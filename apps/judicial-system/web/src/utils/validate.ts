@@ -1,33 +1,41 @@
 // TODO: Add tests
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
-import {
+import type {
   AppealCase,
+  Case,
+  CourtSessionResponse,
+  DateLog,
+  Defendant,
+  IndictmentCount,
+  User,
+  Victim,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealDecisionPartyRole,
-  Case,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
-  CourtSessionResponse,
   CourtSessionRulingType,
-  DateLog,
-  Defendant,
+  CourtSessionStringType,
   DefenderChoice,
-  IndictmentCount,
   IndictmentCountOffense,
   IndictmentDecision,
   SessionArrangements,
-  User,
-  Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from './arrayHelpers'
 import { isCivilClaimantDefendantSelectionValid } from './civilClaimantUtils'
-import { caseLevelAppealDecision, isBusiness } from './utils'
+import {
+  caseLevelAppealDecision,
+  isBusiness,
+  isMatchingAppealCourtFile,
+} from './utils'
 
 export type Validation =
   | 'empty'
@@ -59,7 +67,7 @@ const getRegexByValidation = (validation: Validation) => {
       }
     case 'police-casenumber-format':
       return {
-        regex: /^[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-\d{1,99999}$/,
+        regex: POLICE_CASE_NUMBER_REGEX,
         errorMessage: 'Dæmi: 012-3456-7890',
       }
     case 'national-id':
@@ -685,6 +693,7 @@ export const isCourtSessionValid = (
     (courtSession.isAttestingWitness
       ? courtSession.attestingWitnessId
       : true) &&
+    areMergedCaseEntriesComplete(courtSession) &&
     validate([
       [courtSession.startDate, ['empty', 'date-format']],
       [courtSession.location, ['empty']],
@@ -693,6 +702,37 @@ export const isCourtSessionValid = (
       [courtSession.rulingType, ['empty']],
       [courtSession.endDate, ['empty', 'date-format']],
     ]).isValid
+  )
+}
+
+// Each merged case with documents in a session gets its own entries booking in
+// the court record, and each is required. The set is derived from the filed
+// documents rather than from the strings, so a merged case that has never been
+// written about is missing rather than absent. The value is trimmed because the
+// backend rejects a whitespace-only booking - without it the confirm button
+// would enable and the confirm itself would then fail.
+export const areMergedCaseEntriesComplete = (
+  courtSession: CourtSessionResponse,
+): boolean => {
+  const mergedCaseIds = new Set(
+    courtSession.mergedFiledDocuments?.map((document) => document.caseId),
+  )
+
+  return Array.from(mergedCaseIds).every(
+    (mergedCaseId) =>
+      validate([
+        [
+          courtSession.courtSessionStrings
+            ?.find(
+              (courtSessionString) =>
+                courtSessionString.mergedCaseId === mergedCaseId &&
+                courtSessionString.stringType ===
+                  CourtSessionStringType.ENTRIES,
+            )
+            ?.value?.trim(),
+          ['empty'],
+        ],
+      ]).isValid,
   )
 }
 
@@ -852,8 +892,12 @@ export const isCourtOfAppealRulingStepValid = (
     isCourtOfAppealRulingStepFieldsValid(appealCase) &&
       (appealCase?.appealRulingDecision ===
         AppealCaseRulingDecision.DISCONTINUED ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.APPEAL_RULING,
+        workingCase.caseFiles?.some((file) =>
+          isMatchingAppealCourtFile(
+            file,
+            CaseFileCategory.APPEAL_RULING,
+            appealCase?.rulingFileId,
+          ),
         )),
   )
 }

@@ -1,4 +1,5 @@
-import { FC, PropsWithChildren, useContext, useMemo } from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -34,28 +35,31 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import { CaseFileTable } from '@island.is/judicial-system-web/src/components/Table'
+import type {
   Case,
   CaseFile,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { caseFiles } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useFiledCourtDocuments,
   useFileList,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { CaseFileTable } from '../Table'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderConfirmation from './RulingOrderConfirmation'
 import RulingOrderFileRow from './RulingOrderFileRow'
-import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './IndictmentCaseFilesList.css'
 
 const getDefenderVisiblePoliceCaseNumbers = (
@@ -855,22 +859,44 @@ const IndictmentCaseFilesList: FC<Props> = ({
               (workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
                 <Box>
                   <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                    {workingCase.rulingOrderAppealCases?.map((appealCase) => {
-                      const rulingFile = workingCase.caseFiles?.find(
-                        (f) => f.id === appealCase.rulingFileId,
-                      )
-                      if (!rulingFile) {
-                        return null
-                      }
-                      return (
-                        <RulingOrderAppealFilesAccordion
-                          key={appealCase.id}
-                          appealCase={appealCase}
-                          rulingFile={rulingFile}
-                          onOpenFile={onOpen}
-                        />
-                      )
-                    })}
+                    {(workingCase.rulingOrderAppealCases ?? [])
+                      .flatMap((appealCase) => {
+                        const rulingFile = workingCase.caseFiles?.find(
+                          (f) => f.id === appealCase.rulingFileId,
+                        )
+                        if (!rulingFile) {
+                          return []
+                        }
+
+                        const hasVisibleFiles = (
+                          workingCase.caseFiles ?? []
+                        ).some((file) =>
+                          isAppealFileCategoryVisible(
+                            workingCase,
+                            appealCase,
+                            file,
+                            user,
+                          ),
+                        )
+                        if (!hasVisibleFiles) {
+                          return []
+                        }
+
+                        return [{ appealCase, rulingFile }]
+                      })
+                      .map(
+                        ({ appealCase, rulingFile }, index, visibleCases) => (
+                          <RulingOrderAppealFilesAccordion
+                            key={appealCase.id}
+                            appealCase={appealCase}
+                            rulingFile={rulingFile}
+                            onOpenFile={onOpen}
+                            hideTrailingSeparator={
+                              index < visibleCases.length - 1
+                            }
+                          />
+                        ),
+                      )}
                   </Accordion>
                 </Box>
               )}

@@ -1,6 +1,5 @@
+import type { FC, ForwardedRef } from 'react'
 import {
-  FC,
-  ForwardedRef,
   forwardRef,
   useCallback,
   useContext,
@@ -38,7 +37,7 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
+import { appealCorrectionLock, Feature } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   CheckboxList,
@@ -51,36 +50,42 @@ import {
   SectionHeading,
   TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
-import EditableCaseFile, {
-  Supplement,
-} from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type { Supplement } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type {
+  CourtDocumentResponse,
+  CourtSessionResponse,
+  CourtSessionString,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
-  CourtDocumentResponse,
   CourtDocumentType,
   CourtSessionClosedLegalBasis,
-  CourtSessionResponse,
   CourtSessionRulingType,
-  CourtSessionString,
   CourtSessionStringType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { SelectRepresentative } from '@island.is/judicial-system-web/src/routes/Shared/AddFiles/SelectCaseFileRepresentative'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  TUploadFile,
   useCourtDocuments,
   useCourtSessions,
+  useDebouncedField,
   useFileList,
   useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { reconcileAppealDecisionsForRulingFileChange } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  applyMergedCaseEntries,
+  reconcileAppealDecisionsForRulingFileChange,
+  rulingOrderAppealCase,
+} from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
-import CourtSessionAppealDecisions from './CourtSessionAppealDecisions'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
+import CourtSessionRuling from './CourtSessionRuling'
 import * as styles from './CourtRecord.css'
 
 interface Props {
@@ -172,6 +177,21 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const { features } = useContext(FeatureContext)
   // The in-court appeal decision UI is behind a flag until it's ready for prod.
   const showAppealDecisions = features.includes(Feature.APPEAL_RULING_ORDER)
+  // Moving the ruling type off ORDER removes the ruling, which discards its
+  // decisions and deletes the appeal it produced - not allowed once the appeal
+  // has left the court record's reach (a party filed it itself, or Landsréttur
+  // has the case). courtSession.service.validateRulingRemovalAllowed rejects the
+  // same change server-side. Swapping the ruling onto another file stays open at
+  // every appeal state: it means the same ruling is now a different document, and
+  // everything moves with it.
+  // The reason is kept, not just the boolean, so the section can say which of the
+  // two locks applies - the appeal decision cards next to it are behind a feature
+  // flag and cannot be relied on to explain these controls.
+  const rulingRemovalLock = appealCorrectionLock(
+    rulingOrderAppealCase(workingCase, courtSession.rulingFileId),
+  )
+  const rulingRemovalDisabled =
+    courtSession.isConfirmed || Boolean(rulingRemovalLock)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -181,7 +201,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [readyForInitialization, setReadyForInitialization] = useState(false)
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
-  const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
   const [draggedMergeFileId, setDraggedMergeFileId] = useState<string | null>(
     null,
@@ -259,39 +278,31 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       updatedCourtSessionString: Pick<CourtSessionString, 'value'>,
       { persist = false } = {},
     ) => {
-      const targetCourtSessionString = courtSession.courtSessionStrings?.find(
-        (courtSessionString) =>
-          courtSessionString.courtSessionId === courtSessionId &&
-          courtSessionString.mergedCaseId === mergedCaseId &&
-          courtSessionString.stringType === CourtSessionStringType.ENTRIES,
-      )
-
-      const updatedCourtSessionsStrings = targetCourtSessionString
-        ? courtSession.courtSessionStrings?.map((courtSessionString) =>
-            courtSessionString.id === targetCourtSessionString?.id
-              ? {
-                  ...courtSessionString,
-                  value: updatedCourtSessionString.value,
-                }
-              : courtSessionString,
-          )
-        : [
-            ...(courtSession.courtSessionStrings ?? []),
-            {
-              caseId: workingCase.id,
-              courtSessionId,
-              mergedCaseId,
-              stringType: CourtSessionStringType.ENTRIES,
-              value: updatedCourtSessionString.value,
-            } as CourtSessionString,
-          ]
+      // The strings are read off `prev` rather than the render this call was
+      // created in. A debounced save fires up to `delay` after the keystroke
+      // that scheduled it, so a closed-over array can be stale by then - and
+      // rebuilding from it would revert an edit made to a sibling merged case
+      // in the meantime.
       setWorkingCase((prev) => ({
         ...prev,
-        courtSessions: prev.courtSessions?.map((session) =>
-          session.id === courtSessionId
-            ? { ...session, courtSessionStrings: updatedCourtSessionsStrings }
-            : session,
-        ),
+        courtSessions: prev.courtSessions?.map((session) => {
+          if (session.id !== courtSessionId) {
+            return session
+          }
+
+          return {
+            ...session,
+            courtSessionStrings: applyMergedCaseEntries(
+              session.courtSessionStrings,
+              {
+                caseId: workingCase.id,
+                courtSessionId,
+                mergedCaseId,
+                value: updatedCourtSessionString.value,
+              },
+            ),
+          }
+        }),
       }))
 
       if (persist) {
@@ -304,12 +315,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         })
       }
     },
-    [
-      courtSession.courtSessionStrings,
-      setWorkingCase,
-      updateCourtSessionString,
-      workingCase.id,
-    ],
+    [setWorkingCase, updateCourtSessionString, workingCase.id],
   )
 
   const getInitialAttendees = useCallback(() => {
@@ -341,6 +347,16 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     return `Mættir eru:\n${attendees.join('')}`
   }, [workingCase.prosecutor, workingCase.defendants])
+
+  // No guard against writing into a confirmed session is needed: a confirmed
+  // session renders this field disabled, so nothing can be pending, and
+  // confirming moves focus off the field, which flushes first.
+  const attendeesField = useDebouncedField({
+    value: courtSession.attendees ?? getInitialAttendees(),
+    onChange: (attendees) => patchSession(courtSession.id, { attendees }),
+    onSave: (attendees) =>
+      patchSession(courtSession.id, { attendees }, { persist: true }),
+  })
 
   const initialize = useCallback(() => {
     if (courtSession.startDate) {
@@ -1006,20 +1022,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 data-testid="courtAttendees"
                 name="courtAttendees"
                 label="Mættir eru"
-                value={courtSession.attendees ?? getInitialAttendees()}
+                value={attendeesField.value}
                 placeholder="Skrifa hér..."
-                onChange={(event) => {
-                  patchSession(courtSession.id, {
-                    attendees: event.target.value,
-                  })
-                }}
-                onBlur={(event) => {
-                  patchSession(
-                    courtSession.id,
-                    { attendees: event.target.value },
-                    { persist: true },
-                  )
-                }}
+                onChange={(event) =>
+                  attendeesField.onChange(event.target.value)
+                }
+                onBlur={(event) => attendeesField.onBlur(event.target.value)}
                 textarea
                 rows={7}
                 disabled={courtSession.isConfirmed || false}
@@ -1327,7 +1335,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     )
 
                   return (
-                    <Box key={`merged-case-${courtCaseNumber}`}>
+                    // Keyed by merged case id, not court case number: the
+                    // number falls back to an empty string, so two unnumbered
+                    // merged cases would collide and React would hand one
+                    // row's debounced entries to the other.
+                    <Box key={`merged-case-${mergeDocumentsPerCase.caseId}`}>
                       <CourtSessionMergedCaseEntries
                         courtSessionId={courtSession.id}
                         courtCaseNumber={courtCaseNumber ?? ''}
@@ -1518,6 +1530,21 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   title="Er kveðinn upp dómur eða úrskurður í þinghaldinu?"
                   required
                 />
+                {/* Only shown while the session is open for correction - a
+                confirmed session disables everything anyway, and the reason is
+                then obvious. */}
+                {rulingRemovalLock && !courtSession.isConfirmed && (
+                  <Box marginBottom={2}>
+                    <AlertMessage
+                      type="info"
+                      message={`${
+                        rulingRemovalLock === 'OUT_OF_COURT'
+                          ? 'Úrskurðurinn hefur verið kærður utan þinghalds'
+                          : 'Kæra úrskurðarins er komin til Landsréttar'
+                      } og því er ekki hægt að fella úrskurðinn úr þingbókinni. Áfram er hægt að velja annað skjal fyrir úrskurðinn.`}
+                    />
+                  </Box>
+                )}
                 <BlueBox className={styles.grid}>
                   <RadioButton
                     name="result_verdict"
@@ -1539,7 +1566,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   <RadioButton
@@ -1561,7 +1588,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   <RadioButton
@@ -1583,7 +1610,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   <RadioButton
@@ -1601,7 +1628,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   {courtSession.rulingType === CourtSessionRulingType.ORDER && (
@@ -1657,95 +1684,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 courtSession.rulingType ===
                   CourtSessionRulingType.DISMISSAL_ORDER ||
                 courtSession.rulingType === CourtSessionRulingType.ORDER) && (
-                <>
-                  <Box>
-                    <SectionHeading
-                      title={
-                        courtSession.rulingType ===
-                        CourtSessionRulingType.JUDGEMENT
-                          ? 'Dómsorð'
-                          : 'Úrskurðarorð'
-                      }
-                    />
-                    <Input
-                      data-testid="ruling"
-                      name="ruling"
-                      label={
-                        courtSession.rulingType ===
-                        CourtSessionRulingType.JUDGEMENT
-                          ? 'Dómsorð'
-                          : 'Úrskurðarorð'
-                      }
-                      value={courtSession.ruling || ''}
-                      placeholder={`Hvert er ${
-                        courtSession.rulingType ===
-                        CourtSessionRulingType.JUDGEMENT
-                          ? 'dómsorðið'
-                          : 'úrskurðarorðið'
-                      }?`}
-                      onChange={(event) => {
-                        setRulingErrorMessage('')
-
-                        patchSession(courtSession.id, {
-                          ruling: event.target.value,
-                        })
-                      }}
-                      onBlur={(event) => {
-                        validateAndSetErrorMessage(
-                          ['empty'],
-                          event.target.value,
-                          setRulingErrorMessage,
-                        )
-
-                        patchSession(
-                          courtSession.id,
-                          { ruling: event.target.value },
-                          { persist: true },
-                        )
-                      }}
-                      hasError={rulingErrorMessage !== ''}
-                      errorMessage={rulingErrorMessage}
-                      rows={15}
-                      disabled={courtSession.isConfirmed || false}
-                      textarea
-                      required
-                    />
-                  </Box>
-                  {showAppealDecisions &&
-                    courtSession.rulingType ===
-                      CourtSessionRulingType.ORDER && (
-                      <CourtSessionAppealDecisions
-                        courtSession={courtSession}
-                        workingCase={workingCase}
-                        setWorkingCase={setWorkingCase}
-                      />
-                    )}
-                  <Box>
-                    <SectionHeading title="Bókanir í lok þinghalds" />
-                    <Input
-                      data-testid="closingEntries"
-                      name="closingEntries"
-                      label="Bókanir í kjölfar dómsuppsögu eða uppkvaðningu úrskurðar"
-                      value={courtSession.closingEntries || ''}
-                      placeholder="T.d. Dómfelldi er ekki viðstaddur dómsuppsögu og verður lögreglu falið að birta dóminn fyrir honum..."
-                      onChange={(event) =>
-                        patchSession(courtSession.id, {
-                          closingEntries: event.target.value,
-                        })
-                      }
-                      onBlur={(event) =>
-                        patchSession(
-                          courtSession.id,
-                          { closingEntries: event.target.value },
-                          { persist: true },
-                        )
-                      }
-                      rows={15}
-                      disabled={courtSession.isConfirmed || false}
-                      textarea
-                    />
-                  </Box>
-                </>
+                <CourtSessionRuling
+                  courtSession={courtSession}
+                  showAppealDecisions={showAppealDecisions}
+                  patchSession={patchSession}
+                />
               )}
               <Box>
                 <SectionHeading title="Vottur" />

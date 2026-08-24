@@ -1,5 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
+
 import ContextMenu from './ContextMenu'
 
 describe('ContextMenu', () => {
@@ -22,5 +24,28 @@ describe('ContextMenu', () => {
     const menuItemLink = await screen.findByText('Fyrirtæki')
     expect(menuItemButton?.tagName).toBe('BUTTON')
     expect(menuItemLink?.tagName).toBe('A')
+  })
+
+  it('marks the menu button as expanded while the menu is open', async () => {
+    render(
+      <ContextMenu
+        items={[{ title: 'Einstaklingur' }]}
+        render={
+          <IconButton
+            icon="ellipsisVertical"
+            colorScheme="transparent"
+            ariaLabel="Valmynd"
+          />
+        }
+      />,
+    )
+
+    const menuButton = await screen.findByRole('button', { name: 'Valmynd' })
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false')
+
+    fireEvent.click(menuButton)
+
+    expect(await screen.findByRole('menu')).toBeInTheDocument()
+    expect(menuButton).toHaveAttribute('aria-expanded', 'true')
   })
 })

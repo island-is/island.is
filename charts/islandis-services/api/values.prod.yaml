@@ -39,6 +39,7 @@ env:
   CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi.island.is'
   CONTACT_US_EMAIL: 'island@island.is'
   CONTENTFUL_HOST: 'cdn.contentful.com'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
   ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
   ELFUR_BASE_IDS_URL: 'https://innskra.island.is'

@@ -215,6 +215,43 @@ describe('normalizeRichTextHtml', () => {
       ).toBe('<p class="indent-1">x</p>')
     })
 
+    it('converts a Word first-line indent (Tab at line start) to an indent class', () => {
+      // Word's AutoFormat turns a Tab at the start of a paragraph into a
+      // first-line indent, emitted as text-indent instead of margin-left.
+      expect(
+        normalizeRichTextHtml('<p style="text-indent:36.0pt;">x</p>'),
+      ).toBe('<p class="indent-1">x</p>')
+    })
+
+    it('converts a double-Tab first-line indent (72pt) to two levels', () => {
+      expect(
+        normalizeRichTextHtml('<p style="text-indent:72.0pt;">x</p>'),
+      ).toBe('<p class="indent-2">x</p>')
+    })
+
+    it('sums margin-left and text-indent into one indent level', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<p style="margin-left:36.0pt;text-indent:36.0pt;">x</p>',
+        ),
+      ).toBe('<p class="indent-2">x</p>')
+    })
+
+    it('subtracts a hanging indent (negative text-indent) from the margin', () => {
+      // 36pt - 18pt = 18pt = 24px, which rounds to one indent step.
+      expect(
+        normalizeRichTextHtml(
+          '<p style="margin-left:36.0pt;text-indent:-18.0pt;">x</p>',
+        ),
+      ).toBe('<p class="indent-1">x</p>')
+    })
+
+    it('removes a negative text-indent without a margin', () => {
+      expect(normalizeRichTextHtml('<p style="text-indent:-18pt;">x</p>')).toBe(
+        '<p>x</p>',
+      )
+    })
+
     it('removes margins smaller than half an indent step', () => {
       expect(normalizeRichTextHtml('<p style="margin-left: 10px;">x</p>')).toBe(
         '<p>x</p>',
@@ -231,6 +268,51 @@ describe('normalizeRichTextHtml', () => {
       expect(
         normalizeRichTextHtml('<span style="margin-left: 40px;">x</span>'),
       ).toBe('x')
+    })
+
+    it('does not indent list items, whose level is their nesting', () => {
+      // Word indents items with margin-left as well as nesting them. An indent
+      // class here pads the item itself, pushing its text away from its own
+      // marker, and the PDF ignores it — so it must never be written.
+      expect(
+        normalizeRichTextHtml('<ol><li style="margin-left: 72pt;">x</li></ol>'),
+      ).toBe('<ol><li>x</li></ol>')
+    })
+
+    it('strips indent classes already saved on list items', () => {
+      expect(
+        normalizeRichTextHtml('<ul><li class="indent-2">x</li></ul>'),
+      ).toBe('<ul><li>x</li></ul>')
+    })
+
+    it('keeps other classes when stripping an indent class off an item', () => {
+      expect(
+        normalizeRichTextHtml('<ul><li class="indent-2 hl-ffff00">x</li></ul>'),
+      ).toBe('<ul><li class="hl-ffff00">x</li></ul>')
+    })
+
+    it('carries a suppressed list marker as a class', () => {
+      // The lists plugin marks the wrapper items it creates this way; the
+      // inline style must never reach the API.
+      expect(
+        normalizeRichTextHtml(
+          '<ul><li style="list-style-type: none;"><ul><li>x</li></ul></li></ul>',
+        ),
+      ).toBe('<ul><li class="marker-none"><ul><li>x</li></ul></li></ul>')
+    })
+
+    it('does not suppress markers on anything but a list item', () => {
+      expect(
+        normalizeRichTextHtml('<p style="list-style-type: none;">x</p>'),
+      ).toBe('<p>x</p>')
+    })
+
+    it('still indents paragraphs nested inside a list item', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<ul><li><p style="margin-left: 36pt;">x</p></li></ul>',
+        ),
+      ).toBe('<ul><li><p class="indent-1">x</p></li></ul>')
     })
   })
 

@@ -5,7 +5,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
@@ -36,7 +35,7 @@ import {
   DateLog,
   Defendant,
   InstitutionContactRepositoryService,
-  Notification,
+  NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -53,8 +52,7 @@ interface Attachment {
 @Injectable()
 export class IndictmentCaseNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -65,7 +63,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
       intlService,
       courtService,
@@ -154,9 +152,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       theCase.courtCaseNumber
     } í ${applyDativeCaseToCourtName(
       theCase.court?.name ?? 'héraðsdómi',
-    )}. Einn af dómfelldu í málinu var sviptur ökuréttinda.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(
-      ', ',
-    )}.`
+    )}.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(', ')}.`
 
     const contactInfo = {
       name: theCase.prosecutorsOffice?.name,

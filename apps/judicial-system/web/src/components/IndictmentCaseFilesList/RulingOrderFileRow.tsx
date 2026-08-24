@@ -1,8 +1,9 @@
-import { ComponentProps, FC, useContext } from 'react'
+import type { ComponentProps, FC } from 'react'
+import { useContext } from 'react'
 import router from 'next/router'
 
-import { Icon } from '@island.is/island-ui/core'
-import { Box, IconMapIcon } from '@island.is/island-ui/core'
+import type { Icon, IconMapIcon } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import {
   DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE,
   DEFENDER_APPEAL_CASE_APPEAL_ROUTE,
@@ -24,13 +25,14 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { useWithdrawAppeal } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenuItems/WithdrawAppeal'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import TagAppealState from '@island.is/judicial-system-web/src/components/Tags/TagAppealState/TagAppealState'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealCaseTransition,
-  CaseFile,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -42,10 +44,10 @@ import {
   getCurrentUserStatementDate,
   hasAcceptedRulingOrderInCourt,
   isCurrentAppellantRepresentative,
+  rulingOrderAppealCase,
   userHasActiveInCourtAppeal,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import RulingOrderConfirmationStatus from './RulingOrderConfirmationStatus'
 
 interface Props {
@@ -69,9 +71,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   const isDefence = isDefenceUser(user)
   const isDistrictCourt = isDistrictCourtUser(user)
 
-  const appealCase = workingCase.rulingOrderAppealCases?.find(
-    (a) => a.rulingFileId === file.id,
-  )
+  const appealCase = rulingOrderAppealCase(workingCase, file.id)
 
   const appealRoute = isDefence
     ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE

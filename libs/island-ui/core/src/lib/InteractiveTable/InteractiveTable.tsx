@@ -18,9 +18,9 @@ import {
 import AnimateHeight from 'react-animate-height'
 import cn from 'classnames'
 import { helperStyles } from '@island.is/island-ui/theme'
-import { theme } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
+import type { ResponsiveSpace } from '../Box/useBoxStyles'
 import { Button } from '../Button/Button'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Hidden } from '../Hidden/Hidden'
@@ -72,6 +72,8 @@ type BaseInteractiveTableProps<TData extends object> = {
   sortHint?: string
   meta?: TableMeta<TData>
   colorScheme?: 'default' | 'negative'
+  /** Override the default horizontal cell/header padding (defaults to the `Table` component's own default of `3`). */
+  cellPaddingX?: ResponsiveSpace
 }
 
 export type InteractiveTableProps<TData extends object> =
@@ -96,6 +98,7 @@ export const InteractiveTable = <TData extends object>({
   sortHint = 'Activate to sort.',
   meta,
   colorScheme = 'default',
+  cellPaddingX,
 }: InteractiveTableProps<TData>) => {
   const resolvedExpanderLabel = expanderLabel ?? ''
   const [internalSorting, setInternalSorting] = useState<SortingState>(

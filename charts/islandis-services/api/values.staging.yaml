@@ -39,6 +39,7 @@ env:
   CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
   CONTACT_US_EMAIL: 'island@island.is'
   CONTENTFUL_HOST: 'cdn.contentful.com'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
   ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
   ELFUR_BASE_IDS_URL: 'https://identity-server.staging01.devland.is'

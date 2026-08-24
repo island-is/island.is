@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
-  GaldurExternalDomainRequestsWithdrawApplicationRequest,
+  ApplicantWithdrawLatestApplicationRequest,
   VmstUnemploymentClientService,
 } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../../types'
@@ -38,7 +38,7 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
       )
     }
     const canWithdraw =
-      await this.vmstUnemploymentClientService.canUserWithdrawUnemploymentApplication(
+      await this.vmstUnemploymentClientService.canUserWithdrawBenefitsApplication(
         resolvedApplicantId.applicantId,
       )
 
@@ -79,18 +79,17 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
       'deregistrationDate',
     )
     const reason = getValueViaPath<string>(application.answers, 'reason')
-    const requestObj: GaldurExternalDomainRequestsWithdrawApplicationRequest = {
+    const requestObj: ApplicantWithdrawLatestApplicationRequest = {
       applicantId: resolvedApplicantId.applicantId,
-      withdrawDate: withDrawDate ? new Date(withDrawDate) : undefined,
-      reasonId: reason,
-    }
-    const requestParameter = {
-      galdurExternalDomainRequestsWithdrawApplicationRequest: requestObj,
+      galdurExternalDomainRequestsWithdrawLatestApplicationRequest: {
+        withdrawDate: withDrawDate ? new Date(withDrawDate) : undefined,
+        reasonId: reason,
+      },
     }
 
     const response =
-      await this.vmstUnemploymentClientService.withdrawUnemploymentApplication(
-        requestParameter,
+      await this.vmstUnemploymentClientService.withdrawBenefitsApplication(
+        requestObj,
       )
 
     if (!response.success) {

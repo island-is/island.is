@@ -63,6 +63,7 @@ import {
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
+import { DirectorateOfEqualityApplicationModule } from '@island.is/api/domains/directorate-of-equality-application'
 import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
@@ -322,6 +323,9 @@ const environment = getConfig
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl as string,
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
+    }),
+    DirectorateOfEqualityApplicationModule.register({
+      baseApiUrl: environment.applicationSystem.baseApiUrl as string,
     }),
     LicenseServiceModule,
     DirectorateOfEqualityClientModule,
