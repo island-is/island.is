@@ -1,4 +1,5 @@
 // TODO: Add tests
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
@@ -64,7 +65,7 @@ const getRegexByValidation = (validation: Validation) => {
       }
     case 'police-casenumber-format':
       return {
-        regex: /^[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-\d{1,99999}$/,
+        regex: POLICE_CASE_NUMBER_REGEX,
         errorMessage: 'Dæmi: 012-3456-7890',
       }
     case 'national-id':

@@ -22,7 +22,6 @@ import {
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   GaldurXRoadAPIModelsApplicantInfoResponse,
   GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
-  UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
@@ -41,6 +40,7 @@ import {
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
   JobSearchConfirmationApi,
   GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
+  ApplicantWithdrawLatestApplicationRequest,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -209,7 +209,7 @@ export class VmstUnemploymentClientService {
     )
   }
 
-  async canUserWithdrawUnemploymentApplication(
+  async canUserWithdrawBenefitsApplication(
     applicantId: string,
   ): Promise<GaldurExternalDomainRequestsWithdrawOverviewResponse> {
     const api = await this.createApiClient(
@@ -217,7 +217,7 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
 
-    return await api.applicantGetUnemploymentApplicationsWithdrawOverview({
+    return await api.applicantGetWithdrawOverview({
       id: applicantId,
     })
   }
@@ -233,17 +233,15 @@ export class VmstUnemploymentClientService {
     return await api.supportDataGetDelistingReasons()
   }
 
-  async withdrawUnemploymentApplication(
-    requestParameter: UnemploymentApplicationWithdrawApplicationRequest,
+  async withdrawBenefitsApplication(
+    requestParameter: ApplicantWithdrawLatestApplicationRequest,
   ): Promise<GaldurDomainModelsBaseViewModel> {
     const api = await this.createApiClient(
-      UnemploymentApplicationApi,
+      ApplicantApi,
       'clients-vmst-unemployment',
     )
 
-    return await api.unemploymentApplicationWithdrawApplication(
-      requestParameter,
-    )
+    return await api.applicantWithdrawLatestApplication(requestParameter)
   }
 
   async validateVacationInfoUnemploymentApplication(

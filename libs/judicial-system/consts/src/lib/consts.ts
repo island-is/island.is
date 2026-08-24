@@ -305,10 +305,22 @@ export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
 
 // Masks
-export const POLICE_CASE_NUMBER = '___-____-_______'
+export const POLICE_CASE_NUMBER = '___-____-______'
 export const SSN = '______-____'
 export const PHONE_NUMBER = '___-____'
 export const EDITABLE_DATE = '__.__.____'
 export const DATE_PICKER_TIME = '  :  '
 export const SUBSTANCE_ALCOHOL = '_,__'
 export const SPEED = '___'
+
+// Police case numbers
+/**
+ * A police case number is three digits (the police district prefix), four
+ * digits (the year), and finally up to six digits identifying the case within
+ * the year, e.g. 007-2024-042535. The last part is not zero padded in older
+ * numbers, so anything from one to six digits is accepted.
+ */
+export const POLICE_CASE_NUMBER_REGEX = /^[0-9]{3}-[0-9]{4}-[0-9]{1,6}$/
+
+export const isValidPoliceCaseNumber = (policeCaseNumber?: string | null) =>
+  Boolean(policeCaseNumber && POLICE_CASE_NUMBER_REGEX.test(policeCaseNumber))
