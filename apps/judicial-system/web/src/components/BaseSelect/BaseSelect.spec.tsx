@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
-import { ReactSelectOption } from '../../types'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+
 import BaseSelect from './BaseSelect'
 
 const options: ReactSelectOption[] = [

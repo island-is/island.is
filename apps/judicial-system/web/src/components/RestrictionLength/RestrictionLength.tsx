@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, useContext } from 'react'
+import type { ChangeEvent, FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
@@ -7,15 +8,15 @@ import {
   isAcceptingCaseDecision,
   isCourtOfAppealsUser,
 } from '@island.is/judicial-system/types'
+import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
+import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import BlueBox from '../BlueBox/BlueBox'
-import DateTime from '../DateTime/DateTime'
-import { UserContext } from '../UserProvider/UserProvider'
 import { restrictionLength as strings } from './RestrictionLength.strings'
 
 interface Props {

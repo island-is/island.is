@@ -1,8 +1,8 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 import { PdfButton } from '@island.is/judicial-system-web/src/components'
-import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import RulingOrderConfirmationStatus from './RulingOrderConfirmationStatus'
 

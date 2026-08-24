@@ -1,8 +1,10 @@
-import { ComponentPropsWithoutRef, forwardRef, MouseEvent } from 'react'
+import type { ComponentPropsWithoutRef, MouseEvent } from 'react'
+import { forwardRef } from 'react'
 import cn from 'classnames'
 import { Button } from '@ariakit/react/button'
 
-import { Box, Icon, IconMapIcon, Tooltip } from '@island.is/island-ui/core'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Icon, Tooltip } from '@island.is/island-ui/core'
 
 import * as styles from './IconButton.css'
 

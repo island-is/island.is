@@ -1,16 +1,15 @@
-import { FC, useContext, useMemo } from 'react'
+import type { FC } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
+import type { Item } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
-  Item,
   SelectableList,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseOrigin,
-  PoliceCaseInfo as TPoliceCaseInfo,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PoliceCaseInfo as TPoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
 import { strings } from './PoliceCaseInfo.strings'
