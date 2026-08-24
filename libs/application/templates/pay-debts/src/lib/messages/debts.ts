@@ -21,16 +21,31 @@ export const debts = {
       description: 'Description of description field',
     },
   }),
-  input: defineMessages({
-    title: {
-      id: 'pd.application:debts.input.title',
-      defaultMessage: 'Input',
-      description: 'Title of input field',
+  table: defineMessages({
+    chargeTypeNameHeader: {
+      id: 'pd.application:debts.table.chargeTypeNameHeader',
+      defaultMessage: 'Gjaldflokkur',
+      description: 'Charge type table header',
     },
-    description: {
-      id: 'pd.application:debts.input.description',
-      defaultMessage: 'This is an input, should come from messages.ts',
-      description: 'Description of input field',
+    dueDateHeader: {
+      id: 'pd.application:debts.table.dueDateHeader',
+      defaultMessage: 'Gjalddagi',
+      description: 'Due date table header',
+    },
+    finalDueDateHeader: {
+      id: 'pd.application:debts.table.finalDueDateHeader',
+      defaultMessage: 'Eindagi',
+      description: 'Final due date table header',
+    },
+    amountHeader: {
+      id: 'pd.application:debts.table.amountHeader',
+      defaultMessage: 'Skuldastaða',
+      description: 'Debt amount table header',
+    },
+    emptyMessage: {
+      id: 'pd.application:debts.table.emptyMessage',
+      defaultMessage: 'Engar skuldir fundust',
+      description: 'Message shown when there are no debts',
     },
   }),
 }
