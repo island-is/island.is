@@ -5,6 +5,7 @@ fragment AppointmentDetailFields on HealthDirectorateAppointmentDetail {
   date
   duration
   modality
+  status
   practitioners
   canCancel
   cancelBlockedReason

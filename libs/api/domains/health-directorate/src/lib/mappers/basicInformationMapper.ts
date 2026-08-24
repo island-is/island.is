@@ -46,10 +46,22 @@ export const mapVaccinationStatus = (
 
 export const toAppointmentStatusEnum = (
   status: string,
-): AppointmentStatusEnum | undefined =>
-  Object.values(AppointmentStatusEnum).includes(status as AppointmentStatusEnum)
-    ? (status as AppointmentStatusEnum)
-    : undefined
+): AppointmentStatusEnum | undefined => {
+  switch (status) {
+    case UserVisibleAppointmentStatuses.BOOKED:
+      return AppointmentStatusEnum.BOOKED
+    case UserVisibleAppointmentStatuses.CANCELLED:
+      return AppointmentStatusEnum.CANCELLED
+    case UserVisibleAppointmentStatuses.FULFILLED:
+      return AppointmentStatusEnum.FULFILLED
+    case UserVisibleAppointmentStatuses.ARRIVED:
+      return AppointmentStatusEnum.ARRIVED
+    case UserVisibleAppointmentStatuses.CHECKED_IN:
+      return AppointmentStatusEnum.CHECKED_IN
+    default:
+      return undefined
+  }
+}
 
 export const toAppointmentModalityEnum = (
   modality?: string,

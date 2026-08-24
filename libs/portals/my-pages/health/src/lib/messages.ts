@@ -2166,6 +2166,10 @@ export const messages = defineMessages({
     defaultMessage: 'Hafðu samband við stofnunina til að afbóka tímann.',
     id: 'sp.health:cancel-appointment-not-allowed-generic-text',
   },
+  appointmentCancelledStatus: {
+    defaultMessage: 'Afbókað',
+    id: 'sp.health:appointment-cancelled-status',
+  },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',

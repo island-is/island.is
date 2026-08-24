@@ -1,5 +1,8 @@
-import { HealthDirectorateAppointmentModality } from '@island.is/api/schema'
-import { Box, Button, Stack, Text, toast } from '@island.is/island-ui/core'
+import {
+  HealthDirectorateAppointmentModality,
+  HealthDirectorateAppointmentStatus,
+} from '@island.is/api/schema'
+import { Box, Button, Stack, Tag, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { CardLoader, IntroWrapper } from '@island.is/portals/my-pages/core'
 
@@ -28,11 +31,9 @@ const AppointmentDetail = () => {
   const { id } = useParams<{ id: string }>()
   const [cancelModalVisible, setCancelModalVisible] = useState(false)
   const [notAllowedModalVisible, setNotAllowedModalVisible] = useState(false)
-  const [notAllowedReason, setNotAllowedReason] = useState<
-    'deadlinePassed' | 'generic'
-  >('generic')
 
   const { data, loading, error } = useGetAppointmentDetailQuery({
+    fetchPolicy: 'network-only',
     variables: { id: id ?? '' },
     skip: !id,
   })
@@ -41,16 +42,13 @@ const AppointmentDetail = () => {
     useCancelAppointmentMutation()
 
   const appointment = data?.healthDirectorateAppointment
+  const isCancelled =
+    appointment?.status === HealthDirectorateAppointmentStatus.CANCELLED
 
   const onCancelButtonClick = () => {
-    const deadlinePassed = appointment?.canCancelBefore
-      ? new Date(appointment.canCancelBefore).getTime() < Date.now()
-      : false
-
-    if (appointment?.canCancel && !deadlinePassed) {
+    if (appointment?.canCancel) {
       setCancelModalVisible(true)
     } else {
-      setNotAllowedReason(deadlinePassed ? 'deadlinePassed' : 'generic')
       setNotAllowedModalVisible(true)
     }
   }
@@ -94,17 +92,19 @@ const AppointmentDetail = () => {
       )}
       {!error && appointment && (
         <Stack space={5}>
-          <Box display="flex" columnGap={2}>
-            <Button
-              size="small"
-              variant="utility"
-              icon="calendarCancel"
-              iconType="outline"
-              onClick={onCancelButtonClick}
-            >
-              {formatMessage(messages.cancelAppointment)}
-            </Button>
-          </Box>
+          {!isCancelled && (
+            <Box display="flex" columnGap={2}>
+              <Button
+                size="small"
+                variant="utility"
+                icon="calendarCancel"
+                iconType="outline"
+                onClick={onCancelButtonClick}
+              >
+                {formatMessage(messages.cancelAppointment)}
+              </Button>
+            </Box>
+          )}
 
           <Box border="standard" borderRadius="large" padding={[2, 2, 3]}>
             <Box
@@ -113,9 +113,16 @@ const AppointmentDetail = () => {
               alignItems="center"
             >
               <Stack space={3}>
-                <Text variant="h4" as="h4" color="blue400">
-                  {appointment.title}
-                </Text>
+                <Box display="flex" alignItems="center" columnGap={2}>
+                  <Text variant="h4" as="h4" color="blue400">
+                    {appointment.title}
+                  </Text>
+                  {isCancelled && (
+                    <Tag variant="red" outlined disabled>
+                      {formatMessage(messages.appointmentCancelledStatus)}
+                    </Tag>
+                  )}
+                </Box>
                 <AppointmentDetailCardInfo appointment={appointment} />
               </Stack>
               <Box
@@ -150,7 +157,7 @@ const AppointmentDetail = () => {
 
           <CancelAppointmentNotAllowedModal
             visible={notAllowedModalVisible}
-            reason={notAllowedReason}
+            reason={appointment.cancelBlockedReason ?? undefined}
             onClose={() => setNotAllowedModalVisible(false)}
           />
         </>

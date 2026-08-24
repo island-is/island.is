@@ -57,7 +57,8 @@ export class AppointmentDetail {
 
   @Field(() => AppointmentCancelBlockedReasonEnum, {
     nullable: true,
-    description: 'Reason cancellation is blocked; only set when canCancel is false',
+    description:
+      'Reason cancellation is blocked; only set when canCancel is false',
   })
   cancelBlockedReason?: AppointmentCancelBlockedReasonEnum
 }
