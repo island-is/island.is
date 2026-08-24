@@ -51,34 +51,38 @@ const ContactLinks = () => {
 
   const renderRowContent = (link: ContactLinkItem) => (
     <LinkResolver href={link.href} className={styles.rowLink}>
-      <Box
-        display="flex"
-        justifyContent="spaceBetween"
-        alignItems="flexStart"
-        paddingX={3}
-        paddingY={2}
-        width="full"
-      >
-        <Box flexGrow={1} minWidth={0}>
-          <Text
-            variant="medium"
-            fontWeight="semiBold"
-            lineHeight="lg"
-            color="blue400"
-            className={styles.titleText}
-          >
-            {link.title}
-          </Text>
-          {renderDescription(link)}
-        </Box>
+      <Box paddingX={3} paddingY={2} width="full">
         <Box
-          flexShrink={0}
-          marginLeft={2}
           display="flex"
-          style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
+          justifyContent="spaceBetween"
+          alignItems="flexStart"
+          columnGap={2}
         >
-          <Icon icon={link.icon} type="outline" color="blue400" size="small" />
+          <Box flexGrow={1} minWidth={0}>
+            <Text
+              variant="medium"
+              fontWeight="semiBold"
+              lineHeight="lg"
+              color="blue400"
+              className={styles.titleText}
+            >
+              {link.title}
+            </Text>
+          </Box>
+          <Box
+            flexShrink={0}
+            display="flex"
+            style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
+          >
+            <Icon
+              icon={link.icon}
+              type="outline"
+              color="blue400"
+              size="small"
+            />
+          </Box>
         </Box>
+        {renderDescription(link)}
       </Box>
     </LinkResolver>
   )

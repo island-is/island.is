@@ -1,4 +1,10 @@
-import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Icon,
+  SkeletonLoader,
+  Text,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate, LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -29,7 +35,7 @@ const StateMessage = ({
     alignItems="center"
     paddingTop={2}
     rowGap={2}
-    paddingX={[4, 4, 0]}
+    paddingX={[2, 4, 0]}
   >
     <Text variant="h4" textAlign="center">
       {title}
@@ -81,7 +87,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
-        paddingX={[4, 4, 0]}
+        paddingX={[2, 4, 0]}
       >
         <LinkResolver href={HealthPaths.HealthConversations}>
           <Box
@@ -148,7 +154,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                 alignItems="center"
                 columnGap={2}
                 paddingY={2}
-                paddingX={[4, 4, 2]}
+                paddingX={[2, 4, 2]}
                 borderTopWidth="standard"
                 borderColor="blue200"
                 className={unread ? styles.unreadRow : undefined}
@@ -183,6 +189,11 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                     truncate
                   >
                     {item.title}
+                    {unread && (
+                      <VisuallyHidden>
+                        {` - ${formatMessage(m.notificationUnread)}`}
+                      </VisuallyHidden>
+                    )}
                   </Text>
                 </Box>
               </Box>

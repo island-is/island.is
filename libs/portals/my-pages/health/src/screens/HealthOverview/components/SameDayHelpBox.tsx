@@ -12,6 +12,7 @@ const SameDayHelpBox = () => {
       borderRadius="large"
       background="white"
       padding={3}
+      paddingBottom={2}
     >
       <Text variant="h5" as="h3" lineHeight="lg">
         {formatMessage(messages.contactNow)}
