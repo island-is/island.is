@@ -879,8 +879,16 @@ export const is = {
   'health.messages.videoCall': 'Myndsímtal',
   'health.messages.videoCallCanceled': 'Afboðað',
   'health.messages.startVideoCall': 'Hefja myndsímtal',
-  'health.messages.cannotReply':
-    'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  'health.messages.replyBlocked.default':
+    'Ekki er hægt að svara þessum skilaboðum.',
+  'health.messages.replyBlocked.repliesDisabled':
+    'Ekki er hægt að svara þessum skilaboðum þar sem sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  'health.messages.replyBlocked.outsideWindow':
+    'Ekki er hægt að svara skilaboðum utan opnunartíma.',
+  'health.messages.replyBlocked.windowExpired':
+    'Ekki er hægt að svara þessum skilaboðum þar sem svarfrestur er liðinn.',
+  'health.messages.replyBlocked.awaitingStaff':
+    'Ekki er hægt að svara þessum skilaboðum fyrr en starfsfólk hefur svarað þér.',
   'health.messages.compose.newTitle': 'Ný skilaboð',
   'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
   'health.messages.compose.selectService': 'Veldu þjónustu',
