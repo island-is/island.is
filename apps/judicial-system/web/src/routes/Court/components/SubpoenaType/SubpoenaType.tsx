@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 
 import {
   Box,
@@ -11,16 +11,17 @@ import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  CaseState,
   Defendant,
-  SubpoenaType as SubpoenaTypeEnum,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  SubpoenaType as SubpoenaTypeEnum,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as styles from '@island.is/judicial-system-web/src/routes/Court/Indictments/Subpoena/Subpoena.css'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
-import * as styles from '../../Indictments/Subpoena/Subpoena.css'
 
 interface SubpoenaTypeProps {
   subpoenaItems: {

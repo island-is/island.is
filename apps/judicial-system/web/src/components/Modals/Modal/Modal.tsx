@@ -1,26 +1,12 @@
-import {
-  ChangeEvent,
-  FC,
-  isValidElement,
-  PropsWithChildren,
-  ReactNode,
-  useEffect,
-  useId,
-} from 'react'
+import type { ChangeEvent, FC, PropsWithChildren, ReactNode } from 'react'
+import { isValidElement, useEffect, useId } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import cn from 'classnames'
 import { motion } from 'motion/react'
 
-import {
-  Box,
-  BoxProps,
-  Button,
-  Checkbox,
-  Icon,
-  IconMapIcon,
-  Text,
-} from '@island.is/island-ui/core'
+import type { BoxProps, IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'

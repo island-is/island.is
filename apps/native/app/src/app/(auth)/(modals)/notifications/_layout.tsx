@@ -20,6 +20,14 @@ export default function NotificationsLayout() {
           title: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
         }}
       />
+      <Stack.Screen
+        name="message/[id]"
+        options={{
+          ...tabScreenOptions,
+          title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
+          headerTitleAlign: 'center',
+        }}
+      />
     </Stack>
   )
 }
