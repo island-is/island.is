@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, FileUploadStatus, Text } from '@island.is/island-ui/core'
@@ -15,9 +16,8 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import UploadFiles, {
-  FileWithPreviewURL,
-} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useS3Upload,

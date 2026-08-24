@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   CaseFileCategory,
   CaseType,
@@ -14,7 +15,6 @@ import {
   IntlProviderWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import { UserContext } from '../UserProvider/UserProvider'
 import IndictmentCaseFilesList from './IndictmentCaseFilesList'
 
 describe('IndictmentCaseFilesList', () => {

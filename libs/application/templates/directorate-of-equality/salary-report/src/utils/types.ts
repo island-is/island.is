@@ -69,7 +69,7 @@ export type Employee = {
   field?: string | null
   department?: string | null
   startDate: string
-  workRatio: number
+  paidHours: number
   baseSalary: number
   additionalFixedOvertime?: number | null
   additionalFixedCarAllowance?: number | null

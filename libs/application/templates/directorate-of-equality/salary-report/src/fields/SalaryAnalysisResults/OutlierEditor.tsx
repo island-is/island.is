@@ -1,15 +1,15 @@
-import { FC, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { RecordObject } from '@island.is/application/types'
 import { Box, Button, InteractiveTable, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import type {
-  SalaryAnalysisOutlierDto,
-  ScoreBucketDto,
-} from '@island.is/clients/directorate-of-equality'
+import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import { isOutlierGroupComplete } from '../../utils/outlierGroups'
-import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
+import {
+  foldGroupDirection,
+  isOutlierGroupComplete,
+} from '../../utils/outlierGroups'
+import type { OutlierGroupAnswer, PayStatus } from '../../utils/outlierGroups'
 import { TablePagination } from '../TablePagination'
 import { useOutlierColumns } from './useOutlierColumns'
 import { OutlierGroupCard } from './OutlierGroupCard'
@@ -22,7 +22,6 @@ const SELECT_ALL_PAGE_THRESHOLD = 5
 
 type Props = {
   outliers: SalaryAnalysisOutlierDto[]
-  scoreBuckets: ScoreBucketDto[]
   errors?: RecordObject
   // draft: pre-submit, DMR-synced, keyed by employee id. postponed: answers-backed, keyed by ordinal.
   mode: 'draft' | 'postponed'
@@ -31,7 +30,6 @@ type Props = {
 
 export const OutlierEditor: FC<Props> = ({
   outliers,
-  scoreBuckets,
   errors,
   mode,
   identifierForOrdinal,
@@ -39,6 +37,16 @@ export const OutlierEditor: FC<Props> = ({
   const { formatMessage } = useLocale()
   const { control } = useFormContext()
   const m = messages.salaryAnalysis.outlierGroup
+
+  // Only this component holds the outliers; OutlierGroupCard has ordinals and
+  // needs each member's payStatus to pick its prompt variant.
+  const payStatusByOrdinal = useMemo(
+    () =>
+      new Map<number, PayStatus>(
+        outliers.map((o) => [o.employeeOrdinal, o.payStatus]),
+      ),
+    [outliers],
+  )
 
   // Same field name in both modes; draft mode just never persists it to applicationAnswers.
   const fieldName = 'salaryAnalysis.outlierGroups'
@@ -110,7 +118,6 @@ export const OutlierEditor: FC<Props> = ({
 
   const columns = useOutlierColumns({
     formatMessage,
-    scoreBuckets,
     pageRows,
     selected,
     setSelected,
@@ -127,7 +134,10 @@ export const OutlierEditor: FC<Props> = ({
             columns={columns}
             data={pageRows}
             mobileTitleKey="employee"
-            cellPaddingX={2}
+            cellBox={{
+              header: { paddingLeft: 2, paddingRight: 2 },
+              body: { paddingLeft: 2, paddingRight: 2 },
+            }}
           />
 
           <Box marginTop={2}>
@@ -183,6 +193,12 @@ export const OutlierEditor: FC<Props> = ({
               index={index}
               group={group}
               liveName={watchedGroups[index]?.name}
+              direction={foldGroupDirection(
+                group.employeeOrdinals.flatMap((ordinal) => {
+                  const status = payStatusByOrdinal.get(ordinal)
+                  return status ? [status] : []
+                }),
+              )}
               mode={mode}
               errors={errors}
               identifierForOrdinal={identifierForOrdinal}

@@ -48,9 +48,12 @@ const employeeCount = z.object({
   men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
     params: messages.errors.invalidNonNegativeNumber,
   }),
-  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
+  nonBinary: z
+    .string()
+    .optional()
+    .refine((v) => !v || Number(v) >= 0, {
+      params: messages.errors.invalidNonNegativeNumber,
+    }),
 })
 
 const period = z
