@@ -558,7 +558,7 @@ export class CmsContentfulService {
     return (result.items as types.IAuction[]).map(mapAuction)
   }
 
-  async getAuction(id: string, lang: string): Promise<Auction | null> {
+  async getAuction(id: string, lang: string): Promise<Auction> {
     const params = {
       ['content_type']: 'auction',
       'sys.id': id,
@@ -568,7 +568,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IAuctionFields>(lang, params)
       .catch(errorHandler('getAuction'))
 
-    return (result.items as types.IAuction[]).map(mapAuction)[0] ?? null
+    return (result.items as types.IAuction[]).map(mapAuction)[0]
   }
 
   async getProjectPage(
