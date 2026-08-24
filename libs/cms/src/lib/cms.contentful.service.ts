@@ -558,7 +558,7 @@ export class CmsContentfulService {
     return (result.items as types.IAuction[]).map(mapAuction)
   }
 
-  async getAuction(id: string, lang: string): Promise<Auction> {
+  async getAuction(id: string, lang: string): Promise<Auction | null> {
     const params = {
       ['content_type']: 'auction',
       'sys.id': id,
@@ -568,7 +568,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IAuctionFields>(lang, params)
       .catch(errorHandler('getAuction'))
 
-    return (result.items as types.IAuction[]).map(mapAuction)[0]
+    return (result.items as types.IAuction[]).map(mapAuction)[0] ?? null
   }
 
   async getProjectPage(
@@ -1190,7 +1190,9 @@ export class CmsContentfulService {
       .filter((category) => category?.title && category?.slug)
   }
 
-  async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {
+  async getOpenDataPage({
+    lang,
+  }: GetOpenDataPageInput): Promise<OpenDataPage | null> {
     const params = {
       ['content_type']: 'openDataPage',
       include: 10,
@@ -1208,7 +1210,7 @@ export class CmsContentfulService {
 
   async getOpenDataSubpage({
     lang,
-  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage> {
+  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage | null> {
     const params = {
       ['content_type']: 'openDataSubpage',
       include: 10,
