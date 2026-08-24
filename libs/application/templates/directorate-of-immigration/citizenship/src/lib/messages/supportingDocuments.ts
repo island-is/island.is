@@ -35,6 +35,11 @@ export const supportingDocuments = {
         defaultMessage: 'Upplýsingar um vegabréf',
         description: 'Passport title',
       },
+      hasPassportTitle: {
+        id: 'doi.cs.application:supportingDocuments.labels.passport.hasPassportTitle',
+        defaultMessage: 'Á barnið vegabréf?',
+        description: 'Has passport question for child',
+      },
       publishDate: {
         id: 'doi.cs.application:supportingDocuments.labels.passport.publishDate',
         defaultMessage: 'Útáfudagur',
