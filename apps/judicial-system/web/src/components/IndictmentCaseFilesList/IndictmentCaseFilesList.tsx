@@ -16,7 +16,6 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -29,7 +28,6 @@ import {
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
-  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -57,7 +55,6 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
-import RulingOrderConfirmation from './RulingOrderConfirmation'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
 import * as styles from './IndictmentCaseFilesList.css'
@@ -410,10 +407,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
-  const showRulingOrderAppealMenu = features.includes(
-    Feature.APPEAL_RULING_ORDER,
-  )
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
@@ -811,21 +804,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
-                {showRulingOrderAppealMenu
-                  ? filteredFiles.rulingOrders.map((file) => (
-                      <RulingOrderFileRow
-                        key={file.id}
-                        file={file}
-                        onOpenFile={onOpen}
-                      />
-                    ))
-                  : filteredFiles.rulingOrders.map((file) => (
-                      <RulingOrderConfirmation
-                        key={file.id}
-                        file={file}
-                        onOpenFile={onOpen}
-                      />
-                    ))}
+                {filteredFiles.rulingOrders.map((file) => (
+                  <RulingOrderFileRow
+                    key={file.id}
+                    file={file}
+                    onOpenFile={onOpen}
+                  />
+                ))}
                 {permissions.canViewVerdictServiceCertificate &&
                   workingCase.defendants?.map((defendant) => {
                     if (
@@ -855,51 +840,46 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   })}
               </div>
             )}
-            {showRulingOrderAppealMenu &&
-              (workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
-                <Box>
-                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                    {(workingCase.rulingOrderAppealCases ?? [])
-                      .flatMap((appealCase) => {
-                        const rulingFile = workingCase.caseFiles?.find(
-                          (f) => f.id === appealCase.rulingFileId,
-                        )
-                        if (!rulingFile) {
-                          return []
-                        }
+            {(workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
+              <Box>
+                <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                  {(workingCase.rulingOrderAppealCases ?? [])
+                    .flatMap((appealCase) => {
+                      const rulingFile = workingCase.caseFiles?.find(
+                        (f) => f.id === appealCase.rulingFileId,
+                      )
+                      if (!rulingFile) {
+                        return []
+                      }
 
-                        const hasVisibleFiles = (
-                          workingCase.caseFiles ?? []
-                        ).some((file) =>
-                          isAppealFileCategoryVisible(
-                            workingCase,
-                            appealCase,
-                            file,
-                            user,
-                          ),
-                        )
-                        if (!hasVisibleFiles) {
-                          return []
-                        }
-
-                        return [{ appealCase, rulingFile }]
-                      })
-                      .map(
-                        ({ appealCase, rulingFile }, index, visibleCases) => (
-                          <RulingOrderAppealFilesAccordion
-                            key={appealCase.id}
-                            appealCase={appealCase}
-                            rulingFile={rulingFile}
-                            onOpenFile={onOpen}
-                            hideTrailingSeparator={
-                              index < visibleCases.length - 1
-                            }
-                          />
+                      const hasVisibleFiles = (
+                        workingCase.caseFiles ?? []
+                      ).some((file) =>
+                        isAppealFileCategoryVisible(
+                          workingCase,
+                          appealCase,
+                          file,
+                          user,
                         ),
-                      )}
-                  </Accordion>
-                </Box>
-              )}
+                      )
+                      if (!hasVisibleFiles) {
+                        return []
+                      }
+
+                      return [{ appealCase, rulingFile }]
+                    })
+                    .map(({ appealCase, rulingFile }, index, visibleCases) => (
+                      <RulingOrderAppealFilesAccordion
+                        key={appealCase.id}
+                        appealCase={appealCase}
+                        rulingFile={rulingFile}
+                        onOpenFile={onOpen}
+                        hideTrailingSeparator={index < visibleCases.length - 1}
+                      />
+                    ))}
+                </Accordion>
+              </Box>
+            )}
             <FileSection
               title={formatMessage(caseFiles.criminalRecordUpdateSection)}
               files={filteredFiles.criminalRecordUpdate}
