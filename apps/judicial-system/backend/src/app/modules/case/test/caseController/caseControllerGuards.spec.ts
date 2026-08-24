@@ -11,6 +11,7 @@ import { DefendantExistsGuard } from '../../../defendant'
 import { CaseController } from '../../case.controller'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
+import { CaseExistsForUpdateGuard } from '../../guards/caseExistsForUpdate.guard'
 import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTransitionGuard } from '../../guards/caseTransition.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
@@ -35,8 +36,10 @@ describe('CaseController - Update guards', () => {
 
 describe('CaseController - Transition guards', () => {
   verifyGuards(CaseController, 'transition', [
-    CaseExistsGuard,
+    // RolesGuard first: CaseExistsForUpdateGuard locks the case row, so an
+    // unauthorized caller must be rejected before it can take that lock
     RolesGuard,
+    CaseExistsForUpdateGuard,
     CaseWriteGuard,
     CaseTransitionGuard,
   ])

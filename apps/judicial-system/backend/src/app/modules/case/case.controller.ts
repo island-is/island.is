@@ -70,6 +70,7 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { getOrCreateTransaction, registerAfterCommit } from '../../middleware'
 import {
   CivilClaimantService,
   CurrentDefendant,
@@ -86,6 +87,7 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
+import { CaseExistsForUpdateGuard } from './guards/caseExistsForUpdate.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTransitionGuard } from './guards/caseTransition.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
@@ -331,7 +333,16 @@ export class CaseController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
+  // RolesGuard comes first because CaseExistsForUpdateGuard takes a write lock
+  // on the case row: an authenticated but unauthorized caller must be rejected
+  // before it can hold one. CaseWriteGuard and CaseTransitionGuard need the
+  // case and so must stay after the guard that reads it.
+  @UseGuards(
+    RolesGuard,
+    CaseExistsForUpdateGuard,
+    CaseWriteGuard,
+    CaseTransitionGuard,
+  )
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -353,20 +364,33 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
+    // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the
+    // transition is decided against a row no one else can change.
     const update = transitionCase(transition.transition, theCase, user)
 
-    const updatedCase = await this.sequelize.transaction((transaction) =>
-      this.caseService.update(
-        theCase,
-        update,
-        user,
-        transaction,
-        update.state !== CaseState.DELETED,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const updatedCase = await this.caseService.update(
+      theCase,
+      update,
+      user,
+      transaction,
+      update.state !== CaseState.DELETED,
     )
 
-    // No need to wait
-    this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
+    // The event asserts that the transition happened, so it waits for the
+    // commit - which TransactionCommitInterceptor does after this handler has
+    // returned. Still fire and forget: a failed announcement is logged, not
+    // returned to the caller.
+    registerAfterCommit(() =>
+      this.eventService.postEvent(
+        transition.transition,
+        updatedCase ?? theCase,
+      ),
+    )
 
     return updatedCase ?? theCase
   }
