@@ -1,8 +1,6 @@
+import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import {
   createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -17,20 +15,19 @@ import {
   PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE,
   PROSECUTION_CREATE_TRAVEL_BAN_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseOrigin,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 
-import { api } from '../../services'
-import { UserContext } from '../UserProvider/UserProvider'
-import { CaseQuery, useCaseLazyQuery } from './case.generated'
-import {
-  LimitedAccessCaseQuery,
-  useLimitedAccessCaseLazyQuery,
-} from './limitedAccessCase.generated'
+import type { CaseQuery } from './case.generated'
+import { useCaseLazyQuery } from './case.generated'
+import type { LimitedAccessCaseQuery } from './limitedAccessCase.generated'
+import { useLimitedAccessCaseLazyQuery } from './limitedAccessCase.generated'
 
 type ProviderState =
   | 'creating'

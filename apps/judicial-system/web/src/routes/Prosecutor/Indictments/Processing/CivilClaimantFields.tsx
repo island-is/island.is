@@ -21,13 +21,13 @@ import {
   InputNationalId,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import {
-  CaseFileCategory,
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type {
   CivilClaimant,
   Defendant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAvailableDefendantsForCivilClaimant,
   isCivilClaimantDefendantSelectionValid,
@@ -36,7 +36,7 @@ import {
   useCivilClaimants,
   useNationalRegistry,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 import { strings } from './processing.strings'
 

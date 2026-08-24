@@ -1,10 +1,5 @@
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
@@ -14,7 +9,7 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCurrentUserQuery } from './currentUser.generated'
 

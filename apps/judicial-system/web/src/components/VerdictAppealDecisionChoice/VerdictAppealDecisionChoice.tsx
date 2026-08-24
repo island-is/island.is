@@ -1,12 +1,17 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 
 import { RadioButton } from '@island.is/island-ui/core'
 import { getDefendantVerdictAppealDecisionLabel } from '@island.is/judicial-system/formatters'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
+import type {
+  Defendant,
+  Verdict,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { VerdictAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 
-import { Defendant, Verdict, VerdictAppealDecision } from '../../graphql/schema'
-import useVerdict from '../../utils/hooks/useVerdict'
-import { FormContext } from '../FormProvider/FormProvider'
-import RadioGroup from '../RadioGroup/RadioGroup'
 import * as styles from './VerdictAppealDecisionChoice.css'
 
 interface Props {

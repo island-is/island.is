@@ -181,8 +181,12 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     )
     draftForm.reset({
       salaryAnalysis: {
-        outlierGroups: content.outlierGroups.map((g) => ({
+        outlierGroups: content.outlierGroups.map((g, index) => ({
           id: g.id,
+          name: formatMessage(
+            messages.salaryAnalysis.outlierGroup.defaultGroupName,
+            { index: index + 1 },
+          ),
           reason: g.reason ?? '',
           action: g.action ?? '',
           signatureName: g.signatureName ?? '',

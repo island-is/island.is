@@ -1,5 +1,5 @@
-import React from 'react'
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 

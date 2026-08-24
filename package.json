@@ -137,7 +137,7 @@
     "@react-input/mask": "2.0.4",
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-platform-ios": "15.0.1",
-    "@react-pdf/renderer": "^3.1.9",
+    "@react-pdf/renderer": "^4.6.1",
     "@rehooks/component-size": "1.0.3",
     "@simplewebauthn/server": "10.0.0",
     "@sindresorhus/slugify": "1.0.0",

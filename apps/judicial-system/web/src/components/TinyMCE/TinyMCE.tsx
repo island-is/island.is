@@ -5,8 +5,8 @@ import type { Editor as TinyMCEEditor, Ui } from 'tinymce'
 import { Editor } from '@tinymce/tinymce-react'
 
 import { ErrorMessage } from '@island.is/island-ui/core'
+import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 
-import RequiredStar from '../RequiredStar/RequiredStar'
 import HighlightColorPicker from './HighlightColorPicker'
 import {
   colorFromHighlightClass,

@@ -1,3 +1,4 @@
+import eslintPluginImport from 'eslint-plugin-import'
 import eslintPluginJsxA11y from 'eslint-plugin-jsx-a11y'
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort'
 import { dirname } from 'path'
@@ -21,6 +22,7 @@ export default [
     plugins: {
       'jsx-a11y': eslintPluginJsxA11y,
       'simple-import-sort': eslintPluginSimpleImportSort,
+      import: eslintPluginImport,
     },
   },
   {
@@ -50,6 +52,12 @@ export default [
           ],
         },
       ],
+      'import/no-relative-parent-imports': 'error',
+      'import/no-duplicates': 'error',
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
+      ],
       'jsx-a11y/no-autofocus': [
         2,
         {
@@ -74,6 +82,14 @@ export default [
           ],
         },
       ],
+    },
+  },
+  {
+    // nx runs eslint from the workspace root, so this must not be cwd-relative
+    files: ['**/infra/**'],
+    rules: {
+      'import/no-relative-parent-imports': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
     },
   },
   {

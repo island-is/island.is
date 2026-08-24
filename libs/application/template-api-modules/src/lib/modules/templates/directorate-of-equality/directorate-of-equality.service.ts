@@ -645,6 +645,41 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
+  // Narrow in-place edit — PUTs just the report's narrative content, unlike
+  // submitEqualityReport's full create call. This is what DRAFT_RETRY's
+  // onExit uses: submitEqualityReport is a one-shot create (POST .../reports/
+  // equality), not something a revision can safely re-invoke.
+  async editEqualityContent({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to edit equality content',
+      async () => {
+        const answers = this.parseAnswers(
+          equalityReportDataSchema,
+          application.answers,
+          application.id,
+        )
+
+        const equalityReportContent = getValueViaPath<string>(
+          answers,
+          'goalsAndActions.customField',
+          '',
+        )
+
+        await this.directorateOfEqualityService.editEqualityContent(
+          auth,
+          application.id,
+          {
+            equalityReportContent: equalityReportContent ?? '',
+          },
+        )
+      },
+    )
+  }
+
   async getReportComments({ auth, application }: TemplateApiModuleActionProps) {
     try {
       const comments =
