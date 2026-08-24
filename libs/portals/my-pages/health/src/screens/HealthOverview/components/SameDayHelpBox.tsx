@@ -17,11 +17,17 @@ const SameDayHelpBox = () => {
       <Text variant="h5" as="h3" lineHeight="lg">
         {formatMessage(messages.contactNow)}
       </Text>
-      <Text variant="medium" fontWeight="light" lineHeight="lg" color="dark400">
-        {formatMessage(messages.contactNowDesc)}
-      </Text>
-      <Text variant="medium" fontWeight="light" lineHeight="lg" color="red600">
-        {formatMessage(messages.contactNowEmergencyDesc)}
+      <Text variant="medium" fontWeight="light" lineHeight="md" color="dark400">
+        {formatMessage(messages.contactNowDesc)}{' '}
+        <Text
+          as="span"
+          variant="medium"
+          fontWeight="light"
+          lineHeight="md"
+          color="red600"
+        >
+          {formatMessage(messages.contactNowEmergencyDesc)}
+        </Text>
       </Text>
     </Box>
   )

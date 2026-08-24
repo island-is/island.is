@@ -33,14 +33,14 @@ const ContactLinks = () => {
 
   const renderDescription = (link: ContactLinkItem) => (
     <>
-      <Text variant="medium" fontWeight="light" lineHeight="lg" color="dark400">
+      <Text variant="medium" fontWeight="light" lineHeight="md" color="dark400">
         {link.description}
       </Text>
       {link.emergencyDescription ? (
         <Text
           variant="medium"
           fontWeight="light"
-          lineHeight="lg"
+          lineHeight="md"
           color="red600"
         >
           {link.emergencyDescription}
@@ -57,6 +57,7 @@ const ContactLinks = () => {
           justifyContent="spaceBetween"
           alignItems="flexStart"
           columnGap={2}
+          style={{ marginBottom: 4 }}
         >
           <Box flexGrow={1} minWidth={0}>
             <Text

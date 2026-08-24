@@ -35,7 +35,7 @@ const StateMessage = ({
     alignItems="center"
     paddingTop={2}
     rowGap={2}
-    paddingX={[2, 4, 0]}
+    paddingX={3}
   >
     <Text variant="h4" textAlign="center">
       {title}
@@ -74,7 +74,6 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       borderColor="blue200"
       paddingTop={3}
       paddingBottom={3}
-      paddingX={[0, 0, 4]}
       height="full"
     >
       {!loading && !hasHealthScope && (
@@ -88,7 +87,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
-        paddingX={[2, 4, 0]}
+        paddingX={3}
       >
         <LinkResolver href={HealthPaths.HealthConversations}>
           <Box
@@ -106,7 +105,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       </Box>
 
       {loading && (
-        <Box marginTop={4} paddingX={[4, 4, 0]}>
+        <Box marginTop={4} paddingX={3}>
           <SkeletonLoader
             space={2}
             repeat={4}
@@ -150,52 +149,53 @@ export const HealthConversationsBox = ({ limit }: Props) => {
               )}
               className={styles.conversationLink}
             >
-              <Box
-                display="flex"
-                alignItems="center"
-                columnGap={2}
-                paddingX={[2, 4, 2]}
-                borderTopWidth="standard"
-                borderColor="blue200"
-                style={{ paddingTop: 12, paddingBottom: 12 }}
-                className={unread ? styles.unreadRow : undefined}
-              >
-                <ConversationAvatar
-                  variant="organization"
-                  logoUrl={item.organization?.logoUrl ?? undefined}
-                />
-                <Box flexGrow={1} overflow="hidden">
-                  <Box
-                    display="flex"
-                    justifyContent="spaceBetween"
-                    alignItems="center"
-                    columnGap={2}
-                  >
-                    <Box overflow="hidden">
-                      <Text variant="medium" truncate>
-                        {item.organization?.name}
-                      </Text>
-                    </Box>
-                    {item.lastMessageSentAt && (
-                      <Box flexShrink={0}>
-                        <Text variant="medium" color="dark400">
-                          {formatDate(item.lastMessageSentAt)}
+              <Box paddingX={3}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  columnGap={2}
+                  borderTopWidth="standard"
+                  borderColor="blue200"
+                  style={{ paddingTop: 12, paddingBottom: 12 }}
+                  className={unread ? styles.unreadRow : undefined}
+                >
+                  <ConversationAvatar
+                    variant="organization"
+                    logoUrl={item.organization?.logoUrl ?? undefined}
+                  />
+                  <Box flexGrow={1} overflow="hidden">
+                    <Box
+                      display="flex"
+                      justifyContent="spaceBetween"
+                      alignItems="center"
+                      columnGap={2}
+                    >
+                      <Box overflow="hidden">
+                        <Text variant="medium" truncate>
+                          {item.organization?.name}
                         </Text>
                       </Box>
-                    )}
+                      {item.lastMessageSentAt && (
+                        <Box flexShrink={0}>
+                          <Text variant="medium" color="dark400">
+                            {formatDate(item.lastMessageSentAt)}
+                          </Text>
+                        </Box>
+                      )}
+                    </Box>
+                    <Text
+                      color="blue400"
+                      fontWeight={unread ? 'medium' : 'regular'}
+                      truncate
+                    >
+                      {item.title}
+                      {unread && (
+                        <VisuallyHidden>
+                          {` - ${formatMessage(m.notificationUnread)}`}
+                        </VisuallyHidden>
+                      )}
+                    </Text>
                   </Box>
-                  <Text
-                    color="blue400"
-                    fontWeight={unread ? 'medium' : 'regular'}
-                    truncate
-                  >
-                    {item.title}
-                    {unread && (
-                      <VisuallyHidden>
-                        {` - ${formatMessage(m.notificationUnread)}`}
-                      </VisuallyHidden>
-                    )}
-                  </Text>
                 </Box>
               </Box>
             </LinkResolver>

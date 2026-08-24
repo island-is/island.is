@@ -48,7 +48,7 @@ export const HealthOverview = () => {
   useHealthPlausibleSwap()
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
-  const isStackedLayout = width < theme.breakpoints.lg
+  const isStackedLayout = width < 1100
   const isBiggestScreen = width >= theme.breakpoints.xl
   const { value: showAppointments } = useFeatureFlag(
     Features.isServicePortalHealthAppointmentsPageEnabled,
@@ -199,7 +199,7 @@ export const HealthOverview = () => {
             span={isStackedLayout ? '8/8' : isBiggestScreen ? '5/12' : '5/12'}
           >
             <ContactLinks />
-            <Box marginTop={CONTENT_GAP_LG}>
+            <Box marginTop={2}>
               <SameDayHelpBox />
             </Box>
           </GridColumn>
