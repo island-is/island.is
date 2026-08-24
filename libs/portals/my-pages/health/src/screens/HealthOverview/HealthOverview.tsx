@@ -36,6 +36,7 @@ import BasicInformation from './components/BasicInformation'
 import ContactLinks from './components/ContactLinks'
 import HealthConversationsBox from './components/HealthConversationsBox/HealthConversationsBox'
 import PaymentsAndRights from './components/PaymentsAndRights'
+import SameDayHelpBox from './components/SameDayHelpBox'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import * as styles from './HealthOverview.css'
 
@@ -48,6 +49,7 @@ export const HealthOverview = () => {
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isStackedLayout = width < theme.breakpoints.lg
+  const isBiggestScreen = width >= theme.breakpoints.xl
   const { value: showAppointments } = useFeatureFlag(
     Features.isServicePortalHealthAppointmentsPageEnabled,
     false,
@@ -186,13 +188,20 @@ export const HealthOverview = () => {
       </GridRow>
       {isNewHealthOverviewPageEnabled && (
         <GridRow marginBottom={SECTION_GAP}>
-          <GridColumn span={isStackedLayout ? '8/8' : '4/8'}>
+          <GridColumn
+            span={isStackedLayout ? '8/8' : isBiggestScreen ? '7/12' : '6/12'}
+          >
             <Box marginBottom={isStackedLayout ? CONTENT_GAP_LG : 0}>
               <HealthConversationsBox limit={3} />
             </Box>
           </GridColumn>
-          <GridColumn span={isStackedLayout ? '8/8' : '4/8'}>
+          <GridColumn
+            span={isStackedLayout ? '8/8' : isBiggestScreen ? '5/12' : '6/12'}
+          >
             <ContactLinks />
+            <Box marginTop={CONTENT_GAP_LG}>
+              <SameDayHelpBox />
+            </Box>
           </GridColumn>
         </GridRow>
       )}

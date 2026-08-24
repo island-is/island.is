@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
@@ -50,15 +49,6 @@ const ContactLinks = () => {
     </>
   )
 
-  const renderLink = (link: ContactLinkItem, children: React.ReactNode) =>
-    link.href.startsWith('tel:') ? (
-      <a href={link.href} className={styles.telLink}>
-        {children}
-      </a>
-    ) : (
-      <LinkResolver href={link.href}>{children}</LinkResolver>
-    )
-
   const renderRowContent = (link: ContactLinkItem) => (
     <Box
       display="flex"
@@ -69,8 +59,7 @@ const ContactLinks = () => {
       width="full"
     >
       <Box flexGrow={1} minWidth={0}>
-        {renderLink(
-          link,
+        <LinkResolver href={link.href}>
           <Text
             variant="medium"
             fontWeight="semiBold"
@@ -79,8 +68,8 @@ const ContactLinks = () => {
             className={styles.titleText}
           >
             {link.title}
-          </Text>,
-        )}
+          </Text>
+        </LinkResolver>
         {renderDescription(link)}
       </Box>
       <Box
@@ -89,61 +78,30 @@ const ContactLinks = () => {
         display="flex"
         style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
       >
-        {renderLink(
-          link,
-          <Icon icon={link.icon} type="outline" color="blue400" size="small" />,
-        )}
+        <LinkResolver href={link.href}>
+          <Icon icon={link.icon} type="outline" color="blue400" size="small" />
+        </LinkResolver>
       </Box>
     </Box>
   )
 
   return (
-    <>
-      <Box
-        borderWidth="standard"
-        borderColor="blue200"
-        borderRadius="large"
-        background="white"
-      >
-        {links.map((link, index) => (
-          <Box
-            key={index}
-            borderTopWidth={index > 0 ? 'standard' : undefined}
-            borderColor="blue200"
-          >
-            {renderRowContent(link)}
-          </Box>
-        ))}
-      </Box>
-      <Box
-        borderWidth="standard"
-        borderColor="blue200"
-        borderRadius="large"
-        background="white"
-        padding={3}
-        marginTop={3}
-      >
-        <Text variant="h5" as="h3" lineHeight="lg">
-          {formatMessage(messages.contactNow)}
-        </Text>
-        <Text
-          variant="medium"
-          fontWeight="light"
-          lineHeight="lg"
-          color="dark400"
+    <Box
+      borderWidth="standard"
+      borderColor="blue200"
+      borderRadius="large"
+      background="white"
+    >
+      {links.map((link, index) => (
+        <Box
+          key={index}
+          borderTopWidth={index > 0 ? 'standard' : undefined}
+          borderColor="blue200"
         >
-          {formatMessage(messages.contactNowDesc)}
-        </Text>
-        <Text
-          variant="medium"
-          fontWeight="light"
-          lineHeight="lg"
-          color="red600"
-        >
-          {formatMessage(messages.contactNowEmergencyDesc)}
-        </Text>
-      </Box>
-    </>
+          {renderRowContent(link)}
+        </Box>
+      ))}
+    </Box>
   )
 }
 
