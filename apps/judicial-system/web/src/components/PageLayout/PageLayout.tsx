@@ -1,4 +1,5 @@
-import { FC, PropsWithChildren, ReactNode, useContext, useRef } from 'react'
+import type { FC, PropsWithChildren, ReactNode } from 'react'
+import { useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -24,19 +25,19 @@ import {
   pageLayout,
   sections as formStepperSections,
 } from '@island.is/judicial-system-web/messages'
-import {
+import BreadCrumbs from '@island.is/judicial-system-web/src/components/BreadCrumbs/BreadCrumbs'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import Logo from '@island.is/judicial-system-web/src/components/Logo/Logo'
+import Skeleton from '@island.is/judicial-system-web/src/components/Skeleton/Skeleton'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
   Case,
-  InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import BreadCrumbs from '../BreadCrumbs/BreadCrumbs'
-import { FormContext } from '../FormProvider/FormProvider'
-import Logo from '../Logo/Logo'
-import Skeleton from '../Skeleton/Skeleton'
-import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PageLayout.css'
 
 export interface RouteSection {

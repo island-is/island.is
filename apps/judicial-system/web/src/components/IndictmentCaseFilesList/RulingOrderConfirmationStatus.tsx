@@ -1,4 +1,5 @@
-import { FC, MouseEvent, useContext, useState } from 'react'
+import type { FC, MouseEvent } from 'react'
+import { useContext, useState } from 'react'
 
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
@@ -7,7 +8,7 @@ import {
   Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useConfirmRulingOrderMutation } from './confirmRulingOrder.generated'
 

@@ -1,4 +1,5 @@
-import { Dispatch, FC, SetStateAction, useContext } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -13,13 +14,12 @@ import {
   Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Defendant,
-  IndictmentCaseReviewDecision,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentCaseReviewDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
+import { isConfirmProsecutorDecisionModal } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { isConfirmProsecutorDecisionModal, ModalId } from '../utils'
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
 

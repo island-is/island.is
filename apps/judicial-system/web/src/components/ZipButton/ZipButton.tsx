@@ -1,9 +1,9 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Button } from '@island.is/island-ui/core'
+import { api } from '@island.is/judicial-system-web/src/services'
 
-import { api } from '../../services'
 import { strings } from './ZipButton.strings'
 import * as styles from './ZipButton.css'
 

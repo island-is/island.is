@@ -56,7 +56,7 @@ export default function TabLayout() {
           },
         }}
         iconColor={theme.color.blue400}
-        hidden={tabsHidden && Platform.OS === 'ios'}
+        hidden={tabsHidden}
         screenListeners={{
           tabPress: (e) => uiStore.setState({ focusedTab: e.target }),
         }}

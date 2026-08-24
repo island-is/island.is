@@ -6,8 +6,8 @@ import userEvent from '@testing-library/user-event'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseOrigin,
   CaseState,
   CaseType,
