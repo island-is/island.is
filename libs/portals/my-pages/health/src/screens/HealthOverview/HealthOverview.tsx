@@ -189,14 +189,14 @@ export const HealthOverview = () => {
       {isNewHealthOverviewPageEnabled && (
         <GridRow marginBottom={SECTION_GAP}>
           <GridColumn
-            span={isStackedLayout ? '8/8' : isBiggestScreen ? '7/12' : '6/12'}
+            span={isStackedLayout ? '8/8' : isBiggestScreen ? '7/12' : '7/12'}
           >
             <Box marginBottom={isStackedLayout ? CONTENT_GAP_LG : 0}>
               <HealthConversationsBox limit={3} />
             </Box>
           </GridColumn>
           <GridColumn
-            span={isStackedLayout ? '8/8' : isBiggestScreen ? '5/12' : '6/12'}
+            span={isStackedLayout ? '8/8' : isBiggestScreen ? '5/12' : '5/12'}
           >
             <ContactLinks />
             <Box marginTop={CONTENT_GAP_LG}>
