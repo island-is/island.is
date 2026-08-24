@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parse from 'date-fns/parse'
@@ -26,6 +27,7 @@ import {
   hasGeneratedCourtRecordPdf,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
+import type { FormFooterAction } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CheckboxList,
@@ -34,7 +36,6 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  FormFooterAction,
   Modal,
   PageHeader,
   PageLayout,
@@ -44,20 +45,22 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InputDate from '@island.is/judicial-system-web/src/components/Inputs/InputDate'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
   CourtSessionRulingType,
   CourtSessionType,
-  Defendant,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { CourtCaseNumberInput } from '@island.is/judicial-system-web/src/routes/Court/components'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  UpdateCase,
   useCase,
   useDefendants,
   useFileList,
@@ -72,8 +75,6 @@ import {
   validate,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import InputDate from '../../../../components/Inputs/InputDate'
-import { CourtCaseNumberInput } from '../../components'
 import SelectCandidateMergeCase from './SelectCandidateMergeCase'
 import { strings } from './Conclusion.strings'
 

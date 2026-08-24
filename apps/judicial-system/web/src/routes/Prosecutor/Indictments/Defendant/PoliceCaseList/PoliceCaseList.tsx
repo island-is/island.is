@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { v4 as uuid } from 'uuid'
 
 import { Box, Button } from '@island.is/island-ui/core'
-import {
+import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
@@ -13,19 +13,20 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseOrigin,
+import type {
   IndictmentSubtype,
   PoliceCaseInfo as TPoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getIncidentDescription } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/lib/getIncidentDescription'
 import {
   useCase,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { getIncidentDescription } from '../../Indictment/lib/getIncidentDescription'
-import { PoliceCase, PoliceCaseUpdate } from './PoliceCase/PoliceCase'
+import type { PoliceCaseUpdate } from './PoliceCase/PoliceCase'
+import { PoliceCase } from './PoliceCase/PoliceCase'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { strings } from './PoliceCaseList.strings'
 

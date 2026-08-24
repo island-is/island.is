@@ -20,29 +20,30 @@ import {
   isIndictmentCase,
   isRequestCase,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
-import {
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { LinkComponent } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
   Case,
-  CaseIndictmentRulingDecision,
   CaseType,
   Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
-import { getDefaultDefendantGender } from '../../utils/utils'
-import { FormContext } from '../FormProvider/FormProvider'
-import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
-import { UserContext } from '../UserProvider/UserProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { VictimInfo } from './VictimInfo/VictimInfo'
-import { Item } from './InfoCard'
+import type { Item } from './InfoCard'
 import { strings } from './useInfoCardItems.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
 type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
