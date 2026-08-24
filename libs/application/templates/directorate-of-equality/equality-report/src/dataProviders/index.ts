@@ -1,5 +1,9 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import { defineTemplateApi, IdentityApi } from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
+
+export const IdentityApiProvider = IdentityApi.configure({
+  params: { includeActorInfo: true },
+})
 
 // PREREQUISITES providers — independent of each other, order is inconsequential
 export const CompanyRegistryApi = defineTemplateApi({
@@ -67,6 +71,16 @@ export const SubmitReportCommentApi = defineTemplateApi({
 
 export const SubmitEqualityReportApi = defineTemplateApi({
   action: ApiActions.submitEqualityReport,
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: true,
+  throwOnError: true,
+})
+
+// PUTs just the report's narrative content in place — used as DRAFT_RETRY's
+// onExit, since submitEqualityReport is a one-shot create call that a
+// revision can't safely re-invoke.
+export const EditEqualityContentApi = defineTemplateApi({
+  action: ApiActions.editEqualityContent,
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
   throwOnError: true,
