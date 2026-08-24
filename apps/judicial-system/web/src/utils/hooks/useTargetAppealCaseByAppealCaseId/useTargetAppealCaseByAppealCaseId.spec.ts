@@ -1,4 +1,4 @@
-import {
+import type {
   AppealCase,
   Case,
 } from '@island.is/judicial-system-web/src/graphql/schema'

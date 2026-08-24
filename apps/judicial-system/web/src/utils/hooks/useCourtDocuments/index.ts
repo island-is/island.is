@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import {
+import type {
   CreateCourtDocumentInput,
   DeleteCourtDocumentInput,
   FileCourtDocumentInCourtSessionInput,

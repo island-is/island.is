@@ -1,11 +1,8 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 
-import {
-  AccordionItem,
-  Box,
-  IconMapIcon,
-  Text,
-} from '@island.is/island-ui/core'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   formatDate,
@@ -23,16 +20,14 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   AppealCase,
   Case,
   CaseFile,
-  CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  TUploadFile,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isAppealFileCategoryVisible,
   isMatchingAppealCaseFile,
