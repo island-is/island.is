@@ -6,6 +6,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { DelegationPaths } from '@island.is/portals/shared-modules/delegations'
@@ -47,7 +48,7 @@ export const HealthOverview = () => {
   useHealthPlausibleSwap()
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
-  const isStackedLayout = width < 1100
+  const isStackedLayout = width < theme.breakpoints.lg
   const { value: showAppointments } = useFeatureFlag(
     Features.isServicePortalHealthAppointmentsPageEnabled,
     false,
