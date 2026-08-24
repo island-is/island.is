@@ -1,4 +1,5 @@
-import { FC, PropsWithChildren, useEffect, useState } from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -9,10 +10,10 @@ import {
   Icon,
   LoadingDots,
 } from '@island.is/island-ui/core'
+import { IconAndText } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { IconAndText } from '../../routes/Prosecutor/components'
 import { selectableList as strings } from './SelectableList.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './SelectableList.css'
 
 interface CTAButtonAttributes {

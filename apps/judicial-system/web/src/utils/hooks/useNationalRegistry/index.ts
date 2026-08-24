@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import {
+import type {
   NationalRegistryResponseBusiness,
   NationalRegistryResponsePerson,
 } from '@island.is/judicial-system-web/src/types'
-
-import { isBusiness } from '../../utils'
-import { validate } from '../../validate'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 export type UseNationalRegistryOptions = {
   /** When true, no request is made and cached lookup state is cleared. */

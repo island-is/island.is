@@ -2,7 +2,8 @@ import { type JSX, useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Option } from '@island.is/island-ui/core'
+import type { Option } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -30,14 +31,14 @@ import {
   CaseIndictmentRulingDecision,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
+import {
+  isReviewerAssignedModal,
+  REVIEWER_ASSIGNED,
+} from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import {
-  isReviewerAssignedModal,
-  ModalId,
-  REVIEWER_ASSIGNED,
-} from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
 

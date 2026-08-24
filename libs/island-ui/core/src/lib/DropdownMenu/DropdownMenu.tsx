@@ -127,6 +127,10 @@ export const DropdownMenu = ({
         aria-label={menuLabel}
         className={cn(styles.menu, menuBoxStyle, menuClassName)}
         {...hoverProps}
+        // Hover menus shouldn't yank focus back to the disclosure when they
+        // close. Menu (a Dialog) consumes this option; the disclosure button
+        // doesn't, so it must not go into the shared hoverProps spread.
+        unstable_autoFocusOnHide={!openOnHover}
       >
         {items.map((item, index) => {
           let anchorProps = {}

@@ -74,6 +74,9 @@
       "@island.is/api/domains/customs-general": [
         "libs/api/domains/customs-general/src/index.ts"
       ],
+      "@island.is/api/domains/directorate-of-equality-application": [
+        "libs/api/domains/directorate-of-equality-application/src/index.ts"
+      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],

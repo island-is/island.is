@@ -11,7 +11,7 @@ import {
   useIsMobile,
   useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
-import { ReactNode } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { Link as ReactLink, matchPath } from 'react-router-dom'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import Sticky from '../Sticky/Sticky'
@@ -65,8 +65,11 @@ export const NarrowLayout = ({
 
   /* The takeover is only worth it at true phone widths — narrower than the
    `md` cutoff isMobile uses. */
-  const isMobileTakeover =
-    isPhoneWidth && isMobileTakeoverRoute(pathname, activeParent)
+  const isTakeoverRoute = useMemo(
+    () => isMobileTakeoverRoute(pathname, activeParent),
+    [pathname, activeParent],
+  )
+  const isMobileTakeover = isPhoneWidth && isTakeoverRoute
 
   // headerHeight is the measured height of the fixed header, so the sticky
   // menu clears whatever it contains (e.g. the delegation banner)
@@ -145,22 +148,6 @@ export const NarrowLayout = ({
   /* Takeover routes render without the layout chrome at phone widths:
   no breadcrumbs, mobile sub-nav or footer — the screen is expected to
   provide its own back navigation. */
-  if (isMobileTakeover) {
-    return (
-      <SidebarLayout isSticky={true} sidebarContent={sidebar}>
-        <Box
-          as="main"
-          paddingBottom={9}
-          component="main"
-          style={{ marginTop: height }}
-        >
-          <ModuleAlertBannerSection />
-          {children}
-        </Box>
-      </SidebarLayout>
-    )
-  }
-
   return (
     <SidebarLayout isSticky={true} sidebarContent={sidebar}>
       <Box
@@ -169,38 +156,43 @@ export const NarrowLayout = ({
         component="main"
         style={{ marginTop: height }}
       >
-        <ContentBreadcrumbs />
-        {isMobile && subNavItems && subNavItems.length > 0 && (
-          <Box
-            paddingBottom={3}
-            width="full"
-            className={styles.mobileNav}
-            style={{ top: stickyHeight }}
-          >
-            <Navigation
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <ReactLink to={item?.href}>{link}</ReactLink>
-                ) : (
-                  link
-                )
-              }}
-              asSpan
-              baseId="service-portal-mobile-navigation"
-              title={
-                activeParent?.name
-                  ? formatMessage(activeParent?.name)
-                  : formatMessage(m.tableOfContents)
-              }
-              items={subNavItems}
-              titleIcon={activeParent?.icon}
-              isMenuDialog={true}
-            />
-          </Box>
-        )}
+        {!isMobileTakeover && <ContentBreadcrumbs />}
+        {!isMobileTakeover &&
+          isMobile &&
+          subNavItems &&
+          subNavItems.length > 0 && (
+            <Box
+              paddingBottom={3}
+              width="full"
+              className={styles.mobileNav}
+              style={{ top: stickyHeight }}
+            >
+              <Navigation
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <ReactLink to={item?.href}>{link}</ReactLink>
+                  ) : (
+                    link
+                  )
+                }}
+                asSpan
+                baseId="service-portal-mobile-navigation"
+                title={
+                  activeParent?.name
+                    ? formatMessage(activeParent?.name)
+                    : formatMessage(m.tableOfContents)
+                }
+                items={subNavItems}
+                titleIcon={activeParent?.icon}
+                isMenuDialog={true}
+              />
+            </Box>
+          )}
         <ModuleAlertBannerSection />
         {children}
-        {sidebarFooter && <Hidden above="sm">{sidebarFooter}</Hidden>}
+        {!isMobileTakeover && sidebarFooter && (
+          <Hidden above="sm">{sidebarFooter}</Hidden>
+        )}
       </Box>
     </SidebarLayout>
   )

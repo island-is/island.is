@@ -1,4 +1,5 @@
-import { FC, ReactNode, useMemo, useState } from 'react'
+import type { FC, ReactNode } from 'react'
+import { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
@@ -6,6 +7,7 @@ import isValid from 'date-fns/isValid'
 import { AnimatePresence, motion } from 'motion/react'
 import { InputMask } from '@react-input/mask'
 
+import type { UploadFile } from '@island.is/island-ui/core'
 import {
   Box,
   FileUploadStatus,
@@ -14,14 +16,13 @@ import {
   LoadingDots,
   Text,
   toast,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import type { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { CaseFileCategory } from '../../graphql/schema'
-import { TUploadFile } from '../../utils/hooks'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
 

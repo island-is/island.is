@@ -1,18 +1,20 @@
-import { FC, useContext, useEffect, useState } from 'react'
-import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import type { IntlShape, MessageDescriptor } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
-import {
+import { LawyerRegistryContext } from '@island.is/judicial-system-web/src/components/LawyerRegistryProvider/LawyerRegistryProvider'
+import type {
   Defendant,
-  ServiceStatus,
   Subpoena,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { ServiceStatus } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useSubpoena } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { useSubpoena } from '../../utils/hooks'
-import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import { strings } from './ServiceAnnouncements.strings'
 
 const mapServiceStatusTitle = (

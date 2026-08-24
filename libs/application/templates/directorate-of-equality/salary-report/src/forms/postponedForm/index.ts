@@ -21,8 +21,11 @@ export const postponedForm = buildForm({
   renderLastScreenBackButton: true,
   children: [
     postponedIntroSection,
+    buildSalaryAnalysisSection(
+      { hidePostponeCheckbox: true },
+      { showComments: true },
+    ),
     postponedReportSummarySection,
-    buildSalaryAnalysisSection({ hidePostponeCheckbox: true }),
     buildSection({
       id: 'postponedSubmit',
       title: messages.postponed.sectionTitle,

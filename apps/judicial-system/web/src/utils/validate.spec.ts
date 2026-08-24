@@ -1,9 +1,14 @@
-import {
-  AppealDecisionPartyRole,
+import type {
+  AppealCase,
   Case,
-  CaseAppealDecision,
   CourtSessionResponse,
   IndictmentCount,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseRulingDecision,
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
+  CaseFileCategory,
   IndictmentCountOffense,
   IndictmentSubtype,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -11,6 +16,7 @@ import {
 import {
   areAppealDecisionsComplete,
   getIndictmentCountWarningMessage,
+  isCourtOfAppealRulingStepValid,
   isIndictmentCountComplete,
   validate,
 } from './validate'
@@ -156,6 +162,41 @@ describe('Validate police casenumber format', () => {
     expect(r.isValid).toEqual(false)
     expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
   })
+
+  test('should fail if the last part is longer than six digits', () => {
+    // Arrange
+    const value = '007-2024-1234567'
+
+    // Act
+    const r = validate([[value, ['police-casenumber-format']]])
+
+    // Assert
+    expect(r.isValid).toEqual(false)
+    expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
+  })
+
+  test('should fail if the number has not been finished', () => {
+    // Arrange
+    const value = '007-2024-'
+
+    // Act
+    const r = validate([[value, ['police-casenumber-format']]])
+
+    // Assert
+    expect(r.isValid).toEqual(false)
+    expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
+  })
+
+  test.each(['007-2024-042535', '007-2024-1'])(
+    'should be valid for %s',
+    (value) => {
+      // Act
+      const r = validate([[value, ['police-casenumber-format']]])
+
+      // Assert
+      expect(r.isValid).toEqual(true)
+    },
+  )
 })
 
 describe('Validate time format', () => {
@@ -491,5 +532,61 @@ describe('areAppealDecisionsComplete', () => {
     expect(
       areAppealDecisionsComplete({} as CourtSessionResponse, baseCase),
     ).toBe(false)
+  })
+})
+
+describe('isCourtOfAppealRulingStepValid', () => {
+  const appealCase = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealConclusion: 'Niðurstaða',
+  } as AppealCase
+
+  const appealRulingFile = (rulingFileId: string | null) => ({
+    category: CaseFileCategory.APPEAL_RULING,
+    rulingFileId,
+  })
+
+  it('is true when the case level appeal has its own appeal ruling', () => {
+    const workingCase = { caseFiles: [appealRulingFile(null)] } as Case
+
+    expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(true)
+  })
+
+  it('is false when the only appeal ruling belongs to a ruling order appeal', () => {
+    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+
+    expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(false)
+  })
+
+  it('is true when the ruling order appeal has its own appeal ruling', () => {
+    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+
+    expect(
+      isCourtOfAppealRulingStepValid(workingCase, {
+        ...appealCase,
+        rulingFileId: 'ruling-1',
+      } as AppealCase),
+    ).toBe(true)
+  })
+
+  it('is false when the appeal ruling belongs to another ruling order appeal', () => {
+    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+
+    expect(
+      isCourtOfAppealRulingStepValid(workingCase, {
+        ...appealCase,
+        rulingFileId: 'ruling-2',
+      } as AppealCase),
+    ).toBe(false)
+  })
+
+  it('does not require an appeal ruling when the appeal was discontinued', () => {
+    const workingCase = { caseFiles: [] } as unknown as Case
+
+    expect(
+      isCourtOfAppealRulingStepValid(workingCase, {
+        appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+      } as AppealCase),
+    ).toBe(true)
   })
 })
