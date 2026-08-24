@@ -1,4 +1,4 @@
-import IntlMessageFormat from 'intl-messageformat'
+import { createIntl } from 'react-intl'
 import { messages } from '../lib/messages'
 import { getProviderErrorMessage } from './providerError'
 
@@ -65,11 +65,25 @@ describe('getProviderErrorMessage', () => {
 })
 
 describe('overBenchmarkMessage pluralisation', () => {
+  // Formatted through react-intl rather than intl-messageformat directly:
+  // react-intl is the declared dependency and is what renders these at runtime.
+  //
+  // defaultLocale matters and is not optional here — react-intl formats a
+  // defaultMessage fallback with defaultLocale, not locale, so omitting it
+  // silently applies English plural rules. Production sets both to 'is'
+  // (LocaleContext passes defaultLanguage to IntlProvider).
+  const intl = createIntl({
+    locale: 'is',
+    defaultLocale: 'is',
+    messages: {},
+    onError: () => undefined,
+  })
+
   const format = (count: number) =>
-    new IntlMessageFormat(
-      messages.salaryAnalysis.results.overBenchmarkMessage.defaultMessage,
-      'is',
-    ).format({ benchmark: '4,2', count }) as string
+    intl.formatMessage(messages.salaryAnalysis.results.overBenchmarkMessage, {
+      benchmark: '4,2',
+      count,
+    }) as string
 
   it('uses the singular noun form for one employee', () => {
     expect(format(1)).toContain('1 starfsmaður ber muninn')

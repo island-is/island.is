@@ -323,16 +323,26 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     decomposition?.oskyrtAvailable === true &&
     typeof decomposition.oskyrtPercent === 'number'
 
-  // Soft warnings — the figures are computed but must be shown caveated.
-  const warningMessages = (decomposition?.warnings ?? []).map((warning) =>
-    warning === 'ROWS_EXCLUDED_NON_POSITIVE_WAGE'
-      ? formatMessage(r.warningRowsExcluded, {
-          excluded: decomposition?.counts.excluded ?? 0,
-        })
-      : warning === 'NO_SCORE_OVERLAP'
-      ? formatMessage(r.warningNoScoreOverlap)
-      : formatMessage(r.warningNoScoreVariation),
-  )
+  // Soft warnings — the figures are computed but must be shown caveated. Each
+  // code is named explicitly and anything unrecognised is dropped: DMR can add
+  // a fourth code, and a catch-all would caption it "starfsmatsstig eru þau
+  // sömu hjá öllum starfsmönnum", a specific claim that may be false.
+  const warningMessages = (decomposition?.warnings ?? [])
+    .map((warning) => {
+      switch (warning) {
+        case 'ROWS_EXCLUDED_NON_POSITIVE_WAGE':
+          return formatMessage(r.warningRowsExcluded, {
+            excluded: decomposition?.counts.excluded ?? 0,
+          })
+        case 'NO_SCORE_OVERLAP':
+          return formatMessage(r.warningNoScoreOverlap)
+        case 'NO_SCORE_VARIATION':
+          return formatMessage(r.warningNoScoreVariation)
+        default:
+          return undefined
+      }
+    })
+    .filter((message): message is string => Boolean(message))
 
   const body = (
     <Box>
