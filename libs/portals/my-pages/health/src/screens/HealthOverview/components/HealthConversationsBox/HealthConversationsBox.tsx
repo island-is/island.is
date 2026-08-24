@@ -75,6 +75,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       paddingTop={3}
       paddingBottom={3}
       paddingX={[0, 0, 4]}
+      height="full"
     >
       {!loading && !hasHealthScope && (
         <span className={styles.lock} aria-hidden="true">
@@ -153,10 +154,10 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                 display="flex"
                 alignItems="center"
                 columnGap={2}
-                paddingY={2}
                 paddingX={[2, 4, 2]}
                 borderTopWidth="standard"
                 borderColor="blue200"
+                style={{ paddingTop: 12, paddingBottom: 12 }}
                 className={unread ? styles.unreadRow : undefined}
               >
                 <ConversationAvatar
