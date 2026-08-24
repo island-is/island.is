@@ -22,6 +22,15 @@ export type WageGapState =
     }
   | { kind: 'withinBenchmark'; benchmarkPercent: number }
   | { kind: 'overBenchmark'; benchmarkPercent: number; outlierCount: number }
+  // Correcting the listed employees would carry the gap PAST the benchmark in
+  // the other direction, so no subset of them lands inside it. A normal
+  // category of report, not an error: it concentrates at small cohorts with
+  // wide pay dispersion.
+  | {
+      kind: 'overBenchmarkOvershoots'
+      benchmarkPercent: number
+      outlierCount: number
+    }
   | {
       kind: 'overBenchmarkNoList'
       benchmarkPercent: number
@@ -34,10 +43,6 @@ export type WageGapState =
  * Compliance is `oskyrtWithinBenchmark` and nothing else. `minimumSetClosesGap`
  * and `minimumSetSize` both look like they answer it and neither does — the
  * former tracked compliance only while the walk always named someone.
- *
- * Deferred: `minimumSetClosesGap === false` (correcting the listed employees
- * would overshoot the benchmark in the other direction) currently renders as a
- * plain `overBenchmark`. It needs its own copy, cleared with DMR.
  */
 export const deriveWageGapState = (
   decomposition: WageGapDecompositionDto | undefined | null,
@@ -69,6 +74,16 @@ export const deriveWageGapState = (
       benchmarkPercent,
       reason:
         decomposition.gapCarrierCount === 0 ? 'noCarriers' : 'allOvershoot',
+    }
+  }
+
+  // Checked after the empty-list case: with nobody listed there is no set whose
+  // correction could overshoot, so that branch is the more specific one.
+  if (decomposition.minimumSetClosesGap === false) {
+    return {
+      kind: 'overBenchmarkOvershoots',
+      benchmarkPercent,
+      outlierCount,
     }
   }
 

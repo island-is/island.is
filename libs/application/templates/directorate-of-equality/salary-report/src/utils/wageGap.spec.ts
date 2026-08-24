@@ -73,6 +73,50 @@ describe('deriveWageGapState', () => {
     ).toBe('withinBenchmark')
   })
 
+  it('reports the overshoot state when the set cannot close the gap', () => {
+    expect(
+      deriveWageGapState(
+        decomposition({
+          oskyrtWithinBenchmark: false,
+          minimumSetClosesGap: false,
+        }),
+        2,
+      ),
+    ).toEqual({
+      kind: 'overBenchmarkOvershoots',
+      benchmarkPercent: 3.9,
+      outlierCount: 2,
+    })
+  })
+
+  // An overshoot needs a set to overshoot with; with nothing listed the
+  // empty-list branch is the more specific answer.
+  it('prefers the empty-list state over the overshoot state', () => {
+    expect(
+      deriveWageGapState(
+        decomposition({
+          oskyrtWithinBenchmark: false,
+          minimumSetClosesGap: false,
+          gapCarrierCount: 2,
+        }),
+        0,
+      ).kind,
+    ).toBe('overBenchmarkNoList')
+  })
+
+  // null is "cannot say", and must not be read as false.
+  it('does not treat a null minimumSetClosesGap as an overshoot', () => {
+    expect(
+      deriveWageGapState(
+        decomposition({
+          oskyrtWithinBenchmark: false,
+          minimumSetClosesGap: null,
+        }),
+        2,
+      ).kind,
+    ).toBe('overBenchmark')
+  })
+
   it('reports overBenchmark with the list count when over and listed', () => {
     expect(
       deriveWageGapState(decomposition({ oskyrtWithinBenchmark: false }), 2),

@@ -22,6 +22,7 @@ import {
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
 import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
+import { getProviderErrorMessage } from '../../utils/providerError'
 import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
@@ -40,15 +41,8 @@ interface Props extends FieldBaseProps {
 type AnalysisExternalData = {
   status?: 'success' | 'failure'
   data?: SalaryAnalysisResponseDto
-  reason?: { title?: string; summary?: string } | string[]
-}
-
-const getErrorMessage = (
-  reason: AnalysisExternalData['reason'],
-): string | undefined => {
-  if (!reason) return undefined
-  if (Array.isArray(reason)) return reason.join(', ')
-  return reason.summary || reason.title
+  // Untyped on the wire — see getProviderErrorMessage.
+  reason?: unknown
 }
 
 // outlierGroups is DMR-synced pre-submit, unlike answers-backed `postponed`.
@@ -156,7 +150,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       ) {
         setResult(salaryAnalysisResult.data)
       } else {
-        setErrorMessage(getErrorMessage(salaryAnalysisResult?.reason))
+        setErrorMessage(getProviderErrorMessage(salaryAnalysisResult?.reason))
         setHasError(true)
       }
     } catch {
@@ -293,15 +287,52 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const gapState = deriveWageGapState(decomposition, outlierCount)
   const r = messages.salaryAnalysis.results
 
+  // An overshooting set still gets the plain over-benchmark banner — the list
+  // is the right list to account for. What differs is the note beneath it.
+  const isOvershoot = gapState.kind === 'overBenchmarkOvershoots'
+  const bannerKind: Exclude<typeof gapState.kind, 'overBenchmarkOvershoots'> =
+    isOvershoot ? 'overBenchmark' : gapState.kind
+
   // Magnitude plus an explicit direction word — never the signed figure. The
   // old card rendered totals.wageGapPercent, the asymmetric (male − female) /
   // male form, which reads -4,2% when women out-earn men.
-  const rawGapDirectionLabel =
-    decomposition?.rawGapDirection === 'FEMALE'
-      ? formatMessage(messages.salaryAnalysis.results.directionWomen)
-      : decomposition?.rawGapDirection === 'MALE'
-      ? formatMessage(messages.salaryAnalysis.results.directionMen)
-      : formatMessage(messages.salaryAnalysis.results.directionNone)
+  const directionLabel = (direction?: 'FEMALE' | 'MALE' | 'NONE') =>
+    formatMessage(
+      direction === 'FEMALE'
+        ? r.directionWomen
+        : direction === 'MALE'
+        ? r.directionMen
+        : r.directionNone,
+    )
+
+  const gapContent = (
+    percent: number,
+    direction?: 'FEMALE' | 'MALE' | 'NONE',
+  ) =>
+    formatMessage(r.gapWithDirection, {
+      value: formatPercentMagnitude(percent),
+      direction: directionLabel(direction),
+    })
+
+  // Each tier is gated on its own availability flag: the raw gap and the
+  // leiðréttur gap can be blocked independently.
+  const showRawGap =
+    decomposition?.rawGapAvailable === true &&
+    typeof decomposition.rawGapPercent === 'number'
+  const showAdjustedGap =
+    decomposition?.oskyrtAvailable === true &&
+    typeof decomposition.oskyrtPercent === 'number'
+
+  // Soft warnings — the figures are computed but must be shown caveated.
+  const warningMessages = (decomposition?.warnings ?? []).map((warning) =>
+    warning === 'ROWS_EXCLUDED_NON_POSITIVE_WAGE'
+      ? formatMessage(r.warningRowsExcluded, {
+          excluded: decomposition?.counts.excluded ?? 0,
+        })
+      : warning === 'NO_SCORE_OVERLAP'
+      ? formatMessage(r.warningNoScoreOverlap)
+      : formatMessage(r.warningNoScoreVariation),
+  )
 
   const body = (
     <Box>
@@ -337,7 +368,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       {totals && (
         <Box marginBottom={4}>
           <Text variant="h4" marginBottom={2}>
-            {formatMessage(messages.salaryAnalysis.results.totalsTitle)}
+            {formatMessage(r.meanHourlyWageGroupTitle)}
           </Text>
           <Box
             display="flex"
@@ -347,33 +378,69 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             flexDirection={['column', 'column', 'column', 'row']}
           >
             <StatisticCard
-              title={formatMessage(messages.salaryAnalysis.results.maleLabel)}
+              title={formatMessage(r.maleLabel)}
               content={formatHourlyWage(totals.maleAverageSalary)}
             />
             <StatisticCard
-              title={formatMessage(messages.salaryAnalysis.results.femaleLabel)}
+              title={formatMessage(r.femaleLabel)}
               content={formatHourlyWage(totals.femaleAverageSalary)}
             />
-
-            {decomposition?.rawGapAvailable &&
-              typeof decomposition.rawGapPercent === 'number' && (
-                <StatisticCard
-                  title={formatMessage(
-                    messages.salaryAnalysis.results.wageGapLabel,
-                  )}
-                  content={formatMessage(
-                    messages.salaryAnalysis.results.gapWithDirection,
-                    {
-                      value: formatPercentMagnitude(
-                        decomposition.rawGapPercent,
-                      ),
-                      direction: rawGapDirectionLabel,
-                    },
-                  )}
-                  color="purple"
-                />
-              )}
           </Box>
+        </Box>
+      )}
+
+      {(showRawGap || showAdjustedGap) && decomposition && (
+        <Box marginBottom={4}>
+          <Text variant="h4" marginBottom={2}>
+            {formatMessage(r.wageGapGroupTitle)}
+          </Text>
+          <Box
+            display="flex"
+            columnGap={[0, 0, 0, 4]}
+            rowGap={[2, 2, 2, 0]}
+            marginTop={1}
+            flexDirection={['column', 'column', 'column', 'row']}
+          >
+            {showRawGap && (
+              <StatisticCard
+                title={formatMessage(r.wageGapLabel)}
+                content={gapContent(
+                  decomposition.rawGapPercent as number,
+                  decomposition.rawGapDirection,
+                )}
+              />
+            )}
+            {/* The figure actually tested against the benchmark — the raw gap
+                beside it decides nothing. */}
+            {showAdjustedGap && (
+              <StatisticCard
+                title={formatMessage(r.adjustedGapLabel)}
+                content={gapContent(
+                  decomposition.oskyrtPercent as number,
+                  decomposition.oskyrtDirection,
+                )}
+                footnote={formatMessage(r.benchmarkFootnote, {
+                  benchmark: formatPercentMagnitude(
+                    decomposition.benchmarkPercent,
+                  ),
+                })}
+                color="purple"
+              />
+            )}
+          </Box>
+
+          {warningMessages.length > 0 && (
+            <Box marginTop={2}>
+              <Text variant="small" fontWeight="semiBold">
+                {formatMessage(r.warningsTitle)}
+              </Text>
+              {warningMessages.map((message) => (
+                <Text key={message} variant="small">
+                  {message}
+                </Text>
+              ))}
+            </Box>
+          )}
         </Box>
       )}
 
@@ -386,13 +453,14 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
               ? 'info'
               : 'warning'
           }
-          title={formatMessage(r[`${gapState.kind}Title`])}
+          title={formatMessage(r[`${bannerKind}Title`])}
           message={
             gapState.kind === 'withinBenchmark'
               ? formatMessage(r.withinBenchmarkMessage, {
                   benchmark: formatPercentMagnitude(gapState.benchmarkPercent),
                 })
-              : gapState.kind === 'overBenchmark'
+              : gapState.kind === 'overBenchmark' ||
+                gapState.kind === 'overBenchmarkOvershoots'
               ? formatMessage(r.overBenchmarkMessage, {
                   benchmark: formatPercentMagnitude(gapState.benchmarkPercent),
                   count: gapState.outlierCount,
@@ -409,18 +477,32 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
                   },
                 )
               : gapState.kind === 'notComputable'
-              ? formatMessage(
-                  gapState.blockers.includes('EMPTY_FEMALE_COHORT')
-                    ? r.notComputableNoWomenMessage
-                    : r.notComputableNoMenMessage,
-                  {
+              ? // Each blocker is named explicitly. Falling through to the
+                // male-cohort wording on an empty or unrecognised blocker list
+                // would assert "engir karlar" about a company that may have
+                // plenty.
+                gapState.blockers.includes('EMPTY_FEMALE_COHORT')
+                ? formatMessage(r.notComputableNoWomenMessage, {
                     male: gapState.counts.male,
+                  })
+                : gapState.blockers.includes('EMPTY_MALE_COHORT')
+                ? formatMessage(r.notComputableNoMenMessage, {
                     female: gapState.counts.female,
-                  },
-                )
+                  })
+                : formatMessage(r.unknownMessage)
               : formatMessage(r.unknownMessage)
           }
         />
+      )}
+
+      {isOvershoot && (
+        <Box marginTop={2}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(r.overshootTitle)}
+            message={formatMessage(r.overshootMessage)}
+          />
+        </Box>
       )}
 
       <SalaryDistributionChart
