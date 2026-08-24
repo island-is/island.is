@@ -4,10 +4,11 @@ import {
   buildForm,
   buildSection,
   buildSubmitField,
-  coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { GetDebtsApi } from '../../dataProviders'
+import { externalData } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -16,18 +17,24 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: 'Forkröfur',
+      tabTitle: externalData.dataProvider.sectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'External data',
+          title: externalData.dataProvider.pageTitle,
+          subTitle: externalData.dataProvider.subTitle,
+          checkboxLabel: externalData.dataProvider.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
               provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
+              title: externalData.userProfile.title,
+              subTitle: externalData.userProfile.subTitle,
             }),
-            // Add more data providers as needed
+            buildDataProviderItem({
+              provider: GetDebtsApi,
+              title: externalData.finances.title,
+              subTitle: externalData.finances.subTitle,
+            }),
           ],
           submitField: buildSubmitField({
             id: 'submit',
@@ -36,7 +43,7 @@ export const Prerequisites = buildForm({
             actions: [
               {
                 event: DefaultEvents.SUBMIT,
-                name: coreMessages.buttonNext,
+                name: externalData.dataProvider.submitButton,
                 type: 'primary',
               },
             ],

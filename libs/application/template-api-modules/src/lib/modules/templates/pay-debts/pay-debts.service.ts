@@ -37,22 +37,4 @@ export class PayDebtsService extends BaseTemplateApiService {
       })),
     }
   }
-
-  async createApplication() {
-    // TODO: Implement this
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      id: 1337,
-    }
-  }
-
-  async completeApplication() {
-    // TODO: Implement this
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      id: 1337,
-    }
-  }
 }

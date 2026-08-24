@@ -13,6 +13,8 @@ import {
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
+import { GetDebtsApi } from '../dataProviders'
+import { application } from './messages'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
@@ -24,9 +26,9 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PAY_DEBTS,
-  name: 'pay-debts template',
+  name: application.name,
   codeOwner: CodeOwners.Origo,
-  institution: 'Fjársýsla ríkisins',
+  institution: application.institutionName,
   translationNamespaces: ApplicationConfigurations.PayDebts.translation,
   dataSchema,
   // Note: only use this if any data should remain after pruning for better visibility in the admin portal
@@ -45,7 +47,7 @@ const template: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'Skilyrði',
+          name: application.stateMetaNamePrerequisites.defaultMessage,
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
@@ -61,7 +63,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, GetDebtsApi],
               delete: true,
             },
           ],
@@ -74,7 +76,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Main form',
+          name: application.stateMetaNameDraft.defaultMessage,
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
@@ -102,7 +104,7 @@ const template: ApplicationTemplate<
       },
       [States.COMPLETED]: {
         meta: {
-          name: 'Completed form',
+          name: application.stateMetaNameCompleted.defaultMessage,
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
