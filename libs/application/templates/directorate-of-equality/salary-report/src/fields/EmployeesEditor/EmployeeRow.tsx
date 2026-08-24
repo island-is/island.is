@@ -17,7 +17,7 @@ import type { Employee } from '../../utils/types'
 import {
   formatCurrency,
   formatStartDate,
-  formatWorkRatio,
+  formatPaidHours,
   getSalaryComponentLabels,
 } from './utils'
 import * as styles from './EmployeesEditor.css'
@@ -84,8 +84,8 @@ export const EmployeeRow: FC<Props> = ({
 
   const rightItems = [
     {
-      label: formatMessage(m.workRatioLabel),
-      value: formatWorkRatio(employee.workRatio),
+      label: formatMessage(m.paidHoursLabel),
+      value: formatPaidHours(employee.paidHours),
     },
     {
       label: formatMessage(m.baseSalaryLabel),
