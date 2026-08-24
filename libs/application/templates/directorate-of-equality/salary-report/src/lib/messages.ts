@@ -646,7 +646,7 @@ export const messages = {
         defaultMessage: 'Undirviðmið',
       },
       intro: {
-        id: 'doe.sr.application:report.subCriteria.intro',
+        id: 'doe.sr.application:report.subCriteria.intro#markdown',
         defaultMessage:
           'Nú er komið að því að velja undirviðmið fyrir starfs- og einstaklingsbundna þætti.\n\nHér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði en þú getur bætt við eigin viðmiðum eftir því sem við á. Öll viðmiðin sem valin eru þurfa að vera málefnaleg og í samræmi við starfsemina sem um ræðir.\n\nEinnig þarf að ákveða hve mörg þrep eru í boði fyrir hvert þeirra undirviðmiða sem valin eru. Velja þarf þrep fyrir bæði starfsbundin og einstaklingsbundin undirviðmið.\n\n Við val á fjölda þrepa er gott að horfa yfir sviðið og velta því fyrir sér hve mikil dreifing á hinum völdu þáttum er nauðsynleg til að gegna störfunum og ná fram markmiðunum með kjarnastarfseminni. Ef til dæmis undirviðmiðið menntun hefur verið valið undir hæfni, þá er gott að hugsa á hvaða skala menntunin þarf að vera.\n\n**Dæmi 1:** frá grunnskólaprófi og upp í doktorsgráðu.\n\n**Dæmi 2:** frá stúdentsprófi og til iðnmenntunar/grunnháskólagráðu.',
       },
