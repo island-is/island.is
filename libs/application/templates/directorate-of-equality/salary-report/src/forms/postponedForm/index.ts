@@ -12,6 +12,7 @@ import { buildSalaryAnalysisSection } from '../mainForm/salaryAnalysisSection'
 import { postponedIntroSection } from './postponedIntroSection'
 import { postponedReportSummarySection } from './postponedReportSummarySection'
 import { messages } from '../../lib/messages'
+import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 
 export const postponedForm = buildForm({
   id: 'postponedForm',
@@ -40,46 +41,45 @@ export const postponedForm = buildForm({
               title: messages.postponed.reviewTitle,
               titleVariant: 'h3',
               backId: 'salaryAnalysisOverviewMultiField',
-              items: (answers) => [
-                {
-                  width: 'full',
-                  keyText: messages.salaryAnalysis.outlierGroup.reasonLabel,
-                  valueText:
-                    getValueViaPath<string>(
-                      answers,
-                      'salaryAnalysis.outlierGroups.0.reason',
-                    ) ?? '',
-                },
-                {
-                  width: 'full',
-                  keyText: messages.salaryAnalysis.outlierGroup.actionLabel,
-                  valueText:
-                    getValueViaPath<string>(
-                      answers,
-                      'salaryAnalysis.outlierGroups.0.action',
-                    ) ?? '',
-                },
-                {
-                  width: 'half',
-                  keyText:
-                    messages.salaryAnalysis.outlierGroup.signatureNameLabel,
-                  valueText:
-                    getValueViaPath<string>(
-                      answers,
-                      'salaryAnalysis.outlierGroups.0.signatureName',
-                    ) ?? '',
-                },
-                {
-                  width: 'half',
-                  keyText:
-                    messages.salaryAnalysis.outlierGroup.signatureRoleLabel,
-                  valueText:
-                    getValueViaPath<string>(
-                      answers,
-                      'salaryAnalysis.outlierGroups.0.signatureRole',
-                    ) ?? '',
-                },
-              ],
+              items: (answers) => {
+                const groups =
+                  getValueViaPath<OutlierGroupAnswer[]>(
+                    answers,
+                    'salaryAnalysis.outlierGroups',
+                  ) ?? []
+                return groups.flatMap((group, index) => [
+                  {
+                    width: 'full',
+                    keyText: messages.salaryAnalysis.outlierGroup.groupHeading,
+                    valueText: group.name ? `${group.name}` : `${index + 1}`,
+                    // Divider above every group but the first, so groups read
+                    // as visually distinct blocks in the review list.
+                    ...(index > 0 && { lineAboveKeyText: true }),
+                  },
+                  {
+                    width: 'half',
+                    keyText: messages.salaryAnalysis.outlierGroup.reasonLabel,
+                    valueText: group.reason ?? '',
+                  },
+                  {
+                    width: 'half',
+                    keyText: messages.salaryAnalysis.outlierGroup.actionLabel,
+                    valueText: group.action ?? '',
+                  },
+                  {
+                    width: 'half',
+                    keyText:
+                      messages.salaryAnalysis.outlierGroup.signatureNameLabel,
+                    valueText: group.signatureName ?? '',
+                  },
+                  {
+                    width: 'half',
+                    keyText:
+                      messages.salaryAnalysis.outlierGroup.signatureRoleLabel,
+                    valueText: group.signatureRole ?? '',
+                  },
+                ])
+              },
             }),
             buildSubmitField({
               id: 'postponedSubmit',

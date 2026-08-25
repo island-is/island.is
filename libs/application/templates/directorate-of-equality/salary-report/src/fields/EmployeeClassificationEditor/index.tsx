@@ -43,7 +43,6 @@ const DRAFT_EMPLOYEES_WITH_STEPS_QUERY = gql`
         field
         department
         startDate
-        workRatio
         baseSalary
         additionalFixedOvertime
         additionalFixedCarAllowance
