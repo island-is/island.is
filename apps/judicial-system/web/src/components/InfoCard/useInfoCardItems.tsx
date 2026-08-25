@@ -36,7 +36,10 @@ import {
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  canDefenceUserOpenLinkedCase,
+  getDefaultDefendantGender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
@@ -256,7 +259,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     const mergeCaseId = workingCase.mergeCase?.id
     const internalCourtCaseNumber = workingCase.mergeCase?.courtCaseNumber
     if (internalCourtCaseNumber) {
-      return mergeCaseId ? (
+      const shouldLink =
+        Boolean(mergeCaseId) &&
+        canDefenceUserOpenLinkedCase(user, workingCase.mergeCase)
+
+      return shouldLink ? (
         <LinkComponent
           href={`${ROUTE_HANDLER_ROUTE}/${mergeCaseId}`}
           key={mergeCaseId}
@@ -296,12 +303,16 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     title: formatMessage(strings.mergedFromTitle),
     values: mergedCase.courtCaseNumber
       ? [
-          <LinkComponent
-            href={`${ROUTE_HANDLER_ROUTE}/${mergedCase.id}`}
-            key={mergedCase.id}
-          >
-            {mergedCase.courtCaseNumber}
-          </LinkComponent>,
+          canDefenceUserOpenLinkedCase(user, mergedCase) ? (
+            <LinkComponent
+              href={`${ROUTE_HANDLER_ROUTE}/${mergedCase.id}`}
+              key={mergedCase.id}
+            >
+              {mergedCase.courtCaseNumber}
+            </LinkComponent>
+          ) : (
+            mergedCase.courtCaseNumber
+          ),
         ]
       : [],
   })
