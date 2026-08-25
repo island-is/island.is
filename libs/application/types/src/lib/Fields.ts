@@ -1012,6 +1012,7 @@ export interface StaticTableField extends BaseField {
     getMaxAmount?: (application: Application) => Array<number | undefined>
     placeholder?: StaticText
   }
+  footerRow?: StaticText[] | ((application: Application) => StaticText[])
 }
 
 export type PaginatedSearchableTableRow = Record<

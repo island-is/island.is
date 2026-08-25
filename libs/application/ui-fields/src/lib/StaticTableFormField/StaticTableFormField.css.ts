@@ -8,9 +8,6 @@ globalStyle(`${tableWrapper} table`, {
   width: '100%',
 })
 
-// Matches the font size of the table's own text (Text variant="small")
-// and gives the amount input the exact padding this column needs.
-// Excludes the checkbox's own hidden input so it stays untouched.
 globalStyle(`${tableWrapper} input:not([type="checkbox"])`, {
   fontSize: 12,
   padding: '8px 8px 8px 16px',
@@ -31,3 +28,9 @@ globalStyle(`${tableWrapper} div:has(> input:not([type="checkbox"]))`, {
 
 export const checkboxColumnStyle = { width: 48 }
 export const inputColumnHeaderStyle = { width: 152 }
+
+export const footerRowTestId = 'static-table-footer-row'
+
+globalStyle(`${tableWrapper} tr[data-testid="${footerRowTestId}"] td`, {
+  borderBottomWidth: 0,
+})

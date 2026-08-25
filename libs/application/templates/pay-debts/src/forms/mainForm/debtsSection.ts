@@ -52,6 +52,16 @@ export const debtsSection = buildSection({
             getMaxAmount: (application) =>
               getDebts(application).map((debt) => debt.debts),
           },
+          footerRow: (application) => [
+            messages.table.totalDebtsLabel,
+            '',
+            '',
+            formatCurrency(
+              getDebts(application)
+                .reduce((total, debt) => total + debt.debts, 0)
+                .toString(),
+            ),
+          ],
         }),
       ],
     }),
