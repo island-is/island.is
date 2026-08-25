@@ -7,7 +7,11 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { CaseState, UserRole, type User } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  type User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
