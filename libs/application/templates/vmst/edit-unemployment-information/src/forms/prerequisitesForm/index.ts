@@ -9,7 +9,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
 import {
-  getEditProfileEligibilityApi,
+  GetEditProfileEligibilityApi,
   UnemploymentApi,
 } from '../../dataProviders'
 import { application as applicationMessages } from '../../lib/messages'
@@ -36,7 +36,7 @@ export const Prerequisites = buildForm({
               subTitle: applicationMessages.dataProviderVmstDescription,
             }),
             buildDataProviderItem({
-              provider: getEditProfileEligibilityApi,
+              provider: GetEditProfileEligibilityApi,
             }),
           ],
           submitField: buildSubmitField({

@@ -93,7 +93,7 @@ export class EditUnemploymentInformationService extends BaseTemplateApiService {
           title: coreErrorMessages.defaultTemplateApiError,
           summary: coreErrorMessages.failedDataProvider,
         },
-        400,
+        500,
       )
     }
     if (!response.valid) {
@@ -102,7 +102,7 @@ export class EditUnemploymentInformationService extends BaseTemplateApiService {
           title: errorMsgs.cannotApplyErrorTitle,
           summary: errorMsgs.cannotApplyErrorSummary,
         },
-        500,
+        400,
       )
     }
 

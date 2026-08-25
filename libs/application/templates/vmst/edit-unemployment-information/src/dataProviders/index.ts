@@ -5,7 +5,7 @@ export const UnemploymentApi = defineTemplateApi({
   externalDataId: 'currentApplicationInformation',
 })
 
-export const getEditProfileEligibilityApi = defineTemplateApi({
+export const GetEditProfileEligibilityApi = defineTemplateApi({
   action: 'getEditProfileEligibility',
   externalDataId: 'editProfileEligibility',
 })
