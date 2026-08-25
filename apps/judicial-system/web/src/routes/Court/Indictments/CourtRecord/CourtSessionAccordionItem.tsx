@@ -213,7 +213,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   )
 
   const [modalVisible, setModalVisible] = useState<'DELETE'>()
-  const [isPronouncingOrally, setIsPronouncingOrally] = useState(false)
+  // 'pronouncing' covers the request, 'refreshing' the wait for the case state
+  // that follows it. Both have to keep the control disabled: refreshCase() only
+  // asks for new case state, and until it lands the radio is still unchecked, so
+  // releasing the guard when the request resolves would reopen the window it
+  // exists to close.
+  const [pronounceOrallyState, setPronounceOrallyState] = useState<
+    'idle' | 'pronouncing' | 'refreshing'
+  >('idle')
+  const isPronouncingOrally = pronounceOrallyState !== 'idle'
 
   const {
     judges,
@@ -285,33 +293,41 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     // The radio stays unchecked until the refreshed case arrives, so without a
     // guard every further activation sends another request - and each one
     // creates a ruling of its own.
-    if (isPronouncingOrally) {
+    if (pronounceOrallyState !== 'idle') {
       return
     }
 
-    setIsPronouncingOrally(true)
+    setPronounceOrallyState('pronouncing')
 
-    try {
-      const updatedCourtSession = await pronounceRulingOrally({
-        caseId: workingCase.id,
-        courtSessionId: courtSession.id,
-      })
+    const updatedCourtSession = await pronounceRulingOrally({
+      caseId: workingCase.id,
+      courtSessionId: courtSession.id,
+    })
 
-      if (!updatedCourtSession) {
-        return
-      }
+    if (!updatedCourtSession) {
+      // Nothing to wait for - let them try again.
+      setPronounceOrallyState('idle')
 
-      refreshCase()
-    } finally {
-      setIsPronouncingOrally(false)
+      return
     }
+
+    setPronounceOrallyState('refreshing')
+    refreshCase()
   }, [
     courtSession.id,
-    isPronouncingOrally,
+    pronounceOrallyState,
     pronounceRulingOrally,
     refreshCase,
     workingCase.id,
   ])
+
+  // The refreshed case has landed, so the radio now shows the ruling that was
+  // pronounced and the control can be released.
+  useEffect(() => {
+    if (pronounceOrallyState === 'refreshing' && isCaseUpToDate) {
+      setPronounceOrallyState('idle')
+    }
+  }, [pronounceOrallyState, isCaseUpToDate])
 
   const patchCourtSessionStrings = useCallback(
     (
