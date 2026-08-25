@@ -26,6 +26,7 @@ function getCommitMsg(context) {
 async function getLatestIdsImageTag() {
   const ecr = new AWS.ECR({ region: 'eu-west-1' })
 
+  // get response from aws.
   const response = await ecr
     .describeImages({
       repositoryName: 'identity-server',
