@@ -37,11 +37,16 @@ export const fetch404RedirectUrl = async (
 
   // Url (redirect) entries are stored under the default locale, so a lookup in
   // another language returns nothing — fall back to the default language.
+  let resolvedLocale = locale
   let redirectProps: ApolloQueryResult<GetUrlQuery> | null = await lookup(
     locale,
   )
   if (!redirectProps?.data?.getUrl && locale !== defaultLanguage) {
-    redirectProps = await lookup(defaultLanguage)
+    const fallback = await lookup(defaultLanguage)
+    if (fallback?.data?.getUrl) {
+      redirectProps = fallback
+      resolvedLocale = defaultLanguage
+    }
   }
 
   if (redirectProps?.data?.getUrl) {
@@ -50,7 +55,11 @@ export const fetch404RedirectUrl = async (
     if (!page && explicitRedirect) {
       return encodeURI(explicitRedirect)
     } else if (page) {
-      let url = linkResolver(page.type as LinkType, [page.slug], locale).href
+      let url = linkResolver(
+        page.type as LinkType,
+        [page.slug],
+        resolvedLocale,
+      ).href
 
       if (!url) {
         // Fallback to using default language if page isn't present in another language
