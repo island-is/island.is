@@ -86,21 +86,37 @@ export const StaticTableFormField: FC<Props> = ({
   const allSelected =
     !!selectable && rows.length > 0 && selected.length === rows.length
 
+  const setInputAmount = (rowIndex: number, nowSelected: boolean) => {
+    if (!hasInputColumn || !inputFieldId) {
+      return
+    }
+    const maxAmount = inputMaxAmounts[rowIndex]
+    setValue(
+      `${inputFieldId}[${rowIndex}]`,
+      nowSelected && maxAmount !== undefined ? maxAmount.toString() : '',
+      { shouldDirty: true, shouldTouch: true },
+    )
+  }
+
   const toggleAll = () => {
-    setValue(fieldId, allSelected ? [] : rows.map((_, rowIndex) => rowIndex), {
+    const nowSelected = !allSelected
+    setValue(fieldId, nowSelected ? rows.map((_, rowIndex) => rowIndex) : [], {
       shouldDirty: true,
       shouldTouch: true,
     })
+    rows.forEach((_, rowIndex) => setInputAmount(rowIndex, nowSelected))
   }
 
   const toggleRow = (rowIndex: number) => {
+    const nowSelected = !selected.includes(rowIndex)
     setValue(
       fieldId,
-      selected.includes(rowIndex)
-        ? selected.filter((index) => index !== rowIndex)
-        : [...selected, rowIndex],
+      nowSelected
+        ? [...selected, rowIndex]
+        : selected.filter((index) => index !== rowIndex),
       { shouldDirty: true, shouldTouch: true },
     )
+    setInputAmount(rowIndex, nowSelected)
   }
 
   return (
