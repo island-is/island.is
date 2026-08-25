@@ -322,12 +322,8 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
                       </Typography>
                       <Typography variant="body3">
                         {`${intl.formatDate(item.date)}${
-                          item.agentName ? ' - ' + item.agentName : ''
-                        }${
-                          item.items?.[0]?.amount
-                            ? ' - ' + item.items[0].amount
-                            : ''
-                        }`}
+                          item.pharmacy ? ' - ' + item.pharmacy : ''
+                        }${item.amount ? ' - ' + item.amount : ''}`}
                       </Typography>
                     </View>
                   </DispensationRowItem>
