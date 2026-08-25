@@ -282,6 +282,31 @@ export const getDefenceUserPartyIds = (
   return {}
 }
 
+/**
+ * Whether a defence user may open a linked case (e.g. merge target / merged-from).
+ * Non-defence users always return true. Defence users must be a confirmed
+ * defender or spokesperson on the linked case — matching backend access checks.
+ */
+export const canDefenceUserOpenLinkedCase = (
+  user: User | undefined,
+  linkedCase: Case | null | undefined,
+): boolean => {
+  if (!user || !isDefenceUser(user)) {
+    return true
+  }
+
+  if (!linkedCase) {
+    return false
+  }
+
+  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+    linkedCase,
+    user,
+  )
+
+  return Boolean(defendantId || civilClaimantId)
+}
+
 // The case-level appeal_decision row of a party - the one with no rulingFileId.
 const caseLevelAppealDecisionRow = (
   appealDecisions: Case['appealDecisions'],
