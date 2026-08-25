@@ -132,7 +132,10 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
             {title}
             {titleIcon &&
               (titleIconTooltip ? (
-                <Tooltip text={titleIconTooltip} placement="top">
+                // fullWidth lifts the 240px cap the tooltip otherwise wraps a
+                // short label at, which broke "Úrskurður kveðinn upp munnlega"
+                // across two lines.
+                <Tooltip text={titleIconTooltip} placement="top" fullWidth>
                   <span className={styles.titleIcon}>
                     <Icon icon={titleIcon} type="outline" size="small" />
                   </span>
