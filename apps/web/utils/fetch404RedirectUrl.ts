@@ -18,34 +18,30 @@ export const fetch404RedirectUrl = async (
 ): Promise<string | null> => {
   path = path.trim().replace(/\/\/+/g, '/').replace(/\/+$/, '').toLowerCase()
 
-  const [redirectPropsWithQueryParams, redirectPropsWithoutQueryParams] =
-    await Promise.all([
+  const lookup = async (lang: Locale) => {
+    const [withQueryParams, withoutQueryParams] = await Promise.all([
       apolloClient.query<GetUrlQuery, GetUrlQueryVariables>({
         query: GET_URL_QUERY,
-        variables: {
-          input: {
-            slug: path,
-            lang: locale,
-          },
-        },
+        variables: { input: { slug: path, lang } },
       }),
       apolloClient.query<GetUrlQuery, GetUrlQueryVariables>({
         query: GET_URL_QUERY,
-        variables: {
-          input: {
-            slug: path.split('?')[0],
-            lang: locale,
-          },
-        },
+        variables: { input: { slug: path.split('?')[0], lang } },
       }),
     ])
 
-  let redirectProps: ApolloQueryResult<GetUrlQuery> | null = null
+    if (withQueryParams?.data?.getUrl) return withQueryParams
+    if (withoutQueryParams?.data?.getUrl) return withoutQueryParams
+    return null
+  }
 
-  if (redirectPropsWithQueryParams?.data?.getUrl) {
-    redirectProps = redirectPropsWithQueryParams
-  } else if (redirectPropsWithoutQueryParams?.data?.getUrl) {
-    redirectProps = redirectPropsWithoutQueryParams
+  // Url (redirect) entries are stored under the default locale, so a lookup in
+  // another language returns nothing — fall back to the default language.
+  let redirectProps: ApolloQueryResult<GetUrlQuery> | null = await lookup(
+    locale,
+  )
+  if (!redirectProps?.data?.getUrl && locale !== defaultLanguage) {
+    redirectProps = await lookup(defaultLanguage)
   }
 
   if (redirectProps?.data?.getUrl) {
