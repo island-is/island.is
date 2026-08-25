@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import cn from 'classnames'
 import debounce from 'lodash/debounce'
 import { AnimatePresence } from 'motion/react'
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
@@ -218,21 +219,19 @@ const RichTextEditor = ({
     <div data-testid={dataTestId}>
       <div
         ref={wrapperRef}
-        className={[
-          styles.wrapper,
-          disabled && styles.wrapperDisabled,
-          errorMessage && styles.wrapperError,
-          focused && styles.wrapperFocused,
-          fullscreen && styles.wrapperFullscreen,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        className={cn(styles.wrapper, {
+          [styles.wrapperDisabled]: disabled,
+          [styles.wrapperError]: Boolean(errorMessage),
+          [styles.wrapperFocused]: focused,
+          [styles.wrapperFullscreen]: fullscreen,
+        })}
       >
         <label
           id={labelId}
-          className={`${styles.label}${
-            errorMessage ? ` ${styles.labelError}` : ''
-          }${disabled ? ` ${styles.labelDisabled}` : ''}`}
+          className={cn(styles.label, {
+            [styles.labelError]: Boolean(errorMessage),
+            [styles.labelDisabled]: disabled,
+          })}
         >
           {`${label} `}
           {required && <RequiredStar />}
@@ -247,13 +246,10 @@ const RichTextEditor = ({
           />
         )}
         <div
-          className={[
-            styles.editorArea,
-            fullscreen && styles.editorAreaFullscreen,
-            disabled && styles.editorAreaDisabled,
-          ]
-            .filter(Boolean)
-            .join(' ')}
+          className={cn(styles.editorArea, {
+            [styles.editorAreaFullscreen]: fullscreen,
+            [styles.editorAreaDisabled]: disabled,
+          })}
           style={fullscreen ? undefined : { height: height - TOOLBAR_HEIGHT }}
         >
           <EditorContent editor={editor} className={styles.content} />
