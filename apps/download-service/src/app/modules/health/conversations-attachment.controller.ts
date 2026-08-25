@@ -14,11 +14,13 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
+import { toSafeFileName } from '../../utils/fileName'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.health)
@@ -38,6 +40,7 @@ export class HealthConversationsAttachmentController {
     @Param('conversationId') conversationId: string,
     @Param('messageId') messageId: string,
     @Param('attachmentId', ParseIntPipe) attachmentId: number,
+    @Query('fileName') fileName: string,
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
@@ -71,6 +74,10 @@ export class HealthConversationsAttachmentController {
     const buffer = Buffer.from(attachment.data)
     res.header('Content-Length', buffer.length.toString())
     res.header('Content-Type', attachment.contentType)
+    res.header(
+      'Content-Disposition',
+      `attachment; filename=${toSafeFileName(fileName, 'fylgiskjal')}`,
+    )
     res.header('Pragma', 'no-cache')
     res.header('Cache-Control', 'no-store, private, max-age=0')
     return res.status(200).end(buffer)

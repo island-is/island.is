@@ -1,5 +1,4 @@
 import type { User } from '@island.is/auth-nest-tools'
-import slugify from '@sindresorhus/slugify'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -20,6 +19,7 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
+import { slugifyFileName } from '../../utils/fileName'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(DocumentsScope.main)
@@ -61,12 +61,10 @@ export class DocumentController {
 
     const buffer = Buffer.from(rawDocumentDTO.content, 'base64')
 
-    const slugFileName = slugify(rawDocumentDTO.fileName ?? 'postholf-skjal', {
-      customReplacements: [
-        ['Þ', 'th'],
-        ['ö', 'o'],
-      ],
-    })
+    const slugFileName = slugifyFileName(
+      rawDocumentDTO.fileName ?? '',
+      'postholf-skjal',
+    )
     res.header(
       'Content-Disposition',
       `${

@@ -752,7 +752,9 @@ export class HealthDirectorateService {
       id: String(a.id),
       fileName: a.fileName,
       description: a.description,
-      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/health/conversations/${conversationId}/${messageId}/${a.id}`,
+      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/health/conversations/${conversationId}/${messageId}/${a.id}?fileName=${encodeURIComponent(
+        a.fileName,
+      )}`,
     }
   }
 
