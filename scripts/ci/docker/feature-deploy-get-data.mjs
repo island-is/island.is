@@ -47,7 +47,6 @@ async function getLatestIdsImageTag() {
       return dateB - dateA
     })
 
-    
   return mainImages?.[0].imageTags?.[0]
 }
 
