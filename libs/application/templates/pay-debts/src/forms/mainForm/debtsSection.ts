@@ -9,13 +9,7 @@ import { StaticText } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { debts as messages } from '../../lib/messages'
 import { formatDate } from '../../utils/formatDate'
-
-type CustomerDebt = {
-  chargeTypeName: string
-  dueDate: string
-  finalDueDate: string
-  debts: number
-}
+import { CustomerDebt } from '../../utils/types'
 
 export const debtsSection = buildSection({
   id: 'debtsSection',
@@ -28,6 +22,7 @@ export const debtsSection = buildSection({
         buildDescriptionField({
           id: 'description',
           description: messages.description.description,
+          space: 'none',
         }),
         buildStaticTableField({
           id: 'selectedDebts',
