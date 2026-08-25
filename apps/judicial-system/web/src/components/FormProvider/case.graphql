@@ -662,6 +662,12 @@ query Case($input: CaseQueryInput!) {
           externalPoliceDocumentId
         }
       }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
       caseFiles {
         id
         created

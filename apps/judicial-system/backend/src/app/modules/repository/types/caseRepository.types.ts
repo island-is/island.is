@@ -388,6 +388,13 @@ export const caseInclude: Includeable[] = [
         separate: true,
       },
       {
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
         model: CourtSession,
         as: 'courtSessions',
         required: false,

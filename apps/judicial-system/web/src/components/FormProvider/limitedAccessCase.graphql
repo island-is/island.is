@@ -464,6 +464,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           policeSubpoenaId
         }
       }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
       courtSessions {
         id
         startDate
