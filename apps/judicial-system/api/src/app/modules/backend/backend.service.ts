@@ -784,6 +784,16 @@ export class BackendService {
     return this.patch(`case/${caseId}/appealDecision`, updateAppealDecision)
   }
 
+  pronounceRulingOrally(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<CourtSessionResponse> {
+    return this.post(
+      `case/${caseId}/courtSession/${courtSessionId}/pronounceRulingOrally`,
+      {},
+    )
+  }
+
   deleteCourtSession(
     caseId: string,
     courtSessionId: string,

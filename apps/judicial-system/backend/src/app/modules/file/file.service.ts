@@ -475,6 +475,41 @@ export class FileService {
     return file
   }
 
+  // A ruling order pronounced orally in a court session gets its case file when
+  // it is pronounced, before there is anything to store: the court record links
+  // to it, and the parties' appeal decisions and any appeal are keyed on it. The
+  // district court writes the ruling up and fills the document in later, and
+  // only if the ruling is appealed - until then the key is empty.
+  //
+  // Deliberately not routed through createCaseFile, which expects a key for an
+  // object already uploaded to S3 and would queue the file for delivery to the
+  // police and the courts.
+  async createRulingOrderPronouncedOrally(
+    theCase: Case,
+    name: string,
+    user: User,
+    transaction: Transaction,
+  ): Promise<CaseFile> {
+    return this.fileModel.create(
+      {
+        caseId: theCase.id,
+        category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+        state: CaseFileState.STORED_IN_RVG,
+        isPronouncedOrally: true,
+        name,
+        userGeneratedFilename: name,
+        // No document, so no content type, no size and no key. The name is the
+        // one the ruling was given when it was pronounced, and the document the
+        // district court uploads later keeps it.
+        type: '',
+        size: 0,
+        key: '',
+        submittedBy: user.name,
+      },
+      { transaction },
+    )
+  }
+
   private async createCaseFileInDatabase(
     createFile: CreateFile,
     theCase: Case,

@@ -12,6 +12,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   type Message,
@@ -30,9 +31,11 @@ import {
   CourtSessionStringType,
   EventType,
   IndictmentCaseNotificationType,
+  isRulingOrderWithoutDocument,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import {
   buildInCourtAppealedEvent,
   hasOutOfCourtAppeal,
@@ -49,6 +52,7 @@ import {
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   Case,
+  CaseFile,
   CourtSession,
   CourtSessionRepositoryService,
   CourtSessionString,
@@ -74,6 +78,17 @@ const APPEAL_PARTY_FILE_CATEGORIES = [
   CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
   CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
 ]
+
+// The name a ruling order is given when it is pronounced orally in a court
+// session - "S-123/2026 Úrskurður 12.11.2026". Generated once, when the ruling
+// is pronounced: the document the district court writes up later keeps it.
+const rulingOrderPronouncedOrallyName = (
+  theCase: Case,
+  courtSession: CourtSession,
+): string =>
+  `${theCase.courtCaseNumber ?? ''} Úrskurður ${formatDate(
+    courtSession.startDate ?? nowFactory(),
+  )}`.trim()
 
 @Injectable()
 export class CourtSessionService {
@@ -202,11 +217,16 @@ export class CourtSessionService {
     update: UpdateCourtSessionDto,
     user: TUser,
     transaction: Transaction,
+    // A ruling order pronounced orally as part of this same write, created in
+    // this transaction and so not among the case's loaded files yet. Only
+    // pronounceRulingOrally passes it.
+    pronouncedRulingFile?: CaseFile,
   ): Promise<CourtSession> {
     const normalizedUpdate = await this.validateAndNormalizeRulingFile(
       theCase,
       existingCourtSession,
       update,
+      pronouncedRulingFile,
     )
 
     // Pre-check: confirming an ORDER session requires a decision from every
@@ -325,9 +345,112 @@ export class CourtSessionService {
         user,
         transaction,
       )
+
+      // Runs after the appeal has been moved onto the new ruling, or removed,
+      // so that a ruling the court record has let go of is no longer referenced.
+      await this.deleteUnusedRulingPronouncedOrally(
+        theCase,
+        previousRulingFileId,
+        existingCourtSession.id,
+        transaction,
+      )
     }
 
     return updatedCourtSession
+  }
+
+  // The judge pronounces the session's ruling order orally: the ruling gets its
+  // case file now, with no document behind it, and the session is linked to it
+  // like any other ruling order.
+  //
+  // Routed through update so that a session which already pronounced another
+  // ruling swaps onto this one under the same rules as a swap between two
+  // uploaded ruling orders - the appeal and its decisions move across
+  // (reconcileRulingLinkChange), and a target that already carries an appeal is
+  // rejected (validateRulingSwapAllowed, which a ruling created here always
+  // passes). A rejected swap rolls the transaction back, so the file is never
+  // left behind.
+  async pronounceRulingOrally(
+    theCase: Case,
+    courtSession: CourtSession,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<CourtSession> {
+    if (courtSession.isConfirmed) {
+      throw new BadRequestException(
+        'A ruling cannot be pronounced in a confirmed court session',
+      )
+    }
+
+    const rulingFile = await this.fileService.createRulingOrderPronouncedOrally(
+      theCase,
+      rulingOrderPronouncedOrallyName(theCase, courtSession),
+      user,
+      transaction,
+    )
+
+    return this.update(
+      theCase,
+      courtSession,
+      {
+        rulingType: CourtSessionRulingType.ORDER,
+        rulingFileId: rulingFile.id,
+      },
+      user,
+      transaction,
+      rulingFile,
+    )
+  }
+
+  // A ruling order pronounced orally exists only because the court record said
+  // the ruling was pronounced in a session. Once no session says that any more -
+  // it now pronounces a different ruling, or none at all, or the session itself
+  // is gone - nothing refers to it and there is no document to keep, so it goes.
+  //
+  // A ruling the district court has written up is a real document and stays, as
+  // does one an appeal still keys on: a party's own appeal outlives the court
+  // record's account of the ruling (reconcileRulingLinkChange keeps it), and the
+  // document it was filed against is still owed.
+  private async deleteUnusedRulingPronouncedOrally(
+    theCase: Case,
+    rulingFileId: string,
+    changedCourtSessionId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const rulingFile = theCase.caseFiles?.find(
+      (caseFile) => caseFile.id === rulingFileId,
+    )
+
+    if (!rulingFile || !isRulingOrderWithoutDocument(rulingFile)) {
+      return
+    }
+
+    // theCase holds the state from before this write, so the session that just
+    // let the ruling go still points at it there.
+    const pronouncedInAnotherSession = theCase.courtSessions?.some(
+      (courtSession) =>
+        courtSession.id !== changedCourtSessionId &&
+        courtSession.rulingFileId === rulingFileId,
+    )
+
+    if (pronouncedInAnotherSession) {
+      return
+    }
+
+    const appealCases = await this.appealCaseRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId },
+      transaction,
+    })
+
+    if (appealCases.length > 0) {
+      return
+    }
+
+    await this.fileService.deleteCaseFile(theCase, rulingFile, transaction)
+
+    this.logger.debug(
+      `Deleted ruling order ${rulingFileId} of case ${theCase.id}, pronounced orally and no longer in the court record`,
+    )
   }
 
   // Each merged case with documents in a session gets its own entries booking
@@ -926,6 +1049,7 @@ export class CourtSessionService {
     theCase: Case,
     existingCourtSession: CourtSession,
     update: UpdateCourtSessionDto,
+    pronouncedRulingFile?: CaseFile,
   ): Promise<UpdateCourtSession> {
     const rulingTypeInUpdate = 'rulingType' in update
     const rulingFileIdInUpdate = 'rulingFileId' in update
@@ -950,9 +1074,10 @@ export class CourtSessionService {
         )
       }
 
-      const caseFile = theCase.caseFiles?.find(
-        (f) => f.id === update.rulingFileId,
-      )
+      const caseFile =
+        pronouncedRulingFile?.id === update.rulingFileId
+          ? pronouncedRulingFile
+          : theCase.caseFiles?.find((f) => f.id === update.rulingFileId)
 
       if (!caseFile) {
         throw new NotFoundException(
@@ -1154,13 +1279,27 @@ export class CourtSessionService {
   }
 
   async delete(
-    caseId: string,
-    courtSessionId: string,
+    theCase: Case,
+    courtSession: CourtSession,
     transaction: Transaction,
   ): Promise<boolean> {
-    await this.courtSessionRepositoryService.delete(caseId, courtSessionId, {
-      transaction,
-    })
+    await this.courtSessionRepositoryService.delete(
+      theCase.id,
+      courtSession.id,
+      { transaction },
+    )
+
+    // The session took its account of the ruling with it, so a ruling that was
+    // only ever pronounced there has nothing left holding it up. Runs after the
+    // session is gone, so the ruling is no longer referenced when it is deleted.
+    if (courtSession.rulingFileId) {
+      await this.deleteUnusedRulingPronouncedOrally(
+        theCase,
+        courtSession.rulingFileId,
+        courtSession.id,
+        transaction,
+      )
+    }
 
     return true
   }
