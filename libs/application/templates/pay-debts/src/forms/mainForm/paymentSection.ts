@@ -1,10 +1,14 @@
 import {
   buildDescriptionField,
   buildMultiField,
-  buildRadioField,
   buildSection,
+  buildStaticTableField,
 } from '@island.is/application/core'
-import { payment as messages } from '../../lib/messages'
+import { StaticText } from '@island.is/application/types'
+import { formatCurrency } from '@island.is/application/ui-components'
+import { debts, payment as messages } from '../../lib/messages'
+import { formatDate } from '../../utils/formatDate'
+import { getSelectedDebts } from '../../utils/getSelectedDebts'
 
 export const paymentSection = buildSection({
   id: 'paymentSection',
@@ -12,27 +16,36 @@ export const paymentSection = buildSection({
   children: [
     buildMultiField({
       id: 'paymentSection',
-      title: messages.general.sectionTitle,
+      title: messages.description.title,
       children: [
         buildDescriptionField({
           id: 'description',
-          title: messages.description.title,
           description: messages.description.description,
+          space: 'none',
         }),
-        buildRadioField({
-          id: 'radio',
-          title: messages.radio.title,
-          description: messages.radio.description,
-          options: [
-            // Best practice is to import options from utils/options.ts
-            // Making the template more readable and easier to maintain
+        buildStaticTableField({
+          id: 'selectedDebtsSummary',
+          header: [
+            debts.table.chargeTypeNameHeader,
+            debts.table.dueDateHeader,
+            debts.table.finalDueDateHeader,
+            debts.table.amountHeader,
+          ],
+          rows: (application) =>
+            getSelectedDebts(application).map<StaticText[]>((debt) => [
+              debt.chargeTypeName,
+              formatDate(debt.dueDate),
+              formatDate(debt.finalDueDate),
+              formatCurrency(debt.debts.toString()),
+            ]),
+          summary: (application) => [
             {
-              label: messages.radio.option1Label,
-              value: 'option1',
-            },
-            {
-              label: messages.radio.option2Label,
-              value: 'option2',
+              label: messages.summary.totalLabel,
+              value: formatCurrency(
+                getSelectedDebts(application)
+                  .reduce((total, debt) => total + debt.debts, 0)
+                  .toString(),
+              ),
             },
           ],
         }),

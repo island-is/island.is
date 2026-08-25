@@ -11,7 +11,7 @@ export const payment = {
   description: defineMessages({
     title: {
       id: 'pd.application:payment.description.title',
-      defaultMessage: 'Description',
+      defaultMessage: 'Greiða inn á skuld',
       description: 'Title of payment description field',
     },
     description: {
@@ -21,27 +21,11 @@ export const payment = {
       description: 'Description of payment description field',
     },
   }),
-  radio: defineMessages({
-    title: {
-      id: 'pd.application:payment.radio.title',
-      defaultMessage: 'Radio',
-      description: 'Title of payment radio field',
-    },
-    description: {
-      id: 'pd.application:payment.radio.description',
-      defaultMessage:
-        'This is a radio desctiption, should come from messages.ts',
-      description: 'Description of payment radio field',
-    },
-    option1Label: {
-      id: 'pd.application:payment.radio.option1Label',
-      defaultMessage: 'Option 1',
-      description: 'Label of payment radio first option',
-    },
-    option2Label: {
-      id: 'pd.application:payment.radio.option2Label',
-      defaultMessage: 'Option 2',
-      description: 'Label of payment radio second option',
+  summary: defineMessages({
+    totalLabel: {
+      id: 'pd.application:payment.summary.totalLabel',
+      defaultMessage: 'Samtals',
+      description: 'Label for the total amount of selected debts',
     },
   }),
 }
