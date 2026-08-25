@@ -1,5 +1,5 @@
 import type { FC, MouseEvent, PointerEvent, ReactNode } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { MotionValue } from 'motion/react'
 import {
   animate,
@@ -123,8 +123,6 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState(false)
-  // AccordionItem toggles on click; handle is inside that button.
-  const suppressToggleClickRef = useRef(false)
 
   const formattedDate = useMemo(() => {
     const policeCaseNumber = indictmentCount.policeCaseNumber
@@ -146,20 +144,13 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
 
   const handlePointerDown = (evt: PointerEvent) => {
     evt.preventDefault()
-    evt.stopPropagation()
-    suppressToggleClickRef.current = true
     setIsDragging(true)
     controls.start(evt)
   }
 
-  const handleToggleClickCapture = (evt: MouseEvent) => {
-    if (!suppressToggleClickRef.current) {
-      return
-    }
-
+  const handleDragHandleClick = (evt: MouseEvent) => {
     evt.preventDefault()
     evt.stopPropagation()
-    suppressToggleClickRef.current = false
   }
 
   const handlePointerUp = () => {
@@ -167,9 +158,6 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
       onReorder()
     }
     setIsDragging(false)
-    window.setTimeout(() => {
-      suppressToggleClickRef.current = false
-    }, 0)
   }
 
   return (
@@ -186,10 +174,7 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
       onPointerUp={handlePointerUp}
       drag
     >
-      <Box
-        className={styles.itemWrapper}
-        onClickCapture={handleToggleClickCapture}
-      >
+      <Box className={styles.itemWrapper}>
         <AccordionItem
           id={`indictmentCountAccordionItem-${indictmentCount.id}`}
           expanded={expanded}
@@ -200,6 +185,7 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
                 className={styles.dragHandle}
                 data-testid="indictmentCountDragHandle"
                 onPointerDown={handlePointerDown}
+                onClick={handleDragHandleClick}
               >
                 <Icon icon="menu" color="blue400" />
               </Box>
