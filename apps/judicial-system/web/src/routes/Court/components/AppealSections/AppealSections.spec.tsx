@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react'
 
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
-  Case,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import { mockCase } from '../../../../utils/mocks'
-import { IntlProviderWrapper } from '../../../../utils/testHelpers'
 import AppealSections from './AppealSections'
 
 jest.mock(

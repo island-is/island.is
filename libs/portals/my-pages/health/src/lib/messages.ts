@@ -1957,8 +1957,13 @@ export const messages = defineMessages({
   },
   healthConversationsNewIntroWithWindow: {
     defaultMessage:
-      'Heilsugæslan tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
+      '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
     id: 'sp.health:health-messages-new-intro-with-window',
+  },
+  healthConversationsNewIntroWithRecipient: {
+    defaultMessage:
+      '{name} svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+    id: 'sp.health:health-messages-new-intro-with-recipient',
   },
   healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
@@ -1967,6 +1972,14 @@ export const messages = defineMessages({
   healthConversationsNewSelectServicePlaceholder: {
     defaultMessage: 'Veldu þjónustu úr fellilistanum',
     id: 'sp.health:health-messages-new-select-service-placeholder',
+  },
+  healthConversationsNewSelectRecipient: {
+    defaultMessage: 'Veldu viðtakanda',
+    id: 'sp.health:health-messages-new-select-recipient',
+  },
+  healthConversationsNewSelectRecipientPlaceholder: {
+    defaultMessage: 'Veldu viðtakanda úr fellilistanum',
+    id: 'sp.health:health-messages-new-select-recipient-placeholder',
   },
   healthConversationsNewBodyPlaceholder: {
     defaultMessage: 'Sláðu inn skilaboð',
@@ -2127,6 +2140,39 @@ export const messages = defineMessages({
     defaultMessage:
       'Hér finnur þú upplýsingar um bókaða tímann þinn. Þú getur bætt honum við dagatalið þitt, breytt bókuninni eða afbókað tíma ef þörf krefur.',
     id: 'sp.health:appointments-detail-intro',
+  },
+  bookAppointmentButtonText: {
+    defaultMessage: 'Bóka tíma',
+    id: 'sp.health:book-appointment-button-text',
+  },
+  bookAppointmentTitle: {
+    defaultMessage: 'Bóka tíma',
+    id: 'sp.health:book-appointment-title',
+  },
+  bookAppointmentIntro: {
+    defaultMessage: 'Hér mun vera hægt að bóka tíma',
+    id: 'sp.health:book-appointment-intro',
+  },
+  bookAppointmentStillOnHeilsuveruTitle: {
+    defaultMessage: 'Tímabókanir eru enn á Heilsuveru',
+    id: 'sp.health:book-appointment-still-on-heilsuveru-title',
+  },
+  bookAppointmentStillOnHeilsuveruText: {
+    defaultMessage:
+      'Við erum að vinna að því að færa þessa þjónustu yfir á Mínar síður á Ísland.is. Þangað til getur þú farið á Heilsuveru til að bóka tíma.',
+    id: 'sp.health:book-appointment-still-on-heilsuveru-text',
+  },
+  viewBookAppointmentOnHeilsuveru: {
+    defaultMessage: 'Bóka tíma á Heilsuveru',
+    id: 'sp.health:view-book-appointment-on-heilsuveru',
+  },
+  bookAppointmentHeilsuveruLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/timabokun/boka-tima',
+    id: 'sp.health:book-appointment-heilsuveru-link',
+  },
+  landlaeknirAppointmentsTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar tímabókanir.',
+    id: 'sp.health:landlaeknir-appointments-tooltip',
   },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',

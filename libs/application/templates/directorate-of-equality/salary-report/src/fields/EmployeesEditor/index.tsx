@@ -36,6 +36,7 @@ import { TablePagination } from '../TablePagination'
 import {
   componentsFromFormValues,
   findOrCreateRoleId,
+  paidHoursFromFormValue,
   type EmployeeFormValues,
 } from './utils'
 
@@ -50,7 +51,7 @@ const DRAFT_EMPLOYEES_QUERY = gql`
         field
         department
         startDate
-        workRatio
+        paidHours
         baseSalary
         additionalFixedOvertime
         additionalFixedCarAllowance
@@ -87,7 +88,7 @@ const toEmployee = (e: ReportEmployeeDto): Employee => ({
   field: e.field,
   department: e.department,
   startDate: e.startDate,
-  workRatio: e.workRatio,
+  paidHours: e.paidHours,
   baseSalary: e.baseSalary,
   additionalFixedOvertime: e.additionalFixedOvertime,
   additionalFixedCarAllowance: e.additionalFixedCarAllowance,
@@ -185,7 +186,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     field: values.field || null,
     department: values.department || null,
     startDate: values.startDate,
-    workRatio: (Number(values.workRatio) || 0) / 100,
+    paidHours: paidHoursFromFormValue(values.paidHours),
     baseSalary: Number(values.baseSalary) || 0,
     ...componentsFromFormValues(values),
   })

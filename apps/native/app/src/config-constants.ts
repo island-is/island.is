@@ -36,6 +36,7 @@ export const config = {
     '@island.is/health/organ-donation',
     '@island.is/licenses:barcode',
     '@island.is/auth/passkeys',
+    '@island.is/health',
   ],
   cognitoUrl: 'https://cognito.shared.devland.is/login',
   cognitoClientId: 'bre6r7d5e7imkcgbt7et1kqlc',

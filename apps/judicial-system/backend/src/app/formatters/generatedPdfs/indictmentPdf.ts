@@ -125,7 +125,7 @@ export const createIndictment = async (
       // Newer indictments store the incident description as rich text from
       // the TinyMCE editor, while older ones store plain text.
       if (containsHtml(incidentDescription)) {
-        addRichText(doc, incidentDescription, 0, basePlusFontSize)
+        addRichText(doc, incidentDescription, 0, basePlusFontSize, 'justify')
       } else {
         addNormalPlusJustifiedText(doc, incidentDescription)
       }

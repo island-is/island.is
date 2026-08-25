@@ -1,6 +1,7 @@
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 
-import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 
 import * as styles from './IconCard.css'
 

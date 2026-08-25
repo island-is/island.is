@@ -3,47 +3,50 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { toast } from '@island.is/island-ui/core'
-
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   CaseType,
-  Defendant,
-} from '../../../graphql/schema'
-import { mockCase } from '../../../utils/mocks'
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
   FormContextWrapper,
   IntlProviderWrapper,
-} from '../../../utils/testHelpers'
+} from '@island.is/judicial-system-web/src/utils/testHelpers'
+
 import VerdictTimelineCard from './VerdictTimelineCard'
 
-jest.mock('../../DateTime/DateTime', () => ({
-  __esModule: true,
-  default: ({
-    name,
-    onChange,
-  }: {
-    name: string
-    onChange: (date: Date, valid: boolean) => void
-  }) => (
-    <div>
-      <button
-        data-testid={`set-valid-${name}`}
-        onClick={() => onChange(new Date('2026-01-01T00:00:00.000Z'), true)}
-        type="button"
-      >
-        set valid date
-      </button>
-      <button
-        data-testid={`set-invalid-${name}`}
-        onClick={() => onChange(new Date('2026-01-01T00:00:00.000Z'), false)}
-        type="button"
-      >
-        set invalid date
-      </button>
-    </div>
-  ),
-}))
+jest.mock(
+  '@island.is/judicial-system-web/src/components/DateTime/DateTime',
+  () => ({
+    __esModule: true,
+    default: ({
+      name,
+      onChange,
+    }: {
+      name: string
+      onChange: (date: Date, valid: boolean) => void
+    }) => (
+      <div>
+        <button
+          data-testid={`set-valid-${name}`}
+          onClick={() => onChange(new Date('2026-01-01T00:00:00.000Z'), true)}
+          type="button"
+        >
+          set valid date
+        </button>
+        <button
+          data-testid={`set-invalid-${name}`}
+          onClick={() => onChange(new Date('2026-01-01T00:00:00.000Z'), false)}
+          type="button"
+        >
+          set invalid date
+        </button>
+      </div>
+    ),
+  }),
+)
 
 const mockVerdictAppealDecisionChoice = jest.fn(
   ({ disabled }: { disabled: boolean }) => (
@@ -52,7 +55,7 @@ const mockVerdictAppealDecisionChoice = jest.fn(
 )
 
 jest.mock(
-  '../../VerdictAppealDecisionChoice/VerdictAppealDecisionChoice',
+  '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice',
   () => ({
     __esModule: true,
     default: (props: { disabled: boolean }) =>
