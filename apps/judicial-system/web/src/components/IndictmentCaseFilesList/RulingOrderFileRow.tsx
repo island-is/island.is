@@ -8,6 +8,7 @@ import {
   DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE,
   DEFENDER_APPEAL_CASE_APPEAL_ROUTE,
   DEFENDER_APPEAL_CASE_STATEMENT_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE,
   PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE,
   PROSECUTION_APPEAL_CASE_APPEAL_ROUTE,
   PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE,
@@ -18,6 +19,7 @@ import {
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
+  isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
 import {
   ContextMenu,
@@ -196,11 +198,34 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   }
   // COMPLETED / WITHDRAWN: read-only, no menu items.
 
-  // The district court has nothing to act on before the registered judge has
-  // confirmed the ruling order - until then the row only offers the
-  // "Staðfesta" button, so its action menu stays hidden.
-  const menuItems =
-    isDistrictCourt && !isRulingOrderConfirmed(file) ? [] : items
+  // A ruling pronounced orally has no document until the district court writes
+  // it up, which it only does if the ruling is appealed.
+  const hasNoDocument = isRulingOrderWithoutDocument(file)
+
+  let menuItems = items
+
+  if (isDistrictCourt) {
+    if (hasNoDocument) {
+      // Writing the ruling up is the only thing the court can do with it. The
+      // parties keep their own actions - the ruling was pronounced, so it can
+      // be appealed whether or not it has been written up yet.
+      menuItems = [
+        {
+          title: 'Hlaða upp úrskurði',
+          icon: 'add',
+          onClick: () =>
+            router.push(
+              `${DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}?rulingFileId=${file.id}`,
+            ),
+        },
+      ]
+    } else if (!isRulingOrderConfirmed(file)) {
+      // Nothing to act on before the registered judge has confirmed the ruling
+      // order - until then the row only offers the "Staðfesta" button, so its
+      // action menu stays hidden.
+      menuItems = []
+    }
+  }
 
   // Status text below the file row. Visible to working prosecution, defence,
   // and district-court users. Other roles (e.g. PUBLIC_PROSECUTOR_STAFF) see
@@ -282,13 +307,17 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       <Box flexGrow={1}>
         <PdfButton
           title={fileName}
+          titleIcon={hasNoDocument ? 'chatbubble' : undefined}
+          titleIconTooltip={
+            hasNoDocument ? 'Úrskurður kveðinn upp munnlega' : undefined
+          }
           subtitle={statusText}
           subtitleIcon={statusIcon}
           subtitleIconColor={statusIconColor}
           subtitleIconTooltip={statusIconTooltip}
           renderAs="row"
           disabled={!file.isKeyAccessible}
-          handleClick={() => onOpenFile(file.id)}
+          handleClick={hasNoDocument ? undefined : () => onOpenFile(file.id)}
         >
           <RulingOrderConfirmationStatus file={file} />
           {showCompletedPill && (
