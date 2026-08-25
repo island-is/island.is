@@ -1,22 +1,22 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql'
-import { RskCalculatorFieldKind } from './enums'
+import { TaxCalculatorFieldKind } from './enums'
 import { FieldOption } from './fieldOption.model'
 
-@ObjectType('RskCalculatorField')
+@ObjectType('TaxCalculatorField')
 export class CalculatorField {
   @Field(() => String, {
     description:
-      'The key to use for this field when submitting values to rskCalculatorCalculation.',
+      'The key to use for this field when submitting values to taxCalculatorCalculation.',
   })
   key!: string
 
   @Field(() => String, { description: 'Display label for this field.' })
   label!: string
 
-  @Field(() => RskCalculatorFieldKind, {
+  @Field(() => TaxCalculatorFieldKind, {
     description: 'Which generic input control the web client should render.',
   })
-  kind!: RskCalculatorFieldKind
+  kind!: TaxCalculatorFieldKind
 
   @Field(() => Boolean)
   required!: boolean

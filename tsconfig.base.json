@@ -241,9 +241,6 @@
       "@island.is/api/domains/rights-portal": [
         "libs/api/domains/rights-portal/src/index.ts"
       ],
-      "@island.is/api/domains/rsk-calculators": [
-        "libs/api/domains/rsk-calculators/src/index.ts"
-      ],
       "@island.is/api/domains/secondary-school": [
         "libs/api/domains/secondary-school/src/index.ts"
       ],
@@ -267,6 +264,9 @@
       ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
+      ],
+      "@island.is/api/domains/tax-calculators": [
+        "libs/api/domains/tax-calculators/src/index.ts"
       ],
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"

@@ -1,10 +1,10 @@
 export default {
-  displayName: 'api-domains-rsk-calculators',
+  displayName: 'api-domains-tax-calculators',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../../coverage/libs/api/domains/rsk-calculators',
+  coverageDirectory: '../../../../coverage/libs/api/domains/tax-calculators',
 }

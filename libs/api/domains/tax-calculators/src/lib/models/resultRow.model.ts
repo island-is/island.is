@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('RskCalculatorResultRow')
+@ObjectType('TaxCalculatorResultRow')
 export class CalculatorResultRow {
   @Field(() => String, {
     description: 'Stable identifier for this result row.',

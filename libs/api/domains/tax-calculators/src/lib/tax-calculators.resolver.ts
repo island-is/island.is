@@ -4,36 +4,36 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { CalculatorField } from './models/field.model'
 import { CalculatorResultRow } from './models/resultRow.model'
 import { CalculatorInputValue } from './dto/inputValue.input'
-import { RskCalculatorType } from './models/enums'
-import { RskCalculatorsService } from './rsk-calculators.service'
+import { TaxCalculatorType } from './models/enums'
+import { TaxCalculatorsService } from './tax-calculators.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver()
-export class RskCalculatorsResolver {
-  constructor(private readonly service: RskCalculatorsService) {}
+export class TaxCalculatorsResolver {
+  constructor(private readonly service: TaxCalculatorsService) {}
 
   @Query(() => [CalculatorField], {
-    name: 'rskCalculatorFields',
+    name: 'taxCalculatorFields',
     nullable: true,
     description:
-      'The dynamic form schema for a given RSK calculator type. The web client renders a generic form from this schema.',
+      'The dynamic form schema for a given tax calculator type. The web client renders a generic form from this schema.',
   })
   fields(
-    @Args('calculatorType', { type: () => RskCalculatorType })
-    calculatorType: RskCalculatorType,
+    @Args('calculatorType', { type: () => TaxCalculatorType })
+    calculatorType: TaxCalculatorType,
   ): CalculatorField[] {
     return this.service.getFields(calculatorType)
   }
 
   @Query(() => [CalculatorResultRow], {
-    name: 'rskCalculatorCalculation',
+    name: 'taxCalculatorCalculation',
     nullable: true,
     description:
-      'Runs an RSK calculator for the given calculator type and generic key/value input, matching the keys from rskCalculatorFields.',
+      'Runs a tax calculator for the given calculator type and generic key/value input, matching the keys from taxCalculatorFields.',
   })
   async calculation(
-    @Args('calculatorType', { type: () => RskCalculatorType })
-    calculatorType: RskCalculatorType,
+    @Args('calculatorType', { type: () => TaxCalculatorType })
+    calculatorType: TaxCalculatorType,
     @Args('input', { type: () => [CalculatorInputValue] })
     input: CalculatorInputValue[],
   ): Promise<CalculatorResultRow[]> {
