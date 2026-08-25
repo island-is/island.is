@@ -213,6 +213,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   )
 
   const [modalVisible, setModalVisible] = useState<'DELETE'>()
+  const [isPronouncingOrally, setIsPronouncingOrally] = useState(false)
 
   const {
     judges,
@@ -281,17 +282,36 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   // a field on the session, so the court record and the case's files both have
   // to come back from the server rather than be patched locally.
   const pronounceRulingOrallyInSession = useCallback(async () => {
-    const updatedCourtSession = await pronounceRulingOrally({
-      caseId: workingCase.id,
-      courtSessionId: courtSession.id,
-    })
-
-    if (!updatedCourtSession) {
+    // The radio stays unchecked until the refreshed case arrives, so without a
+    // guard every further activation sends another request - and each one
+    // creates a ruling of its own.
+    if (isPronouncingOrally) {
       return
     }
 
-    refreshCase()
-  }, [courtSession.id, pronounceRulingOrally, refreshCase, workingCase.id])
+    setIsPronouncingOrally(true)
+
+    try {
+      const updatedCourtSession = await pronounceRulingOrally({
+        caseId: workingCase.id,
+        courtSessionId: courtSession.id,
+      })
+
+      if (!updatedCourtSession) {
+        return
+      }
+
+      refreshCase()
+    } finally {
+      setIsPronouncingOrally(false)
+    }
+  }, [
+    courtSession.id,
+    isPronouncingOrally,
+    pronounceRulingOrally,
+    refreshCase,
+    workingCase.id,
+  ])
 
   const patchCourtSessionStrings = useCallback(
     (
@@ -1733,7 +1753,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               ? undefined
                               : pronounceRulingOrallyInSession()
                           }
-                          disabled={Boolean(courtSession.isConfirmed)}
+                          disabled={
+                            Boolean(courtSession.isConfirmed) ||
+                            isPronouncingOrally
+                          }
                           large
                         />
                       </Box>

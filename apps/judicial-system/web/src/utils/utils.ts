@@ -424,8 +424,19 @@ export const rulingOrderChoices = (
     (file) => file.id === courtSession.rulingFileId,
   )
 
+  const pronouncedOrally = linkedRuling?.isPronouncedOrally
+    ? linkedRuling
+    : undefined
+
   return {
-    files: rulingOrders.filter((file) => !isRulingOrderWithoutDocument(file)),
+    // Once the district court writes the session's own orally pronounced ruling
+    // up it is a document like any other, so it would otherwise be offered
+    // twice: as a written ruling and as the oral one. Both would be checked, in
+    // the same radio group.
+    files: rulingOrders.filter(
+      (file) =>
+        !isRulingOrderWithoutDocument(file) && file.id !== pronouncedOrally?.id,
+    ),
     takenIds: new Set(
       workingCase.courtSessions
         ?.filter(
@@ -433,9 +444,7 @@ export const rulingOrderChoices = (
         )
         .map((session) => session.rulingFileId as string) ?? [],
     ),
-    pronouncedOrally: linkedRuling?.isPronouncedOrally
-      ? linkedRuling
-      : undefined,
+    pronouncedOrally,
   }
 }
 

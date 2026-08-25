@@ -110,7 +110,11 @@ describe('FileController - Attach ruling order document', () => {
           type: 'application/pdf',
           name: 'urskurdur.pdf',
         },
-        { where: { id: fileId, caseId }, returning: true, transaction },
+        {
+          where: { id: fileId, caseId, key: '' },
+          returning: true,
+          transaction,
+        },
       )
     })
 
@@ -150,6 +154,28 @@ describe('FileController - Attach ruling order document', () => {
         }),
         expect.any(Object),
       )
+    })
+  })
+
+  // The pre-check reads a ruling that had no document at the time; only the
+  // update can settle a race between two uploads, and the loser matches no rows.
+  describe('another upload wrote the ruling up first', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdate = mockFileModel.update as jest.Mock
+      mockUpdate.mockReset()
+      mockUpdate.mockResolvedValueOnce([0, []])
+
+      then = await givenWhenThen(makeCase(), pronouncedOrally)
+    })
+
+    it('should be rejected without delivering anything', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        'The ruling order has already been written up',
+      )
+      expect(queuedMessages).toHaveLength(0)
     })
   })
 

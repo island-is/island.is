@@ -822,9 +822,12 @@ export class FileService {
       )
     }
 
-    const updatedCaseFile = await this.updateCaseFile(
-      theCase.id,
-      caseFile.id,
+    // Two uploads racing each other both pass the check above, each holding its
+    // own copy of a ruling that had no document when it was read. The update is
+    // therefore the only thing that can decide between them: it matches a ruling
+    // that still has no document, so the loser affects no rows and is rejected
+    // instead of replacing the document the winner just wrote up.
+    const [affectedRows, updatedCaseFiles] = await this.fileModel.update(
       {
         key,
         size,
@@ -832,8 +835,20 @@ export class FileService {
         name: key.slice(NAME_BEGINS_INDEX),
         ...(userGeneratedFilename ? { userGeneratedFilename } : {}),
       },
-      transaction,
+      {
+        where: { id: caseFile.id, caseId: theCase.id, key: '' },
+        returning: true,
+        transaction,
+      },
     )
+
+    if (affectedRows === 0) {
+      throw new BadRequestException(
+        'The ruling order has already been written up',
+      )
+    }
+
+    const updatedCaseFile = updatedCaseFiles[0]
 
     // The ruling finally has a document to deliver, which is what createCaseFile
     // would have queued had the ruling arrived as an upload in the first place.

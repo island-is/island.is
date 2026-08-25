@@ -316,7 +316,10 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
           subtitleIconColor={statusIconColor}
           subtitleIconTooltip={statusIconTooltip}
           renderAs="row"
-          disabled={!file.isKeyAccessible}
+          // A ruling with no document has no S3 object by design, so the
+          // inaccessible-key styling must never apply to it - the district
+          // court still has to reach its upload action.
+          disabled={!hasNoDocument && !file.isKeyAccessible}
           handleClick={hasNoDocument ? undefined : () => onOpenFile(file.id)}
         >
           <RulingOrderConfirmationStatus file={file} />

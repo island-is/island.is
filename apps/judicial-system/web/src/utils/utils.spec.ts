@@ -1785,6 +1785,36 @@ describe('rulingOrderChoices', () => {
     expect(resolved).toBe(writtenUp)
   })
 
+  // Once written up, the session's own oral ruling is a document like any other
+  // - it must not also be offered as a written ruling, or the same file renders
+  // as two checked radios in one group.
+  it('offers a written-up oral ruling only as the oral one', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { files, pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([writtenRuling, writtenUp]),
+      { id: sessionId, rulingFileId: writtenUp.id },
+    )
+
+    expect(resolved).toBe(writtenUp)
+    expect(files).toEqual([writtenRuling])
+  })
+
+  it('still offers a written-up oral ruling of another session as a document', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { files, pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase(
+        [writtenUp],
+        [{ id: otherSessionId, rulingFileId: writtenUp.id }],
+      ),
+      { id: sessionId, rulingFileId: null },
+    )
+
+    expect(resolved).toBeUndefined()
+    expect(files).toEqual([writtenUp])
+  })
+
   it('resolves nothing when the session pronounces a written ruling', () => {
     const { pronouncedOrally: resolved } = rulingOrderChoices(
       makeCase([writtenRuling, pronouncedOrally]),
