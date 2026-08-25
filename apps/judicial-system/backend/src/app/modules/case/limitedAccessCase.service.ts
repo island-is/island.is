@@ -398,6 +398,20 @@ export const include: Includeable[] = [
     attributes,
     include: [
       {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
         model: CourtSession,
         as: 'courtSessions',
         required: false,

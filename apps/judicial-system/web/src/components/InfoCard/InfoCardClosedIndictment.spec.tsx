@@ -15,13 +15,16 @@ import {
 
 import InfoCardClosedIndictment from './InfoCardClosedIndictment'
 
+const DEFENDER_NATIONAL_ID = '1234567890'
+
 const renderClosedIndictment = (
   theCase: Case,
   userRole: UserRole = UserRole.PROSECUTOR,
+  nationalId?: string,
 ) =>
   render(
     <IntlProviderWrapper>
-      <UserContextWrapper userRole={userRole}>
+      <UserContextWrapper userRole={userRole} nationalId={nationalId}>
         <FormContextWrapper theCase={theCase}>
           <InfoCardClosedIndictment />
         </FormContextWrapper>
@@ -46,13 +49,24 @@ describe('InfoCardClosedIndictment', () => {
     )
   })
 
-  test('links the merged case number for defenders', async () => {
+  test('links the merged case number for defenders assigned to the merge target', async () => {
     const theCase = {
       ...mockCase(CaseType.INDICTMENT),
-      mergeCase: { id: 'merged-into-id', courtCaseNumber: 'S-64/2026' },
+      mergeCase: {
+        id: 'merged-into-id',
+        courtCaseNumber: 'S-64/2026',
+        type: CaseType.INDICTMENT,
+        defendants: [
+          {
+            id: 'defendant-1',
+            defenderNationalId: DEFENDER_NATIONAL_ID,
+            isDefenderChoiceConfirmed: true,
+          },
+        ],
+      },
     }
 
-    renderClosedIndictment(theCase, UserRole.DEFENDER)
+    renderClosedIndictment(theCase, UserRole.DEFENDER, DEFENDER_NATIONAL_ID)
 
     const link = await screen.findByRole('link', { name: 'S-64/2026' })
 
@@ -60,6 +74,29 @@ describe('InfoCardClosedIndictment', () => {
       'href',
       `${ROUTE_HANDLER_ROUTE}/merged-into-id`,
     )
+  })
+
+  test('does not link the merged case number for defenders not assigned to the merge target', async () => {
+    const theCase = {
+      ...mockCase(CaseType.INDICTMENT),
+      mergeCase: {
+        id: 'merged-into-id',
+        courtCaseNumber: 'S-64/2026',
+        type: CaseType.INDICTMENT,
+        defendants: [
+          {
+            id: 'defendant-1',
+            defenderNationalId: '9999999999',
+            isDefenderChoiceConfirmed: true,
+          },
+        ],
+      },
+    }
+
+    renderClosedIndictment(theCase, UserRole.DEFENDER, DEFENDER_NATIONAL_ID)
+
+    await screen.findByText('S-64/2026')
+    expect(screen.queryByRole('link', { name: 'S-64/2026' })).toBeNull()
   })
 
   test('does not link an external merged case number', async () => {
