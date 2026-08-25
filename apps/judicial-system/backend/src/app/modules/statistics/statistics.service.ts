@@ -534,6 +534,7 @@ export class StatisticsService {
             { key: 'date', header: 'Dagsetning' },
             { key: 'institution', header: 'Stofnun' },
             { key: 'caseTypeDescriptor', header: 'Tegund máls' },
+            { key: 'isIsolation', header: 'Einangrun' },
             { key: 'origin', header: 'Stofnað í' },
             { key: 'isExtended', header: 'Mál framlengt' },
             {
