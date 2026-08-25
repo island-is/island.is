@@ -339,11 +339,7 @@ export const caseInclude: Includeable[] = [
       {
         model: Defendant,
         as: 'defendants',
-        attributes: [
-          'id',
-          'defenderNationalId',
-          'isDefenderChoiceConfirmed',
-        ],
+        attributes: ['id', 'defenderNationalId', 'isDefenderChoiceConfirmed'],
         required: false,
         order: [['created', 'ASC']],
         separate: true,
