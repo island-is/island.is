@@ -33,7 +33,7 @@ export const employeeCountSubSection = buildSubSection({
           title: messages.aboutTheCompany.employeeCount.nonBinary,
           width: 'half',
           variant: 'number',
-          required: true,
+          required: false,
         }),
       ],
     }),

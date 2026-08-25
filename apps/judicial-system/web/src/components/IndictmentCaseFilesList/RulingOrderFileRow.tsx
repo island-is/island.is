@@ -59,9 +59,6 @@ interface Props {
  * Single ruling-order (`COURT_INDICTMENT_RULING_ORDER`) file row with an
  * action context menu attached. The available menu items are role- and
  * appeal-state-driven.
- *
- * Rendered in place of the plain `<RenderFiles>` row when the
- * `Feature.APPEAL_RULING_ORDER` flag is on.
  */
 const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   const { user } = useContext(UserContext)
