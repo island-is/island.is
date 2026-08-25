@@ -33,6 +33,18 @@ const AddRulingOrder: FC = () => {
 
   const previousRoute = `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
 
+  // Arriving from the "Hlaða upp úrskurði" action on a ruling order that was
+  // pronounced orally: the document is written up for that ruling rather than
+  // uploaded as a new one, so it fills in the file that already exists and
+  // keeps the name the ruling was pronounced under.
+  const rulingOrderId =
+    typeof router.query.rulingFileId === 'string'
+      ? router.query.rulingFileId
+      : undefined
+  const pronouncedRulingOrder = rulingOrderId
+    ? workingCase.caseFiles?.find((file) => file.id === rulingOrderId)
+    : undefined
+
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -41,16 +53,24 @@ const AddRulingOrder: FC = () => {
     removeUploadFile,
     updateUploadFile,
   } = useUploadFiles()
-  const { handleUpload } = useS3Upload(workingCase.id)
+  const { handleUpload, handleUploadRulingOrderDocument } = useS3Upload(
+    workingCase.id,
+  )
 
   const addFiles = (files: FileWithPreviewURL[]) => {
+    // A ruling that was pronounced has exactly one document, so picking a file
+    // replaces whatever was picked before rather than adding to it.
+    if (pronouncedRulingOrder) {
+      uploadFiles.forEach(removeUploadFile)
+    }
+
     addUploadFiles(
-      files,
+      pronouncedRulingOrder ? files.slice(0, 1) : files,
       {
         status: FileUploadStatus.done,
-        userGeneratedFilename: `${
-          workingCase.courtCaseNumber
-        } Úrskurður ${formatDate(new Date())}`,
+        userGeneratedFilename:
+          pronouncedRulingOrder?.userGeneratedFilename ??
+          `${workingCase.courtCaseNumber} Úrskurður ${formatDate(new Date())}`,
         category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       },
       true,
@@ -74,17 +94,32 @@ const AddRulingOrder: FC = () => {
   )
 
   const handleNextButtonClick = useCallback(async () => {
-    const uploadResult = await handleUpload(
-      uploadFiles.filter((file) => file.percent === 0),
-      updateUploadFile,
-    )
+    const filesToUpload = uploadFiles.filter((file) => file.percent === 0)
+
+    const succeeded = pronouncedRulingOrder
+      ? filesToUpload.length > 0 &&
+        (await handleUploadRulingOrderDocument(
+          filesToUpload[0],
+          pronouncedRulingOrder.id,
+          updateUploadFile,
+        ))
+      : (await handleUpload(filesToUpload, updateUploadFile)) ===
+        'ALL_SUCCEEDED'
 
     setVisibleModal(undefined)
 
-    if (uploadResult === 'ALL_SUCCEEDED') {
+    if (succeeded) {
       router.push(previousRoute)
     }
-  }, [handleUpload, updateUploadFile, uploadFiles, router, previousRoute])
+  }, [
+    handleUpload,
+    handleUploadRulingOrderDocument,
+    pronouncedRulingOrder,
+    updateUploadFile,
+    uploadFiles,
+    router,
+    previousRoute,
+  ])
 
   return (
     <PageLayout
