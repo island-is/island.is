@@ -1,4 +1,4 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {

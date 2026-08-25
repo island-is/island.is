@@ -1,12 +1,14 @@
-import {
+import type {
   AppealCase,
-  AppealCaseRulingDecision,
-  AppealDecisionPartyRole,
   Case,
-  CaseAppealDecision,
-  CaseFileCategory,
   CourtSessionResponse,
   IndictmentCount,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseRulingDecision,
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
+  CaseFileCategory,
   IndictmentCountOffense,
   IndictmentSubtype,
 } from '@island.is/judicial-system-web/src/graphql/schema'

@@ -27,6 +27,8 @@ import {
   SignedDocument,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import InfoCard from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseState,
   RequestSharedWithDefender,
@@ -34,8 +36,6 @@ import {
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import InfoCard from '../../../components/InfoCard/InfoCard'
-import useInfoCardItems from '../../../components/InfoCard/useInfoCardItems'
 import { strings } from './CaseOverview.strings'
 
 export const CaseOverview = () => {

@@ -30,7 +30,7 @@ const Host = styled.Pressable<{
 
 interface CheckboxProps {
   borderBottom?: boolean
-  label: string
+  label: React.ReactNode
   checked: boolean
   onPress: () => void
   isFullWidth?: boolean

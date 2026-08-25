@@ -3,7 +3,7 @@ import isNil from 'lodash/isNil'
 import isUndefined from 'lodash/isUndefined'
 import omitBy from 'lodash/omitBy'
 
-import {
+import type {
   Case,
   UpdateCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'

@@ -6,7 +6,7 @@ import {
   PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { faker } from '@island.is/shared/mocking'
 
 import {

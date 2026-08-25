@@ -1,28 +1,29 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 
 import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
-import { Item } from '@island.is/judicial-system-web/src/components'
+import type { Item } from '@island.is/judicial-system-web/src/components'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  PoliceCaseFileCheck,
+  PoliceCaseFilesData,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
-  CaseFile,
-  CaseFileCategory,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+  PoliceCaseFiles,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import {
-  mapPoliceCaseFileToPoliceCaseFileCheck,
-  PoliceCaseFileCheck,
-  PoliceCaseFiles,
-  PoliceCaseFilesData,
-} from '../../components'
 import { strings } from './PoliceCaseFilesRoute.strings'
 
 interface UploadFilesToPoliceCaseProps {
