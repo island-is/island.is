@@ -214,15 +214,6 @@ export class BankTransferService {
         ? result.scaRedirectUrl
         : result.scaRedirectUrl ?? row.scaRedirectUrl ?? undefined
 
-    // Diagnostic: on a raw Blikk SCA_REQUIRED, record whether Blikk sent its own SCA URL, and whether
-    // we dropped a persisted row URL by trusting Blikk's omission. Booleans only — no URL logged.
-    if (isPending && result.rawStatus === 'SCA_REQUIRED') {
-      this.logger.info(`[${row.paymentFlowId}] SCA_REQUIRED verify`, {
-        blikkSentScaUrl: !!result.scaRedirectUrl,
-        droppedRowUrl: !result.scaRedirectUrl && !!row.scaRedirectUrl,
-      })
-    }
-
     return {
       status: result.status,
       message: result.message,

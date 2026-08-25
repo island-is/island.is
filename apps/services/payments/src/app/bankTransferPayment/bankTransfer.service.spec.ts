@@ -817,6 +817,24 @@ describe('BankTransferService', () => {
       expect(result.failureReason).toBeUndefined()
     })
 
+    it('reports no SCA URL at SCA_REQUIRED when Blikk omits one, even though the row holds a creation-time URL (back-channel SCA)', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        scaRedirectUrl: 'https://blikk/sca/original',
+      })
+      mockGetPayment(BankTransferStatus.PENDING, 'SCA_REQUIRED')
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      // Blikk owns the URL at SCA_REQUIRED: empty means the bank pushed a notification instead, and
+      // the row's URL is a DRAFT-time onboarding URL — not the bank's SCA page. Never substitute it.
+      expect(result).toMatchObject({
+        status: BankTransferStatus.PENDING,
+        pendingStatus: BankTransferPendingStatus.SCA_REQUIRED,
+        scaRedirectUrl: undefined,
+      })
+    })
+
     it('reports sca_required for a DRAFT payment whose row already carries the SCA URL (no dots→QR flicker after create)', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue({
         ...activeRow,
@@ -1239,7 +1257,7 @@ describe('BankTransferService', () => {
 
     // Any other non-2xx means Blikk still holds the session — refuse, keep the row live.
     it.each<[string, number]>([
-      ['405 method-not-allowed', 405],
+      ['400 bad-request (past DRAFT, no longer cancellable)', 400],
       ['409 conflict', 409],
     ])(
       'refuses and keeps the row live when the Blikk cancel returns %s',
@@ -1514,7 +1532,7 @@ describe('BankTransferService', () => {
         },
       )
       // At SCA_REQUIRED Blikk is authoritative for the URL: it omitted one (back-channel SCA), so we
-      // surface none rather than resurrecting the row's creation-time URL.
+      // surface none rather than resurrecting the row's creation-time onboarding URL.
       expect(result).toEqual({
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
         updatedAt: baseRow.modified,
