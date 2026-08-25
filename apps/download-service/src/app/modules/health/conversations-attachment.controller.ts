@@ -81,7 +81,7 @@ export class HealthConversationsAttachmentController {
     const ext = mimeTypeToExtension[attachment.contentType] ?? ''
     res.header(
       'Content-Disposition',
-      `attachment; filename=fylgiskjal-${messageId}-${attachmentId}${ext}`,
+      `attachment; filename=fylgiskjal-${attachmentId}${ext}`,
     )
     res.header('Pragma', 'no-cache')
     res.header('Cache-Control', 'no-store, private, max-age=0')
