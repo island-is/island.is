@@ -23,6 +23,7 @@ import {
   defendantEventTypes,
   eventTypes,
   hasGeneratedCourtRecordPdf,
+  isDefenceUser,
   isIndictmentCase,
   isRequestCase,
   stringTypes,
@@ -122,7 +123,60 @@ export interface LimitedAccessUpdateCase
     | 'openedByDefender'
   > {}
 
-export const include: Includeable[] = [
+const linkedCaseDefendantAccessAttributes: (keyof Defendant)[] = [
+  'id',
+  'defenderNationalId',
+  'isDefenderChoiceConfirmed',
+]
+
+const linkedCaseCivilClaimantAccessAttributes: (keyof CivilClaimant)[] = [
+  'id',
+  'hasSpokesperson',
+  'spokespersonNationalId',
+  'isSpokespersonConfirmed',
+]
+
+const normalizeNationalId = (nationalId: string): string =>
+  nationalId.replace(/-/g, '')
+
+const getLinkedCaseDefendantsInclude = (user?: TUser): Includeable => ({
+  model: Defendant,
+  as: 'defendants',
+  attributes: linkedCaseDefendantAccessAttributes,
+  required: false,
+  order: [['created', 'ASC']],
+  ...(user && isDefenceUser(user)
+    ? {
+        where: {
+          defenderNationalId: normalizeNationalId(user.nationalId),
+          isDefenderChoiceConfirmed: true,
+        },
+      }
+    : {}),
+})
+
+const getLinkedCaseCivilClaimantsInclude = (
+  user?: TUser,
+  separate = false,
+): Includeable => ({
+  model: CivilClaimant,
+  as: 'civilClaimants',
+  attributes: linkedCaseCivilClaimantAccessAttributes,
+  required: false,
+  order: [['created', 'ASC']],
+  ...(separate ? { separate: true } : {}),
+  ...(user && isDefenceUser(user)
+    ? {
+        where: {
+          hasSpokesperson: true,
+          spokespersonNationalId: normalizeNationalId(user.nationalId),
+          isSpokespersonConfirmed: true,
+        },
+      }
+    : {}),
+})
+
+export const getInclude = (user?: TUser): Includeable[] => [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
   {
@@ -397,20 +451,8 @@ export const include: Includeable[] = [
     as: 'mergeCase',
     attributes,
     include: [
-      {
-        model: Defendant,
-        as: 'defendants',
-        required: false,
-        order: [['created', 'ASC']],
-        separate: true,
-      },
-      {
-        model: CivilClaimant,
-        as: 'civilClaimants',
-        required: false,
-        order: [['created', 'ASC']],
-        separate: true,
-      },
+      getLinkedCaseDefendantsInclude(user),
+      getLinkedCaseCivilClaimantsInclude(user),
       {
         model: CourtSession,
         as: 'courtSessions',
@@ -467,13 +509,7 @@ export const include: Includeable[] = [
         ],
         separate: true,
       },
-      {
-        model: CivilClaimant,
-        as: 'civilClaimants',
-        required: false,
-        order: [['created', 'ASC']],
-        separate: true,
-      },
+      getLinkedCaseCivilClaimantsInclude(user, true),
       {
         model: CourtSession,
         as: 'courtSessions',
@@ -591,11 +627,11 @@ export class LimitedAccessCaseService {
 
   async findById(
     caseId: string,
-    options?: { transaction?: Transaction },
+    options?: { transaction?: Transaction; user?: TUser },
   ): Promise<Case> {
     const theCase = await this.caseRepositoryService.findOne({
       attributes,
-      include,
+      include: getInclude(options?.user),
       where: {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
@@ -620,7 +656,7 @@ export class LimitedAccessCaseService {
     await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
     // Return limited access case (read within transaction so we see the updated row)
-    return this.findById(theCase.id, { transaction })
+    return this.findById(theCase.id, { transaction, user })
   }
 
   private constructDefender(

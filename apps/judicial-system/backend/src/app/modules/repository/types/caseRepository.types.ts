@@ -339,6 +339,11 @@ export const caseInclude: Includeable[] = [
       {
         model: Defendant,
         as: 'defendants',
+        attributes: [
+          'id',
+          'defenderNationalId',
+          'isDefenderChoiceConfirmed',
+        ],
         required: false,
         order: [['created', 'ASC']],
         separate: true,
@@ -346,6 +351,12 @@ export const caseInclude: Includeable[] = [
       {
         model: CivilClaimant,
         as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
         required: false,
         order: [['created', 'ASC']],
         separate: true,
@@ -390,6 +401,12 @@ export const caseInclude: Includeable[] = [
       {
         model: CivilClaimant,
         as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
         required: false,
         order: [['created', 'ASC']],
         separate: true,
