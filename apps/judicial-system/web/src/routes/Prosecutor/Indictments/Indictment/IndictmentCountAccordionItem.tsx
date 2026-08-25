@@ -181,7 +181,7 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
           expanded={expanded}
           onToggle={onToggle}
           label={
-            <Box display="flex" flexDirection="row" alignItems="center">
+            <Box display="flex" alignItems="center">
               <Box
                 className={styles.dragHandle}
                 data-testid="indictmentCountDragHandle"
