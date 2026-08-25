@@ -49,6 +49,7 @@ import {
   CourtDocumentRepositoryService,
   EventLog,
 } from '../repository'
+import { AttachRulingOrderDocumentDto } from './dto/attachRulingOrderDocument.dto'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
@@ -441,10 +442,23 @@ export class FileService {
       }
     }
 
+    this.addMessagesForIndictmentCaseFileDeliveryToQueue(theCase, file, user)
+
+    return file
+  }
+
+  // Files of an indictment case are delivered to the police and the courts as
+  // they arrive. Also used when a ruling order pronounced orally is written up,
+  // which is the first moment that file has a document to deliver.
+  private addMessagesForIndictmentCaseFileDeliveryToQueue(
+    theCase: Case,
+    file: CaseFile,
+    user: User,
+  ): void {
     if (
-      isIndictmentCase(theCase.type) &&
-      file.category &&
-      [
+      !isIndictmentCase(theCase.type) ||
+      !file.category ||
+      ![
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
@@ -453,26 +467,26 @@ export class FileService {
         CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ].includes(file.category)
     ) {
-      if (theCase.origin === CaseOrigin.LOKE) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: file.id,
-        })
-      }
-
-      if (theCase.courtCaseNumber) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: file.id,
-        })
-      }
+      return
     }
 
-    return file
+    if (theCase.origin === CaseOrigin.LOKE) {
+      addMessagesToQueue({
+        type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+        user,
+        caseId: theCase.id,
+        elementId: file.id,
+      })
+    }
+
+    if (theCase.courtCaseNumber) {
+      addMessagesToQueue({
+        type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+        user,
+        caseId: theCase.id,
+        elementId: file.id,
+      })
+    }
   }
 
   // A ruling order pronounced orally in a court session gets its case file when
@@ -723,7 +737,7 @@ export class FileService {
   async updateCaseFile(
     caseId: string,
     fileId: string,
-    update: { [key: string]: string | null },
+    update: { [key: string]: string | number | null },
     transaction?: Transaction,
   ): Promise<CaseFile> {
     const promisedUpdate = transaction
@@ -777,6 +791,59 @@ export class FileService {
       { submissionDate: nowFactory().toISOString() },
       transaction,
     )
+  }
+
+  // The district court writes up a ruling order that was pronounced orally and
+  // uploads the document. It fills in the ruling that already exists rather than
+  // creating a new file: the court record points at that one, and the parties'
+  // appeal decisions and any appeal are keyed on it, so a new file would strand
+  // all of it - and the ruling would lose the name it was given when it was
+  // pronounced.
+  async attachRulingOrderDocument(
+    theCase: Case,
+    caseFile: CaseFile,
+    attachDocument: AttachRulingOrderDocumentDto,
+    user: User,
+    transaction: Transaction,
+  ): Promise<CaseFile> {
+    if (!isRulingOrderWithoutDocument(caseFile)) {
+      throw new BadRequestException(
+        'Only a ruling order that was pronounced orally and has not been written up can have a document attached',
+      )
+    }
+
+    const { key, size, type, userGeneratedFilename } = attachDocument
+
+    const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
+
+    if (!regExp.test(key)) {
+      throw new BadRequestException(
+        `${key} is not a valid key for case ${theCase.id}`,
+      )
+    }
+
+    const updatedCaseFile = await this.updateCaseFile(
+      theCase.id,
+      caseFile.id,
+      {
+        key,
+        size,
+        type,
+        name: key.slice(NAME_BEGINS_INDEX),
+        ...(userGeneratedFilename ? { userGeneratedFilename } : {}),
+      },
+      transaction,
+    )
+
+    // The ruling finally has a document to deliver, which is what createCaseFile
+    // would have queued had the ruling arrived as an upload in the first place.
+    this.addMessagesForIndictmentCaseFileDeliveryToQueue(
+      theCase,
+      updatedCaseFile,
+      user,
+    )
+
+    return updatedCaseFile
   }
 
   async updateFiles(
