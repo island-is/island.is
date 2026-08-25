@@ -22,6 +22,7 @@ import type { ReportCriterionDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { messages } from '../../lib/messages'
+import { getProviderErrorMessage } from '../../utils/providerError'
 
 // The next screen in the flow — both upload and manual entry advance here.
 const NEXT_SCREEN_ID = 'criteriaMultiField'
@@ -31,9 +32,24 @@ export const ExcelTemplateDownload: FC<
 > = ({ application, goToScreen, setBeforeSubmitCallback, answerQuestions }) => {
   const { formatMessage, lang: locale } = useLocale()
   const [isImporting, setIsImporting] = useState(false)
+  // The API rejects an out-of-date workbook with one specific reason
+  // ("Sniðmátið er af eldri útgáfu … Sæktu nýjasta sniðmátið") rather than
+  // per-row data errors, so the generic importError alone would leave the
+  // likeliest failure unexplained.
+  const [importErrorMessage, setImportErrorMessage] = useState<
+    string | undefined
+  >()
   const [importStatus, setImportStatus] = useState<'success' | 'error' | null>(
     null,
   )
+
+  // Every failure path goes through this so none can leave a stale reason from
+  // an earlier workbook import on screen — a manual-entry failure must not show
+  // "Sniðmátið er af eldri útgáfu".
+  const failImport = (message?: string) => {
+    setImportErrorMessage(message)
+    setImportStatus('error')
+  }
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [updateApplicationExternalData] = useMutation(
@@ -87,6 +103,7 @@ export const ExcelTemplateDownload: FC<
 
     setIsImporting(true)
     setImportStatus(null)
+    setImportErrorMessage(undefined)
     try {
       // 1. Ask the server (authenticated against DMR) for a presigned upload
       //    URL. The resulting { url, key } lands in externalData.importPresign.
@@ -111,7 +128,7 @@ export const ExcelTemplateDownload: FC<
         | undefined
 
       if (!presign?.url) {
-        setImportStatus('error')
+        failImport()
         return
       }
 
@@ -136,7 +153,7 @@ export const ExcelTemplateDownload: FC<
       }
 
       if (!uploadResponse.ok) {
-        setImportStatus('error')
+        failImport()
         return
       }
 
@@ -162,11 +179,12 @@ export const ExcelTemplateDownload: FC<
         | {
             status?: 'success' | 'failure'
             data?: { criteria?: { type?: string }[] }
+            reason?: string | string[] | { title?: string; summary?: string }
           }
         | undefined
 
       if (importData?.status !== 'success') {
-        setImportStatus('error')
+        failImport(getProviderErrorMessage(importData?.reason))
         return
       }
 
@@ -182,7 +200,7 @@ export const ExcelTemplateDownload: FC<
       setImportStatus('success')
       goToScreen?.(NEXT_SCREEN_ID)
     } catch {
-      setImportStatus('error')
+      failImport()
     } finally {
       setIsImporting(false)
     }
@@ -230,13 +248,13 @@ export const ExcelTemplateDownload: FC<
     // Bail on hasError rather than risk seeding duplicate job factors on top
     // of criteria that may already exist server-side.
     if (hasError) {
-      setImportStatus('error')
+      failImport()
       return
     }
     try {
       await seedDefaultJobFactorsIfEmpty()
     } catch {
-      setImportStatus('error')
+      failImport()
       return
     }
     goToScreen?.(NEXT_SCREEN_ID)
@@ -325,7 +343,10 @@ export const ExcelTemplateDownload: FC<
 
       {importStatus === 'error' && (
         <Box marginTop={3}>
-          <AlertMessage type="error" message={formatMessage(m.importError)} />
+          <AlertMessage
+            type="error"
+            message={importErrorMessage ?? formatMessage(m.importError)}
+          />
         </Box>
       )}
     </Box>

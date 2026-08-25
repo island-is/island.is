@@ -38,6 +38,8 @@ import {
   GaldurDomainModelsBaseViewModel,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
+  JobSearchConfirmationApi,
+  GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
   ApplicantWithdrawLatestApplicationRequest,
   GaldurExternalDomainRequestsHasValidApplicationResponse,
 } from '../../gen/fetch'
@@ -62,6 +64,7 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+  | JobSearchConfirmationApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -614,5 +617,13 @@ export class VmstUnemploymentClientService {
     return await api.applicantGetProfileEligibility({
       id: applicantId,
     })
+  }
+
+  async getQuestionnaire(): Promise<GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse> {
+    const api = await this.createApiClient(
+      JobSearchConfirmationApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.jobSearchConfirmationGetQuestionaireSchema()
   }
 }
