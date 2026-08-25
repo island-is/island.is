@@ -1277,7 +1277,7 @@ export class OrganizationResolver {
 // reachable through the normal SliceUnion/richtext embedding path.
 @Resolver(() => Calculator)
 export class CalculatorMockResolver {
-  @Query(() => [Calculator])
+  @Query(() => [Calculator], { nullable: true })
   calculatorMocks(): Calculator[] {
     return mockCalculatorEntries.map(mapCalculator)
   }

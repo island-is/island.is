@@ -3,6 +3,8 @@ import { registerEnumType } from '@nestjs/graphql'
 export enum RskCalculatorType {
   WITHHOLDING_TAX_ON_WAGES = 'withholdingTaxOnWages',
   CHILD_BENEFIT = 'childBenefit',
+  VEHICLE_TAX = 'vehicleTax',
+  VEHICLE_BENEFIT = 'vehicleBenefit',
 }
 
 registerEnumType(RskCalculatorType, {
@@ -14,6 +16,8 @@ export enum RskCalculatorFieldKind {
   NUMBER = 'number',
   SELECT = 'select',
   BOOLEAN = 'boolean',
+  TEXT = 'text',
+  CHECKBOX = 'checkbox',
 }
 
 registerEnumType(RskCalculatorFieldKind, {

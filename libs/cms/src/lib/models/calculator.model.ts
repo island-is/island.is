@@ -26,8 +26,14 @@ export class Calculator {
   // merged validation rejects two differently-scoped scalars sharing a field
   // name across union members, so this must match ConnectedComponent's type.
   @Field(() => graphqlTypeJson, { nullable: true })
-  configJson?: Record<string, any> | null
+  configJson?: Record<string, any>
 
+  // Must stay `nullable: true` to match ConnectedComponent's field of the
+  // same name -- both are `Slice` union members, and GraphQL's
+  // overlapping-fields-can-be-merged rule requires identical types for a
+  // shared field name across union members queried through the same
+  // selection (e.g. richtext/Slice queries). The mapper itself never
+  // actually produces null, but the union constraint takes precedence.
   @CacheField(() => GraphQLJSONObject, { nullable: true })
   translationStrings!: Record<string, string>
 }
@@ -40,6 +46,6 @@ export const mapCalculator = ({
   id: sys.id,
   title: fields?.title ?? '',
   calculatorType: fields?.calculatorType,
-  configJson: fields?.configJson ?? null,
+  configJson: fields?.configJson ?? undefined,
   translationStrings: fields?.translationNamespace?.fields?.strings ?? {},
 })

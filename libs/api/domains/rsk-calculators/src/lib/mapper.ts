@@ -3,6 +3,10 @@ import { isDefined } from '@island.is/shared/utils'
 import type {
   GetApiBarnabaeturData,
   GetApiBarnabaeturResponse,
+  GetApiBifreidagjoldData,
+  GetApiBifreidagjoldResponse,
+  GetApiBifreidahlunnindiData,
+  GetApiBifreidahlunnindiResponse,
   GetApiStadgreidslaData,
   GetApiStadgreidslaResponse,
 } from '@island.is/clients/rsk/reiknivelar'
@@ -13,7 +17,13 @@ import { CalculatorInputValue } from './dto/inputValue.input'
 
 type StadgreidslaQuery = NonNullable<GetApiStadgreidslaData['query']>
 type BarnabaeturQuery = GetApiBarnabaeturData['query']
-type CalculatorQuery = StadgreidslaQuery | BarnabaeturQuery
+type BifreidagjoldQuery = GetApiBifreidagjoldData['query']
+type BifreidahlunnindiQuery = GetApiBifreidahlunnindiData['query']
+type CalculatorQuery =
+  | StadgreidslaQuery
+  | BarnabaeturQuery
+  | BifreidagjoldQuery
+  | BifreidahlunnindiQuery
 
 const parseNumber = (raw: string, key: string): number => {
   const value = Number(raw)
@@ -29,6 +39,16 @@ const parseBoolean = (raw: string, key: string): boolean => {
   throw new BadRequestException(`Invalid boolean value for field "${key}"`)
 }
 
+const parseString = (raw: string): string => raw
+
+const parseDate = (raw: string, key: string): Date => {
+  const value = new Date(raw)
+  if (Number.isNaN(value.getTime())) {
+    throw new BadRequestException(`Invalid date value for field "${key}"`)
+  }
+  return value
+}
+
 /**
  * The raw API expects several fields as a ratio between 0 and 1. We expose
  * these to the web client as a 0-100 percentage for better UX and convert
@@ -36,6 +56,38 @@ const parseBoolean = (raw: string, key: string): boolean => {
  */
 const parsePercentageToRatio = (raw: string, key: string): number =>
   parseNumber(raw, key) / 100
+
+const buildYearOptions = (years: number[]) =>
+  years.map((year) => ({ value: String(year), label: String(year) }))
+
+const CURRENT_YEAR = new Date().getFullYear()
+
+// The current year and the two years before it. `years[0]` becomes the
+// field's default selection (see `CalculatorFieldInput` in the web slice,
+// which defaults a SELECT field to its first option).
+const currentYearIncomeYearOptions = buildYearOptions([
+  CURRENT_YEAR,
+  CURRENT_YEAR - 1,
+  CURRENT_YEAR - 2,
+])
+
+// Child benefit is calculated from the previous year's income, so the
+// previous year is the sensible default.
+const previousYearIncomeYearOptions = buildYearOptions([
+  CURRENT_YEAR - 1,
+  CURRENT_YEAR,
+  CURRENT_YEAR - 2,
+])
+
+// 32-bit signed int max. A generic overflow guard for NUMBER fields with no
+// real business-defined upper bound -- not a business rule itself.
+const MAX_SANE_NUMBER_VALUE = 2_147_483_647
+
+const buildCountOptions = (max: number) =>
+  Array.from({ length: max + 1 }, (_, count) => ({
+    value: String(count),
+    label: String(count),
+  }))
 
 interface FieldDefinition {
   key: string
@@ -47,7 +99,7 @@ interface FieldDefinition {
   min?: number
   max?: number
   options?: { value: string; label: string }[]
-  parse: (raw: string, key: string) => number | boolean
+  parse: (raw: string, key: string) => number | boolean | string | Date
 }
 
 const stadgreidslaFields: FieldDefinition[] = [
@@ -80,8 +132,9 @@ const stadgreidslaFields: FieldDefinition[] = [
     key: 'incomeYear',
     rawKey: 'tekjuar',
     label: 'Tekjuár',
-    kind: RskCalculatorFieldKind.NUMBER,
-    required: false,
+    kind: RskCalculatorFieldKind.SELECT,
+    required: true,
+    options: currentYearIncomeYearOptions,
     parse: parseNumber,
   },
   {
@@ -97,38 +150,44 @@ const stadgreidslaFields: FieldDefinition[] = [
   {
     key: 'salary',
     rawKey: 'laun',
-    label: 'Laun',
+    label: 'Heildarlaun mánaðar',
     kind: RskCalculatorFieldKind.NUMBER,
-    required: false,
+    required: true,
     unit: 'ISK',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
     parse: parseNumber,
   },
   {
     key: 'pensionFundRatio',
     rawKey: 'lifeyrissjodurHlutfall',
-    label: 'Hlutfall í lífeyrissjóð',
-    kind: RskCalculatorFieldKind.NUMBER,
+    label: 'Í lífeyrissjóð',
+    kind: RskCalculatorFieldKind.SELECT,
     required: false,
     unit: '%',
-    min: 0,
-    max: 100,
+    // 4% is the statutory minimum employee contribution to a pension fund.
+    options: [{ value: '4', label: '4%' }],
     parse: parsePercentageToRatio,
   },
   {
     key: 'privatePensionRatio',
     rawKey: 'sereignHlutfall',
-    label: 'Hlutfall í séreignarsparnað',
-    kind: RskCalculatorFieldKind.NUMBER,
+    label: 'Í séreignarsjóð',
+    kind: RskCalculatorFieldKind.SELECT,
     required: false,
     unit: '%',
-    min: 0,
-    max: 100,
+    // Voluntary private pension savings are commonly 0% (opt out), 2%, or 4%.
+    options: [
+      { value: '0', label: '0%' },
+      { value: '2', label: '2%' },
+      { value: '4', label: '4%' },
+    ],
     parse: parsePercentageToRatio,
   },
   {
     key: 'taxCardUtilization',
     rawKey: 'nytingSkattkorts',
-    label: 'Nýting skattkorts',
+    label: 'Nýting eigin afsláttar',
     kind: RskCalculatorFieldKind.NUMBER,
     required: false,
     unit: '%',
@@ -139,7 +198,7 @@ const stadgreidslaFields: FieldDefinition[] = [
   {
     key: 'spouseTaxCardUtilization',
     rawKey: 'nytingSkattkortsMaka',
-    label: 'Nýting skattkorts maka',
+    label: 'Nýting afsláttar maka',
     kind: RskCalculatorFieldKind.NUMBER,
     required: false,
     unit: '%',
@@ -150,10 +209,12 @@ const stadgreidslaFields: FieldDefinition[] = [
   {
     key: 'accumulatedPersonalTaxCredit',
     rawKey: 'uppsafnadurPersonuafslattur',
-    label: 'Uppsafnaður persónuafsláttur',
+    label: 'Uppsafnaður afsláttur',
     kind: RskCalculatorFieldKind.NUMBER,
     required: false,
     unit: 'ISK',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
     parse: parseNumber,
   },
   {
@@ -163,15 +224,19 @@ const stadgreidslaFields: FieldDefinition[] = [
     kind: RskCalculatorFieldKind.NUMBER,
     required: false,
     unit: 'ISK',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
     parse: parseNumber,
   },
   {
     key: 'unionDues',
     rawKey: 'stettarfelag',
-    label: 'Stéttarfélagsgjald',
+    label: 'Gjöld f. stéttarfélag',
     kind: RskCalculatorFieldKind.NUMBER,
     required: false,
     unit: 'ISK',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
     parse: parseNumber,
   },
   {
@@ -181,6 +246,8 @@ const stadgreidslaFields: FieldDefinition[] = [
     kind: RskCalculatorFieldKind.NUMBER,
     required: false,
     unit: 'ISK',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
     parse: parseNumber,
   },
   {
@@ -201,6 +268,8 @@ const stadgreidslaFields: FieldDefinition[] = [
     kind: RskCalculatorFieldKind.NUMBER,
     required: false,
     unit: 'ISK',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
     parse: parseNumber,
   },
   {
@@ -210,6 +279,8 @@ const stadgreidslaFields: FieldDefinition[] = [
     kind: RskCalculatorFieldKind.NUMBER,
     required: false,
     unit: 'ISK',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
     parse: parseNumber,
   },
 ]
@@ -218,48 +289,57 @@ const barnabaeturFields: FieldDefinition[] = [
   {
     key: 'marriedOrCohabiting',
     rawKey: 'hjuskaparstada',
-    label: 'Í hjónabandi eða sambúð',
-    kind: RskCalculatorFieldKind.BOOLEAN,
+    label: 'Hjúskaparstaða',
+    kind: RskCalculatorFieldKind.SELECT,
     required: true,
+    options: [
+      { value: 'true', label: 'Hjón / Í sambúð' },
+      { value: 'false', label: 'Einhleypingur' },
+    ],
     parse: parseBoolean,
   },
   {
     key: 'incomeYear',
     rawKey: 'tekjuar',
     label: 'Tekjuár',
-    kind: RskCalculatorFieldKind.NUMBER,
+    kind: RskCalculatorFieldKind.SELECT,
     required: true,
+    options: previousYearIncomeYearOptions,
     parse: parseNumber,
   },
   {
     key: 'incomeBase',
     rawKey: 'tekjustofn',
-    label: 'Tekjustofn',
+    label: 'Tekjustofn ársins',
     kind: RskCalculatorFieldKind.NUMBER,
     required: true,
     unit: 'ISK',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
     parse: parseNumber,
   },
   {
     key: 'numberOfChildren',
     rawKey: 'fjoldiBarna',
-    label: 'Fjöldi barna',
-    kind: RskCalculatorFieldKind.NUMBER,
+    label: 'Börn alls',
+    kind: RskCalculatorFieldKind.SELECT,
     required: true,
+    options: buildCountOptions(10),
     parse: parseNumber,
   },
   {
     key: 'numberOfChildrenUnder7',
     rawKey: 'fjoldiBarnaUndir7ara',
-    label: 'Fjöldi barna undir 7 ára',
-    kind: RskCalculatorFieldKind.NUMBER,
+    label: 'Börn undir 7 ára',
+    kind: RskCalculatorFieldKind.SELECT,
     required: true,
+    options: buildCountOptions(10),
     parse: parseNumber,
   },
   {
     key: 'splitCustody',
     rawKey: 'skiptBuseta',
-    label: 'Skipt búseta',
+    label: 'Er um að ræða skipta búsetu?',
     kind: RskCalculatorFieldKind.BOOLEAN,
     required: true,
     parse: parseBoolean,
@@ -267,24 +347,170 @@ const barnabaeturFields: FieldDefinition[] = [
   {
     key: 'splitCustodyChildrenOver7',
     rawKey: 'skiptBornYfir7ara',
-    label: 'Börn yfir 7 ára í skiptri búsetu',
-    kind: RskCalculatorFieldKind.NUMBER,
+    label: 'Börn alls',
+    kind: RskCalculatorFieldKind.SELECT,
     required: false,
+    options: buildCountOptions(10),
     parse: parseNumber,
   },
   {
     key: 'splitCustodyChildrenUnder7',
     rawKey: 'skiptBornUndir7ara',
-    label: 'Börn undir 7 ára í skiptri búsetu',
+    label: 'Börn undir 7 ára',
+    kind: RskCalculatorFieldKind.SELECT,
+    required: false,
+    options: buildCountOptions(10),
+    parse: parseNumber,
+  },
+]
+
+const vehicleTaxFields: FieldDefinition[] = [
+  {
+    key: 'year',
+    rawKey: 'ar',
+    label: 'Ár',
+    kind: RskCalculatorFieldKind.SELECT,
+    required: true,
+    options: currentYearIncomeYearOptions,
+    parse: parseNumber,
+  },
+  {
+    key: 'licensePlate',
+    rawKey: 'bilnumer',
+    label: 'Bílnúmer',
+    kind: RskCalculatorFieldKind.TEXT,
+    required: true,
+    parse: parseString,
+  },
+  {
+    key: 'period',
+    rawKey: 'gjaldtimabil',
+    label: 'Tímabil',
+    kind: RskCalculatorFieldKind.SELECT,
+    required: true,
+    options: [
+      { value: 'false', label: '1. janúar - 30. júní' },
+      { value: 'true', label: '1. júlí - 31. desember' },
+    ],
+    parse: parseBoolean,
+  },
+  {
+    // Only used when a vehicle changed owners mid-period; the UI gates this
+    // behind a "Skipta upp tímabilinu" toggle section, not a visibleWhen
+    // condition on another field's value.
+    key: 'periodSplitDate',
+    rawKey: 'gjaldskipting',
+    label: 'Skiptidagur (ÁÁÁÁ-MM-DD)',
+    kind: RskCalculatorFieldKind.TEXT,
+    required: false,
+    // The real query type declares this as a `Date`, not a `string`.
+    parse: parseDate,
+  },
+  {
+    // UI-only switch: lets the viewer enter weight/emissions manually
+    // instead of looking them up by license plate. getApiBifreidagjold's
+    // query has no params for manual weight/CO2 -- see manualCurbWeight
+    // etc. below -- so this and its dependent fields are currently ignored
+    // server-side until the API supports submitting them.
+    key: 'manualWeightEntry',
+    rawKey: 'manualWeightEntry',
+    label: 'Slá inn þyngd og losun',
+    kind: RskCalculatorFieldKind.BOOLEAN,
+    required: false,
+    parse: parseBoolean,
+  },
+  {
+    key: 'manualCurbWeight',
+    rawKey: 'eiginthyngd',
+    label: 'Eigin þyngd',
     kind: RskCalculatorFieldKind.NUMBER,
     required: false,
+    unit: 'kg',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
     parse: parseNumber,
+  },
+  {
+    key: 'manualNedcValue',
+    rawKey: 'nedc',
+    label: 'NEDC gildi',
+    kind: RskCalculatorFieldKind.NUMBER,
+    required: false,
+    unit: 'g/km CO2',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
+    parse: parseNumber,
+  },
+  {
+    key: 'manualWltpValue',
+    rawKey: 'wltp',
+    label: 'WLTP gildi',
+    kind: RskCalculatorFieldKind.NUMBER,
+    required: false,
+    unit: 'g/km CO2',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
+    parse: parseNumber,
+  },
+]
+
+const vehicleBenefitFields: FieldDefinition[] = [
+  {
+    key: 'isElectric',
+    rawKey: 'rafbill',
+    label: 'Eldsneyti',
+    kind: RskCalculatorFieldKind.SELECT,
+    required: true,
+    options: [
+      { value: 'false', label: 'Bensín/dísel/tvinnbíll' },
+      { value: 'true', label: 'Rafbíll/vetni/metan' },
+    ],
+    parse: parseBoolean,
+  },
+  {
+    key: 'purchaseYear',
+    rawKey: 'kaupar',
+    label: 'Kaupár',
+    kind: RskCalculatorFieldKind.NUMBER,
+    required: true,
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
+    parse: parseNumber,
+  },
+  {
+    key: 'purchasePrice',
+    rawKey: 'kaupverd',
+    label: 'Kaupverð',
+    kind: RskCalculatorFieldKind.NUMBER,
+    required: true,
+    unit: 'ISK',
+    min: 0,
+    max: MAX_SANE_NUMBER_VALUE,
+    parse: parseNumber,
+  },
+  {
+    key: 'employeePaysRunningCosts',
+    rawKey: 'starfsmadurGreidirRekstrarkostnad',
+    label: 'Starfsmaður greiðir allan rekstrarkostnað',
+    kind: RskCalculatorFieldKind.CHECKBOX,
+    required: false,
+    parse: parseBoolean,
+  },
+  {
+    key: 'employeePaysCharging',
+    rawKey: 'starfsmadurGreidirHledslu',
+    label: 'Starfsmaður hleður rafbíl á sinn kostnað',
+    kind: RskCalculatorFieldKind.CHECKBOX,
+    required: false,
+    parse: parseBoolean,
   },
 ]
 
 const fieldDefinitionsByType: Record<RskCalculatorType, FieldDefinition[]> = {
   [RskCalculatorType.WITHHOLDING_TAX_ON_WAGES]: stadgreidslaFields,
   [RskCalculatorType.CHILD_BENEFIT]: barnabaeturFields,
+  [RskCalculatorType.VEHICLE_TAX]: vehicleTaxFields,
+  [RskCalculatorType.VEHICLE_BENEFIT]: vehicleBenefitFields,
 }
 
 export const getCalculatorFields = (
@@ -314,11 +540,14 @@ export const buildCalculatorQuery = <TQuery extends CalculatorQuery>(
 ): TQuery => {
   const definitions = fieldDefinitionsByType[calculatorType]
   const valuesByKey = new Map(input.map((entry) => [entry.key, entry.value]))
-  const query: Record<string, number | boolean> = {}
+  const query: Record<string, number | boolean | string | Date> = {}
 
   for (const definition of definitions) {
     const raw = valuesByKey.get(definition.key)
-    if (raw === undefined) {
+    // The web client always submits every field, so an optional field left
+    // blank arrives as "" rather than being omitted -- treat both as "not
+    // provided" rather than parsing an empty string.
+    if (raw === undefined || raw === '') {
       if (definition.required) {
         throw new BadRequestException(
           `Missing required field "${definition.key}"`,
@@ -606,6 +835,92 @@ export const mapBarnabaeturResultToRows = (
       result.barnabaeturFyrirSkiptingu,
       { unit: 'ISK' },
     ),
+  ]
+
+  return rows.filter(isDefined)
+}
+
+export const mapBifreidagjoldResultToRows = (
+  result: GetApiBifreidagjoldResponse | undefined,
+): CalculatorResultRow[] => {
+  if (!result) {
+    throw new BadRequestException('No calculation result was returned')
+  }
+
+  const rows = [
+    buildRow('period', 'Tímabil', result.timabil),
+    buildRow('ownershipDays', 'Gjaldar', result.gjaldar),
+    buildRow('curbWeight', 'Eigin þyngd', result.eiginthyngd, { unit: 'kg' }),
+    buildRow('co2Emissions', 'Losun koltvísýrings (CO2)', result.co2),
+    buildRow('vehicleTax', 'Bifreiðagjald', result.bifreidagjold, {
+      unit: 'ISK',
+    }),
+    buildRow(
+      'processingFee',
+      'Úrvinnslugjald',
+      result.urvinnslugjald,
+      { unit: 'ISK' },
+    ),
+    buildRow(
+      'totalVehicleTax',
+      'Bifreiðagjöld alls',
+      result.bifreidagjoldAlls,
+      { unit: 'ISK', emphasis: true },
+    ),
+  ]
+
+  const buildSplitRows = (
+    split: typeof result.fyrraTimabil,
+    group: string,
+  ) => {
+    if (!split) return []
+    return [
+      buildRow('splitVehicleTax', 'Bifreiðagjald', split.bifreidagjald, {
+        unit: 'ISK',
+        group,
+      }),
+      buildRow(
+        'splitProcessingFee',
+        'Úrvinnslugjald',
+        split.urvinnslugjald,
+        { unit: 'ISK', group },
+      ),
+      buildRow(
+        'splitTotalVehicleTax',
+        'Bifreiðagjöld alls',
+        split.bifreidagjaldAlls,
+        { unit: 'ISK', group },
+      ),
+    ]
+  }
+
+  rows.push(
+    ...buildSplitRows(result.fyrraTimabil, 'fyrraTimabil'),
+    ...buildSplitRows(result.seinnaTimabil, 'seinnaTimabil'),
+  )
+
+  return rows.filter(isDefined)
+}
+
+export const mapBifreidahlunnindiResultToRows = (
+  result: GetApiBifreidahlunnindiResponse | undefined,
+): CalculatorResultRow[] => {
+  if (!result) {
+    throw new BadRequestException('No calculation result was returned')
+  }
+
+  const rows = [
+    buildRow('purchaseYear', 'Kaupár', result.kaupar),
+    buildRow('purchasePrice', 'Kaupverð', result.kaupverd, { unit: 'ISK' }),
+    buildRow(
+      'monthlyBenefit',
+      'Mánaðarhlunnindi',
+      result.manadarhlunnindi,
+      { unit: 'ISK', emphasis: true },
+    ),
+    buildRow('annualBenefit', 'Árshlunnindi', result.arshlunnindi, {
+      unit: 'ISK',
+    }),
   ]
 
   return rows.filter(isDefined)

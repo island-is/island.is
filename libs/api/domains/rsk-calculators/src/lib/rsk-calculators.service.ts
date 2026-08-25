@@ -2,6 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { ReiknivelarClientService } from '@island.is/clients/rsk/reiknivelar'
 import type {
   GetApiBarnabaeturData,
+  GetApiBifreidagjoldData,
+  GetApiBifreidahlunnindiData,
   GetApiStadgreidslaData,
 } from '@island.is/clients/rsk/reiknivelar'
 import { CalculatorField } from './models/field.model'
@@ -12,6 +14,8 @@ import {
   buildCalculatorQuery,
   getCalculatorFields,
   mapBarnabaeturResultToRows,
+  mapBifreidagjoldResultToRows,
+  mapBifreidahlunnindiResultToRows,
   mapStadgreidslaResultToRows,
 } from './mapper'
 
@@ -42,6 +46,23 @@ export class RskCalculatorsService {
         )
         const result = await this.reiknivelarService.getBarnabaetur(query)
         return mapBarnabaeturResultToRows(result)
+      }
+      case RskCalculatorType.VEHICLE_TAX: {
+        const query = buildCalculatorQuery<GetApiBifreidagjoldData['query']>(
+          calculatorType,
+          input,
+        )
+        const result = await this.reiknivelarService.getBifreidagjold(query)
+        return mapBifreidagjoldResultToRows(result)
+      }
+      case RskCalculatorType.VEHICLE_BENEFIT: {
+        const query = buildCalculatorQuery<
+          GetApiBifreidahlunnindiData['query']
+        >(calculatorType, input)
+        const result = await this.reiknivelarService.getBifreidahlunnindi(
+          query,
+        )
+        return mapBifreidahlunnindiResultToRows(result)
       }
       default:
         throw new BadRequestException(

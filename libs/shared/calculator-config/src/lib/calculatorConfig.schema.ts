@@ -25,12 +25,21 @@ const sectionFieldSchema = z.object({
   key: z.string().min(1),
   span: z.number().int().min(1).max(12),
   visibleWhen: conditionSchema.optional(),
+  // When set, the field is rendered but disabled while the condition holds
+  // -- e.g. a license plate lookup field disabled while a "manual entry"
+  // toggle field is on. Unlike visibleWhen, the field stays visible.
+  disabledWhen: conditionSchema.optional(),
 })
 
 const calculatorFieldSectionSchema = z.object({
   key: z.string().min(1),
   title: z.string(),
   description: z.string().optional(),
+  // When set, the section is hidden by default behind a toggle switch
+  // carrying this label; the section (title, description, fields) only
+  // renders once the viewer switches it on. Purely a UI affordance — it is
+  // not tied to any calculator field's visibleWhen condition.
+  toggleLabel: z.string().optional(),
   fields: z.array(sectionFieldSchema),
 })
 
