@@ -16,6 +16,7 @@ DB_PASSWORD=$(aws ssm get-parameter \
     --region "$DUMP_REGION" \
     --output text)
 
+# reteag
 # Create dump
 echo "Creating database dump..."
 PGPASSWORD="$DB_PASSWORD" pg_dump \
