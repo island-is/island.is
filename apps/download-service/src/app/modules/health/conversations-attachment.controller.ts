@@ -20,6 +20,13 @@ import {
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 
+const mimeTypeToExtension: Record<string, string> = {
+  'application/pdf': '.pdf',
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/heic': '.heic',
+}
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.health)
 @Controller('health/conversations')
@@ -71,6 +78,11 @@ export class HealthConversationsAttachmentController {
     const buffer = Buffer.from(attachment.data)
     res.header('Content-Length', buffer.length.toString())
     res.header('Content-Type', attachment.contentType)
+    const ext = mimeTypeToExtension[attachment.contentType] ?? ''
+    res.header(
+      'Content-Disposition',
+      `attachment; filename=fylgiskjal-${messageId}-${attachmentId}${ext}`,
+    )
     res.header('Pragma', 'no-cache')
     res.header('Cache-Control', 'no-store, private, max-age=0')
     return res.status(200).end(buffer)

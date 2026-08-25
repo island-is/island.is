@@ -704,7 +704,7 @@ export class HealthDirectorateHealthService {
     return {
       data: result.data as ArrayBuffer,
       contentType:
-        result.response.headers.get('content-type') ??
+        result.response.headers.get('content-type') ||
         'application/octet-stream',
     }
   }
