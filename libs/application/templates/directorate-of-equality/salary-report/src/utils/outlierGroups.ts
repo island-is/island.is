@@ -19,6 +19,7 @@ export type OutlierGroupAnswer = {
   // Draft-phase id, tracked through useFieldArray so remove/append don't
   // misattribute sync commands by array position. Unused in POSTPONED mode.
   id?: string
+  name?: string
   reason?: string
   action?: string
   signatureName?: string
@@ -87,6 +88,11 @@ export const buildOutlierSyncCommands = (
     finalGroups.map((g, i) => ({
       id: groupIds[i],
       data: {
+        // Unlike its siblings, the generated `name` field isn't nullable —
+        // omit it on blank rather than sending null. In practice this is
+        // already backfilled by SalaryAnalysisResults's setBeforeSubmitCallback
+        // before finalGroups reaches here.
+        name: g.name || undefined,
         reason: g.reason || null,
         action: g.action || null,
         signatureName: g.signatureName || null,

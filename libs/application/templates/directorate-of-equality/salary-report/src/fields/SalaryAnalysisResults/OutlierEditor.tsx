@@ -192,6 +192,7 @@ export const OutlierEditor: FC<Props> = ({
               fieldName={fieldName}
               index={index}
               group={group}
+              liveName={watchedGroups[index]?.name}
               direction={foldGroupDirection(
                 group.employeeOrdinals.flatMap((ordinal) => {
                   const status = payStatusByOrdinal.get(ordinal)

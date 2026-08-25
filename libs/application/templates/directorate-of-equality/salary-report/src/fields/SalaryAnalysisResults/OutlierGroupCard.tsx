@@ -15,6 +15,10 @@ type Props = {
   fieldName: string
   index: number
   group: OutlierGroupAnswer
+  // Live value of group.name, sourced from useWatch rather than useFieldArray's
+  // fields (which only updates on structural changes) so the header updates as
+  // the user types instead of only after an append/remove.
+  liveName?: string
   direction: GroupDirection
   mode: 'draft' | 'postponed'
   errors?: RecordObject
@@ -28,6 +32,7 @@ export const OutlierGroupCard: FC<Props> = ({
   fieldName,
   index,
   group,
+  liveName,
   direction,
   mode,
   errors,
@@ -56,7 +61,7 @@ export const OutlierGroupCard: FC<Props> = ({
     <Box marginBottom={3}>
       <AccordionCard
         id={fieldId}
-        label={`${formatMessage(m.groupHeading)} ${index + 1}`}
+        label={liveName || `${formatMessage(m.groupHeading)} ${index + 1}`}
         visibleContent={`${formatMessage(
           m.groupMembers,
         )}: ${group.employeeOrdinals.map(identifierForOrdinal).join(', ')}`}
@@ -71,13 +76,22 @@ export const OutlierGroupCard: FC<Props> = ({
           <Text variant="small">{formatMessage(prompt)}</Text>
         </Box>
         <InputController
-          id={`${fieldName}.${index}.reason`}
-          name={`${fieldName}.${index}.reason`}
-          label={formatMessage(m.reasonLabel)}
-          textarea
+          id={`${fieldName}.${index}.name`}
+          name={`${fieldName}.${index}.name`}
+          label={formatMessage(m.nameLabel)}
           backgroundColor="blue"
-          error={groupError('reason')}
+          error={groupError('name')}
         />
+        <Box marginTop={2}>
+          <InputController
+            id={`${fieldName}.${index}.reason`}
+            name={`${fieldName}.${index}.reason`}
+            label={formatMessage(m.reasonLabel)}
+            textarea
+            backgroundColor="blue"
+            error={groupError('reason')}
+          />
+        </Box>
         <Box marginTop={2}>
           <InputController
             id={`${fieldName}.${index}.action`}
