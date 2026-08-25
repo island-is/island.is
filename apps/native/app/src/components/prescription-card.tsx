@@ -5,8 +5,9 @@ import styled, { useTheme } from 'styled-components/native'
 
 import chevronDown from '@/assets/icons/chevron-down.png'
 import clockIcon from '@/assets/icons/clock.png'
+import externalLinkIcon from '@/assets/icons/external-link.png'
 import { HealthDirectoratePrescription } from '@/graphql/types/schema'
-import { ExpandableCard, Typography } from '@/ui'
+import { ExpandableCard, Link, LinkText, Typography } from '@/ui'
 import checkmarkIcon from '@/ui/assets/icons/check.png'
 import { capitalizeEveryWord } from '@/utils/capitalize'
 
@@ -41,6 +42,12 @@ const DispensationCheckmark = styled.View`
   padding-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
+type PrescriptionRow = {
+  data?: string | null
+  label: string
+  url?: string
+}
+
 type PrescriptionCardProps = {
   prescription: HealthDirectoratePrescription
 }
@@ -53,7 +60,7 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
   const isExpired =
     prescription.expiryDate && new Date(prescription.expiryDate) < new Date()
 
-  const prescriptionDataInformation = [
+  const prescriptionDataInformation: PrescriptionRow[] = [
     {
       data: prescription.name
         ? capitalizeEveryWord(prescription.name)
@@ -69,6 +76,17 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       label: 'health.prescriptions.indication',
     },
     {
+      data: prescription.dosageInstructions,
+      label: 'health.prescriptions.dosageInstructions',
+    },
+    {
+      data: prescription.url
+        ? intl.formatMessage({ id: 'health.prescriptions.openAttachment' })
+        : undefined,
+      label: 'health.prescriptions.attachment',
+      url: prescription.url ?? undefined,
+    },
+    {
       data: prescription.type,
       label: 'health.prescriptions.type',
     },
@@ -80,13 +98,9 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       data: prescription.totalPrescribedAmount || undefined,
       label: 'health.prescriptions.quantity',
     },
-    {
-      data: prescription.dosageInstructions,
-      label: 'health.prescriptions.dosageInstructions',
-    },
   ]
 
-  const prescriptionDataIssuedBy = [
+  const prescriptionDataIssuedBy: PrescriptionRow[] = [
     {
       data: prescription.issueDate
         ? intl.formatDate(prescription.issueDate)
@@ -94,14 +108,14 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       label: 'health.prescriptions.issueDate',
     },
     {
+      data: prescription.prescriberName,
+      label: 'health.prescriptions.doctor',
+    },
+    {
       data: prescription.expiryDate
         ? intl.formatDate(prescription.expiryDate)
         : undefined,
       label: 'health.prescriptions.expiresAt',
-    },
-    {
-      data: prescription.prescriberName,
-      label: 'health.prescriptions.doctor',
     },
   ]
 
@@ -160,7 +174,15 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
                   </Typography>
                 </RowItem>
                 <RowItem>
-                  <Typography variant="body3">{item.data}</Typography>
+                  {item.url ? (
+                    <Link url={item.url}>
+                      <LinkText variant="small" icon={externalLinkIcon}>
+                        {item.data}
+                      </LinkText>
+                    </Link>
+                  ) : (
+                    <Typography variant="body3">{item.data}</Typography>
+                  )}
                 </RowItem>
               </TableRow>
             ))}
