@@ -1,7 +1,7 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { ApolloError } from '@apollo/client'
+import type { ApolloError } from '@apollo/client'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
@@ -9,16 +9,16 @@ import {
   core,
   signedVerdictOverview as m,
 } from '@island.is/judicial-system-web/messages'
-import {
+import { Modal } from '@island.is/judicial-system-web/src/components'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { useRulingSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/components/Modals/SigningMethodSelectionModal/rulingSignatureConfirmation.generated'
+import type {
   Case,
-  CaseType,
   RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtRecordSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/courtRecordSignatureConfirmation.generated'
 
-import { Modal } from '../..'
-import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
-import { useRulingSignatureConfirmationQuery } from '../SigningMethodSelectionModal/rulingSignatureConfirmation.generated'
 import { signingModal as signingModalStrings } from './SignatureConfirmationModal.strings'
 
 export type SignatureType = 'ruling' | 'courtRecord'

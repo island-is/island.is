@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import router from 'next/router'
@@ -39,8 +40,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseFile,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,

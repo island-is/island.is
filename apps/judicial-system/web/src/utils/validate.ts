@@ -1,29 +1,32 @@
 // TODO: Add tests
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
-import {
+import type {
   AppealCase,
+  Case,
+  CourtSessionResponse,
+  DateLog,
+  Defendant,
+  IndictmentCount,
+  User,
+  Victim,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealDecisionPartyRole,
-  Case,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
-  CourtSessionResponse,
   CourtSessionRulingType,
   CourtSessionStringType,
-  DateLog,
-  Defendant,
   DefenderChoice,
-  IndictmentCount,
   IndictmentCountOffense,
   IndictmentDecision,
   SessionArrangements,
-  User,
-  Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from './arrayHelpers'
@@ -65,7 +68,7 @@ const getRegexByValidation = (validation: Validation) => {
       }
     case 'police-casenumber-format':
       return {
-        regex: /^[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-\d{1,99999}$/,
+        regex: POLICE_CASE_NUMBER_REGEX,
         errorMessage: 'Dæmi: 012-3456-7890',
       }
     case 'national-id':

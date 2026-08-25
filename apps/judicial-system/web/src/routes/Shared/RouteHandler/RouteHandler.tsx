@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
@@ -6,7 +7,7 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getRoute } from './RouteHandler.logic'
 import * as styles from './RouteHandler.css'

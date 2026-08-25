@@ -1,11 +1,5 @@
-import {
-  FC,
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import type { FC } from 'react'
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
@@ -31,12 +25,14 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  CaseState,
-  CourtSessionType,
   Defendant,
   UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  CourtSessionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
