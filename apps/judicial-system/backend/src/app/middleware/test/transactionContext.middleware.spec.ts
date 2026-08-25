@@ -39,8 +39,12 @@ describe('TransactionContextMiddleware', () => {
   const middleware = new TransactionContextMiddleware(logger)
 
   // Runs work inside a request that the middleware has wrapped, and hands back
-  // the response so that the test can end the request afterwards.
-  const givenARequest = async (work: () => Promise<void> | void) => {
+  // the response so that the test can end the request afterwards. work also
+  // receives the response, for the cases that have to end it from inside the
+  // request's own context rather than after it.
+  const givenARequest = async (
+    work: (res: ReturnType<typeof createResponse>) => Promise<void> | void,
+  ) => {
     const res = createResponse()
 
     // The middleware calls next() synchronously inside its ALS store, so the
@@ -51,7 +55,7 @@ describe('TransactionContextMiddleware', () => {
       {} as Request,
       res as unknown as Response,
       (() => {
-        result = Promise.resolve(work())
+        result = Promise.resolve(work(res))
       }) as NextFunction,
     )
 
@@ -87,7 +91,7 @@ describe('TransactionContextMiddleware', () => {
       await givenARequest(() => {
         expect(getTransactionContext()).toEqual({
           transaction: null,
-          settled: false,
+          settlement: 'open',
           afterCommit: [],
         })
       })
@@ -129,6 +133,43 @@ describe('TransactionContextMiddleware', () => {
       })
     })
 
+    it('should not let a caller retry a failed open after the response closed', async () => {
+      const error = new Error('Some error')
+      const transaction = createTransaction()
+      let failToOpen: (error: Error) => void = () => undefined
+      const sequelize = {
+        transaction: jest
+          .fn()
+          .mockReturnValueOnce(
+            new Promise<Transaction>((_, reject) => {
+              failToOpen = reject
+            }),
+          )
+          .mockResolvedValueOnce(transaction),
+      } as unknown as Sequelize
+
+      // The response ends while the transaction is still opening, and the open
+      // then fails. The close handler has settled the slot and will not fire
+      // again, so the caller handling that rejection must not be handed a
+      // second transaction - nothing would be left to settle it.
+      await givenARequest(async (res) => {
+        const opening = getOrCreateTransaction(sequelize)
+
+        const closed = res.emit('close')
+
+        failToOpen(error)
+
+        await closed
+        await expect(opening).rejects.toBe(error)
+
+        await expect(getOrCreateTransaction(sequelize)).rejects.toBeInstanceOf(
+          InternalServerErrorException,
+        )
+      })
+
+      expect(sequelize.transaction).toHaveBeenCalledTimes(1)
+    })
+
     it('should let a caller retry after a failed transaction open', async () => {
       const error = new Error('Some error')
       const transaction = createTransaction()
@@ -147,6 +188,50 @@ describe('TransactionContextMiddleware', () => {
         await expect(getOrCreateTransaction(sequelize)).resolves.toBe(
           transaction,
         )
+      })
+    })
+
+    it('should refuse to open a transaction once the slot is settled', async () => {
+      const transaction = createTransaction()
+      const sequelize = {
+        transaction: jest.fn().mockResolvedValue(transaction),
+      } as unknown as Sequelize
+
+      await givenARequest(async () => {
+        const context = getTransactionContext()
+
+        // Both settlers are spent by this point, so a transaction opened now
+        // would be one nothing ever commits or rolls back.
+        if (context) {
+          context.settlement = 'settled'
+        }
+
+        await expect(getOrCreateTransaction(sequelize)).rejects.toBeInstanceOf(
+          InternalServerErrorException,
+        )
+        expect(sequelize.transaction).not.toHaveBeenCalled()
+      })
+    })
+
+    it('should refuse to reopen a transaction while the slot is being settled', async () => {
+      const transaction = createTransaction()
+      const sequelize = {
+        transaction: jest.fn().mockResolvedValue(transaction),
+      } as unknown as Sequelize
+
+      await givenARequest(async () => {
+        await getOrCreateTransaction(sequelize)
+
+        const context = getTransactionContext()
+
+        if (context) {
+          context.settlement = 'settling'
+        }
+
+        await expect(getOrCreateTransaction(sequelize)).rejects.toBeInstanceOf(
+          InternalServerErrorException,
+        )
+        expect(sequelize.transaction).toHaveBeenCalledTimes(1)
       })
     })
 
@@ -189,11 +274,35 @@ describe('TransactionContextMiddleware', () => {
         await getOrCreateTransaction(sequelize)
 
         // The interceptor settles the slot it already holds; the middleware
-        // only has to respect the flag.
+        // only has to respect the state.
         const context = getTransactionContext()
 
         if (context) {
-          context.settled = true
+          context.settlement = 'settled'
+        }
+      })
+
+      await res.emit('close')
+
+      expect(transaction.rollback).not.toHaveBeenCalled()
+    })
+
+    it('should not roll back a transaction that is being settled', async () => {
+      const transaction = createTransaction()
+      const sequelize = {
+        transaction: jest.fn().mockResolvedValue(transaction),
+      } as unknown as Sequelize
+
+      const res = await givenARequest(async () => {
+        await getOrCreateTransaction(sequelize)
+
+        // What the interceptor looks like mid-commit: it has claimed the slot
+        // but COMMIT has not come back yet. Rolling back here would race it on
+        // the same transaction.
+        const context = getTransactionContext()
+
+        if (context) {
+          context.settlement = 'settling'
         }
       })
 

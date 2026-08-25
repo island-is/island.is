@@ -42,16 +42,16 @@ describe('TransactionCommitInterceptor', () => {
     it('should commit it, settle the slot and forward the value', async () => {
       const next: CallHandler = { handle: () => of('some value') }
 
-      const { value, settled } = await runInRequestContext(async () => {
+      const { value, settlement } = await runInRequestContext(async () => {
         await getOrCreateTransaction(sequelize)
 
         const value = await lastValueFrom(interceptor.intercept(context, next))
 
-        return { value, settled: getTransactionContext()?.settled }
+        return { value, settlement: getTransactionContext()?.settlement }
       })
 
       expect(transaction.commit).toHaveBeenCalledTimes(1)
-      expect(settled).toBe(true)
+      expect(settlement).toBe('settled')
       expect(value).toBe('some value')
     })
 
@@ -102,7 +102,7 @@ describe('TransactionCommitInterceptor', () => {
       const callback = jest.fn()
       const next: CallHandler = { handle: () => of('some value') }
 
-      const settled = await runInRequestContext(async () => {
+      const settlement = await runInRequestContext(async () => {
         await getOrCreateTransaction(sequelize)
         registerAfterCommit(callback)
 
@@ -110,10 +110,10 @@ describe('TransactionCommitInterceptor', () => {
           lastValueFrom(interceptor.intercept(context, next)),
         ).rejects.toBe(error)
 
-        return getTransactionContext()?.settled
+        return getTransactionContext()?.settlement
       })
 
-      expect(settled).toBe(true)
+      expect(settlement).toBe('settled')
       expect(callback).not.toHaveBeenCalled()
     })
 
@@ -135,6 +135,38 @@ describe('TransactionCommitInterceptor', () => {
         'An after commit callback failed',
         { error },
       )
+    })
+
+    it('should claim the slot before committing, so a response that closes mid commit does not roll it back', async () => {
+      let finishCommit: () => void = () => undefined
+      transaction.commit.mockReturnValueOnce(
+        new Promise<void>((resolve) => {
+          finishCommit = resolve
+        }),
+      )
+      const next: CallHandler = { handle: () => of('some value') }
+
+      await runInRequestContext(async () => {
+        await getOrCreateTransaction(sequelize)
+
+        const intercepted = lastValueFrom(interceptor.intercept(context, next))
+
+        // Let the interceptor reach the pending commit, then look at the slot
+        // the way the middleware's close handler would: a client abort here
+        // must find the transaction claimed, not open, or it would roll back a
+        // COMMIT that is already in flight.
+        await Promise.resolve()
+
+        expect(transaction.commit).toHaveBeenCalledTimes(1)
+        expect(getTransactionContext()?.settlement).toBe('settling')
+
+        finishCommit()
+
+        await intercepted
+
+        expect(getTransactionContext()?.settlement).toBe('settled')
+        expect(transaction.rollback).not.toHaveBeenCalled()
+      })
     })
 
     it('should not commit when the handler failed', async () => {
