@@ -2,6 +2,7 @@ import {
   Box,
   Checkbox,
   Filter,
+  Icon,
   Input,
   Stack,
   Text,
@@ -24,6 +25,7 @@ import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ConversationAvatar from './components/ConversationAvatar'
+import * as styles from './HealthConversations.css'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
@@ -290,7 +292,20 @@ const HealthConversations = () => {
                       logoUrl={item.organization?.logoUrl ?? undefined}
                     />
                     <Box minWidth={0}>
-                      <Text variant="medium">{item.organization?.name}</Text>
+                      <Box display="flex" alignItems="center" columnGap={1}>
+                        <Text variant="medium">
+                          {item.organization?.name}
+                        </Text>
+                        {item.hasAttachment && (
+                          <Icon
+                            icon="attach"
+                            size="small"
+                            color="black"
+                            type="outline"
+                            className={styles.attachmentIcon}
+                          />
+                        )}
+                      </Box>
                       <Text
                         color="blue400"
                         truncate
