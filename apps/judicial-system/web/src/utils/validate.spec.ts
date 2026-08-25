@@ -602,16 +602,19 @@ describe('isSubpoenaStepValid', () => {
   })
 
   test('prefers the updated skip flag over the persisted one', () => {
-    const workingCase = { defendants: [alternativeServiceDefendant] } as Case
+    const workingCase = {
+      defendants: [alternativeServiceDefendant],
+      isArraignmentSummonsSkipped: true,
+    } as Case
 
     expect(
       isSubpoenaStepValid(
         workingCase,
         [alternativeServiceDefendant],
         null,
-        true,
+        false,
       ),
-    ).toBe(true)
+    ).toBe(false)
   })
 
   test('returns false when an alternative service defendant has no description', () => {
