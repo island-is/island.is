@@ -196,4 +196,17 @@ export class BasicInformationResolver {
   ): Promise<AppointmentDetail | null> {
     return this.api.getAppointmentById(user, input)
   }
+
+  @Mutation(() => Boolean, {
+    name: 'healthDirectorateCancelAppointment',
+  })
+  @Audit()
+  @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
+  @Scopes(ApiScope.internal, ApiScope.health)
+  async cancelAppointment(
+    @Args() input: HealthDirectorateAppointmentInput,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return this.api.cancelAppointment(user, input)
+  }
 }
