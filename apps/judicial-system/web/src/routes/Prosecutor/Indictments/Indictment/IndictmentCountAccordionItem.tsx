@@ -149,6 +149,7 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
   }
 
   const handleDragHandleClick = (evt: MouseEvent) => {
+    // Prevent the accordion item from being toggled
     evt.preventDefault()
     evt.stopPropagation()
   }
