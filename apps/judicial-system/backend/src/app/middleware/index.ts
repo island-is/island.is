@@ -11,4 +11,5 @@ export {
 export type {
   AfterCommitCallback,
   TransactionContext,
+  TransactionSettlement,
 } from './transactionContext.middleware'

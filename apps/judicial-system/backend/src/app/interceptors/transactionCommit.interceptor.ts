@@ -29,9 +29,16 @@ export class TransactionCommitInterceptor implements NestInterceptor {
   private async commit() {
     const context = getTransactionContext()
 
-    if (!context || context.settled) {
+    if (!context || context.settlement !== 'open') {
       return
     }
+
+    // Claimed before anything is awaited. A commit takes as long as it takes,
+    // and the response can close while it is in flight - a client abort, since
+    // nothing has been written to the socket yet. Without the claim the close
+    // handler would see an unsettled slot and roll back the very transaction
+    // that is committing.
+    context.settlement = 'settling'
 
     try {
       // A request that never opened a transaction has nothing to commit, but
@@ -45,7 +52,7 @@ export class TransactionCommitInterceptor implements NestInterceptor {
     } finally {
       // Settled either way, so the middleware does not roll back a transaction
       // whose commit has already failed, and the callbacks below run once.
-      context.settled = true
+      context.settlement = 'settled'
     }
 
     for (const callback of context.afterCommit) {

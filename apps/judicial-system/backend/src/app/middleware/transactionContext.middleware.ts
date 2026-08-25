@@ -15,6 +15,20 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export type AfterCommitCallback = () => Promise<void>
 
+/**
+ * How far the request's transaction has got towards being finished.
+ *
+ * `settling` exists so that claiming a transaction and finishing with it are
+ * distinguishable. Committing is not instantaneous, and both settlers - the
+ * interceptor on the success path and the `close` handler on the way out - test
+ * this before acting. A single boolean would make them agree only on
+ * "finished", leaving the length of the commit as a window in which the close
+ * handler saw an unfinished transaction and rolled back what was already
+ * committing. Whoever settles claims it first, so the states are exclusive by
+ * construction rather than by timing.
+ */
+export type TransactionSettlement = 'open' | 'settling' | 'settled'
+
 export interface TransactionContext {
   /**
    * The transaction owned by this request, once something has asked for one,
@@ -24,8 +38,8 @@ export interface TransactionContext {
    * the transaction is still opening still has something to settle.
    */
   transaction: Promise<Transaction> | null
-  /** True once the transaction has been committed or rolled back. */
-  settled: boolean
+  /** Whether the transaction is open, being settled, or finished. */
+  settlement: TransactionSettlement
   /** Callbacks to run after a successful commit, in registration order. */
   afterCommit: AfterCommitCallback[]
 }
@@ -64,6 +78,19 @@ export const getOrCreateTransaction = async (
 ): Promise<Transaction> => {
   const context = requireTransactionContext()
 
+  // Once the request's transaction has been claimed, both settlers are spent:
+  // the close handler does not fire twice and the interceptor returns early.
+  // Opening another one here would hand back a transaction that nothing will
+  // ever commit or roll back, holding its row locks until the connection is
+  // reaped - the leak this whole mechanism exists to prevent. Refusing is the
+  // only safe answer, and it is a programming error rather than a request the
+  // caller can recover from.
+  if (context.settlement !== 'open') {
+    throw new InternalServerErrorException(
+      `The request transaction is already ${context.settlement} and cannot be reopened.`,
+    )
+  }
+
   if (!context.transaction) {
     context.transaction = sequelize.transaction()
   }
@@ -97,7 +124,7 @@ export class TransactionContextMiddleware implements NestMiddleware {
   use(_: Request, res: Response, next: NextFunction) {
     const context: TransactionContext = {
       transaction: null,
-      settled: false,
+      settlement: 'open',
       afterCommit: [],
     }
 
@@ -112,11 +139,14 @@ export class TransactionContextMiddleware implements NestMiddleware {
       // 'close' can be emitted from the socket rather than from the request's
       // own async context.
       res.on('close', async () => {
-        if (!context.transaction || context.settled) {
+        // Anything but 'open' means the interceptor has this: either it is
+        // committing right now, in which case rolling back would race its
+        // COMMIT on the same transaction, or it has already finished.
+        if (!context.transaction || context.settlement !== 'open') {
           return
         }
 
-        context.settled = true
+        context.settlement = 'settled'
 
         // The slot holds the opening call, which may still be in flight: a
         // request that ends while its transaction is opening is exactly the
