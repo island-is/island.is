@@ -1111,6 +1111,7 @@ export const buildStaticTableField = (
     titleVariant = 'h4',
     selectable = false,
     inputColumn,
+    footerRow,
   } = data
 
   return {
@@ -1132,6 +1133,7 @@ export const buildStaticTableField = (
     titleVariant,
     selectable,
     inputColumn,
+    footerRow,
   }
 }
 

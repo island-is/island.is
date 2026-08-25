@@ -1,5 +1,5 @@
 import { FieldBaseProps, StaticTableField } from '@island.is/application/types'
-import { FC, useEffect, useState } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Box, Checkbox, Table as T, Text } from '@island.is/island-ui/core'
@@ -57,6 +57,10 @@ export const StaticTableFormField: FC<Props> = ({
     typeof field.summary === 'function'
       ? field.summary(application)
       : field.summary
+  const footerRow =
+    typeof field.footerRow === 'function'
+      ? field.footerRow(application)
+      : field.footerRow
 
   const selected: number[] = selectable
     ? watch(fieldId) ??
@@ -64,6 +68,7 @@ export const StaticTableFormField: FC<Props> = ({
       []
     : []
 
+  const hasInputColumn = !!field.inputColumn
   const inputFieldId = field.inputColumn
     ? resolveFieldId({ id: field.inputColumn.id }, application, user)
     : undefined
@@ -72,6 +77,12 @@ export const StaticTableFormField: FC<Props> = ({
     ? formatText(field.inputColumn.placeholder, application, formatMessage)
     : 'kr.'
   const [focusedRowIndex, setFocusedRowIndex] = useState<number | null>(null)
+
+  const fillerCell = (key: string) => <T.Data key={key} />
+
+  const leadingColumn = (content: ReactNode) => (selectable ? content : null)
+  const trailingColumn = (content: ReactNode) =>
+    hasInputColumn ? content : null
   const allSelected =
     !!selectable && rows.length > 0 && selected.length === rows.length
 
@@ -116,15 +127,17 @@ export const StaticTableFormField: FC<Props> = ({
       )}
       <Box
         marginTop={description ? 3 : 0}
-        className={field.inputColumn ? styles.tableWrapper : undefined}
+        className={
+          hasInputColumn || footerRow ? styles.tableWrapper : undefined
+        }
       >
         <T.Table>
           <T.Head>
             <T.Row>
-              {selectable && (
+              {leadingColumn(
                 <T.HeadData
                   style={
-                    field.inputColumn ? styles.checkboxColumnStyle : undefined
+                    hasInputColumn ? styles.checkboxColumnStyle : undefined
                   }
                 >
                   <Checkbox
@@ -132,13 +145,13 @@ export const StaticTableFormField: FC<Props> = ({
                     checked={allSelected}
                     onChange={toggleAll}
                   />
-                </T.HeadData>
+                </T.HeadData>,
               )}
               {header.map((cell, index) => (
                 <T.HeadData
                   key={`${cell}-${index}`}
                   style={
-                    field.inputColumn && index === header.length - 1
+                    hasInputColumn && index === header.length - 1
                       ? styles.inputColumnHeaderStyle
                       : undefined
                   }
@@ -151,21 +164,21 @@ export const StaticTableFormField: FC<Props> = ({
           <T.Body>
             {rows.map((row, rowIndex) => (
               <T.Row key={`row-${rowIndex}`}>
-                {selectable && (
+                {leadingColumn(
                   <T.Data>
                     <Checkbox
                       id={`${fieldId}-select-${rowIndex}`}
                       checked={selected.includes(rowIndex)}
                       onChange={() => toggleRow(rowIndex)}
                     />
-                  </T.Data>
+                  </T.Data>,
                 )}
                 {row.map((cell, cellIndex) => (
                   <T.Data key={`row-${rowIndex}-cell-${cellIndex}`}>
                     {formatText(cell, application, formatMessage)}
                   </T.Data>
                 ))}
-                {field.inputColumn && inputFieldId && (
+                {hasInputColumn && inputFieldId && (
                   <T.Data
                     onFocus={() => setFocusedRowIndex(rowIndex)}
                     onBlur={() =>
@@ -194,6 +207,24 @@ export const StaticTableFormField: FC<Props> = ({
                 )}
               </T.Row>
             ))}
+            {footerRow && (
+              <T.Row dataTestId={styles.footerRowTestId}>
+                {leadingColumn(fillerCell('footer-checkbox-column'))}
+                {footerRow.map((cell, cellIndex) => (
+                  <T.Data
+                    key={`footer-cell-${cellIndex}`}
+                    text={
+                      cellIndex === footerRow.length - 1
+                        ? { fontWeight: 'semiBold' }
+                        : undefined
+                    }
+                  >
+                    {formatText(cell, application, formatMessage)}
+                  </T.Data>
+                ))}
+                {trailingColumn(fillerCell('footer-input-column'))}
+              </T.Row>
+            )}
           </T.Body>
         </T.Table>
         {summary &&
