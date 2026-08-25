@@ -88,18 +88,6 @@ export type Role = {
   stepIds: string[]
 }
 
-// No name input yet (see README) — API assigns a default server-side when omitted.
-export type OutlierGroup = {
-  id: string
-  name?: string
-  reason?: string
-  action?: string
-  signatureName?: string
-  signatureRole?: string
-  // Member employee ids (replaces the old ordinal list).
-  employeeIds: string[]
-}
-
 export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',

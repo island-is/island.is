@@ -50,21 +50,6 @@ export const toConversationSegmentTypeEnum = (
   }
 }
 
-/**
- * The health service API currently returns a local ISO datetime with
- * no timezone offset. This will be fixed and typed in following verions
- * of the API, but for now we have to parse the date to UTC manually.
- * Once it´s been changed, we can remove this.
- */
-const parseUtcDate = (value?: string): Date | undefined => {
-  if (!value) {
-    return undefined
-  }
-  const hasZone = /(Z|[+-]\d{2}:?\d{2})$/.test(value)
-  const date = new Date(hasZone ? value : `${value}Z`)
-  return isNaN(date.getTime()) ? undefined : date
-}
-
 export const mapConversationSegments = (
   segments?: Array<ContentSegmentDto>,
 ): HealthDirectorateHealthConversationSegment[] | undefined =>
@@ -82,7 +67,7 @@ export const mapConversationVideo = (
     ? {
         url: video.url,
         description: video.description,
-        appointmentDate: parseUtcDate(video.appointmentDate),
+        appointmentDate: video.appointmentDate,
         appointmentHostName: video.appointmentHostName,
         isCanceled: video.isCanceled,
         isEdited: video.isEdited,
