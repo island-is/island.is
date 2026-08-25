@@ -7,76 +7,25 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
-      "options": {
-        "baseHref": "/umsoknir/",
-        "outputPath": "dist/apps/application-system/form",
-        "index": "apps/application-system/form/src/index.html",
-        "main": "apps/application-system/form/src/main.tsx",
-        "polyfills": "apps/application-system/form/src/polyfills.ts",
-        "tsConfig": "apps/application-system/form/tsconfig.app.json",
-        "assets": [
-          "apps/application-system/form/src/favicon.ico",
-          "apps/application-system/form/src/mockServiceWorker.js",
-          "apps/application-system/form/src/assets"
-        ],
-        "styles": ["apps/application-system/form/src/styles.css"],
-        "scripts": [],
-        "webpackConfig": "apps/application-system/form/webpack.config.js",
-        "maxWorkers": 2,
-        "memoryLimit": 8192
-      },
-      "configurations": {
-        "production": {
-          "optimization": false,
-          "outputHashing": "all",
-          "index": "apps/application-system/form/src/index.src.html",
-          "sourceMap": false,
-          "extractCss": true,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "budgets": [
-            {
-              "type": "initial",
-              "maximumWarning": "2mb",
-              "maximumError": "6mb"
-            }
-          ]
-        }
-      },
-      "outputs": ["{options.outputPath}"],
-      "dependsOn": [
-        {
-          "target": "generateDevIndexHTML"
-        }
-      ]
-    },
-    "generateDevIndexHTML": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/application-system/form/src"
-        ]
-      },
-      "outputs": ["{workspaceRoot}/apps/application-system/form/src/index.html"]
-    },
-    "serve": {
-      "executor": "@nx/webpack:dev-server",
-      "options": {
-        "port": 4242,
-        "buildTarget": "application-system-form:build"
+        "command": "vite build --config apps/application-system/form/vite.config.ts"
       },
       "configurations": {
-        "production": {
-          "buildTarget": "application-system-form:build:production"
-        }
+        "production": {}
       },
-      "dependsOn": [
-        {
-          "target": "generateDevIndexHTML"
-        }
-      ]
+      "outputs": ["{workspaceRoot}/dist/apps/application-system/form"],
+      "cache": true,
+      "inputs": ["production", "^production"]
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite serve --config apps/application-system/form/vite.config.ts"
+      },
+      "configurations": {
+        "production": {}
+      }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
@@ -132,6 +81,14 @@
     },
     "docker-static": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p apps/application-system/form/tsconfig.app.json"
+      },
+      "cache": true,
+      "inputs": ["production", "^production"]
     }
   }
 }

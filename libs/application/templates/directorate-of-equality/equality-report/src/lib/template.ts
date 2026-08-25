@@ -8,15 +8,19 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
   DoeCompanyApi,
+  EditEqualityContentApi,
   EqualityReportTemplateDocxApi,
   EqualityReportTemplateHtmlApi,
+  GetReportCommentsApi,
   PreviousEqualityReportContentApi,
+  SubmitReportCommentApi,
   SubmitEqualityReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
@@ -24,7 +28,6 @@ import { mapUserToRole } from '../utils/mapUserToRole'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
-  coreHistoryMessages,
   coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
@@ -32,6 +35,8 @@ import {
 import { messages } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -49,6 +54,17 @@ const template: ApplicationTemplate<
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [
+          InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+        ])
+        return context
+      }),
+    },
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -60,7 +76,7 @@ const template: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDraft,
+              label: messages.general.tagDraft,
               variant: 'blue',
             },
           },
@@ -106,6 +122,7 @@ const template: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: 'Main form',
           progress: 0.4,
@@ -113,13 +130,13 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDraft,
+              label: messages.general.tagDraft,
               variant: 'blue',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationSent,
+                logMessage: messages.inReview.sentHistoryLog,
               },
             ],
           },
@@ -150,6 +167,13 @@ const template: ApplicationTemplate<
               ],
               delete: true,
             },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
           ],
         },
         on: {
@@ -169,21 +193,21 @@ const template: ApplicationTemplate<
           },
           actionCard: {
             tag: {
-              label: coreMessages.tagsInProgress,
+              label: messages.inReview.tagLabel,
               variant: 'blueberry',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApproved,
+                logMessage: messages.inReview.approvedHistoryLog,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: messages.inReview.rejectedHistoryLog,
               },
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: 'Application sent back to draft for editing',
+                logMessage: messages.inReview.editHistoryLog,
               },
             ],
           },
@@ -195,7 +219,21 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
-              delete: true,
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -206,8 +244,81 @@ const template: ApplicationTemplate<
           [DefaultEvents.REJECT]: {
             target: States.DENIED,
           },
+          // Targets DRAFT_RETRY (not DRAFT) so a case-worker-requested
+          // revision lands on a screen built for that purpose — comments
+          // first, then the actual goalsAndActions content to fix — rather
+          // than dropping the applicant back onto the full mainForm.
           [DefaultEvents.EDIT]: {
-            target: States.DRAFT,
+            target: States.DRAFT_RETRY,
+          },
+        },
+      },
+      [States.DRAFT_RETRY]: {
+        meta: {
+          name: 'Lagfæring',
+          progress: 0.7,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
+          // PUTs just the report's narrative content in place — NOT
+          // SubmitEqualityReportApi, which is a one-shot create call
+          // (POST .../reports/equality) that a revision can't safely
+          // re-invoke. Mirrors salary-report's EditOutliersApi/onExit here.
+          onExit: EditEqualityContentApi,
+          actionCard: {
+            tag: {
+              label: messages.draftRetry.tagLabel,
+              variant: 'purple',
+            },
+            pendingAction: {
+              title: messages.draftRetry.pendingActionTitle,
+              content: messages.draftRetry.pendingActionContent,
+              button: messages.draftRetry.pendingActionButton,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.historyLogs.draftRetry,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/draftRetryForm').then((module) =>
+                  Promise.resolve(module.draftRetryForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: {
+                answers: ['comment', 'goalsAndActions'],
+                externalData: ['getReportComments', 'submitReportComment'],
+              },
+              api: [GetReportCommentsApi, SubmitReportCommentApi],
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
           },
         },
       },
@@ -219,7 +330,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDone,
+              label: coreMessages.tagsApproved,
               variant: 'mint',
             },
           },
@@ -231,7 +342,21 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
-              delete: true,
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -256,7 +381,16 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
-              delete: true,
+              // See the identical comment on States.APPROVED.
+              write: { answers: [] },
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },

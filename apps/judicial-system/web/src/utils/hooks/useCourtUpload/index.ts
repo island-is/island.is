@@ -1,17 +1,12 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 
-import {
+import type {
   Case,
   CaseFile,
-  CaseFileState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useUploadFileToCourtMutation } from './uploadFileToCourt.generated'
 

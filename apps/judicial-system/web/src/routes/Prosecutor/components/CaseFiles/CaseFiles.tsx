@@ -12,11 +12,11 @@ import {
 } from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core, errors } from '@island.is/judicial-system-web/messages'
+import type { Item } from '@island.is/judicial-system-web/src/components'
 import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  Item,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -26,12 +26,16 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { useUpdateFilesReorderableMutation } from '@island.is/judicial-system-web/src/components/ReorderableFileUpload/updateFiles.generated'
+import type { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PoliceCaseFilesData } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
-  CaseOrigin,
-  PoliceDigitalCaseFile,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+  PoliceCaseFiles,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import { PoliceDigitalCaseFilesList } from '@island.is/judicial-system-web/src/routes/Prosecutor/components/PoliceCaseFiles/PoliceDigitalCaseFiles'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useDebouncedInput,
   useFileList,
   usePoliceDigitalCaseFile,
@@ -40,12 +44,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import {
-  mapPoliceCaseFileToPoliceCaseFileCheck,
-  PoliceCaseFiles,
-  PoliceCaseFilesData,
-} from '../../components'
-import { PoliceDigitalCaseFilesList } from '../PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 

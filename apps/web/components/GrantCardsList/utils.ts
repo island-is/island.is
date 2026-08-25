@@ -91,7 +91,7 @@ export const parseGrantStatus = (
 
       return date
         ? translationFunction(
-            hasTime ? 'applicationOpensToWithDay' : 'applicationOpensTo',
+            hasTime ? 'applicationOpensTo' : 'applicationOpensToWithDay',
             date,
           )
         : translationFunction('applicationOpen')

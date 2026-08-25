@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -11,24 +12,27 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { getIndictmentAppealDeadline } from '@island.is/judicial-system/types'
 import { core, errors } from '@island.is/judicial-system-web/messages'
-
+import ContextMenuCard from '@island.is/judicial-system-web/src/components/Cards/ContextMenuCard/ContextMenuCard'
+import * as styles from '@island.is/judicial-system-web/src/components/Cards/IconCard/IconCard.css'
+import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
+import Modal from '@island.is/judicial-system-web/src/components/Modals/Modal/Modal'
+import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
+import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
-  Defendant,
   ServiceRequirement,
-} from '../../../graphql/schema'
-import { formatDateForServer, useDefendants } from '../../../utils/hooks'
-import useVerdict from '../../../utils/hooks/useVerdict'
-import DateTime from '../../DateTime/DateTime'
-import { FormContext } from '../../FormProvider/FormProvider'
-import { getAppealExpirationInfo } from '../../InfoCard/DefendantInfo/DefendantInfo.logic'
-import Modal from '../../Modals/Modal/Modal'
-import SectionHeading from '../../SectionHeading/SectionHeading'
-import VerdictAppealDecisionChoice from '../../VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
-import ContextMenuCard from '../ContextMenuCard/ContextMenuCard'
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  formatDateForServer,
+  useDefendants,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+
 import { strings } from './VerdictTimelineCard.strings'
-import { grid } from '../../../utils/styles/recipes.css'
-import * as styles from '../IconCard/IconCard.css'
 
 interface Props {
   defendant: Defendant
