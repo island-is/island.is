@@ -6,12 +6,12 @@ const schema = z.object({
   baseUrl: z.string(),
 })
 
-export const ReiknivelarClientConfig = defineConfig({
-  name: 'ReiknivelarClientConfig',
+export const CalculatorsClientConfig = defineConfig({
+  name: 'CalculatorsClientConfig',
   schema,
   load: (env) => ({
     baseUrl: env.required(
-      'REIKNIVELAR_BASE_URL',
+      'RSK_CALCULATORS_BASE_URL',
       'https://reiknivelarapi.rsk.is',
     ),
   }),

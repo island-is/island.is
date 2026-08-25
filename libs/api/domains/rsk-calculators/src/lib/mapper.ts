@@ -1,24 +1,24 @@
 import { BadRequestException } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import type {
-  GetApiBarnabaeturData,
-  GetApiBarnabaeturResponse,
-  GetApiBifreidagjoldData,
-  GetApiBifreidagjoldResponse,
-  GetApiBifreidahlunnindiData,
-  GetApiBifreidahlunnindiResponse,
-  GetApiStadgreidslaData,
-  GetApiStadgreidslaResponse,
-} from '@island.is/clients/rsk/reiknivelar'
+  GetChildBenefitData,
+  GetChildBenefitResponse,
+  GetVehicleTaxData,
+  GetVehicleTaxResponse,
+  GetVehicleBenefitData,
+  GetVehicleBenefitResponse,
+  GetWithholdingTaxData,
+  GetWithholdingTaxResponse,
+} from '@island.is/clients/rsk/calculators'
 import { RskCalculatorFieldKind, RskCalculatorType } from './models/enums'
 import { CalculatorField } from './models/field.model'
 import { CalculatorResultRow } from './models/resultRow.model'
 import { CalculatorInputValue } from './dto/inputValue.input'
 
-type StadgreidslaQuery = NonNullable<GetApiStadgreidslaData['query']>
-type BarnabaeturQuery = GetApiBarnabaeturData['query']
-type BifreidagjoldQuery = GetApiBifreidagjoldData['query']
-type BifreidahlunnindiQuery = GetApiBifreidahlunnindiData['query']
+type StadgreidslaQuery = NonNullable<GetWithholdingTaxData['query']>
+type BarnabaeturQuery = GetChildBenefitData['query']
+type BifreidagjoldQuery = GetVehicleTaxData['query']
+type BifreidahlunnindiQuery = GetVehicleBenefitData['query']
 type CalculatorQuery =
   | StadgreidslaQuery
   | BarnabaeturQuery
@@ -581,7 +581,7 @@ const buildRow = (
 }
 
 export const mapStadgreidslaResultToRows = (
-  result: GetApiStadgreidslaResponse | undefined,
+  result: GetWithholdingTaxResponse | undefined,
 ): CalculatorResultRow[] => {
   if (!result) {
     throw new BadRequestException('No calculation result was returned')
@@ -713,7 +713,7 @@ export const mapStadgreidslaResultToRows = (
 }
 
 export const mapBarnabaeturResultToRows = (
-  result: GetApiBarnabaeturResponse | undefined,
+  result: GetChildBenefitResponse | undefined,
 ): CalculatorResultRow[] => {
   if (!result) {
     throw new BadRequestException('No calculation result was returned')
@@ -841,7 +841,7 @@ export const mapBarnabaeturResultToRows = (
 }
 
 export const mapBifreidagjoldResultToRows = (
-  result: GetApiBifreidagjoldResponse | undefined,
+  result: GetVehicleTaxResponse | undefined,
 ): CalculatorResultRow[] => {
   if (!result) {
     throw new BadRequestException('No calculation result was returned')
@@ -895,7 +895,7 @@ export const mapBifreidagjoldResultToRows = (
 }
 
 export const mapBifreidahlunnindiResultToRows = (
-  result: GetApiBifreidahlunnindiResponse | undefined,
+  result: GetVehicleBenefitResponse | undefined,
 ): CalculatorResultRow[] => {
   if (!result) {
     throw new BadRequestException('No calculation result was returned')

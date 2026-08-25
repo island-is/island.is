@@ -311,7 +311,7 @@ codemagic.yaml                                                                  
 /libs/clients/rsk/company-registry                                                                                           @island-is/norda
 /libs/clients/rsk/rental-day-rate                                                                                            @island-is/norda
 /libs/clients/rsk/customs                                                                                                    @island-is/stefna
-/libs/clients/rsk/reiknivelar/                                                                                               @island-is/hugsmidjan
+/libs/clients/rsk/calculators/                                                                                               @island-is/hugsmidjan
 
 /libs/api/domains/company-registry                                                                                           @island-is/norda
 /libs/api/domains/financial-statements-inao/                                                                                 @island-is/norda

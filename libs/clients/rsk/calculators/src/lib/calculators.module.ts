@@ -4,18 +4,18 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import type { ConfigType } from '@island.is/nest/config'
 
 import { client } from '../../gen/fetch/client.gen'
-import { ReiknivelarClientConfig } from './reiknivelar.config'
-import { ReiknivelarClientService } from './reiknivelar.service'
+import { CalculatorsClientConfig } from './calculators.config'
+import { CalculatorsClientService } from './calculators.service'
 
 @Module({
-  imports: [ReiknivelarClientConfig.registerOptional()],
-  providers: [ReiknivelarClientService],
-  exports: [ReiknivelarClientService],
+  imports: [CalculatorsClientConfig.registerOptional()],
+  providers: [CalculatorsClientService],
+  exports: [CalculatorsClientService],
 })
-export class ReiknivelarClientModule {
+export class CalculatorsClientModule {
   constructor(
-    @Inject(ReiknivelarClientConfig.KEY)
-    config: ConfigType<typeof ReiknivelarClientConfig>,
+    @Inject(CalculatorsClientConfig.KEY)
+    config: ConfigType<typeof CalculatorsClientConfig>,
   ) {
     client.setConfig({
       baseUrl: config.baseUrl,
@@ -23,7 +23,7 @@ export class ReiknivelarClientModule {
         Accept: 'application/json',
       },
       fetch: createEnhancedFetch({
-        name: 'clients-rsk-reiknivelar',
+        name: 'clients-rsk-calculators',
         organizationSlug: 'skatturinn',
         timeout: 20000,
       }),
