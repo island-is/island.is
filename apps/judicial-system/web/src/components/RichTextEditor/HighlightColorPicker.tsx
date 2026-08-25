@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react'
 import { motion } from 'motion/react'
 
 import { WORD_HIGHLIGHT_COLORS } from './richTextNormalization'
-import * as styles from './TinyMCE.css'
+import * as styles from './RichTextEditor.css'
 
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.92, y: -6 },
