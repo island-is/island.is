@@ -855,12 +855,9 @@ export const mapBifreidagjoldResultToRows = (
     buildRow('vehicleTax', 'Bifreiðagjald', result.bifreidagjold, {
       unit: 'ISK',
     }),
-    buildRow(
-      'processingFee',
-      'Úrvinnslugjald',
-      result.urvinnslugjald,
-      { unit: 'ISK' },
-    ),
+    buildRow('processingFee', 'Úrvinnslugjald', result.urvinnslugjald, {
+      unit: 'ISK',
+    }),
     buildRow(
       'totalVehicleTax',
       'Bifreiðagjöld alls',
@@ -869,22 +866,17 @@ export const mapBifreidagjoldResultToRows = (
     ),
   ]
 
-  const buildSplitRows = (
-    split: typeof result.fyrraTimabil,
-    group: string,
-  ) => {
+  const buildSplitRows = (split: typeof result.fyrraTimabil, group: string) => {
     if (!split) return []
     return [
       buildRow('splitVehicleTax', 'Bifreiðagjald', split.bifreidagjald, {
         unit: 'ISK',
         group,
       }),
-      buildRow(
-        'splitProcessingFee',
-        'Úrvinnslugjald',
-        split.urvinnslugjald,
-        { unit: 'ISK', group },
-      ),
+      buildRow('splitProcessingFee', 'Úrvinnslugjald', split.urvinnslugjald, {
+        unit: 'ISK',
+        group,
+      }),
       buildRow(
         'splitTotalVehicleTax',
         'Bifreiðagjöld alls',
@@ -912,12 +904,10 @@ export const mapBifreidahlunnindiResultToRows = (
   const rows = [
     buildRow('purchaseYear', 'Kaupár', result.kaupar),
     buildRow('purchasePrice', 'Kaupverð', result.kaupverd, { unit: 'ISK' }),
-    buildRow(
-      'monthlyBenefit',
-      'Mánaðarhlunnindi',
-      result.manadarhlunnindi,
-      { unit: 'ISK', emphasis: true },
-    ),
+    buildRow('monthlyBenefit', 'Mánaðarhlunnindi', result.manadarhlunnindi, {
+      unit: 'ISK',
+      emphasis: true,
+    }),
     buildRow('annualBenefit', 'Árshlunnindi', result.arshlunnindi, {
       unit: 'ISK',
     }),

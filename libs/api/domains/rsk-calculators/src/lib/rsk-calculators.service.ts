@@ -59,9 +59,7 @@ export class RskCalculatorsService {
         const query = buildCalculatorQuery<
           GetApiBifreidahlunnindiData['query']
         >(calculatorType, input)
-        const result = await this.reiknivelarService.getBifreidahlunnindi(
-          query,
-        )
+        const result = await this.reiknivelarService.getBifreidahlunnindi(query)
         return mapBifreidahlunnindiResultToRows(result)
       }
       default:

@@ -358,9 +358,9 @@ const Calculator = ({ slice }: CalculatorProps) => {
   const { control, getValues, watch, trigger } = useForm({
     shouldUnregister: true,
   })
-  const [sectionToggles, setSectionToggles] = useState<
-    Record<string, boolean>
-  >({})
+  const [sectionToggles, setSectionToggles] = useState<Record<string, boolean>>(
+    {},
+  )
 
   const parsedConfig = calculatorConfigSchema.safeParse(slice.configJson)
   const config = parsedConfig.success ? parsedConfig.data : undefined
@@ -469,7 +469,11 @@ const Calculator = ({ slice }: CalculatorProps) => {
                         watchedValues,
                       ),
                   )
-                  return { field, span: sectionField.span, disabled: isDisabled }
+                  return {
+                    field,
+                    span: sectionField.span,
+                    disabled: isDisabled,
+                  }
                 })
                 .filter(
                   (
