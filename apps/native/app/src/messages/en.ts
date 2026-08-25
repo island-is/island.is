@@ -1037,8 +1037,10 @@ export const en: TranslatedMessages = {
   'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Prescribed amount',
   'health.prescriptions.dosageInstructions': 'Usage',
-  'health.prescriptions.attachment': 'Attachment',
-  'health.prescriptions.openAttachment': 'Open attachment',
+  'health.prescriptions.attachment': 'Attachment {arg}',
+  'health.prescriptions.openAttachment': 'Open attachment {arg}',
+  'health.prescriptions.attachmentError':
+    'An error occurred while fetching the document',
   'health.prescriptions.issueDate': 'Issue date',
   'health.prescriptions.expiresAt': 'Expires at',
   'health.prescriptions.doctor': 'Doctors',

@@ -98,6 +98,7 @@ query GetDrugPrescriptions($locale: String) {
   healthDirectoratePrescriptions(locale: $locale) {
     prescriptions {
       id
+      productId
       name
       strength
       type
@@ -126,6 +127,17 @@ query GetDrugPrescriptions($locale: String) {
         itemId
         amount
       }
+    }
+  }
+}
+
+query GetPrescriptionDocuments($input: MedicinePrescriptionDocumentsInput!) {
+  healthDirectoratePrescriptionDocuments(input: $input) {
+    id
+    documents {
+      id
+      name
+      url
     }
   }
 }

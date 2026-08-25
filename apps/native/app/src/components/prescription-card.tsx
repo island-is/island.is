@@ -1,12 +1,16 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, View } from 'react-native'
+import { ActivityIndicator, Image, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import chevronDown from '@/assets/icons/chevron-down.png'
 import clockIcon from '@/assets/icons/clock.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
-import { HealthDirectoratePrescription } from '@/graphql/types/schema'
+import {
+  HealthDirectoratePrescription,
+  HealthDirectoratePrescriptionDocument,
+  useGetPrescriptionDocumentsLazyQuery,
+} from '@/graphql/types/schema'
 import { ExpandableCard, Link, LinkText, Typography } from '@/ui'
 import checkmarkIcon from '@/ui/assets/icons/check.png'
 import { capitalizeEveryWord } from '@/utils/capitalize'
@@ -43,8 +47,9 @@ const DispensationCheckmark = styled.View`
 `
 
 type PrescriptionRow = {
-  data?: string | null
-  label: string
+  data?: React.ReactNode
+  label?: string
+  labelText?: string
   url?: string
 }
 
@@ -56,9 +61,70 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
   const intl = useIntl()
   const theme = useTheme()
   const [open, setOpen] = useState(false)
+  const [documents, setDocuments] = useState<
+    HealthDirectoratePrescriptionDocument[]
+  >([])
+  const hasFetchedDocuments = useRef(false)
+
+  const [getDocuments, { loading: documentsLoading, error: documentsError }] =
+    useGetPrescriptionDocumentsLazyQuery()
+
+  const fetchDocuments = useCallback(async () => {
+    if (hasFetchedDocuments.current || !prescription.productId) {
+      return
+    }
+    hasFetchedDocuments.current = true
+    try {
+      const response = await getDocuments({
+        variables: { input: { id: prescription.productId } },
+      })
+      setDocuments(
+        response.data?.healthDirectoratePrescriptionDocuments?.documents ?? [],
+      )
+    } catch {
+      // Allow a retry on the next expand if the fetch failed.
+      hasFetchedDocuments.current = false
+    }
+  }, [getDocuments, prescription.productId])
 
   const isExpired =
     prescription.expiryDate && new Date(prescription.expiryDate) < new Date()
+
+  const attachmentRows: PrescriptionRow[] = documentsLoading
+    ? [
+        {
+          labelText: intl.formatMessage(
+            { id: 'health.prescriptions.attachment' },
+            { arg: 1 },
+          ),
+          data: (
+            <ActivityIndicator size="small" color={theme.color.blue400} />
+          ),
+        },
+      ]
+    : documentsError
+    ? [
+        {
+          labelText: intl.formatMessage(
+            { id: 'health.prescriptions.attachment' },
+            { arg: 1 },
+          ),
+          data: intl.formatMessage({
+            id: 'health.prescriptions.attachmentError',
+          }),
+        },
+      ]
+    : documents.map((document, index) => ({
+        labelText: intl.formatMessage(
+          { id: 'health.prescriptions.attachment' },
+          { arg: index + 1 },
+        ),
+        data: intl.formatMessage(
+          { id: 'health.prescriptions.openAttachment' },
+          { arg: index + 1 },
+        ),
+        url: document.url,
+      }))
 
   const prescriptionDataInformation: PrescriptionRow[] = [
     {
@@ -79,13 +145,7 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       data: prescription.dosageInstructions,
       label: 'health.prescriptions.dosageInstructions',
     },
-    {
-      data: prescription.url
-        ? intl.formatMessage({ id: 'health.prescriptions.openAttachment' })
-        : undefined,
-      label: 'health.prescriptions.attachment',
-      url: prescription.url ?? undefined,
-    },
+    ...attachmentRows,
     {
       data: prescription.type,
       label: 'health.prescriptions.type',
@@ -120,8 +180,13 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
   ]
 
   const onPress = useCallback(() => {
-    setOpen((isOpen) => !isOpen)
-  }, [])
+    setOpen((isOpen) => {
+      if (!isOpen) {
+        void fetchDocuments()
+      }
+      return !isOpen
+    })
+  }, [fetchDocuments])
 
   return (
     <ExpandableCard
@@ -170,7 +235,11 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
               >
                 <RowItem>
                   <Typography variant="eyebrow">
-                    <FormattedMessage id={item.label} />
+                    {item.labelText ? (
+                      item.labelText
+                    ) : (
+                      <FormattedMessage id={item.label} />
+                    )}
                   </Typography>
                 </RowItem>
                 <RowItem>
@@ -180,8 +249,10 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
                         {item.data}
                       </LinkText>
                     </Link>
-                  ) : (
+                  ) : typeof item.data === 'string' ? (
                     <Typography variant="body3">{item.data}</Typography>
+                  ) : (
+                    item.data
                   )}
                 </RowItem>
               </TableRow>
@@ -207,7 +278,7 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
                   >
                     <RowItem>
                       <Typography variant="eyebrow">
-                        <FormattedMessage id={item.label} />
+                        {item.label && <FormattedMessage id={item.label} />}
                       </Typography>
                     </RowItem>
                     <RowItem>
