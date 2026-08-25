@@ -59,14 +59,16 @@ export class BlikkClientService {
   }
 
   /**
-   * `DELETE /ecom/v3/payments/{id}` — cancel a payment. Blikk only honours this while the payment is
-   * in DRAFT; a past-DRAFT payment yields a non-2xx, surfaced as a {@link BlikkClientError} (with the
-   * HTTP `status`) so the caller can decide whether the local state may be discarded.
+   * `POST /ecom/v3/payments/cancel/{id}` — cancel a payment. Blikk only honours this while the
+   * payment is in DRAFT; a past-DRAFT payment yields a non-2xx, surfaced as a {@link BlikkClientError}
+   * (with the HTTP `status`) so the caller can decide whether the local state may be discarded.
+   * The body is required by Blikk; `cancelMessage` is the reason shown on their side.
    */
   async cancelPayment(providerPaymentId: string): Promise<void> {
     await this.request(
-      'DELETE',
-      `/ecom/v3/payments/${encodeURIComponent(providerPaymentId)}`,
+      'POST',
+      `/ecom/v3/payments/cancel/${encodeURIComponent(providerPaymentId)}`,
+      { cancelMessage: 'Cancelled by payer' },
     )
   }
 
@@ -99,7 +101,7 @@ export class BlikkClientService {
   }
 
   private async request(
-    method: 'GET' | 'POST' | 'DELETE',
+    method: 'GET' | 'POST',
     path: string,
     body?: unknown,
   ) {
