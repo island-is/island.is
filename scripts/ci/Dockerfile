@@ -157,6 +157,11 @@ ENV PORT=4200
 COPY --from=deps /build/node_modules /webapp/node_modules
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
+# Fix: Next.js disk-lru-cache needs to write to .next/cache at runtime
+USER root
+RUN mkdir -p /webapp/.next/cache && chown -R runner:runners /webapp/.next/cache
+USER runner
+
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
   GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
