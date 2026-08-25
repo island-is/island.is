@@ -1278,11 +1278,45 @@ export class CourtSessionService {
     }
   }
 
+  // A court session whose ruling order has been appealed cannot be deleted. The
+  // appeal is not the court record's to discard: deleting the session would
+  // leave it pointing at a ruling no court record says was pronounced, which
+  // hides the ruling - and with it the appeal and everything filed for it - from
+  // the very parties who appealed. validateRulingRemovalAllowed refuses to
+  // correct such a ruling out of the record for the same reason; deleting the
+  // session it was pronounced in arrives at the same place.
+  private async validateCourtSessionDeletionAllowed(
+    theCase: Case,
+    courtSession: CourtSession,
+    transaction: Transaction,
+  ): Promise<void> {
+    if (!courtSession.rulingFileId) {
+      return
+    }
+
+    const appealCases = await this.appealCaseRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId: courtSession.rulingFileId },
+      transaction,
+    })
+
+    if (appealCases.length > 0) {
+      throw new BadRequestException(
+        'The ruling order pronounced in this court session has been appealed, so the court session cannot be deleted',
+      )
+    }
+  }
+
   async delete(
     theCase: Case,
     courtSession: CourtSession,
     transaction: Transaction,
   ): Promise<boolean> {
+    await this.validateCourtSessionDeletionAllowed(
+      theCase,
+      courtSession,
+      transaction,
+    )
+
     await this.courtSessionRepositoryService.delete(
       theCase.id,
       courtSession.id,

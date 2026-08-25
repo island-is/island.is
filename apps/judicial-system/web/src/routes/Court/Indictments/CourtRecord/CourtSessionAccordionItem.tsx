@@ -184,9 +184,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   // The reason is kept, not just the boolean, so the section can say which of the
   // two locks applies - the appeal decision cards next to it report the appeal's
   // state, not why these controls are locked.
-  const rulingRemovalLock = appealCorrectionLock(
-    rulingOrderAppealCase(workingCase, courtSession.rulingFileId),
+  const rulingAppealCase = rulingOrderAppealCase(
+    workingCase,
+    courtSession.rulingFileId,
   )
+  const rulingRemovalLock = appealCorrectionLock(rulingAppealCase)
+  // A session whose ruling has been appealed cannot be deleted at all - not
+  // just corrected - because deleting it would strand the appeal.
+  const rulingHasBeenAppealed = Boolean(rulingAppealCase)
   const rulingRemovalDisabled =
     courtSession.isConfirmed || Boolean(rulingRemovalLock)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -840,15 +845,34 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
           paddingY={3}
         >
           {isLastCourtSession && (
-            <Button
-              variant="text"
-              colorScheme="destructive"
-              size="small"
-              icon="trash"
-              onClick={() => setModalVisible('DELETE')}
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="flexEnd"
+              rowGap={1}
             >
-              Eyða
-            </Button>
+              {/* The appeal is not the court record's to discard: deleting the
+              session would leave it pointing at a ruling no court record says
+              was pronounced, hiding it from the parties who appealed it.
+              courtSession.service.validateCourtSessionDeletionAllowed rejects
+              the same deletion server-side. */}
+              {rulingHasBeenAppealed && (
+                <AlertMessage
+                  type="info"
+                  message="Úrskurður sem kveðinn var upp í þinghaldinu hefur verið kærður og því er ekki hægt að eyða þinghaldinu."
+                />
+              )}
+              <Button
+                variant="text"
+                colorScheme="destructive"
+                size="small"
+                icon="trash"
+                onClick={() => setModalVisible('DELETE')}
+                disabled={rulingHasBeenAppealed}
+              >
+                Eyða
+              </Button>
+            </Box>
           )}
           <LayoutGroup>
             <Box
@@ -1704,7 +1728,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           subLabel="Úrskurður kveðinn upp munnlega"
                           backgroundColor="white"
                           checked={Boolean(pronouncedOrally)}
-                          onChange={() => pronounceRulingOrallyInSession()}
+                          onChange={() =>
+                            pronouncedOrally
+                              ? undefined
+                              : pronounceRulingOrallyInSession()
+                          }
                           disabled={Boolean(courtSession.isConfirmed)}
                           large
                         />

@@ -1,6 +1,8 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { BadRequestException } from '@nestjs/common'
+
 import {
   AppealCaseState,
   CaseFileCategory,
@@ -132,31 +134,41 @@ describe('CourtSessionController - Delete', () => {
     })
   })
 
-  describe('session pronouncing an appealed ruling orally', () => {
-    const pronouncedOrally = makeRulingOrder({
-      isPronouncedOrally: true,
-      key: '',
-    })
+  // Deleting the session would leave the appeal pointing at a ruling no court
+  // record says was pronounced, hiding it from the parties who appealed it, so
+  // the deletion is refused outright - for a written ruling as much as an oral
+  // one. Without this the ruling would be stranded: kept alive by its appeal but
+  // impossible to pronounce again.
+  describe.each([
+    ['pronounced orally', { isPronouncedOrally: true, key: '' }],
+    ['uploaded', {}],
+  ])('session pronouncing an appealed ruling %s', (_name, overrides) => {
+    const appealedRuling = makeRulingOrder(overrides)
+    let then: Then
 
     beforeEach(async () => {
       ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
         [
           {
             id: uuid(),
-            rulingFileId: pronouncedOrally.id,
+            rulingFileId: appealedRuling.id,
             appealState: AppealCaseState.APPEALED,
           } as AppealCase,
         ],
       )
 
-      await deleteSessionPronouncing(pronouncedOrally)
+      then = await deleteSessionPronouncing(appealedRuling)
     })
 
-    // The appeal keeps pointing at the ruling it was filed against, and nothing
-    // cascades from the deleted session, so the appeal, its decisions and the
-    // party files all survive - and the ruling can be pronounced in another
-    // session to bring them back into view.
-    it('should keep the ruling the appeal keys on', () => {
+    it('should refuse to delete the session', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        'The ruling order pronounced in this court session has been appealed, so the court session cannot be deleted',
+      )
+      expect(mockCourtSessionRepositoryService.delete).not.toHaveBeenCalled()
+    })
+
+    it('should leave the ruling alone', () => {
       expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
   })
