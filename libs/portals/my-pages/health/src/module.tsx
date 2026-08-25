@@ -143,6 +143,10 @@ const AppointmentDetail = lazy(() =>
   import('./screens/Appointments/AppointmentDetail'),
 )
 
+const BookAppointment = lazy(() =>
+  import('./screens/Appointments/BookAppointment'),
+)
+
 const HealthConversations = lazy(() =>
   import('./screens/HealthConversations/HealthConversations'),
 )
@@ -640,6 +644,15 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <AppointmentDetail />,
+    },
+    {
+      name: hm.bookAppointmentTitle,
+      path: HealthPaths.HealthBookAppointment,
+      key: 'HealthAppointments',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <BookAppointment />,
     },
     {
       name: m.messages,

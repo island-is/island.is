@@ -4,27 +4,29 @@ import {
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
-import {
+import type {
   AppealCase,
+  Case,
+  CourtSessionResponse,
+  DateLog,
+  Defendant,
+  IndictmentCount,
+  User,
+  Victim,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealDecisionPartyRole,
-  Case,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
-  CourtSessionResponse,
   CourtSessionRulingType,
   CourtSessionStringType,
-  DateLog,
-  Defendant,
   DefenderChoice,
-  IndictmentCount,
   IndictmentCountOffense,
   IndictmentDecision,
   SessionArrangements,
-  User,
-  Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from './arrayHelpers'
@@ -667,9 +669,6 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
 export const isCourtSessionValid = (
   courtSession: CourtSessionResponse,
   workingCase: Case,
-  // Appeal decisions are only required once the (flagged) in-court appeal UI is
-  // live; while it is hidden, an ORDER session can be confirmed without them.
-  appealRulingOrderEnabled: boolean,
 ) => {
   return (
     (courtSession.isClosed
@@ -684,8 +683,7 @@ export const isCourtSessionValid = (
     (courtSession.rulingType === CourtSessionRulingType.ORDER
       ? !!courtSession.rulingFileId
       : true) &&
-    (courtSession.rulingType === CourtSessionRulingType.ORDER &&
-    appealRulingOrderEnabled
+    (courtSession.rulingType === CourtSessionRulingType.ORDER
       ? areAppealDecisionsComplete(courtSession, workingCase)
       : true) &&
     (courtSession.isAttestingWitness

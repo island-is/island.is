@@ -1,12 +1,14 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
-import {
+import type {
   Case,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseDecision,
   CaseType,
-  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './Ruling.strings'

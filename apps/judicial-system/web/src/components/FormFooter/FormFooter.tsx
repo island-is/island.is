@@ -1,16 +1,12 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import {
-  Box,
-  Button,
-  ButtonTypes,
-  IconMapIcon,
-} from '@island.is/island-ui/core'
+import type { ButtonTypes, IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
+import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 
-import InfoBox from '../InfoBox/InfoBox'
 import * as styles from './FormFooter.css'
 
 export interface FormFooterAction {

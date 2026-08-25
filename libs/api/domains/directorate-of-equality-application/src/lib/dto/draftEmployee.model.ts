@@ -18,7 +18,7 @@ export class DraftEmployeeModel {
   startDate!: string
 
   @Field(() => Float)
-  workRatio!: number
+  paidHours!: number
 
   @Field(() => Float)
   baseSalary!: number

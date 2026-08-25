@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import IconButton from '../IconButton/IconButton'
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
+
 import ContextMenu from './ContextMenu'
 
 describe('ContextMenu', () => {

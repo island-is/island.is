@@ -1,11 +1,12 @@
-import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
+import type { ChangeEvent, FC, FocusEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { InputMask } from '@react-input/mask'
 
 import { Input } from '@island.is/island-ui/core'
 import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { validate } from '../../utils/validate'
-import { InputProps } from './types'
+import type { InputProps } from './types'
 
 const InputDate: FC<InputProps> = ({
   value,

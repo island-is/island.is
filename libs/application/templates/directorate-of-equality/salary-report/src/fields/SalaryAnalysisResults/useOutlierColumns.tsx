@@ -1,12 +1,10 @@
 import { useMemo } from 'react'
 import { Box, Checkbox, createColumnHelper } from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
-import type {
-  SalaryAnalysisOutlierDto,
-  ScoreBucketDto,
-} from '@island.is/clients/directorate-of-equality'
+import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import { formatCurrency } from '../EmployeesEditor/utils'
+import { formatHourlyWage } from '../EmployeesEditor/utils'
+import { formatPercentMagnitude } from '../../utils/wageGap'
 
 const SELECT_COLUMN_WIDTH = 32
 
@@ -14,7 +12,6 @@ const columnHelper = createColumnHelper<SalaryAnalysisOutlierDto>()
 
 type UseOutlierColumnsArgs = {
   formatMessage: FormatMessage
-  scoreBuckets: ScoreBucketDto[]
   pageRows: SalaryAnalysisOutlierDto[]
   selected: Set<number>
   setSelected: (updater: (prev: Set<number>) => Set<number>) => void
@@ -27,7 +24,6 @@ type UseOutlierColumnsArgs = {
 // single largest, most self-contained chunk of that file.
 export const useOutlierColumns = ({
   formatMessage,
-  scoreBuckets,
   pageRows,
   selected,
   setSelected,
@@ -37,15 +33,18 @@ export const useOutlierColumns = ({
 }: UseOutlierColumnsArgs) => {
   const m = messages.salaryAnalysis.outlierGroup
 
-  const scoreRangeLabel = (outlier: SalaryAnalysisOutlierDto) =>
-    `${outlier.scoreBucketRangeFrom}-${outlier.scoreBucketRangeTo}`
-
-  const medianSalaryForOutlier = (outlier: SalaryAnalysisOutlierDto) =>
-    scoreBuckets.find(
-      (b) =>
-        b.rangeFrom === outlier.scoreBucketRangeFrom &&
-        b.rangeTo === outlier.scoreBucketRangeTo,
-    )?.overallMedianSalary
+  // payStatus must be rendered, not inferred from the sign. A row can be listed
+  // for being paid ABOVE what their stig imply, which is the opposite of what a
+  // reader expects, and deviationPercent's sign only conveys that to someone who
+  // already knows the convention.
+  const payStatusWord = (status: SalaryAnalysisOutlierDto['payStatus']) =>
+    formatMessage(
+      status === 'UNDERPAID'
+        ? m.payStatusUnderpaid
+        : status === 'OVERPAID'
+        ? m.payStatusOverpaid
+        : m.payStatusOnLine,
+    )
 
   return useMemo(
     () => [
@@ -101,34 +100,42 @@ export const useOutlierColumns = ({
         header: formatMessage(m.employeeColumn),
         cell: (info) => identifierForOrdinal(info.getValue()),
       }),
-      columnHelper.accessor((row) => row.scoreBucketRangeFrom, {
+      columnHelper.accessor('score', {
         id: 'score',
         header: formatMessage(m.scoreColumn),
         enableSorting: true,
-        cell: (info) => scoreRangeLabel(info.row.original),
+        cell: (info) => String(info.getValue()),
       }),
-      columnHelper.accessor('adjustedBaseSalary', {
-        id: 'salary',
-        header: formatMessage(m.salaryColumn),
-        cell: (info) => formatCurrency(info.getValue()),
+      columnHelper.accessor('regularHourlyWage', {
+        id: 'hourlyWage',
+        header: formatMessage(m.hourlyWageColumn),
+        cell: (info) => formatHourlyWage(info.getValue()),
       }),
-      columnHelper.display({
-        id: 'medianSalary',
-        header: formatMessage(m.medianSalaryColumn),
-        cell: (info) =>
-          formatCurrency(medianSalaryForOutlier(info.row.original)),
+      columnHelper.accessor('expectedHourlyWage', {
+        id: 'expectedHourlyWage',
+        header: formatMessage(m.expectedHourlyWageColumn),
+        cell: (info) => formatHourlyWage(info.getValue()),
       }),
-      columnHelper.accessor('differencePercent', {
-        id: 'difference',
-        header: formatMessage(m.differenceColumn),
+      // Signed here, unlike the company-level gender gaps: this is a deviation
+      // from a fitted line, so the sign is meaningful and the word glosses it.
+      // The company figures are magnitude-only because their sign would imply a
+      // denominator convention the reader does not have.
+      columnHelper.accessor('deviationPercent', {
+        id: 'deviation',
+        header: formatMessage(m.deviationColumn),
+        enableSorting: true,
         cell: (info) => {
           const value = info.getValue()
           const sign = value > 0 ? '+' : value < 0 ? '-' : ''
-          return `${sign}${Math.abs(value).toFixed(1)}%`
+          return formatMessage(m.deviationCell, {
+            sign,
+            value: formatPercentMagnitude(value),
+            status: payStatusWord(info.row.original.payStatus),
+          })
         },
       }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pageRows, selected, allSelectedOnPage, scoreBuckets, formatMessage],
+    [pageRows, selected, allSelectedOnPage, formatMessage],
   )
 }

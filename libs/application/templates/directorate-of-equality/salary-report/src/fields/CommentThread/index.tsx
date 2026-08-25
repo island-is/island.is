@@ -20,7 +20,7 @@ import type { ApplicationReportCommentDto } from '@island.is/clients/directorate
 import { ApiActions, draftActionId, States } from '../../utils/constants'
 import { messages } from '../../lib/messages'
 
-const SENDABLE_STATES: string[] = [States.IN_REVIEW, States.POSTPONED]
+const SENDABLE_STATES: string[] = [States.POSTPONED, States.DRAFT_RETRY]
 
 export const CommentThread = ({ application, field }: FieldBaseProps) => {
   const showEmptyState =
@@ -195,7 +195,12 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
               rows={3}
             />
           </Box>
-          <Button onClick={handleSend} loading={isSending}>
+          <Button
+            onClick={handleSend}
+            loading={isSending}
+            variant="ghost"
+            size="small"
+          >
             {formatMessage(messages.comments.sendButton)}
           </Button>
         </Box>

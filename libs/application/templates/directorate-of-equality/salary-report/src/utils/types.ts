@@ -69,7 +69,7 @@ export type Employee = {
   field?: string | null
   department?: string | null
   startDate: string
-  workRatio: number
+  paidHours: number
   baseSalary: number
   additionalFixedOvertime?: number | null
   additionalFixedCarAllowance?: number | null
@@ -86,18 +86,6 @@ export type Role = {
   id: string
   title: string
   stepIds: string[]
-}
-
-// No name input yet (see README) — API assigns a default server-side when omitted.
-export type OutlierGroup = {
-  id: string
-  name?: string
-  reason?: string
-  action?: string
-  signatureName?: string
-  signatureRole?: string
-  // Member employee ids (replaces the old ordinal list).
-  employeeIds: string[]
 }
 
 export enum Gender {
