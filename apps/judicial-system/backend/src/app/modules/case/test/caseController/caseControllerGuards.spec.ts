@@ -35,11 +35,12 @@ describe('CaseController - Update guards', () => {
 })
 
 describe('CaseController - Transition guards', () => {
+  // The case-exists guard must stay ahead of RolesGuard: the transition roles
+  // rules read request.case, and prosecutorTransitionRule denies when it is
+  // absent. See the rules spec, which pins that dependency.
   verifyGuards(CaseController, 'transition', [
-    // RolesGuard first: CaseExistsForUpdateGuard locks the case row, so an
-    // unauthorized caller must be rejected before it can take that lock
-    RolesGuard,
     CaseExistsForUpdateGuard,
+    RolesGuard,
     CaseWriteGuard,
     CaseTransitionGuard,
   ])

@@ -333,13 +333,20 @@ export class CaseController {
     )
   }
 
-  // RolesGuard comes first because CaseExistsForUpdateGuard takes a write lock
-  // on the case row: an authenticated but unauthorized caller must be rejected
-  // before it can hold one. CaseWriteGuard and CaseTransitionGuard need the
-  // case and so must stay after the guard that reads it.
+  // CaseExistsForUpdateGuard has to come first, even though it is the guard
+  // that takes the write lock: prosecutorTransitionRule reads request.case and
+  // denies outright when it is missing, so RolesGuard cannot decide this route
+  // before the case has been read. Reordering these two rejects every
+  // prosecutor transition with a 403 - and no controller test catches it,
+  // because guards do not run in them.
+  //
+  // The cost is that an authenticated but unauthorized caller holds a write
+  // lock on the case row until RolesGuard rejects it. That is unchanged from
+  // before this route was converted, and closing it needs authorization that
+  // does not depend on the case rather than a different guard order.
   @UseGuards(
-    RolesGuard,
     CaseExistsForUpdateGuard,
+    RolesGuard,
     CaseWriteGuard,
     CaseTransitionGuard,
   )
