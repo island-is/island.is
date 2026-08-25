@@ -5,6 +5,8 @@ import {
   ActionCard,
   AlertMessage,
   Box,
+  Bullet,
+  BulletList,
   Button,
   LoadingDots,
   Stack,
@@ -22,7 +24,7 @@ import type { ReportCriterionDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { messages } from '../../lib/messages'
-import { getProviderErrorMessage } from '../../utils/providerError'
+import { getProviderErrorMessages } from '../../utils/providerError'
 
 // The next screen in the flow — both upload and manual entry advance here.
 const NEXT_SCREEN_ID = 'criteriaMultiField'
@@ -32,12 +34,12 @@ export const ExcelTemplateDownload: FC<
 > = ({ application, goToScreen, setBeforeSubmitCallback, answerQuestions }) => {
   const { formatMessage, lang: locale } = useLocale()
   const [isImporting, setIsImporting] = useState(false)
-  // The API rejects an out-of-date workbook with one specific reason
-  // ("Sniðmátið er af eldri útgáfu … Sæktu nýjasta sniðmátið") rather than
-  // per-row data errors, so the generic importError alone would leave the
-  // likeliest failure unexplained.
-  const [importErrorMessage, setImportErrorMessage] = useState<
-    string | undefined
+  // The API rejects a bad workbook either with one specific reason ("Sniðmátið
+  // er af eldri útgáfu … Sæktu nýjasta sniðmátið") or with one entry per
+  // invalid row, so the generic importError alone would leave the likeliest
+  // failure unexplained.
+  const [importErrorMessages, setImportErrorMessages] = useState<
+    string[] | undefined
   >()
   const [importStatus, setImportStatus] = useState<'success' | 'error' | null>(
     null,
@@ -46,8 +48,8 @@ export const ExcelTemplateDownload: FC<
   // Every failure path goes through this so none can leave a stale reason from
   // an earlier workbook import on screen — a manual-entry failure must not show
   // "Sniðmátið er af eldri útgáfu".
-  const failImport = (message?: string) => {
-    setImportErrorMessage(message)
+  const failImport = (messages?: string[]) => {
+    setImportErrorMessages(messages)
     setImportStatus('error')
   }
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -103,7 +105,7 @@ export const ExcelTemplateDownload: FC<
 
     setIsImporting(true)
     setImportStatus(null)
-    setImportErrorMessage(undefined)
+    setImportErrorMessages(undefined)
     try {
       // 1. Ask the server (authenticated against DMR) for a presigned upload
       //    URL. The resulting { url, key } lands in externalData.importPresign.
@@ -184,7 +186,7 @@ export const ExcelTemplateDownload: FC<
         | undefined
 
       if (importData?.status !== 'success') {
-        failImport(getProviderErrorMessage(importData?.reason))
+        failImport(getProviderErrorMessages(importData?.reason))
         return
       }
 
@@ -345,7 +347,17 @@ export const ExcelTemplateDownload: FC<
         <Box marginTop={3}>
           <AlertMessage
             type="error"
-            message={importErrorMessage ?? formatMessage(m.importError)}
+            message={
+              importErrorMessages && importErrorMessages.length > 1 ? (
+                <BulletList>
+                  {importErrorMessages.map((message, index) => (
+                    <Bullet key={index}>{message}</Bullet>
+                  ))}
+                </BulletList>
+              ) : (
+                importErrorMessages?.[0] ?? formatMessage(m.importError)
+              )
+            }
           />
         </Box>
       )}
