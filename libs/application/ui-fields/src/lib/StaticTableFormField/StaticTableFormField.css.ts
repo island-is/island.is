@@ -6,6 +6,7 @@ export const tableWrapper = style({})
 globalStyle(`${tableWrapper} table`, {
   tableLayout: 'fixed',
   width: '100%',
+  minWidth: 700,
 })
 
 globalStyle(`${tableWrapper} input:not([type="checkbox"])`, {
