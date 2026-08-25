@@ -47,5 +47,10 @@ export const debts = {
       defaultMessage: 'Engar skuldir fundust',
       description: 'Message shown when there are no debts',
     },
+    toPayLabel: {
+      id: 'pd.application:debts.table.toPayLabel',
+      defaultMessage: 'Til greiðslu',
+      description: 'Label for total amount to pay',
+    }
   }),
 }

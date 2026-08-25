@@ -1,5 +1,5 @@
 import { FieldBaseProps, StaticTableField } from '@island.is/application/types'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Box, Checkbox, Table as T, Text } from '@island.is/island-ui/core'
@@ -10,8 +10,12 @@ import {
   getValueViaPath,
   resolveFieldId,
 } from '@island.is/application/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
+import {
+  FieldDescription,
+  InputController,
+} from '@island.is/shared/form-fields'
 import { Locale } from '@island.is/shared/types'
+import * as styles from './StaticTableFormField.css'
 
 interface Props extends FieldBaseProps {
   field: StaticTableField
@@ -59,15 +63,23 @@ export const StaticTableFormField: FC<Props> = ({
       getValueViaPath<number[]>(application.answers, fieldId) ??
       []
     : []
+
+  const inputFieldId = field.inputColumn
+    ? resolveFieldId({ id: field.inputColumn.id }, application, user)
+    : undefined
+  const inputMaxAmounts = field.inputColumn?.getMaxAmount?.(application) ?? []
+  const inputPlaceholder = field.inputColumn?.placeholder
+    ? formatText(field.inputColumn.placeholder, application, formatMessage)
+    : 'kr.'
+  const [focusedRowIndex, setFocusedRowIndex] = useState<number | null>(null)
   const allSelected =
     !!selectable && rows.length > 0 && selected.length === rows.length
 
   const toggleAll = () => {
-    setValue(
-      fieldId,
-      allSelected ? [] : rows.map((_, rowIndex) => rowIndex),
-      { shouldDirty: true, shouldTouch: true },
-    )
+    setValue(fieldId, allSelected ? [] : rows.map((_, rowIndex) => rowIndex), {
+      shouldDirty: true,
+      shouldTouch: true,
+    })
   }
 
   const toggleRow = (rowIndex: number) => {
@@ -102,12 +114,19 @@ export const StaticTableFormField: FC<Props> = ({
           )}
         />
       )}
-      <Box marginTop={description ? 3 : 0}>
+      <Box
+        marginTop={description ? 3 : 0}
+        className={field.inputColumn ? styles.tableWrapper : undefined}
+      >
         <T.Table>
           <T.Head>
             <T.Row>
               {selectable && (
-                <T.HeadData>
+                <T.HeadData
+                  style={
+                    field.inputColumn ? styles.checkboxColumnStyle : undefined
+                  }
+                >
                   <Checkbox
                     id={`${fieldId}-select-all`}
                     checked={allSelected}
@@ -116,7 +135,14 @@ export const StaticTableFormField: FC<Props> = ({
                 </T.HeadData>
               )}
               {header.map((cell, index) => (
-                <T.HeadData key={`${cell}-${index}`}>
+                <T.HeadData
+                  key={`${cell}-${index}`}
+                  style={
+                    field.inputColumn && index === header.length - 1
+                      ? styles.inputColumnHeaderStyle
+                      : undefined
+                  }
+                >
                   {formatText(cell, application, formatMessage)}
                 </T.HeadData>
               ))}
@@ -139,6 +165,33 @@ export const StaticTableFormField: FC<Props> = ({
                     {formatText(cell, application, formatMessage)}
                   </T.Data>
                 ))}
+                {field.inputColumn && inputFieldId && (
+                  <T.Data
+                    onFocus={() => setFocusedRowIndex(rowIndex)}
+                    onBlur={() =>
+                      setFocusedRowIndex((current) =>
+                        current === rowIndex ? null : current,
+                      )
+                    }
+                  >
+                    <InputController
+                      id={`${inputFieldId}-${rowIndex}`}
+                      name={`${inputFieldId}[${rowIndex}]`}
+                      type="number"
+                      currency
+                      rightAlign
+                      min={0}
+                      max={inputMaxAmounts[rowIndex]}
+                      placeholder={
+                        focusedRowIndex === rowIndex
+                          ? undefined
+                          : inputPlaceholder
+                      }
+                      size="sm"
+                      disabled={!selected.includes(rowIndex)}
+                    />
+                  </T.Data>
+                )}
               </T.Row>
             ))}
           </T.Body>

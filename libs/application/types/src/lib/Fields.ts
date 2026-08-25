@@ -1007,6 +1007,11 @@ export interface StaticTableField extends BaseField {
     | { label: StaticText; value: StaticText }[]
     | ((application: Application) => { label: StaticText; value: StaticText }[])
   selectable?: boolean
+  inputColumn?: {
+    id: string
+    getMaxAmount?: (application: Application) => Array<number | undefined>
+    placeholder?: StaticText
+  }
 }
 
 export type PaginatedSearchableTableRow = Record<
