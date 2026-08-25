@@ -1,17 +1,21 @@
 import { FC } from 'react'
 import { getErrorViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
-import { AccordionCard, Box, Button } from '@island.is/island-ui/core'
+import { AccordionCard, Box, Button, Text } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
+import type {
+  GroupDirection,
+  OutlierGroupAnswer,
+} from '../../utils/outlierGroups'
 
 type Props = {
   fieldId: string
   fieldName: string
   index: number
   group: OutlierGroupAnswer
+  direction: GroupDirection
   mode: 'draft' | 'postponed'
   errors?: RecordObject
   identifierForOrdinal: (ordinal: number) => string
@@ -24,6 +28,7 @@ export const OutlierGroupCard: FC<Props> = ({
   fieldName,
   index,
   group,
+  direction,
   mode,
   errors,
   identifierForOrdinal,
@@ -31,6 +36,16 @@ export const OutlierGroupCard: FC<Props> = ({
 }) => {
   const { formatMessage } = useLocale()
   const m = messages.salaryAnalysis.outlierGroup
+
+  // Below and above are different questions, so they get different prompts.
+  // A group can hold both — the applicant composes groups freely — which is
+  // what 'mixed' is for; it is a real third case, not a fallback.
+  const prompt = {
+    below: m.groupPromptBelow,
+    above: m.groupPromptAbove,
+    mixed: m.groupPromptMixed,
+    onLine: m.groupPromptNeutral,
+  }[direction]
 
   const groupError = (suffix: string) =>
     mode === 'postponed' && errors
@@ -51,6 +66,9 @@ export const OutlierGroupCard: FC<Props> = ({
           <Button variant="text" size="small" onClick={onRemove}>
             {formatMessage(m.removeGroupButton)}
           </Button>
+        </Box>
+        <Box marginBottom={2}>
+          <Text variant="small">{formatMessage(prompt)}</Text>
         </Box>
         <InputController
           id={`${fieldName}.${index}.reason`}

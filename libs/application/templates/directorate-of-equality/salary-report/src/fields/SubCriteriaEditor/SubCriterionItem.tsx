@@ -35,13 +35,16 @@ export const SubCriterionItem: FC<Props> = ({
   const { setValue } = useFormContext()
   const [stepsExpanded, setStepsExpanded] = useState(true)
 
-  const catalogOptions = catalogEntries.map((entry) => ({
+  // Keyed by index, not title: the personal-criterion list spans four
+  // Yfirviðmið (see SubCriteriaEditor), so two entries can share a title and a
+  // title lookup would silently apply whichever came first.
+  const catalogOptions = catalogEntries.map((entry, i) => ({
     label: entry.title,
-    value: entry.title,
+    value: String(i),
   }))
 
-  const applyCatalogEntry = (title: string | undefined) => {
-    const entry = catalogEntries.find((e) => e.title === title)
+  const applyCatalogEntry = (value: string | undefined) => {
+    const entry = value == null ? undefined : catalogEntries[Number(value)]
     if (!entry) return
     setValue(`${fieldName}.title`, entry.title)
     setValue(`${fieldName}.description`, entry.description)
