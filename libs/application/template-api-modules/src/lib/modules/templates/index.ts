@@ -1,4 +1,3 @@
-
 import { PayDebtsModule } from './pay-debts/pay-debts.module'
 import { PayDebtsService } from './pay-debts/pay-debts.service'
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
@@ -298,7 +297,7 @@ export const modules = [
   ConfirmTravelModule,
   DirectorateOfEqualityModule,
   PayDebtsModule,
-            ]
+]
 
 export const services = [
   ExampleCommonActionsService,
@@ -399,4 +398,4 @@ export const services = [
   ConfirmTravelService,
   DirectorateOfEqualityService,
   PayDebtsService,
-            ]
+]

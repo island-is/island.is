@@ -6,9 +6,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 
 @Injectable()
 export class PayDebtsService extends BaseTemplateApiService {
-  constructor(
-    private readonly financeClientV3Service: FinanceClientV3Service,
-  ) {
+  constructor(private readonly financeClientV3Service: FinanceClientV3Service) {
     super(ApplicationTypes.PAY_DEBTS)
   }
 

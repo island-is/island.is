@@ -302,7 +302,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
       '@island.is/application/templates/directorate-of-equality/salary-report'
     ),
   [ApplicationTypes.PAY_DEBTS]: () =>
-    import('@island.is/application/templates/pay-debts')
+    import('@island.is/application/templates/pay-debts'),
 }
 
 export default templates

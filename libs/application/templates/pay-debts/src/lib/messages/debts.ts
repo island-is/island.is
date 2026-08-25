@@ -51,6 +51,6 @@ export const debts = {
       id: 'pd.application:debts.table.toPayLabel',
       defaultMessage: 'Til greiðslu',
       description: 'Label for total amount to pay',
-    }
+    },
   }),
 }

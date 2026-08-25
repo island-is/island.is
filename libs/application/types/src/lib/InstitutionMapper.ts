@@ -545,5 +545,5 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
     slug: InstitutionTypes.FJARSYSLA_RIKISINS,
     contentfulId: InstitutionContentfulIds.FJARSYSLA_RIKISINS,
-  }
+  },
 }
