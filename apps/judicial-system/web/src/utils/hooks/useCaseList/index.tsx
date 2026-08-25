@@ -40,16 +40,15 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
-  Case,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-
-import { findFirstInvalidStep } from '../../formHelper'
-import useCase from '../useCase'
-import { resolveTargetAppealCaseByAppealCaseId } from '../useTargetAppealCaseByAppealCaseId'
+import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { resolveTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])

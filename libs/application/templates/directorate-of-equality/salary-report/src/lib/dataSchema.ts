@@ -48,9 +48,12 @@ const employeeCount = z.object({
   men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
     params: messages.errors.invalidNonNegativeNumber,
   }),
-  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
+  nonBinary: z
+    .string()
+    .optional()
+    .refine((v) => !v || Number(v) >= 0, {
+      params: messages.errors.invalidNonNegativeNumber,
+    }),
 })
 
 const period = z
@@ -133,6 +136,7 @@ const subsidiaries = z
 // Only the POSTPONED-state explanation is answers-backed; outlier grouping
 // itself is decided pre-submit on the DMR draft.
 const outlierGroup = z.object({
+  name: z.string().optional(),
   reason: z.string().optional(),
   action: z.string().optional(),
   signatureName: z.string().optional(),

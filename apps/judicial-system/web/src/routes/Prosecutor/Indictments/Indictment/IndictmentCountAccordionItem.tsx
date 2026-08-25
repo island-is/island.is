@@ -1,17 +1,9 @@
-import {
-  FC,
-  MouseEvent,
-  PointerEvent,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import type { FC, MouseEvent, PointerEvent, ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { MotionValue } from 'motion/react'
 import {
   animate,
   motion,
-  MotionValue,
   Reorder,
   useDragControls,
   useMotionValue,
@@ -25,7 +17,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
+import type {
   Case,
   IndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/graphql/schema'

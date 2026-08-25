@@ -1,12 +1,7 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -20,10 +15,8 @@ import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  isTrafficViolationIndictmentCount,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
+import type { SubstanceMap } from '@island.is/judicial-system/types'
+import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   CheckboxList,
@@ -31,24 +24,24 @@ import {
   SectionHeading,
   TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
   IndictmentCount as TIndictmentCount,
-  IndictmentCountOffense,
   IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { textToHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
+import type {
   UpdateIndictmentCount,
   UpdateIndictmentCountState,
-  useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useLawTag } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   getDefaultDefendantGender,
   isPartiallyVisible,

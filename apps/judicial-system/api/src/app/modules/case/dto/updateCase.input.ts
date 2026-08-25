@@ -6,11 +6,13 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  Matches,
 } from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import type {
   CourtDocument,
   CrimeSceneMap,
@@ -84,6 +86,7 @@ export class UpdateCaseInput {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
+  @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
   @Field(() => [String], { nullable: true })
   readonly policeCaseNumbers?: string[]
 

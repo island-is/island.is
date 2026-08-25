@@ -4,10 +4,10 @@ import {
   isCompletedCase,
   isDefenceUser,
 } from '@island.is/judicial-system/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { FormContext } from '../FormProvider/FormProvider'
-import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
