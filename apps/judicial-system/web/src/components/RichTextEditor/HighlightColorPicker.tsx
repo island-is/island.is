@@ -57,10 +57,10 @@ const HighlightColorPicker = forwardRef<HTMLDivElement, Props>(
           style={{ background: color }}
           aria-label={label}
           variants={itemVariants}
-          onMouseDown={(e) => {
-            e.preventDefault()
-            onSelectColor(color)
-          }}
+          // Mousedown is prevented so the editor selection and focus survive
+          // the press; the action runs on click so keyboard activation works.
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => onSelectColor(color)}
         />
       ))}
       <motion.button
@@ -68,10 +68,8 @@ const HighlightColorPicker = forwardRef<HTMLDivElement, Props>(
         className={styles.removeColor}
         aria-label="Remove highlight"
         variants={itemVariants}
-        onMouseDown={(e) => {
-          e.preventDefault()
-          onRemoveColor()
-        }}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={onRemoveColor}
       >
         ✕
       </motion.button>

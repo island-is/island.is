@@ -112,12 +112,11 @@ const ToolbarButton: FC<{
     }`}
     aria-label={label}
     aria-pressed={active ?? false}
-    // Mousedown instead of click, prevented, so the editor selection and
-    // focus survive the button press and no blur-save fires mid-edit.
-    onMouseDown={(e) => {
-      e.preventDefault()
-      onAction()
-    }}
+    // Mousedown is prevented so the editor selection and focus survive the
+    // button press and no blur-save fires mid-edit; the action itself runs on
+    // click so keyboard activation (Enter/Space) works too.
+    onMouseDown={(e) => e.preventDefault()}
+    onClick={onAction}
   >
     {children}
   </button>
