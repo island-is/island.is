@@ -5,7 +5,6 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
 import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
-import { getConfig } from '@/config'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
@@ -16,6 +15,7 @@ import {
   useReplyToHealthConversationMutation,
 } from '@/graphql/types/schema'
 import { useKeyboardHeight } from '@/hooks/use-keyboard-height'
+import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { uiStore } from '@/stores/ui-store'
 import { getMessagingWindowInfo } from '@/utils/messaging-window'
 import { useLocale } from '@/hooks/use-locale'
@@ -90,8 +90,7 @@ export default function HealthMessageComposeScreen() {
     (s) => s.patientInitiatedTypeCode === typeCode,
   )
   const isCertificateSelected = !isReply && !!selectedType?.isCertificate
-  const origin = getConfig().apiUrl.replace(/\/api$/, '')
-  const certificateUrl = `${origin}/minarsidur/heilsa/skilabod/nytt`
+  const { healthMessageNew: certificateUrl } = useMyPagesLinks()
 
   const recipientsLoading = !isReply && recipientsRes.loading
   const recipientsError =
