@@ -33,6 +33,7 @@ import {
   formatDate,
   formatDOB,
   getRoleTitleFromCaseFileCategory,
+  formatRulingOrderPronouncedOrallyName,
   getWordByGender,
   lowercase,
   Word,
@@ -829,11 +830,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   )
   const pronouncedOrally = availableRulingOrders.pronouncedOrally
 
-  const pronouncedOrallyPreviewName = `${
-    workingCase.courtCaseNumber ?? ''
-  } Úrskurður ${formatDate(
-    getCourtSessionFallbackStartDate(courtSession, workingCase),
-  )}`.trim()
+  // The same fallback the backend uses when it stores the name, so the court is
+  // not shown one name before pronouncing and given another after. Deliberately
+  // not getCourtSessionFallbackStartDate, whose court/arraignment dates the
+  // backend does not consider.
+  const pronouncedOrallyPreviewName = formatRulingOrderPronouncedOrallyName(
+    workingCase.courtCaseNumber,
+    courtSession.startDate ?? new Date(),
+  )
 
   const accordionTitle = useMemo(() => {
     const dateLabel = formatDate(

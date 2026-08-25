@@ -23,6 +23,13 @@ import { EventLog } from '../models/eventLog.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 import { CourtDocumentRepositoryService } from './courtDocumentRepository.service'
 
+interface FindByIdOptions {
+  transaction?: Transaction
+  // Takes a row lock, so a concurrent transaction reading the same session
+  // waits for this one to commit rather than acting on a stale copy.
+  lock?: boolean
+}
+
 interface CreateCourtSessionOptions {
   transaction: Transaction
 }
@@ -67,6 +74,39 @@ export class CourtSessionRepositoryService {
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  async findById(
+    caseId: string,
+    courtSessionId: string,
+    options?: FindByIdOptions,
+  ): Promise<CourtSession | null> {
+    try {
+      this.logger.debug(
+        `Finding court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      const result = await this.courtSessionModel.findOne({
+        where: { id: courtSessionId, caseId },
+        ...(options?.transaction ? { transaction: options.transaction } : {}),
+        ...(options?.lock ? { lock: Transaction.LOCK.UPDATE } : {}),
+      })
+
+      this.logger.debug(
+        `Court session ${courtSessionId} of case ${caseId} ${
+          result ? 'found' : 'not found'
+        }`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error finding court session ${courtSessionId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 
   async create(
     caseId: string,

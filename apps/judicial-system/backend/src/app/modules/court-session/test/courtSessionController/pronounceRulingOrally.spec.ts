@@ -75,6 +75,11 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockFileService = fileService
 
+    // By default the locked re-read returns the session as handed in.
+    ;(
+      mockCourtSessionRepositoryService.findById as jest.Mock
+    ).mockImplementation(async () => null)
+
     // The swap target is clean of recorded decisions.
     ;(appealDecisionRepositoryService.findAll as jest.Mock).mockResolvedValue(
       [],
@@ -182,6 +187,39 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
 
     it('should not delete anything', () => {
       expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
+    })
+
+    it('should take a row lock on the session before creating the ruling', () => {
+      expect(mockCourtSessionRepositoryService.findById).toHaveBeenCalledWith(
+        caseId,
+        courtSessionId,
+        { transaction, lock: true },
+      )
+    })
+  })
+
+  // Two requests pronouncing in the same session would otherwise each act on the
+  // copy they were handed. The locked re-read is what the pronouncement is built
+  // on, so the second sees what the first committed.
+  describe('the locked session differs from the one handed in', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockCourtSessionRepositoryService.findById as jest.Mock
+      ).mockImplementation(async () => makeCourtSession({ isConfirmed: true }))
+
+      then = await givenWhenThen(makeCase(), makeCourtSession())
+    })
+
+    it('should be rejected on what the lock revealed', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        'A ruling cannot be pronounced in a confirmed court session',
+      )
+      expect(
+        mockFileService.createRulingOrderPronouncedOrally,
+      ).not.toHaveBeenCalled()
     })
   })
 

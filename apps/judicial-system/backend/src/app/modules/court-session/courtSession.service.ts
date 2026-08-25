@@ -12,7 +12,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { formatRulingOrderPronouncedOrallyName } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   type Message,
@@ -78,17 +78,6 @@ const APPEAL_PARTY_FILE_CATEGORIES = [
   CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
   CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
 ]
-
-// The name a ruling order is given when it is pronounced orally in a court
-// session - "S-123/2026 Úrskurður 12.11.2026". Generated once, when the ruling
-// is pronounced: the document the district court writes up later keeps it.
-const rulingOrderPronouncedOrallyName = (
-  theCase: Case,
-  courtSession: CourtSession,
-): string =>
-  `${theCase.courtCaseNumber ?? ''} Úrskurður ${formatDate(
-    courtSession.startDate ?? nowFactory(),
-  )}`.trim()
 
 @Injectable()
 export class CourtSessionService {
@@ -376,7 +365,20 @@ export class CourtSessionService {
     user: TUser,
     transaction: Transaction,
   ): Promise<CourtSession> {
-    if (courtSession.isConfirmed) {
+    // Re-read the session under a row lock: two requests pronouncing in the same
+    // session would otherwise both act on the copy they were handed, each create
+    // a ruling, and the second overwrite the first link without cleaning the
+    // first ruling up - leaving a ruling no court record refers to. Taking the
+    // lock makes the second wait, so it sees the first ruling as the one it is
+    // swapping away from and the ordinary cleanup removes it.
+    const lockedCourtSession =
+      (await this.courtSessionRepositoryService.findById(
+        theCase.id,
+        courtSession.id,
+        { transaction, lock: true },
+      )) ?? courtSession
+
+    if (lockedCourtSession.isConfirmed) {
       throw new BadRequestException(
         'A ruling cannot be pronounced in a confirmed court session',
       )
@@ -384,14 +386,17 @@ export class CourtSessionService {
 
     const rulingFile = await this.fileService.createRulingOrderPronouncedOrally(
       theCase,
-      rulingOrderPronouncedOrallyName(theCase, courtSession),
+      formatRulingOrderPronouncedOrallyName(
+        theCase.courtCaseNumber,
+        lockedCourtSession.startDate ?? nowFactory(),
+      ),
       user,
       transaction,
     )
 
     return this.update(
       theCase,
-      courtSession,
+      lockedCourtSession,
       {
         rulingType: CourtSessionRulingType.ORDER,
         rulingFileId: rulingFile.id,
