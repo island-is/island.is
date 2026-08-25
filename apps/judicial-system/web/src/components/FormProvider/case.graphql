@@ -41,6 +41,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
     }
     splitCase {
@@ -279,6 +280,7 @@ query Case($input: CaseQueryInput!) {
       defendantId
       civilClaimantId
       rulingFileId
+      isPronouncedOrally
       hasBeenAppealed
       canBeAppealed
       appealDeadline
@@ -667,6 +669,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
       policeCaseNumbers
       indictmentSubtypes

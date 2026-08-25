@@ -30,6 +30,7 @@ import {
   isCompletedCase,
   isIndictmentCase,
   isRequestCase,
+  isRulingOrderWithoutDocument,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -546,6 +547,16 @@ export class FileService {
   }
 
   private async verifyCaseFile(file: CaseFile, theCase: Case) {
+    // A ruling order pronounced orally has no document behind it until the
+    // district court writes it up, so there is nothing to fetch. Rejected up
+    // front: the object lookup below would come up empty for its blank key and
+    // mark the file inaccessible, which is not what an unwritten ruling is.
+    if (isRulingOrderWithoutDocument(file)) {
+      throw new NotFoundException(
+        `File ${file.id} has no document - the ruling order was pronounced orally and has not been written up`,
+      )
+    }
+
     if (!file.isKeyAccessible) {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }

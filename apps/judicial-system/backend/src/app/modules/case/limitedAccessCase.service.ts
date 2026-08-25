@@ -25,6 +25,7 @@ import {
   hasGeneratedCourtRecordPdf,
   isIndictmentCase,
   isRequestCase,
+  isRulingOrderWithoutDocument,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -780,11 +781,12 @@ export class LimitedAccessCaseService {
         }
 
         // A ruling order uploaded during the course of a case is only visible
-        // once it has been added to a confirmed court session.
+        // once it has been added to a confirmed court session. One pronounced
+        // orally has nothing to add to the zip until it has been written up.
         if (file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
-          return isRulingOrderInConfirmedCourtSession(
-            file.id,
-            theCase.courtSessions,
+          return (
+            !isRulingOrderWithoutDocument(file) &&
+            isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions)
           )
         }
 
