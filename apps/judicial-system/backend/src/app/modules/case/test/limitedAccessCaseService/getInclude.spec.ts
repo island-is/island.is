@@ -62,7 +62,25 @@ describe('LimitedAccessCaseService - getInclude', () => {
         spokespersonNationalId: '1234567890',
         isSpokespersonConfirmed: true,
       })
-      expect(mergedCaseDefendants?.where).toBeUndefined()
+      expect(mergedCaseDefendants?.where).toEqual({
+        defenderNationalId: '1234567890',
+        isDefenderChoiceConfirmed: true,
+      })
+      expect(mergedCaseDefendants?.separate).toBe(true)
+      expect(mergedCaseDefendants?.attributes).toEqual([
+        'id',
+        'defenderNationalId',
+        'isDefenderChoiceConfirmed',
+        'isSentToPrisonAdmin',
+      ])
+      expect(
+        findInclude(mergedCaseDefendants?.include ?? [], 'subpoenas'),
+      ).toBeDefined()
+      expect(mergeCaseDefendants?.attributes).toEqual([
+        'id',
+        'defenderNationalId',
+        'isDefenderChoiceConfirmed',
+      ])
     })
   })
 

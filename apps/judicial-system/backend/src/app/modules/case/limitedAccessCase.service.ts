@@ -129,6 +129,11 @@ const linkedCaseDefendantAccessAttributes: (keyof Defendant)[] = [
   'isDefenderChoiceConfirmed',
 ]
 
+const mergedCaseDefendantAttributes: (keyof Defendant)[] = [
+  ...linkedCaseDefendantAccessAttributes,
+  'isSentToPrisonAdmin',
+]
+
 const linkedCaseCivilClaimantAccessAttributes: (keyof CivilClaimant)[] = [
   'id',
   'hasSpokesperson',
@@ -145,7 +150,7 @@ const getLinkedCaseDefendantsInclude = (user?: TUser): Includeable => ({
   attributes: linkedCaseDefendantAccessAttributes,
   required: false,
   order: [['created', 'ASC']],
-  ...(user && isDefenceUser(user)
+  ...(user && isDefenceUser(user) && user.nationalId
     ? {
         where: {
           defenderNationalId: normalizeNationalId(user.nationalId),
@@ -153,6 +158,45 @@ const getLinkedCaseDefendantsInclude = (user?: TUser): Includeable => ({
         },
       }
     : {}),
+})
+
+const getMergedCaseDefendantsInclude = (user?: TUser): Includeable => ({
+  model: Defendant,
+  as: 'defendants',
+  attributes: mergedCaseDefendantAttributes,
+  required: false,
+  order: [['created', 'ASC']],
+  separate: true,
+  ...(user && isDefenceUser(user) && user.nationalId
+    ? {
+        where: {
+          defenderNationalId: normalizeNationalId(user.nationalId),
+          isDefenderChoiceConfirmed: true,
+        },
+      }
+    : {}),
+  include: [
+    {
+      model: Subpoena,
+      as: 'subpoenas',
+      required: false,
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+    {
+      model: DefendantEventLog,
+      as: 'eventLogs',
+      required: false,
+      where: { eventType: defendantEventTypes },
+      separate: true,
+    },
+    {
+      model: CaseDefendantPoliceCaseNumber,
+      as: 'caseDefendantPoliceCaseNumbers',
+      required: false,
+      separate: true,
+    },
+  ],
 })
 
 const getLinkedCaseCivilClaimantsInclude = (
@@ -165,7 +209,7 @@ const getLinkedCaseCivilClaimantsInclude = (
   required: false,
   order: [['created', 'ASC']],
   ...(separate ? { separate: true } : {}),
-  ...(user && isDefenceUser(user)
+  ...(user && isDefenceUser(user) && user.nationalId
     ? {
         where: {
           hasSpokesperson: true,
@@ -493,22 +537,7 @@ export const getInclude = (user?: TUser): Includeable[] => [
         },
         separate: true,
       },
-      {
-        model: Defendant,
-        as: 'defendants',
-        required: false,
-        order: [['created', 'ASC']],
-        include: [
-          {
-            model: Subpoena,
-            as: 'subpoenas',
-            required: false,
-            order: [['created', 'DESC']],
-            separate: true,
-          },
-        ],
-        separate: true,
-      },
+      getMergedCaseDefendantsInclude(user),
       getLinkedCaseCivilClaimantsInclude(user, true),
       {
         model: CourtSession,

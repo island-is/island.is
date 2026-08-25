@@ -424,33 +424,15 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       withCourtSessions
       defendants {
         id
-        noNationalId
-        nationalId
-        name
-        gender
-        address
-        citizenship
-        defenderName
         defenderNationalId
-        defenderEmail
-        defenderPhoneNumber
-        defenderChoice
-        defendantPlea
-        requestedDefenderChoice
-        requestedDefenderNationalId
-        requestedDefenderName
         isDefenderChoiceConfirmed
-        caseFilesSharedWithDefender
-        verdictAppealDeadline
-        isVerdictAppealDeadlineExpired
-        subpoenaType
         isSentToPrisonAdmin
-        isRegisteredInPrisonSystem
+        policeCaseNumbers
+        indictmentCancelledOrDismissedState {
+          type
+          time
+        }
         sentToPrisonAdminDate
-        openedByPrisonAdminDate
-        punishmentType
-        isAlternativeService
-        alternativeServiceDescription
         subpoenas {
           id
           created
