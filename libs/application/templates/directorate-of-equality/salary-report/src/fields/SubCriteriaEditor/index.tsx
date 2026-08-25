@@ -66,6 +66,17 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     [content],
   )
 
+  // Job criteria match the catalog on parentTitle because their four titles are
+  // seeded read-only constants that mirror the catalog's Yfirviðmið. Personal
+  // criterion titles are user-authored free text, so the same match finds
+  // nothing — the catalog groups every employer-authored entry under several
+  // distinct parentTitles (Aukaábyrgð, Þekking og reynsla, Færni, Frammistaða)
+  // and none of them is what the applicant typed. Select on the type instead.
+  const personalCatalogEntries = useMemo(
+    () => catalogEntries.filter((e) => e.criterionType === 'PERSONAL'),
+    [catalogEntries],
+  )
+
   useSeedOnce(Boolean(content), () => {
     if (!content) return
     const subIds = new Set<string>()
@@ -215,9 +226,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     accordionId={`subCriteria-personal-${criterion.id}`}
                     criterionTitle={criterion.title}
                     criterionWeight={String(criterion.weight)}
-                    catalogEntries={catalogEntries.filter(
-                      (e) => e.parentTitle === criterion.title,
-                    )}
+                    catalogEntries={personalCatalogEntries}
                     startExpanded={i === 0}
                   />
                 ))}

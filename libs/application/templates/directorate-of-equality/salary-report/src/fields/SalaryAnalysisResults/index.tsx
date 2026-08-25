@@ -20,13 +20,16 @@ import {
   isOutlierGroupComplete,
 } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
-import { formatCurrency } from '../EmployeesEditor/utils'
+import { formatHourlyWage } from '../EmployeesEditor/utils'
+import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
+import { getProviderErrorMessage } from '../../utils/providerError'
 import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { OutlierGroupPanel } from './OutlierGroupPanel'
 import { StatisticCard } from './StatisticsCard'
+import { SalaryDistributionChart } from './SalaryDistributionChart'
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -38,15 +41,8 @@ interface Props extends FieldBaseProps {
 type AnalysisExternalData = {
   status?: 'success' | 'failure'
   data?: SalaryAnalysisResponseDto
-  reason?: { title?: string; summary?: string } | string[]
-}
-
-const getErrorMessage = (
-  reason: AnalysisExternalData['reason'],
-): string | undefined => {
-  if (!reason) return undefined
-  if (Array.isArray(reason)) return reason.join(', ')
-  return reason.summary || reason.title
+  // Untyped on the wire — see getProviderErrorMessage.
+  reason?: unknown
 }
 
 // outlierGroups is DMR-synced pre-submit, unlike answers-backed `postponed`.
@@ -154,7 +150,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       ) {
         setResult(salaryAnalysisResult.data)
       } else {
-        setErrorMessage(getErrorMessage(salaryAnalysisResult?.reason))
+        setErrorMessage(getProviderErrorMessage(salaryAnalysisResult?.reason))
         setHasError(true)
       }
     } catch {
@@ -285,8 +281,68 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     refetch,
   ])
 
-  const totals = result?.baseSalaryByGenderAndScoreAll?.totals
+  const totals = result?.regularHourlyWageByScoreAll?.totals
+  const decomposition = result?.wageGapDecomposition
   const outlierCount = result?.outliers?.length ?? 0
+  const gapState = deriveWageGapState(decomposition, outlierCount)
+  const r = messages.salaryAnalysis.results
+
+  // An overshooting set still gets the plain over-benchmark banner — the list
+  // is the right list to account for. What differs is the note beneath it.
+  const isOvershoot = gapState.kind === 'overBenchmarkOvershoots'
+  const bannerKind: Exclude<typeof gapState.kind, 'overBenchmarkOvershoots'> =
+    isOvershoot ? 'overBenchmark' : gapState.kind
+
+  // Magnitude plus an explicit direction word — never the signed figure. The
+  // old card rendered totals.wageGapPercent, the asymmetric (male − female) /
+  // male form, which reads -4,2% when women out-earn men.
+  const directionLabel = (direction?: 'FEMALE' | 'MALE' | 'NONE') =>
+    formatMessage(
+      direction === 'FEMALE'
+        ? r.directionWomen
+        : direction === 'MALE'
+        ? r.directionMen
+        : r.directionNone,
+    )
+
+  const gapContent = (
+    percent: number,
+    direction?: 'FEMALE' | 'MALE' | 'NONE',
+  ) =>
+    formatMessage(r.gapWithDirection, {
+      value: formatPercentMagnitude(percent),
+      direction: directionLabel(direction),
+    })
+
+  // Each tier is gated on its own availability flag: the raw gap and the
+  // leiðréttur gap can be blocked independently.
+  const showRawGap =
+    decomposition?.rawGapAvailable === true &&
+    typeof decomposition.rawGapPercent === 'number'
+  const showAdjustedGap =
+    decomposition?.oskyrtAvailable === true &&
+    typeof decomposition.oskyrtPercent === 'number'
+
+  // Soft warnings — the figures are computed but must be shown caveated. Each
+  // code is named explicitly and anything unrecognised is dropped: DMR can add
+  // a fourth code, and a catch-all would caption it "starfsmatsstig eru þau
+  // sömu hjá öllum starfsmönnum", a specific claim that may be false.
+  const warningMessages = (decomposition?.warnings ?? [])
+    .map((warning) => {
+      switch (warning) {
+        case 'ROWS_EXCLUDED_NON_POSITIVE_WAGE':
+          return formatMessage(r.warningRowsExcluded, {
+            excluded: decomposition?.counts.excluded ?? 0,
+          })
+        case 'NO_SCORE_OVERLAP':
+          return formatMessage(r.warningNoScoreOverlap)
+        case 'NO_SCORE_VARIATION':
+          return formatMessage(r.warningNoScoreVariation)
+        default:
+          return undefined
+      }
+    })
+    .filter((message): message is string => Boolean(message))
 
   const body = (
     <Box>
@@ -322,7 +378,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       {totals && (
         <Box marginBottom={4}>
           <Text variant="h4" marginBottom={2}>
-            {formatMessage(messages.salaryAnalysis.results.totalsTitle)}
+            {formatMessage(r.meanHourlyWageGroupTitle)}
           </Text>
           <Box
             display="flex"
@@ -332,52 +388,141 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             flexDirection={['column', 'column', 'column', 'row']}
           >
             <StatisticCard
-              title={formatMessage(messages.salaryAnalysis.results.maleLabel)}
-              content={formatCurrency(totals.maleAverageSalary)}
+              title={formatMessage(r.maleLabel)}
+              content={formatHourlyWage(totals.maleAverageSalary)}
             />
             <StatisticCard
-              title={formatMessage(messages.salaryAnalysis.results.femaleLabel)}
-              content={formatCurrency(totals.femaleAverageSalary)}
+              title={formatMessage(r.femaleLabel)}
+              content={formatHourlyWage(totals.femaleAverageSalary)}
             />
-
-            {typeof totals.wageGapPercent === 'number' && (
-              <StatisticCard
-                title={formatMessage(
-                  messages.salaryAnalysis.results.wageGapLabel,
-                )}
-                content={totals.wageGapPercent.toFixed(1) + '%'}
-                color="purple"
-              />
-            )}
           </Box>
         </Box>
       )}
 
-      {result &&
-        (outlierCount > 0 ? (
+      {(showRawGap || showAdjustedGap) && decomposition && (
+        <Box marginBottom={4}>
+          <Text variant="h4" marginBottom={2}>
+            {formatMessage(r.wageGapGroupTitle)}
+          </Text>
+          <Box
+            display="flex"
+            columnGap={[0, 0, 0, 4]}
+            rowGap={[2, 2, 2, 0]}
+            marginTop={1}
+            flexDirection={['column', 'column', 'column', 'row']}
+          >
+            {showRawGap && (
+              <StatisticCard
+                title={formatMessage(r.wageGapLabel)}
+                content={gapContent(
+                  decomposition.rawGapPercent as number,
+                  decomposition.rawGapDirection,
+                )}
+              />
+            )}
+            {/* The figure actually tested against the benchmark — the raw gap
+                beside it decides nothing. */}
+            {showAdjustedGap && (
+              <StatisticCard
+                title={formatMessage(r.adjustedGapLabel)}
+                content={gapContent(
+                  decomposition.oskyrtPercent as number,
+                  decomposition.oskyrtDirection,
+                )}
+                footnote={formatMessage(r.benchmarkFootnote, {
+                  benchmark: formatPercentMagnitude(
+                    decomposition.benchmarkPercent,
+                  ),
+                })}
+                color="purple"
+              />
+            )}
+          </Box>
+
+          {warningMessages.length > 0 && (
+            <Box marginTop={2}>
+              <Text variant="small" fontWeight="semiBold">
+                {formatMessage(r.warningsTitle)}
+              </Text>
+              {warningMessages.map((message) => (
+                <Text key={message} variant="small">
+                  {message}
+                </Text>
+              ))}
+            </Box>
+          )}
+        </Box>
+      )}
+
+      {result && (
+        <AlertMessage
+          type={
+            gapState.kind === 'withinBenchmark'
+              ? 'success'
+              : gapState.kind === 'notComputable' || gapState.kind === 'unknown'
+              ? 'info'
+              : 'warning'
+          }
+          title={formatMessage(r[`${bannerKind}Title`])}
+          message={
+            gapState.kind === 'withinBenchmark'
+              ? formatMessage(r.withinBenchmarkMessage, {
+                  benchmark: formatPercentMagnitude(gapState.benchmarkPercent),
+                })
+              : gapState.kind === 'overBenchmark' ||
+                gapState.kind === 'overBenchmarkOvershoots'
+              ? formatMessage(r.overBenchmarkMessage, {
+                  benchmark: formatPercentMagnitude(gapState.benchmarkPercent),
+                  count: gapState.outlierCount,
+                })
+              : gapState.kind === 'overBenchmarkNoList'
+              ? formatMessage(
+                  gapState.reason === 'noCarriers'
+                    ? r.overBenchmarkNoCarriersMessage
+                    : r.overBenchmarkAllOvershootMessage,
+                  {
+                    benchmark: formatPercentMagnitude(
+                      gapState.benchmarkPercent,
+                    ),
+                  },
+                )
+              : gapState.kind === 'notComputable'
+              ? // Each blocker is named explicitly. Falling through to the
+                // male-cohort wording on an empty or unrecognised blocker list
+                // would assert "engir karlar" about a company that may have
+                // plenty.
+                gapState.blockers.includes('EMPTY_FEMALE_COHORT')
+                ? formatMessage(r.notComputableNoWomenMessage, {
+                    male: gapState.counts.male,
+                  })
+                : gapState.blockers.includes('EMPTY_MALE_COHORT')
+                ? formatMessage(r.notComputableNoMenMessage, {
+                    female: gapState.counts.female,
+                  })
+                : formatMessage(r.unknownMessage)
+              : formatMessage(r.unknownMessage)
+          }
+        />
+      )}
+
+      {isOvershoot && (
+        <Box marginTop={2}>
           <AlertMessage
-            type="warning"
-            title={formatMessage(
-              messages.salaryAnalysis.results.outliersFoundTitle,
-              { count: outlierCount },
-            )}
-            message={formatMessage(
-              messages.salaryAnalysis.results.outliersFoundDescription,
-            )}
+            type="info"
+            title={formatMessage(r.overshootTitle)}
+            message={formatMessage(r.overshootMessage)}
           />
-        ) : (
-          <AlertMessage
-            type="success"
-            message={formatMessage(
-              messages.salaryAnalysis.results.noOutliersFound,
-            )}
-          />
-        ))}
+        </Box>
+      )}
+
+      <SalaryDistributionChart
+        dataPoints={result?.regularHourlyWageByScoreAll?.dataPoints ?? []}
+        pooledFit={decomposition?.pooledFit}
+      />
 
       <OutlierGroupPanel
         application={application}
         outliers={result?.outliers ?? []}
-        scoreBuckets={result?.baseSalaryByGenderAndScoreAll?.scoreBuckets ?? []}
         hidePostponeCheckbox={hidePostponeCheckbox}
         errors={errors}
         identifierForOrdinal={identifierForOrdinal}
