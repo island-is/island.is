@@ -48,7 +48,9 @@ import {
   userHasActiveInCourtAppeal,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import RulingOrderConfirmationStatus from './RulingOrderConfirmationStatus'
+import RulingOrderConfirmationStatus, {
+  isRulingOrderConfirmed,
+} from './RulingOrderConfirmationStatus'
 
 interface Props {
   file: CaseFile
@@ -194,6 +196,12 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   }
   // COMPLETED / WITHDRAWN: read-only, no menu items.
 
+  // The district court has nothing to act on before the registered judge has
+  // confirmed the ruling order - until then the row only offers the
+  // "Staðfesta" button, so its action menu stays hidden.
+  const menuItems =
+    isDistrictCourt && !isRulingOrderConfirmed(file) ? [] : items
+
   // Status text below the file row. Visible to working prosecution, defence,
   // and district-court users. Other roles (e.g. PUBLIC_PROSECUTOR_STAFF) see
   // the row without status text or actions.
@@ -291,10 +299,10 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
               />
             </Box>
           )}
-          {items.length > 0 && (
+          {menuItems.length > 0 && (
             <Box marginLeft={1}>
               <ContextMenu
-                items={items}
+                items={menuItems}
                 placement="left-start"
                 shift={-12}
                 render={
