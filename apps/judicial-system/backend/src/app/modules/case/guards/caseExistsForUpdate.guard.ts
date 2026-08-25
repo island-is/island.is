@@ -22,8 +22,14 @@ import { BaseCaseExistsGuard } from './baseCaseExists.guard'
  *   would block on this one's row lock while this one waits for the handler to
  *   return - a deterministic self-deadlock, not a race. Flagging a route and
  *   converting its handler off opening one of its own is a single change.
- * - `RolesGuard` must come first, so an authenticated but unauthorized caller
- *   cannot take a write lock on a case row and hold it until it is rejected.
+ * - Put `RolesGuard` first where the route's roles rules allow it, so an
+ *   authenticated but unauthorized caller cannot take a write lock on a case
+ *   row and hold it until it is rejected. **Check the rules, not just the
+ *   guard**: a `RolesRule.canActivate` may read `request.case`, and several do
+ *   - `prosecutorTransitionRule` denies outright when it is missing. Where a
+ *   rule needs the case, this guard has to run first and the lock exposure
+ *   stands; it cannot be closed by ordering. Nothing catches a wrong order
+ *   here, because guards do not run in controller unit tests.
  */
 @Injectable()
 export class CaseExistsForUpdateGuard extends BaseCaseExistsGuard {
