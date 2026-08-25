@@ -13,18 +13,23 @@ import { BankTransferQrCode } from '../BankTransferQrCode/BankTransferQrCode'
 import { bankTransfer } from '../../messages'
 
 interface BankTransferPendingScreenProps {
-  // Pending sub-status; SCA_REQUIRED renders the QR/deep-link UI, anything else the waiting UI.
+  // Pending sub-status. Drives the waiting message only — never whether the SCA URL is offered.
   pendingStatus?: PaymentsBankTransferPendingStatus | null
-  // The provider SCA URL. May be absent — arrives later via polling if at all.
+  // Provider SCA URL. Absent means there is nothing to redirect to; it can appear or disappear
+  // between polls, so the caller must always pass the latest value rather than a cached one.
   scaRedirectUrl?: string
 }
 
 /**
  * Body of the bank-transfer pending screen.
  *
- * sca_required + URL → desktop: QR code; mobile: open-banking-app button.
- * sca_required without URL → "check your phone" message.
- * processing (SCA complete / not yet required) → waiting message.
+ * Blikk's rule is to offer the redirect whenever `scaRedirectUrl` is non-empty, *regardless of
+ * status*. So the URL's presence alone decides whether we show it, and the sub-status only decides
+ * what we say while there is nothing to show:
+ *
+ * URL present → desktop: QR code; mobile: a button into Blikk's hosted payment page.
+ * No URL, sca_required → back-channel SCA (e.g. Íslandsbanki): "check your phone".
+ * No URL otherwise → waiting on the bank.
  *
  * Payments that enter this screen can not be cancelled by Blikk. User must do it in their banking app.
  */
@@ -34,9 +39,7 @@ export const BankTransferPendingScreen = ({
 }: BankTransferPendingScreenProps) => {
   const { formatMessage } = useLocale()
 
-  const showSca =
-    pendingStatus === PaymentsBankTransferPendingStatus.sca_required &&
-    !!scaRedirectUrl
+  const showSca = !!scaRedirectUrl
 
   const isScaOutstanding =
     pendingStatus === PaymentsBankTransferPendingStatus.sca_required
@@ -50,11 +53,11 @@ export const BankTransferPendingScreen = ({
     >
       {showSca ? (
         <>
-          {/* Desktop: the payer scans the SCA URL with their phone. */}
+          {/* Desktop: the payer scans the URL with their phone to continue there. */}
           <Hidden below="md">
             <BankTransferQrCode url={scaRedirectUrl} />
           </Hidden>
-          {/* Mobile: deep link to banking app. */}
+          {/* Mobile: opens Blikk's hosted payment page, which hands off to the banking app. */}
           <Hidden above="sm">
             <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
               <Button

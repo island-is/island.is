@@ -14,8 +14,8 @@ interface BankTransferQrCodeProps {
 const QR_CODE_SIZE = 200
 
 /**
- * The SCA QR code shown on the desktop pending screen — the payer scans it with
- * their phone to open the banking app.
+ * The SCA QR code shown on the desktop pending screen. The payer scans it with their phone, which
+ * opens Blikk's hosted payment page — that page runs SCA and hands off to the banking app itself.
  */
 export const BankTransferQrCode = ({ url }: BankTransferQrCodeProps) => {
   const { formatMessage } = useLocale()
