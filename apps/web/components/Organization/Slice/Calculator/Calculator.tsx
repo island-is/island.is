@@ -1,4 +1,5 @@
-import { Controller, useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { Controller, useForm, useFormState } from 'react-hook-form'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import { useLazyQuery, useQuery } from '@apollo/client'
 
@@ -10,15 +11,16 @@ import {
   AlertMessage,
   Box,
   Button,
+  Checkbox,
   GridColumn,
   GridColumnProps,
   GridRow,
   Option,
-  RadioButton,
   Select,
   SkeletonLoader,
   Stack,
   Text,
+  ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
@@ -46,12 +48,32 @@ import { messages } from './messages'
 const CALCULATOR_TYPE_BY_CONFIG_VALUE: Record<string, RskCalculatorType> = {
   withholdingTaxOnWages: RskCalculatorType.WithholdingTaxOnWages,
   childBenefit: RskCalculatorType.ChildBenefit,
+  vehicleTax: RskCalculatorType.VehicleTax,
+  vehicleBenefit: RskCalculatorType.VehicleBenefit,
 }
 
 const getCalculatorType = (value: unknown): RskCalculatorType | undefined => {
   if (typeof value !== 'string') return undefined
   return CALCULATOR_TYPE_BY_CONFIG_VALUE[value]
 }
+
+// GridColumn's `span` type is a finite string-literal union (e.g. '4/12'),
+// not `${number}/12` in general, so a 1-12 count needs an explicit lookup
+// rather than a template literal.
+const GRID_SPAN_COLUMNS = [
+  '1/12',
+  '2/12',
+  '3/12',
+  '4/12',
+  '5/12',
+  '6/12',
+  '7/12',
+  '8/12',
+  '9/12',
+  '10/12',
+  '11/12',
+  '12/12',
+] as const
 
 // A section field's `span` is a 1-12 column count on a 12-column grid,
 // editor-authored. Stacks to full width below the largest breakpoint, then
@@ -60,7 +82,12 @@ const getCalculatorType = (value: unknown): RskCalculatorType | undefined => {
 // two-column state at the medium breakpoint; accepted as a minor difference.
 const spanToGridColumn = (
   span: number,
-): NonNullable<GridColumnProps['span']> => ['1/1', '1/1', '1/1', `${span}/12`]
+): NonNullable<GridColumnProps['span']> => [
+  '1/1',
+  '1/1',
+  '1/1',
+  GRID_SPAN_COLUMNS[span - 1],
+]
 
 // Keyed by the domain's `RskCalculatorResultRow.group` string. Unknown group
 // keys (e.g. a future calculator type) fall back to rendering the raw key.
@@ -68,13 +95,15 @@ const GROUP_TITLE_MESSAGES: Record<string, MessageDescriptor> = {
   taxBaseCalculation: messages.groupTaxBaseCalculationTitle,
   withholdingAndPersonalCredit: messages.groupWithholdingAndPersonalCreditTitle,
   employerCosts: messages.groupEmployerCostsTitle,
+  fyrraTimabil: messages.groupFyrraTimabilTitle,
+  seinnaTimabil: messages.groupSeinnaTimabilTitle,
 }
 
 // Field labels come from the GraphQL response, but the id is composed per
 // field key so editors can override an individual label through the linked
 // translation namespace.
 const getFieldLabelMessage = (field: RskCalculatorField) => ({
-  id: `web.rsk.calculator:field.${field.key}.label`,
+  id: `web.rsk.calculatorSlice:field.${field.key}.label`,
   defaultMessage: field.label,
 })
 
@@ -83,7 +112,7 @@ const getFieldLabelMessage = (field: RskCalculatorField) => ({
 // translation namespace supplies the override, keyed by the section's
 // stable `key` (not its position, which shifts on reorder).
 const getSectionTitleMessage = (section: { key: string; title: string }) => ({
-  id: `web.rsk.calculator:section.${section.key}.title`,
+  id: `web.rsk.calculatorSlice:section.${section.key}.title`,
   defaultMessage: section.title,
 })
 
@@ -91,7 +120,7 @@ const getSectionDescriptionMessage = (section: {
   key: string
   description?: string
 }) => ({
-  id: `web.rsk.calculator:section.${section.key}.description`,
+  id: `web.rsk.calculatorSlice:section.${section.key}.description`,
   defaultMessage: section.description ?? '',
 })
 
@@ -110,14 +139,29 @@ interface CalculatorFieldProps {
   field: RskCalculatorField
   control: ReturnType<typeof useForm>['control']
   label: string
+  disabled: boolean
 }
 
 const CalculatorFieldInput = ({
   field,
   control,
   label,
+  disabled,
 }: CalculatorFieldProps) => {
   const { formatMessage } = useIntl()
+  const { errors } = useFormState({ control, name: field.key })
+  const fieldError = errors[field.key]
+  const errorMessage = fieldError
+    ? formatMessage(
+        // 'validate' is only used by the CHECKBOX branch's required check.
+        fieldError.type === 'required' || fieldError.type === 'validate'
+          ? messages.fieldRequiredError
+          : messages.fieldRangeError,
+      )
+    : undefined
+  // A field disabled via `disabledWhen` stays mounted but the user cannot
+  // edit it -- a `required` rule would otherwise block submission forever.
+  const isRequired = field.required && !disabled
 
   if (field.kind === RskCalculatorFieldKind.Select) {
     const options: Option<string>[] = (field.options ?? []).map((option) => ({
@@ -131,12 +175,15 @@ const CalculatorFieldInput = ({
         control={control}
         name={field.key}
         defaultValue={defaultValue}
-        rules={{ required: field.required }}
+        rules={{ required: isRequired }}
         render={({ field: { onChange, value } }) => (
           <Select
             label={label}
             placeholder={formatMessage(messages.selectPlaceholder)}
-            required={field.required}
+            required={isRequired}
+            isDisabled={disabled}
+            hasError={Boolean(errorMessage)}
+            errorMessage={errorMessage}
             options={options}
             value={options.find((option) => option.value === value)}
             onChange={(option) => onChange(option?.value ?? '')}
@@ -154,28 +201,59 @@ const CalculatorFieldInput = ({
         defaultValue="false"
         rules={{ required: field.required }}
         render={({ field: { onChange, value } }) => (
-          <Stack space={1}>
-            <Text variant="medium" fontWeight="light">
-              {label}
-            </Text>
-            <Box display="flex" columnGap={3}>
-              <RadioButton
-                id={`${field.key}-true`}
-                name={field.key}
-                label={formatMessage(messages.yes)}
-                checked={value === 'true'}
-                onChange={() => onChange('true')}
-              />
-              <RadioButton
-                id={`${field.key}-false`}
-                name={field.key}
-                label={formatMessage(messages.no)}
-                checked={value === 'false'}
-                onChange={() => onChange('false')}
-              />
-            </Box>
-          </Stack>
+          <ToggleSwitchCheckbox
+            label={label}
+            checked={value === 'true'}
+            disabled={disabled}
+            onChange={(checked) => onChange(checked ? 'true' : 'false')}
+          />
         )}
+      />
+    )
+  }
+
+  if (field.kind === RskCalculatorFieldKind.Checkbox) {
+    return (
+      <Controller
+        control={control}
+        name={field.key}
+        defaultValue="false"
+        // The value is the string "true"/"false", which never satisfies
+        // react-hook-form's `required` emptiness check (only "" or
+        // null/undefined do) -- a required checkbox needs an explicit
+        // `validate` rule checking the actual value instead.
+        rules={{
+          validate: (value) => !isRequired || value === 'true' || 'required',
+        }}
+        render={({ field: { onChange, value } }) => (
+          <Checkbox
+            large
+            label={label}
+            checked={value === 'true'}
+            disabled={disabled}
+            hasError={Boolean(errorMessage)}
+            errorMessage={errorMessage}
+            onChange={(event) =>
+              onChange(event.target.checked ? 'true' : 'false')
+            }
+          />
+        )}
+      />
+    )
+  }
+
+  if (field.kind === RskCalculatorFieldKind.Text) {
+    return (
+      <InputController
+        id={field.key}
+        name={field.key}
+        control={control}
+        label={label}
+        type="text"
+        required={isRequired}
+        disabled={disabled}
+        error={errorMessage}
+        rules={{ required: isRequired }}
       />
     )
   }
@@ -184,6 +262,7 @@ const CalculatorFieldInput = ({
   return (
     <InputController
       id={field.key}
+      disabled={disabled}
       name={field.key}
       control={control}
       label={label}
@@ -191,10 +270,17 @@ const CalculatorFieldInput = ({
       currency={field.unit === 'ISK'}
       suffix={field.unit && field.unit !== 'ISK' ? ` ${field.unit}` : undefined}
       placeholder={field.unit === 'ISK' ? 'krónur' : field.unit ?? undefined}
-      required={field.required}
+      required={isRequired}
       min={field.min ?? undefined}
       max={field.max ?? undefined}
-      rules={{ required: field.required }}
+      // No calculator field is meant to accept a negative value.
+      allowNegative={false}
+      error={errorMessage}
+      rules={{
+        required: isRequired,
+        min: field.min ?? undefined,
+        max: field.max ?? undefined,
+      }}
     />
   )
 }
@@ -264,7 +350,17 @@ interface CalculatorProps {
 
 const Calculator = ({ slice }: CalculatorProps) => {
   const { formatMessage } = useIntl()
-  const { control, getValues, watch } = useForm()
+  // A field hidden by `visibleWhen` unmounts (its Controller/InputController
+  // stops rendering). Without shouldUnregister, react-hook-form would keep
+  // that field registered -- submitting its stale last value, and (if
+  // required) permanently failing `trigger()` since the user has no way to
+  // fix a field that's no longer rendered.
+  const { control, getValues, watch, trigger } = useForm({
+    shouldUnregister: true,
+  })
+  const [sectionToggles, setSectionToggles] = useState<
+    Record<string, boolean>
+  >({})
 
   const parsedConfig = calculatorConfigSchema.safeParse(slice.configJson)
   const config = parsedConfig.success ? parsedConfig.data : undefined
@@ -311,8 +407,10 @@ const Calculator = ({ slice }: CalculatorProps) => {
 
   const watchedValues = watch()
 
-  const calculate = () => {
+  const calculate = async () => {
     if (!calculatorType) return
+    const isValid = await trigger()
+    if (!isValid) return
     const values = getValues()
     fetchCalculation({
       variables: {
@@ -364,7 +462,14 @@ const Calculator = ({ slice }: CalculatorProps) => {
                     !sectionField.visibleWhen ||
                     evaluateCondition(sectionField.visibleWhen, watchedValues)
                   if (!isVisible) return undefined
-                  return { field, span: sectionField.span }
+                  const isDisabled = Boolean(
+                    sectionField.disabledWhen &&
+                      evaluateCondition(
+                        sectionField.disabledWhen,
+                        watchedValues,
+                      ),
+                  )
+                  return { field, span: sectionField.span, disabled: isDisabled }
                 })
                 .filter(
                   (
@@ -372,38 +477,65 @@ const Calculator = ({ slice }: CalculatorProps) => {
                   ): entry is {
                     field: RskCalculatorField
                     span: number
+                    disabled: boolean
                   } => Boolean(entry),
                 )
 
-              if (!sectionFields.length) return null
+              if (!section.toggleLabel && !sectionFields.length) return null
+
+              const isToggledOn = section.toggleLabel
+                ? sectionToggles[section.key] ?? false
+                : true
 
               return (
                 <Stack key={section.key} space={3}>
-                  {(section.title || section.description) && (
-                    <Stack space={1}>
-                      {section.title && (
-                        <Text variant="h4" as="h4">
-                          {formatMessage(getSectionTitleMessage(section))}
-                        </Text>
-                      )}
-                      {section.description && (
-                        <Text variant="medium">
-                          {formatMessage(getSectionDescriptionMessage(section))}
-                        </Text>
-                      )}
-                    </Stack>
+                  {section.toggleLabel && (
+                    <ToggleSwitchCheckbox
+                      label={section.toggleLabel}
+                      checked={isToggledOn}
+                      onChange={(checked) =>
+                        setSectionToggles((prev) => ({
+                          ...prev,
+                          [section.key]: checked,
+                        }))
+                      }
+                    />
                   )}
-                  <GridRow rowGap={3}>
-                    {sectionFields.map(({ field, span }) => (
-                      <GridColumn key={field.key} span={spanToGridColumn(span)}>
-                        <CalculatorFieldInput
-                          field={field}
-                          control={control}
-                          label={formatMessage(getFieldLabelMessage(field))}
-                        />
-                      </GridColumn>
-                    ))}
-                  </GridRow>
+                  {isToggledOn && (
+                    <>
+                      {(section.title || section.description) && (
+                        <Stack space={1}>
+                          {section.title && (
+                            <Text variant="h4" as="h4">
+                              {formatMessage(getSectionTitleMessage(section))}
+                            </Text>
+                          )}
+                          {section.description && (
+                            <Text variant="medium">
+                              {formatMessage(
+                                getSectionDescriptionMessage(section),
+                              )}
+                            </Text>
+                          )}
+                        </Stack>
+                      )}
+                      <GridRow rowGap={3}>
+                        {sectionFields.map(({ field, span, disabled }) => (
+                          <GridColumn
+                            key={field.key}
+                            span={spanToGridColumn(span)}
+                          >
+                            <CalculatorFieldInput
+                              field={field}
+                              control={control}
+                              label={formatMessage(getFieldLabelMessage(field))}
+                              disabled={disabled}
+                            />
+                          </GridColumn>
+                        ))}
+                      </GridRow>
+                    </>
+                  )}
                 </Stack>
               )
             })}
