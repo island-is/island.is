@@ -3,13 +3,12 @@ import {
   buildMultiField,
   buildSection,
   buildStaticTableField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { StaticText } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { debts as messages } from '../../lib/messages'
 import { formatDate } from '../../utils/formatDate'
-import { CustomerDebt } from '../../utils/types'
+import { getDebts } from '../../utils/getDebts'
 
 export const debtsSection = buildSection({
   id: 'debtsSection',
@@ -32,13 +31,10 @@ export const debtsSection = buildSection({
             messages.table.dueDateHeader,
             messages.table.finalDueDateHeader,
             messages.table.amountHeader,
+            messages.table.toPayLabel,
           ],
           rows: (application) => {
-            const debts =
-              getValueViaPath<CustomerDebt[]>(
-                application.externalData,
-                'customerDebts.data.debts',
-              ) ?? []
+            const debts = getDebts(application)
 
             if (debts.length === 0) {
               return [[messages.table.emptyMessage, '', '', '']]
@@ -50,6 +46,11 @@ export const debtsSection = buildSection({
               formatDate(debt.finalDueDate),
               formatCurrency(debt.debts.toString()),
             ])
+          },
+          inputColumn: {
+            id: 'debtsToPay',
+            getMaxAmount: (application) =>
+              getDebts(application).map((debt) => debt.debts),
           },
         }),
       ],

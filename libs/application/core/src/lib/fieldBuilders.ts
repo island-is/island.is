@@ -1106,6 +1106,7 @@ export const buildStaticTableField = (
     marginTop = 2,
     titleVariant = 'h4',
     selectable = false,
+    inputColumn,
   } = data
 
   return {
@@ -1126,6 +1127,7 @@ export const buildStaticTableField = (
     marginBottom,
     titleVariant,
     selectable,
+    inputColumn,
   }
 }
 
