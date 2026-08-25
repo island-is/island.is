@@ -39,6 +39,7 @@ import {
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
   ApplicantWithdrawLatestApplicationRequest,
+  GaldurExternalDomainRequestsHasValidApplicationResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -593,6 +594,25 @@ export class VmstUnemploymentClientService {
     return await api.attachmentGetAttachment({
       id: attachmentId,
       includeData: true,
+    })
+  }
+
+  async getEditProfileEligibility(
+    auth: User,
+  ): Promise<GaldurExternalDomainRequestsHasValidApplicationResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.applicantGetProfileEligibility({
+      id: applicantId,
     })
   }
 }

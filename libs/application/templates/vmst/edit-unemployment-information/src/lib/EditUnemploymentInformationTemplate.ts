@@ -18,7 +18,7 @@ import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { UnemploymentApi } from '../dataProviders'
+import { getEditProfileEligibilityApi, UnemploymentApi } from '../dataProviders'
 import { ApiActions } from '../utils/constants'
 import { application as applicationMessages } from './messages'
 import { Features } from '@island.is/feature-flags'
@@ -57,7 +57,7 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              api: [UnemploymentApi],
+              api: [UnemploymentApi, getEditProfileEligibilityApi],
               delete: true,
             },
           ],
