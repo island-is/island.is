@@ -9,6 +9,11 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  meetsAdditionalLicenseRequirements,
+  messages,
+} from '@island.is/application/templates/district-commissioners/driving-license-additional'
+import type { DrivingLicenseFakeData } from '@island.is/application/templates/district-commissioners/driving-license-additional'
 
 @Injectable()
 export class DrivingLicenseAdditionalService extends BaseTemplateApiService {
@@ -17,6 +22,37 @@ export class DrivingLicenseAdditionalService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE_ADDITIONAL)
+  }
+
+  /**
+   * Runs on the external-data step, after CurrentLicense (order: 1), so the
+   * fetched license is available on `externalData`. Throws a user-facing error
+   * when the current license doesn't qualify for any additional-license type;
+   * the data-gathering screen shows it and blocks progression. Uses the same
+   * eligibility rule as the form so the gate and the applicationFor options
+   * stay in sync.
+   */
+  async checkEligibility({
+    application,
+  }: TemplateApiModuleActionProps): Promise<{ eligible: true }> {
+    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+      application.answers,
+      'fakeData',
+    )
+
+    if (
+      !meetsAdditionalLicenseRequirements(application.externalData, fakeData)
+    ) {
+      throw new TemplateApiError(
+        {
+          title: messages.notAllowedTitle,
+          summary: messages.notAllowedDescription,
+        },
+        400,
+      )
+    }
+
+    return { eligible: true }
   }
 
   /**

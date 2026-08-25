@@ -4,9 +4,6 @@ import { DistrictCommissionersLogo } from '@island.is/application/assets/institu
 import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
-import { sectionApplicationFor } from './sectionApplicationFor'
-import { sectionAdditionalSummary } from './sectionAdditionalSummary'
-import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
 
 interface DrivingLicenseFormConfig {
   allowFakeData?: boolean
@@ -28,9 +25,6 @@ export const getForm = ({
         children: [
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
-          sectionApplicationFor,
-          sectionAdvancedLicenseSelection,
-          sectionAdditionalSummary,
         ],
       }),
     ],

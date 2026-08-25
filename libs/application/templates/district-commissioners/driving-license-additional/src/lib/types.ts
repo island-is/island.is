@@ -1,5 +1,8 @@
 export type DrivingLicenseCategory = {
-  nr: string
+  // Legacy RLS records carry the category letter in `name` with an empty `nr`,
+  // so both are optional/nullable and code readers must fall back `nr || name`.
+  nr?: string | null
+  name?: string | null
   validToCode: number
   issued?: string
 }

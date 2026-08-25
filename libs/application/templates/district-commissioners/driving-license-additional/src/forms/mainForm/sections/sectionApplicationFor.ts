@@ -1,22 +1,22 @@
 import {
   buildMultiField,
   buildRadioField,
-  buildSubSection,
+  buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { m } from '../../lib/messages'
-import { DrivingLicense } from '../../lib/types'
+import { m } from '../../../lib/messages'
+import { DrivingLicense } from '../../../lib/types'
 import {
   B_ADVANCED,
   BE,
   DrivingLicenseFakeData,
   getApplicantAge,
   getHeldCategories,
-  hasSelectableAdvancedCategories,
-  TEMPORARY_LICENSE_VALIDTO_CODE,
-} from '../../utils'
+  isEligibleForBAdvanced,
+  isEligibleForBE,
+} from '../../../utils'
 
-export const sectionApplicationFor = buildSubSection({
+export const sectionApplicationFor = buildSection({
   id: 'applicationFor',
   title: m.applicationDrivingLicenseTitle,
   children: [
@@ -37,7 +37,7 @@ export const sectionApplicationFor = buildSubSection({
             // eligibility gate and the selection screen agree on age and on
             // which advanced categories the applicant already holds.
             const age = getApplicantAge(app.externalData, fakeData)
-            const heldCategories = getHeldCategories(app.externalData, fakeData)
+            const heldCategories = getHeldCategories(app.externalData)
 
             // Fake-vs-real is resolved by the CurrentLicense data provider, so
             // this screen just reads the resolved license and stays agnostic to
@@ -54,32 +54,20 @@ export const sectionApplicationFor = buildSubSection({
                 label: m.applicationForBELicenseTitle,
                 subLabel: m.applicationForBELicenseDescription,
                 value: BE,
-                disabled:
-                  !currentLicense ||
-                  age < 18 ||
-                  age >= 65 ||
-                  categories?.some((c) => c.nr?.toUpperCase() === BE) ||
-                  // A temporary licence is not eligible to apply for BE.
-                  !categories?.some(
-                    (c) =>
-                      c.nr?.toUpperCase() === 'B' &&
-                      c.validToCode !== TEMPORARY_LICENSE_VALIDTO_CODE,
-                  ),
+                disabled: !isEligibleForBE(currentLicense, categories, age),
               },
               {
                 label: m.applicationForAdvancedLicenseTitle,
                 subLabel: m.applicationForAdvancedLicenseDescription,
                 value: B_ADVANCED,
-                disabled:
-                  !categories?.some(
-                    (c) =>
-                      c.nr?.toUpperCase() === 'B' &&
-                      c.validToCode !== TEMPORARY_LICENSE_VALIDTO_CODE,
-                  ) ||
-                  // Nothing to apply for if the applicant is too young for, or
-                  // already holds, every advanced category, so don't let them
-                  // into a flow that would dead-end on the selection screen.
-                  !hasSelectableAdvancedCategories(age, heldCategories),
+                // Nothing to apply for if the applicant is too young for, or
+                // already holds, every advanced category, so don't let them
+                // into a flow that would dead-end on the selection screen.
+                disabled: !isEligibleForBAdvanced(
+                  categories,
+                  age,
+                  heldCategories,
+                ),
               },
             ]
 

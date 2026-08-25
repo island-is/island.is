@@ -40,6 +40,7 @@ import {
   States,
 } from '../utils'
 import {
+  EligibilityApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
@@ -107,6 +108,7 @@ const template: ApplicationTemplate<
                 QualityPhotoApi,
                 QualityPhotoAndSignatureApi,
                 AllPhotosFromThjodskraApi,
+                EligibilityApi,
               ],
             },
           ],
@@ -181,6 +183,7 @@ const template: ApplicationTemplate<
     if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
+
     return undefined
   },
 }

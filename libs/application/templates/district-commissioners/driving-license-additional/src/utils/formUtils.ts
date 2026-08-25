@@ -6,16 +6,19 @@ import {
   Application,
 } from '@island.is/application/types'
 import { NationalRegistryUser } from '@island.is/api/schema'
+import { DrivingLicense, DrivingLicenseCategory } from '../lib/types'
 import {
   advancedLicenseMap,
   AdvancedLicense,
   AdvancedLicenseGroup,
   AdvancedLicenseGroupCodes,
+  BE,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
   DrivingLicenseFakeData,
   organizedAdvancedLicenseMap,
   Pickup,
+  TEMPORARY_LICENSE_VALID_CODE,
 } from './constants'
 
 export const allowFakeCondition =
@@ -47,18 +50,15 @@ export const getApplicantAge = (
   return Number(raw) || 0
 }
 
-// Canonical, uppercased category codes the applicant already holds, from
-// currentLicense (or fakeData when faking). Reads `nr` OR `name` because legacy
-// RLS records carry the category letter in `name` with an empty `nr`, and
-// uppercases so casing differences from RLS don't hide a held category.
-export const getHeldCategories = (
-  externalData: ExternalData,
-  fakeData?: DrivingLicenseFakeData,
-): string[] => {
-  if (fakeData?.useFakeData === YES) {
-    return (fakeData.advancedCategories ?? []).map((code) => code.toUpperCase())
-  }
-  return (
+// Canonical, uppercased category codes the applicant already holds, read from
+// the CurrentLicense data provider. When faking, the provider bakes the faked
+// advanced categories into `currentLicense.data.categories`, so this stays
+// agnostic to fake-vs-real instead of re-reading fakeData from answers. Reads
+// `nr` OR `name` because legacy RLS records carry the category letter in `name`
+// with an empty `nr`, and uppercases so casing differences from RLS don't hide
+// a held category.
+export const getHeldCategories = (externalData: ExternalData): string[] =>
+  (
     getValueViaPath<Array<{ nr?: string | null; name?: string | null }>>(
       externalData,
       'currentLicense.data.categories',
@@ -66,7 +66,6 @@ export const getHeldCategories = (
   )
     .map((category) => (category.nr || category.name)?.toUpperCase())
     .filter((code): code is string => !!code)
-}
 
 // Whether there is at least one advanced category (main or professional) the
 // applicant is old enough for and does not already hold. Used both to gate the
@@ -85,6 +84,70 @@ export const hasSelectableAdvancedCategories = (
       !held(item.professional.code)
     return mainSelectable || proSelectable
   })
+
+// Uppercased category code. Falls back to `name` because some legacy RLS
+// records put the letter there with an empty `nr` (see getHeldCategories).
+const categoryCode = (c: DrivingLicenseCategory): string | undefined =>
+  (c.nr || c.name)?.toUpperCase()
+
+// Whether the applicant holds a full (non-temporary) B licence — the baseline
+// both additional-licence types build on. A temporary (bráðabirgða) B is not
+// eligible to apply for BE or advanced rights.
+const holdsFullBLicense = (
+  categories: DrivingLicenseCategory[] | null,
+): boolean =>
+  categories?.some(
+    (c) =>
+      categoryCode(c) === 'B' &&
+      c.validToCode !== TEMPORARY_LICENSE_VALID_CODE,
+  ) ?? false
+
+// Whether the applicant is eligible to apply for BE (trailer rights). Mirrors
+// the BE option's `disabled` gate in sectionApplicationFor.
+export const isEligibleForBE = (
+  currentLicense: string | null,
+  categories: DrivingLicenseCategory[] | null,
+  age: number,
+): boolean =>
+  !!currentLicense &&
+  age >= 18 &&
+  age < 65 &&
+  !categories?.some((c) => categoryCode(c) === BE) &&
+  holdsFullBLicense(categories)
+
+// Whether the applicant is eligible to apply for advanced rights. Mirrors the
+// B-advanced option's `disabled` gate in sectionApplicationFor.
+export const isEligibleForBAdvanced = (
+  categories: DrivingLicenseCategory[] | null,
+  age: number,
+  heldCategories: string[],
+): boolean =>
+  holdsFullBLicense(categories) &&
+  hasSelectableAdvancedCategories(age, heldCategories)
+
+// Whether the applicant qualifies for at least one additional-licence type
+// (BE or advanced). Enforced by the checkEligibility data provider, which
+// throws a user-facing error when this is false, and shares the two predicates
+// above with sectionApplicationFor's per-option gating so the eligibility gate
+// and the form can't disagree.
+export const meetsAdditionalLicenseRequirements = (
+  externalData: ExternalData,
+  fakeData?: DrivingLicenseFakeData,
+): boolean => {
+  const age = getApplicantAge(externalData, fakeData)
+  const heldCategories = getHeldCategories(externalData)
+  const licenseData = getValueViaPath<DrivingLicense>(
+    externalData,
+    'currentLicense.data',
+  )
+  const currentLicense = licenseData?.currentLicense ?? null
+  const categories = licenseData?.categories ?? null
+
+  return (
+    isEligibleForBE(currentLicense, categories, age) ||
+    isEligibleForBAdvanced(categories, age, heldCategories)
+  )
+}
 
 // Formats a national-registry address, appending postal code and city only when
 // present so summaries never render `undefined`. Shared by the applicant-info

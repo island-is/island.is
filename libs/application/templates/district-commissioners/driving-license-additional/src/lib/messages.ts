@@ -39,6 +39,18 @@ export const m = defineMessages({
     defaultMessage: 'Skilyrði umsóknar',
     description: 'Eligibility requirements for the application',
   },
+  notAllowedTitle: {
+    id: 'dla.application:notAllowedTitle',
+    defaultMessage: 'Þú uppfyllir ekki skilyrði fyrir þessari umsókn',
+    description:
+      'Applicant does not meet the requirements for this application',
+  },
+  notAllowedDescription: {
+    id: 'dla.application:notAllowedDescription',
+    defaultMessage:
+      'Samkvæmt ökuskírteinaskrá uppfyllir þú ekki skilyrði til að sækja um kerruréttindi (BE) eða aukin ökuréttindi.',
+    description: 'Explanation shown when the applicant is not eligible',
+  },
   applicationOverviewTitle: {
     id: 'dla.application:applicationOverviewTitle',
     defaultMessage: 'Yfirfara',

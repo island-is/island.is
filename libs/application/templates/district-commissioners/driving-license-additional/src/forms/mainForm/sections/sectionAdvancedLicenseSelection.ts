@@ -1,13 +1,13 @@
 import {
   buildCustomField,
   buildMultiField,
-  buildSubSection,
+  buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { m } from '../../lib/messages'
-import { LicenseTypes } from '../../utils'
+import { m } from '../../../lib/messages'
+import { LicenseTypes } from '../../../utils'
 
-export const sectionAdvancedLicenseSelection = buildSubSection({
+export const sectionAdvancedLicenseSelection = buildSection({
   id: 'sectionAdvancedLicenseSelection',
   title: m.applicationForAdvancedLicenseTitle,
   condition: (answers) => {

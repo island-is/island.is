@@ -42,7 +42,7 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // Age and held categories are derived the same way on the prerequisites
   // eligibility gate, so both screens share these helpers to stay in sync.
   const age = getApplicantAge(application.externalData, fakeData)
-  const heldCategories = getHeldCategories(application.externalData, fakeData)
+  const heldCategories = getHeldCategories(application.externalData)
 
   const alreadyHasCategory = (code?: string) =>
     !!code && heldCategories.includes(code)

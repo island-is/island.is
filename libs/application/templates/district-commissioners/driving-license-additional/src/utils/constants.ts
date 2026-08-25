@@ -30,7 +30,7 @@ export const DELIVERY_FEE = 'deliveryFee'
 
 // RLS category `validToCode` for a temporary (bráðabirgða) B licence. A holder
 // of a temporary licence is not eligible to apply for BE or advanced rights.
-export const TEMPORARY_LICENSE_VALIDTO_CODE = 8
+export const TEMPORARY_LICENSE_VALID_CODE = 8
 
 export enum LicenseTypes {
   'B_FULL' = 'B-full',

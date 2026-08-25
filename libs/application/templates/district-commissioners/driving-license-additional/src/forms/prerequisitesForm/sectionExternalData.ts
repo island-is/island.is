@@ -1,10 +1,12 @@
 import {
   buildExternalDataProvider,
   buildDataProviderItem,
+  buildSubmitField,
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
+  DefaultEvents,
   NationalRegistryV3UserApi,
   UserProfileApi,
   CurrentLicenseApi,
@@ -15,6 +17,7 @@ import {
   AllPhotosFromThjodskraApi,
 } from '@island.is/application/types'
 import {
+  EligibilityApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
@@ -27,6 +30,18 @@ export const sectionExternalData = buildSubSection({
       id: 'approveExternalData',
       subTitle: m.externalDataSubTitle,
       checkboxLabel: m.externalDataAgreement,
+      submitField: buildSubmitField({
+        id: 'submit',
+        placement: 'footer',
+        refetchApplicationAfterSubmit: true,
+        actions: [
+          {
+            event: DefaultEvents.SUBMIT,
+            name: m.continue,
+            type: 'primary',
+          },
+        ],
+      }),
       dataProviders: [
         buildDataProviderItem({
           provider: NationalRegistryV3UserApi,
@@ -63,6 +78,11 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: QualityPhotoAndSignatureApi,
+        }),
+        // Silent eligibility gate — surfaces only as an error on this screen
+        // when the applicant's current license does not meet the requirements.
+        buildDataProviderItem({
+          provider: EligibilityApi,
         }),
       ],
     }),
