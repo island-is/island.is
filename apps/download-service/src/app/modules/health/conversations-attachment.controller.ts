@@ -71,6 +71,10 @@ export class HealthConversationsAttachmentController {
     const buffer = Buffer.from(attachment.data)
     res.header('Content-Length', buffer.length.toString())
     res.header('Content-Type', attachment.contentType)
+    res.header(
+      'Content-Disposition',
+      `attachment; filename=fylgiskjal-${attachmentId}.pdf`,
+    )
     res.header('Pragma', 'no-cache')
     res.header('Cache-Control', 'no-store, private, max-age=0')
     return res.status(200).end(buffer)
