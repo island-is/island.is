@@ -60,9 +60,11 @@ export const Overview = () => {
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
   // Defendants whose indictment was cancelled or dismissed (completed for some)
   // do not receive a verdict, so no review decision is required for them.
+  // The same goes for defendants whose case was closed without enforcement.
   const isReviewMissing = workingCase.defendants?.some(
     (defendant) =>
       !defendant.indictmentCancelledOrDismissedState &&
+      !defendant.isClosedWithoutEnforcement &&
       !defendant.indictmentReviewDecision,
   )
 
@@ -112,7 +114,9 @@ export const Overview = () => {
             (isServiceRequired && !!verdict.serviceDate))
         )
 
-        if (verdict) {
+        // Service and appeal alerts are noise for defendants whose case was
+        // closed without enforcement.
+        if (verdict && !defendant.isClosedWithoutEnforcement) {
           acc.verdictStatusAlerts.push(
             <VerdictStatusAlert
               key={`${defendant.id}_verdict_status_alert`}
