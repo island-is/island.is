@@ -26,4 +26,7 @@ export class DrivingLicensePenaltyPointDetail {
 
   @Field({ nullable: true })
   statusCode?: string
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  expiryDate?: Date
 }

@@ -19,7 +19,10 @@ import { useGetDriversDeprivationsQuery } from '../DriversDeprivations/DriversDe
 
 const columnHelper =
   createColumnHelper<
-    Pick<DrivingLicensePenaltyPointDetail, 'offenseDate' | 'penalty' | 'points'>
+    Pick<
+      DrivingLicensePenaltyPointDetail,
+      'offenseDate' | 'penalty' | 'points' | 'expiryDate'
+    >
   >()
 
 const DriversPoints = () => {
@@ -90,11 +93,13 @@ const DriversPoints = () => {
         cell: ({ getValue }) => getValue()?.toString() ?? undefined,
         footer: () => totalPoints.toString(),
       }),
-      columnHelper.display({
+      columnHelper.accessor('expiryDate', {
         id: 'expiresDate',
         header: formatMessage(messages.driversPointsColumnExpiresDate),
-        // TODO: implement when API exposes expiry date field on PenaltyPointDetail
-        cell: () => '-',
+        cell: ({ getValue }) => {
+          const value = getValue()
+          return value ? formatDate(value) : '-'
+        },
       }),
     ],
     [formatMessage, totalPoints],

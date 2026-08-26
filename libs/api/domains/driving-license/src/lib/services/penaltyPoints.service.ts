@@ -30,6 +30,7 @@ export class PenaltyPointsService {
             points: d.points ?? undefined,
             districtName: d.districtName ?? undefined,
             statusCode: d.statusCode ?? undefined,
+            expiryDate: d.expiryDate ?? undefined,
           }
         })
         .filter(isDefined),

@@ -5,6 +5,7 @@ query GetDriversPenaltyPoints {
       offenseDate
       penalty
       points
+      expiryDate
     }
   }
 }
