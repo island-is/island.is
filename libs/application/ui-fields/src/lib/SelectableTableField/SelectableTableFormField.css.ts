@@ -19,10 +19,6 @@ globalStyle(`${tableWrapper} input:not([type="checkbox"])`, {
   }),
 })
 
-// Input.mixins.ts's containerSizes also adds its own padding on the div
-// wrapping the input, stacking on top of the input's own padding above —
-// neither is overridable individually through InputController's props, so
-// zero the wrapper's out to make the input's padding the only one that counts.
 globalStyle(`${tableWrapper} div:has(> input:not([type="checkbox"]))`, {
   padding: 0,
 })
@@ -30,7 +26,7 @@ globalStyle(`${tableWrapper} div:has(> input:not([type="checkbox"]))`, {
 export const checkboxColumnStyle = { width: 48 }
 export const inputColumnHeaderStyle = { width: 152 }
 
-export const footerRowTestId = 'static-table-footer-row'
+export const footerRowTestId = 'selectable-table-footer-row'
 
 globalStyle(`${tableWrapper} tr[data-testid="${footerRowTestId}"] td`, {
   borderBottomWidth: 0,

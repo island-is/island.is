@@ -2,7 +2,7 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildSection,
-  buildStaticTableField,
+  buildSelectableTableField,
   buildStickyFooterField,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -25,7 +25,7 @@ export const debtsSection = buildSection({
           description: messages.description.description,
           space: 'none',
         }),
-        buildStaticTableField({
+        buildSelectableTableField({
           id: 'selectedDebts',
           dataTestId: 'debts-table',
           selectable: true,
