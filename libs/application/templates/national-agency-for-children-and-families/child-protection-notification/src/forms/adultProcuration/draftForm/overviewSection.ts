@@ -22,6 +22,7 @@ export const overviewSection = buildSection({
         ...adultProcurationOverviewFields(true),
         buildCheckboxField({
           id: 'overviewAccuracyConfirmation',
+          required: true,
           options: [
             {
               value: YES,
