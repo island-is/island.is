@@ -81,6 +81,13 @@ import {
 
 import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 
+// This is hopefully a temporary fix until the backend is updated to return
+// the correct extension in the content-type.
+const extractExtension = (contentDisposition: string | null): string => {
+  const match = contentDisposition?.match(/\.([a-zA-Z0-9]{1,5})(?:"|;|$)/)
+  return match ? `.${match[1].toLowerCase()}` : '.pdf'
+}
+
 @Injectable()
 export class HealthDirectorateHealthService {
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
@@ -693,7 +700,11 @@ export class HealthDirectorateHealthService {
     conversationId: string,
     messageId: string,
     attachmentId: number,
-  ): Promise<{ data: ArrayBuffer; contentType: string } | null> {
+  ): Promise<{
+    data: ArrayBuffer
+    contentType: string
+    extension: string
+  } | null> {
     const result = await withAuthContext(auth, () =>
       meConversationControllerGetMessageAttachmentV1({
         path: { id: conversationId, messageId, attachmentId },
@@ -704,8 +715,11 @@ export class HealthDirectorateHealthService {
     return {
       data: result.data as ArrayBuffer,
       contentType:
-        result.response.headers.get('content-type') ??
+        result.response.headers.get('content-type') ||
         'application/octet-stream',
+      extension: extractExtension(
+        result.response.headers.get('content-disposition'),
+      ),
     }
   }
 

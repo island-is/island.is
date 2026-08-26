@@ -73,7 +73,7 @@ export class HealthConversationsAttachmentController {
     res.header('Content-Type', attachment.contentType)
     res.header(
       'Content-Disposition',
-      `attachment; filename=fylgiskjal-${attachmentId}.pdf`,
+      `attachment; filename=fylgiskjal-${attachmentId}${attachment.extension}`,
     )
     res.header('Pragma', 'no-cache')
     res.header('Cache-Control', 'no-store, private, max-age=0')
