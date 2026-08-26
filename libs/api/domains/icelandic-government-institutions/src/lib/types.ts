@@ -6,7 +6,8 @@ export type InvoicePaymentsGroupWithFilters = InvoicePaymentsGroup & {
   dateTo?: Date
 }
 
-export type InvoicePaymentsGroupsWithFilters = InvoicePaymentsGroupCollection & {
-  dateFrom?: Date
-  dateTo?: Date
-}
+export type InvoicePaymentsGroupsWithFilters =
+  InvoicePaymentsGroupCollection & {
+    dateFrom?: Date
+    dateTo?: Date
+  }

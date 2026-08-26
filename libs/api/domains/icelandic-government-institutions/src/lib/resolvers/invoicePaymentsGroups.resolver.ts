@@ -28,9 +28,7 @@ export class InvoicePaymentsGroupsResolver {
     @Args('input', { type: () => InvoicePaymentsGroupsInput })
     input: InvoicePaymentsGroupsInput,
   ): Promise<InvoicePaymentsGroupsWithFilters | null> {
-    const groups = await this.invoiceService.getOpenInvoicePaymentsGroups(
-      input,
-    )
+    const groups = await this.invoiceService.getOpenInvoicePaymentsGroups(input)
     if (!groups) return null
 
     return {
