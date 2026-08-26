@@ -8,17 +8,29 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
   ActiveEqualityReportApi,
   BlankExcelTemplateApi,
   CompanyRegistryApi,
+  CreateSalaryDraftApi,
   DoeCompanyApi,
   EditOutliersApi,
+  GetDraftCriteriaTreeApi,
+  GetDraftHeaderApi,
+  GetReportCommentsApi,
   ImportPresignApi,
-  ParsedSalaryReportApi,
+  ImportSalaryDraftWorkbookApi,
+  ListDraftCriteriaApi,
+  ListDraftEmployeesApi,
+  ListDraftOutlierGroupsApi,
+  ListDraftRolesApi,
+  ListDraftRolesWithStepsApi,
   SalaryAnalysisApi,
+  SubCriterionCatalogApi,
+  SubmitReportCommentApi,
   SubmitSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
@@ -30,7 +42,6 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
-  coreHistoryMessages,
   coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
@@ -39,6 +50,8 @@ import {
 import { messages } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -55,6 +68,18 @@ const template: ApplicationTemplate<
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
+  allowMultipleApplicationsInDraft: false,
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [
+          InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+        ])
+        return context
+      }),
+    },
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -81,6 +106,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 CompanyRegistryApi,
                 DoeCompanyApi,
+                SubCriterionCatalogApi,
                 ActiveEqualityReportApi,
                 BlankExcelTemplateApi,
               ],
@@ -126,15 +152,33 @@ const template: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: messages.general.tagDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.inReview.sentHistoryLog,
+              },
+            ],
+          },
           // onExit (not onEntry on the target states) so a failed submission
           // blocks the transition instead of silently landing the applicant
           // on POSTPONED/COMPLETED with a stale backend record.
           onExit: SubmitSalaryReportApi,
+          // onEntry so the comment thread's non-empty check has fresh
+          // externalData to read on first render — role.api alone never
+          // auto-fetches outside PREREQUISITES, it only permits the on-demand
+          // call CommentThread makes from within the mounted field.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -147,8 +191,32 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [ImportPresignApi, ParsedSalaryReportApi, SalaryAnalysisApi],
+              // Ordered in groups: same order runs concurrently via
+              // Promise.all, so every provider reading/seeding the draft
+              // must be strictly after CreateSalaryDraftApi — otherwise a
+              // GetDraft*/ListDraft* read races the draft-create POST and
+              // 404s before the row is committed.
+              api: [
+                ImportPresignApi.configure({ order: 0 }),
+                CreateSalaryDraftApi.configure({ order: 0 }),
+                ImportSalaryDraftWorkbookApi.configure({ order: 1 }),
+                GetDraftHeaderApi.configure({ order: 2 }),
+                GetDraftCriteriaTreeApi.configure({ order: 2 }),
+                ListDraftRolesWithStepsApi.configure({ order: 2 }),
+                ListDraftCriteriaApi.configure({ order: 2 }),
+                ListDraftRolesApi.configure({ order: 2 }),
+                ListDraftEmployeesApi.configure({ order: 2 }),
+                ListDraftOutlierGroupsApi.configure({ order: 2 }),
+                SalaryAnalysisApi.configure({ order: 2 }),
+              ],
               delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -175,10 +243,19 @@ const template: ApplicationTemplate<
           // report — the report itself was already submitted via DRAFT's
           // onExit.
           onExit: EditOutliersApi,
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           actionCard: {
             tag: {
               label: messages.postponed.tagLabel,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: messages.postponed.pendingActionTitle,
+              content: messages.postponed.pendingActionContent,
+              button: messages.postponed.pendingActionButton,
+              displayStatus: 'info',
             },
             historyLogs: [
               {
@@ -199,10 +276,104 @@ const template: ApplicationTemplate<
               ],
               read: 'all',
               write: {
-                answers: ['salaryAnalysis'],
-                externalData: ['salaryAnalysisResult'],
+                answers: ['salaryAnalysis', 'comment'],
+                externalData: [
+                  'salaryAnalysisResult',
+                  'getReportComments',
+                  'submitReportComment',
+                ],
               },
-              api: [SalaryAnalysisApi],
+              api: [
+                SalaryAnalysisApi,
+                GetReportCommentsApi,
+                SubmitReportCommentApi,
+              ],
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
+          },
+          // DMR can dispatch EDIT independent of the application's own
+          // frontend state — frontend states only pick which form renders,
+          // they don't mirror DMR's backend workflow status 1:1.
+          [DefaultEvents.EDIT]: {
+            target: States.DRAFT_RETRY,
+          },
+        },
+      },
+      [States.DRAFT_RETRY]: {
+        meta: {
+          name: 'Lagfæring',
+          progress: 0.9,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: pruneAfterDays(90),
+          // Fires on leaving DRAFT_RETRY (the resubmit), PUTting the outlier
+          // explanations same as POSTPONED's onExit — see the identical
+          // comment there.
+          onExit: EditOutliersApi,
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
+          actionCard: {
+            tag: {
+              label: messages.draftRetry.tagLabel,
+              variant: 'purple',
+            },
+            pendingAction: {
+              title: messages.draftRetry.pendingActionTitle,
+              content: messages.draftRetry.pendingActionContent,
+              button: messages.draftRetry.pendingActionButton,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.historyLogs.draftRetry,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/draftRetryForm').then((module) =>
+                  Promise.resolve(module.draftRetryForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              read: 'all',
+              write: {
+                answers: ['salaryAnalysis', 'comment'],
+                externalData: [
+                  'salaryAnalysisResult',
+                  'getReportComments',
+                  'submitReportComment',
+                ],
+              },
+              api: [
+                SalaryAnalysisApi,
+                GetReportCommentsApi,
+                SubmitReportCommentApi,
+              ],
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -223,17 +394,21 @@ const template: ApplicationTemplate<
           },
           actionCard: {
             tag: {
-              label: coreMessages.tagsInProgress,
+              label: messages.inReview.tagLabel,
               variant: 'blueberry',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApproved,
+                logMessage: messages.inReview.approvedHistoryLog,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: messages.inReview.rejectedHistoryLog,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: messages.inReview.editHistoryLog,
               },
             ],
           },
@@ -245,7 +420,21 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
-              delete: true,
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -255,6 +444,14 @@ const template: ApplicationTemplate<
           },
           [DefaultEvents.REJECT]: {
             target: States.DENIED,
+          },
+          // Targets DRAFT_RETRY (not DRAFT) so a case-worker-requested
+          // revision reuses the same restricted comments/outlier-plan-editing
+          // flow — there's no path back to the original
+          // company/employee/criteria data-entry screens from here, by
+          // design.
+          [DefaultEvents.EDIT]: {
+            target: States.DRAFT_RETRY,
           },
         },
       },
@@ -266,7 +463,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDone,
+              label: coreMessages.tagsApproved,
               variant: 'mint',
             },
           },
@@ -278,7 +475,21 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
-              delete: true,
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -303,7 +514,16 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
-              delete: true,
+              // See the identical comment on States.APPROVED.
+              write: { answers: [] },
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },

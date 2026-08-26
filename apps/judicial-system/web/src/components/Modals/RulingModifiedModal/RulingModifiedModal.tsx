@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -95,16 +96,19 @@ const RulingModifiedModal: FC<Props> = ({
     <Modal
       title={formatMessage(strings.title)}
       text={description}
-      primaryButton={{
-        text: formatMessage(strings.continue),
-        onClick: handleContinue,
-        isLoading: continueDisabled,
-        isDisabled: errorMessage !== '',
-      }}
-      secondaryButton={{
-        text: formatMessage(strings.cancel),
-        onClick: onCancel,
-      }}
+      buttons={[
+        {
+          text: formatMessage(strings.cancel),
+          onClick: onCancel,
+          variant: 'ghost',
+        },
+        {
+          text: formatMessage(strings.continue),
+          onClick: handleContinue,
+          isLoading: continueDisabled,
+          isDisabled: errorMessage !== '',
+        },
+      ]}
     >
       <Box marginBottom={5}>
         <Input

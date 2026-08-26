@@ -41,7 +41,11 @@ export class BasicVehicleInformation {
 
 @ObjectType()
 export class VehicleOwnerchangeChecksByPermno {
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'No longer checked for owner/co-owner change; Samgöngustofa already validates debt status for this flow via validationErrorMessages.',
+  })
   isDebtLess?: boolean
 
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })

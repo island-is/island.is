@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, FileUploadStatus, Text } from '@island.is/island-ui/core'
@@ -15,9 +16,8 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import UploadFiles, {
-  FileWithPreviewURL,
-} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useS3Upload,
@@ -133,17 +133,20 @@ const AddRulingOrder: FC = () => {
         <Modal
           title="Viltu hlaða upp úrskurði?"
           text="Dómari þarf að staðfesta úrskurðinn eftir að honum hefur verið hlaðið upp."
-          primaryButton={{
-            text: 'Já, hlaða upp',
-            onClick: async () => {
-              await handleNextButtonClick()
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setVisibleModal(undefined),
+              variant: 'ghost',
             },
-            isDisabled: !allFilesDoneOrError,
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => setVisibleModal(undefined),
-          }}
+            {
+              text: 'Já, hlaða upp',
+              onClick: async () => {
+                await handleNextButtonClick()
+              },
+              isDisabled: !allFilesDoneOrError,
+            },
+          ]}
           onClose={() => setVisibleModal(undefined)}
         />
       )}

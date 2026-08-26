@@ -15,8 +15,10 @@ import {
   UpdateOrganDonorDto,
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
+  meAppointmentControllerCancelAppointmentV1,
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentByIdV1,
+  meCertificateControllerCreateCertificateRequestV1,
   meConversationControllerArchiveConversationV1,
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
@@ -53,10 +55,12 @@ import {
 import {
   AppointmentBaseDto,
   AppointmentDetailDto,
+  CertificateRequestDto,
   ConsentCountryDto,
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationStatusFilter,
+  CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
@@ -74,6 +78,8 @@ import {
   SubmitQuestionnaireResponseDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
+
+import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -575,6 +581,18 @@ export class HealthDirectorateHealthService {
     return appointment ?? null
   }
 
+  public async cancelAppointment(auth: Auth, id: string): Promise<boolean> {
+    await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerCancelAppointmentV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return true
+  }
+
   /* Conversations (Health Messages) */
 
   public async getConversations(
@@ -704,5 +722,23 @@ export class HealthDirectorateHealthService {
     )
 
     return recipients ?? null
+  }
+
+  /* Certificates */
+
+  public async createCertificateRequest(
+    auth: Auth,
+    input: CreateCertificateRequestBody,
+  ): Promise<CertificateRequestDto | null> {
+    const request = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreateCertificateRequestV1({
+          // See CreateCertificateRequestBody for why this cast is safe.
+          body: input as unknown as CreateCertificateRequestDto,
+        }),
+      ),
+    )
+
+    return request ?? null
   }
 }

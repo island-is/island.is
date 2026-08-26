@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
+import type { ChangeEvent, FC, FocusEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
@@ -6,9 +7,9 @@ import { Input } from '@island.is/island-ui/core'
 import { EDITABLE_DATE, SSN } from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { validate } from '../../utils/validate'
-import { InputProps } from './types'
+import type { InputProps } from './types'
 
 interface Props extends InputProps {
   isDateOfBirth: boolean

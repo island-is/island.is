@@ -1,12 +1,13 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams, useRouter } from 'next/navigation'
 
+import type { UploadFile } from '@island.is/island-ui/core'
 import {
   Box,
   FileUploadStatus,
   InputFileUpload,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { core, errors } from '@island.is/judicial-system-web/messages'
@@ -168,15 +169,18 @@ const SendToPrisonAdmin: FC = () => {
             courtCaseNumber: workingCase.courtCaseNumber,
             defendant: defendant.name,
           })}
-          primaryButton={{
-            text: formatMessage(strings.modalNextButtonText),
-            onClick: handlePrimaryButtonClick,
-            isLoading: isUpdatingDefendant,
-          }}
-          secondaryButton={{
-            text: formatMessage(core.back),
-            onClick: handleSecondaryButtonClick,
-          }}
+          buttons={[
+            {
+              text: formatMessage(core.back),
+              onClick: handleSecondaryButtonClick,
+              variant: 'ghost',
+            },
+            {
+              text: formatMessage(strings.modalNextButtonText),
+              onClick: handlePrimaryButtonClick,
+              isLoading: isUpdatingDefendant,
+            },
+          ]}
           onClose={handleSecondaryButtonClick}
           loading={isUpdatingDefendant}
           errorMessage={uploadFileError}

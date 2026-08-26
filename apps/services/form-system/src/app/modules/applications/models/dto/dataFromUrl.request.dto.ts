@@ -74,6 +74,9 @@ export class DataFromUrlReqDto {
   @ApiHideProperty()
   zendeskInstance?: string
 
+  @ApiHideProperty()
+  zendeskBrandId?: string
+
   //   @ApiPropertyOptional({ type: [InputValue] })
   //   @ValidateNested({ each: true })
   //   @Type(() => InputValue)

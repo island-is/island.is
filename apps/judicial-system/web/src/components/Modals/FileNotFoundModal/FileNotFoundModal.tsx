@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Modal } from '@island.is/judicial-system-web/src/components'
@@ -17,10 +17,12 @@ const FileNotFoundModal: FC<Props> = ({ dismiss }) => {
       title={formatMessage(strings.title)}
       text={formatMessage(strings.text)}
       onClose={dismiss}
-      primaryButton={{
-        text: formatMessage(strings.close),
-        onClick: dismiss,
-      }}
+      buttons={[
+        {
+          text: formatMessage(strings.close),
+          onClick: dismiss,
+        },
+      ]}
     />
   )
 }

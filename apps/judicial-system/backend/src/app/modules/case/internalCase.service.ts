@@ -61,7 +61,11 @@ import {
 } from '../../formatters'
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../court'
+import {
+  CourtDocumentFolder,
+  CourtService,
+  isFileTooLargeForCourt,
+} from '../court'
 import { buildIndictmentConclusionContent } from '../court/court.service'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
@@ -120,8 +124,6 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'ruling',
   'conclusion',
   'endOfSessionBookings',
-  'accusedAppealAnnouncement',
-  'prosecutorAppealAnnouncement',
   'caseModifiedExplanation',
   'caseResentExplanation',
   'crimeScenes',
@@ -264,7 +266,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -313,7 +316,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -350,7 +354,8 @@ export class InternalCaseService {
           { error },
         )
 
-        return false
+        // Do not retry an upload the court service will never accept
+        return isFileTooLargeForCourt(error)
       })
   }
 
@@ -399,7 +404,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -927,7 +933,8 @@ export class InternalCaseService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -1110,7 +1117,7 @@ export class InternalCaseService {
       }
 
       const rulingDate =
-        deliverDto.rulingDate ?? theCase.created ?? theCase.rulingDate
+        deliverDto.rulingDate ?? theCase.rulingDate ?? theCase.created
 
       if (!rulingDate) {
         return { delivered: false }
@@ -1266,7 +1273,8 @@ export class InternalCaseService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -1469,108 +1477,142 @@ export class InternalCaseService {
     )
   }
 
+  // Only updates the completed case in the police system.
+  // The documents of a completed case are delivered one by one,
+  // so that each of them can be retried on its own.
   async deliverCaseToPolice(
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    const delivered = await this.refreshFormatMessage()
-      .then(async () => {
-        const courtDocuments = [
-          {
-            type: PoliceDocumentType.RVKR,
-            courtDocument: Base64.btoa(
-              await getRequestPdfAsString(theCase, this.formatMessage),
-            ),
-          },
-          {
-            type: PoliceDocumentType.RVTB,
-            courtDocument: Base64.btoa(
-              await getCourtRecordPdfAsString(theCase, this.formatMessage),
-            ),
-          },
-          ...([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
-            theCase.type,
-          ) && theCase.state === CaseState.ACCEPTED
-            ? [
-                {
-                  type: PoliceDocumentType.RVVI,
-                  courtDocument: Base64.btoa(
-                    await getCustodyNoticePdfAsString(
-                      theCase,
-                      this.formatMessage,
-                    ),
-                  ),
-                },
-              ]
-            : []),
-        ]
+    try {
+      const delivered = await this.deliverCaseToPoliceWithFiles(
+        theCase,
+        user,
+        [],
+      )
 
-        return this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments)
-      })
-      .catch((reason) => {
-        // Tolerate failure, but log error
-        this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
-          reason,
-        })
-
-        return false
+      return { delivered }
+    } catch (reason) {
+      // Tolerate failure, but log error
+      this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
+        reason,
       })
 
-    return { delivered }
+      return { delivered: false }
+    }
   }
 
+  // Only updates the completed indictment case in the police system.
+  // The documents of a completed indictment case are delivered one by one,
+  // so that each of them can be retried on its own.
   async deliverIndictmentCaseToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.deliverCaseToPolice(theCase, user)
+  }
+
+  async deliverRequestToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      await this.refreshFormatMessage()
+
+      const request = await getRequestPdfAsString(theCase, this.formatMessage)
+
+      const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
+        {
+          type: PoliceDocumentType.RVKR,
+          courtDocument: Base64.btoa(request),
+        },
+      ])
+
+      return { delivered }
+    } catch (reason) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to deliver the request for case ${theCase.id} to police`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
+  }
+
+  async deliverCourtRecordToPolice(
     theCase: Case,
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-    const delivered = await Promise.all(
-      theCase.caseFiles
-        ?.filter(
-          (caseFile) =>
-            caseFile.category === CaseFileCategory.COURT_RECORD &&
-            caseFile.isKeyAccessible,
+    try {
+      let courtRecord: string
+
+      if (isIndictmentCase(theCase.type)) {
+        const pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+          theCase,
+          user,
+          transaction,
         )
-        .map(async (caseFile) => {
-          const file = await this.fileService.getCaseFileFromS3(
-            theCase,
-            caseFile,
-          )
 
-          return {
-            type: PoliceDocumentType.RVTB,
-            courtDocument: Base64.btoa(file.toString('binary')),
-          }
-        }) ?? [],
-    )
-      .then(async (courtDocuments) => {
-        if (theCase.withCourtSessions) {
-          const pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
-            theCase,
-            user,
-            transaction,
-          )
+        courtRecord = pdf.toString('binary')
+      } else {
+        await this.refreshFormatMessage()
 
-          courtDocuments.push({
-            type: PoliceDocumentType.RVTB,
-            courtDocument: Base64.btoa(pdf.toString('binary')),
-          })
-        }
+        courtRecord = await getCourtRecordPdfAsString(
+          theCase,
+          this.formatMessage,
+        )
+      }
 
-        return courtDocuments
-      })
-      .then((courtDocuments) =>
-        this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
+      const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
+        {
+          type: PoliceDocumentType.RVTB,
+          courtDocument: Base64.btoa(courtRecord),
+        },
+      ])
+
+      return { delivered }
+    } catch (reason) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to deliver the court record for case ${theCase.id} to police`,
+        { reason },
       )
-      .catch((reason) => {
-        this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
-          reason,
-        })
 
-        return false
-      })
+      return { delivered: false }
+    }
+  }
 
-    return { delivered }
+  async deliverCustodyNoticeToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      await this.refreshFormatMessage()
+
+      const custodyNotice = await getCustodyNoticePdfAsString(
+        theCase,
+        this.formatMessage,
+      )
+
+      const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
+        {
+          type: PoliceDocumentType.RVVI,
+          courtDocument: Base64.btoa(custodyNotice),
+        },
+      ])
+
+      return { delivered }
+    } catch (reason) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to deliver the custody notice for case ${theCase.id} to police`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
   }
 
   async deliverIndictmentToPolice(

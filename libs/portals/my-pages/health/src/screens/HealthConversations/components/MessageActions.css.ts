@@ -19,7 +19,21 @@ globalStyle(
   },
 )
 
-export const hoverWhite = style({})
-globalStyle(`${hoverWhite} button:hover, ${hoverWhite} button:focus-visible`, {
-  backgroundColor: theme.color.white,
+export const circleActionButtons = style({})
+
+globalStyle(`${circleActionButtons} button`, {
+  width: 40,
+  height: 40,
+})
+
+globalStyle(
+  `${circleActionButtons} button:hover, ${circleActionButtons} button:focus-visible`,
+  {
+    backgroundColor: theme.color.white,
+  },
+)
+
+globalStyle(`${circleActionButtons} button svg`, {
+  width: 20,
+  height: 20,
 })

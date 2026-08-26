@@ -1,3 +1,7 @@
+// Loaded at runtime by @nestjs/apollo's Apollo driver via a dynamic require;
+// imported here so Nx keeps it in the generated production package.json.
+import '@as-integrations/express5'
+
 import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
@@ -59,6 +63,7 @@ import {
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
+import { DirectorateOfEqualityApplicationModule } from '@island.is/api/domains/directorate-of-equality-application'
 import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
@@ -315,6 +320,9 @@ const environment = getConfig
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl as string,
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
+    }),
+    DirectorateOfEqualityApplicationModule.register({
+      baseApiUrl: environment.applicationSystem.baseApiUrl as string,
     }),
     LicenseServiceModule,
     DirectorateOfEqualityClientModule,

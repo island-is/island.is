@@ -36,6 +36,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  appealCorrectionLock,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -742,6 +743,14 @@ export class CaseService {
     }
   }
 
+  // A custody notice is only generated for accepted custody and admission to facility cases
+  private hasCustodyNoticeForPolice(theCase: Case): boolean {
+    return (
+      theCase.state === CaseState.ACCEPTED &&
+      [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(theCase.type)
+    )
+  }
+
   private addMessagesForCompletedCaseToQueue(theCase: Case, user: TUser): void {
     addMessagesToQueue(
       {
@@ -776,11 +785,33 @@ export class CaseService {
     }
 
     if (theCase.origin === CaseOrigin.LOKE) {
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_POLICE_CASE,
-        user,
-        caseId: theCase.id,
-      })
+      // The case update and each of its documents are delivered separately,
+      // so that each of them can be retried on its own
+      addMessagesToQueue(
+        {
+          type: MessageType.DELIVERY_TO_POLICE_CASE,
+          user,
+          caseId: theCase.id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_REQUEST,
+          user,
+          caseId: theCase.id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_COURT_RECORD,
+          user,
+          caseId: theCase.id,
+        },
+      )
+
+      if (this.hasCustodyNoticeForPolice(theCase)) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+          user,
+          caseId: theCase.id,
+        })
+      }
     }
 
     // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
@@ -852,28 +883,74 @@ export class CaseService {
     }
 
     if (updatedCase.origin === CaseOrigin.LOKE) {
+      // The case update and each of its documents are delivered separately,
+      // so that each of them can be retried on its own
       addMessagesToQueue({
         type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
         user,
         caseId: updatedCase.id,
       })
+
+      for (const caseFile of updatedCase.caseFiles ?? []) {
+        if (
+          caseFile.category === CaseFileCategory.COURT_RECORD &&
+          caseFile.isKeyAccessible
+        ) {
+          addMessagesToQueue({
+            type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+            user,
+            caseId: updatedCase.id,
+            elementId: caseFile.id,
+          })
+        }
+      }
+
+      if (updatedCase.withCourtSessions) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_POLICE_COURT_RECORD,
+          user,
+          caseId: updatedCase.id,
+        })
+      }
     }
   }
 
-  private addMessagesForModifiedCaseToQueue(theCase: Case, user: TUser): void {
+  private addMessagesForModifiedCaseToQueue(
+    theCase: Case,
+    updatedCase: Case,
+    user: TUser,
+  ): void {
     addMessagesToQueue({
       type: MessageType.NOTIFICATION,
       user,
-      caseId: theCase.id,
+      caseId: updatedCase.id,
       body: { type: RequestCaseNotificationType.MODIFIED },
     })
 
-    if (theCase.origin === CaseOrigin.LOKE) {
+    if (updatedCase.origin === CaseOrigin.LOKE) {
       addMessagesToQueue({
         type: MessageType.DELIVERY_TO_POLICE_CASE,
         user,
-        caseId: theCase.id,
+        caseId: updatedCase.id,
       })
+
+      const areCustodyDatesModified =
+        updatedCase.validToDate?.getTime() !== theCase.validToDate?.getTime() ||
+        updatedCase.isolationToDate?.getTime() !==
+          theCase.isolationToDate?.getTime()
+
+      // The other documents of the case are unchanged,
+      // but the custody notice includes the custody and isolation periods
+      if (
+        areCustodyDatesModified &&
+        this.hasCustodyNoticeForPolice(updatedCase)
+      ) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+          user,
+          caseId: updatedCase.id,
+        })
+      }
     }
   }
 
@@ -1033,7 +1110,7 @@ export class CaseService {
       updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
     ) {
       // Case to dates modified
-      this.addMessagesForModifiedCaseToQueue(updatedCase, user)
+      this.addMessagesForModifiedCaseToQueue(theCase, updatedCase, user)
     }
 
     if (updatedCase.courtCaseNumber) {
@@ -1396,67 +1473,9 @@ export class CaseService {
     }
   }
 
-  // Dual-write: mirrors the legacy request-case appeal decision fields into
-  // the in-court appeal_decision rows - one prosecution row and one collective
-  // defence row (no defendantId). Indictment decisions are not stored here.
-  // The legacy columns remain the source of truth until later.
-  private async handleAppealDecisionUpdates(
-    theCase: Case,
-    update: UpdateCase,
-    transaction: Transaction,
-  ): Promise<void> {
-    if (!isRequestCase(theCase.type)) {
-      return
-    }
-
-    // Mirror whenever a decision or announcement is touched. decision is
-    // nullable, so an announcement entered before a decision is picked is
-    // still persisted (and not lost on refresh / column drop).
-    if (
-      update.prosecutorAppealDecision !== undefined ||
-      update.prosecutorAppealAnnouncement !== undefined
-    ) {
-      await this.appealDecisionRepositoryService.upsert(
-        { caseId: theCase.id, partyRole: AppealDecisionPartyRole.PROSECUTOR },
-        {
-          decision:
-            update.prosecutorAppealDecision ??
-            theCase.prosecutorAppealDecision ??
-            null,
-          announcement:
-            update.prosecutorAppealAnnouncement ??
-            theCase.prosecutorAppealAnnouncement ??
-            null,
-        },
-        { transaction },
-      )
-    }
-
-    if (
-      update.accusedAppealDecision !== undefined ||
-      update.accusedAppealAnnouncement !== undefined
-    ) {
-      await this.appealDecisionRepositoryService.upsert(
-        { caseId: theCase.id, partyRole: AppealDecisionPartyRole.DEFENDANT },
-        {
-          decision:
-            update.accusedAppealDecision ??
-            theCase.accusedAppealDecision ??
-            null,
-          announcement:
-            update.accusedAppealAnnouncement ??
-            theCase.accusedAppealAnnouncement ??
-            null,
-        },
-        { transaction },
-      )
-    }
-  }
-
-  // Records a case-level (request-case) appeal decision directly on the
-  // appeal_decision rows - the write switch away from the accused/prosecutor
-  // case columns. A reverse dual-write keeps those legacy columns in sync so
-  // not-yet-migrated paths still read them and they can be dropped in Phase 4.
+  // Records a case-level (request-case) appeal decision on the appeal_decision
+  // rows - the source of truth now that the accused/prosecutor appeal decision
+  // and announcement case columns have been dropped.
   async upsertCaseAppealDecision(
     theCase: Case,
     update: CaseAppealDecisionDto,
@@ -1496,13 +1515,18 @@ export class CaseService {
         },
       )
 
-      if (hasOutOfCourtAppeal(appealedEvents)) {
+      const lock = appealCorrectionLock({
+        appealState: existingAppealCase.appealState,
+        appealedOutOfCourt: hasOutOfCourtAppeal(appealedEvents),
+      })
+
+      if (lock === 'OUT_OF_COURT') {
         throw new BadRequestException(
           'This case has been appealed out of court, so the appeal decisions can no longer be changed',
         )
       }
 
-      if (existingAppealCase.appealState !== AppealCaseState.APPEALED) {
+      if (lock === 'PROGRESSED') {
         throw new BadRequestException(
           'The appeal of this case has progressed past the district court, so the appeal decisions can no longer be changed',
         )
@@ -1520,38 +1544,11 @@ export class CaseService {
       data.announcement = update.announcement ?? null
     }
 
-    const appealDecision = await this.appealDecisionRepositoryService.upsert(
+    return this.appealDecisionRepositoryService.upsert(
       { caseId: theCase.id, rulingFileId: null, partyRole: update.partyRole },
       data,
       { transaction },
     )
-
-    // Reverse dual-write into the legacy case columns.
-    const isProsecutor = update.partyRole === AppealDecisionPartyRole.PROSECUTOR
-    const caseUpdate: UpdateCase = {}
-    if (update.decision !== undefined) {
-      const decision = update.decision ?? null
-      if (isProsecutor) {
-        caseUpdate.prosecutorAppealDecision = decision
-      } else {
-        caseUpdate.accusedAppealDecision = decision
-      }
-    }
-    if (update.announcement !== undefined) {
-      const announcement = update.announcement ?? null
-      if (isProsecutor) {
-        caseUpdate.prosecutorAppealAnnouncement = announcement
-      } else {
-        caseUpdate.accusedAppealAnnouncement = announcement
-      }
-    }
-    if (Object.keys(caseUpdate).length > 0) {
-      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
-        transaction,
-      })
-    }
-
-    return appealDecision
   }
 
   // Converges a request-case (case-level) appeal case's APPEALED events with the
@@ -2117,6 +2114,7 @@ export class CaseService {
             defendant.id,
             {
               isSentToPrisonAdmin: false,
+              isClosedWithoutEnforcement: false,
               indictmentReviewDecision: null,
               publicProsecutorIsRegisteredInPoliceSystem: null,
               isDrivingLicenseSuspended: null,
@@ -2136,7 +2134,6 @@ export class CaseService {
 
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
-    await this.handleAppealDecisionUpdates(theCase, caseUpdate, transaction)
 
     // Handle appealed in court
     if (isCompletingRequestCase) {
@@ -2196,13 +2193,6 @@ export class CaseService {
         // read from the event log uniformly with out-of-court appeals.
         // Request-case defence is collective, so no defendant/civilClaimant party
         // is attached.
-        // TODO: Decide if we should set both appeal dates if both appeal
-        if (prosecutorAppealedInCourt) {
-          caseUpdate.prosecutorPostponedAppealDate = update.rulingDate
-        } else {
-          caseUpdate.accusedPostponedAppealDate = update.rulingDate
-        }
-
         const appealCase = await this.appealCaseRepositoryService.create(
           theCase.id,
           {
@@ -2266,8 +2256,6 @@ export class CaseService {
           user,
           transaction,
         )
-        caseUpdate.prosecutorPostponedAppealDate = null
-        caseUpdate.accusedPostponedAppealDate = null
       }
     }
 

@@ -11,6 +11,7 @@ import {
 import {
   CardLoader,
   IntroWrapper,
+  LinkButton,
   NestedTable,
   PortalTable,
   createColumnHelper,
@@ -117,6 +118,17 @@ const RightCertificates = () => {
       serviceProvider={{
         slug: SAMGONGUSTOFA_SLUG,
         tooltip: formatMessage(m.sailorsTooltip),
+      }}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key="sailor-right-certificates-info-link"
+            to={formatMessage(om.sailorRightCertificatesInfoLinkUrl)}
+            text={formatMessage(om.sailorRightCertificatesInfoLinkText)}
+            icon="open"
+            variant="utility"
+          />,
+        ],
       }}
     >
       {loading && <CardLoader />}

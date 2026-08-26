@@ -2,12 +2,12 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import type { UploadFile } from '@island.is/island-ui/core'
 import {
   Box,
   FileUploadStatus,
   InputFileUpload,
   Text,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -221,10 +221,13 @@ const AppealFiles = () => {
         <Modal
           title="Gögn hafa verið send Landsrétti"
           text="Tilkynning hefur verið send Landsrétti og aðilum máls."
-          secondaryButton={{
-            text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
-          }}
+          buttons={[
+            {
+              text: formatMessage(core.closeModal),
+              onClick: () => router.push(previousUrl),
+              variant: 'ghost',
+            },
+          ]}
         />
       )}
     </PageLayout>

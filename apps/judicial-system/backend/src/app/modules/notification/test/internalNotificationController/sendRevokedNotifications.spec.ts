@@ -15,7 +15,11 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case, Notification } from '../../../repository'
+import {
+  Case,
+  Notification,
+  NotificationRepositoryService,
+} from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
@@ -61,19 +65,19 @@ describe('InternalNotificationController - Send revoked notifications for indict
   }
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       emailService,
-      notificationModel,
+      notificationRepositoryService,
       internalNotificationController,
       notificationConfig,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
     mockConfig = notificationConfig
 
     givenWhenThen = async (notifications?: Notification[]) => {
@@ -128,7 +132,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
           html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}.<br /><br />Hægt er að nálgast yfirlitssíðu málsins á <a href="${mockConfig.clientUrl}/verjandi/akaera/${theCase.id}">rettarvorslugatt.island.is</a>.`,
         }),
       )
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId: caseId,
         type: RequestCaseNotificationType.REVOKED,
         recipients: [

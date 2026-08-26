@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'example-folder-structure-and-conventions',
   preset: '../../../../../jest.preset.js',
   transform: {

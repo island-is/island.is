@@ -22,6 +22,9 @@ const TherapiesOccupational = lazy(() =>
 const AidsAndNutrition = lazy(() =>
   import('./screens/AidsAndNutrition/AidsAndNutrition'),
 )
+const MovementPrescriptions = lazy(() =>
+  import('./screens/MovementPrescriptions/MovementPrescriptions'),
+)
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 
 const HealthCenter = lazy(() => import('./screens/HealthCenter/HealthCenter'))
@@ -140,6 +143,10 @@ const AppointmentDetail = lazy(() =>
   import('./screens/Appointments/AppointmentDetail'),
 )
 
+const BookAppointment = lazy(() =>
+  import('./screens/Appointments/BookAppointment'),
+)
+
 const HealthConversations = lazy(() =>
   import('./screens/HealthConversations/HealthConversations'),
 )
@@ -254,6 +261,13 @@ export const healthModule: PortalModule = {
       name: hm.aidsAndNutritionTitle,
       path: HealthPaths.HealthAidsAndNutritionOld,
       element: <Navigate to={HealthPaths.HealthAidsAndNutrition} replace />,
+    },
+    {
+      name: hm.movementPrescriptionsTitle,
+      path: HealthPaths.HealthMovementPrescriptions,
+      key: 'HealthMovementPrescriptions',
+      enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
+      element: <MovementPrescriptions />,
     },
     {
       name: hm.payments,
@@ -630,6 +644,15 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <AppointmentDetail />,
+    },
+    {
+      name: hm.bookAppointmentTitle,
+      path: HealthPaths.HealthBookAppointment,
+      key: 'HealthAppointments',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <BookAppointment />,
     },
     {
       name: m.messages,

@@ -14,7 +14,11 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import { Case, Defendant, Notification } from '../../../../repository'
+import {
+  Case,
+  Defendant,
+  NotificationRepositoryService,
+} from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 import { notificationModuleConfig } from '../../../notification.config'
@@ -42,7 +46,7 @@ describe('InternalNotificationController - Send defendant delegated defender cho
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   let defendantNotificationDTO: DefendantNotificationDto
@@ -52,7 +56,7 @@ describe('InternalNotificationController - Send defendant delegated defender cho
       emailService,
       notificationConfig,
       internalNotificationController,
-      notificationModel,
+      notificationRepositoryService,
     } = await createTestingNotificationModule()
 
     defendantNotificationDTO = {
@@ -61,7 +65,7 @@ describe('InternalNotificationController - Send defendant delegated defender cho
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -117,8 +121,8 @@ describe('InternalNotificationController - Send defendant delegated defender cho
     })
 
     it('should send a confirmed defender assigned notification with a link to the case', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(2)
-      expect(mockEmailService.sendEmail).toBeCalledWith({
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
         from: {
           name: mockConfig.email.fromName,
           address: mockConfig.email.fromEmail,
@@ -141,7 +145,7 @@ describe('InternalNotificationController - Send defendant delegated defender cho
         ),
       })
 
-      expect(mockEmailService.sendEmail).toBeCalledWith({
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
         from: {
           name: mockConfig.email.fromName,
           address: mockConfig.email.fromEmail,
@@ -166,8 +170,8 @@ describe('InternalNotificationController - Send defendant delegated defender cho
     })
 
     it('should record notification', () => {
-      expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledTimes(1)
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: defendantNotificationDTO.type,
         recipients: [

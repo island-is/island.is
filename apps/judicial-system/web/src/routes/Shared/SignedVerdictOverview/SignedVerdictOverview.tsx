@@ -1,5 +1,7 @@
-import { FC, ReactNode, useCallback, useContext, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC, ReactNode } from 'react'
+import { useCallback, useContext, useState } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
@@ -22,6 +24,7 @@ import {
   signedVerdictOverview as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import type { SignatureType } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseFilesOverview,
   AppealRulingModifiedAlert,
@@ -47,22 +50,23 @@ import {
   RulingAccordionItem,
   RulingModifiedAlert,
   SignatureConfirmationModal,
-  SignatureType,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import {
-  AppealCaseState,
+import type {
   Case,
-  CaseDecision,
-  CaseOrigin,
-  CaseState,
   Institution,
   RequestSignatureResponse,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  UpdateCase,
+  AppealCaseState,
+  CaseDecision,
+  CaseOrigin,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
   useAppealCaseBanner,
   useCase,
   usePoliceDigitalCaseFile,
@@ -71,7 +75,8 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
-import ShareCase, { InstitutionOption } from './Components/ShareCase/ShareCase'
+import type { InstitutionOption } from './Components/ShareCase/ShareCase'
+import ShareCase from './Components/ShareCase/ShareCase'
 
 interface ModalControls {
   open: boolean
@@ -565,10 +570,12 @@ export const SignedVerdictOverview: FC = () => {
           <Modal
             title={shareCaseModal.title}
             text={shareCaseModal.text}
-            primaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => setSharedCaseModal(undefined),
-            }}
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => setSharedCaseModal(undefined),
+              },
+            ]}
           />
         )}
         <AnimatePresence>

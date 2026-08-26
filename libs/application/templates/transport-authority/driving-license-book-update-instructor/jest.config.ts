@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-driving-license-book-update-instructor',
   preset: '../../../../../jest.preset.js',
   transform: {

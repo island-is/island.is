@@ -1,7 +1,7 @@
-import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
-import getConfig from 'next/config'
 import Link from 'next/link'
 import router from 'next/router'
 
@@ -26,23 +26,21 @@ import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
-import {
-  isAdminUser,
-  isDefenceUser,
-  Lawyer,
-} from '@island.is/judicial-system/types'
+import type { Lawyer } from '@island.is/judicial-system/types'
+import { isAdminUser, isDefenceUser } from '@island.is/judicial-system/types'
+import { getPublicRuntimeEnv } from '@island.is/judicial-system-web/environments/runtimeEnvironment'
 import { SearchModal } from '@island.is/judicial-system-web/src/components'
+import { LawyerRegistryContext } from '@island.is/judicial-system-web/src/components/LawyerRegistryProvider/LawyerRegistryProvider'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { api } from '@island.is/judicial-system-web/src/services'
+import { useGeoLocation } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
-import { useGeoLocation } from '../../utils/hooks'
-import { useKeyboardCombo } from '../../utils/hooks/useKeyboardCombo/useKeyboardCombo'
-import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
-import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
-import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
 import * as styles from './Header.css'
 
-const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
+const supportEmail = getPublicRuntimeEnv().supportEmail ?? ''
 
 const LogoIcon = () => (
   <>

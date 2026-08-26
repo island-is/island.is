@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
@@ -36,7 +36,7 @@ const locales = [
 const errorHandler = (name: string) => {
   return (error: Error) => {
     logger.error(error)
-    throw new ApolloError(`Failed to resolve request in ${name}`)
+    throw new GraphQLError(`Failed to resolve request in ${name}`)
   }
 }
 
@@ -82,7 +82,10 @@ export class CmsTranslationsService {
       await this.cacheManager.set(
         namespace,
         messages,
-        this.config.memCacheExpiryMilliseconds + 120000 * Math.random(), // Add a random delay to avoid cache stampede
+        // Random jitter avoids a cache stampede; rounded because Redis
+        // rejects fractional PX values ("value is not an integer").
+        this.config.memCacheExpiryMilliseconds +
+          Math.round(120000 * Math.random()),
       )
 
       return messages

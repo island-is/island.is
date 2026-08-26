@@ -1,6 +1,6 @@
-import { KeyboardEvent } from 'react'
+import type { KeyboardEvent } from 'react'
 
-import { TagVariant } from '@island.is/island-ui/core'
+import type { TagVariant } from '@island.is/island-ui/core'
 import {
   formatDate,
   normalizeAndFormatNationalId,
@@ -12,20 +12,24 @@ import {
   isProsecutionUser,
   isRequestCase,
 } from '@island.is/judicial-system/types'
-import {
+import type {
   AppealCase,
-  AppealCaseState,
-  AppealDecisionPartyRole,
   Case,
-  CaseAppealDecision,
-  CaseCustodyRestrictions,
-  CaseFileCategory,
+  CourtSessionString,
   Defendant,
-  DefendantPlea,
-  Gender,
   Notification,
   TrackedNotificationType,
   User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
+  CaseCustodyRestrictions,
+  CaseFileCategory,
+  CourtSessionStringType,
+  DefendantPlea,
+  Gender,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -279,6 +283,115 @@ export const getDefenceUserPartyIds = (
 }
 
 /**
+ * Whether a defence user may open a linked case (e.g. merge target / merged-from).
+ * Non-defence users always return true. Defence users must be a confirmed
+ * defender or spokesperson on the linked case — matching backend access checks.
+ */
+export const canDefenceUserOpenLinkedCase = (
+  user: User | undefined,
+  linkedCase: Case | null | undefined,
+): boolean => {
+  if (!user || !isDefenceUser(user)) {
+    return true
+  }
+
+  if (!linkedCase) {
+    return false
+  }
+
+  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+    linkedCase,
+    user,
+  )
+
+  return Boolean(defendantId || civilClaimantId)
+}
+
+// The case-level appeal_decision row of a party - the one with no rulingFileId.
+const caseLevelAppealDecisionRow = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+) =>
+  appealDecisions?.find(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )
+
+/**
+ * The in-court appeal decision (Ákvörðun um kæru) recorded for a case-level
+ * party - the collective defence (DEFENDANT) or the prosecution (PROSECUTOR).
+ * Case-level decisions are the appeal_decision rows with no rulingFileId.
+ */
+export const caseLevelAppealDecision = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+): CaseAppealDecision | undefined =>
+  caseLevelAppealDecisionRow(appealDecisions, partyRole)?.decision ?? undefined
+
+/**
+ * The in-court appeal announcement (free text) recorded for a case-level party.
+ * Same case-level row (no rulingFileId) as caseLevelAppealDecision.
+ */
+export const caseLevelAppealAnnouncement = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+): string | undefined =>
+  caseLevelAppealDecisionRow(appealDecisions, partyRole)?.announcement ??
+  undefined
+
+/**
+ * Returns a new appeal-decisions array where the case-level (no rulingFileId)
+ * row for `partyRole` has the provided `decision` / `announcement` applied -
+ * appending a fresh case-level row when none exists yet. Only the keys present
+ * on `update` are overwritten, so an announcement-only update leaves the
+ * decision intact and vice versa. Used for optimistic local updates while the
+ * mutation persists the rows server-side.
+ */
+export const withCaseLevelAppealDecision = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+  update: { decision?: CaseAppealDecision; announcement?: string },
+): Case['appealDecisions'] => {
+  const decisions = appealDecisions ?? []
+  const patch = {
+    ...('decision' in update ? { decision: update.decision } : {}),
+    ...('announcement' in update ? { announcement: update.announcement } : {}),
+  }
+
+  const index = decisions.findIndex(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )
+
+  if (index === -1) {
+    return [
+      ...decisions,
+      { partyRole, rulingFileId: null, ...patch } as NonNullable<
+        Case['appealDecisions']
+      >[number],
+    ]
+  }
+
+  return decisions.map((decision, i) =>
+    i === index ? { ...decision, ...patch } : decision,
+  )
+}
+
+/**
+ * The appeal of a specific ruling order, if it has one. A case can carry several
+ * ruling-order appeals at once, keyed by the ruling file they were made against
+ * - so anything acting on one ruling must resolve its own appeal rather than the
+ * case-level `appealCase`.
+ */
+export const rulingOrderAppealCase = (
+  workingCase: Case,
+  rulingFileId: string | null | undefined,
+): AppealCase | undefined =>
+  rulingFileId
+    ? workingCase.rulingOrderAppealCases?.find(
+        (appealCase) => appealCase.rulingFileId === rulingFileId,
+      )
+    : undefined
+
+/**
  * Returns a human-readable description of who appealed and when.
  *
  * Branches by case type, then by appeal kind for indictment cases. The
@@ -300,8 +413,14 @@ export const getAppealActorText = (
 ): string => {
   if (isRequestCase(workingCase.type)) {
     const appealedInCourt =
-      workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+      caseLevelAppealDecision(
+        workingCase.appealDecisions,
+        AppealDecisionPartyRole.PROSECUTOR,
+      ) === CaseAppealDecision.APPEAL ||
+      caseLevelAppealDecision(
+        workingCase.appealDecisions,
+        AppealDecisionPartyRole.DEFENDANT,
+      ) === CaseAppealDecision.APPEAL
 
     if (appealedInCourt) {
       return appealCase?.appealedByRole === UserRole.PROSECUTOR
@@ -632,6 +751,53 @@ export const reconcileAppealDecisionsForRulingFileChange = (
 }
 
 /**
+ * Applies an edit to a court session's entries booking for one merged case,
+ * appending the row when that merged case has not been written about yet.
+ *
+ * Rows are matched on the merged case rather than on `id`: a row appended here
+ * has no `id` until the case is refetched, so matching on `id` would make two
+ * freshly written merged cases collide on `undefined` and an edit to one would
+ * overwrite the other.
+ */
+export const applyMergedCaseEntries = (
+  courtSessionStrings: CourtSessionString[] | null | undefined,
+  {
+    caseId,
+    courtSessionId,
+    mergedCaseId,
+    value,
+  }: {
+    caseId: string
+    courtSessionId: string
+    mergedCaseId: string
+    value?: string | null
+  },
+): CourtSessionString[] => {
+  const isTarget = (courtSessionString: CourtSessionString) =>
+    courtSessionString.mergedCaseId === mergedCaseId &&
+    courtSessionString.stringType === CourtSessionStringType.ENTRIES
+
+  if (courtSessionStrings?.some(isTarget)) {
+    return courtSessionStrings.map((courtSessionString) =>
+      isTarget(courtSessionString)
+        ? { ...courtSessionString, value }
+        : courtSessionString,
+    )
+  }
+
+  return [
+    ...(courtSessionStrings ?? []),
+    {
+      caseId,
+      courtSessionId,
+      mergedCaseId,
+      stringType: CourtSessionStringType.ENTRIES,
+      value,
+    } as CourtSessionString,
+  ]
+}
+
+/**
  * Returns true iff the file's category is visible per the appeal-state rules,
  * given the specific appeal-case row in scope. Encodes:
  * - Brief categories: visible iff the appellant's role matches.
@@ -736,6 +902,22 @@ export const isAppealFileCategoryVisible = (
       return false
   }
 }
+
+// The court of appeals' own documents (APPEAL_RULING / APPEAL_COURT_RECORD) also
+// belong to exactly one appeal-case row: case-level appeals own the files with
+// no rulingFileId, ruling-order appeals own the files tagged with their own
+// rulingFileId. isMatchingAppealCaseFile cannot be used here as it is scoped to
+// the parties' files (kærugögn) and rejects court of appeals users.
+export const isMatchingAppealCourtFile = (
+  file: {
+    category?: CaseFileCategory | null
+    rulingFileId?: string | null
+  },
+  category: CaseFileCategory,
+  rulingFileId?: string | null,
+): boolean =>
+  file.category === category &&
+  (file.rulingFileId ?? null) === (rulingFileId ?? null)
 
 export const isMatchingAppealCaseFile = (
   workingCase: Case,

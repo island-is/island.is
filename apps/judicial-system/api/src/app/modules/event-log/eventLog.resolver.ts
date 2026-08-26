@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -19,6 +19,7 @@ export class EventLogResolver {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => Boolean, { nullable: true })
@@ -26,12 +27,10 @@ export class EventLogResolver {
     @Args('input', { type: () => CreateEventLogInput })
     input: CreateEventLogInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<boolean> {
     this.logger.debug(`Creating event log for case ${input.caseId}`)
 
-    return backendService.createEventLog({
+    return this.backendService.createEventLog({
       ...input,
       nationalId: user.nationalId,
       userRole: user.role,

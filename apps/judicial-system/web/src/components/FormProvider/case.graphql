@@ -75,6 +75,8 @@ query Case($input: CaseQueryInput!) {
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
+      isClosedWithoutEnforcement
+      closedWithoutEnforcementDate
       publicProsecutorIsRegisteredInPoliceSystem
       openedByPrisonAdminDate
       punishmentType
@@ -195,12 +197,6 @@ query Case($input: CaseQueryInput!) {
     isolationToDate
     conclusion
     endOfSessionBookings
-    accusedAppealDecision
-    accusedAppealAnnouncement
-    prosecutorAppealDecision
-    prosecutorAppealAnnouncement
-    accusedPostponedAppealDate
-    prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
     judge {
@@ -453,6 +449,7 @@ query Case($input: CaseQueryInput!) {
       appealValidToDate
       isAppealCustodyIsolation
       appealIsolationToDate
+      rulingFileId
     }
     rulingOrderAppealCases {
       id
@@ -462,6 +459,7 @@ query Case($input: CaseQueryInput!) {
       appealedByRole
       appealedDate
       appealedInCourt
+      appealedOutOfCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -540,6 +538,18 @@ query Case($input: CaseQueryInput!) {
     mergeCase {
       id
       courtCaseNumber
+      type
+      defendants {
+        id
+        defenderNationalId
+        isDefenderChoiceConfirmed
+      }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
     }
     mergedCases {
       id
@@ -654,6 +664,12 @@ query Case($input: CaseQueryInput!) {
           externalPoliceDocumentId
         }
       }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
       caseFiles {
         id
         created
@@ -681,6 +697,7 @@ query Case($input: CaseQueryInput!) {
         appealedByCivilClaimantId
         appealedByRole
         appealedInCourt
+        appealedOutOfCourt
         appealedDate
         statementDeadline
         isStatementDeadlineExpired

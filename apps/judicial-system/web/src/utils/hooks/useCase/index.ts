@@ -1,42 +1,34 @@
-import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
   CaseIndictmentRulingDecision,
   CaseTransition,
   IndictmentDecision,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { applyUpdateToCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
-import { applyUpdateToCase } from '../../formHelper'
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
 import { useDuplicateIndictmentCaseMutation } from './duplicateIndictmentCase.generated'
 import { useExtendCaseMutation } from './extendCase.generated'
-import {
-  LimitedAccessTransitionCaseMutation,
-  useLimitedAccessTransitionCaseMutation,
-} from './limitedAccessTransitionCase.generated'
-import {
-  LimitedAccessUpdateCaseMutation,
-  useLimitedAccessUpdateCaseMutation,
-} from './limitedAccessUpdateCase.generated'
+import type { LimitedAccessUpdateCaseMutation } from './limitedAccessUpdateCase.generated'
+import { useLimitedAccessUpdateCaseMutation } from './limitedAccessUpdateCase.generated'
 import { useSendAppealNotificationMutation } from './sendAppealNotification.generated'
 import { useSendNotificationMutation } from './sendNotification.generated'
 import { useSplitDefendantFromCaseMutation } from './splitDefendantFromCase.generated'
-import {
-  TransitionCaseMutation,
-  useTransitionCaseMutation,
-} from './transitionCase.generated'
-import {
-  UpdateCaseMutation,
-  useUpdateCaseMutation,
-} from './updateCase.generated'
-import { formatUpdates, UpdateCase } from './useCase.logic'
+import type { TransitionCaseMutation } from './transitionCase.generated'
+import { useTransitionCaseMutation } from './transitionCase.generated'
+import type { UpdateCaseMutation } from './updateCase.generated'
+import { useUpdateCaseMutation } from './updateCase.generated'
+import type { UpdateCase } from './useCase.logic'
+import { formatUpdates } from './useCase.logic'
 
 const useCase = () => {
   const { limitedAccess } = useContext(UserContext)
@@ -58,11 +50,6 @@ const useCase = () => {
 
   const [transitionCaseMutation, { loading: isTransitioningCase }] =
     useTransitionCaseMutation()
-
-  const [
-    limitedAccessTransitionCaseMutation,
-    { loading: isLimitedAccessTransitioningCase },
-  ] = useLimitedAccessTransitionCaseMutation()
 
   const [
     sendNotificationMutation,
@@ -217,16 +204,8 @@ const useCase = () => {
           indictmentRulingDecision?: CaseIndictmentRulingDecision | null
         },
       ): Promise<boolean> => {
-        const mutation = limitedAccess
-          ? limitedAccessTransitionCaseMutation
-          : transitionCaseMutation
-
-        const resultType = limitedAccess
-          ? 'limitedAccessTransitionCase'
-          : 'transitionCase'
-
         try {
-          const { data } = await mutation({
+          const { data } = await transitionCaseMutation({
             variables: {
               input: {
                 id: caseId,
@@ -236,11 +215,10 @@ const useCase = () => {
             },
           })
 
-          const res = data as TransitionCaseMutation &
-            LimitedAccessTransitionCaseMutation
+          const res = data as TransitionCaseMutation
 
-          const state = res?.[resultType]?.state
-          const appealState = res?.[resultType]?.appealCase?.appealState
+          const state = res?.transitionCase?.state
+          const appealState = res?.transitionCase?.appealCase?.appealState
 
           if (!state && !appealState) {
             return false
@@ -249,7 +227,7 @@ const useCase = () => {
           if (setWorkingCase) {
             setWorkingCase((prevWorkingCase) => ({
               ...prevWorkingCase,
-              ...(res[resultType] as Case),
+              ...(res.transitionCase as Case),
             }))
           }
 
@@ -260,12 +238,7 @@ const useCase = () => {
           return false
         }
       },
-    [
-      limitedAccess,
-      limitedAccessTransitionCaseMutation,
-      transitionCaseMutation,
-      formatMessage,
-    ],
+    [transitionCaseMutation, formatMessage],
   )
 
   const sendNotification = useMemo(
@@ -406,8 +379,7 @@ const useCase = () => {
     updateUnlimitedAccessCase,
     isUpdatingCase: isUpdatingCase || isLimitedAccessUpdatingCase,
     transitionCase,
-    isTransitioningCase:
-      isTransitioningCase || isLimitedAccessTransitioningCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,

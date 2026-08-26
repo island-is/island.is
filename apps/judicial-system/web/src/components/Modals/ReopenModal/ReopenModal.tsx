@@ -1,4 +1,5 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -84,15 +85,18 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
           ? 'Að lokinni leiðréttingu er hægt að velja að undirrita leiðréttan úrskurð eigi það við.'
           : 'Að lokinni leiðréttingu þarf dómari að staðfesta aftur dóm. Leiðrétting verður sýnileg málflytjendum.'
       }
-      primaryButton={{
-        text: 'Halda áfram',
-        onClick: handlePrimaryButtonClick,
-        isLoading: isTransitioningCase || isTransitioningAppealCase,
-      }}
-      secondaryButton={{
-        text: 'Hætta við',
-        onClick: onClose,
-      }}
+      buttons={[
+        {
+          text: 'Hætta við',
+          onClick: onClose,
+          variant: 'ghost',
+        },
+        {
+          text: 'Halda áfram',
+          onClick: handlePrimaryButtonClick,
+          isLoading: isTransitioningCase || isTransitioningAppealCase,
+        },
+      ]}
     />
   )
 }

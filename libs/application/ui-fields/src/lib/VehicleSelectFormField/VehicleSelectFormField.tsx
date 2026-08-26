@@ -18,7 +18,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState, type JSX } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SelectController } from '@island.is/shared/form-fields'
 import {

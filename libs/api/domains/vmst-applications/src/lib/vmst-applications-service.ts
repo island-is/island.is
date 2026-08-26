@@ -14,6 +14,7 @@ import { VmstApplicationsVacationValidationInput } from './dto/vacationValidatio
 import { VmstApplicationsU2ValidationInput } from './dto/u2Validation.input'
 import {
   VmstApplicationsUnemploymentApplicationOverview,
+  VmstApplicationsActivationGrantApplicationOverview,
   VmstApplicationsValidationUnemploymentApplication,
   VmstApplicationsApplicantAttachment,
   VmstApplicationsApplicantAttachmentsResponse,
@@ -134,6 +135,16 @@ export class VMSTApplicationsService {
     locale?: Locale,
   ): Promise<VmstApplicationsUnemploymentApplicationOverview> {
     return this.vmstUnemploymentService.getApplicationOverview(auth, locale)
+  }
+
+  async getActivationGrantApplicationOverview(
+    auth: User,
+    locale?: Locale,
+  ): Promise<VmstApplicationsActivationGrantApplicationOverview> {
+    return this.vmstUnemploymentService.getActivationGrantApplicationOverview(
+      auth,
+      locale,
+    )
   }
 
   async resolveApplicant(auth: User): Promise<{ applicantId: string }> {

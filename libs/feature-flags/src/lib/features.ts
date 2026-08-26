@@ -59,6 +59,7 @@ export enum Features {
   servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
   servicePortalHealthMedicineDelegationPageEnabled = 'isServicePortalHealthMedicineDelegationPageEnabled',
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
+  servicePortalHealthMovementPrescriptionsPageEnabled = 'isServicePortalHealthMovementPrescriptionsPageEnabled',
   isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
   isServicePortalMyPagesTRBankInformationPageEnabled = 'isServicePortalMyPagesTRBankInformationPageEnabled',
   isServicePortalTRPaymentTypesOverviewPageEnabled = 'isServicePortalTRPaymentTypesOverviewPageEnabled',
@@ -70,6 +71,7 @@ export enum Features {
   isServicePortalHealthQuestionnairesPageEnabled = 'isServicePortalHealthQuestionnairesPageEnabled',
   isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   isServicePortalUnemploymentBenefitsPageEnabled = 'isServicePortalUnemploymentBenefitsPageEnabled',
+  isServicePortalActivationAllowancePageEnabled = 'isServicePortalActivationAllowancePageEnabled',
 
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
@@ -204,6 +206,8 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Primary school PDF viewer modal
   isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
+  // Switches between current and new primary-school PDF implementations in download-service
+  downloadServiceMmsPrimarySchoolImplementationTest = 'downloadServiceMmsPrimarySchoolImplementationTest',
   // New health overview page (incl. sidebar contact box)
   isNewHealthOverviewPageEnabled = 'isNewHealthOverviewPageEnabled',
   // University micro-credentials (örnám)
@@ -214,6 +218,16 @@ export enum Features {
   isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
+
+  // Application scheduled notification flags
+  transferOfVehicleOwnershipScheduledNotifications = 'isTransferOfVehicleOwnershipScheduledNotificationsEnabled',
+  changeCoOwnerOfVehicleScheduledNotifications = 'isChangeCoOwnerOfVehicleScheduledNotificationsEnabled',
+  changeOperatorOfVehicleScheduledNotifications = 'isChangeOperatorOfVehicleScheduledNotificationsEnabled',
+  trainingLicenseOnWorkMachineScheduledNotifications = 'isTrainingLicenseOnWorkMachineScheduledNotificationsEnabled',
+  transferOfMachineOwnershipScheduledNotifications = 'isTransferOfMachineOwnershipScheduledNotificationsEnabled',
+  secondarySchoolScheduledNotifications = 'isSecondarySchoolScheduledNotificationsEnabled',
+  passportScheduledNotifications = 'isPassportScheduledNotificationsEnabled',
+  idCardScheduledNotifications = 'isIdCardScheduledNotificationsEnabled',
 }
 
 export enum ServerSideFeature {

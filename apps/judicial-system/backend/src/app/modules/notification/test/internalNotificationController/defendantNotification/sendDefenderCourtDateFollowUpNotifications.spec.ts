@@ -14,7 +14,12 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import { Case, DateLog, Defendant, Notification } from '../../../../repository'
+import {
+  Case,
+  DateLog,
+  Defendant,
+  NotificationRepositoryService,
+} from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 
@@ -44,7 +49,7 @@ describe('InternalNotificationController - Send defender court date follow up no
   const pastDate = new Date(Date.now() - 100 * 60 * 1000)
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   let defendantNotificationDTO: DefendantNotificationDto
@@ -69,8 +74,11 @@ describe('InternalNotificationController - Send defender court date follow up no
   } as Defendant
 
   beforeEach(async () => {
-    const { emailService, internalNotificationController, notificationModel } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      internalNotificationController,
+      notificationRepositoryService,
+    } = await createTestingNotificationModule()
 
     defendantNotificationDTO = {
       type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
@@ -78,7 +86,7 @@ describe('InternalNotificationController - Send defender court date follow up no
     }
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -122,8 +130,8 @@ describe('InternalNotificationController - Send defender court date follow up no
     })
 
     it('should send a court session invitation with a calendar invite', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-      expect(mockEmailService.sendEmail).toBeCalledWith(
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
             {
@@ -140,8 +148,8 @@ describe('InternalNotificationController - Send defender court date follow up no
     })
 
     it('should record the follow up notification', () => {
-      expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledTimes(1)
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
         recipients: [
@@ -167,8 +175,8 @@ describe('InternalNotificationController - Send defender court date follow up no
     })
 
     it('should send an arraignment invitation', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-      expect(mockEmailService.sendEmail).toBeCalledWith(
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
             {
@@ -182,7 +190,7 @@ describe('InternalNotificationController - Send defender court date follow up no
     })
 
     it('should record the follow up notification', () => {
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
         recipients: [
@@ -209,8 +217,8 @@ describe('InternalNotificationController - Send defender court date follow up no
     })
 
     it('should prefer the arraignment invitation', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-      expect(mockEmailService.sendEmail).toBeCalledWith(
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           subject: 'Þingfesting í máli: R-123-456/2024',
         }),
@@ -234,11 +242,11 @@ describe('InternalNotificationController - Send defender court date follow up no
     })
 
     it('should not send a notification', () => {
-      expect(mockEmailService.sendEmail).not.toBeCalled()
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
     })
 
     it('should not record a notification', () => {
-      expect(mockNotificationModel.create).not.toHaveBeenCalled()
+      expect(mockNotificationRepositoryService.create).not.toHaveBeenCalled()
     })
   })
 
@@ -266,7 +274,7 @@ describe('InternalNotificationController - Send defender court date follow up no
     })
 
     it('should not send a notification', () => {
-      expect(mockEmailService.sendEmail).not.toBeCalled()
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
     })
   })
 })

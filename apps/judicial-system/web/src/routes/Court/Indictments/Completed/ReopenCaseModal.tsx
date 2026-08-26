@@ -1,4 +1,5 @@
-import { FC, useState } from 'react'
+import type { FC } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
@@ -9,11 +10,13 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { Modal } from '@island.is/judicial-system-web/src/components'
+import type {
+  Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
-  Case,
   CaseIndictmentRulingDecision,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
@@ -77,33 +80,36 @@ const ReopenCaseModal: FC<Props> = ({ workingCase, onClose }) => {
           ))}
         </ul>
       }
-      secondaryButton={{
-        text: 'Hætta við',
-        onClick: onClose,
-      }}
-      primaryButton={{
-        text: 'Halda áfram',
-        colorScheme: 'destructive',
-        isDisabled: !reopenReason.trim() || isSubmitting,
-        onClick: async () => {
-          if (!reopenReason.trim()) {
-            return
-          }
-          setIsSubmitting(true)
-          try {
-            const updated = await updateCase(workingCase.id, {
-              reopenReason,
-            })
-            if (updated) {
-              router.push(
-                `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
-              )
-            }
-          } finally {
-            setIsSubmitting(false)
-          }
+      buttons={[
+        {
+          text: 'Hætta við',
+          onClick: onClose,
+          variant: 'ghost',
         },
-      }}
+        {
+          text: 'Halda áfram',
+          colorScheme: 'destructive',
+          isDisabled: !reopenReason.trim() || isSubmitting,
+          onClick: async () => {
+            if (!reopenReason.trim()) {
+              return
+            }
+            setIsSubmitting(true)
+            try {
+              const updated = await updateCase(workingCase.id, {
+                reopenReason,
+              })
+              if (updated) {
+                router.push(
+                  `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                )
+              }
+            } finally {
+              setIsSubmitting(false)
+            }
+          },
+        },
+      ]}
     >
       <Box marginBottom={4}>
         <Input

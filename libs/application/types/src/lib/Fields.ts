@@ -48,7 +48,7 @@ export type TextFieldVariant =
   | 'tel'
   | 'textarea'
   | 'currency'
-type AlertType = 'default' | 'warning' | 'error' | 'info' | 'success'
+export type AlertType = 'default' | 'warning' | 'error' | 'info' | 'success'
 
 export type Context = {
   application: Application
@@ -323,7 +323,7 @@ export interface Option extends TestSupport {
   subLabel?: FormText
   tooltip?: FormText
   excludeOthers?: boolean
-  illustration?: React.FC<React.PropsWithChildren<unknown>>
+  illustration?: React.FC<React.PropsWithChildren<unknown>> | ImageField
   rightContent?: React.ReactNode
   disabled?: boolean
   tag?: {
@@ -428,6 +428,7 @@ export enum FieldTypes {
   OVERVIEW = 'OVERVIEW',
   COPY_LINK = 'COPY_LINK',
   VEHICLE_PERMNO_WITH_INFO = 'VEHICLE_PERMNO_WITH_INFO',
+  SCALE = 'SCALE',
 }
 
 export enum FieldComponents {
@@ -472,6 +473,7 @@ export enum FieldComponents {
   OVERVIEW = 'OverviewFormField',
   COPY_LINK = 'CopyLinkFormField',
   VEHICLE_PERMNO_WITH_INFO = 'VehiclePermnoWithInfoFormField',
+  SCALE = 'ScaleFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -710,7 +712,7 @@ export interface ExpandableDescriptionField extends BaseField {
 export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
-  alertType?: AlertType
+  alertType?: MaybeWithApplicationAndFieldAndLocale<AlertType>
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
   shouldBlockInSetBeforeSubmitCallback?: boolean
@@ -1174,6 +1176,17 @@ export interface VehiclePermnoWithInfoField extends InputField {
   isTrailer: boolean
 }
 
+export interface ScaleField extends InputField {
+  readonly type: FieldTypes.SCALE
+  component: FieldComponents.SCALE
+  min: number | string
+  max: MaybeWithApplicationAndFieldAndLocale<number | string>
+  step?: number
+  minLabel?: FormTextWithLocale
+  maxLabel?: FormTextWithLocale
+  showLabels?: boolean
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -1218,3 +1231,4 @@ export type Field =
   | OverviewField
   | CopyLinkField
   | VehiclePermnoWithInfoField
+  | ScaleField

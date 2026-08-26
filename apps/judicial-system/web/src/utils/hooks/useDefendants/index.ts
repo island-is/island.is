@@ -1,9 +1,10 @@
-import { Dispatch, SetStateAction, useCallback } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import {
+import type {
   Case,
   CreateDefendantInput,
   UpdateDefendantInput,
@@ -22,11 +23,15 @@ const useDefendants = () => {
 
   const [deleteDefendantMutation] = useDeleteDefendantMutation()
 
+  // Defendant updates can move the case between case tables, so active
+  // case table membership queries - the breadcrumbs - must be refetched.
   const [updateDefendantMutation, { loading: isUpdatingDefendant }] =
-    useUpdateDefendantMutation()
+    useUpdateDefendantMutation({ refetchQueries: ['CaseTableMembership'] })
 
   const [limitedAccessUpdateDefendantMutation] =
-    useLimitedAccessUpdateDefendantMutation()
+    useLimitedAccessUpdateDefendantMutation({
+      refetchQueries: ['CaseTableMembership'],
+    })
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {

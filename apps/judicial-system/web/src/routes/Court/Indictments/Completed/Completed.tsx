@@ -1,5 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
-import React from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -342,33 +342,39 @@ const Completed: FC = () => {
           <Modal
             title="Viltu senda mál til ákæruvalds?"
             text={<ConfirmationInformation uploadFiles={uploadFiles} />}
-            primaryButton={{
-              text: 'Staðfesta',
-              icon: 'checkmark',
-              isLoading: isLoading,
-              onClick: handleCaseConfirmation,
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => setModalVisible(undefined),
-            }}
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setModalVisible(undefined),
+                variant: 'ghost',
+              },
+              {
+                text: 'Staðfesta',
+                icon: 'checkmark',
+                isLoading: isLoading,
+                onClick: handleCaseConfirmation,
+              },
+            ]}
           />
         )}
         {modalVisible === 'DELIVER_VERDICTS' && (
           <Modal
             title="Viltu senda dóm í birtingu?"
             text="Hægt er að senda nýtt eintak af dómi í birtingu ef þörf krefur."
-            primaryButton={{
-              text: 'Já, senda',
-              icon: 'checkmark',
-              isLoading: isLoading,
-              onClick: completeCaseConfirmationWithVerdictDelivery,
-            }}
-            secondaryButton={{
-              text: 'Nei',
-              isLoading: isLoading,
-              onClick: completeCaseConfirmation,
-            }}
+            buttons={[
+              {
+                text: 'Nei',
+                isLoading: isLoading,
+                onClick: completeCaseConfirmation,
+                variant: 'ghost',
+              },
+              {
+                text: 'Já, senda',
+                icon: 'checkmark',
+                isLoading: isLoading,
+                onClick: completeCaseConfirmationWithVerdictDelivery,
+              },
+            ]}
           />
         )}
         {modalVisible === 'CORRECT' && (

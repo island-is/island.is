@@ -34,6 +34,7 @@ export const FormFragment = gql`
     submissionDaysToLive
     derivedFrom
     allowProceedOnValidationFail
+    isInaccessible
     hasSummaryScreen
     organizationZendeskInstance {
       zendeskInstance

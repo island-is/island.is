@@ -2,6 +2,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, waitFor } from '@testing-library/react'
 
 import { UserContext } from '@island.is/judicial-system-web/src/components'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
@@ -23,11 +24,12 @@ import IndictmentOverview from './IndictmentOverview'
 
 // A public prosecution reviewer assigned to the case so the review decision
 // section is displayed.
-const reviewerUser = {
+const reviewerUser: User = {
   ...mockUser(UserRole.PROSECUTOR),
   id: 'reviewer_id',
   institution: {
     ...mockUser(UserRole.PROSECUTOR).institution,
+    id: 'reviewer_institution_id',
     type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
   },
 }

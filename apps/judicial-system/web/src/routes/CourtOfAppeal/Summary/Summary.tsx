@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -27,6 +28,7 @@ import {
   AppealCaseState,
   AppealCaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseNumbers } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
 import {
   getAppealDecision,
   useAppealCase,
@@ -38,7 +40,6 @@ import {
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { CaseNumbers } from '../components'
 import RulingModifiedModal from './RulingModifiedModal/RulingModifiedModal'
 import { strings } from './Summary.strings'
 
@@ -155,17 +156,20 @@ const Summary: FC = () => {
           <Modal
             title={formatMessage(strings.appealCompletedModalTitle)}
             text={formatMessage(strings.appealCompletedModalText)}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                router.push(
-                  appendAppealCaseIdQuery(
-                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-                    targetAppealCase?.id,
-                  ),
-                )
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  router.push(
+                    appendAppealCaseIdQuery(
+                      `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                      targetAppealCase?.id,
+                    ),
+                  )
+                },
+                variant: 'ghost',
               },
-            }}
+            ]}
           />
         )}
         {visibleModal === 'AppealRulingModified' && (
@@ -178,17 +182,20 @@ const Summary: FC = () => {
           <Modal
             title={formatMessage(strings.appealDiscontinuedModalTitle)}
             text={formatMessage(strings.appealDiscontinuedModalText)}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                router.push(
-                  appendAppealCaseIdQuery(
-                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-                    targetAppealCase?.id,
-                  ),
-                )
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  router.push(
+                    appendAppealCaseIdQuery(
+                      `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                      targetAppealCase?.id,
+                    ),
+                  )
+                },
+                variant: 'ghost',
               },
-            }}
+            ]}
           />
         )}
       </PageLayout>

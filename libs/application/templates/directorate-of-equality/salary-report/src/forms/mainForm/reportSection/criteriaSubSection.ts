@@ -4,8 +4,8 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { messages } from '../../../lib/messages'
-import { DEFAULT_CRITERIA_ANSWERS } from '../../../utils/constants'
 
+// Criteria live on the DMR draft (see CriteriaEditor), not applicationAnswers.
 export const criteriaSubSection = buildSubSection({
   id: 'criteria',
   title: messages.report.criteria.sectionTitle,
@@ -18,8 +18,7 @@ export const criteriaSubSection = buildSubSection({
         buildCustomField({
           id: 'criteria',
           component: 'CriteriaEditor',
-          doesNotRequireAnswer: false,
-          defaultValue: DEFAULT_CRITERIA_ANSWERS,
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

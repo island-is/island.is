@@ -1,5 +1,5 @@
 import React from 'react'
-import { Preview, Parameters } from '@storybook/react'
+import { Preview, Parameters } from '@storybook/react-webpack5'
 import { IntlProvider } from 'react-intl'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ApolloClient, ApolloProvider } from '@apollo/client'
@@ -14,6 +14,7 @@ export const parameters: Parameters = {
 }
 
 const preview: Preview = {
+  tags: ['autodocs'],
   decorators: [
     (Story) => {
       const hookFormData = useForm({ defaultValues: {} })

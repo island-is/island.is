@@ -49,6 +49,7 @@ import {
   publicProsecutionOfficeIndictmentsAcquitted,
   publicProsecutionOfficeIndictmentsAppealed,
   publicProsecutionOfficeIndictmentsAppealPeriodExpired,
+  publicProsecutionOfficeIndictmentsClosedWithoutEnforcement,
   publicProsecutionOfficeIndictmentsInReview,
   publicProsecutionOfficeIndictmentsNew,
   publicProsecutionOfficeIndictmentsRequestedAppeal,
@@ -109,6 +110,8 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
     publicProsecutionOfficeIndictmentsAcquitted,
   PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL:
     publicProsecutionOfficeIndictmentsRequestedAppeal,
+  PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_CLOSED_WITHOUT_ENFORCEMENT:
+    publicProsecutionOfficeIndictmentsClosedWithoutEnforcement,
   PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW:
     publicProsecutionIndictmentsInReview,
   PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED: publicProsecutionIndictmentsReviewed,
@@ -128,11 +131,4 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
   DEFENCE_INDICTMENTS_IN_PROGRESS: defenceIndictmentsInProgress,
   DEFENCE_INDICTMENTS_APPEALED: defenceIndictmentsAppealed,
   DEFENCE_INDICTMENTS_COMPLETED: defenceIndictmentsCompleted,
-  // Exception: Not implemented as a static table but we currently need to preserve the case table type
-  STATISTICS: {
-    title: '',
-    hasMyCasesFilter: false,
-    columnKeys: [],
-    columns: [],
-  },
 }

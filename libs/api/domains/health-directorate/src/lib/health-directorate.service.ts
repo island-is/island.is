@@ -3,6 +3,7 @@ import {
   ConversationAttachmentDto,
   ConversationDetailDto,
   ConversationMessageDto,
+  CreateCertificateRequestBody,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
@@ -16,13 +17,14 @@ import type { ConfigType } from '@island.is/nest/config'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
+import { HealthDirectorateCreateCertificateRequestInput } from './dto/createCertificateRequest.input'
 import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
 import { HealthDirectorateReplyToConversationInput } from './dto/replyToHealthConversation.input'
 import {
@@ -35,6 +37,7 @@ import {
   getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
   toAppointmentAssigneeTypeEnum,
+  toAppointmentCancelBlockedReason,
   toAppointmentLinkTypeEnum,
   toAppointmentModalityEnum,
   toAppointmentStatusEnum,
@@ -49,6 +52,10 @@ import {
   toConversationReplyBlockedReasonEnum,
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
+import {
+  mapCertificateRequest,
+  toCertificateTypeCode,
+} from './mappers/certificateMapper'
 import {
   mapDelegationStatus,
   mapDispensationItem,
@@ -93,6 +100,7 @@ import { HealthDirectorateHealthConversationDetail } from './models/healthConver
 import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
+import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -718,7 +726,19 @@ export class HealthDirectorateService {
           }
         })
         .filter(isDefined),
+      canCancel: item.canCancel,
+      cancelBlockedReason: toAppointmentCancelBlockedReason(
+        item.canCancel,
+        item.canCancelBefore,
+      ),
     }
+  }
+
+  public async cancelAppointment(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<boolean> {
+    return this.healthApi.cancelAppointment(auth, input.id)
   }
 
   /* Health Conversations */
@@ -773,7 +793,6 @@ export class HealthDirectorateService {
     return {
       id: c.id,
       title: c.title,
-      status: c.status,
       startDate: c.conversationStartDate,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
@@ -806,7 +825,6 @@ export class HealthDirectorateService {
     return items.map((c) => ({
       id: c.id,
       title: c.title,
-      status: c.status,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
@@ -894,5 +912,31 @@ export class HealthDirectorateService {
     if (!items) return null
 
     return items.map(mapMessagingRecipient)
+  }
+
+  /* Certificates */
+
+  async createCertificateRequest(
+    auth: Auth,
+    input: HealthDirectorateCreateCertificateRequestInput,
+  ): Promise<HealthDirectorateCertificateRequest | null> {
+    if (input.endDate < input.startDate) {
+      throw new BadRequestException('endDate must be on or after startDate')
+    }
+
+    const body: CreateCertificateRequestBody = {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+      certificateType: toCertificateTypeCode(input.certificateType),
+      recipientName: input.recipientName,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      note: input.note,
+    }
+
+    const request = await this.healthApi.createCertificateRequest(auth, body)
+    if (!request) return null
+
+    return mapCertificateRequest(request)
   }
 }

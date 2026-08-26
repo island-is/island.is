@@ -32,7 +32,6 @@ import {
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   Case,
-  CaseRepositoryService,
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
@@ -74,7 +73,6 @@ describe('AppealCaseController - Create', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
-  let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -86,14 +84,12 @@ describe('AppealCaseController - Create', () => {
       appealCaseRepositoryService,
       appealDecisionRepositoryService,
       appealEventLogRepositoryService,
-      caseRepositoryService,
       sequelize,
     } = await createTestingAppealCaseModule()
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
-    mockCaseRepositoryService = caseRepositoryService
 
     const mockNowFactory = nowFactory as jest.Mock
     mockNowFactory.mockReturnValue(now)
@@ -164,16 +160,6 @@ describe('AppealCaseController - Create', () => {
       )
     })
 
-    it('should stamp the prosecutor postponed appeal date on the case', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        expect.objectContaining({
-          prosecutorPostponedAppealDate: now,
-        }),
-        { transaction },
-      )
-    })
-
     it('should queue the appeal to court of appeals notification', () => {
       expect(addMessagesToQueue).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -183,28 +169,6 @@ describe('AppealCaseController - Create', () => {
             type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
           },
         }),
-      )
-    })
-  })
-
-  describe('defence user appeals a restriction case', () => {
-    const theCase = {
-      id: caseId,
-      type: CaseType.CUSTODY,
-      caseFiles: [],
-    } as unknown as Case
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, defender)
-    })
-
-    it('should stamp the accused postponed appeal date on the case', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        expect.objectContaining({
-          accusedPostponedAppealDate: now,
-        }),
-        { transaction },
       )
     })
   })
