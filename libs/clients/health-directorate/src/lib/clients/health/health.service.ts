@@ -81,8 +81,6 @@ import {
 
 import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 
-// This is hopefully a temporary fix until the backend reliably returns
-// the correct extension in the content-type.
 const mimeTypeToExtension: Record<string, string> = {
   'application/pdf': '.pdf',
   'image/jpeg': '.jpg',
@@ -90,6 +88,8 @@ const mimeTypeToExtension: Record<string, string> = {
   'image/heic': '.heic',
 }
 
+// This is hopefully a temporary fix until the backend reliably returns
+// the correct extension in the content-type.
 const extractExtension = (
   contentDisposition: string | null,
   contentType: string,
