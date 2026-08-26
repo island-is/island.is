@@ -9,6 +9,7 @@ import { Dispatch, useEffect, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { FieldBaseProps } from '@island.is/application/types'
 import { CarUsageError, DayRateRecord } from '../../utils/types'
+import { getEligibleDayRateRecords } from '../../utils/dayRateRecordUtils'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import {
@@ -30,6 +31,11 @@ import {
   ADD_ATTACHMENT,
 } from '@island.is/application/graphql'
 import { uploadFileToS3 } from '@island.is/application/ui-components'
+
+type FileMeta = { name: string; key: string }
+
+// Enough to act on without turning the inline error into a wall of plates
+const MAX_LISTED_ERROR_ROWS = 10
 
 interface Props {
   field: {
@@ -54,9 +60,7 @@ export const UploadCarDayRateUsage = ({
   const { locale, lang, formatMessage } = useLocale()
 
   const { setValue, setError, clearErrors, watch } = useFormContext()
-  const uploadedMeta = watch('carDayRateUsageFile') as
-    | { name: string; key: string }[]
-    | undefined
+  const uploadedMeta: FileMeta[] | undefined = watch('carDayRateUsageFile')
 
   // Drive the dropzone off the answers, not local state, so the file shown
   // always matches what validation and submit will use after a remount
@@ -129,9 +133,19 @@ export const UploadCarDayRateUsage = ({
       'getPreviousPeriodDayRateReturns.data',
     ) ?? []
 
+  // Keyed on every record, including already reported ones, so the parser can
+  // tell "not one of your vehicles" apart from "nothing left to report"
   const dayRateRecordsByPermno = new Map<string, DayRateRecord>(
     dayRateRecords.map((d) => [d.permno, d]),
   )
+
+  const eligibleRecordCount = getEligibleDayRateRecords(dayRateRecords).length
+
+  // A blank plate cell is itself a "car not found" error, so fall back to the
+  // row number rather than rendering a bare dash
+  const describeErrorRow = (error: CarUsageError) =>
+    error.carNr?.trim() ||
+    formatMessage(m.multiUpload.rowLabel, { row: error.row })
 
   const parseAndValidateCarDayRateUsage = async (
     file: File,
@@ -144,24 +158,32 @@ export const UploadCarDayRateUsage = ({
     )
 
     if (!parsed.ok) {
+      if (parsed.reason === 'unreadable') {
+        setUploadErrorMessage(formatMessage(m.multiUpload.unreadableFile))
+        return null
+      }
+
       if (parsed.reason === 'no-data') {
         setUploadErrorMessage(formatMessage(m.multiUpload.noCarsToChangeFound))
         return null
       }
 
-      // We have errors, show single error or generic message
+      // We have errors, name the offending rows either way
       const errorMessages = parsed.errors as CarUsageError[]
       if (errorMessages.length === 1) {
         setUploadErrorMessage(
-          `${errorMessages[0].carNr} - ${formatMessage(
+          `${describeErrorRow(errorMessages[0])} - ${formatMessage(
             errorMessages[0].message,
           )}`,
         )
       } else {
+        const listed = errorMessages.slice(0, MAX_LISTED_ERROR_ROWS)
         setUploadErrorMessage(
           `${errorMessages.length} ${formatMessage(
             m.multiUpload.errorMessageToUser,
-          )}`,
+          )} (${listed.map(describeErrorRow).join(', ')}${
+            errorMessages.length > listed.length ? '…' : ''
+          })`,
         )
       }
 
@@ -180,7 +202,9 @@ export const UploadCarDayRateUsage = ({
       return null
     }
 
-    if (parsed.records.length !== dayRateRecordsByPermno.size) {
+    // Already reported vehicles are left out of the generated template and
+    // skipped by the parser, so only the eligible ones have to be accounted for
+    if (parsed.records.length !== eligibleRecordCount) {
       setUploadErrorMessage(formatMessage(m.multiUpload.allCarsMustBePresent))
       return null
     }
@@ -228,9 +252,7 @@ export const UploadCarDayRateUsage = ({
     }
   }
 
-  const uploadAndStoreFile = async (
-    file: File,
-  ): Promise<{ name: string; key: string }> => {
+  const uploadAndStoreFile = async (file: File): Promise<FileMeta> => {
     const upload = fileToObjectDeprecated(file)
 
     const { data } = await createUploadUrl({
@@ -260,7 +282,7 @@ export const UploadCarDayRateUsage = ({
 
   const persistUploadAnswers = async (
     carDayRateUsageCount: number | undefined,
-    uploadedMeta: { name: string; key: string } | undefined,
+    uploadedMeta: FileMeta | undefined,
   ) => {
     // Store only metadata in answers (small payload)
     const carDayRateUsageFile = uploadedMeta ? [uploadedMeta] : []

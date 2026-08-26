@@ -45,8 +45,11 @@ export const parseFileToCarCategory = async (
   const [_, ...values] = parsedLines
 
   const data: Array<CarCategoryRecord | CarCategoryError | undefined> =
-    values.map((row) => {
-      const carNr = row[carNumberIndex]
+    values.map((row, index) => {
+      const carNr = row[carNumberIndex] ?? ''
+      // 1-based line in the file, counting the header dropped above, so a row
+      // with no plate at all can still be pointed at
+      const rowNumber = index + 2
       const prevMileStr = row[prevMilageIndex]?.trim()
       const currMileStr = row[currMilageIndex]?.trim()
 
@@ -70,6 +73,7 @@ export const parseFileToCarCategory = async (
           code: 1,
           message: m.multiUploadErrors.newMileageLowerThanPrevious,
           carNr,
+          row: rowNumber,
         }
       }
 
@@ -78,6 +82,7 @@ export const parseFileToCarCategory = async (
           code: 1,
           message: m.multiUploadErrors.previousMileageRequired,
           carNr,
+          row: rowNumber,
         }
       }
 
@@ -86,6 +91,7 @@ export const parseFileToCarCategory = async (
           code: 1,
           message: m.multiUploadErrors.carNotFound,
           carNr,
+          row: rowNumber,
         }
       }
 
@@ -100,6 +106,7 @@ export const parseFileToCarCategory = async (
               code: 1,
               message: m.multiUploadErrors.dayRateMin15Days,
               carNr,
+              row: rowNumber,
             }
           }
         }

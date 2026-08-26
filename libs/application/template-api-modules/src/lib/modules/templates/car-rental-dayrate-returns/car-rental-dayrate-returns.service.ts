@@ -349,7 +349,9 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     if (invalidRows.length > 0) {
       const uniqueInvalidRows = [...new Set(invalidRows)]
       const errorSummary = uniqueInvalidRows
-        .map((permno) => `${permno}: Invalid or ineligible row`)
+        // " - ", not ": ", so formatDayRateReturnsApiErrorMessages keeps the
+        // plate instead of stripping it as a prefix
+        .map((permno) => `${permno} - Invalid or ineligible row`)
         .join('\n')
 
       throw new TemplateApiError(
@@ -417,6 +419,16 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     )
 
     if (!parsed.ok) {
+      if (parsed.reason === 'unreadable') {
+        throw new TemplateApiError(
+          {
+            title: messages.serviceErrors.invalidFileType.title,
+            summary: messages.serviceErrors.invalidFileType.summary,
+          },
+          400,
+        )
+      }
+
       if (parsed.reason === 'no-data') {
         throw new TemplateApiError(
           {
@@ -433,7 +445,9 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
             typeof e.message === 'string'
               ? e.message
               : e.message.defaultMessage ?? e.message.id
-          return `${e.carNr}: ${msg}`
+          // " - " keeps the plate through formatDayRateReturnsApiErrorMessages
+          // and groups rows that failed for the same reason
+          return `${e.carNr?.trim() || `#${e.row}`} - ${msg}`
         })
         .filter((m) => m.length > 0)
         .join('\n')

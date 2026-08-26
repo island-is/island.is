@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DayRateRecord } from '../../utils/types'
+import { getEligibleDayRateRecords } from '../../utils/dayRateRecordUtils'
 
 export const overviewStatistics = buildSection({
   id: 'overviewStatisticsSection',
@@ -25,9 +26,8 @@ export const overviewStatistics = buildSection({
               ) ?? []
 
             const safeRates = Array.isArray(rates) ? rates : []
-            const carsThatRequireAnswers = safeRates.filter(
-              (rate) => rate.alreadyReportedDays === undefined,
-            ).length
+            const eligibleRates = getEligibleDayRateRecords(safeRates)
+            const carsThatRequireAnswers = eligibleRates.length
             const carsAlreadyReported =
               safeRates.length - carsThatRequireAnswers
 

@@ -233,6 +233,11 @@ export const m = {
       defaultMessage: 'Sniðmát með villum',
       description: 'Download error template button label',
     },
+    rowLabel: {
+      id: 'rsk.crfc.application:multi.upload.row.label',
+      defaultMessage: 'lína {row}',
+      description: 'Fallback label for a file row with no registration number',
+    },
     errorMessageToUser: {
       id: 'rsk.crfc.application:multi.upload.error.message.to.user',
       defaultMessage:

@@ -21,5 +21,8 @@ export interface DayRateRecord {
 export interface CarUsageError {
   code: 1 | 2
   message: MessageDescriptor | string
+  /** Raw cell value, so it still matches the file row when it is blank */
   carNr: string
+  /** 1-based line in the uploaded file, header included */
+  row: number
 }

@@ -1,10 +1,17 @@
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
 import { CarUsageError, CarUsageRecord, DayRateRecord } from './types'
+import { isEligibleForReporting } from './dayRateRecordUtils'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
 
-const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
+// Day counts are whole days, so a decimal comma or stray text is a mistake to
+// report rather than something to silently coerce into a different number
+const parseDayCount = (value: string) => Number(value.replace(',', '.'))
+
+const isValidDayCount = (value: number) => Number.isInteger(value) && value >= 0
+
+export const normalizePermno = (permno: string) => permno.trim().toUpperCase()
 
 export type UploadFileType = 'csv' | 'xlsx'
 
@@ -43,44 +50,70 @@ export const parseFileToCarDayRateUsage = async (
 
   const [_, ...values] = parsedLines
 
+  // Plates are matched case and whitespace insensitively, but the raw cell value
+  // is kept on errors so createErrorExcel can still line them up with file rows
+  const recordsByNormalizedPermno = new Map(
+    [...dayRateRecords.values()].map((record) => [
+      normalizePermno(record.permno),
+      record,
+    ]),
+  )
+
   const data: Array<CarUsageRecord | CarUsageError | undefined> = values.map(
-    (row) => {
-      const carNr = row[carNumberIndex]
+    (row, index) => {
+      const carNr = row[carNumberIndex] ?? ''
+      // 1-based line in the file, counting the header dropped above, so a row
+      // with no plate at all can still be pointed at
+      const rowNumber = index + 2
       const prevPeriodTotalDaysStr = row[prevPeriodTotalDaysIndex]?.trim()
       const prevPeriodUsageStr = row[prevPeriodUsageIndex]?.trim()
-      const dayRateRecord = dayRateRecords.get(carNr)
+      const dayRateRecord = recordsByNormalizedPermno.get(
+        normalizePermno(carNr),
+      )
 
       if (!dayRateRecord) {
         return {
           code: 1,
           message: m.multiUploadErrors.carNotFound,
           carNr,
+          row: rowNumber,
         }
       }
 
       // Listed so the applicant can see it, but Skatturinn already has the
-      // return for this period so it must not be filed again.
-      if (dayRateRecord.alreadyReportedDays !== undefined) {
-        return {
-          code: 1,
-          message: m.multiUploadErrors.alreadyReported,
-          carNr,
-        }
-      }
+      // return for this period. The generated template leaves these rows out,
+      // so skip them rather than failing a file that legitimately includes
+      // them.
+      if (!isEligibleForReporting(dayRateRecord)) return undefined
 
       if (!prevPeriodTotalDaysStr && prevPeriodUsageStr) {
         return {
           code: 1,
           message: m.multiUploadErrors.previousPeriodUsageRequired,
           carNr,
+          row: rowNumber,
         }
       }
 
       // Skip rows where either previous period total days or previous period usage is empty or undefined
       if (!prevPeriodTotalDaysStr || !prevPeriodUsageStr) return undefined
 
-      const prevPeriodTotalDays = Number(sanitizeNumber(prevPeriodTotalDaysStr))
-      const prevPeriodUsage = Number(sanitizeNumber(prevPeriodUsageStr))
+      const prevPeriodTotalDays = parseDayCount(prevPeriodTotalDaysStr)
+      const prevPeriodUsage = parseDayCount(prevPeriodUsageStr)
+
+      // Without this, text or a decimal comma parses to NaN, every comparison
+      // below is false, and the row is submitted to Skatturinn as null
+      if (
+        !isValidDayCount(prevPeriodTotalDays) ||
+        !isValidDayCount(prevPeriodUsage)
+      ) {
+        return {
+          code: 1,
+          message: m.multiUploadErrors.invalidDayCount,
+          carNr,
+          row: rowNumber,
+        }
+      }
 
       if (prevPeriodUsage > prevPeriodTotalDays) {
         return {
@@ -88,11 +121,14 @@ export const parseFileToCarDayRateUsage = async (
           message:
             m.multiUploadErrors.prevPeriodUsageGreaterThanPrevPeriodTotalDays,
           carNr,
+          row: rowNumber,
         }
       }
 
       return {
-        vehicleId: carNr,
+        // The canonical plate, so a differently cased cell still submits
+        // correctly and still resolves its dayRateEntryId
+        vehicleId: dayRateRecord.permno,
         prevPeriodTotalDays,
         prevPeriodUsage,
       }
@@ -262,7 +298,11 @@ export const base64ToBlob = (base64: string, mimeType: string) => {
 
 export type ParseUploadResult =
   | { ok: true; records: CarUsageRecord[] }
-  | { ok: false; errors: CarUsageError[]; reason: 'errors' | 'no-data' }
+  | {
+      ok: false
+      errors: CarUsageError[]
+      reason: 'errors' | 'no-data' | 'unreadable'
+    }
 
 export const getUploadFileType = (
   nameOrMime: string,
@@ -289,7 +329,14 @@ export const parseUploadFile = async (
   type: UploadFileType,
   dayRateRecords: Map<string, DayRateRecord>,
 ): Promise<ParseUploadResult> => {
-  const parsed = await parseFileToCarDayRateUsage(file, type, dayRateRecords)
+  // Ragged rows make csv-parse throw. Uncaught, that surfaced as a silent
+  // failure on the upload screen and as a generic 500 on submit
+  let parsed: Array<CarUsageRecord> | Array<CarUsageError>
+  try {
+    parsed = await parseFileToCarDayRateUsage(file, type, dayRateRecords)
+  } catch {
+    return { ok: false, errors: [], reason: 'unreadable' }
+  }
 
   if (parsed.length === 0) {
     return { ok: false, errors: [], reason: 'no-data' }

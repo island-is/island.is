@@ -381,6 +381,17 @@ export const m = {
         'Skila þarf upplýsingum um útleigudag fyrir öll ökutæki á daggjaldsskrá',
       description: 'Entries for all cars must be present in the upload file',
     },
+    unreadableFile: {
+      id: 'rsk.crdr.application:multi.upload.error.unreadable.file',
+      defaultMessage:
+        'Ekki tókst að lesa skjalið. Sæktu sniðmátið og fylltu það út óbreytt.',
+      description: 'Uploaded file could not be parsed',
+    },
+    rowLabel: {
+      id: 'rsk.crdr.application:multi.upload.row.label',
+      defaultMessage: 'lína {row}',
+      description: 'Fallback label for a file row with no registration number',
+    },
     invalidFileType: {
       id: 'rsk.crdr.application:multi.upload.error.invalid.file.type',
       defaultMessage: 'Skrá verður að vera .csv eða .xlsx',
@@ -449,12 +460,6 @@ export const m = {
   }),
 
   multiUploadErrors: defineMessages({
-    alreadyReported: {
-      id: 'rsk.crdr.application:multi.upload.error.already.reported',
-      defaultMessage:
-        'Útleigudögum fyrir þennan bíl hefur þegar verið skilað fyrir tímabilið',
-      description: 'Rental days for this vehicle were already filed',
-    },
     carNotFound: {
       id: 'rsk.crdr.application:multi.upload.error.car.not.found',
       defaultMessage:
@@ -466,6 +471,11 @@ export const m = {
       defaultMessage:
         'Notkun bíls á síðasta dagsfjölda þarf að vera til staðar!',
       description: 'Previous period usage missing',
+    },
+    invalidDayCount: {
+      id: 'rsk.crdr.application:multi.upload.error.invalid.day.count',
+      defaultMessage: 'Dagafjöldi verður að vera heil tala, 0 eða hærri',
+      description: 'Invalid day count in uploaded file',
     },
     prevPeriodUsageGreaterThanPrevPeriodTotalDays: {
       id: 'rsk.crdr.application:multi.upload.error.prev.period.usage.greater.than.prev.period.total.days',
