@@ -150,31 +150,6 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
     ],
   }),
   buildOverviewField({
-    id: 'overview.employeeCount',
-    title: messages.overview.employeeCount,
-    titleVariant: 'h3',
-    ...(withBackLinks ? { backId: 'employeeCountMultiField' } : {}),
-    items: (answers) => [
-      {
-        width: 'half',
-        keyText: messages.aboutTheCompany.employeeCount.women,
-        valueText:
-          getValueViaPath<string>(answers, 'employeeCount.women') ?? '',
-      },
-      {
-        width: 'half',
-        keyText: messages.aboutTheCompany.employeeCount.men,
-        valueText: getValueViaPath<string>(answers, 'employeeCount.men') ?? '',
-      },
-      {
-        width: 'half',
-        keyText: messages.aboutTheCompany.employeeCount.nonBinary,
-        valueText:
-          getValueViaPath<string>(answers, 'employeeCount.nonBinary') ?? '',
-      },
-    ],
-  }),
-  buildOverviewField({
     id: 'overview.period',
     title: messages.overview.periodLabel,
     titleVariant: 'h3',
