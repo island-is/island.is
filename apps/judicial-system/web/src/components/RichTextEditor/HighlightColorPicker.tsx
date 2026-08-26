@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { motion } from 'motion/react'
 
 import { WORD_HIGHLIGHT_COLORS } from './richTextNormalization'
-import * as styles from './RichTextEditor.css'
+import * as styles from './HighlightColorPicker.css'
 
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.92, y: -6 },

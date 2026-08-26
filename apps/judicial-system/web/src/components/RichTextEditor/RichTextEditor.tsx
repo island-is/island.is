@@ -20,6 +20,13 @@ import * as styles from './RichTextEditor.css'
 // scrollable content area gets the remainder.
 const TOOLBAR_HEIGHT = 42
 
+// Everything pasted from outside the editor is raw clipboard HTML (Word,
+// Google Docs, ...) and goes through artifact removal, fake-list conversion
+// and style-to-class normalization before the schema parses it.
+// Editor-internal pastes (marked data-pm-slice) are already schema-clean.
+const transformPastedHTML = (html: string) =>
+  html.includes('data-pm-slice') ? html : normalizePastedHtml(html)
+
 interface Props {
   label: string
   placeholder: string
@@ -91,6 +98,17 @@ const RichTextEditor = ({
     [placeholder],
   )
 
+  // Stable across renders so useEditor doesn't reapply the props each render.
+  const editorProps = useMemo(
+    () => ({
+      attributes: {
+        'aria-labelledby': labelId,
+      },
+      transformPastedHTML,
+    }),
+    [labelId],
+  )
+
   const editor = useEditor({
     extensions,
     // Normalize on load so legacy content saved with inline styles is
@@ -100,18 +118,7 @@ const RichTextEditor = ({
     editable: !disabled,
     // The page is server-rendered; the editor can only exist in the browser.
     immediatelyRender: false,
-    editorProps: {
-      attributes: {
-        'aria-labelledby': labelId,
-      },
-      // Everything pasted from outside the editor is raw clipboard HTML
-      // (Word, Google Docs, ...) and goes through artifact removal, fake-list
-      // conversion and style-to-class normalization before the schema parses
-      // it. Editor-internal pastes (marked data-pm-slice) are already
-      // schema-clean.
-      transformPastedHTML: (html) =>
-        html.includes('data-pm-slice') ? html : normalizePastedHtml(html),
-    },
+    editorProps,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML()
       onChange?.(html)
