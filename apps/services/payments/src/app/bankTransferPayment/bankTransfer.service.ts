@@ -32,6 +32,7 @@ import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import {
   BankTransferPaymentResult,
+  BankTransferPendingStatus,
   BankTransferStatus,
   BankTransferStatusOverlay,
   CreateBankTransferPaymentInput,
@@ -47,6 +48,7 @@ import {
 } from './dtos'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import {
+  createLogPrefix,
   deriveBankTransferFailureReason,
   generateBankTransferChargeFJSPayload,
   isBankTransferFailureStatus,
@@ -150,17 +152,62 @@ export class BankTransferService {
       throw error
     }
 
-    await this.bankTransferPaymentModel.create({
-      id: correlationId,
-      paymentFlowId: input.paymentFlowId,
-      sourceReferenceId: correlationId,
-      provider: 'blikk',
-      providerPaymentId: providerResult.providerPaymentId,
-      scaRedirectUrl: providerResult.scaRedirectUrl,
-      amount: totalPrice,
-      lastKnownStatus: providerResult.rawStatus,
-      expiresAt,
-    })
+    try {
+      await this.bankTransferPaymentModel.create({
+        id: correlationId,
+        paymentFlowId: input.paymentFlowId,
+        sourceReferenceId: correlationId,
+        provider: 'blikk',
+        providerPaymentId: providerResult.providerPaymentId,
+        scaRedirectUrl: providerResult.scaRedirectUrl,
+        amount: totalPrice,
+        lastKnownStatus: providerResult.rawStatus,
+        expiresAt,
+      })
+    } catch (error) {
+      const errorMessage = (error as Error)?.message ?? 'unknown'
+      const logPrefix = createLogPrefix(
+        input.paymentFlowId,
+        correlationId,
+        providerResult.providerPaymentId,
+      )
+
+      // Best effort to cancel the Blikk payment if persisting the row fails
+      const cancelled = await this.cancelBlikkPayment(
+        providerResult.providerPaymentId,
+        logPrefix,
+      ).catch(() => false)
+
+      if (!cancelled) {
+        this.logger.error(
+          `${logPrefix}Bank transfer row insert failed and the Blikk payment could not be cancelled — it may still settle with no local record`,
+          { error: errorMessage },
+        )
+      }
+
+      await this.paymentFlowService.logPaymentFlowUpdate(
+        {
+          paymentFlowId: input.paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.BANK_TRANSFER,
+          reason: 'payment_failed',
+          message: `Failed to persist bank transfer: ${errorMessage}`,
+          // `logPaymentFlowUpdate` persists the event before attempting delivery, so this is the
+          // durable record of the orphan. It carries the providerPaymentId precisely so that a
+          // payment we failed to cancel can still be reconciled against Blikk by id.
+          metadata: {
+            error: errorMessage,
+            cancelled,
+            providerPaymentId: providerResult.providerPaymentId,
+            correlationId,
+          },
+        },
+        { useRetry: true, throwOnError: false },
+      )
+
+      throw error
+    }
 
     await this.paymentFlowService.logPaymentFlowUpdate(
       {
@@ -180,7 +227,12 @@ export class BankTransferService {
 
     return {
       providerPaymentId: providerResult.providerPaymentId,
-      scaRedirectUrl: providerResult.scaRedirectUrl,
+      // Onboarding is the only URL the FE acts on from `create`. The SCA URL shown to the payer
+      // comes from a poll at SCA_REQUIRED — the one returned here is a different, provider-hosted
+      // URL, so handing it out would invite a caller to render something unusable.
+      scaRedirectUrl: providerResult.onboardingRequired
+        ? providerResult.scaRedirectUrl
+        : undefined,
       expiresAt,
       onboardingRequired: providerResult.onboardingRequired,
     }
@@ -209,31 +261,20 @@ export class BankTransferService {
     await this.finalizeFromBlikkResult(row, result)
 
     const isPending = result.status === BankTransferStatus.PENDING
+    // Blikk hands over the bank's authorisation page at SCA_REQUIRED and not before. The row's
+    // creation-time URL is a different, provider-hosted one, so it is never surfaced — for a
+    // back-channel bank there is no page at all and offering it flashes an unusable QR.
+    // SCA_REQUIRED maps to PENDING, so this is already `undefined` for every terminal status.
     const scaRedirectUrl =
-      result.rawStatus === 'SCA_REQUIRED'
-        ? result.scaRedirectUrl
-        : result.scaRedirectUrl ?? row.scaRedirectUrl ?? undefined
-
-    // Diagnostic: on a raw Blikk SCA_REQUIRED, record whether Blikk sent its own SCA URL, and whether
-    // we dropped a persisted row URL by trusting Blikk's omission. Booleans only — no URL logged.
-    if (isPending && result.rawStatus === 'SCA_REQUIRED') {
-      this.logger.info(`[${row.paymentFlowId}] SCA_REQUIRED verify`, {
-        blikkSentScaUrl: !!result.scaRedirectUrl,
-        droppedRowUrl: !result.scaRedirectUrl && !!row.scaRedirectUrl,
-      })
-    }
+      result.rawStatus === 'SCA_REQUIRED' ? result.scaRedirectUrl : undefined
 
     return {
       status: result.status,
       message: result.message,
       pendingStatus: isPending
-        ? mapRawStatusToBankTransferPendingStatus(
-            result.rawStatus,
-            scaRedirectUrl,
-            this.config.onboardingOrigin,
-          )
+        ? mapRawStatusToBankTransferPendingStatus(result.rawStatus)
         : undefined,
-      scaRedirectUrl: isPending ? scaRedirectUrl : undefined,
+      scaRedirectUrl,
       failureReason:
         deriveBankTransferFailureReason(result.status, row) ?? undefined,
     }
@@ -437,20 +478,22 @@ export class BankTransferService {
     }
 
     if (mapped === BankTransferStatus.PENDING) {
+      // Same rule as `verify`: only a URL Blikk reports at SCA_REQUIRED is offered to the payer.
       const scaRedirectUrl =
         refreshed?.rawStatus === 'SCA_REQUIRED'
           ? refreshed.scaRedirectUrl
-          : refreshed?.scaRedirectUrl ?? row.scaRedirectUrl ?? undefined
+          : undefined
       return {
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
         updatedAt: row.modified,
         bankTransferScaRedirectUrl: scaRedirectUrl,
         bankTransferExpiresAt: row.expiresAt,
-        bankTransferPendingStatus: mapRawStatusToBankTransferPendingStatus(
-          refreshed?.rawStatus ?? row.lastKnownStatus,
-          scaRedirectUrl,
-          this.config.onboardingOrigin,
-        ),
+        // Without a fresh status we do not know SCA is outstanding, and the URL can only come from
+        // a refresh — so report `processing` rather than claiming `sca_required` with no URL, which
+        // the FE renders as "check your phone" for a notification that may never come.
+        bankTransferPendingStatus: refreshed
+          ? mapRawStatusToBankTransferPendingStatus(refreshed.rawStatus)
+          : BankTransferPendingStatus.PROCESSING,
       }
     }
 
@@ -822,6 +865,17 @@ export class BankTransferService {
     if (affectedRows === 0) {
       return
     }
+
+    // Blikk's own reason for the failure. `logPaymentFlowUpdate` logs only its message text, so
+    // without this the reason lives solely in the persisted event and the upstream webhook — and
+    // it is what separates a routine payer decline from a provider-side fault failing every
+    // payment (an expired Blikk certificate, say). `warn`, not `error`: REJECTED and CANCELLED
+    // come through here too and are ordinary. The message is already persisted and sent upstream,
+    // so logging it adds no exposure the flow did not already have.
+    this.logger.warn(`${rowLogPrefix(row)}Bank transfer ${result.status}`, {
+      rawStatus: result.rawStatus,
+      providerMessage: result.message,
+    })
 
     await this.paymentFlowService.logPaymentFlowUpdate(
       {

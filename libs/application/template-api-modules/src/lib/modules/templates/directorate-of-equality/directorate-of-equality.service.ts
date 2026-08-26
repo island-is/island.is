@@ -603,13 +603,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           contactName: answers.contactPerson?.name ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
-          averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
-          averageEmployeeFemaleCount: toNumberOrZero(
-            answers.employeeCount?.women,
-          ),
-          averageEmployeeNeutralCount: toNumberOrZero(
-            answers.employeeCount?.nonBinary,
-          ),
           salaryDataBasis,
           salaryDataPeriod,
         })
