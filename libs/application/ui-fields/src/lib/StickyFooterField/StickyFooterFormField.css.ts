@@ -12,6 +12,7 @@ export const floatingShadow = style({
 
 export const row = style({
   display: 'flex',
+  alignItems: 'flex-start',
 })
 
 // TODO: Fix this hack - should follow number of columns
@@ -19,5 +20,4 @@ export const label = style({
   marginLeft: 56, // 48px checkbox column + 24px cell padding - 16px footer padding
   width: 'calc(25% - 42px)',
   flexShrink: 0,
-  whiteSpace: 'nowrap',
 })
