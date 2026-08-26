@@ -29,4 +29,3 @@ export const decodeHtmlEntities = (value: string) =>
     }
     return HTML_NAMED_ENTITIES[entity.toLowerCase()] ?? match
   })
-

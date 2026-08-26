@@ -60,9 +60,7 @@ export const Editor = ({ application, errors, field }: Props) => {
   // from `rejectionMessage` below, which feeds InputFileUpload's own
   // `errorMessage` slot instead of a standalone alert.
   const [actionError, setActionError] = useState<string | undefined>()
-  const [rejectionMessage, setRejectionMessage] = useState<
-    string | undefined
-  >()
+  const [rejectionMessage, setRejectionMessage] = useState<string | undefined>()
   const [loadingDocx, setLoadingDocx] = useState(false)
 
   const [updateApplicationExternalData] = useMutation(
