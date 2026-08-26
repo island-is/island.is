@@ -100,11 +100,7 @@ export class BlikkClientService {
     return parsed.data
   }
 
-  private async request(
-    method: 'GET' | 'POST',
-    path: string,
-    body?: unknown,
-  ) {
+  private async request(method: 'GET' | 'POST', path: string, body?: unknown) {
     const url = `${this.config.basePath}${path}`
 
     try {

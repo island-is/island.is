@@ -143,7 +143,9 @@ describe('BlikkClientService', () => {
       await expect(service.cancelPayment('prov-1')).resolves.toBeUndefined()
 
       const [url, options] = fetchMock.mock.calls[0]
-      expect(url).toBe('https://stage.blikk.tech/ecom/v3/payments/cancel/prov-1')
+      expect(url).toBe(
+        'https://stage.blikk.tech/ecom/v3/payments/cancel/prov-1',
+      )
       expect(options.method).toBe('POST')
       // Blikk declares the request body as required.
       expect(JSON.parse(options.body)).toEqual({
