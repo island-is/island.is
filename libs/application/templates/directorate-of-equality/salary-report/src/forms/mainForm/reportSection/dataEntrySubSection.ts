@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildDescriptionField,
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
@@ -19,12 +18,6 @@ export const dataEntrySubSection = buildSubSection({
           id: 'dataEntry.excelTemplateDownload',
           component: 'ExcelTemplateDownload',
           doesNotRequireAnswer: true,
-        }),
-        buildDescriptionField({
-          id: 'dataEntry.excelTemplateDownloadDescription',
-
-          description:
-            messages.report.dataEntry.excelTemplateDownloadDescription,
         }),
       ],
     }),
