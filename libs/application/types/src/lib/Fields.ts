@@ -418,6 +418,7 @@ export enum FieldTypes {
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
+  SELECTABLE_TABLE = 'SELECTABLE_TABLE',
   PAGINATED_SEARCHABLE_TABLE = 'PAGINATED_SEARCHABLE_TABLE',
   SLIDER = 'SLIDER',
   INFORMATION_CARD = 'INFORMATION_CARD',
@@ -464,6 +465,7 @@ export enum FieldComponents {
   VEHICLE_RADIO = 'VehicleRadioFormField',
   VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  SELECTABLE_TABLE = 'SelectableTableFormField',
   PAGINATED_SEARCHABLE_TABLE = 'PaginatedSearchableTableFormField',
   SLIDER = 'SliderFormField',
   INFORMATION_CARD = 'InformationCardFormField',
@@ -1008,6 +1010,14 @@ export interface StaticTableField extends BaseField {
   summary?:
     | { label: StaticText; value: StaticText }[]
     | ((application: Application) => { label: StaticText; value: StaticText }[])
+}
+
+export interface SelectableTableField extends BaseField {
+  readonly type: FieldTypes.SELECTABLE_TABLE
+  component: FieldComponents.SELECTABLE_TABLE
+  header: StaticText[] | ((application: Application) => StaticText[])
+  rows: StaticText[][] | ((application: Application) => StaticText[][])
+  titleVariant?: TitleVariants
   selectable?: boolean
   inputColumn?: {
     id: string
@@ -1242,6 +1252,7 @@ export type Field =
   | VehicleRadioField
   | VehicleSelectField
   | StaticTableField
+  | SelectableTableField
   | PaginatedSearchableTableField
   | SliderField
   | InformationCardField

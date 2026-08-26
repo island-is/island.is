@@ -38,6 +38,7 @@ import {
   ActionCardListField,
   TableRepeaterField,
   StaticTableField,
+  SelectableTableField,
   PaginatedSearchableTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
@@ -1086,14 +1087,57 @@ export const buildStaticTableField = (
     | 'defaultValue'
     | 'disabled'
     | 'width'
+  >,
+): StaticTableField => {
+  const {
+    header,
+    condition,
+    dataTestId,
+    title = '',
+    description,
+    rows,
+    summary,
+    marginBottom,
+    marginTop = 2,
+    titleVariant = 'h4',
+  } = data
+
+  return {
+    id: '',
+    title,
+    width: 'full',
+    doesNotRequireAnswer: true,
+    condition,
+    description,
+    dataTestId,
+    children: undefined,
+    type: FieldTypes.STATIC_TABLE,
+    component: FieldComponents.STATIC_TABLE,
+    header,
+    rows,
+    summary,
+    marginTop,
+    marginBottom,
+    titleVariant,
+  }
+}
+
+export const buildSelectableTableField = (
+  data: Omit<
+    SelectableTableField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
   > & {
-    /**
-     * Only needed when `selectable` is true — this is where selected row
-     * indices are stored in `application.answers`.
-     */
     id?: string
   },
-): StaticTableField => {
+): SelectableTableField => {
   const {
     id = '',
     header,
@@ -1102,7 +1146,6 @@ export const buildStaticTableField = (
     title = '',
     description,
     rows,
-    summary,
     marginBottom,
     marginTop = 2,
     titleVariant = 'h4',
@@ -1120,11 +1163,10 @@ export const buildStaticTableField = (
     description,
     dataTestId,
     children: undefined,
-    type: FieldTypes.STATIC_TABLE,
-    component: FieldComponents.STATIC_TABLE,
+    type: FieldTypes.SELECTABLE_TABLE,
+    component: FieldComponents.SELECTABLE_TABLE,
     header,
     rows,
-    summary,
     marginTop,
     marginBottom,
     titleVariant,

@@ -24,7 +24,6 @@ export const paymentSection = buildSection({
           space: 'none',
         }),
         buildStaticTableField({
-          id: 'selectedDebtsSummary',
           header: [
             debts.table.chargeTypeNameHeader,
             debts.table.dueDateHeader,
