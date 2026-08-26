@@ -30,7 +30,7 @@ interface BankTransferPendingScreenProps {
  *
  * sca_required + URL → desktop: QR code; mobile: a button into the bank's authorisation page.
  * sca_required without URL → back-channel SCA (e.g. Íslandsbanki): "check your phone".
- * processing → loading dots only, with no message: nothing is being asked of the payer yet.
+ * processing → loading dots only.
  *
  * Payments that enter this screen can not be cancelled by Blikk. User must do it in their banking app.
  */

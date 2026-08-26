@@ -5,8 +5,7 @@ type FormatMessage = ReturnType<typeof useLocale>['formatMessage']
 
 /**
  * A BBAN is `bbbb-hh-nnnnnn`, where the leading four digits are the institution (first two) plus its
- * branch (last two) — indó is `2200`, Landsbankinn's branches are `01xx`. So the institution is the
- * leading *two* digits, and matching on all four would only catch a single branch of a bank.
+ * branch (last two) — indó is `2200`.
  */
 const BANK_CODE_LENGTH = 2
 
@@ -17,16 +16,21 @@ const BANK_CODE_LENGTH = 2
  */
 export const UNSUPPORTED_BANK_CODES: readonly string[] = ['11', '22']
 
+/** Bare digits, or the 4-2-6 masked form the input produces. Nothing in between. */
+const BBAN_PATTERN = /^\d{12}$/
+const MASKED_BBAN_PATTERN = /^\d{4}-\d{2}-\d{6}$/
+
 export const validateBankAccountNumber = (
   value: string,
   formatMessage: FormatMessage,
 ) => {
-  // The form stores the masked value (0000-00-000000); accept only digits
-  // and the mask separators, then require exactly 12 digits.
-  const digits = value.replace(/-/g, '')
-  if (!/^[\d-]+$/.test(value) || !/^\d{12}$/.test(digits)) {
+  // Only the two canonical shapes are a number: repeated, misplaced or trailing separators are
+  // malformed, even though the input mask makes them hard to type.
+  if (!BBAN_PATTERN.test(value) && !MASKED_BBAN_PATTERN.test(value)) {
     return formatMessage(bankTransfer.accountNumberInvalid)
   }
+
+  const digits = value.replace(/-/g, '')
 
   // Well-formed but at a bank the provider cannot reach — a distinct message, since there is nothing
   // wrong with the number itself and telling the payer to check their typing would send them in

@@ -42,6 +42,21 @@ describe('validateBankAccountNumber', () => {
     )
   })
 
+  // 12 digits is not enough on its own — the separators have to sit where the mask puts them, so
+  // the util is correct independently of whatever produced the value.
+  it.each([
+    ['separators between every digit', '1-2-3-4-5-6-7-8-9-0-1-2'],
+    ['a trailing separator', '123456789012-'],
+    ['a leading separator', '-123456789012'],
+    ['a doubled separator', '1234--56-789012'],
+    ['separators in the wrong places', '1234-567-89012'],
+    ['only the first separator', '1234-56789012'],
+  ])('rejects %s', (_case, value) => {
+    expect(validateBankAccountNumber(value, formatMessage)).toBe(
+      'payments:bankTransfer.accountNumberInvalid',
+    )
+  })
+
   describe('unsupported banks', () => {
     const NOT_SUPPORTED = 'payments:bankTransfer.accountNumberBankNotSupported'
 
