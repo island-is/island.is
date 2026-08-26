@@ -97,7 +97,7 @@ const extractExtension = (
   const match = contentDisposition?.match(/\.([a-zA-Z0-9]{1,5})(?:"|;|$)/)
   if (match) return `.${match[1].toLowerCase()}`
   const normalizedContentType = contentType.split(';')[0].trim().toLowerCase()
-  return mimeTypeToExtension[normalizedContentType] ?? '.pdf'
+  return mimeTypeToExtension[normalizedContentType] ?? ''
 }
 
 @Injectable()
