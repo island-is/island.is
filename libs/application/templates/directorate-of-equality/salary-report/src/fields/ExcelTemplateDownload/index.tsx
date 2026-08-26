@@ -388,9 +388,7 @@ export const ExcelTemplateDownload: FC<
           {importStatus === 'success' && (
             <AlertMessage
               type="success"
-              message={formatMessage(m.importSuccess, {
-                fileName: selectedFile?.name,
-              })}
+              message={formatMessage(m.importSuccess)}
             />
           )}
           {importStatus !== 'success' && (
