@@ -38,7 +38,10 @@ import {
   GaldurDomainModelsBaseViewModel,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
+  JobSearchConfirmationApi,
+  GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
   ApplicantWithdrawLatestApplicationRequest,
+  GaldurExternalDomainRequestsHasValidApplicationResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -61,6 +64,7 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+  | JobSearchConfirmationApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -594,5 +598,32 @@ export class VmstUnemploymentClientService {
       id: attachmentId,
       includeData: true,
     })
+  }
+
+  async getEditProfileEligibility(
+    auth: User,
+  ): Promise<GaldurExternalDomainRequestsHasValidApplicationResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.applicantGetProfileEligibility({
+      id: applicantId,
+    })
+  }
+
+  async getQuestionnaire(): Promise<GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse> {
+    const api = await this.createApiClient(
+      JobSearchConfirmationApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.jobSearchConfirmationGetQuestionaireSchema()
   }
 }

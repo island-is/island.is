@@ -250,7 +250,7 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => OpenDataPage)
+  @Query(() => OpenDataPage, { nullable: true })
   getOpenDataPage(
     @Args('input') input: GetOpenDataPageInput,
   ): Promise<OpenDataPage | null> {
@@ -258,7 +258,7 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => OpenDataSubpage)
+  @Query(() => OpenDataSubpage, { nullable: true })
   getOpenDataSubpage(
     @Args('input') input: GetOpenDataSubpageInput,
   ): Promise<OpenDataSubpage | null> {

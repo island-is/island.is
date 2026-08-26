@@ -20,7 +20,6 @@ type PatchCourtSession = (
 
 interface Props {
   courtSession: CourtSessionResponse
-  showAppealDecisions: boolean
   patchSession: PatchCourtSession
 }
 
@@ -39,7 +38,7 @@ interface Props {
  * want: those only relabel the field, they do not clear it.
  */
 const CourtSessionRuling: FC<Props> = (props) => {
-  const { courtSession, showAppealDecisions, patchSession } = props
+  const { courtSession, patchSession } = props
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
   const isJudgement =
@@ -84,14 +83,13 @@ const CourtSessionRuling: FC<Props> = (props) => {
           required
         />
       </Box>
-      {showAppealDecisions &&
-        courtSession.rulingType === CourtSessionRulingType.ORDER && (
-          <CourtSessionAppealDecisions
-            courtSession={courtSession}
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
-        )}
+      {courtSession.rulingType === CourtSessionRulingType.ORDER && (
+        <CourtSessionAppealDecisions
+          courtSession={courtSession}
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+        />
+      )}
       <Box>
         <SectionHeading title="Bókanir í lok þinghalds" />
         <Input

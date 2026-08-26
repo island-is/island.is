@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { toast } from '@island.is/island-ui/core'
@@ -62,6 +62,18 @@ jest.mock(
       mockVerdictAppealDecisionChoice(props),
   }),
 )
+
+const mockUpdateDefendant = jest.fn()
+const mockSetAndSendDefendantToServer = jest.fn()
+
+jest.mock('../../../utils/hooks/useDefendants', () => ({
+  __esModule: true,
+  default: () => ({
+    updateDefendant: mockUpdateDefendant,
+    setAndSendDefendantToServer: mockSetAndSendDefendantToServer,
+    isUpdatingDefendant: false,
+  }),
+}))
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -176,6 +188,121 @@ describe('VerdictTimelineCard', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('hides date pickers when defendant case is closed without enforcement', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isClosedWithoutEnforcement: true,
+      verdict: {
+        serviceRequirement: 'REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    expect(await screen.findByText(name)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('set-valid-defendantAppealDate'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('set-valid-defendantServiceDate'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('opens a confirmation modal from the close without enforcement menu item', async () => {
+    renderComponent(mockDefendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+    await userEvent.click(await screen.findByText('Ljúka máli án fullnustu'))
+
+    expect(
+      await screen.findByText(
+        (content) =>
+          content.includes('verður lokið án fullnustu gagnvart ákærða') &&
+          content.includes('ekki er hægt að afturkalla'),
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('closes the modal after a successful close without enforcement update', async () => {
+    mockUpdateDefendant.mockResolvedValueOnce(true)
+
+    renderComponent(mockDefendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+    await userEvent.click(await screen.findByText('Ljúka máli án fullnustu'))
+    await userEvent.click(screen.getByRole('button', { name: 'Ljúka máli' }))
+
+    expect(mockUpdateDefendant).toHaveBeenCalledWith({
+      caseId: 'test_id',
+      defendantId: mockDefendant.id,
+      isClosedWithoutEnforcement: true,
+    })
+    await waitFor(() =>
+      expect(
+        screen.queryByText((content) =>
+          content.includes('verður lokið án fullnustu gagnvart ákærða'),
+        ),
+      ).not.toBeInTheDocument(),
+    )
+  })
+
+  it('keeps the modal open when the close without enforcement update fails', async () => {
+    mockUpdateDefendant.mockResolvedValueOnce(false)
+
+    renderComponent(mockDefendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+    await userEvent.click(await screen.findByText('Ljúka máli án fullnustu'))
+    await userEvent.click(screen.getByRole('button', { name: 'Ljúka máli' }))
+
+    expect(mockUpdateDefendant).toHaveBeenCalledTimes(1)
+    expect(
+      await screen.findByText((content) =>
+        content.includes('verður lokið án fullnustu gagnvart ákærða'),
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('hides the close without enforcement menu item when defendant is sent to prison admin', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isSentToPrisonAdmin: true,
+    } as Defendant
+
+    renderComponent(defendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+
+    expect(
+      screen.queryByText('Ljúka máli án fullnustu'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the close without enforcement menu item when defendant is already closed', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isClosedWithoutEnforcement: true,
+    } as Defendant
+
+    renderComponent(defendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+
+    expect(
+      screen.queryByText('Ljúka máli án fullnustu'),
+    ).not.toBeInTheDocument()
+  })
+
   // The public prosecution office has to be able to register an appeal that it
   // only hears about after the deadline has run out - see the confirmation
   // below for the case where the appeal itself was late.
@@ -277,6 +404,22 @@ describe('VerdictTimelineCard', () => {
     const defendant = {
       ...mockDefendant,
       isSentToPrisonAdmin: true,
+      verdict: {
+        serviceRequirement: 'NOT_REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    expect(
+      await screen.findByTestId('verdict-appeal-choice'),
+    ).toHaveTextContent('disabled:true')
+  })
+
+  it('passes disabled true to verdict appeal decision choice when closed without enforcement', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isClosedWithoutEnforcement: true,
       verdict: {
         serviceRequirement: 'NOT_REQUIRED',
       },

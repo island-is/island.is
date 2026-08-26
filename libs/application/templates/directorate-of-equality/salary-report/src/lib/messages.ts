@@ -13,10 +13,6 @@ export const messages = {
       id: 'doe.sr.application:errors.invalidEmail',
       defaultMessage: 'Netfang er ekki gilt',
     },
-    invalidNonNegativeNumber: {
-      id: 'doe.sr.application:errors.invalidNonNegativeNumber',
-      defaultMessage: 'Talan verður að vera 0 eða hærri',
-    },
     duplicateSubsidiary: {
       id: 'doe.sr.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
@@ -309,33 +305,6 @@ export const messages = {
         defaultMessage: 'Símanúmer tengiliðs',
       },
     }),
-    employeeCount: defineMessages({
-      sectionTitle: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.sectionTitle',
-        defaultMessage: 'Fjöldi starfsmanna',
-      },
-      title: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.title',
-        defaultMessage: 'Fjöldi starfsmanna',
-      },
-      intro: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.intro',
-        defaultMessage:
-          'Hér að neðan eru fylltar inn upplýsingar um starfsmannafjölda í launagreiningu.',
-      },
-      women: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.women',
-        defaultMessage: 'Konur',
-      },
-      men: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.men',
-        defaultMessage: 'Karlar',
-      },
-      nonBinary: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.nonBinary',
-        defaultMessage: 'Kynsegin',
-      },
-    }),
     subsidiaries: defineMessages({
       sectionTitle: {
         id: 'doe.sr.application:aboutTheCompany.subsidiaries.sectionTitle',
@@ -513,7 +482,7 @@ export const messages = {
       instructions: {
         id: 'doe.sr.application:report.dataEntry.instructions',
         defaultMessage:
-          'Í fullkomnum heimi fylgir launasetningin stigagjöf, þannig að hæstu stig gefa hæstu launin. Þegar launasetningin er gerð eftir ákveðnu kerfi þá er dregið úr hættu á mismunun. Öll störf eru metin eftir sömu þáttum og þá sjást hugsanleg frávik sem gætu falið í sér kynbundinn launamun og þarfnast leiðréttingar.',
+          'Í fullkomnum heimi fylgir launasetningin stigagjöf, þannig að hæstu stig gefa hæstu launin. Þegar launasetningin er gerð eftir ákveðnu kerfi þá er dregið úr hættu á mismunun. Öll störf eru metin eftir sömu þáttum og þá sést hvar laun víkja frá því sem starfsmatsstigin gefa til kynna, í báðar áttir, og þarfnast skýringa.',
       },
       downloadTemplateButton: {
         id: 'doe.sr.application:report.dataEntry.downloadTemplateButton',
@@ -773,9 +742,9 @@ export const messages = {
         id: 'doe.sr.application:report.employees.startDateLabel',
         defaultMessage: 'Ráðningardagsetning',
       },
-      workRatioLabel: {
-        id: 'doe.sr.application:report.employees.workRatioLabel',
-        defaultMessage: 'Starfshlutfall',
+      paidHoursLabel: {
+        id: 'doe.sr.application:report.employees.paidHoursLabel',
+        defaultMessage: 'Greiddar stundir',
       },
       baseSalaryLabel: {
         id: 'doe.sr.application:report.employees.baseSalaryLabel',
@@ -856,9 +825,18 @@ export const messages = {
         id: 'doe.sr.application:report.employees.roleInputLabel',
         defaultMessage: 'Starf',
       },
-      workRatioInputLabel: {
-        id: 'doe.sr.application:report.employees.workRatioInputLabel',
-        defaultMessage: 'Starfshlutfall (%)',
+      paidHoursInputLabel: {
+        id: 'doe.sr.application:report.employees.paidHoursInputLabel',
+        defaultMessage: 'Greiddar stundir í mánuði',
+      },
+      paidHoursPlaceholder: {
+        id: 'doe.sr.application:report.employees.paidHoursPlaceholder',
+        defaultMessage: 'T.d. 173,33',
+      },
+      paidHoursRangeError: {
+        id: 'doe.sr.application:report.employees.paidHoursRangeError',
+        defaultMessage:
+          'Greiddar stundir þurfa að vera á bilinu 4–750. Skráðu fjölda greiddra stunda í mánuðinum, ekki starfshlutfall.',
       },
       saveButton: {
         id: 'doe.sr.application:report.employees.saveButton',
@@ -953,7 +931,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:salaryAnalysis.improvementPlan.intro',
         defaultMessage:
-          'Hér fyrir neðan færðu lista yfir frávik sem eru yfir útgefið viðmið Hagstofunnar.\n\nNú er tækifærið til að fara vel yfir starfaflokkunina og að öll innslegin gögn til þess að kanna hvort þú þurfir að breyta einhverju.',
+          'Þessir starfsmenn bera leiðréttan launamun fyrirtækisins — laun þeirra víkja frá því sem starfsmatsstig þeirra gefa til kynna. Skráðu ástæður og aðgerðir.\n\nNú er tækifærið til að fara vel yfir starfaflokkunina og öll innslegin gögn til þess að kanna hvort þú þurfir að breyta einhverju.',
       },
     }),
     results: defineMessages({
@@ -976,33 +954,198 @@ export const messages = {
       },
       totalsTitle: {
         id: 'doe.sr.application:salaryAnalysis.results.totalsTitle',
-        defaultMessage: 'Meðaltal grunnlauna',
+        defaultMessage: 'Meðaltímakaup',
       },
 
       maleLabel: {
         id: 'doe.sr.application:salaryAnalysis.results.maleLabel',
-        defaultMessage: 'Meðallaun karla',
+        defaultMessage: 'Meðaltímakaup karla',
       },
       femaleLabel: {
         id: 'doe.sr.application:salaryAnalysis.results.femaleLabel',
-        defaultMessage: 'Meðallaun kvenna',
+        defaultMessage: 'Meðaltímakaup kvenna',
       },
       wageGapLabel: {
         id: 'doe.sr.application:salaryAnalysis.results.wageGapLabel',
+        defaultMessage: 'Óleiðréttur launamunur',
+      },
+      // Compliance is oskyrtWithinBenchmark, never the length of the list —
+      // the previous copy pair ("frávik fundust" / "engin frávik fundust")
+      // encoded exactly that inference and had to go.
+      withinBenchmarkTitle: {
+        id: 'doe.sr.application:salaryAnalysis.results.withinBenchmarkTitle',
+        defaultMessage: 'Leiðréttur launamunur er innan viðmiðs',
+      },
+      withinBenchmarkMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.withinBenchmarkMessage',
+        defaultMessage:
+          'Leiðréttur launamunur fyrirtækisins er innan viðmiðsins {benchmark}%.',
+      },
+      overBenchmarkTitle: {
+        id: 'doe.sr.application:salaryAnalysis.results.overBenchmarkTitle',
+        defaultMessage: 'Leiðréttur launamunur er yfir viðmiði',
+      },
+      overBenchmarkMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.overBenchmarkMessage',
+        defaultMessage:
+          'Leiðréttur launamunur fyrirtækisins er yfir viðmiðinu {benchmark}%. {count, plural, one {# starfsmaður ber muninn og er talinn upp á næsta skrefi, Úrbótaáætlun.} other {# starfsmenn bera muninn og eru taldir upp á næsta skrefi, Úrbótaáætlun.}}',
+      },
+      overBenchmarkNoListTitle: {
+        id: 'doe.sr.application:salaryAnalysis.results.overBenchmarkNoListTitle',
+        defaultMessage: 'Leiðréttur launamunur er yfir viðmiði',
+      },
+      overBenchmarkNoCarriersMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.overBenchmarkNoCarriersMessage',
+        defaultMessage:
+          'Leiðréttur launamunur fyrirtækisins er yfir viðmiðinu {benchmark}%. Greiningin finnur ekki afmarkaðan hóp starfsmanna sem ber muninn. Farðu vel yfir starfaflokkunina og innslegin gögn.',
+      },
+      overBenchmarkAllOvershootMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.overBenchmarkAllOvershootMessage',
+        defaultMessage:
+          'Leiðréttur launamunur fyrirtækisins er yfir viðmiðinu {benchmark}%. Greiningin finnur engan hóp starfsmanna þar sem leiðrétting launa kæmi muninum undir viðmiðið án þess að hann snerist við í hina áttina. Farðu vel yfir starfaflokkunina og innslegin gögn.',
+      },
+      notComputableTitle: {
+        id: 'doe.sr.application:salaryAnalysis.results.notComputableTitle',
+        defaultMessage: 'Ekki er hægt að reikna leiðréttan launamun',
+      },
+      notComputableNoWomenMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.notComputableNoWomenMessage',
+        defaultMessage:
+          'Leiðréttur launamunur verður aðeins reiknaður þegar bæði kyn eru í gögnunum. Í þessari greiningu eru {male} karlar og engar konur.',
+      },
+      notComputableNoMenMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.notComputableNoMenMessage',
+        defaultMessage:
+          'Leiðréttur launamunur verður aðeins reiknaður þegar bæði kyn eru í gögnunum. Í þessari greiningu eru {female} konur og engir karlar.',
+      },
+      unknownTitle: {
+        id: 'doe.sr.application:salaryAnalysis.results.unknownTitle',
+        defaultMessage: 'Niðurstaða launagreiningar liggur ekki fyrir',
+      },
+      unknownMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.unknownMessage',
+        defaultMessage:
+          'Ekki tókst að reikna leiðréttan launamun út frá þessum gögnum.',
+      },
+      // Group headings for the two card rows.
+      meanHourlyWageGroupTitle: {
+        id: 'doe.sr.application:salaryAnalysis.results.meanHourlyWageGroupTitle',
+        defaultMessage: 'Meðaltímakaup',
+      },
+      wageGapGroupTitle: {
+        id: 'doe.sr.application:salaryAnalysis.results.wageGapGroupTitle',
         defaultMessage: 'Launamunur',
       },
-      outliersFoundTitle: {
-        id: 'doe.sr.application:salaryAnalysis.results.outliersFoundTitle',
-        defaultMessage: '{count} frávik fundust',
+      adjustedGapLabel: {
+        id: 'doe.sr.application:salaryAnalysis.results.adjustedGapLabel',
+        defaultMessage: 'Leiðréttur launamunur',
       },
-      outliersFoundDescription: {
-        id: 'doe.sr.application:salaryAnalysis.results.outliersFoundDescription',
+      benchmarkFootnote: {
+        id: 'doe.sr.application:salaryAnalysis.results.benchmarkFootnote',
+        defaultMessage: 'Viðmið: {benchmark}%',
+      },
+      // Deliberately carries no figures: quantifying the shortfall implies the
+      // exact pay changes this process never asks for. And it must not say the
+      // rest of the gap sits with people the analysis cannot reach — the list
+      // covers both sides of the line, so there is no unreachable group.
+      overshootTitle: {
+        id: 'doe.sr.application:salaryAnalysis.results.overshootTitle',
         defaultMessage:
-          'Farið er nánar yfir frávikin og skýringar á næsta skrefi, Úrbótaáætlun.',
+          'Launamunur helst yfir viðmiði þótt þessir starfsmenn séu skoðaðir',
       },
-      noOutliersFound: {
-        id: 'doe.sr.application:salaryAnalysis.results.noOutliersFound',
-        defaultMessage: 'Engin frávik fundust í launagreiningunni.',
+      overshootMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.overshootMessage',
+        defaultMessage:
+          'Það nægir ekki að skoða þá starfsmenn sem taldir eru upp hér til að koma launamuninum undir viðmiðið. Skráðu engu að síður ástæður og fyrirhugaðar aðgerðir fyrir þá. Framvinda er metin á fyrirtækinu í heild í næstu skýrslu.',
+      },
+      // Soft warnings: the figures ARE computed, but shown caveated.
+      warningsTitle: {
+        id: 'doe.sr.application:salaryAnalysis.results.warningsTitle',
+        defaultMessage: 'Athugasemdir við útreikninginn',
+      },
+      warningRowsExcluded: {
+        id: 'doe.sr.application:salaryAnalysis.results.warningRowsExcluded',
+        defaultMessage:
+          '{excluded} starfsmenn eru undanskildir í útreikningnum þar sem reglulegt tímakaup reiknaðist ekki hærra en núll. Kannaðu greiddar stundir og laun hjá þeim.',
+      },
+      warningNoScoreOverlap: {
+        id: 'doe.sr.application:salaryAnalysis.results.warningNoScoreOverlap',
+        defaultMessage:
+          'Kynin skarast ekki á starfsmatsstigum, sem gerir samanburðinn óvissari.',
+      },
+      warningNoScoreVariation: {
+        id: 'doe.sr.application:salaryAnalysis.results.warningNoScoreVariation',
+        defaultMessage:
+          'Starfsmatsstig eru þau sömu hjá öllum starfsmönnum, sem gerir samanburðinn óvissari.',
+      },
+      gapWithDirection: {
+        id: 'doe.sr.application:salaryAnalysis.results.gapWithDirection',
+        defaultMessage: '{value}% {direction}',
+      },
+      directionWomen: {
+        id: 'doe.sr.application:salaryAnalysis.results.directionWomen',
+        defaultMessage: 'í óhag kvenna',
+      },
+      directionMen: {
+        id: 'doe.sr.application:salaryAnalysis.results.directionMen',
+        defaultMessage: 'í óhag karla',
+      },
+      directionNone: {
+        id: 'doe.sr.application:salaryAnalysis.results.directionNone',
+        defaultMessage: 'enginn munur',
+      },
+    }),
+    chart: defineMessages({
+      title: {
+        id: 'doe.sr.application:salaryAnalysis.chart.title',
+        defaultMessage: 'Dreifing tímakaups eftir starfsmatsstigum',
+      },
+      intro: {
+        id: 'doe.sr.application:salaryAnalysis.chart.intro',
+        defaultMessage:
+          'Ferillinn sýnir væntanlegt reglulegt tímakaup miðað við starfsmatsstig. Frávikin í töflunni hér fyrir neðan eru mæld sem lóðrétt fjarlægð frá ferlinum, í báðar áttir.',
+      },
+      xAxisLabel: {
+        id: 'doe.sr.application:salaryAnalysis.chart.xAxisLabel',
+        defaultMessage: 'Starfsmatsstig',
+      },
+      yAxisLabel: {
+        id: 'doe.sr.application:salaryAnalysis.chart.yAxisLabel',
+        defaultMessage: 'Reglulegt tímakaup (kr./klst.)',
+      },
+      legendMale: {
+        id: 'doe.sr.application:salaryAnalysis.chart.legendMale',
+        defaultMessage: 'Karlar',
+      },
+      legendFemale: {
+        id: 'doe.sr.application:salaryAnalysis.chart.legendFemale',
+        defaultMessage: 'Konur',
+      },
+      legendCurve: {
+        id: 'doe.sr.application:salaryAnalysis.chart.legendCurve',
+        defaultMessage: 'Væntanlegt tímakaup',
+      },
+      growthUp: {
+        id: 'doe.sr.application:salaryAnalysis.chart.growthUp',
+        defaultMessage: 'Tímakaup hækkar um {pct}% á hverjum {step} stigum.',
+      },
+      growthDown: {
+        id: 'doe.sr.application:salaryAnalysis.chart.growthDown',
+        defaultMessage: 'Tímakaup lækkar um {pct}% á hverjum {step} stigum.',
+      },
+      anchor: {
+        id: 'doe.sr.application:salaryAnalysis.chart.anchor',
+        defaultMessage:
+          'Við meðalstigafjölda ({score} stig) gefur ferillinn {wage}.',
+      },
+      rSquared: {
+        id: 'doe.sr.application:salaryAnalysis.chart.rSquared',
+        defaultMessage: 'Skýringarhlutfall ferilsins (R²): {value}.',
+      },
+      noFit: {
+        id: 'doe.sr.application:salaryAnalysis.chart.noFit',
+        defaultMessage:
+          'Ekki tókst að reikna feril fyrir þessi gögn — starfsmatsstigin eru öll þau sömu eða gögnin duga ekki til.',
       },
     }),
     outlierGroup: defineMessages({
@@ -1010,21 +1153,57 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.employeeColumn',
         defaultMessage: 'Auðkenni',
       },
-      differenceColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.differenceColumn',
-        defaultMessage: 'Launamunur',
-      },
       scoreColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.scoreColumn',
-        defaultMessage: 'Stigaflokkur',
+        defaultMessage: 'Starfsmatsstig',
       },
-      salaryColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.salaryColumn',
-        defaultMessage: 'Laun',
+      hourlyWageColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.hourlyWageColumn',
+        defaultMessage: 'Reglulegt tímakaup',
       },
-      medianSalaryColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.medianSalaryColumn',
-        defaultMessage: 'Miðgildi launa í stigaflokki',
+      expectedHourlyWageColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.expectedHourlyWageColumn',
+        defaultMessage: 'Væntanlegt tímakaup',
+      },
+      deviationColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.deviationColumn',
+        defaultMessage: 'Frávik',
+      },
+      deviationCell: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.deviationCell',
+        defaultMessage: '{sign}{value}% ({status})',
+      },
+      payStatusUnderpaid: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.payStatusUnderpaid',
+        defaultMessage: 'undir',
+      },
+      payStatusOverpaid: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.payStatusOverpaid',
+        defaultMessage: 'yfir',
+      },
+      payStatusOnLine: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.payStatusOnLine',
+        defaultMessage: 'á línu',
+      },
+      groupPromptBelow: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupPromptBelow',
+        defaultMessage:
+          'Laun þessara starfsmanna eru undir því sem starfsmatsstig þeirra gefa til kynna. Skráðu ástæður og fyrirhugaðar aðgerðir.',
+      },
+      groupPromptAbove: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupPromptAbove',
+        defaultMessage:
+          'Laun þessara starfsmanna eru yfir því sem starfsmatsstig þeirra gefa til kynna. Skráðu ástæður og fyrirhugaðar aðgerðir. Ef starfsmatið vanmetur störfin er úrbótin að endurskoða matið.',
+      },
+      groupPromptMixed: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupPromptMixed',
+        defaultMessage:
+          'Í þessum hópi eru bæði starfsmenn sem eru yfir og starfsmenn sem eru undir því sem starfsmatsstig þeirra gefa til kynna. Skráðu ástæður og fyrirhugaðar aðgerðir.',
+      },
+      groupPromptNeutral: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupPromptNeutral',
+        defaultMessage:
+          'Skráðu ástæður og fyrirhugaðar aðgerðir fyrir þennan hóp.',
       },
       postponeCardTitle: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCardTitle',
@@ -1038,6 +1217,10 @@ export const messages = {
       postponeCheckboxLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
         defaultMessage: 'Ég vil skila úrbótaáætlun seinna',
+      },
+      nameLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.nameLabel',
+        defaultMessage: 'Heiti hóps',
       },
       reasonLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.reasonLabel',
@@ -1137,10 +1320,6 @@ export const messages = {
     contactPerson: {
       id: 'doe.sr.application:overview.contactPerson',
       defaultMessage: 'Tengiliður',
-    },
-    employeeCount: {
-      id: 'doe.sr.application:overview.employeeCount',
-      defaultMessage: 'Fjöldi starfsmanna',
     },
     submitButton: {
       id: 'doe.sr.application:overview.submitButton',

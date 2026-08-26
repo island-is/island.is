@@ -2119,6 +2119,7 @@ export class CaseService {
             defendant.id,
             {
               isSentToPrisonAdmin: false,
+              isClosedWithoutEnforcement: false,
               indictmentReviewDecision: null,
               publicProsecutorIsRegisteredInPoliceSystem: null,
               isDrivingLicenseSuspended: null,
