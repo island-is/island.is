@@ -13,10 +13,6 @@ export const messages = {
       id: 'doe.sr.application:errors.invalidEmail',
       defaultMessage: 'Netfang er ekki gilt',
     },
-    invalidNonNegativeNumber: {
-      id: 'doe.sr.application:errors.invalidNonNegativeNumber',
-      defaultMessage: 'Talan verður að vera 0 eða hærri',
-    },
     duplicateSubsidiary: {
       id: 'doe.sr.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
@@ -307,33 +303,6 @@ export const messages = {
       phonePlaceholder: {
         id: 'doe.sr.application:aboutTheCompany.contactPerson.phonePlaceholder',
         defaultMessage: 'Símanúmer tengiliðs',
-      },
-    }),
-    employeeCount: defineMessages({
-      sectionTitle: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.sectionTitle',
-        defaultMessage: 'Fjöldi starfsmanna',
-      },
-      title: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.title',
-        defaultMessage: 'Fjöldi starfsmanna',
-      },
-      intro: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.intro',
-        defaultMessage:
-          'Hér að neðan eru fylltar inn upplýsingar um starfsmannafjölda í launagreiningu.',
-      },
-      women: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.women',
-        defaultMessage: 'Konur',
-      },
-      men: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.men',
-        defaultMessage: 'Karlar',
-      },
-      nonBinary: {
-        id: 'doe.sr.application:aboutTheCompany.employeeCount.nonBinary',
-        defaultMessage: 'Kynsegin',
       },
     }),
     subsidiaries: defineMessages({
@@ -1351,10 +1320,6 @@ export const messages = {
     contactPerson: {
       id: 'doe.sr.application:overview.contactPerson',
       defaultMessage: 'Tengiliður',
-    },
-    employeeCount: {
-      id: 'doe.sr.application:overview.employeeCount',
-      defaultMessage: 'Fjöldi starfsmanna',
     },
     submitButton: {
       id: 'doe.sr.application:overview.submitButton',
