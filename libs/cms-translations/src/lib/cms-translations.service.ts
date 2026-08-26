@@ -1,5 +1,4 @@
 import { Inject, Injectable, Optional } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
 import { GraphQLError } from 'graphql'
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
@@ -12,7 +11,7 @@ import { ContentfulRepository } from '@island.is/cms'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { Locale } from '@island.is/shared/types'
 import {
-  ApplicationTranslationProvider,
+  type ApplicationTranslationProvider,
   APPLICATION_TRANSLATION_PROVIDER,
   getApplicationTranslationCacheKey,
 } from '@island.is/islandis-translations'

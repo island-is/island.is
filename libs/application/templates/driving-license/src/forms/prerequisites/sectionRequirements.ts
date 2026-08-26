@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
   buildSubmitField,
