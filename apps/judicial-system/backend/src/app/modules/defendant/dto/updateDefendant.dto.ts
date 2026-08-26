@@ -165,4 +165,9 @@ export class UpdateDefendantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isClosedWithoutEnforcement?: boolean
 }
