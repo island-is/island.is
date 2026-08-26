@@ -2023,6 +2023,51 @@ export const messages = defineMessages({
     defaultMessage: 'Skrifaðu stutta lýsingu á veikindunum',
     id: 'sp.health:health-messages-certificate-note-placeholder',
   },
+  healthConversationCertificateTag: {
+    defaultMessage: 'Vottorð',
+    id: 'sp.health:health-message-certificate-tag',
+  },
+  healthConversationCertificateDownload: {
+    defaultMessage: 'Sækja vottorð',
+    id: 'sp.health:health-message-certificate-download',
+  },
+  healthConversationCertificatePay: {
+    defaultMessage: 'Greiða {arg} kr.',
+    id: 'sp.health:health-message-certificate-pay',
+  },
+  healthConversationCertificatePayNoAmount: {
+    defaultMessage: 'Greiða',
+    id: 'sp.health:health-message-certificate-pay-no-amount',
+  },
+  healthConversationCertificatePaymentPending: {
+    defaultMessage: 'Greiðslu vantar',
+    id: 'sp.health:health-message-certificate-payment-pending',
+  },
+  healthConversationCertificatePaymentInProgress: {
+    defaultMessage: 'Greiðsla í vinnslu',
+    id: 'sp.health:health-message-certificate-payment-in-progress',
+  },
+  healthConversationCertificatePaymentInProgressText: {
+    defaultMessage:
+      'Greiðsla er í vinnslu. Þetta getur tekið nokkrar mínútur.',
+    id: 'sp.health:health-message-certificate-payment-in-progress-text',
+  },
+  healthConversationCertificatePaymentSuccess: {
+    defaultMessage: 'Greiðsla tókst',
+    id: 'sp.health:health-message-certificate-payment-success',
+  },
+  healthConversationCertificatePaymentError: {
+    defaultMessage: 'Ekki tókst að hefja greiðslu, vinsamlegast reyndu aftur',
+    id: 'sp.health:health-message-certificate-payment-error',
+  },
+  healthConversationCertificatePaymentCancelled: {
+    defaultMessage: 'Hætt var við greiðslu',
+    id: 'sp.health:health-message-certificate-payment-cancelled',
+  },
+  healthConversationCertificateDownloadError: {
+    defaultMessage: 'Ekki tókst að sækja vottorð, vinsamlegast reyndu aftur',
+    id: 'sp.health:health-message-certificate-download-error',
+  },
   healthConversationsNewTermsLabel: {
     defaultMessage: 'Ég samþykki <link>skilmála</link>',
     id: 'sp.health:health-messages-new-terms-label',

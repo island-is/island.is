@@ -24,6 +24,11 @@ fragment HealthConversationMessage on HealthDirectorateHealthConversationEntry {
   direction
   messageSentAt
   senderGroupName
+  certificateId
+  requiresPayment
+  paid
+  amountIsk
+  pendingPaymentId
   content {
     __typename
     ...HealthConversationTextContent
@@ -95,5 +100,25 @@ mutation ReplyToHealthConversation(
     messages {
       ...HealthConversationMessage
     }
+  }
+}
+
+query GetHealthCertificate($id: ID!) {
+  healthDirectorateCertificate(id: $id) {
+    id
+    requiresPayment
+    paid
+    amountIsk
+    downloadServiceURL
+  }
+}
+
+mutation CreateHealthCertificatePaymentIntent(
+  $input: HealthDirectorateCreateCertificatePaymentIntentInput!
+  $locale: LocaleEnum
+) {
+  healthDirectorateCreateCertificatePaymentIntent(input: $input, locale: $locale) {
+    paymentId
+    paymentPageUrl
   }
 }

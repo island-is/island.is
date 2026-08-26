@@ -3,6 +3,7 @@ import {
   ConversationAttachmentDto,
   ConversationDetailDto,
   ConversationMessageDto,
+  CreateCertificatePaymentIntentDto,
   CreateCertificateRequestBody,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
@@ -24,6 +25,7 @@ import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
+import { HealthDirectorateCreateCertificatePaymentIntentInput } from './dto/createCertificatePaymentIntent.input'
 import { HealthDirectorateCreateCertificateRequestInput } from './dto/createCertificateRequest.input'
 import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
 import { HealthDirectorateReplyToConversationInput } from './dto/replyToHealthConversation.input'
@@ -53,6 +55,7 @@ import {
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
 import {
+  mapCertificate,
   mapCertificateRequest,
   toCertificateTypeCode,
 } from './mappers/certificateMapper'
@@ -100,7 +103,9 @@ import { HealthDirectorateHealthConversationDetail } from './models/healthConver
 import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
+import { HealthDirectorateCertificate } from './models/certificate.model'
 import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
+import { HealthDirectorateCertificatePaymentIntent } from './models/paymentIntent.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -784,6 +789,11 @@ export class HealthDirectorateService {
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),
       ),
+      certificateId: m.certificateId,
+      requiresPayment: m.requiresPayment,
+      paid: m.paid,
+      amountIsk: m.amountIsk,
+      pendingPaymentId: m.pendingPaymentId,
     }
   }
 
@@ -938,5 +948,41 @@ export class HealthDirectorateService {
     if (!request) return null
 
     return mapCertificateRequest(request)
+  }
+
+  async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateCertificate | null> {
+    const certificate = await this.healthApi.getCertificate(auth, id)
+    if (!certificate) return null
+
+    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/health/certificates/${id}/pdf`
+
+    return mapCertificate(certificate, downloadServiceURL)
+  }
+
+  async createCertificatePaymentIntent(
+    auth: Auth,
+    input: HealthDirectorateCreateCertificatePaymentIntentInput,
+    locale: Locale = 'is',
+  ): Promise<HealthDirectorateCertificatePaymentIntent | null> {
+    const body: CreateCertificatePaymentIntentDto = {
+      returnUrl: input.returnUrl,
+      cancelUrl: input.cancelUrl,
+    }
+
+    const intent = await this.healthApi.createCertificatePaymentIntent(
+      auth,
+      input.id,
+      body,
+      locale,
+    )
+    if (!intent) return null
+
+    return {
+      paymentId: intent.paymentId,
+      paymentPageUrl: intent.paymentPageUrl,
+    }
   }
 }

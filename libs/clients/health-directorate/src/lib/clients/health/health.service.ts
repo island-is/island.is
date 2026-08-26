@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data, dataOr404Null } from '@island.is/clients/middlewares'
+import { data, dataOr404Null, FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -19,6 +19,9 @@ import {
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentByIdV1,
   meCertificateControllerCreateCertificateRequestV1,
+  meCertificateControllerCreatePaymentIntentV1,
+  meCertificateControllerGetCertificatePdfV1,
+  meCertificateControllerGetCertificateV1,
   meConversationControllerArchiveConversationV1,
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
@@ -55,11 +58,13 @@ import {
 import {
   AppointmentBaseDto,
   AppointmentDetailDto,
+  CertificateDto,
   CertificateRequestDto,
   ConsentCountryDto,
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationStatusFilter,
+  CreateCertificatePaymentIntentDto,
   CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
@@ -68,6 +73,8 @@ import {
   EuPatientConsentResponseDto,
   Locale,
   MessagingRecipientDto,
+  PaymentIntentDto,
+  PaymentRequiredProblemResponse,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
@@ -80,6 +87,10 @@ import {
 } from './gen/fetch/types.gen'
 
 import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
+
+export type CertificatePdfResult =
+  | { status: 200; data: ArrayBuffer; contentType: string }
+  | { status: 402; resourceType: string; resourceId?: string }
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -740,5 +751,73 @@ export class HealthDirectorateHealthService {
     )
 
     return request ?? null
+  }
+
+  public async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<CertificateDto | null> {
+    const certificate = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meCertificateControllerGetCertificateV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return certificate ?? null
+  }
+
+  public async createCertificatePaymentIntent(
+    auth: Auth,
+    id: string,
+    input: CreateCertificatePaymentIntentDto,
+    locale?: Locale,
+  ): Promise<PaymentIntentDto | null> {
+    const intent = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreatePaymentIntentV1({
+          path: { id },
+          body: input,
+          query: { locale },
+        }),
+      ),
+    )
+
+    return intent ?? null
+  }
+
+  public async getCertificatePdf(
+    auth: Auth,
+    id: string,
+  ): Promise<CertificatePdfResult | null> {
+    try {
+      const result = await withAuthContext(auth, () =>
+        meCertificateControllerGetCertificatePdfV1({
+          path: { id },
+          parseAs: 'arrayBuffer',
+        }),
+      )
+      if (!result.data) return null
+      return {
+        status: 200,
+        data: result.data as ArrayBuffer,
+        contentType:
+          result.response.headers.get('content-type') ?? 'application/pdf',
+      }
+    } catch (error) {
+      if (error instanceof FetchError && error.status === 404) {
+        return null
+      }
+      if (error instanceof FetchError && error.status === 402) {
+        const body = error.body as PaymentRequiredProblemResponse
+        return {
+          status: 402,
+          resourceType: body.resourceType ?? 'CERTIFICATE',
+          resourceId: body.resourceId,
+        }
+      }
+      throw error
+    }
   }
 }

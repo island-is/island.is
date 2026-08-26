@@ -32,6 +32,7 @@ import { RegulationDocumentsController } from './modules/regulation-documents/re
 import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
 import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
 import { HealthConversationsAttachmentController } from './modules/health/conversations-attachment.controller'
+import { HealthCertificatePdfController } from './modules/health/certificate-pdf.controller'
 import { OccupationalLicensesController } from './modules/occupational-licenses/occupational-license.controller'
 import { MMSClientModule, MMSClientConfig } from '@island.is/clients/mms'
 
@@ -95,6 +96,7 @@ import {
     EducationController,
     HealthPaymentsOverviewController,
     HealthConversationsAttachmentController,
+    HealthCertificatePdfController,
     RegulationDocumentsController,
     WorkMachinesController,
     OccupationalLicensesController,
