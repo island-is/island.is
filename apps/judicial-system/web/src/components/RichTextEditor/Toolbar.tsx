@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import React from 'react'
+import cn from 'classnames'
 import type { Editor } from '@tiptap/react'
 import { useEditorState } from '@tiptap/react'
 
@@ -107,17 +108,16 @@ const ToolbarButton: FC<{
 }> = ({ label, active, onAction, children }) => (
   <button
     type="button"
-    className={`${styles.toolbarButton}${
-      active ? ` ${styles.toolbarButtonActive}` : ''
-    }`}
+    className={cn(styles.toolbarButton, {
+      [styles.toolbarButtonActive]: active,
+    })}
     aria-label={label}
     aria-pressed={active ?? false}
-    // Mousedown instead of click, prevented, so the editor selection and
-    // focus survive the button press and no blur-save fires mid-edit.
-    onMouseDown={(e) => {
-      e.preventDefault()
-      onAction()
-    }}
+    // Mousedown is prevented so the editor selection and focus survive the
+    // button press and no blur-save fires mid-edit; the action itself runs on
+    // click so keyboard activation (Enter/Space) works too.
+    onMouseDown={(e) => e.preventDefault()}
+    onClick={onAction}
   >
     {children}
   </button>
