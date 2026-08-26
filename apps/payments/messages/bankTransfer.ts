@@ -99,12 +99,6 @@ export const bankTransfer = defineMessages({
     description:
       'Supporting text under the open-banking-app button on the mobile pending screen. EN: "Open your banking app to approve payment."',
   },
-  waitingForAuthorisation: {
-    id: 'payments:bankTransfer.waitingForAuthorisation',
-    defaultMessage: 'Beðið eftir heimild',
-    description:
-      'Waiting message under the loading dots while SCA is complete/not yet required and we poll for terminal status. EN: "Waiting for authorisation..."',
-  },
   checkPhone: {
     id: 'payments:bankTransfer.checkPhone',
     defaultMessage:

@@ -69,12 +69,12 @@ sequenceDiagram
         FE->>FE: reload → SSR pending screen (bankTransferPendingStatus drives the UI)
     end
 
-    alt sca_required + URL (incl. DRAFT with a non-onboarding URL)
+    alt sca_required + URL (Blikk reported one on a poll)
         FE->>U: desktop: QR code of scaRedirectUrl / mobile: "Opna bankaapp" button
         U->>Bank: scan / open link, authenticate & approve
     else sca_required without URL (back-channel)
         FE->>U: "check your phone for a banking-app notification"
-    else processing (PENDING / SCA_COMPLETE / DRAFT without URL)
+    else processing (DRAFT / PENDING / SCA_COMPLETE)
         FE->>U: loading dots + "Beðið eftir heimild..."
     end
 
@@ -162,19 +162,45 @@ local hook state.
 
    - **`sca_required` + URL**: desktop (≥ `md`) shows a QR code encoding the raw SCA URL
      ([`BankTransferQrCode`](../../../../../../apps/payments/components/BankTransferQrCode/BankTransferQrCode.tsx));
-     mobile shows an **"Opna bankaapp"** button that opens the URL directly. `DRAFT` with a
-     non-onboarding SCA URL also maps here — a DRAFT only advances once the payer initiates,
-     so the QR shows immediately after create instead of flickering dots→QR.
+     mobile shows an **"Opna bankaapp"** button that opens the URL directly.
    - **`sca_required` without URL** (back-channel): "check your phone for a banking-app
      notification" message.
-   - **`processing`** (`PENDING`/`SCA_COMPLETE`/`DRAFT` without a usable URL): loading dots +
+   - **`processing`** (`DRAFT`/`PENDING`/`SCA_COMPLETE`): loading dots +
      "Beðið eftir heimild..."
    - A **Cancel** button on all variants — the backend refuses once the payer has
      initiated/approved (`BankTransferAlreadyInProgress`), surfaced as a dedicated toast.
 
-   A back-channel create has no SCA URL at first; when Blikk mints one on the
-   `DRAFT → SCA_REQUIRED` transition, `verify`/`getBankTransferStatus` persist it on the row and
-   the poll response carries it to the FE, so the QR/deep link appears mid-poll without a reload.
+   **Only a URL Blikk reports at `SCA_REQUIRED` is ever rendered.** Blikk's instruction is not to
+   show the URL from the `create` response, because it may not be usable: `SCA_REQUIRED` is the
+   point at which Blikk has decided whether there is anything for the payer to open at all. So
+   neither read path falls back to the row's creation-time `sca_redirect_url` — it is persisted for
+   the record and for the onboarding redirect, never for display.
+
+   The practical effect is a **loading-dots phase** after create, until a poll reports
+   `SCA_REQUIRED`. This is deliberate, and it is the behaviour already running in production. It
+   avoids the alternative: with the create-time URL, Íslandsbanki (a back-channel bank) renders a QR
+   that then vanishes — a code that was never scannable.
+
+   Blikk advances to `SCA_REQUIRED` on its own, with no payer action, for both bank types.
+   Measured against the Blikk test environment via
+   [`useBankTransferStatusPolling`](../../../../../../apps/payments/hooks/useBankTransferStatusPolling.ts)'s
+   500ms→5s ladder:
+
+   | Bank | Reached `SCA_REQUIRED` | URL at `SCA_REQUIRED` |
+   | --- | --- | --- |
+   | Landsbankinn (redirect) | 5th poll, ~6.5 s | `app.landsbankinn.is/connect/authorize?…` |
+   | Íslandsbanki (back-channel) | 1st poll, < 1 s | none — bank pushes to the banking app |
+
+   Note the redirect URL Blikk reports at `SCA_REQUIRED` is the **bank's own** authorisation page,
+   not the `payment.blikk.tech` hosted page returned by `create`. They are different URLs; only the
+   former is ever shown to the payer.
+
+   When Blikk mints a URL on the `DRAFT → SCA_REQUIRED` transition,
+   `verify`/`getBankTransferStatus` persist it on the row and the poll response carries it to the
+   FE, so the QR/deep link appears mid-poll without a reload. If the Blikk refresh fails, no URL is
+   surfaced at all and the payer keeps waiting until a poll gets through — reading the row back
+   would not be a safe substitute, since `finalizeFromBlikkResult` only writes `scaRedirectUrl`
+   when the row has none, so a row past `DRAFT` can still be holding the creation-time value.
 
    This screen is reached via **SSR**: the `router.reload()` the FE issues right after `create`
    (or returning from the onboarding redirect).
@@ -268,11 +294,21 @@ paths guard against it:
 
 **Persist failure after provider create.** In `create`, the Blikk payment is created before the
 local row is inserted. If that insert throws (e.g. the one-active-per-flow unique race on a
-concurrent double-submit), the provider payment is left as an orphaned **DRAFT**. This is benign and
-needs no reconciliation: the request throws before returning, so the payer never receives the
-`scaRedirectUrl` and the payment **cannot settle** (no money moves, no double-charge), and it
-**auto-expires** via the `expiresAt` TTL we sent Blikk. _Optional monitoring:_ alert on Blikk DRAFT
-payments with no matching `bank_transfer_payment` row that outlive the TTL.
+concurrent double-submit), the provider payment is left orphaned: it will **auto-expire** via the
+`expiresAt` TTL we sent Blikk, but until then it is **not** inert.
+
+> **Known gap — unhandled.** This paragraph previously argued the orphan was benign because the
+> request throws before returning, so the payer never receives the `scaRedirectUrl` and the payment
+> cannot settle. That reasoning is wrong. Blikk advances the payment to `SCA_REQUIRED` on its own,
+> without payer action, and a back-channel bank (Íslandsbanki) then pushes the approval straight to
+> the payer's banking app — no URL required. A payer who approves that push settles a payment with
+> **no local row**, so the callback's `verify` finds nothing, and there is no fulfillment and no FJS
+> charge: money moved with no record. The window is the TTL.
+>
+> Not currently mitigated. The fix is a best-effort `cancelPayment` on the insert-failure path
+> (Blikk honours a cancel while the payment is still `DRAFT`), plus the monitoring below.
+
+_Monitoring:_ alert on Blikk payments with no matching `bank_transfer_payment` row.
 
 ## Cancel semantics
 

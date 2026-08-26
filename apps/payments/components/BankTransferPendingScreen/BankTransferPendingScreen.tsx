@@ -13,23 +13,24 @@ import { BankTransferQrCode } from '../BankTransferQrCode/BankTransferQrCode'
 import { bankTransfer } from '../../messages'
 
 interface BankTransferPendingScreenProps {
-  // Pending sub-status. Drives the waiting message only — never whether the SCA URL is offered.
+  // Pending sub-status; only sca_required means the payer has something to act on.
   pendingStatus?: PaymentsBankTransferPendingStatus | null
-  // Provider SCA URL. Absent means there is nothing to redirect to; it can appear or disappear
-  // between polls, so the caller must always pass the latest value rather than a cached one.
+  // Provider SCA URL, only ever populated at sca_required. It can appear or disappear between
+  // polls, so the caller must always pass the latest value rather than a cached one.
   scaRedirectUrl?: string
 }
 
 /**
  * Body of the bank-transfer pending screen.
  *
- * Blikk's rule is to offer the redirect whenever `scaRedirectUrl` is non-empty, *regardless of
- * status*. So the URL's presence alone decides whether we show it, and the sub-status only decides
- * what we say while there is nothing to show:
+ * The URL is offered only once Blikk has reached SCA_REQUIRED, because that is the point at which
+ * Blikk hands over the payer's bank's own authorisation page — and decides whether there is a page
+ * at all. The URL returned when the payment is created is a different, provider-hosted one; showing
+ * it early flashes a QR that a back-channel bank (Íslandsbanki) then removes.
  *
- * URL present → desktop: QR code; mobile: a button into Blikk's hosted payment page.
- * No URL, sca_required → back-channel SCA (e.g. Íslandsbanki): "check your phone".
- * No URL otherwise → waiting on the bank.
+ * sca_required + URL → desktop: QR code; mobile: a button into the bank's authorisation page.
+ * sca_required without URL → back-channel SCA (e.g. Íslandsbanki): "check your phone".
+ * processing → loading dots only, with no message: nothing is being asked of the payer yet.
  *
  * Payments that enter this screen can not be cancelled by Blikk. User must do it in their banking app.
  */
@@ -39,10 +40,10 @@ export const BankTransferPendingScreen = ({
 }: BankTransferPendingScreenProps) => {
   const { formatMessage } = useLocale()
 
-  const showSca = !!scaRedirectUrl
-
   const isScaOutstanding =
     pendingStatus === PaymentsBankTransferPendingStatus.sca_required
+
+  const showSca = isScaOutstanding && !!scaRedirectUrl
 
   return (
     <Box
@@ -57,7 +58,7 @@ export const BankTransferPendingScreen = ({
           <Hidden below="md">
             <BankTransferQrCode url={scaRedirectUrl} />
           </Hidden>
-          {/* Mobile: opens Blikk's hosted payment page, which hands off to the banking app. */}
+          {/* Mobile: opens the bank's authorisation page, which hands off to the banking app. */}
           <Hidden above="sm">
             <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
               <Button
@@ -81,13 +82,14 @@ export const BankTransferPendingScreen = ({
           rowGap={[2, 3]}
         >
           <LoadingDots />
-          <Text textAlign="center">
-            {formatMessage(
-              pendingStatus === PaymentsBankTransferPendingStatus.sca_required
-                ? bankTransfer.checkPhone
-                : bankTransfer.waitingForAuthorisation,
-            )}
-          </Text>
+          {/* At `processing` nothing is being asked of the payer, so the dots stand alone. The
+              message appearing — together with the note below — is what marks the moment the
+              bank does want something, which a text swap alone made too easy to miss. */}
+          {isScaOutstanding && (
+            <Text textAlign="center">
+              {formatMessage(bankTransfer.checkPhone)}
+            </Text>
+          )}
         </Box>
       )}
 

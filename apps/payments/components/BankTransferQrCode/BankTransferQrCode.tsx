@@ -14,8 +14,10 @@ interface BankTransferQrCodeProps {
 const QR_CODE_SIZE = 200
 
 /**
- * The SCA QR code shown on the desktop pending screen. The payer scans it with their phone, which
- * opens Blikk's hosted payment page — that page runs SCA and hands off to the banking app itself.
+ * The SCA QR code shown on the desktop pending screen. Encodes the URL Blikk reports at
+ * SCA_REQUIRED, which is the payer's own bank's authorisation page (e.g. `app.landsbankinn.is/
+ * connect/authorize?…`) — not the `payment.blikk.tech` page returned when the payment is created.
+ * The payer scans it with their phone and authenticates with their bank there.
  */
 export const BankTransferQrCode = ({ url }: BankTransferQrCodeProps) => {
   const { formatMessage } = useLocale()
