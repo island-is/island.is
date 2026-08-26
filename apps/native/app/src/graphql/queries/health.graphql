@@ -143,6 +143,23 @@ query GetPrescriptionDocuments($input: MedicinePrescriptionDocumentsInput!) {
   }
 }
 
+query GetPrescriptionRenewalTargets($prescriptionId: String!) {
+  healthDirectoratePrescriptionRenewalTargets(prescriptionId: $prescriptionId) {
+    groupId
+    nodeId
+    name
+    description
+  }
+}
+
+mutation PostPrescriptionRenewal($input: HealthDirectorateRenewalInput!) {
+  healthDirectoratePrescriptionRenewal(input: $input) {
+    prescriptions {
+      id
+    }
+  }
+}
+
 query GetDrugCertificates {
   rightsPortalDrugCertificates {
     id

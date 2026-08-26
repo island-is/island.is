@@ -1072,6 +1072,21 @@ export const en: TranslatedMessages = {
   'health.prescriptions.renewalBlockedRecipientExcludesAtc':
     'Renewal not available because',
   'health.prescriptions.renewalBlockedOther': 'Unknown reason',
+  'health.prescriptions.renewalModal.title': 'Prescription renewal request',
+  'health.prescriptions.renewalModal.description':
+    'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112.',
+  'health.prescriptions.renewalModal.selectRecipient': 'Send to',
+  'health.prescriptions.renewalModal.medicineInformation':
+    'Medicine information',
+  'health.prescriptions.renewalModal.medicineName': 'Medication name',
+  'health.prescriptions.renewalModal.usedFor': 'Used for',
+  'health.prescriptions.renewalModal.cancel': 'Cancel',
+  'health.prescriptions.renewalModal.noTargets':
+    'Could not find an institution to send the renewal request to. Please contact your health clinic.',
+  'health.prescriptions.renewalModal.success':
+    'The renewal request has been sent. Please contact your health clinic if further information is needed.',
+  'health.prescriptions.renewalModal.error':
+    'Could not send the renewal request. Please try again later.',
   'health.prescriptions.issueDate': 'Issue date',
   'health.prescriptions.expiresAt': 'Expires at',
   'health.prescriptions.doctor': 'Doctors',
