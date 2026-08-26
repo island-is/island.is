@@ -1,5 +1,4 @@
 import type { FC, ReactNode } from 'react'
-import React from 'react'
 import type { Editor } from '@tiptap/react'
 import { useEditorState } from '@tiptap/react'
 
