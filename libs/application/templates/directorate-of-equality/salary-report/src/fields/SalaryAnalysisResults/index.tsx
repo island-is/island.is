@@ -129,6 +129,10 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     setIsAnalyzing(true)
     setHasError(false)
     setErrorMessage(undefined)
+    // Clear any cached result up front — otherwise a failed recomputation
+    // (or one still in flight) would leave stale totals/banner/chart/outliers
+    // on screen from a draft that no longer matches them.
+    setResult(undefined)
     try {
       const res = await updateApplicationExternalData({
         variables: {
