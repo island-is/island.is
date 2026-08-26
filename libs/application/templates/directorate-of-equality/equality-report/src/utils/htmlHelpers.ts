@@ -30,12 +30,3 @@ export const decodeHtmlEntities = (value: string) =>
     return HTML_NAMED_ENTITIES[entity.toLowerCase()] ?? match
   })
 
-export const decodeEditorHtml = (base64: string) => {
-  try {
-    return atob(base64)
-      .replace(/<[^>]*>/g, '')
-      .trim()
-  } catch {
-    return ''
-  }
-}

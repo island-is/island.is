@@ -3,7 +3,6 @@ import * as kennitala from 'kennitala'
 import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
 import { Gender } from '../utils/constants'
-import { decodeEditorHtml } from '../utils/htmlHelpers'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),
@@ -53,7 +52,8 @@ const employeeCount = z.object({
   men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
     params: messages.errors.invalidNonNegativeNumber,
   }),
-  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+  // Optional — unlike women/men, companies aren't required to report this.
+  nonBinary: z.string().refine((v) => v === '' || Number(v) >= 0, {
     params: messages.errors.invalidNonNegativeNumber,
   }),
 })
@@ -95,7 +95,7 @@ const subsidiaries = z.object({
 })
 
 const goalsAndActions = z.object({
-  customField: z.string().refine((v) => decodeEditorHtml(v).length > 0, {
+  filename: z.string().refine((v) => v.length > 0, {
     params: messages.errors.required,
   }),
 })

@@ -13,7 +13,9 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 
 import { DraftEmployeesInput } from './dto/draftEmployees.input'
+import { EditEqualityContentInput } from './dto/editEqualityContent.input'
 import { SyncSalaryReportDraftInput } from './dto/syncSalaryReportDraft.input'
+import { UpdateEqualityDraftContentInput } from './dto/updateEqualityDraftContent.input'
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityApplicationService'
 
@@ -99,5 +101,37 @@ export class DirectorateOfEqualityApplicationService {
       input.page,
       input.pageSize,
     )
+  }
+
+  // Custom resolver, not the standard updateApplicationExternalData provider
+  // mechanism — that only takes {actionId, order}, with no channel for an
+  // arbitrary content payload. Content goes straight to DMR, never through
+  // application.answers.
+  async updateEqualityDraftContent(
+    input: UpdateEqualityDraftContentInput,
+    user: User,
+  ): Promise<boolean> {
+    await this.assertOwnsApplication(input.applicationId, user, 'is')
+    await this.directorateOfEqualityService.updateDraft(
+      user,
+      input.applicationId,
+      { equalityReportContent: input.equalityReportContent },
+    )
+    return true
+  }
+
+  // Same rationale as updateEqualityDraftContent, but for an already-submitted
+  // (IN_REVIEW) report during a case-worker-requested revision, not a DRAFT.
+  async editEqualityContent(
+    input: EditEqualityContentInput,
+    user: User,
+  ): Promise<boolean> {
+    await this.assertOwnsApplication(input.applicationId, user, 'is')
+    await this.directorateOfEqualityService.editEqualityContent(
+      user,
+      input.applicationId,
+      { equalityReportContent: input.equalityReportContent },
+    )
+    return true
   }
 }

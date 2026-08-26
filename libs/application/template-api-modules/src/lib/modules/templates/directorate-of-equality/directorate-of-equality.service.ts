@@ -12,10 +12,7 @@ import {
   getValueViaPath,
   YES,
 } from '@island.is/application/core'
-import {
-  Gender,
-  dataSchema as equalityReportDataSchema,
-} from '@island.is/application/templates/directorate-of-equality/equality-report'
+import { dataSchema as equalityReportDataSchema } from '@island.is/application/templates/directorate-of-equality/equality-report'
 import {
   dataSchema as salaryReportDataSchema,
   PERIOD_ONE_MONTH,
@@ -186,24 +183,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  async getEqualityReportTemplateHtml({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.getEqualityReportTemplateHtml(
-        auth,
-      )
-    } catch (error) {
-      this.logger.error('Failed to get equality report template html', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...this.extractFetchErrorDetails(error),
-      })
-      throw error
-    }
-  }
-
   async getEqualityReportTemplateDocx({
     auth,
     application,
@@ -229,38 +208,29 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const hasActiveReport = getValueViaPath<boolean>(
-      application.externalData,
-      'activeEqualityReport.data.hasActiveEqualityReport',
-    )
-    if (!hasActiveReport) return null
+    const activeReport =
+      await this.directorateOfEqualityService.getActiveEqualityReport(auth)
 
-    // `identifier` is set to the submitting application's id at submit time
-    // (see submitEqualityReport below), the same value stored as `providerId`
-    // — which is what getReport() looks up by.
-    const providerId = getValueViaPath<string>(
-      application.externalData,
-      'activeEqualityReport.data.identifier',
-    )
-    if (!providerId) return null
-    try {
-      // TODO: PROVIDER ID VS COMPANY ID.
-      const report = await this.directorateOfEqualityService.getReport(
-        auth,
-        providerId,
-      )
-      return { equalityReportContent: report.equalityReportContent ?? '' }
-    } catch (error) {
-      this.logger.error(
-        'Failed to get previous equality report content, falling back',
-        {
-          applicationId: application.id,
-          context: LOGGING_CONTEXT,
-          ...this.extractFetchErrorDetails(error),
-        },
-      )
-      return null
+    if (activeReport && activeReport.identifier) {
+      try {
+        const report = await this.directorateOfEqualityService.getReport(
+          auth,
+          activeReport.id,
+        )
+        return { equalityReportContent: report.equalityReportContent ?? '' }
+      } catch (error) {
+        this.logger.error(
+          'Failed to get previous equality report content, falling back',
+          {
+            applicationId: application.id,
+            context: LOGGING_CONTEXT,
+            ...this.extractFetchErrorDetails(error),
+          },
+        )
+        return null
+      }
     }
+    return null
   }
 
   async getBlankExcelTemplate({
@@ -301,6 +271,22 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       () =>
         this.directorateOfEqualityService.createDraft(auth, {
           type: ReportTypeEnum.SALARY,
+          providerId: application.id,
+        }),
+    )
+  }
+
+  // Idempotent on providerId — reopening this step returns the same draft.
+  async createEqualityDraft({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to create equality report draft',
+      () =>
+        this.directorateOfEqualityService.createDraft(auth, {
+          type: ReportTypeEnum.EQUALITY,
           providerId: application.id,
         }),
     )
@@ -574,7 +560,12 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
-  async submitEqualityReport({
+  // Finalises the draft; only the pre-dataEntry answers need patching onto
+  // it first — the report's narrative content was already pushed live via
+  // the directorate-of-equality-application GraphQL resolver's
+  // updateEqualityDraftContent mutation as the applicant uploaded it, not
+  // read from application.answers here.
+  async submitEqualityDraft({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
@@ -583,43 +574,21 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       application.answers,
       application.id,
     )
-
-    const genderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
-      [Gender.MALE]: 'MALE',
-      [Gender.FEMALE]: 'FEMALE',
-      [Gender.NON_BINARY]: 'NEUTRAL',
-    }
-    const equalityReportContent = getValueViaPath(
-      answers,
-      'goalsAndActions.customField',
-      '',
-    )
-
+    const providerId = application.id
     const subsidiaryList = answers.subsidiaries?.list ?? []
 
     return this.withTemplateApiError(
       application.id,
       'Failed to submit equality report',
-      () =>
-        this.directorateOfEqualityService.submitEqualityReport(auth, {
-          providerId: application.id,
+      async () => {
+        await this.directorateOfEqualityService.updateDraft(auth, providerId, {
           companyAdminName: answers.chiefExecutive?.name ?? '',
+          companyAdminTitle: answers.chiefExecutive?.jobTitle ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
-          companyAdminGender: answers.chiefExecutive?.gender
-            ? genderMap[answers.chiefExecutive.gender]
-            : 'NEUTRAL',
+          companyAdminGender: mapGender(answers.chiefExecutive?.gender),
           contactName: answers.contactPerson?.name ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
-          equalityReportContent: equalityReportContent ?? '',
-          company: {
-            name: answers.generalInformation?.companyName ?? '',
-            nationalId: answers.generalInformation?.nationalId ?? '',
-            address: answers.generalInformation?.address ?? '',
-            city: answers.generalInformation?.municipality ?? '',
-            postcode: answers.generalInformation?.postalCode ?? '',
-            isatCategory: answers.generalInformation?.isatClassification ?? '',
-          },
           averageEmployeeFemaleCount: toNumberOrZero(
             answers.employeeCount?.women,
           ),
@@ -627,47 +596,28 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           averageEmployeeNeutralCount: toNumberOrZero(
             answers.employeeCount?.nonBinary,
           ),
+        })
 
-          subsidiaries:
-            answers.subsidiaries?.includesSubsidiaries === 'yes'
-              ? subsidiaryList.map((s) => ({
-                  name: s.nationalIdWithName.name,
-                  nationalId: s.nationalIdWithName.nationalId,
-                }))
-              : [],
-        }),
-    )
-  }
-
-  // Narrow in-place edit — PUTs just the report's narrative content, unlike
-  // submitEqualityReport's full create call. This is what DRAFT_RETRY's
-  // onExit uses: submitEqualityReport is a one-shot create (POST .../reports/
-  // equality), not something a revision can safely re-invoke.
-  async editEqualityContent({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
-    return this.withTemplateApiError(
-      application.id,
-      'Failed to edit equality content',
-      async () => {
-        const answers = this.parseAnswers(
-          equalityReportDataSchema,
-          application.answers,
-          application.id,
-        )
-
-        const equalityReportContent = getValueViaPath<string>(
-          answers,
-          'goalsAndActions.customField',
-          '',
-        )
-
-        await this.directorateOfEqualityService.editEqualityContent(
+        return await this.directorateOfEqualityService.submitDraft(
           auth,
-          application.id,
+          providerId,
           {
-            equalityReportContent: equalityReportContent ?? '',
+            company: {
+              name: answers.generalInformation?.companyName ?? '',
+              nationalId: answers.generalInformation?.nationalId ?? '',
+              address: answers.generalInformation?.address ?? '',
+              city: answers.generalInformation?.municipality ?? '',
+              postcode: answers.generalInformation?.postalCode ?? '',
+              isatCategory:
+                answers.generalInformation?.isatClassification ?? '',
+            },
+            subsidiaries:
+              answers.subsidiaries?.includesSubsidiaries === 'yes'
+                ? subsidiaryList.map((s) => ({
+                    name: s.nationalIdWithName.name,
+                    nationalId: s.nationalIdWithName.nationalId,
+                  }))
+                : [],
           },
         )
       },

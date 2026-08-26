@@ -267,7 +267,6 @@ export const aboutTheCompanySection = buildSection({
               title: messages.aboutTheCompany.employeeCount.nonBinary,
               width: 'half',
               variant: 'number',
-              required: true,
             }),
           ],
         }),

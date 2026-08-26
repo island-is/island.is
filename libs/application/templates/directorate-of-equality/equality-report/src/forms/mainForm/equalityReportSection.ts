@@ -90,10 +90,13 @@ export const equalityReportSection = buildSection({
               link: messages.equalityReport.information.detailLink,
               variant: 'text',
             }),
-            buildCustomField({
-              id: 'goalsAndActions.customField',
-              component: 'Editor',
-            }),
+            buildCustomField(
+              {
+                id: 'goalsAndActions.filename',
+                component: 'Editor',
+              },
+              { mode: 'draft' },
+            ),
           ],
         }),
       ],
