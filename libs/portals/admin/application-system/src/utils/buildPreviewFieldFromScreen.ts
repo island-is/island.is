@@ -140,7 +140,7 @@ export const buildPreviewFieldFromScreen = (
         ...base,
         type: FieldTypes.TEXT,
         component: FieldComponents.TEXT,
-        title: screen.title ?? undefined,
+        placeholder: resolveFormText(screen.inputPlaceholder),
         backgroundColor: previewWorkspaceInputBackgroundColor(screen),
       } as Field
 
@@ -149,7 +149,7 @@ export const buildPreviewFieldFromScreen = (
         ...base,
         type: FieldTypes.PHONE,
         component: FieldComponents.PHONE,
-        title: screen.title ?? undefined,
+        placeholder: resolveFormText(screen.inputPlaceholder),
         backgroundColor: previewWorkspaceInputBackgroundColor(screen),
       } as Field
 
@@ -158,7 +158,7 @@ export const buildPreviewFieldFromScreen = (
         ...base,
         type: FieldTypes.DATE,
         component: FieldComponents.DATE,
-        title: screen.title ?? undefined,
+        placeholder: resolveFormText(screen.inputPlaceholder),
         backgroundColor: previewWorkspaceInputBackgroundColor(screen),
       } as Field
 
