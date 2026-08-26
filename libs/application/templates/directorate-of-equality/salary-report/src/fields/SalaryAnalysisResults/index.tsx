@@ -162,11 +162,12 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     }
   }
 
-  // Run automatically on arrival at this screen — the applicant shouldn't
-  // have to press a button to see results. Only fires when there's no
-  // existing result yet (e.g. from a prior visit to this screen).
+  // Run automatically on every arrival at this screen — the applicant
+  // shouldn't have to press a button to see results, and the draft can have
+  // changed since the last visit (re-imported workbook, edited criteria,
+  // edited employees) with nothing here to know that and invalidate a cached
+  // `result`, so always recompute rather than trusting the last analysis.
   useEffect(() => {
-    if (result) return
     handleAnalyze()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

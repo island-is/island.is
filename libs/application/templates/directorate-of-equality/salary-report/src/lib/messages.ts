@@ -563,6 +563,10 @@ export const messages = {
         id: 'doe.sr.application:report.dataEntry.importSuccessContinueButton',
         defaultMessage: 'Halda áfram í launagreiningu',
       },
+      importErrorTitle: {
+        id: 'doe.sr.application:report.dataEntry.importErrorTitle',
+        defaultMessage: 'Villa kom upp við úrvinnslu skjalsins',
+      },
       importError: {
         id: 'doe.sr.application:report.dataEntry.importError',
         defaultMessage:
@@ -575,7 +579,7 @@ export const messages = {
       excelTemplateDownloadDescription: {
         id: 'doe.sr.application:report.dataEntry.excelTemplateDownloadDescription',
         defaultMessage:
-          'Athugið að bein tenging við vefþjónustu Jafnréttisstofu til að einfalda stór gagnaskil er væntanleg.',
+          'Athugið að bein tenging við vefþjónustu Jafnréttisstofu er væntanleg.',
       },
     }),
     criteria: defineMessages({

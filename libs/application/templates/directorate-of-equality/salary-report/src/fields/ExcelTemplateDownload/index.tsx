@@ -11,6 +11,7 @@ import {
   InputFileUpload,
   LoadingDots,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
@@ -357,6 +358,7 @@ export const ExcelTemplateDownload: FC<
           {importStatus === 'error' && (
             <AlertMessage
               type="error"
+              title={formatMessage(m.importErrorTitle)}
               message={
                 importErrorMessages && importErrorMessages.length > 1 ? (
                   <BulletList>
@@ -395,15 +397,21 @@ export const ExcelTemplateDownload: FC<
             <ActionCard
               backgroundColor="white"
               heading={formatMessage(m.manualEntryCardTitle)}
+              headingVariant="h4"
               text={formatMessage(m.manualEntryCardIntro)}
               cta={{
                 label: formatMessage(m.manualEntryButtonLabel),
-                variant: 'primary',
+                variant: 'ghost',
                 icon: 'arrowForward',
                 onClick: () => void handleManualEntry(),
               }}
             />
           )}
+          <Text variant="small" color="dark400">
+            {formatMessage(
+              messages.report.dataEntry.excelTemplateDownloadDescription,
+            )}
+          </Text>
         </Stack>
       )}
     </Box>
