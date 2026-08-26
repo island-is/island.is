@@ -40,7 +40,7 @@ const SelectableTableFormFieldRowComponent: FC<Props> = ({
       return
     }
     register(checkboxFieldId)
-    return () => unregister(checkboxFieldId)
+    return () => unregister(checkboxFieldId, { keepValue: true })
   }, [selectable, checkboxFieldId, register, unregister])
 
   const checked = !!useWatch({ name: checkboxFieldId, control })

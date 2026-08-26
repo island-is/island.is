@@ -14,6 +14,7 @@ import {
   FormItemTypes,
   FormValue,
   RecordObject,
+  SelectableTableField,
   SubmitField,
 } from '@island.is/application/types'
 import { FormScreen, MOCKPAYMENT } from './types'
@@ -125,6 +126,14 @@ export const getAccordionChildFieldIds = (
   )
 }
 
+export const getSelectableTableChildFieldIds = (field: Field): string[] => {
+  if (field.type !== FieldTypes.SELECTABLE_TABLE) {
+    return []
+  }
+  const inputColumnId = (field as SelectableTableField).inputColumn?.id
+  return inputColumnId ? [inputColumnId] : []
+}
+
 export const extractAnswersToSubmitFromScreen = (
   data: FormValue,
   screen: FormScreen,
@@ -171,6 +180,7 @@ export const extractAnswersToSubmitFromScreen = (
             ? resolveFieldId(c as Field, application, user)
             : (c.id as string),
           ...getAccordionChildFieldIds(c as Field, application, user),
+          ...getSelectableTableChildFieldIds(c as Field),
         ]),
       )
     case FormItemTypes.REPEATER:
