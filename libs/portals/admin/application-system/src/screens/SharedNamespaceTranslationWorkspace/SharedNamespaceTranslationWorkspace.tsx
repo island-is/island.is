@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useParams } from 'react-router-dom'
 import {
   Box,
   Button,
@@ -10,10 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import {
-  ApplicationSystemPaths,
-  buildSharedNamespaceTranslationPath,
-} from '../../lib/paths'
+import { buildSharedNamespaceTranslationPath } from '../../lib/paths'
 import {
   useGetApplicationSharedNamespaceIntrospectionQuery,
   useGetApplicationTranslationsQuery,
@@ -42,7 +39,6 @@ import {
   hasUnsavedTranslationChanges,
 } from '../../utils/translationWorkspaceEditing'
 import { useRegisterTranslationWorkspaceHeaderChrome } from '../../context/TranslationWorkspaceHeaderBridge'
-import { TranslationWorkspacePageHeader } from '../../components/TranslationWorkspacePageHeader/TranslationWorkspacePageHeader'
 import { TranslationStringsList } from '../../components/TranslationWorkspaceStatesTabsPanel/TranslationStringsList'
 import {
   TranslationWorkspaceError,
@@ -353,17 +349,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
 
   return (
     <Box className={styles.sharedNamespaceShell}>
-      <TranslationWorkspacePageHeader />
-
       <Box paddingY={3}>
-        <Box marginBottom={3}>
-          <Link to={ApplicationSystemPaths.Root}>
-            <Button variant="text" size="small">
-              {formatMessage(m.translationBackToList)}
-            </Button>
-          </Link>
-        </Box>
-
         <Box marginBottom={3}>
           <Input
             name="search-shared-namespace-strings"

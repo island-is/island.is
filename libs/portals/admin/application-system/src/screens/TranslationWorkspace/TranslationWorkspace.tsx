@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
 import { Box, Button, ModalBase, Text, toast } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import {
@@ -33,7 +34,6 @@ import {
   buildSubSectionNavigationScreen,
 } from '../../utils/translationWorkspaceNavigation'
 import { useRegisterTranslationWorkspaceHeaderChrome } from '../../context/TranslationWorkspaceHeaderBridge'
-import { TranslationWorkspacePageHeader } from '../../components/TranslationWorkspacePageHeader/TranslationWorkspacePageHeader'
 import { TranslationWorkspacePreviewArea } from '../../components/TranslationWorkspacePreviewArea/TranslationWorkspacePreviewArea'
 import { TranslationWorkspaceStatesTabsPanel } from '../../components/TranslationWorkspaceStatesTabsPanel/TranslationWorkspaceStatesTabsPanel'
 import {
@@ -47,6 +47,23 @@ import { useTemplateCustomFields } from '../../hooks/useTemplateCustomFields'
 import * as workspaceStyles from './TranslationWorkspace.css'
 
 const AUTOSAVE_INTERVAL_MS = 60_000
+const NAV_DRAWER_COMPACT_MAX_PX = theme.breakpoints.xl - 1
+
+const useViewportMaxWidth = (maxWidthPx: number) => {
+  const [matches, setMatches] = useState(false)
+
+  useEffect(() => {
+    const mediaQueryList = window.matchMedia(`(max-width: ${maxWidthPx}px)`)
+    const update = () => {
+      setMatches(mediaQueryList.matches)
+    }
+    update()
+    mediaQueryList.addEventListener('change', update)
+    return () => mediaQueryList.removeEventListener('change', update)
+  }, [maxWidthPx])
+
+  return matches
+}
 
 export const TranslationWorkspace = () => {
   const { typeId } = useParams<{ typeId: string }>()
@@ -128,6 +145,9 @@ export const TranslationWorkspace = () => {
   const [lastAutosaveTime, setLastAutosaveTime] = useState<string | null>(null)
   const [historyOpen, setHistoryOpen] = useState(false)
   const [publishConfirmVisible, setPublishConfirmVisible] = useState(false)
+  const [navDrawerOpen, setNavDrawerOpen] = useState(false)
+  const isCompactNav = useViewportMaxWidth(NAV_DRAWER_COMPACT_MAX_PX)
+  const navPanelInert = isCompactNav && !navDrawerOpen
 
   const getPersistedForMessage = useCallback(
     (messageKey: string, locale: 'is' | 'en') => {
@@ -483,6 +503,31 @@ export const TranslationWorkspace = () => {
     setHistoryOpen(false)
   }, [])
 
+  const handleToggleNavDrawer = useCallback(() => {
+    setNavDrawerOpen((open) => !open)
+  }, [])
+
+  const handleCloseNavDrawer = useCallback(() => {
+    setNavDrawerOpen(false)
+  }, [])
+
+  useEffect(() => {
+    if (!navDrawerOpen) return undefined
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setNavDrawerOpen(false)
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [navDrawerOpen])
+
+  useEffect(() => {
+    if (!isCompactNav) {
+      setNavDrawerOpen(false)
+    }
+  }, [isCompactNav])
+
   const handleRollbackComplete = useCallback(async () => {
     await refetchTranslations()
     setEditedValues({ is: {}, en: {} })
@@ -492,6 +537,8 @@ export const TranslationWorkspace = () => {
   const handleSidebarNavClick = useCallback(
     (nav: ScreenIntrospection, location: SidebarNavLocation) => {
       if (!introspection) return
+
+      setNavDrawerOpen(false)
 
       const resolvedTypeId = introspection.typeId ?? typeId ?? ''
 
@@ -660,9 +707,10 @@ export const TranslationWorkspace = () => {
   }
 
   return (
-    <Box className={workspaceStyles.workspaceShell}>
-      <TranslationWorkspacePageHeader />
-
+    <Box
+      className={workspaceStyles.workspaceShell}
+      data-nav-drawer-open={navDrawerOpen ? 'true' : 'false'}
+    >
       <div className={workspaceStyles.workspaceMainRow}>
         <div className={workspaceStyles.workspacePreviewAside}>
           <TranslationWorkspacePreviewArea
@@ -689,40 +737,79 @@ export const TranslationWorkspace = () => {
             footerSubmitScreen={footerSubmitScreen}
           />
         </div>
+        <button
+          type="button"
+          className={workspaceStyles.navDrawerBackdrop}
+          aria-label={formatMessage(m.translationWorkspacePanelClose)}
+          aria-hidden={!navDrawerOpen}
+          tabIndex={-1}
+          onClick={handleCloseNavDrawer}
+        />
         <div className={workspaceStyles.workspaceNavAside}>
-          <TranslationWorkspaceStatesTabsPanel
-            states={introspection.states as unknown as TemplateStateNav[]}
-            selectedScreenId={selectedScreen?.id}
-            selectedLocation={selectedLocation}
-            onNavClick={handleSidebarNavClick}
-            formatMessage={formatMessage}
-            selectedScreen={selectedScreen}
-            screenMessageDescriptors={screenMessageDescriptors}
-            allApplicationMessageDescriptors={allApplicationMessageDescriptors}
-            editedValues={editedValues}
-            activeLocale={activeLocale}
-            getPersistedForLocale={getPersistedForLocale}
-            onValueChange={handleValueChange}
-            showValidationErrors={showValidationErrors}
-            validationDescriptors={validationDescriptors}
-            persistedByKey={persistedByKey}
-            previewScreens={previewScreens}
-            resolvePreviewString={resolvePreviewString}
-            validationDescriptorsByPath={validationDescriptorsByPath}
-            focusedFieldId={focusedFieldId}
-            onFocusedFieldChange={handleFocusedFieldChange}
-            fieldErrorOverrides={fieldErrorOverrides}
-            onToggleFieldError={handleToggleFieldError}
-            onSetPreviewFieldValue={handleSetPreviewFieldValue}
-            onActiveTabChange={(tab) => setFieldsTabActive(tab === 'fields')}
-            onGoogleTranslate={
-              activeLocale === 'en' ? handleGoogleTranslate : undefined
+          <button
+            type="button"
+            className={workspaceStyles.navDrawerToggle}
+            onClick={handleToggleNavDrawer}
+            title={
+              navDrawerOpen
+                ? formatMessage(m.translationWorkspacePanelClose)
+                : formatMessage(m.translationWorkspacePanelOpen)
             }
-            onGoogleTranslateAll={
-              activeLocale === 'en' ? handleGoogleTranslateAll : undefined
+            aria-label={
+              navDrawerOpen
+                ? formatMessage(m.translationWorkspacePanelClose)
+                : formatMessage(m.translationWorkspacePanelOpen)
             }
-            isTranslating={translating}
-          />
+            aria-expanded={navDrawerOpen}
+            aria-controls="translation-workspace-nav-panel"
+          >
+            <span
+              className={workspaceStyles.navDrawerToggleGrip}
+              aria-hidden="true"
+            />
+          </button>
+          <div
+            className={workspaceStyles.navDrawerPanel}
+            id="translation-workspace-nav-panel"
+            inert={navPanelInert}
+            aria-hidden={navPanelInert}
+          >
+            <TranslationWorkspaceStatesTabsPanel
+              states={introspection.states as unknown as TemplateStateNav[]}
+              selectedScreenId={selectedScreen?.id}
+              selectedLocation={selectedLocation}
+              onNavClick={handleSidebarNavClick}
+              formatMessage={formatMessage}
+              selectedScreen={selectedScreen}
+              screenMessageDescriptors={screenMessageDescriptors}
+              allApplicationMessageDescriptors={
+                allApplicationMessageDescriptors
+              }
+              editedValues={editedValues}
+              activeLocale={activeLocale}
+              getPersistedForLocale={getPersistedForLocale}
+              onValueChange={handleValueChange}
+              showValidationErrors={showValidationErrors}
+              validationDescriptors={validationDescriptors}
+              persistedByKey={persistedByKey}
+              previewScreens={previewScreens}
+              resolvePreviewString={resolvePreviewString}
+              validationDescriptorsByPath={validationDescriptorsByPath}
+              focusedFieldId={focusedFieldId}
+              onFocusedFieldChange={handleFocusedFieldChange}
+              fieldErrorOverrides={fieldErrorOverrides}
+              onToggleFieldError={handleToggleFieldError}
+              onSetPreviewFieldValue={handleSetPreviewFieldValue}
+              onActiveTabChange={(tab) => setFieldsTabActive(tab === 'fields')}
+              onGoogleTranslate={
+                activeLocale === 'en' ? handleGoogleTranslate : undefined
+              }
+              onGoogleTranslateAll={
+                activeLocale === 'en' ? handleGoogleTranslateAll : undefined
+              }
+              isTranslating={translating}
+            />
+          </div>
         </div>
       </div>
 

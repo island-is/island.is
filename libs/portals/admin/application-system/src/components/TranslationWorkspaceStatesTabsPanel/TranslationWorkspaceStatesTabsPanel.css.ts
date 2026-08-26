@@ -41,9 +41,7 @@ globalStyle(
 
 globalStyle(`${tabsPanelRoot} [role="tabpanel"]:not([hidden])`, {
   ...flexColumnChild,
-  paddingLeft: theme.spacing[6],
-  paddingRight: theme.spacing[6],
-  paddingTop: theme.spacing[6],
+  padding: 0,
 })
 
 globalStyle(
@@ -83,5 +81,16 @@ export const tabsPanelScroll = style({
 export const tabsPanelInner = style({
   minWidth: 0,
   maxWidth: '100%',
-  overflowWrap: 'anywhere',
+  overflowWrap: 'break-word',
+  paddingTop: theme.spacing[3],
+  paddingLeft: theme.spacing[3],
+  paddingRight: theme.spacing[3],
+  paddingBottom: theme.spacing[3],
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
+      paddingTop: theme.spacing[6],
+      paddingLeft: theme.spacing[6],
+      paddingRight: theme.spacing[6],
+    },
+  },
 })

@@ -72,7 +72,7 @@ const LayoutModuleContainer: FC<
     if (fullBleed) {
       return (
         <Box
-          {...moduleContainerBoxProps}
+          className={styles.workspaceContainer}
           background={pageBackground}
           overflow="hidden"
         >

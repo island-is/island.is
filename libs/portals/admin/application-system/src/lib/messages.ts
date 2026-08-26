@@ -229,6 +229,14 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationStatesNavDrawerAriaLabel',
     defaultMessage: 'Yfirlit yfir stöður og skjái',
   },
+  translationWorkspacePanelOpen: {
+    id: 'admin-portal.application-system:translationWorkspacePanelOpen',
+    defaultMessage: 'Opna þýðingaborð',
+  },
+  translationWorkspacePanelClose: {
+    id: 'admin-portal.application-system:translationWorkspacePanelClose',
+    defaultMessage: 'Loka þýðingaborði',
+  },
   translationSaveFailed: {
     id: 'admin-portal.application-system:translationSaveFailed',
     defaultMessage: 'Ekki tókst að vista. {detail}',
@@ -405,6 +413,22 @@ export const m = defineMessages({
   translationAutosaved: {
     id: 'admin-portal.application-system:translationAutosaved',
     defaultMessage: 'Sjálfvirk vistun kl. {time}',
+  },
+  translationAutosaveLabel: {
+    id: 'admin-portal.application-system:translationAutosaveLabel',
+    defaultMessage: 'Sjálfvirk vistun',
+  },
+  translationMoreActions: {
+    id: 'admin-portal.application-system:translationMoreActions',
+    defaultMessage: 'Fleiri valkostir',
+  },
+  translationLocaleEnglish: {
+    id: 'admin-portal.application-system:translationLocaleEnglish',
+    defaultMessage: 'English',
+  },
+  translationLocaleIcelandic: {
+    id: 'admin-portal.application-system:translationLocaleIcelandic',
+    defaultMessage: 'Íslenska',
   },
   translationPublish: {
     id: 'admin-portal.application-system:translationPublish',
