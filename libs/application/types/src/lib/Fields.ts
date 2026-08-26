@@ -1032,9 +1032,7 @@ export interface StickyFooterField extends BaseField {
   component: FieldComponents.STICKY_FOOTER
   rows:
     | { label: StaticText; value: StaticText }[]
-    | ((
-        application: Application,
-      ) => { label: StaticText; value: StaticText }[])
+    | ((application: Application) => { label: StaticText; value: StaticText }[])
   widthReferenceTestId: string
   watchFieldIds: string[]
 }
