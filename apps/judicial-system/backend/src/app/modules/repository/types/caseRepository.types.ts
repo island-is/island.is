@@ -337,6 +337,27 @@ export const caseInclude: Includeable[] = [
     as: 'mergeCase',
     include: [
       {
+        model: Defendant,
+        as: 'defendants',
+        attributes: ['id', 'defenderNationalId', 'isDefenderChoiceConfirmed'],
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
         model: CourtSession,
         as: 'courtSessions',
         required: false,
@@ -371,6 +392,19 @@ export const caseInclude: Includeable[] = [
             separate: true,
           },
         ],
+        separate: true,
+      },
+      {
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
+        required: false,
+        order: [['created', 'ASC']],
         separate: true,
       },
       {
@@ -648,4 +682,5 @@ export interface UpdateDefendant {
   indictmentReviewDecision?: IndictmentCaseReviewDecision | null
   publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
   isDrivingLicenseSuspended?: boolean | null
+  isClosedWithoutEnforcement?: boolean
 }
