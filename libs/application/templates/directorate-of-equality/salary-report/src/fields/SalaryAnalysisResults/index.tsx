@@ -201,7 +201,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   // `result`, so always recompute rather than trusting the last analysis.
   useEffect(() => {
     handleAnalyze()
-  }, [handleAnalyze, result])
+  }, [handleAnalyze])
 
   // Re-assert the flags whenever a result appears, so the conditional
   // úrbótaáætlun subsection and the overview gate resolve on a restored draft
