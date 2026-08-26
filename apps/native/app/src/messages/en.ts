@@ -1041,6 +1041,37 @@ export const en: TranslatedMessages = {
   'health.prescriptions.openAttachment': 'Open attachment {arg}',
   'health.prescriptions.attachmentError':
     'An error occurred while fetching the document',
+  'health.prescriptions.renewal': 'Renewal',
+  'health.prescriptions.renew': 'Renew',
+  'health.prescriptions.renewalPossible': 'Can be renewed',
+  'health.prescriptions.renewalValid': 'Valid prescription',
+  'health.prescriptions.renewalNotAvailable': 'Renewal not available',
+  'health.prescriptions.renewalBlockedIsRegiment':
+    'Medical treatment courses cannot be renewed here',
+  'health.prescriptions.renewalBlockedNoMedCard': 'No drug card registered',
+  'health.prescriptions.renewalBlockedNoHealthClinic':
+    'No registered health clinic',
+  'health.prescriptions.renewalBlockedNotFullyDispensed':
+    'Renewal is not available because the previous prescription has not been fully dispensed',
+  'health.prescriptions.renewalBlockedPendingRequest':
+    'Renewal request pending',
+  'health.prescriptions.renewalBlockedRejectedRequest':
+    'Prescription renewal request denied',
+  'health.prescriptions.renewalBlockedDismissedRequest':
+    'Renewal request dismissed',
+  'health.prescriptions.renewalBlockedAlreadyRequested':
+    'Renewal request is already in process',
+  'health.prescriptions.renewalBlockedMoreRecentExists':
+    'Renewal is not available because a more recent active prescription was found',
+  'health.prescriptions.renewalBlockedSpecialistOnly':
+    'Renewal is not available because this is a specialist only prescription',
+  'health.prescriptions.renewalBlockedNoRenewalTargets':
+    'Renewal not available',
+  'health.prescriptions.renewalBlockedInvalidRenewalTarget':
+    'Renewal not available',
+  'health.prescriptions.renewalBlockedRecipientExcludesAtc':
+    'Renewal not available because',
+  'health.prescriptions.renewalBlockedOther': 'Unknown reason',
   'health.prescriptions.issueDate': 'Issue date',
   'health.prescriptions.expiresAt': 'Expires at',
   'health.prescriptions.doctor': 'Doctors',

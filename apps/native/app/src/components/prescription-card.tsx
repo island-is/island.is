@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { FormattedMessage, IntlShape, useIntl } from 'react-intl'
 import { ActivityIndicator, Image, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -9,9 +9,11 @@ import externalLinkIcon from '@/assets/icons/external-link.png'
 import {
   HealthDirectoratePrescription,
   HealthDirectoratePrescriptionDocument,
+  HealthDirectoratePrescriptionRenewalBlockedReason,
+  HealthDirectoratePrescriptionRenewalStatus,
   useGetPrescriptionDocumentsLazyQuery,
 } from '@/graphql/types/schema'
-import { ExpandableCard, Link, LinkText, Typography } from '@/ui'
+import { Alert, Button, ExpandableCard, Link, LinkText, Typography } from '@/ui'
 import checkmarkIcon from '@/ui/assets/icons/check.png'
 import { capitalizeEveryWord } from '@/utils/capitalize'
 
@@ -46,6 +48,15 @@ const DispensationCheckmark = styled.View`
   padding-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
+const StatusPill = styled.View`
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.color.blue200};
+  border-radius: ${({ theme }) => theme.border.radius.large};
+  padding-vertical: ${({ theme }) => theme.spacing[1]}px;
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  align-items: center;
+`
+
 type PrescriptionRow = {
   data?: React.ReactNode
   label?: string
@@ -55,9 +66,138 @@ type PrescriptionRow = {
 
 type PrescriptionCardProps = {
   prescription: HealthDirectoratePrescription
+  onRenewPress?: () => void
 }
 
-export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
+type BlockedReasonInfo = {
+  description: string
+  // Whether the prescription itself is still valid (positive state).
+  isValid: boolean
+  // Whether the description should surface in the info alert box.
+  showReason: boolean
+}
+
+// Mirrors the web portal's mapBlockedStatus (libs/portals/my-pages/health).
+const getBlockedReasonInfo = (
+  reason: HealthDirectoratePrescriptionRenewalBlockedReason | null | undefined,
+  intl: IntlShape,
+): BlockedReasonInfo => {
+  const Reason = HealthDirectoratePrescriptionRenewalBlockedReason
+  const describe = (id: string) => intl.formatMessage({ id })
+  switch (reason) {
+    case Reason.IsRegiment:
+      return {
+        description: describe('health.prescriptions.renewalBlockedIsRegiment'),
+        isValid: false,
+        showReason: true,
+      }
+    case Reason.NoMedCard:
+      return {
+        description: describe('health.prescriptions.renewalBlockedNoMedCard'),
+        isValid: false,
+        showReason: true,
+      }
+    case Reason.NoHealthClinic:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedNoHealthClinic',
+        ),
+        isValid: false,
+        showReason: true,
+      }
+    case Reason.NotFullyDispensed:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedNotFullyDispensed',
+        ),
+        isValid: true,
+        showReason: false,
+      }
+    case Reason.PendingRequest:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedPendingRequest',
+        ),
+        isValid: false,
+        showReason: false,
+      }
+    case Reason.RejectedRequest:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedRejectedRequest',
+        ),
+        isValid: false,
+        showReason: false,
+      }
+    case Reason.DismissedRequest:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedDismissedRequest',
+        ),
+        isValid: false,
+        showReason: true,
+      }
+    case Reason.AlreadyRequested:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedAlreadyRequested',
+        ),
+        isValid: false,
+        showReason: false,
+      }
+    case Reason.MoreRecentPrescriptionExists:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedMoreRecentExists',
+        ),
+        isValid: false,
+        showReason: true,
+      }
+    case Reason.SpecialistOnlyPrescription:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedSpecialistOnly',
+        ),
+        isValid: false,
+        showReason: true,
+      }
+    case Reason.NoRenewalTargets:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedNoRenewalTargets',
+        ),
+        isValid: false,
+        showReason: true,
+      }
+    case Reason.InvalidRenewalTarget:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedInvalidRenewalTarget',
+        ),
+        isValid: false,
+        showReason: true,
+      }
+    case Reason.RecipientExcludesAtc:
+      return {
+        description: describe(
+          'health.prescriptions.renewalBlockedRecipientExcludesAtc',
+        ),
+        isValid: false,
+        showReason: true,
+      }
+    default:
+      return {
+        description: describe('health.prescriptions.renewalBlockedOther'),
+        isValid: false,
+        showReason: true,
+      }
+  }
+}
+
+export const PrescriptionCard = ({
+  prescription,
+  onRenewPress,
+}: PrescriptionCardProps) => {
   const intl = useIntl()
   const theme = useTheme()
   const [open, setOpen] = useState(false)
@@ -89,6 +229,37 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
 
   const isExpired =
     prescription.expiryDate && new Date(prescription.expiryDate) < new Date()
+
+  // Renewal presentation, mirroring the web portal's decision order:
+  // renewalStatus wins → else renewable shows the action → else blocked reason.
+  const canRenew = !!prescription.isRenewable && !prescription.renewalStatus
+  const renewalInfo = ((): { statusLabel: string; alertMessage?: string } => {
+    if (prescription.renewalStatus) {
+      const isValid =
+        prescription.renewalStatus ===
+        HealthDirectoratePrescriptionRenewalStatus.Approved
+      return {
+        statusLabel: intl.formatMessage({
+          id: isValid
+            ? 'health.prescriptions.renewalValid'
+            : 'health.prescriptions.renewalNotAvailable',
+        }),
+        alertMessage: prescription.renewResponseMessage ?? undefined,
+      }
+    }
+    const blocked = getBlockedReasonInfo(prescription.renewalBlockedReason, intl)
+    return {
+      statusLabel: intl.formatMessage({
+        id: blocked.isValid
+          ? 'health.prescriptions.renewalValid'
+          : 'health.prescriptions.renewalNotAvailable',
+      }),
+      alertMessage:
+        blocked.showReason || prescription.renewResponseMessage
+          ? prescription.renewResponseMessage || blocked.description
+          : undefined,
+    }
+  })()
 
   const attachmentRows: PrescriptionRow[] = documentsLoading
     ? [
@@ -133,6 +304,16 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
         : undefined,
       label: 'health.prescriptions.drug',
     },
+    ...(canRenew
+      ? [
+          {
+            data: intl.formatMessage({
+              id: 'health.prescriptions.renewalPossible',
+            }),
+            label: 'health.prescriptions.renewal',
+          },
+        ]
+      : []),
     {
       data: prescription.strength || undefined,
       label: 'health.prescriptions.strength',
@@ -188,6 +369,20 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
     })
   }, [fetchDocuments])
 
+  // Always visible (collapsed + expanded): the renew action or the status pill.
+  const renewalElement = canRenew ? (
+    <Button
+      isOutlined
+      title={intl.formatMessage({ id: 'health.prescriptions.renew' })}
+      onPress={onRenewPress}
+      style={{ alignSelf: 'stretch' }}
+    />
+  ) : (
+    <StatusPill>
+      <Typography variant="body3">{renewalInfo.statusLabel}</Typography>
+    </StatusPill>
+  )
+
   return (
     <ExpandableCard
       title={
@@ -213,8 +408,14 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       icon={chevronDown}
       onPress={onPress}
       open={open}
+      footer={renewalElement}
     >
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
+        {renewalInfo.alertMessage ? (
+          <View style={{ marginBottom: theme.spacing[2] }}>
+            <Alert type="info" hasBorder message={renewalInfo.alertMessage} />
+          </View>
+        ) : null}
         <View>
           <TableHeader>
             <Typography variant="eyebrow">

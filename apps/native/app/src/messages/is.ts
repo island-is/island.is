@@ -1034,6 +1034,35 @@ export const is = {
   'health.prescriptions.attachment': 'Fylgiskjal {arg}',
   'health.prescriptions.openAttachment': 'Opna fylgiskjal {arg}',
   'health.prescriptions.attachmentError': 'Villa kom upp við að sækja skjal',
+  'health.prescriptions.renewal': 'Endurnýjun',
+  'health.prescriptions.renew': 'Endurnýja',
+  'health.prescriptions.renewalPossible': 'Hægt að endurnýja',
+  'health.prescriptions.renewalValid': 'Gild lyfjaávísun',
+  'health.prescriptions.renewalNotAvailable': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedIsRegiment':
+    'Ekki er hægt að endurnýja lyfjakúr',
+  'health.prescriptions.renewalBlockedNoMedCard': 'Ekkert lyfjakort skráð',
+  'health.prescriptions.renewalBlockedNoHealthClinic':
+    'Engin heilsugæslustöð skráð',
+  'health.prescriptions.renewalBlockedNotFullyDispensed': 'Ekki öll lyf sótt',
+  'health.prescriptions.renewalBlockedPendingRequest':
+    'Beiðni um endurnýjun í vinnslu',
+  'health.prescriptions.renewalBlockedRejectedRequest':
+    'Beiðni um endurnýjun hafnað',
+  'health.prescriptions.renewalBlockedDismissedRequest':
+    'Beiðni um endurnýjun vísað frá',
+  'health.prescriptions.renewalBlockedAlreadyRequested':
+    'Endurnýjun þegar í vinnslu',
+  'health.prescriptions.renewalBlockedMoreRecentExists':
+    'Endurnýjun ekki í boði vegna þess að nýrri lyfseðill er til staðar',
+  'health.prescriptions.renewalBlockedSpecialistOnly': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedNoRenewalTargets':
+    'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedInvalidRenewalTarget':
+    'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedRecipientExcludesAtc':
+    'Endurnýjun ekki í boði vegna',
+  'health.prescriptions.renewalBlockedOther': 'Óþekkt ástæða',
   'health.prescriptions.issueDate': 'Útgáfudagur',
   'health.prescriptions.expiresAt': 'Gildir til',
   'health.prescriptions.doctor': 'Læknir',
