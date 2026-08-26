@@ -336,7 +336,8 @@ describe('BankTransferService', () => {
         expect(bankTransferPaymentModel.create).toHaveBeenCalledTimes(1)
         expect(result).toEqual({
           providerPaymentId: 'prov-1',
-          scaRedirectUrl: 'https://blikk/sca',
+          // Not onboarding, so no URL is handed back — the payer's SCA URL arrives on a poll.
+          scaRedirectUrl: undefined,
           expiresAt: expect.any(Date),
           onboardingRequired: false,
         })
@@ -458,7 +459,7 @@ describe('BankTransferService', () => {
       expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
     })
 
-    it('calls Blikk, persists the row, emits payment_started, and returns scaRedirectUrl + expiresAt', async () => {
+    it('calls Blikk, persists the row, emits payment_started, and returns expiresAt', async () => {
       const blikkSpy = mockBlikkCreate()
 
       const result = await service.create(createInput)
@@ -510,13 +511,107 @@ describe('BankTransferService', () => {
       })
 
       // expiresAt on the response matches the row (which is the same value we sent Blikk),
-      // and onboardingRequired passes through from the provider result (true-case covered
-      // in the createBankTransferPayment describe).
+      // and onboardingRequired passes through from the provider result.
       expect(result).toEqual({
         providerPaymentId: 'prov-1',
-        scaRedirectUrl: 'https://blikk/sca',
+        // The row keeps the create-time URL for the record, but the response withholds it: the
+        // URL the payer is shown comes from a poll at SCA_REQUIRED and is a different URL.
+        scaRedirectUrl: undefined,
         expiresAt: rowArg.expiresAt,
         onboardingRequired: false,
+      })
+      expect(rowArg.scaRedirectUrl).toBe('https://blikk/sca')
+    })
+
+    // The one case that still needs the URL from `create`: the FE redirects to it immediately,
+    // before any polling exists. Breaking this silently strands first-time payers.
+    it('still returns the onboarding URL when onboarding is required', async () => {
+      jest.spyOn(service, 'createBankTransferPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'DRAFT',
+        status: BankTransferStatus.PENDING,
+        scaRedirectUrl: 'https://light.blikk.tech/onboarding/prov-1',
+        onboardingRequired: true,
+      })
+
+      const result = await service.create(createInput)
+
+      expect(result).toMatchObject({
+        onboardingRequired: true,
+        scaRedirectUrl: 'https://light.blikk.tech/onboarding/prov-1',
+      })
+    })
+
+    // A failed insert leaves the Blikk payment live and untrackable: it reaches SCA_REQUIRED on its
+    // own and a back-channel bank pushes the approval to the payer's app, so an approval would
+    // settle money we have no record of. It must be cancelled while still DRAFT.
+    describe('orphaned provider payment', () => {
+      it('cancels the Blikk payment, emits payment_failed, and rethrows when the row insert fails', async () => {
+        mockBlikkCreate()
+        const insertError = new Error('duplicate key value')
+        bankTransferPaymentModel.create.mockRejectedValue(insertError)
+
+        await expect(service.create(createInput)).rejects.toThrow(insertError)
+
+        expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
+        // The attempt never started, so only the failure is recorded.
+        expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+        expect(
+          paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+        ).toMatchObject({
+          paymentFlowId: 'flow-1',
+          reason: 'payment_failed',
+          // The event is persisted before delivery, so it is the durable record of the orphan —
+          // it has to carry the provider id for the payment to be reconcilable by id later.
+          metadata: { cancelled: true, providerPaymentId: 'prov-1' },
+        })
+      })
+
+      it('logs an error when Blikk refuses the cancel, since the payment may still settle', async () => {
+        mockBlikkCreate()
+        bankTransferPaymentModel.create.mockRejectedValue(
+          new Error('insert failed'),
+        )
+        blikkClient.cancelPayment.mockRejectedValue(
+          new BlikkClientError('conflict', 409),
+        )
+
+        await expect(service.create(createInput)).rejects.toThrow(
+          'insert failed',
+        )
+
+        expect(logger.error).toHaveBeenCalledWith(
+          expect.stringContaining('may still settle with no local record'),
+          expect.objectContaining({ error: 'insert failed' }),
+        )
+        // The uncancelled payment is the case that most needs a durable record to reconcile from.
+        expect(
+          paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+        ).toMatchObject({
+          reason: 'payment_failed',
+          metadata: { cancelled: false, providerPaymentId: 'prov-1' },
+        })
+      })
+
+      // cancelBlikkPayment throws FailedToFetchBankTransfer when Blikk is unreachable. That must
+      // not surface in place of the insert error — the caller needs the real cause.
+      it('propagates the insert error, not the cancel error, when Blikk is unreachable', async () => {
+        mockBlikkCreate()
+        bankTransferPaymentModel.create.mockRejectedValue(
+          new Error('connection terminated'),
+        )
+        // No status on the error → cancelBlikkPayment rethrows as a BadRequestException.
+        blikkClient.cancelPayment.mockRejectedValue(
+          new BlikkClientError('socket hang up'),
+        )
+
+        await expect(service.create(createInput)).rejects.toThrow(
+          'connection terminated',
+        )
+        expect(logger.error).toHaveBeenCalledWith(
+          expect.stringContaining('may still settle with no local record'),
+          expect.objectContaining({ error: 'connection terminated' }),
+        )
       })
     })
 
@@ -753,6 +848,13 @@ describe('BankTransferService', () => {
             providerMessage: 'provider detail',
           },
         })
+        // The provider's reason must reach the application log too — logPaymentFlowUpdate only
+        // logs its message text, so otherwise a provider-side fault failing every payment (an
+        // expired Blikk certificate, say) shows up with no reason attached.
+        expect(logger.warn).toHaveBeenCalledWith(
+          expect.stringContaining(`Bank transfer ${status}`),
+          { rawStatus, providerMessage: 'provider detail' },
+        )
         expect(result.status).toBe(status)
         // The expiry-aware failure reason passes through (fresh row → 1:1 with the status).
         expect(result.failureReason).toBe(failureReason)
@@ -817,19 +919,39 @@ describe('BankTransferService', () => {
       expect(result.failureReason).toBeUndefined()
     })
 
-    it('reports sca_required for a DRAFT payment whose row already carries the SCA URL (no dots→QR flicker after create)', async () => {
+    it('reports no SCA URL at SCA_REQUIRED when Blikk omits one, even though the row holds a creation-time URL (back-channel SCA)', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        scaRedirectUrl: 'https://blikk/sca/original',
+      })
+      mockGetPayment(BankTransferStatus.PENDING, 'SCA_REQUIRED')
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      // Blikk owns the URL at SCA_REQUIRED: empty means the bank pushed a notification instead. The
+      // row holds the provider-hosted URL from create, which is not the bank's authorisation page —
+      // never substitute it.
+      expect(result).toMatchObject({
+        status: BankTransferStatus.PENDING,
+        pendingStatus: BankTransferPendingStatus.SCA_REQUIRED,
+        scaRedirectUrl: undefined,
+      })
+    })
+
+    it('withholds the row creation-time SCA URL while Blikk is still at DRAFT', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue({
         ...activeRow,
         lastKnownStatus: 'DRAFT',
         scaRedirectUrl: 'https://stage.blikk.tech/sca/prov-1',
       })
-      // Blikk GET repeats DRAFT and omits the URL — the row's creation-time URL is the fallback.
+      // Blikk GET repeats DRAFT and omits the URL. Before SCA_REQUIRED the row's creation-time URL
+      // is not known to be usable — offering it flashes a QR that a back-channel bank then removes.
       mockGetPayment(BankTransferStatus.PENDING, 'DRAFT')
 
       const result = await service.verify({ paymentFlowId: 'flow-1' })
 
-      expect(result.pendingStatus).toBe(BankTransferPendingStatus.SCA_REQUIRED)
-      expect(result.scaRedirectUrl).toBe('https://stage.blikk.tech/sca/prov-1')
+      expect(result.pendingStatus).toBe(BankTransferPendingStatus.PROCESSING)
+      expect(result.scaRedirectUrl).toBeUndefined()
     })
 
     it('persists a newly minted SCA URL alongside the raw-status drift (back-channel create → SCA_REQUIRED)', async () => {
@@ -1239,7 +1361,7 @@ describe('BankTransferService', () => {
 
     // Any other non-2xx means Blikk still holds the session — refuse, keep the row live.
     it.each<[string, number]>([
-      ['405 method-not-allowed', 405],
+      ['400 bad-request (past DRAFT, no longer cancellable)', 400],
       ['409 conflict', 409],
     ])(
       'refuses and keeps the row live when the Blikk cancel returns %s',
@@ -1514,7 +1636,7 @@ describe('BankTransferService', () => {
         },
       )
       // At SCA_REQUIRED Blikk is authoritative for the URL: it omitted one (back-channel SCA), so we
-      // surface none rather than resurrecting the row's creation-time URL.
+      // surface none rather than resurrecting the row's creation-time onboarding URL.
       expect(result).toEqual({
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
         updatedAt: baseRow.modified,
@@ -1524,7 +1646,7 @@ describe('BankTransferService', () => {
       })
     })
 
-    it('surfaces sca_required right after create (DRAFT + SCA URL) so SSR renders the QR without a flicker', async () => {
+    it('reports processing with no URL while Blikk is still at DRAFT, even though the row holds one', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue({
         ...baseRow,
         lastKnownStatus: 'DRAFT',
@@ -1535,7 +1657,27 @@ describe('BankTransferService', () => {
 
       expect(result).toMatchObject({
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
-        bankTransferScaRedirectUrl: 'https://blikk/sca',
+        bankTransferScaRedirectUrl: undefined,
+        bankTransferPendingStatus: BankTransferPendingStatus.PROCESSING,
+      })
+    })
+
+    // The ISB case end to end: Blikk settles on SCA_REQUIRED with no URL because the bank pushes
+    // the approval to the payer's banking app. The row's creation-time URL must not resurface, or
+    // the screen flashes an unusable QR before switching to "check your phone".
+    it('reports sca_required with no URL for a back-channel bank, never the row creation-time URL', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'SCA_REQUIRED',
+        scaRedirectUrl: 'https://payment.blikk.tech/?id=stale',
+      })
+      mockGetPayment(BankTransferStatus.PENDING, 'SCA_REQUIRED')
+
+      const result = await service.getBankTransferStatus('flow-1')
+
+      expect(result).toMatchObject({
+        paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
+        bankTransferScaRedirectUrl: undefined,
         bankTransferPendingStatus: BankTransferPendingStatus.SCA_REQUIRED,
       })
     })
@@ -1722,12 +1864,34 @@ describe('BankTransferService', () => {
       expect(result).toEqual({
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
         updatedAt: baseRow.modified,
-        bankTransferScaRedirectUrl: 'https://blikk/sca',
+        // No fresh Blikk status means no URL to offer: the row's creation-time URL is never
+        // surfaced, so the payer waits until a poll gets through rather than being shown a URL
+        // that may not be usable.
+        bankTransferScaRedirectUrl: undefined,
         bankTransferExpiresAt: baseRow.expiresAt,
         // Cached raw status is PENDING → processing.
         bankTransferPendingStatus: BankTransferPendingStatus.PROCESSING,
       })
       expect(logger.warn).toHaveBeenCalled()
+    })
+
+    // Without a fresh status we cannot know SCA is outstanding, and the URL only ever comes from a
+    // refresh. Reporting the cached `SCA_REQUIRED` would render "check your phone" — telling a
+    // redirect-bank payer to wait for a notification their bank never sends.
+    it('reports processing, not the cached sca_required, when the Blikk refresh fails', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'SCA_REQUIRED',
+      })
+      jest.spyOn(service, 'getPayment').mockRejectedValue(new Error('network'))
+
+      const result = await service.getBankTransferStatus('flow-1')
+
+      expect(result).toMatchObject({
+        paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
+        bankTransferScaRedirectUrl: undefined,
+        bankTransferPendingStatus: BankTransferPendingStatus.PROCESSING,
+      })
     })
 
     it('refreshes from Blikk and soft-deletes an expired PENDING row that Blikk confirms is not settled', async () => {
