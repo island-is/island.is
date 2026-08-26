@@ -12,6 +12,7 @@ air-discount-scheme-backend:
     DB_NAME: 'air_discount_scheme_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'air_discount_scheme_backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ENVIRONMENT: 'staging'
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
@@ -47,7 +48,7 @@ air-discount-scheme-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -95,7 +96,7 @@ air-discount-scheme-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -147,6 +148,7 @@ api:
     CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -221,6 +223,7 @@ api:
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
     XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4'
     XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
+    XROAD_DRIVING_LICENSE_V6_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v6'
     XROAD_ENERGY_FUNDS_PATH: 'IS-TEST/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1'
     XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
     XROAD_FARMERS_PATH: 'IS-TEST/GOV/7108120120/Afurd-Private/baendur'
@@ -335,7 +338,7 @@ api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -358,7 +361,7 @@ api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -463,6 +466,10 @@ api:
     SKATTUR_TOLLUR_ALMENNT_BASE_URL: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_BASE_URL'
     SKATTUR_TOLLUR_ALMENNT_PASSWORD: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_PASSWORD'
     SKATTUR_TOLLUR_ALMENNT_USERNAME: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_USERNAME'
+    SKATTUR_TOLLUR_REIKNIVEL_API_KEY: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_API_KEY'
+    SKATTUR_TOLLUR_REIKNIVEL_BASE_URL: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_BASE_URL'
+    SKATTUR_TOLLUR_REIKNIVEL_PASSWORD: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_PASSWORD'
+    SKATTUR_TOLLUR_REIKNIVEL_USERNAME: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_USERNAME'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
@@ -521,6 +528,7 @@ application-system-api:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     EHIC_XROAD_PROVIDER_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -578,11 +586,13 @@ application-system-api:
     XROAD_COURT_BANKRUPTCY_CERT_PATH: 'IS-TEST/GOV/10019/Domstolasyslan/JusticePortal-v1'
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1'
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
+    XROAD_DIRECTORATE_OF_EQUALITY_PATH: 'IS-TEST/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti'
     XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: 'IS-TEST/GOV/10011/UTL-Protected/Utl-Umsokn-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
     XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4'
     XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
+    XROAD_DRIVING_LICENSE_V6_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v6'
     XROAD_ENERGY_FUNDS_PATH: 'IS-TEST/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1'
     XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
     XROAD_FINANCES_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeIsland'
@@ -668,7 +678,7 @@ application-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -716,7 +726,7 @@ application-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -804,6 +814,7 @@ application-system-api-worker:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     EHIC_XROAD_PROVIDER_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-staging-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
@@ -855,7 +866,7 @@ application-system-api-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
@@ -868,7 +879,7 @@ application-system-api-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -934,7 +945,7 @@ application-system-form:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -957,7 +968,7 @@ application-system-form:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -984,6 +995,7 @@ cms-importer-energy-fund-import:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
@@ -1005,7 +1017,7 @@ cms-importer-energy-fund-import:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1016,7 +1028,7 @@ cms-importer-energy-fund-import:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1039,6 +1051,7 @@ cms-importer-fsre-buildings-import:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
@@ -1060,7 +1073,7 @@ cms-importer-fsre-buildings-import:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1071,7 +1084,7 @@ cms-importer-fsre-buildings-import:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1096,6 +1109,7 @@ cms-importer-web-sitemap:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     S3_BUCKET: 'island-is-staging-cms-importer'
@@ -1117,7 +1131,7 @@ cms-importer-web-sitemap:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1130,7 +1144,7 @@ cms-importer-web-sitemap:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1160,6 +1174,7 @@ cms-importer-worker:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
@@ -1181,7 +1196,7 @@ cms-importer-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1192,7 +1207,7 @@ cms-importer-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1215,6 +1230,7 @@ consultation-portal:
     BACKEND_DL_URL: 'https://samradapi-test.devland.is/api/Documents/'
     BASEPATH: '/consultation-portal'
     CODE_OWNER: 'Advania'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ENVIRONMENT: 'staging'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
@@ -1240,7 +1256,7 @@ consultation-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1263,7 +1279,7 @@ consultation-portal:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1288,6 +1304,7 @@ consultation-portal:
 download-service:
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
     HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
     HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
@@ -1348,7 +1365,7 @@ download-service:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1371,7 +1388,7 @@ download-service:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1392,6 +1409,7 @@ download-service:
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
+    REQUEST_TIMEOUT_MS: '/k8s/download-service/REQUEST_TIMEOUT_MS'
     XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
     XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
@@ -1419,6 +1437,7 @@ endorsement-system-api:
     DB_NAME: 'services_endorsements_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_endorsements_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_FROM_NAME: 'devland.is'
     EMAIL_REGION: 'eu-west-1'
@@ -1462,7 +1481,7 @@ endorsement-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
@@ -1498,7 +1517,7 @@ endorsement-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1548,7 +1567,7 @@ form-system-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1571,7 +1590,7 @@ form-system-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1610,6 +1629,7 @@ icelandic-names-registry-backend:
     DB_NAME: 'icelandic_names_registry_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'icelandic_names_registry_backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
@@ -1632,7 +1652,7 @@ icelandic-names-registry-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
@@ -1681,7 +1701,7 @@ icelandic-names-registry-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1726,7 +1746,7 @@ island-ui-storybook:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1747,7 +1767,7 @@ island-ui-storybook:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1765,6 +1785,7 @@ license-api:
   enabled: true
   env:
     CODE_OWNER: 'hugsmidjan'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     HUNTING_LICENSE_PASS_TEMPLATE_ID: '1da72d52-a93a-4d0f-8463-1933a2bd210b'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
@@ -1779,6 +1800,7 @@ license-api:
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
     XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4'
     XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
+    XROAD_DRIVING_LICENSE_V6_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v6'
     XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
     XROAD_NVS_PERMITS_PATH: 'IS-TEST/GOV/10085/NVS-Protected/api'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
@@ -1802,7 +1824,7 @@ license-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1825,7 +1847,7 @@ license-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1903,8 +1925,9 @@ payments:
     API_INTERNAL_BASEPATH: 'http://api.islandis.svc.cluster.local'
     APP_EXTERNAL_BASEPATH: 'https://beta.staging01.devland.is'
     BASEPATH: '/greida'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -1928,7 +1951,7 @@ payments:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1951,15 +1974,15 @@ payments:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
-      cpu: '200m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '1024Mi'
     requests:
-      cpu: '100m'
-      memory: '128Mi'
+      cpu: '200m'
+      memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'
@@ -2002,7 +2025,7 @@ portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2025,7 +2048,7 @@ portals-admin:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2053,6 +2076,7 @@ regulations-admin-backend:
     DB_NAME: 'regulations_admin_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'regulations_admin_backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
@@ -2090,7 +2114,7 @@ regulations-admin-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2136,7 +2160,7 @@ regulations-admin-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2172,6 +2196,7 @@ search-indexer-service:
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     ENVIRONMENT: 'staging'
@@ -2331,7 +2356,7 @@ service-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2354,7 +2379,7 @@ service-portal:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2384,6 +2409,7 @@ service-portal-api:
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'service_portal_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
@@ -2425,7 +2451,7 @@ service-portal-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -2471,7 +2497,7 @@ service-portal-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2517,6 +2543,7 @@ services-bff-portals-admin:
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     CODE_OWNER: 'core'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
     IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/document-provider:institution","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin","@admin.island.is/payments"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
@@ -2544,7 +2571,7 @@ services-bff-portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2567,7 +2594,7 @@ services-bff-portals-admin:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2603,8 +2630,9 @@ services-bff-portals-my-pages:
     BFF_NAME: 'minarsidur'
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@island.is/applications/directorate-of-equality","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -2630,7 +2658,7 @@ services-bff-portals-my-pages:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2653,7 +2681,7 @@ services-bff-portals-my-pages:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2681,6 +2709,7 @@ services-documents:
     DB_NAME: 'services_documents'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_documents'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
@@ -2704,7 +2733,7 @@ services-documents:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
@@ -2740,7 +2769,7 @@ services-documents:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2770,6 +2799,7 @@ services-form-system-api:
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_form_system_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
     FORM_SYSTEM_BUCKET: 'island-is-staging-form-system-presign-bucket'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
@@ -2820,7 +2850,7 @@ services-form-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2866,7 +2896,7 @@ services-form-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2914,6 +2944,7 @@ services-form-system-api-worker:
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_form_system_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
     FORM_SYSTEM_BUCKET: 'island-is-staging-form-system-presign-bucket'
     LOG_LEVEL: 'info'
@@ -2946,7 +2977,7 @@ services-form-system-api-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
@@ -2959,7 +2990,7 @@ services-form-system-api-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2984,6 +3015,7 @@ services-payment-flow-update-handler:
   enabled: true
   env:
     CODE_OWNER: 'stefna'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LANDSPITALI_WEB_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Beinn styrkur - Landspítali'
     LANDSPITALI_WEB_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Minningarkort - Landspítali'
     LANDSPITALI_WEB_PAYMENT_CONFIRMATION_SEND_FROM_EMAIL: 'development@island.is'
@@ -3012,7 +3044,7 @@ services-payment-flow-update-handler:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -3035,7 +3067,7 @@ services-payment-flow-update-handler:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3059,12 +3091,14 @@ services-payments:
   enabled: true
   env:
     BLIKK_API_BASE_URL: 'https://stage.blikk.tech'
+    BLIKK_ONBOARDING_URL: 'https://light.blikk.tech'
     BLIKK_PAYMENT_TTL_SECONDS: '300'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_payments'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
@@ -3104,7 +3138,7 @@ services-payments:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -3160,7 +3194,7 @@ services-payments:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3209,11 +3243,15 @@ services-payments-worker:
     - 'node'
   enabled: true
   env:
+    BLIKK_API_BASE_URL: 'https://stage.blikk.tech'
+    BLIKK_ONBOARDING_URL: 'https://light.blikk.tech'
+    BLIKK_PAYMENT_TTL_SECONDS: '300'
     CODE_OWNER: 'aranja'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_payments'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
@@ -3251,7 +3289,7 @@ services-payments-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
@@ -3264,7 +3302,7 @@ services-payments-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3275,6 +3313,7 @@ services-payments-worker:
       memory: '128Mi'
   schedule: '*/5 * * * *'
   secrets:
+    BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
@@ -3301,6 +3340,7 @@ services-sessions:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions_read'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3328,7 +3368,7 @@ services-sessions:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -3351,7 +3391,7 @@ services-sessions:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3384,6 +3424,7 @@ services-sessions-cleanup:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -3408,7 +3449,7 @@ services-sessions-cleanup:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -3419,7 +3460,7 @@ services-sessions-cleanup:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3449,6 +3490,7 @@ services-sessions-worker:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3476,7 +3518,7 @@ services-sessions-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -3513,7 +3555,7 @@ services-sessions-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3545,6 +3587,7 @@ services-university-gateway:
     DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_university_gateway'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
@@ -3584,7 +3627,7 @@ services-university-gateway:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -3643,7 +3686,7 @@ services-university-gateway:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3678,6 +3721,7 @@ services-university-gateway-worker:
     DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_university_gateway'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
@@ -3717,7 +3761,7 @@ services-university-gateway-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
@@ -3730,7 +3774,7 @@ services-university-gateway-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3756,6 +3800,7 @@ skilavottord-web:
   enabled: true
   env:
     API_URL: 'http://skilavottord-ws'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ENVIRONMENT: 'staging'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3779,7 +3824,7 @@ skilavottord-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -3802,7 +3847,7 @@ skilavottord-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3834,6 +3879,7 @@ skilavottord-ws:
     DB_NAME: 'skilavottord'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'skilavottord'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3856,7 +3902,7 @@ skilavottord-ws:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -3902,7 +3948,7 @@ skilavottord-ws:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3949,6 +3995,7 @@ user-notification:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
@@ -4001,7 +4048,7 @@ user-notification:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -4033,7 +4080,7 @@ user-notification:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4081,6 +4128,7 @@ user-notification-birthday-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
@@ -4133,7 +4181,7 @@ user-notification-birthday-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -4146,7 +4194,7 @@ user-notification-birthday-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4190,6 +4238,7 @@ user-notification-cleanup-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -4215,7 +4264,7 @@ user-notification-cleanup-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -4251,7 +4300,7 @@ user-notification-cleanup-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4290,6 +4339,7 @@ user-notification-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
@@ -4343,7 +4393,7 @@ user-notification-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -4379,7 +4429,7 @@ user-notification-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4415,6 +4465,7 @@ web:
   env:
     API_URL: 'http://api'
     CODE_OWNER: 'stefna'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
@@ -4449,7 +4500,7 @@ web:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -4472,7 +4523,7 @@ web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4499,6 +4550,7 @@ xroad-collector:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
@@ -4526,7 +4578,7 @@ xroad-collector:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
@@ -4539,7 +4591,7 @@ xroad-collector:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:

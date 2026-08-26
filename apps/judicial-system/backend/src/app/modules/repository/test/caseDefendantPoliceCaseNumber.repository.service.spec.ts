@@ -101,8 +101,8 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
   describe('resolvePoliceCaseNumbersForCases', () => {
     it('sets policeCaseNumbers from junction when rows exist', async () => {
       mockModel.findAll.mockResolvedValue([
-        { caseId: 'case-a', policeCaseNumber: '007-2' },
-        { caseId: 'case-a', policeCaseNumber: '007-1' },
+        { caseId: 'case-a', policeCaseNumber: '007-1', created: new Date(1) },
+        { caseId: 'case-a', policeCaseNumber: '007-2', created: new Date(2) },
       ])
 
       let numbers = ['legacy']
@@ -185,13 +185,66 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
     })
   })
 
-  describe('findDistinctPoliceCaseNumbersByCaseIds', () => {
-    it('returns sorted distinct numbers per case id', async () => {
+  describe('findAssignedDefendantIds', () => {
+    it('filters on case, police case numbers and defendants, and de-duplicates', async () => {
       mockModel.findAll.mockResolvedValue([
-        { caseId: 'case-a', policeCaseNumber: '007-2' },
-        { caseId: 'case-a', policeCaseNumber: '007-1' },
-        { caseId: 'case-a', policeCaseNumber: '007-1' },
-        { caseId: 'case-b', policeCaseNumber: '008' },
+        { defendantId: 'def-a' },
+        { defendantId: 'def-b' },
+        { defendantId: 'def-a' },
+      ])
+
+      const res = await service.findAssignedDefendantIds(
+        'case-1',
+        ['007-1', '007-2'],
+        ['def-a', 'def-b', 'def-c'],
+      )
+
+      expect(mockModel.findAll).toHaveBeenCalledWith({
+        where: {
+          caseId: 'case-1',
+          policeCaseNumber: ['007-1', '007-2'],
+          defendantId: ['def-a', 'def-b', 'def-c'],
+        },
+        attributes: ['defendantId'],
+      })
+      expect(res).toEqual(['def-a', 'def-b'])
+    })
+
+    it('drops rows without a defendant id', async () => {
+      mockModel.findAll.mockResolvedValue([
+        { defendantId: null },
+        { defendantId: undefined },
+        { defendantId: 'def-a' },
+      ])
+
+      const res = await service.findAssignedDefendantIds(
+        'case-1',
+        ['007-1'],
+        ['def-a'],
+      )
+
+      expect(res).toEqual(['def-a'])
+    })
+
+    it('does not query when there are no police case numbers or no defendants', async () => {
+      expect(
+        await service.findAssignedDefendantIds('case-1', [], ['def-a']),
+      ).toEqual([])
+      expect(
+        await service.findAssignedDefendantIds('case-1', ['007-1'], []),
+      ).toEqual([])
+
+      expect(mockModel.findAll).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('findDistinctPoliceCaseNumbersByCaseIds', () => {
+    it('returns distinct numbers per case id in created order', async () => {
+      mockModel.findAll.mockResolvedValue([
+        { caseId: 'case-a', policeCaseNumber: '007-1', created: new Date(1) },
+        { caseId: 'case-a', policeCaseNumber: '007-2', created: new Date(2) },
+        { caseId: 'case-a', policeCaseNumber: '007-1', created: new Date(1) },
+        { caseId: 'case-b', policeCaseNumber: '008', created: new Date(3) },
       ])
 
       const map = await service.findDistinctPoliceCaseNumbersByCaseIds(
@@ -201,7 +254,11 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
 
       expect(mockModel.findAll).toHaveBeenCalledWith({
         where: { caseId: ['case-a', 'case-b', 'case-c'] },
-        attributes: ['caseId', 'policeCaseNumber'],
+        attributes: ['caseId', 'policeCaseNumber', 'created'],
+        order: [
+          ['created', 'ASC'],
+          ['policeCaseNumber', 'ASC'],
+        ],
         transaction,
       })
       expect(map.get('case-a')).toEqual(['007-1', '007-2'])

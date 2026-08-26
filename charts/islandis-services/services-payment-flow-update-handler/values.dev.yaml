@@ -20,6 +20,7 @@ name: 'services-payment-flow-update-handler'
 enabled: true
 env:
   CODE_OWNER: 'stefna'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   LANDSPITALI_WEB_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Beinn styrkur - Landspítali'
   LANDSPITALI_WEB_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Minningarkort - Landspítali'
   LANDSPITALI_WEB_PAYMENT_CONFIRMATION_SEND_FROM_EMAIL: 'development@island.is'
@@ -48,7 +49,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   internal-gw:
@@ -71,7 +72,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:

@@ -1,17 +1,11 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
   Button,
-  Checkbox,
   Icon,
   Input,
   Select,
@@ -21,32 +15,33 @@ import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  isTrafficViolationIndictmentCount,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
+import type { SubstanceMap } from '@island.is/judicial-system/types'
+import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/types'
 import {
   BlueBox,
+  CheckboxList,
   IndictmentInfo,
   SectionHeading,
+  TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
   IndictmentCount as TIndictmentCount,
-  IndictmentCountOffense,
   IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import { textToHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
+import type {
   UpdateIndictmentCount,
   UpdateIndictmentCountState,
-  useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useLawTag } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   getDefaultDefendantGender,
   isPartiallyVisible,
@@ -55,7 +50,6 @@ import {
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
 import { strings } from './IndictmentCount.strings'
-import * as styles from './IndictmentCount.css'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -75,6 +69,12 @@ interface Props {
 }
 
 type Law = [number, number]
+
+// Decodes entities and strips tags so an otherwise-empty editor document
+// (e.g. a lone &nbsp; paragraph) doesn't pass the required check.
+const htmlToPlainText = (html: string) =>
+  new DOMParser().parseFromString(html, 'text/html').body.textContent?.trim() ??
+  ''
 
 const driversLicenceLaws: Law[] = [[58, 1]]
 const generalLaws: Law[] = [[95, 1]]
@@ -244,6 +244,12 @@ export const IndictmentCount: FC<Props> = ({
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
     : []
+
+  // Legacy counts store the incident description as plain text; convert it so
+  // the rich text editor preserves its line breaks. Rich text passes through.
+  const incidentDescriptionHtml = textToHtml(
+    indictmentCount.incidentDescription ?? '',
+  )
 
   const gender = useMemo(
     () => getDefaultDefendantGender(workingCase.defendants),
@@ -483,31 +489,18 @@ export const IndictmentCount: FC<Props> = ({
               heading="h4"
               marginBottom={2}
             />
-            <div className={styles.indictmentSubtypesContainter}>
-              {subtypes.map((subtype: IndictmentSubtype) => (
-                <div
-                  className={styles.indictmentSubtypesItem}
-                  key={`${subtype}-${indictmentCount.id}`}
-                >
-                  <Checkbox
-                    name={`${subtype}-${indictmentCount.id}`}
-                    value={subtype}
-                    label={capitalize(indictmentSubtypes[subtype])}
-                    checked={
-                      indictmentCount.indictmentCountSubtypes?.includes(
-                        subtype,
-                      ) ?? false
-                    }
-                    onChange={(evt) => {
-                      handleSubtypeChange(subtype, evt.target.checked)
-                    }}
-                    backgroundColor="white"
-                    large
-                    filled
-                  />
-                </div>
-              ))}
-            </div>
+            <CheckboxList
+              blueBox={false}
+              checkboxes={subtypes.map((subtype: IndictmentSubtype) => ({
+                id: `${subtype}-${indictmentCount.id}`,
+                title: capitalize(indictmentSubtypes[subtype]),
+                checked:
+                  indictmentCount.indictmentCountSubtypes?.includes(subtype) ??
+                  false,
+                onChange: (checked: boolean) =>
+                  handleSubtypeChange(subtype, checked),
+              }))}
+            />
           </Box>
         )}
       </Box>
@@ -651,42 +644,47 @@ export const IndictmentCount: FC<Props> = ({
           marginBottom={2}
         />
         <Box marginBottom={2}>
-          <Input
-            name="incidentDescription"
-            autoComplete="off"
+          <TinyMCE
+            data-testid="incidentDescription"
             label={formatMessage(strings.incidentDescriptionLabel)}
             placeholder={formatMessage(strings.incidentDescriptionPlaceholder)}
-            errorMessage={incidentDescriptionErrorMessage}
-            hasError={incidentDescriptionErrorMessage !== ''}
-            value={indictmentCount.incidentDescription ?? ''}
-            onChange={(event) => {
+            defaultValue={incidentDescriptionHtml}
+            value={incidentDescriptionHtml}
+            errorMessage={incidentDescriptionErrorMessage || undefined}
+            height={250}
+            onChange={(html) => {
               removeErrorMessageIfValid(
                 ['empty'],
-                event.target.value,
+                htmlToPlainText(html),
                 incidentDescriptionErrorMessage,
                 setIncidentDescriptionErrorMessage,
               )
 
               updateIndictmentCountState(
                 indictmentCount.id,
-                { incidentDescription: event.target.value },
+                { incidentDescription: html },
                 setWorkingCase,
               )
             }}
-            onBlur={(event) => {
+            onDebouncedChange={(html) =>
+              onChange(indictmentCount.id, { incidentDescription: html })
+            }
+            onBlur={(html) => {
+              const plainText = htmlToPlainText(html)
+
               validateAndSetErrorMessage(
                 ['empty'],
-                event.target.value,
+                plainText,
                 setIncidentDescriptionErrorMessage,
               )
 
+              // An entity-only document (e.g. a lone &nbsp;) still serializes
+              // as markup; store it as empty so validation treats it as missing.
               onChange(indictmentCount.id, {
-                incidentDescription: event.target.value.trim(),
+                incidentDescription: plainText ? html : '',
               })
             }}
             required
-            rows={7}
-            textarea
           />
         </Box>
       </Box>

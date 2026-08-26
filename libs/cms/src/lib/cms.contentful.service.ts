@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import type { EntryCollection } from 'contentful'
@@ -137,7 +137,7 @@ import { mapFooterItem } from './models/footerItem.model'
 const errorHandler = (name: string) => {
   return (error: Error) => {
     logger.error(error)
-    throw new ApolloError('Failed to resolve request in ' + name)
+    throw new GraphQLError('Failed to resolve request in ' + name)
   }
 }
 
@@ -1190,7 +1190,9 @@ export class CmsContentfulService {
       .filter((category) => category?.title && category?.slug)
   }
 
-  async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {
+  async getOpenDataPage({
+    lang,
+  }: GetOpenDataPageInput): Promise<OpenDataPage | null> {
     const params = {
       ['content_type']: 'openDataPage',
       include: 10,
@@ -1208,7 +1210,7 @@ export class CmsContentfulService {
 
   async getOpenDataSubpage({
     lang,
-  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage> {
+  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage | null> {
     const params = {
       ['content_type']: 'openDataSubpage',
       include: 10,

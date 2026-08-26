@@ -2,6 +2,7 @@ import {
   Box,
   Checkbox,
   Filter,
+  Icon,
   Input,
   Stack,
   Text,
@@ -24,6 +25,7 @@ import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ConversationAvatar from './components/ConversationAvatar'
+import * as styles from './HealthConversations.css'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
@@ -111,6 +113,9 @@ const HealthConversations = () => {
     onError: onMutationError,
   })
 
+  const filterCount =
+    (filterValues.starred ? 1 : 0) + (filterValues.archived ? 1 : 0)
+
   const filteredConversations = useMemo(() => {
     if (!healthConversations) {
       return []
@@ -122,7 +127,7 @@ const HealthConversations = () => {
     return healthConversations.filter((message) => {
       return (
         message.title?.toLowerCase().includes(query) ||
-        message.lastSenderGroupName?.toLowerCase().includes(query)
+        message.organization?.name?.toLowerCase().includes(query)
       )
     })
   }, [filterValues, healthConversations])
@@ -150,69 +155,76 @@ const HealthConversations = () => {
         alignItems="center"
         marginBottom={3}
       >
-        <Filter
-          labelClearAll={formatMessage(m.clearAllFilters)}
-          labelClear={formatMessage(m.clearFilter)}
-          labelOpen={formatMessage(m.openFilter)}
-          reverse
-          variant="popover"
-          align="left"
-          filterInput={
-            <Input
-              name="messageSearch"
-              placeholder={formatMessage(
-                messages.healthConversationsSearchPlaceholder,
-              )}
-              value={searchInput}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              icon={{ type: 'outline', name: 'search' }}
-              size="xs"
-              backgroundColor="blue"
-            />
-          }
-          onFilterClear={() => {
-            debouncedSetSearchQuery.cancel()
-            setSearchInput('')
-            setFilterValues(defaultFilterValues)
-          }}
-        >
-          <Box paddingX={3} paddingY={3}>
-            <Text variant="h5" marginBottom={2}>
-              {formatMessage(m.filterBy)}
-            </Text>
-            <Box>
-              <Checkbox
-                id="filter-starred"
-                label={formatMessage(messages.healthConversationsFilterStarred)}
-                checked={filterValues.starred}
-                onChange={(e) =>
-                  setFilterValues((prev) => ({
-                    ...prev,
-                    starred: e.target.checked,
-                  }))
-                }
-              />
-            </Box>
-            <Box paddingTop={1}>
-              <Checkbox
-                id="filter-archived"
-                label={formatMessage(
-                  messages.healthConversationsFilterArchived,
+        <Box style={{ minWidth: 0 }}>
+          <Filter
+            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelClear={formatMessage(m.clearFilter)}
+            labelOpen={formatMessage(m.openFilter)}
+            reverse
+            variant="popover"
+            align="left"
+            mobileWrap={false}
+            filterCount={filterCount}
+            filterInput={
+              <Input
+                name="messageSearch"
+                placeholder={formatMessage(
+                  messages.healthConversationsSearchPlaceholder,
                 )}
-                checked={filterValues.archived}
-                onChange={(e) =>
-                  setFilterValues((prev) => ({
-                    ...prev,
-                    archived: e.target.checked,
-                  }))
-                }
+                value={searchInput}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                icon={{ type: 'outline', name: 'search' }}
+                size="xs"
+                backgroundColor="blue"
               />
+            }
+            onFilterClear={() => {
+              debouncedSetSearchQuery.cancel()
+              setSearchInput('')
+              setFilterValues(defaultFilterValues)
+            }}
+          >
+            <Box paddingX={3} paddingY={3}>
+              <Text variant="h5" marginBottom={2}>
+                {formatMessage(m.filterBy)}
+              </Text>
+              <Box>
+                <Checkbox
+                  id="filter-starred"
+                  label={formatMessage(
+                    messages.healthConversationsFilterStarred,
+                  )}
+                  checked={filterValues.starred}
+                  onChange={(e) =>
+                    setFilterValues((prev) => ({
+                      ...prev,
+                      starred: e.target.checked,
+                    }))
+                  }
+                />
+              </Box>
+              <Box paddingTop={1}>
+                <Checkbox
+                  id="filter-archived"
+                  label={formatMessage(
+                    messages.healthConversationsFilterArchived,
+                  )}
+                  checked={filterValues.archived}
+                  onChange={(e) =>
+                    setFilterValues((prev) => ({
+                      ...prev,
+                      archived: e.target.checked,
+                    }))
+                  }
+                />
+              </Box>
             </Box>
-          </Box>
-        </Filter>
+          </Filter>
+        </Box>
         <Box
           display={['none', 'none', 'none', 'block']}
-          style={{ whiteSpace: 'nowrap' }}
+          style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+          marginLeft={2}
         >
           <LinkButton
             to={HealthPaths.HealthConversationsNew}
@@ -276,10 +288,22 @@ const HealthConversations = () => {
                     }}
                   >
                     <ConversationAvatar
-                      icon={item.hasAttachment ? 'document' : 'heart'}
+                      variant="organization"
+                      logoUrl={item.organization?.logoUrl ?? undefined}
                     />
                     <Box minWidth={0}>
-                      <Text variant="medium">{item.lastSenderGroupName}</Text>
+                      <Box display="flex" alignItems="center" columnGap={1}>
+                        <Text variant="medium">{item.organization?.name}</Text>
+                        {item.hasAttachment && (
+                          <Icon
+                            icon="attach"
+                            size="small"
+                            color="black"
+                            type="outline"
+                            className={styles.attachmentIcon}
+                          />
+                        )}
+                      </Box>
                       <Text
                         color="blue400"
                         truncate
@@ -307,6 +331,7 @@ const HealthConversations = () => {
                         : ''}
                     </Text>
                     <MessageActions
+                      size="small"
                       colorScheme="negative"
                       bookmarked={item.isStarred}
                       archived={item.isArchived}
@@ -316,7 +341,9 @@ const HealthConversations = () => {
                             variables: { input: { id: item.id } },
                           })
                         } else {
-                          starMessage({ variables: { input: { id: item.id } } })
+                          starMessage({
+                            variables: { input: { id: item.id } },
+                          })
                         }
                       }}
                       onStash={() => {

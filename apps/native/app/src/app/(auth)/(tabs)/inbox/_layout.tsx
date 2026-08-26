@@ -4,6 +4,7 @@ import {
   tabScreenOptions,
 } from '../../../../constants/screen-options'
 import { useIntl } from 'react-intl'
+import { theme } from '@/ui'
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -31,6 +32,7 @@ export default function InboxLayout() {
         name="index"
         options={{
           title: intl.formatMessage({ id: 'inbox.screenTitle' }),
+          headerTitleAlign: 'center',
         }}
       />
       <Stack.Screen
@@ -49,7 +51,9 @@ export default function InboxLayout() {
         name="[id]/communications"
         options={{
           headerShown: false,
-          ...modalScreenOptions,
+          ...tabScreenOptions,
+          headerTransparent: false,
+          headerStyle: { backgroundColor: theme.color.white },
           title: intl.formatMessage({
             id: 'documentDetail.buttonCommunications',
           }),
@@ -58,7 +62,6 @@ export default function InboxLayout() {
       <Stack.Screen
         name="[id]/reply"
         options={{
-          headerShown: false,
           ...modalScreenOptions,
         }}
       />

@@ -39,6 +39,13 @@ export const bankTransfer = defineMessages({
     description:
       'Validation error when the bank account number is not 12 digits',
   },
+  accountNumberBankNotSupported: {
+    id: 'payments:bankTransfer.accountNumberBankNotSupported',
+    defaultMessage:
+      'Millifærsla er ekki í boði frá þessum banka. Notaðu reikning í öðrum banka.',
+    description:
+      'Validation error when the account number is well-formed but belongs to a bank the payment provider cannot process. Must not read as a typo error — the number is fine, the bank is the problem. EN: "Bank transfer is not available from this bank. Please use an account at another bank."',
+  },
   cancel: {
     id: 'payments:bankTransfer.cancel',
     defaultMessage: 'Hætta við',
@@ -67,6 +74,37 @@ export const bankTransfer = defineMessages({
     defaultMessage: 'Ekki tókst að hætta við millifærsluna. Reyndu aftur.',
     description:
       'Error toast shown when the cancel-bank-transfer mutation fails (non-already-paid)',
+  },
+  cancelInBankAppNote: {
+    id: 'payments:bankTransfer.cancelInBankAppNote',
+    defaultMessage: 'Þú getur hafnað greiðslubeiðninni í bankaappinu þínu.',
+    description:
+      'Static note under the SCA QR / open-banking-app screen telling the payer how to back out, since the payment cannot be cancelled from here once SCA is under way. EN: "Changed your mind? You can decline the payment request in your banking app."',
+  },
+  scanQrInstruction: {
+    id: 'payments:bankTransfer.scanQrInstruction',
+    defaultMessage: 'Skannaðu þennan QR-kóða með símanum þínum.',
+    description:
+      'Bold heading under the SCA QR code on the desktop pending screen. EN: "Scan the QR code"',
+  },
+  openBankingApp: {
+    id: 'payments:bankTransfer.openBankingApp',
+    defaultMessage: 'Opna bankaapp',
+    description:
+      'Primary CTA on the mobile pending screen that opens the SCA deep link in the banking app. EN: "Open banking app"',
+  },
+  openBankingAppInstruction: {
+    id: 'payments:bankTransfer.openBankingAppInstruction',
+    defaultMessage: 'Opnaðu bankaappið þitt til að staðfesta greiðslu.',
+    description:
+      'Supporting text under the open-banking-app button on the mobile pending screen. EN: "Open your banking app to approve payment."',
+  },
+  checkPhone: {
+    id: 'payments:bankTransfer.checkPhone',
+    defaultMessage:
+      'Athugaðu hvort tilkynning frá bankanum þínum hafi borist í símann þinn',
+    description:
+      'Waiting message when SCA is required but there is no SCA URL (back-channel SCA). EN: "Please check your phone for a banking app notification"',
   },
 })
 
@@ -140,13 +178,13 @@ export const bankTransferError = defineMessages({
   expired: {
     id: 'payments:bankTransferError.expired',
     defaultMessage:
-      'Tími til að ljúka millifærslunni rann út. Reyndu aftur til að halda áfram.',
+      'Tími til að ljúka millifærslunni rann út. Vinsamlegast reynið aftur.',
     description:
       'Error shown when the bank-transfer attempt timed out before completing',
   },
   expiredTitle: {
     id: 'payments:bankTransferError.expiredTitle',
-    defaultMessage: 'Millifærsla rann út á tíma',
+    defaultMessage: 'Tíminn rann út',
     description:
       'Header on the standard error view for a bank-transfer that expired before completing',
   },

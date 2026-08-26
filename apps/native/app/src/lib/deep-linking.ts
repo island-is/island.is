@@ -60,6 +60,12 @@ const routes: Record<
     pathname: '/health/medicine/delegation/[id]',
     params: { id: id as string },
   }),
+  '/minarsidur/heilsa/skilabod': '/health/messages',
+  '/minarsidur/heilsa/skilabod/nytt': '/health/messages/new',
+  '/minarsidur/heilsa/skilabod/:id': ({ id }) => ({
+    pathname: '/health/messages/[id]',
+    params: { id: id as string },
+  }),
   // Family
   '/minarsidur/min-gogn/yfirlit': '/more/family',
   // Applications
@@ -155,6 +161,11 @@ function adjustedAppRoute(dest: Href, source: Href | undefined): Href {
         pathname.replace('/inbox/', '/notifications/document/'),
       )
     }
+    // Open a health message inside the notifications modal so back returns to
+    // the sheet (mirrors the inbox-document rewrite above).
+    if (pathname === '/health/messages/[id]') {
+      return replacePathname(dest, '/notifications/message/[id]')
+    }
   }
   return dest
 }
@@ -162,13 +173,19 @@ function adjustedAppRoute(dest: Href, source: Href | undefined): Href {
 /**
  * Navigate to a universal link. If our mapping returns a valid native screen,
  * navigate there directly. Otherwise, open in the in-app browser.
+ *
+ * Callers that can supply `openBrowser` from `useBrowser()` should — that path
+ * runs the passkey flow for supported URLs. The raw WebBrowser fallback exists
+ * for non-React callers and skips passkey.
  */
 export async function navigateToUniversalLink({
   link,
   fromScreen,
+  openBrowser,
 }: {
   link?: NotificationMessage['link']['url']
   fromScreen?: Href
+  openBrowser?: (url: string) => void | Promise<void>
 }) {
   if (!link) return
 
@@ -181,9 +198,13 @@ export async function navigateToUniversalLink({
   // No matching native route — open in browser
   try {
     if (link.startsWith('http')) {
-      await WebBrowser.openBrowserAsync(link, {
-        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
-      })
+      if (openBrowser) {
+        await openBrowser(link)
+      } else {
+        await WebBrowser.openBrowserAsync(link, {
+          presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+        })
+      }
     }
   } catch (error) {
     console.log('Failed to open link in browser', { link, error })

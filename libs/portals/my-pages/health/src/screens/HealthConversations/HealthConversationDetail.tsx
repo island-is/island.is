@@ -1,12 +1,11 @@
 import {
-  AlertMessage,
   Box,
   Button,
   Divider,
   GridColumn,
   GridContainer,
   GridRow,
-  Input,
+  Icon,
   Text,
   toast,
 } from '@island.is/island-ui/core'
@@ -16,14 +15,23 @@ import {
   formSubmit,
   formatDateWithTime,
   m,
+  useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import ConversationAvatar from './components/ConversationAvatar'
+import ConversationBackButton from './components/ConversationBackButton'
+import ConversationCancelSubmit from './components/ConversationCancelSubmit'
+import ConversationMessageBody from './components/ConversationMessageBody'
+import ConversationReplyForm from './components/ConversationReplyForm'
+import MobileActionFooter from './components/MobileActionFooter'
+import ReplyBlockedAlert from './components/ReplyBlockedAlert'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import * as styles from './HealthConversations.css'
 import {
   useGetHealthConversationDetailQuery,
   useMarkHealthConversationAsReadMutation,
@@ -43,19 +51,26 @@ const HealthConversationDetail = () => {
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
   const userInfo = useUserInfo()
-  const location = useLocation()
-  const justCreated =
-    (location.state as { justCreated?: boolean } | null)?.justCreated ?? false
+  const navigate = useNavigate()
+  const { isPhoneWidth } = useIsPhoneWidth()
 
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
   const replyRef = useRef<HTMLDivElement>(null)
   const replyInputRef = useRef<HTMLTextAreaElement | null>(null)
+  const replyTriggerRef = useRef<HTMLElement | null>(null)
+
+  const openReply = () => {
+    replyTriggerRef.current = document.activeElement as HTMLElement | null
+    setReplyOpen(true)
+  }
 
   useEffect(() => {
     if (replyOpen) {
       replyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       replyInputRef.current?.focus()
+    } else {
+      replyTriggerRef.current?.focus()
     }
   }, [replyOpen])
 
@@ -102,7 +117,7 @@ const HealthConversationDetail = () => {
   if (loading) {
     return (
       <GridContainer>
-        <GridRow marginTop={2}>
+        <GridRow marginTop={[1, 0, 0]}>
           <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
             <Box padding={6}>
               <CardLoader />
@@ -116,7 +131,7 @@ const HealthConversationDetail = () => {
   if (error) {
     return (
       <GridContainer>
-        <GridRow marginTop={2}>
+        <GridRow marginTop={[1, 0, 0]}>
           <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
             <Box padding={6}>
               <Problem error={error} noBorder={false} />
@@ -130,7 +145,7 @@ const HealthConversationDetail = () => {
   if (!item) {
     return (
       <GridContainer>
-        <GridRow marginTop={2}>
+        <GridRow marginTop={[1, 0, 0]}>
           <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
             <Box padding={6}>
               <Problem
@@ -160,231 +175,226 @@ const HealthConversationDetail = () => {
     }
   }
 
+  /* There's no explicit "recipient" for an existing thread yet so we need this
+  to approximate it */
+  const latestStaffMessage = [...item.messages]
+    .reverse()
+    .find((msg) => msg.direction === 'STAFF')
+  const replyToName = latestStaffMessage
+    ? item.organization?.name ?? latestStaffMessage.senderGroupName ?? undefined
+    : undefined
+
+  const handleBack = () => {
+    /* On mobile, replying takes over the screen, so back should return to the
+    the thread first. On desktop the reply form is just appended below
+    the (still visible) thread, so back always leaves the conversation.  */
+    if (isPhoneWidth && replyOpen) {
+      setReplyOpen(false)
+    } else {
+      navigate(HealthPaths.HealthConversations)
+    }
+  }
+
   return (
     <GridContainer>
-      <GridRow marginTop={2}>
+      <GridRow marginTop={[1, 0, 0]}>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box
+            className={styles.messageCard}
             background="white"
-            borderColor="blue200"
-            borderWidth="standard"
-            borderRadius="large"
-            paddingTop={3}
-            paddingBottom={[3, 3, 5]}
-            paddingX={[2, 2, 5]}
+            paddingTop={[2, 2, 3]}
+            paddingBottom={[10, 5, 5]}
+            paddingX={[2, 5, 5]}
           >
             <Box
               display="flex"
               justifyContent="spaceBetween"
               alignItems="center"
-              marginBottom={0}
+              marginBottom={1}
             >
-              <Text variant="h3" as="h1">
-                {item.title}
-              </Text>
-              <MessageActions
-                bookmarked={item.isStarred}
-                archived={item.isArchived}
-                onReply={
-                  item.patientCanReply !== false
-                    ? () => setReplyOpen(true)
-                    : undefined
-                }
-                onFav={() => {
-                  if (item.isStarred) {
-                    unstarMessage({ variables: { input: { id } } })
-                  } else {
-                    starMessage({ variables: { input: { id } } })
+              <Box className={styles.backButton}>
+                <ConversationBackButton onClick={handleBack} />
+              </Box>
+              {!replyOpen && (
+                <MessageActions
+                  bookmarked={item.isStarred}
+                  archived={item.isArchived}
+                  onReply={
+                    item.patientCanReply !== false ? openReply : undefined
                   }
-                }}
-                onStash={() => {
-                  if (item.isArchived) {
-                    unarchiveMessage({ variables: { input: { id } } })
-                  } else {
-                    archiveMessage({ variables: { input: { id } } })
-                  }
-                }}
-              />
+                  onFav={() => {
+                    if (item.isStarred) {
+                      unstarMessage({ variables: { input: { id } } })
+                    } else {
+                      starMessage({ variables: { input: { id } } })
+                    }
+                  }}
+                  onStash={() => {
+                    if (item.isArchived) {
+                      unarchiveMessage({ variables: { input: { id } } })
+                    } else {
+                      archiveMessage({ variables: { input: { id } } })
+                    }
+                  }}
+                />
+              )}
             </Box>
 
-            {/* Message thread */}
-            {item.messages.map((msg, index) => {
-              const isPatient = msg.direction === 'PATIENT'
-              const senderName = isPatient
-                ? userInfo.profile.name ?? ''
-                : msg.senderGroupName ?? item.lastSenderGroupName ?? ''
+            <Text variant="h4" as="h1" marginBottom={2}>
+              {item.title}
+            </Text>
 
-              return (
-                <Box key={msg.id}>
-                  {index > 0 && (
-                    <Box paddingY={1}>
-                      <Divider />
-                    </Box>
-                  )}
+            {replyOpen && isPhoneWidth ? (
+              /* Mobile takes over the screen while replying: the thread is
+              hidden and only the recipient + reply form are shown. */
+              <ConversationReplyForm
+                ref={replyRef}
+                replyToName={replyToName}
+                value={replyText}
+                onChange={setReplyText}
+                inputRef={replyInputRef}
+              />
+            ) : (
+              <>
+                {/* Message thread */}
+                {item.messages.map((msg, index) => {
+                  const isPatient = msg.direction === 'PATIENT'
+                  const senderName = isPatient
+                    ? userInfo.profile.name ?? ''
+                    : item.organization?.name ?? msg.senderGroupName ?? ''
 
-                  {/* Sender info */}
-                  <Box
-                    display="flex"
-                    flexDirection="row"
-                    paddingTop={3}
-                    marginBottom={3}
-                  >
-                    {isPatient ? (
-                      <ConversationAvatar
-                        variant="user"
-                        name={userInfo.profile.name ?? ''}
-                      />
-                    ) : (
-                      <ConversationAvatar
-                        variant="organization"
-                        name={senderName}
-                      />
-                    )}
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      marginLeft={2}
-                      justifyContent="center"
-                    >
-                      <Text variant="eyebrow" fontWeight="medium" truncate>
-                        {senderName}
-                      </Text>
-                      <Text variant="medium">
-                        {formatDateWithTime(msg.messageSentAt)}
-                      </Text>
-                    </Box>
-                  </Box>
+                  return (
+                    <Box key={msg.id}>
+                      {index > 0 && (
+                        <Box paddingY={1}>
+                          <Divider />
+                        </Box>
+                      )}
 
-                  {/* Body */}
-                  {msg.messageTextContent && (
-                    <Box marginBottom={4} style={{ whiteSpace: 'pre-line' }}>
-                      <Text fontWeight="light">{msg.messageTextContent}</Text>
-                    </Box>
-                  )}
+                      {/* Sender info */}
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        justifyContent="spaceBetween"
+                        alignItems="center"
+                        paddingTop={index > 0 ? 3 : 0}
+                        marginBottom={3}
+                      >
+                        <Box display="flex" flexDirection="row">
+                          {isPatient ? (
+                            <ConversationAvatar
+                              variant="user"
+                              name={userInfo.profile.name ?? ''}
+                              large
+                            />
+                          ) : (
+                            <ConversationAvatar
+                              variant="organization"
+                              logoUrl={item.organization?.logoUrl ?? undefined}
+                              large
+                            />
+                          )}
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            marginLeft={2}
+                            justifyContent="center"
+                          >
+                            <Text
+                              variant="eyebrow"
+                              fontWeight="medium"
+                              truncate
+                            >
+                              {senderName}
+                            </Text>
+                            <Text variant="medium">
+                              {formatDateWithTime(msg.messageSentAt)}
+                            </Text>
+                          </Box>
+                        </Box>
+                        {msg.attachments.length > 0 && (
+                          <Icon
+                            icon="attach"
+                            size="small"
+                            color="black"
+                            type="outline"
+                            className={styles.attachmentIcon}
+                          />
+                        )}
+                      </Box>
 
-                  {/* Attachments */}
-                  {msg.attachments.length > 0 && (
-                    <Box
-                      display="flex"
-                      flexWrap="wrap"
-                      columnGap={2}
-                      rowGap={1}
-                      marginBottom={3}
-                    >
-                      {msg.attachments.map((file) => (
-                        <Button
-                          key={file.id}
-                          variant="utility"
-                          icon="document"
-                          iconType="outline"
-                          onClick={() => formSubmit(file.downloadServiceURL)}
+                      {/* Body */}
+                      <ConversationMessageBody message={msg} />
+
+                      {/* Attachments */}
+                      {msg.attachments.length > 0 && (
+                        <Box
+                          display="flex"
+                          flexWrap="wrap"
+                          columnGap={2}
+                          rowGap={1}
+                          marginBottom={3}
                         >
-                          {file.fileName}
-                        </Button>
-                      ))}
+                          {msg.attachments.map((file) => (
+                            <Button
+                              key={file.id}
+                              variant="utility"
+                              icon="document"
+                              iconType="outline"
+                              onClick={() =>
+                                formSubmit(file.downloadServiceURL)
+                              }
+                            >
+                              {file.fileName}
+                            </Button>
+                          ))}
+                        </Box>
+                      )}
                     </Box>
-                  )}
-                </Box>
-              )
-            })}
+                  )
+                })}
 
-            {/* Reply button — below thread, hidden when form is open */}
-            {!replyOpen && item.patientCanReply !== false && (
-              <Box marginTop={6}>
+                {/* Reply form — desktop only; mobile branches above */}
+                {replyOpen && (
+                  <ConversationReplyForm
+                    ref={replyRef}
+                    withSenderHeader
+                    senderName={userInfo.profile.name ?? ''}
+                    replyToName={replyToName}
+                    value={replyText}
+                    onChange={setReplyText}
+                    inputRef={replyInputRef}
+                  />
+                )}
+              </>
+            )}
+
+            <MobileActionFooter>
+              {replyOpen ? (
+                <ConversationCancelSubmit
+                  cancelLabel={formatMessage(messages.cancel)}
+                  submitLabel={formatMessage(messages.healthConversationSend)}
+                  onCancel={() => setReplyOpen(false)}
+                  onSubmit={handleReply}
+                  submitDisabled={!replyText.trim()}
+                  loading={replySending}
+                  fluid={isPhoneWidth}
+                />
+              ) : item.patientCanReply === false ? (
+                <ReplyBlockedAlert reason={item.replyBlockedReason} />
+              ) : (
                 <Button
                   variant="ghost"
-                  size="small"
-                  preTextIcon="document"
+                  size="medium"
+                  preTextIcon="undo"
                   preTextIconType="outline"
-                  onClick={() => setReplyOpen(true)}
+                  onClick={openReply}
+                  fluid={isPhoneWidth}
                 >
                   {formatMessage(m.replyDocument)}
                 </Button>
-              </Box>
-            )}
-
-            {/* Sent confirmation banner */}
-            {justCreated && !replyOpen && (
-              <Box marginTop={4}>
-                <AlertMessage
-                  type="success"
-                  title={formatMessage(messages.healthConversationSentTitle)}
-                  message={formatMessage(messages.healthConversationSentText)}
-                />
-              </Box>
-            )}
-
-            {/* Reply form */}
-            {replyOpen && (
-              <div ref={replyRef}>
-                <Box paddingY={1}>
-                  <Divider />
-                </Box>
-
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  justifyContent="spaceBetween"
-                  paddingTop={3}
-                  marginBottom={3}
-                >
-                  <Box display="flex" flexDirection="row">
-                    <ConversationAvatar
-                      variant="user"
-                      name={userInfo.profile.name ?? ''}
-                    />
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      marginLeft={2}
-                      justifyContent="center"
-                    >
-                      <Text variant="eyebrow" fontWeight="medium" truncate>
-                        {userInfo.profile.name ?? ''}
-                      </Text>
-                      <Text variant="medium">
-                        {formatMessage(messages.healthConversationTo, {
-                          arg: item.lastSenderGroupName ?? '',
-                        })}
-                      </Text>
-                    </Box>
-                  </Box>
-                  <Button
-                    circle
-                    icon="close"
-                    colorScheme="light"
-                    aria-label={formatMessage(
-                      messages.healthConversationCloseReply,
-                    )}
-                    onClick={() => setReplyOpen(false)}
-                  />
-                </Box>
-
-                <Box marginBottom={3}>
-                  <Input
-                    textarea
-                    rows={6}
-                    name="reply-message"
-                    label={formatMessage(m.messages)}
-                    backgroundColor="blue"
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    ref={replyInputRef}
-                  />
-                </Box>
-
-                <Box display="flex" justifyContent="flexEnd">
-                  <Button
-                    size="small"
-                    onClick={handleReply}
-                    loading={replySending}
-                    disabled={!replyText.trim()}
-                  >
-                    {formatMessage(messages.healthConversationSend)}
-                  </Button>
-                </Box>
-              </div>
-            )}
+              )}
+            </MobileActionFooter>
           </Box>
         </GridColumn>
       </GridRow>

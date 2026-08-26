@@ -1,8 +1,9 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 
-import { Box, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Icon, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatDate,
@@ -12,27 +13,25 @@ import {
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
-  IconButton,
   InfoBox,
   useRejectCaseFile,
 } from '@island.is/judicial-system-web/src/components'
+import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   SortButton,
   TableContainer,
   TableDate,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
-import {
-  CaseFile,
-  CaseFileState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as tableStyles from '@island.is/judicial-system-web/src/components/Table/Table.css'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useFiledCourtDocuments,
   useSort,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
-import ContextMenu from '../../ContextMenu/ContextMenu'
-import * as tableStyles from '../Table.css'
 import * as styles from './CaseFileTable.css'
 
 interface Props {
@@ -89,13 +88,19 @@ const CaseFileTable: FC<Props> = ({
         loading={loading}
         tableHeader={
           <>
-            <th className={tableStyles.th}>
+            <th
+              className={tableStyles.th}
+              aria-sort={getClassNamesFor('name') ?? 'none'}
+            >
               <SortButton
                 {...createSortProps(formatMessage(tables.caseFileName), 'name')}
               />
             </th>
             <TableHeaderText title={formatMessage(tables.caseFileDate)} />
-            <th className={tableStyles.th}>
+            <th
+              className={tableStyles.th}
+              aria-sort={getClassNamesFor('created') ?? 'none'}
+            >
               <SortButton
                 {...createSortProps(formatMessage(tables.received), 'created')}
               />
@@ -109,12 +114,24 @@ const CaseFileTable: FC<Props> = ({
             file.fileRepresentative ?? file.submittedBy,
           )
           const isRejected = file.state === CaseFileState.REJECTED
+          const fileName = prefixUploadedDocumentNameWithDocumentOrder(
+            file.id,
+            file.userGeneratedFilename ?? '',
+          )
 
           return (
             <tr key={file.id}>
               <td>
                 <Box
                   onClick={() => !isRejected && onOpenFile(file.id)}
+                  onKeyDown={
+                    isRejected
+                      ? undefined
+                      : onEnterOrSpace(() => onOpenFile(file.id))
+                  }
+                  role={isRejected ? undefined : 'button'}
+                  tabIndex={isRejected ? undefined : 0}
+                  aria-label={isRejected ? undefined : `Opna ${fileName}`}
                   className={!isRejected && styles.linkButton}
                   display="flex"
                   alignItems="center"
@@ -130,10 +147,7 @@ const CaseFileTable: FC<Props> = ({
                     }
                     variant="h5"
                   >
-                    {prefixUploadedDocumentNameWithDocumentOrder(
-                      file.id,
-                      file.userGeneratedFilename ?? '',
-                    )}
+                    {fileName}
                   </Text>
                 </Box>
               </td>
@@ -164,16 +178,18 @@ const CaseFileTable: FC<Props> = ({
                       items={[rejectCaseFile(file)]}
                       render={
                         <motion.div
-                          className={tableStyles.smallContainer}
+                          className={tableStyles.contextMenuButton}
+                          aria-label={`Valmynd fyrir ${file.name}`}
                           key={file.id}
                           initial={{ opacity: 1 }}
                           animate={{ opacity: 1, y: 1 }}
                           exit={{ opacity: 0, y: 5 }}
                           onClick={(evt) => evt.stopPropagation()}
                         >
-                          <IconButton
+                          <Icon
                             icon="ellipsisVertical"
-                            colorScheme="transparent"
+                            color="blue400"
+                            size="small"
                           />
                         </motion.div>
                       }

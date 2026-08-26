@@ -98,7 +98,7 @@ export const m = {
     },
     applicationWasOpenToAndWith: {
       id: 'web.grants:search.applicationWasOpenToAndWith',
-      defaultMessage: 'Frestur var til {arg}',
+      defaultMessage: 'Frestur var til og með {arg}',
     },
     applicationAlwaysOpen: {
       id: 'web.grants:search.applicationAlwaysOpen',
@@ -201,6 +201,14 @@ export const m = {
     answeringQuestions: {
       id: 'web.grants:single.answeringQuestions',
       defaultMessage: 'Svör við spurningum',
+    },
+    utcSuffix: {
+      id: 'web.grants:single.utcSuffix',
+      defaultMessage: ' ',
+    },
+    icelandicTimeNote: {
+      id: 'web.grants:single.icelandicTimeNote',
+      defaultMessage: 'Miðast við íslenskan tíma',
     },
   }),
   home: defineMessages({

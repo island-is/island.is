@@ -20,6 +20,7 @@ name: 'skilavottord-web'
 enabled: true
 env:
   API_URL: 'http://skilavottord-ws'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   ENVIRONMENT: 'staging'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -43,7 +44,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 8
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   primary-gw:
@@ -66,7 +67,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:

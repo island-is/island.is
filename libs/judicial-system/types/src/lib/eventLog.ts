@@ -16,6 +16,9 @@ export enum EventType {
   REQUEST_COMPLETED = 'REQUEST_COMPLETED', // Request case is completed
   INDICTMENT_SPLIT_COMPLETED = 'INDICTMENT_SPLIT_COMPLETED',
   INDICTMENT_REOPENED = 'INDICTMENT_REOPENED',
+  // An in-court ruling-order appeal was deleted because a confirmed court
+  // session was corrected to remove the appeal before it left the district court.
+  APPEAL_DELETED = 'APPEAL_DELETED',
 }
 
 export const eventTypes = Object.values(EventType)
@@ -28,6 +31,7 @@ export enum DefendantEventType {
   INDICTMENT_REVIEWED = 'INDICTMENT_REVIEWED',
   INDICTMENT_DISMISSED = 'INDICTMENT_DISMISSED',
   INDICTMENT_CANCELLED = 'INDICTMENT_CANCELLED',
+  CLOSED_WITHOUT_ENFORCEMENT = 'CLOSED_WITHOUT_ENFORCEMENT',
 }
 
 export const defendantEventTypes = Object.values(DefendantEventType)
@@ -41,3 +45,24 @@ export enum AppealEventType {
 }
 
 export const appealEventTypes = Object.values(AppealEventType)
+
+// Where an APPEALED event came from. Only meaningful for APPEALED events, so it
+// is null on the others.
+//
+// This has to be recorded rather than derived. An in-court appeal is normally
+// identified by a decision = APPEAL row, but a party that appealed OUT of court
+// has no such row - they appealed precisely because they postponed in court. So
+// "no APPEAL row" cannot distinguish an out-of-court appellant from an in-court
+// one whose decision was later corrected away, and correction reconciliation
+// must not treat the two alike: the first has to be preserved, the second
+// discarded.
+//
+// Set on every APPEALED event - enforced by the
+// appeal_event_log_appeal_origin_check constraint, which also requires the other
+// event types to leave it null.
+export enum AppealOrigin {
+  IN_COURT = 'IN_COURT',
+  OUT_OF_COURT = 'OUT_OF_COURT',
+}
+
+export const appealOrigins = Object.values(AppealOrigin)

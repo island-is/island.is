@@ -14,7 +14,11 @@ import { PaymentMethod, PaymentStatus } from '../../types'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
-import { BankTransferStatus } from './bankTransfer.types'
+import {
+  BankTransferFailureReason,
+  BankTransferStatus,
+  BankTransferPendingStatus,
+} from './bankTransfer.types'
 import { BankTransferService } from './bankTransfer.service'
 import { BankTransferModuleConfig } from './bankTransfer.config'
 import { BankTransferLocale } from './dtos/createBankTransfer.input'
@@ -22,6 +26,7 @@ import { BankTransferPayment } from './models/bankTransferPayment.model'
 
 const config: ConfigType<typeof BankTransferModuleConfig> = {
   paymentTtlSeconds: 300,
+  onboardingOrigin: 'https://light.blikk.tech',
   isConfigured: true,
 }
 
@@ -173,7 +178,27 @@ describe('BankTransferService', () => {
         status: BankTransferStatus.PENDING,
         scaRedirectUrl: 'https://stage.blikk.tech/sca/provider-123',
         message: undefined,
+        // DRAFT with a regular SCA URL is a normal create — not onboarding.
+        onboardingRequired: false,
       })
+    })
+
+    it('flags onboardingRequired for a DRAFT payment whose SCA URL points at the onboarding app', async () => {
+      blikkClient.createPayment.mockResolvedValue({
+        id: 'provider-123',
+        status: 'DRAFT',
+        scaRedirectUrl: 'https://light.blikk.tech/onboarding/provider-123',
+        message: '',
+      })
+
+      const result = await service.createBankTransferPayment({
+        amount: 14000,
+        currency: 'ISK',
+        paymentFlowId: 'flow-1',
+        correlationId: 'btp-onboard',
+      })
+
+      expect(result.onboardingRequired).toBe(true)
     })
 
     it('maps a BlikkClientError to FailedToCreateBankTransfer', async () => {
@@ -251,23 +276,11 @@ describe('BankTransferService', () => {
         status: BankTransferStatus.PENDING,
         scaRedirectUrl: 'https://blikk/sca',
         message: undefined,
+        onboardingRequired: false,
       })
 
     beforeEach(() => {
       bankTransferPaymentModel.findOne.mockResolvedValue(null)
-    })
-
-    it('passes the payer national id and bank account number to the provider create', async () => {
-      const blikkSpy = mockBlikkCreate()
-
-      await service.create(createInput)
-
-      expect(blikkSpy).toHaveBeenCalledTimes(1)
-      expect(blikkSpy.mock.calls[0][0]).toMatchObject({
-        // payerNationalId from the getPaymentFlowDetails mock above.
-        debtorExternalId: '1234567890',
-        bankAccountNumber: '123456789012',
-      })
     })
 
     it('throws PaymentFlowAlreadyPaid when the flow is already PAID', async () => {
@@ -323,8 +336,10 @@ describe('BankTransferService', () => {
         expect(bankTransferPaymentModel.create).toHaveBeenCalledTimes(1)
         expect(result).toEqual({
           providerPaymentId: 'prov-1',
-          scaRedirectUrl: 'https://blikk/sca',
+          // Not onboarding, so no URL is handed back — the payer's SCA URL arrives on a poll.
+          scaRedirectUrl: undefined,
           expiresAt: expect.any(Date),
+          onboardingRequired: false,
         })
       },
     )
@@ -444,12 +459,13 @@ describe('BankTransferService', () => {
       expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
     })
 
-    it('calls Blikk, persists the row, emits payment_started, and returns scaRedirectUrl + expiresAt', async () => {
+    it('calls Blikk, persists the row, emits payment_started, and returns expiresAt', async () => {
       const blikkSpy = mockBlikkCreate()
 
       const result = await service.create(createInput)
 
-      // Provider call gets the correct URLs/amount and a per-attempt correlationId (NOT paymentFlowId).
+      // Provider call gets the correct URLs/amount/payer details and a per-attempt
+      // correlationId (NOT paymentFlowId).
       expect(blikkSpy).toHaveBeenCalledTimes(1)
       const blikkArg = blikkSpy.mock.calls[0][0]
       expect(blikkArg).toMatchObject({
@@ -458,6 +474,9 @@ describe('BankTransferService', () => {
         currency: 'ISK',
         callbackUrl: 'https://island.is/greida/api/bank-transfer/callback',
         partnerRedirectUrl: 'https://island.is/greida/is/flow-1',
+        // payerNationalId from the getPaymentFlowDetails mock; BBAN from the input.
+        debtorExternalId: '1234567890',
+        bankAccountNumber: '123456789012',
       })
       expect(blikkArg.correlationId).not.toBe('flow-1')
       expect(blikkArg.expiresAt).toBeGreaterThan(Math.floor(Date.now() / 1000))
@@ -491,11 +510,108 @@ describe('BankTransferService', () => {
         metadata: { providerPaymentId: 'prov-1' },
       })
 
-      // expiresAt on the response matches the row (which is the same value we sent Blikk).
+      // expiresAt on the response matches the row (which is the same value we sent Blikk),
+      // and onboardingRequired passes through from the provider result.
       expect(result).toEqual({
         providerPaymentId: 'prov-1',
-        scaRedirectUrl: 'https://blikk/sca',
+        // The row keeps the create-time URL for the record, but the response withholds it: the
+        // URL the payer is shown comes from a poll at SCA_REQUIRED and is a different URL.
+        scaRedirectUrl: undefined,
         expiresAt: rowArg.expiresAt,
+        onboardingRequired: false,
+      })
+      expect(rowArg.scaRedirectUrl).toBe('https://blikk/sca')
+    })
+
+    // The one case that still needs the URL from `create`: the FE redirects to it immediately,
+    // before any polling exists. Breaking this silently strands first-time payers.
+    it('still returns the onboarding URL when onboarding is required', async () => {
+      jest.spyOn(service, 'createBankTransferPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'DRAFT',
+        status: BankTransferStatus.PENDING,
+        scaRedirectUrl: 'https://light.blikk.tech/onboarding/prov-1',
+        onboardingRequired: true,
+      })
+
+      const result = await service.create(createInput)
+
+      expect(result).toMatchObject({
+        onboardingRequired: true,
+        scaRedirectUrl: 'https://light.blikk.tech/onboarding/prov-1',
+      })
+    })
+
+    // A failed insert leaves the Blikk payment live and untrackable: it reaches SCA_REQUIRED on its
+    // own and a back-channel bank pushes the approval to the payer's app, so an approval would
+    // settle money we have no record of. It must be cancelled while still DRAFT.
+    describe('orphaned provider payment', () => {
+      it('cancels the Blikk payment, emits payment_failed, and rethrows when the row insert fails', async () => {
+        mockBlikkCreate()
+        const insertError = new Error('duplicate key value')
+        bankTransferPaymentModel.create.mockRejectedValue(insertError)
+
+        await expect(service.create(createInput)).rejects.toThrow(insertError)
+
+        expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
+        // The attempt never started, so only the failure is recorded.
+        expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+        expect(
+          paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+        ).toMatchObject({
+          paymentFlowId: 'flow-1',
+          reason: 'payment_failed',
+          // The event is persisted before delivery, so it is the durable record of the orphan —
+          // it has to carry the provider id for the payment to be reconcilable by id later.
+          metadata: { cancelled: true, providerPaymentId: 'prov-1' },
+        })
+      })
+
+      it('logs an error when Blikk refuses the cancel, since the payment may still settle', async () => {
+        mockBlikkCreate()
+        bankTransferPaymentModel.create.mockRejectedValue(
+          new Error('insert failed'),
+        )
+        blikkClient.cancelPayment.mockRejectedValue(
+          new BlikkClientError('conflict', 409),
+        )
+
+        await expect(service.create(createInput)).rejects.toThrow(
+          'insert failed',
+        )
+
+        expect(logger.error).toHaveBeenCalledWith(
+          expect.stringContaining('may still settle with no local record'),
+          expect.objectContaining({ error: 'insert failed' }),
+        )
+        // The uncancelled payment is the case that most needs a durable record to reconcile from.
+        expect(
+          paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+        ).toMatchObject({
+          reason: 'payment_failed',
+          metadata: { cancelled: false, providerPaymentId: 'prov-1' },
+        })
+      })
+
+      // cancelBlikkPayment throws FailedToFetchBankTransfer when Blikk is unreachable. That must
+      // not surface in place of the insert error — the caller needs the real cause.
+      it('propagates the insert error, not the cancel error, when Blikk is unreachable', async () => {
+        mockBlikkCreate()
+        bankTransferPaymentModel.create.mockRejectedValue(
+          new Error('connection terminated'),
+        )
+        // No status on the error → cancelBlikkPayment rethrows as a BadRequestException.
+        blikkClient.cancelPayment.mockRejectedValue(
+          new BlikkClientError('socket hang up'),
+        )
+
+        await expect(service.create(createInput)).rejects.toThrow(
+          'connection terminated',
+        )
+        expect(logger.error).toHaveBeenCalledWith(
+          expect.stringContaining('may still settle with no local record'),
+          expect.objectContaining({ error: 'connection terminated' }),
+        )
       })
     })
 
@@ -626,12 +742,11 @@ describe('BankTransferService', () => {
         message,
       })
 
-    it('looks up the active row by providerPaymentId', async () => {
+    it('looks up the active row by providerPaymentId, falling back to paymentFlowId', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
       mockGetPayment(BankTransferStatus.PENDING, 'PENDING')
 
       await service.verify({ providerPaymentId: 'prov-1' })
-
       expect(bankTransferPaymentModel.findOne).toHaveBeenCalledWith({
         where: {
           provider: 'blikk',
@@ -639,29 +754,21 @@ describe('BankTransferService', () => {
           isDeleted: false,
         },
       })
-    })
-
-    it('looks up the active row by paymentFlowId when providerPaymentId is absent', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
-      mockGetPayment(BankTransferStatus.PENDING, 'PENDING')
 
       await service.verify({ paymentFlowId: 'flow-1' })
-
       expect(bankTransferPaymentModel.findOne).toHaveBeenCalledWith({
         where: { paymentFlowId: 'flow-1', isDeleted: false },
       })
     })
 
-    it('throws BankTransferNotFound when no row is found', async () => {
+    it('throws BankTransferNotFound when no row is found or no lookup key is provided', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(null)
-
       await expect(service.verify({ paymentFlowId: 'flow-1' })).rejects.toThrow(
         BankTransferErrorCode.BankTransferNotFound,
       )
-    })
 
-    it('throws BankTransferNotFound when no lookup key is provided', async () => {
       // No findOne call — findActiveBankTransferPayment returns null without keys.
+      bankTransferPaymentModel.findOne.mockClear()
       await expect(service.verify({})).rejects.toThrow(
         BankTransferErrorCode.BankTransferNotFound,
       )
@@ -698,13 +805,21 @@ describe('BankTransferService', () => {
       expect(result.status).toBe(BankTransferStatus.SUCCESS)
     })
 
-    it.each<[BankTransferStatus, string]>([
-      [BankTransferStatus.ERROR, 'ERROR'],
-      [BankTransferStatus.REJECTED, 'REJECTED'],
-      [BankTransferStatus.CANCELLED, 'CANCELLED'],
+    it.each<[BankTransferStatus, string, BankTransferFailureReason]>([
+      [BankTransferStatus.ERROR, 'ERROR', BankTransferFailureReason.ERROR],
+      [
+        BankTransferStatus.REJECTED,
+        'REJECTED',
+        BankTransferFailureReason.REJECTED,
+      ],
+      [
+        BankTransferStatus.CANCELLED,
+        'CANCELLED',
+        BankTransferFailureReason.CANCELLED,
+      ],
     ])(
       'persists lastKnownStatus and emits payment_failed when the provider reports %s (row stays alive for BANK_TRANSFER_FAILED rendering)',
-      async (status, rawStatus) => {
+      async (status, rawStatus, failureReason) => {
         bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
         mockGetPayment(status, rawStatus, 'provider detail')
 
@@ -733,7 +848,19 @@ describe('BankTransferService', () => {
             providerMessage: 'provider detail',
           },
         })
+        // The provider's reason must reach the application log too — logPaymentFlowUpdate only
+        // logs its message text, so otherwise a provider-side fault failing every payment (an
+        // expired Blikk certificate, say) shows up with no reason attached.
+        expect(logger.warn).toHaveBeenCalledWith(
+          expect.stringContaining(`Bank transfer ${status}`),
+          { rawStatus, providerMessage: 'provider detail' },
+        )
         expect(result.status).toBe(status)
+        // The expiry-aware failure reason passes through (fresh row → 1:1 with the status).
+        expect(result.failureReason).toBe(failureReason)
+        // Pending-only fields must not leak onto a terminal response.
+        expect(result.pendingStatus).toBeUndefined()
+        expect(result.scaRedirectUrl).toBeUndefined()
       },
     )
 
@@ -770,6 +897,143 @@ describe('BankTransferService', () => {
       expect(result.status).toBe(BankTransferStatus.PENDING)
     })
 
+    it('returns the pending sub-status and the fresh SCA URL from the provider', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
+      jest.spyOn(service, 'getPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SCA_REQUIRED',
+        status: BankTransferStatus.PENDING,
+        scaRedirectUrl: 'https://blikk/sca/fresh',
+      })
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(result).toEqual({
+        status: BankTransferStatus.PENDING,
+        message: undefined,
+        pendingStatus: BankTransferPendingStatus.SCA_REQUIRED,
+        scaRedirectUrl: 'https://blikk/sca/fresh',
+      })
+      // A pending attempt carries no failure reason. (The raw-status → pendingStatus
+      // mapping itself is table-tested in bankTransfer.utils.spec.ts.)
+      expect(result.failureReason).toBeUndefined()
+    })
+
+    it('reports no SCA URL at SCA_REQUIRED when Blikk omits one, even though the row holds a creation-time URL (back-channel SCA)', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        scaRedirectUrl: 'https://blikk/sca/original',
+      })
+      mockGetPayment(BankTransferStatus.PENDING, 'SCA_REQUIRED')
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      // Blikk owns the URL at SCA_REQUIRED: empty means the bank pushed a notification instead. The
+      // row holds the provider-hosted URL from create, which is not the bank's authorisation page —
+      // never substitute it.
+      expect(result).toMatchObject({
+        status: BankTransferStatus.PENDING,
+        pendingStatus: BankTransferPendingStatus.SCA_REQUIRED,
+        scaRedirectUrl: undefined,
+      })
+    })
+
+    it('withholds the row creation-time SCA URL while Blikk is still at DRAFT', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        lastKnownStatus: 'DRAFT',
+        scaRedirectUrl: 'https://stage.blikk.tech/sca/prov-1',
+      })
+      // Blikk GET repeats DRAFT and omits the URL. Before SCA_REQUIRED the row's creation-time URL
+      // is not known to be usable — offering it flashes a QR that a back-channel bank then removes.
+      mockGetPayment(BankTransferStatus.PENDING, 'DRAFT')
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(result.pendingStatus).toBe(BankTransferPendingStatus.PROCESSING)
+      expect(result.scaRedirectUrl).toBeUndefined()
+    })
+
+    it('persists a newly minted SCA URL alongside the raw-status drift (back-channel create → SCA_REQUIRED)', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        lastKnownStatus: 'DRAFT',
+        scaRedirectUrl: null,
+      })
+      jest.spyOn(service, 'getPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SCA_REQUIRED',
+        status: BankTransferStatus.PENDING,
+        scaRedirectUrl: 'https://blikk/sca/late',
+      })
+
+      await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        {
+          lastKnownStatus: 'SCA_REQUIRED',
+          scaRedirectUrl: 'https://blikk/sca/late',
+        },
+        {
+          where: { id: 'corr-1', isDeleted: false, lastKnownStatus: 'DRAFT' },
+        },
+      )
+    })
+
+    it('persists an SCA URL that appears without a raw-status change', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        lastKnownStatus: 'SCA_REQUIRED',
+        scaRedirectUrl: null,
+      })
+      jest.spyOn(service, 'getPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SCA_REQUIRED',
+        status: BankTransferStatus.PENDING,
+        scaRedirectUrl: 'https://blikk/sca/late',
+      })
+
+      await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        {
+          lastKnownStatus: 'SCA_REQUIRED',
+          scaRedirectUrl: 'https://blikk/sca/late',
+        },
+        {
+          where: {
+            id: 'corr-1',
+            isDeleted: false,
+            lastKnownStatus: 'SCA_REQUIRED',
+          },
+        },
+      )
+    })
+
+    it('does not overwrite an already-persisted SCA URL', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        lastKnownStatus: 'DRAFT',
+        scaRedirectUrl: 'https://blikk/sca/original',
+      })
+      jest.spyOn(service, 'getPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SCA_REQUIRED',
+        status: BankTransferStatus.PENDING,
+        scaRedirectUrl: 'https://blikk/sca/other',
+      })
+
+      await service.verify({ paymentFlowId: 'flow-1' })
+
+      // Only the status drift is persisted — the creation-time URL stays.
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        { lastKnownStatus: 'SCA_REQUIRED' },
+        {
+          where: { id: 'corr-1', isDeleted: false, lastKnownStatus: 'DRAFT' },
+        },
+      )
+    })
+
     it('does not write or notify when the provider returns the same non-terminal status', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue({
         ...activeRow,
@@ -782,6 +1046,19 @@ describe('BankTransferService', () => {
       expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
       expect(result.status).toBe(BankTransferStatus.PENDING)
+    })
+
+    it('reports failureReason expired when the provider ERROR lands on a row past its TTL', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        expiresAt: new Date(Date.now() - 60 * 1000),
+      })
+      mockGetPayment(BankTransferStatus.ERROR, 'ERROR', 'expired')
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(result.status).toBe(BankTransferStatus.ERROR)
+      expect(result.failureReason).toBe(BankTransferFailureReason.EXPIRED)
     })
   })
 
@@ -808,12 +1085,15 @@ describe('BankTransferService', () => {
       expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
     })
 
-    it('refreshes then cancels on Blikk and soft-deletes the row when PENDING + fresh and Blikk still says PENDING', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // Authoritative refresh — Blikk confirms still PENDING.
+    it('refreshes then cancels on Blikk and soft-deletes the row when the payment is still DRAFT', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'DRAFT',
+      })
+      // Authoritative refresh — Blikk confirms still DRAFT (payer has not initiated).
       blikkClient.getPayment.mockResolvedValue({
         id: 'prov-1',
-        status: 'PENDING',
+        status: 'DRAFT',
       })
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
@@ -827,12 +1107,92 @@ describe('BankTransferService', () => {
           where: {
             id: 'corr-1',
             isDeleted: false,
-            lastKnownStatus: 'PENDING',
+            lastKnownStatus: 'DRAFT',
           },
         },
       )
       expect(result).toEqual({ ok: true })
     })
+
+    it('cancels on Blikk and soft-deletes when SCA_REQUIRED and Blikk honours the cancel', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'SCA_REQUIRED',
+      })
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'SCA_REQUIRED',
+      })
+      // Default cancelPayment mock resolves (2xx) — Blikk confirmed the cancel.
+
+      const result = await service.cancel({ paymentFlowId: 'flow-1' })
+
+      expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        { isDeleted: true },
+        {
+          where: {
+            id: 'corr-1',
+            isDeleted: false,
+            lastKnownStatus: 'SCA_REQUIRED',
+          },
+        },
+      )
+      expect(result).toEqual({ ok: true })
+    })
+
+    it('refuses and keeps the row live when SCA_REQUIRED and Blikk refuses the cancel', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'SCA_REQUIRED',
+      })
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'SCA_REQUIRED',
+      })
+      // Blikk only honours cancels for DRAFT — a live SCA session yields a non-2xx (e.g. 409).
+      blikkClient.cancelPayment.mockRejectedValue(
+        new BlikkClientError('conflict', 409),
+      )
+
+      await expect(service.cancel({ paymentFlowId: 'flow-1' })).rejects.toThrow(
+        BankTransferErrorCode.BankTransferCannotCancel,
+      )
+
+      expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
+      // The still-live attempt must NOT be soft-deleted, and no payment_cancelled event fires.
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalledWith(
+        { isDeleted: true },
+        expect.anything(),
+      )
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+
+    it.each<[string]>([['PENDING'], ['SCA_COMPLETE']])(
+      'refuses the cancel when the payment is %s (payer initiated/approved — settlement may be in flight)',
+      async (rawStatus) => {
+        bankTransferPaymentModel.findOne.mockResolvedValue({
+          ...baseRow,
+          lastKnownStatus: rawStatus,
+        })
+        blikkClient.getPayment.mockResolvedValue({
+          id: 'prov-1',
+          status: rawStatus,
+        })
+
+        await expect(
+          service.cancel({ paymentFlowId: 'flow-1' }),
+        ).rejects.toThrow(BankTransferErrorCode.BankTransferAlreadyInProgress)
+
+        expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
+        // The live payment must NOT be soft-deleted, and no payment_cancelled event fires.
+        expect(bankTransferPaymentModel.update).not.toHaveBeenCalledWith(
+          { isDeleted: true },
+          expect.anything(),
+        )
+        expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      },
+    )
 
     // Closes the cancel-vs-settlement race: if Blikk has settled but the webhook
     // hasn't reached us yet, the cached PENDING row would silently soft-delete a
@@ -924,34 +1284,31 @@ describe('BankTransferService', () => {
       },
     )
 
-    it('falls through to the Blikk cancel on cached state when the refresh fails (network)', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // Refresh fails — swallowed by refreshFromBlikkOrWarn.
-      blikkClient.getPayment.mockRejectedValue(
-        new BlikkClientError('ECONNRESET'),
-      )
-      // Cancel succeeds, so the cancel proceeds to soft-delete.
+    // Cancelling on cached state could soft-delete a payment that has since gone live at Blikk
+    // (a stale DRAFT the payer just took to the bank), so a pending cancel requires a fresh
+    // provider status — the error is retryable and the FE surfaces the cancel-failed toast.
+    it.each<[string]>([['DRAFT'], ['PENDING']])(
+      'throws FailedToFetchBankTransfer and touches nothing when the refresh fails on a cached %s row',
+      async (cachedRawStatus) => {
+        bankTransferPaymentModel.findOne.mockResolvedValue({
+          ...baseRow,
+          lastKnownStatus: cachedRawStatus,
+        })
+        blikkClient.getPayment.mockRejectedValue(
+          new BlikkClientError('ECONNRESET'),
+        )
 
-      const result = await service.cancel({ paymentFlowId: 'flow-1' })
+        await expect(
+          service.cancel({ paymentFlowId: 'flow-1' }),
+        ).rejects.toThrow(BankTransferErrorCode.FailedToFetchBankTransfer)
 
-      expect(blikkClient.getPayment).toHaveBeenCalledWith('prov-1')
-      expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
+        expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
+        expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+        expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      },
+    )
 
-      // Cached PENDING soft-delete uses the cached lastKnownStatus race-guard.
-      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
-        { isDeleted: true },
-        {
-          where: {
-            id: 'corr-1',
-            isDeleted: false,
-            lastKnownStatus: 'PENDING',
-          },
-        },
-      )
-      expect(result).toEqual({ ok: true })
-    })
-
-    it('skips the Blikk call but still soft-deletes the row when the row is already terminal-failed', async () => {
+    it('skips the Blikk calls but still soft-deletes a terminal-failed row, without emitting payment_cancelled', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue({
         ...baseRow,
         lastKnownStatus: 'REJECTED',
@@ -971,78 +1328,91 @@ describe('BankTransferService', () => {
           },
         },
       )
+      // The row already emitted payment_failed when it was finalized.
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
       expect(result).toEqual({ ok: true })
     })
 
-    it('soft-deletes the row when the Blikk cancel returns 404 (nothing live to orphan)', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // Refresh: Blikk still PENDING.
+    // A 404 means the payment is already gone at Blikk (it lapsed) — safe to discard locally.
+    it('soft-deletes a DRAFT payment when the Blikk cancel returns 404 not-found (already gone)', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'DRAFT',
+      })
       blikkClient.getPayment.mockResolvedValue({
         id: 'prov-1',
-        status: 'PENDING',
+        status: 'DRAFT',
       })
-      // Cancel: 404 — the payment is unknown to Blikk, nothing live to orphan.
       blikkClient.cancelPayment.mockRejectedValue(
-        new BlikkClientError('not found', 404),
+        new BlikkClientError('gone', 404),
       )
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
+      expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
         {
-          where: {
-            id: 'corr-1',
-            isDeleted: false,
-            lastKnownStatus: 'PENDING',
-          },
+          where: { id: 'corr-1', isDeleted: false, lastKnownStatus: 'DRAFT' },
         },
       )
       expect(result).toEqual({ ok: true })
     })
 
-    // Blikk only cancels DRAFT payments; a non-2xx (other than 404) means the payment is past DRAFT /
-    // live. Soft-deleting it would hide a possible settlement from the webhook/polling backstop and
-    // orphan the money, so we refuse the cancel instead.
-    it('throws and does NOT soft-delete when the Blikk cancel returns a non-2xx (payment is live)', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // Refresh: Blikk still PENDING.
+    // Any other non-2xx means Blikk still holds the session — refuse, keep the row live.
+    it.each<[string, number]>([
+      ['400 bad-request (past DRAFT, no longer cancellable)', 400],
+      ['409 conflict', 409],
+    ])(
+      'refuses and keeps the row live when the Blikk cancel returns %s',
+      async (_label, status) => {
+        bankTransferPaymentModel.findOne.mockResolvedValue({
+          ...baseRow,
+          lastKnownStatus: 'DRAFT',
+        })
+        blikkClient.getPayment.mockResolvedValue({
+          id: 'prov-1',
+          status: 'DRAFT',
+        })
+        blikkClient.cancelPayment.mockRejectedValue(
+          new BlikkClientError('refused', status),
+        )
+
+        await expect(
+          service.cancel({ paymentFlowId: 'flow-1' }),
+        ).rejects.toThrow(BankTransferErrorCode.BankTransferCannotCancel)
+
+        expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
+        expect(bankTransferPaymentModel.update).not.toHaveBeenCalledWith(
+          { isDeleted: true },
+          expect.anything(),
+        )
+        expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      },
+    )
+
+    // A network failure leaves the provider state unknown — never discard on a guess.
+    it('throws FailedToFetchBankTransfer and keeps the row live when the Blikk cancel hits a network failure', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'DRAFT',
+      })
       blikkClient.getPayment.mockResolvedValue({
         id: 'prov-1',
-        status: 'PENDING',
+        status: 'DRAFT',
       })
-      // Cancel: 409 — Blikk refuses to cancel a payment that is no longer in DRAFT.
       blikkClient.cancelPayment.mockRejectedValue(
-        new BlikkClientError('conflict', 409),
+        new BlikkClientError('network down', undefined),
       )
 
       await expect(service.cancel({ paymentFlowId: 'flow-1' })).rejects.toThrow(
-        BankTransferErrorCode.BankTransferAlreadyInProgress,
+        BankTransferErrorCode.FailedToFetchBankTransfer,
       )
 
-      expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
-      // The live payment must NOT be soft-deleted, and no payment_cancelled event fires.
-      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
-      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
-    })
-
-    it('throws and does NOT soft-delete when the Blikk cancel request fails (network)', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // Refresh: Blikk still PENDING.
-      blikkClient.getPayment.mockResolvedValue({
-        id: 'prov-1',
-        status: 'PENDING',
-      })
-      // Cancel: network failure (no HTTP status) — we can't confirm the cancel, so fail safe.
-      blikkClient.cancelPayment.mockRejectedValue(
-        new BlikkClientError('ECONNRESET'),
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalledWith(
+        { isDeleted: true },
+        expect.anything(),
       )
-
-      await expect(service.cancel({ paymentFlowId: 'flow-1' })).rejects.toThrow(
-        BankTransferErrorCode.BankTransferAlreadyInProgress,
-      )
-
-      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
     })
 
@@ -1073,6 +1443,8 @@ describe('BankTransferService', () => {
           },
         },
       )
+      // Only active (non-expired) cancels emit payment_cancelled.
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
       expect(result).toEqual({ ok: true })
     })
 
@@ -1107,11 +1479,14 @@ describe('BankTransferService', () => {
       expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
     })
 
-    it('emits payment_cancelled when cancelling an active PENDING row', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
+    it('emits payment_cancelled when cancelling an active DRAFT row', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'DRAFT',
+      })
       blikkClient.getPayment.mockResolvedValue({
         id: 'prov-1',
-        status: 'PENDING',
+        status: 'DRAFT',
       })
 
       await service.cancel({ paymentFlowId: 'flow-1' })
@@ -1131,41 +1506,6 @@ describe('BankTransferService', () => {
       )
     })
 
-    it('does not emit when cancelling a terminal-failed row', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue({
-        ...baseRow,
-        lastKnownStatus: 'REJECTED',
-      })
-
-      await service.cancel({ paymentFlowId: 'flow-1' })
-
-      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
-    })
-
-    it('does not emit when cancelling an expired PENDING row', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue({
-        ...baseRow,
-        expiresAt: new Date(Date.now() - 10 * 60 * 1000),
-      })
-
-      await service.cancel({ paymentFlowId: 'flow-1' })
-
-      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
-    })
-
-    it('does not emit when the soft-delete affects no rows (race loss)', async () => {
-      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      bankTransferPaymentModel.update.mockResolvedValueOnce([0])
-      blikkClient.getPayment.mockResolvedValue({
-        id: 'prov-1',
-        status: 'PENDING',
-      })
-
-      await service.cancel({ paymentFlowId: 'flow-1' })
-
-      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
-    })
-
     it('throws PaymentFlowAlreadyPaid and does not soft-delete when the row is already SUCCESS', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue({
         ...baseRow,
@@ -1183,13 +1523,14 @@ describe('BankTransferService', () => {
     })
 
     it('throws PaymentFlowAlreadyPaid when the row flips to SUCCESS between refresh and soft-delete (race)', async () => {
+      const draftRow = { ...baseRow, lastKnownStatus: 'DRAFT' }
       bankTransferPaymentModel.findOne
-        .mockResolvedValueOnce(baseRow)
-        .mockResolvedValueOnce({ ...baseRow, lastKnownStatus: 'SUCCESS' })
+        .mockResolvedValueOnce(draftRow)
+        .mockResolvedValueOnce({ ...draftRow, lastKnownStatus: 'SUCCESS' })
       bankTransferPaymentModel.update.mockResolvedValueOnce([0])
       blikkClient.getPayment.mockResolvedValue({
         id: 'prov-1',
-        status: 'PENDING',
+        status: 'DRAFT',
       })
 
       await expect(service.cancel({ paymentFlowId: 'flow-1' })).rejects.toThrow(
@@ -1199,18 +1540,20 @@ describe('BankTransferService', () => {
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
     })
 
-    it('returns { ok: true } when the soft-delete races against a concurrent cancel (idempotent)', async () => {
+    it('returns { ok: true } without emitting when the soft-delete races against a concurrent cancel (idempotent)', async () => {
+      const draftRow = { ...baseRow, lastKnownStatus: 'DRAFT' }
       bankTransferPaymentModel.findOne
-        .mockResolvedValueOnce(baseRow)
-        .mockResolvedValueOnce({ ...baseRow, isDeleted: true })
+        .mockResolvedValueOnce(draftRow)
+        .mockResolvedValueOnce({ ...draftRow, isDeleted: true })
       bankTransferPaymentModel.update.mockResolvedValueOnce([0])
       blikkClient.getPayment.mockResolvedValue({
         id: 'prov-1',
-        status: 'PENDING',
+        status: 'DRAFT',
       })
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
+      // Zero affected rows → the other writer won; no payment_cancelled from this call.
       expect(result).toEqual({ ok: true })
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
     })
@@ -1271,7 +1614,7 @@ describe('BankTransferService', () => {
       expect(result).toBeNull()
     })
 
-    it('refreshes from Blikk on fresh PENDING and surfaces BANK_TRANSFER_PENDING when still pending', async () => {
+    it('refreshes from Blikk on fresh PENDING; at SCA_REQUIRED it trusts Blikk and surfaces no redirect URL when Blikk omits one', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
       const getPaymentSpy = mockGetPayment(
         BankTransferStatus.PENDING,
@@ -1292,11 +1635,86 @@ describe('BankTransferService', () => {
           },
         },
       )
+      // At SCA_REQUIRED Blikk is authoritative for the URL: it omitted one (back-channel SCA), so we
+      // surface none rather than resurrecting the row's creation-time onboarding URL.
       expect(result).toEqual({
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
         updatedAt: baseRow.modified,
-        bankTransferScaRedirectUrl: 'https://blikk/sca',
+        bankTransferScaRedirectUrl: undefined,
         bankTransferExpiresAt: baseRow.expiresAt,
+        bankTransferPendingStatus: BankTransferPendingStatus.SCA_REQUIRED,
+      })
+    })
+
+    it('reports processing with no URL while Blikk is still at DRAFT, even though the row holds one', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'DRAFT',
+      })
+      mockGetPayment(BankTransferStatus.PENDING, 'DRAFT')
+
+      const result = await service.getBankTransferStatus('flow-1')
+
+      expect(result).toMatchObject({
+        paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
+        bankTransferScaRedirectUrl: undefined,
+        bankTransferPendingStatus: BankTransferPendingStatus.PROCESSING,
+      })
+    })
+
+    // The ISB case end to end: Blikk settles on SCA_REQUIRED with no URL because the bank pushes
+    // the approval to the payer's banking app. The row's creation-time URL must not resurface, or
+    // the screen flashes an unusable QR before switching to "check your phone".
+    it('reports sca_required with no URL for a back-channel bank, never the row creation-time URL', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'SCA_REQUIRED',
+        scaRedirectUrl: 'https://payment.blikk.tech/?id=stale',
+      })
+      mockGetPayment(BankTransferStatus.PENDING, 'SCA_REQUIRED')
+
+      const result = await service.getBankTransferStatus('flow-1')
+
+      expect(result).toMatchObject({
+        paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
+        bankTransferScaRedirectUrl: undefined,
+        bankTransferPendingStatus: BankTransferPendingStatus.SCA_REQUIRED,
+      })
+    })
+
+    it('surfaces a freshly minted SCA URL from the refresh when the row has none yet', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        scaRedirectUrl: null,
+      })
+      jest.spyOn(service, 'getPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SCA_REQUIRED',
+        status: BankTransferStatus.PENDING,
+        scaRedirectUrl: 'https://blikk/sca/late',
+      })
+
+      const result = await service.getBankTransferStatus('flow-1')
+
+      // Persisted for later reads…
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        {
+          lastKnownStatus: 'SCA_REQUIRED',
+          scaRedirectUrl: 'https://blikk/sca/late',
+        },
+        {
+          where: {
+            id: 'corr-1',
+            isDeleted: false,
+            lastKnownStatus: 'PENDING',
+          },
+        },
+      )
+      // …and surfaced immediately (the in-memory row predates the persist).
+      expect(result).toMatchObject({
+        paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
+        bankTransferScaRedirectUrl: 'https://blikk/sca/late',
+        bankTransferPendingStatus: BankTransferPendingStatus.SCA_REQUIRED,
       })
     })
 
@@ -1402,6 +1820,24 @@ describe('BankTransferService', () => {
       },
     )
 
+    it('surfaces lastBankTransferFailure expired when the refresh reports ERROR on a row past its TTL', async () => {
+      // Cached PENDING + expired: the refresh runs before any discard, and Blikk reports the
+      // lapsed TTL as a plain ERROR — the overlay derives it as `expired` for the failed screen.
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        expiresAt: new Date(Date.now() - 60 * 1000),
+      })
+      mockGetPayment(BankTransferStatus.ERROR, 'ERROR', 'expired')
+
+      const result = await service.getBankTransferStatus('flow-1')
+
+      expect(result).toEqual({
+        paymentStatus: PaymentStatus.BANK_TRANSFER_FAILED,
+        updatedAt: baseRow.modified,
+        lastBankTransferFailure: BankTransferFailureReason.EXPIRED,
+      })
+    })
+
     it('does not fire payment_failed when the race-guarded persist affects zero rows (concurrent verify won)', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
       bankTransferPaymentModel.update.mockResolvedValue([0])
@@ -1428,10 +1864,34 @@ describe('BankTransferService', () => {
       expect(result).toEqual({
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
         updatedAt: baseRow.modified,
-        bankTransferScaRedirectUrl: 'https://blikk/sca',
+        // No fresh Blikk status means no URL to offer: the row's creation-time URL is never
+        // surfaced, so the payer waits until a poll gets through rather than being shown a URL
+        // that may not be usable.
+        bankTransferScaRedirectUrl: undefined,
         bankTransferExpiresAt: baseRow.expiresAt,
+        // Cached raw status is PENDING → processing.
+        bankTransferPendingStatus: BankTransferPendingStatus.PROCESSING,
       })
       expect(logger.warn).toHaveBeenCalled()
+    })
+
+    // Without a fresh status we cannot know SCA is outstanding, and the URL only ever comes from a
+    // refresh. Reporting the cached `SCA_REQUIRED` would render "check your phone" — telling a
+    // redirect-bank payer to wait for a notification their bank never sends.
+    it('reports processing, not the cached sca_required, when the Blikk refresh fails', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'SCA_REQUIRED',
+      })
+      jest.spyOn(service, 'getPayment').mockRejectedValue(new Error('network'))
+
+      const result = await service.getBankTransferStatus('flow-1')
+
+      expect(result).toMatchObject({
+        paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
+        bankTransferScaRedirectUrl: undefined,
+        bankTransferPendingStatus: BankTransferPendingStatus.PROCESSING,
+      })
     })
 
     it('refreshes from Blikk and soft-deletes an expired PENDING row that Blikk confirms is not settled', async () => {
@@ -1625,7 +2085,7 @@ describe('BankTransferService', () => {
       ).rejects.toThrow('connection reset')
     })
 
-    it('logs critically and keeps the fulfillment when the FJS charge keeps failing', async () => {
+    it('warns that the worker will retry and keeps the fulfillment when the FJS charge keeps failing', async () => {
       paymentFlowService.createFjsCharge.mockRejectedValue(
         new Error('FJS down'),
       )
@@ -1635,8 +2095,8 @@ describe('BankTransferService', () => {
       ).resolves.toBeUndefined()
 
       expect(paymentFlowService.createFjsCharge).toHaveBeenCalledTimes(3)
-      expect(logger.error).toHaveBeenCalledWith(
-        expect.stringContaining('manual reconciliation required'),
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('the payment worker will retry'),
         expect.any(Object),
       )
     })

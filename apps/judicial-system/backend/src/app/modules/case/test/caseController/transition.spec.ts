@@ -6,12 +6,16 @@ import { ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseFileCategory,
   CaseFileState,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseTransition,
+  CaseType,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
+  DefendantEventType,
   IndictmentCaseNotificationType,
   indictmentCases,
   InstitutionType,
@@ -29,6 +33,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
+import { VerdictService } from '../../../verdict'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 
 jest.mock('../../../../factories')
@@ -57,14 +62,21 @@ describe('CaseController - Transition', () => {
   let mockQueuedMessages: Message[]
   let transaction: Transaction
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockVerdictService: VerdictService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, sequelize, caseRepositoryService, caseController } =
-      await createTestingCaseModule()
+    const {
+      queuedMessages,
+      sequelize,
+      caseRepositoryService,
+      verdictService,
+      caseController,
+    } = await createTestingCaseModule()
 
     mockQueuedMessages = queuedMessages
     mockCaseRepositoryService = caseRepositoryService
+    mockVerdictService = verdictService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -230,6 +242,37 @@ describe('CaseController - Transition', () => {
                   },
                   caseId,
                 },
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_REQUEST,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_COURT_RECORD,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                ...(newState === CaseState.ACCEPTED &&
+                [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
+                  type,
+                )
+                  ? [
+                      {
+                        type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+                        user: {
+                          ...defaultUser,
+                          canConfirmIndictment: isIndictmentCase(theCase.type),
+                        },
+                        caseId,
+                      },
+                    ]
+                  : []),
               ])
             } else if (newState === CaseState.DELETED) {
               expect(mockQueuedMessages).toEqual([
@@ -307,12 +350,14 @@ describe('CaseController - Transition', () => {
             key: uuid(),
             isKeyAccessible: true,
             state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COURT_RECORD,
           },
           {
             id: caseFileId2,
             key: uuid(),
             isKeyAccessible: true,
             state: CaseFileState.STORED_IN_COURT,
+            category: CaseFileCategory.RULING,
           },
         ]
         const courtEndTime = randomDate()
@@ -370,6 +415,15 @@ describe('CaseController - Transition', () => {
           if (completedIndictmentCaseStates.includes(newState)) {
             expect(mockQueuedMessages).toEqual([
               {
+                type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
+                },
+                caseId,
+                elementId: caseFileId1,
+              },
+              {
                 type: MessageType.NOTIFICATION,
                 user: {
                   ...defaultUser,
@@ -385,6 +439,16 @@ describe('CaseController - Transition', () => {
                   canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
                 caseId,
+              },
+              {
+                // Only court records are delivered to police, not rulings
+                type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
+                },
+                caseId,
+                elementId: caseFileId1,
               },
             ])
           } else if (
@@ -517,6 +581,56 @@ describe('CaseController - Transition', () => {
     },
   )
 
+  describe('completing an indictment case with a ruling', () => {
+    const caseId = uuid()
+    const dismissedDefendantId = uuid()
+    const activeDefendantId = uuid()
+    const defendants = [
+      {
+        id: dismissedDefendantId,
+        eventLogs: [
+          {
+            eventType: DefendantEventType.INDICTMENT_DISMISSED,
+            created: randomDate(),
+          },
+        ],
+      },
+      { id: activeDefendantId, eventLogs: [] },
+    ]
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      type: indictmentCases[0],
+      policeCaseNumbers: [uuid()],
+      courtCaseNumber: uuid(),
+      state: CaseState.RECEIVED,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      courtEndTime: randomDate(),
+      defendants,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        state: CaseState.COMPLETED,
+      })
+
+      await givenWhenThen(caseId, theCase, {
+        transition: CaseTransition.COMPLETE,
+      })
+    })
+
+    it('should only create verdicts for defendants whose indictment was not cancelled or dismissed', () => {
+      expect(mockVerdictService.createVerdict).toHaveBeenCalledTimes(1)
+      expect(mockVerdictService.createVerdict).toHaveBeenCalledWith(
+        caseId,
+        { defendantId: activeDefendantId },
+        transaction,
+      )
+    })
+  })
+
   describe('indictment case with 0 defendants', () => {
     each(indictmentCases).describe('%s case', (type) => {
       it('should reject ASK_FOR_CONFIRMATION and not call update', async () => {
@@ -529,7 +643,7 @@ describe('CaseController - Transition', () => {
           policeCaseNumbers: [policeCaseNumber],
           state: CaseState.DRAFT,
           defendants: [],
-        } as Case
+        } as unknown as Case
 
         const then = await givenWhenThen(caseId, theCaseWithNoDefendants, {
           transition: CaseTransition.ASK_FOR_CONFIRMATION,

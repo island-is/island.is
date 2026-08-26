@@ -46,6 +46,7 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
   isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
+  isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -59,6 +60,7 @@ export enum Features {
   servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
   servicePortalHealthMedicineDelegationPageEnabled = 'isServicePortalHealthMedicineDelegationPageEnabled',
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
+  servicePortalHealthMovementPrescriptionsPageEnabled = 'isServicePortalHealthMovementPrescriptionsPageEnabled',
   isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
   isServicePortalMyPagesTRBankInformationPageEnabled = 'isServicePortalMyPagesTRBankInformationPageEnabled',
   isServicePortalTRPaymentTypesOverviewPageEnabled = 'isServicePortalTRPaymentTypesOverviewPageEnabled',
@@ -70,6 +72,7 @@ export enum Features {
   isServicePortalHealthQuestionnairesPageEnabled = 'isServicePortalHealthQuestionnairesPageEnabled',
   isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   isServicePortalUnemploymentBenefitsPageEnabled = 'isServicePortalUnemploymentBenefitsPageEnabled',
+  isServicePortalActivationAllowancePageEnabled = 'isServicePortalActivationAllowancePageEnabled',
 
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
@@ -96,6 +99,9 @@ export enum Features {
 
   //Is vehicle bulk mileage graph enabled?
   isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
+
+  //Enable sailors page
+  isServicePortalSailorsPageEnabled = 'isServicePortalSailorsPageEnabled',
 
   //Enable user ships page
   isServicePortalUserShipsPageEnabled = 'isServicePortalUserShipsPageEnabled',
@@ -201,8 +207,10 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Primary school PDF viewer modal
   isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
-  // Service portal sidebar grid layout
-  isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
+  // Switches between current and new primary-school PDF implementations in download-service
+  downloadServiceMmsPrimarySchoolImplementationTest = 'downloadServiceMmsPrimarySchoolImplementationTest',
+  // New health overview page (incl. sidebar contact box)
+  isNewHealthOverviewPageEnabled = 'isNewHealthOverviewPageEnabled',
   // University micro-credentials (örnám)
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
   // Car recycling
@@ -211,6 +219,16 @@ export enum Features {
   isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
+
+  // Application scheduled notification flags
+  transferOfVehicleOwnershipScheduledNotifications = 'isTransferOfVehicleOwnershipScheduledNotificationsEnabled',
+  changeCoOwnerOfVehicleScheduledNotifications = 'isChangeCoOwnerOfVehicleScheduledNotificationsEnabled',
+  changeOperatorOfVehicleScheduledNotifications = 'isChangeOperatorOfVehicleScheduledNotificationsEnabled',
+  trainingLicenseOnWorkMachineScheduledNotifications = 'isTrainingLicenseOnWorkMachineScheduledNotificationsEnabled',
+  transferOfMachineOwnershipScheduledNotifications = 'isTransferOfMachineOwnershipScheduledNotificationsEnabled',
+  secondarySchoolScheduledNotifications = 'isSecondarySchoolScheduledNotificationsEnabled',
+  passportScheduledNotifications = 'isPassportScheduledNotificationsEnabled',
+  idCardScheduledNotifications = 'isIdCardScheduledNotificationsEnabled',
 }
 
 export enum ServerSideFeature {

@@ -39,6 +39,7 @@ export {
 } from './FeatureProvider/FeatureProvider'
 export { default as FormContentContainer } from './FormContentContainer/FormContentContainer'
 export { default as FormFooter } from './FormFooter/FormFooter'
+export type { FormFooterAction } from './FormFooter/FormFooter'
 export { FormProvider, FormContext } from './FormProvider/FormProvider'
 export { default as Header } from './Header/Header'
 export { default as HideableText } from './HideableText/HideableText'
@@ -54,7 +55,6 @@ export { default as IndictmentCaseScheduledCard } from './Cards/IndictmentCaseSc
 export { default as InputAdvocate } from './Inputs/InputAdvocate'
 export { default as InputName } from './Inputs/InputName'
 export { default as InputNationalId } from './Inputs/InputNationalId'
-export { default as Loading } from './Loading/Loading'
 export { default as LoadingDots } from './LoadingDots/LoadingDots'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
@@ -83,7 +83,6 @@ export { strings as serviceAnnouncementsStrings } from './ServiceAnnouncement/Se
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as TagAppealState } from './Tags/TagAppealState/TagAppealState'
-export { default as TagCaseState } from './Tags/TagCaseState/TagCaseState'
 export { default as CaseTag } from './Tags/CaseTag'
 export { getIndictmentRulingDecisionTag } from './Tags/utils'
 export {
@@ -111,6 +110,7 @@ export { default as RulingDateLabel } from './DateLabel/RulingDateLabel'
 export { default as DateLabel } from './DateLabel/DateLabel'
 export { default as RulingFileLabel } from './RulingFileLabel/RulingFileLabel'
 export { default as ReopenModal } from './Modals/ReopenModal/ReopenModal'
+export { default as ReorderableFileUpload } from './ReorderableFileUpload/ReorderableFileUpload'
 export { default as RulingModifiedModal } from './Modals/RulingModifiedModal/RulingModifiedModal'
 export { default as CasesLayout } from './Layouts/CasesLayout'
 export { default as CommentsInput } from './CommentsInput/CommentsInput'
@@ -126,10 +126,6 @@ export {
   useIndictmentsLawsBroken,
 } from './AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
 export { default as IndictmentCaseFilesList } from './IndictmentCaseFilesList/IndictmentCaseFilesList'
-export {
-  default as WithdrawAppealContextMenuModal,
-  useWithdrawAppealMenuOption,
-} from './DeprecatedContextMenuOptions/WithdrawAppealMenuOption'
 export { default as ZipButton } from './ZipButton/ZipButton'
 export { default as RequestAppealRulingNotToBePublishedCheckbox } from './RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'
@@ -142,4 +138,5 @@ export { default as ArraignmentAlert } from './Alerts/ArraignmentAlert/Arraignme
 export { default as RulingModifiedAlert } from './Alerts/RulingModifiedAlert/RulingModifiedAlert'
 export { default as AppealRulingModifiedAlert } from './Alerts/AppealRulingModifiedAlert/AppealRulingModifiedAlert'
 export { default as ChangeProsecutorModal } from './Modals/ChangeProsecutorModal/ChangeProsecutorModal'
+export { default as DuplicateIndictmentModal } from './Modals/DuplicateIndictmentModal/DuplicateIndictmentModal'
 export { default as TinyMCE } from './TinyMCE/TinyMCE'

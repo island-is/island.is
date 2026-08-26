@@ -10,12 +10,14 @@ import {
   IsString,
   IsUUID,
   Length,
+  Matches,
   MaxLength,
   ValidateNested,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
@@ -87,7 +89,7 @@ export class UpdateCaseDto {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
-  @MaxLength(255, { each: true })
+  @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly policeCaseNumbers?: string[]
 
@@ -351,26 +353,6 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly endOfSessionBookings?: string
-
-  @IsOptional()
-  @IsEnum(CaseAppealDecision)
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  readonly accusedAppealDecision?: CaseAppealDecision
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly accusedAppealAnnouncement?: string
-
-  @IsOptional()
-  @IsEnum(CaseAppealDecision)
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  readonly prosecutorAppealDecision?: CaseAppealDecision
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly prosecutorAppealAnnouncement?: string
 
   @IsOptional()
   @Type(() => Date)

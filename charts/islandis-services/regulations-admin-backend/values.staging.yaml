@@ -24,6 +24,7 @@ env:
   DB_NAME: 'regulations_admin_backend'
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'regulations_admin_backend'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
@@ -61,7 +62,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   primary-gw:
@@ -107,7 +108,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:

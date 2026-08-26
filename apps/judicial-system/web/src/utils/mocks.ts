@@ -1,23 +1,27 @@
 import faker from 'faker'
 
+import { ProsecutorSelectionUsersDocument } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
+import type {
+  Case,
+  CaseFile,
+  CaseType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealCaseTransition,
-  Case,
-  CaseFile,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
   CaseState,
-  CaseType,
   Gender,
   InstitutionType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { TransitionAppealCaseDocument } from './hooks/useAppealCase/transitionAppealCase.generated'
+import { CaseTableMembershipDocument } from './hooks/useCaseTableMembership/caseTableMembership.generated'
 
 export const mockCourt = {
   id: 'court_id',
@@ -147,6 +151,43 @@ export const mockTransitionAppealCaseMutation = (
           appealReceivedByCourtDate: '2021-09-09T12:00:00.000Z',
           appealRulingDate: '2021-09-09T12:00:00.000Z',
         },
+      },
+    },
+  },
+]
+
+// BreadCrumbs (rendered via PageLayout) fires this query whenever the working
+// case has an id. Include it in MockedProvider mocks to avoid unmocked-query
+// warnings.
+export const mockCaseTableMembershipQuery = (caseId: string) => [
+  {
+    request: {
+      query: CaseTableMembershipDocument,
+      variables: {
+        caseId,
+      },
+    },
+    result: {
+      data: {
+        caseTableMembership: {
+          caseTableTypes: [],
+        },
+      },
+    },
+  },
+]
+
+// IndictmentReviewerSelector (rendered for public prosecutor staff) fires this
+// query to populate the reviewer dropdown. Include it in MockedProvider mocks
+// to avoid unmocked-query warnings.
+export const mockProsecutorSelectionUsersQuery = [
+  {
+    request: {
+      query: ProsecutorSelectionUsersDocument,
+    },
+    result: {
+      data: {
+        users: [],
       },
     },
   },

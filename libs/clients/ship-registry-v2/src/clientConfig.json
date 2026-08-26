@@ -2,57 +2,32 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Skútan Government API",
-    "contact": {
-      "name": ""
-    },
-    "license": {
-      "name": "",
-      "url": "http://licenseUrl"
-    },
+    "contact": { "name": "" },
+    "license": { "name": "", "url": "http://licenseUrl" },
     "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "/api/v1/gov"
-    }
-  ],
+  "servers": [{ "url": "/api/v1/gov" }],
   "tags": [
-    {
-      "name": "Skipaskrá"
-    },
-    {
-      "name": "Útgerð - Fishery"
-    },
-    {
-      "name": "Stöður og stöðuflokkar - Ranks and Rank groups"
-    },
-    {
-      "name": "Lögskráningar - Crew Registration "
-    },
-    {
-      "name": "Sjómenn - Fishermen"
-    },
-    {
-      "name": "Eigendur - Owners"
-    }
+    { "name": "Eigendur - Owners" },
+    { "name": "Sjómenn - Fishermen" },
+    { "name": "Skipaskrá" },
+    { "name": "Lögskráningar - Crew Registration " },
+    { "name": "Útgerð - Fishery" },
+    { "name": "Stöður og stöðuflokkar - Ranks and Rank groups" }
   ],
   "paths": {
-    "/fishery/{datefrom}/{dateto}": {
+    "/owner/{datefrom}/{dateto}": {
       "get": {
-        "tags": ["Útgerð - Fishery"],
-        "summary": "Get fisherman data by last_update_date",
-        "operationId": "getFisheriesByLastUpdatedate",
+        "tags": ["Eigendur - Owners"],
+        "summary": "Get Owner data by last_update_date",
+        "operationId": "getOwnersByLastUpdateDate",
         "parameters": [
           {
             "name": "datefrom",
             "in": "path",
             "description": "Date on the format yyyy-MM-dd",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
+            "schema": { "type": "string" },
             "example": "2022-01-01"
           },
           {
@@ -60,11 +35,7 @@
             "in": "path",
             "description": "Date on the format yyyy-MM-dd",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
+            "schema": { "type": "string" },
             "example": "2022-03-01"
           }
         ],
@@ -75,9 +46,7 @@
               "*/*": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FisheryDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OwnerDto" }
                 }
               }
             }
@@ -86,9 +55,7 @@
             "description": "Bad request",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           },
@@ -96,610 +63,54 @@
             "description": "Internal Server Error",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           }
         }
       }
     },
-    "/rank/{datefrom}/{dateto}": {
-      "get": {
-        "tags": ["Stöður og stöðuflokkar - Ranks and Rank groups"],
-        "summary": "Get Ranks by last_update_date",
-        "operationId": "getRanksByLastUpdateDate",
-        "parameters": [
-          {
-            "name": "datefrom",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-01-01"
+    "/sailor/crewregistrationsbyship": {
+      "post": {
+        "tags": ["Sjómenn - Fishermen"],
+        "summary": "Get crew registration days ",
+        "description": "SSN is passed in token",
+        "operationId": "getCrewRegistrationCountByShip",
+        "requestBody": {
+          "description": "Crew registration count request body. Dates should be on the form yyyy-mm-dd",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FishermanShipCrewRegistrationRequestDto"
+              }
+            }
           },
-          {
-            "name": "dateto",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-03-01"
-          }
-        ],
+          "required": false
+        },
         "responses": {
           "200": {
             "description": "successful operation",
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RankDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/rankgroup/{datefrom}/{dateto}": {
-      "get": {
-        "tags": ["Stöður og stöðuflokkar - Ranks and Rank groups"],
-        "summary": "Get Rank groups by last_update_date",
-        "operationId": "getRankGroupsByLastUpdateDate",
-        "parameters": [
-          {
-            "name": "datefrom",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-01-01"
-          },
-          {
-            "name": "dateto",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-03-01"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RankGroupDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/audit/rank/{datefrom}/{dateto}": {
-      "get": {
-        "tags": ["Stöður og stöðuflokkar - Ranks and Rank groups"],
-        "summary": "Get Rank groups from history (AUDIT) table by last_update_date",
-        "operationId": "getAuditRanksByLastUpdateDate",
-        "parameters": [
-          {
-            "name": "datefrom",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-01-01"
-          },
-          {
-            "name": "dateto",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-03-01"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RankDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/audit/rankgroup/{datefrom}/{dateto}": {
-      "get": {
-        "tags": ["Stöður og stöðuflokkar - Ranks and Rank groups"],
-        "summary": "Get Rank groups from history (AUDIT) table by last_update_date",
-        "operationId": "getAuditRankGroupsByLastUpdateDate",
-        "parameters": [
-          {
-            "name": "datefrom",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-01-01"
-          },
-          {
-            "name": "dateto",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-03-01"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RankGroupDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/captaincheck/crewregistration/{sailorSsn}": {
-      "get": {
-        "tags": ["Lögskráningar - Crew Registration "],
-        "summary": "Check if sailor has active Captain rank crew registration",
-        "operationId": "getIsSailorRegisteredAsCaptain",
-        "parameters": [
-          {
-            "name": "sailorSsn",
-            "in": "path",
-            "description": "SSN of fisherman",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "0101019999"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/CrewRegistrationCheckMessageDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/crewregistration/{sailorSsn}/{dateFrom}/{dateTo}": {
-      "get": {
-        "tags": ["Lögskráningar - Crew Registration "],
-        "summary": "Get Crew registrations by SSN over period",
-        "operationId": "getCrewRegistrationBySSNOverPeriod",
-        "parameters": [
-          {
-            "name": "sailorSsn",
-            "in": "path",
-            "description": "SSN of fisherman",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "0101019999"
-          },
-          {
-            "name": "dateFrom",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2025-01-01"
-          },
-          {
-            "name": "dateTo",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2025-12-31"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CrewRegistrationBasicInfoModel"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/crewregistration/{datefrom}/{dateto}": {
-      "get": {
-        "tags": ["Lögskráningar - Crew Registration "],
-        "summary": "Get Crew registration data by last_update_date",
-        "operationId": "getCrewRegistrationDataByLastUpdateDate",
-        "parameters": [
-          {
-            "name": "datefrom",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-01-01"
-          },
-          {
-            "name": "dateto",
-            "in": "path",
-            "description": "Date on the format yyyy-MM-dd",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2022-03-01"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CrewRegistrationDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ships/getall": {
-      "get": {
-        "tags": ["Skipaskrá"],
-        "summary": "Get all ships",
-        "description": "Fetches all ships on record. Returns an array of ShipHaxModel objects.",
-        "operationId": "GetAllShips",
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ShipHAXModel"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ships/detail/{shipRegistrationNumber}": {
-      "get": {
-        "tags": ["Skipaskrá"],
-        "summary": "Get detailed information of ship by registrationNumber",
-        "operationId": "getShipInfoDetail",
-        "parameters": [
-          {
-            "name": "shipRegistrationNumber",
-            "in": "path",
-            "description": "shipRegistrationNumber",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "2941"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ShipDetailsModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ships/myships": {
-      "get": {
-        "tags": ["Skipaskrá"],
-        "summary": "Get a list of my ships either from ownership or fishery SSN",
-        "operationId": "getShipsByOwnerAndFisherySSN",
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ShipBaseInfoDto"
-                  }
+                  "$ref": "#/components/schemas/CrewRegistrationsByShipResponseDto"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Unauthorized Error",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           },
@@ -707,8 +118,265 @@
             "description": "Internal Server Error",
             "content": {
               "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/sailor/maritime-books": {
+      "get": {
+        "tags": ["Sjómenn - Fishermen"],
+        "summary": "Get sailor maritime books",
+        "description": "SSNs are passed in token",
+        "operationId": "getSailorMaritimeBooks",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
+                  "$ref": "#/components/schemas/MaritimeBookResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fisherman/{datefrom}/{dateto}": {
+      "get": {
+        "tags": ["Sjómenn - Fishermen"],
+        "summary": "Get fisherman data by last_update_date",
+        "operationId": "getFishermanDataByLastUpdateDate",
+        "parameters": [
+          {
+            "name": "datefrom",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-01-01"
+          },
+          {
+            "name": "dateto",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-03-01"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FishermanDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sailor/school-certificates": {
+      "get": {
+        "tags": ["Sjómenn - Fishermen"],
+        "summary": "Get sailor school and right certificates, maritime books and right exemptions",
+        "description": "SSNs are passed in token",
+        "operationId": "getSailorSchoolCertificates",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchoolCertificateIslandIsResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sailor/right-certificates": {
+      "get": {
+        "tags": ["Sjómenn - Fishermen"],
+        "summary": "Get sailor right certificates",
+        "description": "SSNs are passed in token",
+        "operationId": "getSailorRightCertificates",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RightCertificateIslandisResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sailor/registration-exemptions": {
+      "get": {
+        "tags": ["Sjómenn - Fishermen"],
+        "summary": "Get sailor registration exemptions",
+        "description": "SSNs are passed in token",
+        "operationId": "getSailorRegistrationExemptions",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationExemptionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sailor/getallranks": {
+      "get": {
+        "tags": ["Sjómenn - Fishermen"],
+        "summary": "Get ranks",
+        "operationId": "getRanks",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["rank_id", "rank", "rank_en"],
+                    "properties": {
+                      "rank_id": { "type": "integer", "format": "int32" },
+                      "rank": { "type": "string" },
+                      "rank_en": { "type": "string" }
+                    }
+                  }
                 }
               }
             }
@@ -727,11 +395,7 @@
             "name": "shipRegistrationNumber",
             "in": "path",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -739,9 +403,7 @@
             "description": "successful operation",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ShipHAXModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ShipHAXModel" }
               }
             }
           },
@@ -749,9 +411,7 @@
             "description": "Bad request",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           },
@@ -759,9 +419,7 @@
             "description": "Not Found",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           },
@@ -769,9 +427,49 @@
             "description": "Internal Server Error",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ships/myshipdetail/{shipRegistrationNumber}": {
+      "get": {
+        "tags": ["Skipaskrá"],
+        "summary": "Get ship base info and certificate details for my ships in Island.is",
+        "operationId": "getShipInfoCertDetail",
+        "parameters": [
+          {
+            "name": "shipRegistrationNumber",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "3999"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/MyShipDetailDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           }
@@ -788,22 +486,14 @@
             "name": "dateFrom",
             "in": "path",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
+            "schema": { "type": "string" },
             "example": "2025-01-01"
           },
           {
             "name": "dateTo",
             "in": "path",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
+            "schema": { "type": "string" },
             "example": "2025-12-31"
           }
         ],
@@ -825,9 +515,7 @@
             "description": "Bad request",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           },
@@ -835,31 +523,26 @@
             "description": "Internal Server Error",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           }
         }
       }
     },
-    "/ships/myshipdetail/{shipRegistrationNumber}": {
+    "/ships/detail/{shipRegistrationNumber}": {
       "get": {
         "tags": ["Skipaskrá"],
-        "summary": "Get ship base info and certificate details for my ships in Island.is",
-        "operationId": "getShipInfoCertDetail",
+        "summary": "Get detailed information of ship by registrationNumber",
+        "operationId": "getShipInfoDetail",
         "parameters": [
           {
             "name": "shipRegistrationNumber",
             "in": "path",
+            "description": "shipRegistrationNumber",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "3999"
+            "schema": { "type": "string" },
+            "example": "2941"
           }
         ],
         "responses": {
@@ -867,9 +550,7 @@
             "description": "successful operation",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/MyShipDetailDto"
-                }
+                "schema": { "$ref": "#/components/schemas/ShipDetailsModel" }
               }
             }
           },
@@ -877,8 +558,63 @@
             "description": "Bad request",
             "content": {
               "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ships/myships": {
+      "get": {
+        "tags": ["Skipaskrá"],
+        "summary": "Get a list of my ships either from ownership or fishery SSN",
+        "operationId": "getShipsByOwnerAndFisherySSN",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ShipBaseInfoDto" }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ships/getall": {
+      "get": {
+        "tags": ["Skipaskrá"],
+        "summary": "Get all ships",
+        "description": "Fetches all ships on record. Returns an array of ShipHaxModel objects.",
+        "operationId": "GetAllShips",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ShipHAXModel" }
                 }
               }
             }
@@ -887,31 +623,206 @@
             "description": "Internal Server Error",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           }
         }
       }
     },
-    "/fisherman/{datefrom}/{dateto}": {
+    "/captaincheck/crewregistration/{sailorSsn}": {
       "get": {
-        "tags": ["Sjómenn - Fishermen"],
+        "tags": ["Lögskráningar - Crew Registration "],
+        "summary": "Check if sailor has active Captain rank crew registration",
+        "operationId": "getIsSailorRegisteredAsCaptain",
+        "parameters": [
+          {
+            "name": "sailorSsn",
+            "in": "path",
+            "description": "SSN of fisherman",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "0101019999"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewRegistrationCheckMessageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/crewregistration/{sailorSsn}/{dateFrom}/{dateTo}": {
+      "get": {
+        "tags": ["Lögskráningar - Crew Registration "],
+        "summary": "Get Crew registrations by SSN over period",
+        "operationId": "getCrewRegistrationBySSNOverPeriod",
+        "parameters": [
+          {
+            "name": "sailorSsn",
+            "in": "path",
+            "description": "SSN of fisherman",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "0101019999"
+          },
+          {
+            "name": "dateFrom",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2025-01-01"
+          },
+          {
+            "name": "dateTo",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2025-12-31"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrewRegistrationBasicInfoModel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/crewregistration/{datefrom}/{dateto}": {
+      "get": {
+        "tags": ["Lögskráningar - Crew Registration "],
+        "summary": "Get Crew registration data by last_update_date",
+        "operationId": "getCrewRegistrationDataByLastUpdateDate",
+        "parameters": [
+          {
+            "name": "datefrom",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-01-01"
+          },
+          {
+            "name": "dateto",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-03-01"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrewRegistrationDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fishery/{datefrom}/{dateto}": {
+      "get": {
+        "tags": ["Útgerð - Fishery"],
         "summary": "Get fisherman data by last_update_date",
-        "operationId": "getFishermanDataByLastUpdateDate",
+        "operationId": "getFisheriesByLastUpdatedate",
         "parameters": [
           {
             "name": "datefrom",
             "in": "path",
             "description": "Date on the format yyyy-MM-dd",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
+            "schema": { "type": "string" },
             "example": "2022-01-01"
           },
           {
@@ -919,11 +830,7 @@
             "in": "path",
             "description": "Date on the format yyyy-MM-dd",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
+            "schema": { "type": "string" },
             "example": "2022-03-01"
           }
         ],
@@ -934,9 +841,7 @@
               "*/*": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FishermanDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FisheryDto" }
                 }
               }
             }
@@ -945,9 +850,7 @@
             "description": "Bad request",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           },
@@ -955,31 +858,25 @@
             "description": "Internal Server Error",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           }
         }
       }
     },
-    "/owner/{datefrom}/{dateto}": {
+    "/rankgroup/{datefrom}/{dateto}": {
       "get": {
-        "tags": ["Eigendur - Owners"],
-        "summary": "Get Owner data by last_update_date",
-        "operationId": "getOwnersByLastUpdateDate",
+        "tags": ["Stöður og stöðuflokkar - Ranks and Rank groups"],
+        "summary": "Get Rank groups by last_update_date",
+        "operationId": "getRankGroupsByLastUpdateDate",
         "parameters": [
           {
             "name": "datefrom",
             "in": "path",
             "description": "Date on the format yyyy-MM-dd",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
+            "schema": { "type": "string" },
             "example": "2022-01-01"
           },
           {
@@ -987,11 +884,7 @@
             "in": "path",
             "description": "Date on the format yyyy-MM-dd",
             "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
+            "schema": { "type": "string" },
             "example": "2022-03-01"
           }
         ],
@@ -1002,9 +895,7 @@
               "*/*": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OwnerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RankGroupDto" }
                 }
               }
             }
@@ -1013,9 +904,7 @@
             "description": "Bad request",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           },
@@ -1023,9 +912,169 @@
             "description": "Internal Server Error",
             "content": {
               "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audit/rank/{datefrom}/{dateto}": {
+      "get": {
+        "tags": ["Stöður og stöðuflokkar - Ranks and Rank groups"],
+        "summary": "Get Rank groups from history (AUDIT) table by last_update_date",
+        "operationId": "getAuditRanksByLastUpdateDate",
+        "parameters": [
+          {
+            "name": "datefrom",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-01-01"
+          },
+          {
+            "name": "dateto",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-03-01"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseModel"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RankDto" }
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rank/{datefrom}/{dateto}": {
+      "get": {
+        "tags": ["Stöður og stöðuflokkar - Ranks and Rank groups"],
+        "summary": "Get Ranks by last_update_date",
+        "operationId": "getRanksByLastUpdateDate",
+        "parameters": [
+          {
+            "name": "datefrom",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-01-01"
+          },
+          {
+            "name": "dateto",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-03-01"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RankDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audit/rankgroup/{datefrom}/{dateto}": {
+      "get": {
+        "tags": ["Stöður og stöðuflokkar - Ranks and Rank groups"],
+        "summary": "Get Rank groups from history (AUDIT) table by last_update_date",
+        "operationId": "getAuditRankGroupsByLastUpdateDate",
+        "parameters": [
+          {
+            "name": "datefrom",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-01-01"
+          },
+          {
+            "name": "dateto",
+            "in": "path",
+            "description": "Date on the format yyyy-MM-dd",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "2022-03-01"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RankGroupDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponseModel" }
               }
             }
           }
@@ -1035,89 +1084,398 @@
   },
   "components": {
     "schemas": {
-      "FisheryDto": {
+      "OwnerDto": {
         "required": [
-          "COMPANY_ID_NUMBER",
           "CREATION_DATE",
           "ENABLED",
           "FOREIGN",
-          "HAND_OFF_DATE",
           "ID",
           "LAST_UPDATE_DATE",
+          "OWNERSHIP",
+          "OWNER_ID_NUMBER",
+          "REGISTER_DATE",
           "SHIP_ID",
           "SOCIAL_SECURITY_NUMBER"
         ],
         "type": "object",
         "properties": {
-          "ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "SOCIAL_SECURITY_NUMBER": {
-            "type": "string"
-          },
-          "SHIP_ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "HAND_OFF_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "COMPANY_ID_NUMBER": {
-            "type": "string"
-          },
-          "FOREIGN": {
-            "type": "boolean"
-          },
-          "ENABLED": {
-            "type": "boolean"
-          },
-          "CREATION_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "LAST_UPDATE_DATE": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "ID": { "type": "integer", "format": "int64" },
+          "SOCIAL_SECURITY_NUMBER": { "type": "string" },
+          "SHIP_ID": { "type": "integer", "format": "int64" },
+          "OWNERSHIP": { "type": "integer", "format": "int32" },
+          "OWNER_ID_NUMBER": { "type": "string" },
+          "REGISTER_DATE": { "type": "string", "format": "date-time" },
+          "FOREIGN": { "type": "boolean" },
+          "ENABLED": { "type": "boolean" },
+          "CREATION_DATE": { "type": "string", "format": "date-time" },
+          "LAST_UPDATE_DATE": { "type": "string", "format": "date-time" }
         }
       },
       "ErrorModel": {
         "required": ["description", "parameterName", "traceId"],
         "type": "object",
         "properties": {
-          "traceId": {
-            "type": "string"
-          },
-          "parameterName": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          }
+          "traceId": { "type": "string" },
+          "parameterName": { "type": "string" },
+          "description": { "type": "string" }
         }
       },
       "ErrorResponseModel": {
         "required": ["code", "datetime", "description", "errors"],
         "type": "object",
         "properties": {
-          "code": {
+          "code": { "type": "integer", "format": "int32" },
+          "description": { "type": "string" },
+          "datetime": { "type": "string", "format": "date-time" },
+          "errors": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ErrorModel" }
+          }
+        }
+      },
+      "CrewRegistrationsByShipDto": {
+        "required": [
+          "bruttoGrossTonnage",
+          "endDate",
+          "length",
+          "mainEngineKw",
+          "numberOfDays",
+          "rankNameAndCode",
+          "shipName",
+          "shipRegistrationNo",
+          "startDate"
+        ],
+        "type": "object",
+        "properties": {
+          "shipName": { "type": "string" },
+          "length": { "$ref": "#/components/schemas/ValueUnitPairDto" },
+          "bruttoGrossTonnage": {
+            "$ref": "#/components/schemas/ValueUnitPairDto"
+          },
+          "mainEngineKw": { "$ref": "#/components/schemas/ValueUnitPairDto" },
+          "shipRegistrationNo": { "type": "string" },
+          "rankNameAndCode": { "$ref": "#/components/schemas/Translation" },
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" },
+          "numberOfDays": { "type": "integer", "format": "int64" }
+        }
+      },
+      "CrewRegistrationsByShipHeaderDto": {
+        "required": [
+          "bruttoGrossTonnage",
+          "endDate",
+          "length",
+          "mainEngineKw",
+          "numberOfDays",
+          "rankNameAndCode",
+          "shipName",
+          "shipRegistrationNo",
+          "startDate"
+        ],
+        "type": "object",
+        "properties": {
+          "shipName": { "$ref": "#/components/schemas/Translation" },
+          "length": { "$ref": "#/components/schemas/Translation" },
+          "bruttoGrossTonnage": { "$ref": "#/components/schemas/Translation" },
+          "mainEngineKw": { "$ref": "#/components/schemas/Translation" },
+          "shipRegistrationNo": { "$ref": "#/components/schemas/Translation" },
+          "rankNameAndCode": { "$ref": "#/components/schemas/Translation" },
+          "startDate": { "$ref": "#/components/schemas/Translation" },
+          "endDate": { "$ref": "#/components/schemas/Translation" },
+          "numberOfDays": { "$ref": "#/components/schemas/Translation" }
+        }
+      },
+      "CrewRegistrationsByShipResponseDto": {
+        "required": [
+          "crewRegistrations",
+          "header",
+          "pagination",
+          "seaServiceDayCount",
+          "totalCrewRegistrationDayCount",
+          "totalWorkDays",
+          "workAshoreDayCount"
+        ],
+        "type": "object",
+        "properties": {
+          "totalCrewRegistrationDayCount": {
             "type": "integer",
             "format": "int32"
           },
-          "description": {
-            "type": "string"
+          "seaServiceDayCount": { "type": "integer", "format": "int32" },
+          "workAshoreDayCount": { "type": "integer", "format": "int32" },
+          "totalWorkDays": { "type": "integer", "format": "int32" },
+          "pagination": { "$ref": "#/components/schemas/PaginationDto" },
+          "header": {
+            "$ref": "#/components/schemas/CrewRegistrationsByShipHeaderDto"
           },
-          "datetime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "errors": {
+          "crewRegistrations": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ErrorModel"
+              "$ref": "#/components/schemas/CrewRegistrationsByShipDto"
             }
+          }
+        }
+      },
+      "PaginationDto": {
+        "required": [
+          "numberOfPages",
+          "pageNumber",
+          "pageSize",
+          "totalRecordCount"
+        ],
+        "type": "object",
+        "properties": {
+          "pageNumber": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" },
+          "totalRecordCount": { "type": "integer", "format": "int32" },
+          "numberOfPages": { "type": "integer", "format": "int32" }
+        }
+      },
+      "Translation": {
+        "required": ["en", "is"],
+        "type": "object",
+        "properties": { "is": { "type": "string" }, "en": { "type": "string" } }
+      },
+      "ValueUnitPairDto": {
+        "required": ["unit", "value"],
+        "type": "object",
+        "properties": {
+          "value": { "type": "string" },
+          "unit": { "type": "string", "enum": ["METER", "TON", "KW"] }
+        }
+      },
+      "FishermanShipCrewRegistrationRequestDto": {
+        "type": "object",
+        "properties": {
+          "date_from": { "type": "string" },
+          "date_to": { "type": "string" },
+          "rank_id": { "type": "integer", "format": "int64" },
+          "from_or_eq_length": { "type": "number", "format": "float" },
+          "from_or_eq_main_engine_power": {
+            "type": "number",
+            "format": "float"
+          },
+          "from_or_eq_brutto_weight": { "type": "number", "format": "float" },
+          "page_number": { "type": "integer", "format": "int32" },
+          "page_size": { "type": "integer", "format": "int32" }
+        }
+      },
+      "MaritimeBookDto": {
+        "required": [
+          "dateFrom",
+          "dateTo",
+          "maritimeBookSerial",
+          "maritimeBookType"
+        ],
+        "type": "object",
+        "properties": {
+          "maritimeBookType": { "type": "string" },
+          "maritimeBookSerial": { "type": "string" },
+          "dateFrom": { "type": "string" },
+          "dateTo": { "type": "string" }
+        }
+      },
+      "MaritimeBookHeaderDto": {
+        "required": [
+          "dateFrom",
+          "dateTo",
+          "maritimeBookSerial",
+          "maritimeBookType"
+        ],
+        "type": "object",
+        "properties": {
+          "maritimeBookType": { "$ref": "#/components/schemas/Translation" },
+          "maritimeBookSerial": { "$ref": "#/components/schemas/Translation" },
+          "dateFrom": { "$ref": "#/components/schemas/Translation" },
+          "dateTo": { "$ref": "#/components/schemas/Translation" }
+        }
+      },
+      "MaritimeBookResponseDto": {
+        "required": ["data", "header"],
+        "type": "object",
+        "properties": {
+          "header": { "$ref": "#/components/schemas/MaritimeBookHeaderDto" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MaritimeBookDto" }
+          }
+        }
+      },
+      "FishermanDto": {
+        "required": [
+          "CREATION_DATE",
+          "ID",
+          "LAST_UPDATE_DATE",
+          "SOCIAL_SECURITY_NUMBER"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": { "type": "integer", "format": "int64" },
+          "SOCIAL_SECURITY_NUMBER": { "type": "string" },
+          "LAST_UPDATE_DATE": { "type": "string", "format": "date-time" },
+          "CREATION_DATE": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SchoolCertificateIslandIsDto": {
+        "required": [
+          "examDate",
+          "rightTypes",
+          "school",
+          "schoolCertificate",
+          "validTo"
+        ],
+        "type": "object",
+        "properties": {
+          "school": { "type": "string" },
+          "schoolCertificate": { "type": "string" },
+          "rightTypes": { "type": "string" },
+          "examDate": { "type": "string" },
+          "validTo": { "type": "string" }
+        }
+      },
+      "SchoolCertificateIslandIsHeaderDto": {
+        "required": [
+          "examDate",
+          "rightTypes",
+          "school",
+          "schoolCertificate",
+          "validTo"
+        ],
+        "type": "object",
+        "properties": {
+          "school": { "$ref": "#/components/schemas/Translation" },
+          "schoolCertificate": { "$ref": "#/components/schemas/Translation" },
+          "rightTypes": { "$ref": "#/components/schemas/Translation" },
+          "examDate": { "$ref": "#/components/schemas/Translation" },
+          "validTo": { "$ref": "#/components/schemas/Translation" }
+        }
+      },
+      "SchoolCertificateIslandIsResponseDto": {
+        "required": ["data", "header"],
+        "type": "object",
+        "properties": {
+          "header": {
+            "$ref": "#/components/schemas/SchoolCertificateIslandIsHeaderDto"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SchoolCertificateIslandIsDto"
+            }
+          }
+        }
+      },
+      "RightCertificateIslandisDto": {
+        "required": [
+          "certificateSerialNo",
+          "expirationDate",
+          "issueDate",
+          "rightCertificateType",
+          "rightTypes"
+        ],
+        "type": "object",
+        "properties": {
+          "rightCertificateType": { "type": "string" },
+          "certificateSerialNo": { "type": "integer", "format": "int32" },
+          "rightTypes": { "type": "string" },
+          "issueDate": { "type": "string" },
+          "expirationDate": { "type": "string" }
+        }
+      },
+      "RightCertificateIslandisHeaderDto": {
+        "required": [
+          "certificateSerialNo",
+          "expirationDate",
+          "issueDate",
+          "rightCertificateType",
+          "rightTypes"
+        ],
+        "type": "object",
+        "properties": {
+          "rightCertificateType": {
+            "$ref": "#/components/schemas/Translation"
+          },
+          "certificateSerialNo": { "$ref": "#/components/schemas/Translation" },
+          "rightTypes": { "$ref": "#/components/schemas/Translation" },
+          "issueDate": { "$ref": "#/components/schemas/Translation" },
+          "expirationDate": { "$ref": "#/components/schemas/Translation" }
+        }
+      },
+      "RightCertificateIslandisResponseDto": {
+        "required": ["data", "header"],
+        "type": "object",
+        "properties": {
+          "header": {
+            "$ref": "#/components/schemas/RightCertificateIslandisHeaderDto"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RightCertificateIslandisDto"
+            }
+          }
+        }
+      },
+      "RegistrationExemptionDto": {
+        "required": [
+          "advertised",
+          "dateFrom",
+          "dateTo",
+          "exemptionLowerStatus",
+          "numberOfDays",
+          "rank",
+          "shipName",
+          "shipRegistrationNo"
+        ],
+        "type": "object",
+        "properties": {
+          "shipRegistrationNo": { "type": "integer", "format": "int32" },
+          "shipName": { "type": "string" },
+          "rank": { "$ref": "#/components/schemas/Translation" },
+          "advertised": { "$ref": "#/components/schemas/Translation" },
+          "exemptionLowerStatus": {
+            "$ref": "#/components/schemas/Translation"
+          },
+          "dateFrom": { "type": "string" },
+          "dateTo": { "type": "string" },
+          "numberOfDays": { "type": "integer", "format": "int64" }
+        }
+      },
+      "RegistrationExemptionHeaderDto": {
+        "required": [
+          "advertised",
+          "dateFrom",
+          "dateTo",
+          "exemptionLowerStatus",
+          "numberOfDays",
+          "rank",
+          "shipName",
+          "shipRegistrationNo"
+        ],
+        "type": "object",
+        "properties": {
+          "shipRegistrationNo": { "$ref": "#/components/schemas/Translation" },
+          "shipName": { "$ref": "#/components/schemas/Translation" },
+          "rank": { "$ref": "#/components/schemas/Translation" },
+          "advertised": { "$ref": "#/components/schemas/Translation" },
+          "exemptionLowerStatus": {
+            "$ref": "#/components/schemas/Translation"
+          },
+          "dateFrom": { "$ref": "#/components/schemas/Translation" },
+          "dateTo": { "$ref": "#/components/schemas/Translation" },
+          "numberOfDays": { "$ref": "#/components/schemas/Translation" }
+        }
+      },
+      "RegistrationExemptionResponseDto": {
+        "required": ["data", "header"],
+        "type": "object",
+        "properties": {
+          "header": {
+            "$ref": "#/components/schemas/RegistrationExemptionHeaderDto"
+          },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RegistrationExemptionDto" }
           }
         }
       },
@@ -1136,209 +1494,16 @@
         ],
         "type": "object",
         "properties": {
-          "ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "RANK_CODE": {
-            "type": "string"
-          },
-          "LAST_UPDATE_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "CREATION_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "ENABLED": {
-            "type": "boolean"
-          },
-          "ORDER_BY_NUMBER": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "SUPERIOR_RANK_ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "RANK": {
-            "type": "string"
-          },
-          "RANK_EN": {
-            "type": "string"
-          },
-          "RANK_GROUP_ID": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "RankGroupDto": {
-        "required": [
-          "CREATION_DATE",
-          "ENABLED",
-          "ID",
-          "LAST_UPDATE_DATE",
-          "RANK_GROUP_CODE",
-          "RANK_GROUP_NAME"
-        ],
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "RANK_GROUP_NAME": {
-            "type": "string"
-          },
-          "RANK_GROUP_CODE": {
-            "type": "string"
-          },
-          "ENABLED": {
-            "type": "boolean"
-          },
-          "LAST_UPDATE_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "CREATION_DATE": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "CrewRegistrationCheckMessageDto": {
-        "required": ["crewRegistration", "legallyRegistered", "sailorSSN"],
-        "type": "object",
-        "properties": {
-          "legallyRegistered": {
-            "type": "boolean"
-          },
-          "sailorSSN": {
-            "type": "string"
-          },
-          "crewRegistration": {
-            "$ref": "#/components/schemas/CrewRegistrationMinDto"
-          }
-        }
-      },
-      "CrewRegistrationMinDto": {
-        "required": [
-          "endDate",
-          "kennitala",
-          "name",
-          "rank",
-          "rankCode",
-          "startDate"
-        ],
-        "type": "object",
-        "properties": {
-          "kennitala": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "rank": {
-            "type": "string"
-          },
-          "rankCode": {
-            "type": "string"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "CrewRegistrationBasicInfoModel": {
-        "required": [
-          "endDate",
-          "kennitala",
-          "name",
-          "numberOfDaysValid",
-          "rank",
-          "rankCode",
-          "startDate"
-        ],
-        "type": "object",
-        "properties": {
-          "kennitala": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "rank": {
-            "type": "string"
-          },
-          "rankCode": {
-            "type": "string"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "numberOfDaysValid": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "CrewRegistrationDto": {
-        "required": [
-          "CREATION_DATE",
-          "END_DATE",
-          "FISHERMAN_ID",
-          "ID",
-          "LAST_UPDATE_DATE",
-          "RANK_ID",
-          "SHIP_ID",
-          "START_DATE"
-        ],
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "SHIP_ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "FISHERMAN_ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "RANK_ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "START_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "END_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "LAST_UPDATE_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "CREATION_DATE": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "ID": { "type": "integer", "format": "int64" },
+          "RANK_CODE": { "type": "string" },
+          "LAST_UPDATE_DATE": { "type": "string", "format": "date-time" },
+          "CREATION_DATE": { "type": "string", "format": "date-time" },
+          "ENABLED": { "type": "boolean" },
+          "ORDER_BY_NUMBER": { "type": "integer", "format": "int32" },
+          "SUPERIOR_RANK_ID": { "type": "integer", "format": "int64" },
+          "RANK": { "type": "string" },
+          "RANK_EN": { "type": "string" },
+          "RANK_GROUP_ID": { "type": "integer", "format": "int64" }
         }
       },
       "ShipHAXModel": {
@@ -1357,59 +1522,216 @@
         ],
         "type": "object",
         "properties": {
-          "registrationNumber": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "name": {
-            "type": "string"
-          },
-          "region": {
-            "type": "string"
-          },
-          "homeHarbour": {
-            "type": "string"
-          },
+          "registrationNumber": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "region": { "type": "string" },
+          "homeHarbour": { "type": "string" },
           "initialRegistrationDate": {
             "type": "string",
             "format": "date-time"
           },
-          "hullMaterial": {
-            "type": "string"
+          "hullMaterial": { "type": "string" },
+          "open": { "type": "boolean" },
+          "bruttoGRT": { "type": "number", "format": "double" },
+          "status": { "type": "string" },
+          "statusChangeDate": { "type": "string", "format": "date-time" },
+          "statusChangeComment": { "type": "string" }
+        }
+      },
+      "MainEngineDto": {
+        "required": ["engineName", "enginePower", "engineYear"],
+        "type": "object",
+        "properties": {
+          "engineName": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "engineYear": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "enginePower": { "$ref": "#/components/schemas/ValueUnitMessageDto" }
+        }
+      },
+      "MyShipDetailDto": {
+        "required": [
+          "mainEngines",
+          "shipCertificateDetails",
+          "shipRegistrationInfo",
+          "shipSpec"
+        ],
+        "type": "object",
+        "properties": {
+          "shipRegistrationInfo": {
+            "$ref": "#/components/schemas/ShipRegistrationInfoDto"
           },
-          "open": {
-            "type": "boolean"
+          "shipSpec": { "$ref": "#/components/schemas/ShipSpecDto" },
+          "mainEngines": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MainEngineDto" }
           },
-          "bruttoGRT": {
-            "type": "number",
-            "format": "double"
-          },
-          "status": {
-            "type": "string"
-          },
-          "statusChangeDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "statusChangeComment": {
-            "type": "string"
+          "shipCertificateDetails": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ShipCertificateDetailDto" }
           }
+        }
+      },
+      "ShipCertificateDetailDto": {
+        "required": [
+          "certificateIssueStatus",
+          "certificateIssueStatusEnum",
+          "certificateTypeName",
+          "extensionDate",
+          "issueDate",
+          "validToDate"
+        ],
+        "type": "object",
+        "properties": {
+          "certificateTypeName": { "type": "string" },
+          "certificateIssueStatusEnum": {
+            "type": "string",
+            "enum": [
+              "VALID",
+              "INVALID",
+              "NEEDS_REINSPECTION",
+              "IN_INSPECTION_WINDOW"
+            ]
+          },
+          "certificateIssueStatus": {
+            "$ref": "#/components/schemas/Translation"
+          },
+          "issueDate": { "type": "string" },
+          "validToDate": { "type": "string" },
+          "extensionDate": { "type": "string" }
+        }
+      },
+      "ShipRegistrationInfoDto": {
+        "required": [
+          "classificationSociety",
+          "constructionStation",
+          "constructionYear",
+          "fishery",
+          "fisheryAddress",
+          "fisheryMunicipality",
+          "fisheryPhoneNo",
+          "hullMaterial",
+          "imoNumber",
+          "phoneOnBoardShip",
+          "regionString",
+          "seaworthyExpiryDate",
+          "shipName",
+          "shipRegistrationNumber",
+          "usageTypeString"
+        ],
+        "type": "object",
+        "properties": {
+          "shipRegistrationNumber": {
+            "$ref": "#/components/schemas/ValueMessageDto"
+          },
+          "shipName": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "seaworthyExpiryDate": {
+            "$ref": "#/components/schemas/ValueMessageDto"
+          },
+          "regionString": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "usageTypeString": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "imoNumber": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "constructionStation": {
+            "$ref": "#/components/schemas/ValueMessageDto"
+          },
+          "constructionYear": {
+            "$ref": "#/components/schemas/ValueMessageDto"
+          },
+          "hullMaterial": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "classificationSociety": {
+            "$ref": "#/components/schemas/ValueMessageDto"
+          },
+          "fishery": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "fisheryAddress": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "fisheryMunicipality": {
+            "$ref": "#/components/schemas/ValueMessageDto"
+          },
+          "fisheryPhoneNo": { "$ref": "#/components/schemas/ValueMessageDto" },
+          "phoneOnBoardShip": { "$ref": "#/components/schemas/ValueMessageDto" }
+        }
+      },
+      "ShipSpecDto": {
+        "required": [
+          "bruttoGRT",
+          "bruttoTonnage",
+          "depth",
+          "length",
+          "maxLength",
+          "width"
+        ],
+        "type": "object",
+        "properties": {
+          "width": { "$ref": "#/components/schemas/ValueUnitMessageDto" },
+          "length": { "$ref": "#/components/schemas/ValueUnitMessageDto" },
+          "maxLength": { "$ref": "#/components/schemas/ValueUnitMessageDto" },
+          "depth": { "$ref": "#/components/schemas/ValueUnitMessageDto" },
+          "bruttoGRT": { "$ref": "#/components/schemas/ValueUnitMessageDto" },
+          "bruttoTonnage": {
+            "$ref": "#/components/schemas/ValueUnitMessageDto"
+          }
+        }
+      },
+      "ValueMessageDto": {
+        "required": ["translation", "value"],
+        "type": "object",
+        "properties": {
+          "translation": { "$ref": "#/components/schemas/Translation" },
+          "value": { "type": "string" }
+        }
+      },
+      "ValueUnitMessageDto": {
+        "required": ["translation", "unit", "value"],
+        "type": "object",
+        "properties": {
+          "translation": { "$ref": "#/components/schemas/Translation" },
+          "value": { "type": "string" },
+          "unit": { "type": "string" }
+        }
+      },
+      "PreOrDeRegistrationDto": {
+        "required": [
+          "bruttoTonnage",
+          "currentShipStatus",
+          "currentShipStatusId",
+          "homeHarbour",
+          "hullMaterial",
+          "open",
+          "regionAcronym",
+          "shipName",
+          "shipPrevStatus",
+          "shipPrevStatusId",
+          "shipRegistrationNumber",
+          "shipStatus",
+          "shipStatusId",
+          "statusChangeComment",
+          "statusChangeDate",
+          "statusChangeId"
+        ],
+        "type": "object",
+        "properties": {
+          "statusChangeId": { "type": "integer", "format": "int64" },
+          "shipRegistrationNumber": { "type": "string" },
+          "shipName": { "type": "string" },
+          "regionAcronym": { "type": "string" },
+          "homeHarbour": { "type": "string" },
+          "shipPrevStatusId": { "type": "integer", "format": "int64" },
+          "shipPrevStatus": { "type": "string" },
+          "shipStatusId": { "type": "integer", "format": "int64" },
+          "shipStatus": { "type": "string" },
+          "currentShipStatusId": { "type": "integer", "format": "int64" },
+          "currentShipStatus": { "type": "string" },
+          "statusChangeDate": { "type": "string", "format": "date-time" },
+          "hullMaterial": { "type": "string" },
+          "open": { "type": "boolean" },
+          "bruttoTonnage": { "type": "number", "format": "float" },
+          "statusChangeComment": { "type": "string" }
         }
       },
       "CrewMemberModel": {
         "required": ["crewRegistrationNumber", "rank", "sailor"],
         "type": "object",
         "properties": {
-          "crewRegistrationNumber": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "rank": {
-            "$ref": "#/components/schemas/RankModel"
-          },
-          "sailor": {
-            "$ref": "#/components/schemas/SailorModel"
-          }
+          "crewRegistrationNumber": { "type": "integer", "format": "int64" },
+          "rank": { "$ref": "#/components/schemas/RankModel" },
+          "sailor": { "$ref": "#/components/schemas/SailorModel" }
         }
       },
       "EngineModel": {
@@ -1422,41 +1744,21 @@
         ],
         "type": "object",
         "properties": {
-          "manufacturingNumber": {
-            "type": "string"
-          },
-          "power": {
-            "type": "number",
-            "format": "float"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "usage": {
-            "$ref": "#/components/schemas/Usage"
-          },
-          "manufacturer": {
-            "$ref": "#/components/schemas/Manufacturer"
-          }
+          "manufacturingNumber": { "type": "string" },
+          "power": { "type": "number", "format": "float" },
+          "year": { "type": "integer", "format": "int32" },
+          "usage": { "$ref": "#/components/schemas/Usage" },
+          "manufacturer": { "$ref": "#/components/schemas/Manufacturer" }
         }
       },
       "FisheryModel": {
         "required": ["address", "identityNumber", "name", "postalCode"],
         "type": "object",
         "properties": {
-          "identityNumber": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "address": {
-            "type": "string"
-          },
-          "postalCode": {
-            "type": "string"
-          }
+          "identityNumber": { "type": "string" },
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "postalCode": { "type": "string" }
         }
       },
       "IdentificationModel": {
@@ -1469,21 +1771,11 @@
         ],
         "type": "object",
         "properties": {
-          "homeHarbor": {
-            "type": "string"
-          },
-          "regionName": {
-            "type": "string"
-          },
-          "regionAcronym": {
-            "type": "string"
-          },
-          "regionNumber": {
-            "type": "string"
-          },
-          "callSign": {
-            "type": "string"
-          }
+          "homeHarbor": { "type": "string" },
+          "regionName": { "type": "string" },
+          "regionAcronym": { "type": "string" },
+          "regionNumber": { "type": "string" },
+          "callSign": { "type": "string" }
         }
       },
       "InsuranceCompanyModel": {
@@ -1498,12 +1790,8 @@
             "type": "integer",
             "format": "int64"
           },
-          "name": {
-            "type": "string"
-          },
-          "nationalIdentificationNumber": {
-            "type": "string"
-          }
+          "name": { "type": "string" },
+          "nationalIdentificationNumber": { "type": "string" }
         }
       },
       "InsuranceTypeModel": {
@@ -1514,12 +1802,8 @@
             "type": "integer",
             "format": "int64"
           },
-          "name": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
-          }
+          "name": { "type": "string" },
+          "code": { "type": "string" }
         }
       },
       "MainMeasurementsModel": {
@@ -1535,62 +1819,30 @@
         ],
         "type": "object",
         "properties": {
-          "length": {
-            "type": "number",
-            "format": "float"
-          },
-          "mostLength": {
-            "type": "number",
-            "format": "float"
-          },
-          "width": {
-            "type": "number",
-            "format": "float"
-          },
-          "depth": {
-            "type": "number",
-            "format": "float"
-          },
-          "draft": {
-            "type": "number",
-            "format": "float"
-          },
-          "bruttoGrt": {
-            "type": "number",
-            "format": "float"
-          },
-          "bruttoWeightTons": {
-            "type": "number",
-            "format": "float"
-          },
-          "nettoWeightTons": {
-            "type": "number",
-            "format": "float"
-          }
+          "length": { "type": "number", "format": "float" },
+          "mostLength": { "type": "number", "format": "float" },
+          "width": { "type": "number", "format": "float" },
+          "depth": { "type": "number", "format": "float" },
+          "draft": { "type": "number", "format": "float" },
+          "bruttoGrt": { "type": "number", "format": "float" },
+          "bruttoWeightTons": { "type": "number", "format": "float" },
+          "nettoWeightTons": { "type": "number", "format": "float" }
         }
       },
       "Manufacturer": {
         "required": ["code", "name"],
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
+          "code": { "type": "string" },
+          "name": { "type": "string" }
         }
       },
       "OperationAreaModel": {
         "required": ["englishName", "icelandicName"],
         "type": "object",
         "properties": {
-          "icelandicName": {
-            "type": "string"
-          },
-          "englishName": {
-            "type": "string"
-          }
+          "icelandicName": { "type": "string" },
+          "englishName": { "type": "string" }
         }
       },
       "OwnerModel": {
@@ -1606,35 +1858,15 @@
         ],
         "type": "object",
         "properties": {
-          "percentage": {
-            "type": "string"
-          },
-          "nationalIdentificationNumber": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "registrationDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastUpdated": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "documentTitle": {
-            "type": "string"
-          },
-          "address": {
-            "type": "string"
-          },
-          "postalCode": {
-            "type": "string"
-          },
-          "isForeign": {
-            "type": "boolean"
-          }
+          "percentage": { "type": "string" },
+          "nationalIdentificationNumber": { "type": "string" },
+          "name": { "type": "string" },
+          "registrationDate": { "type": "string", "format": "date-time" },
+          "lastUpdated": { "type": "string", "format": "date-time" },
+          "documentTitle": { "type": "string" },
+          "address": { "type": "string" },
+          "postalCode": { "type": "string" },
+          "isForeign": { "type": "boolean" }
         }
       },
       "PassengerPermitModel": {
@@ -1645,10 +1877,7 @@
         ],
         "type": "object",
         "properties": {
-          "shipRegistrationNumber": {
-            "type": "integer",
-            "format": "int64"
-          },
+          "shipRegistrationNumber": { "type": "integer", "format": "int64" },
           "operationArea": {
             "$ref": "#/components/schemas/OperationAreaModel"
           },
@@ -1661,51 +1890,28 @@
         "required": ["code", "nameEn", "nameIs"],
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string"
-          },
-          "nameIs": {
-            "type": "string"
-          },
-          "nameEn": {
-            "type": "string"
-          }
+          "code": { "type": "string" },
+          "nameIs": { "type": "string" },
+          "nameEn": { "type": "string" }
         }
       },
       "SailorModel": {
         "required": ["isForeign", "name", "nationalIdentificationNumber"],
         "type": "object",
         "properties": {
-          "nationalIdentificationNumber": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "isForeign": {
-            "type": "boolean"
-          }
+          "nationalIdentificationNumber": { "type": "string" },
+          "name": { "type": "string" },
+          "isForeign": { "type": "boolean" }
         }
       },
       "SeaworthinessModel": {
         "required": ["extendedValidTo", "isValid", "validFrom", "validTo"],
         "type": "object",
         "properties": {
-          "isValid": {
-            "type": "boolean"
-          },
-          "validFrom": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "validTo": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "extendedValidTo": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "isValid": { "type": "boolean" },
+          "validFrom": { "type": "string", "format": "date-time" },
+          "validTo": { "type": "string", "format": "date-time" },
+          "extendedValidTo": { "type": "string", "format": "date-time" }
         }
       },
       "ShipDetailsModel": {
@@ -1751,38 +1957,16 @@
         ],
         "type": "object",
         "properties": {
-          "shipRegistrationNumber": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "name": {
-            "type": "string"
-          },
-          "isOpen": {
-            "type": "boolean"
-          },
-          "usageType": {
-            "type": "string"
-          },
-          "operationArea": {
-            "type": "string"
-          },
-          "imoNumber": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "isLegallyStaffed": {
-            "type": "boolean"
-          },
-          "initialRegistrationDate": {
-            "type": "string"
-          },
-          "constructionYear": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "shipRegistrationNumber": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "isOpen": { "type": "boolean" },
+          "usageType": { "type": "string" },
+          "operationArea": { "type": "string" },
+          "imoNumber": { "type": "string" },
+          "status": { "type": "string" },
+          "isLegallyStaffed": { "type": "boolean" },
+          "initialRegistrationDate": { "type": "string" },
+          "constructionYear": { "type": "integer", "format": "int32" },
           "seaworthiness": {
             "$ref": "#/components/schemas/SeaworthinessModel"
           },
@@ -1794,100 +1978,47 @@
           },
           "crew": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CrewMemberModel"
-            }
+            "items": { "$ref": "#/components/schemas/CrewMemberModel" }
           },
           "owners": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OwnerModel"
-            }
+            "items": { "$ref": "#/components/schemas/OwnerModel" }
           },
           "passengerPermits": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PassengerPermitModel"
-            }
+            "items": { "$ref": "#/components/schemas/PassengerPermitModel" }
           },
           "insurances": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ShipInsuranceModel"
-            }
+            "items": { "$ref": "#/components/schemas/ShipInsuranceModel" }
           },
           "engines": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/EngineModel"
-            }
+            "items": { "$ref": "#/components/schemas/EngineModel" }
           },
-          "fishery": {
-            "$ref": "#/components/schemas/FisheryModel"
-          },
-          "constructionPlace": {
-            "type": "string"
-          },
-          "constructionStation": {
-            "type": "string"
-          },
-          "constructionCountry": {
-            "type": "string"
-          },
-          "constructionNumber": {
-            "type": "string"
-          },
-          "identificationRegistrationDate": {
-            "type": "string"
-          },
-          "changeDate": {
-            "type": "string"
-          },
-          "hullMaterial": {
-            "type": "string"
-          },
-          "classificationSociety": {
-            "type": "string"
-          },
-          "propellerCount": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "fishery": { "$ref": "#/components/schemas/FisheryModel" },
+          "constructionPlace": { "type": "string" },
+          "constructionStation": { "type": "string" },
+          "constructionCountry": { "type": "string" },
+          "constructionNumber": { "type": "string" },
+          "identificationRegistrationDate": { "type": "string" },
+          "changeDate": { "type": "string" },
+          "hullMaterial": { "type": "string" },
+          "classificationSociety": { "type": "string" },
+          "propellerCount": { "type": "integer", "format": "int32" },
           "auxiliaryEnginePowerKiloWatts": {
             "type": "number",
             "format": "double"
           },
-          "acOrDc": {
-            "type": "string"
-          },
-          "previousNameOfShip": {
-            "type": "string"
-          },
-          "powerIndicator": {
-            "type": "number",
-            "format": "float"
-          },
-          "otherInfo": {
-            "type": "string"
-          },
-          "maxPropellerDiameter": {
-            "type": "number",
-            "format": "float"
-          },
-          "powerKW": {
-            "type": "number",
-            "format": "float"
-          },
-          "horsePower": {
-            "type": "number",
-            "format": "float"
-          },
-          "voltage": {
-            "type": "string"
-          },
-          "comments": {
-            "type": "string"
-          }
+          "acOrDc": { "type": "string" },
+          "previousNameOfShip": { "type": "string" },
+          "powerIndicator": { "type": "number", "format": "float" },
+          "otherInfo": { "type": "string" },
+          "maxPropellerDiameter": { "type": "number", "format": "float" },
+          "powerKW": { "type": "number", "format": "float" },
+          "horsePower": { "type": "number", "format": "float" },
+          "voltage": { "type": "string" },
+          "comments": { "type": "string" }
         }
       },
       "ShipInsuranceModel": {
@@ -1908,28 +2039,12 @@
             "type": "integer",
             "format": "int64"
           },
-          "validFrom": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "validTo": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "numberOfInsured": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "comment": {
-            "type": "string"
-          },
-          "amountISK": {
-            "type": "integer",
-            "format": "int64"
-          },
+          "validFrom": { "type": "string", "format": "date-time" },
+          "validTo": { "type": "string", "format": "date-time" },
+          "enabled": { "type": "boolean" },
+          "numberOfInsured": { "type": "integer", "format": "int32" },
+          "comment": { "type": "string" },
+          "amountISK": { "type": "integer", "format": "int64" },
           "insuranceType": {
             "$ref": "#/components/schemas/InsuranceTypeModel"
           },
@@ -1941,11 +2056,7 @@
       "Usage": {
         "required": ["name"],
         "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          }
-        }
+        "properties": { "name": { "type": "string" } }
       },
       "ShipBaseInfoDto": {
         "required": [
@@ -1956,393 +2067,128 @@
         ],
         "type": "object",
         "properties": {
-          "shipName": {
-            "type": "string"
-          },
-          "shipRegistrationNumber": {
-            "type": "string"
-          },
-          "regionalAcronym": {
-            "type": "string"
-          },
-          "seaWorthyExpiry": {
-            "type": "string",
-            "format": "date-time"
+          "shipName": { "type": "string" },
+          "shipRegistrationNumber": { "type": "string" },
+          "regionalAcronym": { "type": "string" },
+          "seaWorthyExpiry": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CrewRegistrationCheckMessageDto": {
+        "required": ["crewRegistration", "legallyRegistered", "sailorSSN"],
+        "type": "object",
+        "properties": {
+          "legallyRegistered": { "type": "boolean" },
+          "sailorSSN": { "type": "string" },
+          "crewRegistration": {
+            "$ref": "#/components/schemas/CrewRegistrationMinDto"
           }
         }
       },
-      "PreOrDeRegistrationDto": {
+      "CrewRegistrationMinDto": {
         "required": [
-          "bruttoTonnage",
-          "currentShipStatus",
-          "currentShipStatusId",
-          "homeHarbour",
-          "hullMaterial",
-          "open",
-          "regionAcronym",
-          "shipName",
-          "shipPrevStatus",
-          "shipPrevStatusId",
-          "shipRegistrationNumber",
-          "shipStatus",
-          "shipStatusId",
-          "statusChangeComment",
-          "statusChangeDate",
-          "statusChangeId"
+          "endDate",
+          "kennitala",
+          "name",
+          "rank",
+          "rankCode",
+          "startDate"
         ],
         "type": "object",
         "properties": {
-          "statusChangeId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "shipRegistrationNumber": {
-            "type": "string"
-          },
-          "shipName": {
-            "type": "string"
-          },
-          "regionAcronym": {
-            "type": "string"
-          },
-          "homeHarbour": {
-            "type": "string"
-          },
-          "shipPrevStatusId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "shipPrevStatus": {
-            "type": "string"
-          },
-          "shipStatusId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "shipStatus": {
-            "type": "string"
-          },
-          "currentShipStatusId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "currentShipStatus": {
-            "type": "string"
-          },
-          "statusChangeDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "hullMaterial": {
-            "type": "string"
-          },
-          "open": {
-            "type": "boolean"
-          },
-          "bruttoTonnage": {
-            "type": "number",
-            "format": "float"
-          },
-          "statusChangeComment": {
-            "type": "string"
-          }
+          "kennitala": { "type": "string" },
+          "name": { "type": "string" },
+          "rank": { "type": "string" },
+          "rankCode": { "type": "string" },
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" }
         }
       },
-      "MainEngineDto": {
-        "required": ["engineName", "enginePower", "engineYear"],
-        "type": "object",
-        "properties": {
-          "engineName": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "engineYear": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "enginePower": {
-            "$ref": "#/components/schemas/ValueUnitMessageDto"
-          }
-        }
-      },
-      "MyShipDetailDto": {
+      "CrewRegistrationBasicInfoModel": {
         "required": [
-          "mainEngines",
-          "shipCertificateDetails",
-          "shipRegistrationInfo",
-          "shipSpec"
+          "endDate",
+          "kennitala",
+          "name",
+          "numberOfDaysValid",
+          "rank",
+          "rankCode",
+          "startDate"
         ],
         "type": "object",
         "properties": {
-          "shipRegistrationInfo": {
-            "$ref": "#/components/schemas/ShipRegistrationInfoDto"
-          },
-          "shipSpec": {
-            "$ref": "#/components/schemas/ShipSpecDto"
-          },
-          "mainEngines": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MainEngineDto"
-            }
-          },
-          "shipCertificateDetails": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ShipCertificateDetailDto"
-            }
-          }
+          "kennitala": { "type": "string" },
+          "name": { "type": "string" },
+          "rank": { "type": "string" },
+          "rankCode": { "type": "string" },
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" },
+          "numberOfDaysValid": { "type": "integer", "format": "int32" }
         }
       },
-      "ShipCertificateDetailDto": {
-        "required": [
-          "certificateIssueStatus",
-          "certificateIssueStatusEnum",
-          "certificateTypeName",
-          "extensionDate",
-          "issueDate",
-          "validToDate"
-        ],
-        "type": "object",
-        "properties": {
-          "certificateTypeName": {
-            "type": "string"
-          },
-          "certificateIssueStatusEnum": {
-            "type": "string",
-            "enum": [
-              "VALID",
-              "INVALID",
-              "NEEDS_REINSPECTION",
-              "IN_INSPECTION_WINDOW"
-            ]
-          },
-          "certificateIssueStatus": {
-            "$ref": "#/components/schemas/Translation"
-          },
-          "issueDate": {
-            "type": "string"
-          },
-          "validToDate": {
-            "type": "string"
-          },
-          "extensionDate": {
-            "type": "string"
-          }
-        }
-      },
-      "ShipRegistrationInfoDto": {
-        "required": [
-          "classificationSociety",
-          "constructionStation",
-          "constructionYear",
-          "fishery",
-          "fisheryAddress",
-          "fisheryMunicipality",
-          "fisheryPhoneNo",
-          "hullMaterial",
-          "imoNumber",
-          "phoneOnBoardShip",
-          "regionString",
-          "seaworthyExpiryDate",
-          "shipName",
-          "shipRegistrationNumber",
-          "usageTypeString"
-        ],
-        "type": "object",
-        "properties": {
-          "shipRegistrationNumber": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "shipName": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "seaworthyExpiryDate": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "regionString": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "usageTypeString": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "imoNumber": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "constructionStation": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "constructionYear": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "hullMaterial": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "classificationSociety": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "fishery": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "fisheryAddress": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "fisheryMunicipality": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "fisheryPhoneNo": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          },
-          "phoneOnBoardShip": {
-            "$ref": "#/components/schemas/ValueMessageDto"
-          }
-        }
-      },
-      "ShipSpecDto": {
-        "required": [
-          "bruttoGRT",
-          "bruttoTonnage",
-          "depth",
-          "length",
-          "maxLength",
-          "width"
-        ],
-        "type": "object",
-        "properties": {
-          "width": {
-            "$ref": "#/components/schemas/ValueUnitMessageDto"
-          },
-          "length": {
-            "$ref": "#/components/schemas/ValueUnitMessageDto"
-          },
-          "maxLength": {
-            "$ref": "#/components/schemas/ValueUnitMessageDto"
-          },
-          "depth": {
-            "$ref": "#/components/schemas/ValueUnitMessageDto"
-          },
-          "bruttoGRT": {
-            "$ref": "#/components/schemas/ValueUnitMessageDto"
-          },
-          "bruttoTonnage": {
-            "$ref": "#/components/schemas/ValueUnitMessageDto"
-          }
-        }
-      },
-      "Translation": {
-        "required": ["en", "is"],
-        "type": "object",
-        "properties": {
-          "is": {
-            "type": "string"
-          },
-          "en": {
-            "type": "string"
-          }
-        }
-      },
-      "ValueMessageDto": {
-        "required": ["translation", "value"],
-        "type": "object",
-        "properties": {
-          "translation": {
-            "$ref": "#/components/schemas/Translation"
-          },
-          "value": {
-            "type": "string"
-          }
-        }
-      },
-      "ValueUnitMessageDto": {
-        "required": ["translation", "unit", "value"],
-        "type": "object",
-        "properties": {
-          "translation": {
-            "$ref": "#/components/schemas/Translation"
-          },
-          "value": {
-            "type": "string"
-          },
-          "unit": {
-            "type": "string"
-          }
-        }
-      },
-      "FishermanDto": {
+      "CrewRegistrationDto": {
         "required": [
           "CREATION_DATE",
+          "END_DATE",
+          "FISHERMAN_ID",
           "ID",
           "LAST_UPDATE_DATE",
-          "SOCIAL_SECURITY_NUMBER"
+          "RANK_ID",
+          "SHIP_ID",
+          "START_DATE"
         ],
         "type": "object",
         "properties": {
-          "ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "SOCIAL_SECURITY_NUMBER": {
-            "type": "string"
-          },
-          "LAST_UPDATE_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "CREATION_DATE": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "ID": { "type": "integer", "format": "int64" },
+          "SHIP_ID": { "type": "integer", "format": "int64" },
+          "FISHERMAN_ID": { "type": "integer", "format": "int64" },
+          "RANK_ID": { "type": "integer", "format": "int64" },
+          "START_DATE": { "type": "string", "format": "date-time" },
+          "END_DATE": { "type": "string", "format": "date-time" },
+          "LAST_UPDATE_DATE": { "type": "string", "format": "date-time" },
+          "CREATION_DATE": { "type": "string", "format": "date-time" }
         }
       },
-      "OwnerDto": {
+      "FisheryDto": {
         "required": [
+          "COMPANY_ID_NUMBER",
           "CREATION_DATE",
           "ENABLED",
           "FOREIGN",
+          "HAND_OFF_DATE",
           "ID",
           "LAST_UPDATE_DATE",
-          "OWNERSHIP",
-          "OWNER_ID_NUMBER",
-          "REGISTER_DATE",
           "SHIP_ID",
           "SOCIAL_SECURITY_NUMBER"
         ],
         "type": "object",
         "properties": {
-          "ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "SOCIAL_SECURITY_NUMBER": {
-            "type": "string"
-          },
-          "SHIP_ID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "OWNERSHIP": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "OWNER_ID_NUMBER": {
-            "type": "string"
-          },
-          "REGISTER_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "FOREIGN": {
-            "type": "boolean"
-          },
-          "ENABLED": {
-            "type": "boolean"
-          },
-          "CREATION_DATE": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "LAST_UPDATE_DATE": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "ID": { "type": "integer", "format": "int64" },
+          "SOCIAL_SECURITY_NUMBER": { "type": "string" },
+          "SHIP_ID": { "type": "integer", "format": "int64" },
+          "HAND_OFF_DATE": { "type": "string", "format": "date-time" },
+          "COMPANY_ID_NUMBER": { "type": "string" },
+          "FOREIGN": { "type": "boolean" },
+          "ENABLED": { "type": "boolean" },
+          "CREATION_DATE": { "type": "string", "format": "date-time" },
+          "LAST_UPDATE_DATE": { "type": "string", "format": "date-time" }
+        }
+      },
+      "RankGroupDto": {
+        "required": [
+          "CREATION_DATE",
+          "ENABLED",
+          "ID",
+          "LAST_UPDATE_DATE",
+          "RANK_GROUP_CODE",
+          "RANK_GROUP_NAME"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": { "type": "integer", "format": "int64" },
+          "RANK_GROUP_NAME": { "type": "string" },
+          "RANK_GROUP_CODE": { "type": "string" },
+          "ENABLED": { "type": "boolean" },
+          "LAST_UPDATE_DATE": { "type": "string", "format": "date-time" },
+          "CREATION_DATE": { "type": "string", "format": "date-time" }
         }
       }
     }

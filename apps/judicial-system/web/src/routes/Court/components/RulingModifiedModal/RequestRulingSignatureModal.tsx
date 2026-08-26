@@ -1,4 +1,5 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -38,14 +39,17 @@ const RequestRulingSignatureModal: FC<Props> = ({
     <Modal
       title={formatMessage(strings.title)}
       text={description}
-      primaryButton={{
-        text: formatMessage(strings.yes),
-        onClick: handleContinue,
-      }}
-      secondaryButton={{
-        text: formatMessage(strings.no),
-        onClick: onNo,
-      }}
+      buttons={[
+        {
+          text: formatMessage(strings.no),
+          onClick: onNo,
+          variant: 'ghost',
+        },
+        {
+          text: formatMessage(strings.yes),
+          onClick: handleContinue,
+        },
+      ]}
     />
   )
 }

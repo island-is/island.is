@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 import isSameDay from 'date-fns/isSameDay'
 
@@ -12,12 +12,17 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
+import AccordionListItem from '@island.is/judicial-system-web/src/components/AccordionListItem/AccordionListItem'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
+  AppealDecisionPartyRole,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  caseLevelAppealAnnouncement,
+  caseLevelAppealDecision,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
-import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { courtRecordAccordion as m } from './CourtRecordAccordion.strings'
 
 interface Props {
@@ -27,13 +32,28 @@ interface Props {
 const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
+  const prosecutorAppealAnnouncement = caseLevelAppealAnnouncement(
+    workingCase.appealDecisions,
+    AppealDecisionPartyRole.PROSECUTOR,
+  )
+  const accusedAppealAnnouncement = caseLevelAppealAnnouncement(
+    workingCase.appealDecisions,
+    AppealDecisionPartyRole.DEFENDANT,
+  )
+
   const prosecutorAppeal = formatAppeal(
-    workingCase.prosecutorAppealDecision,
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.PROSECUTOR,
+    ),
     'Sækjandi',
   )
 
   const accusedAppeal = formatAppeal(
-    workingCase.accusedAppealDecision,
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.DEFENDANT,
+    ),
     capitalize(
       formatMessage(core.defendant, {
         suffix:
@@ -145,17 +165,15 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
             <Box marginBottom={2}>
               <Text>
                 {`${prosecutorAppeal}${
-                  workingCase.prosecutorAppealAnnouncement
-                    ? ` ${workingCase.prosecutorAppealAnnouncement}`
+                  prosecutorAppealAnnouncement
+                    ? ` ${prosecutorAppealAnnouncement}`
                     : ''
                 }`}
               </Text>
             </Box>
             <Text>
               {`${accusedAppeal}${
-                workingCase.accusedAppealAnnouncement
-                  ? ` ${workingCase.accusedAppealAnnouncement}`
-                  : ''
+                accusedAppealAnnouncement ? ` ${accusedAppealAnnouncement}` : ''
               }`}
             </Text>
           </AccordionListItem>

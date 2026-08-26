@@ -1,4 +1,5 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -25,7 +26,9 @@ import {
 import {
   useAppealCase,
   useCase,
+  useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
   onClose: () => void
@@ -37,12 +40,13 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
   const { user } = useContext(UserContext)
   const { transitionCase, isTransitioningCase } = useCase()
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const handlePrimaryButtonClick = async () => {
     const caseTransitioned = isCourtOfAppealsUser(user)
       ? await transitionAppealCase(
           workingCase.id,
-          workingCase.appealCase?.id ?? '',
+          targetAppealCase?.id ?? workingCase.appealCase?.id ?? '',
           AppealCaseTransition.REOPEN_APPEAL,
         )
       : isRequestCase(workingCase.type)
@@ -52,7 +56,10 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
     if (caseTransitioned) {
       router.push(
         isCourtOfAppealsUser(user)
-          ? `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`
+          ? appendAppealCaseIdQuery(
+              `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`,
+              targetAppealCase?.id,
+            )
           : isRestrictionCase(workingCase.type)
           ? `${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
           : isInvestigationCase(workingCase.type)
@@ -78,15 +85,18 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
           ? 'Að lokinni leiðréttingu er hægt að velja að undirrita leiðréttan úrskurð eigi það við.'
           : 'Að lokinni leiðréttingu þarf dómari að staðfesta aftur dóm. Leiðrétting verður sýnileg málflytjendum.'
       }
-      primaryButton={{
-        text: 'Halda áfram',
-        onClick: handlePrimaryButtonClick,
-        isLoading: isTransitioningCase || isTransitioningAppealCase,
-      }}
-      secondaryButton={{
-        text: 'Hætta við',
-        onClick: onClose,
-      }}
+      buttons={[
+        {
+          text: 'Hætta við',
+          onClick: onClose,
+          variant: 'ghost',
+        },
+        {
+          text: 'Halda áfram',
+          onClick: handlePrimaryButtonClick,
+          isLoading: isTransitioningCase || isTransitioningAppealCase,
+        },
+      ]}
     />
   )
 }

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName:
     'application-templates-social-insurance-administration-medical-and-rehabilitation-payments',
   preset: '../../../../../jest.preset.js',

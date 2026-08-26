@@ -2,12 +2,12 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import type { UploadFile } from '@island.is/island-ui/core'
 import {
   Box,
   FileUploadStatus,
   InputFileUpload,
   Text,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -205,21 +205,29 @@ const AppealFiles = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
-          nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda gögn'}
-          nextIsLoading={!allFilesDoneOrError}
-          nextIsDisabled={uploadFiles.length === 0 || !allFilesDoneOrError}
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+          actions={[
+            {
+              text: someFilesError ? 'Reyna aftur' : 'Senda gögn',
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: handleNextButtonClick,
+              disabled: uploadFiles.length === 0 || !allFilesDoneOrError,
+              loading: !allFilesDoneOrError,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === true && (
         <Modal
           title="Gögn hafa verið send Landsrétti"
           text="Tilkynning hefur verið send Landsrétti og aðilum máls."
-          secondaryButton={{
-            text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
-          }}
+          buttons={[
+            {
+              text: formatMessage(core.closeModal),
+              onClick: () => router.push(previousUrl),
+              variant: 'ghost',
+            },
+          ]}
         />
       )}
     </PageLayout>

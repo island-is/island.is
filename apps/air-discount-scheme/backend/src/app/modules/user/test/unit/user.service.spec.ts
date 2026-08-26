@@ -144,7 +144,7 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(cacheManagerGetSpy).toBeCalledTimes(1)
+      expect(cacheManagerGetSpy).toHaveBeenCalledTimes(1)
 
       expect(result).toEqual(user)
     })
@@ -195,7 +195,7 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(cacheManagerGetSpy).toBeCalledTimes(1)
+      expect(cacheManagerGetSpy).toHaveBeenCalledTimes(1)
 
       expect(result).toEqual(user)
     })
@@ -251,7 +251,7 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(cacheManagerGetSpy).toBeCalledTimes(1)
+      expect(cacheManagerGetSpy).toHaveBeenCalledTimes(1)
 
       expect(result).toEqual({
         ...user,
@@ -304,7 +304,7 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(cacheManagerGetSpy).toBeCalledTimes(1)
+      expect(cacheManagerGetSpy).toHaveBeenCalledTimes(1)
 
       expect(result).toEqual({
         ...user,
@@ -352,7 +352,7 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(cacheManagerGetSpy).toBeCalledTimes(1)
+      expect(cacheManagerGetSpy).toHaveBeenCalledTimes(1)
 
       expect(result).toEqual({
         ...user,

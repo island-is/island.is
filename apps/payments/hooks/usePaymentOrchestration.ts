@@ -40,6 +40,8 @@ const deriveInitialBankTransferError = (
       return { code: BankTransferErrorCode.BankTransferRejected }
     case PaymentsBankTransferFailureReason.cancelled:
       return { code: BankTransferErrorCode.BankTransferCancelled }
+    case PaymentsBankTransferFailureReason.expired:
+      return { code: BankTransferErrorCode.BankTransferExpired }
     default:
       return { code: BankTransferErrorCode.BankTransferGenericError }
   }
@@ -124,8 +126,9 @@ export const usePaymentOrchestration = ({
 
       try {
         if (selectedPaymentMethod === 'card') {
-          const { card, cardExpiry, cardCVC } = data
+          const { cardholderName, card, cardExpiry, cardCVC } = data
           if (
+            !cardholderName ||
             !card ||
             !cardExpiry ||
             typeof cardExpiry !== 'string' ||
@@ -137,7 +140,9 @@ export const usePaymentOrchestration = ({
           }
           const [month, year] = cardExpiry.split('/')
           await cardPayment.processCardPayment({
-            number: card,
+            cardholderName,
+            // The form stores the masked value; the processor needs digits.
+            number: card.replace(/\D/g, ''),
             expiryMonth: Number(month),
             expiryYear: Number(year),
             cvc: cardCVC,
@@ -154,7 +159,8 @@ export const usePaymentOrchestration = ({
             return
           }
           await bankTransferPayment.processBankTransferPayment(
-            bankAccountNumber,
+            // The form stores the masked value; the service needs digits.
+            bankAccountNumber.replace(/\D/g, ''),
           )
         }
       } catch (e: unknown) {

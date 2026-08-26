@@ -291,6 +291,7 @@ export const en: TranslatedMessages = {
 
   // document communications
   'documentCommunications.caseNumber': 'Case number',
+  'documentCommunications.copyCaseNumber': 'Copy case number',
   'documentCommunications.initialReply':
     'The message has been received and a case has been created. You can continue the conversation here or via your personal email {email}.',
   'documentCommunications.cannotReply':
@@ -859,6 +860,66 @@ export const en: TranslatedMessages = {
     'Appointment not found. It may have been cancelled.',
   'health.appointments.minutesFormat': '{minutes} minutes',
   'health.appointments.moreInfo': 'More information',
+
+  // health - messages
+  'health.messages.screenTitle': 'Messages',
+  'health.messages.errorMessage':
+    'Failed to fetch messages. Please try again later.',
+  'health.messages.noMessagesTitle': 'No messages',
+  'health.messages.noMessagesText':
+    'When you receive messages, they will appear here.',
+  'health.messages.searchPlaceholder': 'Search',
+  'health.messages.filter.screenTitle': 'Filter messages',
+  'health.messages.replyButton': 'Reply to message',
+  'health.messages.archiveSuccess': 'Message archived',
+  'health.messages.unarchiveSuccess': 'Message removed from archive',
+  'health.messages.archiveError': 'Could not archive the message',
+  'health.messages.unarchiveError': 'Could not remove the message from archive',
+  'health.messages.starSuccess': 'Message starred',
+  'health.messages.unstarSuccess': 'Star removed',
+  'health.messages.starError': 'Could not star the message',
+  'health.messages.unstarError': 'Could not remove the star',
+  'health.messages.videoCall': 'Video call',
+  'health.messages.videoCallCanceled': 'Canceled',
+  'health.messages.startVideoCall': 'Start video call',
+  'health.messages.cannotReply':
+    'You cannot reply to this message because the sender has closed further replies in this conversation.',
+  'health.messages.compose.newTitle': 'New message',
+  'health.messages.compose.selectRecipient': 'Select recipient',
+  'health.messages.compose.selectService': 'Select service',
+  'health.messages.compose.selectServicePlaceholder':
+    'Select a service from the dropdown',
+  'health.messages.compose.to': 'To: {name}',
+  'health.messages.compose.messageLabel': 'Message',
+  'health.messages.compose.messagePlaceholder': 'Write your message here',
+  'health.messages.compose.termsAccept': 'I accept the',
+  'health.messages.compose.termsLink': 'terms',
+  'health.messages.compose.termsTitle': 'Terms for messages',
+  'health.messages.compose.termsBody':
+    '- Messages are answered during opening hours, usually within three business days\n- Messages and replies are automatically saved to your medical record\n- The type of message determines who answers your inquiry\n- A healthcare professional will have access to your medical record to answer your inquiry',
+  'health.messages.compose.availabilityWindow':
+    '{name} accepts messages every day from {openTime} to {closeTime}.',
+  'health.messages.compose.availabilityInfo':
+    'Replies are usually within 3 business days. If your matter is urgent and you need a reply the same day, call 1700. In an emergency, call 112 immediately.',
+  'health.messages.compose.closedTitle': 'Closed for new messages right now',
+  'health.messages.compose.notAllowedTitle': 'Cannot send messages',
+  'health.messages.compose.notAllowedText':
+    'This service provider does not offer messaging on Ísland.is.',
+  'health.messages.compose.soleBlockedTitle':
+    'Your health clinic is not open for messages',
+  'health.messages.compose.soleBlockedText':
+    '{name} does not offer a messaging service through Ísland.is',
+  'health.messages.compose.closingSoonTitle': 'Note: messaging is closing soon',
+  'health.messages.compose.send': 'Send message',
+  'health.messages.compose.sendError':
+    'Failed to send message. Please try again later.',
+  'health.messages.compose.noRecipient':
+    'It is not possible to send messages at the moment',
+  'health.messages.attachmentError':
+    'Failed to download the document. Please try again later.',
+  'health.messages.sentTitle': 'Message received',
+  'health.messages.sentText':
+    'We reply during office hours, usually within three working days. If your inquiry is urgent and needs an answer today, call 1700. In case of an emergency, call 112 immediately.',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

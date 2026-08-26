@@ -5,6 +5,7 @@ import { IntlService } from '@island.is/cms-translations'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import { ApplicationService } from '@island.is/application/api/core'
 import { HistoryService } from '@island.is/application/api/history'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import {
   createApplicationTemplate,
   createApplication,
@@ -24,6 +25,7 @@ describe('ApplicationActionService', () => {
   let mockTemplateApiActionRunner: any
   let mockApplicationService: any
   let mockHistoryService: any
+  let mockFeatureFlagService: any
 
   beforeEach(async () => {
     mockIntlService = {
@@ -62,10 +64,16 @@ describe('ApplicationActionService', () => {
       updateApplicationState: jest
         .fn()
         .mockResolvedValue({ updatedApplication: {} }),
+      cancelScheduledNotifications: jest.fn().mockResolvedValue([0]),
+      createScheduledNotifications: jest.fn().mockResolvedValue([]),
     }
 
     mockHistoryService = {
       saveStateTransition: jest.fn().mockResolvedValue({}),
+    }
+
+    mockFeatureFlagService = {
+      getValue: jest.fn().mockResolvedValue(false),
     }
 
     const module: TestingModule = await Test.createTestingModule({
@@ -78,6 +86,7 @@ describe('ApplicationActionService', () => {
         },
         { provide: ApplicationService, useValue: mockApplicationService },
         { provide: HistoryService, useValue: mockHistoryService },
+        { provide: FeatureFlagService, useValue: mockFeatureFlagService },
       ],
       imports: [LoggingModule],
     }).compile()

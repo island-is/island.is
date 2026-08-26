@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -16,11 +17,11 @@ import {
   InputAdvocate,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
+import type {
   CivilClaimant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCivilClaimants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
@@ -78,6 +79,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             <IconButton
               icon="pencil"
               colorScheme="blue"
+              ariaLabel={`Breyta talsmanni ${civilClaimant.name}`}
               disabled={
                 workingCase.state === CaseState.CORRECTING ||
                 !civilClaimant.isSpokespersonConfirmed
@@ -87,6 +89,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             <IconButton
               icon="trash"
               colorScheme="blue"
+              ariaLabel={`Fjarlægja talsmann ${civilClaimant.name}`}
               disabled={workingCase.state === CaseState.CORRECTING}
               onClick={() =>
                 handleSetAndSendCivilClaimantToServer({
@@ -288,22 +291,26 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
             spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
           })}
-          primaryButton={{
-            text: formatMessage(strings.confirmModalPrimaryButtonText, {
-              isConfirming: !civilClaimant.isSpokespersonConfirmed,
-            }),
-            onClick: () => {
-              handleSetAndSendCivilClaimantToServer({
-                isSpokespersonConfirmed: !civilClaimant.isSpokespersonConfirmed,
-              })
-
-              setDisplayModal(false)
+          buttons={[
+            {
+              text: formatMessage(strings.confirmModalSecondaryButtonText),
+              onClick: () => setDisplayModal(false),
+              variant: 'ghost',
             },
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.confirmModalSecondaryButtonText),
-            onClick: () => setDisplayModal(false),
-          }}
+            {
+              text: formatMessage(strings.confirmModalPrimaryButtonText, {
+                isConfirming: !civilClaimant.isSpokespersonConfirmed,
+              }),
+              onClick: () => {
+                handleSetAndSendCivilClaimantToServer({
+                  isSpokespersonConfirmed:
+                    !civilClaimant.isSpokespersonConfirmed,
+                })
+
+                setDisplayModal(false)
+              },
+            },
+          ]}
         />
       )}
     </BlueBox>

@@ -1,15 +1,19 @@
+import addMinutes from 'date-fns/addMinutes'
+import subMinutes from 'date-fns/subMinutes'
 import {
-  ConversationStatusFilter,
   DiseaseVaccinationDtoVaccinationStatusEnum,
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
 import {
+  VIDEO_CALL_ACTIVATES_MINUTES_BEFORE,
+  VIDEO_CALL_EXPIRES_MINUTES_AFTER,
+} from '../constants'
+import {
   AppointmentAssigneeTypeEnum,
+  AppointmentCancelBlockedReasonEnum,
   AppointmentLinkTypeEnum,
   AppointmentModalityEnum,
   AppointmentStatusEnum,
-  HealthConversationDirectionEnum,
-  HealthConversationStatusFilterEnum,
   ReferralStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
@@ -42,10 +46,22 @@ export const mapVaccinationStatus = (
 
 export const toAppointmentStatusEnum = (
   status: string,
-): AppointmentStatusEnum | undefined =>
-  Object.values(AppointmentStatusEnum).includes(status as AppointmentStatusEnum)
-    ? (status as AppointmentStatusEnum)
-    : undefined
+): AppointmentStatusEnum | undefined => {
+  switch (status) {
+    case UserVisibleAppointmentStatuses.BOOKED:
+      return AppointmentStatusEnum.BOOKED
+    case UserVisibleAppointmentStatuses.CANCELLED:
+      return AppointmentStatusEnum.CANCELLED
+    case UserVisibleAppointmentStatuses.FULFILLED:
+      return AppointmentStatusEnum.FULFILLED
+    case UserVisibleAppointmentStatuses.ARRIVED:
+      return AppointmentStatusEnum.ARRIVED
+    case UserVisibleAppointmentStatuses.CHECKED_IN:
+      return AppointmentStatusEnum.CHECKED_IN
+    default:
+      return undefined
+  }
+}
 
 export const toAppointmentModalityEnum = (
   modality?: string,
@@ -95,6 +111,43 @@ export const toAppointmentLinkTypeEnum = (
       return AppointmentLinkTypeEnum.VIDEO_CALL
     default:
       return undefined
+  }
+}
+
+export const toAppointmentCancelBlockedReason = (
+  canCancel: boolean,
+  canCancelBefore?: Date,
+): AppointmentCancelBlockedReasonEnum | undefined => {
+  if (canCancel) {
+    return undefined
+  }
+
+  if (canCancelBefore && canCancelBefore.getTime() < Date.now()) {
+    return AppointmentCancelBlockedReasonEnum.DeadlinePassed
+  }
+
+  return AppointmentCancelBlockedReasonEnum.NotAllowed
+}
+
+/*
+ * Only the video call link is currently time-gated. The window is computed
+ * here, so web and native both read the same activatesAt/expiresAt instead
+ * of each hardcoding the rules independently.
+ */
+export const getAppointmentLinkActivationWindow = (
+  type: AppointmentLinkTypeEnum | undefined,
+  appointmentDate: Date,
+): { activatesAt?: Date; expiresAt?: Date } => {
+  if (type !== AppointmentLinkTypeEnum.VIDEO_CALL) {
+    return {}
+  }
+
+  return {
+    activatesAt: subMinutes(
+      appointmentDate,
+      VIDEO_CALL_ACTIVATES_MINUTES_BEFORE,
+    ),
+    expiresAt: addMinutes(appointmentDate, VIDEO_CALL_EXPIRES_MINUTES_AFTER),
   }
 }
 
@@ -164,33 +217,5 @@ export const mapReferralStatusValueToStatus = (
     default:
       // Unknown status values if new ones get added without letting us know
       return ReferralStatusEnum.Unknown
-  }
-}
-
-export const toConversationDirectionEnum = (
-  direction: string,
-): HealthConversationDirectionEnum => {
-  switch (direction) {
-    case 'PATIENT':
-      return HealthConversationDirectionEnum.PATIENT
-    case 'STAFF':
-      return HealthConversationDirectionEnum.STAFF
-    case 'SYSTEM':
-      return HealthConversationDirectionEnum.SYSTEM
-    default:
-      return HealthConversationDirectionEnum.SYSTEM
-  }
-}
-
-export const toConversationStatusFilter = (
-  status: HealthConversationStatusFilterEnum,
-): ConversationStatusFilter => {
-  switch (status) {
-    case HealthConversationStatusFilterEnum.ACTIVE:
-      return ConversationStatusFilter.ACTIVE
-    case HealthConversationStatusFilterEnum.ARCHIVED:
-      return ConversationStatusFilter.ARCHIVED
-    case HealthConversationStatusFilterEnum.ALL:
-      return ConversationStatusFilter.ALL
   }
 }

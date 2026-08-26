@@ -296,14 +296,6 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:my-tax-credit-usage',
     defaultMessage: 'Nýting persónuafsláttar',
   },
-  spouseNoUsage: {
-    id: 'sp.social-insurance-maintenance:spouse-no-usage',
-    defaultMessage: 'Engin nýting',
-  },
-  youAreUsingSpouseTaxCreditTitle: {
-    id: 'sp.social-insurance-maintenance:you-are-using-spouse-tax-credit-title',
-    defaultMessage: 'Þú nýtir persónuafslátt maka',
-  },
   spousePersonalTaxCreditDescription: {
     id: 'sp.social-insurance-maintenance:spouse-personal-tax-credit-description',
     defaultMessage:

@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react'
-import { Legend, LegendProps } from 'recharts'
+import { DefaultLegendContentProps, Legend, LegendPayload } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
 
@@ -11,7 +11,7 @@ import {
 import { decideChartBase } from '../utils'
 
 const renderLegendItemLabel = (
-  value: string,
+  value: string | undefined,
   component?: ChartComponentWithRenderProps,
 ) => {
   return (
@@ -26,19 +26,19 @@ const renderLegendItemLabel = (
   )
 }
 
-type InferredArrayType<T> = T extends (infer U)[] ? U : never
-
-interface CustomLegendRendererProps extends LegendProps {
+interface CustomLegendRendererProps extends DefaultLegendContentProps {
   components: ChartComponentWithRenderProps[]
   data: ChartData
   customStyleConfig: CustomStyleConfig
-  payload?:
-    | (InferredArrayType<LegendProps['payload']> & {
-        payload: {
-          dataKey: string
-          stroke: string
-        }
-      })[]
+  payload?: ReadonlyArray<
+    LegendPayload & {
+      payload?: {
+        dataKey?: string
+        stroke?: string
+        strokeDasharray?: string | number
+      }
+    }
+  >
 }
 
 const CustomLegendRenderer = (props: CustomLegendRendererProps) => {
@@ -156,6 +156,7 @@ export const renderLegend = ({
           height={props.height}
           components={componentsWithAddedProps}
           data={data}
+          customStyleConfig={customStyleConfig}
         />
       )}
     />

@@ -9,10 +9,9 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
   defineTemplateApi,
-  IdentityApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -40,7 +39,6 @@ import {
   SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCountriesApi,
-  SocialInsuranceAdministrationLanguagesApi,
   SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationEmploymentStatusesApi,
@@ -123,14 +121,13 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                IdentityApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,
                   },
                 }),
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3SpouseApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
@@ -139,7 +136,6 @@ const template: ApplicationTemplate<
                 SocialInsuranceAdministrationEducationLevelsApi,
                 SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
                 SocialInsuranceAdministrationCountriesApi,
-                SocialInsuranceAdministrationLanguagesApi,
                 SocialInsuranceAdministrationEmploymentStatusesApi,
                 SocialInsuranceAdministrationMaritalStatusesApi,
                 SocialInsuranceAdministrationProfessionActivitiesApi,

@@ -1,5 +1,7 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
 import { AnimatePresence, motion } from 'motion/react'
@@ -18,13 +20,13 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { createCaseModifiedExplanation } from './ModifyDatesModal.logic'
@@ -349,15 +351,18 @@ const ModifyDatesModal: FC<Props> = ({
           <Modal
             title={getSuccessTitle(workingCase.type)}
             text={successText}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                closeModal()
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  closeModal()
 
-                setCaseModifiedExplanation(undefined)
-                setSuccessText(undefined)
+                  setCaseModifiedExplanation(undefined)
+                  setSuccessText(undefined)
+                },
+                variant: 'ghost',
               },
-            }}
+            ]}
           />
         </motion.div>
       ) : (
@@ -365,34 +370,37 @@ const ModifyDatesModal: FC<Props> = ({
           <Modal
             title={getTitle(workingCase.type)}
             text={getText(workingCase.type)}
-            primaryButton={{
-              text: 'Staðfesta',
-              onClick: handleDateModification,
-              isDisabled: isCaseModificationInvalid(),
-              isLoading: isSendingNotification || isUpdatingCase,
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => {
-                closeModal()
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => {
+                  closeModal()
 
-                setCaseModifiedExplanation(undefined)
+                  setCaseModifiedExplanation(undefined)
 
-                if (workingCase.validToDate) {
-                  setModifiedValidToDate({
-                    value: new Date(workingCase.validToDate),
-                    isValid: true,
-                  })
-                }
+                  if (workingCase.validToDate) {
+                    setModifiedValidToDate({
+                      value: new Date(workingCase.validToDate),
+                      isValid: true,
+                    })
+                  }
 
-                if (workingCase.isolationToDate) {
-                  setModifiedIsolationToDate({
-                    value: new Date(workingCase.isolationToDate),
-                    isValid: true,
-                  })
-                }
+                  if (workingCase.isolationToDate) {
+                    setModifiedIsolationToDate({
+                      value: new Date(workingCase.isolationToDate),
+                      isValid: true,
+                    })
+                  }
+                },
+                variant: 'ghost',
               },
-            }}
+              {
+                text: 'Staðfesta',
+                onClick: handleDateModification,
+                isDisabled: isCaseModificationInvalid(),
+                isLoading: isSendingNotification || isUpdatingCase,
+              },
+            ]}
           >
             <Box marginBottom={5}>
               <SectionHeading

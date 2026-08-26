@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, useContext, useState } from 'react'
+import type { ChangeEvent, FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -17,11 +18,13 @@ import {
   InputAdvocate,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  Defendant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseState,
-  Defendant,
   DefenderChoice,
-  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -157,6 +160,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             <IconButton
               icon="pencil"
               colorScheme="blue"
+              ariaLabel={`Breyta verjanda ${defendant.name}`}
               disabled={workingCase.state === CaseState.CORRECTING}
               onClick={() => setDisplayModal(true)}
             />
@@ -299,20 +303,23 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               : strings.confirmDefenderChoiceModalText,
             { defenderName: defendant?.defenderName },
           )}
-          primaryButton={{
-            text: formatMessage(strings.confirmModalPrimaryButtonText, {
-              isConfirming: !defendant.isDefenderChoiceConfirmed,
-            }),
-            onClick: () =>
-              toggleDefenderChoiceConfirmed(
-                defendant,
-                !defendant.isDefenderChoiceConfirmed,
-              ),
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.confirmModalSecondaryButtonText),
-            onClick: () => setDisplayModal(false),
-          }}
+          buttons={[
+            {
+              text: formatMessage(strings.confirmModalSecondaryButtonText),
+              onClick: () => setDisplayModal(false),
+              variant: 'ghost',
+            },
+            {
+              text: formatMessage(strings.confirmModalPrimaryButtonText, {
+                isConfirming: !defendant.isDefenderChoiceConfirmed,
+              }),
+              onClick: () =>
+                toggleDefenderChoiceConfirmed(
+                  defendant,
+                  !defendant.isDefenderChoiceConfirmed,
+                ),
+            },
+          ]}
         />
       )}
     </Box>

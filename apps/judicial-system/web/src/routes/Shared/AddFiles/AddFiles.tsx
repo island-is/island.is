@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -27,14 +28,15 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import UploadFiles, {
-  FileWithPreviewURL,
-} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import {
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type {
   Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseFileCategory,
   TrackedNotificationType,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
@@ -261,36 +263,41 @@ const AddFiles: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousRoute}
-          nextButtonText={
-            someFilesError
-              ? formatMessage(strings.tryUploadAgain)
-              : formatMessage(strings.nextButtonText)
-          }
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
-          nextIsDisabled={
-            uploadFiles.length === 0 ||
-            !allFilesDoneOrError ||
-            editCount > 0 ||
-            !hasValidFileRepresentativeSelection
-          }
-          onNextButtonClick={() => setVisibleModal('confirmation')}
+          actions={[
+            {
+              text: someFilesError
+                ? formatMessage(strings.tryUploadAgain)
+                : formatMessage(strings.nextButtonText),
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: () => setVisibleModal('confirmation'),
+              disabled:
+                uploadFiles.length === 0 ||
+                !allFilesDoneOrError ||
+                editCount > 0 ||
+                !hasValidFileRepresentativeSelection,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === 'confirmation' && (
         <Modal
           title={formatMessage(strings.filesSentModalTitle)}
           text={formatMessage(strings.filesSentModalText)}
-          primaryButton={{
-            text: formatMessage(strings.filesConfirmedModalButtonText),
-            onClick: async () => {
-              await handleNextButtonClick()
+          buttons={[
+            {
+              text: formatMessage(strings.filesDismissedModalButtonText),
+              onClick: () => setVisibleModal(undefined),
+              variant: 'ghost',
             },
-            isDisabled: !allFilesDoneOrError,
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.filesDismissedModalButtonText),
-            onClick: () => setVisibleModal(undefined),
-          }}
+            {
+              text: formatMessage(strings.filesConfirmedModalButtonText),
+              onClick: async () => {
+                await handleNextButtonClick()
+              },
+              isDisabled: !allFilesDoneOrError,
+            },
+          ]}
           onClose={() => setVisibleModal(undefined)}
         />
       )}

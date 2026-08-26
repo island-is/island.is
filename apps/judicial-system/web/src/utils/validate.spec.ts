@@ -1,12 +1,22 @@
-import {
+import type {
+  AppealCase,
   Case,
+  CourtSessionResponse,
   IndictmentCount,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseRulingDecision,
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
+  CaseFileCategory,
   IndictmentCountOffense,
   IndictmentSubtype,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
+  areAppealDecisionsComplete,
   getIndictmentCountWarningMessage,
+  isCourtOfAppealRulingStepValid,
   isIndictmentCountComplete,
   validate,
 } from './validate'
@@ -140,6 +150,28 @@ describe('getIndictmentCountWarningMessage', () => {
   })
 })
 
+describe('Validate empty', () => {
+  test.each(['', undefined, '   ', '\t', '\n'])(
+    'should fail for %j',
+    (value) => {
+      // Act
+      const r = validate([[value, ['empty']]])
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Reitur má ekki vera tómur')
+    },
+  )
+
+  test.each([' a ', '0'])('should be valid for %j', (value) => {
+    // Act
+    const r = validate([[value, ['empty']]])
+
+    // Assert
+    expect(r.isValid).toEqual(true)
+  })
+})
+
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
     // Arrange
@@ -152,6 +184,41 @@ describe('Validate police casenumber format', () => {
     expect(r.isValid).toEqual(false)
     expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
   })
+
+  test('should fail if the last part is longer than six digits', () => {
+    // Arrange
+    const value = '007-2024-1234567'
+
+    // Act
+    const r = validate([[value, ['police-casenumber-format']]])
+
+    // Assert
+    expect(r.isValid).toEqual(false)
+    expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
+  })
+
+  test('should fail if the number has not been finished', () => {
+    // Arrange
+    const value = '007-2024-'
+
+    // Act
+    const r = validate([[value, ['police-casenumber-format']]])
+
+    // Assert
+    expect(r.isValid).toEqual(false)
+    expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
+  })
+
+  test.each(['007-2024-042535', '007-2024-1'])(
+    'should be valid for %s',
+    (value) => {
+      // Act
+      const r = validate([[value, ['police-casenumber-format']]])
+
+      // Assert
+      expect(r.isValid).toEqual(true)
+    },
+  )
 })
 
 describe('Validate time format', () => {
@@ -410,4 +477,138 @@ describe('Validate court case number', () => {
       expect(result.errorMessage).toEqual('Dæmi: S-1234/2020')
     },
   )
+})
+
+describe('areAppealDecisionsComplete', () => {
+  const rulingFileId = 'ruling-file-id'
+  const courtSession = { rulingFileId } as CourtSessionResponse
+
+  const decisionFor = (
+    party: {
+      partyRole: AppealDecisionPartyRole
+      defendantId?: string
+      civilClaimantId?: string
+    },
+    decision: CaseAppealDecision | null = CaseAppealDecision.ACCEPT,
+  ) => ({ rulingFileId, decision, ...party })
+
+  const baseCase = {
+    defendants: [{ id: 'd1' }],
+    civilClaimants: [{ id: 'c1' }],
+  } as Case
+
+  it('is true when every party has a decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId: 'd1',
+        }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(true)
+  })
+
+  it('is false when a defendant has no decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
+  })
+
+  it('is false when a party has an announcement but no decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }, null),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId: 'd1',
+        }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
+  })
+
+  it('is false when the session has no ruling file', () => {
+    expect(
+      areAppealDecisionsComplete({} as CourtSessionResponse, baseCase),
+    ).toBe(false)
+  })
+})
+
+describe('isCourtOfAppealRulingStepValid', () => {
+  const appealCase = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealConclusion: 'Niðurstaða',
+  } as AppealCase
+
+  const appealRulingFile = (rulingFileId: string | null) => ({
+    category: CaseFileCategory.APPEAL_RULING,
+    rulingFileId,
+  })
+
+  it('is true when the case level appeal has its own appeal ruling', () => {
+    const workingCase = { caseFiles: [appealRulingFile(null)] } as Case
+
+    expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(true)
+  })
+
+  it('is false when the only appeal ruling belongs to a ruling order appeal', () => {
+    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+
+    expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(false)
+  })
+
+  it('is true when the ruling order appeal has its own appeal ruling', () => {
+    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+
+    expect(
+      isCourtOfAppealRulingStepValid(workingCase, {
+        ...appealCase,
+        rulingFileId: 'ruling-1',
+      } as AppealCase),
+    ).toBe(true)
+  })
+
+  it('is false when the appeal ruling belongs to another ruling order appeal', () => {
+    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+
+    expect(
+      isCourtOfAppealRulingStepValid(workingCase, {
+        ...appealCase,
+        rulingFileId: 'ruling-2',
+      } as AppealCase),
+    ).toBe(false)
+  })
+
+  it('does not require an appeal ruling when the appeal was discontinued', () => {
+    const workingCase = { caseFiles: [] } as unknown as Case
+
+    expect(
+      isCourtOfAppealRulingStepValid(workingCase, {
+        appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+      } as AppealCase),
+    ).toBe(true)
+  })
 })

@@ -16,7 +16,7 @@ import { AccidentNotificationStatus } from './models/accidentNotificationStatus.
 import { AccidentNotificationService } from '../accident-notification.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.icelandHealth)
 @Resolver(() => AccidentNotificationStatus)
 export class HealthInsuranceAccidentNotificationResolver {
   constructor(

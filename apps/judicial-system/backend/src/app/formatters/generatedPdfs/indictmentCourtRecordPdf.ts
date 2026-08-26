@@ -35,8 +35,8 @@ import {
 } from '../pdfHelpers'
 
 const formatFiledBy = (submitterText: string, submittedBy?: string | null) => {
-  if (submitterText === 'Sækjandi') {
-    return 'Sækjandi lagði fram:'
+  if (submitterText === 'Ákærandi') {
+    return 'Ákærandi lagði fram:'
   }
 
   return [submitterText, submittedBy, 'lagði fram:'].filter(Boolean).join(' ')
@@ -51,7 +51,7 @@ export const getFiledBy = (
 
     if (split?.length === 2) {
       const submitterText = getRoleTitleFromCaseFileCategory(split[1], {
-        prosecutor: 'Sækjandi',
+        prosecutor: 'Ákærandi',
         notRegistered: '',
       })
 
@@ -72,7 +72,7 @@ export const getFiledBy = (
       ].includes(file.category)
     ) {
       const submitterText = getRoleTitleFromCaseFileCategory(file.category, {
-        prosecutor: 'Sækjandi',
+        prosecutor: 'Ákærandi',
         notRegistered: '',
       })
 
@@ -224,10 +224,8 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc)
-    addNormalText(doc, 'Mættir eru:', 'Times-Bold')
     addNormalText(
       doc,
-      // Must use || here as we want to display a default message if the file has no content
       courtSession.attendees?.trim() || 'Enginn er mættur í þinghaldið.',
       'Times-Roman',
     )

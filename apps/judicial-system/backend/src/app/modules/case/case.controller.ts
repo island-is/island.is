@@ -49,6 +49,7 @@ import {
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isCompletedCase,
   isDistrictCourtUser,
   isIndictmentCase,
   isPublicProsecutionOfficeUser,
@@ -62,7 +63,6 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
-  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -76,9 +76,10 @@ import {
   DefendantExistsGuard,
 } from '../defendant'
 import { EventService } from '../event'
-import { Case, Defendant } from '../repository'
+import { AppealDecision, Case, Defendant } from '../repository'
 import { UpdateCase } from '../repository'
 import { UserService } from '../user'
+import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
@@ -108,7 +109,6 @@ import {
   CaseInterceptor,
   CasesInterceptor,
 } from './interceptors/case.interceptor'
-import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -304,6 +304,33 @@ export class CaseController {
     }
   }
 
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch('case/:caseId/appealDecision')
+  @ApiOkResponse({
+    type: AppealDecision,
+    description: 'Creates or updates a case-level party appeal decision',
+  })
+  upsertCaseAppealDecision(
+    @Param('caseId') caseId: string,
+    @Body() appealDecision: CaseAppealDecisionDto,
+    @CurrentCase() theCase: Case,
+  ): Promise<AppealDecision> {
+    this.logger.debug(`Upserting case-level appeal decision for case ${caseId}`)
+
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.upsertCaseAppealDecision(
+        theCase,
+        appealDecision,
+        transaction,
+      ),
+    )
+  }
+
   @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
   @RolesRules(
     prosecutorTransitionRule,
@@ -342,21 +369,6 @@ export class CaseController {
     this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
 
     return updatedCase ?? theCase
-  }
-
-  @UseGuards(RolesGuard)
-  @RolesRules(defenderRule)
-  @UseInterceptors(CaseListInterceptor)
-  @Get('cases')
-  @ApiOkResponse({
-    type: Case,
-    isArray: true,
-    description: 'Gets all existing cases',
-  })
-  getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
-    this.logger.debug('Getting all cases')
-
-    return this.caseService.getAll(user)
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -1004,7 +1016,6 @@ export class CaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
@@ -1021,14 +1032,17 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Duplicating indictment case ${caseId} into a new draft`)
 
-    // Only indictments that were revoked after being sent to court can be
-    // duplicated into a new draft case
-    if (
-      theCase.indictmentRulingDecision !==
-        CaseIndictmentRulingDecision.WITHDRAWAL &&
-      theCase.indictmentRulingDecision !==
-        CaseIndictmentRulingDecision.CANCELLATION
-    ) {
+    const isWaitingForCancellation =
+      theCase.state === CaseState.WAITING_FOR_CANCELLATION
+
+    const isCompletedRevocation =
+      isCompletedCase(theCase.state) &&
+      (theCase.indictmentRulingDecision ===
+        CaseIndictmentRulingDecision.WITHDRAWAL ||
+        theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.CANCELLATION)
+
+    if (!isWaitingForCancellation && !isCompletedRevocation) {
       throw new ForbiddenException(
         `Cannot duplicate indictment case ${caseId} - it has not been revoked`,
       )

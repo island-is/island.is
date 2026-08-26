@@ -1,10 +1,13 @@
-import { FC, Fragment, useCallback, useContext } from 'react'
+import type { FC } from 'react'
+import { Fragment, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
-import { DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE,
+  getStandardUserDashboardRoute,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -33,14 +36,16 @@ import {
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
+import type {
+  Defendant,
+  Subpoena,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
-  Defendant,
   IndictmentDecision,
   ServiceStatus,
-  Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -296,10 +301,7 @@ const IndictmentOverview: FC = () => {
           </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
-          <FormFooter
-            previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton
-          />
+          <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
         </FormContentContainer>
         {appealModals}
       </PageLayout>

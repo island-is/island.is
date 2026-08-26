@@ -366,7 +366,7 @@ const VehicleDetail = () => {
               label={formatMessage(messages.lastKnownOdometerStatus)}
               content={displayWithUnit(
                 data.vehiclesDetail.latestMileageRegistration,
-                'km',
+                mainInfo?.hasMilesOdometer ? 'mi' : 'km',
                 true,
               )}
               loading={loading}

@@ -1,4 +1,5 @@
-import { ChangeEvent, useCallback, useContext, useState } from 'react'
+import type { ChangeEvent } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -15,8 +16,7 @@ import {
   COURT_OF_APPEAL_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
-import { appealRuling } from '@island.is/judicial-system-web/messages'
+import { appealRuling, core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -28,13 +28,14 @@ import {
   RestrictionLength,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type { UpdateAppealCaseInput } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseState,
-  UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseNumbers } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   formatDateForServer,
@@ -48,13 +49,13 @@ import {
 import {
   appendAppealCaseIdQuery,
   applyAppealCaseUpdate,
+  isMatchingAppealCourtFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 import {
   isCourtOfAppealRulingStepFieldsValid,
   validate,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { CaseNumbers } from '../components'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
 const Ruling = () => {
@@ -134,8 +135,11 @@ const Ruling = () => {
       AppealCaseRulingDecision.DISCONTINUED ||
       uploadFiles.some(
         (file) =>
-          file.category === CaseFileCategory.APPEAL_RULING &&
-          file.status === FileUploadStatus.done,
+          isMatchingAppealCourtFile(
+            file,
+            CaseFileCategory.APPEAL_RULING,
+            targetAppealCase?.rulingFileId,
+          ) && file.status === FileUploadStatus.done,
       ))
 
   const decisionOptions = [
@@ -244,9 +248,12 @@ const Ruling = () => {
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUpload
               name="appealCourtRecord"
-              files={uploadFiles.filter(
-                (file) =>
-                  file.category === CaseFileCategory.APPEAL_COURT_RECORD,
+              files={uploadFiles.filter((file) =>
+                isMatchingAppealCourtFile(
+                  file,
+                  CaseFileCategory.APPEAL_COURT_RECORD,
+                  targetAppealCase?.rulingFileId,
+                ),
               )}
               accept="application/pdf"
               title={formatMessage(strings.inputFieldLabel)}
@@ -258,6 +265,7 @@ const Ruling = () => {
                 handleUpload(
                   addUploadFiles(files, {
                     category: CaseFileCategory.APPEAL_COURT_RECORD,
+                    rulingFileId: targetAppealCase?.rulingFileId,
                   }),
                   updateUploadFile,
                 )
@@ -370,8 +378,12 @@ const Ruling = () => {
               />
               <InputFileUpload
                 name="appealRuling"
-                files={uploadFiles.filter(
-                  (file) => file.category === CaseFileCategory.APPEAL_RULING,
+                files={uploadFiles.filter((file) =>
+                  isMatchingAppealCourtFile(
+                    file,
+                    CaseFileCategory.APPEAL_RULING,
+                    targetAppealCase?.rulingFileId,
+                  ),
                 )}
                 accept="application/pdf"
                 title={formatMessage(strings.inputFieldLabel)}
@@ -383,6 +395,7 @@ const Ruling = () => {
                   handleUpload(
                     addUploadFiles(files, {
                       category: CaseFileCategory.APPEAL_RULING,
+                      rulingFileId: targetAppealCase?.rulingFileId,
                     }),
                     updateUploadFile,
                   )
@@ -401,12 +414,18 @@ const Ruling = () => {
             `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           )}
-          nextUrl={appendAppealCaseIdQuery(
-            `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
-            targetAppealCase?.id,
-          )}
-          nextIsDisabled={!isStepValid}
-          nextButtonIcon="arrowForward"
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              url: appendAppealCaseIdQuery(
+                `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+                targetAppealCase?.id,
+              ),
+              disabled: !isStepValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

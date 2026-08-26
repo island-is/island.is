@@ -7,6 +7,7 @@ import { BlikkItem } from '@island.is/clients/blikk'
 import {
   BankTransferFailureReason,
   BankTransferStatus,
+  BankTransferPendingStatus,
 } from './bankTransfer.types'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
@@ -49,6 +50,34 @@ export const mapBlikkStatusToBankTransferStatus = (
       return BankTransferStatus.PENDING
   }
 }
+
+/** True when Blikk signals the payer must complete onboarding first: a DRAFT payment whose SCA URL points at the configured onboarding app. Compares parsed origins — an unparsable URL is never onboarding. */
+export const isOnboardingRequired = (
+  rawStatus: string,
+  scaRedirectUrl: string | undefined,
+  onboardingOrigin: string,
+): boolean => {
+  if (rawStatus !== 'DRAFT' || !scaRedirectUrl) {
+    return false
+  }
+  try {
+    return new URL(scaRedirectUrl).origin === new URL(onboardingOrigin).origin
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Map a raw Blikk status onto the pending sub-status. Only `SCA_REQUIRED` asks the payer to act —
+ * that is the point at which Blikk has decided whether there is an SCA URL to open at all, so an
+ * earlier status is always "waiting", never "your turn".
+ */
+export const mapRawStatusToBankTransferPendingStatus = (
+  status: string,
+): BankTransferPendingStatus =>
+  status === 'SCA_REQUIRED'
+    ? BankTransferPendingStatus.SCA_REQUIRED
+    : BankTransferPendingStatus.PROCESSING
 
 export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   name: item.chargeItemName,
@@ -111,6 +140,15 @@ export const toBankTransferFailureReason = (
       return null
   }
 }
+
+export const deriveBankTransferFailureReason = (
+  status: BankTransferStatus,
+  row: Pick<BankTransferPayment, 'expiresAt'>,
+): BankTransferFailureReason | null =>
+  // Blikk reports a lapsed TTL as a plain ERROR — expiry is derived from the row.
+  status === BankTransferStatus.ERROR && isRowExpired(row)
+    ? BankTransferFailureReason.EXPIRED
+    : toBankTransferFailureReason(status)
 
 /** Builds a PAID FJS charge payload for a settled bank transfer; carries the provider id in `RRN`. */
 export const generateBankTransferChargeFJSPayload = ({

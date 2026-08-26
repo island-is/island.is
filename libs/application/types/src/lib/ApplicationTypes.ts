@@ -106,6 +106,8 @@ export enum ApplicationTypes {
   DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
   VMST_SUBMIT_DOCUMENTS = 'VmstSubmitDocuments',
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
+  EQUALITY_REPORT = 'EqualityReport',
+  SALARY_REPORT = 'SalaryReport',
 }
 
 export interface ApplicationConfiguration {
@@ -533,7 +535,7 @@ export const ApplicationConfigurations: Record<
     translation: ['hb.application', 'uiForms.application'],
   },
   [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
-    slug: 'breyta-upplysingum-atvinnuleysisbaetur',
+    slug: 'vmst-breyta-upplysingum',
     translation: ['vmst.eui.application', 'uiForms.application'],
   },
   [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
@@ -541,7 +543,7 @@ export const ApplicationConfigurations: Record<
     translation: ['vmst.cjs', 'uiForms.application'],
   },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
-    slug: 'afskraning-atvinnuleysisbota',
+    slug: 'vmst-afskraning-bota',
     translation: ['vmst.dub.application', 'uiForms.application'],
   },
   [ApplicationTypes.VMST_SUBMIT_DOCUMENTS]: {
@@ -549,7 +551,15 @@ export const ApplicationConfigurations: Record<
     translation: ['vmst.vsd.application', 'uiForms.application'],
   },
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
-    slug: 'atvinnuleysisbaetur-stadfesting-ferda',
+    slug: 'vmst-tilkynning-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.EQUALITY_REPORT]: {
+    slug: 'jafnrettisstofa-jafnrettisaaetlun',
+    translation: ['doe.er.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.SALARY_REPORT]: {
+    slug: 'jafnrettisstofa-skyrslugjof',
+    translation: ['doe.sr.application', 'uiForms.application'],
   },
 }

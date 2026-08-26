@@ -11,12 +11,15 @@ import {
   Box,
   Button,
   Checkbox,
-  GridColumn,
-  GridRow,
+  GridColumn as Column,
+  GridRow as Row,
+  Icon,
   Input,
   RadioButton,
   Stack,
   Text,
+  LinkV2,
+  Divider,
 } from '@island.is/island-ui/core'
 import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -26,6 +29,12 @@ type ZendeskInstanceConfig = {
   serviceSystemInstance: string
   serviceSystemBrandID: string
 }
+
+const parseZendeskBrandIds = (brandIds?: string | null) =>
+  brandIds
+    ?.split(';')
+    .map((brandId) => brandId.trim())
+    .filter(Boolean) ?? []
 
 export const SubmissionUrls = () => {
   const { formatMessage } = useIntl()
@@ -46,6 +55,14 @@ export const SubmissionUrls = () => {
   })
   const [updateOrganizationZendeskInstance] = useMutation(
     UPDATE_ORGANIZATION_ZENDESK_INSTANCE,
+  )
+
+  const zendeskBrandId =
+    form.organizationZendeskInstance?.zendeskBrandId?.trim()
+  const zendeskInstance =
+    form.organizationZendeskInstance?.zendeskInstance?.trim()
+  const [zendeskBrandIdOptions, setZendeskBrandIdOptions] = useState(() =>
+    parseZendeskBrandIds(zendeskBrandId),
   )
 
   const sanitizeId = (url: string) => url.replace(/[^a-zA-Z0-9-_]/g, '-')
@@ -107,25 +124,36 @@ export const SubmissionUrls = () => {
       return
     }
 
+    const brandIdOptions = parseZendeskBrandIds(parsed.serviceSystemBrandID)
+    const nextZendeskBrandId =
+      brandIdOptions.length === 1
+        ? brandIdOptions[0]
+        : brandIdOptions.includes(
+            form.organizationZendeskInstance?.zendeskBrandId ?? '',
+          )
+        ? form.organizationZendeskInstance?.zendeskBrandId ?? ''
+        : ''
+    setZendeskBrandIdOptions(brandIdOptions)
+
     if (
       parsed.serviceSystemInstance !==
         form.organizationZendeskInstance?.zendeskInstance ||
-      parsed.serviceSystemBrandID !==
-        form.organizationZendeskInstance?.zendeskBrandId
+      nextZendeskBrandId !== form.organizationZendeskInstance?.zendeskBrandId
     ) {
       controlDispatch({
         type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
         payload: {
           zendeskInstance: parsed.serviceSystemInstance,
-          zendeskBrandId: parsed.serviceSystemBrandID,
+          zendeskBrandId: nextZendeskBrandId,
         },
       })
       await updateOrganizationZendeskInstance({
         variables: {
           input: {
             zendeskInstance: parsed.serviceSystemInstance,
-            zendeskBrandId: parsed.serviceSystemBrandID,
+            zendeskBrandId: nextZendeskBrandId,
             organizationId: form.organizationId,
+            formId: form.id,
           },
         },
       })
@@ -136,10 +164,57 @@ export const SubmissionUrls = () => {
     updateZendeskInstance()
   }, [])
 
+  useEffect(() => {
+    const brandIdOptions = parseZendeskBrandIds(zendeskBrandId)
+    setZendeskBrandIdOptions((currentBrandIdOptions) =>
+      brandIdOptions.length > 1 ||
+      currentBrandIdOptions.length === 0 ||
+      (brandIdOptions.length === 1 &&
+        !currentBrandIdOptions.includes(brandIdOptions[0]))
+        ? brandIdOptions
+        : currentBrandIdOptions,
+    )
+  }, [zendeskBrandId])
+
+  const selectedZendeskBrandId =
+    zendeskBrandIdOptions.length === 1
+      ? zendeskBrandIdOptions[0]
+      : zendeskBrandId?.includes(';')
+      ? ''
+      : zendeskBrandId
+  const displayedZendeskBrandIds =
+    zendeskBrandIdOptions.length > 0 ? zendeskBrandIdOptions : ['']
+
   return (
-    <Stack space={2}>
+    <>
+      <Box marginTop={2} />
+      <Row>
+        <Column span="8/10">
+          <Text variant="medium">
+            Hér velur þú hvert umsóknirnar fyrir þetta tiltekna form verða
+            sendar. Það er hægt að senda á Zendesk málakerfið eða sérsmíðaða
+            vefþjónustu stofnunar yfir X-Road.{' '}
+          </Text>
+          <Box marginTop={1} />
+          <Text variant="medium">
+            Ef notuð er vefþjónusta stofnunar yfir X-Road þá vinsamlega kynnið
+            ykkur þessar leiðbeiningar:
+          </Text>
+          <LinkV2
+            href="https://www.notion.so/Tengingar-vi-ytri-m-lakerfi-2a45a76701d680e3af0bee6e41786126"
+            newTab={true}
+            color="blue400"
+            underline="small"
+          >
+            Tengingar við ytri málakerfi
+            <Box component="span" marginLeft={1} display="inlineBlock">
+              <Icon icon="open" type="outline" size="small" />
+            </Box>
+          </LinkV2>
+        </Column>
+      </Row>
       {!showInput && !submissionUrlInput && (
-        <Box marginTop={7}>
+        <Box marginTop={5}>
           <Button
             onClick={() => setShowInput(true)}
             variant="ghost"
@@ -151,9 +226,9 @@ export const SubmissionUrls = () => {
       )}
 
       {(showInput || submissionUrlInput) && (
-        <GridRow>
-          <GridColumn>
-            <Box marginTop={7}>
+        <Row>
+          <Column>
+            <Box marginTop={5}>
               <Input
                 label={formatMessage(m.newFormUrlButton)}
                 placeholder="/r1/IS/..."
@@ -165,25 +240,19 @@ export const SubmissionUrls = () => {
                   setSubmissionUrlInput(e.target.value)
                 }}
               />
-              <Box marginTop={2}>
+              <Box marginTop={1} marginBottom={1}>
                 <Text variant="small">
                   {formatMessage(m.urlReuseEncouragement)}
                 </Text>
               </Box>
-              <Box marginTop={2}>
-                <Text variant="small">
-                  {formatMessage(m.urlFormatInstruction)}{' '}
-                  <strong>/r1/IS/</strong>
-                </Text>
-              </Box>
             </Box>
-          </GridColumn>
-        </GridRow>
+          </Column>
+        </Row>
       )}
 
       {submissionUrlInput && (
-        <GridRow>
-          <GridColumn span="10/10">
+        <Row>
+          <Column span="10/10">
             <RadioButton
               label={submissionUrlInput}
               large
@@ -209,119 +278,198 @@ export const SubmissionUrls = () => {
                 })
               }}
             />
-          </GridColumn>
-        </GridRow>
+          </Column>
+        </Row>
       )}
+      <Box marginTop={3} />
+      <Stack space={2}>
+        {submissionUrls?.map(
+          (url) =>
+            url !== submissionUrlInput && (
+              <Row key={url}>
+                <Column span="10/10">
+                  <RadioButton
+                    label={url}
+                    large
+                    name="submissionUrl"
+                    id={`submission-url-${sanitizeId(url ?? '')}`}
+                    disabled={isReadOnly}
+                    checked={form.submissionServiceUrl === url}
+                    onChange={() => {
+                      controlDispatch({
+                        type: 'CHANGE_SUBMISSION_URL',
+                        payload: { value: url ?? '' },
+                      })
+                      formUpdate({ ...form, submissionServiceUrl: url ?? '' })
+                    }}
+                  />
+                </Column>
+              </Row>
+            ),
+        )}
+        {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
+          <Row>
+            <Column span="10/10">
+              <Checkbox
+                label={formatMessage(m.useValidate)}
+                checked={!!form.useValidate}
+                disabled={isReadOnly}
+                onChange={(e) => {
+                  controlDispatch({
+                    type: 'CHANGE_USE_VALIDATE',
+                    payload: { value: e.target.checked },
+                  })
+                  formUpdate({ ...form, useValidate: e.target.checked })
+                }}
+              />
+            </Column>
+          </Row>
+        )}
+        <Box marginTop={3} />
 
-      {submissionUrls?.map(
-        (url) =>
-          url !== submissionUrlInput && (
-            <GridRow>
-              <GridColumn span="10/10" key={url}>
-                <RadioButton
-                  label={url}
-                  large
-                  name="submissionUrl"
-                  id={`submission-url-${sanitizeId(url ?? '')}`}
+        <Row>
+          <Column span="10/10">
+            <RadioButton
+              label="Zendesk"
+              large
+              name="submissionUrl"
+              id="zendesk"
+              checked={form.submissionServiceUrl === 'zendesk'}
+              disabled={isReadOnly}
+              onChange={async (e) => {
+                controlDispatch({
+                  type: 'CHANGE_SUBMISSION_URL',
+                  payload: { value: e.target.id, useValidate: false },
+                })
+
+                formUpdate({
+                  ...form,
+                  submissionServiceUrl: e.target.id,
+                  useValidate: false,
+                })
+                await persistZendeskApplicantRequirements()
+              }}
+            />
+          </Column>
+          {/* {form.submissionServiceUrl === 'zendesk' && (
+            <Column span="5/10">
+              <Blockquote>
+                <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
+                  <code>
+                    Zendesk instance:{' '}
+                    {form.organizationZendeskInstance?.zendeskInstance
+                      ? form.organizationZendeskInstance.zendeskInstance
+                      : 'digitaliceland'}
+                    .zendesk.com
+                  </code>
+                </Text>
+                <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
+                  <code>
+                    Zendesk brand ID:{' '}
+                    {form.organizationZendeskInstance?.zendeskBrandId}
+                  </code>
+                </Text>
+              </Blockquote>
+            </Column>
+          )} */}
+        </Row>
+        {form.submissionServiceUrl === 'zendesk' && (
+          <>
+            <Row>
+              <Column span="8/10">
+                <Text variant="medium">
+                  Brand Id og Instance eru sótt sjálfkrafa í Contentful frá
+                  stofnuninni sem á formið. Ef það vantar brand Id eða instance
+                  þá þarf að setja það upp í Contentful. <br />
+                  Ef stofnunin á fleiri en eitt Brand Id þá er hægt að velja á
+                  milli þeirra hér.
+                </Text>
+              </Column>
+            </Row>
+            {displayedZendeskBrandIds.map((brandId, index) => {
+              const zendeskBrandInputId = `zendesk-brand-id-${
+                sanitizeId(brandId) || `missing-${index}`
+              }-${index}`
+
+              return (
+                <Row key={zendeskBrandInputId}>
+                  <Column span="6/10">
+                    <RadioButton
+                      label={
+                        <strong>
+                          Brand Id:{' '}
+                          {brandId || (
+                            <Text
+                              as="span"
+                              color="red600"
+                              variant="small"
+                              fontWeight="semiBold"
+                            >
+                              Zendesk brand Id vantar
+                            </Text>
+                          )}
+                        </strong>
+                      }
+                      large
+                      name="zendeskBrandId"
+                      id={zendeskBrandInputId}
+                      checked={selectedZendeskBrandId === brandId}
+                      disabled={isReadOnly || !brandId}
+                      onChange={() => {
+                        controlDispatch({
+                          type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+                          payload: {
+                            zendeskInstance: zendeskInstance ?? '',
+                            zendeskBrandId: brandId,
+                          },
+                        })
+                        formUpdate({
+                          ...form,
+                          organizationZendeskInstance: {
+                            zendeskInstance: zendeskInstance ?? '',
+                            zendeskBrandId: brandId,
+                          },
+                        })
+                      }}
+                      subLabel={
+                        zendeskInstance ? (
+                          `${zendeskInstance}.zendesk.com`
+                        ) : (
+                          <Text
+                            as="span"
+                            color="red600"
+                            variant="small"
+                            fontWeight="semiBold"
+                          >
+                            Zendesk instance vantar
+                          </Text>
+                        )
+                      }
+                    />
+                  </Column>
+                </Row>
+              )
+            })}
+
+            <Row>
+              <Column span="9/10">
+                <Checkbox
+                  label={formatMessage(m.zendeskPrivate)}
+                  checked={!!form.zendeskInternal}
                   disabled={isReadOnly}
-                  checked={form.submissionServiceUrl === url}
-                  onChange={() => {
+                  onChange={(e) => {
                     controlDispatch({
-                      type: 'CHANGE_SUBMISSION_URL',
-                      payload: { value: url ?? '' },
+                      type: 'CHANGE_ZENDESK_INTERNAL',
+                      payload: { value: e.target.checked },
                     })
-                    formUpdate({ ...form, submissionServiceUrl: url ?? '' })
+                    formUpdate({ ...form, zendeskInternal: e.target.checked })
                   }}
                 />
-              </GridColumn>
-            </GridRow>
-          ),
-      )}
-
-      <GridRow>
-        <GridColumn span="5/10">
-          <RadioButton
-            label="Zendesk"
-            large
-            name="submissionUrl"
-            id="zendesk"
-            checked={form.submissionServiceUrl === 'zendesk'}
-            disabled={isReadOnly}
-            onChange={async (e) => {
-              controlDispatch({
-                type: 'CHANGE_SUBMISSION_URL',
-                payload: { value: e.target.id, useValidate: false },
-              })
-
-              formUpdate({
-                ...form,
-                submissionServiceUrl: e.target.id,
-                useValidate: false,
-              })
-              await persistZendeskApplicantRequirements()
-            }}
-          />
-        </GridColumn>
-        {form.submissionServiceUrl === 'zendesk' && (
-          <GridColumn span="5/10">
-            <Blockquote>
-              <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
-                <code>
-                  Zendesk instance:{' '}
-                  {form.organizationZendeskInstance?.zendeskInstance
-                    ? form.organizationZendeskInstance.zendeskInstance
-                    : 'digitaliceland'}
-                  .zendesk.com
-                </code>
-              </Text>
-              <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
-                <code>
-                  Zendesk brand ID:{' '}
-                  {form.organizationZendeskInstance?.zendeskBrandId}
-                </code>
-              </Text>
-            </Blockquote>
-          </GridColumn>
+              </Column>
+            </Row>
+          </>
         )}
-      </GridRow>
-
-      {form.submissionServiceUrl === 'zendesk' && (
-        <GridRow>
-          <GridColumn span="9/10">
-            <Checkbox
-              label={formatMessage(m.zendeskPrivate)}
-              checked={!!form.zendeskInternal}
-              disabled={isReadOnly}
-              onChange={(e) => {
-                controlDispatch({
-                  type: 'CHANGE_ZENDESK_INTERNAL',
-                  payload: { value: e.target.checked },
-                })
-                formUpdate({ ...form, zendeskInternal: e.target.checked })
-              }}
-            />
-          </GridColumn>
-        </GridRow>
-      )}
-
-      {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
-        <GridRow>
-          <GridColumn span="10/10">
-            <Checkbox
-              label={formatMessage(m.useValidate)}
-              checked={!!form.useValidate}
-              disabled={isReadOnly}
-              onChange={(e) => {
-                controlDispatch({
-                  type: 'CHANGE_USE_VALIDATE',
-                  payload: { value: e.target.checked },
-                })
-                formUpdate({ ...form, useValidate: e.target.checked })
-              }}
-            />
-          </GridColumn>
-        </GridRow>
-      )}
-    </Stack>
+      </Stack>
+    </>
   )
 }

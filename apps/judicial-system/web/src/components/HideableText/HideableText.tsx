@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { Icon, Text, Tooltip } from '@island.is/island-ui/core'
@@ -21,6 +21,7 @@ const HideableText: FC<Props> = ({
   const renderVisibilityButton = () => (
     <button
       className={styles.eyeButton}
+      aria-label={isHidden ? 'Sýna texta' : 'Fela texta'}
       onClick={() => {
         onToggleVisibility(!isHidden)
       }}

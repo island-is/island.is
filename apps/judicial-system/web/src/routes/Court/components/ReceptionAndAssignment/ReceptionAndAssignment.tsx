@@ -8,14 +8,14 @@ import {
   DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE,
   DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE,
   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+  getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -27,12 +27,12 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
+import CourtCaseNumber from '@island.is/judicial-system-web/src/routes/Court/components/CourtCaseNumber/CourtCaseNumber'
+import { ProsecutorSection } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/utils'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { ProsecutorSection } from '../../../Prosecutor/components'
-import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
 import SelectCourtOfficials from './SelectCourtOfficials/SelectCourtOfficials'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 
@@ -138,14 +138,20 @@ const ReceptionAndAssignment = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={
             isIndictment
               ? `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
               : getStandardUserDashboardRoute(user)
           }
-          onNextButtonClick={() => handleNavigationTo(getNextRoute)}
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () => handleNavigationTo(getNextRoute),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

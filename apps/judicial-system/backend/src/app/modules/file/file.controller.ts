@@ -78,6 +78,7 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
+import { DeleteAppealCaseFileGuard } from './guards/deleteAppealCaseFile.guard'
 import { districtCourtJudgeConfirmRulingOrderRule } from './guards/rolesRules'
 import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
@@ -330,7 +331,7 @@ export class FileController {
     )
   }
 
-  @UseGuards(CaseWriteGuard, CaseFileExistsGuard)
+  @UseGuards(CaseWriteGuard, CaseFileExistsGuard, DeleteAppealCaseFileGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -410,7 +411,11 @@ export class FileController {
   }
 
   @UseGuards(
-    new CaseTypeGuard(indictmentCases),
+    new CaseTypeGuard([
+      ...indictmentCases,
+      ...restrictionCases,
+      ...investigationCases,
+    ]),
     CaseWriteGuard,
     CaseNotCompletedGuard,
   )

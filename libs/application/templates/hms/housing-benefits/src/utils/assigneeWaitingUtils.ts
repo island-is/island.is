@@ -4,6 +4,7 @@ import {
   getRejectedAssigneeNames,
   getSignedApprovalNames,
   getUnsignedApprovalNames,
+  getApplicantName,
 } from './assigneeUtils'
 
 export const assigneeWaitingApprovedDescription = (
@@ -30,5 +31,12 @@ export const assigneeWaitingRejectedDescription = (
   ...m.assigneeWaiting.rejectedList,
   values: {
     names: getRejectedAssigneeNames(application).join(' \n\n * ') || '—',
+  },
+})
+
+export const assigneeWaitingIntroDescription = (application: Application) => ({
+  ...m.assigneeWaiting.introDescription,
+  values: {
+    applicantName: getApplicantName(application),
   },
 })

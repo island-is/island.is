@@ -90,7 +90,9 @@ describe('DelegationsController', () => {
           client: client.clientId,
         })
 
-        const domain = createDomain()
+        // Unique name so it can never collide with the random-word default
+        // domains created by setupWithAuth.
+        const domain = createDomain({ name: `test-domain-${uuid()}` })
         let nationalRegistryApiSpy: jest.SpyInstance
         let nationalRegistryV3ApiSpy: jest.SpyInstance
 

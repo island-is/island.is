@@ -1,4 +1,4 @@
-import { SetStateAction } from 'react'
+import type { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import {
@@ -51,13 +51,13 @@ import {
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import {
+import type {
   AppealCase,
   Case,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { replaceTabs } from './formatters'
-import { UpdateCase } from './hooks'
+import { normalizeBlankString, replaceTabs } from './formatters'
+import type { UpdateCase } from './hooks'
 import * as validations from './validate'
 
 export const applyUpdateToCase = (
@@ -98,9 +98,21 @@ export const removeErrorMessageIfValid = (
   errorMessage?: string,
   errorMessageSetter?: (value: SetStateAction<string>) => void,
 ) => {
-  const isValid = validations.validate([[value, validationsToRun]]).isValid
+  // Nothing is displayed, so there is nothing to clear. An absent
+  // `errorMessage` means the caller does not track one at all.
+  if (!errorMessage || !errorMessageSetter) {
+    return
+  }
 
-  if (errorMessage !== '' && errorMessageSetter && isValid) {
+  const validation = validations.validate([[value, validationsToRun]])
+
+  // Clear as soon as the problem the message describes is fixed, even when the
+  // value is not valid yet. `validate` reports the first failing rule, so a
+  // different message means the displayed one is stale: clearing a required
+  // field and starting to retype would otherwise leave "Reitur má ekki vera
+  // tómur" sitting next to a value that is no longer empty. A newly broken rule
+  // is deliberately not surfaced here — errors appear on blur.
+  if (validation.isValid || validation.errorMessage !== errorMessage) {
     errorMessageSetter('')
   }
 }
@@ -142,6 +154,10 @@ export const validateAndSendToServer = (
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
+  // Whitespace-only input is persisted as '' - a required field then fails
+  // validation and is not sent, an optional field is cleared on the server.
+  value = normalizeBlankString(value)
+
   const isValid = validateAndSetErrorMessage(
     validations,
     value,

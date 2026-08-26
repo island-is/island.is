@@ -1,6 +1,13 @@
 import type { StorybookConfig } from '@storybook/react-webpack5'
 import { VanillaExtractPlugin } from '@vanilla-extract/webpack-plugin'
 import path, { dirname, join } from 'path'
+import { createRequire } from 'node:module'
+import { fileURLToPath } from 'node:url'
+
+// Storybook 10 loads this config as a true ES module, where CommonJS
+// globals are not defined.
+const require = createRequire(import.meta.url)
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const rootDir = (dir: string) => path.resolve(__dirname, dir)
 
@@ -17,7 +24,7 @@ const config: StorybookConfig = {
   addons: [
     getAbsolutePath('@storybook/addon-a11y'),
     getAbsolutePath('storybook-addon-apollo-client'),
-    getAbsolutePath('@storybook/addon-essentials'),
+    getAbsolutePath('@storybook/addon-docs'),
   ],
   babel: (options: any) => ({
     ...options,
@@ -142,28 +149,11 @@ const config: StorybookConfig = {
       }
     }
 
-    // Add source loader for story files (after babel processing)
-    config.module?.rules?.push({
-      test: /\.stories\.(ts|tsx)$/,
-      exclude: path.resolve(__dirname, '../../../../node_modules'),
-      use: [
-        {
-          loader: '@storybook/source-loader',
-          options: {
-            injectParameters: true,
-          },
-        },
-      ],
-    })
-
     return config
   },
   framework: {
     name: getAbsolutePath('@storybook/react-webpack5'),
     options: {},
-  },
-  docs: {
-    autodocs: true,
   },
 }
 

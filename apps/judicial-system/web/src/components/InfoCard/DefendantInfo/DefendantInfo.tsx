@@ -1,4 +1,5 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -9,29 +10,27 @@ import {
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
+import { isPublicProsecutionOfficeUser } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
+import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
+import { strings as infoCardStrings } from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems.strings'
+import { link } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper.css'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
-  isPublicProsecutionOfficeUser,
-} from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
-import {
-  Defendant,
   ServiceRequirement,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { UserContext } from '../../UserProvider/UserProvider'
-import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import {
   getAppealExpirationInfo,
   getDefendantTagConfig,
   getVerdictViewDateText,
 } from './DefendantInfo.logic'
-import { strings as infoCardStrings } from '../useInfoCardItems.strings'
 import { strings } from './DefendantInfo.strings'
-import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './DefendantInfo.css'
 
 interface Defender {
@@ -50,9 +49,7 @@ interface DefendantInfoProps {
   displaySentToPrisonAdminDate?: boolean
   defender?: Defender
   displayOpenCaseReference?: boolean
-  isDismissalCase?: boolean
-  isCancellationCase?: boolean
-  isFineCase?: boolean
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
 }
 
 const ConnectedCasesInfo = ({
@@ -118,9 +115,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     displaySentToPrisonAdminDate = true,
     displayOpenCaseReference,
     defender,
-    isDismissalCase,
-    isCancellationCase,
-    isFineCase,
+    indictmentRulingDecision,
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -144,9 +139,8 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const defendantTagConfig = getDefendantTagConfig({
     verdict: defendant.verdict,
     isPublicProsecutionOffice: isPublicProsecutionOfficeUser(user),
-    isDismissalCase,
-    isCancellationCase,
-    isFineCase,
+    indictmentRulingDecision,
+    isClosedWithoutEnforcement: defendant.isClosedWithoutEnforcement,
   })
 
   return (
@@ -214,6 +208,16 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             })}
           </Text>
         )}
+        {isPublicProsecutionOfficeUser(user) &&
+          defendant.isClosedWithoutEnforcement &&
+          defendant.closedWithoutEnforcementDate && (
+            <Text fontWeight="semiBold">
+              {`Máli lokið án fullnustu ${formatDate(
+                defendant.closedWithoutEnforcementDate,
+                'PPP',
+              )}`}
+            </Text>
+          )}
         {defendant.indictmentCancelledOrDismissedState && (
           <Text fontWeight="semiBold">{`${
             defendant.indictmentCancelledOrDismissedState.type ===

@@ -17,34 +17,43 @@ import {
 import {
   isCompletedCase,
   isDefenceUser,
+  isIndictmentCase,
   isRequestCase,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
-import {
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { LinkComponent } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
   Case,
-  CaseIndictmentRulingDecision,
   CaseType,
   Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import {
+  canDefenceUserOpenLinkedCase,
+  getDefaultDefendantGender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
-import { getDefaultDefendantGender } from '../../utils/utils'
-import { FormContext } from '../FormProvider/FormProvider'
-import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
-import { UserContext } from '../UserProvider/UserProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { VictimInfo } from './VictimInfo/VictimInfo'
-import { Item } from './InfoCard'
+import type { Item } from './InfoCard'
 import { strings } from './useInfoCardItems.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
-const useInfoCardItems = () => {
+type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
+
+// Semantic heading level for the item titles built here. The visual size stays
+// h4 so only the level exposed to assistive technology changes.
+const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
@@ -72,7 +81,7 @@ const useInfoCardItems = () => {
     return {
       id: 'defendant-item',
       title: (
-        <Text variant="h4" as="h4" marginBottom={2}>
+        <Text variant="h4" as={titleAs} marginBottom={2}>
           {capitalize(
             isRequestCase(caseType)
               ? formatMessage(core.defendant, {
@@ -109,17 +118,8 @@ const useInfoCardItems = () => {
                     displayVerdictViewDate={displayVerdictViewDate}
                     displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
                     displayOpenCaseReference={displayOpenCaseReference}
-                    isDismissalCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.DISMISSAL
-                    }
-                    isCancellationCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.CANCELLATION
-                    }
-                    isFineCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.FINE
+                    indictmentRulingDecision={
+                      workingCase.indictmentRulingDecision
                     }
                   />
                 </div>
@@ -134,7 +134,7 @@ const useInfoCardItems = () => {
     return {
       id: `cancelled-and-dismissed-defendant-item-${defendant.id}`,
       title: (
-        <Text variant="h4" as="h4">
+        <Text variant="h4" as={titleAs}>
           {getHumanReadableCaseIndictmentRulingDecision(
             defendant.indictmentCancelledOrDismissedState?.type,
           )}
@@ -179,7 +179,7 @@ const useInfoCardItems = () => {
 
   const prosecutorsOffice: Item = {
     id: 'prosecutors-office-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(workingCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [workingCase.prosecutorsOffice?.name || ''],
   }
 
@@ -256,9 +256,23 @@ const useInfoCardItems = () => {
   }
 
   const getMergeCaseValue = () => {
+    const mergeCaseId = workingCase.mergeCase?.id
     const internalCourtCaseNumber = workingCase.mergeCase?.courtCaseNumber
     if (internalCourtCaseNumber) {
-      return internalCourtCaseNumber
+      const shouldLink =
+        Boolean(mergeCaseId) &&
+        canDefenceUserOpenLinkedCase(user, workingCase.mergeCase)
+
+      return shouldLink ? (
+        <LinkComponent
+          href={`${ROUTE_HANDLER_ROUTE}/${mergeCaseId}`}
+          key={mergeCaseId}
+        >
+          {internalCourtCaseNumber}
+        </LinkComponent>
+      ) : (
+        internalCourtCaseNumber
+      )
     }
 
     const externalCourtCaseNumber = workingCase.mergeCaseNumber
@@ -287,12 +301,25 @@ const useInfoCardItems = () => {
   const mergedCaseCourtCaseNumber = (mergedCase: Case): Item => ({
     id: 'merged-case-court-case-number-item',
     title: formatMessage(strings.mergedFromTitle),
-    values: [mergedCase.courtCaseNumber],
+    values: mergedCase.courtCaseNumber
+      ? [
+          canDefenceUserOpenLinkedCase(user, mergedCase) ? (
+            <LinkComponent
+              href={`${ROUTE_HANDLER_ROUTE}/${mergedCase.id}`}
+              key={mergedCase.id}
+            >
+              {mergedCase.courtCaseNumber}
+            </LinkComponent>
+          ) : (
+            mergedCase.courtCaseNumber
+          ),
+        ]
+      : [],
   })
 
   const mergedCaseProsecutor = (mergedCase: Case): Item => ({
     id: 'merged-case-prosecutor-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(mergedCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [mergedCase.prosecutorsOffice?.name],
   })
 
@@ -440,7 +467,7 @@ const useInfoCardItems = () => {
   const civilClaimants: Item = {
     id: 'civil-claimant-item',
     title: (
-      <Text variant="h4" as="h4" marginBottom={2}>
+      <Text variant="h4" as={titleAs} marginBottom={2}>
         {capitalize(
           isNonEmptyArray(workingCase.civilClaimants) &&
             workingCase.civilClaimants.length > 1
@@ -472,7 +499,7 @@ const useInfoCardItems = () => {
   const victims: Item = {
     id: 'victim-item',
     title: (
-      <Text variant="h4" as="h4" marginBottom={2}>
+      <Text variant="h4" as={titleAs} marginBottom={2}>
         {workingCase.victims && workingCase.victims.length > 1
           ? 'Brotaþolar'
           : 'Brotaþoli'}
