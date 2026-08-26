@@ -34,6 +34,11 @@ export const messages = {
       id: 'doe.sr.application:errors.draftLoadFailed',
       defaultMessage: 'Ekki tókst að sækja gögnin. Reyndu aftur.',
     },
+    submitConflict: {
+      id: 'doe.sr.application:errors.submitConflict',
+      defaultMessage:
+        'Fyrirtæki er nú þegar með innsenda skýrslu sem er í vinnslu hjá ritstjórn.',
+    },
     retryButton: {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',

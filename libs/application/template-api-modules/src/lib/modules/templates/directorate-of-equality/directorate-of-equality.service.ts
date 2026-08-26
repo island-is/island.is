@@ -18,6 +18,7 @@ import {
 } from '@island.is/application/templates/directorate-of-equality/equality-report'
 import {
   dataSchema as salaryReportDataSchema,
+  messages as salaryReportMessages,
   PERIOD_ONE_MONTH,
 } from '@island.is/application/templates/directorate-of-equality/salary-report'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -613,31 +614,47 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           salaryDataPeriod,
         })
 
-        return await this.directorateOfEqualityService.submitDraft(
-          auth,
-          providerId,
-          {
-            company: {
-              name: answers.generalInformation?.companyName ?? '',
-              nationalId: answers.generalInformation?.nationalId ?? '',
-              address: answers.generalInformation?.address ?? '',
-              city: answers.generalInformation?.municipality ?? '',
-              postcode: answers.generalInformation?.postalCode ?? '',
-              isatCategory:
-                answers.generalInformation?.isatClassification ?? '',
+        try {
+          return await this.directorateOfEqualityService.submitDraft(
+            auth,
+            providerId,
+            {
+              company: {
+                name: answers.generalInformation?.companyName ?? '',
+                nationalId: answers.generalInformation?.nationalId ?? '',
+                address: answers.generalInformation?.address ?? '',
+                city: answers.generalInformation?.municipality ?? '',
+                postcode: answers.generalInformation?.postalCode ?? '',
+                isatCategory:
+                  answers.generalInformation?.isatClassification ?? '',
+              },
+              subsidiaries:
+                answers.subsidiaries?.includesSubsidiaries === 'yes'
+                  ? subsidiaryList.map((s) => ({
+                      name: s.nationalIdWithName.name,
+                      nationalId: s.nationalIdWithName.nationalId,
+                    }))
+                  : [],
+              equalityReportId,
+              outliersPostponed:
+                answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
             },
-            subsidiaries:
-              answers.subsidiaries?.includesSubsidiaries === 'yes'
-                ? subsidiaryList.map((s) => ({
-                    name: s.nationalIdWithName.name,
-                    nationalId: s.nationalIdWithName.nationalId,
-                  }))
-                : [],
-            equalityReportId,
-            outliersPostponed:
-              answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
-          },
-        )
+          )
+        } catch (error) {
+          // DMR returns 409 when the company already has a report in progress
+          // with the reviewing body — worth its own message instead of the
+          // generic defaultTemplateApiError text.
+          if (this.extractFetchErrorDetails(error).status === 409) {
+            throw new TemplateApiError(
+              {
+                title: coreErrorMessages.defaultTemplateApiError,
+                summary: salaryReportMessages.errors.submitConflict,
+              },
+              409,
+            )
+          }
+          throw error
+        }
       },
     )
   }
