@@ -4,4 +4,5 @@ export type CustomerDebt = {
   dueDate: string
   finalDueDate: string
   debts: number
+  chargeItemSubject: string
 }

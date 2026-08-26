@@ -143,6 +143,7 @@ export const StaticTableFormField: FC<Props> = ({
       )}
       <Box
         marginTop={description ? 3 : 0}
+        dataTestId={field.dataTestId}
         className={
           hasInputColumn || footerRow ? styles.tableWrapper : undefined
         }
