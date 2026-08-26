@@ -48,6 +48,7 @@ import {
 import {
   appendAppealCaseIdQuery,
   applyAppealCaseUpdate,
+  isMatchingAppealCourtFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 import {
   isCourtOfAppealRulingStepFieldsValid,
@@ -134,8 +135,11 @@ const Ruling = () => {
       AppealCaseRulingDecision.DISCONTINUED ||
       uploadFiles.some(
         (file) =>
-          file.category === CaseFileCategory.APPEAL_RULING &&
-          file.status === FileUploadStatus.done,
+          isMatchingAppealCourtFile(
+            file,
+            CaseFileCategory.APPEAL_RULING,
+            targetAppealCase?.rulingFileId,
+          ) && file.status === FileUploadStatus.done,
       ))
 
   const decisionOptions = [
@@ -244,9 +248,12 @@ const Ruling = () => {
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUpload
               name="appealCourtRecord"
-              files={uploadFiles.filter(
-                (file) =>
-                  file.category === CaseFileCategory.APPEAL_COURT_RECORD,
+              files={uploadFiles.filter((file) =>
+                isMatchingAppealCourtFile(
+                  file,
+                  CaseFileCategory.APPEAL_COURT_RECORD,
+                  targetAppealCase?.rulingFileId,
+                ),
               )}
               accept="application/pdf"
               title={formatMessage(strings.inputFieldLabel)}
@@ -258,6 +265,7 @@ const Ruling = () => {
                 handleUpload(
                   addUploadFiles(files, {
                     category: CaseFileCategory.APPEAL_COURT_RECORD,
+                    rulingFileId: targetAppealCase?.rulingFileId,
                   }),
                   updateUploadFile,
                 )
@@ -370,8 +378,12 @@ const Ruling = () => {
               />
               <InputFileUpload
                 name="appealRuling"
-                files={uploadFiles.filter(
-                  (file) => file.category === CaseFileCategory.APPEAL_RULING,
+                files={uploadFiles.filter((file) =>
+                  isMatchingAppealCourtFile(
+                    file,
+                    CaseFileCategory.APPEAL_RULING,
+                    targetAppealCase?.rulingFileId,
+                  ),
                 )}
                 accept="application/pdf"
                 title={formatMessage(strings.inputFieldLabel)}
@@ -383,6 +395,7 @@ const Ruling = () => {
                   handleUpload(
                     addUploadFiles(files, {
                       category: CaseFileCategory.APPEAL_RULING,
+                      rulingFileId: targetAppealCase?.rulingFileId,
                     }),
                     updateUploadFile,
                   )

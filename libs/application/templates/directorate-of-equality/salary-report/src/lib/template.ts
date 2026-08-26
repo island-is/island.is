@@ -20,6 +20,7 @@ import {
   ImportPresignApi,
   ParsedSalaryReportApi,
   SalaryAnalysisApi,
+  SubCriterionCatalogApi,
   SubmitReportCommentApi,
   SubmitSalaryReportApi,
 } from '../dataProviders'
@@ -83,6 +84,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 CompanyRegistryApi,
                 DoeCompanyApi,
+                SubCriterionCatalogApi,
                 ActiveEqualityReportApi,
                 BlankExcelTemplateApi,
               ],
