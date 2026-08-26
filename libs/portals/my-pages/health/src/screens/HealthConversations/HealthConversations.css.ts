@@ -16,6 +16,11 @@ export const messageCard = style(
   }),
 )
 
+export const attachmentIcon = style({
+  width: 20,
+  height: 20,
+})
+
 export const backButton = style({})
 
 globalStyle(
