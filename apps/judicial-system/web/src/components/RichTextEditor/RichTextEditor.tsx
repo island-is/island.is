@@ -23,8 +23,8 @@ import {
 import Toolbar from './Toolbar'
 import * as styles from './RichTextEditor.css'
 
-// The toolbar row the height prop has to account for, so a given height
-// yields roughly the same content area as the previous editor did.
+// The height prop describes the whole editor, toolbar row included, so the
+// scrollable content area gets the remainder.
 const TOOLBAR_HEIGHT = 42
 
 interface Props {
@@ -68,7 +68,7 @@ const RichTextEditor = ({
     left: 0,
   })
   const pickerRef = useRef<HTMLDivElement>(null)
-  const highlightButtonRef = useRef<HTMLElement | null>(null)
+  const highlightButtonRef = useRef<HTMLButtonElement | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   // Persist while the user types so content isn't lost on a refresh that
@@ -208,7 +208,7 @@ const RichTextEditor = ({
 
   const toggleHighlightPicker = useCallback(() => {
     const wrapper = wrapperRef.current
-    const button = wrapper?.querySelector<HTMLElement>(
+    const button = wrapper?.querySelector<HTMLButtonElement>(
       '[aria-label="Highlight"]',
     )
     highlightButtonRef.current = button ?? null

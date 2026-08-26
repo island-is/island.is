@@ -6,7 +6,7 @@ import { useEditorState } from '@tiptap/react'
 import * as styles from './RichTextEditor.css'
 
 // Hand-drawn 24x24 glyphs so the toolbar has no icon-font or asset
-// dependency; they follow the shapes of the previous editor's icons.
+// dependency.
 const BoldIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
     <path

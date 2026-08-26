@@ -270,8 +270,7 @@ const normalizeDoc = (doc: Document) => {
 
 // --- External-paste pipeline -----------------------------------------------
 //
-// TinyMCE 5's paste plugin used to pre-filter Word clipboard HTML before our
-// normalization saw it. Tiptap has no such filter, so the raw clipboard HTML
+// The editor does no Word filtering of its own, so the raw clipboard HTML
 // arrives here: Word artifacts are removed, Word's fake lists (styled
 // paragraphs) become real ul/ol/li, and the result goes through the same
 // style-to-class normalization as loaded content. Element/attribute

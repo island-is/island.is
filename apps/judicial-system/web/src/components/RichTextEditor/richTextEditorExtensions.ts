@@ -183,11 +183,10 @@ const RichTextListItem = ListItem.extend({
     return {
       ...this.parent?.(),
       // sinkListItem nests an item under its previous sibling, so it cannot
-      // indent an item that has none. The previous editor kept indenting past
-      // the available nesting by wrapping the item in a marker-suppressed
-      // item holding a deeper list — the same marker-none model the paste
-      // pipeline and the PDF renderer use — so this command does that when
-      // sinking is impossible.
+      // indent an item that has none. To keep indenting past the available
+      // nesting, wrap the item in a marker-suppressed item holding a deeper
+      // list — the same marker-none model the paste pipeline and the PDF
+      // renderer use.
       wrapListItemDeeper:
         () =>
         ({ state, tr, dispatch }) => {

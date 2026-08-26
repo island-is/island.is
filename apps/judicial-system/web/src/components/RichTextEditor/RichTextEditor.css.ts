@@ -123,8 +123,7 @@ export const toolbar = style({
   flexWrap: 'wrap',
   gap: 0,
   padding: `4px ${theme.spacing[1]}px 5px`,
-  // The full-width divider between the toolbar and the content area, like
-  // the previous editor drew under its toolbar.
+  // Full-width divider between the toolbar and the content area.
   borderBottom: `${theme.border.width.standard}px solid ${theme.color.dark200}`,
 })
 
@@ -177,7 +176,7 @@ export const editorAreaFullscreen = style({
   flex: 1,
 })
 
-// Legibility overlay matching the previous editor's disabled state.
+// Tint marking the content read-only while keeping it legible.
 export const editorAreaDisabled = style({
   '::after': {
     content: '""',
@@ -234,9 +233,9 @@ globalStyle(`${content} .ProseMirror p`, {
   fontWeight: 'inherit',
 })
 
-// True bold, like the previous editor rendered — _app.tsx loads the 700 and
-// 700-italic faces specifically for this (island-ui itself tops out at
-// semiBold, so the theme has no token for it).
+// _app.tsx loads the 700 and 700-italic faces specifically for the editor's
+// bold; island-ui itself tops out at semiBold, so the theme has no token for
+// this weight.
 globalStyle(`${content} .ProseMirror strong, ${content} .ProseMirror b`, {
   fontWeight: 700,
 })
