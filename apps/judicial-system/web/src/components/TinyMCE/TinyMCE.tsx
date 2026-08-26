@@ -5,8 +5,8 @@ import type { Editor as TinyMCEEditor, Ui } from 'tinymce'
 import { Editor } from '@tinymce/tinymce-react'
 
 import { ErrorMessage } from '@island.is/island-ui/core'
+import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 
-import RequiredStar from '../RequiredStar/RequiredStar'
 import HighlightColorPicker from './HighlightColorPicker'
 import {
   colorFromHighlightClass,
@@ -355,8 +355,11 @@ const TinyMCE = ({
             // to "background". These retained styles never reach the content —
             // PastePreProcess converts them all to classes/semantic tags and
             // strips every style attribute.
+            // text-indent is required too: Word's AutoFormat turns a Tab at
+            // the start of a paragraph into a first-line indent, which arrives
+            // as text-indent rather than margin-left.
             paste_retain_style_properties:
-              'font-weight,font-style,background,background-color,margin-left,padding-left',
+              'font-weight,font-style,background,background-color,margin-left,padding-left,text-indent',
             paste_strip_class_attributes: 'all',
             content_style:
               "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; } " +

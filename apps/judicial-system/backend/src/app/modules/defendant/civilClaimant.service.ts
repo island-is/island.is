@@ -23,7 +23,7 @@ import {
 import { CourtService } from '../court'
 import {
   Case,
-  CaseDefendantPoliceCaseNumber,
+  CaseDefendantPoliceCaseNumberRepositoryService,
   CivilClaimant,
 } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
@@ -34,8 +34,7 @@ export class CivilClaimantService {
   constructor(
     @InjectModel(CivilClaimant)
     private readonly civilClaimantModel: typeof CivilClaimant,
-    @InjectModel(CaseDefendantPoliceCaseNumber)
-    private readonly caseDefendantPoliceCaseNumberModel: typeof CaseDefendantPoliceCaseNumber,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     private readonly courtService: CourtService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -97,18 +96,12 @@ export class CivilClaimantService {
       return []
     }
 
-    const validLinks = await this.caseDefendantPoliceCaseNumberModel.findAll({
-      where: {
-        caseId,
-        policeCaseNumber: policeCaseNumbers,
-        defendantId: currentDefendantIds,
-      },
-    })
-
     const validDefendantIds = new Set(
-      validLinks
-        .map((link) => link.defendantId)
-        .filter((id): id is string => !!id),
+      await this.caseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds(
+        caseId,
+        policeCaseNumbers,
+        currentDefendantIds,
+      ),
     )
 
     return currentDefendantIds.filter((id) => validDefendantIds.has(id))

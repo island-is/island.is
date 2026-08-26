@@ -1,11 +1,12 @@
-import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
+import type { ChangeEvent, FC, FocusEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { validate } from '../../utils/validate'
-import { InputProps } from './types'
+import type { InputProps } from './types'
 
 /**
  * A reusable input component for names. It handles input validation for names,

@@ -20,7 +20,7 @@ import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
-  CaseDefendantPoliceCaseNumber,
+  CaseDefendantPoliceCaseNumberRepositoryService,
   CivilClaimant,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
@@ -40,6 +40,9 @@ jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock(
+  '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
+)
 jest.mock('../../event-log/eventLog.service')
 
 export const createTestingDefendantModule = async () => {
@@ -60,6 +63,7 @@ export const createTestingDefendantModule = async () => {
       CaseService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      CaseDefendantPoliceCaseNumberRepositoryService,
       EventLogService,
       {
         provide: LOGGER_PROVIDER,
@@ -81,12 +85,6 @@ export const createTestingDefendantModule = async () => {
           findByPk: jest.fn(),
         },
       },
-      {
-        provide: getModelToken(CaseDefendantPoliceCaseNumber),
-        useValue: {
-          findAll: jest.fn(),
-        },
-      },
       DefendantService,
       CivilClaimantService,
     ],
@@ -106,6 +104,11 @@ export const createTestingDefendantModule = async () => {
   const defendantEventLogRepositoryService =
     defendantModule.get<DefendantEventLogRepositoryService>(
       DefendantEventLogRepositoryService,
+    )
+
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    defendantModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
     )
 
   const defendantService =
@@ -156,6 +159,7 @@ export const createTestingDefendantModule = async () => {
     sequelize,
     defendantRepositoryService,
     defendantEventLogRepositoryService,
+    caseDefendantPoliceCaseNumberRepositoryService,
     defendantService,
     defendantController,
     internalDefendantController,

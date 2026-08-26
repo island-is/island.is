@@ -27,6 +27,12 @@ type ZendeskInstanceConfig = {
   serviceSystemBrandID: string
 }
 
+const parseZendeskBrandIds = (brandIds?: string | null) =>
+  brandIds
+    ?.split(';')
+    .map((brandId) => brandId.trim())
+    .filter(Boolean) ?? []
+
 export const ListSettings = () => {
   const {
     control,
@@ -107,25 +113,35 @@ export const ListSettings = () => {
       return
     }
 
+    const brandIdOptions = parseZendeskBrandIds(parsed.serviceSystemBrandID)
+    const nextZendeskBrandId =
+      brandIdOptions.length === 1
+        ? brandIdOptions[0]
+        : brandIdOptions.includes(
+            form.organizationZendeskInstance?.zendeskBrandId ?? '',
+          )
+        ? form.organizationZendeskInstance?.zendeskBrandId ?? ''
+        : ''
+
     if (
       parsed.serviceSystemInstance !==
         form.organizationZendeskInstance?.zendeskInstance ||
-      parsed.serviceSystemBrandID !==
-        form.organizationZendeskInstance?.zendeskBrandId
+      nextZendeskBrandId !== form.organizationZendeskInstance?.zendeskBrandId
     ) {
       controlDispatch({
         type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
         payload: {
           zendeskInstance: parsed.serviceSystemInstance,
-          zendeskBrandId: parsed.serviceSystemBrandID,
+          zendeskBrandId: nextZendeskBrandId,
         },
       })
       await updateOrganizationZendeskInstance({
         variables: {
           input: {
             zendeskInstance: parsed.serviceSystemInstance,
-            zendeskBrandId: parsed.serviceSystemBrandID,
+            zendeskBrandId: nextZendeskBrandId,
             organizationId: form.organizationId,
+            formId: form.id,
           },
         },
       })

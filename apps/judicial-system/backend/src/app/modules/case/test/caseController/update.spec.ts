@@ -1539,6 +1539,7 @@ describe('CaseController - Update', () => {
     it('should reset defendant fields', () => {
       const resetPayload = {
         isSentToPrisonAdmin: false,
+        isClosedWithoutEnforcement: false,
         indictmentReviewDecision: null,
         publicProsecutorIsRegisteredInPoliceSystem: null,
         isDrivingLicenseSuspended: null,

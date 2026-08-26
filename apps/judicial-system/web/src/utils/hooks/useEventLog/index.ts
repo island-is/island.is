@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 
 import { errors } from '@island.is/judicial-system-web/messages'
-import { CreateEventLogInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CreateEventLogInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCreateEventLogMutation } from './createEventLog.generated'
 

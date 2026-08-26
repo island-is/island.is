@@ -1,11 +1,11 @@
 import {
-  AlertMessage,
   Box,
   Button,
   Divider,
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Text,
   toast,
 } from '@island.is/island-ui/core'
@@ -24,10 +24,11 @@ import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMessageBody from './components/ConversationMessageBody'
 import ConversationReplyForm from './components/ConversationReplyForm'
 import MobileActionFooter from './components/MobileActionFooter'
+import ReplyBlockedAlert from './components/ReplyBlockedAlert'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './HealthConversations.css'
@@ -51,9 +52,6 @@ const HealthConversationDetail = () => {
   const { id } = useParams() as UseParams
   const userInfo = useUserInfo()
   const navigate = useNavigate()
-  const location = useLocation()
-  const justCreated =
-    (location.state as { justCreated?: boolean } | null)?.justCreated ?? false
   const { isPhoneWidth } = useIsPhoneWidth()
 
   const [replyOpen, setReplyOpen] = useState(false)
@@ -177,9 +175,6 @@ const HealthConversationDetail = () => {
     }
   }
 
-  const lastMessageIsFromPatient =
-    item.messages[item.messages.length - 1]?.direction === 'PATIENT'
-
   /* There's no explicit "recipient" for an existing thread yet so we need this
   to approximate it */
   const latestStaffMessage = [...item.messages]
@@ -280,33 +275,52 @@ const HealthConversationDetail = () => {
                       <Box
                         display="flex"
                         flexDirection="row"
+                        justifyContent="spaceBetween"
+                        alignItems="center"
                         paddingTop={index > 0 ? 3 : 0}
                         marginBottom={3}
                       >
-                        {isPatient ? (
-                          <ConversationAvatar
-                            variant="user"
-                            name={userInfo.profile.name ?? ''}
-                          />
-                        ) : (
-                          <ConversationAvatar
-                            variant="organization"
-                            logoUrl={item.organization?.logoUrl ?? undefined}
+                        <Box display="flex" flexDirection="row">
+                          {isPatient ? (
+                            <ConversationAvatar
+                              variant="user"
+                              name={userInfo.profile.name ?? ''}
+                              large
+                            />
+                          ) : (
+                            <ConversationAvatar
+                              variant="organization"
+                              logoUrl={item.organization?.logoUrl ?? undefined}
+                              large
+                            />
+                          )}
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            marginLeft={2}
+                            justifyContent="center"
+                          >
+                            <Text
+                              variant="eyebrow"
+                              fontWeight="medium"
+                              truncate
+                            >
+                              {senderName}
+                            </Text>
+                            <Text variant="medium">
+                              {formatDateWithTime(msg.messageSentAt)}
+                            </Text>
+                          </Box>
+                        </Box>
+                        {msg.attachments.length > 0 && (
+                          <Icon
+                            icon="attach"
+                            size="small"
+                            color="black"
+                            type="outline"
+                            className={styles.attachmentIcon}
                           />
                         )}
-                        <Box
-                          display="flex"
-                          flexDirection="column"
-                          marginLeft={2}
-                          justifyContent="center"
-                        >
-                          <Text variant="eyebrow" fontWeight="medium" truncate>
-                            {senderName}
-                          </Text>
-                          <Text variant="medium">
-                            {formatDateWithTime(msg.messageSentAt)}
-                          </Text>
-                        </Box>
                       </Box>
 
                       {/* Body */}
@@ -340,21 +354,6 @@ const HealthConversationDetail = () => {
                   )
                 })}
 
-                {/* Sent confirmation banner */}
-                {justCreated && !replyOpen && (
-                  <Box marginTop={4}>
-                    <AlertMessage
-                      type="success"
-                      title={formatMessage(
-                        messages.healthConversationSentTitle,
-                      )}
-                      message={formatMessage(
-                        messages.healthConversationSentText,
-                      )}
-                    />
-                  </Box>
-                )}
-
                 {/* Reply form — desktop only; mobile branches above */}
                 {replyOpen && (
                   <ConversationReplyForm
@@ -382,14 +381,7 @@ const HealthConversationDetail = () => {
                   fluid={isPhoneWidth}
                 />
               ) : item.patientCanReply === false ? (
-                <AlertMessage
-                  type="info"
-                  message={formatMessage(
-                    lastMessageIsFromPatient
-                      ? messages.healthConversationReplyClosedShortText
-                      : messages.healthConversationReplyClosedText,
-                  )}
-                />
+                <ReplyBlockedAlert reason={item.replyBlockedReason} />
               ) : (
                 <Button
                   variant="ghost"

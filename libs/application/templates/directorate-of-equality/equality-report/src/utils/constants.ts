@@ -14,11 +14,13 @@ export enum States {
   IN_REVIEW = 'inReview',
   APPROVED = 'approved',
   DENIED = 'denied',
+  DRAFT_RETRY = 'draftRetry',
 }
 
 export enum Roles {
   APPLICANT = 'applicant',
   NOT_ALLOWED = 'notAllowed',
+  ASSIGNEE = 'assignee',
 }
 
 export enum Gender {
@@ -42,6 +44,7 @@ export enum ApiActions {
   getEqualityReportTemplateDocx = 'getEqualityReportTemplateDocx',
   getPreviousEqualityReportContent = 'getPreviousEqualityReportContent',
   submitEqualityReport = 'submitEqualityReport',
+  editEqualityContent = 'editEqualityContent',
   getReportComments = 'getReportComments',
   submitReportComment = 'submitReportComment',
 }
