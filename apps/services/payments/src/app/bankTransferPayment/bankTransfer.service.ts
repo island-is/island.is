@@ -172,14 +172,7 @@ export class BankTransferService {
         providerResult.providerPaymentId,
       )
 
-      // The row is what makes the attempt trackable: without it a callback cannot be matched to a
-      // flow. And the payment is not inert — measured against Blikk, it reaches SCA_REQUIRED on its
-      // own within a second or so, with no payer action, whereupon a back-channel bank
-      // (Íslandsbanki) pushes the approval straight to the payer's banking app, no URL involved. A
-      // payer who approves that would settle a payment we have no record of. So undo it while it is
-      // still DRAFT, the only state Blikk honours a cancel for.
-      // `.catch`: cancelBlikkPayment throws when Blikk is unreachable, and that must not replace
-      // the insert error the caller needs to see.
+      // Best effort to cancel the Blikk payment if persisting the row fails
       const cancelled = await this.cancelBlikkPayment(
         providerResult.providerPaymentId,
         logPrefix,
@@ -200,7 +193,15 @@ export class BankTransferService {
           paymentMethod: PaymentMethod.BANK_TRANSFER,
           reason: 'payment_failed',
           message: `Failed to persist bank transfer: ${errorMessage}`,
-          metadata: { error: errorMessage, cancelled },
+          // `logPaymentFlowUpdate` persists the event before attempting delivery, so this is the
+          // durable record of the orphan. It carries the providerPaymentId precisely so that a
+          // payment we failed to cancel can still be reconciled against Blikk by id.
+          metadata: {
+            error: errorMessage,
+            cancelled,
+            providerPaymentId: providerResult.providerPaymentId,
+            correlationId,
+          },
         },
         { useRetry: true, throwOnError: false },
       )
@@ -864,6 +865,17 @@ export class BankTransferService {
     if (affectedRows === 0) {
       return
     }
+
+    // Blikk's own reason for the failure. `logPaymentFlowUpdate` logs only its message text, so
+    // without this the reason lives solely in the persisted event and the upstream webhook — and
+    // it is what separates a routine payer decline from a provider-side fault failing every
+    // payment (an expired Blikk certificate, say). `warn`, not `error`: REJECTED and CANCELLED
+    // come through here too and are ordinary. The message is already persisted and sent upstream,
+    // so logging it adds no exposure the flow did not already have.
+    this.logger.warn(`${rowLogPrefix(row)}Bank transfer ${result.status}`, {
+      rawStatus: result.rawStatus,
+      providerMessage: result.message,
+    })
 
     await this.paymentFlowService.logPaymentFlowUpdate(
       {

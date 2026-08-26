@@ -561,7 +561,9 @@ describe('BankTransferService', () => {
         ).toMatchObject({
           paymentFlowId: 'flow-1',
           reason: 'payment_failed',
-          metadata: { cancelled: true },
+          // The event is persisted before delivery, so it is the durable record of the orphan —
+          // it has to carry the provider id for the payment to be reconcilable by id later.
+          metadata: { cancelled: true, providerPaymentId: 'prov-1' },
         })
       })
 
@@ -582,6 +584,13 @@ describe('BankTransferService', () => {
           expect.stringContaining('may still settle with no local record'),
           expect.objectContaining({ error: 'insert failed' }),
         )
+        // The uncancelled payment is the case that most needs a durable record to reconcile from.
+        expect(
+          paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+        ).toMatchObject({
+          reason: 'payment_failed',
+          metadata: { cancelled: false, providerPaymentId: 'prov-1' },
+        })
       })
 
       // cancelBlikkPayment throws FailedToFetchBankTransfer when Blikk is unreachable. That must
@@ -839,6 +848,13 @@ describe('BankTransferService', () => {
             providerMessage: 'provider detail',
           },
         })
+        // The provider's reason must reach the application log too — logPaymentFlowUpdate only
+        // logs its message text, so otherwise a provider-side fault failing every payment (an
+        // expired Blikk certificate, say) shows up with no reason attached.
+        expect(logger.warn).toHaveBeenCalledWith(
+          expect.stringContaining(`Bank transfer ${status}`),
+          { rawStatus, providerMessage: 'provider detail' },
+        )
         expect(result.status).toBe(status)
         // The expiry-aware failure reason passes through (fresh row → 1:1 with the status).
         expect(result.failureReason).toBe(failureReason)
