@@ -1157,6 +1157,7 @@ export const buildStickyFooterField = (
     marginTop,
     marginBottom,
     widthReferenceTestId,
+    watchFieldIds,
   } = data
 
   return {
@@ -1171,6 +1172,7 @@ export const buildStickyFooterField = (
     marginTop,
     marginBottom,
     widthReferenceTestId,
+    watchFieldIds,
   }
 }
 

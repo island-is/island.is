@@ -1,5 +1,10 @@
-import { FieldBaseProps, StickyFooterField } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FormValue,
+  StickyFooterField,
+} from '@island.is/application/types'
 import { FC, useEffect, useRef, useState } from 'react'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
@@ -13,8 +18,24 @@ const BOTTOM_GAP = 16
 
 export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
   const { formatMessage } = useLocale()
+  const { control } = useFormContext()
+
+  const watchedValues = useWatch({ name: field.watchFieldIds, control })
+  const liveAnswers: Record<string, unknown> = Object.fromEntries(
+    field.watchFieldIds.map((id, index) => [id, watchedValues[index]]),
+  )
+  const liveApplication = {
+    ...application,
+    answers: {
+      ...application.answers,
+      ...liveAnswers,
+    } as FormValue,
+  }
+
   const rows =
-    typeof field.rows === 'function' ? field.rows(application) : field.rows
+    typeof field.rows === 'function'
+      ? field.rows(liveApplication)
+      : field.rows
 
   const footerRef = useRef<HTMLElement>(null)
 
