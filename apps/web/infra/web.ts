@@ -5,8 +5,6 @@ import {
   ServiceBuilder,
 } from '../../../infra/src/dsl/dsl'
 
-// TODO: Remove this comment
-
 export const serviceSetup = (services: {
   api: ServiceBuilder<'api'>
 }): ServiceBuilder<'web'> => {
