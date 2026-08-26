@@ -41,21 +41,6 @@ const contactPerson = z.object({
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
-const employeeCount = z.object({
-  women: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
-  men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
-  nonBinary: z
-    .string()
-    .optional()
-    .refine((v) => !v || Number(v) >= 0, {
-      params: messages.errors.invalidNonNegativeNumber,
-    }),
-})
-
 const period = z
   .object({
     period: z
@@ -198,7 +183,6 @@ export const dataSchema = z.object({
   generalInformation: generalInformation.optional(),
   chiefExecutive: chiefExecutive.optional(),
   contactPerson: contactPerson.optional(),
-  employeeCount: employeeCount.optional(),
   period: period.optional(),
   subsidiaries: subsidiaries.optional(),
   salaryAnalysis: salaryAnalysis,
