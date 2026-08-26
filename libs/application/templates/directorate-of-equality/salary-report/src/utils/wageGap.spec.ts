@@ -1,5 +1,10 @@
 import type { WageGapDecompositionDto } from '@island.is/clients/directorate-of-equality'
-import { deriveWageGapState, formatPercentMagnitude } from './wageGap'
+import {
+  deriveWageGapState,
+  formatPercentMagnitude,
+  formatSignedPercentMagnitude,
+  hasIdentifiableRegressionFit,
+} from './wageGap'
 
 const decomposition = (
   overrides: Partial<WageGapDecompositionDto>,
@@ -174,7 +179,50 @@ describe('formatPercentMagnitude', () => {
     expect(formatPercentMagnitude(12.35)).toBe('12,4')
   })
 
+  it('keeps one decimal by default but allows headline figures to ask for two', () => {
+    expect(formatPercentMagnitude(12.35)).toBe('12,4')
+    expect(formatPercentMagnitude(12.345, 2)).toBe('12,35')
+    expect(formatPercentMagnitude(-3.9, 2)).toBe('3,90')
+  })
+
   it('renders a missing value as zero rather than NaN', () => {
     expect(formatPercentMagnitude(null)).toBe('0,0')
+  })
+})
+
+describe('formatSignedPercentMagnitude', () => {
+  it('keeps the sign but suppresses negative zero after rounding', () => {
+    expect(formatSignedPercentMagnitude(3.94)).toBe('+3,9')
+    expect(formatSignedPercentMagnitude(-3.94)).toBe('-3,9')
+    expect(formatSignedPercentMagnitude(-0.04)).toBe('0,0')
+  })
+})
+
+describe('hasIdentifiableRegressionFit', () => {
+  it('requires a slope, intercept, and positive score variation', () => {
+    expect(
+      hasIdentifiableRegressionFit({
+        slope: 0.001,
+        intercept: 7.8,
+        sampleCount: 20,
+        xSumSquares: 100,
+      }),
+    ).toBe(true)
+    expect(
+      hasIdentifiableRegressionFit({
+        slope: 0,
+        intercept: 7.8,
+        sampleCount: 20,
+        xSumSquares: 0,
+      }),
+    ).toBe(false)
+    expect(
+      hasIdentifiableRegressionFit({
+        slope: null,
+        intercept: 7.8,
+        sampleCount: 20,
+        xSumSquares: 100,
+      }),
+    ).toBe(false)
   })
 })
