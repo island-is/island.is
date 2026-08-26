@@ -28,21 +28,21 @@ export const paymentSection = buildSection({
             debts.table.chargeTypeNameHeader,
             debts.table.dueDateHeader,
             debts.table.finalDueDateHeader,
-            debts.table.amountHeader,
+            debts.table.toPayLabel,
           ],
           rows: (application) =>
             getSelectedDebts(application).map<StaticText[]>((debt) => [
               debt.chargeTypeName,
               formatDate(debt.dueDate),
               formatDate(debt.finalDueDate),
-              formatCurrency(debt.debts.toString()),
+              formatCurrency(debt.amountToPay.toString()),
             ]),
           summary: (application) => [
             {
               label: messages.summary.totalLabel,
               value: formatCurrency(
                 getSelectedDebts(application)
-                  .reduce((total, debt) => total + debt.debts, 0)
+                  .reduce((total, debt) => total + debt.amountToPay, 0)
                   .toString(),
               ),
             },
