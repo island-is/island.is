@@ -215,7 +215,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       try {
         const report = await this.directorateOfEqualityService.getReport(
           auth,
-          activeReport.id,
+          activeReport.identifier,
         )
         return { equalityReportContent: report.equalityReportContent ?? '' }
       } catch (error) {

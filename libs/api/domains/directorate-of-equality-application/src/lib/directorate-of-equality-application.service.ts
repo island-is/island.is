@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -32,13 +32,20 @@ export class DirectorateOfEqualityApplicationService {
   }
 
   // Duplicates apps/application-system's ownership check since this resolver sits outside that REST layer and nothing else verifies the caller owns applicationId.
+  // expectedState additionally rejects calls made outside the state the mutation is meant for (e.g. a
+  // content edit fired at IN_REVIEW/APPROVED/DENIED instead of DRAFT_RETRY) — callers that are valid across
+  // every state (draft sync, draft employee listing) simply omit it.
   private async assertOwnsApplication(
     applicationId: string,
     user: User,
     locale: Locale,
+    expectedState?: string,
   ): Promise<void> {
+    let application
     try {
-      await this.applicationApiWithAuth(user).applicationControllerFindOne({
+      application = await this.applicationApiWithAuth(
+        user,
+      ).applicationControllerFindOne({
         id: applicationId,
         locale,
       })
@@ -48,6 +55,21 @@ export class DirectorateOfEqualityApplicationService {
         context: LOGGING_CONTEXT,
       })
       throw error
+    }
+
+    if (expectedState && application.state !== expectedState) {
+      this.logger.warn(
+        'Rejected draft sync: application is not in the expected state',
+        {
+          applicationId,
+          expectedState,
+          actualState: application.state,
+          context: LOGGING_CONTEXT,
+        },
+      )
+      throw new BadRequestException(
+        `Application ${applicationId} is not in the expected state`,
+      )
     }
   }
 
@@ -111,7 +133,8 @@ export class DirectorateOfEqualityApplicationService {
     input: UpdateEqualityDraftContentInput,
     user: User,
   ): Promise<boolean> {
-    await this.assertOwnsApplication(input.applicationId, user, 'is')
+    // 'draft' matches equality-report's States.DRAFT — the only state this content push is valid in.
+    await this.assertOwnsApplication(input.applicationId, user, 'is', 'draft')
     await this.directorateOfEqualityService.updateDraft(
       user,
       input.applicationId,
@@ -126,7 +149,13 @@ export class DirectorateOfEqualityApplicationService {
     input: EditEqualityContentInput,
     user: User,
   ): Promise<boolean> {
-    await this.assertOwnsApplication(input.applicationId, user, 'is')
+    // 'draftRetry' matches equality-report's States.DRAFT_RETRY — the only state this edit is valid in.
+    await this.assertOwnsApplication(
+      input.applicationId,
+      user,
+      'is',
+      'draftRetry',
+    )
     await this.directorateOfEqualityService.editEqualityContent(
       user,
       input.applicationId,
