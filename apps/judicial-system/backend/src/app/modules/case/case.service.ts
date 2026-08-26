@@ -1056,11 +1056,11 @@ export class CaseService {
     }
   }
 
-  private addMessagesForUpdatedCaseToQueue(
+  private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
-  ): void {
+  ): Promise<void> {
     const isIndictment = isIndictmentCase(updatedCase.type)
 
     if (updatedCase.state !== theCase.state) {
@@ -1101,7 +1101,7 @@ export class CaseService {
       ) {
         this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.WAITING_FOR_CANCELLATION) {
-        this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
+        await this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
       }
     }
 
@@ -2433,7 +2433,7 @@ export class CaseService {
       })
     }
 
-    this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
+    await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
     if (isReceivingCase) {
       this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
