@@ -12,7 +12,9 @@
   "paths": {
     "/api/applications/v5/applyfor/be": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "summary": "Apply for BE category",
         "parameters": [
           {
@@ -115,7 +117,9 @@
     },
     "/api/applications/v5/testfinished/{applicationId}": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "summary": "Confirm application as done, test finished",
         "parameters": [
           {
@@ -219,7 +223,9 @@
     },
     "/api/applications/v5/applyfor/renewal65": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "summary": "Apply for 65+ renewal",
         "parameters": [
           {
@@ -322,7 +328,9 @@
     },
     "/api/applications/v5/renewal65/confirmdone/{applicationId}": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "summary": "Confirm renewal 65+ application done — called by employee after health certificate approval",
         "parameters": [
           {
@@ -409,7 +417,9 @@
     },
     "/api/applications/v5/canapply/renewal65": {
       "get": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "summary": "Check if person can apply for renewal 65+ renewal",
         "parameters": [
           {
@@ -487,7 +497,9 @@
     },
     "/api/applications/v5/status/{applicationId}": {
       "get": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "summary": "Get application status",
         "parameters": [
           {
@@ -566,7 +578,9 @@
     },
     "/api/codetables/deprivations": {
       "get": {
-        "tags": ["Codetables"],
+        "tags": [
+          "Codetables"
+        ],
         "summary": "Get for types of driver licence deprivations",
         "parameters": [
           {
@@ -625,7 +639,9 @@
     },
     "/api/codetables/categories": {
       "get": {
-        "tags": ["Codetables"],
+        "tags": [
+          "Codetables"
+        ],
         "summary": "Get types of categories",
         "parameters": [
           {
@@ -684,7 +700,9 @@
     },
     "/api/codetables/remarks": {
       "get": {
-        "tags": ["Codetables"],
+        "tags": [
+          "Codetables"
+        ],
         "summary": "Get types of remarks",
         "parameters": [
           {
@@ -743,7 +761,9 @@
     },
     "/api/codetables/error-codes": {
       "get": {
-        "tags": ["Codetables"],
+        "tags": [
+          "Codetables"
+        ],
         "summary": "Get all error code descriptions",
         "parameters": [
           {
@@ -802,7 +822,9 @@
     },
     "/api/codetables/error-codes/{code}": {
       "get": {
-        "tags": ["Codetables"],
+        "tags": [
+          "Codetables"
+        ],
         "summary": "Get description for a specific error code",
         "parameters": [
           {
@@ -881,7 +903,9 @@
     },
     "/api/codetables/districts": {
       "get": {
-        "tags": ["Codetables"],
+        "tags": [
+          "Codetables"
+        ],
         "summary": "Get for all districts",
         "parameters": [
           {
@@ -940,7 +964,9 @@
     },
     "/api/imagecontroller/v5/hasqualityphoto": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -1001,7 +1027,9 @@
     },
     "/api/imagecontroller/v5/hasqualitysignature": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -1062,7 +1090,9 @@
     },
     "/api/imagecontroller/v5/getqualityphoto": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
@@ -1126,7 +1156,9 @@
     },
     "/api/imagecontroller/v5/getqualitysignature": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Get quality marked signature for person",
         "parameters": [
           {
@@ -1190,7 +1222,9 @@
     },
     "/api/imagecontroller/v5/fromnationalregistry": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Get for all images from thjodskra",
         "parameters": [
           {
@@ -1248,7 +1282,9 @@
     },
     "/api/imagecontroller/v5/fromnationalregistry/withagerestriction": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Get for all images from thjodskra",
         "parameters": [
           {
@@ -1306,7 +1342,9 @@
     },
     "/api/imagecontroller/v5/hasqualityscannedphoto": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Check if person has quality marked scanned photo",
         "parameters": [
           {
@@ -1367,7 +1405,9 @@
     },
     "/api/imagecontroller/v5/hasqualityscannedsignature": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Check if person has quality marked scanned photo",
         "parameters": [
           {
@@ -1428,7 +1468,9 @@
     },
     "/api/imagecontroller/v5/getqualityscannedphoto": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Get quality marked scanned photo for person",
         "parameters": [
           {
@@ -1492,7 +1534,9 @@
     },
     "/api/imagecontroller/v5/getqualityscannedsignature": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Get quality marked scanned signature for person",
         "parameters": [
           {
@@ -1556,7 +1600,9 @@
     },
     "/api/imagecontroller/v5/hasqualityphotoandsignature": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Check if person has quality marked photo and signature",
         "parameters": [
           {
@@ -1614,7 +1660,9 @@
     },
     "/api/imagecontroller/v5/getqualityphotoandsignature": {
       "get": {
-        "tags": ["Image"],
+        "tags": [
+          "Image"
+        ],
         "summary": "Get quality marked photo and signature including binary data for a person",
         "parameters": [
           {
@@ -1672,7 +1720,9 @@
     },
     "/api/drivinglicense/v5/deprivations": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Return all deprivations from ssn",
         "parameters": [
           {
@@ -1759,7 +1809,9 @@
     },
     "/api/drivinglicense/v5": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get for person driver licence",
         "operationId": "GetCurrentLicenseV5",
         "parameters": [
@@ -1838,7 +1890,9 @@
     },
     "/api/drivinglicense/v5/mini": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get current driver licence for person (mini - no images)",
         "operationId": "GetCurrentLicenseMiniV5",
         "parameters": [
@@ -1917,7 +1971,9 @@
     },
     "/api/drivinglicense/v5/digitallicensecreated": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Create record of digital licence created",
         "parameters": [
           {
@@ -1978,7 +2034,9 @@
     },
     "/api/drivinglicense/v5/canapplyfor/{category}/full": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person can apply for full drivers license for a specific category",
         "parameters": [
           {
@@ -2045,7 +2103,9 @@
     },
     "/api/drivinglicense/v5/applications/new/{category}": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
@@ -2152,7 +2212,9 @@
     },
     "/api/drivinglicense/v5/applications/new/collaborative": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Apply for new collaborative of old license (Samrit)",
         "parameters": [
           {
@@ -2258,7 +2320,9 @@
     },
     "/api/drivinglicense/v5/deprivation": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get for current deprivation",
         "parameters": [
           {
@@ -2316,7 +2380,9 @@
     },
     "/api/drivinglicense/v5/applications/new/temporary": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
@@ -2411,7 +2477,9 @@
     },
     "/api/drivinglicense/v5/applications/new/temporarywithhealthdeclaration": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
@@ -2514,7 +2582,9 @@
     },
     "/api/drivinglicense/v5/applications/temporarytestfinished": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Endpoint to tell system that person has finished learning for temporary license and license can be ordered",
         "description": "Checks\r\n- Does person exist in national registry\r\n- Is the liecense that has not been ordered\r\n- Is person at least 17 years old\r\n- Does he have a deprivation\r\n- Does he have a quality marked picture\r\n- Does he have a quality marked signature",
         "parameters": [
@@ -2610,7 +2680,9 @@
     },
     "/api/drivinglicense/v5/penaltypoints": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get traffic violation points for person",
         "parameters": [
           {
@@ -2668,7 +2740,9 @@
     },
     "/api/drivinglicense/v5/penaltypoints/details": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get detailed penalty point records for person",
         "parameters": [
           {
@@ -2735,7 +2809,9 @@
     },
     "/api/drivinglicense/v5/all": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get for all persons driver licences",
         "parameters": [
           {
@@ -2821,7 +2897,9 @@
     },
     "/api/drivinglicense/v5/hasteachingrights": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person has rights to be a driving instructor",
         "parameters": [
           {
@@ -2882,7 +2960,9 @@
     },
     "/api/drivinglicense/v5/canapplyfor/temporary": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person can apply for temporary B drivers license",
         "description": "Checks :\r\n - Is in national registry\r\n - Does not have B category license already\r\n - Has a deprivation exeeding next 30 days\r\n - Is at least 16 years of age",
         "parameters": [
@@ -2941,7 +3021,9 @@
     },
     "/api/drivinglicense/v5/hasqualityphoto": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -3002,7 +3084,9 @@
     },
     "/api/drivinglicense/v5/hasqualitysignature": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -3063,7 +3147,9 @@
     },
     "/api/drivinglicense/v5/getqualityphoto": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
@@ -3127,7 +3213,9 @@
     },
     "/api/drivinglicense/v5/getqualitysignature": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
@@ -3191,7 +3279,9 @@
     },
     "/api/drivinglicense/v5/hasfinisheddrivingschool3": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Has person finised driving school 3",
         "parameters": [
           {
@@ -3248,7 +3338,9 @@
     },
     "/api/drivinglicense/v5/drivingassessment": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Create a new driver assessment",
         "parameters": [
           {
@@ -3324,7 +3416,9 @@
         }
       },
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person has driving assessment",
         "parameters": [
           {
@@ -3402,7 +3496,9 @@
     },
     "/api/drivinglicense/v5/drivinginstructors": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get driving teachers",
         "parameters": [
           {
@@ -3461,7 +3557,9 @@
     },
     "/api/drivinglicense/v5/{licenseid}/status": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check current license status",
         "operationId": "GetLicenseById",
         "parameters": [
@@ -3521,7 +3619,9 @@
     },
     "/api/drivinglicense/v5/categoryvalid/{category}/{drivinglicenseid}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check status of license and category",
         "parameters": [
           {
@@ -3598,7 +3698,9 @@
     },
     "/api/drivinglicense/v5/applications/unfinished/{categoryid}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get latest unfinished/unpublished license with requested categorie and person id",
         "parameters": [
           {
@@ -3665,7 +3767,9 @@
     },
     "/api/drivinglicense/v5/applications/practicepermit": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Post practice permit",
         "parameters": [
           {
@@ -3768,7 +3872,9 @@
     },
     "/api/drivinglicense/v5/canapplyfor/practicepermit": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Post practice permit",
         "parameters": [
           {
@@ -3871,7 +3977,9 @@
     },
     "/api/drivinglicense/v5/canapplyfor/renewal65": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person over 65 years old can apply for renewal of drivers license",
         "parameters": [
           {
@@ -3929,7 +4037,9 @@
     },
     "/api/drivinglicense/v5/applications/renewal65": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Post renewal request for people 65 year old or older",
         "parameters": [
           {
@@ -4033,7 +4143,9 @@
     },
     "/api/drivinglicense/v5/statistics/temporarylicenses/created/detailed/{yearfrom}/{monthfrom}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get a list of temporary licenses created from year/month",
         "parameters": [
           {
@@ -4114,7 +4226,9 @@
     },
     "/api/drivinglicense/v5/statistics/temporarylicenses/created/grouped/{yearfrom}/{monthfrom}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get a grouped list (year/month/count) of temporary licenses created",
         "parameters": [
           {
@@ -4195,7 +4309,9 @@
     },
     "/api/drivinglicense/v5/statistics/licenses/created/detailed/{yearfrom}/{monthfrom}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get a list of full licenses created from year/month",
         "parameters": [
           {
@@ -4276,7 +4392,9 @@
     },
     "/api/drivinglicense/v5/statistics/licenses/created/grouped/{yearfrom}/{monthfrom}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get a grouped list (year/month/count) of full licenses created",
         "parameters": [
           {
@@ -4357,7 +4475,9 @@
     },
     "/api/drivinglicense/v5/statistics/drivingassessments/created/detailed/{yearfrom}/{monthfrom}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get a list of driving assessments created",
         "parameters": [
           {
@@ -4438,7 +4558,9 @@
     },
     "/api/drivinglicense/v5/statistics/drivingassessments/created/grouped/{yearfrom}/{monthfrom}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get a grouped list (year/month/count) of driving ass licenses created",
         "parameters": [
           {
@@ -4519,7 +4641,9 @@
     },
     "/api/drivinglicense/v5/licenseactions/{licenseid}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get all license actions",
         "parameters": [
           {
@@ -4616,7 +4740,9 @@
     },
     "/api/drivinglicense/v5/licenseactions/producedbyskra/{licenseId}": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Mark license produced by SKRA",
         "parameters": [
           {
@@ -4699,7 +4825,9 @@
     },
     "/api/drivinglicense/v5/licenseactions/productionerror/{licenseId}": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Update license, a production error occured",
         "parameters": [
           {
@@ -4782,7 +4910,9 @@
     },
     "/api/drivinglicense/v5/licenseactions/productionerrorwithmsg/{licenseId}": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Update license, a production error occured",
         "parameters": [
           {
@@ -4965,7 +5095,10 @@
         "description": "Dto for application finished"
       },
       "Dto.ApplicationForCategoryDto": {
-        "required": ["category", "result"],
+        "required": [
+          "category",
+          "result"
+        ],
         "type": "object",
         "properties": {
           "category": {
@@ -4997,7 +5130,9 @@
         "description": "Data transfer object for category application"
       },
       "Dto.EmbaettiDto": {
-        "required": ["nr"],
+        "required": [
+          "nr"
+        ],
         "type": "object",
         "properties": {
           "nr": {
@@ -5174,7 +5309,10 @@
         "description": "All images from thjodskra dto"
       },
       "Dto.TegSviptingaDto": {
-        "required": ["heiti", "id"],
+        "required": [
+          "heiti",
+          "id"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -5192,7 +5330,12 @@
         "description": "Dto for Tegund sviptinga"
       },
       "Dto.TegundAthugasemdaDto": {
-        "required": ["athugasemd", "giltFyrir", "heiti", "nr"],
+        "required": [
+          "athugasemd",
+          "giltFyrir",
+          "heiti",
+          "nr"
+        ],
         "type": "object",
         "properties": {
           "nr": {
@@ -5224,7 +5367,9 @@
         "description": "Types of remarks"
       },
       "Dto.TegundRettindaDto": {
-        "required": ["nr"],
+        "required": [
+          "nr"
+        ],
         "type": "object",
         "properties": {
           "nr": {
@@ -5242,7 +5387,11 @@
         "description": "Data transfer object for type of categories"
       },
       "Dto.V5.CategoryDto": {
-        "required": ["dateTo", "id", "nr"],
+        "required": [
+          "dateTo",
+          "id",
+          "nr"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -5801,7 +5950,11 @@
         "description": "Dto for image and signature data"
       },
       "Dto.V5.ImageDto": {
-        "required": ["dateRegistered", "image", "socialSecurityNumber"],
+        "required": [
+          "dateRegistered",
+          "image",
+          "socialSecurityNumber"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -5912,7 +6065,10 @@
         "description": "Dto Class for latest unfinished/unpublished license"
       },
       "Dto.V5.LicenseCommentsDto": {
-        "required": ["id", "nr"],
+        "required": [
+          "id",
+          "nr"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -6137,7 +6293,9 @@
         "description": "Penalty point detail entry"
       },
       "Dto.V5.PenaltyPointsDto": {
-        "required": ["ok"],
+        "required": [
+          "ok"
+        ],
         "type": "object",
         "properties": {
           "ok": {
@@ -6282,7 +6440,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "Models.HealthDeclarationModel": {
         "type": "object",
@@ -6367,7 +6525,11 @@
         "description": "License production error message model"
       },
       "Models.V5.PostApplicationForBEModel": {
-        "required": ["districtId", "healthDeclarationModel", "instructorSSN"],
+        "required": [
+          "districtId",
+          "healthDeclarationModel",
+          "instructorSSN"
+        ],
         "type": "object",
         "properties": {
           "userId": {
@@ -6463,7 +6625,11 @@
         "description": "Post new collaborative\r\nCopies old license, marks old license as lost"
       },
       "Models.V5.PostNewDrivingAssessment": {
-        "required": ["dateOfAssessment", "instructorSSN", "ssn"],
+        "required": [
+          "dateOfAssessment",
+          "instructorSSN",
+          "ssn"
+        ],
         "type": "object",
         "properties": {
           "ssn": {
@@ -6490,7 +6656,10 @@
         "description": "Post new driving assessment"
       },
       "Models.V5.PostNewFinalLicense": {
-        "required": ["authorityNumber", "personIdNumber"],
+        "required": [
+          "authorityNumber",
+          "personIdNumber"
+        ],
         "type": "object",
         "properties": {
           "personIdNumber": {
@@ -6545,7 +6714,11 @@
         "description": "Model class to post new final license"
       },
       "Models.V5.PostPracticePermit": {
-        "required": ["dateFrom", "studentSSN", "userId"],
+        "required": [
+          "dateFrom",
+          "studentSSN",
+          "userId"
+        ],
         "type": "object",
         "properties": {
           "userId": {
@@ -6666,7 +6839,11 @@
         "description": "Post renewal request for person 65 year old or older"
       },
       "Models.V5.PostTeachingDoneForTempLicense": {
-        "required": ["dateCompleted", "driverLicenseId", "ssn"],
+        "required": [
+          "dateCompleted",
+          "driverLicenseId",
+          "ssn"
+        ],
         "type": "object",
         "properties": {
           "ssn": {
