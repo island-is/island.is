@@ -5,30 +5,28 @@ import {
   mapInvoiceGroupInvoiceItemization,
 } from './invoiceGroupInvoiceItemization.dto'
 
-export interface InvoiceGroupInvoiceDto {
+export interface InvoiceDto {
   id: string
-  timestamp: Date
-  amount: number
-  currencyCode: string
+  number: string
+  totalAmount: number
   itemization: Array<InvoiceItemization>
 }
 
-export const mapInvoiceGroupInvoice = (
+export const mapInvoiceDto = (
   data: InvoicePaymentDetailResponseDto,
-): InvoiceGroupInvoiceDto | null => {
+): InvoiceDto | null => {
   if (
+    data.erpInvoiceId == null ||
     !data.invoiceNum ||
-    !data.paymentAccountingDate ||
     !data.invoiceCurrencyCode
   ) {
     return null
   }
 
   return {
-    id: data.invoiceNum,
-    timestamp: new Date(data.paymentAccountingDate),
-    amount: data.paymentAmountISK ?? 0,
-    currencyCode: data.invoiceCurrencyCode,
+    id: String(data.erpInvoiceId),
+    number: data.invoiceNum,
+    totalAmount: data.invoiceTotalBaseAmountISK ?? 0,
     itemization: (data.glLines ?? [])
       .map(mapInvoiceGroupInvoiceItemization)
       .filter(isDefined),

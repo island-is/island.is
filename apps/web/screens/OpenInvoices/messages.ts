@@ -94,7 +94,11 @@ export const m = {
   totals: defineMessages({
     total: {
       id: 'web.openinvoices:totals.total',
-      defaultMessage: 'Samtals',
+      defaultMessage: 'Samtals greitt',
+    },
+    invoiceAmount: {
+      id: 'web.openinvoices:totals.invoiceAmount',
+      defaultMessage: 'Upphæð reiknings',
     },
   }),
   search: defineMessages({

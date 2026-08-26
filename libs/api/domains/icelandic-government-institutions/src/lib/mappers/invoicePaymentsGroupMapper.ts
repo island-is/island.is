@@ -1,9 +1,10 @@
-import { InvoiceGroupDto } from '@island.is/clients/government-invoices'
-import { InvoiceGroup } from '../models/invoiceGroup.model'
-import { mapInvoice } from './invoiceMapper'
-import { isDefined } from '@island.is/shared/utils'
+import { InvoicePaymentsGroupDto } from '@island.is/clients/government-invoices'
+import { InvoicePaymentsGroup } from '../models/invoicePaymentsGroup.model'
+import { mapPayment } from './paymentMapper'
 
-export const mapInvoiceGroup = (data: InvoiceGroupDto): InvoiceGroup => {
+export const mapInvoicePaymentsGroup = (
+  data: InvoicePaymentsGroupDto,
+): InvoicePaymentsGroup => {
   return {
     id: `${data.debtor.erpLegalEntityId}-${data.supplier.legalId}`,
     supplier: {
@@ -18,8 +19,8 @@ export const mapInvoiceGroup = (data: InvoiceGroupDto): InvoiceGroup => {
       legalId: data.debtor.legalId,
       name: data.debtor.name,
     },
-    totalSum: data.paymentsSum,
-    totalCount: data.paymentsCount,
-    invoices: data.invoices?.map(mapInvoice).filter(isDefined),
+    totalPaymentsSum: data.totalPaymentsSum,
+    totalPaymentsCount: data.totalPaymentsCount,
+    payments: data.payments?.map(mapPayment),
   }
 }

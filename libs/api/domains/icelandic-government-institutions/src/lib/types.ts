@@ -1,12 +1,12 @@
-import { InvoiceGroupCollection } from './models/invoiceGroups.model'
-import { InvoiceGroup } from './models/invoiceGroup.model'
+import { InvoicePaymentsGroupCollection } from './models/invoicePaymentsGroups.model'
+import { InvoicePaymentsGroup } from './models/invoicePaymentsGroup.model'
 
-export type InvoiceGroupWithFilters = InvoiceGroup & {
+export type InvoicePaymentsGroupWithFilters = InvoicePaymentsGroup & {
   dateFrom?: Date
   dateTo?: Date
 }
 
-export type InvoiceGroupsWithFilters = InvoiceGroupCollection & {
+export type InvoicePaymentsGroupsWithFilters = InvoicePaymentsGroupCollection & {
   dateFrom?: Date
   dateTo?: Date
 }

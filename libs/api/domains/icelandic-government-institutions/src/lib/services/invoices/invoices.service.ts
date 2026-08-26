@@ -1,6 +1,6 @@
 import { GovernmentInvoicesClientService } from '@island.is/clients/government-invoices'
 import { Injectable } from '@nestjs/common'
-import { InvoiceGroupInput } from '../../dtos/getInvoiceGroup.input'
+import { InvoicePaymentsGroupInput } from '../../dtos/getInvoicePaymentsGroup.input'
 import { DebtorsInput } from '../../dtos/getDebtors.input'
 import { MinistriesInput } from '../../dtos/getMinistries.input'
 import { SuppliersInput } from '../../dtos/getSuppliers.input'
@@ -10,10 +10,10 @@ import { Suppliers } from '../../models/suppliers.model'
 import { mapDebtors } from '../../mappers/debtorMapper'
 import { mapMinistries } from '../../mappers/ministryMapper'
 import { mapSuppliers } from '../../mappers/supplierMapper'
-import { mapInvoiceGroup } from '../../mappers/invoiceGroupMapper'
-import { InvoiceGroup } from '../../models/invoiceGroup.model'
-import { InvoiceGroupCollection } from '../../models/invoiceGroups.model'
-import { InvoiceGroupsInput } from '../../dtos/getInvoiceGroups.input'
+import { mapInvoicePaymentsGroup } from '../../mappers/invoicePaymentsGroupMapper'
+import { InvoicePaymentsGroup } from '../../models/invoicePaymentsGroup.model'
+import { InvoicePaymentsGroupCollection } from '../../models/invoicePaymentsGroups.model'
+import { InvoicePaymentsGroupsInput } from '../../dtos/getInvoicePaymentsGroups.input'
 import { InvoicePaymentTypesInput } from '../../dtos/getInvoicePaymentTypes.input'
 import { InvoicePaymentTypes } from '../../models/invoicePaymentTypes.model'
 import { mapInvoicePaymentTypes } from '../../mappers/invoicePaymentTypeMapper'
@@ -22,29 +22,33 @@ import { mapInvoicePaymentTypes } from '../../mappers/invoicePaymentTypeMapper'
 export class InvoicesService {
   constructor(private govInvoicesService: GovernmentInvoicesClientService) {}
 
-  async getOpenInvoicesGroup(
-    input: InvoiceGroupInput,
-  ): Promise<InvoiceGroup | null> {
-    const data = await this.govInvoicesService.getOpenInvoiceGroup(input)
+  async getOpenInvoicesPaymentsGroup(
+    input: InvoicePaymentsGroupInput,
+  ): Promise<InvoicePaymentsGroup | null> {
+    const data = await this.govInvoicesService.getOpenInvoicePaymentsGroup(
+      input,
+    )
 
     if (!data) {
       return null
     }
 
-    return mapInvoiceGroup(data)
+    return mapInvoicePaymentsGroup(data)
   }
 
-  async getOpenInvoiceGroups(
-    input?: InvoiceGroupsInput,
-  ): Promise<InvoiceGroupCollection | null> {
-    const data = await this.govInvoicesService.getOpenInvoiceGroups(input)
+  async getOpenInvoicePaymentsGroups(
+    input?: InvoicePaymentsGroupsInput,
+  ): Promise<InvoicePaymentsGroupCollection | null> {
+    const data = await this.govInvoicesService.getOpenInvoicePaymentsGroups(
+      input,
+    )
 
     if (!data) {
       return null
     }
 
     return {
-      data: data.invoiceGroups.map((group) => mapInvoiceGroup(group)),
+      data: data.invoiceGroups.map((group) => mapInvoicePaymentsGroup(group)),
       totalPaymentsCount: data.totalPaymentsCount,
       totalPaymentsSum: data.totalPaymentsSum,
       totalCount: data.totalCount,

@@ -2,7 +2,7 @@ import { OpenInvoiceSortFields, SortDirections } from '../../../gen/fetch'
 
 export { OpenInvoiceSortFields, SortDirections }
 
-export interface InvoiceGroupRequestDto {
+export interface InvoicePaymentsGroupRequestDto {
   suppliers?: string[]
   debtors?: number[]
   ministries?: string[]

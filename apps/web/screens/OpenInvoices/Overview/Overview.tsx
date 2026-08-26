@@ -22,14 +22,14 @@ import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import { formatCurrency, isDefined } from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
 import {
-  IcelandicGovernmentInstitutionsInvoiceGroup,
-  IcelandicGovernmentInstitutionsInvoiceGroups,
+  IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
+  IcelandicGovernmentInstitutionsInvoicePaymentsGroups,
   IcelandicGovernmentInstitutionsOpenInvoiceSortField,
   IcelandicGovernmentInstitutionsSortDirection,
   Organization,
   Query,
   QueryGetOrganizationArgs,
-  QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs,
+  QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -71,7 +71,7 @@ const SORT_FIELD_MAP: Record<
 > = {
   supplier: IcelandicGovernmentInstitutionsOpenInvoiceSortField.SupplierName,
   customer: IcelandicGovernmentInstitutionsOpenInvoiceSortField.DebtorName,
-  totalSum: IcelandicGovernmentInstitutionsOpenInvoiceSortField.Amount,
+  totalPaymentsSum: IcelandicGovernmentInstitutionsOpenInvoiceSortField.Amount,
 }
 
 const toDebtorIds = (debtors?: string[] | null) =>
@@ -98,9 +98,9 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     },
   ] = useLazyQuery<
     {
-      icelandicGovernmentInstitutionsInvoiceGroups: IcelandicGovernmentInstitutionsInvoiceGroups
+      icelandicGovernmentInstitutionsInvoicePaymentsGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroups
     },
-    QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs
+    QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs
   >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS)
 
   const baseUrl = linkResolver('openinvoices', [], locale).href
@@ -125,8 +125,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1)
 
   const fetchedResult =
-    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
-  const displayGroups: IcelandicGovernmentInstitutionsInvoiceGroup[] =
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
+  const displayGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroup[] =
     fetchedResult?.data ?? initialInvoiceGroups?.data ?? []
   const totalCount =
     fetchedResult?.totalCount ?? initialInvoiceGroups?.totalCount ?? 0
@@ -277,7 +277,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
     const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
     const totalPaymentsSum =
-      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
         ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
 
     if (totalPayments === 1) {
@@ -310,7 +310,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     dateRangeStart,
     formatMessage,
     initialInvoiceGroups?.totalPaymentsSum,
-    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
       ?.totalPaymentsSum,
     totalPayments,
   ])
@@ -322,7 +322,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
     const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
     const totalPaymentsSum =
-      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
         ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
 
     return {
@@ -344,7 +344,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     dateRangeStart,
     formatMessage,
     initialInvoiceGroups?.totalPaymentsSum,
-    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
       ?.totalPaymentsSum,
     totalPayments,
   ])
@@ -585,7 +585,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 interface OpenInvoicesOverviewProps {
   organization?: Organization
   locale: Locale
-  initialInvoiceGroups?: IcelandicGovernmentInstitutionsInvoiceGroups
+  initialInvoiceGroups?: IcelandicGovernmentInstitutionsInvoicePaymentsGroups
   today: string
 }
 
@@ -640,10 +640,10 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     addMonths(dateToInput, -1)
 
   const {
-    data: { icelandicGovernmentInstitutionsInvoiceGroups },
+    data: { icelandicGovernmentInstitutionsInvoicePaymentsGroups },
   } = await apolloClient.query<
     Query,
-    QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs
+    QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs
   >({
     query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
     variables: {
@@ -663,7 +663,7 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
   return {
     locale: locale as Locale,
     initialInvoiceGroups:
-      icelandicGovernmentInstitutionsInvoiceGroups ?? undefined,
+      icelandicGovernmentInstitutionsInvoicePaymentsGroups ?? undefined,
     organization: getOrganization ?? undefined,
     today: todayIso,
   }

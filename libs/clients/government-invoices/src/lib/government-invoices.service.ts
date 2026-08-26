@@ -18,20 +18,23 @@ import { mapDebtorDto } from './dtos/debtor.dto'
 import { MinistriesDto } from './dtos/ministries.dto'
 import { mapMinistryDto } from './dtos/ministry.dto'
 import { mapPageInfo } from './utils/pageInfo.util'
-import { InvoiceGroupRequestDto } from './dtos/invoiceGroupRequest.dto'
+import { InvoicePaymentsGroupRequestDto } from './dtos/invoicePaymentsGroupRequest.dto'
 import {
-  InvoiceGroupCollectionDto,
-  mapInvoiceGroupCollectionDto,
-} from './dtos/invoiceGroupCollection.dto'
-import { InvoiceGroupDto, mapInvoiceGroupDto } from './dtos/invoiceGroup.dto'
+  InvoicePaymentsGroupCollectionDto,
+  mapInvoicePaymentsGroupCollectionDto,
+} from './dtos/invoicePaymentsGroupCollection.dto'
+import {
+  InvoicePaymentsGroupDto,
+  mapInvoicePaymentsGroupDto,
+} from './dtos/invoicePaymentsGroup.dto'
 import { InvoicePaymentTypesDto } from './dtos/invoicePaymentTypes.dto'
 import { mapInvoicePaymentTypeDto } from './dtos/invoicePaymentType.dto'
 
 @Injectable()
 export class GovernmentInvoicesClientService {
-  public async getOpenInvoiceGroups(
-    input?: InvoiceGroupRequestDto,
-  ): Promise<InvoiceGroupCollectionDto | null> {
+  public async getOpenInvoicePaymentsGroups(
+    input?: InvoicePaymentsGroupRequestDto,
+  ): Promise<InvoicePaymentsGroupCollectionDto | null> {
     const { data } = await getV1OpeninvoicesInvoices(
       input
         ? {
@@ -59,12 +62,12 @@ export class GovernmentInvoicesClientService {
       return null
     }
 
-    return mapInvoiceGroupCollectionDto(data)
+    return mapInvoicePaymentsGroupCollectionDto(data)
   }
 
-  public async getOpenInvoiceGroup(
+  public async getOpenInvoicePaymentsGroup(
     requestParams: InvoiceRequestDto,
-  ): Promise<InvoiceGroupDto | null> {
+  ): Promise<InvoicePaymentsGroupDto | null> {
     const { data } =
       await getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId({
         path: {
@@ -87,7 +90,7 @@ export class GovernmentInvoicesClientService {
       return null
     }
 
-    return mapInvoiceGroupDto(data)
+    return mapInvoicePaymentsGroupDto(data)
   }
 
   public async getSuppliers(

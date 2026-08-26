@@ -41,15 +41,15 @@ export const NestedLines = ({
     },
   )
 
-  const invoices =
-    data?.icelandicGovernmentInstitutionsInvoiceGroup?.invoices ?? []
+  const payments =
+    data?.icelandicGovernmentInstitutionsInvoicePaymentsGroup?.payments ?? []
 
   const renderItemizations = () => {
     if (error) {
       return <EmptyTable message={formatMessage(m.overview.errorLoading)} />
     }
 
-    if (loading || !invoices.length) {
+    if (loading || !payments.length) {
       return (
         <EmptyTable
           loading={loading}
@@ -58,23 +58,23 @@ export const NestedLines = ({
       )
     }
 
-    return invoices.map((invoice) => (
-      <Box paddingBottom={3} paddingLeft={2} paddingRight={2} key={invoice.id}>
+    return payments.map((payment) => (
+      <Box paddingBottom={3} paddingLeft={2} paddingRight={2} key={payment.id}>
         <Box marginBottom={2} display="flex">
           <Box marginRight={2}>
             <Text variant="small" fontWeight="semiBold">
-              {formatDate(new Date(invoice.date), {
+              {formatDate(new Date(payment.date), {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
               })}
             </Text>
           </Box>
-          <Text variant="small">{invoice.id}</Text>
+          <Text variant="small">{payment.invoice.number}</Text>
         </Box>
         <T.Table>
           <T.Body>
-            {invoice.itemizations?.map((invoiceItem, i) => {
+            {payment.invoice.itemizations?.map((invoiceItem, i) => {
               const background = i % 2 === 0 ? 'white' : undefined
               return (
                 <T.Row key={invoiceItem.id}>
@@ -105,24 +105,28 @@ export const NestedLines = ({
               <T.Data
                 box={{
                   background:
-                    (invoice.itemizations?.length ?? 0) % 2 === 0
-                      ? 'white'
-                      : undefined,
-                  className: styles.noBorder,
-                }}
-              />
-              <T.Data
-                box={{
-                  textAlign: 'right',
-                  background:
-                    (invoice.itemizations?.length ?? 0) % 2 === 0
+                    (payment.invoice.itemizations?.length ?? 0) % 2 === 0
                       ? 'white'
                       : undefined,
                   className: styles.noBorder,
                 }}
               >
                 <Text fontWeight="semiBold" variant="small">
-                  {formatCurrency(invoice.totalItemizationAmount)}
+                  {formatMessage(m.totals.invoiceAmount)}
+                </Text>
+              </T.Data>
+              <T.Data
+                box={{
+                  textAlign: 'right',
+                  background:
+                    (payment.invoice.itemizations?.length ?? 0) % 2 === 0
+                      ? 'white'
+                      : undefined,
+                  className: styles.noBorder,
+                }}
+              >
+                <Text fontWeight="semiBold" variant="small">
+                  {formatCurrency(payment.invoice.totalAmount)}
                 </Text>
               </T.Data>
             </T.Row>
@@ -133,7 +137,7 @@ export const NestedLines = ({
   }
 
   return (
-    <Box background="blue100">
+    <Box background="blue100" paddingTop={3}>
       {renderItemizations()}
       <Box paddingY={3} paddingLeft={2} background="blue100">
         <Box

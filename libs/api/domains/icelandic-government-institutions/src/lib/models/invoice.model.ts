@@ -6,11 +6,11 @@ export class Invoice {
   @Field(() => ID)
   id!: string
 
-  @Field({ description: 'ISO8601' })
-  date!: string
+  @Field()
+  number!: string
 
   @Field(() => Float)
-  totalItemizationAmount!: number
+  totalAmount!: number
 
   @Field(() => [InvoiceItem], { nullable: true })
   itemizations?: InvoiceItem[]

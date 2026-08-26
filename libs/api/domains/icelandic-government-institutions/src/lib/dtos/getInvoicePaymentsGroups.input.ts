@@ -2,8 +2,8 @@ import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsDate, IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator'
 import { OpenInvoiceSortFields, SortDirections } from './sortEnums'
 
-@InputType('IcelandicGovernmentInstitutionsInvoiceGroupsInput')
-export class InvoiceGroupsInput {
+@InputType('IcelandicGovernmentInstitutionsInvoicePaymentsGroupsInput')
+export class InvoicePaymentsGroupsInput {
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()

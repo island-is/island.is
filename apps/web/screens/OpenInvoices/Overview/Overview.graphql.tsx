@@ -117,10 +117,10 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES = gql`
 `
 
 export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
-  query IcelandicGovernmentInstitutionsInvoiceGroup(
-    $input: IcelandicGovernmentInstitutionsInvoiceGroupInput!
+  query IcelandicGovernmentInstitutionsInvoicePaymentsGroup(
+    $input: IcelandicGovernmentInstitutionsInvoicePaymentsGroupInput!
   ) {
-    icelandicGovernmentInstitutionsInvoiceGroup(input: $input) {
+    icelandicGovernmentInstitutionsInvoicePaymentsGroup(input: $input) {
       id
       supplier {
         id
@@ -134,18 +134,23 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
         legalId
         name
       }
-      invoices {
+      payments {
         id
         date
-        totalItemizationAmount
-        itemizations {
+        amount
+        invoice {
           id
-          label
-          invoicePaymentType {
+          number
+          totalAmount
+          itemizations {
             id
-            name
+            label
+            invoicePaymentType {
+              id
+              name
+            }
+            amount
           }
-          amount
         }
       }
     }
@@ -153,10 +158,10 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
 `
 
 export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
-  query IcelandicGovernmentInstitutionsInvoiceGroups(
-    $input: IcelandicGovernmentInstitutionsInvoiceGroupsInput!
+  query IcelandicGovernmentInstitutionsInvoicePaymentsGroups(
+    $input: IcelandicGovernmentInstitutionsInvoicePaymentsGroupsInput!
   ) {
-    icelandicGovernmentInstitutionsInvoiceGroups(input: $input) {
+    icelandicGovernmentInstitutionsInvoicePaymentsGroups(input: $input) {
       totalPaymentsSum
       totalPaymentsCount
       data {
@@ -173,8 +178,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
           legalId
           name
         }
-        totalSum
-        totalCount
+        totalPaymentsSum
+        totalPaymentsCount
       }
       totalCount
       pageInfo {

@@ -1,8 +1,8 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsDate, IsInt, IsOptional, IsString } from 'class-validator'
 
-@InputType('IcelandicGovernmentInstitutionsInvoiceGroupInput')
-export class InvoiceGroupInput {
+@InputType('IcelandicGovernmentInstitutionsInvoicePaymentsGroupInput')
+export class InvoicePaymentsGroupInput {
   @Field()
   @IsString()
   supplierLegalId!: string

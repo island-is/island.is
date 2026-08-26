@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { ApolloError } from '@apollo/client'
 
-import { IcelandicGovernmentInstitutionsInvoiceGroup } from '@island.is/api/schema'
+import { IcelandicGovernmentInstitutionsInvoicePaymentsGroup } from '@island.is/api/schema'
 import {
   Box,
   createColumnHelper,
@@ -19,7 +19,7 @@ import { NestedLines } from './NestedLines'
 interface Props {
   dateTo?: Date
   dateFrom?: Date
-  invoiceGroups: Array<IcelandicGovernmentInstitutionsInvoiceGroup>
+  invoiceGroups: Array<IcelandicGovernmentInstitutionsInvoicePaymentsGroup>
   loading?: boolean
   error?: ApolloError
   sorting: SortingState
@@ -27,7 +27,7 @@ interface Props {
 }
 
 const columnHelper =
-  createColumnHelper<IcelandicGovernmentInstitutionsInvoiceGroup>()
+  createColumnHelper<IcelandicGovernmentInstitutionsInvoicePaymentsGroup>()
 
 export const OverviewTable = ({
   dateTo,
@@ -58,7 +58,7 @@ export const OverviewTable = ({
         id: 'customer',
         header: formatMessage(m.overview.customer),
       }),
-      columnHelper.accessor('totalSum', {
+      columnHelper.accessor('totalPaymentsSum', {
         header: formatMessage(m.overview.amount),
         cell: (info) => formatCurrency(info.getValue()),
         meta: { align: 'right' },
@@ -92,7 +92,7 @@ export const OverviewTable = ({
           <NestedLines
             supplierLegalId={row.original.supplier.id}
             erpLegalEntityId={Number(row.original.debtor.id)}
-            total={row.original.totalSum}
+            total={row.original.totalPaymentsSum}
             dateFrom={dateFrom}
             dateTo={dateTo}
           />

@@ -1,12 +1,12 @@
-import { InvoiceGroupInvoiceDto } from '@island.is/clients/government-invoices'
+import { InvoiceDto } from '@island.is/clients/government-invoices'
 import { Invoice } from '../models/invoice.model'
 import { mapInvoiceItem } from './invoiceItemMapper'
 
-export const mapInvoice = (invoice: InvoiceGroupInvoiceDto): Invoice => {
+export const mapInvoice = (invoice: InvoiceDto): Invoice => {
   return {
     id: invoice.id,
-    date: invoice.timestamp.toISOString(),
-    totalItemizationAmount: invoice.amount,
+    number: invoice.number,
+    totalAmount: invoice.totalAmount,
     itemizations: invoice.itemization.map(mapInvoiceItem),
   }
 }

@@ -1,20 +1,23 @@
 import { PageInfoDto } from '@island.is/nest/pagination'
 import { isDefined } from '@island.is/shared/utils'
 import { OpenInvoicesGroupCollectionResponseDto } from '../../../gen/fetch'
-import { InvoiceGroupDto, mapInvoiceGroupDto } from './invoiceGroup.dto'
+import {
+  InvoicePaymentsGroupDto,
+  mapInvoicePaymentsGroupDto,
+} from './invoicePaymentsGroup.dto'
 import { mapOffsetPageInfo } from '../utils/pageInfo.util'
 
-export interface InvoiceGroupCollectionDto {
+export interface InvoicePaymentsGroupCollectionDto {
   totalCount: number
   totalPaymentsSum: number
   totalPaymentsCount: number
-  invoiceGroups: InvoiceGroupDto[]
+  invoiceGroups: InvoicePaymentsGroupDto[]
   pageInfo?: PageInfoDto
 }
 
-export const mapInvoiceGroupCollectionDto = (
+export const mapInvoicePaymentsGroupCollectionDto = (
   data: OpenInvoicesGroupCollectionResponseDto,
-): InvoiceGroupCollectionDto | null => {
+): InvoicePaymentsGroupCollectionDto | null => {
   if (
     data.totalCount == null ||
     data.totalPaymentsSum == null ||
@@ -27,7 +30,7 @@ export const mapInvoiceGroupCollectionDto = (
     totalPaymentsCount: data.totalPaymentsCount,
     totalPaymentsSum: data.totalPaymentsSum,
     invoiceGroups: (data.invoiceGroups ?? [])
-      .map(mapInvoiceGroupDto)
+      .map(mapInvoicePaymentsGroupDto)
       .filter(isDefined),
     pageInfo: data.pageInfo ? mapOffsetPageInfo(data.pageInfo) : undefined,
   }

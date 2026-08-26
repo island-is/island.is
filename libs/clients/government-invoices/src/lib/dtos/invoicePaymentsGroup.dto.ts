@@ -2,22 +2,19 @@ import { isDefined } from '@island.is/shared/utils'
 import { OpenInvoiceGroupResponseDto } from '../../../gen/fetch'
 import { DebtorDto, mapDebtorDto } from './debtor.dto'
 import { mapSupplierDto, SupplierDto } from './supplier.dto'
-import {
-  InvoiceGroupInvoiceDto,
-  mapInvoiceGroupInvoice,
-} from './invoiceGroupInvoice.dto'
+import { PaymentDto, mapPaymentDto } from './payment.dto'
 
-export interface InvoiceGroupDto {
+export interface InvoicePaymentsGroupDto {
   supplier: SupplierDto
   debtor: DebtorDto
-  paymentsSum: number
-  paymentsCount: number
-  invoices?: InvoiceGroupInvoiceDto[]
+  totalPaymentsSum: number
+  totalPaymentsCount: number
+  payments?: PaymentDto[]
 }
 
-export const mapInvoiceGroupDto = (
+export const mapInvoicePaymentsGroupDto = (
   invoiceGroup: OpenInvoiceGroupResponseDto,
-): InvoiceGroupDto | null => {
+): InvoicePaymentsGroupDto | null => {
   if (
     !invoiceGroup.debtor ||
     !invoiceGroup.supplier ||
@@ -29,8 +26,8 @@ export const mapInvoiceGroupDto = (
 
   const supplierDto = mapSupplierDto(invoiceGroup.supplier)
   const debtorDto = mapDebtorDto(invoiceGroup.debtor)
-  const invoicesDto = invoiceGroup?.invoices
-    ?.map(mapInvoiceGroupInvoice)
+  const paymentsDto = invoiceGroup?.invoices
+    ?.map(mapPaymentDto)
     .filter(isDefined)
 
   if (!supplierDto || !debtorDto) {
@@ -40,8 +37,8 @@ export const mapInvoiceGroupDto = (
   return {
     supplier: supplierDto,
     debtor: debtorDto,
-    paymentsSum: invoiceGroup.totalPaymentsSum,
-    paymentsCount: invoiceGroup.totalPaymentCount,
-    invoices: invoicesDto,
+    totalPaymentsSum: invoiceGroup.totalPaymentsSum,
+    totalPaymentsCount: invoiceGroup.totalPaymentCount,
+    payments: paymentsDto,
   }
 }

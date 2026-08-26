@@ -2,9 +2,9 @@ import { Audit } from '@island.is/nest/audit'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import { InvoicesService } from '../services/invoices/invoices.service'
-import { InvoiceGroupsInput } from '../dtos/getInvoiceGroups.input'
-import type { InvoiceGroupsWithFilters } from '../types'
-import { InvoiceGroupCollection } from '../models/invoiceGroups.model'
+import { InvoicePaymentsGroupsInput } from '../dtos/getInvoicePaymentsGroups.input'
+import type { InvoicePaymentsGroupsWithFilters } from '../types'
+import { InvoicePaymentsGroupCollection } from '../models/invoicePaymentsGroups.model'
 import { Ministries } from '../models/ministries.model'
 import { MinistriesInput } from '../dtos/getMinistries.input'
 import { Suppliers } from '../models/suppliers.model'
@@ -14,21 +14,23 @@ import { DebtorsInput } from '../dtos/getDebtors.input'
 import { InvoicePaymentTypes } from '../models/invoicePaymentTypes.model'
 import { InvoicePaymentTypesInput } from '../dtos/getInvoicePaymentTypes.input'
 
-@Resolver(() => InvoiceGroupCollection)
+@Resolver(() => InvoicePaymentsGroupCollection)
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
-export class InvoiceGroupsResolver {
+export class InvoicePaymentsGroupsResolver {
   constructor(private readonly invoiceService: InvoicesService) {}
 
-  @Query(() => InvoiceGroupCollection, {
-    name: 'icelandicGovernmentInstitutionsInvoiceGroups',
+  @Query(() => InvoicePaymentsGroupCollection, {
+    name: 'icelandicGovernmentInstitutionsInvoicePaymentsGroups',
     nullable: true,
   })
   @BypassAuth()
-  async getInvoiceGroups(
-    @Args('input', { type: () => InvoiceGroupsInput })
-    input: InvoiceGroupsInput,
-  ): Promise<InvoiceGroupsWithFilters | null> {
-    const groups = await this.invoiceService.getOpenInvoiceGroups(input)
+  async getInvoicePaymentsGroups(
+    @Args('input', { type: () => InvoicePaymentsGroupsInput })
+    input: InvoicePaymentsGroupsInput,
+  ): Promise<InvoicePaymentsGroupsWithFilters | null> {
+    const groups = await this.invoiceService.getOpenInvoicePaymentsGroups(
+      input,
+    )
     if (!groups) return null
 
     return {
