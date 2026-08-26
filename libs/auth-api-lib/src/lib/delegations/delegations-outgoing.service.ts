@@ -323,7 +323,7 @@ export class DelegationsOutgoingService {
 
       if (
         !allowDelegationNotification ||
-        !delegation.scopes ||
+        !delegation.scopes?.length ||
         !delegation.domainName
       ) {
         return
