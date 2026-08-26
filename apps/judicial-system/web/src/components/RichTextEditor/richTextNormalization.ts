@@ -203,6 +203,16 @@ export const normalizeRichTextHtml = (html: string): string => {
 
   const doc = new DOMParser().parseFromString(html, 'text/html')
   normalizeDoc(doc)
+
+  // Markup without visible text (e.g. '<p>&nbsp;&nbsp;</p>' from typing only
+  // spaces - the editor stores consecutive spaces as non-breaking spaces) is
+  // effectively empty. Emit '' so required-field validation and persistence
+  // treat it like any other blank input. textContent decodes the entities and
+  // trim() removes the resulting non-breaking spaces.
+  if (!doc.body.textContent?.trim()) {
+    return ''
+  }
+
   return doc.body.innerHTML
 }
 

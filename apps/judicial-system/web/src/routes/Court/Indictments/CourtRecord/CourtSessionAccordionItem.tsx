@@ -1499,15 +1499,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     )
                   }
                   onBlur={(html) => {
-                    // Decode entities (e.g. &nbsp;) and strip tags so an
-                    // otherwise-empty paragraph doesn't pass the required check.
-                    const decodedText =
-                      new DOMParser()
-                        .parseFromString(html, 'text/html')
-                        .body.textContent?.trim() ?? ''
+                    // Visually blank markup arrives normalized to '' (see
+                    // normalizeRichTextHtml), so the html can be validated
+                    // directly.
                     validateAndSetErrorMessage(
                       ['empty'],
-                      decodedText,
+                      html,
                       setEntriesErrorMessage,
                     )
                     patchSession(
