@@ -23,11 +23,15 @@ const useDefendants = () => {
 
   const [deleteDefendantMutation] = useDeleteDefendantMutation()
 
+  // Defendant updates can move the case between case tables, so active
+  // case table membership queries - the breadcrumbs - must be refetched.
   const [updateDefendantMutation, { loading: isUpdatingDefendant }] =
-    useUpdateDefendantMutation()
+    useUpdateDefendantMutation({ refetchQueries: ['CaseTableMembership'] })
 
   const [limitedAccessUpdateDefendantMutation] =
-    useLimitedAccessUpdateDefendantMutation()
+    useLimitedAccessUpdateDefendantMutation({
+      refetchQueries: ['CaseTableMembership'],
+    })
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {
