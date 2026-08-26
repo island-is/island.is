@@ -21,6 +21,9 @@ declare module '@tiptap/core' {
     blockIndent: {
       changeBlockIndent: (delta: number) => ReturnType
     }
+    richTextListItem: {
+      wrapListItemDeeper: () => ReturnType
+    }
   }
 }
 
@@ -173,6 +176,40 @@ const RichTextListItem = ListItem.extend({
         renderHTML: (attributes) =>
           attributes.markerNone ? { class: MARKER_NONE_CLASS } : {},
       },
+    }
+  },
+
+  addCommands() {
+    return {
+      ...this.parent?.(),
+      // sinkListItem nests an item under its previous sibling, so it cannot
+      // indent an item that has none. The previous editor kept indenting past
+      // the available nesting by wrapping the item in a marker-suppressed
+      // item holding a deeper list — the same marker-none model the paste
+      // pipeline and the PDF renderer use — so this command does that when
+      // sinking is impossible.
+      wrapListItemDeeper:
+        () =>
+        ({ state, tr, dispatch }) => {
+          const { $from, $to } = state.selection
+          const listItemType = state.schema.nodes[this.name]
+          const range = $from.blockRange(
+            $to,
+            (node) =>
+              node.childCount > 0 && node.firstChild?.type === listItemType,
+          )
+          if (!range) return false
+          // With a previous sibling the normal sink applies; this command is
+          // only the fallback.
+          if (range.startIndex > 0) return false
+          if (dispatch) {
+            tr.wrap(range, [
+              { type: listItemType, attrs: { markerNone: true } },
+              { type: range.parent.type, attrs: range.parent.attrs },
+            ])
+          }
+          return true
+        },
     }
   },
 })

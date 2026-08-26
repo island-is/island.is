@@ -129,12 +129,11 @@ const ToolbarButton: FC<{
     }`}
     aria-label={label}
     aria-pressed={active ?? false}
-    // Mousedown instead of click, prevented, so the editor selection and
-    // focus survive the button press and no blur-save fires mid-edit.
-    onMouseDown={(e) => {
-      e.preventDefault()
-      onAction()
-    }}
+    // Mousedown is prevented so the editor selection and focus survive the
+    // press and no blur-save fires mid-edit; the action runs on click so
+    // keyboard activation works too.
+    onMouseDown={(e) => e.preventDefault()}
+    onClick={onAction}
   >
     {children}
   </button>
@@ -178,7 +177,13 @@ const Toolbar: FC<Props> = ({
     // Inside a list, indenting means nesting the item rather than padding it.
     if (inList) {
       if (delta > 0) {
-        editor.chain().focus().sinkListItem('listItem').run()
+        // Sinking needs a previous sibling to nest under; past the available
+        // nesting, wrap deeper via a marker-none item instead (see
+        // wrapListItemDeeper).
+        const sank = editor.chain().focus().sinkListItem('listItem').run()
+        if (!sank) {
+          editor.chain().focus().wrapListItemDeeper().run()
+        }
       } else {
         editor.chain().focus().liftListItem('listItem').run()
       }

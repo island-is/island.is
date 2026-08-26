@@ -104,6 +104,20 @@ export const wrapperFullscreen = style({
   flexDirection: 'column',
 })
 
+// With no stacking-context ancestors the z-index above is enough to cover the
+// page, but an ancestor that forms one (e.g. the motion reorder items around
+// indictment counts) traps that z-index, letting later-painted page chrome —
+// the form stepper, sibling drag handles — draw on top of the fullscreen
+// editor. While fullscreen is active, promote every ancestor of the editor so
+// its chain wins at each stacking level. Position relative makes z-index
+// effective on ancestors that are otherwise static; it is layout-neutral
+// since no offsets are set, and the rule only applies while the editor covers
+// the viewport anyway.
+globalStyle(`body :has(${wrapperFullscreen})`, {
+  position: 'relative',
+  zIndex: 1200,
+})
+
 export const toolbar = style({
   display: 'flex',
   flexWrap: 'wrap',
@@ -114,6 +128,8 @@ export const toolbar = style({
   borderBottom: `${theme.border.width.standard}px solid ${theme.color.dark200}`,
 })
 
+// The icon keeps its color in every state — hover, press and toggled-on are
+// signalled by the background only.
 export const toolbarButton = style({
   display: 'flex',
   alignItems: 'center',
@@ -128,7 +144,6 @@ export const toolbarButton = style({
   padding: 0,
   ':hover': {
     background: theme.color.blue100,
-    color: theme.color.blue400,
   },
   ':focus-visible': {
     background: theme.color.mint200,
@@ -137,17 +152,14 @@ export const toolbarButton = style({
   },
   ':active': {
     background: theme.color.blue200,
-    color: theme.color.blue400,
   },
 })
 
 export const toolbarButtonActive = style({
   background: theme.color.blue200,
-  color: theme.color.blue400,
   selectors: {
     '&:hover': {
       background: theme.color.blue200,
-      color: theme.color.blue400,
     },
   },
 })
@@ -222,11 +234,11 @@ globalStyle(`${content} .ProseMirror p`, {
   fontWeight: 'inherit',
 })
 
-// The app loads IBM Plex Sans in weights 300/400/500/600 only (_app.tsx), so
-// 700 would be browser-synthesized faux bold. semiBold is the heaviest real
-// face and what island-ui renders emphasis with.
+// True bold, like the previous editor rendered — _app.tsx loads the 700 and
+// 700-italic faces specifically for this (island-ui itself tops out at
+// semiBold, so the theme has no token for it).
 globalStyle(`${content} .ProseMirror strong, ${content} .ProseMirror b`, {
-  fontWeight: theme.typography.semiBold,
+  fontWeight: 700,
 })
 
 globalStyle(`${content} .ProseMirror ul, ${content} .ProseMirror ol`, {
