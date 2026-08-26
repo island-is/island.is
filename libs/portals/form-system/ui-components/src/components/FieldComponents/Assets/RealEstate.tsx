@@ -84,7 +84,18 @@ type RealEstatePropertyVars = {
   }
 }
 
-const PROPERTY_NUMBER_REGEX = /^\d{7}$/
+const PROPERTY_NUMBER_REGEX = /^F?\d{7}$/i
+
+const normalizePropertyNumber = (propertyNumber: string) =>
+  propertyNumber.trim().replace(/^F/i, '')
+
+const sanitizePropertyNumberInput = (propertyNumber: string) => {
+  const sanitized = propertyNumber
+    .replace(/[^\dF]/gi, '')
+    .replace(/(?!^)F/gi, '')
+
+  return sanitized.slice(0, /^F/i.test(sanitized) ? 8 : 7)
+}
 
 export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { lang, formatMessage } = useLocale()
@@ -247,9 +258,10 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   }
 
   const fetchProperty = async (propertyNumber: string) => {
-    const normalized = propertyNumber.trim()
+    const trimmed = propertyNumber.trim()
+    const normalized = normalizePropertyNumber(trimmed)
 
-    if (!normalized) {
+    if (!trimmed) {
       setValue(propertyNumberField, '')
       setValue(addressField, '')
       setValue(postalCodeField, '')
@@ -261,7 +273,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       return
     }
 
-    if (!PROPERTY_NUMBER_REGEX.test(normalized)) {
+    if (!PROPERTY_NUMBER_REGEX.test(trimmed)) {
       setError(propertyNumberField, {
         type: 'validate',
         message: formatMessage(m.invalidPropertyNumber),
@@ -600,7 +612,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
                 name="propertySearch"
                 value={field.value}
                 onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '').slice(0, 7)
+                  const value = sanitizePropertyNumberInput(e.target.value)
                   field.onChange(value)
 
                   setValue(addressField, '')
