@@ -1,235 +1,496 @@
-import { FC, useMemo } from 'react'
+import { FC, ReactNode } from 'react'
 import {
   CartesianGrid,
-  ComposedChart,
   Legend,
-  Line,
   ResponsiveContainer,
   Scatter,
+  ScatterChart,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts'
+import type { TooltipContentProps } from 'recharts'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import type {
-  ScatterDataPointDto,
-  WageGapPooledFitDto,
+  SalaryAnalysisResponseDto,
+  SalaryByGenderAndScoreDto,
+  WageGapDecompositionDto,
+  WageGapEmployeeDto,
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
+import { formatPercentMagnitude } from '../../utils/wageGap'
+
+type PayDispersionDto = SalaryAnalysisResponseDto['payDispersion']
 
 type Props = {
-  dataPoints: ScatterDataPointDto[]
-  pooledFit?: WageGapPooledFitDto | null
+  data?: SalaryByGenderAndScoreDto | null
+  decomposition?: WageGapDecompositionDto | null
+  payDispersion?: PayDispersionDto | null
+  identifierForOrdinal: (ordinal: number) => string
 }
 
-// How many points to sample the curve at. It is exp(a + b·stig), so a two-point
-// line would draw a chord and visibly miss the curve it is meant to be.
-const CURVE_SAMPLES = 60
+type ChartPoint = {
+  score: number
+  regularHourlyWage: number
+  gender: WageGapEmployeeDto['gender']
+  employee: WageGapEmployeeDto | null
+  marked: boolean
+}
 
-/**
- * The curve is the pooled log fit — `Væntanlegt tímakaup`, the line every
- * `deviationPercent` in the outlier table is measured from. With a
- * two-directional minimum set the listed employees sit on BOTH sides of it.
- *
- * It bends because pay is fitted as a constant percentage rise per stig and a
- * percentage compounds; in krónur that is a curve. Do NOT swap in a level-space
- * linear fit to straighten it — such a fit predicts negative pay at the bottom
- * of the observed range and disagrees with the model the table uses, so a
- * reader can see a point above the drawn line whose row says "undir".
- */
+const RENDERED_PAY_DISPERSION_POPULATION: PayDispersionDto['population'] =
+  'ALL_EMPLOYEES'
+const NICE_AXIS_STEPS = [1, 1.5, 2, 2.5, 3, 4, 5, 7.5, 10]
+const CURVE_SAMPLES = 48
+
+const formatSalary = (value: number) =>
+  new Intl.NumberFormat('is-IS').format(Math.round(value)).replaceAll(',', '.')
+
+const niceAxisMax = (dataMax: number) => {
+  if (!Number.isFinite(dataMax) || dataMax <= 0) return 1
+  const magnitude = 10 ** Math.floor(Math.log10(dataMax))
+  const normalised = dataMax / magnitude
+  const step =
+    NICE_AXIS_STEPS.find((candidate) => normalised <= candidate) ?? 10
+  return step * magnitude
+}
+
+const isMarked = (
+  employee: WageGapEmployeeDto,
+  decomposition: WageGapDecompositionDto,
+  payDispersion: PayDispersionDto | null | undefined,
+): boolean => {
+  if (decomposition.oskyrtWithinBenchmark === false) {
+    return employee.inMinimumSet
+  }
+
+  if (
+    decomposition.oskyrtWithinBenchmark !== true ||
+    !payDispersion?.available ||
+    payDispersion.population !== RENDERED_PAY_DISPERSION_POPULATION
+  ) {
+    return false
+  }
+
+  return payDispersion.employees.some(
+    (row) => row.employeeOrdinal === employee.ordinal,
+  )
+}
+
+const NoSymbol = () => <g />
+
+const EmployeeDot = ({
+  cx,
+  cy,
+  fill,
+  payload,
+}: {
+  cx?: number
+  cy?: number
+  fill?: string
+  payload?: ChartPoint
+}) => {
+  if (cx == null || cy == null) return null
+  const marked = payload?.marked === true
+
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={10} fill="transparent" />
+      <circle
+        cx={cx}
+        cy={cy}
+        r={marked ? 6 : 4}
+        fill={fill}
+        fillOpacity={marked ? 1 : 0.8}
+        stroke={marked ? theme.color.dark400 : 'none'}
+        strokeWidth={marked ? 2 : 0}
+        pointerEvents="none"
+      />
+    </g>
+  )
+}
+
+const isChartPoint = (datum: unknown): datum is ChartPoint =>
+  typeof datum === 'object' &&
+  datum !== null &&
+  'employee' in datum &&
+  'gender' in datum
+
+const payStatusWord = (
+  payStatus: WageGapEmployeeDto['payStatus'],
+  formatMessage: ReturnType<typeof useLocale>['formatMessage'],
+) => {
+  const m = messages.salaryAnalysis.outlierGroup
+  return formatMessage(
+    payStatus === 'UNDERPAID'
+      ? m.payStatusUnderpaid
+      : payStatus === 'OVERPAID'
+      ? m.payStatusOverpaid
+      : m.payStatusOnLine,
+  )
+}
+
+const genderLabel = (
+  gender: WageGapEmployeeDto['gender'],
+  formatMessage: ReturnType<typeof useLocale>['formatMessage'],
+): string => {
+  const m = messages.salaryAnalysis.payDispersion
+  if (gender === 'MALE') return formatMessage(m.genderMale)
+  if (gender === 'FEMALE') return formatMessage(m.genderFemale)
+  return formatMessage(m.genderNeutral)
+}
+
+const ChartTooltip = ({
+  active,
+  payload,
+  markedLabel,
+  identifierForOrdinal,
+  formatMessage,
+}: Partial<TooltipContentProps<number, string>> & {
+  markedLabel: string | null
+  identifierForOrdinal: (ordinal: number) => string
+  formatMessage: ReturnType<typeof useLocale>['formatMessage']
+}) => {
+  const datum = active ? payload?.[0]?.payload : undefined
+  if (!isChartPoint(datum)) return null
+
+  const tooltipMessages = messages.salaryAnalysis.chartTooltip
+  const employee = datum.employee
+  const rows: [string, string][] = []
+
+  if (employee) {
+    rows.push([
+      formatMessage(tooltipMessages.gender),
+      genderLabel(employee.gender, formatMessage),
+    ])
+  }
+  rows.push([
+    formatMessage(tooltipMessages.score),
+    String(Math.round(datum.score)),
+  ])
+  rows.push([
+    formatMessage(tooltipMessages.salary),
+    formatHourlyWage(datum.regularHourlyWage),
+  ])
+
+  if (employee) {
+    const sign =
+      employee.deviationPercent > 0
+        ? '+'
+        : employee.deviationPercent < 0
+        ? '-'
+        : ''
+    rows.push([
+      formatMessage(tooltipMessages.expected),
+      formatHourlyWage(employee.expectedHourlyWage),
+    ])
+    rows.push([
+      formatMessage(tooltipMessages.deviation),
+      `${sign}${formatPercentMagnitude(
+        employee.deviationPercent,
+      )}% (${payStatusWord(employee.payStatus, formatMessage)})`,
+    ])
+  }
+
+  return (
+    <Box
+      background="white"
+      borderRadius="standard"
+      padding={2}
+      style={{
+        border: `1px solid ${theme.color.blue200}`,
+        boxShadow: '0 2px 8px rgba(0, 0, 60, 0.12)',
+      }}
+    >
+      <Text variant="small" fontWeight="semiBold">
+        {employee
+          ? `${formatMessage(tooltipMessages.employee)} ${identifierForOrdinal(
+              employee.ordinal,
+            )}`
+          : formatMessage(messages.salaryAnalysis.chart.title)}
+      </Text>
+      {rows.map(([label, value]) => (
+        <Box key={label} display="flex" columnGap={1}>
+          <Text variant="small" color="dark350">
+            {label}:
+          </Text>
+          <Text variant="small">{value}</Text>
+        </Box>
+      ))}
+      {datum.marked && markedLabel && (
+        <Box marginTop={1}>
+          <Text variant="small" fontWeight="semiBold">
+            {markedLabel}
+          </Text>
+        </Box>
+      )}
+    </Box>
+  )
+}
+
+const ChartLegend = ({
+  hasMale,
+  hasFemale,
+  hasCurve,
+  markedLabel,
+}: {
+  hasMale: boolean
+  hasFemale: boolean
+  hasCurve: boolean
+  markedLabel: string | null
+}) => {
+  const { formatMessage } = useLocale()
+  const items: { label: string; swatch: ReactNode }[] = []
+  const dot = (fill: string) => (
+    <svg width={12} height={12} aria-hidden>
+      <circle cx={6} cy={6} r={5} fill={fill} fillOpacity={0.8} />
+    </svg>
+  )
+
+  if (hasMale) {
+    items.push({
+      label: formatMessage(messages.salaryAnalysis.payDispersion.genderMale),
+      swatch: dot(theme.color.blue400),
+    })
+  }
+  if (hasFemale) {
+    items.push({
+      label: formatMessage(messages.salaryAnalysis.payDispersion.genderFemale),
+      swatch: dot(theme.color.purple400),
+    })
+  }
+  if (hasCurve) {
+    items.push({
+      label: formatMessage(messages.salaryAnalysis.chart.legendCurve),
+      swatch: (
+        <svg width={16} height={12} aria-hidden>
+          <line
+            x1={0}
+            y1={6}
+            x2={16}
+            y2={6}
+            stroke={theme.color.roseTinted400}
+            strokeWidth={2.5}
+          />
+        </svg>
+      ),
+    })
+  }
+  if (markedLabel) {
+    items.push({
+      label: markedLabel,
+      swatch: (
+        <svg width={14} height={14} aria-hidden>
+          <circle
+            cx={7}
+            cy={7}
+            r={5}
+            fill="none"
+            stroke={theme.color.dark400}
+            strokeWidth={2}
+          />
+        </svg>
+      ),
+    })
+  }
+
+  return (
+    <Box display="flex" justifyContent="center" columnGap={3} flexWrap="wrap">
+      {items.map((item) => (
+        <Box key={item.label} display="flex" alignItems="center" columnGap={1}>
+          {item.swatch}
+          <Text variant="small">{item.label}</Text>
+        </Box>
+      ))}
+    </Box>
+  )
+}
+
 export const SalaryDistributionChart: FC<Props> = ({
-  dataPoints,
-  pooledFit,
+  data,
+  decomposition,
+  payDispersion,
+  identifierForOrdinal,
 }) => {
   const { formatMessage } = useLocale()
   const m = messages.salaryAnalysis.chart
 
-  const male = useMemo(
-    () => dataPoints.filter((p) => p.gender === 'MALE'),
-    [dataPoints],
+  if (!data) return null
+
+  const fit = decomposition?.pooledFit
+  const slope = fit?.slope ?? null
+  const intercept = fit?.intercept ?? null
+  const hasFit = slope != null && intercept != null
+  const predict = (score: number) =>
+    hasFit ? Math.exp(intercept + slope * score) : 0
+
+  const points: ChartPoint[] = decomposition?.employees?.length
+    ? decomposition.employees.map((employee) => ({
+        score: employee.score,
+        regularHourlyWage: employee.hourlyWage,
+        gender: employee.gender,
+        employee,
+        marked: isMarked(employee, decomposition, payDispersion),
+      }))
+    : data.dataPoints.map((point) => ({
+        score: point.score,
+        regularHourlyWage: point.regularHourlyWage,
+        gender: point.gender,
+        employee: null,
+        marked: false,
+      }))
+
+  if (points.length === 0) return null
+
+  const malePoints = points.filter((point) => point.gender === 'MALE')
+  const femalePoints = points.filter((point) => point.gender !== 'MALE')
+  const markedLabel =
+    decomposition?.oskyrtWithinBenchmark === false
+      ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.minimumSet)
+      : decomposition?.oskyrtWithinBenchmark === true
+      ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.abending)
+      : null
+  const hasMarked = points.some((point) => point.marked)
+
+  const scoreBucketMax =
+    data.scoreBuckets.length > 0
+      ? Math.max(...data.scoreBuckets.map((bucket) => bucket.rangeTo))
+      : Math.max(...points.map((point) => point.score), 0)
+  const xAxisMax = Math.max(250, Math.ceil((scoreBucketMax + 100) / 250) * 250)
+  const scores = points.map((point) => point.score)
+  const curveFrom = Math.min(...scores)
+  const curveTo = Math.max(...scores)
+  const regressionData = hasFit
+    ? Array.from({ length: CURVE_SAMPLES + 1 }, (_, i) => {
+        const score = curveFrom + ((curveTo - curveFrom) * i) / CURVE_SAMPLES
+        return { score, regularHourlyWage: predict(score) }
+      })
+    : []
+
+  const allY = [
+    ...points.map((point) => point.regularHourlyWage),
+    ...regressionData.map((point) => point.regularHourlyWage),
+  ]
+  const yMax = niceAxisMax(Math.max(...allY, 1))
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((fraction) =>
+    Math.round(yMax * fraction),
   )
-  const female = useMemo(
-    () => dataPoints.filter((p) => p.gender !== 'MALE'),
-    [dataPoints],
-  )
-
-  // xSumSquares is the identifiability test, not `slope != null`: a degenerate
-  // fit from identical scores returns slope 0, which is a real finding (pay
-  // flat across stig) and must still draw. Absent data must draw nothing — a
-  // flat line there would read as that same finding.
-  const fit = useMemo(() => {
-    if (!pooledFit) return null
-    const { slope, intercept, xRangeFrom, xRangeTo, xSumSquares } = pooledFit
-    if (
-      slope == null ||
-      intercept == null ||
-      xRangeFrom == null ||
-      xRangeTo == null ||
-      xSumSquares === 0
-    ) {
-      return null
-    }
-    return { slope, intercept, xRangeFrom, xRangeTo }
-  }, [pooledFit])
-
-  const curve = useMemo(() => {
-    if (!fit) return []
-    const { slope, intercept, xRangeFrom, xRangeTo } = fit
-    const span = xRangeTo - xRangeFrom
-    // Sampled across the OBSERVED range only — the curve is exponential and
-    // extending it past the data distorts the axis.
-    return Array.from({ length: CURVE_SAMPLES }, (_, i) => {
-      const score = xRangeFrom + (span * i) / (CURVE_SAMPLES - 1)
-      return { score, expected: Math.exp(intercept + slope * score) }
-    })
-  }, [fit])
-
-  // The curve's own values must be in the domain: with a steep enough slope its
-  // top end sits above every observed wage, and recharts' auto-domain would
-  // clip the line at the plot edge.
-  const yDomain = useMemo((): [number, number] => {
-    const values = [
-      ...dataPoints.map((p) => p.regularHourlyWage),
-      ...curve.map((c) => c.expected),
-    ]
-    if (values.length === 0) return [0, 1]
-    const min = Math.min(...values)
-    const max = Math.max(...values)
-    const pad = (max - min) * 0.05 || max * 0.05 || 1
-    return [Math.max(0, min - pad), max + pad]
-  }, [dataPoints, curve])
-
-  const stats = useMemo(() => {
-    if (!fit || !pooledFit) return null
-    const { slope, intercept, xRangeFrom, xRangeTo } = fit
-    // exp(step · slope) − 1: the compounded proportional rise, which is also
-    // what explains the bend. The slope itself is in log units and means
-    // nothing to a reader. Derive the step from the observed range — on a 3–15
-    // score, "per 100 stig" would be nonsense.
-    const span = xRangeTo - xRangeFrom
-    const step = span >= 100 ? 100 : span >= 50 ? 50 : span >= 20 ? 20 : 10
-    const growth = Math.exp(step * slope) - 1
-    return {
-      step,
-      growth: Math.abs(growth * 100),
-      rising: growth >= 0,
-      // Anchored at the cohort's MEAN stig. Never print the intercept: exp(a)
-      // is pay at zero stig, a score no job holds, and reads as a floor.
-      anchorScore: pooledFit.xMean,
-      anchorWage:
-        pooledFit.xMean == null
-          ? null
-          : Math.exp(intercept + slope * pooledFit.xMean),
-      rSquared: pooledFit.rSquared,
-    }
-  }, [fit, pooledFit])
-
-  if (dataPoints.length === 0) return null
 
   return (
-    <Box marginBottom={4}>
-      <Text variant="h4" marginBottom={1}>
-        {formatMessage(m.title)}
-      </Text>
-      <Text variant="small" marginBottom={2}>
-        {formatMessage(m.intro)}
-      </Text>
+    <Box display="flex" flexDirection="column" rowGap={2} marginBottom={4}>
+      <Text variant="h4">{formatMessage(m.title)}</Text>
+      <Text>{formatMessage(m.intro)}</Text>
 
-      <Box style={{ width: '100%', height: 320 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart margin={{ top: 8, right: 16, bottom: 24, left: 16 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={theme.color.blue200} />
-            <XAxis
-              type="number"
-              dataKey="score"
-              name={formatMessage(m.xAxisLabel)}
-              domain={['dataMin', 'dataMax']}
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis
-              type="number"
-              dataKey="regularHourlyWage"
-              name={formatMessage(m.yAxisLabel)}
-              domain={yDomain}
-              tick={{ fontSize: 12 }}
-              width={80}
-              tickFormatter={(v: number) =>
-                v.toLocaleString('is-IS', { maximumFractionDigits: 0 })
-              }
-            />
-            <Tooltip
-              formatter={(value) =>
-                typeof value === 'number' ? formatHourlyWage(value) : ''
-              }
-              labelFormatter={(label) =>
-                `${formatMessage(m.xAxisLabel)}: ${String(label ?? '')}`
-              }
-            />
-            <Legend />
-            <Scatter
-              name={formatMessage(m.legendMale)}
-              data={male}
-              fill={theme.color.blue400}
-            />
-            <Scatter
-              name={formatMessage(m.legendFemale)}
-              data={female}
-              fill={theme.color.purple400}
-            />
-            {curve.length > 0 && (
-              <Line
-                name={formatMessage(m.legendCurve)}
-                data={curve}
-                dataKey="expected"
-                stroke={theme.color.red400}
-                strokeWidth={2}
-                dot={false}
-                activeDot={false}
-                isAnimationActive={false}
-              />
+      <ResponsiveContainer width="100%" height={420}>
+        <ScatterChart
+          margin={{ top: 24, right: 0, left: 0, bottom: 24 }}
+          style={{ outline: 'none' }}
+        >
+          <CartesianGrid vertical={false} stroke={theme.color.blue200} />
+          <XAxis
+            type="number"
+            dataKey="score"
+            domain={[0, xAxisMax]}
+            ticks={Array.from(
+              { length: Math.ceil(xAxisMax / 250) + 1 },
+              (_, i) => i * 250,
             )}
-          </ComposedChart>
-        </ResponsiveContainer>
-      </Box>
-
-      {stats ? (
-        <Box marginTop={1}>
-          <Text variant="small">
-            {formatMessage(stats.rising ? m.growthUp : m.growthDown, {
-              pct: stats.growth.toLocaleString('is-IS', {
-                maximumFractionDigits: 1,
-              }),
-              step: stats.step,
-            })}
-          </Text>
-          {stats.anchorScore != null && stats.anchorWage != null && (
-            <Text variant="small">
-              {formatMessage(m.anchor, {
-                score: stats.anchorScore.toLocaleString('is-IS', {
-                  maximumFractionDigits: 0,
-                }),
-                wage: formatHourlyWage(stats.anchorWage),
-              })}
-            </Text>
+            stroke={theme.color.blue200}
+            tickLine={false}
+            tick={{ fill: theme.color.black, fontSize: 14 }}
+            label={{
+              value: formatMessage(m.xAxisLabel),
+              position: 'insideBottomRight',
+              dx: 5,
+              dy: 10,
+              fontWeight: 'bold',
+              fill: theme.color.black,
+              fontSize: 14,
+            }}
+          />
+          <YAxis
+            type="number"
+            dataKey="regularHourlyWage"
+            domain={[0, yMax]}
+            ticks={yTicks}
+            tickFormatter={formatSalary}
+            stroke={theme.color.blue200}
+            tickLine={false}
+            tick={{ fill: theme.color.black, fontSize: 14 }}
+            width={95}
+            label={{
+              value: formatMessage(m.yAxisLabel),
+              position: 'insideTop',
+              offset: -22,
+              fontWeight: 'bold',
+              fill: theme.color.black,
+              fontSize: 14,
+              dx: 32,
+            }}
+          />
+          <Tooltip
+            cursor={false}
+            isAnimationActive={false}
+            shared={false}
+            content={
+              <ChartTooltip
+                markedLabel={hasMarked ? markedLabel : null}
+                identifierForOrdinal={identifierForOrdinal}
+                formatMessage={formatMessage}
+              />
+            }
+          />
+          <Legend
+            wrapperStyle={{ paddingTop: 16 }}
+            content={
+              <ChartLegend
+                hasMale={malePoints.length > 0}
+                hasFemale={femalePoints.length > 0}
+                hasCurve={regressionData.length > 0}
+                markedLabel={hasMarked ? markedLabel : null}
+              />
+            }
+          />
+          {malePoints.length > 0 && (
+            <Scatter
+              name={formatMessage(
+                messages.salaryAnalysis.payDispersion.genderMale,
+              )}
+              data={malePoints}
+              fill={theme.color.blue400}
+              legendType="none"
+              shape={<EmployeeDot />}
+            />
           )}
-          {stats.rSquared != null && (
-            <Text variant="small">
-              {formatMessage(m.rSquared, {
-                value: stats.rSquared.toLocaleString('is-IS', {
-                  maximumFractionDigits: 2,
-                }),
-              })}
-            </Text>
+          {femalePoints.length > 0 && (
+            <Scatter
+              name={formatMessage(
+                messages.salaryAnalysis.payDispersion.genderFemale,
+              )}
+              data={femalePoints}
+              fill={theme.color.purple400}
+              legendType="none"
+              shape={<EmployeeDot />}
+            />
           )}
-        </Box>
-      ) : (
-        <Box marginTop={1}>
-          <Text variant="small">{formatMessage(m.noFit)}</Text>
-        </Box>
-      )}
+          {regressionData.length > 0 && (
+            <Scatter
+              data={regressionData}
+              name={formatMessage(m.legendCurve)}
+              line={{
+                stroke: theme.color.roseTinted400,
+                strokeWidth: 2.5,
+              }}
+              lineType="joint"
+              shape={<NoSymbol />}
+              legendType="none"
+              isAnimationActive={false}
+            />
+          )}
+        </ScatterChart>
+      </ResponsiveContainer>
     </Box>
   )
 }

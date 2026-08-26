@@ -174,6 +174,12 @@ describe('formatPercentMagnitude', () => {
     expect(formatPercentMagnitude(12.35)).toBe('12,4')
   })
 
+  it('keeps one decimal by default but allows headline figures to ask for two', () => {
+    expect(formatPercentMagnitude(12.35)).toBe('12,4')
+    expect(formatPercentMagnitude(12.345, 2)).toBe('12,35')
+    expect(formatPercentMagnitude(-3.9, 2)).toBe('3,90')
+  })
+
   it('renders a missing value as zero rather than NaN', () => {
     expect(formatPercentMagnitude(null)).toBe('0,0')
   })

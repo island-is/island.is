@@ -25,7 +25,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ZodTypeAny, z } from 'zod'
 import { mapGender, toNumberOrZero } from './directorate-of-equality.utils'
 
-// Page size for walking listDraftEmployees to completion (SalaryAnalysisResults only).
+// Page size for walking listDraftEmployees to completion on salary-analysis screens.
 const DRAFT_EMPLOYEE_PAGE_SIZE = 100
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
@@ -396,9 +396,9 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
-  // Only SalaryAnalysisResults still uses this — outlier-group management
-  // needs the full id<->ordinal mapping across every employee, which can't be
-  // paginated (a group can reference employees from anywhere in the set).
+  // Salary-analysis screens need a full employee list: outlier-group
+  // management needs the id<->ordinal mapping, and the extra-pay table derives
+  // its totals from the same draft rows.
   async listDraftEmployees({
     auth,
     application,

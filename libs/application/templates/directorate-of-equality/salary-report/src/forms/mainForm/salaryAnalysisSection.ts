@@ -1,12 +1,12 @@
 import {
   buildCustomField,
-  buildDividerField,
   buildMultiField,
   buildSection,
   buildSubSection,
 } from '@island.is/application/core'
-import { RecordObject } from '@island.is/application/types'
+import type { RecordObject } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
+import { salaryAnalysisNeedsImprovementPlan } from '../../utils/salaryAnalysisNavigation'
 import { hasReviewerComment } from '../commentThreadSection'
 
 // Parameterized so the POSTPONED-state review screen can reuse it with
@@ -25,11 +25,11 @@ export const buildSalaryAnalysisSection = (
     children: [
       buildSubSection({
         id: 'salaryAnalysisOverview',
-        title: messages.salaryAnalysis.section.sectionTitle,
+        title: messages.salaryAnalysis.overview.sectionTitle,
         children: [
           buildMultiField({
             id: 'salaryAnalysisOverviewMultiField',
-            title: messages.salaryAnalysis.section.sectionTitle,
+            title: messages.salaryAnalysis.overview.title,
             description: messages.salaryAnalysis.overview.intro,
             children: [
               buildCustomField(
@@ -50,6 +50,27 @@ export const buildSalaryAnalysisSection = (
                     }),
                   ]
                 : []),
+            ],
+          }),
+        ],
+      }),
+      buildSubSection({
+        id: 'salaryAnalysisImprovementPlan',
+        title: messages.salaryAnalysis.improvementPlan.sectionTitle,
+        condition: salaryAnalysisNeedsImprovementPlan,
+        children: [
+          buildMultiField({
+            id: 'salaryAnalysisImprovementPlanMultiField',
+            title: messages.salaryAnalysis.improvementPlan.title,
+            description: messages.salaryAnalysis.improvementPlan.intro,
+            children: [
+              buildCustomField(
+                {
+                  id: 'salaryAnalysis.outlierPlanReviewed',
+                  component: 'SalaryImprovementPlan',
+                },
+                fieldProps,
+              ),
             ],
           }),
         ],

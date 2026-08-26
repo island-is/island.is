@@ -95,8 +95,11 @@ export const deriveWageGapState = (
  * signed: with the denominator fixed, a 100/96 split reads 4,00% one way and
  * 4,17% the other, so a sign alone does not tell the reader which.
  */
-export const formatPercentMagnitude = (value?: number | null): string =>
+export const formatPercentMagnitude = (
+  value?: number | null,
+  fractionDigits = 1,
+): string =>
   Math.abs(value ?? 0).toLocaleString('is-IS', {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
   })

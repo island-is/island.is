@@ -31,18 +31,16 @@ type Props = {
   outlierGroupsFormMethods?: UseFormReturn<{
     salaryAnalysis: { outlierGroups: OutlierGroupAnswer[] }
   }>
+  hideHeading?: boolean
 }
 
-// Rendered inline by SalaryAnalysisResults, sharing its already-fetched
-// analysis result — this must NOT independently re-read
-// application.externalData, since a sibling custom field reading that prop
-// can be stale relative to the mutation response the parent just received.
 export const OutlierGroupPanel: FC<Props> = ({
   outliers,
   hidePostponeCheckbox,
   errors,
   identifierForOrdinal,
   outlierGroupsFormMethods,
+  hideHeading,
 }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -63,13 +61,17 @@ export const OutlierGroupPanel: FC<Props> = ({
   if (outliers.length === 0) return null
 
   return (
-    <Box marginTop={5}>
-      <Text variant="h3" marginBottom={1}>
-        {formatMessage(improvementPlanMessages.title)}
-      </Text>
-      <Text marginBottom={3}>
-        {formatMessage(improvementPlanMessages.intro)}
-      </Text>
+    <Box marginTop={hideHeading ? 0 : 5}>
+      {!hideHeading && (
+        <>
+          <Text variant="h3" marginBottom={1}>
+            {formatMessage(improvementPlanMessages.title)}
+          </Text>
+          <Text marginBottom={3}>
+            {formatMessage(improvementPlanMessages.intro)}
+          </Text>
+        </>
+      )}
 
       {!hidePostponeCheckbox && (
         <Box

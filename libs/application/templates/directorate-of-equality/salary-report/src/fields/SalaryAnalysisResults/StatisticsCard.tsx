@@ -7,6 +7,7 @@ export type StatisticCardProps = {
   // Small print under the figure — used to carry the benchmark next to the
   // leiðréttur gap, which is the only figure it applies to.
   footnote?: string
+  subtext?: string
 }
 
 export const StatisticCard = ({
@@ -14,6 +15,7 @@ export const StatisticCard = ({
   content,
   color = 'blue',
   footnote,
+  subtext,
 }: StatisticCardProps) => {
   const background = color === 'blue' ? 'blue100' : 'purple100'
 
@@ -34,6 +36,11 @@ export const StatisticCard = ({
       >
         {content}
       </Text>
+      {subtext && (
+        <Text variant="small" color="dark350" marginBottom={1}>
+          {subtext}
+        </Text>
+      )}
       {footnote && (
         <Text variant="small" color="dark300">
           {footnote}

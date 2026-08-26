@@ -13,6 +13,7 @@ import { postponedIntroSection } from './postponedIntroSection'
 import { postponedReportSummarySection } from './postponedReportSummarySection'
 import { messages } from '../../lib/messages'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
+import { salaryAnalysisOutlierPlanIsReviewed } from '../../utils/salaryAnalysisNavigation'
 
 export const postponedForm = buildForm({
   id: 'postponedForm',
@@ -30,6 +31,7 @@ export const postponedForm = buildForm({
     buildSection({
       id: 'postponedSubmit',
       title: messages.postponed.sectionTitle,
+      condition: salaryAnalysisOutlierPlanIsReviewed,
       children: [
         buildMultiField({
           id: 'postponedSubmitMultiField',

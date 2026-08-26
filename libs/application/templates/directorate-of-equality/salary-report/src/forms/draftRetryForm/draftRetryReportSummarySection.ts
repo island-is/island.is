@@ -5,11 +5,13 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
+import { salaryAnalysisOutlierPlanIsReviewed } from '../../utils/salaryAnalysisNavigation'
 import { buildReportOverviewFields } from '../mainForm/overviewSection'
 
 export const draftRetryReportSummarySection = buildSection({
   id: 'draftRetryReportSummary',
   title: messages.draftRetry.reportSummarySectionTitle,
+  condition: salaryAnalysisOutlierPlanIsReviewed,
   children: [
     buildMultiField({
       id: 'draftRetryReportSummaryMultiField',

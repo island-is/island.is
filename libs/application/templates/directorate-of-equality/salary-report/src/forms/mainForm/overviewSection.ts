@@ -8,6 +8,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 import { PERIOD_ONE_MONTH } from '../../utils/constants'
+import { salaryAnalysisOutlierPlanIsReviewed } from '../../utils/salaryAnalysisNavigation'
 
 const MONTH_LABELS = [
   messages.aboutTheCompany.period.january,
@@ -187,6 +188,7 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
 export const overviewSection = buildSection({
   id: 'overview',
   title: messages.overview.sectionTitle,
+  condition: salaryAnalysisOutlierPlanIsReviewed,
   children: [
     buildMultiField({
       id: 'overviewMultiField',
