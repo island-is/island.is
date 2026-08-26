@@ -197,11 +197,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
 
     while (hasNextPage) {
       const cursorValue = cursor.toString()
-      console.log('[FormSystemRealEstate] Fetching assetsOverview', {
-        fieldId: item.id,
-        valueIndex,
-        cursor: cursorValue,
-      })
 
       const result = await client.query<
         RealEstatePropertiesQuery,
@@ -227,13 +222,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       }
 
       const pageItems = pageData.properties ?? []
-      console.log('[FormSystemRealEstate] assetsOverview page received', {
-        fieldId: item.id,
-        valueIndex,
-        cursor: cursorValue,
-        itemCount: pageItems.length,
-        hasNextPage: pageData.paging?.hasNextPage ?? false,
-      })
 
       for (const property of pageItems) {
         if (!property?.propertyNumber || seen.has(property.propertyNumber)) {
@@ -247,12 +235,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       hasNextPage = pageData.paging?.hasNextPage ?? false
       cursor += 1
     }
-
-    console.log('[FormSystemRealEstate] Finished fetching assetsOverview', {
-      fieldId: item.id,
-      valueIndex,
-      totalItems: allItems.length,
-    })
 
     return allItems
   }
@@ -284,12 +266,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
     setSearchLoading(true)
 
     try {
-      console.log('[FormSystemRealEstate] Fetching assetsDetail', {
-        fieldId: item.id,
-        valueIndex,
-        assetId: normalized,
-      })
-
       const result = await client.query<
         RealEstatePropertyQuery,
         RealEstatePropertyVars
@@ -306,13 +282,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       const propertyData = result.data?.assetsDetail
 
       if (propertyData?.propertyNumber) {
-        console.log('[FormSystemRealEstate] assetsDetail received', {
-          fieldId: item.id,
-          valueIndex,
-          assetId: normalized,
-          hasDefaultAddress: Boolean(propertyData.defaultAddress),
-        })
-
         const propertyNumber = propertyData.propertyNumber
         const { address, postalCode, municipality } = getAddressParts(
           propertyData.defaultAddress,
