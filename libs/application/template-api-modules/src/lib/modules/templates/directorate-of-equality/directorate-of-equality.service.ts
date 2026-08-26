@@ -208,29 +208,28 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const activeReport =
-      await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+    try {
+      const activeReport =
+        await this.directorateOfEqualityService.getActiveEqualityReport(auth)
 
-    if (activeReport && activeReport.identifier) {
-      try {
-        const report = await this.directorateOfEqualityService.getReport(
-          auth,
-          activeReport.identifier,
-        )
-        return { equalityReportContent: report.equalityReportContent ?? '' }
-      } catch (error) {
-        this.logger.error(
-          'Failed to get previous equality report content, falling back',
-          {
-            applicationId: application.id,
-            context: LOGGING_CONTEXT,
-            ...this.extractFetchErrorDetails(error),
-          },
-        )
-        return null
-      }
+      if (!activeReport || !activeReport.identifier) return null
+
+      const report = await this.directorateOfEqualityService.getReport(
+        auth,
+        activeReport.identifier,
+      )
+      return { equalityReportContent: report.equalityReportContent ?? '' }
+    } catch (error) {
+      this.logger.error(
+        'Failed to get previous equality report content, falling back',
+        {
+          applicationId: application.id,
+          context: LOGGING_CONTEXT,
+          ...this.extractFetchErrorDetails(error),
+        },
+      )
+      return null
     }
-    return null
   }
 
   async getBlankExcelTemplate({

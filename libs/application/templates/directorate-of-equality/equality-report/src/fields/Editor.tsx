@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { messages } from '../lib/messages'
 import { useIntl } from 'react-intl'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import mammoth from 'mammoth'
 import { FileRejection } from 'react-dropzone'
 import { useMutation } from '@apollo/client'
@@ -62,6 +62,11 @@ export const Editor = ({ application, errors, field }: Props) => {
   const [actionError, setActionError] = useState<string | undefined>()
   const [rejectionMessage, setRejectionMessage] = useState<string | undefined>()
   const [loadingDocx, setLoadingDocx] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  // The filename last known to actually match DMR's stored content — restored
+  // on a failed replacement so a bad re-upload attempt can't strand the user
+  // on an invalid, unrecoverable field.
+  const lastGoodFilenameRef = useRef(initialFilename ?? '')
 
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
@@ -71,6 +76,25 @@ export const Editor = ({ application, errors, field }: Props) => {
     setActionError(undefined)
     setRejectionMessage(undefined)
     setUploadSuccess(false)
+    setIsUploading(true)
+    // Clear the (possibly still-valid, previously pushed) filename for the
+    // duration of this attempt so the required-field check fails and
+    // Continue is blocked — otherwise a replacement upload could still be
+    // in flight to DMR while the stale-but-valid old filename lets the user
+    // navigate straight to Submit.
+    setValue('goalsAndActions.filename', '', { shouldValidate: true })
+    setSelectedFile({ name: file.name, status: FileUploadStatus.uploading })
+
+    const restoreLastGood = () => {
+      setValue('goalsAndActions.filename', lastGoodFilenameRef.current, {
+        shouldValidate: true,
+      })
+      setSelectedFile(
+        lastGoodFilenameRef.current
+          ? { name: lastGoodFilenameRef.current, status: FileUploadStatus.done }
+          : null,
+      )
+    }
 
     try {
       let html = ''
@@ -86,7 +110,7 @@ export const Editor = ({ application, errors, field }: Props) => {
           .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br />')}</p>`)
           .join('')
       } else {
-        setSelectedFile(null)
+        restoreLastGood()
         setRejectionMessage(formatMessage(m.editorUnsupportedFile))
         return
       }
@@ -95,7 +119,7 @@ export const Editor = ({ application, errors, field }: Props) => {
       // treated the same as an unsupported file — there's nothing to send.
       const plainTextLength = html.replace(/<[^>]*>/g, '').trim().length
       if (plainTextLength === 0) {
-        setSelectedFile(null)
+        restoreLastGood()
         setRejectionMessage(formatMessage(m.editorUnsupportedFile))
         return
       }
@@ -109,12 +133,15 @@ export const Editor = ({ application, errors, field }: Props) => {
         await pushRetryContent(application.id, base64)
       }
 
+      lastGoodFilenameRef.current = file.name
       setValue('goalsAndActions.filename', file.name, { shouldValidate: true })
       setSelectedFile({ name: file.name, status: FileUploadStatus.done })
       setUploadSuccess(true)
     } catch {
-      setSelectedFile(null)
+      restoreLastGood()
       setActionError(formatMessage(m.editorUploadError))
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -127,7 +154,11 @@ export const Editor = ({ application, errors, field }: Props) => {
   const handleUploadRejection = (rejections: FileRejection[]) => {
     setActionError(undefined)
     setUploadSuccess(false)
-    setSelectedFile(null)
+    setSelectedFile(
+      lastGoodFilenameRef.current
+        ? { name: lastGoodFilenameRef.current, status: FileUploadStatus.done }
+        : null,
+    )
     setRejectionMessage(
       rejections[0]?.errors[0]?.code === 'file-invalid-type'
         ? formatMessage(m.editorUnsupportedFile)
@@ -136,6 +167,7 @@ export const Editor = ({ application, errors, field }: Props) => {
   }
 
   const handleRemove = () => {
+    lastGoodFilenameRef.current = ''
     setValue('goalsAndActions.filename', '', { shouldValidate: true })
     setSelectedFile(null)
     setUploadSuccess(false)
@@ -221,6 +253,7 @@ export const Editor = ({ application, errors, field }: Props) => {
       <InputFileUpload
         name="equalityReportUpload"
         files={selectedFile ? [selectedFile] : []}
+        disabled={isUploading}
         description={formatMessage(m.editorSupportedFileTypes)}
         buttonLabel={formatMessage(m.editorUploadFile)}
         accept={['.txt', '.docx']}

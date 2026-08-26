@@ -1,4 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import sanitizeHtml from 'sanitize-html'
 
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -125,6 +126,17 @@ export class DirectorateOfEqualityApplicationService {
     )
   }
 
+  // Content is browser-side HTML converted from an applicant-uploaded DOCX
+  // (mammoth doesn't sanitize its output — a document can carry a
+  // javascript: href straight through), base64-encoded for transport. Strip
+  // it down to sanitize-html's default allowlist (which already excludes the
+  // javascript: scheme) before it reaches DMR, since this resolver — not the
+  // browser — is the actual trust boundary for this payload.
+  private sanitizeEqualityReportContent(base64Content: string): string {
+    const html = Buffer.from(base64Content, 'base64').toString('utf-8')
+    return Buffer.from(sanitizeHtml(html)).toString('base64')
+  }
+
   // Custom resolver, not the standard updateApplicationExternalData provider
   // mechanism — that only takes {actionId, order}, with no channel for an
   // arbitrary content payload. Content goes straight to DMR, never through
@@ -138,7 +150,11 @@ export class DirectorateOfEqualityApplicationService {
     await this.directorateOfEqualityService.updateDraft(
       user,
       input.applicationId,
-      { equalityReportContent: input.equalityReportContent },
+      {
+        equalityReportContent: this.sanitizeEqualityReportContent(
+          input.equalityReportContent,
+        ),
+      },
     )
     return true
   }
@@ -159,7 +175,11 @@ export class DirectorateOfEqualityApplicationService {
     await this.directorateOfEqualityService.editEqualityContent(
       user,
       input.applicationId,
-      { equalityReportContent: input.equalityReportContent },
+      {
+        equalityReportContent: this.sanitizeEqualityReportContent(
+          input.equalityReportContent,
+        ),
+      },
     )
     return true
   }
