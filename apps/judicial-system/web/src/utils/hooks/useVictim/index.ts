@@ -9,6 +9,7 @@ import type {
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateVictimMutation } from './createVictim.generated'
 import { useDeleteVictimMutation } from './deleteVictim.generated'
 import { useUpdateVictimMutation } from './updateVictim.generated'
@@ -25,7 +26,7 @@ const useVictims = () => {
         if (!isCreatingVictim) {
           const { data } = await createVictimMutation({
             variables: {
-              input: victim,
+              input: normalizeBlankStrings(victim),
             },
           })
 
@@ -63,7 +64,7 @@ const useVictims = () => {
       try {
         const { data } = await updateVictimMutation({
           variables: {
-            input: updateVictim,
+            input: normalizeBlankStrings(updateVictim),
           },
         })
 
