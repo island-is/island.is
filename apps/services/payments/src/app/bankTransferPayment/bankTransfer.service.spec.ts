@@ -542,6 +542,70 @@ describe('BankTransferService', () => {
       })
     })
 
+    // A failed insert leaves the Blikk payment live and untrackable: it reaches SCA_REQUIRED on its
+    // own and a back-channel bank pushes the approval to the payer's app, so an approval would
+    // settle money we have no record of. It must be cancelled while still DRAFT.
+    describe('orphaned provider payment', () => {
+      it('cancels the Blikk payment, emits payment_failed, and rethrows when the row insert fails', async () => {
+        mockBlikkCreate()
+        const insertError = new Error('duplicate key value')
+        bankTransferPaymentModel.create.mockRejectedValue(insertError)
+
+        await expect(service.create(createInput)).rejects.toThrow(insertError)
+
+        expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
+        // The attempt never started, so only the failure is recorded.
+        expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+        expect(
+          paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+        ).toMatchObject({
+          paymentFlowId: 'flow-1',
+          reason: 'payment_failed',
+          metadata: { cancelled: true },
+        })
+      })
+
+      it('logs an error when Blikk refuses the cancel, since the payment may still settle', async () => {
+        mockBlikkCreate()
+        bankTransferPaymentModel.create.mockRejectedValue(
+          new Error('insert failed'),
+        )
+        blikkClient.cancelPayment.mockRejectedValue(
+          new BlikkClientError('conflict', 409),
+        )
+
+        await expect(service.create(createInput)).rejects.toThrow(
+          'insert failed',
+        )
+
+        expect(logger.error).toHaveBeenCalledWith(
+          expect.stringContaining('may still settle with no local record'),
+          expect.objectContaining({ error: 'insert failed' }),
+        )
+      })
+
+      // cancelBlikkPayment throws FailedToFetchBankTransfer when Blikk is unreachable. That must
+      // not surface in place of the insert error — the caller needs the real cause.
+      it('propagates the insert error, not the cancel error, when Blikk is unreachable', async () => {
+        mockBlikkCreate()
+        bankTransferPaymentModel.create.mockRejectedValue(
+          new Error('connection terminated'),
+        )
+        // No status on the error → cancelBlikkPayment rethrows as a BadRequestException.
+        blikkClient.cancelPayment.mockRejectedValue(
+          new BlikkClientError('socket hang up'),
+        )
+
+        await expect(service.create(createInput)).rejects.toThrow(
+          'connection terminated',
+        )
+        expect(logger.error).toHaveBeenCalledWith(
+          expect.stringContaining('may still settle with no local record'),
+          expect.objectContaining({ error: 'connection terminated' }),
+        )
+      })
+    })
+
     it('emits payment_failed and rethrows when Blikk createBankTransferPayment fails', async () => {
       jest
         .spyOn(service, 'createBankTransferPayment')

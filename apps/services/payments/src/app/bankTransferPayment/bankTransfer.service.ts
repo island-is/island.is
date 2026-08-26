@@ -48,6 +48,7 @@ import {
 } from './dtos'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import {
+  createLogPrefix,
   deriveBankTransferFailureReason,
   generateBankTransferChargeFJSPayload,
   isBankTransferFailureStatus,
@@ -151,17 +152,61 @@ export class BankTransferService {
       throw error
     }
 
-    await this.bankTransferPaymentModel.create({
-      id: correlationId,
-      paymentFlowId: input.paymentFlowId,
-      sourceReferenceId: correlationId,
-      provider: 'blikk',
-      providerPaymentId: providerResult.providerPaymentId,
-      scaRedirectUrl: providerResult.scaRedirectUrl,
-      amount: totalPrice,
-      lastKnownStatus: providerResult.rawStatus,
-      expiresAt,
-    })
+    try {
+      await this.bankTransferPaymentModel.create({
+        id: correlationId,
+        paymentFlowId: input.paymentFlowId,
+        sourceReferenceId: correlationId,
+        provider: 'blikk',
+        providerPaymentId: providerResult.providerPaymentId,
+        scaRedirectUrl: providerResult.scaRedirectUrl,
+        amount: totalPrice,
+        lastKnownStatus: providerResult.rawStatus,
+        expiresAt,
+      })
+    } catch (error) {
+      const errorMessage = (error as Error)?.message ?? 'unknown'
+      const logPrefix = createLogPrefix(
+        input.paymentFlowId,
+        correlationId,
+        providerResult.providerPaymentId,
+      )
+
+      // The row is what makes the attempt trackable: without it a callback cannot be matched to a
+      // flow. And the payment is not inert — measured against Blikk, it reaches SCA_REQUIRED on its
+      // own within a second or so, with no payer action, whereupon a back-channel bank
+      // (Íslandsbanki) pushes the approval straight to the payer's banking app, no URL involved. A
+      // payer who approves that would settle a payment we have no record of. So undo it while it is
+      // still DRAFT, the only state Blikk honours a cancel for.
+      // `.catch`: cancelBlikkPayment throws when Blikk is unreachable, and that must not replace
+      // the insert error the caller needs to see.
+      const cancelled = await this.cancelBlikkPayment(
+        providerResult.providerPaymentId,
+        logPrefix,
+      ).catch(() => false)
+
+      if (!cancelled) {
+        this.logger.error(
+          `${logPrefix}Bank transfer row insert failed and the Blikk payment could not be cancelled — it may still settle with no local record`,
+          { error: errorMessage },
+        )
+      }
+
+      await this.paymentFlowService.logPaymentFlowUpdate(
+        {
+          paymentFlowId: input.paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.BANK_TRANSFER,
+          reason: 'payment_failed',
+          message: `Failed to persist bank transfer: ${errorMessage}`,
+          metadata: { error: errorMessage, cancelled },
+        },
+        { useRetry: true, throwOnError: false },
+      )
+
+      throw error
+    }
 
     await this.paymentFlowService.logPaymentFlowUpdate(
       {

@@ -294,21 +294,33 @@ paths guard against it:
 
 **Persist failure after provider create.** In `create`, the Blikk payment is created before the
 local row is inserted. If that insert throws (e.g. the one-active-per-flow unique race on a
-concurrent double-submit), the provider payment is left orphaned: it will **auto-expire** via the
-`expiresAt` TTL we sent Blikk, but until then it is **not** inert.
+concurrent double-submit), the provider payment is left orphaned — and an orphan is **not** inert.
+It reaches `SCA_REQUIRED` on its own, with no payer action, whereupon a back-channel bank
+(Íslandsbanki) pushes the approval straight to the payer's banking app, no URL required. A payer
+who approves that would settle a payment with **no local row**: the callback's `verify` finds
+nothing, so there is no fulfillment and no FJS charge — money moved with no record. Nor is there a
+backstop; the worker reconciles from existing `bank_transfer_payment` rows, and an orphan has none.
 
-> **Known gap — unhandled.** This paragraph previously argued the orphan was benign because the
-> request throws before returning, so the payer never receives the `scaRedirectUrl` and the payment
-> cannot settle. That reasoning is wrong. Blikk advances the payment to `SCA_REQUIRED` on its own,
-> without payer action, and a back-channel bank (Íslandsbanki) then pushes the approval straight to
-> the payer's banking app — no URL required. A payer who approves that push settles a payment with
-> **no local row**, so the callback's `verify` finds nothing, and there is no fulfillment and no FJS
-> charge: money moved with no record. The window is the TTL.
->
-> Not currently mitigated. The fix is a best-effort `cancelPayment` on the insert-failure path
-> (Blikk honours a cancel while the payment is still `DRAFT`), plus the monitoring below.
+On a concurrent double-submit the orphan is a _second_ live payment on the same flow: both requests
+pass the active-row check and each gets its own Blikk payment via its per-attempt
+`sourceReferenceId`, the first insert wins the unique index, and the second throws. The payer only
+ever sees the first, but Blikk may push an approval request for both.
 
-_Monitoring:_ alert on Blikk payments with no matching `bank_transfer_payment` row.
+So `create` cancels it: the insert is wrapped, and on failure the provider payment is cancelled
+best-effort before the error is rethrown. This is reliable in the common case because the payment is
+still `DRAFT` milliseconds after create, which is the only state Blikk honours a cancel for.
+
+Two cases it does **not** cover, both of which leave an orphan that only the TTL closes:
+
+- The payment has already left `DRAFT` — the traces show that takes about a second, so a slow
+  insert failure (a DB timeout rather than a constraint violation) can miss the window. Blikk then
+  refuses the cancel and an `error`-level log is all we get.
+- The Blikk `create` call itself timed out after Blikk had processed it, so we never learned the
+  `providerPaymentId` and have nothing to cancel. Covering this would need a Blikk lookup by
+  `sourceReferenceId`; unknown whether their API offers one.
+
+_Monitoring (still unimplemented, and the real backstop for both):_ alert on Blikk payments with no
+matching `bank_transfer_payment` row that outlive the TTL.
 
 ## Cancel semantics
 
