@@ -88,7 +88,7 @@ const mimeTypeToExtension: Record<string, string> = {
   'image/heic': '.heic',
 }
 
-// This is hopefully a temporary fix until the backend reliably returns
+// This should be a temporary fix until the backend reliably returns
 // the correct extension in the content-type.
 const extractExtension = (
   contentDisposition: string | null,
