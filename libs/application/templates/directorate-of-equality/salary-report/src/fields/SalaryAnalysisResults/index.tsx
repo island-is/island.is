@@ -57,6 +57,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   field,
   errors,
   setBeforeSubmitCallback,
+  goToScreen,
 }) => {
   const hidePostponeCheckbox =
     field?.props && typeof field.props['hidePostponeCheckbox'] === 'boolean'
@@ -161,11 +162,12 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     }
   }
 
-  // Run automatically on arrival at this screen — the applicant shouldn't
-  // have to press a button to see results. Only fires when there's no
-  // existing result yet (e.g. from a prior visit to this screen).
+  // Run automatically on every arrival at this screen — the applicant
+  // shouldn't have to press a button to see results, and the draft can have
+  // changed since the last visit (re-imported workbook, edited criteria,
+  // edited employees) with nothing here to know that and invalidate a cached
+  // `result`, so always recompute rather than trusting the last analysis.
   useEffect(() => {
-    if (result) return
     handleAnalyze()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -370,6 +372,20 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
 
   const body = (
     <Box>
+      {isDraftPhase && (
+        <Box marginBottom={3}>
+          <Button
+            variant="ghost"
+            size="small"
+            preTextIcon="arrowBack"
+            disabled={isAnalyzing}
+            onClick={() => goToScreen?.('criteriaMultiField')}
+          >
+            {formatMessage(messages.salaryAnalysis.results.reviewDataButton)}
+          </Button>
+        </Box>
+      )}
+
       {isAnalyzing && (
         <Box display="flex" justifyContent="center" paddingY={5}>
           <LoadingDots />

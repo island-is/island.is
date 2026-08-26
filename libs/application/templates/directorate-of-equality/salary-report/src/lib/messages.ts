@@ -30,6 +30,11 @@ export const messages = {
       id: 'doe.sr.application:errors.draftLoadFailed',
       defaultMessage: 'Ekki tókst að sækja gögnin. Reyndu aftur.',
     },
+    submitConflict: {
+      id: 'doe.sr.application:errors.submitConflict',
+      defaultMessage:
+        'Fyrirtæki er nú þegar með innsenda skýrslu sem er í vinnslu hjá ritstjórn.',
+    },
     retryButton: {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
@@ -520,23 +525,36 @@ export const messages = {
       },
       importSuccess: {
         id: 'doe.sr.application:report.dataEntry.importSuccess',
-        defaultMessage: 'Skráin var flutt inn.',
+        defaultMessage:
+          'Skráin var flutt inn og launagreining fer fram í næsta skrefi.',
+      },
+      importSuccessContinueButton: {
+        id: 'doe.sr.application:report.dataEntry.importSuccessContinueButton',
+        defaultMessage: 'Halda áfram í launagreiningu',
+      },
+      importErrorTitle: {
+        id: 'doe.sr.application:report.dataEntry.importErrorTitle',
+        defaultMessage: 'Villa kom upp við úrvinnslu skjalsins',
       },
       importError: {
         id: 'doe.sr.application:report.dataEntry.importError',
         defaultMessage:
           'Villa kom upp við innflutning. Vinsamlegast reyndu aftur.',
       },
+      invalidFileType: {
+        id: 'doe.sr.application:report.dataEntry.invalidFileType',
+        defaultMessage: 'Aðeins er hægt að hlaða upp Excel (.xlsx) skjölum.',
+      },
       excelTemplateDownloadDescription: {
         id: 'doe.sr.application:report.dataEntry.excelTemplateDownloadDescription',
         defaultMessage:
-          'Athugið að bein tenging við vefþjónustu Jafnréttisstofu til að einfalda stór gagnaskil er væntanleg.',
+          'Athugið að bein tenging við vefþjónustu Jafnréttisstofu er væntanleg.',
       },
     }),
     criteria: defineMessages({
       sectionTitle: {
         id: 'doe.sr.application:report.criteria.sectionTitle',
-        defaultMessage: 'Yfirviðmiðt',
+        defaultMessage: 'Yfirviðmið',
       },
       title: {
         id: 'doe.sr.application:report.criteria.title',
@@ -942,6 +960,10 @@ export const messages = {
       recalculateButton: {
         id: 'doe.sr.application:salaryAnalysis.results.recalculateButton',
         defaultMessage: 'Reikna aftur',
+      },
+      reviewDataButton: {
+        id: 'doe.sr.application:salaryAnalysis.results.reviewDataButton',
+        defaultMessage: 'Yfirfara gögn í viðmóti',
       },
       analyzing: {
         id: 'doe.sr.application:salaryAnalysis.results.analyzing',
