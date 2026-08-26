@@ -3,8 +3,10 @@ import {
   buildMultiField,
   buildSection,
   buildStaticTableField,
+  buildStickyFooterField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { StaticText } from '@island.is/application/types'
+import { Application, StaticText } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { debts as messages } from '../../lib/messages'
 import { formatDate } from '../../utils/formatDate'
@@ -25,6 +27,7 @@ export const debtsSection = buildSection({
         }),
         buildStaticTableField({
           id: 'selectedDebts',
+          dataTestId: 'debts-table',
           selectable: true,
           header: [
             messages.table.chargeTypeNameHeader,
@@ -62,6 +65,31 @@ export const debtsSection = buildSection({
                 .toString(),
             ),
           ],
+        }),
+        buildStickyFooterField({
+          id: 'debtsSummaryFooter',
+          widthReferenceTestId: 'debts-table',
+          rows: (application: Application) => {
+            const totalDebts = getDebts(application).reduce(
+              (total, debt) => total + debt.debts,
+              0,
+            )
+            const totalToPay = (
+              getValueViaPath<string[]>(application.answers, 'debtsToPay') ??
+              []
+            ).reduce((total, amount) => total + (parseInt(amount, 10) || 0), 0)
+
+            return [
+              {
+                label: messages.table.totalToPayLabel,
+                value: formatCurrency(totalToPay.toString()),
+              },
+              {
+                label: messages.table.totalLeftLabel,
+                value: formatCurrency((totalDebts - totalToPay).toString()),
+              },
+            ]
+          },
         }),
       ],
     }),

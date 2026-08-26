@@ -56,6 +56,7 @@ import {
   VehiclePermnoWithInfoField,
   ScaleField,
   MaybeWithAnswersAndExternalData,
+  StickyFooterField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -1130,6 +1131,46 @@ export const buildStaticTableField = (
     selectable,
     inputColumn,
     footerRow,
+  }
+}
+
+export const buildStickyFooterField = (
+  data: Omit<
+    StickyFooterField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  > & {
+    id?: string
+  },
+): StickyFooterField => {
+  const {
+    id = '',
+    rows,
+    condition,
+    marginTop,
+    marginBottom,
+    widthReferenceTestId,
+  } = data
+
+  return {
+    id,
+    width: 'full',
+    doesNotRequireAnswer: true,
+    condition,
+    children: undefined,
+    type: FieldTypes.STICKY_FOOTER,
+    component: FieldComponents.STICKY_FOOTER,
+    rows,
+    marginTop,
+    marginBottom,
+    widthReferenceTestId,
   }
 }
 

@@ -429,6 +429,7 @@ export enum FieldTypes {
   COPY_LINK = 'COPY_LINK',
   VEHICLE_PERMNO_WITH_INFO = 'VEHICLE_PERMNO_WITH_INFO',
   SCALE = 'SCALE',
+  STICKY_FOOTER = 'STICKY_FOOTER',
 }
 
 export enum FieldComponents {
@@ -474,6 +475,7 @@ export enum FieldComponents {
   COPY_LINK = 'CopyLinkFormField',
   VEHICLE_PERMNO_WITH_INFO = 'VehiclePermnoWithInfoFormField',
   SCALE = 'ScaleFormField',
+  STICKY_FOOTER = 'StickyFooterFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -1015,6 +1017,21 @@ export interface StaticTableField extends BaseField {
   footerRow?: StaticText[] | ((application: Application) => StaticText[])
 }
 
+export interface StickyFooterField extends BaseField {
+  readonly type: FieldTypes.STICKY_FOOTER
+  component: FieldComponents.STICKY_FOOTER
+  rows:
+    | { label: StaticText; value: StaticText }[]
+    | ((
+        application: Application,
+      ) => { label: StaticText; value: StaticText }[])
+  /**
+   * `dataTestId` of the element (e.g. a `StaticTableField`) whose rendered
+   * width/position the footer should match at runtime.
+   */
+  widthReferenceTestId: string
+}
+
 export type PaginatedSearchableTableRow = Record<
   string,
   string | number | null | undefined
@@ -1239,3 +1256,4 @@ export type Field =
   | CopyLinkField
   | VehiclePermnoWithInfoField
   | ScaleField
+  | StickyFooterField
