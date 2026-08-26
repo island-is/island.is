@@ -173,13 +173,24 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   }, [handleAnalyze, result])
 
   // Re-assert the navigation flags from a restored result so this subsection
-  // stays reachable and the overview stays gated across a reload.
+  // stays reachable and the overview stays gated across a reload. Written to
+  // the form as well as dispatched, for the same reason as on the overview
+  // screen: an ANSWER-only flag is merged over by this screen's own submit
+  // payload and never persists, so leaving here via the sidebar would drop it.
   useEffect(() => {
     if (!result) return
-    answerQuestionsRef.current?.(
-      navigationAnswersForAnalysisResult(result, { resetReviewed: false }),
+    const answers = navigationAnswersForAnalysisResult(result, {
+      resetReviewed: false,
+    })
+    const { hasMinimumSetOutliers } = (
+      answers as { salaryAnalysis: { hasMinimumSetOutliers: boolean } }
+    ).salaryAnalysis
+    setAmbientValue(
+      'salaryAnalysis.hasMinimumSetOutliers',
+      hasMinimumSetOutliers,
     )
-  }, [result])
+    answerQuestionsRef.current?.(answers)
+  }, [result, setAmbientValue])
 
   useSeedOnce(isDraftPhase && Boolean(content), () => {
     if (!content) return

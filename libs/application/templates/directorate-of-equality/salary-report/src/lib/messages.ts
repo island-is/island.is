@@ -1042,8 +1042,7 @@ export const messages = {
       },
       rawGapSubtext: {
         id: 'doe.sr.application:salaryAnalysis.results.rawGapSubtext',
-        defaultMessage:
-          'Óleiðréttur launamunur: {value}% {direction}. Ekki borið við viðmið.',
+        defaultMessage: 'Óleiðréttur launamunur: {value}% {direction}.',
       },
       // Deliberately carries no figures: quantifying the shortfall implies the
       // exact pay changes this process never asks for. And it must not say the
@@ -1104,7 +1103,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:salaryAnalysis.chart.intro',
         defaultMessage:
-          'Ferillinn sýnir væntanlegt reglulegt tímakaup miðað við starfsmatsstig. Frávikin í töflunni hér fyrir neðan eru mæld sem lóðrétt fjarlægð frá ferlinum, í báðar áttir.',
+          'Viðmiðslínan er væntanlegt tímakaup eftir stigum. Launafrávik hvers starfsmanns er mælt frá henni, og úrbótaáætlun getur tekið til starfsmanna á báða vegu — bæði undir línunni og yfir henni.',
       },
       xAxisLabel: {
         id: 'doe.sr.application:salaryAnalysis.chart.xAxisLabel',
@@ -1112,17 +1111,48 @@ export const messages = {
       },
       yAxisLabel: {
         id: 'doe.sr.application:salaryAnalysis.chart.yAxisLabel',
-        defaultMessage: 'Reglulegt tímakaup (kr./klst.)',
+        defaultMessage: 'kr./klst.',
       },
       legendCurve: {
         id: 'doe.sr.application:salaryAnalysis.chart.legendCurve',
         defaultMessage: 'Væntanlegt tímakaup',
       },
     }),
+    chartRegression: defineMessages({
+      heading: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.heading',
+        defaultMessage: 'Viðmiðslína',
+      },
+      note: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.note',
+        defaultMessage:
+          'Viðmiðslínan sveigist vegna þess að væntanlegt tímakaup hækkar um fast HLUTFALL á hvert stig, ekki fasta krónutölu — og hlutfallshækkun leggst við sjálfa sig. Í krónum verður hvert 100 stiga þrep því stærra en það síðasta.',
+      },
+      growthLabel: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.growthLabel',
+        defaultMessage: 'Hækkun á hver 100 stig',
+      },
+      growthHint: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.growthHint',
+        defaultMessage: 'Hlutfallsleg hækkun á væntanlegu tímakaupi',
+      },
+      atMeanLabel: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.atMeanLabel',
+        defaultMessage: 'Væntanlegt tímakaup við meðalstig',
+      },
+      atMeanHint: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.atMeanHint',
+        defaultMessage: 'Punktur á línunni við meðalstig starfsmanna',
+      },
+      unavailable: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.unavailable',
+        defaultMessage: 'Viðmiðslína ekki reiknanleg fyrir þessi gögn',
+      },
+    }),
     chartMarkedLegend: defineMessages({
       minimumSet: {
         id: 'doe.sr.application:salaryAnalysis.chartMarkedLegend.minimumSet',
-        defaultMessage: 'Í lágmarksmengi',
+        defaultMessage: 'Frávik',
       },
       abending: {
         id: 'doe.sr.application:salaryAnalysis.chartMarkedLegend.abending',

@@ -1,4 +1,5 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -55,6 +56,55 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
+  const { setValue } = useFormContext()
+
+  // answerQuestions is a fresh arrow on every shell render, so it must never be
+  // an effect dependency: the ANSWER it dispatches re-renders the shell, which
+  // hands down a new identity, which re-fires the effect — a render loop. The
+  // ref keeps the latest callback while the effect stays keyed to the result.
+  const answerQuestionsRef = useRef(answerQuestions)
+  answerQuestionsRef.current = answerQuestions
+
+  /**
+   * The navigation flags have to reach the FORM, not just the shell's answer
+   * state. answerQuestions dispatches ANSWER, which updates the in-memory
+   * answers — enough for the sidebar and for screen navigability to refresh
+   * immediately — but the screen's own submit then merges its react-hook-form
+   * payload over that, and RHF was reset from the *persisted* answers. So a
+   * stale salaryAnalysis silently reverts the flag (and an undefined one wipes
+   * the whole object), which sends the úrbótaáætlun screen non-navigable and
+   * hands the applicant straight to the overview. It bites hardest on the
+   * re-analysis path: a first pass under the benchmark persists
+   * hasMinimumSetOutliers: false / outlierPlanReviewed: true, and editing the
+   * data upward afterwards would otherwise never reopen the plan screen.
+   * setValue puts them in the submitted data, so they survive that merge and
+   * persist for the next visit.
+   */
+  const applyNavigationAnswers = useCallback(
+    (analysis: SalaryAnalysisResponseDto, resetReviewed: boolean) => {
+      const answers = navigationAnswersForAnalysisResult(analysis, {
+        resetReviewed,
+      })
+      const { hasMinimumSetOutliers, outlierPlanReviewed } = (
+        answers as {
+          salaryAnalysis: {
+            hasMinimumSetOutliers: boolean
+            outlierPlanReviewed?: boolean
+          }
+        }
+      ).salaryAnalysis
+
+      setValue('salaryAnalysis.hasMinimumSetOutliers', hasMinimumSetOutliers)
+      // Absent means "leave it alone" — a plan already signed off must not be
+      // reopened just because this screen re-mounted.
+      if (typeof outlierPlanReviewed === 'boolean') {
+        setValue('salaryAnalysis.outlierPlanReviewed', outlierPlanReviewed)
+      }
+
+      answerQuestionsRef.current?.(answers)
+    },
+    [setValue],
+  )
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true)
@@ -81,11 +131,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         salaryAnalysisResult?.status === 'success' &&
         salaryAnalysisResult.data
       ) {
-        answerQuestions?.(
-          navigationAnswersForAnalysisResult(salaryAnalysisResult.data, {
-            resetReviewed: true,
-          }),
-        )
+        applyNavigationAnswers(salaryAnalysisResult.data, true)
         setResult(salaryAnalysisResult.data)
       } else {
         setErrorMessage(getProviderErrorMessage(salaryAnalysisResult?.reason))
@@ -107,22 +153,13 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // answerQuestions is a fresh arrow on every shell render, so it must never be
-  // an effect dependency: the ANSWER it dispatches re-renders the shell, which
-  // hands down a new identity, which re-fires the effect — a render loop. The
-  // ref keeps the latest callback while the effect stays keyed to the result.
-  const answerQuestionsRef = useRef(answerQuestions)
-  answerQuestionsRef.current = answerQuestions
-
-  // Persist the navigation flags whenever a result appears, so the conditional
+  // Re-assert the flags whenever a result appears, so the conditional
   // úrbótaáætlun subsection and the overview gate resolve on a restored draft
   // too — not just immediately after a fresh analysis.
   useEffect(() => {
     if (!result) return
-    answerQuestionsRef.current?.(
-      navigationAnswersForAnalysisResult(result, { resetReviewed: false }),
-    )
-  }, [result])
+    applyNavigationAnswers(result, false)
+  }, [applyNavigationAnswers, result])
 
   const identifierForOrdinal = useMemo(
     () => (ordinal: number) =>
@@ -150,9 +187,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         ]
       }
 
-      answerQuestions?.(
-        navigationAnswersForAnalysisResult(result, { resetReviewed: false }),
-      )
+      applyNavigationAnswers(result, false)
       return [true, null]
     })
   }, [
@@ -162,7 +197,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     errorMessage,
     formatMessage,
     result,
-    answerQuestions,
+    applyNavigationAnswers,
   ])
 
   const totals = result?.regularHourlyWageByScoreAll?.totals
@@ -311,6 +346,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             columnGap={[0, 0, 0, 4]}
             rowGap={[2, 2, 2, 0]}
             marginTop={1}
+            marginBottom={1}
             flexDirection={['column', 'column', 'column', 'row']}
           >
             {/* The figure actually tested against the benchmark — the raw gap
@@ -322,8 +358,8 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
                 decomposition.oskyrtDirection,
                 2,
               )}
-              subtext={rawGapSubtext}
-              footnote={formatMessage(r.benchmarkFootnote, {
+              // footnote={rawGapSubtext}
+              subtext={formatMessage(r.benchmarkFootnote, {
                 benchmark: formatPercentMagnitude(
                   decomposition.benchmarkPercent,
                 ),
@@ -331,6 +367,12 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
               color="purple"
             />
           </Box>
+
+          {rawGapSubtext ? (
+            <Text variant="small" color="dark350">
+              {rawGapSubtext}
+            </Text>
+          ) : null}
 
           {warningMessages.length > 0 && (
             <Box marginTop={2}>

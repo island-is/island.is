@@ -10,7 +10,7 @@ import {
   YAxis,
 } from 'recharts'
 import type { TooltipContentProps } from 'recharts'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import type {
@@ -18,6 +18,7 @@ import type {
   SalaryByGenderAndScoreDto,
   WageGapDecompositionDto,
   WageGapEmployeeDto,
+  WageGapPooledFitDto,
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
@@ -44,6 +45,10 @@ const RENDERED_PAY_DISPERSION_POPULATION: PayDispersionDto['population'] =
   'ALL_EMPLOYEES'
 const NICE_AXIS_STEPS = [1, 1.5, 2, 2.5, 3, 4, 5, 7.5, 10]
 const CURVE_SAMPLES = 48
+// Wide enough for the formatted krónur ticks. The label that sits above it is
+// the bare unit ("kr./klst."), short enough to centre on the axis — a full
+// phrase here overflows the container and gets clipped on the left.
+const Y_AXIS_WIDTH = 95
 
 const formatSalary = (value: number) =>
   new Intl.NumberFormat('is-IS').format(Math.round(value)).replaceAll(',', '.')
@@ -308,6 +313,89 @@ const ChartLegend = ({
   )
 }
 
+/**
+ * The curve in words: how fast it rises, and one real point on it.
+ *
+ * Ritstjórn also prints R² here; the application deliberately does not. It
+ * answers "how much do the stig explain", a question for whoever reviews the
+ * report rather than for the employer filling it in.
+ */
+const RegressionReadout = ({ fit }: { fit?: WageGapPooledFitDto | null }) => {
+  const { formatMessage } = useLocale()
+  const t = messages.salaryAnalysis.chartRegression
+  const slope = fit?.slope ?? null
+  const intercept = fit?.intercept ?? null
+
+  // xSumSquares is the identifiability test the API documents — a degenerate fit
+  // comes back with slope 0, not null, which would otherwise be printed as a
+  // confident "0,0% á hver 100 stig".
+  if (!fit || fit.xSumSquares <= 0 || slope == null) {
+    return (
+      <Text variant="small" color="dark300">
+        {formatMessage(t.unavailable)}
+      </Text>
+    )
+  }
+
+  // exp(slope · 100) − 1: the compounded proportional rise over 100 stig. Not
+  // slope · 100, which is the log-space increment and understates it.
+  const growthPercent = (Math.exp(slope * 100) - 1) * 100
+
+  // A real point ON the curve, at the cohort's own mean score — deliberately not
+  // exp(intercept), which is pay at zero stig: outside any support, and easy to
+  // misread as a floor.
+  const expectedAtMeanScore =
+    intercept != null && fit.xMean != null
+      ? Math.exp(intercept + slope * fit.xMean)
+      : null
+
+  const rows: { label: string; value: string; hint: string }[] = [
+    {
+      label: formatMessage(t.growthLabel),
+      value: `${growthPercent.toLocaleString('is-IS', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      })}%`,
+      hint: formatMessage(t.growthHint),
+    },
+  ]
+
+  if (expectedAtMeanScore != null) {
+    rows.push({
+      label: formatMessage(t.atMeanLabel),
+      value: formatHourlyWage(expectedAtMeanScore),
+      hint: formatMessage(t.atMeanHint),
+    })
+  }
+
+  return (
+    <Box>
+      <Box marginTop={0} marginBottom={1}>
+        <Text variant="small" color="dark300">
+          {formatMessage(t.note)}
+        </Text>
+      </Box>
+      {rows.map((row) => (
+        <Box
+          key={row.label}
+          display="flex"
+          columnGap={2}
+          marginTop={1}
+          flexWrap="wrap"
+        >
+          <Text variant="small" fontWeight="semiBold">
+            {row.label}
+          </Text>
+          <Text variant="small">{row.value}</Text>
+          <Text variant="small" color="dark300">
+            {row.hint}
+          </Text>
+        </Box>
+      ))}
+    </Box>
+  )
+}
+
 export const SalaryDistributionChart: FC<Props> = ({
   data,
   decomposition,
@@ -419,7 +507,7 @@ export const SalaryDistributionChart: FC<Props> = ({
             stroke={theme.color.blue200}
             tickLine={false}
             tick={{ fill: theme.color.black, fontSize: 14 }}
-            width={95}
+            width={Y_AXIS_WIDTH}
             label={{
               value: formatMessage(m.yAxisLabel),
               position: 'insideTop',
@@ -491,6 +579,16 @@ export const SalaryDistributionChart: FC<Props> = ({
           )}
         </ScatterChart>
       </ResponsiveContainer>
+
+      <RegressionReadout fit={fit} />
+
+      {/* Closes the chart block before the extra-pay table. rowGap already
+          supplies 16px above, so the extra 16px here matches the 32px the
+          container's marginBottom leaves below — a divider only reads as a
+          separator when the space either side of it is equal. */}
+      <Box marginTop={2}>
+        <Divider />
+      </Box>
     </Box>
   )
 }

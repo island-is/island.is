@@ -37,7 +37,7 @@ export const StatisticCard = ({
         {content}
       </Text>
       {subtext && (
-        <Text variant="small" color="dark350" marginBottom={1}>
+        <Text variant="small" color="dark350">
           {subtext}
         </Text>
       )}

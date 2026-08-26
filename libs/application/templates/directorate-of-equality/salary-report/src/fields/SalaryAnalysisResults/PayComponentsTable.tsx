@@ -40,19 +40,19 @@ export const PayComponentsTable = ({ data }: Props) => {
 
   const rows: Row[] = [
     {
-      label: formatMessage(t.male),
+      label: formatMessage(t.male) + ` (${data.male.count})`,
       additional: cell(data.male.averageAdditionalSalary, data.male.count),
       bonus: cell(data.male.averageBonusSalary, data.male.count),
       total: cell(data.male.averageTotal, data.male.count),
     },
     {
-      label: formatMessage(t.female),
+      label: formatMessage(t.female) + ` (${data.female.count})`,
       additional: cell(data.female.averageAdditionalSalary, data.female.count),
       bonus: cell(data.female.averageBonusSalary, data.female.count),
       total: cell(data.female.averageTotal, data.female.count),
     },
     {
-      label: formatMessage(t.overall),
+      label: formatMessage(t.overall) + ` (${data.overall.count})`,
       additional: cell(
         data.overall.averageAdditionalSalary,
         data.overall.count,
