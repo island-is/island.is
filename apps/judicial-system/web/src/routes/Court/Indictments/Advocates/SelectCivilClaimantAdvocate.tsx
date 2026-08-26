@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -16,11 +17,11 @@ import {
   InputAdvocate,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
+import type {
   CivilClaimant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCivilClaimants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 

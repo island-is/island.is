@@ -1,24 +1,26 @@
 import faker from 'faker'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
+import type {
   AppealCase,
-  AppealCaseState,
-  AppealDecisionPartyRole,
   Case,
-  CaseAppealDecision,
   CaseFile,
-  CaseFileCategory,
-  CaseType,
   CivilClaimant,
   CourtSessionString,
-  CourtSessionStringType,
   Defendant,
+  Notification,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
+  CaseFileCategory,
+  CaseType,
+  CourtSessionStringType,
   Gender,
   InstitutionType,
-  Notification,
   TrackedNotificationType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 

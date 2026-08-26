@@ -1,5 +1,6 @@
-import { FC } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 
 import { Box, Tag, Text } from '@island.is/island-ui/core'
@@ -13,7 +14,7 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-import {
+import type {
   Case,
   CaseType,
   Defendant,

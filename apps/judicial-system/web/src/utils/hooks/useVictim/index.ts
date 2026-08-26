@@ -1,7 +1,8 @@
-import { Dispatch, SetStateAction, useCallback } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import {
+import type {
   Case,
   CreateVictimInput,
   UpdateVictimInput,

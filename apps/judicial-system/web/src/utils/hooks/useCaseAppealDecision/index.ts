@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import { UpdateCaseAppealDecisionInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { UpdateCaseAppealDecisionInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { normalizeBlankStrings } from '../../formatters'
 import { useUpdateCaseAppealDecisionMutation } from './updateCaseAppealDecision.generated'

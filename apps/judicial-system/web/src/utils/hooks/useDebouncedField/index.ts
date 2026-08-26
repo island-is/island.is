@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import debounce from 'lodash/debounce'
 
-import { normalizeBlankString, replaceTabs } from '../../formatters'
+import {
+  normalizeBlankString,
+  replaceTabs,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
-} from '../../formHelper'
-import { validate, Validation } from '../../validate'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface UseDebouncedFieldParams {
   /**

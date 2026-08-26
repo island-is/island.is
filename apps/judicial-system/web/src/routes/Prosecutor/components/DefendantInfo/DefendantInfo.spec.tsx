@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import {
+import type {
   Case,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'

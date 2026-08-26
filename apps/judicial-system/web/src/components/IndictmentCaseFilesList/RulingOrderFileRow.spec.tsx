@@ -1,20 +1,22 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
+  Case,
+  CaseFile,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealCaseTransition,
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
-  CaseFile,
   CaseFileCategory,
   CaseState,
   CaseType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -67,9 +69,12 @@ describe('RulingOrderFileRow - send in-court appeal to Court of appeals', () => 
     category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
     hasBeenAppealed: true,
     isKeyAccessible: true,
+    // The judge has confirmed the ruling order, so the district court may act
+    // on the appeal.
+    submissionDate: '2026-06-05T10:00:00.000Z',
   } as CaseFile
 
-  const renderRow = (user: User) => {
+  const renderRow = (user: User, file: CaseFile = rulingOrderFile) => {
     const workingCase = {
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.RECEIVED,
@@ -103,7 +108,7 @@ describe('RulingOrderFileRow - send in-court appeal to Court of appeals', () => 
 
     return render(
       wrapInProviders(
-        <RulingOrderFileRow file={rulingOrderFile} onOpenFile={jest.fn()} />,
+        <RulingOrderFileRow file={file} onOpenFile={jest.fn()} />,
       ),
     )
   }
@@ -147,6 +152,39 @@ describe('RulingOrderFileRow - send in-court appeal to Court of appeals', () => 
 
     expect(await screen.findByText('Senda inn greinargerð')).toBeInTheDocument()
     expect(screen.queryByText('Senda til Landsréttar')).not.toBeInTheDocument()
+  })
+
+  // The ruling order still awaits the judge's confirmation ("Staðfesta"), so
+  // the district court gets no action menu at all - the appeal is not theirs to
+  // forward yet.
+  describe('before the ruling order has been confirmed', () => {
+    const unconfirmedRulingOrderFile = {
+      ...rulingOrderFile,
+      submissionDate: null,
+    } as CaseFile
+
+    it('hides the action menu from a district court user', () => {
+      renderRow(mockJudge, unconfirmedRulingOrderFile)
+
+      expect(
+        screen.queryByLabelText(`Valmynd fyrir ${fileName}`),
+      ).not.toBeInTheDocument()
+    })
+
+    it('still shows the in-court appeal status to the district court', async () => {
+      renderRow(mockJudge, unconfirmedRulingOrderFile)
+
+      expect(await screen.findByText(/Kært í þinghaldi/)).toBeInTheDocument()
+    })
+
+    it('keeps the prosecution actions available', async () => {
+      renderRow(mockProsecutor, unconfirmedRulingOrderFile)
+      openMenu()
+
+      expect(
+        await screen.findByText('Senda inn greinargerð'),
+      ).toBeInTheDocument()
+    })
   })
 })
 

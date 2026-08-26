@@ -1,6 +1,5 @@
+import type { FC, ForwardedRef } from 'react'
 import {
-  FC,
-  ForwardedRef,
   forwardRef,
   useCallback,
   useContext,
@@ -38,12 +37,11 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { appealCorrectionLock, Feature } from '@island.is/judicial-system/types'
+import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   CheckboxList,
   DateTime,
-  FeatureContext,
   FileNotFoundModal,
   FormContext,
   Modal,
@@ -51,24 +49,26 @@ import {
   SectionHeading,
   TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
-import EditableCaseFile, {
-  Supplement,
-} from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type { Supplement } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type {
+  CourtDocumentResponse,
+  CourtSessionResponse,
+  CourtSessionString,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
-  CourtDocumentResponse,
   CourtDocumentType,
   CourtSessionClosedLegalBasis,
-  CourtSessionResponse,
   CourtSessionRulingType,
-  CourtSessionString,
   CourtSessionStringType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { SelectRepresentative } from '@island.is/judicial-system-web/src/routes/Shared/AddFiles/SelectCaseFileRepresentative'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  TUploadFile,
   useCourtDocuments,
   useCourtSessions,
   useDebouncedField,
@@ -83,7 +83,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
 import CourtSessionRuling from './CourtSessionRuling'
 import * as styles from './CourtRecord.css'
@@ -174,9 +173,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const ref = useRef<HTMLDivElement>(null)
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
-  // The in-court appeal decision UI is behind a flag until it's ready for prod.
-  const showAppealDecisions = features.includes(Feature.APPEAL_RULING_ORDER)
   // Moving the ruling type off ORDER removes the ruling, which discards its
   // decisions and deletes the appeal it produced - not allowed once the appeal
   // has left the court record's reach (a party filed it itself, or Landsréttur
@@ -185,8 +181,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   // every appeal state: it means the same ruling is now a different document, and
   // everything moves with it.
   // The reason is kept, not just the boolean, so the section can say which of the
-  // two locks applies - the appeal decision cards next to it are behind a feature
-  // flag and cannot be relied on to explain these controls.
+  // two locks applies - the appeal decision cards next to it report the appeal's
+  // state, not why these controls are locked.
   const rulingRemovalLock = appealCorrectionLock(
     rulingOrderAppealCase(workingCase, courtSession.rulingFileId),
   )
@@ -1683,7 +1679,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 courtSession.rulingType === CourtSessionRulingType.ORDER) && (
                 <CourtSessionRuling
                   courtSession={courtSession}
-                  showAppealDecisions={showAppealDecisions}
                   patchSession={patchSession}
                 />
               )}
@@ -1790,11 +1785,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         }
                         size="small"
                         disabled={
-                          !isCourtSessionValid(
-                            courtSession,
-                            workingCase,
-                            showAppealDecisions,
-                          )
+                          !isCourtSessionValid(courtSession, workingCase)
                         }
                       >
                         Staðfesta þingbók
