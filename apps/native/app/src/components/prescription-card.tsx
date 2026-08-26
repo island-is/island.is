@@ -247,7 +247,10 @@ export const PrescriptionCard = ({
         alertMessage: prescription.renewResponseMessage ?? undefined,
       }
     }
-    const blocked = getBlockedReasonInfo(prescription.renewalBlockedReason, intl)
+    const blocked = getBlockedReasonInfo(
+      prescription.renewalBlockedReason,
+      intl,
+    )
     return {
       statusLabel: intl.formatMessage({
         id: blocked.isValid
@@ -268,9 +271,7 @@ export const PrescriptionCard = ({
             { id: 'health.prescriptions.attachment' },
             { arg: 1 },
           ),
-          data: (
-            <ActivityIndicator size="small" color={theme.color.blue400} />
-          ),
+          data: <ActivityIndicator size="small" color={theme.color.blue400} />,
         },
       ]
     : documentsError

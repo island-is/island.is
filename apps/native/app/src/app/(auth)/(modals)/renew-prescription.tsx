@@ -37,14 +37,12 @@ export default function RenewPrescriptionScreen() {
   // padded to clear it (nothing hides permanently behind the buttons).
   const [footerHeight, setFooterHeight] = useState(0)
 
-  const {
-    data,
-    loading: targetsLoading,
-  } = useGetPrescriptionRenewalTargetsQuery({
-    variables: { prescriptionId: params.id },
-    fetchPolicy: 'network-only',
-    skip: !params.id,
-  })
+  const { data, loading: targetsLoading } =
+    useGetPrescriptionRenewalTargetsQuery({
+      variables: { prescriptionId: params.id },
+      fetchPolicy: 'network-only',
+      skip: !params.id,
+    })
 
   const targets = useMemo(
     () => data?.healthDirectoratePrescriptionRenewalTargets ?? [],
@@ -67,12 +65,10 @@ export default function RenewPrescriptionScreen() {
     }
   }, [options, selectedValue])
 
-  const [
-    postRenewal,
-    { loading: submitting },
-  ] = usePostPrescriptionRenewalMutation({
-    refetchQueries: ['GetDrugPrescriptions'],
-  })
+  const [postRenewal, { loading: submitting }] =
+    usePostPrescriptionRenewalMutation({
+      refetchQueries: ['GetDrugPrescriptions'],
+    })
 
   const noTargets = !targetsLoading && options.length === 0
 
