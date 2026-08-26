@@ -108,6 +108,74 @@ describe('useDebouncedField', () => {
       expect(onSave).not.toHaveBeenCalled()
     })
 
+    it('should persist a whitespace-only value as an empty string when the field has no validations', () => {
+      const onSave = jest.fn()
+      const { result } = renderHook(() =>
+        useDebouncedField({ value: 'Jón', onSave }),
+      )
+
+      act(() => result.current.onChange('   '))
+      advance(DELAY)
+
+      expect(onSave).toHaveBeenCalledWith('')
+    })
+
+    it('should not persist a whitespace-only value for a required field', () => {
+      const onSave = jest.fn()
+      const { result } = renderHook(() =>
+        useDebouncedField({ value: 'Jón', onSave, validations: ['empty'] }),
+      )
+
+      act(() => result.current.onChange('   '))
+      advance(DELAY)
+
+      expect(onSave).not.toHaveBeenCalled()
+    })
+
+    it('should keep the whitespace the user typed in the local value', () => {
+      const { result } = renderHook(() =>
+        useDebouncedField({ value: 'Jón', onSave: jest.fn() }),
+      )
+
+      act(() => result.current.onChange('   '))
+      advance(DELAY)
+
+      expect(result.current.value).toBe('   ')
+    })
+
+    it('should snap a whitespace-only value to empty on blur when it was saved as empty', () => {
+      const onChange = jest.fn()
+      const onSave = jest.fn()
+      const { result } = renderHook(() =>
+        useDebouncedField({ value: 'Jón', onSave, onChange }),
+      )
+
+      act(() => result.current.onChange('   '))
+      act(() => result.current.onBlur())
+
+      expect(onSave).toHaveBeenCalledWith('')
+      expect(result.current.value).toBe('')
+      expect(onChange).toHaveBeenLastCalledWith('')
+    })
+
+    it('should keep the typed whitespace on blur for a required field', () => {
+      const onSave = jest.fn()
+      const { result } = renderHook(() =>
+        useDebouncedField({
+          value: 'Jón',
+          onSave,
+          validations: ['empty'],
+        }),
+      )
+
+      act(() => result.current.onChange('   '))
+      act(() => result.current.onBlur())
+
+      expect(onSave).not.toHaveBeenCalled()
+      expect(result.current.value).toBe('   ')
+      expect(result.current.hasError).toBe(true)
+    })
+
     // Regression: the debounced save used to set the error message as a side
     // effect of deciding not to persist, so clearing a required field to retype
     // it flagged an error mid-edit, while the field still had focus. Every other
