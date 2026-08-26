@@ -250,6 +250,13 @@ export class DelegationsOutgoingService {
       },
     })
 
+    // Whether the delegation already had scopes before this grant, so the
+    // recipient gets the "new delegation" vs "updated delegation" notification.
+    const hadExistingScopes = delegation
+      ? (await this.delegationScopeService.findByDelegationId(delegation.id))
+          .length > 0
+      : false
+
     if (!delegation) {
       const [fromDisplayName, toName] = await Promise.all([
         this.namesService.getUserName(user),
@@ -296,6 +303,8 @@ export class DelegationsOutgoingService {
       user,
     )
 
+    void this.notifyDelegationUpdate(user, newDelegation, hadExistingScopes)
+
     return newDelegation
   }
 
@@ -314,7 +323,7 @@ export class DelegationsOutgoingService {
 
       if (
         !allowDelegationNotification ||
-        !delegation.scopes ||
+        !delegation.scopes?.length ||
         !delegation.domainName
       ) {
         return
