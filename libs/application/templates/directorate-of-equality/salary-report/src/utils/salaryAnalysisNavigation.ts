@@ -12,6 +12,13 @@ export const hasMinimumSetOutliersInResult = (
   result?: Pick<SalaryAnalysisResponseDto, 'outliers'> | null,
 ): boolean => (result?.outliers?.length ?? 0) > 0
 
+export type SalaryAnalysisNavigationAnswers = {
+  salaryAnalysis: {
+    hasMinimumSetOutliers: boolean
+    outlierPlanReviewed?: boolean
+  }
+}
+
 export const getSalaryAnalysisResult = (
   externalData?: ExternalData,
 ): SalaryAnalysisResponseDto | undefined => {
@@ -28,32 +35,43 @@ export const salaryAnalysisNeedsImprovementPlan = (
   answers: FormValue,
   externalData?: ExternalData,
 ): boolean => {
+  const result = getSalaryAnalysisResult(externalData)
+  if (result) return hasMinimumSetOutliersInResult(result)
+
   const answerFlag = getValueViaPath<boolean>(
     answers,
     'salaryAnalysis.hasMinimumSetOutliers',
   )
-  if (typeof answerFlag === 'boolean') return answerFlag
-
-  return hasMinimumSetOutliersInResult(getSalaryAnalysisResult(externalData))
+  return answerFlag === true
 }
 
 export const salaryAnalysisOutlierPlanIsReviewed = (
   answers: FormValue,
   externalData?: ExternalData,
-): boolean =>
-  !salaryAnalysisNeedsImprovementPlan(answers, externalData) ||
-  getValueViaPath<boolean>(answers, 'salaryAnalysis.outlierPlanReviewed') ===
-    true
+): boolean => {
+  if (!salaryAnalysisNeedsImprovementPlan(answers, externalData)) return true
+
+  return (
+    getValueViaPath<boolean>(
+      answers,
+      'salaryAnalysis.hasMinimumSetOutliers',
+    ) === true &&
+    getValueViaPath<boolean>(answers, 'salaryAnalysis.outlierPlanReviewed') ===
+      true
+  )
+}
 
 export const navigationAnswersForAnalysisResult = (
   result: Pick<SalaryAnalysisResponseDto, 'outliers'>,
   { resetReviewed }: { resetReviewed: boolean },
-): FormValue => {
+): SalaryAnalysisNavigationAnswers => {
   const hasMinimumSetOutliers = hasMinimumSetOutliersInResult(result)
-  const salaryAnalysis: FormValue = { hasMinimumSetOutliers }
+  const salaryAnalysis: SalaryAnalysisNavigationAnswers['salaryAnalysis'] = {
+    hasMinimumSetOutliers,
+  }
 
   if (!hasMinimumSetOutliers) {
-    salaryAnalysis.outlierPlanReviewed = true
+    salaryAnalysis.outlierPlanReviewed = false
   } else if (resetReviewed) {
     salaryAnalysis.outlierPlanReviewed = false
   }

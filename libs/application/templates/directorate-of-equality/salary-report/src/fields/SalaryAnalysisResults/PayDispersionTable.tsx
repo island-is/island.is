@@ -3,28 +3,28 @@ import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
-import { formatPercentMagnitude } from '../../utils/wageGap'
+import { formatSalaryAnalysisGenderLabel } from '../../utils/salaryAnalysisLabels'
+import { formatSignedPercentMagnitude } from '../../utils/wageGap'
 
 type PayDispersionDto = SalaryAnalysisResponseDto['payDispersion']
 type PayDispersionEmployeeDto = PayDispersionDto['employees'][number]
+type PayDispersionBlocker = PayDispersionDto['blockers'][number]
 
 const RENDERED_POPULATION: PayDispersionDto['population'] = 'ALL_EMPLOYEES'
 const dash = '—'
 
-const formatSpreads = (value: number | null | undefined): string =>
-  value == null
-    ? dash
-    : `${value > 0 ? '+' : ''}${value.toFixed(2).replace('.', ',')}`
-
-const formatSignedPercent = (value: number) =>
-  `${value > 0 ? '+' : value < 0 ? '-' : ''}${formatPercentMagnitude(value)}%`
+const formatSpreads = (value: number | null | undefined): string => {
+  if (value == null) return dash
+  const roundedValue = Math.round(value * 100) / 100
+  const sign = roundedValue > 0 ? '+' : ''
+  return `${sign}${roundedValue.toFixed(2).replace('.', ',')}`
+}
 
 const formatSignedDeviation = (
   employee: PayDispersionEmployeeDto,
   formatMessage: ReturnType<typeof useLocale>['formatMessage'],
 ): string => {
   const value = employee.deviationPercent
-  const sign = value > 0 ? '+' : value < 0 ? '-' : ''
   const m = messages.salaryAnalysis.payDispersion
 
   const word =
@@ -34,18 +34,25 @@ const formatSignedDeviation = (
       ? formatMessage(m.directionAbove)
       : undefined
 
-  const percent = `${sign}${formatPercentMagnitude(value)}%`
+  const percent = `${formatSignedPercentMagnitude(value)}%`
   return word ? `${percent} (${word})` : percent
 }
 
-const genderLabel = (
-  gender: PayDispersionEmployeeDto['gender'],
+const blockerMessage = (
+  code: PayDispersionBlocker,
   formatMessage: ReturnType<typeof useLocale>['formatMessage'],
 ): string => {
   const m = messages.salaryAnalysis.payDispersion
-  if (gender === 'MALE') return formatMessage(m.genderMale)
-  if (gender === 'FEMALE') return formatMessage(m.genderFemale)
-  return formatMessage(m.genderNeutral)
+  switch (code) {
+    case 'COHORT_TOO_SMALL':
+      return formatMessage(m.blockerCohortTooSmall)
+    case 'NO_SCORE_VARIATION':
+      return formatMessage(m.blockerNoScoreVariation)
+    case 'GAP_NOT_COMPUTABLE':
+      return formatMessage(m.blockerGapNotComputable)
+    default:
+      return code
+  }
 }
 
 type Props = {
@@ -79,13 +86,7 @@ export const PayDispersionTable = ({
         <Box>
           {payDispersion.blockers.map((code) => (
             <Text key={code} variant="small" color="dark350">
-              {formatMessage(
-                code === 'COHORT_TOO_SMALL'
-                  ? p.blockerCohortTooSmall
-                  : code === 'NO_SCORE_VARIATION'
-                  ? p.blockerNoScoreVariation
-                  : p.blockerGapNotComputable,
-              )}
+              {blockerMessage(code, formatMessage)}
             </Text>
           ))}
         </Box>
@@ -103,12 +104,12 @@ export const PayDispersionTable = ({
             payDispersion.cohortResidualSpreadPercentDown != null && (
               <Text variant="small" color="dark350" marginBottom={2}>
                 {formatMessage(p.spreadNote, {
-                  down: formatSignedPercent(
+                  down: `${formatSignedPercentMagnitude(
                     payDispersion.cohortResidualSpreadPercentDown,
-                  ),
-                  up: formatSignedPercent(
+                  )}%`,
+                  up: `${formatSignedPercentMagnitude(
                     payDispersion.cohortResidualSpreadPercentUp,
-                  ),
+                  )}%`,
                   threshold: String(payDispersion.threshold).replace('.', ','),
                 })}
               </Text>
@@ -132,7 +133,12 @@ export const PayDispersionTable = ({
                   <T.Data>
                     {identifierForOrdinal(employee.employeeOrdinal)}
                   </T.Data>
-                  <T.Data>{genderLabel(employee.gender, formatMessage)}</T.Data>
+                  <T.Data>
+                    {formatSalaryAnalysisGenderLabel(
+                      employee.gender,
+                      formatMessage,
+                    )}
+                  </T.Data>
                   <T.Data>{employee.score}</T.Data>
                   <T.Data>
                     {formatHourlyWage(employee.regularHourlyWage)}

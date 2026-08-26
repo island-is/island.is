@@ -66,8 +66,9 @@ export const buildSalaryAnalysisSection = (
             children: [
               buildCustomField(
                 {
-                  id: 'salaryAnalysis.outlierPlanReviewed',
+                  id: 'salaryAnalysis',
                   component: 'SalaryImprovementPlan',
+                  doesNotRequireAnswer: true,
                 },
                 fieldProps,
               ),

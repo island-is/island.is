@@ -188,7 +188,6 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
 export const overviewSection = buildSection({
   id: 'overview',
   title: messages.overview.sectionTitle,
-  condition: salaryAnalysisOutlierPlanIsReviewed,
   children: [
     buildMultiField({
       id: 'overviewMultiField',
@@ -205,6 +204,7 @@ export const overviewSection = buildSection({
               event: DefaultEvents.SUBMIT,
               name: messages.overview.submitButton,
               type: 'primary',
+              condition: salaryAnalysisOutlierPlanIsReviewed,
             },
           ],
         }),

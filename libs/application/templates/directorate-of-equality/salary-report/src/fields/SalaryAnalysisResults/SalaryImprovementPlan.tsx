@@ -22,6 +22,8 @@ import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import {
   buildOutlierSyncCommands,
   isOutlierGroupComplete,
+  unassignedOutlierOrdinals,
+  withFallbackOutlierGroupNames,
   type OutlierGroupAnswer,
 } from '../../utils/outlierGroups'
 import { getProviderErrorMessage } from '../../utils/providerError'
@@ -52,6 +54,7 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   errors,
   answerQuestions,
   setBeforeSubmitCallback,
+  setSubmitButtonDisabled,
 }) => {
   const hidePostponeCheckbox =
     field?.props && typeof field.props['hidePostponeCheckbox'] === 'boolean'
@@ -121,7 +124,10 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   // shell, which hands down a new identity, which re-fires the caller. Keeping
   // it in a ref holds the latest callback without leaking that churn into deps.
   const answerQuestionsRef = useRef(answerQuestions)
-  answerQuestionsRef.current = answerQuestions
+
+  useEffect(() => {
+    answerQuestionsRef.current = answerQuestions
+  }, [answerQuestions])
 
   const handleAnalyze = useCallback(async () => {
     setIsAnalyzing(true)
@@ -150,7 +156,7 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       ) {
         answerQuestionsRef.current?.(
           navigationAnswersForAnalysisResult(salaryAnalysisResult.data, {
-            resetReviewed: false,
+            resetReviewed: true,
           }),
         )
         setResult(salaryAnalysisResult.data)
@@ -158,7 +164,11 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
         setErrorMessage(getProviderErrorMessage(salaryAnalysisResult?.reason))
         setHasError(true)
       }
-    } catch {
+    } catch (error) {
+      console.error(
+        'Failed to analyze salary report for improvement plan',
+        error,
+      )
       setHasError(true)
     } finally {
       setIsAnalyzing(false)
@@ -171,26 +181,6 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     if (result) return
     void handleAnalyze()
   }, [handleAnalyze, result])
-
-  // Re-assert the navigation flags from a restored result so this subsection
-  // stays reachable and the overview stays gated across a reload. Written to
-  // the form as well as dispatched, for the same reason as on the overview
-  // screen: an ANSWER-only flag is merged over by this screen's own submit
-  // payload and never persists, so leaving here via the sidebar would drop it.
-  useEffect(() => {
-    if (!result) return
-    const answers = navigationAnswersForAnalysisResult(result, {
-      resetReviewed: false,
-    })
-    const { hasMinimumSetOutliers } = (
-      answers as { salaryAnalysis: { hasMinimumSetOutliers: boolean } }
-    ).salaryAnalysis
-    setAmbientValue(
-      'salaryAnalysis.hasMinimumSetOutliers',
-      hasMinimumSetOutliers,
-    )
-    answerQuestionsRef.current?.(answers)
-  }, [result, setAmbientValue])
 
   useSeedOnce(isDraftPhase && Boolean(content), () => {
     if (!content) return
@@ -231,6 +221,72 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       control: ambientControl,
     }) as OutlierGroupAnswer[] | undefined) ?? []
   const outlierGroups = isDraftPhase ? draftOutlierGroups : ambientOutlierGroups
+  const currentOutliers = useMemo(() => result?.outliers ?? [], [result])
+  const hasMinimumSetOutliers = currentOutliers.length > 0
+  const unassignedOrdinals = useMemo(
+    () => unassignedOutlierOrdinals(currentOutliers, outlierGroups),
+    [currentOutliers, outlierGroups],
+  )
+  const groupsComplete = outlierGroups.every(isOutlierGroupComplete)
+  const outlierPlanReviewed =
+    hasMinimumSetOutliers &&
+    (isPostponed || (unassignedOrdinals.length === 0 && groupsComplete))
+
+  const fallbackGroupName = useCallback(
+    (index: number) =>
+      `${formatMessage(messages.salaryAnalysis.outlierGroup.groupHeading)} ${
+        index + 1
+      }`,
+    [formatMessage],
+  )
+
+  useEffect(() => {
+    if (!result) return
+    const answers = {
+      salaryAnalysis: {
+        hasMinimumSetOutliers,
+        outlierPlanReviewed: hasMinimumSetOutliers
+          ? outlierPlanReviewed
+          : false,
+      },
+    }
+    setAmbientValue(
+      'salaryAnalysis.hasMinimumSetOutliers',
+      answers.salaryAnalysis.hasMinimumSetOutliers,
+    )
+    setAmbientValue(
+      'salaryAnalysis.outlierPlanReviewed',
+      answers.salaryAnalysis.outlierPlanReviewed,
+    )
+    answerQuestionsRef.current?.(answers)
+  }, [hasMinimumSetOutliers, outlierPlanReviewed, result, setAmbientValue])
+
+  useEffect(() => {
+    if (!setSubmitButtonDisabled) return undefined
+
+    setSubmitButtonDisabled(!outlierPlanReviewed)
+
+    return () => setSubmitButtonDisabled(false)
+  }, [outlierPlanReviewed, setSubmitButtonDisabled])
+
+  useEffect(() => {
+    if (isDraftPhase || isPostponed || !hasMinimumSetOutliers) return
+    outlierGroups.forEach((group, index) => {
+      if (!group.name?.trim()) {
+        setAmbientValue(
+          `salaryAnalysis.outlierGroups.${index}.name`,
+          fallbackGroupName(index),
+        )
+      }
+    })
+  }, [
+    fallbackGroupName,
+    hasMinimumSetOutliers,
+    isDraftPhase,
+    isPostponed,
+    outlierGroups,
+    setAmbientValue,
+  ])
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
@@ -248,28 +304,16 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       if (!result) {
         return [
           false,
-          formatMessage(messages.salaryAnalysis.results.unknownMessage),
+          formatMessage(messages.salaryAnalysis.results.noAnalysisMessage),
         ]
       }
 
-      const currentOutliers = result.outliers ?? []
       if (currentOutliers.length === 0) {
-        setAmbientValue('salaryAnalysis.hasMinimumSetOutliers', false)
-        setAmbientValue('salaryAnalysis.outlierPlanReviewed', true)
-        answerQuestions?.(
-          navigationAnswersForAnalysisResult(result, { resetReviewed: false }),
-        )
         return [true, null]
       }
 
       if (!isPostponed) {
-        const assignedOrdinals = new Set(
-          outlierGroups.flatMap((group) => group.employeeOrdinals),
-        )
-        const allOutliersAssigned = currentOutliers.every((outlier) =>
-          assignedOrdinals.has(outlier.employeeOrdinal),
-        )
-        if (!allOutliersAssigned) {
+        if (unassignedOrdinals.length > 0) {
           return [
             false,
             formatMessage(
@@ -278,7 +322,6 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
           ]
         }
 
-        const groupsComplete = outlierGroups.every(isOutlierGroupComplete)
         if (!groupsComplete) {
           return [
             false,
@@ -289,48 +332,26 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
         }
       }
 
-      const nameFor = (group: OutlierGroupAnswer, index: number) =>
-        group.name?.trim() ||
-        `${formatMessage(messages.salaryAnalysis.outlierGroup.groupHeading)} ${
-          index + 1
-        }`
-
       if (isDraftPhase) {
         if (!content) {
           return [false, formatMessage(messages.errors.draftLoadFailed)]
         }
 
-        const finalGroups = draftForm
-          .getValues()
-          .salaryAnalysis.outlierGroups.map((group, index) => ({
-            ...group,
-            name: nameFor(group, index),
-          }))
+        const finalGroups = draftForm.getValues().salaryAnalysis.outlierGroups
         try {
-          await sync(buildOutlierSyncCommands(content, finalGroups))
+          await sync(
+            buildOutlierSyncCommands(
+              content,
+              withFallbackOutlierGroupNames(finalGroups, fallbackGroupName),
+            ),
+          )
           await refetch({ silent: true })
-        } catch {
+        } catch (error) {
+          console.error('Failed to sync salary outlier groups', error)
           return [false, formatMessage(messages.errors.draftSyncFailed)]
         }
-      } else {
-        outlierGroups.forEach((group, index) => {
-          if (!group.name?.trim()) {
-            setAmbientValue(
-              `salaryAnalysis.outlierGroups.${index}.name`,
-              nameFor(group, index),
-            )
-          }
-        })
       }
 
-      setAmbientValue('salaryAnalysis.hasMinimumSetOutliers', true)
-      setAmbientValue('salaryAnalysis.outlierPlanReviewed', true)
-      answerQuestions?.({
-        salaryAnalysis: {
-          hasMinimumSetOutliers: true,
-          outlierPlanReviewed: true,
-        },
-      })
       return [true, null]
     })
   }, [
@@ -339,16 +360,17 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     hasError,
     errorMessage,
     result,
-    setAmbientValue,
-    answerQuestions,
+    currentOutliers,
+    unassignedOrdinals,
+    groupsComplete,
     isPostponed,
-    outlierGroups,
     isDraftPhase,
     content,
     draftForm,
     sync,
     refetch,
     formatMessage,
+    fallbackGroupName,
   ])
 
   if (hasError) {
@@ -403,13 +425,11 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <OutlierGroupPanel
-      application={application}
       outliers={result.outliers ?? []}
       hidePostponeCheckbox={hidePostponeCheckbox}
       errors={errors}
       identifierForOrdinal={identifierForOrdinal}
       outlierGroupsFormMethods={isDraftPhase ? draftForm : undefined}
-      hideHeading
     />
   )
 }

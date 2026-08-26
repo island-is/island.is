@@ -22,7 +22,11 @@ import type {
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
-import { formatPercentMagnitude } from '../../utils/wageGap'
+import { formatSalaryAnalysisGenderLabel } from '../../utils/salaryAnalysisLabels'
+import {
+  formatSignedPercentMagnitude,
+  hasIdentifiableRegressionFit,
+} from '../../utils/wageGap'
 
 type PayDispersionDto = SalaryAnalysisResponseDto['payDispersion']
 
@@ -65,22 +69,15 @@ const niceAxisMax = (dataMax: number) => {
 const isMarked = (
   employee: WageGapEmployeeDto,
   decomposition: WageGapDecompositionDto,
-  payDispersion: PayDispersionDto | null | undefined,
+  payDispersionOrdinals: Set<number> | null,
 ): boolean => {
   if (decomposition.oskyrtWithinBenchmark === false) {
     return employee.inMinimumSet
   }
 
-  if (
-    decomposition.oskyrtWithinBenchmark !== true ||
-    !payDispersion?.available ||
-    payDispersion.population !== RENDERED_PAY_DISPERSION_POPULATION
-  ) {
-    return false
-  }
-
-  return payDispersion.employees.some(
-    (row) => row.employeeOrdinal === employee.ordinal,
+  return (
+    decomposition.oskyrtWithinBenchmark === true &&
+    payDispersionOrdinals?.has(employee.ordinal) === true
   )
 }
 
@@ -137,16 +134,6 @@ const payStatusWord = (
   )
 }
 
-const genderLabel = (
-  gender: WageGapEmployeeDto['gender'],
-  formatMessage: ReturnType<typeof useLocale>['formatMessage'],
-): string => {
-  const m = messages.salaryAnalysis.payDispersion
-  if (gender === 'MALE') return formatMessage(m.genderMale)
-  if (gender === 'FEMALE') return formatMessage(m.genderFemale)
-  return formatMessage(m.genderNeutral)
-}
-
 const ChartTooltip = ({
   active,
   payload,
@@ -168,7 +155,7 @@ const ChartTooltip = ({
   if (employee) {
     rows.push([
       formatMessage(tooltipMessages.gender),
-      genderLabel(employee.gender, formatMessage),
+      formatSalaryAnalysisGenderLabel(employee.gender, formatMessage),
     ])
   }
   rows.push([
@@ -181,19 +168,13 @@ const ChartTooltip = ({
   ])
 
   if (employee) {
-    const sign =
-      employee.deviationPercent > 0
-        ? '+'
-        : employee.deviationPercent < 0
-        ? '-'
-        : ''
     rows.push([
       formatMessage(tooltipMessages.expected),
       formatHourlyWage(employee.expectedHourlyWage),
     ])
     rows.push([
       formatMessage(tooltipMessages.deviation),
-      `${sign}${formatPercentMagnitude(
+      `${formatSignedPercentMagnitude(
         employee.deviationPercent,
       )}% (${payStatusWord(employee.payStatus, formatMessage)})`,
     ])
@@ -256,13 +237,13 @@ const ChartLegend = ({
 
   if (hasMale) {
     items.push({
-      label: formatMessage(messages.salaryAnalysis.payDispersion.genderMale),
+      label: formatMessage(messages.salaryAnalysis.chart.legendMale),
       swatch: dot(theme.color.blue400),
     })
   }
   if (hasFemale) {
     items.push({
-      label: formatMessage(messages.salaryAnalysis.payDispersion.genderFemale),
+      label: formatMessage(messages.salaryAnalysis.chart.legendNonMale),
       swatch: dot(theme.color.purple400),
     })
   }
@@ -323,13 +304,11 @@ const ChartLegend = ({
 const RegressionReadout = ({ fit }: { fit?: WageGapPooledFitDto | null }) => {
   const { formatMessage } = useLocale()
   const t = messages.salaryAnalysis.chartRegression
-  const slope = fit?.slope ?? null
-  const intercept = fit?.intercept ?? null
 
   // xSumSquares is the identifiability test the API documents — a degenerate fit
   // comes back with slope 0, not null, which would otherwise be printed as a
   // confident "0,0% á hver 100 stig".
-  if (!fit || fit.xSumSquares <= 0 || slope == null) {
+  if (!hasIdentifiableRegressionFit(fit)) {
     return (
       <Text variant="small" color="dark300">
         {formatMessage(t.unavailable)}
@@ -339,15 +318,13 @@ const RegressionReadout = ({ fit }: { fit?: WageGapPooledFitDto | null }) => {
 
   // exp(slope · 100) − 1: the compounded proportional rise over 100 stig. Not
   // slope · 100, which is the log-space increment and understates it.
-  const growthPercent = (Math.exp(slope * 100) - 1) * 100
+  const growthPercent = (Math.exp(fit.slope * 100) - 1) * 100
 
   // A real point ON the curve, at the cohort's own mean score — deliberately not
   // exp(intercept), which is pay at zero stig: outside any support, and easy to
   // misread as a floor.
   const expectedAtMeanScore =
-    intercept != null && fit.xMean != null
-      ? Math.exp(intercept + slope * fit.xMean)
-      : null
+    fit.xMean != null ? Math.exp(fit.intercept + fit.slope * fit.xMean) : null
 
   const rows: { label: string; value: string; hint: string }[] = [
     {
@@ -408,11 +385,14 @@ export const SalaryDistributionChart: FC<Props> = ({
   if (!data) return null
 
   const fit = decomposition?.pooledFit
-  const slope = fit?.slope ?? null
-  const intercept = fit?.intercept ?? null
-  const hasFit = slope != null && intercept != null
+  const hasFit = hasIdentifiableRegressionFit(fit)
   const predict = (score: number) =>
-    hasFit ? Math.exp(intercept + slope * score) : 0
+    hasFit ? Math.exp(fit.intercept + fit.slope * score) : 0
+  const payDispersionMarkedOrdinals =
+    payDispersion?.available &&
+    payDispersion.population === RENDERED_PAY_DISPERSION_POPULATION
+      ? new Set(payDispersion.employees.map((row) => row.employeeOrdinal))
+      : null
 
   const points: ChartPoint[] = decomposition?.employees?.length
     ? decomposition.employees.map((employee) => ({
@@ -420,7 +400,7 @@ export const SalaryDistributionChart: FC<Props> = ({
         regularHourlyWage: employee.hourlyWage,
         gender: employee.gender,
         employee,
-        marked: isMarked(employee, decomposition, payDispersion),
+        marked: isMarked(employee, decomposition, payDispersionMarkedOrdinals),
       }))
     : data.dataPoints.map((point) => ({
         score: point.score,
@@ -543,9 +523,7 @@ export const SalaryDistributionChart: FC<Props> = ({
           />
           {malePoints.length > 0 && (
             <Scatter
-              name={formatMessage(
-                messages.salaryAnalysis.payDispersion.genderMale,
-              )}
+              name={formatMessage(messages.salaryAnalysis.chart.legendMale)}
               data={malePoints}
               fill={theme.color.blue400}
               legendType="none"
@@ -554,9 +532,7 @@ export const SalaryDistributionChart: FC<Props> = ({
           )}
           {femalePoints.length > 0 && (
             <Scatter
-              name={formatMessage(
-                messages.salaryAnalysis.payDispersion.genderFemale,
-              )}
+              name={formatMessage(messages.salaryAnalysis.chart.legendNonMale)}
               data={femalePoints}
               fill={theme.color.purple400}
               legendType="none"

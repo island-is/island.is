@@ -31,7 +31,6 @@ export const postponedForm = buildForm({
     buildSection({
       id: 'postponedSubmit',
       title: messages.postponed.sectionTitle,
-      condition: salaryAnalysisOutlierPlanIsReviewed,
       children: [
         buildMultiField({
           id: 'postponedSubmitMultiField',
@@ -42,7 +41,7 @@ export const postponedForm = buildForm({
               id: 'postponedSubmitOverview',
               title: messages.postponed.reviewTitle,
               titleVariant: 'h3',
-              backId: 'salaryAnalysisOverviewMultiField',
+              backId: 'salaryAnalysisImprovementPlanMultiField',
               items: (answers) => {
                 const groups =
                   getValueViaPath<OutlierGroupAnswer[]>(
@@ -92,6 +91,7 @@ export const postponedForm = buildForm({
                   event: DefaultEvents.SUBMIT,
                   name: messages.postponed.submitButton,
                   type: 'primary',
+                  condition: salaryAnalysisOutlierPlanIsReviewed,
                 },
               ],
             }),

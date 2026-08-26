@@ -1,4 +1,7 @@
-import type { WageGapDecompositionDto } from '@island.is/clients/directorate-of-equality'
+import type {
+  WageGapDecompositionDto,
+  WageGapPooledFitDto,
+} from '@island.is/clients/directorate-of-equality'
 
 export type WageGapCounts = { male: number; female: number; excluded: number }
 
@@ -103,3 +106,35 @@ export const formatPercentMagnitude = (
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits,
   })
+
+export const formatSignedPercentMagnitude = (
+  value?: number | null,
+  fractionDigits = 1,
+): string => {
+  const numericValue = value ?? 0
+  const factor = 10 ** fractionDigits
+  const roundedMagnitude = Math.round(Math.abs(numericValue) * factor) / factor
+  const sign =
+    roundedMagnitude === 0
+      ? ''
+      : numericValue > 0
+      ? '+'
+      : numericValue < 0
+      ? '-'
+      : ''
+
+  return `${sign}${formatPercentMagnitude(numericValue, fractionDigits)}`
+}
+
+export type IdentifiableRegressionFit = WageGapPooledFitDto & {
+  slope: number
+  intercept: number
+  xSumSquares: number
+}
+
+export const hasIdentifiableRegressionFit = (
+  fit?: WageGapPooledFitDto | null,
+): fit is IdentifiableRegressionFit =>
+  Boolean(
+    fit && fit.xSumSquares > 0 && fit.slope != null && fit.intercept != null,
+  )

@@ -1023,6 +1023,11 @@ export const messages = {
         defaultMessage:
           'Ekki tókst að reikna leiðréttan launamun út frá þessum gögnum.',
       },
+      noAnalysisMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.noAnalysisMessage',
+        defaultMessage:
+          'Launagreining hefur ekki verið keyrð fyrir þessi gögn.',
+      },
       // Group headings for the two card rows.
       meanHourlyWageGroupTitle: {
         id: 'doe.sr.application:salaryAnalysis.results.meanHourlyWageGroupTitle',
@@ -1117,12 +1122,16 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.chart.legendCurve',
         defaultMessage: 'Væntanlegt tímakaup',
       },
+      legendMale: {
+        id: 'doe.sr.application:salaryAnalysis.chart.legendMale',
+        defaultMessage: 'Karlar',
+      },
+      legendNonMale: {
+        id: 'doe.sr.application:salaryAnalysis.chart.legendNonMale',
+        defaultMessage: 'Konur',
+      },
     }),
     chartRegression: defineMessages({
-      heading: {
-        id: 'doe.sr.application:salaryAnalysis.chartRegression.heading',
-        defaultMessage: 'Viðmiðslína',
-      },
       note: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.note',
         defaultMessage:
@@ -1217,7 +1226,7 @@ export const messages = {
       },
       female: {
         id: 'doe.sr.application:salaryAnalysis.components.female',
-        defaultMessage: 'Kona',
+        defaultMessage: 'Kona/kynsegin',
       },
       overall: {
         id: 'doe.sr.application:salaryAnalysis.components.overall',
@@ -1225,7 +1234,7 @@ export const messages = {
       },
       gapRow: {
         id: 'doe.sr.application:salaryAnalysis.components.gapRow',
-        defaultMessage: 'Óleiðréttur launamunur',
+        defaultMessage: 'Hlutfallslegur munur',
       },
       empty: {
         id: 'doe.sr.application:salaryAnalysis.components.empty',
@@ -1234,7 +1243,7 @@ export const messages = {
       gapHint: {
         id: 'doe.sr.application:salaryAnalysis.components.gapHint',
         defaultMessage:
-          'Hlutfallslegur munur á meðaltali karla og kvenna fyrir hvern lið. Ekki leiðrétt fyrir starfsmatsstigum og ekki borið við viðmið.',
+          'Jákvæð tala merkir að meðaltal karla sé hærra fyrir liðinn. Ekki leiðrétt fyrir starfsmatsstigum og ekki borið við viðmið.',
       },
     }),
     payDispersion: defineMessages({

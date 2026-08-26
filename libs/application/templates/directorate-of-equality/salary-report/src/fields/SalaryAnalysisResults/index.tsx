@@ -32,6 +32,10 @@ import { StatisticCard } from './StatisticsCard'
 import { SalaryDistributionChart } from './SalaryDistributionChart'
 
 type Props = FieldBaseProps
+type DraftEmployeesExternalData = {
+  status?: 'success' | 'failure'
+  data?: { employees: ReportEmployeeDto[] }
+}
 
 export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   application,
@@ -39,14 +43,21 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage, lang: locale } = useLocale()
-  const { content: employeesContent } = useDraftQuery<{
-    employees: ReportEmployeeDto[]
-  }>(
-    application,
-    draftActionId(ApiActions.listDraftEmployees),
-    'draftEmployees',
-  )
+  const { content: employeesContent, refetch: refetchEmployees } =
+    useDraftQuery<{
+      employees: ReportEmployeeDto[]
+    }>(
+      application,
+      draftActionId(ApiActions.listDraftEmployees),
+      'draftEmployees',
+    )
+  const [draftEmployees, setDraftEmployees] = useState<
+    ReportEmployeeDto[] | undefined
+  >(() => employeesContent?.employees)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [hasRequestedAnalysis, setHasRequestedAnalysis] = useState(() =>
+    Boolean(getSalaryAnalysisResult(application.externalData)),
+  )
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
   const [result, setResult] = useState<SalaryAnalysisResponseDto | undefined>(
@@ -63,7 +74,21 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   // hands down a new identity, which re-fires the effect — a render loop. The
   // ref keeps the latest callback while the effect stays keyed to the result.
   const answerQuestionsRef = useRef(answerQuestions)
-  answerQuestionsRef.current = answerQuestions
+  const refreshedEmployeesForRestoredResultRef = useRef(false)
+
+  useEffect(() => {
+    answerQuestionsRef.current = answerQuestions
+  }, [answerQuestions])
+
+  useEffect(() => {
+    if (employeesContent) setDraftEmployees(employeesContent.employees)
+  }, [employeesContent])
+
+  useEffect(() => {
+    if (!result || refreshedEmployeesForRestoredResultRef.current) return
+    refreshedEmployeesForRestoredResultRef.current = true
+    void refetchEmployees({ silent: true })
+  }, [refetchEmployees, result])
 
   /**
    * The navigation flags have to reach the FORM, not just the shell's answer
@@ -74,25 +99,18 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
    * stale salaryAnalysis silently reverts the flag (and an undefined one wipes
    * the whole object), which sends the úrbótaáætlun screen non-navigable and
    * hands the applicant straight to the overview. It bites hardest on the
-   * re-analysis path: a first pass under the benchmark persists
-   * hasMinimumSetOutliers: false / outlierPlanReviewed: true, and editing the
-   * data upward afterwards would otherwise never reopen the plan screen.
-   * setValue puts them in the submitted data, so they survive that merge and
-   * persist for the next visit.
+   * re-analysis path: editing the data upward has to reopen the plan screen
+   * when the new result carries real lágmarksmengi outliers. setValue puts
+   * those flags in the submitted data, so they survive that merge and persist
+   * for the next visit.
    */
   const applyNavigationAnswers = useCallback(
     (analysis: SalaryAnalysisResponseDto, resetReviewed: boolean) => {
       const answers = navigationAnswersForAnalysisResult(analysis, {
         resetReviewed,
       })
-      const { hasMinimumSetOutliers, outlierPlanReviewed } = (
-        answers as {
-          salaryAnalysis: {
-            hasMinimumSetOutliers: boolean
-            outlierPlanReviewed?: boolean
-          }
-        }
-      ).salaryAnalysis
+      const { hasMinimumSetOutliers, outlierPlanReviewed } =
+        answers.salaryAnalysis
 
       setValue('salaryAnalysis.hasMinimumSetOutliers', hasMinimumSetOutliers)
       // Absent means "leave it alone" — a plan already signed off must not be
@@ -106,7 +124,9 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     [setValue],
   )
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = useCallback(async () => {
+    setHasRequestedAnalysis(true)
+    refreshedEmployeesForRestoredResultRef.current = true
     setIsAnalyzing(true)
     setHasError(false)
     setErrorMessage(undefined)
@@ -120,13 +140,29 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
                 actionId: draftActionId(ApiActions.analyzeSalaryReport),
                 order: 0,
               },
+              {
+                actionId: draftActionId(ApiActions.listDraftEmployees),
+                order: 1,
+              },
             ],
           },
           locale,
         },
       })
-      const salaryAnalysisResult = res.data?.updateApplicationExternalData
-        .externalData?.salaryAnalysisResult as AnalysisExternalData | undefined
+      const externalData =
+        res.data?.updateApplicationExternalData.externalData ?? {}
+      const salaryAnalysisResult = externalData.salaryAnalysisResult as
+        | AnalysisExternalData
+        | undefined
+      const draftEmployeesResult = externalData.draftEmployees as
+        | DraftEmployeesExternalData
+        | undefined
+      if (
+        draftEmployeesResult?.status === 'success' &&
+        draftEmployeesResult.data
+      ) {
+        setDraftEmployees(draftEmployeesResult.data.employees)
+      }
       if (
         salaryAnalysisResult?.status === 'success' &&
         salaryAnalysisResult.data
@@ -137,12 +173,18 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         setErrorMessage(getProviderErrorMessage(salaryAnalysisResult?.reason))
         setHasError(true)
       }
-    } catch {
+    } catch (error) {
+      console.error('Failed to analyze salary report', error)
       setHasError(true)
     } finally {
       setIsAnalyzing(false)
     }
-  }
+  }, [
+    application.id,
+    applyNavigationAnswers,
+    locale,
+    updateApplicationExternalData,
+  ])
 
   // Run automatically on arrival at this screen — the applicant shouldn't
   // have to press a button to see results. Only fires when there's no
@@ -150,8 +192,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   useEffect(() => {
     if (result) return
     handleAnalyze()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [handleAnalyze, result])
 
   // Re-assert the flags whenever a result appears, so the conditional
   // úrbótaáætlun subsection and the overview gate resolve on a restored draft
@@ -183,7 +224,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       if (!result) {
         return [
           false,
-          formatMessage(messages.salaryAnalysis.results.unknownMessage),
+          formatMessage(messages.salaryAnalysis.results.noAnalysisMessage),
         ]
       }
 
@@ -205,11 +246,8 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const outlierCount = result?.outliers?.length ?? 0
   const gapState = deriveWageGapState(decomposition, outlierCount)
   const payComponents = useMemo(
-    () =>
-      employeesContent
-        ? buildPayComponentsBreakdown(employeesContent.employees)
-        : null,
-    [employeesContent],
+    () => (draftEmployees ? buildPayComponentsBreakdown(draftEmployees) : null),
+    [draftEmployees],
   )
   const r = messages.salaryAnalysis.results
 
@@ -259,6 +297,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
           direction: directionLabel(decomposition.rawGapDirection),
         })
       : undefined
+  const formatBenchmark = (value: number) => formatPercentMagnitude(value, 2)
 
   // Soft warnings — the figures are computed but must be shown caveated. Each
   // code is named explicitly and anything unrecognised is dropped: DMR can add
@@ -283,7 +322,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
 
   const body = (
     <Box>
-      {isAnalyzing && (
+      {(isAnalyzing || (!result && !hasRequestedAnalysis)) && (
         <Box display="flex" justifyContent="center" paddingY={5}>
           <LoadingDots />
         </Box>
@@ -307,6 +346,26 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
               disabled={isAnalyzing}
             >
               {formatMessage(messages.salaryAnalysis.results.recalculateButton)}
+            </Button>
+          </Box>
+        </Box>
+      )}
+
+      {!isAnalyzing && !hasError && !result && hasRequestedAnalysis && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(r.unknownTitle)}
+            message={formatMessage(r.noAnalysisMessage)}
+          />
+          <Box marginTop={2}>
+            <Button
+              variant="ghost"
+              size="small"
+              icon="reload"
+              onClick={handleAnalyze}
+            >
+              {formatMessage(r.recalculateButton)}
             </Button>
           </Box>
         </Box>
@@ -336,37 +395,35 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         </Box>
       )}
 
-      {showAdjustedGap && decomposition && (
+      {(showAdjustedGap || rawGapSubtext) && decomposition && (
         <Box marginBottom={4}>
           <Text variant="h4" marginBottom={2}>
             {formatMessage(r.wageGapGroupTitle)}
           </Text>
-          <Box
-            display="flex"
-            columnGap={[0, 0, 0, 4]}
-            rowGap={[2, 2, 2, 0]}
-            marginTop={1}
-            marginBottom={1}
-            flexDirection={['column', 'column', 'column', 'row']}
-          >
-            {/* The figure actually tested against the benchmark — the raw gap
-                now appears only as a quieter note on this card. */}
-            <StatisticCard
-              title={formatMessage(r.adjustedGapLabel)}
-              content={gapContent(
-                decomposition.oskyrtPercent as number,
-                decomposition.oskyrtDirection,
-                2,
-              )}
-              // footnote={rawGapSubtext}
-              subtext={formatMessage(r.benchmarkFootnote, {
-                benchmark: formatPercentMagnitude(
-                  decomposition.benchmarkPercent,
-                ),
-              })}
-              color="purple"
-            />
-          </Box>
+
+          {showAdjustedGap && (
+            <Box
+              display="flex"
+              columnGap={[0, 0, 0, 4]}
+              rowGap={[2, 2, 2, 0]}
+              marginTop={1}
+              marginBottom={1}
+              flexDirection={['column', 'column', 'column', 'row']}
+            >
+              <StatisticCard
+                title={formatMessage(r.adjustedGapLabel)}
+                content={gapContent(
+                  decomposition.oskyrtPercent as number,
+                  decomposition.oskyrtDirection,
+                  2,
+                )}
+                subtext={formatMessage(r.benchmarkFootnote, {
+                  benchmark: formatBenchmark(decomposition.benchmarkPercent),
+                })}
+                color="purple"
+              />
+            </Box>
+          )}
 
           {rawGapSubtext ? (
             <Text variant="small" color="dark350">
@@ -404,16 +461,12 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             message={
               gapState.kind === 'withinBenchmark'
                 ? formatMessage(r.withinBenchmarkMessage, {
-                    benchmark: formatPercentMagnitude(
-                      gapState.benchmarkPercent,
-                    ),
+                    benchmark: formatBenchmark(gapState.benchmarkPercent),
                   })
                 : gapState.kind === 'overBenchmark' ||
                   gapState.kind === 'overBenchmarkOvershoots'
                 ? formatMessage(r.overBenchmarkMessage, {
-                    benchmark: formatPercentMagnitude(
-                      gapState.benchmarkPercent,
-                    ),
+                    benchmark: formatBenchmark(gapState.benchmarkPercent),
                     count: gapState.outlierCount,
                   })
                 : gapState.kind === 'overBenchmarkNoList'
@@ -422,9 +475,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
                       ? r.overBenchmarkNoCarriersMessage
                       : r.overBenchmarkAllOvershootMessage,
                     {
-                      benchmark: formatPercentMagnitude(
-                        gapState.benchmarkPercent,
-                      ),
+                      benchmark: formatBenchmark(gapState.benchmarkPercent),
                     },
                   )
                 : gapState.kind === 'notComputable'

@@ -5,6 +5,7 @@ import {
   hasNoPayComponents,
   type PayComponentsBreakdown,
 } from '../../utils/payComponents'
+import { formatSignedPercentMagnitude } from '../../utils/wageGap'
 import { formatCurrency } from '../EmployeesEditor/utils'
 
 type Row = {
@@ -12,6 +13,7 @@ type Row = {
   additional: string
   bonus: string
   total: string
+  isOverall?: boolean
   isGap?: boolean
 }
 
@@ -21,12 +23,7 @@ const cell = (value: number, count: number) =>
   count === 0 ? dash : formatCurrency(value)
 
 const formatSignedPercent = (value: number | null) =>
-  value == null
-    ? dash
-    : `${value > 0 ? '+' : ''}${value.toLocaleString('is-IS', {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      })}%`
+  value == null ? dash : `${formatSignedPercentMagnitude(value)}%`
 
 type Props = {
   data?: PayComponentsBreakdown | null
@@ -59,6 +56,7 @@ export const PayComponentsTable = ({ data }: Props) => {
       ),
       bonus: cell(data.overall.averageBonusSalary, data.overall.count),
       total: cell(data.overall.averageTotal, data.overall.count),
+      isOverall: true,
     },
     {
       label: formatMessage(t.gapRow),
@@ -97,9 +95,7 @@ export const PayComponentsTable = ({ data }: Props) => {
                     <Text
                       variant="small"
                       fontWeight={
-                        row.isGap || row.label === formatMessage(t.overall)
-                          ? 'semiBold'
-                          : 'regular'
+                        row.isGap || row.isOverall ? 'semiBold' : 'regular'
                       }
                     >
                       {row.label}

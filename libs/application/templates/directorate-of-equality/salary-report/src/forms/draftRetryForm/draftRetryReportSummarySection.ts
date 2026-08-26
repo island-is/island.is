@@ -11,7 +11,6 @@ import { buildReportOverviewFields } from '../mainForm/overviewSection'
 export const draftRetryReportSummarySection = buildSection({
   id: 'draftRetryReportSummary',
   title: messages.draftRetry.reportSummarySectionTitle,
-  condition: salaryAnalysisOutlierPlanIsReviewed,
   children: [
     buildMultiField({
       id: 'draftRetryReportSummaryMultiField',
@@ -27,6 +26,7 @@ export const draftRetryReportSummarySection = buildSection({
               event: DefaultEvents.SUBMIT,
               name: messages.draftRetry.submitButton,
               type: 'primary',
+              condition: salaryAnalysisOutlierPlanIsReviewed,
             },
           ],
         }),

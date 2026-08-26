@@ -88,6 +88,26 @@ describe('salary analysis outlier navigation flags', () => {
   })
 
   it('treats ábendingar-only results as not requiring the improvement plan', () => {
+    const answers: FormValue = {
+      salaryAnalysis: {
+        hasMinimumSetOutliers: true,
+        outlierPlanReviewed: false,
+      },
+    }
+    const data = externalData(
+      result(0, {
+        payDispersion: {
+          available: true,
+          blockers: [],
+          population: 'ALL_EMPLOYEES',
+          threshold: 2,
+          employees: [dispersionRow(1)],
+        },
+      } as Partial<SalaryAnalysisResponseDto>),
+    )
+
+    expect(salaryAnalysisNeedsImprovementPlan(answers, data)).toBe(false)
+    expect(salaryAnalysisOutlierPlanIsReviewed(answers, data)).toBe(true)
     expect(
       navigationAnswersForAnalysisResult(
         result(0, {
@@ -104,12 +124,30 @@ describe('salary analysis outlier navigation flags', () => {
     ).toEqual({
       salaryAnalysis: {
         hasMinimumSetOutliers: false,
-        outlierPlanReviewed: true,
+        outlierPlanReviewed: false,
       },
     })
   })
 
   it('does not require the improvement plan for over-benchmark results with no listed outliers', () => {
+    const answers: FormValue = {
+      salaryAnalysis: {
+        hasMinimumSetOutliers: true,
+        outlierPlanReviewed: false,
+      },
+    }
+    const data = externalData(
+      result(0, {
+        wageGapDecomposition: {
+          oskyrtWithinBenchmark: false,
+          gapCarrierCount: 2,
+          minimumSetSize: 0,
+        },
+      } as Partial<SalaryAnalysisResponseDto>),
+    )
+
+    expect(salaryAnalysisNeedsImprovementPlan(answers, data)).toBe(false)
+    expect(salaryAnalysisOutlierPlanIsReviewed(answers, data)).toBe(true)
     expect(
       navigationAnswersForAnalysisResult(
         result(0, {
@@ -124,7 +162,7 @@ describe('salary analysis outlier navigation flags', () => {
     ).toEqual({
       salaryAnalysis: {
         hasMinimumSetOutliers: false,
-        outlierPlanReviewed: true,
+        outlierPlanReviewed: false,
       },
     })
   })
@@ -145,11 +183,8 @@ describe('salary analysis outlier navigation flags', () => {
     ).toBe(true)
   })
 
-  // The regression that shipped broken: a first pass under the benchmark
-  // persists hasMinimumSetOutliers: false / outlierPlanReviewed: true. Editing
-  // the data upward afterwards has to reopen the plan screen and re-gate the
-  // overview, which only works if the fresh answers override the stale ones
-  // through the same merge the shell applies on submit.
+  // The regression that shipped broken: stale no-outlier answers must not win
+  // when a fresh analysis turns up real lágmarksmengi outliers.
   it('reopens the plan when a re-analysis turns up outliers after a compliant pass', () => {
     const persisted: FormValue = {
       salaryAnalysis: {
@@ -182,6 +217,12 @@ describe('salary analysis outlier navigation flags', () => {
 
     expect(salaryAnalysisNeedsImprovementPlan(merged)).toBe(false)
     expect(salaryAnalysisOutlierPlanIsReviewed(merged)).toBe(true)
+    expect(merged).toMatchObject({
+      salaryAnalysis: {
+        hasMinimumSetOutliers: false,
+        outlierPlanReviewed: false,
+      },
+    })
   })
 
   it('falls back to restored externalData when local navigation answers are absent', () => {
@@ -190,6 +231,22 @@ describe('salary analysis outlier navigation flags', () => {
     ).toBe(true)
     expect(
       salaryAnalysisOutlierPlanIsReviewed({}, externalData(result(1))),
+    ).toBe(false)
+  })
+
+  it('lets a present result outrank stale local need answers', () => {
+    const answers: FormValue = {
+      salaryAnalysis: {
+        hasMinimumSetOutliers: false,
+        outlierPlanReviewed: true,
+      },
+    }
+
+    expect(
+      salaryAnalysisNeedsImprovementPlan(answers, externalData(result(1))),
+    ).toBe(true)
+    expect(
+      salaryAnalysisOutlierPlanIsReviewed(answers, externalData(result(1))),
     ).toBe(false)
   })
 })
