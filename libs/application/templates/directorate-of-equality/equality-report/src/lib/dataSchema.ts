@@ -53,14 +53,16 @@ const employeeCount = z.object({
     params: messages.errors.invalidNonNegativeNumber,
   }),
   // Optional — unlike women/men, companies aren't required to report this.
-  nonBinary: z.string().refine(
-    (v) =>
-      v === '' ||
-      (v.trim() !== '' && Number.isFinite(Number(v)) && Number(v) >= 0),
-    {
-      params: messages.errors.invalidNonNegativeNumber,
-    },
-  ),
+  nonBinary: z
+    .string()
+    .refine(
+      (v) =>
+        v === '' ||
+        (v.trim() !== '' && Number.isFinite(Number(v)) && Number(v) >= 0),
+      {
+        params: messages.errors.invalidNonNegativeNumber,
+      },
+    ),
 })
 
 const subsidiaries = z.object({
