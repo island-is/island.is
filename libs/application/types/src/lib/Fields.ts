@@ -1025,11 +1025,8 @@ export interface StickyFooterField extends BaseField {
     | ((
         application: Application,
       ) => { label: StaticText; value: StaticText }[])
-  /**
-   * `dataTestId` of the element (e.g. a `StaticTableField`) whose rendered
-   * width/position the footer should match at runtime.
-   */
   widthReferenceTestId: string
+  watchFieldIds: string[]
 }
 
 export type PaginatedSearchableTableRow = Record<

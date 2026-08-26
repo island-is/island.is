@@ -69,6 +69,7 @@ export const debtsSection = buildSection({
         buildStickyFooterField({
           id: 'debtsSummaryFooter',
           widthReferenceTestId: 'debts-table',
+          watchFieldIds: ['debtsToPay', 'selectedDebts'],
           rows: (application: Application) => {
             const totalDebts = getDebts(application).reduce(
               (total, debt) => total + debt.debts,
