@@ -1249,6 +1249,10 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
         defaultMessage: 'Ég vil skila úrbótaáætlun seinna',
       },
+      nameLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.nameLabel',
+        defaultMessage: 'Heiti hóps',
+      },
       reasonLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.reasonLabel',
         defaultMessage: 'Ástæða frávika',

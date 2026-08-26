@@ -37,6 +37,7 @@ const AppointmentsOverview = () => {
   })
   const [searchTerm, setSearchTerm] = useState<string>('')
   const { data, loading, error } = useGetAppointmentsQuery({
+    fetchPolicy: 'network-only',
     variables: {
       from: filter.dates?.from,
       status:

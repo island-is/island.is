@@ -15,6 +15,7 @@ import {
   UpdateOrganDonorDto,
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
+  meAppointmentControllerCancelAppointmentV1,
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentByIdV1,
   meCertificateControllerCreateCertificateRequestV1,
@@ -578,6 +579,18 @@ export class HealthDirectorateHealthService {
     )
 
     return appointment ?? null
+  }
+
+  public async cancelAppointment(auth: Auth, id: string): Promise<boolean> {
+    await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerCancelAppointmentV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return true
   }
 
   /* Conversations (Health Messages) */

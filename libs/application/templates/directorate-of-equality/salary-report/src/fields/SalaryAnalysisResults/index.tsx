@@ -99,7 +99,8 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   })
 
   // postponed stays answers-backed in both phases — read from the ambient form, never draftForm.
-  const { control: ambientControl } = useFormContext()
+  const { control: ambientControl, setValue: setAmbientValue } =
+    useFormContext()
   const postponed: string[] =
     useWatch({
       name: 'salaryAnalysis.postponed',
@@ -177,12 +178,9 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     )
     draftForm.reset({
       salaryAnalysis: {
-        outlierGroups: content.outlierGroups.map((g, index) => ({
+        outlierGroups: content.outlierGroups.map((g) => ({
           id: g.id,
-          name: formatMessage(
-            messages.salaryAnalysis.outlierGroup.defaultGroupName,
-            { index: index + 1 },
-          ),
+          name: g.name ?? '',
           reason: g.reason ?? '',
           action: g.action ?? '',
           signatureName: g.signatureName ?? '',
@@ -251,9 +249,23 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         }
       }
 
+      // A blank name still needs to reach the backend as something that tells
+      // groups apart, so backfill it with the same numbered label the
+      // accordion header already falls back to when displaying an empty name.
+      const nameFor = (group: OutlierGroupAnswer, index: number) =>
+        group.name?.trim() ||
+        `${formatMessage(messages.salaryAnalysis.outlierGroup.groupHeading)} ${
+          index + 1
+        }`
+
       // Draft phase: persist the outlier grouping to DMR before continuing; postponed has nothing to sync.
       if (isDraftPhase && content) {
-        const finalGroups = draftForm.getValues().salaryAnalysis.outlierGroups
+        const finalGroups = draftForm
+          .getValues()
+          .salaryAnalysis.outlierGroups.map((g, index) => ({
+            ...g,
+            name: nameFor(g, index),
+          }))
         try {
           await sync(buildOutlierSyncCommands(content, finalGroups))
           // Refresh in case the applicant navigates back to an earlier screen this session.
@@ -261,6 +273,17 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         } catch {
           return [false, formatMessage(messages.errors.draftSyncFailed)]
         }
+      } else {
+        // Postponed mode is answers-backed — write the fallback straight into
+        // the ambient form so it's part of what gets persisted on submit.
+        outlierGroups.forEach((g, index) => {
+          if (!g.name?.trim()) {
+            setAmbientValue(
+              `salaryAnalysis.outlierGroups.${index}.name`,
+              nameFor(g, index),
+            )
+          }
+        })
       }
 
       return [true, null]
@@ -279,6 +302,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     draftForm,
     sync,
     refetch,
+    setAmbientValue,
   ])
 
   const totals = result?.regularHourlyWageByScoreAll?.totals
