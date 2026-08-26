@@ -68,6 +68,7 @@ const RichTextEditor = ({
     left: 0,
   })
   const pickerRef = useRef<HTMLDivElement>(null)
+  const highlightButtonRef = useRef<HTMLElement | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   // Persist while the user types so content isn't lost on a refresh that
@@ -169,7 +170,15 @@ const RichTextEditor = ({
     if (!pickerOpen) return
     const handleMouseDown = (e: MouseEvent) => {
       const target = e.target as Node
-      if (pickerRef.current && !pickerRef.current.contains(target)) {
+      // The highlight button is excluded: React flushes this effect while the
+      // opening mousedown is still bubbling towards the document, so without
+      // the exclusion the picker would close in the same event that opened
+      // it. The button's own handler does the toggling instead.
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(target) &&
+        !highlightButtonRef.current?.contains(target)
+      ) {
         setPickerOpen(false)
       }
     }
@@ -202,6 +211,7 @@ const RichTextEditor = ({
     const button = wrapper?.querySelector<HTMLElement>(
       '[aria-label="Highlight"]',
     )
+    highlightButtonRef.current = button ?? null
     if (wrapper && button) {
       // Both the wrapper (position: relative) and the button live in this
       // component, so the picker is anchored with plain offset math.

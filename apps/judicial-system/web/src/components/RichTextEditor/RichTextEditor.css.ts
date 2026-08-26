@@ -107,8 +107,11 @@ export const wrapperFullscreen = style({
 export const toolbar = style({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 2,
-  padding: `${theme.spacing[1]}px ${theme.spacing[1]}px 0 ${theme.spacing[1]}px`,
+  gap: 0,
+  padding: `4px ${theme.spacing[1]}px 5px`,
+  // The full-width divider between the toolbar and the content area, like
+  // the previous editor drew under its toolbar.
+  borderBottom: `${theme.border.width.standard}px solid ${theme.color.dark200}`,
 })
 
 export const toolbarButton = style({
@@ -185,28 +188,53 @@ export const content = style({
 // so the editor must never emit inline styles. These rules make the classes
 // render in the editor.
 
+// Typography mirrors the island-ui Input textarea (see
+// libs/island-ui/core/src/lib/Input/Input.mixins.ts) so the editor reads like
+// the other input fields around it: same theme font stack, light weight,
+// responsive 16/18px size, dark400 text and blue caret.
 globalStyle(`${content} .ProseMirror`, {
-  fontFamily: "'IBM Plex Sans', sans-serif",
-  fontSize: 18,
-  fontWeight: 300,
+  fontFamily: theme.typography.fontFamily,
+  fontSize: 16,
+  fontWeight: theme.typography.light,
+  color: theme.color.dark400,
+  caretColor: theme.color.blue400,
   minHeight: '100%',
   outline: 'none',
-  padding: theme.spacing[2],
+  // island-ui fields inset their text by container padding (8px) plus the
+  // input element's own padding (8px mobile, 16px desktop); the editor has no
+  // inner element, so the sum is applied here to line the text up with them.
+  padding: `${theme.spacing[2]}px ${theme.spacing[2]}px`,
   whiteSpace: 'pre-wrap',
   overflowWrap: 'break-word',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      fontSize: 18,
+      padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+    },
+  },
 })
 
 globalStyle(`${content} .ProseMirror p`, {
   margin: 0,
+  // The island-ui global reset puts font-weight: normal directly on every p,
+  // which beats the weight inherited from the rule above — undo it so the
+  // editor's light weight reaches the text.
+  fontWeight: 'inherit',
 })
 
+// The app loads IBM Plex Sans in weights 300/400/500/600 only (_app.tsx), so
+// 700 would be browser-synthesized faux bold. semiBold is the heaviest real
+// face and what island-ui renders emphasis with.
 globalStyle(`${content} .ProseMirror strong, ${content} .ProseMirror b`, {
-  fontWeight: 700,
+  fontWeight: theme.typography.semiBold,
 })
 
 globalStyle(`${content} .ProseMirror ul, ${content} .ProseMirror ol`, {
   margin: 0,
   paddingLeft: 32,
+  // The island-ui reset also sets font-weight: normal on ul/ol, which list
+  // items would pass on to the paragraphs inside them.
+  fontWeight: 'inherit',
 })
 
 // Every nesting level keeps the same bullet. The browser default cycles
@@ -216,6 +244,12 @@ globalStyle(`${content} .ProseMirror ul, ${content} .ProseMirror ol`, {
 // default at any depth.
 globalStyle(`${content} .ProseMirror ul`, {
   listStyleType: 'disc',
+})
+
+// The island-ui global reset strips list markers (list-style: none on ul and
+// untyped ol), so ordered lists must restore theirs explicitly too.
+globalStyle(`${content} .ProseMirror ol`, {
+  listStyleType: 'decimal',
 })
 
 globalStyle(`${content} .ProseMirror li.${MARKER_NONE_CLASS}`, {

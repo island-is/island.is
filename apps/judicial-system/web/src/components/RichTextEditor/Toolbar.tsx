@@ -1,101 +1,117 @@
 import type { FC, ReactNode } from 'react'
 import React from 'react'
-import cn from 'classnames'
 import type { Editor } from '@tiptap/react'
 import { useEditorState } from '@tiptap/react'
 
 import * as styles from './RichTextEditor.css'
 
-// Hand-drawn 20x20 glyphs so the toolbar has no icon-font or asset
+// Hand-drawn 24x24 glyphs so the toolbar has no icon-font or asset
 // dependency; they follow the shapes of the previous editor's icons.
 const BoldIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
     <path
       fill="currentColor"
-      d="M6.5 3h5a3.75 3.75 0 0 1 2.45 6.6A3.9 3.9 0 0 1 12.1 17H6.5V3Zm2.8 5.6h2a1.55 1.55 0 1 0 0-3.1h-2v3.1Zm0 5.9h2.6a1.7 1.7 0 1 0 0-3.4H9.3v3.4Z"
+      d="M7 3.5h5.8c2.6 0 4.5 1.55 4.5 3.9 0 1.6-.85 2.8-2.1 3.35 1.7.5 2.8 1.9 2.8 3.75 0 2.5-2 4-4.8 4H7v-15Zm3.1 6.1h2.35c1.15 0 1.9-.65 1.9-1.65 0-1-.75-1.6-1.9-1.6H10.1v3.25Zm0 6.05h2.85c1.25 0 2.05-.7 2.05-1.75s-.8-1.7-2.05-1.7H10.1v3.45Z"
     />
   </svg>
 )
 
 const ItalicIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
     <path
       fill="currentColor"
-      d="M8.5 3H16v2h-2.7l-3 10H13v2H4.5v-2h2.7l3-10H7.5V3Z"
+      d="M10.6 3.8h7v1.8h-2.9l-3.2 12.8h2.5v1.8H6.7v-1.8h2.8l3.2-12.8h-2.1V3.8Z"
     />
   </svg>
 )
 
 const BulletListIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
     <g fill="currentColor">
-      <circle cx="4" cy="5" r="1.5" />
-      <circle cx="4" cy="10" r="1.5" />
-      <circle cx="4" cy="15" r="1.5" />
-      <rect x="8" y="4" width="9" height="2" rx="1" />
-      <rect x="8" y="9" width="9" height="2" rx="1" />
-      <rect x="8" y="14" width="9" height="2" rx="1" />
+      <circle cx="4.7" cy="6" r="1.9" />
+      <circle cx="4.7" cy="12" r="1.9" />
+      <circle cx="4.7" cy="18" r="1.9" />
+      <rect x="9.5" y="4.9" width="11" height="2.2" rx="1.1" />
+      <rect x="9.5" y="10.9" width="11" height="2.2" rx="1.1" />
+      <rect x="9.5" y="16.9" width="11" height="2.2" rx="1.1" />
     </g>
   </svg>
 )
 
 const OrderedListIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
     <g fill="currentColor">
-      <text x="2" y="7" fontSize="6.5" fontFamily="inherit">
+      <text x="2.6" y="8" fontSize="6.8" fontWeight="600" fontFamily="inherit">
         1
       </text>
-      <text x="2" y="12.5" fontSize="6.5" fontFamily="inherit">
+      <text
+        x="2.6"
+        y="14.6"
+        fontSize="6.8"
+        fontWeight="600"
+        fontFamily="inherit"
+      >
         2
       </text>
-      <text x="2" y="18" fontSize="6.5" fontFamily="inherit">
+      <text
+        x="2.6"
+        y="21.2"
+        fontSize="6.8"
+        fontWeight="600"
+        fontFamily="inherit"
+      >
         3
       </text>
-      <rect x="8" y="4" width="9" height="2" rx="1" />
-      <rect x="8" y="9.5" width="9" height="2" rx="1" />
-      <rect x="8" y="15" width="9" height="2" rx="1" />
+      <rect x="9.5" y="4.4" width="11" height="2.2" rx="1.1" />
+      <rect x="9.5" y="11" width="11" height="2.2" rx="1.1" />
+      <rect x="9.5" y="17.6" width="11" height="2.2" rx="1.1" />
     </g>
   </svg>
 )
 
 const IndentIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
     <g fill="currentColor">
-      <rect x="3" y="3.5" width="14" height="2" rx="1" />
-      <rect x="9" y="7.5" width="8" height="2" rx="1" />
-      <rect x="9" y="11" width="8" height="2" rx="1" />
-      <rect x="3" y="14.5" width="14" height="2" rx="1" />
-      <path d="M3 7.5l4 2.75L3 13z" />
+      <rect x="3" y="4" width="18" height="2.2" rx="1.1" />
+      <rect x="10.5" y="8.6" width="10.5" height="2.2" rx="1.1" />
+      <rect x="10.5" y="13.2" width="10.5" height="2.2" rx="1.1" />
+      <rect x="3" y="17.8" width="18" height="2.2" rx="1.1" />
+      <path d="M3 8.4l5.2 3.6L3 15.6V8.4Z" />
     </g>
   </svg>
 )
 
 const OutdentIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
     <g fill="currentColor">
-      <rect x="3" y="3.5" width="14" height="2" rx="1" />
-      <rect x="9" y="7.5" width="8" height="2" rx="1" />
-      <rect x="9" y="11" width="8" height="2" rx="1" />
-      <rect x="3" y="14.5" width="14" height="2" rx="1" />
-      <path d="M7 7.5l-4 2.75L7 13z" />
+      <rect x="3" y="4" width="18" height="2.2" rx="1.1" />
+      <rect x="10.5" y="8.6" width="10.5" height="2.2" rx="1.1" />
+      <rect x="10.5" y="13.2" width="10.5" height="2.2" rx="1.1" />
+      <rect x="3" y="17.8" width="18" height="2.2" rx="1.1" />
+      <path d="M8.2 8.4L3 12l5.2 3.6V8.4Z" />
     </g>
   </svg>
 )
 
 const HighlightIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
     <g fill="currentColor">
-      <path d="M12.9 2.9a1.4 1.4 0 0 1 2 0l2.2 2.2a1.4 1.4 0 0 1 0 2L9.6 14.6 5 15l.4-4.6 7.5-7.5Zm-5 8.4-.15 1.85 1.85-.15 6.5-6.5-1.7-1.7-6.5 6.5Z" />
-      <rect x="3" y="16.5" width="14" height="2.5" rx="1" />
+      <path d="M16.6 3.2a1.6 1.6 0 0 1 2.26 0l1.94 1.94a1.6 1.6 0 0 1 0 2.26L11 17.2 6 18l.8-5L16.6 3.2Z" />
+      <rect x="3.5" y="19.5" width="17" height="2.8" rx="1" />
     </g>
   </svg>
 )
 
+// Ionicons expand-outline (MIT), inlined like the other glyphs.
 const FullscreenIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+  <svg width="22" height="22" viewBox="0 0 512 512" aria-hidden="true">
     <path
-      fill="currentColor"
-      d="M3 8V3h5v2H5v3H3Zm14 0V5h-3V3h5v5h-2ZM3 17v-5h2v3h3v2H3Zm9 0v-2h3v-3h2v5h-5Z"
+      d="M432 320v112H320M421.8 421.77 304 304M80 192V80h112M90.2 90.23 208 208M320 80h112v112M421.77 90.2 304 208M192 432H80V320M90.23 421.8 208 304"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="44"
     />
   </svg>
 )
@@ -108,16 +124,17 @@ const ToolbarButton: FC<{
 }> = ({ label, active, onAction, children }) => (
   <button
     type="button"
-    className={cn(styles.toolbarButton, {
-      [styles.toolbarButtonActive]: active,
-    })}
+    className={`${styles.toolbarButton}${
+      active ? ` ${styles.toolbarButtonActive}` : ''
+    }`}
     aria-label={label}
     aria-pressed={active ?? false}
-    // Mousedown is prevented so the editor selection and focus survive the
-    // button press and no blur-save fires mid-edit; the action itself runs on
-    // click so keyboard activation (Enter/Space) works too.
-    onMouseDown={(e) => e.preventDefault()}
-    onClick={onAction}
+    // Mousedown instead of click, prevented, so the editor selection and
+    // focus survive the button press and no blur-save fires mid-edit.
+    onMouseDown={(e) => {
+      e.preventDefault()
+      onAction()
+    }}
   >
     {children}
   </button>
