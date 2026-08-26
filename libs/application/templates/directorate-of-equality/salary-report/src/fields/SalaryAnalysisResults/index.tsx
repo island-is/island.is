@@ -57,6 +57,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   field,
   errors,
   setBeforeSubmitCallback,
+  goToScreen,
 }) => {
   const hidePostponeCheckbox =
     field?.props && typeof field.props['hidePostponeCheckbox'] === 'boolean'
@@ -370,6 +371,20 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
 
   const body = (
     <Box>
+      {isDraftPhase && (
+        <Box marginBottom={3}>
+          <Button
+            variant="ghost"
+            size="small"
+            preTextIcon="arrowBack"
+            disabled={isAnalyzing}
+            onClick={() => goToScreen?.('criteriaMultiField')}
+          >
+            {formatMessage(messages.salaryAnalysis.results.reviewDataButton)}
+          </Button>
+        </Box>
+      )}
+
       {isAnalyzing && (
         <Box display="flex" justifyContent="center" paddingY={5}>
           <LoadingDots />

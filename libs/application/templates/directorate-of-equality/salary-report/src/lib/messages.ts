@@ -551,12 +551,21 @@ export const messages = {
       },
       importSuccess: {
         id: 'doe.sr.application:report.dataEntry.importSuccess',
-        defaultMessage: 'Skráin var flutt inn.',
+        defaultMessage:
+          'Skráin var flutt inn og launagreining fer fram í næsta skrefi.',
+      },
+      importSuccessContinueButton: {
+        id: 'doe.sr.application:report.dataEntry.importSuccessContinueButton',
+        defaultMessage: 'Halda áfram í launagreiningu',
       },
       importError: {
         id: 'doe.sr.application:report.dataEntry.importError',
         defaultMessage:
           'Villa kom upp við innflutning. Vinsamlegast reyndu aftur.',
+      },
+      invalidFileType: {
+        id: 'doe.sr.application:report.dataEntry.invalidFileType',
+        defaultMessage: 'Aðeins er hægt að hlaða upp Excel (.xlsx) skjölum.',
       },
       excelTemplateDownloadDescription: {
         id: 'doe.sr.application:report.dataEntry.excelTemplateDownloadDescription',
@@ -567,7 +576,7 @@ export const messages = {
     criteria: defineMessages({
       sectionTitle: {
         id: 'doe.sr.application:report.criteria.sectionTitle',
-        defaultMessage: 'Yfirviðmiðt',
+        defaultMessage: 'Yfirviðmið',
       },
       title: {
         id: 'doe.sr.application:report.criteria.title',
@@ -973,6 +982,10 @@ export const messages = {
       recalculateButton: {
         id: 'doe.sr.application:salaryAnalysis.results.recalculateButton',
         defaultMessage: 'Reikna aftur',
+      },
+      reviewDataButton: {
+        id: 'doe.sr.application:salaryAnalysis.results.reviewDataButton',
+        defaultMessage: 'Yfirfara gögn í viðmóti',
       },
       analyzing: {
         id: 'doe.sr.application:salaryAnalysis.results.analyzing',
