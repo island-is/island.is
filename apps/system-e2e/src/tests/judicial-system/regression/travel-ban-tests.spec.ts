@@ -2,9 +2,14 @@ import { expect } from '@playwright/test'
 import { urls } from '../../../support/urls'
 import { test } from '../utils/judicialSystemTest'
 import { verifyRequestCompletion } from '../../../support/api-tools'
-import { getDaysFromNow, randomPoliceCaseNumber } from '../utils/helpers'
+import {
+  getDaysFromNow,
+  injectTestDefenderIntoLawyerRegistry,
+  randomPoliceCaseNumber,
+  selectTestDefender,
+} from '../utils/helpers'
 import { judgeSubmitsDecision } from './shared-steps/court-decision'
-import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
+import { defenderAppealsCaseTest } from './shared-steps/send-appeal'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
 
@@ -20,6 +25,8 @@ test.describe.serial('Travel ban tests', () => {
     prosecutorPage,
   }) => {
     const page = prosecutorPage
+
+    await injectTestDefenderIntoLawyerRegistry(page)
 
     await page.goto('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
@@ -48,6 +55,12 @@ test.describe.serial('Travel ban tests', () => {
       .fill('Latibær')
     await page.locator('#defendantGender').click()
     await page.locator('#react-select-defendantGender-option-0').click()
+
+    // Defender - registered through the lawyer registry combobox so the
+    // defender fixture can appeal the ruling later
+    await selectTestDefender(page)
+    await page.locator('label[for="defender-access-ready-for-court"]').click()
+
     await Promise.all([
       page.getByRole('button', { name: 'Stofna mál' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCase'),
@@ -110,13 +123,13 @@ test.describe.serial('Travel ban tests', () => {
     judgePage,
   }) => {
     await judgeSubmitsDecision(judgePage, caseId, {
-      acceptRulingText: 'Krafa um farbann samþykkt',
+      decisionText: 'Krafa um farbann samþykkt',
       validToDate: travelBanEndDate,
     })
   })
 
-  test('prosecutor should appeal case', async ({ prosecutorPage }) => {
-    await prosecutorAppealsCaseTest(prosecutorPage, caseId)
+  test('defender should appeal case', async ({ defenderPage }) => {
+    await defenderAppealsCaseTest(defenderPage, caseId)
   })
 
   test('judge should receive appealed case', async ({ judgePage }) => {
