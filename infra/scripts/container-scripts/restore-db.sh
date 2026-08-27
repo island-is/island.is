@@ -26,13 +26,15 @@ aws s3 cp \
   "$DUMP_FILE" \
   --region "eu-west-1"
 
+
+
 # Restore dump
 echo "Restoring database from dump..."
 gunzip -c "$DUMP_FILE" | psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -v ON_ERROR_STOP=0
 
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER SCHEMA public OWNER TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT USAGE, CREATE ON SCHEMA public TO \"$DB_USER\""
-psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "REASSIGN OWNED BY \"$PGUSER\" TO \"$DB_USER\""
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "REASSIGN OWNED BY servicesauth TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO \"$DB_USER\""
