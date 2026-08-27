@@ -322,10 +322,6 @@ export class ScopeService extends MultiEnvironmentService {
   ): Promise<ScopesByTenantsPayload> {
     const uniqueIds = Array.from(new Set(tenantIds))
 
-    // Fetch scopes for every tenant, batching the fan-out so a large number of
-    // tenants doesn't burst into one huge wave of upstream requests. Previously
-    // this was truncated to a fixed number of tenants, which silently hid the
-    // scopes of any tenant beyond the cap.
     const settled: PromiseSettledResult<{
       tenantId: string
       payload: ScopesPayload
