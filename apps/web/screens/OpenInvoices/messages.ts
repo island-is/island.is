@@ -100,9 +100,13 @@ export const m = {
       id: 'web.openinvoices:totals.invoiceAmount',
       defaultMessage: 'Upphæð reiknings',
     },
-    paidAmount: {
+    paid: {
       id: 'web.openinvoices:totals.paidAmount',
-      defaultMessage: 'Þar af greitt',
+      defaultMessage: 'Greitt',
+    },
+    linkedToMorePayments: {
+      id: 'web.openinvoices:totals.linkedToMorePayments',
+      defaultMessage: 'tengist fleiri greiðslum',
     },
   }),
   search: defineMessages({

@@ -58,79 +58,94 @@ export const NestedLines = ({
       )
     }
 
-    return payments.map((payment) => (
-      <Box paddingBottom={3} paddingLeft={2} paddingRight={2} key={payment.id}>
-        <Box marginBottom={2} display="flex">
-          <Box marginRight={2}>
-            <Text variant="small" fontWeight="semiBold">
-              {formatDate(new Date(payment.date), {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+    return payments.map((payment) => {
+      const isFullyPaid = payment.amount === payment.invoice.totalAmount
+
+      return (
+        <Box
+          paddingBottom={3}
+          paddingLeft={2}
+          paddingRight={2}
+          key={payment.id}
+        >
+          <Box marginBottom={2} display="flex">
+            <Box marginRight={2}>
+              <Text variant="small" fontWeight="semiBold">
+                {formatDate(new Date(payment.date), {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </Text>
+            </Box>
+            <Text variant="small">
+              {isFullyPaid
+                ? payment.invoice.number
+                : `${payment.invoice.number} - ${formatMessage(
+                    m.totals.linkedToMorePayments,
+                  )}`}
             </Text>
           </Box>
-          <Text variant="small">{payment.invoice.number}</Text>
-        </Box>
-        <T.Table>
-          <T.Body>
-            {payment.invoice.itemizations?.map((invoiceItem, i) => {
-              const background = i % 2 === 0 ? 'white' : undefined
-              return (
-                <T.Row key={invoiceItem.id}>
+          <T.Table>
+            <T.Body>
+              {payment.invoice.itemizations?.map((invoiceItem, i) => {
+                const background = i % 2 === 0 ? 'white' : undefined
+                return (
+                  <T.Row key={invoiceItem.id}>
+                    <T.Data
+                      box={{
+                        textAlign: 'left',
+                        background,
+                        className: styles.noBorder,
+                      }}
+                    >
+                      <Text variant="small">{invoiceItem.label}</Text>
+                    </T.Data>
+                    <T.Data
+                      box={{
+                        textAlign: 'right',
+                        background,
+                        className: styles.noBorder,
+                      }}
+                    >
+                      <Text variant="small">
+                        {formatCurrency(invoiceItem.amount)}
+                      </Text>
+                    </T.Data>
+                  </T.Row>
+                )
+              })}
+              {!isFullyPaid && (
+                <T.Row>
                   <T.Data
                     box={{
-                      textAlign: 'left',
-                      background,
-                      className: styles.noBorder,
-                    }}
-                  >
-                    <Text variant="small">{invoiceItem.label}</Text>
-                  </T.Data>
-                  <T.Data
-                    box={{
-                      textAlign: 'right',
-                      background,
+                      background:
+                        (payment.invoice.itemizations?.length ?? 0) % 2 === 0
+                          ? 'white'
+                          : undefined,
                       className: styles.noBorder,
                     }}
                   >
                     <Text variant="small">
-                      {formatCurrency(invoiceItem.amount)}
+                      {formatMessage(m.totals.invoiceAmount)}
+                    </Text>
+                  </T.Data>
+                  <T.Data
+                    box={{
+                      textAlign: 'right',
+                      background:
+                        (payment.invoice.itemizations?.length ?? 0) % 2 === 0
+                          ? 'white'
+                          : undefined,
+                      className: styles.noBorder,
+                    }}
+                  >
+                    <Text variant="small">
+                      {formatCurrency(payment.invoice.totalAmount)}
                     </Text>
                   </T.Data>
                 </T.Row>
-              )
-            })}
-            <T.Row>
-              <T.Data
-                box={{
-                  background:
-                    (payment.invoice.itemizations?.length ?? 0) % 2 === 0
-                      ? 'white'
-                      : undefined,
-                  className: styles.noBorder,
-                }}
-              >
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(m.totals.invoiceAmount)}
-                </Text>
-              </T.Data>
-              <T.Data
-                box={{
-                  textAlign: 'right',
-                  background:
-                    (payment.invoice.itemizations?.length ?? 0) % 2 === 0
-                      ? 'white'
-                      : undefined,
-                  className: styles.noBorder,
-                }}
-              >
-                <Text fontWeight="semiBold" variant="small">
-                  {formatCurrency(payment.invoice.totalAmount)}
-                </Text>
-              </T.Data>
-            </T.Row>
-            {payment.amount !== payment.invoice.totalAmount && (
+              )}
               <T.Row>
                 <T.Data
                   box={{
@@ -142,7 +157,7 @@ export const NestedLines = ({
                   }}
                 >
                   <Text fontWeight="semiBold" variant="small">
-                    {formatMessage(m.totals.paidAmount)}
+                    {formatMessage(m.totals.paid)}
                   </Text>
                 </T.Data>
                 <T.Data
@@ -160,11 +175,11 @@ export const NestedLines = ({
                   </Text>
                 </T.Data>
               </T.Row>
-            )}
-          </T.Body>
-        </T.Table>
-      </Box>
-    ))
+            </T.Body>
+          </T.Table>
+        </Box>
+      )
+    })
   }
 
   return (
