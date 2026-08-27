@@ -25,10 +25,14 @@ export const SortableTable = <T extends Record<string, any>>({
   defaultSortDir = 'asc',
   onRowClick,
 }: Props<T>) => {
-  const [sortKey, setSortKey] = useState<keyof T>(
-    defaultSortKey ??
-      (columns.find((column) => column.sortable !== false) ?? columns[0]).key,
-  )
+  const [sortKey, setSortKey] = useState<keyof T | undefined>(() => {
+    const sortableColumns = columns.filter(
+      (column) => column.sortable !== false,
+    )
+    return sortableColumns.some((column) => column.key === defaultSortKey)
+      ? defaultSortKey
+      : sortableColumns[0]?.key
+  })
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>(defaultSortDir)
 
   const handleSort = (key: keyof T) => {
@@ -40,13 +44,16 @@ export const SortableTable = <T extends Record<string, any>>({
     }
   }
 
-  const sorted = [...data].sort((a, b) => {
-    const av = String(a[sortKey] ?? '').toLowerCase()
-    const bv = String(b[sortKey] ?? '').toLowerCase()
-    if (av < bv) return sortDir === 'asc' ? -1 : 1
-    if (av > bv) return sortDir === 'asc' ? 1 : -1
-    return 0
-  })
+  const sorted =
+    sortKey === undefined
+      ? data
+      : [...data].sort((a, b) => {
+          const av = String(a[sortKey] ?? '').toLowerCase()
+          const bv = String(b[sortKey] ?? '').toLowerCase()
+          if (av < bv) return sortDir === 'asc' ? -1 : 1
+          if (av > bv) return sortDir === 'asc' ? 1 : -1
+          return 0
+        })
 
   return (
     <T.Table>

@@ -58,4 +58,4 @@ export const CURRENCY_FLAG_SPRITE_HEIGHT =
   CURRENCY_CODES.length * CURRENCY_FLAG_SIZE
 
 export const hasCurrencyFlag = (code: string): code is CurrencyCode =>
-  code in currencyFlagIndex
+  Object.prototype.hasOwnProperty.call(currencyFlagIndex, code)
