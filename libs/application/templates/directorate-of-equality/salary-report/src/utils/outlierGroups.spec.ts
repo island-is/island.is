@@ -56,10 +56,20 @@ describe('isOutlierGroupComplete', () => {
     expect(isOutlierGroupComplete({ ...complete, reason: '   ' })).toBe(false)
   })
 
-  it('rejects a group missing its signature', () => {
+  it('rejects a group missing its signature role', () => {
     expect(isOutlierGroupComplete({ ...complete, signatureRole: '' })).toBe(
       false,
     )
+  })
+
+  // The responsible party's name is optional, so it must not hold up the
+  // Continue button the way the other fields do.
+  it('accepts a group with no responsible party name', () => {
+    expect(isOutlierGroupComplete({ ...complete, signatureName: '' })).toBe(
+      true,
+    )
+    const { signatureName: _omitted, ...withoutName } = complete
+    expect(isOutlierGroupComplete(withoutName)).toBe(true)
   })
 })
 

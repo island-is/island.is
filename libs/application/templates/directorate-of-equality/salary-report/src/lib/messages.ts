@@ -1358,13 +1358,31 @@ export const messages = {
       },
     }),
     outlierGroup: defineMessages({
-      employeeColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.employeeColumn',
-        defaultMessage: 'Auðkenni',
+      ordinalColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.ordinalColumn',
+        defaultMessage: '#',
       },
-      scoreColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.scoreColumn',
-        defaultMessage: 'Starfsmatsstig',
+      // The bare ordinal only reads as an identifier if the applicant knows it
+      // is the same number they saw on the earlier screens and in the workbook.
+      employeeColumnTooltip: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.employeeColumnTooltip',
+        defaultMessage:
+          'Númer starfsmanns (#) samsvarar númeri í einstaklingsmati, innsetningu gagna og eða excel skjali',
+      },
+      roleColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.roleColumn',
+        defaultMessage: 'Starf',
+      },
+      genderColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.genderColumn',
+        defaultMessage: 'Kyn',
+      },
+      // New id, not a new defaultMessage on the old one: the CMS translation for
+      // `scoreColumn` ("Stigaflokkur") wins over whatever is written here, so a
+      // renamed header only takes effect under an id Contentful has never seen.
+      stigColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.stigColumn',
+        defaultMessage: 'Stig',
       },
       hourlyWageColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.hourlyWageColumn',
@@ -1373,6 +1391,10 @@ export const messages = {
       expectedHourlyWageColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.expectedHourlyWageColumn',
         defaultMessage: 'Væntanlegt tímakaup',
+      },
+      wageUnitFootnote: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.wageUnitFootnote',
+        defaultMessage: 'Tímakaup er sýnt í kr./klst.',
       },
       deviationColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.deviationColumn',
