@@ -285,6 +285,72 @@ describe('DrivingLicenseDuplicateService', () => {
     })
   })
 
+  describe('postFullLicenseWithHealthDeclarationV6', () => {
+    // Regression test for a false failure observed on IS-DEV: the 201 body was
+    // routed through `handleCreateResponse` (written for v5 NewCategory), which
+    // reported "unknown type of response" for an application RLS had actually
+    // created. The applicant had already paid, was told it failed, and their retry
+    // died with "An application already exists for this category".
+    const auth = { authorization: 'Bearer v6-user-token' } as Auth
+    const model = {
+      districtId: 37,
+      sendPlasticToPerson: false,
+      healthDeclaration: {},
+    }
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    it.each([
+      ['an id as text, as the spec documents', '3248752'],
+      ['an empty body', ''],
+      // The shapes that used to be misread as failure.
+      ['a wrapped zero', '{"value":0}'],
+      ['a bare boolean', 'true'],
+      ['null', 'null'],
+      ['an unexpected object', '{"created":true}'],
+    ])('treats %s as success', async (_label, body) => {
+      jest
+        .spyOn(
+          applicationV6,
+          'apiApplicationsV6CategoryWithhealthdeclarationPost',
+        )
+        .mockResolvedValue(body as unknown as number)
+
+      await expect(
+        service.postFullLicenseWithHealthDeclarationV6({
+          auth,
+          category: 'B',
+          model,
+        }),
+      ).resolves.toBe(true)
+    })
+
+    it('propagates a rejection rather than reporting success', async () => {
+      // 400 ProblemDetails is the documented failure mode and enhanced fetch
+      // throws it, so it must reach submitApplication's error path intact.
+      const problem = Object.assign(new Error('already exists'), {
+        name: 'FetchError',
+        status: 400,
+      })
+      jest
+        .spyOn(
+          applicationV6,
+          'apiApplicationsV6CategoryWithhealthdeclarationPost',
+        )
+        .mockRejectedValue(problem)
+
+      await expect(
+        service.postFullLicenseWithHealthDeclarationV6({
+          auth,
+          category: 'B',
+          model,
+        }),
+      ).rejects.toBe(problem)
+    })
+  })
+
   describe('getErrorCodeDescriptions caching', () => {
     const sampleCatalogue = [
       {

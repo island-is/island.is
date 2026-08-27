@@ -94,17 +94,28 @@ export class DrivingLicenseApi {
   }
 
   /**
-   * B-full counterpart of the above. Unlike the temporary endpoint this returns
-   * a bare number rather than a DTO, and the generated client's `Promise<number>`
-   * is a lie — the raw method ends in `TextApiResponse`, and the service returns
-   * a string on error. `handleCreateResponse` is the existing handler for that.
+   * B-full counterpart of the temporary endpoint above.
+   *
+   * Deliberately does NOT use `handleCreateResponse`. That helper exists for the
+   * v5 NewCategory endpoint, whose body is `{ value: number }` / a bare number /
+   * an error string. This endpoint has exactly two documented outcomes — 201 with
+   * the new application id, and 400 with ProblemDetails — and `createEnhancedFetch`
+   * throws on 4xx. So reaching the line after the call IS the success signal, and
+   * there is no body shape worth interpreting.
+   *
+   * This was learned the hard way on IS-DEV: routing the 201 body through
+   * `handleCreateResponse` produced "unknown type of response" for an application
+   * RLS had actually created, so the applicant was told the submission failed
+   * after paying — and their retry then failed for real with
+   * "An application already exists for this category". A false failure here is
+   * strictly worse than no check at all.
    */
   public async postFullLicenseWithHealthDeclarationV6(input: {
     auth: Auth
     category: string
     model: v6.ModelsV6PostFullLicenseWithHealthDeclaration
   }): Promise<boolean> {
-    const response = await withAuthContext(input.auth, () =>
+    await withAuthContext(input.auth, () =>
       this.applicationV6.apiApplicationsV6CategoryWithhealthdeclarationPost({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
         apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
@@ -113,15 +124,7 @@ export class DrivingLicenseApi {
       }),
     )
 
-    const handledResponse = handleCreateResponse(response)
-
-    if (!handledResponse.success) {
-      throw new Error(
-        `POST apiApplicationsV6CategoryWithhealthdeclarationPost was not successful, response was: ${handledResponse.error}`,
-      )
-    }
-
-    return handledResponse.success
+    return true
   }
 
   public async postTemporaryLicenseWithHealthDeclaratio(input: {
