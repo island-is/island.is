@@ -5,6 +5,27 @@ import type {
   TemplateStateNav,
 } from '../types/translationWorkspace'
 
+/** GraphQL codegen uses `string | null`; domain `MessageDescriptor` uses `string | undefined`. */
+type GraphqlMessageDescriptor = {
+  id: string
+  defaultMessage?: string | null
+  description?: string | null
+}
+
+const toMessageDescriptor = (
+  descriptor?: GraphqlMessageDescriptor | null,
+): MessageDescriptor | undefined => {
+  if (!descriptor) {
+    return undefined
+  }
+
+  return {
+    id: descriptor.id,
+    defaultMessage: descriptor.defaultMessage ?? undefined,
+    description: descriptor.description ?? undefined,
+  }
+}
+
 /** Deduped union of `messageDescriptors` on each screen (already flattened for multifields on the API). */
 export const mergeScreensMessageDescriptors = (
   screens: ScreenIntrospection[],
@@ -52,47 +73,53 @@ export const mergeScreensMessageDescriptors = (
 export const buildSectionNavigationScreen = (
   sectionId: string,
   title: string | null | undefined,
-  titleMessageDescriptor: MessageDescriptor | null | undefined,
+  titleMessageDescriptor: GraphqlMessageDescriptor | null | undefined,
   screens: ScreenIntrospection[],
-): ScreenIntrospection => ({
-  id: `__navigation:section:${sectionId}`,
-  type: 'SECTION_NAV_GROUP',
-  title: title ?? sectionId,
-  description: null,
-  pageTitle: null,
-  subTitle: null,
-  subDescription: null,
-  checkboxLabel: null,
-  width: null,
-  space: null,
-  messageDescriptors: [
-    ...(titleMessageDescriptor ? [titleMessageDescriptor] : []),
-    ...mergeScreensMessageDescriptors(screens),
-  ],
-})
+): ScreenIntrospection => {
+  const titleDescriptor = toMessageDescriptor(titleMessageDescriptor)
+  return {
+    id: `__navigation:section:${sectionId}`,
+    type: 'SECTION_NAV_GROUP',
+    title: title ?? sectionId,
+    description: null,
+    pageTitle: null,
+    subTitle: null,
+    subDescription: null,
+    checkboxLabel: null,
+    width: null,
+    space: null,
+    messageDescriptors: [
+      ...(titleDescriptor ? [titleDescriptor] : []),
+      ...mergeScreensMessageDescriptors(screens),
+    ],
+  }
+}
 
 /** One sidebar entry per subsection (matches stepper subsection tabs). */
 export const buildSubSectionNavigationScreen = (
   subSectionId: string,
   title: string | null | undefined,
-  titleMessageDescriptor: MessageDescriptor | null | undefined,
+  titleMessageDescriptor: GraphqlMessageDescriptor | null | undefined,
   screens: ScreenIntrospection[],
-): ScreenIntrospection => ({
-  id: `__navigation:subsection:${subSectionId}`,
-  type: 'SUBSECTION_NAV_GROUP',
-  title: title ?? subSectionId,
-  description: null,
-  pageTitle: null,
-  subTitle: null,
-  subDescription: null,
-  checkboxLabel: null,
-  width: null,
-  space: null,
-  messageDescriptors: [
-    ...(titleMessageDescriptor ? [titleMessageDescriptor] : []),
-    ...mergeScreensMessageDescriptors(screens),
-  ],
-})
+): ScreenIntrospection => {
+  const titleDescriptor = toMessageDescriptor(titleMessageDescriptor)
+  return {
+    id: `__navigation:subsection:${subSectionId}`,
+    type: 'SUBSECTION_NAV_GROUP',
+    title: title ?? subSectionId,
+    description: null,
+    pageTitle: null,
+    subTitle: null,
+    subDescription: null,
+    checkboxLabel: null,
+    width: null,
+    space: null,
+    messageDescriptors: [
+      ...(titleDescriptor ? [titleDescriptor] : []),
+      ...mergeScreensMessageDescriptors(screens),
+    ],
+  }
+}
 
 /**
  * Section-level leaf not under a subsection (uncommon). Keeps translations for that leaf only,

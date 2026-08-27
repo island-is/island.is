@@ -17,12 +17,12 @@ describe('ApplicationTranslationService', () => {
   let createPublishSpy: jest.Mock
   let bulkCreateSnapshotSpy: jest.Mock
 
-  const user = {
+  const user: User = {
     nationalId: '0101302989',
     scope: [],
     authorization: '',
     client: 'test',
-  } satisfies User
+  }
 
   beforeEach(async () => {
     findOneSpy = jest.fn()
