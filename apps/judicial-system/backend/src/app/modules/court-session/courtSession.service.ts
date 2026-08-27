@@ -436,12 +436,18 @@ export class CourtSessionService {
       return
     }
 
-    // theCase holds the state from before this write, so the session that just
-    // let the ruling go still points at it there.
-    const pronouncedInAnotherSession = theCase.courtSessions?.some(
-      (courtSession) =>
-        courtSession.id !== changedCourtSessionId &&
-        courtSession.rulingFileId === rulingFileId,
+    // Read from the transaction for the same reason as the ruling above: the
+    // session that just let the ruling go still points at it in theCase, and a
+    // session another request has since linked to it would not be there at all.
+    const sessionsPronouncingRuling =
+      await this.courtSessionRepositoryService.findAllByRulingFileId(
+        theCase.id,
+        rulingFileId,
+        { transaction },
+      )
+
+    const pronouncedInAnotherSession = sessionsPronouncingRuling.some(
+      (courtSession) => courtSession.id !== changedCourtSessionId,
     )
 
     if (pronouncedInAnotherSession) {

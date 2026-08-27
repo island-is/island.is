@@ -34,6 +34,8 @@ describe('CourtSessionController - Delete', () => {
 
   // Every ruling the specs build, as the database would hold it.
   const rulingOrdersById = new Map<string, CaseFile>()
+  // The sessions the case under test has, as the database would hold them.
+  let sessionsPronouncing: CourtSession[] = []
 
   let mockCourtSessionRepositoryService: CourtSessionRepositoryService
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
@@ -66,6 +68,15 @@ describe('CourtSessionController - Delete', () => {
     // the way the database would.
     ;(mockFileService.findByIdOrNull as jest.Mock).mockImplementation(
       async (fileId: string) => rulingOrdersById.get(fileId) ?? null,
+    )
+    // Which sessions pronounce a ruling is read from the transaction too, so the
+    // stub answers from the sessions the test set up on the case.
+    ;(
+      mockCourtSessionRepositoryService.findAllByRulingFileId as jest.Mock
+    ).mockImplementation(async (_caseId: string, rulingFileId: string) =>
+      sessionsPronouncing.filter(
+        (session) => session.rulingFileId === rulingFileId,
+      ),
     )
 
     givenWhenThen = async (theCase, courtSession) => {
@@ -114,6 +125,8 @@ describe('CourtSessionController - Delete', () => {
       courtSessions: [{ id: uuid() } as CourtSession, courtSession],
       rulingOrderAppealCases: [],
     } as unknown as Case
+
+    sessionsPronouncing = (theCase.courtSessions ?? []) as CourtSession[]
 
     return givenWhenThen(theCase, courtSession)
   }

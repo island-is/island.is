@@ -48,6 +48,8 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
   // Every ruling the specs build, as the database would hold it - the cleanup
   // reads from there rather than from the case it was handed.
   const rulingOrdersById = new Map<string, CaseFile>()
+  // The sessions the case under test has, as the database would hold them.
+  let sessionsPronouncing: CourtSession[] = []
 
   let mockCourtSessionRepositoryService: CourtSessionRepositoryService
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
@@ -81,6 +83,15 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
     // the way the database would.
     ;(mockFileService.findByIdOrNull as jest.Mock).mockImplementation(
       async (fileId: string) => rulingOrdersById.get(fileId) ?? null,
+    )
+    // Which sessions pronounce a ruling is read from the transaction too, so the
+    // stub answers from the sessions the test set up on the case.
+    ;(
+      mockCourtSessionRepositoryService.findAllByRulingFileId as jest.Mock
+    ).mockImplementation(async (_caseId: string, rulingFileId: string) =>
+      sessionsPronouncing.filter(
+        (session) => session.rulingFileId === rulingFileId,
+      ),
     )
 
     // By default the locked re-read returns the session as handed in.
@@ -146,15 +157,20 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
     return rulingOrder
   }
 
-  const makeCase = (overrides: Partial<Case> = {}): Case =>
-    ({
+  const makeCase = (overrides: Partial<Case> = {}): Case => {
+    const theCase = {
       id: caseId,
       courtCaseNumber,
       caseFiles: [],
       courtSessions: [],
       rulingOrderAppealCases: [],
       ...overrides,
-    } as unknown as Case)
+    } as unknown as Case
+
+    sessionsPronouncing = (theCase.courtSessions ?? []) as CourtSession[]
+
+    return theCase
+  }
 
   const makeCourtSession = (
     overrides: Partial<CourtSession> = {},
