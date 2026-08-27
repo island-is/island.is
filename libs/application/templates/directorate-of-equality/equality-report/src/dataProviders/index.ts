@@ -36,13 +36,6 @@ export const PreviousEqualityReportContentApi = defineTemplateApi({
   order: 0,
 })
 
-export const EqualityReportTemplateHtmlApi = defineTemplateApi({
-  action: ApiActions.getEqualityReportTemplateHtml,
-  externalDataId: 'equalityReportTemplateHtml',
-  namespace: 'DirectorateOfEquality',
-  order: 0,
-})
-
 export const EqualityReportTemplateDocxApi = defineTemplateApi({
   action: ApiActions.getEqualityReportTemplateDocx,
   externalDataId: 'equalityReportTemplateDocx',
@@ -69,18 +62,18 @@ export const SubmitReportCommentApi = defineTemplateApi({
   throwOnError: false,
 })
 
-export const SubmitEqualityReportApi = defineTemplateApi({
-  action: ApiActions.submitEqualityReport,
+// Idempotent on providerId — reopening this step returns the same draft.
+export const CreateEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.createEqualityDraft,
+  externalDataId: 'equalityDraft',
   namespace: 'DirectorateOfEquality',
-  shouldPersistToExternalData: true,
+  shouldPersistToExternalData: false,
   throwOnError: true,
 })
 
-// PUTs just the report's narrative content in place — used as DRAFT_RETRY's
-// onExit, since submitEqualityReport is a one-shot create call that a
-// revision can't safely re-invoke.
-export const EditEqualityContentApi = defineTemplateApi({
-  action: ApiActions.editEqualityContent,
+export const SubmitEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.submitEqualityDraft,
+  externalDataId: 'submitEqualityDraft',
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
   throwOnError: true,
