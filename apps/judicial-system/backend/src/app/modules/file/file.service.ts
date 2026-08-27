@@ -341,10 +341,22 @@ export class FileService {
     )
   }
 
-  async findById(fileId: string, caseId: string): Promise<CaseFile> {
-    const caseFile = await this.fileModel.findOne({
+  // Reads the file from the given transaction, so a caller acting on state a
+  // concurrent request has just written sees it - unlike the case associations
+  // loaded when the request began.
+  async findByIdOrNull(
+    fileId: string,
+    caseId: string,
+    transaction?: Transaction,
+  ): Promise<CaseFile | null> {
+    return this.fileModel.findOne({
       where: { id: fileId, caseId, state: { [Op.not]: CaseFileState.DELETED } },
+      ...(transaction ? { transaction } : {}),
     })
+  }
+
+  async findById(fileId: string, caseId: string): Promise<CaseFile> {
+    const caseFile = await this.findByIdOrNull(fileId, caseId)
 
     if (!caseFile) {
       throw new NotFoundException(

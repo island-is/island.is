@@ -42,10 +42,17 @@ const AddRulingOrder: FC = () => {
   // pronounced orally: the document is written up for that ruling rather than
   // uploaded as a new one, so it fills in the file that already exists and
   // keeps the name the ruling was pronounced under.
+  const rulingOrderIdParam = router.query.rulingFileId
   const rulingOrderId =
-    typeof router.query.rulingFileId === 'string'
-      ? router.query.rulingFileId
+    typeof rulingOrderIdParam === 'string' && rulingOrderIdParam.length > 0
+      ? rulingOrderIdParam
       : undefined
+
+  // A ruling was asked for but the query cannot say which - repeated, or empty.
+  // That must not read as "no ruling asked for", which would upload a new one.
+  const rulingOrderRequestedButUnusable =
+    'rulingFileId' in router.query && !rulingOrderId
+
   const pronouncedRulingOrder = rulingOrderId
     ? workingCase.caseFiles?.find((file) => file.id === rulingOrderId)
     : undefined
@@ -53,9 +60,14 @@ const AddRulingOrder: FC = () => {
   // Asked to write up a particular ruling that is not on the case. Uploading
   // anyway would create a new ruling and leave the court record and any appeal
   // pointing at the one that was asked for, so refuse instead.
-  const pronouncedRulingOrderNotFound = Boolean(
-    rulingOrderId && !isLoadingWorkingCase && !pronouncedRulingOrder,
-  )
+  const pronouncedRulingOrderNotFound =
+    rulingOrderRequestedButUnusable ||
+    Boolean(rulingOrderId && !isLoadingWorkingCase && !pronouncedRulingOrder)
+
+  // These pages are statically optimised, so router.query is empty on the first
+  // client render: until it has hydrated there is no telling whether a ruling
+  // was asked for, and uploading meanwhile would create a new one.
+  const uploadBlocked = !router.isReady || pronouncedRulingOrderNotFound
 
   const {
     uploadFiles,
@@ -108,7 +120,7 @@ const AddRulingOrder: FC = () => {
   const handleNextButtonClick = useCallback(async () => {
     const filesToUpload = uploadFiles.filter((file) => file.percent === 0)
 
-    if (pronouncedRulingOrderNotFound) {
+    if (uploadBlocked) {
       return
     }
 
@@ -131,7 +143,7 @@ const AddRulingOrder: FC = () => {
     handleUpload,
     handleUploadRulingOrderDocument,
     pronouncedRulingOrder,
-    pronouncedRulingOrderNotFound,
+    uploadBlocked,
     updateUploadFile,
     uploadFiles,
     router,
@@ -184,7 +196,7 @@ const AddRulingOrder: FC = () => {
                 uploadFiles.length === 0 ||
                 !allFilesDoneOrError ||
                 editCount > 0 ||
-                pronouncedRulingOrderNotFound,
+                uploadBlocked,
               testId: 'continueButton',
             },
           ]}

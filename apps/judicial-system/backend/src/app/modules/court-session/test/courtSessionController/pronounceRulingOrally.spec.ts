@@ -45,6 +45,9 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
   const user = { id: uuid(), name: 'Dómarinn' } as User
 
   const createdRulingFileId = uuid()
+  // Every ruling the specs build, as the database would hold it - the cleanup
+  // reads from there rather than from the case it was handed.
+  const rulingOrdersById = new Map<string, CaseFile>()
 
   let mockCourtSessionRepositoryService: CourtSessionRepositoryService
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
@@ -74,6 +77,11 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockFileService = fileService
+    // The cleanup reads the ruling from the transaction, so the stub resolves it
+    // the way the database would.
+    ;(mockFileService.findByIdOrNull as jest.Mock).mockImplementation(
+      async (fileId: string) => rulingOrdersById.get(fileId) ?? null,
+    )
 
     // By default the locked re-read returns the session as handed in.
     ;(
@@ -125,13 +133,18 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
 
   afterEach(() => jest.clearAllMocks())
 
-  const makeRulingOrder = (overrides: Partial<CaseFile> = {}): CaseFile =>
-    ({
+  const makeRulingOrder = (overrides: Partial<CaseFile> = {}): CaseFile => {
+    const rulingOrder = {
       id: uuid(),
       category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       key: `${caseId}/${uuid()}/ruling.pdf`,
       ...overrides,
-    } as CaseFile)
+    } as CaseFile
+
+    rulingOrdersById.set(rulingOrder.id, rulingOrder)
+
+    return rulingOrder
+  }
 
   const makeCase = (overrides: Partial<Case> = {}): Case =>
     ({
@@ -338,6 +351,27 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
       )
 
       expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
+    })
+
+    // The point of reading the ruling from the transaction: a second request
+    // pronouncing in the same session was handed a case loaded before the first
+    // request created its ruling, so the ruling being replaced is absent from
+    // that snapshot. Looking there would leave it behind.
+    it('should delete a ruling the case it was handed does not know about', async () => {
+      const theCase = caseStillPronouncing({ caseFiles: [] })
+
+      await swapAwayFrom(theCase)
+
+      expect(mockFileService.findByIdOrNull).toHaveBeenCalledWith(
+        pronouncedOrally.id,
+        caseId,
+        transaction,
+      )
+      expect(mockFileService.deleteCaseFile).toHaveBeenCalledWith(
+        expect.objectContaining({ id: caseId }),
+        pronouncedOrally,
+        transaction,
+      )
     })
 
     it('should keep a ruling an appeal still keys on', async () => {

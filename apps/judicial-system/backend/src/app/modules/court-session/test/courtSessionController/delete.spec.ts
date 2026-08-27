@@ -32,6 +32,9 @@ describe('CourtSessionController - Delete', () => {
   const caseId = uuid()
   const courtSessionId = uuid()
 
+  // Every ruling the specs build, as the database would hold it.
+  const rulingOrdersById = new Map<string, CaseFile>()
+
   let mockCourtSessionRepositoryService: CourtSessionRepositoryService
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockFileService: FileService
@@ -59,6 +62,11 @@ describe('CourtSessionController - Delete', () => {
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockFileService = fileService
+    // The cleanup reads the ruling from the transaction, so the stub resolves it
+    // the way the database would.
+    ;(mockFileService.findByIdOrNull as jest.Mock).mockImplementation(
+      async (fileId: string) => rulingOrdersById.get(fileId) ?? null,
+    )
 
     givenWhenThen = async (theCase, courtSession) => {
       const then = {} as Then
@@ -80,13 +88,18 @@ describe('CourtSessionController - Delete', () => {
 
   afterEach(() => jest.clearAllMocks())
 
-  const makeRulingOrder = (overrides: Partial<CaseFile> = {}): CaseFile =>
-    ({
+  const makeRulingOrder = (overrides: Partial<CaseFile> = {}): CaseFile => {
+    const rulingOrder = {
       id: uuid(),
       category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       key: `${caseId}/${uuid()}/ruling.pdf`,
       ...overrides,
-    } as CaseFile)
+    } as CaseFile
+
+    rulingOrdersById.set(rulingOrder.id, rulingOrder)
+
+    return rulingOrder
+  }
 
   const deleteSessionPronouncing = (rulingFile?: CaseFile) => {
     const courtSession = {

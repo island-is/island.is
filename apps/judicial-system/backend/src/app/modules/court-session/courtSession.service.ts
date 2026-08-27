@@ -422,8 +422,14 @@ export class CourtSessionService {
     changedCourtSessionId: string,
     transaction: Transaction,
   ): Promise<void> {
-    const rulingFile = theCase.caseFiles?.find(
-      (caseFile) => caseFile.id === rulingFileId,
+    // Read from the transaction, not from theCase: when two requests pronounce a
+    // ruling in the same session, the second one's case was loaded before the
+    // first created its ruling, so the ruling now being replaced is absent from
+    // that snapshot - and looking there would leave it behind.
+    const rulingFile = await this.fileService.findByIdOrNull(
+      rulingFileId,
+      theCase.id,
+      transaction,
     )
 
     if (!rulingFile || !isRulingOrderWithoutDocument(rulingFile)) {
