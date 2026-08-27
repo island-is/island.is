@@ -193,12 +193,14 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     }
   }, [application.id, locale, updateApplicationExternalData])
 
-  // Only when arriving without a result — e.g. straight into the POSTPONED
-  // review, where nothing has been analysed in this session yet.
+  // Draft phase only. The review states seed from the stored snapshot, which is
+  // the analysis the report was submitted with and the one the úrbótaáætlun
+  // explains — recomputing against current draft data would replace what the
+  // plan was written against.
   useEffect(() => {
-    if (result) return
+    if (!isDraftPhase || result) return
     void handleAnalyze()
-  }, [handleAnalyze, result])
+  }, [handleAnalyze, isDraftPhase, result])
 
   useSeedOnce(isDraftPhase && Boolean(content), () => {
     if (!content) return
@@ -408,17 +410,19 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
             formatMessage(messages.salaryAnalysis.results.analyzeError)
           }
         />
-        <Box marginTop={2}>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="reload"
-            onClick={handleAnalyze}
-            disabled={isAnalyzing}
-          >
-            {formatMessage(messages.salaryAnalysis.results.recalculateButton)}
-          </Button>
-        </Box>
+        {isDraftPhase && (
+          <Box marginTop={2}>
+            <Button
+              variant="ghost"
+              size="small"
+              icon="reload"
+              onClick={handleAnalyze}
+              disabled={isAnalyzing}
+            >
+              {formatMessage(messages.salaryAnalysis.results.recalculateButton)}
+            </Button>
+          </Box>
+        )}
       </Box>
     )
   }

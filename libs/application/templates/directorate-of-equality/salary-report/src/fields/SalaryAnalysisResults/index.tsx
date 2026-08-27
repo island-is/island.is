@@ -406,17 +406,21 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
               formatMessage(messages.salaryAnalysis.results.analyzeError)
             }
           />
-          <Box marginTop={2}>
-            <Button
-              variant="ghost"
-              size="small"
-              icon="reload"
-              onClick={handleAnalyze}
-              disabled={isAnalyzing}
-            >
-              {formatMessage(messages.salaryAnalysis.results.recalculateButton)}
-            </Button>
-          </Box>
+          {isDraftPhase && (
+            <Box marginTop={2}>
+              <Button
+                variant="ghost"
+                size="small"
+                icon="reload"
+                onClick={handleAnalyze}
+                disabled={isAnalyzing}
+              >
+                {formatMessage(
+                  messages.salaryAnalysis.results.recalculateButton,
+                )}
+              </Button>
+            </Box>
+          )}
         </Box>
       )}
 
@@ -427,16 +431,18 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             title={formatMessage(r.unknownTitle)}
             message={formatMessage(r.noAnalysisMessage)}
           />
-          <Box marginTop={2}>
-            <Button
-              variant="ghost"
-              size="small"
-              icon="reload"
-              onClick={handleAnalyze}
-            >
-              {formatMessage(r.recalculateButton)}
-            </Button>
-          </Box>
+          {isDraftPhase && (
+            <Box marginTop={2}>
+              <Button
+                variant="ghost"
+                size="small"
+                icon="reload"
+                onClick={handleAnalyze}
+              >
+                {formatMessage(r.recalculateButton)}
+              </Button>
+            </Box>
+          )}
         </Box>
       )}
 
