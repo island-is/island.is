@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -22,6 +23,7 @@ import { OrganizationDelegationDto } from './models/dto/organizationDelegation.d
 import { Form } from '../forms/models/form.model'
 import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
 
 @Injectable()
 export class OrganizationsService {
@@ -125,7 +127,15 @@ export class OrganizationsService {
       throw new UnauthorizedException(`User does not have admin privileges`)
     }
 
-    organization.zendeskInstance = zendeskInstance ? zendeskInstance : ''
+    const supportedZendeskInstance = zendeskInstance
+      ? normalizeZendeskInstance(zendeskInstance)
+      : undefined
+
+    if (zendeskInstance && !supportedZendeskInstance) {
+      throw new BadRequestException('Unsupported Zendesk tenant')
+    }
+
+    organization.zendeskInstance = supportedZendeskInstance ?? ''
 
     await this.sequelize.transaction(async (transaction) => {
       await organization.save({ transaction })

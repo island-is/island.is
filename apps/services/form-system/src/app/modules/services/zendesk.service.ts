@@ -18,6 +18,7 @@ import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import {
   Instance,
   mapToCustomFields,
+  normalizeZendeskInstance,
 } from '../../../utils/zendeskPartiesCustomFieldIds'
 import { FileService } from '../file/file.service'
 
@@ -54,30 +55,41 @@ export class ZendeskService {
     storedInstance?: string,
     storedBrandId?: string,
   ): Promise<boolean> {
-    const contactEmail = 'stafraentisland@gmail.com'
-    const username = `${contactEmail}/token`
-
+    let contactEmail = 'stafraentisland@gmail.com'
     let zendeskBrandId: string | undefined = undefined
     let zendeskInstance = this.SANDBOX_INSTANCE
-    let apiKey = this.SANDBOX_API_KEY
 
     if (applicationDto.isTest === false && environment.production === true) {
       zendeskInstance = storedInstance || this.PROD_INSTANCE
-      apiKey = this.PROD_API_KEY
       zendeskBrandId = storedBrandId
     }
 
-    if (zendeskInstance === 'heilsa') {
-      apiKey = this.HEILSA_API_KEY
-    } else if (zendeskInstance === 'haskoliislands') {
-      apiKey = this.HASKOLI_ISLANDS_API_KEY
+    const supportedZendeskInstance = normalizeZendeskInstance(zendeskInstance)
+
+    if (!supportedZendeskInstance) {
+      throw new Error('Unsupported Zendesk tenant')
     }
 
-    if (!zendeskInstance || !apiKey) {
+    let apiKey = this.SANDBOX_API_KEY
+
+    if (applicationDto.isTest === false && environment.production === true) {
+      apiKey = this.PROD_API_KEY
+    }
+
+    if (supportedZendeskInstance === 'heilsa') {
+      apiKey = this.HEILSA_API_KEY
+      contactEmail = 'admin@stafraentisland.is'
+    } else if (supportedZendeskInstance === 'haskoliislands') {
+      apiKey = this.HASKOLI_ISLANDS_API_KEY
+      contactEmail = 'admin@stafraentisland.is'
+    }
+
+    if (!apiKey) {
       throw new Error('Zendesk tenant id or API key not configured')
     }
 
-    const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
+    const zendeskUrl = `https://${supportedZendeskInstance}.zendesk.com`
+    const username = `${contactEmail}/token`
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
     const { name, email } = this.getNameAndEmail(applicationDto)
@@ -86,7 +98,7 @@ export class ZendeskService {
 
     const customFields = this.getCustomFields(
       applicationDto,
-      zendeskInstance as Instance,
+      supportedZendeskInstance,
     )
     const subject = applicationDto.formName?.is ?? 'No subject'
     const isInternal = applicationDto.zendeskInternal === true

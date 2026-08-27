@@ -7,7 +7,6 @@ import {
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
-  Blockquote,
   Box,
   Button,
   Checkbox,
@@ -19,7 +18,6 @@ import {
   Stack,
   Text,
   LinkV2,
-  Divider,
 } from '@island.is/island-ui/core'
 import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -35,6 +33,9 @@ const parseZendeskBrandIds = (brandIds?: string | null) =>
     ?.split(';')
     .map((brandId) => brandId.trim())
     .filter(Boolean) ?? []
+
+const unsupportedZendeskInstanceMessage =
+  'Zendesk instance er ekki gilt. Athugaðu skráningu þína í Contentful.'
 
 export const SubmissionUrls = () => {
   const { formatMessage } = useIntl()
@@ -64,6 +65,9 @@ export const SubmissionUrls = () => {
   const [zendeskBrandIdOptions, setZendeskBrandIdOptions] = useState(() =>
     parseZendeskBrandIds(zendeskBrandId),
   )
+  const [unsupportedZendeskInstance, setUnsupportedZendeskInstance] = useState<
+    string | undefined
+  >()
 
   const sanitizeId = (url: string) => url.replace(/[^a-zA-Z0-9-_]/g, '-')
 
@@ -133,30 +137,39 @@ export const SubmissionUrls = () => {
           )
         ? form.organizationZendeskInstance?.zendeskBrandId ?? ''
         : ''
-    setZendeskBrandIdOptions(brandIdOptions)
 
     if (
       parsed.serviceSystemInstance !==
         form.organizationZendeskInstance?.zendeskInstance ||
       nextZendeskBrandId !== form.organizationZendeskInstance?.zendeskBrandId
     ) {
-      controlDispatch({
-        type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
-        payload: {
-          zendeskInstance: parsed.serviceSystemInstance,
-          zendeskBrandId: nextZendeskBrandId,
-        },
-      })
-      await updateOrganizationZendeskInstance({
-        variables: {
-          input: {
+      try {
+        await updateOrganizationZendeskInstance({
+          variables: {
+            input: {
+              zendeskInstance: parsed.serviceSystemInstance,
+              zendeskBrandId: nextZendeskBrandId,
+              organizationId: form.organizationId,
+              formId: form.id,
+            },
+          },
+        })
+        setZendeskBrandIdOptions(brandIdOptions)
+        setUnsupportedZendeskInstance(undefined)
+        controlDispatch({
+          type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+          payload: {
             zendeskInstance: parsed.serviceSystemInstance,
             zendeskBrandId: nextZendeskBrandId,
-            organizationId: form.organizationId,
-            formId: form.id,
           },
-        },
-      })
+        })
+      } catch {
+        setUnsupportedZendeskInstance(parsed.serviceSystemInstance)
+        setZendeskBrandIdOptions(brandIdOptions)
+      }
+    } else {
+      setUnsupportedZendeskInstance(undefined)
+      setZendeskBrandIdOptions(brandIdOptions)
     }
   }
 
@@ -414,7 +427,9 @@ export const SubmissionUrls = () => {
                       name="zendeskBrandId"
                       id={zendeskBrandInputId}
                       checked={selectedZendeskBrandId === brandId}
-                      disabled={isReadOnly || !brandId}
+                      disabled={
+                        isReadOnly || !brandId || !!unsupportedZendeskInstance
+                      }
                       onChange={() => {
                         controlDispatch({
                           type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
@@ -432,7 +447,16 @@ export const SubmissionUrls = () => {
                         })
                       }}
                       subLabel={
-                        zendeskInstance ? (
+                        unsupportedZendeskInstance ? (
+                          <Text
+                            as="span"
+                            color="red600"
+                            variant="small"
+                            fontWeight="semiBold"
+                          >
+                            {unsupportedZendeskInstanceMessage}
+                          </Text>
+                        ) : zendeskInstance ? (
                           `${zendeskInstance}.zendesk.com`
                         ) : (
                           <Text
