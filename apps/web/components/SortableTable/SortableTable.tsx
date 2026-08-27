@@ -6,6 +6,8 @@ export type SortableTableColumn<T> = {
   key: keyof T
   label: string
   render?: (value: T[keyof T], row: T) => ReactNode
+  /** Defaults to true. Set to false for columns that hold no sortable value. */
+  sortable?: boolean
 }
 
 interface Props<T extends Record<string, any>> {
@@ -24,7 +26,8 @@ export const SortableTable = <T extends Record<string, any>>({
   onRowClick,
 }: Props<T>) => {
   const [sortKey, setSortKey] = useState<keyof T>(
-    defaultSortKey ?? columns[0].key,
+    defaultSortKey ??
+      (columns.find((column) => column.sortable !== false) ?? columns[0]).key,
   )
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>(defaultSortDir)
 
@@ -49,33 +52,39 @@ export const SortableTable = <T extends Record<string, any>>({
     <T.Table>
       <T.Head>
         <T.Row>
-          {columns.map(({ key, label }) => (
+          {columns.map(({ key, label, sortable }) => (
             <T.HeadData key={String(key)}>
-              <button
-                onClick={() => handleSort(key)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                }}
-              >
+              {sortable === false ? (
                 <Text variant="h5" as="span">
                   {label}
                 </Text>
-                <Icon
-                  icon={
-                    sortKey === key && sortDir === 'desc'
-                      ? 'caretUp'
-                      : 'caretDown'
-                  }
-                  size="small"
-                  color={sortKey === key ? 'blue400' : 'blue300'}
-                />
-              </button>
+              ) : (
+                <button
+                  onClick={() => handleSort(key)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                  }}
+                >
+                  <Text variant="h5" as="span">
+                    {label}
+                  </Text>
+                  <Icon
+                    icon={
+                      sortKey === key && sortDir === 'desc'
+                        ? 'caretUp'
+                        : 'caretDown'
+                    }
+                    size="small"
+                    color={sortKey === key ? 'blue400' : 'blue300'}
+                  />
+                </button>
+              )}
             </T.HeadData>
           ))}
         </T.Row>

@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/client'
 
 import { GET_CUSTOMS_GENERAL_EXCHANGE_RATES } from '@island.is/web/screens/queries/CustomsGeneral'
 
+import { CurrencyFlag } from './CurrencyFlag'
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
@@ -12,6 +13,14 @@ const CustomsGeneralExchangeRates = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
   const columns = [
+    {
+      key: 'flag' as const,
+      label: '',
+      sortable: false,
+      render: (_value: string, row: { code: string }) => (
+        <CurrencyFlag currencyCode={row.code} />
+      ),
+    },
     { key: 'code' as const, label: formatMessage(m.columnCode) },
     { key: 'name' as const, label: formatMessage(m.columnName) },
     { key: 'rate' as const, label: formatMessage(m.exchangeRateRate) },
@@ -26,6 +35,7 @@ const CustomsGeneralExchangeRates = () => {
 
   const items = (data?.customsGeneralExchangeRates ?? []).map(
     (item: { code?: string; name?: string; rate?: number }) => ({
+      flag: '',
       code: item.code ?? '',
       name: item.name ?? '',
       rate: item.rate?.toString() ?? '',
