@@ -7,8 +7,8 @@ export const completedForm = buildForm({
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({
-      alertTitle: 'Congratulations',
-      alertMessage: 'You have completed this boilerplate application',
+      alertTitle: 'Staðfesting',
+      alertMessage: 'Greiðsla til Fjársýslunnar hefur verið móttekin!',
     }),
   ],
 })
