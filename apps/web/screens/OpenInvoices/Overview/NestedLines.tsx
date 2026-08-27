@@ -130,6 +130,37 @@ export const NestedLines = ({
                 </Text>
               </T.Data>
             </T.Row>
+            {payment.amount !== payment.invoice.totalAmount && (
+              <T.Row>
+                <T.Data
+                  box={{
+                    background:
+                      (payment.invoice.itemizations?.length ?? 0) % 2 === 0
+                        ? 'white'
+                        : undefined,
+                    className: styles.noBorder,
+                  }}
+                >
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(m.totals.paidAmount)}
+                  </Text>
+                </T.Data>
+                <T.Data
+                  box={{
+                    textAlign: 'right',
+                    background:
+                      (payment.invoice.itemizations?.length ?? 0) % 2 === 0
+                        ? 'white'
+                        : undefined,
+                    className: styles.noBorder,
+                  }}
+                >
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatCurrency(payment.amount)}
+                  </Text>
+                </T.Data>
+              </T.Row>
+            )}
           </T.Body>
         </T.Table>
       </Box>

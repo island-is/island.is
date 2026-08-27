@@ -100,6 +100,10 @@ export const m = {
       id: 'web.openinvoices:totals.invoiceAmount',
       defaultMessage: 'Upphæð reiknings',
     },
+    paidAmount: {
+      id: 'web.openinvoices:totals.paidAmount',
+      defaultMessage: 'Þar af greitt',
+    },
   }),
   search: defineMessages({
     filterTitle: {
