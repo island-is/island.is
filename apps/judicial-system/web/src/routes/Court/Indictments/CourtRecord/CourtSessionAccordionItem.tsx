@@ -37,18 +37,17 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { appealCorrectionLock, Feature } from '@island.is/judicial-system/types'
+import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   CheckboxList,
   DateTime,
-  FeatureContext,
   FileNotFoundModal,
   FormContext,
   Modal,
   MultipleValueList,
+  RichTextEditor,
   SectionHeading,
-  TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
 import type { Supplement } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
@@ -174,9 +173,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const ref = useRef<HTMLDivElement>(null)
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
-  // The in-court appeal decision UI is behind a flag until it's ready for prod.
-  const showAppealDecisions = features.includes(Feature.APPEAL_RULING_ORDER)
   // Moving the ruling type off ORDER removes the ruling, which discards its
   // decisions and deletes the appeal it produced - not allowed once the appeal
   // has left the court record's reach (a party filed it itself, or Landsréttur
@@ -185,8 +181,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   // every appeal state: it means the same ruling is now a different document, and
   // everything moves with it.
   // The reason is kept, not just the boolean, so the section can say which of the
-  // two locks applies - the appeal decision cards next to it are behind a feature
-  // flag and cannot be relied on to explain these controls.
+  // two locks applies - the appeal decision cards next to it report the appeal's
+  // state, not why these controls are locked.
   const rulingRemovalLock = appealCorrectionLock(
     rulingOrderAppealCase(workingCase, courtSession.rulingFileId),
   )
@@ -1486,7 +1482,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               )}
               <Box>
                 <SectionHeading title="Bókanir" />
-                <TinyMCE
+                <RichTextEditor
                   data-testid="entries"
                   label="Afstaða ákærða, málflutningur og aðrar bókanir"
                   placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
@@ -1503,15 +1499,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     )
                   }
                   onBlur={(html) => {
-                    // Decode entities (e.g. &nbsp;) and strip tags so an
-                    // otherwise-empty paragraph doesn't pass the required check.
-                    const decodedText =
-                      new DOMParser()
-                        .parseFromString(html, 'text/html')
-                        .body.textContent?.trim() ?? ''
+                    // Visually blank markup arrives normalized to '' (see
+                    // normalizeRichTextHtml), so the html can be validated
+                    // directly.
                     validateAndSetErrorMessage(
                       ['empty'],
-                      decodedText,
+                      html,
                       setEntriesErrorMessage,
                     )
                     patchSession(
@@ -1686,7 +1679,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 courtSession.rulingType === CourtSessionRulingType.ORDER) && (
                 <CourtSessionRuling
                   courtSession={courtSession}
-                  showAppealDecisions={showAppealDecisions}
                   patchSession={patchSession}
                 />
               )}
@@ -1793,11 +1785,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         }
                         size="small"
                         disabled={
-                          !isCourtSessionValid(
-                            courtSession,
-                            workingCase,
-                            showAppealDecisions,
-                          )
+                          !isCourtSessionValid(courtSession, workingCase)
                         }
                       >
                         Staðfesta þingbók

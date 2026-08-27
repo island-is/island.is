@@ -10,6 +10,7 @@ import type {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateDefendantMutation } from './createDefendant.generated'
 import { useDeleteDefendantMutation } from './deleteDefendant.generated'
 import { useLimitedAccessUpdateDefendantMutation } from './limitedAccessUpdateDefendant.generated'
@@ -23,11 +24,15 @@ const useDefendants = () => {
 
   const [deleteDefendantMutation] = useDeleteDefendantMutation()
 
+  // Defendant updates can move the case between case tables, so active
+  // case table membership queries - the breadcrumbs - must be refetched.
   const [updateDefendantMutation, { loading: isUpdatingDefendant }] =
-    useUpdateDefendantMutation()
+    useUpdateDefendantMutation({ refetchQueries: ['CaseTableMembership'] })
 
   const [limitedAccessUpdateDefendantMutation] =
-    useLimitedAccessUpdateDefendantMutation()
+    useLimitedAccessUpdateDefendantMutation({
+      refetchQueries: ['CaseTableMembership'],
+    })
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {
@@ -35,7 +40,7 @@ const useDefendants = () => {
         if (!isCreatingDefendant) {
           const { data } = await createDefendantMutation({
             variables: {
-              input: defendant,
+              input: normalizeBlankStrings(defendant),
             },
           })
 
@@ -72,7 +77,7 @@ const useDefendants = () => {
       try {
         const { data } = await updateDefendantMutation({
           variables: {
-            input: updateDefendant,
+            input: normalizeBlankStrings(updateDefendant),
           },
         })
 
@@ -91,7 +96,7 @@ const useDefendants = () => {
       try {
         const { data } = await limitedAccessUpdateDefendantMutation({
           variables: {
-            input: updateDefendant,
+            input: normalizeBlankStrings(updateDefendant),
           },
         })
 

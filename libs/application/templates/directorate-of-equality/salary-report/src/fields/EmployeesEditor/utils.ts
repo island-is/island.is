@@ -24,7 +24,7 @@ export type EmployeeFormValues = {
   field: string
   department: string
   startDate: string
-  workRatio: string
+  paidHours: string
   baseSalary: string
 } & Record<SalaryComponentKey, string>
 
@@ -34,7 +34,7 @@ export const EMPTY_EMPLOYEE_FORM_VALUES: EmployeeFormValues = {
   field: '',
   department: '',
   startDate: '',
-  workRatio: '100',
+  paidHours: '',
   baseSalary: '',
   ...(Object.fromEntries(
     SALARY_COMPONENT_KEYS.map((key) => [key, '']),
@@ -54,7 +54,7 @@ export const toFormValues = (
   field: employee.field ?? '',
   department: employee.department ?? '',
   startDate: employee.startDate,
-  workRatio: String((employee.workRatio ?? 0) * 100),
+  paidHours: paidHoursToFormValue(employee.paidHours),
   baseSalary: String(employee.baseSalary ?? ''),
   ...(Object.fromEntries(
     SALARY_COMPONENT_KEYS.map((key) => {
@@ -97,8 +97,33 @@ export const getSalaryComponentLabels = (
 export const formatCurrency = (value?: number | null): string =>
   `${(value ?? 0).toLocaleString('is-IS')} kr.`
 
-export const formatWorkRatio = (ratio?: number | null): string =>
-  `${Math.round((ratio ?? 0) * 100)}%`
+// Greiddar stundir is an absolute count of hours, not a percentage — there is
+// deliberately no scaling in either direction here. The old workRatio field
+// stored a fraction and multiplied by 100 for display; carrying that over would
+// turn 173,33 hours into 17.333.
+export const paidHoursToFormValue = (hours?: number | null): string =>
+  hours == null ? '' : String(hours)
+
+// Accepts '173,33' as well as '173.33': type="number" on an is-IS locale can
+// hand back a comma, and Number('173,33') is NaN — which would submit 0 hours
+// and silently inflate tímakaup instead of failing.
+export const paidHoursFromFormValue = (value: string): number => {
+  const parsed = Number(String(value).replace(',', '.'))
+  // DECIMAL(6,2) on the API side.
+  return Number.isFinite(parsed) ? Math.round(parsed * 100) / 100 : 0
+}
+
+export const formatPaidHours = (hours?: number | null): string =>
+  hours == null
+    ? ''
+    : `${hours.toLocaleString('is-IS', { maximumFractionDigits: 2 })} klst.`
+
+// Reglulegt tímakaup, not a monthly figure — these run two orders of magnitude
+// smaller than the salary fields formatCurrency is used for.
+export const formatHourlyWage = (value?: number | null): string =>
+  `${(value ?? 0).toLocaleString('is-IS', {
+    maximumFractionDigits: 0,
+  })} kr./klst.`
 
 export const formatStartDate = (value?: string): string => {
   if (!value) return ''
