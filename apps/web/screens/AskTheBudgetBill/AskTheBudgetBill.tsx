@@ -70,13 +70,19 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
   const shellRef = useRef<HTMLElement>(null)
   const [shellHeight, setShellHeight] = useState<number | null>(null)
 
-  // The shell fills what is left of the viewport below the site header, which
-  // moves when an alert banner is shown or the mobile browser chrome collapses.
+  // The shell fills what is left of the viewport between the site header and
+  // the footer, both of which move when an alert banner is shown or the mobile
+  // browser chrome collapses. The footer is rendered by the layout, outside of
+  // this tree, so it is measured off the document.
   useEffect(() => {
     const measure = () => {
       const top = shellRef.current?.getBoundingClientRect().top
       if (typeof top !== 'number') return
-      setShellHeight(Math.max(0, Math.round(window.innerHeight - top)))
+      const footerHeight =
+        document.querySelector('footer')?.getBoundingClientRect().height ?? 0
+      setShellHeight(
+        Math.max(0, Math.round(window.innerHeight - top - footerHeight)),
+      )
     }
     measure()
     window.addEventListener('resize', measure)
@@ -187,6 +193,7 @@ export default withMainLayout(
     CustomPageUniqueIdentifier.AskTheBudgetBill as GraphQLCustomPageUniqueIdentifier,
     AskTheBudgetBill,
   ),
-  // The chat fills the viewport, so the page must not scroll past it
-  { showFooter: false, wrapContent: false },
+  // The chat fills the viewport, so the page must not scroll past it. The small
+  // island.is footer the organization pages carry still sits underneath it.
+  { footerVersion: 'organization', wrapContent: false },
 )

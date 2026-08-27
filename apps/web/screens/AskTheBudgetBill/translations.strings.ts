@@ -11,11 +11,6 @@ export const m = defineMessages({
     defaultMessage: 'Spurðu fjárlagafrumvarpið',
     description: 'H1 titill á síðunni',
   },
-  inputLabel: {
-    id: 'web.askTheBudgetBill:inputLabel',
-    defaultMessage: 'Spurning',
-    description: 'Merking á innsláttarreit',
-  },
   inputPlaceholder: {
     id: 'web.askTheBudgetBill:inputPlaceholder',
     defaultMessage: 'Spurðu um fjárlagafrumvarpið...',

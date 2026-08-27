@@ -4,21 +4,18 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import {
   AlertMessage,
   Box,
-  Button,
-  Input,
   LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 
 import { m } from '../translations.strings'
+import { QuestionInput } from './QuestionInput'
 import type { MessengerStatus } from './useZendeskMessenger'
 import * as styles from './ChatLauncher.css'
 
 /** The delays the caret is handed back over, see the effect below */
 const FOCUS_RETRY_DELAYS_MS = [0, 50, 150, 300, 600]
-
-const COMPOSER_ROWS = 4
 
 interface ChatLauncherProps {
   /** True while a conversation is being created for the question just asked */
@@ -41,7 +38,7 @@ export const ChatLauncher = ({
   const { formatMessage } = useIntl()
   const [value, setValue] = useState('')
   const rootRef = useRef<HTMLDivElement>(null)
-  const composerRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+  const composerRef = useRef<HTMLInputElement>(null)
 
   const focusComposer = useCallback(() => {
     const active = document.activeElement
@@ -76,13 +73,35 @@ export const ChatLauncher = ({
   }, [isVisible, focusComposer])
 
   const isReady = status === 'ready'
-  const canSubmit = isReady && !isStarting && Boolean(value.trim())
+  // A question asked before the widget had booted, waiting on it
+  const [pendingQuestion, setPendingQuestion] = useState<string | null>(null)
+  const isWaiting = isStarting || pendingQuestion !== null
 
   const submit = (question: string) => {
-    if (!isReady || isStarting || !question.trim()) return
+    const trimmed = question.trim()
+    if (status === 'error' || isWaiting || !trimmed) return
     setValue('')
-    onAsk(question.trim())
+    // Held rather than dropped, and sent by the effect below once the widget
+    // finishes booting
+    if (!isReady) {
+      setPendingQuestion(trimmed)
+      return
+    }
+    onAsk(trimmed)
   }
+
+  useEffect(() => {
+    if (pendingQuestion === null) return
+    if (status === 'ready') {
+      setPendingQuestion(null)
+      onAsk(pendingQuestion)
+    } else if (status === 'error') {
+      // The widget never came up, so the question is handed back to the box
+      // rather than lost, alongside the error message below it.
+      setPendingQuestion(null)
+      setValue(pendingQuestion)
+    }
+  }, [status, pendingQuestion, onAsk])
 
   return (
     <Box
@@ -97,33 +116,16 @@ export const ChatLauncher = ({
         </Text>
 
         <Stack space={2}>
-          <Input
+          <QuestionInput
             ref={composerRef}
-            name="budget-bill-question"
-            label={formatMessage(m.inputLabel)}
             placeholder={formatMessage(m.inputPlaceholder)}
-            textarea
-            rows={COMPOSER_ROWS}
+            sendLabel={formatMessage(m.send)}
             value={value}
-            disabled={isStarting}
-            onChange={(event) => setValue(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault()
-                submit(value)
-              }
-            }}
+            // The button turns into a spinner while the question is on its way
+            loading={isWaiting}
+            onChange={setValue}
+            onSubmit={() => submit(value)}
           />
-
-          <Box display="flex" justifyContent="flexEnd">
-            <Button
-              loading={isStarting}
-              disabled={!canSubmit}
-              onClick={() => submit(value)}
-            >
-              {formatMessage(m.send)}
-            </Button>
-          </Box>
 
           {status === 'error' && (
             <AlertMessage
