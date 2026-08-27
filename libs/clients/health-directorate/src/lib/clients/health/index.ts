@@ -1,6 +1,6 @@
 export {
   HealthDirectorateHealthService,
-  CertificatePdfResult,
+  AttachmentDownloadResult,
 } from './health.service'
 export * from './health.config'
 export * from './gen/fetch/types.gen'

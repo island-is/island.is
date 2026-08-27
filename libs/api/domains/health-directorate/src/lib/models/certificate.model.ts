@@ -35,7 +35,4 @@ export class HealthDirectorateCertificate {
       'Price the patient would be charged, in ISK. Only set when requiresPayment is true.',
   })
   amountIsk?: number
-
-  @Field({ description: 'URL to download the certificate PDF.' })
-  downloadServiceURL!: string
 }

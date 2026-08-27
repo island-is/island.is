@@ -20,7 +20,6 @@ import {
   meAppointmentControllerGetPatientAppointmentByIdV1,
   meCertificateControllerCreateCertificateRequestV1,
   meCertificateControllerCreatePaymentIntentV1,
-  meCertificateControllerGetCertificatePdfV1,
   meCertificateControllerGetCertificateV1,
   meConversationControllerArchiveConversationV1,
   meConversationControllerCreateConversationV1,
@@ -88,7 +87,7 @@ import {
 
 import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 
-export type CertificatePdfResult =
+export type AttachmentDownloadResult =
   | { status: 200; data: ArrayBuffer; contentType: string }
   | { status: 402; resourceType: string; resourceId?: string }
 
@@ -704,19 +703,36 @@ export class HealthDirectorateHealthService {
     conversationId: string,
     messageId: string,
     attachmentId: number,
-  ): Promise<{ data: ArrayBuffer; contentType: string } | null> {
-    const result = await withAuthContext(auth, () =>
-      meConversationControllerGetMessageAttachmentV1({
-        path: { id: conversationId, messageId, attachmentId },
-        parseAs: 'arrayBuffer',
-      }),
-    )
-    if (!result.data) return null
-    return {
-      data: result.data as ArrayBuffer,
-      contentType:
-        result.response.headers.get('content-type') ??
-        'application/octet-stream',
+  ): Promise<AttachmentDownloadResult | null> {
+    try {
+      const result = await withAuthContext(auth, () =>
+        meConversationControllerGetMessageAttachmentV1({
+          path: { id: conversationId, messageId, attachmentId },
+          parseAs: 'arrayBuffer',
+        }),
+      )
+      if (!result.data) return null
+      return {
+        status: 200,
+        data: result.data as ArrayBuffer,
+        contentType:
+          result.response.headers.get('content-type') ??
+          'application/octet-stream',
+      }
+    } catch (error) {
+      if (error instanceof FetchError && error.status === 404) {
+        return null
+      }
+
+      if (error instanceof FetchError && error.status === 402) {
+        const body = error.body as PaymentRequiredProblemResponse
+        return {
+          status: 402,
+          resourceType: body.resourceType ?? 'CERTIFICATE',
+          resourceId: body.resourceId,
+        }
+      }
+      throw error
     }
   }
 
@@ -785,39 +801,5 @@ export class HealthDirectorateHealthService {
     )
 
     return intent ?? null
-  }
-
-  public async getCertificatePdf(
-    auth: Auth,
-    id: string,
-  ): Promise<CertificatePdfResult | null> {
-    try {
-      const result = await withAuthContext(auth, () =>
-        meCertificateControllerGetCertificatePdfV1({
-          path: { id },
-          parseAs: 'arrayBuffer',
-        }),
-      )
-      if (!result.data) return null
-      return {
-        status: 200,
-        data: result.data as ArrayBuffer,
-        contentType:
-          result.response.headers.get('content-type') ?? 'application/pdf',
-      }
-    } catch (error) {
-      if (error instanceof FetchError && error.status === 404) {
-        return null
-      }
-      if (error instanceof FetchError && error.status === 402) {
-        const body = error.body as PaymentRequiredProblemResponse
-        return {
-          status: 402,
-          resourceType: body.resourceType ?? 'CERTIFICATE',
-          resourceId: body.resourceId,
-        }
-      }
-      throw error
-    }
   }
 }

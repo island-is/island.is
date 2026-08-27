@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Box, Button, Tag, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formSubmit } from '@island.is/portals/my-pages/core'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { messages } from '../../../lib/messages'
 import {
   useCreateHealthCertificatePaymentIntentMutation,
-  useGetHealthCertificateLazyQuery,
   useGetHealthCertificateQuery,
 } from '../HealthConversationDetail.generated'
 
@@ -61,29 +59,11 @@ const CertificateAction = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPolling, pollResult?.paid])
 
-  const [getCertificate, { loading: downloadLoading }] =
-    useGetHealthCertificateLazyQuery()
-
   const [createPaymentIntent, { loading: paymentLoading }] =
     useCreateHealthCertificatePaymentIntentMutation()
 
   if (!requiresPayment && !certificateId) {
     return null
-  }
-
-  const handleDownload = async () => {
-    if (!certificateId) return
-    const { data, error } = await getCertificate({
-      variables: { id: certificateId },
-    })
-    const url = data?.healthDirectorateCertificate?.downloadServiceURL
-    if (error || !url) {
-      toast.error(
-        formatMessage(messages.healthConversationCertificateDownloadError),
-      )
-      return
-    }
-    formSubmit(url)
   }
 
   const handlePay = async () => {
@@ -105,11 +85,13 @@ const CertificateAction = ({
       }
       window.location.href = paymentPageUrl
     } catch {
-      toast.error(formatMessage(messages.healthConversationCertificatePaymentError))
+      toast.error(
+        formatMessage(messages.healthConversationCertificatePaymentError),
+      )
     }
   }
 
-  const showDownload = !requiresPayment || paid
+  const isUnpaid = requiresPayment && !paid
 
   return (
     <Box
@@ -125,28 +107,20 @@ const CertificateAction = ({
         {formatMessage(messages.healthConversationCertificateTag)}
       </Tag>
 
-      {showDownload && (
-        <Button
-          variant="utility"
-          icon="document"
-          iconType="outline"
-          loading={downloadLoading}
-          onClick={handleDownload}
-        >
-          {formatMessage(messages.healthConversationCertificateDownload)}
-        </Button>
-      )}
-
-      {!showDownload && isPolling && (
+      {isUnpaid && isPolling && (
         <Tag variant="yellow" outlined disabled>
-          {formatMessage(messages.healthConversationCertificatePaymentInProgress)}
+          {formatMessage(
+            messages.healthConversationCertificatePaymentInProgress,
+          )}
         </Tag>
       )}
 
-      {!showDownload && !isPolling && certificateId && (
+      {isUnpaid && !isPolling && certificateId && (
         <>
           <Tag variant="red" outlined disabled>
-            {formatMessage(messages.healthConversationCertificatePaymentPending)}
+            {formatMessage(
+              messages.healthConversationCertificatePaymentPending,
+            )}
           </Tag>
           <Button
             variant="utility"
@@ -166,7 +140,7 @@ const CertificateAction = ({
         </>
       )}
 
-      {!showDownload && !isPolling && !certificateId && (
+      {isUnpaid && !isPolling && !certificateId && (
         <Tag variant="red" outlined disabled>
           {formatMessage(messages.healthConversationCertificatePaymentPending)}
         </Tag>

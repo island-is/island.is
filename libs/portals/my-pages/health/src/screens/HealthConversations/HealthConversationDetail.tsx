@@ -89,9 +89,11 @@ const HealthConversationDetail = () => {
     }
   }, [replyOpen])
 
-  const { data, loading, error, refetch } = useGetHealthConversationDetailQuery({
-    variables: { id },
-  })
+  const { data, loading, error, refetch } = useGetHealthConversationDetailQuery(
+    {
+      variables: { id },
+    },
+  )
 
   const handleCertificatePaid = () => {
     toast.success(
@@ -350,29 +352,30 @@ const HealthConversationDetail = () => {
                       )}
 
                       {/* Attachments */}
-                      {msg.attachments.length > 0 && (
-                        <Box
-                          display="flex"
-                          flexWrap="wrap"
-                          columnGap={2}
-                          rowGap={1}
-                          marginBottom={3}
-                        >
-                          {msg.attachments.map((file) => (
-                            <Button
-                              key={file.id}
-                              variant="utility"
-                              icon="document"
-                              iconType="outline"
-                              onClick={() =>
-                                formSubmit(file.downloadServiceURL)
-                              }
-                            >
-                              {file.fileName}
-                            </Button>
-                          ))}
-                        </Box>
-                      )}
+                      {msg.attachments.length > 0 &&
+                        !(msg.requiresPayment && !msg.paid) && (
+                          <Box
+                            display="flex"
+                            flexWrap="wrap"
+                            columnGap={2}
+                            rowGap={1}
+                            marginBottom={3}
+                          >
+                            {msg.attachments.map((file) => (
+                              <Button
+                                key={file.id}
+                                variant="utility"
+                                icon="document"
+                                iconType="outline"
+                                onClick={() =>
+                                  formSubmit(file.downloadServiceURL)
+                                }
+                              >
+                                {file.fileName}
+                              </Button>
+                            ))}
+                          </Box>
+                        )}
                     </Box>
                   )
                 })}

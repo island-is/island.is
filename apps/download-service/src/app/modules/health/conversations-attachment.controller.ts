@@ -62,6 +62,13 @@ export class HealthConversationsAttachmentController {
       return res.status(404).json({ statusCode: 404, message: 'Not found' })
     }
 
+    if (attachment.status === 402) {
+      return res.status(402).json({
+        resourceType: attachment.resourceType,
+        resourceId: attachment.resourceId,
+      })
+    }
+
     this.auditService.audit({
       action: 'getHealthConversationAttachment',
       auth: user,

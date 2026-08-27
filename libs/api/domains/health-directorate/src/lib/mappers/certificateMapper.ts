@@ -27,7 +27,6 @@ export const mapCertificateRequest = (
 
 export const mapCertificate = (
   dto: CertificateDto,
-  downloadServiceURL: string,
 ): HealthDirectorateCertificate => ({
   id: dto.id,
   conversationId: dto.conversationId,
@@ -38,5 +37,4 @@ export const mapCertificate = (
   requiresPayment: dto.requiresPayment,
   paid: dto.paid,
   amountIsk: dto.amountIsk,
-  downloadServiceURL,
 })

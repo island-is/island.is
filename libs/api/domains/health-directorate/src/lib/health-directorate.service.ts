@@ -957,9 +957,7 @@ export class HealthDirectorateService {
     const certificate = await this.healthApi.getCertificate(auth, id)
     if (!certificate) return null
 
-    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/health/certificates/${id}/pdf`
-
-    return mapCertificate(certificate, downloadServiceURL)
+    return mapCertificate(certificate)
   }
 
   async createCertificatePaymentIntent(

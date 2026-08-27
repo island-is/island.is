@@ -2027,10 +2027,6 @@ export const messages = defineMessages({
     defaultMessage: 'Vottorð',
     id: 'sp.health:health-message-certificate-tag',
   },
-  healthConversationCertificateDownload: {
-    defaultMessage: 'Sækja vottorð',
-    id: 'sp.health:health-message-certificate-download',
-  },
   healthConversationCertificatePay: {
     defaultMessage: 'Greiða {arg} kr.',
     id: 'sp.health:health-message-certificate-pay',
@@ -2063,10 +2059,6 @@ export const messages = defineMessages({
   healthConversationCertificatePaymentCancelled: {
     defaultMessage: 'Hætt var við greiðslu',
     id: 'sp.health:health-message-certificate-payment-cancelled',
-  },
-  healthConversationCertificateDownloadError: {
-    defaultMessage: 'Ekki tókst að sækja vottorð, vinsamlegast reyndu aftur',
-    id: 'sp.health:health-message-certificate-download-error',
   },
   healthConversationsNewTermsLabel: {
     defaultMessage: 'Ég samþykki <link>skilmála</link>',

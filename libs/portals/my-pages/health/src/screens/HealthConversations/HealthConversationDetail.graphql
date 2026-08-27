@@ -109,7 +109,6 @@ query GetHealthCertificate($id: ID!) {
     requiresPayment
     paid
     amountIsk
-    downloadServiceURL
   }
 }
 

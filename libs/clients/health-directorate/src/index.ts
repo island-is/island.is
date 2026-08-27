@@ -46,8 +46,8 @@ export {
   CreateEuPatientConsentDto,
 } from './lib/clients'
 export {
+  AttachmentDownloadResult,
   CertificateDto,
-  CertificatePdfResult,
   CertificateRequestDto,
   CertificateTypeCode,
   ContentSegmentDto,
