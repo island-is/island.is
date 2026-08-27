@@ -74,6 +74,7 @@ import {
   ApplicationJsonValueDto,
 } from '../applications/models/dto/application.json.dto'
 import { FormDelegationDto } from './models/dto/formDelegation.dto'
+import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
 
 const MAX_COPY_SLUG_RETRIES = 5
 
@@ -623,11 +624,16 @@ export class FormsService {
     )
     const zendeskBrandId = form.zendeskBrandId?.trim()
     const zendeskInstance = organization?.zendeskInstance?.trim()
+    const supportedZendeskInstance = normalizeZendeskInstance(zendeskInstance)
 
     if (!zendeskBrandId || !zendeskInstance) {
       throw new BadRequestException(
         'Zendesk instance and brand ID must be configured before publishing a Zendesk form.',
       )
+    }
+
+    if (!supportedZendeskInstance) {
+      throw new BadRequestException('Unsupported Zendesk tenant')
     }
   }
 
