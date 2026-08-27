@@ -1265,6 +1265,11 @@ export const m = defineMessages({
     defaultMessage: 'Fjarlægja',
     description: 'Remove',
   },
+  testApplicationBanner: {
+    id: 'form.system:test-application-banner',
+    defaultMessage: 'Þetta er prófunarumsókn',
+    description: 'This is a test application',
+  },
   applicationLifetime: {
     id: 'form.system:application-lifetime',
     defaultMessage: 'Líftími umsókna',
@@ -1330,6 +1335,13 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Zendesk brand ID og Zendesk instance þurfa að vera skilgreind.',
     description:
       'The form cannot be published. Zendesk brand ID and Zendesk instance must be configured.',
+  },
+  unsupportedZendeskInstanceError: {
+    id: 'form.system:unsupported-zendesk-instance-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk instance er ekki stutt.',
+    description:
+      'The form cannot be published. The Zendesk instance is not supported.',
   },
   copyFieldHover: {
     id: 'form.system:copy-field-hover',
