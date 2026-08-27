@@ -838,10 +838,13 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(input.healthDeclaration).toMatchObject({ hasEpilepsy: false })
     })
 
-    // The v6 call takes the resolver's output through `resolved?.x`, so the
-    // undefined-vs-null distinction the legacy path was pinned on has to hold
-    // here too: RLS reads an explicit null as "use what you already hold" and an
-    // absent key as "nothing to say".
+    // The v6 call takes the resolver's output through `resolved?.x`, so what the
+    // resolver distinguishes — an explicit null for "selected, but no biometric
+    // ID to send" versus nothing at all for "no selection" — has to survive to
+    // the request. Unlike the legacy path, where the distinction was load-bearing
+    // for keeping requests byte-identical, here it is consistency with the BE and
+    // 65+ payloads; how RLS itself treats null vs absent on this endpoint has not
+    // been verified.
     it.each([
       ['a stale selection matching no FACIAL entry', 'facial-gone'],
       ['the RLS quality photo', 'qualityPhoto'],
