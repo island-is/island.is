@@ -23,7 +23,6 @@ import {
   getProviderSuccessData,
   type ProviderExternalData,
 } from '../../utils/providerResult'
-import { useDraftQuery } from '../../utils/useDraftQuery'
 import { buildPayComponentsBreakdown } from '../../utils/payComponents'
 import {
   getSalaryAnalysisResult,
@@ -51,26 +50,25 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       ? field.props['hidePostponeCheckbox']
       : false
   const isDraftPhase = !hidePostponeCheckbox
-  const { content: employeesContent, refetch: refetchEmployees } =
-    useDraftQuery<{
-      employees: ReportEmployeeDto[]
-    }>(
-      application,
-      draftActionId(ApiActions.listDraftEmployees),
-      'draftEmployees',
-    )
-  const [draftEmployees, setDraftEmployees] = useState<
+  /**
+   * The employees list that arrived WITH the analysis now in `result`, and the
+   * only source the pay-components table derives from.
+   *
+   * The list and the analysis are separate providers in one mutation, and
+   * updateApplicationExternalData reports their statuses independently (its
+   * endpoint never applies throwOnError). So the only way to know a component
+   * average and a gap figure describe the same draft is to keep the list that
+   * came back beside the analysis — a tracked "are they still in step?" flag
+   * cannot hold that invariant, because any other writer of the list is free to
+   * replace it without telling the flag.
+   *
+   * Which is why nothing else here fetches employees: handleAnalyze asks for
+   * both legs on every arrival, so a standalone refresh has no reason to exist
+   * and no way to pair a newer list with an older analysis.
+   */
+  const [analyzedEmployees, setAnalyzedEmployees] = useState<
     ReportEmployeeDto[] | undefined
-  >(() => employeesContent?.employees)
-  // The employees list and the analysis are two providers in one mutation, and
-  // updateApplicationExternalData reports their statuses independently (its
-  // endpoint never applies throwOnError). When only one leg lands, the two
-  // halves of this screen describe different drafts — either way round. The
-  // pay-components table is the one element built from the employees snapshot
-  // rather than from `result`, so it is the one that would caption a component
-  // average from one attempt with a gap figure from another; it stands down
-  // until a paired attempt lands.
-  const [snapshotsOutOfStep, setSnapshotsOutOfStep] = useState(false)
+  >()
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasRequestedAnalysis, setHasRequestedAnalysis] = useState(() =>
     Boolean(getSalaryAnalysisResult(application.externalData)),
@@ -91,21 +89,10 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   // hands down a new identity, which re-fires the effect — a render loop. The
   // ref keeps the latest callback while the effect stays keyed to the result.
   const answerQuestionsRef = useRef(answerQuestions)
-  const refreshedEmployeesForRestoredResultRef = useRef(false)
 
   useEffect(() => {
     answerQuestionsRef.current = answerQuestions
   }, [answerQuestions])
-
-  useEffect(() => {
-    if (employeesContent) setDraftEmployees(employeesContent.employees)
-  }, [employeesContent])
-
-  useEffect(() => {
-    if (!result || refreshedEmployeesForRestoredResultRef.current) return
-    refreshedEmployeesForRestoredResultRef.current = true
-    void refetchEmployees({ silent: true })
-  }, [refetchEmployees, result])
 
   /**
    * The navigation flags have to reach the FORM, not just the shell's answer
@@ -143,7 +130,6 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
 
   const handleAnalyze = useCallback(async () => {
     setHasRequestedAnalysis(true)
-    refreshedEmployeesForRestoredResultRef.current = true
     setIsAnalyzing(true)
     setHasError(false)
     setErrorMessage(undefined)
@@ -178,21 +164,16 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       )
       const analysis = getProviderSuccessData(salaryAnalysisResult)
 
-      // Only a paired attempt clears the skew. If neither leg landed nothing
-      // was replaced, so the standing verdict still describes what is on
-      // screen and resetting it here would show a skewed pair as though it
-      // had been re-checked.
-      if (employees && analysis) {
-        setSnapshotsOutOfStep(false)
-      } else if (employees || analysis) {
-        setSnapshotsOutOfStep(true)
-      }
-
+      // Both legs, or the table stands down: a new analysis with no list of its
+      // own clears the stored one, since that list belongs to the analysis being
+      // replaced. An analysis that did not land leaves the existing pair alone —
+      // it still describes what is on screen.
+      //
       // A failed employees leg is deliberately not surfaced as an error: the
       // analysis is the artifact this screen gates submission on and it stands
       // on its own, so a failed side-read must not discard it or block the
       // applicant. Only the derived table stands down.
-      if (employees) setDraftEmployees(employees.employees)
+      if (analysis) setAnalyzedEmployees(employees?.employees)
 
       if (analysis) {
         applyNavigationAnswers(analysis, true)
@@ -275,8 +256,11 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const outlierCount = result?.outliers?.length ?? 0
   const gapState = deriveWageGapState(decomposition, outlierCount)
   const payComponents = useMemo(
-    () => (draftEmployees ? buildPayComponentsBreakdown(draftEmployees) : null),
-    [draftEmployees],
+    () =>
+      analyzedEmployees
+        ? buildPayComponentsBreakdown(analyzedEmployees)
+        : null,
+    [analyzedEmployees],
   )
   const r = messages.salaryAnalysis.results
 
@@ -558,9 +542,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         identifierForOrdinal={identifierForOrdinal}
       />
 
-      <PayComponentsTable
-        data={result && !snapshotsOutOfStep ? payComponents : null}
-      />
+      <PayComponentsTable data={payComponents} />
 
       <PayDispersionTable
         payDispersion={result?.payDispersion}

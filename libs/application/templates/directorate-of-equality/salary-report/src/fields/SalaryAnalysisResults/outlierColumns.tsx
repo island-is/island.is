@@ -19,8 +19,14 @@ const m = messages.salaryAnalysis.outlierGroup
 // characters that every row pays for twice, wrapping the cell onto a second
 // line and widening the column past what the container holds. OutlierEditor
 // carries the unit once, under the table.
+// A missing figure is a dash, not a zero: `?? 0` would print "0" as though DMR
+// had reported a wage of nothing. The DTO types both wage fields as required, so
+// this is contract-defensive rather than a path we expect — but a false figure an
+// applicant could act on is the wrong way to fail. Zero itself still formats.
 const formatWageAmount = (value?: number | null): string =>
-  (value ?? 0).toLocaleString('is-IS', { maximumFractionDigits: 0 })
+  value == null
+    ? DASH
+    : value.toLocaleString('is-IS', { maximumFractionDigits: 0 })
 
 /**
  * InteractiveTable wraps every ordinary cell in `<Text variant="medium">`, which
