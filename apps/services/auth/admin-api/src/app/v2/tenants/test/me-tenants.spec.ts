@@ -323,6 +323,34 @@ describe('MeTenantsController', () => {
         })
       })
 
+      it('PATCH should set and clear municipalityName', async () => {
+        const created = await fixtureFactory.createDomain({
+          name: '@super.patch.municipality.domain',
+          nationalId: createNationalId('company'),
+        })
+
+        const setRes = await server
+          .patch(`/v2/me/tenants/${encodeURIComponent(created.name)}`)
+          .send({
+            municipalityName: 'Reykjavík',
+          })
+
+        expect(setRes.status).toBe(200)
+        expect(setRes.body).toMatchObject({
+          name: created.name,
+          municipalityName: 'Reykjavík',
+        })
+
+        const clearRes = await server
+          .patch(`/v2/me/tenants/${encodeURIComponent(created.name)}`)
+          .send({
+            municipalityName: null,
+          })
+
+        expect(clearRes.status).toBe(200)
+        expect(clearRes.body.municipalityName).toBeNull()
+      })
+
       it('PATCH should update nationalId', async () => {
         const created = await fixtureFactory.createDomain({
           name: '@super.patch.national-id.domain',

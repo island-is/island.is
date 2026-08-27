@@ -87,7 +87,8 @@ export const editTenantAction: WrappedActionFn =
             displayName: rest.displayName,
             description: rest.description,
             contactEmail: rest.contactEmail || undefined,
-            municipalityName: rest.municipalityName || undefined,
+            // null (not undefined) so clearing the field persists NULL
+            municipalityName: rest.municipalityName || null,
           },
         },
       })
