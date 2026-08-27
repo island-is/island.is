@@ -58,7 +58,9 @@ export const judgeSubmitsDecision = async (
 
   // Ruling
   await expect(page).toHaveURL(`/domur/urskurdur/${caseId}`)
-  await page.getByText(options.decisionText).click()
+  // Exact match because some decision labels are prefixes of others, e.g.
+  // 'Kröfu um gæsluvarðhald hafnað( en úrskurðað í farbann)'
+  await page.getByText(options.decisionText, { exact: true }).click()
   if (options.validToDate) {
     await page.locator('input[id=validToDate]').fill(options.validToDate)
     await page.keyboard.press('Escape')
