@@ -257,9 +257,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const gapState = deriveWageGapState(decomposition, outlierCount)
   const payComponents = useMemo(
     () =>
-      analyzedEmployees
-        ? buildPayComponentsBreakdown(analyzedEmployees)
-        : null,
+      analyzedEmployees ? buildPayComponentsBreakdown(analyzedEmployees) : null,
     [analyzedEmployees],
   )
   const r = messages.salaryAnalysis.results
