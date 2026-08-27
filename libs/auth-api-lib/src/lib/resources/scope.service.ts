@@ -20,7 +20,11 @@ import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
 import { DelegationResourcesService } from './delegation-resources.service'
 import { mapToScopeTree } from './utils/scope-tree.mapper'
-import { municipalityNameKey } from './utils/municipality'
+
+// Compared normalized so admin-entered values don't need to match the
+// National Registry byte-for-byte in casing or whitespace.
+const normalizeMunicipalityName = (name: string): string =>
+  name.normalize('NFC').toLowerCase().replace(/\s+/g, ' ').trim()
 
 const VIRTUAL_MUNICIPALITY_TAG_ID = 'virtual-mitt-sveitarfelag'
 const VIRTUAL_MUNICIPALITY_TAG_SLUG = 'mitt-sveitarfelag'
@@ -58,10 +62,9 @@ export class ScopeService {
 
   /**
    * Looks up the user's municipality from the National Registry and finds
-   * a matching domain among the candidates by comparing normalized
-   * municipality names against Domain.displayName. Normalization handles
-   * the National Registry and domains using different forms of the same
-   * name, e.g. "Reykjavík" vs "Reykjavíkurborg".
+   * a matching domain among the candidates by comparing against
+   * Domain.municipalityName, which admins fill in with the municipality
+   * name as the National Registry returns it.
    */
   private async getUserMunicipalDomain(
     user: User,
@@ -84,13 +87,18 @@ export class ScopeService {
     if (!sveitarfelag) return null
 
     const domains = await this.domainModel.findAll({
-      attributes: ['name', 'displayName'],
-      where: { name: { [Op.in]: candidateDomainNames } },
+      attributes: ['name', 'municipalityName'],
+      where: {
+        name: { [Op.in]: candidateDomainNames },
+        municipalityName: { [Op.ne]: null },
+      },
     })
 
-    const municipalityKey = municipalityNameKey(sveitarfelag)
+    const municipalityKey = normalizeMunicipalityName(sveitarfelag)
     const domain = domains.find(
-      (domain) => municipalityNameKey(domain.displayName) === municipalityKey,
+      (domain) =>
+        domain.municipalityName &&
+        normalizeMunicipalityName(domain.municipalityName) === municipalityKey,
     )
 
     return domain?.name ?? null

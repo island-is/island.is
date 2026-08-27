@@ -223,8 +223,8 @@ describe('ScopeService', () => {
         sveitarfelag: 'Kópavogur',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', displayName: 'Kópavogsbær' },
-        { name: '@arborg.is', displayName: 'Sveitarfélagið Árborg' },
+        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
+        { name: '@arborg.is', municipalityName: 'Sveitarfélagið Árborg' },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
@@ -255,14 +255,14 @@ describe('ScopeService', () => {
       expect(mittTag!.scopes[0].name).toBe('@kopavogur.is/service')
     })
 
-    it('should match when National Registry uses the geographic name and the domain the legal name', async () => {
-      // National Registry returns "Reykjavík" while the domain is
-      // registered as "Reykjavíkurborg"
+    it('should match on municipalityName independent of the domain display name', async () => {
+      // The domain is registered as "Reykjavíkurborg" but its
+      // municipalityName holds the National Registry form "Reykjavík"
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Reykjavík',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@reykjavik.is', displayName: 'Reykjavíkurborg' },
+        { name: '@reykjavik.is', municipalityName: 'Reykjavík' },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
@@ -287,12 +287,12 @@ describe('ScopeService', () => {
       expect(mittTag!.scopes[0].name).toBe('@reykjavik.is/service')
     })
 
-    it('should match regardless of the "Sveitarfélagið" prefix on either side', async () => {
+    it('should not match domains that have no municipalityName set', async () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Múlaþing',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@mulathing.is', displayName: 'Sveitarfélagið Múlaþing' },
+        { name: '@mulathing.is', municipalityName: null },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
@@ -312,9 +312,9 @@ describe('ScopeService', () => {
 
       const result = await service.findScopeTags(mockUser, 'is')
 
-      const mittTag = result.find((t) => t.id === 'virtual-mitt-sveitarfelag')
-      expect(mittTag).toBeDefined()
-      expect(mittTag!.scopes[0].name).toBe('@mulathing.is/service')
+      expect(
+        result.find((t) => t.id === 'virtual-mitt-sveitarfelag'),
+      ).toBeUndefined()
     })
 
     it('should match despite casing and whitespace differences', async () => {
@@ -322,7 +322,7 @@ describe('ScopeService', () => {
         sveitarfelag: '  GARÐABÆR ',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@gardabaer.is', displayName: 'Garðabær' },
+        { name: '@gardabaer.is', municipalityName: 'Garðabær' },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
@@ -352,7 +352,7 @@ describe('ScopeService', () => {
         sveitarfelag: 'Kópavogur',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', displayName: 'Kópavogsbær' },
+        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
@@ -378,7 +378,10 @@ describe('ScopeService', () => {
 
       expect(mockDomainModel.findAll).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { name: { [Op.in]: ['@kopavogur.is'] } },
+          where: {
+            name: { [Op.in]: ['@kopavogur.is'] },
+            municipalityName: { [Op.ne]: null },
+          },
         }),
       )
     })
@@ -388,7 +391,7 @@ describe('ScopeService', () => {
         sveitarfelag: 'Kópavogur',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', displayName: 'Kópavogsbær' },
+        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
@@ -419,7 +422,7 @@ describe('ScopeService', () => {
         sveitarfelag: 'Kópavogur',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', displayName: 'Kópavogsbær' },
+        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
@@ -481,7 +484,7 @@ describe('ScopeService', () => {
         sveitarfelag: 'Dalvík',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', displayName: 'Kópavogsbær' },
+        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
@@ -511,7 +514,7 @@ describe('ScopeService', () => {
         sveitarfelag: 'Kópavogur',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', displayName: 'Kópavogsbær' },
+        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
@@ -536,7 +539,7 @@ describe('ScopeService', () => {
         sveitarfelag: 'Kópavogur',
       })
       mockDomainModel.findAll.mockResolvedValue([
-        { name: '@arborg.is', displayName: 'Sveitarfélagið Árborg' },
+        { name: '@arborg.is', municipalityName: 'Sveitarfélagið Árborg' },
       ])
 
       mockCms.getDelegationScopeTags.mockResolvedValue([

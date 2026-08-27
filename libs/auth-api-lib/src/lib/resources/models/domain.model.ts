@@ -73,6 +73,16 @@ export class Domain extends Model {
   })
   contactEmail?: string
 
+  @Column({
+    type: DataType.STRING,
+  })
+  @ApiPropertyOptional({
+    example: 'Reykjavík',
+    description:
+      'Municipality name as returned by the National Registry, used to match users to their municipality domain.',
+  })
+  municipalityName?: string
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

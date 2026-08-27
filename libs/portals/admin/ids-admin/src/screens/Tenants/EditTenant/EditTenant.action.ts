@@ -87,6 +87,7 @@ export const editTenantAction: WrappedActionFn =
             displayName: rest.displayName,
             description: rest.description,
             contactEmail: rest.contactEmail || undefined,
+            municipalityName: rest.municipalityName || undefined,
           },
         },
       })

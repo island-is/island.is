@@ -55,4 +55,16 @@ export class AdminCreateTenantDto {
   @IsEmail()
   @ApiPropertyOptional({ example: 'island@example.is' })
   contactEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @Matches(SAFE_TEXT_REGEX, {
+    message: 'Municipality name contains invalid characters',
+  })
+  @ApiPropertyOptional({
+    example: 'Reykjavík',
+    description:
+      'Municipality name as returned by the National Registry, used to match users to their municipality domain.',
+  })
+  municipalityName?: string
 }
