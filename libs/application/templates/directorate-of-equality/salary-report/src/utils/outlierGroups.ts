@@ -53,6 +53,20 @@ export const unassignedOutlierOrdinals = (
     .filter((ordinal) => !assignedOrdinals.has(ordinal))
 }
 
+// A group with no members has nothing to explain, so it never reaches DMR: one
+// created and emptied in the same session is simply dropped, and one the draft
+// already holds diffs as a removal (buildOutlierSyncCommands frees its recorded
+// members in the same batch, exactly as "Fjarlægja hóp" does).
+//
+// Applied by the caller before withFallbackOutlierGroupNames so the auto-names
+// stay contiguous, and mirroring the identical filter editOutliers applies
+// before PUTting the POSTPONED plan — both phases agree on what a group needs
+// in order to exist.
+export const outlierGroupsWithMembers = (
+  groups: OutlierGroupAnswer[],
+): OutlierGroupAnswer[] =>
+  groups.filter((group) => group.employeeOrdinals.length > 0)
+
 export const withFallbackOutlierGroupNames = (
   groups: OutlierGroupAnswer[],
   fallbackName: (index: number) => string,
@@ -159,3 +173,28 @@ export const buildOutlierSyncCommands = (
     employees: employeeCommands,
   }
 }
+
+// Postponing the improvement plan discards the grouping work: DMR's submit
+// drops the draft's outlier groups, and its group-delete guard rejects a group
+// that still holds members ("still has N member(s); reassign or remove them
+// first"), so submitting a postponed report while groups are populated 409s.
+//
+// Returned as two batches rather than one because that guard also dictates the
+// order — the memberships have to be gone before the groups are removed, and
+// the sync endpoint's within-batch ordering isn't ours to assume. Callers await
+// `employees` first, then `outlierGroups`.
+export const buildOutlierClearCommands = (content: {
+  outlierGroups: DraftOutlierGroupDto[]
+}): { employees: SyncCommand[]; outlierGroups: SyncCommand[] } => ({
+  employees: content.outlierGroups.flatMap((group) =>
+    group.memberEmployeeIds.map((employeeId) => ({
+      method: SyncMethodEnum.UPDATE,
+      id: employeeId,
+      data: { outlierGroupId: null },
+    })),
+  ),
+  outlierGroups: content.outlierGroups.map((group) => ({
+    method: SyncMethodEnum.REMOVE,
+    id: group.id,
+  })),
+})

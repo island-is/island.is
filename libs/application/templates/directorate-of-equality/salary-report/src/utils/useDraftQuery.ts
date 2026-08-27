@@ -13,8 +13,19 @@ type QueryExternalData<T> = {
 
 // Each screen owns its own externalData key/actionId (no shared cross-screen
 // cache needed, since refetch's mutation response writes straight into
-// application.externalData). DMR is called only on mount when that key is
-// missing (or ensureDraft), and after a sync to pre-warm the next screen.
+// application.externalData). DMR is called on every mount, and again after a
+// sync to pre-warm the next screen.
+//
+// Deliberately not cached across mounts, even though the provider persists its
+// response to externalData: the draft is mutable server state that OTHER
+// screens write to. Criteria are edited on the criteria screen but read (as a
+// tree, with sub-criteria) by three later screens; a workbook re-import
+// REPLACEs the whole scoring graph with fresh ids. Every screen diffs its form
+// against the ids it loaded, so a snapshot that predates a sibling's sync makes
+// it send UPDATE/REMOVE commands for rows DMR no longer has — a 404
+// (`Criterion "…" not found`) that repeats on every Continue, since the stale
+// snapshot is what got persisted. One read per mount is the price of a baseline
+// that is actually current.
 export const useDraftQuery = <T>(
   application: Application,
   actionId: string,
@@ -38,13 +49,18 @@ export const useDraftQuery = <T>(
   )
 
   const [content, setContent] = useState<T | undefined>(() => {
+    // An enabled query is about to fetch, so it starts empty — screens gate
+    // their one-shot seed on `content`, and seeding them from the persisted
+    // snapshot would hand them the stale baseline this hook exists to avoid.
+    // A disabled query never fetches, so the snapshot is all it can offer.
+    if (enabled) return undefined
     const existing = getValueViaPath<QueryExternalData<T>>(
       application.externalData,
       externalDataId,
     )
     return existing?.status === 'success' ? existing.data : undefined
   })
-  const [loading, setLoading] = useState(enabled && (ensureDraft || !content))
+  const [loading, setLoading] = useState(enabled)
   const [hasError, setHasError] = useState(false)
   const fetchedOnce = useRef(false)
 
@@ -105,7 +121,6 @@ export const useDraftQuery = <T>(
   useEffect(() => {
     if (!enabled) return
     if (fetchedOnce.current) return
-    if (content && !ensureDraft) return
     fetchedOnce.current = true
     void fetchContent()
     // eslint-disable-next-line react-hooks/exhaustive-deps

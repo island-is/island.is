@@ -19,8 +19,10 @@ import {
 import { messages } from '../../lib/messages'
 import { ApiActions, draftActionId } from '../../utils/constants'
 import {
+  buildOutlierClearCommands,
   buildOutlierSyncCommands,
   isOutlierGroupComplete,
+  outlierGroupsWithMembers,
   unassignedOutlierOrdinals,
   withFallbackOutlierGroupNames,
   type OutlierGroupAnswer,
@@ -356,14 +358,33 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
           return [false, formatMessage(messages.errors.draftLoadFailed)]
         }
 
-        const finalGroups = draftForm.getValues().salaryAnalysis.outlierGroups
         try {
-          await sync(
-            buildOutlierSyncCommands(
-              content,
-              withFallbackOutlierGroupNames(finalGroups, fallbackGroupName),
-            ),
-          )
+          if (isPostponed) {
+            // Postponing throws the grouping away rather than carrying it into
+            // the POSTPONED state, where the plan is filled in from scratch
+            // against the answers. Leaving it on the draft is what made the
+            // submit 409 on DMR's group-delete guard.
+            const clear = buildOutlierClearCommands(content)
+            if (clear.employees.length > 0) {
+              await sync({ employees: clear.employees })
+            }
+            if (clear.outlierGroups.length > 0) {
+              await sync({ outlierGroups: clear.outlierGroups })
+            }
+            draftForm.setValue('salaryAnalysis.outlierGroups', [])
+          } else {
+            // Emptied groups are discarded rather than synced as memberless
+            // rows on the draft.
+            const finalGroups = outlierGroupsWithMembers(
+              draftForm.getValues().salaryAnalysis.outlierGroups,
+            )
+            await sync(
+              buildOutlierSyncCommands(
+                content,
+                withFallbackOutlierGroupNames(finalGroups, fallbackGroupName),
+              ),
+            )
+          }
           await refetch({ silent: true })
         } catch (error) {
           console.error('Failed to sync salary outlier groups', error)
