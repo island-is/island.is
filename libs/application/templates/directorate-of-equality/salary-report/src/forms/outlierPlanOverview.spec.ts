@@ -75,7 +75,9 @@ describe('outlierPlanOverviewItems', () => {
     }
 
     expect(
-      groupNames(outlierPlanOverviewItems(answers, draftExternalData([draftGroup()]))),
+      groupNames(
+        outlierPlanOverviewItems(answers, draftExternalData([draftGroup()])),
+      ),
     ).toEqual(['Úr svörum'])
   })
 
