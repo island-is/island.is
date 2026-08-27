@@ -44,7 +44,7 @@ export const messages = {
   general: defineMessages({
     applicationName: {
       id: 'doe.sr.application:general.applicationName',
-      defaultMessage: 'Skýrslugjöf',
+      defaultMessage: 'Skýrslugjöf um kynbundin launamun',
     },
     institution: {
       id: 'doe.sr.application:general.institution',
@@ -53,6 +53,10 @@ export const messages = {
     tagDraft: {
       id: 'doe.sr.application:general.tagDraft',
       defaultMessage: 'Drög',
+    },
+    newApplicationButtonLabel: {
+      id: 'doe.sr.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný skýrsla',
     },
   }),
 

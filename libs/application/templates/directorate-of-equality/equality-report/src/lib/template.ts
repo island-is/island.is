@@ -7,7 +7,6 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  IdentityApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -18,6 +17,7 @@ import {
   DoeCompanyApi,
   EqualityReportTemplateDocxApi,
   GetReportCommentsApi,
+  IdentityApiProvider,
   PreviousEqualityReportContentApi,
   SubmitReportCommentApi,
   SubmitEqualityDraftApi,
@@ -50,6 +50,7 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.EQUALITY_REPORT].translation,
   dataSchema,
+  newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
@@ -97,7 +98,7 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                IdentityApi,
+                IdentityApiProvider,
                 CompanyRegistryApi,
                 ActiveEqualityReportApi,
                 DoeCompanyApi,

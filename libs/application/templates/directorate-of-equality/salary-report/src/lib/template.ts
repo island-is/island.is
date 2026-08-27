@@ -7,7 +7,6 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  IdentityApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -21,6 +20,7 @@ import {
   GetDraftCriteriaTreeApi,
   GetDraftHeaderApi,
   GetReportCommentsApi,
+  IdentityApiProvider,
   ImportPresignApi,
   ImportSalaryDraftWorkbookApi,
   ListDraftCriteriaApi,
@@ -69,6 +69,7 @@ const template: ApplicationTemplate<
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
+  newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   stateMachineOptions: {
     actions: {
       assignToInstitution: assign((context) => {
@@ -103,7 +104,7 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                IdentityApi,
+                IdentityApiProvider,
                 CompanyRegistryApi,
                 DoeCompanyApi,
                 SubCriterionCatalogApi,

@@ -44,6 +44,10 @@ export const messages = {
       id: 'doe.er.application:general.tagDraft',
       defaultMessage: 'Drög',
     },
+    newApplicationButtonLabel: {
+      id: 'doe.er.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný jafnréttisáætlun',
+    },
   }),
 
   notAllowed: defineMessages({
