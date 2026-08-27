@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import type { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
+import type { ApplicationNamespaceTranslations } from '@island.is/islandis-translations'
 import { ApplicationTranslation } from './application-translation.model'
 import { ApplicationTranslationLog } from './application-translation-log.model'
 import { ApplicationTranslationPublish } from './application-translation-publish.model'
@@ -56,24 +57,34 @@ export class ApplicationTranslationService {
    * Runtime read path -- returns published values only.
    * Draft columns are intentionally excluded.
    */
+  async getTranslationsForAllLocales(
+    namespace: string,
+  ): Promise<ApplicationNamespaceTranslations> {
+    const translations = await this.translationModel.findAll({
+      where: { namespace },
+      attributes: ['messageKey', 'valueIs', 'valueEn'],
+    })
+
+    const is: Record<string, string> = {}
+    const en: Record<string, string> = {}
+    for (const t of translations) {
+      if (t.valueIs != null && t.valueIs !== '') {
+        is[t.messageKey] = t.valueIs
+      }
+      const enValue = t.valueEn ?? t.valueIs
+      if (enValue != null && enValue !== '') {
+        en[t.messageKey] = enValue
+      }
+    }
+    return { is, en }
+  }
+
   async getTranslationsForNamespace(
     namespace: string,
     locale: Locale,
   ): Promise<Record<string, string>> {
-    const valueColumn = locale === 'en' ? 'valueEn' : 'valueIs'
-    const translations = await this.translationModel.findAll({
-      where: { namespace },
-      attributes: ['messageKey', valueColumn],
-    })
-
-    const result: Record<string, string> = {}
-    for (const t of translations) {
-      const value = locale === 'en' ? t.valueEn ?? t.valueIs : t.valueIs
-      if (value != null && value !== '') {
-        result[t.messageKey] = value
-      }
-    }
-    return result
+    const translations = await this.getTranslationsForAllLocales(namespace)
+    return translations[locale]
   }
 
   async getTranslationsForNamespaces(

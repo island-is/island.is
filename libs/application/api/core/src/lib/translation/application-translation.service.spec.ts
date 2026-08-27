@@ -68,6 +68,64 @@ describe('ApplicationTranslationService', () => {
     )
   })
 
+  describe('getTranslationsForAllLocales', () => {
+    it('returns published Icelandic and English strings in one pass', async () => {
+      findAllTranslationsSpy.mockResolvedValue([
+        {
+          messageKey: 'key.both',
+          valueIs: 'Íslenska',
+          valueEn: 'English',
+        },
+        {
+          messageKey: 'key.fallback',
+          valueIs: 'Aðeins íslenska',
+          valueEn: null,
+        },
+        {
+          messageKey: 'key.empty',
+          valueIs: '',
+          valueEn: '',
+        },
+      ])
+
+      await expect(
+        service.getTranslationsForAllLocales('test.ns'),
+      ).resolves.toEqual({
+        is: {
+          'key.both': 'Íslenska',
+          'key.fallback': 'Aðeins íslenska',
+        },
+        en: {
+          'key.both': 'English',
+          'key.fallback': 'Aðeins íslenska',
+        },
+      })
+
+      expect(findAllTranslationsSpy).toHaveBeenCalledWith({
+        where: { namespace: 'test.ns' },
+        attributes: ['messageKey', 'valueIs', 'valueEn'],
+      })
+    })
+  })
+
+  describe('getTranslationsForNamespace', () => {
+    it('returns a single locale from the bilingual result', async () => {
+      findAllTranslationsSpy.mockResolvedValue([
+        {
+          messageKey: 'key.both',
+          valueIs: 'Íslenska',
+          valueEn: 'English',
+        },
+      ])
+
+      await expect(
+        service.getTranslationsForNamespace('test.ns', 'en'),
+      ).resolves.toEqual({
+        'key.both': 'English',
+      })
+    })
+  })
+
   describe('upsertTranslation', () => {
     it('creates a row with empty published valueIs and draft content only', async () => {
       findOneSpy.mockResolvedValue(null)

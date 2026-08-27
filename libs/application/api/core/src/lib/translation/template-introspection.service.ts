@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import {
   ApplicationTypes,
   ApplicationConfigurations,
@@ -45,6 +45,7 @@ export { extractValidationDescriptors } from './utils/validation-descriptors.uti
 
 @Injectable()
 export class TemplateIntrospectionService {
+  private readonly logger = new Logger(TemplateIntrospectionService.name)
   /**
    * Runs the template's `formLoader` for the given state and role (same as introspection)
    * and returns the raw form object as JSON-serializable data for admin tooling.
@@ -167,6 +168,7 @@ export class TemplateIntrospectionService {
 
       for (const role of metaRoles) {
         let formIntrospection: FormIntrospection | null = null
+        let loadError: string | null = null
 
         if (role.formLoader && typeof role.formLoader === 'function') {
           try {
@@ -179,7 +181,15 @@ export class TemplateIntrospectionService {
               }) => Promise<Form>
             )({ featureFlagClient: mockFeatureFlagClient })
 
-            formIntrospection = walkForm(form, customFieldManifest)
+            formIntrospection = JSON.parse(
+              JSON.stringify(walkForm(form, customFieldManifest)),
+            ) as FormIntrospection
+
+            this.logger.log(
+              `introspected "${typeId}" / "${stateKey}" / "${String(
+                role.id,
+              )}": ${formIntrospection.sections.length} section(s)`,
+            )
 
             const descriptors = collectAllDescriptors(formIntrospection)
             for (const d of descriptors) {
@@ -188,14 +198,20 @@ export class TemplateIntrospectionService {
                 allDescriptors.push(d)
               }
             }
-          } catch {
-            // formLoader may fail in server context, skip gracefully
+          } catch (e) {
+            loadError = e instanceof Error ? e.message : String(e)
+            this.logger.warn(
+              `formLoader/walkForm failed for "${typeId}" / "${stateKey}" / "${
+                role.id
+              }": ${e instanceof Error ? e.stack ?? e.message : String(e)}`,
+            )
           }
         }
 
         roles.push({
           roleId: role.id as string,
           form: formIntrospection,
+          formLoadError: loadError,
         })
       }
 

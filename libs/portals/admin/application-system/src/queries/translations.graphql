@@ -205,6 +205,7 @@ query getApplicationTemplateIntrospection($typeId: String!) {
       status
       roles {
         roleId
+        formLoadError
         form {
           id
           title

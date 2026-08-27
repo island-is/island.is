@@ -6,7 +6,8 @@ import { applicationTranslationHttpFetch } from './application-translation-http.
 
 /**
  * HTTP-backed APPLICATION_TRANSLATION_PROVIDER for APIs without the application DB (e.g. island.is api).
- * Expects application-system API to expose GET /public/translations/:namespace.
+ * Expects application-system API to expose GET /public/translations/:namespace
+ * and GET /public/translations/:namespace/locales.
  */
 @Global()
 @Module({

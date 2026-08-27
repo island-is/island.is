@@ -437,6 +437,9 @@ export class RoleIntrospectionGql {
 
   @Field(() => FormIntrospectionGql, { nullable: true })
   form?: FormIntrospectionGql | null
+
+  @Field(() => String, { nullable: true })
+  formLoadError?: string | null
 }
 
 @ObjectType()

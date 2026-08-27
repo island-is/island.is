@@ -43,6 +43,7 @@ export interface TemplateStateNav {
   stateName: string
   roles: Array<{
     roleId: string
+    formLoadError?: string | null
     form?: {
       logoKey?: string | null
       sections: SectionIntrospection[]

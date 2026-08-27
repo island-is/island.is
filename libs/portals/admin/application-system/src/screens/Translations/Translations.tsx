@@ -92,9 +92,12 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
         display="flex"
         justifyContent="spaceBetween"
         alignItems="center"
+        marginTop={3}
         marginBottom={3}
       >
-        <Text variant="h3">{formatMessage(m.translations)}</Text>
+        <Text variant="h3" as="h1">
+          {formatMessage(m.translations)}
+        </Text>
       </Box>
 
       {isSuperAdmin && (

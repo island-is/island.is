@@ -207,6 +207,7 @@ export interface FormIntrospection {
 export interface RoleIntrospection {
   roleId: string
   form: FormIntrospection | null
+  formLoadError?: string | null
 }
 
 export interface StateIntrospection {

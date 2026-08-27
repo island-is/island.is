@@ -2,6 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { ApplicationTranslationService } from '@island.is/application/api/core'
+import type { ApplicationNamespaceTranslations } from '@island.is/islandis-translations'
 import type { Locale } from '@island.is/shared/types'
 
 /**
@@ -14,6 +15,13 @@ export class PublicTranslationController {
   constructor(
     private readonly translationService: ApplicationTranslationService,
   ) {}
+
+  @Get(':namespace/locales')
+  async getTranslationsForAllLocales(
+    @Param('namespace') namespace: string,
+  ): Promise<ApplicationNamespaceTranslations> {
+    return this.translationService.getTranslationsForAllLocales(namespace)
+  }
 
   @Get(':namespace')
   async getTranslations(

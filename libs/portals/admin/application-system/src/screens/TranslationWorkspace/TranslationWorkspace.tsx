@@ -83,6 +83,7 @@ export const TranslationWorkspace = () => {
   const { data, loading, error } = useGetApplicationTemplateIntrospectionQuery({
     variables: { typeId: typeId ?? '' },
     skip: !typeId,
+    fetchPolicy: 'network-only',
   })
 
   const introspection = data?.applicationTemplateIntrospection ?? null

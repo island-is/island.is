@@ -79,7 +79,6 @@ export class CmsTranslationsService {
 
   private getNamespaceMessagesFromDb = async (
     namespace: string,
-    lang: Locale,
   ): Promise<Messages> => {
     const cacheKey = getApplicationTranslationCacheKey(namespace)
     const cache = await this.cacheManager.get(cacheKey)
@@ -87,21 +86,13 @@ export class CmsTranslationsService {
       return cache as Messages
     }
 
-    const isStrings =
-      await this.appTranslationProvider!.getTranslationsForNamespace(
-        namespace,
-        'is',
-      )
-    const enStrings =
-      await this.appTranslationProvider!.getTranslationsForNamespace(
-        namespace,
-        'en',
-      )
+    const { is, en } =
+      await this.appTranslationProvider!.getTranslationsForAllLocales(namespace)
 
     const messages: Messages = {
       id: namespace,
-      is: isStrings,
-      en: enStrings,
+      is,
+      en,
     }
 
     await this.cacheManager.set(
@@ -115,7 +106,7 @@ export class CmsTranslationsService {
 
   getNamespaceMessages = async (namespace: string) => {
     if (await this.shouldUseApplicationTranslationWorkspace(namespace)) {
-      return this.getNamespaceMessagesFromDb(namespace, 'is')
+      return this.getNamespaceMessagesFromDb(namespace)
     }
 
     const cache = await this.cacheManager.get(namespace)

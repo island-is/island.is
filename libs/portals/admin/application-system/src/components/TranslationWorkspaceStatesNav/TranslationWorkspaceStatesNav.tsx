@@ -132,15 +132,32 @@ export const TranslationWorkspaceStatesNav = ({
                           labelUse="div"
                           iconVariant="small"
                         >
-                          {(role.form?.sections ?? [])
-                            .filter((section) => {
-                              const hasScreens =
-                                (section.screens as ScreenIntrospection[])
-                                  .length > 0
-                              const hasSubs = section.subSections.length > 0
-                              return hasScreens || hasSubs
-                            })
-                            .map((section, sectionIndex) => {
+                          {role.formLoadError && (
+                            <Box marginLeft={2} marginBottom={1}>
+                              <Text variant="small" color="red600">
+                                Form failed to load: {role.formLoadError}
+                              </Text>
+                            </Box>
+                          )}
+                          {!role.formLoadError &&
+                            !role.form && (
+                              <Box marginLeft={2} marginBottom={1}>
+                                <Text variant="small" color="dark300">
+                                  No form returned for this role.
+                                </Text>
+                              </Box>
+                            )}
+                          {!role.formLoadError &&
+                            role.form &&
+                            (role.form.sections ?? []).length === 0 && (
+                              <Box marginLeft={2} marginBottom={1}>
+                                <Text variant="small" color="dark300">
+                                  Form loaded with no sections.
+                                </Text>
+                              </Box>
+                            )}
+                          {(role.form?.sections ?? []).map(
+                            (section, sectionIndex) => {
                               const screens =
                                 section.screens as ScreenIntrospection[]
                               const { subSections } = section

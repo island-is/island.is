@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { getApplicationTranslationNamespaceSet } from '@island.is/application/utils'
-import { type ApplicationTranslationProvider } from '@island.is/islandis-translations'
+import {
+  type ApplicationNamespaceTranslations,
+  type ApplicationTranslationProvider,
+} from '@island.is/islandis-translations'
 import { Locale } from '@island.is/shared/types'
 import { ApplicationTranslationService } from './application-translation.service'
 
@@ -26,5 +29,11 @@ export class ApplicationTranslationProviderImpl
       namespace,
       locale,
     )
+  }
+
+  async getTranslationsForAllLocales(
+    namespace: string,
+  ): Promise<ApplicationNamespaceTranslations> {
+    return this.translationService.getTranslationsForAllLocales(namespace)
   }
 }
