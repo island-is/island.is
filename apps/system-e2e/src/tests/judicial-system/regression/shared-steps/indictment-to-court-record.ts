@@ -3,7 +3,9 @@ import { verifyRequestCompletion } from '../../../../support/api-tools'
 import {
   randomPoliceCaseNumber,
   getDaysFromNow,
+  injectTestDefenderIntoLawyerRegistry,
   randomIndictmentCourtCaseNumber,
+  selectTestDefender,
 } from '../../utils/helpers'
 
 export const prosecutorCreatesIndictmentCase = async (
@@ -182,8 +184,17 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
   page: Page,
   caseId: string,
   accusedName: string,
+  options?: {
+    // Assign the test defender on the advocates screen instead of the
+    // defendants waiving their right to counsel
+    assignDefender?: boolean
+  },
 ) => {
   const nextWeek = getDaysFromNow(7)
+
+  if (options?.assignDefender) {
+    await injectTestDefenderIntoLawyerRegistry(page)
+  }
 
   await page.goto('/malalistar/sakamal-sem-bida-uthlutunar')
   await expect(page).toHaveURL('/malalistar/sakamal-sem-bida-uthlutunar')
@@ -237,17 +248,29 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
 
   await expect(page).toHaveURL(`domur/akaera/malflytjendur/${caseId}`)
 
-  // One defender choice per defendant
-  const defenderChoiceOptions = page
-    .locator('label')
-    .filter({ hasText: 'óskar ekki eftir að sé' })
-  await expect(defenderChoiceOptions.first()).toBeVisible()
-  const defenderChoiceCount = await defenderChoiceOptions.count()
-  for (let i = 0; i < defenderChoiceCount; i++) {
-    await defenderChoiceOptions.nth(i).click()
+  if (options?.assignDefender) {
+    // Assign the test defender from the lawyer registry; selecting fires an
+    // UpdateDefendant with the defender fields
+    await selectTestDefender(page)
+    await page.getByRole('button', { name: 'Staðfesta val' }).click()
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+      page.getByTestId('modalPrimaryButton').click(),
+    ])
+    await expect(page.getByText('Verjandi staðfestur')).toBeVisible()
+  } else {
+    // One defender choice per defendant
+    const defenderChoiceOptions = page
+      .locator('label')
+      .filter({ hasText: 'óskar ekki eftir að sé' })
+    await expect(defenderChoiceOptions.first()).toBeVisible()
+    const defenderChoiceCount = await defenderChoiceOptions.count()
+    for (let i = 0; i < defenderChoiceCount; i++) {
+      await defenderChoiceOptions.nth(i).click()
+    }
+    await page.getByRole('button', { name: 'Staðfesta val' }).click()
+    await page.getByTestId('modalPrimaryButton').click()
   }
-  await page.getByRole('button', { name: 'Staðfesta val' }).click()
-  await page.getByTestId('modalPrimaryButton').click()
 
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
