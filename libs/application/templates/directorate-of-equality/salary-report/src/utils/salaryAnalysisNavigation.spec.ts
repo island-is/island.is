@@ -6,6 +6,9 @@ import type {
 } from '@island.is/clients/directorate-of-equality'
 import {
   hasMinimumSetOutliersInResult,
+  hasNotSeenPostponeReceipt,
+  hasSeenPostponeReceipt,
+  isPostponeRequested,
   navigationAnswersForAnalysisResult,
   salaryAnalysisNeedsImprovementPlan,
   salaryAnalysisOutlierPlanIsReviewed,
@@ -248,5 +251,53 @@ describe('salary analysis outlier navigation flags', () => {
     expect(
       salaryAnalysisOutlierPlanIsReviewed(answers, externalData(result(1))),
     ).toBe(false)
+  })
+})
+
+describe('postpone receipt visibility', () => {
+  it('treats a fresh postpone submission as not yet seen', () => {
+    const answers: FormValue = { salaryAnalysis: { postponed: ['yes'] } }
+
+    expect(hasSeenPostponeReceipt(answers)).toBe(false)
+    expect(hasNotSeenPostponeReceipt(answers)).toBe(true)
+  })
+
+  it('skips the receipt once the flag is persisted', () => {
+    const answers: FormValue = {
+      salaryAnalysis: { postponed: ['yes'], postponeReceiptSeen: true },
+    }
+
+    expect(hasSeenPostponeReceipt(answers)).toBe(true)
+    expect(hasNotSeenPostponeReceipt(answers)).toBe(false)
+  })
+
+  // The marker writes `true` and nothing else ever writes the key, but a
+  // falsy-but-present value must still read as "not seen" rather than as
+  // "present, therefore done".
+  it('reads a false flag as not seen', () => {
+    const answers: FormValue = {
+      salaryAnalysis: { postponeReceiptSeen: false },
+    }
+
+    expect(hasSeenPostponeReceipt(answers)).toBe(false)
+    expect(hasNotSeenPostponeReceipt(answers)).toBe(true)
+  })
+})
+
+describe('isPostponeRequested', () => {
+  it('reads the postpone checkbox', () => {
+    expect(isPostponeRequested({ salaryAnalysis: { postponed: ['yes'] } })).toBe(
+      true,
+    )
+  })
+
+  // OutlierGroupPanel empties the array once the applicant reaches the plan
+  // screen in a review state — the answer tracks the live intent, not history.
+  it('reads a cleared or absent checkbox as not postponed', () => {
+    expect(isPostponeRequested({ salaryAnalysis: { postponed: [] } })).toBe(
+      false,
+    )
+    expect(isPostponeRequested({ salaryAnalysis: {} })).toBe(false)
+    expect(isPostponeRequested({})).toBe(false)
   })
 })

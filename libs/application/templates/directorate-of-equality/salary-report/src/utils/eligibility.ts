@@ -1,5 +1,6 @@
 import { ApplicationContext } from '@island.is/application/types'
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { isPostponeRequested } from './salaryAnalysisNavigation'
 
 export const hasActiveEqualityReport = (ctx: ApplicationContext): boolean =>
   getValueViaPath<boolean>(
@@ -9,8 +10,4 @@ export const hasActiveEqualityReport = (ctx: ApplicationContext): boolean =>
   ) === true
 
 export const hasPostponedOutlierPlan = (ctx: ApplicationContext): boolean =>
-  getValueViaPath<string[]>(
-    ctx.application.answers,
-    'salaryAnalysis.postponed',
-    [],
-  )?.includes(YES) ?? false
+  isPostponeRequested(ctx.application.answers)

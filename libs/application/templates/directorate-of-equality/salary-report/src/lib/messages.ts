@@ -946,6 +946,10 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.improvementPlan.title',
         defaultMessage: 'Úrbótaáætlun',
       },
+      viewAnalysisButton: {
+        id: 'doe.sr.application:salaryAnalysis.improvementPlan.viewAnalysisButton',
+        defaultMessage: 'Skoða launagreiningu',
+      },
       intro: {
         id: 'doe.sr.application:salaryAnalysis.improvementPlan.intro',
         defaultMessage:
@@ -1552,6 +1556,28 @@ export const messages = {
       id: 'doe.sr.application:overview.contactPerson',
       defaultMessage: 'Tengiliður',
     },
+    salaryAnalysisTitle: {
+      id: 'doe.sr.application:overview.salaryAnalysisTitle',
+      defaultMessage: 'Launagreining',
+    },
+    withinBenchmarkLabel: {
+      id: 'doe.sr.application:overview.withinBenchmarkLabel',
+      defaultMessage: 'Er launamunur undir viðmiði?',
+    },
+    // Neither Já nor Nei: a single-gender workforce has no measurable gap, and
+    // an absent analysis has no verdict at all — see WageGapState.
+    withinBenchmarkNotComputable: {
+      id: 'doe.sr.application:overview.withinBenchmarkNotComputable',
+      defaultMessage: 'Ekki reiknanlegt',
+    },
+    withinBenchmarkUnknown: {
+      id: 'doe.sr.application:overview.withinBenchmarkUnknown',
+      defaultMessage: 'Liggur ekki fyrir',
+    },
+    postponeLabel: {
+      id: 'doe.sr.application:overview.postponeLabel',
+      defaultMessage: 'Fresta úrbótaáætlun?',
+    },
     submitButton: {
       id: 'doe.sr.application:overview.submitButton',
       defaultMessage: 'Senda inn umsókn',
@@ -1675,6 +1701,10 @@ export const messages = {
     alertTitle: {
       id: 'doe.sr.application:postponed.alertTitle',
       defaultMessage: 'Úrbótaáætlun frestað',
+    },
+    expandableHeader: {
+      id: 'doe.sr.application:postponed.expandableHeader',
+      defaultMessage: 'Hvað gerist næst?',
     },
     expandableIntro: {
       id: 'doe.sr.application:postponed.expandableIntro',

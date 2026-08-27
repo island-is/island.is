@@ -85,8 +85,14 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         )?.employees,
   )
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [hasRequestedAnalysis, setHasRequestedAnalysis] = useState(() =>
-    Boolean(getSalaryAnalysisResult(application.externalData)),
+  // The review states never ask on their own (see the auto-analyse effect
+  // below), so nothing is pending there — start as "asked" so a missing stored
+  // analysis lands on its own banner with the manual retry instead of an
+  // endless spinner.
+  const [hasRequestedAnalysis, setHasRequestedAnalysis] = useState(
+    () =>
+      !isDraftPhase ||
+      Boolean(getSalaryAnalysisResult(application.externalData)),
   )
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
@@ -223,14 +229,24 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     updateApplicationExternalData,
   ])
 
-  // Run automatically on every arrival at this screen — the applicant
-  // shouldn't have to press a button to see results, and the draft can have
-  // changed since the last visit (re-imported workbook, edited criteria,
-  // edited employees) with nothing here to know that and invalidate a cached
-  // `result`, so always recompute rather than trusting the last analysis.
+  // Draft phase only. There the applicant shouldn't have to press a button to
+  // see results, and the draft can have changed since the last visit
+  // (re-imported workbook, edited criteria, edited employees) with nothing here
+  // to know that and invalidate a cached `result`, so always recompute rather
+  // than trusting the last analysis.
+  //
+  // The review states are the opposite case: the stored analysis IS the one the
+  // report was submitted with, and no screen they expose can change the data it
+  // was computed from. Recomputing on arrival would re-run the analysis every
+  // time the applicant stepped back onto this screen to read the outliers their
+  // úrbótaáætlun explains — and would replace the snapshot the plan was written
+  // against. So they seed from the stored externalData and leave it alone; the
+  // recalculate button below stays as the manual escape hatch for the case
+  // where no snapshot is stored at all.
   useEffect(() => {
+    if (!isDraftPhase) return
     handleAnalyze()
-  }, [handleAnalyze])
+  }, [handleAnalyze, isDraftPhase])
 
   // Re-assert the flags whenever a result appears, so the conditional
   // úrbótaáætlun subsection and the overview gate resolve on a restored draft

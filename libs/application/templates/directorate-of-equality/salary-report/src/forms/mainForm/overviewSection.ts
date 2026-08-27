@@ -3,12 +3,20 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  coreMessages,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
+import { DefaultEvents, type ExternalData } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 import { PERIOD_ONE_MONTH } from '../../utils/constants'
-import { salaryAnalysisOutlierPlanIsReviewed } from '../../utils/salaryAnalysisNavigation'
+import {
+  getSalaryAnalysisResult,
+  isPostponeRequested,
+  salaryAnalysisNeedsImprovementPlan,
+  salaryAnalysisOutlierPlanIsReviewed,
+} from '../../utils/salaryAnalysisNavigation'
+import { deriveWageGapState } from '../../utils/wageGap'
+import { buildOutlierPlanOverviewField } from '../outlierPlanOverview'
 
 const MONTH_LABELS = [
   messages.aboutTheCompany.period.january,
@@ -183,8 +191,30 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
   }),
 ]
 
-// Basic overview — mirrors the equality report. Company / contact blocks for
-// now; the report + salary-analysis summary will be added later.
+// The verdict, not the figures: the analysis screen already renders the gap
+// itself, and this row answers the one question the submission turns on. The
+// three-way mapping is deliberate — WageGapState keeps "no measurable gap" and
+// "no result" apart from both verdicts, so neither may be reported as Nei.
+const withinBenchmarkValue = (externalData: ExternalData) => {
+  const result = getSalaryAnalysisResult(externalData)
+  const state = deriveWageGapState(
+    result?.wageGapDecomposition,
+    result?.outliers?.length ?? 0,
+  )
+
+  switch (state.kind) {
+    case 'withinBenchmark':
+      return coreMessages.radioYes
+    case 'notComputable':
+      return messages.overview.withinBenchmarkNotComputable
+    case 'unknown':
+      return messages.overview.withinBenchmarkUnknown
+    default:
+      return coreMessages.radioNo
+  }
+}
+
+// Basic overview — mirrors the equality report.
 export const overviewSection = buildSection({
   id: 'overview',
   title: messages.overview.sectionTitle,
@@ -195,6 +225,36 @@ export const overviewSection = buildSection({
       description: messages.overview.intro,
       children: [
         ...buildReportOverviewFields(true),
+        buildOverviewField({
+          id: 'overview.salaryAnalysis',
+          title: messages.overview.salaryAnalysisTitle,
+          titleVariant: 'h3',
+          backId: 'salaryAnalysisOverviewMultiField',
+          items: (answers, externalData) => [
+            {
+              width: 'half',
+              keyText: messages.overview.withinBenchmarkLabel,
+              valueText: withinBenchmarkValue(externalData),
+            },
+            // Postponing is only offered where there is a plan to postpone, so
+            // the row only means anything there.
+            ...(salaryAnalysisNeedsImprovementPlan(answers, externalData)
+              ? [
+                  {
+                    width: 'half' as const,
+                    keyText: messages.overview.postponeLabel,
+                    valueText: isPostponeRequested(answers)
+                      ? coreMessages.radioYes
+                      : coreMessages.radioNo,
+                  },
+                ]
+              : []),
+          ],
+        }),
+        buildOutlierPlanOverviewField({
+          id: 'overview.outlierPlan',
+          backId: 'salaryAnalysisImprovementPlanMultiField',
+        }),
         buildSubmitField({
           id: 'submit',
           title: messages.overview.submitButton,

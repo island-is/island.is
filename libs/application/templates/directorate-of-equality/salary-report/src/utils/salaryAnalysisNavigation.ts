@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import type { ExternalData, FormValue } from '@island.is/application/types'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 
@@ -78,3 +78,25 @@ export const navigationAnswersForAnalysisResult = (
 
   return { salaryAnalysis }
 }
+
+// The applicant asked to hand the úrbótaáætlun in later. Cleared again by
+// OutlierGroupPanel once they reach the plan screen in a review state, so it
+// answers "is the plan being postponed *now*", not "was it ever postponed".
+export const isPostponeRequested = (answers: FormValue): boolean =>
+  getValueViaPath<string[]>(answers, 'salaryAnalysis.postponed', [])?.includes(
+    YES,
+  ) ?? false
+
+// The POSTPONED receipt screen ("Sending móttekin") is a dead end on the visit
+// that submitted the report: it is the only navigable screen there, so the
+// applicant is handed the last-screen button instead of being walked straight
+// into the úrbótaáætlun flow. PostponeReceiptMarker persists the flag while
+// that screen renders — deliberately without telling the form shell, so the
+// screen the applicant is looking at does not restructure under them. The next
+// visit reads the persisted flag and skips the receipt.
+export const hasSeenPostponeReceipt = (answers: FormValue): boolean =>
+  getValueViaPath<boolean>(answers, 'salaryAnalysis.postponeReceiptSeen') ===
+  true
+
+export const hasNotSeenPostponeReceipt = (answers: FormValue): boolean =>
+  !hasSeenPostponeReceipt(answers)

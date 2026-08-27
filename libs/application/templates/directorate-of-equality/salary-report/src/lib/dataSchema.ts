@@ -135,6 +135,10 @@ const salaryAnalysis = z
     outlierGroups: z.array(outlierGroup).optional(),
     hasMinimumSetOutliers: z.boolean().optional(),
     outlierPlanReviewed: z.boolean().optional(),
+    // Set by the POSTPONED receipt screen the first time it renders, so a
+    // reopened application skips it and lands on the úrbótaáætlun screen —
+    // see PostponeReceiptMarker.
+    postponeReceiptSeen: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
     // Explanations are only required when there's something to explain (a

@@ -32,9 +32,25 @@ Directorate of Equality (Jafnréttisstofa).
 - **`notAllowed`** — terminal state shown when the applicant isn't eligible.
 - **`draft`** — the main form: company details, criteria/sub-criteria
   weighting, employee data (imported or entered manually), job classification
-  and employee classification.
-- **`completed`** — submits the report (`submitSalaryReport`) and shows the
-  confirmation screen.
+  and employee classification, the salary analysis and the úrbótaáætlun.
+  Submitting runs `submitSalaryReport` on the way out (`onExit`, so a failed
+  submission blocks the transition) and branches to `postponed` or `inReview`
+  depending on whether the applicant asked to hand the úrbótaáætlun in later
+  (`hasPostponedOutlierPlan`).
+- **`postponed`** — the applicant postponed the úrbótaáætlun. The visit that
+  submitted the report shows only the receipt screen ("Sending móttekin") and
+  ends there; every later visit skips the receipt and opens on the
+  úrbótaáætlun screen instead, with the submitted salary analysis behind it,
+  read-only and never recalculated. Submitting PUTs just the outlier
+  explanations (`editOutliers`) and moves to `inReview`.
+- **`draftRetry`** — a case worker sent the application back for revision
+  (`EDIT` from `inReview` or `postponed`). Same restricted comments and
+  úrbótaáætlun editing as `postponed`; there is no path back to the original
+  data-entry screens. Submitting moves to `inReview`.
+- **`inReview`** — with Jafnréttisstofa. Branches to `approved`, `denied`, or
+  back to `draftRetry`.
+- **`approved` / `denied`** — terminal states with their own conclusion
+  screens.
 
 The template is feature flagged via
 `Features.isDirectorateOfEqualityApplicationsEnabled`.
