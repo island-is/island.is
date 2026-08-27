@@ -882,8 +882,16 @@ export const en: TranslatedMessages = {
   'health.messages.videoCall': 'Video call',
   'health.messages.videoCallCanceled': 'Canceled',
   'health.messages.startVideoCall': 'Start video call',
-  'health.messages.cannotReply':
-    'You cannot reply to this message because the sender has closed further replies in this conversation.',
+  'health.messages.replyBlocked.default':
+    "You can't reply to this conversation.",
+  'health.messages.replyBlocked.repliesDisabled':
+    "You can't reply to this conversation because the sender has closed further replies in it.",
+  'health.messages.replyBlocked.outsideWindow':
+    "You can't reply to messages outside opening hours.",
+  'health.messages.replyBlocked.windowExpired':
+    "You can't reply to this conversation because the reply window has passed.",
+  'health.messages.replyBlocked.awaitingStaff':
+    "You can't reply to this conversation until staff have responded to you.",
   'health.messages.compose.newTitle': 'New message',
   'health.messages.compose.selectRecipient': 'Select recipient',
   'health.messages.compose.selectService': 'Select service',
@@ -915,6 +923,11 @@ export const en: TranslatedMessages = {
     'Failed to send message. Please try again later.',
   'health.messages.compose.noRecipient':
     'It is not possible to send messages at the moment',
+  'health.messages.compose.certificateTitle':
+    'Certificates cannot be requested in the app',
+  'health.messages.compose.certificateText':
+    'It is currently not possible to request certificates through the Ísland.is app. Please request certificates through Ísland.is My Pages.',
+  'health.messages.compose.certificateLink': 'Request a certificate',
   'health.messages.attachmentError':
     'Failed to download the document. Please try again later.',
   'health.messages.sentTitle': 'Message received',
