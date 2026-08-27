@@ -52,9 +52,8 @@ export const ListSettings = () => {
     !currentItem.fieldSettings?.listType ||
       currentItem.fieldSettings?.listType === ListTypesEnum.CUSTOM,
   )
-  const [unsupportedZendeskInstance, setUnsupportedZendeskInstance] = useState<
-    string | undefined
-  >()
+  const [isUnsupportedZendeskInstance, setIsUnsupportedZendeskInstance] =
+    useState(false)
   const [contentfulZendeskInstance, setContentfulZendeskInstance] = useState<
     string | undefined
   >()
@@ -146,9 +145,11 @@ export const ListSettings = () => {
         },
       })
     } catch {
-      setUnsupportedZendeskInstance(parsed.serviceSystemInstance)
+      setIsUnsupportedZendeskInstance(true)
       return
     }
+
+    setIsUnsupportedZendeskInstance(false)
 
     if (
       parsed.serviceSystemInstance ===
@@ -165,7 +166,6 @@ export const ListSettings = () => {
         zendeskBrandId: nextZendeskBrandId,
       },
     })
-    setUnsupportedZendeskInstance(undefined)
   }
 
   useEffect(() => {
@@ -190,7 +190,7 @@ export const ListSettings = () => {
     contentfulZendeskInstance ?? zendeskInstance,
   )
   const zendeskInstanceError =
-    unsupportedZendeskInstance || !zendeskInstanceValue
+    isUnsupportedZendeskInstance || !zendeskInstanceValue
       ? unsupportedZendeskInstanceMessage
       : undefined
 

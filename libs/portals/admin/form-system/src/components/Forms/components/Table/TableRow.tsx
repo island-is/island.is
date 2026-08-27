@@ -60,6 +60,28 @@ interface Props {
 }
 
 const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
+const ZENDESK_PUBLISH_ERROR =
+  'Zendesk instance and brand ID must be configured before publishing a Zendesk form.'
+const UNSUPPORTED_ZENDESK_PUBLISH_ERROR = 'Unsupported Zendesk tenant'
+
+type GraphQLErrorLike = {
+  graphQLErrors?: Array<{ message?: string }>
+}
+
+const getErrorMessages = (error: unknown): string[] => {
+  const messages = error instanceof Error ? [error.message] : []
+  const graphQLErrors = (error as GraphQLErrorLike)?.graphQLErrors
+
+  if (Array.isArray(graphQLErrors)) {
+    messages.push(
+      ...graphQLErrors
+        .map((graphQLError) => graphQLError.message)
+        .filter((message): message is string => Boolean(message)),
+    )
+  }
+
+  return messages
+}
 
 interface ColumnTextProps {
   text: string | number
@@ -101,6 +123,34 @@ export const TableRow = ({
   })
   const location = useLocation()
   const handleToggle = () => setIsOpen((prev) => !prev)
+
+  const showPublishError = useCallback(
+    (error: unknown) => {
+      const errorMessages = getErrorMessages(error)
+
+      if (
+        errorMessages.some((message) =>
+          message.includes(UNSUPPORTED_ZENDESK_PUBLISH_ERROR),
+        )
+      ) {
+        toast.error(formatMessage(m.unsupportedZendeskInstanceError))
+      } else if (
+        errorMessages.some((message) => message.includes(ZENDESK_PUBLISH_ERROR))
+      ) {
+        toast.error(formatMessage(m.zendeskSettingsNeededError))
+      } else {
+        toast.error(
+          formatMessage({
+            id: 'publishFormError',
+            defaultMessage: 'Ekki tókst að gefa út formið.',
+          }),
+        )
+      }
+
+      console.error('Error publishing form:', error)
+    },
+    [formatMessage],
+  )
 
   const sortedOrganizations = useMemo(
     () =>
@@ -312,11 +362,11 @@ export const TableRow = ({
         })
         const form = formData?.formSystemForm?.form
         if (!form || !hasEnglishForAllNameFields(form)) {
-          toast.warning(formatMessage(m.translationNeededError))
+          toast.error(formatMessage(m.translationNeededError))
           return
         }
         if (!hasZendeskSettingsForPublish(form)) {
-          toast.warning(formatMessage(m.zendeskSettingsNeededError))
+          toast.error(formatMessage(m.zendeskSettingsNeededError))
           return
         }
         try {
@@ -334,7 +384,7 @@ export const TableRow = ({
             ),
           )
         } catch (error) {
-          console.error('Error publishing form:', error)
+          showPublishError(error)
         }
       },
     }
@@ -349,11 +399,11 @@ export const TableRow = ({
         })
         const form = formData?.formSystemForm?.form
         if (!form || !hasEnglishForAllNameFields(form)) {
-          toast.warning(formatMessage(m.translationNeededError))
+          toast.error(formatMessage(m.translationNeededError))
           return
         }
         if (!form || !hasZendeskSettingsForPublish(form)) {
-          toast.warning(formatMessage(m.zendeskSettingsNeededError))
+          toast.error(formatMessage(m.zendeskSettingsNeededError))
           return
         }
         try {
@@ -388,7 +438,7 @@ export const TableRow = ({
               .filter((form) => form.id !== returnedForm.id)
           })
         } catch (error) {
-          console.error('Error publishing form:', error)
+          showPublishError(error)
         }
       },
     }
@@ -579,6 +629,7 @@ export const TableRow = ({
     formatMessage,
     updateFormStatus,
     copyFormToOrganization,
+    showPublishError,
     organizationNationalId,
     selectedCopyOrganization,
     selectedCopyOrganizationNationalId,

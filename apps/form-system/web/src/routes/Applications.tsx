@@ -187,20 +187,31 @@ export const Applications = () => {
   }, [slug, createApplication, fetchApplications])
 
   useEffect(() => {
-    if (headerApplication === null) {
-      setInfo({
-        applicationName: undefined,
-        organisationName: undefined,
-        isTest: false,
-      })
-      return
+    const resetInfo = {
+      applicationName: undefined,
+      organizationName: undefined,
+      isTest: false,
     }
+    const nextInfo =
+      headerApplication === null
+        ? resetInfo
+        : {
+            applicationName: headerApplication?.formName?.[lang] ?? '',
+            organizationName: headerApplication?.organizationName?.[lang] ?? '',
+            isTest: headerApplication?.isTest ?? false,
+          }
 
-    setInfo({
-      applicationName: headerApplication?.formName?.[lang] ?? '',
-      organisationName: headerApplication?.organizationName?.[lang] ?? '',
-      isTest: headerApplication?.isTest ?? false,
-    })
+    setInfo(nextInfo)
+
+    return () => {
+      setInfo((currentInfo) =>
+        currentInfo.applicationName === nextInfo.applicationName &&
+        currentInfo.organizationName === nextInfo.organizationName &&
+        currentInfo.isTest === nextInfo.isTest
+          ? resetInfo
+          : currentInfo,
+      )
+    }
   }, [headerApplication, lang, setInfo])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)

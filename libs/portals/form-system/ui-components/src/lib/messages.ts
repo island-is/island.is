@@ -1336,6 +1336,13 @@ export const m = defineMessages({
     description:
       'The form cannot be published. Zendesk brand ID and Zendesk instance must be configured.',
   },
+  unsupportedZendeskInstanceError: {
+    id: 'form.system:unsupported-zendesk-instance-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk instance er ekki stutt.',
+    description:
+      'The form cannot be published. The Zendesk instance is not supported.',
+  },
   copyFieldHover: {
     id: 'form.system:copy-field-hover',
     defaultMessage: 'Afrita innslátt',

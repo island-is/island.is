@@ -21,7 +21,7 @@ describe('FormsService', () => {
     ({
       nationalId,
       scope,
-    } as User)
+    } as unknown as User)
 
   beforeEach(() => {
     formModel = {
@@ -72,7 +72,9 @@ describe('FormsService', () => {
         service.updateStatus(createUser(sourceOrganizationNationalId), formId, {
           newStatus: 'PUBLISHED',
         }),
-      ).rejects.toBeInstanceOf(BadRequestException)
+      ).rejects.toThrow(
+        'Zendesk instance and brand ID must be configured before publishing a Zendesk form.',
+      )
 
       expect(publishFormInDevelopment).not.toHaveBeenCalled()
     })
@@ -98,9 +100,39 @@ describe('FormsService', () => {
         service.updateStatus(createUser(sourceOrganizationNationalId), formId, {
           newStatus: 'PUBLISHED',
         }),
-      ).rejects.toBeInstanceOf(BadRequestException)
+      ).rejects.toThrow(
+        'Zendesk instance and brand ID must be configured before publishing a Zendesk form.',
+      )
 
       expect(publishFormBeingChanged).not.toHaveBeenCalled()
+    })
+
+    it('rejects publishing a Zendesk form with an unsupported organization Zendesk instance', async () => {
+      const form = {
+        id: formId,
+        organizationId: 'organization-id',
+        organizationNationalId: sourceOrganizationNationalId,
+        status: 'IN_DEVELOPMENT',
+        submissionServiceUrl: 'zendesk',
+        zendeskBrandId: '123',
+      } as Form
+      const publishFormInDevelopment = jest.spyOn(
+        service,
+        'publishFormInDevelopment' as never,
+      )
+
+      formModel.findByPk.mockResolvedValue(form)
+      organizationModel.findByPk.mockResolvedValue({
+        zendeskInstance: 'unsupported',
+      })
+
+      await expect(
+        service.updateStatus(createUser(sourceOrganizationNationalId), formId, {
+          newStatus: 'PUBLISHED',
+        }),
+      ).rejects.toThrow('Unsupported Zendesk tenant')
+
+      expect(publishFormInDevelopment).not.toHaveBeenCalled()
     })
   })
 

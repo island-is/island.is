@@ -20,7 +20,7 @@ export const Form = () => {
   useEffect(() => {
     setInfo({
       applicationName: state.application?.formName?.[lang] ?? '',
-      organisationName: state.application?.organizationName?.[lang] ?? '',
+      organizationName: state.application?.organizationName?.[lang] ?? '',
       isTest: state.application?.isTest ?? false,
     })
   }, [

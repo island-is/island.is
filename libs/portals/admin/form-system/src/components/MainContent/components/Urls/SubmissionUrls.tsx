@@ -65,9 +65,8 @@ export const SubmissionUrls = () => {
   const [zendeskBrandIdOptions, setZendeskBrandIdOptions] = useState(() =>
     parseZendeskBrandIds(zendeskBrandId),
   )
-  const [unsupportedZendeskInstance, setUnsupportedZendeskInstance] = useState<
-    string | undefined
-  >()
+  const [isUnsupportedZendeskInstance, setIsUnsupportedZendeskInstance] =
+    useState(false)
 
   const sanitizeId = (url: string) => url.replace(/[^a-zA-Z0-9-_]/g, '-')
 
@@ -138,6 +137,8 @@ export const SubmissionUrls = () => {
         ? form.organizationZendeskInstance?.zendeskBrandId ?? ''
         : ''
 
+    setZendeskBrandIdOptions(brandIdOptions)
+
     try {
       await updateOrganizationZendeskInstance({
         variables: {
@@ -150,12 +151,11 @@ export const SubmissionUrls = () => {
         },
       })
     } catch {
-      setUnsupportedZendeskInstance(parsed.serviceSystemInstance)
-      setZendeskBrandIdOptions(brandIdOptions)
+      setIsUnsupportedZendeskInstance(true)
       return
     }
 
-    setZendeskBrandIdOptions(brandIdOptions)
+    setIsUnsupportedZendeskInstance(false)
 
     if (
       parsed.serviceSystemInstance ===
@@ -172,7 +172,6 @@ export const SubmissionUrls = () => {
         zendeskBrandId: nextZendeskBrandId,
       },
     })
-    setUnsupportedZendeskInstance(undefined)
   }
 
   useEffect(() => {
@@ -430,7 +429,7 @@ export const SubmissionUrls = () => {
                       id={zendeskBrandInputId}
                       checked={selectedZendeskBrandId === brandId}
                       disabled={
-                        isReadOnly || !brandId || !!unsupportedZendeskInstance
+                        isReadOnly || !brandId || isUnsupportedZendeskInstance
                       }
                       onChange={() => {
                         controlDispatch({
@@ -449,7 +448,7 @@ export const SubmissionUrls = () => {
                         })
                       }}
                       subLabel={
-                        unsupportedZendeskInstance ? (
+                        isUnsupportedZendeskInstance ? (
                           <Text
                             as="span"
                             color="red600"

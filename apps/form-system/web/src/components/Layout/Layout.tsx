@@ -19,9 +19,9 @@ export const Layout = ({ children }: PropsWithChildren) => {
       <GridContainer>
         <Header
           info={
-            info.applicationName && info.organisationName
+            info.applicationName && info.organizationName
               ? {
-                  title: info.organisationName,
+                  title: info.organizationName,
                   description: info.applicationName,
                 }
               : undefined

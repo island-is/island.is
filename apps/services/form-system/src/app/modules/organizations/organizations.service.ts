@@ -131,11 +131,7 @@ export class OrganizationsService {
       ? normalizeZendeskInstance(zendeskInstance)
       : undefined
 
-    if (zendeskInstance && !supportedZendeskInstance) {
-      throw new BadRequestException('Unsupported Zendesk tenant')
-    }
-
-    organization.zendeskInstance = supportedZendeskInstance ?? ''
+    organization.zendeskInstance = zendeskInstance?.trim() ?? ''
 
     await this.sequelize.transaction(async (transaction) => {
       await organization.save({ transaction })
@@ -157,6 +153,10 @@ export class OrganizationsService {
         await form.save({ transaction })
       }
     })
+
+    if (zendeskInstance && !supportedZendeskInstance) {
+      throw new BadRequestException('Unsupported Zendesk tenant')
+    }
   }
 
   async addDelegation(
