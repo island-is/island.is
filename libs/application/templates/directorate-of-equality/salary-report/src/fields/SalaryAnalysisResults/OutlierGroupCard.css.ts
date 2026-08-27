@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 // Wrapper around each member pill: the positioning context for the overlay
@@ -8,23 +8,25 @@ export const memberPill = style({
   display: 'inline-flex',
   position: 'relative',
   borderRadius: theme.border.radius.large,
-  selectors: {
-    // Tag's `focusable` class floods the ground blue400 with white text on
-    // hover. That 150ms background transition running underneath a white
-    // overlay fading in on top of it is what reads as a flash, so the pill is
-    // pinned to its resting look and the overlay becomes the only thing that
-    // changes. Higher specificity than Tag's own `.class:hover`, so it wins.
-    '& button:hover': {
-      backgroundColor: 'transparent',
-      color: theme.color.blue400,
-    },
-  },
   // The overlay would mask Tag's mint focus ground, so the keyboard indicator
   // lives out here where nothing covers it. Transient under the pointer: the
   // click that focuses the pill also removes it.
   ':focus-within': {
     boxShadow: `0 0 0 3px ${theme.color.mint400}`,
   },
+})
+
+// Tag's `focusable` class floods the ground blue400 with white text on hover.
+// That 150ms background transition running underneath a white overlay fading in
+// on top of it is what reads as a flash, so the pill is pinned to its resting
+// look and the overlay becomes the only thing that changes.
+//
+// globalStyle because the target is Tag's own button, a descendant we don't
+// render — `& button:hover` is not a selector vanilla-extract accepts on a
+// style block. Specificity is 0,2,1 against Tag's own 0,2,0, so this wins.
+globalStyle(`${memberPill} button:hover`, {
+  backgroundColor: 'transparent',
+  color: theme.color.blue400,
 })
 
 // The remove affordance is taken out of flow entirely and fades in over the

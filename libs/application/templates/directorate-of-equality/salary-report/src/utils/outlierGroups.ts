@@ -27,6 +27,33 @@ export type OutlierGroupAnswer = {
   employeeOrdinals: number[]
 }
 
+// A newly created group, with every text field explicitly blank.
+//
+// The blanks are not decoration: react-hook-form resolves a registered input's
+// initial value from `_formValues` and falls back to `_defaultValues` AT THE
+// SAME ARRAY INDEX for any key the value is missing. Both forms that hold these
+// groups have defaults (the draft form from useSeedOnce's reset, the ambient one
+// from application.answers), so appending a group that omits `reason` put the
+// *deleted* group N's reason into the new group N — and wrote it back into the
+// form values. Declaring every key keeps the fallback from ever being reached.
+//
+// Keep this in step with OutlierGroupAnswer: a text field added there without
+// being added here is silently re-exposed to that fallback.
+export const emptyOutlierGroupAnswer = (
+  employeeOrdinals: number[],
+  // Draft mode tracks groups by a stable client-minted id so sync commands are
+  // attributed by id rather than array position; POSTPONED mode has no sync.
+  id?: string,
+): OutlierGroupAnswer => ({
+  id,
+  name: '',
+  reason: '',
+  action: '',
+  signatureName: '',
+  signatureRole: '',
+  employeeOrdinals,
+})
+
 // An empty group (all its members freed by a removal) has nothing to explain,
 // so it's vacuously complete — same exemption dataSchema's superRefine makes.
 //

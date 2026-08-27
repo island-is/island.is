@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import {
+  emptyOutlierGroupAnswer,
   foldGroupDirection,
   isOutlierGroupComplete,
 } from '../../utils/outlierGroups'
@@ -133,11 +134,12 @@ export const OutlierEditor: FC<Props> = ({
   const byOrdinal = (a: number, b: number) => a - b
 
   const handleCreateGroup = () => {
-    append({
-      // Draft mode needs a stable id from creation to track by id, not array position.
-      id: mode === 'draft' ? crypto.randomUUID() : undefined,
-      employeeOrdinals: [...selected].sort(byOrdinal),
-    } as OutlierGroupAnswer)
+    append(
+      emptyOutlierGroupAnswer(
+        [...selected].sort(byOrdinal),
+        mode === 'draft' ? crypto.randomUUID() : undefined,
+      ),
+    )
     setSelected(new Set())
     // The current page may no longer exist once its rows leave the table.
     setPage(1)
