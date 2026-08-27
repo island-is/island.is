@@ -23,7 +23,9 @@ import { PublishScopeInput } from './dto/publish-scope.input'
 import { PatchScopeResponse } from './models/patch-scope-response.model'
 import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
 
-const SCOPES_BY_TENANTS_FETCH_LIMIT = 100
+// How many tenants to fetch scopes for concurrently. We fetch every tenant,
+// batching only to keep the upstream fan-out bounded.
+const SCOPES_BY_TENANTS_BATCH_SIZE = 25
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -320,19 +322,24 @@ export class ScopeService extends MultiEnvironmentService {
   ): Promise<ScopesByTenantsPayload> {
     const uniqueIds = Array.from(new Set(tenantIds))
 
-    const limitedIds = uniqueIds.slice(0, SCOPES_BY_TENANTS_FETCH_LIMIT)
-    if (limitedIds.length < uniqueIds.length) {
-      this.logger.warn(
-        `getScopesByTenants truncated request from ${uniqueIds.length} to ${SCOPES_BY_TENANTS_FETCH_LIMIT} tenants`,
+    // Fetch scopes for every tenant, batching the fan-out so a large number of
+    // tenants doesn't burst into one huge wave of upstream requests. Previously
+    // this was truncated to a fixed number of tenants, which silently hid the
+    // scopes of any tenant beyond the cap.
+    const settled: PromiseSettledResult<{
+      tenantId: string
+      payload: ScopesPayload
+    }>[] = []
+    for (let i = 0; i < uniqueIds.length; i += SCOPES_BY_TENANTS_BATCH_SIZE) {
+      const batch = uniqueIds.slice(i, i + SCOPES_BY_TENANTS_BATCH_SIZE)
+      const batchResults = await Promise.allSettled(
+        batch.map(async (tenantId) => ({
+          tenantId,
+          payload: await this.getScopes(user, tenantId, environment),
+        })),
       )
+      settled.push(...batchResults)
     }
-
-    const settled = await Promise.allSettled(
-      limitedIds.map(async (tenantId) => ({
-        tenantId,
-        payload: await this.getScopes(user, tenantId, environment),
-      })),
-    )
 
     const data = settled.flatMap((result, index) => {
       if (result.status === 'fulfilled') {
@@ -340,7 +347,7 @@ export class ScopeService extends MultiEnvironmentService {
           { tenantId: result.value.tenantId, data: result.value.payload.data },
         ]
       }
-      this.logger.error(`Failed to get scopes for tenant ${limitedIds[index]}`)
+      this.logger.error(`Failed to get scopes for tenant ${uniqueIds[index]}`)
       return []
     })
 
