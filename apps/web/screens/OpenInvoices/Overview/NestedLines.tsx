@@ -60,6 +60,11 @@ export const NestedLines = ({
 
     return payments.map((payment) => {
       const isFullyPaid = payment.amount === payment.invoice.totalAmount
+      const itemizationsCount = payment.invoice.itemizations?.length ?? 0
+      const invoiceAmountBackground =
+        itemizationsCount % 2 === 0 ? 'white' : undefined
+      const paidRowIndex = itemizationsCount + (isFullyPaid ? 0 : 1)
+      const paidBackground = paidRowIndex % 2 === 0 ? 'white' : undefined
 
       return (
         <Box
@@ -118,10 +123,7 @@ export const NestedLines = ({
                 <T.Row>
                   <T.Data
                     box={{
-                      background:
-                        (payment.invoice.itemizations?.length ?? 0) % 2 === 0
-                          ? 'white'
-                          : undefined,
+                      background: invoiceAmountBackground,
                       className: styles.noBorder,
                     }}
                   >
@@ -132,10 +134,7 @@ export const NestedLines = ({
                   <T.Data
                     box={{
                       textAlign: 'right',
-                      background:
-                        (payment.invoice.itemizations?.length ?? 0) % 2 === 0
-                          ? 'white'
-                          : undefined,
+                      background: invoiceAmountBackground,
                       className: styles.noBorder,
                     }}
                   >
@@ -148,10 +147,7 @@ export const NestedLines = ({
               <T.Row>
                 <T.Data
                   box={{
-                    background:
-                      (payment.invoice.itemizations?.length ?? 0) % 2 === 0
-                        ? 'white'
-                        : undefined,
+                    background: paidBackground,
                     className: styles.noBorder,
                   }}
                 >
@@ -162,10 +158,7 @@ export const NestedLines = ({
                 <T.Data
                   box={{
                     textAlign: 'right',
-                    background:
-                      (payment.invoice.itemizations?.length ?? 0) % 2 === 0
-                        ? 'white'
-                        : undefined,
+                    background: paidBackground,
                     className: styles.noBorder,
                   }}
                 >
