@@ -30,7 +30,7 @@ export const debtsSection = buildSection({
           dataTestId: 'debts-table',
           selectable: true,
           header: [
-            { label: messages.table.chargeTypeNameHeader, width: 180 },
+            { label: messages.table.chargeTypeNameHeader, width: 200 },
             messages.table.dueDateHeader,
             messages.table.finalDueDateHeader,
             messages.table.amountHeader,
@@ -70,6 +70,8 @@ export const debtsSection = buildSection({
           id: 'debtsSummaryFooter',
           widthReferenceTestId: 'debts-table',
           watchFieldIds: ['debtsToPay', 'selectedDebts'],
+          labelOffset: 56,
+          labelWidth: 200,
           rows: (application: Application) => {
             const totalDebts = getDebts(application).reduce(
               (total, debt) => total + debt.debts,

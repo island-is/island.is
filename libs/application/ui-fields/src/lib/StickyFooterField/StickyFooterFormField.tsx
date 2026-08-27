@@ -121,19 +121,34 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
             paddingBottom={1}
             className={styles.row}
           >
-            <Text
-              variant="medium"
-              fontWeight={index === 0 ? 'semiBold' : 'regular'}
-              className={styles.label}
+            <Box
+              style={{
+                marginLeft: field.labelOffset,
+                width: field.labelWidth,
+                flexShrink: 0,
+              }}
             >
-              {formatText(row.label, application, formatMessage)}
-            </Text>
-            <Text
-              variant="medium"
-              fontWeight={index === 0 ? 'semiBold' : 'regular'}
+              <Text
+                variant="medium"
+                fontWeight={index === 0 ? 'semiBold' : 'regular'}
+              >
+                {formatText(row.label, application, formatMessage)}
+              </Text>
+            </Box>
+            <Box
+              style={
+                field.valueWidth
+                  ? { width: field.valueWidth, flexShrink: 0 }
+                  : undefined
+              }
             >
-              {formatText(row.value, application, formatMessage)}
-            </Text>
+              <Text
+                variant="medium"
+                fontWeight={index === 0 ? 'semiBold' : 'regular'}
+              >
+                {formatText(row.value, application, formatMessage)}
+              </Text>
+            </Box>
           </Box>
         ))}
       </Box>
