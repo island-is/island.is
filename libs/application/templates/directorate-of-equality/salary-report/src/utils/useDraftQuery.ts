@@ -19,7 +19,15 @@ export const useDraftQuery = <T>(
   application: Application,
   actionId: string,
   externalDataId: string,
-  { ensureDraft = false }: { ensureDraft?: boolean } = {},
+  // enabled=false for a provider the current state's role does not grant —
+  // the mutation would 400 on the actionId check. The screen still renders;
+  // whatever the query would have supplied is simply absent. Only the mount
+  // fetch is gated: an explicit refetch() is the caller's decision, so it
+  // still fires.
+  {
+    ensureDraft = false,
+    enabled = true,
+  }: { ensureDraft?: boolean; enabled?: boolean } = {},
 ) => {
   const { lang: locale } = useLocale()
   const [updateApplicationExternalData] = useMutation(
@@ -33,7 +41,7 @@ export const useDraftQuery = <T>(
     )
     return existing?.status === 'success' ? existing.data : undefined
   })
-  const [loading, setLoading] = useState(ensureDraft || !content)
+  const [loading, setLoading] = useState(enabled && (ensureDraft || !content))
   const [hasError, setHasError] = useState(false)
   const fetchedOnce = useRef(false)
 
@@ -92,6 +100,7 @@ export const useDraftQuery = <T>(
   )
 
   useEffect(() => {
+    if (!enabled) return
     if (fetchedOnce.current) return
     if (content && !ensureDraft) return
     fetchedOnce.current = true

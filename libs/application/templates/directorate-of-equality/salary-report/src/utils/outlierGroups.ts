@@ -29,12 +29,17 @@ export type OutlierGroupAnswer = {
 
 // An empty group (all its members freed by a removal) has nothing to explain,
 // so it's vacuously complete — same exemption dataSchema's superRefine makes.
+//
+// `signatureName` is deliberately absent: the responsible party's name is
+// optional (nullable on the draft sync contract), so requiring it here would
+// block "Continue" on a field the form marks as not required. Keep this list
+// and dataSchema's superRefine in step — the button gates on this rule while
+// the schema produces the field errors.
 export const isOutlierGroupComplete = (group: OutlierGroupAnswer): boolean =>
   group.employeeOrdinals.length === 0 ||
   Boolean(
     group.reason?.trim() &&
       group.action?.trim() &&
-      group.signatureName?.trim() &&
       group.signatureRole?.trim(),
   )
 
