@@ -75,7 +75,10 @@ export const requestHandlers = [
       }
       lastV6TemporaryRequest.body = await req.json()
 
-      return res(ctx.status(200), ctx.json({ result: true, driverLicenseId: 7 }))
+      return res(
+        ctx.status(200),
+        ctx.json({ result: true, driverLicenseId: 7 }),
+      )
     },
   ),
   rest.get(/api\/drivinglicense\/v5\/hasqualityphoto/, (req, res, ctx) => {
