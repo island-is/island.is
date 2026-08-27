@@ -744,9 +744,12 @@ export class DrivingLicenseService {
     // is a genuine failure and must propagate to `submitApplication`. The value
     // is the RLS application guid (or null on the lost-response path); log it, as
     // it is the only handle for reconciling or denying the application later.
-    this.logger.info(`${LOGTAG} created temporary driving-license application`, {
-      applicationGuid,
-    })
+    this.logger.info(
+      `${LOGTAG} created temporary driving-license application`,
+      {
+        applicationGuid,
+      },
+    )
 
     return {
       success: true,

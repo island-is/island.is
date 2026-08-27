@@ -27,8 +27,7 @@ import { handleCreateResponse } from './utils/handleCreateResponse'
 // the temporary endpoint carries it under a field the generated DTO drops. Pull
 // it out defensively — purely for logging/reconciliation, so it must never throw.
 const extractApplicationGuid = (body: unknown): string | null => {
-  const UUID =
-    /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+  const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
   if (typeof body === 'string') {
     return body.match(UUID)?.[0] ?? null
   }
@@ -82,11 +81,13 @@ export class DrivingLicenseApi {
       // the generated DTO parser drops it. 4xx still throws here (enhanced fetch),
       // so reaching the read is success.
       const response = await withAuthContext(input.auth, () =>
-        this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPostRaw({
-          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
-          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-          modelsV6PostTemporaryLicenseWithHealthDeclaration: input.model,
-        }),
+        this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPostRaw(
+          {
+            apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+            apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+            modelsV6PostTemporaryLicenseWithHealthDeclaration: input.model,
+          },
+        ),
       )
 
       // Best-effort: guid capture must never turn a successful create into a
