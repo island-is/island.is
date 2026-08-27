@@ -5,6 +5,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { payment as messages } from '../../lib/messages'
+import { getDebts } from '../../utils/getDebts'
 import { getSelectedDebts } from '../../utils/getSelectedDebts'
 
 export const paymentSection = buildSection({
@@ -22,8 +23,21 @@ export const paymentSection = buildSection({
         buildPaymentChargeOverviewField({
           id: 'paymentChargeOverview',
           forPaymentLabel: messages.summary.forPaymentLabel,
+          forPaymentLabelVariant: 'h5',
           totalLabel: messages.summary.totalLabel,
           simplifiedList: true,
+          additionalSummaryLabel: messages.summary.remainingLabel,
+          getAdditionalSummaryAmount: (application) => {
+            const totalDebts = getDebts(application).reduce(
+              (total, debt) => total + debt.debts,
+              0,
+            )
+            const totalToPay = getSelectedDebts(application).reduce(
+              (total, debt) => total + debt.amountToPay,
+              0,
+            )
+            return totalDebts - totalToPay
+          },
           getSelectedChargeItems: (application) =>
             getSelectedDebts(application).map((debt) => ({
               chargeItemCode: debt.chargeTypeId,

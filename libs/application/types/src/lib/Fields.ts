@@ -739,6 +739,7 @@ export interface PaymentChargeOverviewField extends BaseField {
   readonly type: FieldTypes.PAYMENT_CHARGE_OVERVIEW
   component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
   forPaymentLabel: StaticText
+  forPaymentLabelVariant?: TitleVariants
   totalLabel: StaticText
   unitPriceLabel?: StaticText
   quantityLabel?: StaticText
@@ -750,6 +751,8 @@ export interface PaymentChargeOverviewField extends BaseField {
    * breakdown. Opt-in — defaults to false, existing consumers unaffected.
    */
   simplifiedList?: boolean
+  additionalSummaryLabel?: StaticText
+  getAdditionalSummaryAmount?: (application: Application) => number
   getSelectedChargeItems: (
     application: Application,
   ) => {
