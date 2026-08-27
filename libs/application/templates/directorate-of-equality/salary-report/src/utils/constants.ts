@@ -46,9 +46,9 @@ export enum ApiActions {
   listDraftRolesWithSteps = 'listDraftRolesWithSteps',
   listDraftCriteria = 'listDraftCriteria',
   listDraftRoles = 'listDraftRoles',
-  // Only SalaryAnalysisResults still uses this — it needs the full id<->ordinal
-  // mapping across every employee to seed/sync outlier groups, which can't be
-  // paginated (a group can reference employees from anywhere in the set).
+  // Salary-analysis screens need the full employee list: the extra-pay table
+  // derives totals from it, and outlier-group sync needs the full id<->ordinal
+  // mapping because a group can reference employees from anywhere in the set.
   listDraftEmployees = 'listDraftEmployees',
   listDraftOutlierGroups = 'listDraftOutlierGroups',
 }
@@ -66,6 +66,12 @@ export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
 
 // Live server-paginated employee queries (EmployeesEditor, EmployeeClassificationEditor).
 export const DRAFT_EMPLOYEES_PAGE_SIZE = 25
+
+// Greiddar stundir bounds, mirrored from the API (DECIMAL(6,2)). The lower
+// bound rejects a starfshlutfall carried into the field — 0,8 or 1 would
+// otherwise pass validation and inflate reglulegt tímakaup ~173x.
+export const PAID_HOURS_MIN = 4
+export const PAID_HOURS_MAX = 750
 
 // Duplicated from the client lib rather than imported — importing it as a value
 // pulls in that package's NestJS module (backend-only deps), breaking the frontend bundle.

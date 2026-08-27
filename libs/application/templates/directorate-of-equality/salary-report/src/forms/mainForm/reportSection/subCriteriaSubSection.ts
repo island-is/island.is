@@ -12,7 +12,6 @@ export const subCriteriaSubSection = buildSubSection({
     buildMultiField({
       id: 'subCriteriaMultiField',
       title: messages.report.subCriteria.title,
-      description: messages.report.subCriteria.intro,
       children: [
         buildCustomField({
           id: 'subCriteria',

@@ -2,59 +2,40 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
 
-import { FileUploadStatus, toast, UploadFile } from '@island.is/island-ui/core'
+import type { UploadFile } from '@island.is/island-ui/core'
+import { FileUploadStatus, toast } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import {
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type {
   CaseFile,
-  CaseFileCategory,
   CreateFileInput,
   Defendant,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import {
-  CreateCivilClaimantFileMutation,
-  useCreateCivilClaimantFileMutation,
-} from './createCivilClaimantFile.generated'
-import {
-  CreateDefendantFileMutation,
-  useCreateDefendantFileMutation,
-} from './createDefendantFile.generated'
-import {
-  CreateFileMutation,
-  useCreateFileMutation,
-} from './createFile.generated'
-import {
-  CreatePresignedPostMutation,
-  useCreatePresignedPostMutation,
-} from './createPresignedPost.generated'
-import {
-  DeleteFileMutation,
-  useDeleteFileMutation,
-} from './deleteFile.generated'
-import {
-  LimitedAccessCreateCivilClaimantFileMutation,
-  useLimitedAccessCreateCivilClaimantFileMutation,
-} from './limitedAccessCreateCivilClaimantFile.generated'
-import {
-  LimitedAccessCreateDefendantFileMutation,
-  useLimitedAccessCreateDefendantFileMutation,
-} from './limitedAccessCreateDefendantFile.generated'
-import {
-  LimitedAccessCreateFileMutation,
-  useLimitedAccessCreateFileMutation,
-} from './limitedAccessCreateFile.generated'
-import {
-  LimitedAccessCreatePresignedPostMutation,
-  useLimitedAccessCreatePresignedPostMutation,
-} from './limitedAccessCreatePresignedPost.generated'
-import {
-  LimitedAccessDeleteFileMutation,
-  useLimitedAccessDeleteFileMutation,
-} from './limitedAccessDeleteFile.generated'
+import type { CreateCivilClaimantFileMutation } from './createCivilClaimantFile.generated'
+import { useCreateCivilClaimantFileMutation } from './createCivilClaimantFile.generated'
+import type { CreateDefendantFileMutation } from './createDefendantFile.generated'
+import { useCreateDefendantFileMutation } from './createDefendantFile.generated'
+import type { CreateFileMutation } from './createFile.generated'
+import { useCreateFileMutation } from './createFile.generated'
+import type { CreatePresignedPostMutation } from './createPresignedPost.generated'
+import { useCreatePresignedPostMutation } from './createPresignedPost.generated'
+import type { DeleteFileMutation } from './deleteFile.generated'
+import { useDeleteFileMutation } from './deleteFile.generated'
+import type { LimitedAccessCreateCivilClaimantFileMutation } from './limitedAccessCreateCivilClaimantFile.generated'
+import { useLimitedAccessCreateCivilClaimantFileMutation } from './limitedAccessCreateCivilClaimantFile.generated'
+import type { LimitedAccessCreateDefendantFileMutation } from './limitedAccessCreateDefendantFile.generated'
+import { useLimitedAccessCreateDefendantFileMutation } from './limitedAccessCreateDefendantFile.generated'
+import type { LimitedAccessCreateFileMutation } from './limitedAccessCreateFile.generated'
+import { useLimitedAccessCreateFileMutation } from './limitedAccessCreateFile.generated'
+import type { LimitedAccessCreatePresignedPostMutation } from './limitedAccessCreatePresignedPost.generated'
+import { useLimitedAccessCreatePresignedPostMutation } from './limitedAccessCreatePresignedPost.generated'
+import type { LimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.generated'
+import { useLimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.generated'
 import { useUploadCriminalRecordFileMutation } from './uploadCriminalRecordFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 import { strings } from './useS3Upload.strings'

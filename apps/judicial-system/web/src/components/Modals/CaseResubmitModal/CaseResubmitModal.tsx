@@ -1,13 +1,13 @@
-import { FC, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useState } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import {
-  Case,
-  RequestSharedWithDefender,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { Modal } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { Modal } from '../..'
 import { strings } from './CaseResubmitModal.strings'
 
 interface Props {

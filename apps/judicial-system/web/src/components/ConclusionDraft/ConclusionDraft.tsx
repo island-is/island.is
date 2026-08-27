@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -8,9 +8,8 @@ import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { useCase } from '../../utils/hooks'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
