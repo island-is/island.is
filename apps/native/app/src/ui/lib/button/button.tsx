@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  ActivityIndicator,
   ImageSourcePropType,
   ImageStyle,
   TextProps,
@@ -10,7 +11,6 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
-import { Loader } from '../loader/loader'
 
 interface ButtonBaseProps extends TouchableHighlightProps {
   isTransparent?: boolean
@@ -144,6 +144,18 @@ export function Button({
 
   if (isFilledUtilityButton) isUtilityButton = true
 
+  // Match the spinner colour to the button's text colour (same rules as Text).
+  const spinnerColor =
+    isTransparent && rest.disabled
+      ? theme.color.dark200
+      : isUtilityButton && !isFilledUtilityButton
+      ? theme.isDark
+        ? theme.color.white
+        : theme.color.dark400
+      : isTransparent || isOutlined
+      ? theme.color.blue400
+      : theme.color.white
+
   const renderIcon = () => {
     return (
       <Icon
@@ -184,7 +196,7 @@ export function Button({
             paddingHorizontal: theme.spacing.p3,
           }}
         >
-          <Loader />
+          <ActivityIndicator color={spinnerColor} />
         </View>
       ) : (
         <View
