@@ -134,34 +134,38 @@ export const ListSettings = () => {
         ? form.organizationZendeskInstance?.zendeskBrandId ?? ''
         : ''
 
-    if (
-      parsed.serviceSystemInstance !==
-        form.organizationZendeskInstance?.zendeskInstance ||
-      nextZendeskBrandId !== form.organizationZendeskInstance?.zendeskBrandId
-    ) {
-      try {
-        await updateOrganizationZendeskInstance({
-          variables: {
-            input: {
-              zendeskInstance: parsed.serviceSystemInstance,
-              zendeskBrandId: nextZendeskBrandId,
-              organizationId: form.organizationId,
-              formId: form.id,
-            },
-          },
-        })
-        controlDispatch({
-          type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
-          payload: {
+    try {
+      await updateOrganizationZendeskInstance({
+        variables: {
+          input: {
             zendeskInstance: parsed.serviceSystemInstance,
             zendeskBrandId: nextZendeskBrandId,
+            organizationId: form.organizationId,
+            formId: form.id,
           },
-        })
-        setUnsupportedZendeskInstance(undefined)
-      } catch {
-        setUnsupportedZendeskInstance(parsed.serviceSystemInstance)
-      }
+        },
+      })
+    } catch {
+      setUnsupportedZendeskInstance(parsed.serviceSystemInstance)
+      return
     }
+
+    if (
+      parsed.serviceSystemInstance ===
+        form.organizationZendeskInstance?.zendeskInstance &&
+      nextZendeskBrandId === form.organizationZendeskInstance?.zendeskBrandId
+    ) {
+      return
+    }
+
+    controlDispatch({
+      type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+      payload: {
+        zendeskInstance: parsed.serviceSystemInstance,
+        zendeskBrandId: nextZendeskBrandId,
+      },
+    })
+    setUnsupportedZendeskInstance(undefined)
   }
 
   useEffect(() => {

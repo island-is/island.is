@@ -38,6 +38,8 @@ export const Applications = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [isValidSlug, setIsValidSlug] = useState(true)
   const [createDisabled, setCreateDisabled] = useState(false)
+  const [headerApplication, setHeaderApplication] =
+    useState<FormSystemApplication | null>()
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
   const currentSlug = useRef(slug)
   currentSlug.current = slug
@@ -145,31 +147,18 @@ export const Applications = () => {
     const run = async () => {
       setIsLoading(true)
       setCreateDisabled(false)
-      setInfo({
-        applicationName: undefined,
-        organisationName: undefined,
-        isTest: false,
-      })
+      setHeaderApplication(null)
       const responseDto = await fetchApplications(requestSlug, isCurrentRequest)
       if (!isCurrentRequest()) return
 
       if (!responseDto) {
-        setInfo({
-          applicationName: undefined,
-          organisationName: undefined,
-          isTest: false,
-        })
+        setHeaderApplication(null)
         setIsLoading(false)
         return
       }
 
       const apps: FormSystemApplication[] = responseDto.applications || []
-      const headerApplication = apps[0]
-      setInfo({
-        applicationName: headerApplication?.formName?.[lang] ?? '',
-        organisationName: headerApplication?.organizationName?.[lang] ?? '',
-        isTest: headerApplication?.isTest ?? false,
-      })
+      setHeaderApplication(apps[0])
 
       if (apps.length > 0) {
         setApplications(
@@ -195,7 +184,24 @@ export const Applications = () => {
     return () => {
       cancelled = true
     }
-  }, [slug, createApplication, fetchApplications, lang, setInfo])
+  }, [slug, createApplication, fetchApplications])
+
+  useEffect(() => {
+    if (headerApplication === null) {
+      setInfo({
+        applicationName: undefined,
+        organisationName: undefined,
+        isTest: false,
+      })
+      return
+    }
+
+    setInfo({
+      applicationName: headerApplication?.formName?.[lang] ?? '',
+      organisationName: headerApplication?.organizationName?.[lang] ?? '',
+      isTest: headerApplication?.isTest ?? false,
+    })
+  }, [headerApplication, lang, setInfo])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
 

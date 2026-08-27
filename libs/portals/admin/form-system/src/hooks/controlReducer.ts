@@ -306,12 +306,18 @@ type InputSettingsActions =
     }
   | {
       type: 'CHANGE_LIST_ITEM'
-      payload: {
-        property: 'label' | 'description' | 'value'
-        lang?: 'is' | 'en'
-        value: string
-        id: UniqueIdentifier
-      }
+      payload:
+        | {
+            property: 'label' | 'description'
+            lang: 'is' | 'en'
+            value: string
+            id: UniqueIdentifier
+          }
+        | {
+            property: 'value'
+            value: string
+            id: UniqueIdentifier
+          }
     }
   | { type: 'ADD_LIST_ITEM'; payload: { newListItem: FormSystemListItem } }
   | {
@@ -1541,17 +1547,17 @@ export const controlReducer = (
     case 'CHANGE_LIST_ITEM': {
       const field = activeItem.data as FormSystemField
       const list = field.list as FormSystemListItem[]
-      const { property, lang, value, id } = action.payload
+      const { value, id } = action.payload
       const listItem = list?.find((l) => l?.id === id) as FormSystemListItem
 
       const newListItem = {
         ...listItem,
-        [property]:
-          property === 'value'
+        [action.payload.property]:
+          action.payload.property === 'value'
             ? value
             : {
-                ...listItem[property],
-                [lang ?? 'is']: value,
+                ...listItem[action.payload.property],
+                [action.payload.lang]: value,
               },
       }
 

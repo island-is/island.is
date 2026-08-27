@@ -324,6 +324,7 @@ export const ListItem = ({
       <Row marginTop={2}>
         <Column span="10/10">
           <Input
+            id={`list-item-value-${listItem.id || index}`}
             name="value"
             label="Valkvæmt gildi (value) fyrir bakendavinnslu"
             backgroundColor="blue"
