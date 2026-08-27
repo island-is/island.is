@@ -131,7 +131,9 @@ export class OrganizationsService {
       ? normalizeZendeskInstance(zendeskInstance)
       : undefined
 
-    organization.zendeskInstance = zendeskInstance?.trim() ?? ''
+    organization.zendeskInstance = supportedZendeskInstance
+      ? supportedZendeskInstance
+      : ''
 
     await this.sequelize.transaction(async (transaction) => {
       await organization.save({ transaction })
