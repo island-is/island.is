@@ -257,10 +257,12 @@ describe('DrivingLicenseDuplicateService', () => {
       // Bare token: RLS answers 400 "Invalid JWT Token" to the prefixed form.
       expect(headers?.jwttoken).toBe('v6-user-token')
       // The wrapper rebuilds the Headers object, so pin that it carries the
-      // config headers through — dropping SECRET or X-Road-Client would fail
-      // only in production, where nothing else would point at the wrapper.
-      expect(headers?.secret).toBeTruthy()
-      expect(headers?.['x-road-client']).toBeTruthy()
+      // config headers THROUGH rather than dropping them. Assert presence, not a
+      // value: the values come from config (empty in CI, set locally), whereas
+      // "not dropped by the rebuild" is what the wrapper is responsible for — a
+      // dropped header would read back as null here.
+      expect(headers?.secret).not.toBeNull()
+      expect(headers?.['x-road-client']).not.toBeNull()
       // Both headers go out: `authSource: 'context'` also sets Authorization.
       // Documented here because the fallback, if RLS ever rejects the pair, is
       // to drop `authSource` and send jwttoken alone.
