@@ -137,14 +137,20 @@ describe('BlikkClientService', () => {
   })
 
   describe('cancelPayment', () => {
-    it('DELETEs /ecom/v3/payments/{id} and resolves on success', async () => {
-      fetchMock.mockResolvedValue(okResponse({}))
+    it('POSTs /ecom/v3/payments/cancel/{id} with the required body and resolves on success', async () => {
+      fetchMock.mockResolvedValue(okResponse({ message: 'cancelled' }))
 
       await expect(service.cancelPayment('prov-1')).resolves.toBeUndefined()
 
       const [url, options] = fetchMock.mock.calls[0]
-      expect(url).toBe('https://stage.blikk.tech/ecom/v3/payments/prov-1')
-      expect(options.method).toBe('DELETE')
+      expect(url).toBe(
+        'https://stage.blikk.tech/ecom/v3/payments/cancel/prov-1',
+      )
+      expect(options.method).toBe('POST')
+      // Blikk declares the request body as required.
+      expect(JSON.parse(options.body)).toEqual({
+        cancelMessage: 'Cancelled by payer',
+      })
     })
 
     it('throws BlikkClientError carrying the HTTP status (e.g. 409 for a live payment)', async () => {

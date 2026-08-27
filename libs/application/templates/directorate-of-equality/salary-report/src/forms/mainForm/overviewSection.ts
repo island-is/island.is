@@ -8,6 +8,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 import { PERIOD_ONE_MONTH } from '../../utils/constants'
+import { salaryAnalysisOutlierPlanIsReviewed } from '../../utils/salaryAnalysisNavigation'
 
 const MONTH_LABELS = [
   messages.aboutTheCompany.period.january,
@@ -150,31 +151,6 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
     ],
   }),
   buildOverviewField({
-    id: 'overview.employeeCount',
-    title: messages.overview.employeeCount,
-    titleVariant: 'h3',
-    ...(withBackLinks ? { backId: 'employeeCountMultiField' } : {}),
-    items: (answers) => [
-      {
-        width: 'half',
-        keyText: messages.aboutTheCompany.employeeCount.women,
-        valueText:
-          getValueViaPath<string>(answers, 'employeeCount.women') ?? '',
-      },
-      {
-        width: 'half',
-        keyText: messages.aboutTheCompany.employeeCount.men,
-        valueText: getValueViaPath<string>(answers, 'employeeCount.men') ?? '',
-      },
-      {
-        width: 'half',
-        keyText: messages.aboutTheCompany.employeeCount.nonBinary,
-        valueText:
-          getValueViaPath<string>(answers, 'employeeCount.nonBinary') ?? '',
-      },
-    ],
-  }),
-  buildOverviewField({
     id: 'overview.period',
     title: messages.overview.periodLabel,
     titleVariant: 'h3',
@@ -228,6 +204,7 @@ export const overviewSection = buildSection({
               event: DefaultEvents.SUBMIT,
               name: messages.overview.submitButton,
               type: 'primary',
+              condition: salaryAnalysisOutlierPlanIsReviewed,
             },
           ],
         }),

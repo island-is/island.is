@@ -13,6 +13,7 @@ import { postponedIntroSection } from './postponedIntroSection'
 import { postponedReportSummarySection } from './postponedReportSummarySection'
 import { messages } from '../../lib/messages'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
+import { salaryAnalysisOutlierPlanIsReviewed } from '../../utils/salaryAnalysisNavigation'
 
 export const postponedForm = buildForm({
   id: 'postponedForm',
@@ -40,7 +41,7 @@ export const postponedForm = buildForm({
               id: 'postponedSubmitOverview',
               title: messages.postponed.reviewTitle,
               titleVariant: 'h3',
-              backId: 'salaryAnalysisOverviewMultiField',
+              backId: 'salaryAnalysisImprovementPlanMultiField',
               items: (answers) => {
                 const groups =
                   getValueViaPath<OutlierGroupAnswer[]>(
@@ -90,6 +91,7 @@ export const postponedForm = buildForm({
                   event: DefaultEvents.SUBMIT,
                   name: messages.postponed.submitButton,
                   type: 'primary',
+                  condition: salaryAnalysisOutlierPlanIsReviewed,
                 },
               ],
             }),

@@ -315,6 +315,7 @@ query GetHealthConversation($id: ID!) {
     isArchived
     isRead
     patientCanReply
+    replyBlockedReason
     organization {
       name
       logoUrl

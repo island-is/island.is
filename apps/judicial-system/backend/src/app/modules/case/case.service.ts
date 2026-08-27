@@ -105,7 +105,6 @@ import {
   Institution,
   UpdateCase,
 } from '../repository'
-import { SubpoenaService } from '../subpoena'
 import { VerdictService } from '../verdict'
 import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -164,7 +163,6 @@ export class CaseService {
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly indictmentCountService: IndictmentCountService,
-    private readonly subpoenaService: SubpoenaService,
     @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
@@ -970,10 +968,10 @@ export class CaseService {
     this.addMessagesForRevokeNotificationToQueue(user, theCase)
   }
 
-  private async addMessagesForRevokedIndictmentCaseToQueue(
+  private addMessagesForRevokedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
-  ): Promise<void> {
+  ): void {
     this.addMessagesForRevokeNotificationToQueue(user, theCase)
 
     if (theCase.courtCaseNumber) {
@@ -985,23 +983,17 @@ export class CaseService {
       })
     }
 
-    // TODO: Use subpoenas already included in theCase.defendants
-    // - no need to call the subpoena service
-    // - we should also include split case subpoenas, which were created before the split
-    // -    or, the alternatively those subpoenas should be revoked on split
-    const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
-      theCase.id,
-    )
-
-    if (subpoenasToRevoke?.length > 0) {
-      addMessagesToQueue(
-        ...subpoenasToRevoke.map((subpoena) => ({
+    // TODO: Also include split case subpoenas created before the split,
+    // or revoke those subpoenas when the case is split.
+    for (const defendant of theCase.defendants ?? []) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        addMessagesToQueue({
           type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
           user,
           caseId: theCase.id,
-          elementId: [subpoena.defendantId, subpoena.id],
-        })),
-      )
+          elementId: [defendant.id, subpoena.id],
+        })
+      }
     }
   }
 
@@ -2114,6 +2106,7 @@ export class CaseService {
             defendant.id,
             {
               isSentToPrisonAdmin: false,
+              isClosedWithoutEnforcement: false,
               indictmentReviewDecision: null,
               publicProsecutorIsRegisteredInPoliceSystem: null,
               isDrivingLicenseSuspended: null,
