@@ -19,6 +19,17 @@ export const lastNewCategoryRequest: {
   body?: Record<string, unknown>
 } = {}
 
+// Headers and body of the most recent POST to the v6 temporary
+// `withhealthdeclaration` endpoint. v6 identifies the caller from a `jwttoken`
+// HEADER that the OpenAPI document does not declare, so the header is injected
+// by a fetch wrapper in `apiConfiguration.ts` rather than by the generated
+// client — meaning nothing above the fetch layer can verify it. This capture is
+// what makes that wrapper testable.
+export const lastV6TemporaryRequest: {
+  headers?: Record<string, string | null>
+  body?: Record<string, unknown>
+} = {}
+
 export const VALID_AUTH = 'Bearer OKIDOKE'
 export const INVALID_AUTH = 'Bearer NOPEDEDOPE'
 
@@ -53,6 +64,20 @@ const url = (path: string) => {
 }
 
 export const requestHandlers = [
+  rest.post(
+    /api\/applications\/v6\/temporarywithhealthdeclaration/,
+    async (req, res, ctx) => {
+      lastV6TemporaryRequest.headers = {
+        jwttoken: req.headers.get('jwttoken'),
+        authorization: req.headers.get('authorization'),
+        'x-road-client': req.headers.get('X-Road-Client'),
+        secret: req.headers.get('SECRET'),
+      }
+      lastV6TemporaryRequest.body = await req.json()
+
+      return res(ctx.status(200), ctx.json({ result: true, driverLicenseId: 7 }))
+    },
+  ),
   rest.get(/api\/drivinglicense\/v5\/hasqualityphoto/, (req, res, ctx) => {
     const jwttoken = req.headers.get('jwttoken')
 

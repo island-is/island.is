@@ -838,6 +838,58 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(input.healthDeclaration).toMatchObject({ hasEpilepsy: false })
     })
 
+    // The v6 call takes the resolver's output through `resolved?.x`, so the
+    // undefined-vs-null distinction the legacy path was pinned on has to hold
+    // here too: RLS reads an explicit null as "use what you already hold" and an
+    // absent key as "nothing to say".
+    it.each([
+      ['a stale selection matching no FACIAL entry', 'facial-gone'],
+      ['the RLS quality photo', 'qualityPhoto'],
+    ])('sends explicit null biometric IDs for %s', async (_label, selected) => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBFullRedesignEnabled: true,
+          selectLicensePhoto: selected,
+        },
+        externalData: thjodskraExternalData,
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      const [, input] = newDrivingLicenseWithHealthDeclaration.mock.calls[0]
+      expect('photoBiometricsId' in input).toBe(true)
+      expect(input.photoBiometricsId).toBeNull()
+      expect(input.signatureBiometricsId).toBeNull()
+    })
+
+    it('omits the biometric keys when no photo was selected at all', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: { ...baseAnswers, isBFullRedesignEnabled: true },
+        externalData: thjodskraExternalData,
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      const [, input] = newDrivingLicenseWithHealthDeclaration.mock.calls[0]
+      expect(input.photoBiometricsId).toBeUndefined()
+      expect(input.signatureBiometricsId).toBeUndefined()
+    })
+
     it('attaches the certificate when a health answer requires one', async () => {
       const user = createCurrentUser()
       const application = createApplication({

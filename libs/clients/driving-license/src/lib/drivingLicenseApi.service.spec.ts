@@ -12,6 +12,7 @@ import type { Auth } from '@island.is/auth-nest-tools'
 
 import {
   lastNewCategoryRequest,
+  lastV6TemporaryRequest,
   MOCK_TOKEN,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
@@ -222,6 +223,65 @@ describe('DrivingLicenseDuplicateService', () => {
         service.postTemporaryLicenseWithHealthDeclarationV6({ auth, model }),
       ).rejects.toBe(original)
       expect(canApply).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('v6 token forwarding (jwttoken header)', () => {
+    // This is the one test that actually executes the fetch wrapper in
+    // `apiConfiguration.ts`. Every other v6 test spies above the fetch layer, so
+    // without this the PR's central claim — that we send the header RLS reads —
+    // is unverified in CI and only confirmed by hand against IS-DEV.
+    const auth = { authorization: 'Bearer v6-user-token' } as Auth
+
+    beforeEach(() => {
+      lastV6TemporaryRequest.headers = undefined
+      lastV6TemporaryRequest.body = undefined
+    })
+
+    it('sends the bare token in jwttoken, keeping the X-Road headers intact', async () => {
+      const response =
+        await service.postTemporaryLicenseWithHealthDeclarationV6({
+          auth,
+          model: {
+            districtId: 37,
+            instructorSSN: '0101302479',
+            sendPlasticToPerson: false,
+            healthDeclaration: {},
+          },
+        })
+
+      expect(response).toEqual({ result: true, driverLicenseId: 7 })
+
+      const headers = lastV6TemporaryRequest.headers
+      // Bare token: RLS answers 400 "Invalid JWT Token" to the prefixed form.
+      expect(headers?.jwttoken).toBe('v6-user-token')
+      // The wrapper rebuilds the Headers object, so pin that it carries the
+      // config headers through — dropping SECRET or X-Road-Client would fail
+      // only in production, where nothing else would point at the wrapper.
+      expect(headers?.secret).toBeTruthy()
+      expect(headers?.['x-road-client']).toBeTruthy()
+      // Both headers go out: `authSource: 'context'` also sets Authorization.
+      // Documented here because the fallback, if RLS ever rejects the pair, is
+      // to drop `authSource` and send jwttoken alone.
+      expect(headers?.authorization).toBe('Bearer v6-user-token')
+    })
+
+    it('sends no jwttoken when there is no auth context to forward', async () => {
+      // A missing context must not become the literal string 'undefined' in the
+      // header, which is what a naive `String(auth?.authorization)` would do.
+      await expect(
+        service.postTemporaryLicenseWithHealthDeclarationV6({
+          auth: {} as Auth,
+          model: {
+            districtId: 37,
+            instructorSSN: '0101302479',
+            sendPlasticToPerson: false,
+            healthDeclaration: {},
+          },
+        }),
+      ).resolves.toBeDefined()
+
+      expect(lastV6TemporaryRequest.headers?.jwttoken).toBeNull()
     })
   })
 

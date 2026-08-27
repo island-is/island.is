@@ -557,4 +557,95 @@ describe('DrivingLicenseService', () => {
         .catch((e) => expect(e).toBeTruthy())
     })
   })
+
+  describe('withHealthDeclaration (v6)', () => {
+    const auth = { authorization: 'Bearer token' } as never
+    const allNo = {
+      isDisabled: false,
+      hasDiabetes: false,
+      hasEpilepsy: false,
+      isAlcoholic: false,
+      hasHeartDisease: false,
+      hasMentalIllness: false,
+      hasOtherDiseases: false,
+      usesMedicalDrugs: false,
+      usesContactGlasses: false,
+      hasReducedPeripheralVision: false,
+    }
+    const baseInput = {
+      districtId: 37,
+      sendPlasticToPerson: false,
+      healthDeclaration: allNo,
+    }
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    // The temporary endpoint returns a DTO, not a boolean. If `result` is not
+    // mapped, `submitApplication` never sees `success: false` and every RLS
+    // business rejection reaches the applicant as "submitted".
+    it('maps a rejected temporary submission to success: false and keeps the code', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'postTemporaryLicenseWithHealthDeclarationV6')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_B_CATEGORY' })
+
+      await expect(
+        service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
+          ...baseInput,
+          instructorSSN: MOCK_NATIONAL_ID_TEACHER,
+        }),
+      ).resolves.toStrictEqual({
+        success: false,
+        errorMessage: 'HAS_B_CATEGORY',
+      })
+    })
+
+    it('maps an accepted temporary submission to success: true', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'postTemporaryLicenseWithHealthDeclarationV6')
+        .mockResolvedValue({ result: true, driverLicenseId: 1 })
+
+      await expect(
+        service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
+          ...baseInput,
+          instructorSSN: MOCK_NATIONAL_ID_TEACHER,
+        }),
+      ).resolves.toStrictEqual({ success: true, errorMessage: null })
+    })
+
+    // An empty DTO is what a 201 with no body deserialises to; it must not read
+    // as success.
+    it('treats an absent result as a failure rather than a success', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'postTemporaryLicenseWithHealthDeclarationV6')
+        .mockResolvedValue({})
+
+      await expect(
+        service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
+          ...baseInput,
+          instructorSSN: MOCK_NATIONAL_ID_TEACHER,
+        }),
+      ).resolves.toStrictEqual({ success: false, errorMessage: null })
+    })
+
+    it('forwards the category as a path param for the full licence', async () => {
+      const spy = jest
+        .spyOn(drivingLicenseApi, 'postFullLicenseWithHealthDeclarationV6')
+        .mockResolvedValue(true)
+
+      await expect(
+        service.newDrivingLicenseWithHealthDeclaration(auth, {
+          ...baseInput,
+          licenseCategory: DrivingLicenseCategory.B,
+        }),
+      ).resolves.toStrictEqual({ success: true, errorMessage: null })
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({ auth, category: DrivingLicenseCategory.B }),
+      )
+      // `licenseCategory` travels in the path, so it must not also be in the body.
+      expect('licenseCategory' in spy.mock.calls[0][0].model).toBe(false)
+    })
+  })
 })

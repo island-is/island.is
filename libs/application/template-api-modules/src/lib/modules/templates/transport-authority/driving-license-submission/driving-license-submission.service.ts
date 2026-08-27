@@ -456,7 +456,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const healthDeclarationAnswers =
       getValueViaPath<Record<string, string>>(answers, 'healthDeclaration') ??
       {}
-    const glassesMismatch =
+    // `glassesCheck.data === true` means the applicant's current licence carries
+    // a glasses code — not that their answers contradict it. (The contradiction
+    // is `healthDeclaration.contactGlassesMismatch`, a different answer.)
+    const licenseRequiresGlasses =
       getValueViaPath<boolean>(
         application.externalData,
         'glassesCheck.data',
@@ -465,7 +468,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     // merged into `needsHealthCert` above: that one feeds the legacy v5
     // `needsToPresentHealthCertificate` flags, which must keep their exact
     // current values for flag-off drafts.
-    const needsHealthCertificate = needsHealthCert || remarks || glassesMismatch
+    const needsHealthCertificate =
+      needsHealthCert || remarks || licenseRequiresGlasses
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const jurisdictionId = Number(
       getValueViaPath(answers, 'delivery.jurisdiction'),
@@ -710,24 +714,17 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         signatureBiometricsId = resolvedBeBiometrics.signatureBiometricsId
       }
 
-      // Health certificate handling
-      const healthDeclaration =
-        getValueViaPath<Record<string, string>>(answers, 'healthDeclaration') ??
-        {}
-      const beNeedsHealthCert =
-        calculateNeedsHealthCert(healthDeclaration) ||
-        remarks ||
-        getValueViaPath<boolean>(
-          application.externalData,
-          'glassesCheck.data',
-        ) === true
-
-      const contentList = beNeedsHealthCert
+      // BE uses the shared predicate above — it recomputed an identical one from
+      // the same inputs until the redesigned B-temp/B-full flows needed the same
+      // rule and it was hoisted.
+      const contentList = needsHealthCertificate
         ? await this.readHealthCertificateContentList(application)
         : undefined
 
       // Health declaration model — always sent for BE
-      const healthDeclarationModel = toHealthDeclarationModel(healthDeclaration)
+      const healthDeclarationModel = toHealthDeclarationModel(
+        healthDeclarationAnswers,
+      )
 
       return this.drivingLicenseService.applyForBELicense(
         nationalId,
