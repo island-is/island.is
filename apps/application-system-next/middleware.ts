@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { SDF_ENABLED_APPLICATION_SLUGS } from '@island.is/application/types'
-import {
-  buildCsp,
-  CSP_HEADER,
-  generateNonce,
-  NONCE_HEADER,
-} from './lib/csp'
+import { buildCsp, CSP_HEADER, generateNonce, NONCE_HEADER } from './lib/csp'
 
 // Validates the incoming application slug against the SDF allowlist.
 
