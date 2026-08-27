@@ -104,9 +104,10 @@ export const m = {
       id: 'web.openinvoices:totals.paidAmount',
       defaultMessage: 'Greitt',
     },
-    linkedToMorePayments: {
-      id: 'web.openinvoices:totals.linkedToMorePayments',
-      defaultMessage: 'tengist fleiri greiðslum',
+    invoiceHeading: {
+      id: 'web.openinvoices:totals.invoiceHeading',
+      defaultMessage:
+        'Reikningur {number}{linked, select, true { - tengist fleiri greiðslum} other {}}',
     },
   }),
   search: defineMessages({

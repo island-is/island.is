@@ -79,11 +79,10 @@ export const NestedLines = ({
               </Text>
             </Box>
             <Text variant="small">
-              {isFullyPaid
-                ? payment.invoice.number
-                : `${payment.invoice.number} - ${formatMessage(
-                    m.totals.linkedToMorePayments,
-                  )}`}
+              {formatMessage(m.totals.invoiceHeading, {
+                number: payment.invoice.number,
+                linked: String(!isFullyPaid),
+              })}
             </Text>
           </Box>
           <T.Table>
