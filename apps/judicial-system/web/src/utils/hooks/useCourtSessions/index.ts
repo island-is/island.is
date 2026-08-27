@@ -10,6 +10,7 @@ import type {
   UpdateCourtSessionStringInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCourtSessionMutation } from './createCourtSession.generated'
 import { useDeleteCourtSessionMutation } from './deleteCourtSession.generated'
 import { usePronounceRulingOrallyMutation } from './pronounceRulingOrally.generated'
@@ -58,7 +59,7 @@ const useCourtSessions = () => {
       try {
         const { data } = await updateCourtSessionMutation({
           variables: {
-            input: updateCourtSession,
+            input: normalizeBlankStrings(updateCourtSession),
           },
         })
 
@@ -77,7 +78,7 @@ const useCourtSessions = () => {
       try {
         const { data } = await updateCourtSessionStringMutation({
           variables: {
-            input: updateCourtSessionString,
+            input: normalizeBlankStrings(updateCourtSessionString),
           },
         })
 

@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   AvatarImage,
@@ -5,17 +6,20 @@ import {
   getInitials,
   ORG_LOGO_PARAMS,
 } from '@island.is/portals/my-pages/core'
+import * as styles from './ConversationAvatar.css'
 
-type Props =
+type Props = (
   | { variant: 'user'; name: string; logoUrl?: never }
   | { variant: 'organization'; logoUrl?: string; name?: never }
+) & { large?: boolean }
 
-const ConversationAvatar = ({ variant, name, logoUrl }: Props) => {
+const ConversationAvatar = ({ variant, name, logoUrl, large }: Props) => {
   if (variant === 'organization') {
     return (
       <AvatarImage
         as="div"
         background="blue100"
+        large={large}
         img={logoUrl ? logoUrl.concat(ORG_LOGO_PARAMS) : FALLBACK_ORG_LOGO_URL}
       />
     )
@@ -29,7 +33,7 @@ const ConversationAvatar = ({ variant, name, logoUrl }: Props) => {
       justifyContent="center"
       borderRadius="full"
       background="blueberry100"
-      style={{ width: 48, height: 48, flexShrink: 0 }}
+      className={cn(styles.userAvatar, { [styles.userAvatarLarge]: large })}
     >
       <Text variant="h5" as="p">
         {getInitials(name ?? '')}

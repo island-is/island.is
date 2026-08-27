@@ -879,8 +879,16 @@ export const is = {
   'health.messages.videoCall': 'Myndsímtal',
   'health.messages.videoCallCanceled': 'Afboðað',
   'health.messages.startVideoCall': 'Hefja myndsímtal',
-  'health.messages.cannotReply':
-    'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  'health.messages.replyBlocked.default':
+    'Ekki er hægt að svara þessum skilaboðum.',
+  'health.messages.replyBlocked.repliesDisabled':
+    'Ekki er hægt að svara þessum skilaboðum þar sem sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  'health.messages.replyBlocked.outsideWindow':
+    'Ekki er hægt að svara skilaboðum utan opnunartíma.',
+  'health.messages.replyBlocked.windowExpired':
+    'Ekki er hægt að svara þessum skilaboðum þar sem svarfrestur er liðinn.',
+  'health.messages.replyBlocked.awaitingStaff':
+    'Ekki er hægt að svara þessum skilaboðum fyrr en starfsfólk hefur svarað þér.',
   'health.messages.compose.newTitle': 'Ný skilaboð',
   'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
   'health.messages.compose.selectService': 'Veldu þjónustu',
@@ -913,6 +921,11 @@ export const is = {
     'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
   'health.messages.compose.noRecipient':
     'Ekki er hægt að senda skilaboð eins og er',
+  'health.messages.compose.certificateTitle':
+    'Ekki hægt að sækja um vottorð í gegnum appið',
+  'health.messages.compose.certificateText':
+    'Eins og er er ekki hægt að sækja um vottorð í gegnum Ísland.is appið. Vinsamlegast sækið um vottorð í gegnum Mínar síður Ísland.is.',
+  'health.messages.compose.certificateLink': 'Sækja um vottorð',
   'health.messages.attachmentError':
     'Ekki tókst að sækja skjalið. Vinsamlegast reyndu aftur síðar.',
   'health.messages.sentTitle': 'Skilaboð móttekin',
