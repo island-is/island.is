@@ -743,9 +743,7 @@ export interface PaymentChargeOverviewField extends BaseField {
   quantityUnitLabel?: StaticText
   totalPerUnitLabel?: StaticText
   simplifiedList?: boolean
-  getSelectedChargeItems: (
-    application: Application,
-  ) => {
+  getSelectedChargeItems: (application: Application) => {
     chargeItemCode: string
     chargeItemQuantity?: number
     extraLabel?: StaticText
