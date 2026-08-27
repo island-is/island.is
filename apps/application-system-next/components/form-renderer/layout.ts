@@ -12,6 +12,7 @@ export const FULL_ROW_TYPES = new Set([
   'SdfSearchField',
   'SdfFileUploadField',
   'SdfSliderField',
+  'SdfScaleField',
   'SdfDividerField',
   'SdfTitleField',
   'SdfDescriptionField',

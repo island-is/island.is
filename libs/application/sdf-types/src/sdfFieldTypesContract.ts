@@ -56,6 +56,7 @@ export const FIELD_TYPE_TO_GRAPHQL_TYPENAME: Record<FieldTypes, string> = {
   [FieldTypes.IMAGE]: 'SdfImageField',
   [FieldTypes.BANK_ACCOUNT]: 'SdfBankAccountField',
   [FieldTypes.SLIDER]: 'SdfSliderField',
+  [FieldTypes.SCALE]: 'SdfScaleField',
   [FieldTypes.TITLE]: 'SdfTitleField',
   [FieldTypes.OVERVIEW]: 'SdfOverviewField',
   [FieldTypes.VEHICLE_PERMNO_WITH_INFO]: 'SdfVehiclePermnoWithInfoField',

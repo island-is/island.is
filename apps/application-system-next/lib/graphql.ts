@@ -196,6 +196,9 @@ export interface SdfComponentData {
   min?: number
   max?: number
   step?: number
+  minLabel?: string
+  maxLabel?: string
+  showLabels?: boolean
   minDate?: string
   maxDate?: string
   maxSize?: number
@@ -546,6 +549,21 @@ export const GET_SCREEN_QUERY = `
             marginBottom
             clientShowWhen
           }
+          ... on SdfScaleField {
+            id
+            label
+            min
+            max
+            step
+            minLabel
+            maxLabel
+            showLabels
+            required
+            disabled
+            marginTop
+            marginBottom
+            clientShowWhen
+          }
           ... on SdfExternalDataProviderField {
             id
             label
@@ -767,6 +785,7 @@ export const EXECUTE_ACTION_MUTATION = `
           ... on SdfLinkField { id label url marginTop marginBottom clientShowWhen }
           ... on SdfDisplayField { id label displayValue: value displayInputLabel clientValueExpression inputVariant textSuffix rightAlign titleVariant halfWidthOwnline width marginTop marginBottom clientShowWhen }
           ... on SdfSliderField { id label min max step marginTop marginBottom clientShowWhen }
+          ... on SdfScaleField { id label min max step minLabel maxLabel showLabels required disabled marginTop marginBottom clientShowWhen }
           ... on SdfExternalDataProviderField { id label subTitle description checkboxLabel dataProviders { id title subTitle } marginTop marginBottom }
           ... on SdfTitleField { id label marginTop marginBottom clientShowWhen }
           ... on SdfPaymentPendingField { id marginTop marginBottom clientShowWhen }

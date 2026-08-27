@@ -30,6 +30,7 @@ import { SdfPdfLinkButtonField } from './fields/SdfPdfLinkButtonField'
 import { SdfPhoneField } from './fields/SdfPhoneField'
 import { SdfRadioField } from './fields/SdfRadioField'
 import { SdfRepeaterComponent } from './fields/SdfRepeaterComponent'
+import { SdfScaleField } from './fields/SdfScaleField'
 import { SdfSearchField } from './fields/SdfSearchField'
 import { SdfSelectField } from './fields/SdfSelectField'
 import { SdfSliderField } from './fields/SdfSliderField'
@@ -71,6 +72,7 @@ const fieldRenderers: Record<
   SdfPhoneField,
   SdfRadioField,
   SdfRepeaterComponent,
+  SdfScaleField,
   SdfSearchField,
   SdfSelectField,
   SdfSliderField,

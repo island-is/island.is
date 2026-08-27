@@ -1116,6 +1116,53 @@ export class SdfSliderField {
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
+@ObjectType('SdfScaleField')
+export class SdfScaleField {
+  @Field()
+  id!: string
+
+  @Field()
+  label!: string
+
+  @Field(() => Int)
+  min!: number
+
+  @Field(() => Int)
+  max!: number
+
+  @Field(() => Int, { nullable: true })
+  step?: number
+
+  /** Caption under the lowest step (legacy `minLabel`). */
+  @Field({ nullable: true })
+  minLabel?: string
+
+  /** Caption under the highest step (legacy `maxLabel`). */
+  @Field({ nullable: true })
+  maxLabel?: string
+
+  @Field({ nullable: true })
+  showLabels?: boolean
+
+  // Non-null to match every other input field in the `SdfComponent` union —
+  // GraphQL rejects a query selecting `required`/`disabled` across members
+  // whose nullability differs.
+  @Field()
+  required!: boolean
+
+  @Field()
+  disabled!: boolean
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
+}
+
 @ObjectType('SdfExternalDataProviderItem')
 export class SdfExternalDataProviderItem {
   @Field()
@@ -1523,6 +1570,7 @@ const allComponentTypes = () =>
     SdfImageField,
     SdfBankAccountField,
     SdfSliderField,
+    SdfScaleField,
     SdfExternalDataProviderField,
     SdfTitleField,
     SdfPaginatedSearchableTableField,
@@ -1577,6 +1625,7 @@ const resolveComponentTypeByName = (
     IMAGE: SdfImageField,
     BANK_ACCOUNT: SdfBankAccountField,
     SLIDER: SdfSliderField,
+    SCALE: SdfScaleField,
     EXTERNAL_DATA_PROVIDER: SdfExternalDataProviderField,
     TITLE: SdfTitleField,
     PAGINATED_SEARCHABLE_TABLE: SdfPaginatedSearchableTableField,

@@ -24,6 +24,7 @@ import { mapOverviewField } from './overview.mapper'
 import { mapPaymentChargeOverviewField } from './payment-charge-overview.mapper'
 import { mapPdfLinkButtonField } from './pdf-link-button.mapper'
 import { mapPhoneField } from './phone.mapper'
+import { mapScaleField } from './scale.mapper'
 import { mapSearchField } from './search.mapper'
 import { mapSelectField } from './select.mapper'
 import { mapSliderField } from './slider.mapper'
@@ -56,6 +57,7 @@ const fieldMappers: Partial<Record<FieldTypes, FieldMapper>> = {
   [FieldTypes.PAYMENT_CHARGE_OVERVIEW]: mapPaymentChargeOverviewField,
   [FieldTypes.PDF_LINK_BUTTON]: mapPdfLinkButtonField,
   [FieldTypes.PHONE]: mapPhoneField,
+  [FieldTypes.SCALE]: mapScaleField,
   [FieldTypes.SEARCH]: mapSearchField,
   [FieldTypes.SELECT]: mapSelectField,
   [FieldTypes.SLIDER]: mapSliderField,

@@ -212,6 +212,18 @@ export class ComponentDto {
   @ApiPropertyOptional()
   step?: number
 
+  /** SCALE: caption under the lowest step. */
+  @ApiPropertyOptional()
+  minLabel?: string
+
+  /** SCALE: caption under the highest step. */
+  @ApiPropertyOptional()
+  maxLabel?: string
+
+  /** SCALE: render the min/max captions. */
+  @ApiPropertyOptional()
+  showLabels?: boolean
+
   @ApiPropertyOptional()
   minDate?: string
 
