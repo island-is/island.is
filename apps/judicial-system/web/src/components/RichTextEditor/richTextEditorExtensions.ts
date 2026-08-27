@@ -83,10 +83,14 @@ const ClassHighlight = Mark.create({
 
   addCommands() {
     return {
-      setClassHighlight: (color) => ({ commands }) =>
-        commands.setMark(this.name, { color }),
-      unsetClassHighlight: () => ({ commands }) =>
-        commands.unsetMark(this.name),
+      setClassHighlight:
+        (color) =>
+        ({ commands }) =>
+          commands.setMark(this.name, { color }),
+      unsetClassHighlight:
+        () =>
+        ({ commands }) =>
+          commands.unsetMark(this.name),
     }
   },
 })
@@ -127,27 +131,32 @@ const BlockIndent = Extension.create({
 
   addCommands() {
     return {
-      changeBlockIndent: (delta) => ({ state, tr, dispatch }) => {
-        let changed = false
-        const { from, to } = state.selection
-        state.doc.nodesBetween(from, to, (node, pos) => {
-          if (node.type.name !== 'paragraph') {
-            return
-          }
-          const current: number = node.attrs.indent ?? 0
-          const next = Math.min(MAX_INDENT_LEVEL, Math.max(0, current + delta))
-          if (next !== current) {
-            if (dispatch) {
-              tr.setNodeMarkup(pos, undefined, {
-                ...node.attrs,
-                indent: next,
-              })
+      changeBlockIndent:
+        (delta) =>
+        ({ state, tr, dispatch }) => {
+          let changed = false
+          const { from, to } = state.selection
+          state.doc.nodesBetween(from, to, (node, pos) => {
+            if (node.type.name !== 'paragraph') {
+              return
             }
-            changed = true
-          }
-        })
-        return changed
-      },
+            const current: number = node.attrs.indent ?? 0
+            const next = Math.min(
+              MAX_INDENT_LEVEL,
+              Math.max(0, current + delta),
+            )
+            if (next !== current) {
+              if (dispatch) {
+                tr.setNodeMarkup(pos, undefined, {
+                  ...node.attrs,
+                  indent: next,
+                })
+              }
+              changed = true
+            }
+          })
+          return changed
+        },
     }
   },
 })
@@ -182,26 +191,28 @@ const RichTextListItem = ListItem.extend({
       // nesting, wrap the item in a marker-suppressed item holding a deeper
       // list — the same marker-none model the paste pipeline and the PDF
       // renderer use.
-      wrapListItemDeeper: () => ({ state, tr, dispatch }) => {
-        const { $from, $to } = state.selection
-        const listItemType = state.schema.nodes[this.name]
-        const range = $from.blockRange(
-          $to,
-          (node) =>
-            node.childCount > 0 && node.firstChild?.type === listItemType,
-        )
-        if (!range) return false
-        // With a previous sibling the normal sink applies; this command is
-        // only the fallback.
-        if (range.startIndex > 0) return false
-        if (dispatch) {
-          tr.wrap(range, [
-            { type: listItemType, attrs: { markerNone: true } },
-            { type: range.parent.type, attrs: range.parent.attrs },
-          ])
-        }
-        return true
-      },
+      wrapListItemDeeper:
+        () =>
+        ({ state, tr, dispatch }) => {
+          const { $from, $to } = state.selection
+          const listItemType = state.schema.nodes[this.name]
+          const range = $from.blockRange(
+            $to,
+            (node) =>
+              node.childCount > 0 && node.firstChild?.type === listItemType,
+          )
+          if (!range) return false
+          // With a previous sibling the normal sink applies; this command is
+          // only the fallback.
+          if (range.startIndex > 0) return false
+          if (dispatch) {
+            tr.wrap(range, [
+              { type: listItemType, attrs: { markerNone: true } },
+              { type: range.parent.type, attrs: range.parent.attrs },
+            ])
+          }
+          return true
+        },
     }
   },
 })
@@ -236,10 +247,12 @@ const RichTextTable = Table.extend({
       // The stock command defaults withHeaderRow to true and would then look
       // up the header-cell node, which this schema deliberately lacks — force
       // plain rows no matter how the command is called.
-      insertTable: ({ rows = 3, cols = 3 } = {}) => (props) =>
-        parent?.insertTable
-          ? parent.insertTable({ rows, cols, withHeaderRow: false })(props)
-          : false,
+      insertTable:
+        ({ rows = 3, cols = 3 } = {}) =>
+        (props) =>
+          parent?.insertTable
+            ? parent.insertTable({ rows, cols, withHeaderRow: false })(props)
+            : false,
     }
   },
 }).configure({ resizable: false }) // resizing would write colwidth → styles

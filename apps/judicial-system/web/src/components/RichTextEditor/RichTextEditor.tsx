@@ -102,9 +102,10 @@ const RichTextEditor = ({
     }
   }, [debouncedSave])
 
-  const extensions = useMemo(() => buildEditorExtensions(placeholder), [
-    placeholder,
-  ])
+  const extensions = useMemo(
+    () => buildEditorExtensions(placeholder),
+    [placeholder],
+  )
 
   // Stable across renders so useEditor doesn't reapply the props each render.
   const editorProps = useMemo(

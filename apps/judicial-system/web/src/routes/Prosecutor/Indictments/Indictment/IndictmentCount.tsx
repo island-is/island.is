@@ -86,7 +86,8 @@ const offenseLawsMap: Record<
 > = {
   [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE]: driversLicenceLaws,
   [IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE]: driversLicenceLaws,
-  [IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE]: driversLicenceLaws,
+  [IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE]:
+    driversLicenceLaws,
   [IndictmentCountOffense.DRUNK_DRIVING]: [[49, 1]],
   DRUNK_DRIVING_MINOR: [[49, 2]],
   DRUNK_DRIVING_MAJOR: [[49, 3]],
@@ -230,14 +231,10 @@ export const IndictmentCount: FC<Props> = ({
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
   ] = useState<string>('')
-  const [
-    incidentDescriptionErrorMessage,
-    setIncidentDescriptionErrorMessage,
-  ] = useState<string>('')
-  const [
-    legalArgumentsErrorMessage,
-    setLegalArgumentsErrorMessage,
-  ] = useState<string>('')
+  const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
+    useState<string>('')
+  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
+    useState<string>('')
 
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]

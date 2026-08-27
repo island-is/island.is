@@ -612,7 +612,7 @@ describe('addRichText layout', () => {
         : originalStroke(color as PDFKit.Mixins.ColorValue)
     }
 
-    const docInternals = (doc as unknown) as {
+    const docInternals = doc as unknown as {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       _fragment: (text: string, x: number, y: number, options: unknown) => void
     }
@@ -716,7 +716,7 @@ describe('addRichText layout', () => {
 
     // The document font must not be left on Times-Bold, or subsequent text
     // added without an explicit font would render bold.
-    const font = ((doc as unknown) as { _font: { name: string } })._font
+    const font = (doc as unknown as { _font: { name: string } })._font
     expect(font.name).toBe('Times-Roman')
     doc.end()
   })
@@ -1123,7 +1123,7 @@ describe('addNumberedList', () => {
     const frags: Frag[] = []
     const currentPage = () => doc.bufferedPageRange().count
 
-    const docInternals = (doc as unknown) as {
+    const docInternals = doc as unknown as {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       _fragment: (text: string, x: number, y: number, options: unknown) => void
     }

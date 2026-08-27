@@ -524,12 +524,14 @@ const WORD_LIST_CLASS_REGEX = /(?:^|\s)(?:Mso)?ListParagraph/i
 // closing punctuation ("1.", "a)", "(iv)", "[B]"). Bare bullet glyphs — Word
 // uses · (Symbol font), o (Courier New), § and ▪ (Wingdings) — have no
 // punctuation and fall through to unordered.
-const ORDERED_MARKER_REGEX = /^\(?(?:\d{1,4}|[a-zA-Z]{1,3}|[ivxlcdmIVXLCDM]{1,7})[.)\]]$/
+const ORDERED_MARKER_REGEX =
+  /^\(?(?:\d{1,4}|[a-zA-Z]{1,3}|[ivxlcdmIVXLCDM]{1,7})[.)\]]$/
 
 // The literal marker at the start of an item's text when no mso-list:Ignore
 // span identifies it: a bullet glyph or an ordered marker, followed by
 // whitespace (Word pads with no-break spaces).
-const LEADING_MARKER_REGEX = /^[\s\u00a0]*((?:[·•o§▪*]|-|–|—)|\(?(?:\d{1,4}|[a-zA-Z]{1,3})[.)\]])[\s\u00a0]+/
+const LEADING_MARKER_REGEX =
+  /^[\s\u00a0]*((?:[·•o§▪*]|-|–|—)|\(?(?:\d{1,4}|[a-zA-Z]{1,3})[.)\]])[\s\u00a0]+/
 
 // Word's default list indentation is 36pt (48px) per level, so the fallback
 // derives the level from the paragraph's left margin.
