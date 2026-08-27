@@ -1,8 +1,8 @@
 import {
   buildDescriptionField,
+  buildInteractiveTableField,
   buildMultiField,
   buildSection,
-  buildSelectableTableField,
   buildStickyFooterField,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -25,12 +25,12 @@ export const debtsSection = buildSection({
           description: messages.description.description,
           space: 'none',
         }),
-        buildSelectableTableField({
+        buildInteractiveTableField({
           id: 'selectedDebts',
           dataTestId: 'debts-table',
           selectable: true,
           header: [
-            messages.table.chargeTypeNameHeader,
+            { label: messages.table.chargeTypeNameHeader, width: 180 },
             messages.table.dueDateHeader,
             messages.table.finalDueDateHeader,
             messages.table.amountHeader,

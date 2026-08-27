@@ -1,6 +1,6 @@
 import {
   FieldBaseProps,
-  SelectableTableField,
+  InteractiveTableField,
 } from '@island.is/application/types'
 import { FC, ReactNode, useMemo } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
@@ -14,14 +14,14 @@ import {
 } from '@island.is/application/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { Locale } from '@island.is/shared/types'
-import * as styles from './SelectableTableFormField.css'
-import { SelectableTableFormFieldRow } from './SelectableTableFormFieldRow'
+import * as styles from './InteractiveTableFormField.css'
+import { InteractiveTableFormFieldRow } from './InteractiveTableFormFieldRow'
 
 interface Props extends FieldBaseProps {
-  field: SelectableTableField
+  field: InteractiveTableField
 }
 
-export const SelectableTableFormField: FC<Props> = ({
+export const InteractiveTableFormField: FC<Props> = ({
   field,
   application,
   showFieldName,
@@ -146,23 +146,34 @@ export const SelectableTableFormField: FC<Props> = ({
                   />
                 </T.HeadData>,
               )}
-              {header.map((cell, index) => (
-                <T.HeadData
-                  key={`${cell}-${index}`}
-                  style={
-                    hasInputColumn && index === header.length - 1
-                      ? styles.inputColumnHeaderStyle
-                      : undefined
-                  }
-                >
-                  {formatText(cell, application, formatMessage)}
-                </T.HeadData>
-              ))}
+              {header.map((headerCell, index) => {
+                const hasWidth =
+                  typeof headerCell === 'object' &&
+                  headerCell !== null &&
+                  'label' in headerCell
+                const label = hasWidth ? headerCell.label : headerCell
+                const width = hasWidth ? headerCell.width : undefined
+
+                return (
+                  <T.HeadData
+                    key={`${label}-${index}`}
+                    style={
+                      width
+                        ? { width }
+                        : hasInputColumn && index === header.length - 1
+                          ? styles.inputColumnHeaderStyle
+                          : undefined
+                    }
+                  >
+                    {formatText(label, application, formatMessage)}
+                  </T.HeadData>
+                )
+              })}
             </T.Row>
           </T.Head>
           <T.Body>
             {rows.map((row, rowIndex) => (
-              <SelectableTableFormFieldRow
+              <InteractiveTableFormFieldRow
                 key={`row-${rowIndex}`}
                 row={row}
                 rowIndex={rowIndex}

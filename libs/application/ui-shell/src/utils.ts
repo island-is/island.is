@@ -13,8 +13,8 @@ import {
   FormComponent,
   FormItemTypes,
   FormValue,
+  InteractiveTableField,
   RecordObject,
-  SelectableTableField,
   SubmitField,
 } from '@island.is/application/types'
 import { FormScreen, MOCKPAYMENT } from './types'
@@ -126,11 +126,11 @@ export const getAccordionChildFieldIds = (
   )
 }
 
-export const getSelectableTableChildFieldIds = (field: Field): string[] => {
-  if (field.type !== FieldTypes.SELECTABLE_TABLE) {
+export const getInteractiveTableChildFieldIds = (field: Field): string[] => {
+  if (field.type !== FieldTypes.INTERACTIVE_TABLE) {
     return []
   }
-  const inputColumnId = (field as SelectableTableField).inputColumn?.id
+  const inputColumnId = (field as InteractiveTableField).inputColumn?.id
   return inputColumnId ? [inputColumnId] : []
 }
 
@@ -180,7 +180,7 @@ export const extractAnswersToSubmitFromScreen = (
             ? resolveFieldId(c as Field, application, user)
             : (c.id as string),
           ...getAccordionChildFieldIds(c as Field, application, user),
-          ...getSelectableTableChildFieldIds(c as Field),
+          ...getInteractiveTableChildFieldIds(c as Field),
         ]),
       )
     case FormItemTypes.REPEATER:

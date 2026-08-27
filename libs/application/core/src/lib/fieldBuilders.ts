@@ -38,7 +38,7 @@ import {
   ActionCardListField,
   TableRepeaterField,
   StaticTableField,
-  SelectableTableField,
+  InteractiveTableField,
   PaginatedSearchableTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
@@ -1134,9 +1134,9 @@ export const buildStaticTableField = (
   }
 }
 
-export const buildSelectableTableField = (
+export const buildInteractiveTableField = (
   data: Omit<
-    SelectableTableField,
+    InteractiveTableField,
     | 'type'
     | 'component'
     | 'children'
@@ -1149,7 +1149,7 @@ export const buildSelectableTableField = (
   > & {
     id?: string
   },
-): SelectableTableField => {
+): InteractiveTableField => {
   const {
     id = '',
     header,
@@ -1175,8 +1175,8 @@ export const buildSelectableTableField = (
     description,
     dataTestId,
     children: undefined,
-    type: FieldTypes.SELECTABLE_TABLE,
-    component: FieldComponents.SELECTABLE_TABLE,
+    type: FieldTypes.INTERACTIVE_TABLE,
+    component: FieldComponents.INTERACTIVE_TABLE,
     header,
     rows,
     marginTop,

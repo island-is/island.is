@@ -420,7 +420,7 @@ export enum FieldTypes {
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
-  SELECTABLE_TABLE = 'SELECTABLE_TABLE',
+  INTERACTIVE_TABLE = 'INTERACTIVE_TABLE',
   PAGINATED_SEARCHABLE_TABLE = 'PAGINATED_SEARCHABLE_TABLE',
   SLIDER = 'SLIDER',
   INFORMATION_CARD = 'INFORMATION_CARD',
@@ -467,7 +467,7 @@ export enum FieldComponents {
   VEHICLE_RADIO = 'VehicleRadioFormField',
   VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
-  SELECTABLE_TABLE = 'SelectableTableFormField',
+  INTERACTIVE_TABLE = 'InteractiveTableFormField',
   PAGINATED_SEARCHABLE_TABLE = 'PaginatedSearchableTableFormField',
   SLIDER = 'SliderFormField',
   INFORMATION_CARD = 'InformationCardFormField',
@@ -1028,10 +1028,16 @@ export interface StaticTableField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
-export interface SelectableTableField extends BaseField {
-  readonly type: FieldTypes.SELECTABLE_TABLE
-  component: FieldComponents.SELECTABLE_TABLE
-  header: StaticText[] | ((application: Application) => StaticText[])
+export type InteractiveTableHeaderCell =
+  | StaticText
+  | { label: StaticText; width?: number }
+
+export interface InteractiveTableField extends BaseField {
+  readonly type: FieldTypes.INTERACTIVE_TABLE
+  component: FieldComponents.INTERACTIVE_TABLE
+  header:
+    | InteractiveTableHeaderCell[]
+    | ((application: Application) => InteractiveTableHeaderCell[])
   rows: StaticText[][] | ((application: Application) => StaticText[][])
   titleVariant?: TitleVariants
   selectable?: boolean
@@ -1279,7 +1285,7 @@ export type Field =
   | VehicleRadioField
   | VehicleSelectField
   | StaticTableField
-  | SelectableTableField
+  | InteractiveTableField
   | PaginatedSearchableTableField
   | SliderField
   | InformationCardField
