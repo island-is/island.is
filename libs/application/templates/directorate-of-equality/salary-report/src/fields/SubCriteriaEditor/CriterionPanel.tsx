@@ -1,4 +1,9 @@
-import { AccordionCard, Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  AccordionCard,
+  AlertMessage,
+  Box,
+  Button,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
@@ -87,12 +92,17 @@ export const CriterionPanel: FC<Props> = ({
         expectedWeight !== 0 &&
         Math.abs(subCriteriaTotal - expectedWeight) > 0.001 && (
           <Box marginTop={3}>
-            <Text color="red600">
-              {formatMessage(messages.report.subCriteria.weightSumError, {
-                total: subCriteriaTotal,
-                expected: expectedWeight,
-              })}
-            </Text>
+            <AlertMessage
+              type="error"
+              title={formatMessage(messages.errors.alertTitle)}
+              message={formatMessage(
+                messages.report.subCriteria.weightSumError,
+                {
+                  total: subCriteriaTotal,
+                  expected: expectedWeight,
+                },
+              )}
+            />
           </Box>
         )}
     </AccordionCard>

@@ -39,6 +39,10 @@ export const messages = {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
     },
+    alertTitle: {
+      id: 'doe.sr.application:errors.alertTitle',
+      defaultMessage: 'Villa:',
+    },
   }),
 
   general: defineMessages({
