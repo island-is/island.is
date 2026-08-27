@@ -144,9 +144,15 @@ export function Button({
 
   if (isFilledUtilityButton) isUtilityButton = true
 
-  // Match the spinner colour to the button's text colour.
+  // Match the spinner colour to the button's text colour (same rules as Text).
   const spinnerColor =
-    isTransparent || isOutlined || (isUtilityButton && !isFilledUtilityButton)
+    isTransparent && rest.disabled
+      ? theme.color.dark200
+      : isUtilityButton && !isFilledUtilityButton
+      ? theme.isDark
+        ? theme.color.white
+        : theme.color.dark400
+      : isTransparent || isOutlined
       ? theme.color.blue400
       : theme.color.white
 

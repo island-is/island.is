@@ -218,11 +218,17 @@ export const PrescriptionCard = ({
       const response = await getDocuments({
         variables: { input: { id: prescription.productId } },
       })
+      // Apollo surfaces network/GraphQL errors via `response.error` rather than
+      // rejecting, so reset the guard here too to allow a retry on re-expand.
+      if (response.error) {
+        hasFetchedDocuments.current = false
+        return
+      }
       setDocuments(
         response.data?.healthDirectoratePrescriptionDocuments?.documents ?? [],
       )
     } catch {
-      // Allow a retry on the next expand if the fetch failed.
+      // Allow a retry on the next expand if the request threw.
       hasFetchedDocuments.current = false
     }
   }, [getDocuments, prescription.productId])
