@@ -12,3 +12,6 @@ export const formatCurrency = (
     ? `${formattedValue} ${currencyPostfix}`
     : formattedValue
 }
+
+export const formatCurrencyWithoutSuffix = (value: number | string) =>
+  formatCurrency(value, '')

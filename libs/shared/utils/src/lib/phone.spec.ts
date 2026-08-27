@@ -1,4 +1,8 @@
-import { formatPhoneNumber, removeCountryCode } from './phone'
+import {
+  formatPhoneNumber,
+  formatPhoneNumberWithIcelandicCountryCode,
+  removeCountryCode,
+} from './phone'
 
 describe('formatPhoneNumber', () => {
   it('returns the same value if the phone number is already formatted', () => {
@@ -29,5 +33,25 @@ describe('removeCountryCode', () => {
 
   it('strips hyphens from a local number', () => {
     expect(removeCountryCode('790-1234')).toBe('7901234')
+  })
+})
+
+describe('formatPhoneNumberWithIcelandicCountryCode', () => {
+  it('formats a number with an Icelandic country code', () => {
+    expect(formatPhoneNumberWithIcelandicCountryCode('+3547901234')).toBe(
+      '+354 790-1234',
+    )
+  })
+
+  it('formats a 7-digit local number', () => {
+    expect(formatPhoneNumberWithIcelandicCountryCode('7901234')).toBe(
+      '790-1234',
+    )
+  })
+
+  it('returns the same value if the phone number is in an unexpected format', () => {
+    expect(formatPhoneNumberWithIcelandicCountryCode('790-1234')).toBe(
+      '790-1234',
+    )
   })
 })

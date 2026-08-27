@@ -12,8 +12,11 @@ import {
   isValid as isValidKennitala,
   sanitize as sanitizeKennitala,
 } from 'kennitala'
-import { formatPhoneNumberWithIcelandicCountryCode } from '@island.is/application/ui-components'
-import { formatBankInfo, formatCurrency } from '@island.is/shared/utils'
+import {
+  formatBankInfo,
+  formatCurrency,
+  formatPhoneNumberWithIcelandicCountryCode,
+} from '@island.is/shared/utils'
 import * as m from '../lib/messages'
 import { getRejectedAssigneeNationalIdsFromAnswers } from './assigneeRejectionUtils'
 import {
