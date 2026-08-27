@@ -20,7 +20,9 @@ export class ApplicationTranslationHttpProvider
 {
   constructor(
     @Inject(ApplicationTranslationHttpConfig.KEY)
-    private readonly config: ConfigType<typeof ApplicationTranslationHttpConfig>,
+    private readonly config: ConfigType<
+      typeof ApplicationTranslationHttpConfig
+    >,
     @Inject(APPLICATION_TRANSLATION_HTTP_FETCH)
     private readonly fetch: EnhancedFetchAPI,
   ) {}
@@ -61,8 +63,8 @@ export class ApplicationTranslationHttpProvider
           typeof error.body === 'string'
             ? error.body.slice(0, 500)
             : error.body
-              ? JSON.stringify(error.body).slice(0, 500)
-              : ''
+            ? JSON.stringify(error.body).slice(0, 500)
+            : ''
 
         throw new Error(
           `Application translation HTTP ${error.status} ${

@@ -464,7 +464,10 @@ export const TranslationWorkspaceHeaderOverflowMenu = () => {
   const chrome = ctx?.workspaceChrome
   const localeInOverflow = useViewportMaxWidth(styles.overflowMenuMaxPx, true)
   const saveInOverflow = useViewportMaxWidth(styles.compactActionsMaxPx, true)
-  const historyInOverflow = useViewportMaxWidth(styles.historyCompactMaxPx, true)
+  const historyInOverflow = useViewportMaxWidth(
+    styles.historyCompactMaxPx,
+    true,
+  )
 
   if (!chrome) {
     return null
