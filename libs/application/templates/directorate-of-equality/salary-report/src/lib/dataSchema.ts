@@ -133,6 +133,8 @@ const salaryAnalysis = z
   .object({
     postponed: z.array(z.string()).optional(),
     outlierGroups: z.array(outlierGroup).optional(),
+    hasMinimumSetOutliers: z.boolean().optional(),
+    outlierPlanReviewed: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
     // Explanations are only required when there's something to explain (a

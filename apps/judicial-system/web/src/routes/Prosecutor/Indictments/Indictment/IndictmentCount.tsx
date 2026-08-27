@@ -21,8 +21,8 @@ import {
   BlueBox,
   CheckboxList,
   IndictmentInfo,
+  RichTextEditor,
   SectionHeading,
-  TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
 import type {
   Case,
@@ -644,7 +644,7 @@ export const IndictmentCount: FC<Props> = ({
           marginBottom={2}
         />
         <Box marginBottom={2}>
-          <TinyMCE
+          <RichTextEditor
             data-testid="incidentDescription"
             label={formatMessage(strings.incidentDescriptionLabel)}
             placeholder={formatMessage(strings.incidentDescriptionPlaceholder)}

@@ -36,7 +36,7 @@ export const normalizeBlankStrings = <T extends object>(input: T): T =>
 const escapeHtml = (str: string) =>
   str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-// Converts plain text to the paragraph-based HTML the TinyMCE editor produces,
+// Converts plain text to the paragraph-based HTML the rich text editor produces,
 // one <p> per line. Text that already contains markup is passed through so
 // stored rich text is not double-escaped.
 export const textToHtml = (str: string) =>
