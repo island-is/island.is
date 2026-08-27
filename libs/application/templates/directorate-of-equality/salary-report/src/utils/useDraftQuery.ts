@@ -21,9 +21,12 @@ export const useDraftQuery = <T>(
   externalDataId: string,
   // enabled=false for a provider the current state's role does not grant —
   // the mutation would 400 on the actionId check. The screen still renders;
-  // whatever the query would have supplied is simply absent. Only the mount
-  // fetch is gated: an explicit refetch() is the caller's decision, so it
-  // still fires.
+  // whatever the query would have supplied is simply absent. An explicit
+  // refetch() is the caller's decision and still fires.
+  // Read once, at mount: it gates the mount effect (deps []) and the initial
+  // `loading`, so a later false -> true flip neither fetches nor re-enters
+  // loading. Callers must derive it from something stable, as both current
+  // ones do (a field prop).
   {
     ensureDraft = false,
     enabled = true,

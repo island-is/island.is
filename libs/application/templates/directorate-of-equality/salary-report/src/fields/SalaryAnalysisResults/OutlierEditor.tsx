@@ -147,7 +147,6 @@ export const OutlierEditor: FC<Props> = ({
     () => ({
       selected,
       allSelectedOnPage,
-      pageIsEmpty: pageRows.length === 0,
       toggleSelect,
       toggleSelectPage,
       roleTitleForOrdinal,
@@ -155,7 +154,6 @@ export const OutlierEditor: FC<Props> = ({
     [
       selected,
       allSelectedOnPage,
-      pageRows.length,
       toggleSelect,
       toggleSelectPage,
       roleTitleForOrdinal,
@@ -171,14 +169,16 @@ export const OutlierEditor: FC<Props> = ({
               columns={OUTLIER_COLUMNS}
               data={pageRows}
               mobileTitleKey="employee"
-              // Longhand on purpose: Table's own T.Data/T.HeadData pass
-              // paddingTop/paddingBottom ('p5' = 18px) and paddingLeft/
-              // paddingRight (3 = 24px) into the same useBoxStyles call this
-              // object is spread over. Only identical keys replace those; a
-              // paddingY/paddingX shorthand emits a second, competing atomic
-              // class and loses. The 24px sides are also the single biggest
-              // width cost here — 8 columns spend 384px on padding alone,
-              // which is what overflows the card.
+              // Longhand on purpose: T.Data/T.HeadData spread this object
+              // over their own paddingTop/paddingBottom ('p5' = 18px) and
+              // paddingLeft/paddingRight (3 = 24px) in a single useBoxStyles
+              // call, and that call resolves each side as
+              // `paddingTop ?? paddingY ?? padding`. A shorthand here would
+              // therefore lose to the longhands already in the object, while
+              // these longhands replace them outright — and also override the
+              // paddingY: 2 InteractiveTable passes for body cells. The 24px
+              // sides are the single biggest width cost here: 8 columns spend
+              // 384px on padding alone, which is what overflows the card.
               cellBox={{
                 header: {
                   paddingTop: 1,

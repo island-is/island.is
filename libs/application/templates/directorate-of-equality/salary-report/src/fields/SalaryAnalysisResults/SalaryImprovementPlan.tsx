@@ -86,8 +86,9 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     'draftEmployees',
   )
   // Roles carry the job title; ReportEmployeeDto only carries the role's id.
-  // Not granted to the POSTPONED role, hence `enabled` — that review shows the
-  // column empty rather than firing a provider it cannot call.
+  // Granted to the DRAFT role only, hence `enabled` — both review states
+  // (POSTPONED and DRAFT_RETRY) show the column empty rather than firing a
+  // provider they cannot call, which the controller rejects outright.
   const { content: rolesContent } = useDraftQuery<{
     roles: ReportEmployeeRoleDto[]
   }>(application, draftActionId(ApiActions.listDraftRoles), 'draftRoles', {

@@ -65,10 +65,25 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
    * Which is why nothing else here fetches employees: handleAnalyze asks for
    * both legs on every arrival, so a standalone refresh has no reason to exist
    * and no way to pair a newer list with an older analysis.
+   *
+   * The review states are the one exception, and they seed from the stored
+   * externalData instead. They are not granted the employee read at all, so a
+   * fresh pair is unobtainable there — and unnecessary: neither POSTPONED nor
+   * DRAFT_RETRY exposes a screen that can edit the employee list (DRAFT_RETRY's
+   * editable sections are still empty placeholders), so the stored list is the
+   * one the report was submitted with. Nothing to fall out of step with.
    */
   const [analyzedEmployees, setAnalyzedEmployees] = useState<
     ReportEmployeeDto[] | undefined
-  >()
+  >(() =>
+    isDraftPhase
+      ? undefined
+      : getProviderSuccessData(
+          application.externalData.draftEmployees as
+            | ProviderExternalData<{ employees: ReportEmployeeDto[] }>
+            | undefined,
+        )?.employees,
+  )
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasRequestedAnalysis, setHasRequestedAnalysis] = useState(() =>
     Boolean(getSalaryAnalysisResult(application.externalData)),
@@ -143,10 +158,19 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
                 actionId: draftActionId(ApiActions.analyzeSalaryReport),
                 order: 0,
               },
-              {
-                actionId: draftActionId(ApiActions.listDraftEmployees),
-                order: 1,
-              },
+              // DRAFT is the only state whose role grants the employee read,
+              // and the controller rejects the entire mutation on the first
+              // ungranted actionId — so asking for it in the review states
+              // takes the analysis down with it, leaving the screen on its
+              // error banner with submission blocked.
+              ...(isDraftPhase
+                ? [
+                    {
+                      actionId: draftActionId(ApiActions.listDraftEmployees),
+                      order: 1,
+                    },
+                  ]
+                : []),
             ],
           },
           locale,
@@ -173,7 +197,10 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       // analysis is the artifact this screen gates submission on and it stands
       // on its own, so a failed side-read must not discard it or block the
       // applicant. Only the derived table stands down.
-      if (analysis) setAnalyzedEmployees(employees?.employees)
+      // Draft phase only: the review states never asked for the list, so an
+      // absent one there says nothing about the pair and must not clear the
+      // seed above.
+      if (analysis && isDraftPhase) setAnalyzedEmployees(employees?.employees)
 
       if (analysis) {
         applyNavigationAnswers(analysis, true)
@@ -191,6 +218,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   }, [
     application.id,
     applyNavigationAnswers,
+    isDraftPhase,
     locale,
     updateApplicationExternalData,
   ])

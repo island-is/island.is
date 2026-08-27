@@ -43,7 +43,9 @@ const formatWageAmount = (value?: number | null): string =>
  *  - the header keeps its own hardcoded 16px — an inline style no class can
  *    beat — so headers stay one step larger than the cells;
  *  - on mobile these values sit left in their half of the card instead of right,
- *    and the `#` column loses the h4 treatment it had as the card title.
+ *    and the `#` column, being the card title, loses both the h4 look and the
+ *    `as="h2"` that came with it. The expander's aria-labelledby still resolves
+ *    to the title element, so what is lost is heading navigation, not labelling.
  */
 const COMPACT_CELL = { type: 'interactive' } as const
 
@@ -59,12 +61,11 @@ const compactCell = (children: ReactNode, align?: 'right'): ReactNode => (
 type OutlierTableContextValue = {
   selected: Set<number>
   allSelectedOnPage: boolean
-  pageIsEmpty: boolean
   toggleSelect: (ordinal: number) => void
   toggleSelectPage: () => void
-  // Absent for an employee whose role can't be resolved — the POSTPONED review
-  // has no access to the draft's employees or roles, so the column is blank
-  // there rather than wrong.
+  // Absent for an employee whose role can't be resolved — neither the POSTPONED
+  // nor the DRAFT_RETRY review is granted the draft's employee/role reads, so
+  // the column is blank in both rather than wrong.
   roleTitleForOrdinal: (ordinal: number) => string | undefined
 }
 
@@ -99,6 +100,13 @@ type CellProps = { row: { original: SalaryAnalysisOutlierDto } }
  * instead, where it costs the alignment nothing and still reserves its space
  * whether or not the column is currently sorted, so the header does not jump
  * when clicked.
+ *
+ * The wrappers are spans. The mobile card renders every header label inside
+ * `<Text fontWeight="semiBold">`, i.e. a `<p>`, and `Hidden` hides the mobile
+ * markup with `display: none` rather than unmounting it — so a `<div>` here is
+ * invalid nesting that React logs for every non-title column of every row, at
+ * every viewport. A span is still blockified as a flex item in the desktop
+ * header wrapper, so the spacer and `order: 2` behave exactly as above.
  */
 const headerFor = (
   message: typeof m.roleColumn,
@@ -107,11 +115,16 @@ const headerFor = (
   const Header = () => {
     const { formatMessage } = useLocale()
     const label = formatMessage(message)
-    if (!align) return <Box>{label}</Box>
+    if (!align) return <Box component="span">{label}</Box>
     return (
       <>
-        <Box flexGrow={1} />
-        <Box marginLeft={1} textAlign="right" style={{ order: 2 }}>
+        <Box component="span" flexGrow={1} />
+        <Box
+          component="span"
+          marginLeft={1}
+          textAlign="right"
+          style={{ order: 2 }}
+        >
           {label}
         </Box>
       </>
@@ -127,11 +140,15 @@ const HourlyWageHeader = headerFor(m.hourlyWageColumn, 'right')
 const ExpectedHourlyWageHeader = headerFor(m.expectedHourlyWageColumn, 'right')
 const DeviationHeader = headerFor(m.deviationColumn, 'right')
 
+// The span is for the same reason as in headerFor. Checkbox's own root is a
+// Box, so this header still nests a div inside the mobile `<p>` — pre-existing
+// in island-ui and not something a caller can fix from here.
 const SelectAllHeader = () => {
   const { formatMessage } = useLocale()
-  const { allSelectedOnPage, pageIsEmpty, toggleSelectPage } = useOutlierTable()
+  const { allSelectedOnPage, toggleSelectPage } = useOutlierTable()
   return (
     <Box
+      component="span"
       display="flex"
       justifyContent="center"
       style={{ maxWidth: SELECT_COLUMN_WIDTH }}
@@ -140,7 +157,6 @@ const SelectAllHeader = () => {
         label=""
         ariaLabel={formatMessage(m.selectAllLabel)}
         checked={allSelectedOnPage}
-        disabled={pageIsEmpty}
         onChange={toggleSelectPage}
       />
     </Box>
@@ -176,7 +192,7 @@ const SelectCell = ({ row }: CellProps) => {
 const OrdinalHeader = () => {
   const { formatMessage } = useLocale()
   return (
-    <Box display="flex" alignItems="center" columnGap={1}>
+    <Box component="span" display="flex" alignItems="center" columnGap={1}>
       {formatMessage(m.ordinalColumn)}
       <Tooltip
         placement="right"
