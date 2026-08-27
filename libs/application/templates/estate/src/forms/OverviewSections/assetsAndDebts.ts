@@ -8,10 +8,8 @@ import { Application } from '@island.is/application/types'
 import { EstateAsset, EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
-import {
-  formatBankInfo,
-  formatCurrency,
-} from '@island.is/application/ui-components'
+import { formatBankInfo } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
 import { EstateTypes } from '../../lib/constants'

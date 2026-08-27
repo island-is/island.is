@@ -11,11 +11,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatCurrency } from '@island.is/shared/utils'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee } from '../../utils/types'
 import {
-  formatCurrency,
   formatStartDate,
   formatPaidHours,
   getSalaryComponentLabels,
@@ -93,7 +93,7 @@ export const EmployeeRow: FC<Props> = ({
     },
     ...SALARY_COMPONENT_KEYS.map((key) => ({
       label: componentLabels[key],
-      value: formatCurrency(employee[key]),
+      value: formatCurrency(employee[key] ?? 0),
     })),
   ]
 

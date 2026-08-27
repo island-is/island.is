@@ -7,10 +7,8 @@ import {
 import { m } from '../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { format as formatNationalId } from 'kennitala'
-import {
-  formatCurrency,
-  formatPhoneNumberWithIcelandicCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumberWithIcelandicCountryCode } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { BOARDMEMEBER } from './constants'
 import { CareTaker } from '../types/types'
 

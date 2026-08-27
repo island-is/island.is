@@ -14,9 +14,9 @@ import {
 } from 'kennitala'
 import {
   formatBankInfo,
-  formatCurrency,
   formatPhoneNumberWithIcelandicCountryCode,
 } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import * as m from '../lib/messages'
 import { getRejectedAssigneeNationalIdsFromAnswers } from './assigneeRejectionUtils'
 import {
