@@ -148,10 +148,11 @@ export const adultProcurationOverviewFields = (editable?: boolean) => [
   }),
   buildOverviewField({
     id: 'overview.protectiveFactors',
-    title: protectiveFactorsMessages.shared.sectionTitle,
+    title: protectiveFactorsMessages.sectionTitle,
     backId: editable ? 'protectiveFactors' : undefined,
     items: getProtectiveFactorsItems,
     hideIfEmpty: true,
+    condition: (answers) => !isUnborn(answers),
   }),
   buildOverviewField({
     id: 'overview.childSafety',
