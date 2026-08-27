@@ -31,6 +31,7 @@ type GivenWhenThen = (
   defenderNationalId?: string,
   appealRulingDecision?: AppealCaseRulingDecision,
   appealRulingModifiedHistory?: string,
+  hasDefender?: boolean,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal completed notifications', () => {
@@ -70,6 +71,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
       defenderNationalId?: string,
       appealRulingDecision?: AppealCaseRulingDecision,
       appealRulingModifiedHistory?: string,
+      hasDefender = true,
     ) => {
       const then = {} as Then
 
@@ -97,8 +99,8 @@ describe('InternalNotificationController - Send appeal completed notifications',
             judge: { name: judge.name, email: judge.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
-            defenderName: defender.name,
-            defenderEmail: defender.email,
+            defenderName: hasDefender ? defender.name : undefined,
+            defenderEmail: hasDefender ? defender.email : undefined,
             courtCaseNumber,
             courtId: courtId,
             appealCase,
@@ -258,6 +260,34 @@ describe('InternalNotificationController - Send appeal completed notifications',
         }),
       )
       expect(mockSmsService.sendSms).not.toHaveBeenCalled()
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('notification sent in discontinued appeal when no defender is registered', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        '',
+        AppealCaseRulingDecision.DISCONTINUED,
+        undefined,
+        false,
+      )
+    })
+
+    it('should only send notification about discontinuance to the prosecutor', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          subject: `Niðurfelling máls ${appealCaseNumber} (${courtCaseNumber})`,
+          html: `Landsréttur hefur móttekið afturköllun á kæru í máli ${courtCaseNumber}. Landsréttarmálið ${appealCaseNumber} hefur verið fellt niður. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({ to: [{ name: '', address: '' }] }),
+      )
       expect(then.result).toEqual({ delivered: true })
     })
   })
