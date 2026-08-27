@@ -60,12 +60,19 @@ export const FormContextWrapper: FC<
 }
 
 export const UserContextWrapper: FC<
-  PropsWithChildren<{ userRole: UserRole; children: ReactNode }>
-> = ({ userRole, children }) => {
+  PropsWithChildren<{
+    userRole: UserRole
+    nationalId?: string
+    children: ReactNode
+  }>
+> = ({ userRole, nationalId, children }) => {
   return (
     <UserContext.Provider
       value={{
-        user: mockUser(userRole),
+        user: {
+          ...mockUser(userRole),
+          ...(nationalId !== undefined ? { nationalId } : {}),
+        },
       }}
     >
       {children}
