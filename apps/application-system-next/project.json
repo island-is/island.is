@@ -10,7 +10,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/application-system-next"
+        "outputPath": "dist/apps/application-system-next",
+        "webpack": true
       },
       "configurations": {
         "development": {
@@ -49,7 +50,8 @@
         "buildTarget": "application-system-next:build",
         "dev": true,
         "port": 4250,
-        "customServerTarget": "application-system-next:serve-custom-server"
+        "customServerTarget": "application-system-next:serve-custom-server",
+        "webpack": true
       },
       "configurations": {
         "development": {
