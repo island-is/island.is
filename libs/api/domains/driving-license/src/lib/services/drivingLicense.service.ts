@@ -365,7 +365,12 @@ export class DrivingLicenseService {
       case 'PERSON_NOT_REGISTERED_IN_ICELAND':
         return RequirementKey.localResidency
       default:
-        this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
+        // Must be an object: a bare string second arg is treated as winston
+        // splat and silently dropped, which is why ~265 of these warnings a
+        // month never recorded which code was unhandled.
+        this.logger.warn(`${LOGTAG} unhandled can apply error code`, {
+          errorCode,
+        })
 
         return RequirementKey.deniedByService
     }
@@ -386,6 +391,12 @@ export class DrivingLicenseService {
         await this.drivingLicenseApi.getErrorCodeDescriptions()
       const match = descriptions.find((d) => d.code === code)
       if (!match) {
+        // RLS has no description for this code either, so the UI falls back to
+        // generic copy. Worth knowing about: it means neither we nor RLS
+        // document the code, and it is a candidate to ask RLS to catalogue.
+        this.logger.warn(`${LOGTAG} no RLS description for error code`, {
+          code,
+        })
         return null
       }
       return {

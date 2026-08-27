@@ -1,4 +1,9 @@
-import { foldGroupDirection, isOutlierGroupComplete } from './outlierGroups'
+import {
+  foldGroupDirection,
+  isOutlierGroupComplete,
+  unassignedOutlierOrdinals,
+  withFallbackOutlierGroupNames,
+} from './outlierGroups'
 
 describe('foldGroupDirection', () => {
   it('reads a group of underpaid employees as below', () => {
@@ -55,5 +60,46 @@ describe('isOutlierGroupComplete', () => {
     expect(isOutlierGroupComplete({ ...complete, signatureRole: '' })).toBe(
       false,
     )
+  })
+})
+
+describe('unassignedOutlierOrdinals', () => {
+  it('returns only outliers missing from every group', () => {
+    expect(
+      unassignedOutlierOrdinals(
+        [
+          { employeeOrdinal: 1 },
+          { employeeOrdinal: 2 },
+          { employeeOrdinal: 3 },
+        ],
+        [{ employeeOrdinals: [2] }, { employeeOrdinals: [3, 99] }],
+      ),
+    ).toEqual([1])
+  })
+
+  it('returns an empty list when every outlier is assigned', () => {
+    expect(
+      unassignedOutlierOrdinals(
+        [{ employeeOrdinal: 1 }, { employeeOrdinal: 2 }],
+        [{ employeeOrdinals: [1, 2] }],
+      ),
+    ).toEqual([])
+  })
+})
+
+describe('withFallbackOutlierGroupNames', () => {
+  it('fills only blank group names', () => {
+    expect(
+      withFallbackOutlierGroupNames(
+        [
+          { name: 'Skrifstofa', employeeOrdinals: [1] },
+          { name: '   ', employeeOrdinals: [2] },
+        ],
+        (index) => `Hópur ${index + 1}`,
+      ),
+    ).toEqual([
+      { name: 'Skrifstofa', employeeOrdinals: [1] },
+      { name: 'Hópur 2', employeeOrdinals: [2] },
+    ])
   })
 })

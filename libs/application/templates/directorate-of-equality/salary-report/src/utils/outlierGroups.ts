@@ -7,7 +7,7 @@ import { SyncMethodEnum } from './constants'
 import { buildUpsertRemoveCommands } from './syncCommands'
 
 // The outlier-group answer shape and its completeness rule live here because
-// two screens-worth of components depend on them: SalaryAnalysisResults gates
+// two screens-worth of components depend on them: SalaryImprovementPlan gates
 // "Continue" on the rule, OutlierEditor renders the matching inline warning.
 // Declared in both places they could drift, and the button would then block on
 // a condition the warning never showed.
@@ -36,6 +36,31 @@ export const isOutlierGroupComplete = (group: OutlierGroupAnswer): boolean =>
       group.action?.trim() &&
       group.signatureName?.trim() &&
       group.signatureRole?.trim(),
+  )
+
+export const unassignedOutlierOrdinals = (
+  outliers: { employeeOrdinal: number }[],
+  groups: Pick<OutlierGroupAnswer, 'employeeOrdinals'>[],
+): number[] => {
+  const assignedOrdinals = new Set(
+    groups.flatMap((group) => group.employeeOrdinals),
+  )
+  return outliers
+    .map((outlier) => outlier.employeeOrdinal)
+    .filter((ordinal) => !assignedOrdinals.has(ordinal))
+}
+
+export const withFallbackOutlierGroupNames = (
+  groups: OutlierGroupAnswer[],
+  fallbackName: (index: number) => string,
+): OutlierGroupAnswer[] =>
+  groups.map((group, index) =>
+    group.name?.trim()
+      ? group
+      : {
+          ...group,
+          name: fallbackName(index),
+        },
   )
 
 export type PayStatus = 'UNDERPAID' | 'OVERPAID' | 'ON_LINE'
@@ -90,7 +115,7 @@ export const buildOutlierSyncCommands = (
       data: {
         // Unlike its siblings, the generated `name` field isn't nullable —
         // omit it on blank rather than sending null. In practice this is
-        // already backfilled by SalaryAnalysisResults's setBeforeSubmitCallback
+        // already backfilled by SalaryImprovementPlan before submission
         // before finalGroups reaches here.
         name: g.name || undefined,
         reason: g.reason || null,

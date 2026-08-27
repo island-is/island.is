@@ -30,6 +30,11 @@ export const messages = {
       id: 'doe.sr.application:errors.draftLoadFailed',
       defaultMessage: 'Ekki tókst að sækja gögnin. Reyndu aftur.',
     },
+    submitConflict: {
+      id: 'doe.sr.application:errors.submitConflict',
+      defaultMessage:
+        'Fyrirtæki er nú þegar með innsenda skýrslu sem er í vinnslu hjá ritstjórn.',
+    },
     retryButton: {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
@@ -520,23 +525,36 @@ export const messages = {
       },
       importSuccess: {
         id: 'doe.sr.application:report.dataEntry.importSuccess',
-        defaultMessage: 'Skráin var flutt inn.',
+        defaultMessage:
+          'Skráin var flutt inn og launagreining fer fram í næsta skrefi.',
+      },
+      importSuccessContinueButton: {
+        id: 'doe.sr.application:report.dataEntry.importSuccessContinueButton',
+        defaultMessage: 'Halda áfram í launagreiningu',
+      },
+      importErrorTitle: {
+        id: 'doe.sr.application:report.dataEntry.importErrorTitle',
+        defaultMessage: 'Villa kom upp við úrvinnslu skjalsins',
       },
       importError: {
         id: 'doe.sr.application:report.dataEntry.importError',
         defaultMessage:
           'Villa kom upp við innflutning. Vinsamlegast reyndu aftur.',
       },
+      invalidFileType: {
+        id: 'doe.sr.application:report.dataEntry.invalidFileType',
+        defaultMessage: 'Aðeins er hægt að hlaða upp Excel (.xlsx) skjölum.',
+      },
       excelTemplateDownloadDescription: {
         id: 'doe.sr.application:report.dataEntry.excelTemplateDownloadDescription',
         defaultMessage:
-          'Athugið að bein tenging við vefþjónustu Jafnréttisstofu til að einfalda stór gagnaskil er væntanleg.',
+          'Athugið að bein tenging við vefþjónustu Jafnréttisstofu er væntanleg.',
       },
     }),
     criteria: defineMessages({
       sectionTitle: {
         id: 'doe.sr.application:report.criteria.sectionTitle',
-        defaultMessage: 'Yfirviðmiðt',
+        defaultMessage: 'Yfirviðmið',
       },
       title: {
         id: 'doe.sr.application:report.criteria.title',
@@ -943,6 +961,10 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.results.recalculateButton',
         defaultMessage: 'Reikna aftur',
       },
+      reviewDataButton: {
+        id: 'doe.sr.application:salaryAnalysis.results.reviewDataButton',
+        defaultMessage: 'Yfirfara gögn í viðmóti',
+      },
       analyzing: {
         id: 'doe.sr.application:salaryAnalysis.results.analyzing',
         defaultMessage: 'Reikna út launagreiningu...',
@@ -964,10 +986,6 @@ export const messages = {
       femaleLabel: {
         id: 'doe.sr.application:salaryAnalysis.results.femaleLabel',
         defaultMessage: 'Meðaltímakaup kvenna',
-      },
-      wageGapLabel: {
-        id: 'doe.sr.application:salaryAnalysis.results.wageGapLabel',
-        defaultMessage: 'Óleiðréttur launamunur',
       },
       // Compliance is oskyrtWithinBenchmark, never the length of the list —
       // the previous copy pair ("frávik fundust" / "engin frávik fundust")
@@ -1027,6 +1045,11 @@ export const messages = {
         defaultMessage:
           'Ekki tókst að reikna leiðréttan launamun út frá þessum gögnum.',
       },
+      noAnalysisMessage: {
+        id: 'doe.sr.application:salaryAnalysis.results.noAnalysisMessage',
+        defaultMessage:
+          'Launagreining hefur ekki verið keyrð fyrir þessi gögn.',
+      },
       // Group headings for the two card rows.
       meanHourlyWageGroupTitle: {
         id: 'doe.sr.application:salaryAnalysis.results.meanHourlyWageGroupTitle',
@@ -1043,6 +1066,10 @@ export const messages = {
       benchmarkFootnote: {
         id: 'doe.sr.application:salaryAnalysis.results.benchmarkFootnote',
         defaultMessage: 'Viðmið: {benchmark}%',
+      },
+      rawGapSubtext: {
+        id: 'doe.sr.application:salaryAnalysis.results.rawGapSubtext',
+        defaultMessage: 'Óleiðréttur launamunur: {value}% {direction}.',
       },
       // Deliberately carries no figures: quantifying the shortfall implies the
       // exact pay changes this process never asks for. And it must not say the
@@ -1103,7 +1130,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:salaryAnalysis.chart.intro',
         defaultMessage:
-          'Ferillinn sýnir væntanlegt reglulegt tímakaup miðað við starfsmatsstig. Frávikin í töflunni hér fyrir neðan eru mæld sem lóðrétt fjarlægð frá ferlinum, í báðar áttir.',
+          'Viðmiðslínan er væntanlegt tímakaup eftir stigum. Launafrávik hvers starfsmanns er mælt frá henni, og úrbótaáætlun getur tekið til starfsmanna á báða vegu — bæði undir línunni og yfir henni.',
       },
       xAxisLabel: {
         id: 'doe.sr.application:salaryAnalysis.chart.xAxisLabel',
@@ -1111,41 +1138,223 @@ export const messages = {
       },
       yAxisLabel: {
         id: 'doe.sr.application:salaryAnalysis.chart.yAxisLabel',
-        defaultMessage: 'Reglulegt tímakaup (kr./klst.)',
-      },
-      legendMale: {
-        id: 'doe.sr.application:salaryAnalysis.chart.legendMale',
-        defaultMessage: 'Karlar',
-      },
-      legendFemale: {
-        id: 'doe.sr.application:salaryAnalysis.chart.legendFemale',
-        defaultMessage: 'Konur',
+        defaultMessage: 'kr./klst.',
       },
       legendCurve: {
         id: 'doe.sr.application:salaryAnalysis.chart.legendCurve',
         defaultMessage: 'Væntanlegt tímakaup',
       },
-      growthUp: {
-        id: 'doe.sr.application:salaryAnalysis.chart.growthUp',
-        defaultMessage: 'Tímakaup hækkar um {pct}% á hverjum {step} stigum.',
+      legendMale: {
+        id: 'doe.sr.application:salaryAnalysis.chart.legendMale',
+        defaultMessage: 'Karlar',
       },
-      growthDown: {
-        id: 'doe.sr.application:salaryAnalysis.chart.growthDown',
-        defaultMessage: 'Tímakaup lækkar um {pct}% á hverjum {step} stigum.',
+      legendNonMale: {
+        id: 'doe.sr.application:salaryAnalysis.chart.legendNonMale',
+        defaultMessage: 'Konur',
       },
-      anchor: {
-        id: 'doe.sr.application:salaryAnalysis.chart.anchor',
+    }),
+    chartRegression: defineMessages({
+      note: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.note',
         defaultMessage:
-          'Við meðalstigafjölda ({score} stig) gefur ferillinn {wage}.',
+          'Viðmiðslínan sveigist vegna þess að væntanlegt tímakaup hækkar um fast HLUTFALL á hvert stig, ekki fasta krónutölu — og hlutfallshækkun leggst við sjálfa sig. Í krónum verður hvert 100 stiga þrep því stærra en það síðasta.',
       },
-      rSquared: {
-        id: 'doe.sr.application:salaryAnalysis.chart.rSquared',
-        defaultMessage: 'Skýringarhlutfall ferilsins (R²): {value}.',
+      growthLabel: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.growthLabel',
+        defaultMessage: 'Hækkun á hver 100 stig',
       },
-      noFit: {
-        id: 'doe.sr.application:salaryAnalysis.chart.noFit',
+      growthHint: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.growthHint',
+        defaultMessage: 'Hlutfallsleg hækkun á væntanlegu tímakaupi',
+      },
+      atMeanLabel: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.atMeanLabel',
+        defaultMessage: 'Væntanlegt tímakaup við meðalstig',
+      },
+      atMeanHint: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.atMeanHint',
+        defaultMessage: 'Punktur á línunni við meðalstig starfsmanna',
+      },
+      unavailable: {
+        id: 'doe.sr.application:salaryAnalysis.chartRegression.unavailable',
+        defaultMessage: 'Viðmiðslína ekki reiknanleg fyrir þessi gögn',
+      },
+    }),
+    chartMarkedLegend: defineMessages({
+      minimumSet: {
+        id: 'doe.sr.application:salaryAnalysis.chartMarkedLegend.minimumSet',
+        defaultMessage: 'Frávik',
+      },
+      abending: {
+        id: 'doe.sr.application:salaryAnalysis.chartMarkedLegend.abending',
+        defaultMessage: 'Ábending',
+      },
+    }),
+    chartTooltip: defineMessages({
+      employee: {
+        id: 'doe.sr.application:salaryAnalysis.chartTooltip.employee',
+        defaultMessage: 'Starfsmaður',
+      },
+      gender: {
+        id: 'doe.sr.application:salaryAnalysis.chartTooltip.gender',
+        defaultMessage: 'Kyn',
+      },
+      score: {
+        id: 'doe.sr.application:salaryAnalysis.chartTooltip.score',
+        defaultMessage: 'Starfsmatsstig',
+      },
+      salary: {
+        id: 'doe.sr.application:salaryAnalysis.chartTooltip.salary',
+        defaultMessage: 'Tímakaup',
+      },
+      expected: {
+        id: 'doe.sr.application:salaryAnalysis.chartTooltip.expected',
+        defaultMessage: 'Væntanlegt tímakaup',
+      },
+      deviation: {
+        id: 'doe.sr.application:salaryAnalysis.chartTooltip.deviation',
+        defaultMessage: 'Launafrávik',
+      },
+    }),
+    components: defineMessages({
+      heading: {
+        id: 'doe.sr.application:salaryAnalysis.components.heading',
+        defaultMessage: 'Viðbótarlaun og aukagreiðslur',
+      },
+      description: {
+        id: 'doe.sr.application:salaryAnalysis.components.description',
         defaultMessage:
-          'Ekki tókst að reikna feril fyrir þessi gögn — starfsmatsstigin eru öll þau sömu eða gögnin duga ekki til.',
+          'Meðaltal viðbótarlauna og aukagreiðslna á mánuði, eftir kyni. Krónur á mánuði — ekki tímakaup, og ekki deilt með greiddum stundum.',
+      },
+      genderHeader: {
+        id: 'doe.sr.application:salaryAnalysis.components.genderHeader',
+        defaultMessage: 'Kyn',
+      },
+      additionalHeader: {
+        id: 'doe.sr.application:salaryAnalysis.components.additionalHeader',
+        defaultMessage: 'Viðbótarlaun',
+      },
+      bonusHeader: {
+        id: 'doe.sr.application:salaryAnalysis.components.bonusHeader',
+        defaultMessage: 'Aukagreiðslur',
+      },
+      totalHeader: {
+        id: 'doe.sr.application:salaryAnalysis.components.totalHeader',
+        defaultMessage: 'Samtals',
+      },
+      male: {
+        id: 'doe.sr.application:salaryAnalysis.components.male',
+        defaultMessage: 'Karl',
+      },
+      female: {
+        id: 'doe.sr.application:salaryAnalysis.components.female',
+        defaultMessage: 'Kona/kynsegin',
+      },
+      overall: {
+        id: 'doe.sr.application:salaryAnalysis.components.overall',
+        defaultMessage: 'Allir',
+      },
+      gapRow: {
+        id: 'doe.sr.application:salaryAnalysis.components.gapRow',
+        defaultMessage: 'Hlutfallslegur munur',
+      },
+      empty: {
+        id: 'doe.sr.application:salaryAnalysis.components.empty',
+        defaultMessage: 'Engar viðbótarlaunagreiðslur skráðar',
+      },
+      gapHint: {
+        id: 'doe.sr.application:salaryAnalysis.components.gapHint',
+        defaultMessage:
+          'Jákvæð tala merkir að meðaltal karla sé hærra fyrir liðinn. Ekki leiðrétt fyrir starfsmatsstigum og ekki borið við viðmið.',
+      },
+    }),
+    payDispersion: defineMessages({
+      heading: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.heading',
+        defaultMessage: 'Ábendingar um launadreifingu',
+      },
+      intro: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.intro',
+        defaultMessage:
+          'Laun þessara starfsmanna víkja meira frá starfsmatsstigum þeirra en launadreifing fyrirtækisins skýrir.',
+      },
+      noObligation: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.noObligation',
+        defaultMessage:
+          'Engra skýringa er krafist og ekkert þarf að skrá — þetta eru ekki frávik í skilningi úrbótaáætlunar og hafa engin áhrif á afgreiðslu skýrslunnar. Ábendingin er til fyrirtækisins sjálfs: gögnin gætu þurft nánari skoðun innanhúss.',
+      },
+      spreadNote: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.spreadNote',
+        defaultMessage:
+          'Dæmigerð dreifing um línuna hjá þessu fyrirtæki er {down} til {up}. Hér eru starfsmenn sem víkja {threshold} staðalvik eða meira frá henni.',
+      },
+      allClear: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.allClear',
+        defaultMessage:
+          'Engar ábendingar — laun engra starfsmanna víkja meira frá starfsmatsstigum sínum en launadreifing fyrirtækisins skýrir.',
+      },
+      blockerCohortTooSmall: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.blockerCohortTooSmall',
+        defaultMessage:
+          'Of fáir starfsmenn til að meta launadreifingu áreiðanlega — það þarf að minnsta kosti 12.',
+      },
+      blockerNoScoreVariation: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.blockerNoScoreVariation',
+        defaultMessage:
+          'Öll starfsmatsstig eru eins, því liggur ekkert væntanlegt tímakaup fyrir til að víkja frá.',
+      },
+      blockerGapNotComputable: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.blockerGapNotComputable',
+        defaultMessage:
+          'Launadreifing verður ekki metin því ekki var unnt að reikna væntanlegt tímakaup.',
+      },
+      numberHeader: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.numberHeader',
+        defaultMessage: 'Auðkenni',
+      },
+      genderHeader: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.genderHeader',
+        defaultMessage: 'Kyn',
+      },
+      points: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.points',
+        defaultMessage: 'Stig',
+      },
+      salary: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.salary',
+        defaultMessage: 'Tímakaup',
+      },
+      predictedSalary: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.predictedSalary',
+        defaultMessage: 'Væntanlegt tímakaup',
+      },
+      deviationHeader: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.deviationHeader',
+        defaultMessage: 'Launafrávik',
+      },
+      spreadHeader: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.spreadHeader',
+        defaultMessage: 'Staðalvik frá línu',
+      },
+      directionBelow: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.directionBelow',
+        defaultMessage: 'undir',
+      },
+      directionAbove: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.directionAbove',
+        defaultMessage: 'yfir',
+      },
+      genderMale: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.genderMale',
+        defaultMessage: 'Karl',
+      },
+      genderFemale: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.genderFemale',
+        defaultMessage: 'Kona',
+      },
+      genderNeutral: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.genderNeutral',
+        defaultMessage: 'Kynsegin',
       },
     }),
     outlierGroup: defineMessages({
