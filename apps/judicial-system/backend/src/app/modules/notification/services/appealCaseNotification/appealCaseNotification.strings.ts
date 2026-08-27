@@ -140,5 +140,11 @@ export const strings = {
         '{withdrawnByProsecution, select, true {Sækjandi} other {Verjandi}} hefur afturkallað kæru í máli {courtCaseNumber}.',
       description: 'Texti í pósti til aðila máls þegar kæra er afturkölluð',
     },
+    bodyWithoutAppellant: {
+      id: 'judicial.system.backend:notifications.case_appeal_withdrawn.body_without_appellant',
+      defaultMessage: 'Kæra í máli {courtCaseNumber} hefur verið afturkölluð.',
+      description:
+        'Texti í pósti til aðila máls þegar kæra fellur niður án þess að aðili afturkalli hana, t.d. við leiðréttingu þingbókar',
+    },
   }),
 }
