@@ -158,13 +158,9 @@ const salaryAnalysis = z
           params: messages.errors.required,
         })
       }
-      if (!group.signatureName) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['outlierGroups', i, 'signatureName'],
-          params: messages.errors.required,
-        })
-      }
+      // No check for signatureName: the responsible party's name is optional.
+      // isOutlierGroupComplete omits it too — that rule gates the Continue
+      // button, so the two have to name the same fields.
       if (!group.signatureRole) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
