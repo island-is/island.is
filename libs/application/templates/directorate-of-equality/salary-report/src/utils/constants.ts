@@ -46,9 +46,9 @@ export enum ApiActions {
   listDraftRolesWithSteps = 'listDraftRolesWithSteps',
   listDraftCriteria = 'listDraftCriteria',
   listDraftRoles = 'listDraftRoles',
-  // Only SalaryAnalysisResults still uses this — it needs the full id<->ordinal
-  // mapping across every employee to seed/sync outlier groups, which can't be
-  // paginated (a group can reference employees from anywhere in the set).
+  // Salary-analysis screens need the full employee list: the extra-pay table
+  // derives totals from it, and outlier-group sync needs the full id<->ordinal
+  // mapping because a group can reference employees from anywhere in the set.
   listDraftEmployees = 'listDraftEmployees',
   listDraftOutlierGroups = 'listDraftOutlierGroups',
 }

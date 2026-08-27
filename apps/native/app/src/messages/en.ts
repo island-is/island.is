@@ -882,8 +882,16 @@ export const en: TranslatedMessages = {
   'health.messages.videoCall': 'Video call',
   'health.messages.videoCallCanceled': 'Canceled',
   'health.messages.startVideoCall': 'Start video call',
-  'health.messages.cannotReply':
-    'You cannot reply to this message because the sender has closed further replies in this conversation.',
+  'health.messages.replyBlocked.default':
+    "You can't reply to this conversation.",
+  'health.messages.replyBlocked.repliesDisabled':
+    "You can't reply to this conversation because the sender has closed further replies in it.",
+  'health.messages.replyBlocked.outsideWindow':
+    "You can't reply to messages outside opening hours.",
+  'health.messages.replyBlocked.windowExpired':
+    "You can't reply to this conversation because the reply window has passed.",
+  'health.messages.replyBlocked.awaitingStaff':
+    "You can't reply to this conversation until staff have responded to you.",
   'health.messages.compose.newTitle': 'New message',
   'health.messages.compose.selectRecipient': 'Select recipient',
   'health.messages.compose.selectService': 'Select service',
@@ -915,6 +923,11 @@ export const en: TranslatedMessages = {
     'Failed to send message. Please try again later.',
   'health.messages.compose.noRecipient':
     'It is not possible to send messages at the moment',
+  'health.messages.compose.certificateTitle':
+    'Certificates cannot be requested in the app',
+  'health.messages.compose.certificateText':
+    'It is currently not possible to request certificates through the Ísland.is app. Please request certificates through Ísland.is My Pages.',
+  'health.messages.compose.certificateLink': 'Request a certificate',
   'health.messages.attachmentError':
     'Failed to download the document. Please try again later.',
   'health.messages.sentTitle': 'Message received',
@@ -1036,7 +1049,57 @@ export const en: TranslatedMessages = {
   'health.prescriptions.type': 'Type',
   'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Prescribed amount',
-  'health.prescriptions.dosageInstructions': 'Dosage instructions',
+  'health.prescriptions.dosageInstructions': 'Usage',
+  'health.prescriptions.attachment': 'Attachment {arg}',
+  'health.prescriptions.openAttachment': 'Open attachment {arg}',
+  'health.prescriptions.attachmentError':
+    'An error occurred while fetching the document',
+  'health.prescriptions.renewal': 'Renewal',
+  'health.prescriptions.renew': 'Renew',
+  'health.prescriptions.renewalPossible': 'Can be renewed',
+  'health.prescriptions.renewalValid': 'Valid prescription',
+  'health.prescriptions.renewalNotAvailable': 'Renewal not available',
+  'health.prescriptions.renewalBlockedIsRegiment':
+    'Medical treatment courses cannot be renewed here',
+  'health.prescriptions.renewalBlockedNoMedCard': 'No drug card registered',
+  'health.prescriptions.renewalBlockedNoHealthClinic':
+    'No registered health clinic',
+  'health.prescriptions.renewalBlockedNotFullyDispensed':
+    'Renewal is not available because the previous prescription has not been fully dispensed',
+  'health.prescriptions.renewalBlockedPendingRequest':
+    'Renewal request pending',
+  'health.prescriptions.renewalBlockedRejectedRequest':
+    'Prescription renewal request denied',
+  'health.prescriptions.renewalBlockedDismissedRequest':
+    'Renewal request dismissed',
+  'health.prescriptions.renewalBlockedAlreadyRequested':
+    'Renewal request is already in process',
+  'health.prescriptions.renewalBlockedMoreRecentExists':
+    'Renewal is not available because a more recent active prescription was found',
+  'health.prescriptions.renewalBlockedSpecialistOnly':
+    'Renewal is not available because this is a specialist only prescription',
+  'health.prescriptions.renewalBlockedNoRenewalTargets':
+    'Renewal not available',
+  'health.prescriptions.renewalBlockedInvalidRenewalTarget':
+    'Renewal not available',
+  'health.prescriptions.renewalBlockedRecipientExcludesAtc':
+    'Renewal not available',
+  'health.prescriptions.renewalBlockedOther': 'Unknown reason',
+  'health.prescriptions.renewalModal.title': 'Prescription renewal request',
+  'health.prescriptions.renewalModal.description':
+    'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112.',
+  'health.prescriptions.renewalModal.selectRecipient': 'Send to',
+  'health.prescriptions.renewalModal.medicineInformation':
+    'Medicine information',
+  'health.prescriptions.renewalModal.medicineName': 'Medication name',
+  'health.prescriptions.renewalModal.usedFor': 'Used for',
+  'health.prescriptions.renewalModal.cancel': 'Cancel',
+  'health.prescriptions.renewalModal.noTargets':
+    'Could not find an institution to send the renewal request to. Please contact your health clinic.',
+  'health.prescriptions.renewalModal.success':
+    'The renewal request has been sent. Please contact your health clinic if further information is needed.',
+  'health.prescriptions.renewalModal.error':
+    'Could not send the renewal request. Please try again later.',
   'health.prescriptions.issueDate': 'Issue date',
   'health.prescriptions.expiresAt': 'Expires at',
   'health.prescriptions.doctor': 'Doctors',

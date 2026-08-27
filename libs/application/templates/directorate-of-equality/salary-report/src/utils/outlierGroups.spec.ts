@@ -1,4 +1,9 @@
-import { foldGroupDirection, isOutlierGroupComplete } from './outlierGroups'
+import {
+  foldGroupDirection,
+  isOutlierGroupComplete,
+  unassignedOutlierOrdinals,
+  withFallbackOutlierGroupNames,
+} from './outlierGroups'
 
 describe('foldGroupDirection', () => {
   it('reads a group of underpaid employees as below', () => {
@@ -51,9 +56,60 @@ describe('isOutlierGroupComplete', () => {
     expect(isOutlierGroupComplete({ ...complete, reason: '   ' })).toBe(false)
   })
 
-  it('rejects a group missing its signature', () => {
+  it('rejects a group missing its signature role', () => {
     expect(isOutlierGroupComplete({ ...complete, signatureRole: '' })).toBe(
       false,
     )
+  })
+
+  // The responsible party's name is optional, so it must not hold up the
+  // Continue button the way the other fields do.
+  it('accepts a group with no responsible party name', () => {
+    expect(isOutlierGroupComplete({ ...complete, signatureName: '' })).toBe(
+      true,
+    )
+    const { signatureName: _omitted, ...withoutName } = complete
+    expect(isOutlierGroupComplete(withoutName)).toBe(true)
+  })
+})
+
+describe('unassignedOutlierOrdinals', () => {
+  it('returns only outliers missing from every group', () => {
+    expect(
+      unassignedOutlierOrdinals(
+        [
+          { employeeOrdinal: 1 },
+          { employeeOrdinal: 2 },
+          { employeeOrdinal: 3 },
+        ],
+        [{ employeeOrdinals: [2] }, { employeeOrdinals: [3, 99] }],
+      ),
+    ).toEqual([1])
+  })
+
+  it('returns an empty list when every outlier is assigned', () => {
+    expect(
+      unassignedOutlierOrdinals(
+        [{ employeeOrdinal: 1 }, { employeeOrdinal: 2 }],
+        [{ employeeOrdinals: [1, 2] }],
+      ),
+    ).toEqual([])
+  })
+})
+
+describe('withFallbackOutlierGroupNames', () => {
+  it('fills only blank group names', () => {
+    expect(
+      withFallbackOutlierGroupNames(
+        [
+          { name: 'Skrifstofa', employeeOrdinals: [1] },
+          { name: '   ', employeeOrdinals: [2] },
+        ],
+        (index) => `Hópur ${index + 1}`,
+      ),
+    ).toEqual([
+      { name: 'Skrifstofa', employeeOrdinals: [1] },
+      { name: 'Hópur 2', employeeOrdinals: [2] },
+    ])
   })
 })

@@ -41,21 +41,6 @@ const contactPerson = z.object({
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
-const employeeCount = z.object({
-  women: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
-  men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
-  nonBinary: z
-    .string()
-    .optional()
-    .refine((v) => !v || Number(v) >= 0, {
-      params: messages.errors.invalidNonNegativeNumber,
-    }),
-})
-
 const period = z
   .object({
     period: z
@@ -148,6 +133,8 @@ const salaryAnalysis = z
   .object({
     postponed: z.array(z.string()).optional(),
     outlierGroups: z.array(outlierGroup).optional(),
+    hasMinimumSetOutliers: z.boolean().optional(),
+    outlierPlanReviewed: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
     // Explanations are only required when there's something to explain (a
@@ -171,13 +158,9 @@ const salaryAnalysis = z
           params: messages.errors.required,
         })
       }
-      if (!group.signatureName) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['outlierGroups', i, 'signatureName'],
-          params: messages.errors.required,
-        })
-      }
+      // No check for signatureName: the responsible party's name is optional.
+      // isOutlierGroupComplete omits it too — that rule gates the Continue
+      // button, so the two have to name the same fields.
       if (!group.signatureRole) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -198,7 +181,6 @@ export const dataSchema = z.object({
   generalInformation: generalInformation.optional(),
   chiefExecutive: chiefExecutive.optional(),
   contactPerson: contactPerson.optional(),
-  employeeCount: employeeCount.optional(),
   period: period.optional(),
   subsidiaries: subsidiaries.optional(),
   salaryAnalysis: salaryAnalysis,

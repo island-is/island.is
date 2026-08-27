@@ -441,25 +441,17 @@ export const messages = {
         defaultMessage:
           '* Markmiðin eru skýr\n\n* Framkvæmdaáætlun er í samræmi við sett markmið\n\n* Aðgerðir hafa tímaramma\n\n* Áætlunin inniheldur árangursmat\n\n* Ábyrgð er skýr\n\n* Gildistími tilgreindur',
       },
-      editorTitle: {
-        id: 'doe.er.application:equalityReport.information.editorTitle',
-        defaultMessage: 'Innihald efnis',
-      },
-      editorFetchTemplate: {
-        id: 'doe.er.application:equalityReport.information.editorFetchTemplate',
-        defaultMessage: 'Sækja sniðmát',
-      },
       editorFetchTemplateDoc: {
         id: 'doe.er.application:equalityReport.information.editorFetchTemplateDoc',
         defaultMessage: 'Hlaða niður sniðmáti (.docx)',
       },
-      editorFetchTemplateFill: {
-        id: 'doe.er.application:equalityReport.information.editorFetchTemplateFill',
-        defaultMessage: 'Fá sniðmát í ritil',
-      },
       editorUploadFile: {
         id: 'doe.er.application:equalityReport.information.editorUploadFile',
         defaultMessage: 'Hlaða upp skjali',
+      },
+      editorSupportedFileTypes: {
+        id: 'doe.er.application:equalityReport.information.editorSupportedFileTypes',
+        defaultMessage: 'Samþykktar skráartegundir eru: .docx, .txt',
       },
       editorUnsupportedFile: {
         id: 'doe.er.application:equalityReport.information.editorUnsupportedFile',
@@ -470,6 +462,10 @@ export const messages = {
         id: 'doe.er.application:equalityReport.information.editorUploadError',
         defaultMessage:
           'Villa kom upp við lestur skráar. Vinsamlegast reynið aftur.',
+      },
+      editorUploadSuccess: {
+        id: 'doe.er.application:equalityReport.information.editorUploadSuccess',
+        defaultMessage: 'Jafnréttisáætlun var hlaðið upp.',
       },
     }),
     previousEqualityPlan: defineMessages({
@@ -564,6 +560,10 @@ export const messages = {
     equalityPlan: {
       id: 'doe.er.application:overview.equalityPlan',
       defaultMessage: 'Jafnréttisáætlun',
+    },
+    equalityPlanFile: {
+      id: 'doe.er.application:overview.equalityPlanFile',
+      defaultMessage: 'Skjal',
     },
     women: {
       id: 'doe.er.application:overview.women',

@@ -167,6 +167,8 @@ export const createTestingCaseModule = async () => {
 
   const eventLogService = caseModule.get<EventLogService>(EventLogService)
 
+  const eventService = caseModule.get<EventService>(EventService)
+
   const courtService = caseModule.get<CourtService>(CourtService)
 
   const policeService = caseModule.get<PoliceService>(PoliceService)
@@ -276,6 +278,7 @@ export const createTestingCaseModule = async () => {
     appealDecisionRepositoryService,
     appealEventLogRepositoryService,
     eventLogService,
+    eventService,
     courtService,
     policeService,
     userService,

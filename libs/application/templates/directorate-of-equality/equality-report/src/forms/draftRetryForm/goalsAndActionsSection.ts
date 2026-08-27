@@ -9,7 +9,7 @@ import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 
 // Reuses the same field id as mainForm's equalityReportSection
-// (goalsAndActions.customField) so this edits the same underlying answer
+// (goalsAndActions.filename) so this edits the same underlying answer
 // rather than a shadow copy. No inline CommentThread here — draftRetryForm
 // already has its own standalone comments screen as the landing page.
 export const draftRetryGoalsAndActionsSection = buildSection({
@@ -27,10 +27,13 @@ export const draftRetryGoalsAndActionsSection = buildSection({
           link: messages.equalityReport.information.detailLink,
           variant: 'text',
         }),
-        buildCustomField({
-          id: 'goalsAndActions.customField',
-          component: 'Editor',
-        }),
+        buildCustomField(
+          {
+            id: 'goalsAndActions.filename',
+            component: 'Editor',
+          },
+          { mode: 'retry' },
+        ),
         buildSubmitField({
           id: 'draftRetrySubmit',
           title: messages.draftRetry.submitButton,
