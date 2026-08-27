@@ -62,7 +62,6 @@ export class RentalAgreementsResolver {
       data,
       totalCount,
       pageInfo: {
-        // Assumes 1-indexed `page` (unconfirmed by backend spec) — verify before relying on this.
         hasNextPage:
           page !== undefined && pageSize !== undefined
             ? page * pageSize < totalCount
