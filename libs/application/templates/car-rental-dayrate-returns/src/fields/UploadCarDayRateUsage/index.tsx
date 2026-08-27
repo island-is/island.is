@@ -225,7 +225,7 @@ export const UploadCarDayRateUsage = ({
   const handleOnInputFileUploadRemove = async () => {
     setUploadErrorMessage(null)
     setErrorFile(null)
-    await persistUploadAnswers(undefined, undefined)
+    await persistUploadAnswers(0, undefined)
   }
 
   const handleOnInputFileUploadChange = async (files: File[]) => {
@@ -283,7 +283,10 @@ export const UploadCarDayRateUsage = ({
   }
 
   const persistUploadAnswers = async (
-    carDayRateUsageCount: number | undefined,
+    // Always a number, never undefined: the answers are deep merged on the
+    // server and an undefined value is dropped from the mutation payload, so
+    // clearing the count has to send a value rather than leave the key out
+    carDayRateUsageCount: number,
     uploadedMeta: FileMeta | undefined,
   ) => {
     // Store only metadata in answers (small payload)
