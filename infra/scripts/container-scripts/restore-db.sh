@@ -36,15 +36,21 @@ aws s3 cp \
 echo "Restoring database from dump..."
 gunzip -c "$DUMP_FILE" | psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -v ON_ERROR_STOP=0
 
+# The database needs to bre restored ad root
+# which leaves table owner as root that makes 
+# the feature db owener unable ro run migrations.
+# here we are fixing that issue.
+
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER SCHEMA public OWNER TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT USAGE, CREATE ON SCHEMA public TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT \"$DB_USER\" TO \"$PGUSER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "REASSIGN OWNED BY \"$PGUSER\" TO \"$DB_USER\""
-psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "REVOKE \"$DB_USER\" FROM \"$PGUSER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER DEFAULT PRIVILEGES FOR ROLE \"$DB_USER\" IN SCHEMA public GRANT ALL ON TABLES TO \"$DB_USER\""
 psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER DEFAULT PRIVILEGES FOR ROLE \"$DB_USER\" IN SCHEMA public GRANT ALL ON SEQUENCES TO \"$DB_USER\""
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "REVOKE \"$DB_USER\" FROM \"$PGUSER\""
+
 
 # Verify
 TABLE_COUNT_AFTER=$(psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -t -c \
@@ -60,3 +66,4 @@ fi
 # Cleanup
 rm -f "$DUMP_FILE"
 echo "Restore complete."
+
