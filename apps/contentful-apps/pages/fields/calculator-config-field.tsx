@@ -29,11 +29,11 @@ import {
 // embed types) no sibling `type` field gate or plain-JSON fallback is
 // needed here.
 
-const GET_RSK_CALCULATOR_FIELDS = gql`
-  query GetRskCalculatorFieldsForContentfulApp(
-    $calculatorType: RskCalculatorType!
+const GET_TAX_CALCULATOR_FIELDS = gql`
+  query GetTaxCalculatorFieldsForContentfulApp(
+    $calculatorType: TaxCalculatorType!
   ) {
-    rskCalculatorFields(calculatorType: $calculatorType) {
+    taxCalculatorFields(calculatorType: $calculatorType) {
       key
       label
     }
@@ -56,7 +56,7 @@ const generateKey = () => Math.random().toString(36).slice(2, 10)
 
 const emptyConfig: CalculatorConfig = { sections: [] }
 
-const RskCalculatorConfigField = () => {
+const TaxCalculatorConfigField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const [config, setConfig] = useState<CalculatorConfig>(
     sdk.field.getValue() ?? emptyConfig,
@@ -81,14 +81,14 @@ const RskCalculatorConfigField = () => {
     [config],
   )
 
-  const { data, loading } = useQuery(GET_RSK_CALCULATOR_FIELDS, {
+  const { data, loading } = useQuery(GET_TAX_CALCULATOR_FIELDS, {
     variables: {
       calculatorType: CALCULATOR_TYPE_TO_ENUM[config.calculatorType ?? ''],
     },
     skip: !config.calculatorType,
   })
 
-  const availableFields = data?.rskCalculatorFields ?? []
+  const availableFields = data?.taxCalculatorFields ?? []
   const availableFieldKeys: string[] = availableFields.map(
     (field: { key: string }) => field.key,
   )
@@ -466,4 +466,4 @@ const RskCalculatorConfigField = () => {
   )
 }
 
-export default RskCalculatorConfigField
+export default TaxCalculatorConfigField

@@ -8,7 +8,7 @@ import { ICalculator } from '../generated/contentfulTypes'
 // 'calculator', not 'rskCalculator' -- a cheap hedge in case the unrelated
 // ECOI/WHODAS calculators are ever routed through the same mechanism. The
 // GraphQL contract it renders against (calculatorType values, field/kind
-// lookups) stays 100% RSK-specific for now; see rsk-calculators domain.
+// lookups) stays 100% RSK-specific for now; see tax-calculators domain.
 @ObjectType()
 export class Calculator {
   @Field(() => ID)

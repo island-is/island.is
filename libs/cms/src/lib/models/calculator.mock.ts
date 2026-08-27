@@ -3,9 +3,9 @@ import { ICalculator } from '../generated/contentfulTypes'
 // TEMPORARY — approximates real Contentful `calculator` entries for the PoC,
 // since the content type doesn't exist in any Contentful environment yet.
 // Delete once real entries exist and this is no longer needed to exercise
-// the pipeline end-to-end. Field keys match libs/api/domains/rsk-calculators'
-// mapper.ts exactly, since the frontend's field-key picker validates against
-// that live list.
+// the pipeline end-to-end. Field keys match libs/api/domains/tax-calculators'
+// calculators/*/*.fields.ts exactly, since the frontend's field-key picker
+// validates against that live list.
 const withholdingTaxOnWagesEntry: ICalculator = {
   sys: {
     id: 'mock-withholding-tax-on-wages',

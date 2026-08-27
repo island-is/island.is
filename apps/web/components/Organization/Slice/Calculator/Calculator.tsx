@@ -25,19 +25,19 @@ import {
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Calculator as CalculatorSlice,
-  GetRskCalculatorCalculationQuery,
-  GetRskCalculatorCalculationQueryVariables,
-  GetRskCalculatorFieldsQuery,
-  GetRskCalculatorFieldsQueryVariables,
-  RskCalculatorField,
-  RskCalculatorFieldKind,
-  RskCalculatorResultRow,
-  RskCalculatorType,
+  GetTaxCalculatorCalculationQuery,
+  GetTaxCalculatorCalculationQueryVariables,
+  GetTaxCalculatorFieldsQuery,
+  GetTaxCalculatorFieldsQueryVariables,
+  TaxCalculatorField,
+  TaxCalculatorFieldKind,
+  TaxCalculatorResultRow,
+  TaxCalculatorType,
 } from '@island.is/web/graphql/schema'
 import {
-  GET_RSK_CALCULATOR_CALCULATION,
-  GET_RSK_CALCULATOR_FIELDS,
-} from '@island.is/web/screens/queries/RSKCalculator'
+  GET_TAX_CALCULATOR_CALCULATION,
+  GET_TAX_CALCULATOR_FIELDS,
+} from '@island.is/web/screens/queries/TaxCalculator'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
 import { messages } from './messages'
@@ -45,14 +45,14 @@ import { messages } from './messages'
 // The `configJson.calculatorType` value is locale-independent and selects
 // which calculator this slice instance calls. It is intentionally
 // English/camelCase and does not need to match the GraphQL enum's wire value.
-const CALCULATOR_TYPE_BY_CONFIG_VALUE: Record<string, RskCalculatorType> = {
-  withholdingTaxOnWages: RskCalculatorType.WithholdingTaxOnWages,
-  childBenefit: RskCalculatorType.ChildBenefit,
-  vehicleTax: RskCalculatorType.VehicleTax,
-  vehicleBenefit: RskCalculatorType.VehicleBenefit,
+const CALCULATOR_TYPE_BY_CONFIG_VALUE: Record<string, TaxCalculatorType> = {
+  withholdingTaxOnWages: TaxCalculatorType.WithholdingTaxOnWages,
+  childBenefit: TaxCalculatorType.ChildBenefit,
+  vehicleTax: TaxCalculatorType.VehicleTax,
+  vehicleBenefit: TaxCalculatorType.VehicleBenefit,
 }
 
-const getCalculatorType = (value: unknown): RskCalculatorType | undefined => {
+const getCalculatorType = (value: unknown): TaxCalculatorType | undefined => {
   if (typeof value !== 'string') return undefined
   return CALCULATOR_TYPE_BY_CONFIG_VALUE[value]
 }
@@ -89,7 +89,7 @@ const spanToGridColumn = (
   GRID_SPAN_COLUMNS[span - 1],
 ]
 
-// Keyed by the domain's `RskCalculatorResultRow.group` string. Unknown group
+// Keyed by the domain's `TaxCalculatorResultRow.group` string. Unknown group
 // keys (e.g. a future calculator type) fall back to rendering the raw key.
 const GROUP_TITLE_MESSAGES: Record<string, MessageDescriptor> = {
   taxBaseCalculation: messages.groupTaxBaseCalculationTitle,
@@ -102,7 +102,7 @@ const GROUP_TITLE_MESSAGES: Record<string, MessageDescriptor> = {
 // Field labels come from the GraphQL response, but the id is composed per
 // field key so editors can override an individual label through the linked
 // translation namespace.
-const getFieldLabelMessage = (field: RskCalculatorField) => ({
+const getFieldLabelMessage = (field: TaxCalculatorField) => ({
   id: `web.rsk.calculatorSlice:field.${field.key}.label`,
   defaultMessage: field.label,
 })
@@ -125,7 +125,7 @@ const getSectionDescriptionMessage = (section: {
 })
 
 const formatResultValue = (
-  row: Pick<RskCalculatorResultRow, 'value' | 'unit'>,
+  row: Pick<TaxCalculatorResultRow, 'value' | 'unit'>,
 ) => {
   const numericValue = Number(row.value)
   if (Number.isNaN(numericValue)) return row.value
@@ -136,7 +136,7 @@ const formatResultValue = (
 }
 
 interface CalculatorFieldProps {
-  field: RskCalculatorField
+  field: TaxCalculatorField
   control: ReturnType<typeof useForm>['control']
   label: string
   disabled: boolean
@@ -163,7 +163,7 @@ const CalculatorFieldInput = ({
   // edit it -- a `required` rule would otherwise block submission forever.
   const isRequired = field.required && !disabled
 
-  if (field.kind === RskCalculatorFieldKind.Select) {
+  if (field.kind === TaxCalculatorFieldKind.Select) {
     const options: Option<string>[] = (field.options ?? []).map((option) => ({
       label: option.label,
       value: option.value,
@@ -193,7 +193,7 @@ const CalculatorFieldInput = ({
     )
   }
 
-  if (field.kind === RskCalculatorFieldKind.Boolean) {
+  if (field.kind === TaxCalculatorFieldKind.Boolean) {
     return (
       <Controller
         control={control}
@@ -212,7 +212,7 @@ const CalculatorFieldInput = ({
     )
   }
 
-  if (field.kind === RskCalculatorFieldKind.Checkbox) {
+  if (field.kind === TaxCalculatorFieldKind.Checkbox) {
     return (
       <Controller
         control={control}
@@ -242,7 +242,7 @@ const CalculatorFieldInput = ({
     )
   }
 
-  if (field.kind === RskCalculatorFieldKind.Text) {
+  if (field.kind === TaxCalculatorFieldKind.Text) {
     return (
       <InputController
         id={field.key}
@@ -258,7 +258,7 @@ const CalculatorFieldInput = ({
     )
   }
 
-  // RskCalculatorFieldKind.Number
+  // TaxCalculatorFieldKind.Number
   return (
     <InputController
       id={field.key}
@@ -286,13 +286,13 @@ const CalculatorFieldInput = ({
 }
 
 interface CalculatorResultsProps {
-  results: RskCalculatorResultRow[]
+  results: TaxCalculatorResultRow[]
 }
 
 const CalculatorResults = ({ results }: CalculatorResultsProps) => {
   const { formatMessage } = useIntl()
   const groupKeys: string[] = []
-  const rowsByGroup: Record<string, RskCalculatorResultRow[]> = {}
+  const rowsByGroup: Record<string, TaxCalculatorResultRow[]> = {}
   const UNGROUPED = ''
 
   for (const row of results) {
@@ -369,13 +369,13 @@ const Calculator = ({ slice }: CalculatorProps) => {
   const disclaimer = formatMessage(messages.disclaimer)
 
   const fieldsResponse = useQuery<
-    GetRskCalculatorFieldsQuery,
-    GetRskCalculatorFieldsQueryVariables
-  >(GET_RSK_CALCULATOR_FIELDS, {
+    GetTaxCalculatorFieldsQuery,
+    GetTaxCalculatorFieldsQueryVariables
+  >(GET_TAX_CALCULATOR_FIELDS, {
     // `skip` guards the undefined-calculatorType case; the fallback value is
     // never sent because the query is skipped when calculatorType is unset.
     variables: {
-      calculatorType: calculatorType ?? RskCalculatorType.ChildBenefit,
+      calculatorType: calculatorType ?? TaxCalculatorType.ChildBenefit,
     },
     skip: !calculatorType,
   })
@@ -389,14 +389,14 @@ const Calculator = ({ slice }: CalculatorProps) => {
       error: calculationError,
     },
   ] = useLazyQuery<
-    GetRskCalculatorCalculationQuery,
-    GetRskCalculatorCalculationQueryVariables
-  >(GET_RSK_CALCULATOR_CALCULATION)
+    GetTaxCalculatorCalculationQuery,
+    GetTaxCalculatorCalculationQueryVariables
+  >(GET_TAX_CALCULATOR_CALCULATION)
 
-  const fields = fieldsResponse.data?.rskCalculatorFields ?? []
+  const fields = fieldsResponse.data?.taxCalculatorFields ?? []
   const fieldsByKey = new Map(fields.map((field) => [field.key, field]))
   const sections = config?.sections ?? []
-  const results = calculationData?.rskCalculatorCalculation ?? []
+  const results = calculationData?.taxCalculatorCalculation ?? []
   // The ungrouped, emphasized row (if any) is the calculator's headline
   // total (e.g. "Heildarlaun eftir frádrátt") -- rendered standalone above
   // the grouped breakdown rather than inside it.
@@ -479,7 +479,7 @@ const Calculator = ({ slice }: CalculatorProps) => {
                   (
                     entry,
                   ): entry is {
-                    field: RskCalculatorField
+                    field: TaxCalculatorField
                     span: number
                     disabled: boolean
                   } => Boolean(entry),
