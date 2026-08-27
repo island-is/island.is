@@ -79,8 +79,10 @@ export const ExcelTemplateDownload: FC<
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
-  // Ensures the draft exists (idempotent); shares the 'draftCriteria' key
-  // with CriteriaEditor so that screen reuses this fetch.
+  // ensureDraft prepends the create-draft provider, so the draft exists before
+  // anything reads it (idempotent). Same 'draftCriteria' key as CriteriaEditor,
+  // which keeps the persisted snapshot in one place — that screen still reads
+  // the draft itself on mount rather than reusing this fetch.
   const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
   }>(

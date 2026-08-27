@@ -1513,7 +1513,7 @@ export const messages = {
       // now carries a count instead of the member list — see stigColumn.
       groupMemberCount: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMemberCount',
-        defaultMessage: 'Fjöldi starfsmanna í hóp',
+        defaultMessage: 'Fjöldi starfsmanna í hópi',
       },
       // New id, not new copy on the retired `groupMembers`: a CMS translation
       // keyed to the old id would win over what is written here.

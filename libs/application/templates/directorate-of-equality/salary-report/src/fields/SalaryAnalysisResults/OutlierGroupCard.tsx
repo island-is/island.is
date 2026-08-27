@@ -14,7 +14,6 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import type { GroupDirection } from '../../utils/outlierGroups'
-import * as styles from './OutlierGroupCard.css'
 
 type Props = {
   fieldId: string
@@ -96,31 +95,39 @@ export const OutlierGroupCard: FC<Props> = ({
                 {`${formatMessage(m.groupMembersLabel)}:`}
               </Text>
               {memberOrdinals.map((ordinal) => (
-                <span key={ordinal} className={styles.memberPill}>
-                  <Tag
-                    variant="blue"
-                    outlined
-                    // Without this, Tag paints a mint :focus ground on pointer
-                    // click — a green flash under the overlay. Keyboard focus
-                    // is handled by memberPill's own ring.
-                    focusVisibleOnly
-                    onClick={() => onRemoveMember(ordinal)}
+                <Tag
+                  key={ordinal}
+                  variant="blueberry"
+                  // Without this, Tag paints a mint ground on :focus, which a
+                  // pointer click triggers — keyboard focus still gets it.
+                  focusVisibleOnly
+                  onClick={() => onRemoveMember(ordinal)}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    columnGap="smallGutter"
                   >
-                    <>
-                      {`#${ordinal}`}
-                      {/* TagProps takes no aria-label, so the button's purpose
-                          rides along inside its label instead. */}
-                      <VisuallyHidden>
-                        {` — ${formatMessage(m.removeMemberLabel, {
-                          employee: ordinal,
-                        })}`}
-                      </VisuallyHidden>
-                    </>
-                  </Tag>
-                  <span className={styles.removeOverlay} aria-hidden>
-                    <Icon icon="close" size="small" ariaHidden />
-                  </span>
-                </span>
+                    {`#${ordinal}`}
+                    {/* Always rendered rather than revealed on hover: the pill
+                        is a remove control, and a hover-only affordance never
+                        appears on touch at all. */}
+                    <Box
+                      component="span"
+                      display="inlineFlex"
+                      alignItems="center"
+                    >
+                      <Icon icon="close" size="small" ariaHidden />
+                    </Box>
+                    {/* TagProps takes no aria-label, so the button's purpose
+                        rides along inside its label instead. */}
+                    <VisuallyHidden>
+                      {formatMessage(m.removeMemberLabel, {
+                        employee: ordinal,
+                      })}
+                    </VisuallyHidden>
+                  </Box>
+                </Tag>
               ))}
             </Box>
           </Box>

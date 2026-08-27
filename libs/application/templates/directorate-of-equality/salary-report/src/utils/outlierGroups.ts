@@ -206,10 +206,13 @@ export const buildOutlierSyncCommands = (
 // that still holds members ("still has N member(s); reassign or remove them
 // first"), so submitting a postponed report while groups are populated 409s.
 //
-// Returned as two batches rather than one because that guard also dictates the
-// order — the memberships have to be gone before the groups are removed, and
-// the sync endpoint's within-batch ordering isn't ours to assume. Callers await
-// `employees` first, then `outlierGroups`.
+// Both collections go out in ONE sync: the endpoint applies a batch in
+// dependency order under a single transaction, clearing membership before
+// processing removals, which is what lets a group be emptied and removed
+// together. buildOutlierSyncCommands relies on the same ordering every time
+// "Fjarlægja hóp" removes a populated group, so splitting these into two
+// awaited calls would only trade the all-or-nothing batch for a window where
+// the members are freed and the groups still stand.
 export const buildOutlierClearCommands = (content: {
   outlierGroups: DraftOutlierGroupDto[]
 }): { employees: SyncCommand[]; outlierGroups: SyncCommand[] } => ({

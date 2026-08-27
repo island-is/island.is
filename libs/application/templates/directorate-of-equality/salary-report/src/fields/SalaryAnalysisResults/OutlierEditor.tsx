@@ -67,14 +67,8 @@ export const OutlierEditor: FC<Props> = ({
   // remove) — it does NOT reflect keystrokes in the reason/action/signature
   // inputs below. The completeness warning needs live values, so it reads
   // from useWatch instead.
-  //
-  // Memoised past the `?? []`: an empty-on-undefined literal is a fresh
-  // identity every render, which would re-run memberOrdinalsByIndex below on
-  // each one.
-  const watchedValue = useWatch({ name: fieldName }) as
-    | OutlierGroupAnswer[]
-    | undefined
-  const watchedGroups = useMemo(() => watchedValue ?? [], [watchedValue])
+  const watchedGroups =
+    (useWatch({ name: fieldName }) as OutlierGroupAnswer[] | undefined) ?? []
 
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [page, setPage] = useState(1)
@@ -84,6 +78,16 @@ export const OutlierEditor: FC<Props> = ({
   // see — so the live ordinals come from the watched values, positionally
   // aligned with `fields` and falling back to them on the render where a
   // structural change has landed in one but not yet the other.
+  //
+  // Keyed on the membership CONTENT, not on `watchedGroups`: useWatch clones its
+  // whole subtree on every change, so depending on its identity would recompute
+  // this — and with it unassignedOutliers and the `data` array handed to
+  // InteractiveTable — on every keystroke in any group's reason/action/signature
+  // field. That is precisely the churn the note on pageRows below exists to
+  // prevent; membership is the only part of the subtree this reads.
+  const memberKey = watchedGroups
+    .map((group) => (group?.employeeOrdinals ?? []).join(','))
+    .join('|')
   const memberOrdinalsByIndex = useMemo(
     () =>
       (fields as unknown as (OutlierGroupAnswer & { id: string })[]).map(
@@ -92,7 +96,8 @@ export const OutlierEditor: FC<Props> = ({
           field.employeeOrdinals ??
           [],
       ),
-    [fields, watchedGroups],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fields, memberKey],
   )
 
   // Once an outlier is put into a group it leaves the table below — the
@@ -168,9 +173,14 @@ export const OutlierEditor: FC<Props> = ({
     setPage(1)
   }
 
-  const groupLabel = (index: number) =>
-    watchedGroups[index]?.name?.trim() ||
-    `${formatMessage(m.groupHeading)} ${index + 1}`
+  // Suffixed with the index because the name is free text: two groups the
+  // applicant calls "Sölufólk" would otherwise render two identical menu rows
+  // bound to different groups.
+  const groupLabel = (index: number) => {
+    const name = watchedGroups[index]?.name?.trim()
+    const fallback = `${formatMessage(m.groupHeading)} ${index + 1}`
+    return name ? `${name} (${index + 1})` : fallback
+  }
 
   const handleSelectAll = () =>
     setSelected(new Set(unassignedOutliers.map((o) => o.employeeOrdinal)))
@@ -287,7 +297,8 @@ export const OutlierEditor: FC<Props> = ({
               // choice, not an implicit "make another one".
               <DropdownMenu
                 menuLabel={formatMessage(m.assignToGroupMenuLabel)}
-                title={formatMessage(m.createGroupButton)}
+                // No `title`: island-ui reads it only in the branch that builds
+                // its own button, not the `disclosure` one.
                 disclosure={
                   <Button
                     variant="ghost"

@@ -92,18 +92,26 @@ describe('emptyOutlierGroupAnswer', () => {
     ])
   })
 
-  it('declares every field an input is registered against', () => {
-    // Any key missing here is a key react-hook-form resolves from defaults.
-    expect(Object.keys(emptyOutlierGroupAnswer([1], 'id')).sort()).toEqual(
-      [
-        'action',
-        'employeeOrdinals',
-        'id',
-        'name',
-        'reason',
-        'signatureName',
-        'signatureRole',
-      ].sort(),
-    )
+  // OutlierGroupCard registers an input for each of these. react-hook-form's
+  // fallback fires on an undefined VALUE rather than on a missing key, so this
+  // asserts the values — `Object.keys` alone would still pass if one of them
+  // regressed to `undefined`.
+  it.each(['name', 'reason', 'action', 'signatureName', 'signatureRole'])(
+    'gives %s a defined value, so the defaults are never consulted for it',
+    (field) => {
+      expect(
+        emptyOutlierGroupAnswer([1], 'id')[field as keyof OutlierGroupAnswer],
+      ).toBe('')
+    },
+  )
+
+  // `id` is deliberately absent from that list: POSTPONED mode passes it as
+  // undefined, which is safe because no input is registered against it — the
+  // fallback only ever runs from register().
+  it('carries the members and the id it was given', () => {
+    expect(emptyOutlierGroupAnswer([2, 1], 'group-id')).toMatchObject({
+      id: 'group-id',
+      employeeOrdinals: [2, 1],
+    })
   })
 })

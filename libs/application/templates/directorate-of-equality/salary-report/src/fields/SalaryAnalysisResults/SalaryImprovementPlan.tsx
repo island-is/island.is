@@ -38,7 +38,7 @@ import type {
   ReportEmployeeDto,
   ReportEmployeeRoleDto,
 } from '../../utils/types'
-import { useDraftQuery } from '../../utils/useDraftQuery'
+import { useDraftQueries } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
 import { OutlierGroupPanel } from './OutlierGroupPanel'
@@ -67,35 +67,38 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       : false
   const isDraftPhase = !hidePostponeCheckbox
   const { formatMessage, lang: locale } = useLocale()
+  // All three reads in one mutation — see the batching note on useDraftQueries.
+  //
+  // All three are also granted to the DRAFT role only, hence the shared
+  // `enabled`: both review states (POSTPONED and DRAFT_RETRY) grant just the
+  // analysis and comment providers, and the controller rejects the whole
+  // mutation on the first actionId the role does not hold. They fall back to
+  // the persisted snapshot instead, which is correct there — the draft is
+  // already submitted, so there is nothing for it to be stale against.
+  //
+  // Roles are in the group because they carry the job title; ReportEmployeeDto
+  // only carries the role's id.
   const {
-    content: outlierGroupsContent,
-    loading: outlierGroupsLoading,
-    hasError: outlierGroupsHasError,
-    refetch: refetchOutlierGroups,
-  } = useDraftQuery<{ groups: DraftOutlierGroupDto[] }>(
+    contents,
+    loading: draftLoading,
+    hasError: draftHasError,
+    refetch,
+  } = useDraftQueries<{
+    draftOutlierGroups: { groups: DraftOutlierGroupDto[] }
+    draftEmployees: { employees: ReportEmployeeDto[] }
+    draftRoles: { roles: ReportEmployeeRoleDto[] }
+  }>(
     application,
-    draftActionId(ApiActions.listDraftOutlierGroups),
-    'draftOutlierGroups',
+    {
+      draftOutlierGroups: draftActionId(ApiActions.listDraftOutlierGroups),
+      draftEmployees: draftActionId(ApiActions.listDraftEmployees),
+      draftRoles: draftActionId(ApiActions.listDraftRoles),
+    },
+    { enabled: isDraftPhase },
   )
-  const {
-    content: employeesContent,
-    loading: employeesLoading,
-    hasError: employeesHasError,
-    refetch: refetchEmployees,
-  } = useDraftQuery<{ employees: ReportEmployeeDto[] }>(
-    application,
-    draftActionId(ApiActions.listDraftEmployees),
-    'draftEmployees',
-  )
-  // Roles carry the job title; ReportEmployeeDto only carries the role's id.
-  // Granted to the DRAFT role only, hence `enabled` — both review states
-  // (POSTPONED and DRAFT_RETRY) show the column empty rather than firing a
-  // provider they cannot call, which the controller rejects outright.
-  const { content: rolesContent } = useDraftQuery<{
-    roles: ReportEmployeeRoleDto[]
-  }>(application, draftActionId(ApiActions.listDraftRoles), 'draftRoles', {
-    enabled: isDraftPhase,
-  })
+  const outlierGroupsContent = contents.draftOutlierGroups
+  const employeesContent = contents.draftEmployees
+  const rolesContent = contents.draftRoles
   const content = useMemo(
     () =>
       outlierGroupsContent && employeesContent
@@ -105,11 +108,6 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
           }
         : undefined,
     [outlierGroupsContent, employeesContent],
-  )
-  const refetch = useCallback(
-    (options?: { silent?: boolean }) =>
-      Promise.all([refetchOutlierGroups(options), refetchEmployees(options)]),
-    [refetchOutlierGroups, refetchEmployees],
   )
   const { sync } = useDraftSync(application)
   const draftForm = useForm<DraftOutlierFormValues>({
@@ -191,10 +189,17 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
 
   // Only when arriving without a result — e.g. straight into the POSTPONED
   // review, where nothing has been analysed in this session yet.
+  //
+  // Held until the draft group has settled so the two don't overlap:
+  // updateApplicationExternalData merges its results onto a snapshot of the
+  // whole externalData column taken before its providers run, so two calls in
+  // flight together lose whichever keys the loser added (see useDraftQueries).
+  // In the review states draftLoading is false from the first render — nothing
+  // is fetched there — so this waits on nothing.
   useEffect(() => {
-    if (result) return
+    if (result || draftLoading) return
     void handleAnalyze()
-  }, [handleAnalyze, result])
+  }, [draftLoading, handleAnalyze, result])
 
   useSeedOnce(isDraftPhase && Boolean(content), () => {
     if (!content) return
@@ -365,11 +370,8 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
             // against the answers. Leaving it on the draft is what made the
             // submit 409 on DMR's group-delete guard.
             const clear = buildOutlierClearCommands(content)
-            if (clear.employees.length > 0) {
-              await sync({ employees: clear.employees })
-            }
-            if (clear.outlierGroups.length > 0) {
-              await sync({ outlierGroups: clear.outlierGroups })
+            if (clear.employees.length > 0 || clear.outlierGroups.length > 0) {
+              await sync(clear)
             }
             draftForm.setValue('salaryAnalysis.outlierGroups', [])
           } else {
@@ -448,18 +450,11 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
 
   if ((result.outliers?.length ?? 0) === 0) return null
 
-  if (isDraftPhase && (outlierGroupsHasError || employeesHasError)) {
-    return (
-      <DraftErrorState
-        onRetry={() => {
-          refetchOutlierGroups()
-          refetchEmployees()
-        }}
-      />
-    )
+  if (isDraftPhase && draftHasError) {
+    return <DraftErrorState onRetry={() => refetch()} />
   }
 
-  if (isDraftPhase && (outlierGroupsLoading || employeesLoading || !content)) {
+  if (isDraftPhase && (draftLoading || !content)) {
     return <DraftLoadingState />
   }
 
