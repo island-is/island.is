@@ -83,6 +83,36 @@ export interface NewBEDrivingLicenseInput {
   healthDeclarationModel: NewBEHealthDeclaration
 }
 
+/**
+ * Input for the v6 `withhealthdeclaration` endpoints, which carry the health
+ * declaration AND the certificate in one call. Reuses the `NewBE*` types rather
+ * than renaming them: they are already product-neutral in practice — see
+ * `NewRenewal65DrivingLicenseInput.contentList` — and renaming would churn the
+ * live BE path for no behavioural gain.
+ *
+ * Note what the v6 models drop relative to the legacy inputs:
+ * `sendLicenseInMail` (0/1) and `sendToAddress` become the single boolean
+ * `sendPlasticToPerson`; `needsToPresentHealthCertificate` and
+ * `needsToPresentQualityPhoto` are gone, because the certificate travels as
+ * `contentList` and the photo as `photoBiometricsId`.
+ */
+export interface NewDrivingLicenseWithHealthDeclarationInput {
+  licenseCategory: string
+  districtId: number
+  sendPlasticToPerson: boolean
+  email?: string
+  primaryPhoneNumber?: string
+  healthDeclaration: NewBEHealthDeclaration
+  contentList?: NewBEDrivingLicenseContentItem[]
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
+}
+
+export interface NewTemporaryDrivingLicenseWithHealthDeclarationInput
+  extends Omit<NewDrivingLicenseWithHealthDeclarationInput, 'licenseCategory'> {
+  instructorSSN: string
+}
+
 export interface NewDrivingLicenseResult {
   success: boolean
   errorMessage: string | null

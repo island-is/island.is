@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { User } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 import {
   TeachingRightsStatus,
   StudentInformation,
@@ -14,6 +14,8 @@ import {
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
   NewBEDrivingLicenseInput,
+  NewDrivingLicenseWithHealthDeclarationInput,
+  NewTemporaryDrivingLicenseWithHealthDeclarationInput,
   DrivinglicenseDuplicateValidityStatus,
   NewRenewal65DrivingLicenseInput,
 } from './drivingLicense.type'
@@ -655,6 +657,76 @@ export class DrivingLicenseService {
     return {
       success: response,
       errorMessage: null,
+    }
+  }
+
+  /**
+   * B-full via the v6 `withhealthdeclaration` endpoint. Takes the whole `Auth`
+   * object, not `auth.authorization` — the v6 client wraps the call in
+   * `withAuthContext`, which needs the object to put the token on the `jwttoken`
+   * header. Passing the string would leave that header unset and every request
+   * would come back 400, while unit tests carried on passing.
+   *
+   * The neighbouring methods take a bare string; that is deliberate and stays.
+   * Unifying them is PR #23064's job.
+   */
+  async newDrivingLicenseWithHealthDeclaration(
+    auth: Auth,
+    input: NewDrivingLicenseWithHealthDeclarationInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const success =
+      await this.drivingLicenseApi.postFullLicenseWithHealthDeclarationV6({
+        auth,
+        category: input.licenseCategory,
+        model: {
+          districtId: input.districtId,
+          sendPlasticToPerson: input.sendPlasticToPerson,
+          email: input.email,
+          primaryPhoneNumber: input.primaryPhoneNumber,
+          healthDeclaration: input.healthDeclaration,
+          contentList: input.contentList,
+          photoBiometricsId: input.photoBiometricsId,
+          signatureBiometricsId: input.signatureBiometricsId,
+        },
+      })
+
+    return {
+      success,
+      errorMessage: null,
+    }
+  }
+
+  /**
+   * B-temp counterpart. Unlike the full-licence endpoint this one returns a DTO
+   * rather than a boolean, so the result MUST be mapped: this single call now
+   * decides success on its own, where previously the legacy submit that followed
+   * did. Leaving the DTO unread would make `submitApplication` never see
+   * `success: false`, and every RLS business rejection would reach the applicant
+   * as "submitted".
+   */
+  async newTemporaryDrivingLicenseWithHealthDeclaration(
+    auth: Auth,
+    input: NewTemporaryDrivingLicenseWithHealthDeclarationInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const response =
+      await this.drivingLicenseApi.postTemporaryLicenseWithHealthDeclarationV6({
+        auth,
+        model: {
+          districtId: input.districtId,
+          instructorSSN: input.instructorSSN,
+          sendPlasticToPerson: input.sendPlasticToPerson,
+          email: input.email,
+          primaryPhoneNumber: input.primaryPhoneNumber,
+          healthDeclaration: input.healthDeclaration,
+          contentList: input.contentList,
+          photoBiometricsId: input.photoBiometricsId,
+          signatureBiometricsId: input.signatureBiometricsId,
+        },
+      })
+
+    return {
+      success: response.result ?? false,
+      errorMessage: response.errorCode ?? null,
     }
   }
 
