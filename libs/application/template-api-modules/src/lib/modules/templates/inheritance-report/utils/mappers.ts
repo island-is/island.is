@@ -1,4 +1,5 @@
 import { infer as zinfer } from 'zod'
+import { YES } from '@island.is/application/core'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 
 type InheritanceReportSchema = zinfer<typeof inheritanceReportSchema>
@@ -37,12 +38,19 @@ export const expandAnswers = (
         name: answers.executors?.executor.name ?? '',
         nationalId: answers.executors?.executor.nationalId ?? '',
       },
-      spouse: {
-        email: answers.executors?.spouse?.email ?? '',
-        phone: answers.executors?.spouse?.phone ?? '',
-        name: answers.executors?.spouse?.name ?? '',
-        nationalId: answers.executors?.spouse?.nationalId ?? '',
-      },
+      spouse: answers.executors?.includeSpouse?.includes(YES)
+        ? {
+            email: answers.executors?.spouse?.email ?? '',
+            phone: answers.executors?.spouse?.phone ?? '',
+            name: answers.executors?.spouse?.name ?? '',
+            nationalId: answers.executors?.spouse?.nationalId ?? '',
+          }
+        : {
+            email: '',
+            phone: '',
+            name: '',
+            nationalId: '',
+          },
       includeSpouse: undefined,
     },
     approveExternalData: answers.approveExternalData,
