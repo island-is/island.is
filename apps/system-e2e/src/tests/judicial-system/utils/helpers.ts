@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 
 export const randomPoliceCaseNumber = () => {
@@ -27,6 +27,54 @@ export const getDaysFromNow = (days = 0) => {
   const daysAdded = day * days
 
   return new Date(new Date().getTime() + daysAdded).toLocaleDateString('is-IS')
+}
+
+// The defender login fixture uses national id 0909090909, which does not
+// exist in the LMFÍ lawyer registry backing the defender comboboxes. The
+// registry response is intercepted and the test defender prepended so the
+// real selection UI (and its mutations) can be driven end to end.
+export const testDefender = {
+  name: 'Test Verjandi',
+  practice: 'Réttarvörslugátt',
+  email: 'verjandi@dummy.dd',
+  phoneNr: '1111111',
+  nationalId: '0909090909',
+  isLitigator: true,
+}
+
+export const injectTestDefenderIntoLawyerRegistry = async (page: Page) => {
+  await page.route('**/api/defender/lawyerRegistry*', async (route) => {
+    const response = await route.fetch()
+    let lawyers: unknown[] = []
+    if (response.ok()) {
+      try {
+        lawyers = await response.json()
+      } catch {
+        lawyers = []
+      }
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([testDefender, ...lawyers]),
+    })
+  })
+}
+
+// Selects the test defender in an InputAdvocate lawyer combobox. Assumes
+// injectTestDefenderIntoLawyerRegistry has been called on the page.
+export const selectTestDefender = async (page: Page) => {
+  await page.locator('#advocateName').click()
+  await page.keyboard.type(testDefender.name)
+  await page
+    .locator('[id^="react-select-advocateName-option"]')
+    .filter({ hasText: testDefender.name })
+    .first()
+    .click()
+  // Selecting a lawyer auto-fills email and phone from the registry entry.
+  await expect(page.getByTestId('defenderEmail')).toHaveValue(
+    testDefender.email,
+  )
 }
 
 const createFakePdf = (title: string) => {
