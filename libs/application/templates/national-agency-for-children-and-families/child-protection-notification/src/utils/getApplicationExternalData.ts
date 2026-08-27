@@ -4,6 +4,7 @@ import { Option } from '@island.is/clients/mms/frigg'
 import {
   DetailedDropDownDto,
   DropDownDto,
+  ExternalNotifierRoleSubTypeResponse,
   ProtectiveFactorSectionDto,
 } from '@island.is/clients/national-agency-for-children-and-families'
 import { ChildNationalIdTypeCode } from './constants'
@@ -98,6 +99,15 @@ export const getApplicationExternalData = (
     'childNationalIdType.data.registryCode',
   )
 
+  const notifierRoles =
+    getValueViaPath<DropDownDto[]>(externalData, 'notifierRoles.data') ?? []
+
+  const notifierRoleSubTypes =
+    getValueViaPath<ExternalNotifierRoleSubTypeResponse[]>(
+      externalData,
+      'notifierRoleSubTypes.data',
+    ) ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -118,5 +128,7 @@ export const getApplicationExternalData = (
     guardianNotAwareReasons,
     schoolTypes,
     childNationalIdTypeCode,
+    notifierRoles,
+    notifierRoleSubTypes,
   }
 }

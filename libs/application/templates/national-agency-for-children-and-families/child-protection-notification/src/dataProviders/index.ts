@@ -77,3 +77,15 @@ export const LanguageEnvironmentsApi = defineTemplateApi({
   externalDataId: 'languageEnvironments',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
+
+export const NotifierRolesApi = defineTemplateApi({
+  action: ApiModuleActions.getNotifierRoles,
+  externalDataId: 'notifierRoles',
+  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+})
+
+export const NotifierRoleSubTypesApi = defineTemplateApi({
+  action: ApiModuleActions.getNotifierRoleSubTypes,
+  externalDataId: 'notifierRoleSubTypes',
+  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+})

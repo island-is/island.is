@@ -1,17 +1,16 @@
+import { Application } from '@island.is/api/schema'
 import {
   buildDescriptionField,
   buildMultiField,
+  buildSelectField,
   buildSubSection,
-  buildAsyncSelectField,
-  coreErrorMessages,
   buildTextField,
-  coreMessages,
   buildTitleField,
+  coreMessages,
 } from '@island.is/application/core'
 import { prerequisitesMessages, sharedMessages } from '../../lib/messages'
-import { Application } from '@island.is/api/schema'
-import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
+import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
 export const serviceProviderSubSection = buildSubSection({
   id: 'serviceProviderSubSection',
@@ -22,38 +21,45 @@ export const serviceProviderSubSection = buildSubSection({
       title: prerequisitesMessages.serviceProvider.subSectionTitle,
       description: prerequisitesMessages.serviceProvider.description,
       children: [
-        buildAsyncSelectField({
+        buildSelectField({
           id: 'serviceProvider.service',
           title: prerequisitesMessages.serviceProvider.service,
           placeholder: prerequisitesMessages.serviceProvider.servicePlaceholder,
-          loadingError: coreErrorMessages.failedDataProvider,
-          loadOptions: async () => {
-            // TODO: Update to call endpoint for services when implemented
-            return [
-              { value: '1', label: 'Þjónusta 1' },
-              { value: '2', label: 'Þjónusta 2' },
-              { value: '3', label: 'Þjónusta 3' },
-            ]
+          options: ({ externalData }) => {
+            const { notifierRoles } = getApplicationExternalData(externalData)
+
+            return notifierRoles.map((n) => ({
+              value: n.value ?? '',
+              label: n.label ?? '',
+            }))
           },
         }),
-        buildAsyncSelectField({
+        buildSelectField({
           id: 'serviceProvider.serviceType',
           title: prerequisitesMessages.serviceProvider.serviceType,
           placeholder:
             prerequisitesMessages.serviceProvider.serviceTypePlaceholder,
-          loadingError: coreErrorMessages.failedDataProvider,
-          loadOptions: async () => {
-            // TODO: Update to call endpoint for services when implemented
-            return [
-              { value: '1', label: 'Tegund 1' },
-              { value: '2', label: 'Tegund 2' },
-              { value: '3', label: 'Tegund 3' },
-            ]
-          },
-          condition: (answers) => {
+          options: ({ answers, externalData }) => {
             const { serviceProviderService } = getApplicationAnswers(answers)
+            const { notifierRoleSubTypes } =
+              getApplicationExternalData(externalData)
 
-            return !!serviceProviderService
+            return notifierRoleSubTypes
+              .filter((n) => n.notifierRoleCode === serviceProviderService)
+              .map((n) => ({
+                value: n.code ?? '',
+                label: n.label ?? '',
+              }))
+          },
+          condition: (answers, externalData) => {
+            const { serviceProviderService } = getApplicationAnswers(answers)
+            const { notifierRoleSubTypes } =
+              getApplicationExternalData(externalData)
+
+            const hasSubTypes = notifierRoleSubTypes.some(
+              (n) => n.notifierRoleCode === serviceProviderService,
+            )
+            return !!serviceProviderService && hasSubTypes
           },
         }),
 

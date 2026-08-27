@@ -28,6 +28,8 @@ export enum ApiModuleActions {
   getGuardianNotAwareReasons = 'getGuardianNotAwareReasons',
   getSchoolTypes = 'getSchoolTypes',
   getChildNationalIdType = 'getChildNationalIdType',
+  getNotifierRoles = 'getNotifierRoles',
+  getNotifierRoleSubTypes = 'getNotifierRoleSubTypes',
   createNotification = 'createNotification',
   completeNotification = 'completeNotification',
 }
