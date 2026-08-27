@@ -279,7 +279,9 @@ export type RepeaterItem = {
     }
   | {
       component: 'vehiclePermnoWithInfo'
-      loadValidation?: (c: VehiclePermnoWithInfoContext) => Promise<{
+      loadValidation?: (
+        c: VehiclePermnoWithInfoContext,
+      ) => Promise<{
         errorMessages?: FormText[]
       }>
       permnoLabel?: FormText
@@ -418,7 +420,7 @@ export enum FieldTypes {
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
-  SELECTABLE_TABLE = 'SELECTABLE_TABLE',
+  INTERACTIVE_TABLE = 'INTERACTIVE_TABLE',
   PAGINATED_SEARCHABLE_TABLE = 'PAGINATED_SEARCHABLE_TABLE',
   SLIDER = 'SLIDER',
   INFORMATION_CARD = 'INFORMATION_CARD',
@@ -465,7 +467,7 @@ export enum FieldComponents {
   VEHICLE_RADIO = 'VehicleRadioFormField',
   VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
-  SELECTABLE_TABLE = 'SelectableTableFormField',
+  INTERACTIVE_TABLE = 'InteractiveTableFormField',
   PAGINATED_SEARCHABLE_TABLE = 'PaginatedSearchableTableFormField',
   SLIDER = 'SliderFormField',
   INFORMATION_CARD = 'InformationCardFormField',
@@ -743,7 +745,9 @@ export interface PaymentChargeOverviewField extends BaseField {
   quantityUnitLabel?: StaticText
   totalPerUnitLabel?: StaticText
   simplifiedList?: boolean
-  getSelectedChargeItems: (application: Application) => {
+  getSelectedChargeItems: (
+    application: Application,
+  ) => {
     chargeItemCode: string
     chargeItemQuantity?: number
     extraLabel?: StaticText
@@ -771,7 +775,9 @@ export interface PdfLinkButtonField extends BaseField {
   verificationDescription: StaticText
   verificationLinkTitle: StaticText
   verificationLinkUrl: StaticText
-  getPdfFiles?: (application: Application) => {
+  getPdfFiles?: (
+    application: Application,
+  ) => {
     base64: string
     buttonText?: StaticText
     customButtonText?: { is: string; en: string }
@@ -847,7 +853,9 @@ export type TableRepeaterField = BaseField & {
   editField?: boolean
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
-  onSubmitLoad?(c: TableContext): Promise<{
+  onSubmitLoad?(
+    c: TableContext,
+  ): Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dictionaryOfItems: Array<{ path: string; value: any }>
   }>
@@ -1015,10 +1023,16 @@ export interface StaticTableField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
-export interface SelectableTableField extends BaseField {
-  readonly type: FieldTypes.SELECTABLE_TABLE
-  component: FieldComponents.SELECTABLE_TABLE
-  header: StaticText[] | ((application: Application) => StaticText[])
+export type InteractiveTableHeaderCell =
+  | StaticText
+  | { label: StaticText; width?: number }
+
+export interface InteractiveTableField extends BaseField {
+  readonly type: FieldTypes.INTERACTIVE_TABLE
+  component: FieldComponents.INTERACTIVE_TABLE
+  header:
+    | InteractiveTableHeaderCell[]
+    | ((application: Application) => InteractiveTableHeaderCell[])
   rows: StaticText[][] | ((application: Application) => StaticText[][])
   titleVariant?: TitleVariants
   selectable?: boolean
@@ -1197,7 +1211,9 @@ export interface CopyLinkField extends BaseField {
 export interface VehiclePermnoWithInfoField extends InputField {
   readonly type: FieldTypes.VEHICLE_PERMNO_WITH_INFO
   component: FieldComponents.VEHICLE_PERMNO_WITH_INFO
-  loadValidation?: (c: VehiclePermnoWithInfoContext) => Promise<{
+  loadValidation?: (
+    c: VehiclePermnoWithInfoContext,
+  ) => Promise<{
     errorMessages?: FormText[]
   }>
   permnoLabel?: FormText
@@ -1253,7 +1269,7 @@ export type Field =
   | VehicleRadioField
   | VehicleSelectField
   | StaticTableField
-  | SelectableTableField
+  | InteractiveTableField
   | PaginatedSearchableTableField
   | SliderField
   | InformationCardField

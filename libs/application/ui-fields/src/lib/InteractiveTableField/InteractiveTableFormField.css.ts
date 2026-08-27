@@ -26,7 +26,7 @@ globalStyle(`${tableWrapper} div:has(> input:not([type="checkbox"]))`, {
 export const checkboxColumnStyle = { width: 48 }
 export const inputColumnHeaderStyle = { width: 152 }
 
-export const footerRowTestId = 'selectable-table-footer-row'
+export const footerRowTestId = 'interactive-table-footer-row'
 
 globalStyle(`${tableWrapper} tr[data-testid="${footerRowTestId}"] td`, {
   borderBottomWidth: 0,

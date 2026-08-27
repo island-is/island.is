@@ -18,7 +18,7 @@ interface Props {
   inputPlaceholder: string
 }
 
-const SelectableTableFormFieldRowComponent: FC<Props> = ({
+const InteractiveTableFormFieldRowComponent: FC<Props> = ({
   row,
   rowIndex,
   application,
@@ -117,7 +117,7 @@ const arePropsEqual = (prev: Props, next: Props) =>
   prev.row.length === next.row.length &&
   prev.row.every((cell, index) => cell === next.row[index])
 
-export const SelectableTableFormFieldRow = memo(
-  SelectableTableFormFieldRowComponent,
+export const InteractiveTableFormFieldRow = memo(
+  InteractiveTableFormFieldRowComponent,
   arePropsEqual,
 )

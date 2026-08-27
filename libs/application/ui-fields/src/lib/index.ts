@@ -30,7 +30,7 @@ export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormFiel
 export { VehicleRadioFormField } from './VehicleRadioFormField/VehicleRadioFormField'
 export { VehicleSelectFormField } from './VehicleSelectFormField/VehicleSelectFormField'
 export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'
-export { SelectableTableFormField } from './SelectableTableField/SelectableTableFormField'
+export { InteractiveTableFormField } from './InteractiveTableField/InteractiveTableFormField'
 export { PaginatedSearchableTableFormField } from './PaginatedSearchableTableFormField/PaginatedSearchableTableFormField'
 export { SliderFormField } from './SliderFormField/SliderFormField'
 export { InformationCardFormField } from './InformationCardFormField/InformationCardFormField'
