@@ -162,7 +162,6 @@ export const toolbarButtonActive = style({
     },
   },
 })
-
 // The scrollable area around the ProseMirror content. Its height is set
 // inline from the height prop; in fullscreen it grows instead.
 export const editorArea = style({
@@ -265,6 +264,49 @@ globalStyle(`${content} .ProseMirror ol`, {
 
 globalStyle(`${content} .ProseMirror li.${MARKER_NONE_CLASS}`, {
   listStyleType: 'none',
+})
+
+// Tables carry no attributes at all (the WAF forbids inline styles and the
+// schema drops everything else), so their entire appearance lives here.
+// Fixed layout splits the width evenly between columns — the same equal-width
+// model the PDF renderer uses.
+globalStyle(`${content} .ProseMirror table`, {
+  borderCollapse: 'collapse',
+  tableLayout: 'fixed',
+  width: '100%',
+  margin: `${theme.spacing[1]}px 0`,
+})
+
+globalStyle(`${content} .ProseMirror td`, {
+  border: `1px solid ${theme.color.dark300}`,
+  padding: `${theme.spacing[1]}px`,
+  verticalAlign: 'top',
+  // Long unbroken strings must wrap inside their fixed-width cell instead of
+  // overflowing into the neighbor.
+  overflowWrap: 'break-word',
+})
+
+// prosemirror-tables marks the cells of a cell selection (dragging across
+// cells, shift-arrowing) with this class; without it the selection would be
+// invisible.
+globalStyle(`${content} .ProseMirror td.selectedCell`, {
+  backgroundColor: theme.color.blue100,
+})
+
+// The gapcursor marks a block boundary with no text position — e.g. clicking
+// above a table that starts the document. Its stock style is a horizontal
+// blinking line, which reads as a sideways caret; restyle it as a normal
+// vertical caret in the editor's caret color. (Typing there opens a paragraph,
+// so a text caret is what it effectively is.)
+// The cursor's anchor sits exactly on the boundary, so the bar is centered on
+// it: half reaches into the free space on one side, half into the table's own
+// margin on the other — never across the table border itself.
+globalStyle(`${content} .ProseMirror-gapcursor::after`, {
+  top: '-0.5em',
+  width: 0,
+  height: '1em',
+  borderTop: 'none',
+  borderLeft: `1.5px solid ${theme.color.blue400}`,
 })
 
 // The placeholder the Placeholder extension renders on the empty document.

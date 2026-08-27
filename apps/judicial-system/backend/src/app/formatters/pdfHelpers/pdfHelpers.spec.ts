@@ -411,6 +411,143 @@ describe('htmlToBlocks', () => {
       ])
     })
   })
+
+  describe('tables', () => {
+    it('parses an editor-shaped table into a table block', () => {
+      const blocks = htmlToBlocks(
+        '<table><tbody>' +
+          '<tr><td><p>a</p></td><td><p>b</p></td></tr>' +
+          '<tr><td><p>c</p></td><td><p>d</p></td></tr>' +
+          '</tbody></table>',
+      )
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0].runs).toEqual([])
+      expect(blocks[0].indent).toBe(0)
+      const rows = blocks[0].table?.rows
+      expect(rows).toHaveLength(2)
+      expect(rows?.[0].cells).toHaveLength(2)
+      expect(rows?.[0].cells[0].blocks[0].runs[0].text).toBe('a')
+      expect(rows?.[0].cells[1].blocks[0].runs[0].text).toBe('b')
+      expect(rows?.[1].cells[1].blocks[0].runs[0].text).toBe('d')
+    })
+
+    it('parses tr directly under table, without a tbody', () => {
+      // htmlparser2 does no tree construction, so legacy content may reach
+      // the parser without the tbody a browser would synthesize.
+      const blocks = htmlToBlocks(
+        '<table><tr><td><p>a</p></td></tr><tr><td><p>b</p></td></tr></table>',
+      )
+      expect(blocks[0].table?.rows).toHaveLength(2)
+      expect(blocks[0].table?.rows[0].cells[0].blocks[0].runs[0].text).toBe('a')
+    })
+
+    it('parses th like td, without forcing bold', () => {
+      const blocks = htmlToBlocks(
+        '<table><thead><tr><th><p>h</p></th></tr></thead>' +
+          '<tbody><tr><td><p>a</p></td></tr></tbody></table>',
+      )
+      const rows = blocks[0].table?.rows
+      expect(rows).toHaveLength(2)
+      expect(rows?.[0].cells[0].blocks[0].runs[0]).toMatchObject({
+        text: 'h',
+        bold: false,
+      })
+    })
+
+    it('keeps marks and classes on cell content', () => {
+      const blocks = htmlToBlocks(
+        '<table><tbody><tr><td>' +
+          '<p><strong>bold</strong> <span class="hl-ffff00">lit</span></p>' +
+          '<p class="indent-1">inn</p>' +
+          '</td></tr></tbody></table>',
+      )
+      const cellBlocks = blocks[0].table?.rows[0].cells[0].blocks
+      expect(cellBlocks).toHaveLength(2)
+      expect(cellBlocks?.[0].runs.map((r) => r.text)).toEqual([
+        'bold',
+        ' ',
+        'lit',
+      ])
+      expect(cellBlocks?.[0].runs[0].bold).toBe(true)
+      expect(cellBlocks?.[0].runs[2].highlight).toBe('#ffff00')
+      expect(cellBlocks?.[1].indent).toBe(30)
+    })
+
+    it('splits cell paragraphs and hard breaks into blocks', () => {
+      const blocks = htmlToBlocks(
+        '<table><tbody><tr><td><p>one<br>two</p><p>three</p></td></tr></tbody></table>',
+      )
+      const cellBlocks = blocks[0].table?.rows[0].cells[0].blocks
+      expect(cellBlocks?.map((b) => b.runs[0]?.text)).toEqual([
+        'one',
+        'two',
+        'three',
+      ])
+      expect(cellBlocks?.[0].softBreak).toBe(true)
+      expect(cellBlocks?.[1].softBreak).toBe(false)
+    })
+
+    it('collapses whitespace inside cells and ignores it between rows', () => {
+      const blocks = htmlToBlocks(
+        '<table>\n <tbody>\n  <tr>\n   <td><p>a    b</p></td>\n  </tr>\n </tbody>\n</table>',
+      )
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0].table?.rows).toHaveLength(1)
+      expect(blocks[0].table?.rows[0].cells[0].blocks[0].runs[0].text).toBe(
+        'a b',
+      )
+    })
+
+    it('parses lists inside a cell as marker blocks', () => {
+      const blocks = htmlToBlocks(
+        '<table><tbody><tr><td><ul><li><p>a</p></li><li><p>b</p></li></ul></td></tr></tbody></table>',
+      )
+      const cellBlocks = blocks[0].table?.rows[0].cells[0].blocks
+      expect(cellBlocks).toHaveLength(2)
+      expect(cellBlocks?.[0]).toMatchObject({ marker: '•', indent: 30 })
+      expect(cellBlocks?.[0].runs[0].text).toBe('a')
+    })
+
+    it('tolerates ragged rows and ignores colspan/rowspan', () => {
+      const blocks = htmlToBlocks(
+        '<table><tbody>' +
+          '<tr><td colspan="2"><p>a</p></td></tr>' +
+          '<tr><td rowspan="2"><p>b</p></td><td><p>c</p></td></tr>' +
+          '</tbody></table>',
+      )
+      const rows = blocks[0].table?.rows
+      expect(rows?.[0].cells).toHaveLength(1)
+      expect(rows?.[1].cells).toHaveLength(2)
+    })
+
+    it('keeps a nested table as a block inside its host cell', () => {
+      const blocks = htmlToBlocks(
+        '<table><tbody><tr><td><p>outer</p>' +
+          '<table><tbody><tr><td><p>inner</p></td></tr></tbody></table>' +
+          '</td></tr></tbody></table>',
+      )
+      const cellBlocks = blocks[0].table?.rows[0].cells[0].blocks
+      expect(cellBlocks?.[0].runs[0].text).toBe('outer')
+      expect(
+        cellBlocks?.[1].table?.rows[0].cells[0].blocks[0].runs[0].text,
+      ).toBe('inner')
+    })
+
+    it('produces no block for an empty table', () => {
+      expect(htmlToBlocks('<table></table>')).toEqual([])
+      expect(htmlToBlocks('<table><tbody><tr></tr></tbody></table>')).toEqual(
+        [],
+      )
+    })
+
+    it('indents a table nested in an indented container', () => {
+      const blocks = htmlToBlocks(
+        '<div class="indent-1"><table><tbody><tr><td><p>a</p></td></tr></tbody></table></div>',
+      )
+      expect(blocks[0].indent).toBe(30)
+      expect(blocks[0].table?.rows).toHaveLength(1)
+    })
+  })
 })
 
 describe('addRichText layout', () => {
@@ -420,6 +557,8 @@ describe('addRichText layout', () => {
     w: number
     h: number
     page: number
+    // How the rect was painted: highlight rects fill, table borders stroke.
+    kind?: 'fill' | 'stroke'
   }
   interface Frag {
     text: string
@@ -444,13 +583,36 @@ describe('addRichText layout', () => {
     const frags: Frag[] = []
     const currentPage = () => doc.bufferedPageRange().count
 
+    let lastRect: Rect | undefined
     const originalRect = doc.rect.bind(doc)
     doc.rect = (x: number, y: number, w: number, h: number) => {
-      rects.push({ x, y, w, h, page: currentPage() })
+      const rect: Rect = { x, y, w, h, page: currentPage() }
+      rects.push(rect)
+      lastRect = rect
       return originalRect(x, y, w, h)
     }
 
-    const docInternals = doc as unknown as {
+    // The paint call that follows a rect tells highlight fills and table
+    // border strokes apart.
+    const tagLastRect = (kind: 'fill' | 'stroke') => {
+      if (lastRect && !lastRect.kind) {
+        lastRect.kind = kind
+      }
+    }
+    const originalFill = doc.fill.bind(doc)
+    doc.fill = (color?: unknown) => {
+      tagLastRect('fill')
+      return originalFill(color as PDFKit.Mixins.ColorValue)
+    }
+    const originalStroke = doc.stroke.bind(doc)
+    doc.stroke = (color?: unknown) => {
+      tagLastRect('stroke')
+      return color === undefined
+        ? originalStroke()
+        : originalStroke(color as PDFKit.Mixins.ColorValue)
+    }
+
+    const docInternals = (doc as unknown) as {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       _fragment: (text: string, x: number, y: number, options: unknown) => void
     }
@@ -554,7 +716,7 @@ describe('addRichText layout', () => {
 
     // The document font must not be left on Times-Bold, or subsequent text
     // added without an explicit font would render bold.
-    const font = (doc as unknown as { _font: { name: string } })._font
+    const font = ((doc as unknown) as { _font: { name: string } })._font
     expect(font.name).toBe('Times-Roman')
     doc.end()
   })
@@ -769,6 +931,177 @@ describe('addRichText layout', () => {
       doc.end()
     })
   })
+
+  describe('tables', () => {
+    const strokes = (rects: Rect[]) => rects.filter((r) => r.kind === 'stroke')
+    const fills = (rects: Rect[]) => rects.filter((r) => r.kind === 'fill')
+
+    // A4 with the 70pt margins the instrumented doc uses.
+    const CONTENT_LEFT = 70
+    const CONTENT_WIDTH = 595.28 - 140
+    const CELL_PADDING = 5
+
+    it('draws equal-width bordered cells with padded content', () => {
+      const { doc, rects, frags } = createInstrumentedDoc()
+
+      addRichText(
+        doc,
+        '<table><tbody>' +
+          '<tr><td><p>a</p></td><td><p>b</p></td></tr>' +
+          '<tr><td><p>c</p></td><td><p>d</p></td></tr>' +
+          '</tbody></table>',
+        2,
+      )
+
+      const borders = strokes(rects)
+      expect(borders).toHaveLength(4)
+
+      const columnWidth = CONTENT_WIDTH / 2
+      for (const border of borders) {
+        expect(Math.abs(border.w - columnWidth)).toBeLessThanOrEqual(0.01)
+      }
+      const xs = [...new Set(borders.map((r) => Math.round(r.x)))].sort(
+        (a, b) => a - b,
+      )
+      expect(xs).toEqual([CONTENT_LEFT, Math.round(CONTENT_LEFT + columnWidth)])
+
+      // Second-column text starts one cell padding inside its column.
+      const fragB = findFragmentWith(frags, 'b')
+      expect(
+        Math.abs(fragB.x - (CONTENT_LEFT + columnWidth + CELL_PADDING)),
+      ).toBeLessThanOrEqual(0.01)
+
+      // First-row text sits one cell padding below the row top.
+      const rowTop = Math.min(...borders.map((r) => r.y))
+      const fragA = findFragmentWith(frags, 'a')
+      expect(Math.abs(fragA.y - (rowTop + CELL_PADDING))).toBeLessThanOrEqual(
+        Y_TOLERANCE,
+      )
+      doc.end()
+    })
+
+    it('sizes a row to its tallest cell', () => {
+      const { doc, rects } = createInstrumentedDoc()
+
+      addRichText(
+        doc,
+        `<table><tbody><tr><td><p>${'orð '.repeat(60)}</p></td>` +
+          '<td><p>stutt</p></td></tr></tbody></table>',
+        2,
+      )
+
+      const borders = strokes(rects)
+      expect(borders).toHaveLength(2)
+      // Both cells share the wrapped cell's height, well beyond one line.
+      expect(Math.abs(borders[0].h - borders[1].h)).toBeLessThanOrEqual(0.01)
+      expect(borders[0].h).toBeGreaterThan(40)
+      doc.end()
+    })
+
+    it('moves a row that no longer fits to the next page in one piece', () => {
+      const { doc, rects, frags } = createInstrumentedDoc()
+
+      doc.y = doc.page.height - doc.page.margins.bottom - 20
+      addRichText(
+        doc,
+        '<table><tbody><tr><td><p>fyrsta lína<br>önnur lína<br>þriðja lína</p></td></tr></tbody></table>',
+        2,
+      )
+
+      const borders = strokes(rects)
+      expect(borders).toHaveLength(1)
+      expect(borders[0].page).toBe(2)
+      expect(borders[0].y).toBe(70)
+      expect(findFragmentWith(frags, 'fyrsta').page).toBe(2)
+      expect(findFragmentWith(frags, 'þriðja').page).toBe(2)
+      doc.end()
+    })
+
+    it('splits a row taller than a page at line boundaries', () => {
+      const { doc, rects, frags } = createInstrumentedDoc()
+
+      const paragraphs = Array.from(
+        { length: 60 },
+        (_, i) => `<p>efni${i}</p>`,
+      ).join('')
+      addRichText(
+        doc,
+        `<table><tbody><tr><td>${paragraphs}</td></tr></tbody></table>`,
+        2,
+      )
+
+      const borders = strokes(rects)
+      expect(borders.length).toBeGreaterThanOrEqual(2)
+      expect(new Set(borders.map((r) => r.page)).size).toBeGreaterThanOrEqual(2)
+      expect(findFragmentWith(frags, 'efni0').page).toBe(1)
+      expect(findFragmentWith(frags, 'efni59').page).toBeGreaterThan(1)
+      doc.end()
+    })
+
+    it('keeps a highlight rect inside its cell, on its text', () => {
+      const { doc, rects, frags } = createInstrumentedDoc()
+
+      addRichText(
+        doc,
+        '<table><tbody><tr>' +
+          '<td><p><span class="hl-ffff00">merkt</span></p></td>' +
+          '<td><p>b</p></td>' +
+          '</tr></tbody></table>',
+        2,
+      )
+
+      const highlights = fills(rects)
+      expect(highlights).toHaveLength(1)
+      const frag = findFragmentWith(frags, 'merkt')
+      expect(Math.abs(highlights[0].x - frag.x)).toBeLessThanOrEqual(2)
+      expect(Math.abs(highlights[0].y - frag.y)).toBeLessThanOrEqual(
+        Y_TOLERANCE,
+      )
+
+      const cellBorder = strokes(rects)[0]
+      expect(highlights[0].x).toBeGreaterThanOrEqual(cellBorder.x)
+      expect(highlights[0].x + highlights[0].w).toBeLessThanOrEqual(
+        cellBorder.x + cellBorder.w,
+      )
+      doc.end()
+    })
+
+    it('lays out a list inside a cell with its marker in the cell', () => {
+      const { doc, rects, frags } = createInstrumentedDoc()
+
+      addRichText(
+        doc,
+        '<table><tbody><tr>' +
+          '<td><ul><li><p>fyrsti</p></li></ul></td><td><p>b</p></td>' +
+          '</tr></tbody></table>',
+        2,
+      )
+
+      const cellBorder = strokes(rects)[0]
+      const marker = findFragmentWith(frags, '•')
+      const item = findFragmentWith(frags, 'fyrsti')
+      expect(marker.x).toBeGreaterThanOrEqual(cellBorder.x)
+      expect(item.x).toBeGreaterThan(marker.x)
+      expect(item.x + 1).toBeLessThanOrEqual(cellBorder.x + cellBorder.w)
+      doc.end()
+    })
+
+    it('resumes normal flow at the margin below the table', () => {
+      const { doc, rects, frags } = createInstrumentedDoc()
+
+      addRichText(
+        doc,
+        '<table><tbody><tr><td><p>a</p></td></tr></tbody></table><p>eftir</p>',
+        2,
+      )
+
+      const border = strokes(rects)[0]
+      const frag = findFragmentWith(frags, 'eftir')
+      expect(frag.x).toBe(CONTENT_LEFT)
+      expect(frag.y).toBeGreaterThan(border.y + border.h)
+      doc.end()
+    })
+  })
 })
 
 describe('addNumberedList', () => {
@@ -790,7 +1123,7 @@ describe('addNumberedList', () => {
     const frags: Frag[] = []
     const currentPage = () => doc.bufferedPageRange().count
 
-    const docInternals = doc as unknown as {
+    const docInternals = (doc as unknown) as {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       _fragment: (text: string, x: number, y: number, options: unknown) => void
     }

@@ -63,6 +63,35 @@ describe('rich text editor schema', () => {
     it('keeps hard breaks', () => {
       expect(roundTrip('<p>a<br>b</p>')).toBe('<p>a<br>b</p>')
     })
+
+    it('keeps minimal table markup', () => {
+      const table =
+        '<table><tbody><tr><td><p>a</p></td><td><p>b</p></td></tr>' +
+        '<tr><td><p>c</p></td><td><p>d</p></td></tr></tbody></table>'
+      expect(roundTrip(table)).toBe(table)
+    })
+
+    it('keeps marks and paragraph structure inside cells', () => {
+      const table =
+        '<table><tbody><tr><td><p><strong>a</strong></p>' +
+        '<p class="indent-1"><span class="hl-ffff00">b</span></p></td>' +
+        '</tr></tbody></table>'
+      expect(roundTrip(table)).toBe(table)
+    })
+
+    it('keeps lists inside cells', () => {
+      const table =
+        '<table><tbody><tr><td>' +
+        '<ul><li><p>a</p></li><li><p>b</p></li></ul>' +
+        '</td></tr></tbody></table>'
+      expect(roundTrip(table)).toBe(table)
+    })
+
+    it('backfills an empty cell with an empty paragraph', () => {
+      expect(
+        roundTrip('<table><tbody><tr><td></td></tr></tbody></table>'),
+      ).toBe('<table><tbody><tr><td><p></p></td></tr></tbody></table>')
+    })
   })
 
   describe('foreign content is dropped or unwrapped', () => {
@@ -90,20 +119,59 @@ describe('rich text editor schema', () => {
       expect(roundTrip('<p>a<img src="x.png" alt="">b</p>')).toBe('<p>ab</p>')
     })
 
-    it('keeps table text but no table markup', () => {
-      const result = roundTrip('<table><tr><td>a</td><td>b</td></tr></table>')
-      expect(result).toContain('a')
-      expect(result).toContain('b')
-      expect(result).not.toContain('<table')
-      expect(result).not.toContain('<td')
+    it('reduces stock-Tiptap table output to the minimal markup', () => {
+      // What the unmodified table extension would serialize: a styled table,
+      // a styled colgroup and cells carrying width/span/align attributes.
+      // None of it may survive — the WAF rejects any style attribute.
+      const result = roundTrip(
+        '<table style="min-width: 50px"><colgroup><col style="width: 100px">' +
+          '<col style="min-width: 25px"></colgroup><tbody><tr>' +
+          '<td colspan="1" rowspan="1" colwidth="100" align="right"><p>a</p></td>' +
+          '<td colspan="1" rowspan="1"><p>b</p></td></tr></tbody></table>',
+      )
+      expect(result).toBe(
+        '<table><tbody><tr><td><p>a</p></td><td><p>b</p></td></tr></tbody></table>',
+      )
+    })
+
+    it('parses th as a plain cell', () => {
+      expect(
+        roundTrip(
+          '<table><thead><tr><th>a</th></tr></thead><tbody><tr><td>b</td></tr></tbody></table>',
+        ),
+      ).toBe(
+        '<table><tbody><tr><td><p>a</p></td></tr><tr><td><p>b</p></td></tr></tbody></table>',
+      )
+    })
+
+    it('hoists a nested table out behind its host table', () => {
+      // The cell content expression cannot hold a table, so the parser moves
+      // the inner one out behind its host instead of dropping it. The paste
+      // and load normalization flattens nested tables before they reach the
+      // parser, so this only pins the schema's own fallback.
+      expect(
+        roundTrip(
+          '<table><tbody><tr><td><p>outer</p>' +
+            '<table><tbody><tr><td><p>inner</p></td></tr></tbody></table>' +
+            '</td></tr></tbody></table>',
+        ),
+      ).toBe(
+        '<table><tbody><tr><td><p>outer</p></td></tr></tbody></table>' +
+          '<table><tbody><tr><td><p>inner</p></td></tr></tbody></table>',
+      )
     })
 
     it('never serializes a style attribute, whatever comes in', () => {
       const hostile =
         '<div style="color:red"><p style="margin:1em">' +
         '<span style="background:yellow" class="hl-ffff00">a</span>' +
-        '<iframe src="https://example.com"></iframe></p></div>'
-      expect(roundTrip(hostile)).not.toContain('style=')
+        '<iframe src="https://example.com"></iframe></p></div>' +
+        '<table style="width:50px;border:1px solid red" width="50" bgcolor="red">' +
+        '<tr><td style="text-align:right" align="right" valign="top">x</td></tr></table>'
+      const result = roundTrip(hostile)
+      expect(result).not.toContain('style=')
+      expect(result).not.toContain('align')
+      expect(result).not.toContain('width')
     })
   })
 })

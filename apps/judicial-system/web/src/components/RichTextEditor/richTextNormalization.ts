@@ -202,18 +202,209 @@ export const normalizeRichTextHtml = (html: string): string => {
   if (typeof DOMParser === 'undefined' || !html) return html
 
   const doc = new DOMParser().parseFromString(html, 'text/html')
+  normalizeTables(doc)
   normalizeDoc(doc)
 
   // Markup without visible text (e.g. '<p>&nbsp;&nbsp;</p>' from typing only
   // spaces - the editor stores consecutive spaces as non-breaking spaces) is
   // effectively empty. Emit '' so required-field validation and persistence
   // treat it like any other blank input. textContent decodes the entities and
-  // trim() removes the resulting non-breaking spaces.
-  if (!doc.body.textContent?.trim()) {
+  // trim() removes the resulting non-breaking spaces. A table is content even
+  // before anything is typed into it — a just-inserted empty table must not
+  // be wiped on the next save/load round-trip.
+  if (!hasVisibleDocContent(doc)) {
     return ''
   }
 
   return doc.body.innerHTML
+}
+
+const hasVisibleDocContent = (doc: Document): boolean =>
+  Boolean(doc.body.textContent?.trim()) ||
+  doc.body.querySelector('table') !== null
+
+// Whether saved editor HTML holds anything a user would consider content: text
+// or an (even empty) table. Consumers use this instead of a plain-text check
+// when deciding to persist or wipe a value.
+export const hasVisibleContent = (html: string): boolean => {
+  if (!html) return false
+  if (typeof DOMParser === 'undefined') return true
+  return hasVisibleDocContent(
+    new DOMParser().parseFromString(html, 'text/html'),
+  )
+}
+
+// Tags whose background style is table chrome (Word shades cells with
+// background:#d9d9d9), not a text highlight — converting it to an hl- class
+// would color the cell's text.
+const TABLE_CHROME_TAGS = new Set([
+  'TABLE',
+  'THEAD',
+  'TBODY',
+  'TFOOT',
+  'TR',
+  'TD',
+  'TH',
+])
+
+// Block-level elements a table cell can hold; whitespace-only text next to
+// one of these is layout, not content.
+const CELL_BLOCK_TAGS = new Set(['P', 'DIV', 'BLOCKQUOTE', 'UL', 'OL', 'TABLE'])
+
+// Attributes Word/Docs put on table markup that the schema would drop anyway;
+// scrubbed here so the pipeline's own output stays clean and testable.
+const TABLE_PRESENTATION_ATTRIBUTES = [
+  'align',
+  'bgcolor',
+  'border',
+  'cellpadding',
+  'cellspacing',
+  'height',
+  'valign',
+  'width',
+]
+
+// Reduce every pasted or loaded table to the minimal shape the schema can
+// hold: no nested tables, no headers, no merged cells, no colgroup — the same
+// contract the editor itself serializes and the PDF renderer lays out.
+const normalizeTables = (doc: Document) => {
+  // Nested tables cannot live inside a cell, and the schema parser would
+  // hoist them out behind their host table — unwrap them into their host
+  // cell instead, innermost first so each replacement leaves no nesting
+  // behind it.
+  for (const inner of Array.from(
+    doc.body.querySelectorAll('table table'),
+  ).reverse()) {
+    const blocks: Element[] = []
+    for (const cell of Array.from(inner.querySelectorAll('td, th'))) {
+      if (cell.children.length > 0) {
+        blocks.push(...Array.from(cell.children))
+      } else if (cell.textContent?.trim()) {
+        // A cell holding bare text keeps it via a paragraph wrapper.
+        const p = doc.createElement('p')
+        p.textContent = cell.textContent ?? ''
+        blocks.push(p)
+      }
+    }
+    inner.replaceWith(...blocks)
+  }
+
+  for (const table of Array.from(doc.body.querySelectorAll('table'))) {
+    // A caption is real text; keep it as a paragraph before the table.
+    for (const caption of Array.from(table.querySelectorAll('caption'))) {
+      const p = doc.createElement('p')
+      p.textContent = caption.textContent ?? ''
+      table.before(p)
+      caption.remove()
+    }
+    for (const el of Array.from(table.querySelectorAll('colgroup, col'))) {
+      el.remove()
+    }
+    for (const th of Array.from(table.querySelectorAll('th'))) {
+      const td = doc.createElement('td')
+      for (const attribute of Array.from(th.attributes)) {
+        td.setAttribute(attribute.name, attribute.value)
+      }
+      while (th.firstChild) {
+        td.appendChild(th.firstChild)
+      }
+      th.replaceWith(td)
+    }
+
+    flattenMergedCells(table)
+
+    for (const el of [table, ...Array.from(table.querySelectorAll('*'))]) {
+      for (const attribute of TABLE_PRESENTATION_ATTRIBUTES) {
+        el.removeAttribute(attribute)
+      }
+
+      // Word separates table markup with literal newlines; whitespace-only
+      // text between structural elements (and around the block elements
+      // inside a cell) is not content — the same cleanup the paste pipeline
+      // does between body-level blocks. Whitespace between a cell's inline
+      // children ("<strong>a</strong> <em>b</em>") is content and stays.
+      const structural = ['TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR'].includes(
+        el.tagName,
+      )
+      if (structural || el.tagName === 'TD') {
+        for (const node of Array.from(el.childNodes)) {
+          if (node.nodeType !== Node.TEXT_NODE || node.textContent?.trim()) {
+            continue
+          }
+          const touchesBlock = [node.previousSibling, node.nextSibling].some(
+            (sibling) =>
+              sibling !== null &&
+              sibling.nodeType === Node.ELEMENT_NODE &&
+              CELL_BLOCK_TAGS.has((sibling as Element).tagName),
+          )
+          if (structural || touchesBlock) {
+            node.remove()
+          }
+        }
+      }
+    }
+  }
+}
+
+// Expand colspan/rowspan merges into a rectangular grid of plain cells.
+// Dropping the attributes alone would shift every later cell out of its
+// column; instead each merged cell keeps its top-left position and the
+// covered positions become empty cells.
+const flattenMergedCells = (table: Element) => {
+  const doc = table.ownerDocument
+  // How many upcoming rows each column position is still covered by a
+  // rowspan from above.
+  const pendingRowspans: number[] = []
+
+  for (const row of Array.from(table.querySelectorAll('tr'))) {
+    let column = 0
+
+    for (const cell of Array.from(row.children)) {
+      if (cell.tagName !== 'TD') continue
+
+      // Positions covered by a rowspan from above get an empty cell so this
+      // row's own cells stay in their columns.
+      while ((pendingRowspans[column] ?? 0) > 0) {
+        pendingRowspans[column] -= 1
+        row.insertBefore(doc.createElement('td'), cell)
+        column += 1
+      }
+
+      const colspan = Math.max(
+        1,
+        parseInt(cell.getAttribute('colspan') ?? '1', 10) || 1,
+      )
+      const rowspan = Math.max(
+        1,
+        parseInt(cell.getAttribute('rowspan') ?? '1', 10) || 1,
+      )
+      cell.removeAttribute('colspan')
+      cell.removeAttribute('rowspan')
+
+      for (let i = 0; i < colspan; i++) {
+        pendingRowspans[column + i] =
+          (pendingRowspans[column + i] ?? 0) + (rowspan - 1)
+      }
+      for (let i = 1; i < colspan; i++) {
+        row.insertBefore(doc.createElement('td'), cell.nextSibling)
+      }
+      column += colspan
+    }
+
+    // Trailing positions covered from above: pad up to the last covered
+    // column so every pending position keeps its alignment.
+    let lastPending = pendingRowspans.length - 1
+    while (lastPending >= column && (pendingRowspans[lastPending] ?? 0) === 0) {
+      lastPending -= 1
+    }
+    while (column <= lastPending) {
+      if ((pendingRowspans[column] ?? 0) > 0) {
+        pendingRowspans[column] -= 1
+      }
+      row.appendChild(doc.createElement('td'))
+      column += 1
+    }
+  }
 }
 
 const normalizeDoc = (doc: Document) => {
@@ -222,7 +413,11 @@ const normalizeDoc = (doc: Document) => {
     el.removeAttribute('style')
 
     const background = style.match(BACKGROUND_REGEX)
-    if (background && parseCssColor(background[1].trim())) {
+    if (
+      background &&
+      parseCssColor(background[1].trim()) &&
+      !TABLE_CHROME_TAGS.has(el.tagName)
+    ) {
       el.classList.add(
         highlightClassFromColor(
           findNearestHighlightColor(background[1].trim()),
@@ -329,14 +524,12 @@ const WORD_LIST_CLASS_REGEX = /(?:^|\s)(?:Mso)?ListParagraph/i
 // closing punctuation ("1.", "a)", "(iv)", "[B]"). Bare bullet glyphs — Word
 // uses · (Symbol font), o (Courier New), § and ▪ (Wingdings) — have no
 // punctuation and fall through to unordered.
-const ORDERED_MARKER_REGEX =
-  /^\(?(?:\d{1,4}|[a-zA-Z]{1,3}|[ivxlcdmIVXLCDM]{1,7})[.)\]]$/
+const ORDERED_MARKER_REGEX = /^\(?(?:\d{1,4}|[a-zA-Z]{1,3}|[ivxlcdmIVXLCDM]{1,7})[.)\]]$/
 
 // The literal marker at the start of an item's text when no mso-list:Ignore
 // span identifies it: a bullet glyph or an ordered marker, followed by
 // whitespace (Word pads with no-break spaces).
-const LEADING_MARKER_REGEX =
-  /^[\s\u00a0]*((?:[·•o§▪*]|-|–|—)|\(?(?:\d{1,4}|[a-zA-Z]{1,3})[.)\]])[\s\u00a0]+/
+const LEADING_MARKER_REGEX = /^[\s\u00a0]*((?:[·•o§▪*]|-|–|—)|\(?(?:\d{1,4}|[a-zA-Z]{1,3})[.)\]])[\s\u00a0]+/
 
 // Word's default list indentation is 36pt (48px) per level, so the fallback
 // derives the level from the paragraph's left margin.
@@ -529,6 +722,7 @@ export const normalizePastedHtml = (html: string): string => {
 
   const doc = new DOMParser().parseFromString(html, 'text/html')
   removeWordArtifacts(doc)
+  normalizeTables(doc)
   convertWordFakeLists(doc)
   normalizeDoc(doc)
   removeUnknownClasses(doc)

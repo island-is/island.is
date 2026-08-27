@@ -20,6 +20,7 @@ import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/ty
 import {
   BlueBox,
   CheckboxList,
+  hasVisibleContent,
   IndictmentInfo,
   RichTextEditor,
   SectionHeading,
@@ -70,12 +71,6 @@ interface Props {
 
 type Law = [number, number]
 
-// Decodes entities and strips tags so an otherwise-empty editor document
-// (e.g. a lone &nbsp; paragraph) doesn't pass the required check.
-const htmlToPlainText = (html: string) =>
-  new DOMParser().parseFromString(html, 'text/html').body.textContent?.trim() ??
-  ''
-
 const driversLicenceLaws: Law[] = [[58, 1]]
 const generalLaws: Law[] = [[95, 1]]
 
@@ -91,8 +86,7 @@ const offenseLawsMap: Record<
 > = {
   [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE]: driversLicenceLaws,
   [IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE]: driversLicenceLaws,
-  [IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE]:
-    driversLicenceLaws,
+  [IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE]: driversLicenceLaws,
   [IndictmentCountOffense.DRUNK_DRIVING]: [[49, 1]],
   DRUNK_DRIVING_MINOR: [[49, 2]],
   DRUNK_DRIVING_MAJOR: [[49, 3]],
@@ -236,10 +230,14 @@ export const IndictmentCount: FC<Props> = ({
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
   ] = useState<string>('')
-  const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
-    useState<string>('')
-  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
-    useState<string>('')
+  const [
+    incidentDescriptionErrorMessage,
+    setIncidentDescriptionErrorMessage,
+  ] = useState<string>('')
+  const [
+    legalArgumentsErrorMessage,
+    setLegalArgumentsErrorMessage,
+  ] = useState<string>('')
 
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
@@ -655,7 +653,7 @@ export const IndictmentCount: FC<Props> = ({
             onChange={(html) => {
               removeErrorMessageIfValid(
                 ['empty'],
-                htmlToPlainText(html),
+                hasVisibleContent(html) ? html : '',
                 incidentDescriptionErrorMessage,
                 setIncidentDescriptionErrorMessage,
               )
@@ -670,18 +668,22 @@ export const IndictmentCount: FC<Props> = ({
               onChange(indictmentCount.id, { incidentDescription: html })
             }
             onBlur={(html) => {
-              const plainText = htmlToPlainText(html)
+              // Validation and persistence share one emptiness notion: an
+              // entity-only document (e.g. a lone &nbsp;) is empty, while a
+              // table counts as content even before anything is typed into
+              // it — it is stored (a '' would sync back and wipe the table
+              // the user just inserted), so it must not flag as missing
+              // either.
+              const storedValue = hasVisibleContent(html) ? html : ''
 
               validateAndSetErrorMessage(
                 ['empty'],
-                plainText,
+                storedValue,
                 setIncidentDescriptionErrorMessage,
               )
 
-              // An entity-only document (e.g. a lone &nbsp;) still serializes
-              // as markup; store it as empty so validation treats it as missing.
               onChange(indictmentCount.id, {
-                incidentDescription: plainText ? html : '',
+                incidentDescription: storedValue,
               })
             }}
             required

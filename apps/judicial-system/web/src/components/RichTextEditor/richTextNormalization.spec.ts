@@ -1,6 +1,7 @@
 import {
   colorFromHighlightClass,
   findNearestHighlightColor,
+  hasVisibleContent,
   highlightClassFromColor,
   levelFromIndentClass,
   MAX_INDENT_LEVEL,
@@ -360,6 +361,135 @@ describe('normalizeRichTextHtml', () => {
     })
   })
 
+  describe('tables', () => {
+    it('keeps a text-empty table instead of normalizing to an empty string', () => {
+      const table =
+        '<table><tbody><tr><td><p></p></td><td><p></p></td></tr></tbody></table>'
+      expect(normalizeRichTextHtml(table)).toBe(table)
+    })
+
+    it('expands a colspan into empty cells so columns stay aligned', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<table><tbody>' +
+            '<tr><td colspan="2"><p>a</p></td><td><p>b</p></td></tr>' +
+            '<tr><td><p>c</p></td><td><p>d</p></td><td><p>e</p></td></tr>' +
+            '</tbody></table>',
+        ),
+      ).toBe(
+        '<table><tbody>' +
+          '<tr><td><p>a</p></td><td></td><td><p>b</p></td></tr>' +
+          '<tr><td><p>c</p></td><td><p>d</p></td><td><p>e</p></td></tr>' +
+          '</tbody></table>',
+      )
+    })
+
+    it('expands a rowspan so cells below the span keep their column', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<table><tbody>' +
+            '<tr><td rowspan="2"><p>a</p></td><td><p>b</p></td></tr>' +
+            '<tr><td><p>c</p></td></tr>' +
+            '</tbody></table>',
+        ),
+      ).toBe(
+        '<table><tbody>' +
+          '<tr><td><p>a</p></td><td><p>b</p></td></tr>' +
+          '<tr><td></td><td><p>c</p></td></tr>' +
+          '</tbody></table>',
+      )
+    })
+
+    it('expands a combined colspan and rowspan into a rectangular grid', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<table><tbody>' +
+            '<tr><td colspan="2" rowspan="2"><p>a</p></td><td><p>b</p></td></tr>' +
+            '<tr><td><p>c</p></td></tr>' +
+            '<tr><td><p>d</p></td><td><p>e</p></td><td><p>f</p></td></tr>' +
+            '</tbody></table>',
+        ),
+      ).toBe(
+        '<table><tbody>' +
+          '<tr><td><p>a</p></td><td></td><td><p>b</p></td></tr>' +
+          '<tr><td></td><td></td><td><p>c</p></td></tr>' +
+          '<tr><td><p>d</p></td><td><p>e</p></td><td><p>f</p></td></tr>' +
+          '</tbody></table>',
+      )
+    })
+
+    it('pads a row that only rowspans cover at its end', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<table><tbody>' +
+            '<tr><td><p>a</p></td><td rowspan="2"><p>b</p></td></tr>' +
+            '<tr><td><p>c</p></td></tr>' +
+            '</tbody></table>',
+        ),
+      ).toBe(
+        '<table><tbody>' +
+          '<tr><td><p>a</p></td><td><p>b</p></td></tr>' +
+          '<tr><td><p>c</p></td><td></td></tr>' +
+          '</tbody></table>',
+      )
+    })
+
+    it('renames th to td, keeping its content', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<table><thead><tr><th><p>h</p></th></tr></thead>' +
+            '<tbody><tr><td><p>a</p></td></tr></tbody></table>',
+        ),
+      ).toBe(
+        '<table><thead><tr><td><p>h</p></td></tr></thead>' +
+          '<tbody><tr><td><p>a</p></td></tr></tbody></table>',
+      )
+    })
+
+    it('removes colgroup and keeps caption text as a paragraph', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<table><caption>about</caption><colgroup><col width="100"><col></colgroup>' +
+            '<tbody><tr><td><p>a</p></td></tr></tbody></table>',
+        ),
+      ).toBe(
+        '<p>about</p><table><tbody><tr><td><p>a</p></td></tr></tbody></table>',
+      )
+    })
+
+    it('strips presentational attributes off table markup', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<table border="1" cellspacing="0" cellpadding="0" width="600">' +
+            '<tbody><tr height="20"><td width="300" valign="top" align="right" bgcolor="#d9d9d9">' +
+            '<p>a</p></td></tr></tbody></table>',
+        ),
+      ).toBe('<table><tbody><tr><td><p>a</p></td></tr></tbody></table>')
+    })
+
+    it('turns a cell background style into no highlight class', () => {
+      // Word shades cells with background:#d9d9d9 — table chrome, not a text
+      // highlight; it must vanish rather than color the cell text.
+      expect(
+        normalizeRichTextHtml(
+          '<table><tbody><tr><td style="background:#d9d9d9"><p>a</p></td></tr></tbody></table>',
+        ),
+      ).toBe('<table><tbody><tr><td><p>a</p></td></tr></tbody></table>')
+    })
+
+    it('unwraps a nested table into its host cell', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<table><tbody><tr><td><p>outer</p>' +
+            '<table><tbody><tr><td><p>inner1</p></td><td>inner2</td></tr></tbody></table>' +
+            '</td></tr></tbody></table>',
+        ),
+      ).toBe(
+        '<table><tbody><tr><td><p>outer</p><p>inner1</p><p>inner2</p></td></tr></tbody></table>',
+      )
+    })
+  })
+
   it('never leaves a style attribute in the output', () => {
     const result = normalizeRichTextHtml(
       '<p style="text-align:center;margin-left:36pt">' +
@@ -393,5 +523,24 @@ describe('normalizeRichTextHtml', () => {
 
   it('returns empty input unchanged', () => {
     expect(normalizeRichTextHtml('')).toBe('')
+  })
+})
+
+describe('hasVisibleContent', () => {
+  it('treats text as content', () => {
+    expect(hasVisibleContent('<p>a</p>')).toBe(true)
+  })
+
+  it('treats entity-only markup as empty', () => {
+    expect(hasVisibleContent('<p>&nbsp;&nbsp;</p>')).toBe(false)
+    expect(hasVisibleContent('')).toBe(false)
+  })
+
+  it('treats a text-empty table as content', () => {
+    expect(
+      hasVisibleContent(
+        '<table><tbody><tr><td><p></p></td></tr></tbody></table>',
+      ),
+    ).toBe(true)
   })
 })

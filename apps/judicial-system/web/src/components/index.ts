@@ -140,3 +140,4 @@ export { default as AppealRulingModifiedAlert } from './Alerts/AppealRulingModif
 export { default as ChangeProsecutorModal } from './Modals/ChangeProsecutorModal/ChangeProsecutorModal'
 export { default as DuplicateIndictmentModal } from './Modals/DuplicateIndictmentModal/DuplicateIndictmentModal'
 export { default as RichTextEditor } from './RichTextEditor/RichTextEditor'
+export { hasVisibleContent } from './RichTextEditor/richTextNormalization'

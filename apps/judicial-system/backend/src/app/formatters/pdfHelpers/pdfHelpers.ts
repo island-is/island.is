@@ -496,12 +496,24 @@ interface Run {
   highlight: string | false
 }
 
+export interface RichTextTableCell {
+  blocks: RichTextBlock[]
+}
+
+export interface RichTextTableRow {
+  cells: RichTextTableCell[]
+}
+
 export interface RichTextBlock {
   runs: Run[]
   indent: number
   softBreak?: boolean
   // List marker drawn in the gutter to the left of the block ("•" or "3.").
   marker?: string
+  // Present when the block is a table; runs is empty in that case. Rows may
+  // be ragged (defensive merged-cell flattening) — they are padded to the
+  // table's column count at render time.
+  table?: { rows: RichTextTableRow[] }
 }
 
 // Values that mean "no highlight" and must not be drawn as a filled rect.
@@ -721,6 +733,43 @@ const collectListBlocks = (el: Element, indent: number): RichTextBlock[] => {
   return blocks
 }
 
+const TABLE_SECTION_TAGS = new Set(['thead', 'tbody', 'tfoot'])
+
+// The editor serializes tables as <table><tbody><tr><td> with paragraph (and
+// list) content in the cells, but legacy or pasted HTML may put tr directly
+// under table (htmlparser2 does no tree construction, so no tbody is
+// synthesized), use th, or carry colspan/rowspan. th is treated as a plain
+// cell and the span attributes are ignored — each td/th becomes one cell in
+// source order, so merged legacy tables flatten instead of crashing;
+// caption/colgroup hold no cell content and are skipped.
+const collectTableBlock = (el: Element): { rows: RichTextTableRow[] } => {
+  const rows: RichTextTableRow[] = []
+
+  const collectRows = (nodes: ChildNode[]) => {
+    for (const node of nodes) {
+      if (node.type !== 'tag') continue
+      const child = node as Element
+      if (TABLE_SECTION_TAGS.has(child.name)) {
+        collectRows(child.children ?? [])
+      } else if (child.name === 'tr') {
+        const cells: RichTextTableCell[] = []
+        for (const cellNode of child.children ?? []) {
+          if (cellNode.type !== 'tag') continue
+          const cellEl = cellNode as Element
+          if (cellEl.name !== 'td' && cellEl.name !== 'th') continue
+          cells.push({ blocks: collectBlocksFromNodes(cellEl.children ?? []) })
+        }
+        if (cells.length > 0) {
+          rows.push({ cells })
+        }
+      }
+    }
+  }
+
+  collectRows(el.children ?? [])
+  return { rows }
+}
+
 const collectBlocksFromNodes = (
   nodes: ChildNode[],
   indent = 0,
@@ -755,6 +804,11 @@ const collectBlocksFromNodes = (
       blocks.push(...collectInlineBlocks(children, indent + pIndent))
     } else if (el.name === 'ul' || el.name === 'ol') {
       blocks.push(...collectListBlocks(el, indent))
+    } else if (el.name === 'table') {
+      const table = collectTableBlock(el)
+      if (table.rows.length > 0) {
+        blocks.push({ runs: [], indent: indent + indentFromClass(el), table })
+      }
     } else {
       // The editor also puts indent-N on div/li/blockquote (legacy or pasted
       // content), and its content CSS indents any element carrying the class —
@@ -804,14 +858,25 @@ const collapseWhitespace = (runs: Run[]): Run[] => {
   return collapsed
 }
 
-export const htmlToBlocks = (html: string): RichTextBlock[] => {
-  const dom = parseDocument(html)
-  const blocks = collectBlocksFromNodes(dom.children)
-  return blocks.map((block) => ({
+// Whitespace collapsing must reach the blocks nested inside table cells too;
+// for a block without a table this is exactly the flat map it always was.
+const normalizeBlocks = (blocks: RichTextBlock[]): RichTextBlock[] =>
+  blocks.map((block) => ({
     ...block,
     runs: collapseWhitespace(block.runs),
+    ...(block.table && {
+      table: {
+        rows: block.table.rows.map((row) => ({
+          cells: row.cells.map((cell) => ({
+            blocks: normalizeBlocks(cell.blocks),
+          })),
+        })),
+      },
+    }),
   }))
-}
+
+export const htmlToBlocks = (html: string): RichTextBlock[] =>
+  normalizeBlocks(collectBlocksFromNodes(parseDocument(html).children))
 
 const getFontName = (run: Run): string => {
   if (run.bold && run.italic) return 'Times-BoldItalic'
@@ -832,6 +897,450 @@ interface LineFragment {
 // (AFM "Descender -217" — identical across all four Times variants).
 const TIMES_DESCENDER = 217
 
+const TABLE_CELL_PADDING = 5
+const TABLE_BORDER_WIDTH = 0.5
+
+// All Times variants share their vertical metrics, so the line geometry can
+// be computed once per block (or table) from the regular face.
+const getLineMetrics = (
+  doc: PDFKit.PDFDocument,
+  fontSize: number,
+  lineGap: number,
+) => {
+  doc.font('Times-Roman').fontSize(fontSize)
+  const lineHeight = doc.currentLineHeight(true)
+  return {
+    lineHeight,
+    lineAdvance: lineHeight + lineGap,
+    visibleHeight: doc.currentLineHeight(false),
+    // Shift rects up by half the descender height to centre them around the
+    // visible glyphs.
+    descender: (TIMES_DESCENDER / 1000) * fontSize,
+  }
+}
+
+type LineMetrics = ReturnType<typeof getLineMetrics>
+
+interface LaidOutLine {
+  fragments: LineFragment[]
+}
+
+interface BlockLayout {
+  lines: LaidOutLine[]
+  // The list marker with its final x, drawn on the block's first line. It
+  // sits in the gutter opened up by the list indent, right-aligned so wider
+  // ordered-list labels ("10.") stay clear of the item text, and never left
+  // of markerFloorX (the page margin, or the cell edge inside a table).
+  marker?: { text: string; x: number }
+}
+
+// Lays out one block word by word into lines of positioned fragments, without
+// drawing anything. Every quantity that feeds a fragment coordinate (leftX,
+// width, font measurements, justification slack) is independent of y, so the
+// caller can decide page placement afterwards — the main flow draws line by
+// line as before, and table cells measure every cell before choosing a row
+// height and page.
+const layoutBlockLines = (
+  doc: PDFKit.PDFDocument,
+  block: RichTextBlock,
+  leftX: number,
+  width: number,
+  fontSize: number,
+  alignment: 'left' | 'justify',
+  markerFloorX: number,
+): BlockLayout => {
+  doc.font('Times-Roman').fontSize(fontSize)
+
+  let marker: BlockLayout['marker']
+  if (block.marker) {
+    const markerWidth = doc.widthOfString(block.marker)
+    marker = {
+      text: block.marker,
+      x: Math.max(markerFloorX, leftX - LIST_MARKER_GAP_PT - markerWidth),
+    }
+  }
+
+  const lines: LaidOutLine[] = []
+  let x = leftX
+  let lineFragments: LineFragment[] = []
+
+  // Stretch a wrapped line to the full block width by widening the gaps
+  // between words evenly. Fragment x/width values are adjusted in place
+  // before anything is drawn, so the highlight rects (computed from the same
+  // fragments) widen with the spaces they cover.
+  const justifyLineFragments = () => {
+    const last = lineFragments[lineFragments.length - 1]
+    doc.font(last.font).fontSize(fontSize)
+    const lineEnd = last.x + doc.widthOfString(last.text.trimEnd())
+    const slack = leftX + width - lineEnd
+    if (slack <= 0) return
+
+    // Words carry their single trailing space, and inter-run spaces are lone
+    // ' ' tokens, so every gap is a fragment ending in a space.
+    const gaps = lineFragments.filter(
+      (fragment, index) =>
+        index < lineFragments.length - 1 && fragment.text.endsWith(' '),
+    ).length
+    if (gaps === 0) return
+
+    const extra = slack / gaps
+    let offset = 0
+    for (let i = 0; i < lineFragments.length; i++) {
+      const fragment = lineFragments[i]
+      fragment.x += offset
+      if (i < lineFragments.length - 1 && fragment.text.endsWith(' ')) {
+        fragment.width += extra
+        offset += extra
+      }
+    }
+  }
+
+  const closeLine = (justifyLine = false) => {
+    if (alignment === 'justify' && justifyLine && lineFragments.length > 0) {
+      justifyLineFragments()
+    }
+    lines.push({ fragments: lineFragments })
+    lineFragments = []
+    x = leftX
+  }
+
+  for (const run of block.runs) {
+    // Hard break from a <br> nested below the paragraph level.
+    if (run.text === '\n') {
+      closeLine()
+      continue
+    }
+
+    const font = getFontName(run)
+    doc.font(font).fontSize(fontSize)
+
+    // Whitespace is already collapsed, so tokens are words with their
+    // single trailing space attached, or a lone inter-run space.
+    const tokens = run.text.match(/\S+ ?| /g) ?? []
+    for (let token of tokens) {
+      // Drop spaces that would start a wrapped line.
+      if (token === ' ' && x === leftX) continue
+
+      let tokenWidth = doc.widthOfString(token)
+      const wordWidth = token.endsWith(' ')
+        ? doc.widthOfString(token.trimEnd())
+        : tokenWidth
+      if (x + wordWidth > leftX + width && x > leftX) {
+        // Only wrap-induced breaks justify; hard breaks and the block's last
+        // line keep their natural width, as in any word processor.
+        closeLine(true)
+      }
+
+      // A single token wider than the whole line is chopped to fit.
+      while (doc.widthOfString(token.trimEnd()) > width && token.length > 1) {
+        let length = token.length - 1
+        while (
+          length > 1 &&
+          doc.widthOfString(token.slice(0, length)) > width
+        ) {
+          length--
+        }
+        const head = token.slice(0, length)
+        lineFragments.push({
+          text: head,
+          x,
+          width: doc.widthOfString(head),
+          font,
+          highlight: run.highlight,
+        })
+        closeLine()
+        token = token.slice(length)
+      }
+
+      tokenWidth = doc.widthOfString(token)
+      lineFragments.push({
+        text: token,
+        x,
+        width: tokenWidth,
+        font,
+        highlight: run.highlight,
+      })
+      x += tokenWidth
+    }
+  }
+  closeLine()
+
+  return { lines, marker }
+}
+
+// Draws one laid-out line at the given y: one rect per contiguous
+// same-colored highlight group, then the text on top.
+const drawLine = (
+  doc: PDFKit.PDFDocument,
+  fragments: LineFragment[],
+  y: number,
+  fontSize: number,
+  metrics: LineMetrics,
+) => {
+  const hPad = 1
+
+  let i = 0
+  let drewRect = false
+  while (i < fragments.length) {
+    const fragment = fragments[i]
+    if (!fragment.highlight) {
+      i++
+      continue
+    }
+    let groupWidth = fragment.width
+    let end = i + 1
+    while (
+      end < fragments.length &&
+      fragments[end].highlight === fragment.highlight
+    ) {
+      groupWidth += fragments[end].width
+      end++
+    }
+    doc
+      .rect(
+        fragment.x - hPad,
+        y - metrics.descender / 2 - 1,
+        groupWidth + hPad * 2,
+        metrics.visibleHeight + metrics.descender + 1,
+      )
+      .fill(fragment.highlight as string)
+    drewRect = true
+    i = end
+  }
+  if (drewRect) {
+    doc.fillColor('black')
+  }
+  for (const fragment of fragments) {
+    doc.font(fragment.font).fontSize(fontSize)
+    doc.text(fragment.text, fragment.x, y, { lineBreak: false })
+  }
+}
+
+interface CellLine {
+  fragments: LineFragment[]
+  // Vertical offset of the line within the cell's content box.
+  yOffset: number
+  marker?: { text: string; x: number }
+}
+
+interface CellLayout {
+  lines: CellLine[]
+  height: number
+}
+
+// A nested table inside a cell cannot be laid out recursively (the editor
+// cannot produce one; legacy pasted content might) — flatten it into its host
+// cell as consecutive blocks instead.
+const flattenCellBlocks = (blocks: RichTextBlock[]): RichTextBlock[] =>
+  blocks.flatMap((block) =>
+    block.table
+      ? block.table.rows.flatMap((row) =>
+          row.cells.flatMap((cell) => flattenCellBlocks(cell.blocks)),
+        )
+      : [block],
+  )
+
+// Lays out a cell's blocks within the cell's inner box: the same per-block
+// layout as the main flow (cells are always left-aligned — justification in
+// narrow columns reads badly and the editor shows cells left-aligned), with
+// line positions recorded relative to the cell top so the row can be placed
+// on a page later.
+const layoutCell = (
+  doc: PDFKit.PDFDocument,
+  blocks: RichTextBlock[],
+  cellLeftX: number,
+  cellWidth: number,
+  fontSize: number,
+  metrics: LineMetrics,
+): CellLayout => {
+  const lines: CellLine[] = []
+  let cursor = 0
+
+  for (const block of flattenCellBlocks(blocks)) {
+    const leftX = cellLeftX + block.indent
+    // Deeply indented content in a narrow cell keeps at least a sliver of
+    // width so the layout always makes progress.
+    const width = Math.max(cellWidth - block.indent, fontSize)
+    const layout = layoutBlockLines(
+      doc,
+      block,
+      leftX,
+      width,
+      fontSize,
+      'left',
+      cellLeftX,
+    )
+
+    layout.lines.forEach((line, index) => {
+      lines.push({
+        fragments: line.fragments,
+        yOffset: cursor,
+        marker: index === 0 ? layout.marker : undefined,
+      })
+      cursor += metrics.lineAdvance
+    })
+    // The same paragraph gap the main flow adds after each block.
+    cursor += block.softBreak ? 0 : 1
+  }
+
+  if (lines.length === 0) {
+    lines.push({ fragments: [], yOffset: 0 })
+  }
+
+  return {
+    lines,
+    height: lines[lines.length - 1].yOffset + metrics.lineHeight,
+  }
+}
+
+// Draws a table with equal column widths across the available width. Rows are
+// measured before they are placed, so a row that no longer fits on the page
+// moves to the next one whole; only a row taller than an entire page is split
+// at line boundaries, with each page's chunk drawn as a bordered box of its
+// own so the split edge reads as a rule.
+const renderTable = (
+  doc: PDFKit.PDFDocument,
+  table: { rows: RichTextTableRow[] },
+  indent: number,
+  fontSize: number,
+  lineGap: number,
+) => {
+  const leftX = doc.page.margins.left + indent
+  const tableWidth = doc.page.width - doc.page.margins.right - leftX
+  const columnCount = Math.max(...table.rows.map((row) => row.cells.length))
+  if (columnCount <= 0 || tableWidth <= 0) return
+
+  const columnWidth = tableWidth / columnCount
+  const innerWidth = columnWidth - 2 * TABLE_CELL_PADDING
+  const metrics = getLineMetrics(doc, fontSize, lineGap)
+  const pageBottomY = () => doc.page.height - doc.page.margins.bottom
+
+  let y = doc.y
+
+  // Draws the lines of every cell whose offset lies in [fromOffset, toOffset)
+  // inside a bordered box of the given height: borders first, then content,
+  // so highlight fills never sit on a border's antialiasing.
+  const drawRowChunk = (
+    layouts: CellLayout[],
+    top: number,
+    chunkHeight: number,
+    fromOffset: number,
+    toOffset: number,
+  ) => {
+    doc.lineWidth(TABLE_BORDER_WIDTH)
+    for (let column = 0; column < columnCount; column++) {
+      doc
+        .rect(leftX + column * columnWidth, top, columnWidth, chunkHeight)
+        .stroke()
+    }
+    doc.lineWidth(1)
+
+    for (const layout of layouts) {
+      for (const line of layout.lines) {
+        if (line.yOffset < fromOffset || line.yOffset >= toOffset) continue
+        const lineY = top + TABLE_CELL_PADDING + line.yOffset - fromOffset
+        if (line.marker) {
+          doc.font('Times-Roman').fontSize(fontSize)
+          doc.text(line.marker.text, line.marker.x, lineY, {
+            lineBreak: false,
+          })
+        }
+        drawLine(doc, line.fragments, lineY, fontSize, metrics)
+      }
+    }
+  }
+
+  for (const row of table.rows) {
+    // Ragged rows (flattened legacy merges) pad with empty cells.
+    const cells = [...row.cells]
+    while (cells.length < columnCount) {
+      cells.push({ blocks: [] })
+    }
+
+    const layouts = cells.map((cell, column) =>
+      layoutCell(
+        doc,
+        cell.blocks,
+        leftX + column * columnWidth + TABLE_CELL_PADDING,
+        innerWidth,
+        fontSize,
+        metrics,
+      ),
+    )
+    const contentHeight = Math.max(...layouts.map((layout) => layout.height))
+    const rowHeight = contentHeight + 2 * TABLE_CELL_PADDING
+    const usableHeight =
+      doc.page.height - doc.page.margins.top - doc.page.margins.bottom
+
+    if (rowHeight <= usableHeight) {
+      // Keep the row intact: move it to the next page when it doesn't fit.
+      if (y + rowHeight > pageBottomY()) {
+        doc.addPage()
+        y = doc.page.margins.top
+      }
+      drawRowChunk(layouts, y, rowHeight, 0, contentHeight + 1)
+      y += rowHeight
+    } else {
+      // The row can never fit on one page: split it at line boundaries.
+      let from = 0
+      while (from < contentHeight) {
+        let available = pageBottomY() - y - 2 * TABLE_CELL_PADDING
+        if (available < metrics.lineHeight) {
+          doc.addPage()
+          y = doc.page.margins.top
+          available = pageBottomY() - y - 2 * TABLE_CELL_PADDING
+        }
+
+        const remaining = contentHeight - from
+        if (remaining <= available) {
+          drawRowChunk(
+            layouts,
+            y,
+            remaining + 2 * TABLE_CELL_PADDING,
+            from,
+            contentHeight + 1,
+          )
+          y += remaining + 2 * TABLE_CELL_PADDING
+          break
+        }
+
+        // Whole lines whose text box fits in the available space; the chunk
+        // is as tall as the lines it actually holds.
+        const cut = from + available - metrics.lineHeight
+        const included = layouts
+          .flatMap((layout) => layout.lines.map((line) => line.yOffset))
+          .filter((offset) => offset >= from && offset <= cut)
+        const to =
+          included.length > 0
+            ? Math.max(...included) + 0.001
+            : from + metrics.lineAdvance
+        const chunkContent =
+          included.length > 0
+            ? Math.max(...included) - from + metrics.lineHeight
+            : metrics.lineHeight
+        drawRowChunk(
+          layouts,
+          y,
+          chunkContent + 2 * TABLE_CELL_PADDING,
+          from,
+          to,
+        )
+        y += chunkContent + 2 * TABLE_CELL_PADDING
+
+        // Resume at the first line the chunk did not hold.
+        const upcoming = layouts
+          .flatMap((layout) => layout.lines.map((line) => line.yOffset))
+          .filter((offset) => offset >= to)
+        from = upcoming.length > 0 ? Math.min(...upcoming) : contentHeight
+      }
+    }
+  }
+
+  doc.x = doc.page.margins.left
+  // The paragraph-equivalent gap the main flow leaves after a block.
+  doc.y = y + lineGap + 1
+}
+
 // Lays out and draws each block manually, word by word, instead of letting
 // PDFKit wrap a chain of continued text() calls. Highlight rects and text are
 // drawn from the same computed coordinates, so they cannot drift apart the way
@@ -848,6 +1357,13 @@ export const addRichText = (
   const blocks = htmlToBlocks(html)
 
   for (const block of blocks) {
+    // A table block carries no runs of its own; it must be handled before the
+    // empty-block check below would swallow it.
+    if (block.table) {
+      renderTable(doc, block.table, block.indent, fontSize, lineGap)
+      continue
+    }
+
     const isEmptyBlock =
       block.runs.length === 0 || block.runs.every((r) => !r.text.trim())
 
@@ -862,189 +1378,49 @@ export const addRichText = (
     const width = doc.page.width - doc.page.margins.right - leftX
     const paragraphGap = block.softBreak ? 0 : 1
 
-    // All Times variants share their vertical metrics, so the line geometry
-    // can be computed once per block.
-    doc.font('Times-Roman').fontSize(fontSize)
-    const lineHeight = doc.currentLineHeight(true)
-    const lineAdvance = lineHeight + lineGap
-    const visibleHeight = doc.currentLineHeight(false)
-    // Shift rect up by half the descender height to centre around visible glyphs
-    const descender = (TIMES_DESCENDER / 1000) * fontSize
-    const hPad = 1
+    const metrics = getLineMetrics(doc, fontSize, lineGap)
+    const layout = layoutBlockLines(
+      doc,
+      block,
+      leftX,
+      width,
+      fontSize,
+      alignment,
+      doc.page.margins.left,
+    )
 
     let y = doc.y
-    let x = leftX
-    let lineFragments: LineFragment[] = []
 
     // PDFKit's text() moves to a new page when the next line no longer fits;
     // mirror that so rects and text agree on the page as well.
     const ensureRoom = () => {
-      if (y + lineHeight > doc.page.height - doc.page.margins.bottom) {
+      if (y + metrics.lineHeight > doc.page.height - doc.page.margins.bottom) {
         doc.addPage()
         y = doc.page.margins.top
       }
     }
     ensureRoom()
 
-    // The marker sits in the gutter opened up by the list indent, right-aligned
-    // so wider ordered-list labels ("10.") stay clear of the item text. It is
-    // drawn once, on the item's first line, after ensureRoom so it lands on the
-    // same page as that line.
-    if (block.marker) {
+    // The marker is drawn once, on the item's first line, after ensureRoom so
+    // it lands on the same page as that line.
+    if (layout.marker) {
       doc.font('Times-Roman').fontSize(fontSize)
-      const markerWidth = doc.widthOfString(block.marker)
-      const markerX = Math.max(
-        doc.page.margins.left,
-        leftX - LIST_MARKER_GAP_PT - markerWidth,
-      )
-      doc.text(block.marker, markerX, y, { lineBreak: false })
+      doc.text(layout.marker.text, layout.marker.x, y, { lineBreak: false })
     }
 
-    // Stretch a wrapped line to the full block width by widening the gaps
-    // between words evenly. Fragment x/width values are adjusted in place
-    // before anything is drawn, so the highlight rects (computed from the same
-    // fragments) widen with the spaces they cover.
-    const justifyLineFragments = () => {
-      const last = lineFragments[lineFragments.length - 1]
-      doc.font(last.font).fontSize(fontSize)
-      const lineEnd = last.x + doc.widthOfString(last.text.trimEnd())
-      const slack = leftX + width - lineEnd
-      if (slack <= 0) return
-
-      // Words carry their single trailing space, and inter-run spaces are lone
-      // ' ' tokens, so every gap is a fragment ending in a space.
-      const gaps = lineFragments.filter(
-        (fragment, index) =>
-          index < lineFragments.length - 1 && fragment.text.endsWith(' '),
-      ).length
-      if (gaps === 0) return
-
-      const extra = slack / gaps
-      let offset = 0
-      for (let i = 0; i < lineFragments.length; i++) {
-        const fragment = lineFragments[i]
-        fragment.x += offset
-        if (i < lineFragments.length - 1 && fragment.text.endsWith(' ')) {
-          fragment.width += extra
-          offset += extra
-        }
+    for (let i = 0; i < layout.lines.length; i++) {
+      drawLine(doc, layout.lines[i].fragments, y, fontSize, metrics)
+      // The break for the next line is decided after this one is drawn — the
+      // same order the interleaved layout used, so page-break points are
+      // unchanged.
+      if (i < layout.lines.length - 1) {
+        y += metrics.lineAdvance
+        ensureRoom()
       }
     }
-
-    const flushLine = (justifyLine = false) => {
-      if (alignment === 'justify' && justifyLine && lineFragments.length > 0) {
-        justifyLineFragments()
-      }
-
-      // Draw one rect per contiguous same-colored group, then the text on top.
-      let i = 0
-      let drewRect = false
-      while (i < lineFragments.length) {
-        const fragment = lineFragments[i]
-        if (!fragment.highlight) {
-          i++
-          continue
-        }
-        let groupWidth = fragment.width
-        let end = i + 1
-        while (
-          end < lineFragments.length &&
-          lineFragments[end].highlight === fragment.highlight
-        ) {
-          groupWidth += lineFragments[end].width
-          end++
-        }
-        doc
-          .rect(
-            fragment.x - hPad,
-            y - descender / 2 - 1,
-            groupWidth + hPad * 2,
-            visibleHeight + descender + 1,
-          )
-          .fill(fragment.highlight as string)
-        drewRect = true
-        i = end
-      }
-      if (drewRect) {
-        doc.fillColor('black')
-      }
-      for (const fragment of lineFragments) {
-        doc.font(fragment.font).fontSize(fontSize)
-        doc.text(fragment.text, fragment.x, y, { lineBreak: false })
-      }
-      lineFragments = []
-    }
-
-    const newline = (justifyLine = false) => {
-      flushLine(justifyLine)
-      x = leftX
-      y += lineAdvance
-      ensureRoom()
-    }
-
-    for (const run of block.runs) {
-      // Hard break from a <br> nested below the paragraph level.
-      if (run.text === '\n') {
-        newline()
-        continue
-      }
-
-      const font = getFontName(run)
-      doc.font(font).fontSize(fontSize)
-
-      // Whitespace is already collapsed, so tokens are words with their
-      // single trailing space attached, or a lone inter-run space.
-      const tokens = run.text.match(/\S+ ?| /g) ?? []
-      for (let token of tokens) {
-        // Drop spaces that would start a wrapped line.
-        if (token === ' ' && x === leftX) continue
-
-        let tokenWidth = doc.widthOfString(token)
-        const wordWidth = token.endsWith(' ')
-          ? doc.widthOfString(token.trimEnd())
-          : tokenWidth
-        if (x + wordWidth > leftX + width && x > leftX) {
-          // Only wrap-induced breaks justify; hard breaks and the block's last
-          // line keep their natural width, as in any word processor.
-          newline(true)
-        }
-
-        // A single token wider than the whole line is chopped to fit.
-        while (doc.widthOfString(token.trimEnd()) > width && token.length > 1) {
-          let length = token.length - 1
-          while (
-            length > 1 &&
-            doc.widthOfString(token.slice(0, length)) > width
-          ) {
-            length--
-          }
-          const head = token.slice(0, length)
-          lineFragments.push({
-            text: head,
-            x,
-            width: doc.widthOfString(head),
-            font,
-            highlight: run.highlight,
-          })
-          newline()
-          token = token.slice(length)
-        }
-
-        tokenWidth = doc.widthOfString(token)
-        lineFragments.push({
-          text: token,
-          x,
-          width: tokenWidth,
-          font,
-          highlight: run.highlight,
-        })
-        x += tokenWidth
-      }
-    }
-    flushLine()
 
     doc.x = doc.page.margins.left
-    doc.y = y + lineAdvance + paragraphGap
+    doc.y = y + metrics.lineAdvance + paragraphGap
   }
 
   // Fragment drawing leaves the document font on whatever the last run used
