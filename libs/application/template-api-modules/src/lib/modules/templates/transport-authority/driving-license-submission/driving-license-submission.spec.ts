@@ -419,6 +419,8 @@ describe('DrivingLicenseSubmissionService', () => {
     let service: DrivingLicenseSubmissionService
     let newTemporaryDrivingLicense: jest.Mock
     let postHealthDeclaration: jest.Mock
+    let newTemporaryDrivingLicenseWithHealthDeclaration: jest.Mock
+    let getFiles: jest.Mock
 
     const baseAnswers = {
       applicationFor: 'B-temp',
@@ -449,6 +451,11 @@ describe('DrivingLicenseSubmissionService', () => {
         errorMessage: null,
       }))
       postHealthDeclaration = jest.fn(async () => undefined)
+      newTemporaryDrivingLicenseWithHealthDeclaration = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+      getFiles = jest.fn(async () => [])
 
       const module = await Test.createTestingModule({
         imports: [
@@ -463,7 +470,14 @@ describe('DrivingLicenseSubmissionService', () => {
           AdapterService,
           {
             provide: DrivingLicenseService,
-            useValue: { newTemporaryDrivingLicense, postHealthDeclaration },
+            // All three registered together: a `.not.toHaveBeenCalled()`
+            // assertion on a mock the service never received would pass
+            // vacuously.
+            useValue: {
+              newTemporaryDrivingLicense,
+              postHealthDeclaration,
+              newTemporaryDrivingLicenseWithHealthDeclaration,
+            },
           },
           { provide: LOGGER_PROVIDER, useValue: logger },
           {
@@ -472,7 +486,7 @@ describe('DrivingLicenseSubmissionService', () => {
           },
           {
             provide: AttachmentS3Service,
-            useValue: { getFiles: jest.fn(async () => []) },
+            useValue: { getFiles },
           },
           {
             provide: SharedTemplateApiService,
@@ -520,13 +534,14 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(input.signatureBiometricsId).toBeUndefined()
     })
 
-    it('resolves photo and signature biometric IDs when a Thjodskra photo is selected', async () => {
+    it('routes flag-on submissions to the v6 withhealthdeclaration endpoint, in a single call', async () => {
       const user = createCurrentUser()
       const application = createApplication({
         answers: {
           ...baseAnswers,
           isBTempRedesignEnabled: true,
           selectLicensePhoto: 'facial-1',
+          drivingInstructor: '0101302399',
         },
         externalData: thjodskraExternalData,
         typeId: ApplicationTypes.DRIVING_LICENSE,
@@ -540,11 +555,30 @@ describe('DrivingLicenseSubmissionService', () => {
       })
 
       expect(res).toEqual({ success: true })
-      const [, , input] = newTemporaryDrivingLicense.mock.calls[0]
+      expect(
+        newTemporaryDrivingLicenseWithHealthDeclaration,
+      ).toHaveBeenCalledTimes(1)
+      // The legacy pair must not run: the v6 endpoint does both jobs.
+      expect(newTemporaryDrivingLicense).not.toHaveBeenCalled()
+      expect(postHealthDeclaration).not.toHaveBeenCalled()
+
+      const [auth, input] =
+        newTemporaryDrivingLicenseWithHealthDeclaration.mock.calls[0]
+      // The whole Auth object, not auth.authorization: the client needs it for
+      // withAuthContext, and passing the string would leave the jwttoken header
+      // unset while this test still passed.
+      expect(auth).toBe(user)
       expect(input).toMatchObject({
+        districtId: 37,
+        instructorSSN: '0101302399',
+        sendPlasticToPerson: true,
+        email: 'mock@email.com',
         photoBiometricsId: 'facial-1',
         signatureBiometricsId: 'sig-1',
       })
+      // No certificate needed → the key is omitted rather than sent as null.
+      expect(input.contentList).toBeUndefined()
+      expect(input.healthDeclaration.hasEpilepsy).toBe(false)
     })
 
     it('sends null biometric IDs when the RLS quality photo is selected', async () => {
@@ -566,22 +600,21 @@ describe('DrivingLicenseSubmissionService', () => {
         status: ApplicationStatus.IN_PROGRESS,
       })
 
-      const res = await service.submitApplication({
+      await service.submitApplication({
         application,
         auth: user,
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
-      const [, , input] = newTemporaryDrivingLicense.mock.calls[0]
+      const [, input] =
+        newTemporaryDrivingLicenseWithHealthDeclaration.mock.calls[0]
       expect(input).toMatchObject({
         photoBiometricsId: null,
         signatureBiometricsId: null,
       })
-      expect(postHealthDeclaration).not.toHaveBeenCalled()
     })
 
-    it('carries biometric IDs on both postHealthDeclaration and newTemporaryDrivingLicense when a health certificate is needed', async () => {
+    it('attaches the certificate when a health answer requires one', async () => {
       const user = createCurrentUser()
       const application = createApplication({
         answers: {
@@ -595,33 +628,67 @@ describe('DrivingLicenseSubmissionService', () => {
         status: ApplicationStatus.IN_PROGRESS,
       })
 
-      const res = await service.submitApplication({
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      await service.submitApplication({
         application,
         auth: user,
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      const [, input] =
+        newTemporaryDrivingLicenseWithHealthDeclaration.mock.calls[0]
+      expect(input.contentList).toHaveLength(1)
+      expect(input.contentList[0]).toMatchObject({
+        fileName: 'cert.pdf',
+        contentType: 'application/pdf',
+        description: 'Laeknisvottord',
+      })
+      expect(input.healthDeclaration.hasEpilepsy).toBe(true)
+    })
 
-      expect(postHealthDeclaration).toHaveBeenCalledTimes(1)
-      const [, healthModel] = postHealthDeclaration.mock.calls[0]
-      expect(healthModel).toMatchObject({
-        photoBiometricsId: 'facial-1',
-        signatureBiometricsId: 'sig-1',
+    it('rejects when a certificate is required but none was uploaded', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBTempRedesignEnabled: true,
+          healthDeclaration: { hasEpilepsy: 'yes' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
       })
 
-      expect(newTemporaryDrivingLicense).toHaveBeenCalledTimes(1)
-      const [, , input] = newTemporaryDrivingLicense.mock.calls[0]
-      expect(input).toMatchObject({
-        photoBiometricsId: 'facial-1',
-        signatureBiometricsId: 'sig-1',
+      await expect(
+        service.submitApplication({
+          application,
+          auth: user,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            summary: expect.objectContaining({
+              id: 'dl.application:validation.healthCertificateRequired',
+            }),
+          },
+          status: 400,
+        },
       })
+
+      expect(
+        newTemporaryDrivingLicenseWithHealthDeclaration,
+      ).not.toHaveBeenCalled()
     })
   })
 
   describe('B-full redesign branch', () => {
     let service: DrivingLicenseSubmissionService
     let newDrivingLicense: jest.Mock
+    let newDrivingLicenseWithHealthDeclaration: jest.Mock
+    let getFiles: jest.Mock
 
     const baseAnswers = {
       applicationFor: 'B-full',
@@ -651,6 +718,11 @@ describe('DrivingLicenseSubmissionService', () => {
         success: true,
         errorMessage: null,
       }))
+      newDrivingLicenseWithHealthDeclaration = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+      getFiles = jest.fn(async () => [])
 
       const module = await Test.createTestingModule({
         imports: [
@@ -665,7 +737,12 @@ describe('DrivingLicenseSubmissionService', () => {
           AdapterService,
           {
             provide: DrivingLicenseService,
-            useValue: { newDrivingLicense },
+            // Both registered: a `.not.toHaveBeenCalled()` on a mock the
+            // service never received would pass vacuously.
+            useValue: {
+              newDrivingLicense,
+              newDrivingLicenseWithHealthDeclaration,
+            },
           },
           { provide: LOGGER_PROVIDER, useValue: logger },
           {
@@ -674,7 +751,7 @@ describe('DrivingLicenseSubmissionService', () => {
           },
           {
             provide: AttachmentS3Service,
-            useValue: { getFiles: jest.fn(async () => []) },
+            useValue: { getFiles },
           },
           {
             provide: SharedTemplateApiService,
@@ -722,7 +799,7 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(input.signatureBiometricsId).toBeUndefined()
     })
 
-    it('resolves photo and signature biometric IDs when a Thjodskra photo is selected', async () => {
+    it('routes flag-on submissions to the v6 withhealthdeclaration endpoint', async () => {
       const user = createCurrentUser()
       const application = createApplication({
         answers: {
@@ -742,75 +819,84 @@ describe('DrivingLicenseSubmissionService', () => {
       })
 
       expect(res).toEqual({ success: true })
-      const [, input] = newDrivingLicense.mock.calls[0]
+      expect(newDrivingLicenseWithHealthDeclaration).toHaveBeenCalledTimes(1)
+      expect(newDrivingLicense).not.toHaveBeenCalled()
+
+      const [auth, input] = newDrivingLicenseWithHealthDeclaration.mock.calls[0]
+      // Whole Auth object, not auth.authorization - see the B-temp equivalent.
+      expect(auth).toBe(user)
       expect(input).toMatchObject({
+        licenseCategory: 'B',
+        districtId: 37,
+        sendPlasticToPerson: true,
         photoBiometricsId: 'facial-1',
         signatureBiometricsId: 'sig-1',
       })
+      expect(input.contentList).toBeUndefined()
+      // B-full previously sent only a derived boolean and dropped the ten
+      // answers; they must now reach RLS.
+      expect(input.healthDeclaration).toMatchObject({ hasEpilepsy: false })
     })
 
-    it('sends null biometric IDs when the selected photo matches no FACIAL entry', async () => {
+    it('attaches the certificate when a health answer requires one', async () => {
       const user = createCurrentUser()
       const application = createApplication({
         answers: {
           ...baseAnswers,
           isBFullRedesignEnabled: true,
-          // Selected in the draft but gone from Þjóðskrá temp storage by the
-          // time we submit — the defensive branch. Behaviour is deliberately
-          // log-and-continue (never throw): createLicense runs post-payment,
-          // so throwing would strand a paid application.
-          selectLicensePhoto: 'facial-gone',
+          selectLicensePhoto: 'facial-1',
+          healthDeclaration: { hasDiabetes: 'yes' },
         },
         externalData: thjodskraExternalData,
         typeId: ApplicationTypes.DRIVING_LICENSE,
         status: ApplicationStatus.IN_PROGRESS,
       })
 
-      const res = await service.submitApplication({
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      await service.submitApplication({
         application,
         auth: user,
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
-      const [, input] = newDrivingLicense.mock.calls[0]
-      expect(input).toMatchObject({
-        photoBiometricsId: null,
-        signatureBiometricsId: null,
-      })
+      const [, input] = newDrivingLicenseWithHealthDeclaration.mock.calls[0]
+      expect(input.contentList).toHaveLength(1)
+      expect(input.healthDeclaration.hasDiabetes).toBe(true)
     })
 
-    it('sends null biometric IDs when the RLS quality photo is selected', async () => {
+    it('rejects when a certificate is required but none was uploaded', async () => {
       const user = createCurrentUser()
       const application = createApplication({
         answers: {
           ...baseAnswers,
           isBFullRedesignEnabled: true,
-          selectLicensePhoto: 'qualityPhoto',
-        },
-        externalData: {
-          qualityPhotoAndSignature: {
-            data: { pohto: 'somebase64' },
-            status: 'success',
-            date: new Date(),
-          },
+          healthDeclaration: { hasDiabetes: 'yes' },
         },
         typeId: ApplicationTypes.DRIVING_LICENSE,
         status: ApplicationStatus.IN_PROGRESS,
       })
 
-      const res = await service.submitApplication({
-        application,
-        auth: user,
-        currentUserLocale: 'is',
+      await expect(
+        service.submitApplication({
+          application,
+          auth: user,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            summary: expect.objectContaining({
+              id: 'dl.application:validation.healthCertificateRequired',
+            }),
+          },
+          status: 400,
+        },
       })
 
-      expect(res).toEqual({ success: true })
-      const [, input] = newDrivingLicense.mock.calls[0]
-      expect(input).toMatchObject({
-        photoBiometricsId: null,
-        signatureBiometricsId: null,
-      })
+      expect(newDrivingLicenseWithHealthDeclaration).not.toHaveBeenCalled()
     })
   })
 

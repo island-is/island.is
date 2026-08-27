@@ -453,6 +453,19 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
+    const healthDeclarationAnswers =
+      getValueViaPath<Record<string, string>>(answers, 'healthDeclaration') ??
+      {}
+    const glassesMismatch =
+      getValueViaPath<boolean>(
+        application.externalData,
+        'glassesCheck.data',
+      ) === true
+    // Certificate-required predicate, matching BE's rule. Deliberately NOT
+    // merged into `needsHealthCert` above: that one feeds the legacy v5
+    // `needsToPresentHealthCertificate` flags, which must keep their exact
+    // current values for flag-off drafts.
+    const needsHealthCertificate = needsHealthCert || remarks || glassesMismatch
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const jurisdictionId = Number(
       getValueViaPath(answers, 'delivery.jurisdiction'),
@@ -463,23 +476,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const phone = formatPhoneNumber(answers.phone as string)
     const setJurisdictionToKopavogur = 37
 
+    // Legacy B-temp only: the v5 two-call path. It carried optional biometric-ID
+    // params, but the only flow that ever passed them (flag-on B-temp) now
+    // returns early through the v6 endpoint, so they are gone.
     const postHealthDeclaration = async (
       nationalId: string,
       answers: FormValue,
       auth: User,
-      photoBiometricsId?: string | null,
-      signatureBiometricsId?: string | null,
     ) => {
       await this.drivingLicenseService
         .postHealthDeclaration(
           nationalId,
-          {
-            ...PostTemporaryLicenseWithHealthDeclarationMapper(
-              answers as DrivingLicenseSchema,
-            ),
-            photoBiometricsId,
-            signatureBiometricsId,
-          },
+          PostTemporaryLicenseWithHealthDeclarationMapper(
+            answers as DrivingLicenseSchema,
+          ),
           auth.authorization.split(' ')[1] ?? '',
         )
         .catch((e) => {
@@ -562,32 +572,48 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       // branches on the flag value *frozen into answers* at prerequisites.
       // This is intentionally sticky: a draft keeps the flow it started with
       // even if the flag is flipped mid-lifecycle. A draft begun while the flag
-      // was ON therefore keeps sending biometric IDs even after a global
-      // rollback; only a NEW draft begun after rollback freezes the flag OFF.
-      // Flag frozen OFF → both IDs stay `undefined`, so the keys are omitted
-      // from the RLS request and the call is byte-identical to the pre-redesign
-      // flow.
-      // NOTE: the health-certificate upload is intentionally not wired here yet
-      // — the full-license RLS endpoint has no `contentList`, so only the photo
-      // is redesigned for now (same as B-temp).
+      // was ON therefore keeps the redesigned flow even after a global
+      // rollback; only a NEW draft begun after rollback freezes the flag OFF
+      // and takes the legacy path below unchanged.
       const isBFullRedesignEnabled =
         getValueViaPath<boolean>(answers, 'isBFullRedesignEnabled') === true
 
-      let photoBiometricsId: string | null | undefined
-      let signatureBiometricsId: string | null | undefined
-
       if (isBFullRedesignEnabled) {
+        // Redesigned B-full posts the health declaration and, when required, the
+        // certificate itself, through the v6 `withhealthdeclaration` endpoint.
+        // The declaration is always sent (as BE does) so there is one payload
+        // shape per product rather than one per flag/certificate combination;
+        // previously B-full sent only a derived boolean and dropped the ten
+        // answers entirely.
         const resolved = this.resolveSelectedPhotoBiometrics(
           answers,
           application,
         )
 
-        if (resolved) {
-          photoBiometricsId = resolved.photoBiometricsId
-          signatureBiometricsId = resolved.signatureBiometricsId
-        }
+        return this.drivingLicenseService.newDrivingLicenseWithHealthDeclaration(
+          auth,
+          {
+            licenseCategory: DrivingLicenseCategory.B,
+            districtId: jurisdictionId
+              ? jurisdictionId
+              : setJurisdictionToKopavogur,
+            sendPlasticToPerson: deliveryMethod === Pickup.POST,
+            email,
+            primaryPhoneNumber: phone,
+            healthDeclaration: toHealthDeclarationModel(
+              healthDeclarationAnswers,
+            ),
+            contentList: needsHealthCertificate
+              ? await this.readHealthCertificateContentList(application)
+              : undefined,
+            photoBiometricsId: resolved?.photoBiometricsId,
+            signatureBiometricsId: resolved?.signatureBiometricsId,
+          },
+        )
       }
 
+      // Legacy B-full — flag frozen OFF, so there is no photo step and no
+      // biometric IDs to send. Byte-identical to the pre-redesign request.
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId
           ? jurisdictionId
@@ -596,43 +622,53 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
         licenseCategory: DrivingLicenseCategory.B,
-        photoBiometricsId,
-        signatureBiometricsId,
       })
     } else if (applicationFor === 'B-temp') {
-      // Photo selection only applies to the redesigned B-temp flow. Gate on
-      // the *persisted* flag (captured into answers by a hidden input during
-      // prerequisites) — not on the mere presence of `selectLicensePhoto` —
-      // so a draft created while the flag was on does not keep sending
-      // biometric IDs after the flag is turned off. Flag off → both IDs stay
-      // `undefined`, so the keys are omitted from the RLS request bodies
-      // entirely and the calls are byte-identical to the pre-redesign flow.
+      // The redesigned B-temp flow (photo selection plus the health-certificate
+      // upload) is gated on the *persisted* flag — captured into answers by a
+      // hidden input during prerequisites — not on the mere presence of
+      // `selectLicensePhoto`, so a draft created while the flag was on keeps
+      // that flow and a draft created after a rollback takes the legacy path
+      // below unchanged.
       const isBTempRedesignEnabled =
         getValueViaPath<boolean>(answers, 'isBTempRedesignEnabled') === true
 
-      let photoBiometricsId: string | null | undefined
-      let signatureBiometricsId: string | null | undefined
-
       if (isBTempRedesignEnabled) {
+        // Redesigned B-temp: one call instead of two. The legacy path below
+        // posts the declaration and then submits, both of which RLS documents as
+        // "Apply for…" and both of which return NewTemporaryLicsenseDto; the v6
+        // endpoint does both jobs.
         const resolved = this.resolveSelectedPhotoBiometrics(
           answers,
           application,
         )
 
-        if (resolved) {
-          photoBiometricsId = resolved.photoBiometricsId
-          signatureBiometricsId = resolved.signatureBiometricsId
-        }
+        return this.drivingLicenseService.newTemporaryDrivingLicenseWithHealthDeclaration(
+          auth,
+          {
+            districtId: jurisdictionId
+              ? jurisdictionId
+              : setJurisdictionToKopavogur,
+            instructorSSN: teacher,
+            sendPlasticToPerson: deliveryMethod === Pickup.POST,
+            email,
+            primaryPhoneNumber: phone,
+            healthDeclaration: toHealthDeclarationModel(
+              healthDeclarationAnswers,
+            ),
+            contentList: needsHealthCertificate
+              ? await this.readHealthCertificateContentList(application)
+              : undefined,
+            photoBiometricsId: resolved?.photoBiometricsId,
+            signatureBiometricsId: resolved?.signatureBiometricsId,
+          },
+        )
       }
 
+      // Legacy B-temp — flag frozen OFF, so no photo step and no biometric IDs.
+      // Two calls: the declaration first, then the application itself.
       if (needsHealthCert) {
-        await postHealthDeclaration(
-          nationalId,
-          answers,
-          auth,
-          photoBiometricsId,
-          signatureBiometricsId,
-        )
+        await postHealthDeclaration(nationalId, answers, auth)
       }
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
@@ -647,8 +683,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           teacherNationalId: teacher,
           email: email,
           phone: phone,
-          photoBiometricsId,
-          signatureBiometricsId,
         },
       )
     } else if (applicationFor === 'BE') {
