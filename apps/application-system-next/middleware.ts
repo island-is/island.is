@@ -1,26 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { SDF_ENABLED_APPLICATION_SLUGS } from '@island.is/application/types'
+import {
+  buildCsp,
+  CSP_HEADER,
+  generateNonce,
+  NONCE_HEADER,
+} from './lib/csp'
 
-/**
- * Validates the incoming application slug against the SDF allowlist.
- *
- * This app is mounted under `basePath: '/umsoknir/sdf'` (see `next.config.js`),
- * and the deployed ingress routes only `/umsoknir/sdf/*` here while
- * `application-system-form` owns the rest of `/umsoknir/*`. Because of the
- * basePath, `request.nextUrl.pathname` is already basePath-relative here — a
- * request to `/umsoknir/sdf/<slug>` arrives as `/<slug>` (and the matcher below
- * is likewise relative; Next prefixes it with the basePath at build time).
- *
- * - If the first path segment is an SDF-enabled slug, the request proceeds.
- * - Otherwise we redirect to the legacy form at `/umsoknir/<slug>` so old
- *   (non-SDF) applications keep working. In production this is a same-origin
- *   redirect (the ingress sends `/umsoknir/*` to the form); locally
- *   `LEGACY_SPA_URL` points it at the form dev server (`:4242`).
- *
- * Slugs are listed explicitly in `SDF_ENABLED_APPLICATION_SLUGS` (see that
- * module) so the Edge bundle stays reliable; `sdfEnabledApplicationSlugs.spec.ts`
- * keeps the list in sync with `ApplicationConfigurations`.
- */
+// Validates the incoming application slug against the SDF allowlist.
 
 const SDF_ENABLED_SLUGS = new Set(SDF_ENABLED_APPLICATION_SLUGS)
 
@@ -34,7 +21,21 @@ export const middleware = (request: NextRequest) => {
   const slug = pathname.split('/')[1]
 
   if (!slug || SDF_ENABLED_SLUGS.has(slug)) {
-    return NextResponse.next()
+    // SDF page request → own the CSP here with a fresh per-request nonce.
+    const nonce = generateNonce()
+    const csp = buildCsp(nonce)
+
+    // Setting the CSP (and nonce) on the *request* headers lets Next read the
+    // nonce and stamp it onto its bootstrap/hydration scripts during SSR;
+    // `x-nonce` exposes it to the layout for any app-authored inline scripts.
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set(NONCE_HEADER, nonce)
+    requestHeaders.set(CSP_HEADER, csp)
+
+    const response = NextResponse.next({ request: { headers: requestHeaders } })
+    // And on the *response* so the browser actually enforces the policy.
+    response.headers.set(CSP_HEADER, csp)
+    return response
   }
 
   // Not an SDF app → hand back to the legacy form under `/umsoknir/<slug>`,
