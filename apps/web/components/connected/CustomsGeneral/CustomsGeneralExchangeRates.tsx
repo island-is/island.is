@@ -2,28 +2,34 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
+import { SortableTableColumn } from '@island.is/web/components'
 import { GET_CUSTOMS_GENERAL_EXCHANGE_RATES } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CurrencyFlag } from './CurrencyFlag'
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
+interface ExchangeRateRow {
+  flag: string
+  code: string
+  name: string
+  rate: string
+}
+
 const CustomsGeneralExchangeRates = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
-  const columns = [
+  const columns: SortableTableColumn<ExchangeRateRow>[] = [
     {
-      key: 'flag' as const,
+      key: 'flag',
       label: '',
       sortable: false,
-      render: (_value: string, row: { code: string }) => (
-        <CurrencyFlag currencyCode={row.code} />
-      ),
+      render: (_value, row) => <CurrencyFlag currencyCode={row.code} />,
     },
-    { key: 'code' as const, label: formatMessage(m.columnCode) },
-    { key: 'name' as const, label: formatMessage(m.columnName) },
-    { key: 'rate' as const, label: formatMessage(m.exchangeRateRate) },
+    { key: 'code', label: formatMessage(m.columnCode) },
+    { key: 'name', label: formatMessage(m.columnName) },
+    { key: 'rate', label: formatMessage(m.exchangeRateRate) },
   ]
 
   const { data, loading, error } = useQuery(
@@ -33,14 +39,14 @@ const CustomsGeneralExchangeRates = () => {
     },
   )
 
-  const items = (data?.customsGeneralExchangeRates ?? []).map(
-    (item: { code?: string; name?: string; rate?: number }) => ({
-      flag: '',
-      code: item.code ?? '',
-      name: item.name ?? '',
-      rate: item.rate?.toString() ?? '',
-    }),
-  )
+  const items: ExchangeRateRow[] = (
+    data?.customsGeneralExchangeRates ?? []
+  ).map((item: { code?: string; name?: string; rate?: number }) => ({
+    flag: '',
+    code: item.code ?? '',
+    name: item.name ?? '',
+    rate: item.rate?.toString() ?? '',
+  }))
 
   return (
     <CustomsGeneralDateTable
