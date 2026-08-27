@@ -674,7 +674,7 @@ export class DrivingLicenseService {
     auth: Auth,
     input: NewDrivingLicenseWithHealthDeclarationInput,
   ): Promise<NewDrivingLicenseResult> {
-    const success =
+    const applicationGuid =
       await this.drivingLicenseApi.postFullLicenseWithHealthDeclarationV6({
         auth,
         category: input.licenseCategory,
@@ -690,8 +690,17 @@ export class DrivingLicenseService {
         },
       })
 
+    // Record the RLS application guid returned on creation. It is the only handle
+    // for reconciling or denying the application afterwards (RLS-side id, not our
+    // application id), and its absence is what made a failed create impossible to
+    // clean up during development.
+    this.logger.info(`${LOGTAG} created full driving-license application`, {
+      applicationGuid,
+      category: input.licenseCategory,
+    })
+
     return {
-      success,
+      success: true,
       errorMessage: null,
     }
   }
@@ -708,7 +717,7 @@ export class DrivingLicenseService {
     auth: Auth,
     input: NewTemporaryDrivingLicenseWithHealthDeclarationInput,
   ): Promise<NewDrivingLicenseResult> {
-    const response =
+    const applicationGuid =
       await this.drivingLicenseApi.postTemporaryLicenseWithHealthDeclarationV6({
         auth,
         model: {
@@ -732,8 +741,13 @@ export class DrivingLicenseService {
     // surfaced to the applicant as a failed submission *after they had paid*.
     // The client's `postTemporaryLicenseWithHealthDeclarationV6` already maps the
     // one benign 400 (a lost-response retry) to a resolved value, so a throw here
-    // is a genuine failure and must propagate to `submitApplication`.
-    void response
+    // is a genuine failure and must propagate to `submitApplication`. The value
+    // is the RLS application guid (or null on the lost-response path); log it, as
+    // it is the only handle for reconciling or denying the application later.
+    this.logger.info(`${LOGTAG} created temporary driving-license application`, {
+      applicationGuid,
+    })
+
     return {
       success: true,
       errorMessage: null,

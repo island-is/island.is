@@ -179,23 +179,23 @@ describe('DrivingLicenseDuplicateService', () => {
       jest.restoreAllMocks()
     })
 
-    const rejectPostWith = (error: unknown) =>
+    const rejectRawWith = (error: unknown) =>
       jest
         .spyOn(
           applicationV6,
-          'apiApplicationsV6TemporarywithhealthdeclarationPost',
+          'apiApplicationsV6TemporarywithhealthdeclarationPostRaw',
         )
         .mockRejectedValue(error)
 
-    it('treats a 400 with HAS_B_CATEGORY as success', async () => {
-      rejectPostWith({ status: 400 })
+    it('treats a 400 with HAS_B_CATEGORY as success (guid unknown on this path)', async () => {
+      rejectRawWith({ status: 400 })
       const canApply = jest
         .spyOn(service, 'getCanApplyForCategoryTemporary')
         .mockResolvedValue({ result: false, errorCode: 'HAS_B_CATEGORY' })
 
       await expect(
         service.postTemporaryLicenseWithHealthDeclarationV6({ auth, model }),
-      ).resolves.toEqual({ result: true })
+      ).resolves.toBeNull()
 
       // The bare token, not the `Bearer ` prefix — v5 `canapplyfor` reads it as
       // the `jwttoken` header and rejects the prefixed form.
@@ -204,7 +204,7 @@ describe('DrivingLicenseDuplicateService', () => {
 
     it('rethrows a 400 with any other code, so the description pipeline still runs', async () => {
       const original = { status: 400, name: 'FetchError' }
-      rejectPostWith(original)
+      rejectRawWith(original)
       jest
         .spyOn(service, 'getCanApplyForCategoryTemporary')
         .mockResolvedValue({ result: false, errorCode: 'HAS_DEPRIVATION' })
@@ -216,7 +216,7 @@ describe('DrivingLicenseDuplicateService', () => {
 
     it('does not re-check canApply for a non-400 failure', async () => {
       const original = { status: 500, name: 'FetchError' }
-      rejectPostWith(original)
+      rejectRawWith(original)
       const canApply = jest.spyOn(service, 'getCanApplyForCategoryTemporary')
 
       await expect(
@@ -250,7 +250,8 @@ describe('DrivingLicenseDuplicateService', () => {
           },
         })
 
-      expect(response).toEqual({ result: true, driverLicenseId: 7 })
+      // The wrapper reads RLS's guid from the raw body (the DTO would drop it).
+      expect(response).toBe('a1b2c3d4-e5f6-7890-abcd-ef1234567890')
 
       const headers = lastV6TemporaryRequest.headers
       // Bare token: RLS answers 400 "Invalid JWT Token" to the prefixed form.
@@ -302,15 +303,26 @@ describe('DrivingLicenseDuplicateService', () => {
       jest.restoreAllMocks()
     })
 
+    // The endpoint returns the new application's guid as the text body. Reaching
+    // the return at all is success (4xx throws); the value is the extracted guid,
+    // or null when the body carries none. None of these previously-misread shapes
+    // must throw.
     it.each([
-      ['an id as text, as the spec documents', '3248752'],
-      ['an empty body', ''],
-      // The shapes that used to be misread as failure.
-      ['a wrapped zero', '{"value":0}'],
-      ['a bare boolean', 'true'],
-      ['null', 'null'],
-      ['an unexpected object', '{"created":true}'],
-    ])('treats %s as success', async (_label, body) => {
+      [
+        'a bare guid',
+        '3630b0bc-ec51-442e-976d-13a3c21c5e5b',
+        '3630b0bc-ec51-442e-976d-13a3c21c5e5b',
+      ],
+      [
+        'a quoted guid',
+        '"3630b0bc-ec51-442e-976d-13a3c21c5e5b"',
+        '3630b0bc-ec51-442e-976d-13a3c21c5e5b',
+      ],
+      ['an id as text (no guid)', '3248752', null],
+      ['an empty body', '', null],
+      ['a wrapped zero', '{"value":0}', null],
+      ['null', 'null', null],
+    ])('resolves %s to %s', async (_label, body, expected) => {
       jest
         .spyOn(
           applicationV6,
@@ -324,7 +336,7 @@ describe('DrivingLicenseDuplicateService', () => {
           category: 'B',
           model,
         }),
-      ).resolves.toBe(true)
+      ).resolves.toBe(expected)
     })
 
     it('propagates a rejection rather than reporting success', async () => {

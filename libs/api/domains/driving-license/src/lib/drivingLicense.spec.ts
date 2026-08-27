@@ -53,6 +53,8 @@ describe('DrivingLicenseService', () => {
           provide: LOGGER_PROVIDER,
           useValue: {
             warn: () => undefined,
+            info: () => undefined,
+            error: () => undefined,
           },
         },
         {
@@ -589,27 +591,17 @@ describe('DrivingLicenseService', () => {
     // retry then hit 400 APPLICATION_ALREADY_EXISTS. Any resolved response is a
     // success, whatever the DTO body looks like.
     it.each([
-      ['the documented shape', { result: true, driverLicenseId: 1 }],
-      [
-        'a created app with result falsy (the dev regression)',
-        { result: false },
-      ],
-      ['an empty body', {}],
-      [
-        'a body carrying only the guid RLS actually returns',
-        {
-          guid: '3630b0bc-ec51-442e-976d-13a3c21c5e5b',
-        },
-      ],
+      ['a guid', '3630b0bc-ec51-442e-976d-13a3c21c5e5b'],
+      ['null (guid unreadable / lost-response retry)', null],
     ])(
       'treats a resolved temporary submission (%s) as success',
-      async (_l, dto) => {
+      async (_l, guid) => {
         jest
           .spyOn(
             drivingLicenseApi,
             'postTemporaryLicenseWithHealthDeclarationV6',
           )
-          .mockResolvedValue(dto as never)
+          .mockResolvedValue(guid as never)
 
         await expect(
           service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
@@ -640,7 +632,7 @@ describe('DrivingLicenseService', () => {
     it('forwards the category as a path param for the full licence', async () => {
       const spy = jest
         .spyOn(drivingLicenseApi, 'postFullLicenseWithHealthDeclarationV6')
-        .mockResolvedValue(true)
+        .mockResolvedValue('3630b0bc-ec51-442e-976d-13a3c21c5e5b')
 
       await expect(
         service.newDrivingLicenseWithHealthDeclaration(auth, {

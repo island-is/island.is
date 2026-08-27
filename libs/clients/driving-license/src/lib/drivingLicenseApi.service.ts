@@ -21,6 +21,29 @@ import {
   Remark,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
+
+// RLS returns the new application's guid on a successful create, but not in a
+// stable, documented place: the full endpoint sends it as the (text) body, and
+// the temporary endpoint carries it under a field the generated DTO drops. Pull
+// it out defensively — purely for logging/reconciliation, so it must never throw.
+const extractApplicationGuid = (body: unknown): string | null => {
+  const UUID =
+    /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+  if (typeof body === 'string') {
+    return body.match(UUID)?.[0] ?? null
+  }
+  if (body && typeof body === 'object') {
+    const rec = body as Record<string, unknown>
+    for (const key of ['guid', 'applicationGuid', 'applicationId']) {
+      const value = rec[key]
+      if (typeof value === 'string' && UUID.test(value)) {
+        return value
+      }
+    }
+    return JSON.stringify(body).match(UUID)?.[0] ?? null
+  }
+  return null
+}
 import {
   DtoV5PracticePermitDto,
   DtoV5DriverLicenseWithoutImagesDto,
@@ -53,15 +76,26 @@ export class DrivingLicenseApi {
   public async postTemporaryLicenseWithHealthDeclarationV6(input: {
     auth: Auth
     model: v6.ModelsV6PostTemporaryLicenseWithHealthDeclaration
-  }): Promise<v6.DtoV6NewTemporaryLicsenseDto> {
+  }): Promise<string | null> {
     try {
-      return await withAuthContext(input.auth, () =>
-        this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPost({
+      // The Raw variant so we can read RLS's guid from the response body before
+      // the generated DTO parser drops it. 4xx still throws here (enhanced fetch),
+      // so reaching the read is success.
+      const response = await withAuthContext(input.auth, () =>
+        this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPostRaw({
           apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
           apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
           modelsV6PostTemporaryLicenseWithHealthDeclaration: input.model,
         }),
       )
+
+      // Best-effort: guid capture must never turn a successful create into a
+      // failure, so any problem reading the body just yields a null guid.
+      try {
+        return extractApplicationGuid(await response.raw.clone().json())
+      } catch {
+        return null
+      }
     } catch (e) {
       // Same guard as the v5 `postCreateDrivingLicenseTemporary` path, and for
       // the same reason: if the licence was created but the response was lost,
@@ -82,7 +116,9 @@ export class DrivingLicenseApi {
         })
 
         if (hasTemp.errorCode === 'HAS_B_CATEGORY') {
-          return { result: true }
+          // Created on a previous attempt; treat as success. The guid is not
+          // recoverable on this path, hence null.
+          return null
         }
       }
 
@@ -114,8 +150,12 @@ export class DrivingLicenseApi {
     auth: Auth
     category: string
     model: v6.ModelsV6PostFullLicenseWithHealthDeclaration
-  }): Promise<boolean> {
-    await withAuthContext(input.auth, () =>
+  }): Promise<string | null> {
+    // Enhanced fetch throws on 4xx, so reaching the return is success. RLS
+    // documents an int32 here but actually sends the new application's guid as
+    // the text body; surface it (never gate on it) for logging and so a tester
+    // can deny the created application.
+    const created = await withAuthContext(input.auth, () =>
       this.applicationV6.apiApplicationsV6CategoryWithhealthdeclarationPost({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
         apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
@@ -124,7 +164,7 @@ export class DrivingLicenseApi {
       }),
     )
 
-    return true
+    return extractApplicationGuid(created)
   }
 
   public async postTemporaryLicenseWithHealthDeclaratio(input: {

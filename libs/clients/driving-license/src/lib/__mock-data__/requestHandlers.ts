@@ -75,9 +75,15 @@ export const requestHandlers = [
       }
       lastV6TemporaryRequest.body = await req.json()
 
+      // RLS returns the new application's guid on success (under a field the
+      // generated DTO drops); the wrapper reads it from the raw body.
       return res(
         ctx.status(200),
-        ctx.json({ result: true, driverLicenseId: 7 }),
+        ctx.json({
+          result: true,
+          driverLicenseId: 7,
+          guid: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        }),
       )
     },
   ),
