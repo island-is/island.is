@@ -267,6 +267,7 @@ export class PoliceService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
+    @Inject(forwardRef(() => IndictmentSubtypeRepositoryService))
     private readonly indictmentSubtypeRepositoryService: IndictmentSubtypeRepositoryService,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
@@ -799,7 +800,10 @@ export class PoliceService {
       this.getRVMalseiningarResponseSchema.parse(responseJson)
     const caseUnits = await Promise.all(
       parsedCaseUnits.map(async (unit) => {
-        const subtype = await this.getSubtypeByArticle(unit.artalNrGreinLidur)
+        const subtype = await this.getSubtypeByArticle(
+          unit.artalNrGreinLidur,
+          unit.nanar,
+        )
         const key = Object.keys(IndictmentCaseSubtypes).find(
           (k) =>
             IndictmentCaseSubtypes[k as keyof typeof IndictmentCaseSubtypes] ===
@@ -1532,7 +1536,11 @@ export class PoliceService {
 
   getSubtypeByArticle(
     article?: string | null,
+    details?: string | null,
   ): Promise<IndictmentSubtype | null> {
-    return this.indictmentSubtypeRepositoryService.findByArticle(article)
+    return this.indictmentSubtypeRepositoryService.findByArticle(
+      article,
+      details,
+    )
   }
 }

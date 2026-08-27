@@ -1,8 +1,8 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { AccordionItem } from '@island.is/island-ui/core'
 import { IndictmentCaseFilesList } from '@island.is/judicial-system-web/src/components'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   connectedCaseParentId: string

@@ -3,9 +3,9 @@ import faker from 'faker'
 import { FileUploadStatus } from '@island.is/island-ui/core'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import type { ReorderableItem } from './IndictmentsCaseFilesAccordionItem'
 import {
   getFilesToUpdate,
-  ReorderableItem,
   sortedFilesInChapter,
 } from './IndictmentsCaseFilesAccordionItem'
 

@@ -1,7 +1,8 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import {
+import type {
   Case,
   CreateVerdictsInput,
   Defendant,
@@ -43,7 +44,11 @@ const useVerdict = (currentVerdict?: Verdict) => {
     [],
   )
 
-  const [updateVerdictMutation] = useUpdateVerdictMutation()
+  // Verdict updates can move the case between case tables, so active
+  // case table membership queries - the breadcrumbs - must be refetched.
+  const [updateVerdictMutation] = useUpdateVerdictMutation({
+    refetchQueries: ['CaseTableMembership'],
+  })
   const [createVerdictsMutation] = useCreateVerdictsMutation()
 
   const createVerdicts = async (verdictsToCreate: CreateVerdictsInput) => {

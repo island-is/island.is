@@ -11,6 +11,17 @@ import {
   ConfigV5,
   ImageApiV5,
 } from '../v5'
+import {
+  ApiV6,
+  ApplicationApiV6,
+  CodeTableV6,
+  ConfigV6,
+  ImageApiV6,
+  LicenseOrderingApiV6,
+  LicenseServiceApiV6,
+  RLSApplicationProxyApiV6,
+  StatisticsApiV6,
+} from '../v6'
 
 const configFactory = (
   config: ConfigType<typeof DrivingLicenseApiConfig>,
@@ -102,6 +113,94 @@ export const exportedApis = [
       return new ImageApiV5(
         new ConfigV5(
           configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV5}`),
+        ),
+      )
+    },
+    inject: [DrivingLicenseApiConfig.KEY],
+  },
+  {
+    provide: ApiV6,
+    useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
+      return new ApiV6(
+        new ConfigV6(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+        ),
+      )
+    },
+    inject: [DrivingLicenseApiConfig.KEY],
+  },
+  {
+    provide: ApplicationApiV6,
+    useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
+      return new ApplicationApiV6(
+        new ConfigV6(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+        ),
+      )
+    },
+    inject: [DrivingLicenseApiConfig.KEY],
+  },
+  {
+    provide: CodeTableV6,
+    useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
+      return new CodeTableV6(
+        new ConfigV6(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+        ),
+      )
+    },
+    inject: [DrivingLicenseApiConfig.KEY],
+  },
+  {
+    provide: ImageApiV6,
+    useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
+      return new ImageApiV6(
+        new ConfigV6(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+        ),
+      )
+    },
+    inject: [DrivingLicenseApiConfig.KEY],
+  },
+  {
+    provide: LicenseOrderingApiV6,
+    useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
+      return new LicenseOrderingApiV6(
+        new ConfigV6(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+        ),
+      )
+    },
+    inject: [DrivingLicenseApiConfig.KEY],
+  },
+  {
+    provide: LicenseServiceApiV6,
+    useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
+      return new LicenseServiceApiV6(
+        new ConfigV6(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+        ),
+      )
+    },
+    inject: [DrivingLicenseApiConfig.KEY],
+  },
+  {
+    provide: RLSApplicationProxyApiV6,
+    useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
+      return new RLSApplicationProxyApiV6(
+        new ConfigV6(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+        ),
+      )
+    },
+    inject: [DrivingLicenseApiConfig.KEY],
+  },
+  {
+    provide: StatisticsApiV6,
+    useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
+      return new StatisticsApiV6(
+        new ConfigV6(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
         ),
       )
     },
