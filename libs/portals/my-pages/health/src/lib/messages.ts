@@ -2044,8 +2044,7 @@ export const messages = defineMessages({
     id: 'sp.health:health-message-certificate-payment-in-progress',
   },
   healthConversationCertificatePaymentInProgressText: {
-    defaultMessage:
-      'Greiðsla er í vinnslu. Þetta getur tekið nokkrar mínútur.',
+    defaultMessage: 'Greiðsla er í vinnslu. Þetta getur tekið nokkrar mínútur.',
     id: 'sp.health:health-message-certificate-payment-in-progress-text',
   },
   healthConversationCertificatePaymentSuccess: {
