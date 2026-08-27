@@ -88,7 +88,10 @@ export const PermissionApplications = () => {
 
   // Sync initial clients from query → table whenever the source changes
   // (e.g. on first load or after a successful save triggers a refetch).
+  // Skip while add/remove edits are staged so a background cache-and-network
+  // refetch can't clobber them and desync the table from the submitted ids.
   useEffect(() => {
+    if (addedClients.length > 0 || removedClients.length > 0) return
     setClients(initialClients)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialClients])

@@ -129,7 +129,9 @@ describe('MeScopeClientsController', () => {
   })
 
   it('PATCH returns 204 (no content) when the scope does not belong to the path tenant', async () => {
-    const nonOwnerNationalId = '3333333333'
+    // Owns @other.is so MeTenantGuard passes; the 204 must then come from the
+    // scope-ownership check (@owner.is/scope does not belong to @other.is).
+    const nonOwnerNationalId = '2222222222'
     const nonOwner = createCurrentUser({
       nationalId: nonOwnerNationalId,
       scope: [AdminPortalScope.idsAdmin],
