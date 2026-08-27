@@ -12,7 +12,7 @@
  */
 import { render, waitFor } from '@testing-library/react'
 import type { Application } from '@island.is/application/types'
-import { useDraftQueries } from './useDraftQuery'
+import { useDraftQueries, type DraftQueriesResult } from './useDraftQuery'
 
 // Must be `mock`-prefixed to be usable inside a hoisted jest.mock factory.
 const mockMutate = jest.fn()
@@ -62,7 +62,7 @@ const response = {
   },
 }
 
-let observed: ReturnType<typeof useDraftQueries<Contents>> | null = null
+let observed: DraftQueriesResult<Contents> | null = null
 
 const Screen = ({ enabled }: { enabled: boolean }) => {
   observed = useDraftQueries<Contents>(application, spec, { enabled })

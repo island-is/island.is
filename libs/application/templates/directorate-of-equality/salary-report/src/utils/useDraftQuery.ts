@@ -11,6 +11,16 @@ type QueryExternalData<T> = {
   data?: T
 }
 
+// Named rather than inferred so callers (and the spec) can reference the shape
+// without a `typeof useDraftQueries<T>` instantiation expression, which the
+// repo's prettier cannot parse.
+export type DraftQueriesResult<T extends Record<string, unknown>> = {
+  contents: Partial<T>
+  loading: boolean
+  hasError: boolean
+  refetch: (options?: { silent?: boolean }) => Promise<void>
+}
+
 type DraftQueryOptions = {
   // Prepends the create-draft provider, so the draft exists before the reads
   // run. Only the first screen to touch the draft needs it.
@@ -53,7 +63,7 @@ export const useDraftQueries = <T extends Record<string, unknown>>(
   // Keyed by externalDataId, valued by the actionId that fills it.
   actionIdByExternalDataId: { [K in keyof T]: string },
   { ensureDraft = false, enabled = true }: DraftQueryOptions = {},
-) => {
+): DraftQueriesResult<T> => {
   const { lang: locale } = useLocale()
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
