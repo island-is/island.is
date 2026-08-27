@@ -1,5 +1,5 @@
-import * as styles from './CurrencyFlag.css'
 import { hasCurrencyFlag } from './currencyFlags'
+import * as styles from './CurrencyFlag.css'
 
 interface CurrencyFlagProps {
   currencyCode: string
