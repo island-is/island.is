@@ -1,6 +1,5 @@
 import { FormValue } from '@island.is/application/types'
-import { formatBankInfo } from '@island.is/application/ui-components'
-import { formatCurrency } from '@island.is/shared/utils'
+import { formatBankInfo, formatCurrency } from '@island.is/shared/utils'
 import { m } from '../../../lib/messages'
 import { roundedValueToNumber, valueToNumber } from '../../../lib/utils/helpers'
 import {
