@@ -24,13 +24,19 @@ export const payment = {
   summary: defineMessages({
     forPaymentLabel: {
       id: 'pd.application:payment.summary.forPaymentLabel',
-      defaultMessage: 'Til greiðslu',
+      defaultMessage: 'Greiðsluliðir',
       description: 'Heading shown above the list of selected debts',
     },
     totalLabel: {
       id: 'pd.application:payment.summary.totalLabel',
-      defaultMessage: 'Samtals',
-      description: 'Label for the total amount of selected debts',
+      defaultMessage: 'Samtals til greiðslu',
+      description:
+        'Label for the total amount to be paid for the selected debts',
+    },
+    remainingLabel: {
+      id: 'pd.application:payment.summary.remainingLabel',
+      defaultMessage: 'Eftirstöðvar skuldar',
+      description: 'Label for the remaining amount of the selected debts',
     },
   }),
 }
