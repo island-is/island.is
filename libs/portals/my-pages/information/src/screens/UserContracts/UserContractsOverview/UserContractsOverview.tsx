@@ -1,6 +1,7 @@
 import {
   ActionCard,
   Box,
+  Pagination,
   Stack,
   Text,
   ToggleSwitchButton,
@@ -22,6 +23,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HmsRentalAgreementPropertyType } from '@island.is/api/schema'
 
+const DEFAULT_PAGE_SIZE = 10
+const DEFAULT_PAGE_NUMBER = 1
+
 const UserContractsOverview = () => {
   useNamespaces('sp.contracts')
   const { formatMessage } = useLocale()
@@ -29,10 +33,15 @@ const UserContractsOverview = () => {
   const navigate = useNavigate()
 
   const [hideInactiveContracts, setHideInactiveContracts] = useState(false)
+  const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
 
   const { data, loading, error } = useUserContractsOverviewQuery({
     variables: {
-      hideInactiveContracts: hideInactiveContracts,
+      input: {
+        hideInactiveAgreements: hideInactiveContracts,
+        page,
+        pageSize: DEFAULT_PAGE_SIZE,
+      },
     },
   })
 
@@ -60,6 +69,7 @@ const UserContractsOverview = () => {
             aria-controls="contracts-area"
             onChange={() => {
               setHideInactiveContracts(!hideInactiveContracts)
+              setPage(DEFAULT_PAGE_NUMBER)
             }}
             label={
               <Text variant="medium">
@@ -148,6 +158,21 @@ const UserContractsOverview = () => {
               })
               .filter(isDefined)}
           </Stack>
+          {(data.hmsRentalAgreements.totalCount ?? 0) > DEFAULT_PAGE_SIZE && (
+            <Box marginTop={3}>
+              <Pagination
+                page={page}
+                totalPages={Math.ceil(
+                  data.hmsRentalAgreements.totalCount / DEFAULT_PAGE_SIZE,
+                )}
+                renderLink={(page, className, children) => (
+                  <button className={className} onClick={() => setPage(page)}>
+                    {children}
+                  </button>
+                )}
+              />
+            </Box>
+          )}
         </Box>
       )}
     </IntroWrapper>

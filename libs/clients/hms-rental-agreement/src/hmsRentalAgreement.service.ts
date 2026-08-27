@@ -7,7 +7,6 @@ import {
   mapRentalAgreementDto,
   RentalAgreementDto,
 } from './dtos/rentalAgreements.dto'
-import { INACTIVE_AGREEMENT_STATUSES } from './constants'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ContractDocumentItemDto,
@@ -27,15 +26,27 @@ export class HmsRentalAgreementService {
   async getRentalAgreements(
     user: User,
     hideInactiveAgreements = false,
-  ): Promise<RentalAgreementDto[]> {
-    const res = await this.apiWithAuth(user).contractGet()
+    page?: number,
+    pageSize?: number,
+  ): Promise<{ data: RentalAgreementDto[]; totalCount: number }> {
+    const res = await this.apiWithAuth(user).contractGetRaw({
+      page,
+      pageSize,
+      excludeInactive: hideInactiveAgreements,
+    })
+    const contracts = await res.value()
 
-    const data = res.map(mapRentalAgreementDto).filter(isDefined)
+    const totalCountHeader = res.raw.headers.get('x-total-count')
+    const totalCount = totalCountHeader
+      ? Number(totalCountHeader)
+      : contracts.length
 
-    if (hideInactiveAgreements) {
-      return data.filter((d) => !INACTIVE_AGREEMENT_STATUSES.includes(d.status))
+    const data = contracts.map(mapRentalAgreementDto).filter(isDefined)
+
+    return {
+      data,
+      totalCount: Number.isNaN(totalCount) ? data.length : totalCount,
     }
-    return data
   }
 
   async getRentalAgreement(

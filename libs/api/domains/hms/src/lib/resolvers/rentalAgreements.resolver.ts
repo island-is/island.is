@@ -20,6 +20,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
+import { GetRentalAgreementsInput } from '../dto/getRentalAgreements.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -40,12 +41,14 @@ export class RentalAgreementsResolver {
   @Audit()
   async getRentalAgreements(
     @CurrentUser() user: User,
-    @Args('hideInactiveAgreements', { nullable: true })
-    hideInactiveAgreements?: boolean,
+    @Args('input', { nullable: true }) input?: GetRentalAgreementsInput,
   ): Promise<PaginatedRentalAgreementCollection> {
-    const dtos = await this.service.getRentalAgreements(
+    const { hideInactiveAgreements, page, pageSize } = input ?? {}
+    const { data: dtos, totalCount } = await this.service.getRentalAgreements(
       user,
       hideInactiveAgreements,
+      page,
+      pageSize,
     )
     const data = dtos
       .map(mapToRentalAgreement)
@@ -57,9 +60,13 @@ export class RentalAgreementsResolver {
 
     return {
       data,
-      totalCount: data.length,
+      totalCount,
       pageInfo: {
-        hasNextPage: false,
+        // Assumes 1-indexed `page` (unconfirmed by backend spec) — verify before relying on this.
+        hasNextPage:
+          page !== undefined && pageSize !== undefined
+            ? page * pageSize < totalCount
+            : false,
       },
     }
   }
