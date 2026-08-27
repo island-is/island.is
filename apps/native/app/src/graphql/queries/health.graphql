@@ -260,6 +260,8 @@ query getAppointmentDetail($id: String!) {
     links {
       type
       url
+      activatesAt
+      expiresAt
     }
     location {
       name

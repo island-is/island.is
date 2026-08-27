@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ImageSourcePropType,
@@ -75,6 +75,35 @@ const StickyFooter = styled.View`
   background-color: ${({ theme }) => theme.color.white};
 `
 
+type VideoCallPhase = 'before' | 'active' | 'expired'
+
+// A missing/unparseable timestamp yields undefined, treated downstream as
+// "not time-gated" so the link stays usable rather than blocking the call.
+const toTimeMs = (value?: string | null): number | undefined => {
+  if (!value) {
+    return undefined
+  }
+  const ms = new Date(value).getTime()
+  return Number.isNaN(ms) ? undefined : ms
+}
+
+const getVideoCallPhase = (
+  activatesAtMs?: number,
+  expiresAtMs?: number,
+): VideoCallPhase => {
+  if (activatesAtMs === undefined || expiresAtMs === undefined) {
+    return 'active'
+  }
+  const now = Date.now()
+  if (now >= expiresAtMs) {
+    return 'expired'
+  }
+  if (now >= activatesAtMs) {
+    return 'active'
+  }
+  return 'before'
+}
+
 export default function AppointmentDetailScreen() {
   const { id: appointmentId } = useLocalSearchParams<{ id: string }>()
   const intl = useIntl()
@@ -131,60 +160,34 @@ export default function AppointmentDetailScreen() {
   const isVideo =
     appointment?.modality === HealthDirectorateAppointmentModality.Video
 
-  const videoCallLink = data?.healthDirectorateAppointment?.links?.find(
+  const videoCall = data?.healthDirectorateAppointment?.links?.find(
     (l) => l.type === HealthDirectorateAppointmentLinkType.VideoCall,
-  )?.url
+  )
+  const videoCallLink = videoCall?.url
 
-  type VideoCallPhase = 'before' | 'active' | 'expired'
-  const [videoCallPhase, setVideoCallPhase] = useState<VideoCallPhase>('before')
+  // Activation window (link becomes usable / expires) comes from the server.
+  const activatesAtMs = toTimeMs(videoCall?.activatesAt)
+  const expiresAtMs = toTimeMs(videoCall?.expiresAt)
 
+  const [, rerender] = useReducer((c) => c + 1, 0)
+  const videoCallPhase = getVideoCallPhase(activatesAtMs, expiresAtMs)
+
+  // Arm a timer for the next phase boundary. No dep array: it re-arms each
+  // render, so a capped long wait chains itself and a sleep-delayed timer
+  // self-corrects instead of getting stuck.
   useEffect(() => {
-    if (!appointment?.date) {
-      setVideoCallPhase('before')
+    if (
+      videoCallPhase === 'expired' ||
+      activatesAtMs === undefined ||
+      expiresAtMs === undefined
+    ) {
       return
     }
-    const appointmentMs = new Date(appointment.date).getTime()
-    const activateAtMs = appointmentMs - 5 * 60 * 1000
-    // 1 hour after the appointment start time, we stop showing anything related to the link
-    const deactivateAtMs = appointmentMs + 60 * 60 * 1000
-    const now = Date.now()
-
-    if (now >= deactivateAtMs) {
-      setVideoCallPhase('expired')
-      return
-    }
-
-    if (now >= activateAtMs) {
-      setVideoCallPhase('active')
-      const deactivateTimeout = setTimeout(
-        () => setVideoCallPhase('expired'),
-        deactivateAtMs - now,
-      )
-      return () => clearTimeout(deactivateTimeout)
-    }
-
-    setVideoCallPhase('before')
-
-    // setTimeout in JS overflows past ~24.8 days (2^31 - 1 ms) and fires
-    // immediately. For appointments further out, skip scheduling — the user
-    // will revisit closer to the date and the next mount will set it up.
-    const MAX_TIMEOUT_MS = 2 ** 31 - 1
-    if (activateAtMs - now > MAX_TIMEOUT_MS) {
-      return
-    }
-
-    const activateTimeout = setTimeout(() => {
-      setVideoCallPhase('active')
-    }, activateAtMs - now)
-    const deactivateTimeout = setTimeout(
-      () => setVideoCallPhase('expired'),
-      deactivateAtMs - now,
-    )
-    return () => {
-      clearTimeout(activateTimeout)
-      clearTimeout(deactivateTimeout)
-    }
-  }, [appointment?.date])
+    const boundary = videoCallPhase === 'before' ? activatesAtMs : expiresAtMs
+    const delay = Math.min(boundary - Date.now(), 60 * 60 * 1000)
+    const timeout = setTimeout(rerender, Math.max(delay, 1000))
+    return () => clearTimeout(timeout)
+  })
 
   const isVideoCallActive = videoCallPhase === 'active'
   const isVideoCallExpired = videoCallPhase === 'expired'
