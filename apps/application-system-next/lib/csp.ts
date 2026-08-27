@@ -17,6 +17,18 @@ export const generateNonce = () => {
  */
 const isDev = () => process.env.NODE_ENV !== 'production'
 
+/**
+ * File uploads go straight from the browser to a presigned S3 URL on the
+ * `island-is-<env>-upload-api` bucket (see `SdfFileUploadField`), which
+ * `connect-src` governs. Same hosts the platform policy allows in
+ * `libs/infra-next-server/src/lib/csp.ts`; the wildcard covers every
+ * environment's bucket, and the bare host covers path-style URLs.
+ */
+const S3_UPLOAD_ORIGINS = [
+  'https://s3.eu-west-1.amazonaws.com',
+  'https://*.s3.eu-west-1.amazonaws.com',
+]
+
 export const buildCsp = (nonce: string, { dev = isDev() } = {}) =>
   [
     `default-src 'self'`,
@@ -26,7 +38,7 @@ export const buildCsp = (nonce: string, { dev = isDev() } = {}) =>
     `style-src 'self' 'unsafe-inline'`,
     `img-src 'self' blob: data:`,
     `font-src 'self'`,
-    `connect-src 'self'`,
+    `connect-src 'self' ${S3_UPLOAD_ORIGINS.join(' ')}`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,

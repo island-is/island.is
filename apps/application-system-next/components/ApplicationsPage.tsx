@@ -19,10 +19,8 @@ import {
 } from '@island.is/application/graphql'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
-import {
-  ErrorShell,
-  useApplicationNamespaces,
-} from '@island.is/application/ui-shell'
+import { useApplicationNamespaces } from '../hooks/useApplicationNamespaces'
+import { ErrorShell } from '@island.is/application/ui-shell/error-shell'
 import { useLocale, useLocalizedQuery } from '@island.is/localization'
 import {
   findProblemInApolloError,

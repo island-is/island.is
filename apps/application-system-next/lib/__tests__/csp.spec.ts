@@ -46,6 +46,12 @@ describe('csp', () => {
       expect(directive('style-src')).toContain(`'unsafe-inline'`)
     })
 
+    it('allows the s3 upload bucket in connect-src (file uploads go direct)', () => {
+      const connectSrc = directive('connect-src')
+      expect(connectSrc).toContain(`'self'`)
+      expect(connectSrc).toContain('https://*.s3.eu-west-1.amazonaws.com')
+    })
+
     it('locks down the dangerous directives', () => {
       expect(directive('default-src')).toBe(`default-src 'self'`)
       expect(directive('object-src')).toBe(`object-src 'none'`)
