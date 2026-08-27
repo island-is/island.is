@@ -22,7 +22,6 @@ type Props = {
   direction: GroupDirection
   mode: 'draft' | 'postponed'
   errors?: RecordObject
-  identifierForOrdinal: (ordinal: number) => string
   onRemove: () => void
 }
 
@@ -36,7 +35,6 @@ export const OutlierGroupCard: FC<Props> = ({
   direction,
   mode,
   errors,
-  identifierForOrdinal,
   onRemove,
 }) => {
   const { formatMessage } = useLocale()
@@ -64,7 +62,7 @@ export const OutlierGroupCard: FC<Props> = ({
         label={liveName || `${formatMessage(m.groupHeading)} ${index + 1}`}
         visibleContent={`${formatMessage(
           m.groupMembers,
-        )}: ${group.employeeOrdinals.map(identifierForOrdinal).join(', ')}`}
+        )}: ${group.employeeOrdinals.join(', ')}`}
         startExpanded
       >
         <Box marginBottom={2} display="flex" justifyContent="flexEnd">
@@ -87,6 +85,7 @@ export const OutlierGroupCard: FC<Props> = ({
             id={`${fieldName}.${index}.reason`}
             name={`${fieldName}.${index}.reason`}
             label={formatMessage(m.reasonLabel)}
+            required
             textarea
             backgroundColor="blue"
             error={groupError('reason')}
@@ -97,6 +96,7 @@ export const OutlierGroupCard: FC<Props> = ({
             id={`${fieldName}.${index}.action`}
             name={`${fieldName}.${index}.action`}
             label={formatMessage(m.actionLabel)}
+            required
             textarea
             backgroundColor="blue"
             error={groupError('action')}
@@ -117,6 +117,7 @@ export const OutlierGroupCard: FC<Props> = ({
               id={`${fieldName}.${index}.signatureRole`}
               name={`${fieldName}.${index}.signatureRole`}
               label={formatMessage(m.signatureRoleLabel)}
+              required
               backgroundColor="blue"
               error={groupError('signatureRole')}
             />
