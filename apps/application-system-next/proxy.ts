@@ -10,7 +10,7 @@ const LEGACY_SPA_BASE =
   process.env.LEGACY_SPA_URL ??
   (process.env.NODE_ENV !== 'production' ? 'http://localhost:4242' : undefined)
 
-export const middleware = (request: NextRequest) => {
+export const proxy = (request: NextRequest) => {
   // basePath (`/umsoknir/sdf`) is already stripped from `pathname`.
   const { pathname } = request.nextUrl
   const slug = pathname.split('/')[1]

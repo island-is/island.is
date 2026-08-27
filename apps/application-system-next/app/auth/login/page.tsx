@@ -1,11 +1,11 @@
 import { BffLoginRedirect } from '../../../components/BffLoginRedirect'
 
-export default function AuthLoginPage({
+export default async function AuthLoginPage({
   searchParams,
 }: {
-  searchParams: { target_link_uri?: string }
+  searchParams: Promise<{ target_link_uri?: string }>
 }) {
-  return (
-    <BffLoginRedirect targetLinkUri={searchParams.target_link_uri ?? '/'} />
-  )
+  const { target_link_uri: targetLinkUri } = await searchParams
+
+  return <BffLoginRedirect targetLinkUri={targetLinkUri ?? '/'} />
 }

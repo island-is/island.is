@@ -14,7 +14,7 @@ describe('csp', () => {
 
   describe('buildCsp', () => {
     const nonce = 'test-nonce'
-    const directives = buildCsp(nonce)
+    const directives = buildCsp(nonce, { dev: false })
       .split(';')
       .map((d) => d.trim())
 
@@ -25,6 +25,20 @@ describe('csp', () => {
       const scriptSrc = directive('script-src')
       expect(scriptSrc).toContain(`'nonce-${nonce}'`)
       expect(scriptSrc).toContain(`'strict-dynamic'`)
+    })
+
+    it(`adds 'unsafe-eval' only in development (webpack dev bundles use eval)`, () => {
+      const devScriptSrc = buildCsp(nonce, { dev: true })
+        .split(';')
+        .map((d) => d.trim())
+        .find((d) => d.startsWith('script-src '))
+      const prodScriptSrc = buildCsp(nonce, { dev: false })
+        .split(';')
+        .map((d) => d.trim())
+        .find((d) => d.startsWith('script-src '))
+
+      expect(devScriptSrc).toContain(`'unsafe-eval'`)
+      expect(prodScriptSrc).not.toContain(`'unsafe-eval'`)
     })
 
     it('allows inline style attributes (island-ui/vanilla-extract) via style-src', () => {

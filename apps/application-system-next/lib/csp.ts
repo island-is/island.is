@@ -10,10 +10,19 @@ export const generateNonce = () => {
   return btoa(binary)
 }
 
-export const buildCsp = (nonce: string) =>
+/**
+ * Webpack's dev bundles are `eval`-based (HMR + `eval-source-map`), so the dev
+ * server cannot run under a policy without `'unsafe-eval'`. Production bundles
+ * contain no `eval`, so the deployed policy stays strict.
+ */
+const isDev = () => process.env.NODE_ENV !== 'production'
+
+export const buildCsp = (nonce: string, { dev = isDev() } = {}) =>
   [
     `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${
+      dev ? ` 'unsafe-eval'` : ''
+    }`,
     `style-src 'self' 'unsafe-inline'`,
     `img-src 'self' blob: data:`,
     `font-src 'self'`,

@@ -1,9 +1,11 @@
 import { ApplicationsPage } from '../../components/ApplicationsPage'
 
-export default function SdfApplicationSlugPage({
+export default async function SdfApplicationSlugPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  return <ApplicationsPage slug={params.slug} />
+  const { slug } = await params
+
+  return <ApplicationsPage slug={slug} />
 }
