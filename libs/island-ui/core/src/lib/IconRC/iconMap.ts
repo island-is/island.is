@@ -13,6 +13,7 @@ export type Icon =
   | 'business'
   | 'calculator'
   | 'calendar'
+  | 'calendarCancel'
   | 'call'
   | 'car'
   | 'cardWithCheckmark'
@@ -104,6 +105,7 @@ export type Icon =
   | 'list'
   | 'hammer'
   | 'hourglass'
+  | 'videoCam'
 
 export default {
   filled: {
@@ -121,6 +123,7 @@ export default {
     business: 'Business',
     calculator: 'Calculator',
     calendar: 'Calendar',
+    calendarCancel: 'CalendarCancel',
     call: 'Call',
     car: 'Car',
     card: 'Card',
@@ -211,6 +214,7 @@ export default {
     list: 'List',
     hammer: 'HammerOutline',
     hourglass: 'HourglassOutline',
+    videoCam: 'VideoCam',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -227,6 +231,7 @@ export default {
     business: 'BusinessOutline',
     calculator: 'CalculatorOutline',
     calendar: 'CalendarOutline',
+    calendarCancel: 'CalendarCancelOutline',
     call: 'CallOutline',
     car: 'CarOutline',
     card: 'CardOutline',
@@ -317,5 +322,6 @@ export default {
     list: 'ListOutline',
     hammer: 'HammerOutline',
     hourglass: 'HourglassOutline',
+    videoCam: 'VideoCamOutline',
   },
 }

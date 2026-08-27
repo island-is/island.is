@@ -6,8 +6,8 @@ import {
   Checkbox,
   Input,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { toast } from '@island.is/island-ui/core'
 import { ADMIN_USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
   formatDate,
@@ -162,7 +162,8 @@ export const MessageSuspension = () => {
               {suspension.suspended && suspension.modified && (
                 <Text variant="small" color="dark400">
                   {`Frestað ${
-                    formatDate(suspension.modified, 'Pp') ?? 'á óþekktum tíma'
+                    formatDate(suspension.modified, 'dd.MM.y HH:mm') ??
+                    'á óþekktum tíma'
                   } af ${
                     formatNationalId(suspension.modifiedBy) ||
                     'óþekktum notanda'

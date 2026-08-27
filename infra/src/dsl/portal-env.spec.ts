@@ -145,7 +145,7 @@ describe('BFF PortalEnv serialization', () => {
   it('replica count', () => {
     expect(result.serviceDef[0].replicaCount).toStrictEqual({
       min: 1,
-      max: 3,
+      max: 2,
       default: 1,
     })
   })
@@ -173,6 +173,7 @@ describe('BFF PortalEnv serialization', () => {
       BFF_LOGIN_ATTEMPT_TTL_MS: ONE_WEEK_IN_MS.toString(),
       NODE_OPTIONS:
         '--max-old-space-size=460 --enable-source-maps -r dd-trace/init',
+      DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
       REDIS_URL_NODE_01: 'b',
@@ -200,23 +201,12 @@ describe('BFF PortalEnv serialization', () => {
     })
   })
 
-  it('ingress', () => {
-    expect(result.serviceDef[0].ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-          'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-        },
-        hosts: [
-          {
-            host: 'beta.dev01.devland.is',
-            paths: ['/stjornbord/bff'],
-          },
-        ],
-      },
-    })
+  it('httpRoute', () => {
+    expect((result.serviceDef[0] as any).ingress).toBeUndefined()
+    expect(result.serviceDef[0].httpRoute).toBeDefined()
+    expect(result.serviceDef[0].httpRoute!['primary-gw'].hostnames).toEqual([
+      'beta.dev01.devland.is',
+    ])
   })
 })
 
@@ -234,7 +224,7 @@ describe('Env definition defaults', () => {
   it('replica max count', () => {
     expect(result.serviceDef[0].replicaCount).toStrictEqual({
       min: 1,
-      max: 3,
+      max: 2,
       default: 1,
     })
   })

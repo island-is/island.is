@@ -102,6 +102,7 @@ import { ApplicationActionService } from './application-action.service'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { withCodeOwner } from '@island.is/infra-tracing'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -127,6 +128,7 @@ export class ApplicationController {
     private readonly historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
     private readonly applicationActionService: ApplicationActionService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -348,7 +350,7 @@ export class ApplicationController {
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
-    application: Application,
+    application: Pick<Application, 'id'>,
     callback: (...args: TArgs) => R,
     ...args: TArgs
   ): R => {
@@ -477,12 +479,16 @@ export class ApplicationController {
       actionDto.externalData = withUpdatedExternalData.externalData // Make sure to update the actionDto with the updated external data
     }
 
-    await handleScheduledNotifications(
-      this.applicationService,
-      actionDto,
-      template,
-      updatedApplication.state,
-    )
+    await this.withApplicationInfo(template, actionDto, async () => {
+      await handleScheduledNotifications(
+        this.applicationService,
+        actionDto,
+        template,
+        updatedApplication.state,
+        this.featureFlagService,
+        user,
+      )
+    })
 
     return updatedApplication
   }
@@ -1048,8 +1054,11 @@ export class ApplicationController {
       )
 
       for (const api of onDeleteActions) {
-        const result =
-          deletingApplication.externalData[api.externalDataId || api.action]
+        const resolvedId = api.resolveExternalDataId(
+          deletingApplication,
+          user.nationalId,
+        )
+        const result = deletingApplication.externalData[resolvedId]
 
         this.logger.debug(
           `Performing action ${api.action} on ${JSON.stringify(

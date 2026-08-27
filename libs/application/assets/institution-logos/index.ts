@@ -21,7 +21,7 @@ export { TheIcelandicPoliceLogo } from './gen/TheIcelandicPoliceLogo' // Lögreg
 export { TheIcelandicRecyclingFundLogo } from './gen/TheIcelandicRecyclingFundLogo' // Úrvinnslusjóður
 export { TransportAuthorityLogo } from './gen/TransportAuthorityLogo' // Samgöngustofa
 export { HeilsugaeslaHofudborgarsvaedisinsLogo } from './gen/HeilsugaeslaHofudborgarsvaedisinsLogo' // Heilsugæsla höfuðborgarsvæðisins
-
+export { DirectorateOfEqualityLogo } from './gen/DirectorateOfEquality' // Jafnréttisstofa
 // Coat of arms
 export { CoatOfArmsLogo as CoatOfArms } from './gen/CoatOfArms' // Skjaldarmerkið
 

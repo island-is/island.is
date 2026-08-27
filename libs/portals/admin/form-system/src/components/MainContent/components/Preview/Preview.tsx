@@ -4,6 +4,7 @@ import {
   Banknumber,
   Checkbox,
   CurrencyField,
+  CurrencySumField,
   Email,
   FileUpload,
   List,
@@ -31,52 +32,57 @@ export const Preview = ({ data, screenOrSection }: Props) => {
   const type = data.fieldType
   const methods = useForm()
   const { formatMessage } = useLocale()
+
+  const fieldContent = (
+    <>
+      {type === FieldTypesEnum.MESSAGE && <MessageWithLink item={data} />}
+      {type === FieldTypesEnum.BANK_ACCOUNT && <Banknumber item={data} />}
+      {type === FieldTypesEnum.EMAIL && <Email item={data} />}
+      {type === FieldTypesEnum.DATE_PICKER && (
+        <Box marginTop={2} width="half">
+          <DatePicker
+            label={
+              data?.name?.is === '' || !data?.name?.is
+                ? formatMessage(m.datePicker)
+                : data?.name?.is
+            }
+            placeholderText={formatMessage(m.chooseDate)}
+          />
+        </Box>
+      )}
+      {type === FieldTypesEnum.NATIONAL_ID && <NationalId item={data} />}
+      {type === FieldTypesEnum.FILE && <FileUpload item={data} />}
+      {type === FieldTypesEnum.TEXTBOX && <TextInput item={data} />}
+      {type === FieldTypesEnum.NUMBERBOX && <NumberInput item={data} />}
+      {type === FieldTypesEnum.DROPDOWN_LIST && <List item={data} />}
+      {type === FieldTypesEnum.RADIO_BUTTONS && <Radio item={data} />}
+      {type === FieldTypesEnum.ISK_NUMBERBOX && <CurrencyField item={data} />}
+      {type === FieldTypesEnum.CHECKBOX && <Checkbox item={data} />}
+      {type === FieldTypesEnum.PHONE_NUMBER && <PhoneNumber item={data} />}
+      {type === FieldTypesEnum.TIME_INPUT && <TimeInput item={data} />}
+      {type === FieldTypesEnum.PROPERTY_NUMBER && (
+        <PropertyNumber item={data} />
+      )}
+      {type === FieldTypesEnum.PAYMENT_QUANTITY && (
+        <PaymentQuantity item={data} />
+      )}
+      {type === FieldTypesEnum.ISK_SUMBOX && <CurrencySumField item={data} />}
+    </>
+  )
+
   return (
     <FormProvider {...methods}>
-      <Box padding={2} border="standard" borderRadius="large">
-        {!screenOrSection && (
+      {screenOrSection ? (
+        // End-user view: render the field exactly like form-system-web's Field
+        <Box marginTop={4}>{fieldContent}</Box>
+      ) : (
+        <Box padding={2} border="standard" borderRadius="large">
           <Text variant="h5" marginBottom={4}>
             {formatMessage(m.previewField)}
           </Text>
-        )}
-
-        {type === FieldTypesEnum.MESSAGE && <MessageWithLink item={data} />}
-        {type === FieldTypesEnum.BANK_ACCOUNT && (
-          <div>
-            <Text variant="h5">{data?.name?.is}</Text>
-            <Banknumber item={data} />
-          </div>
-        )}
-        {type === FieldTypesEnum.EMAIL && <Email item={data} />}
-        {type === FieldTypesEnum.DATE_PICKER && (
-          <Box marginTop={2} width="half">
-            <DatePicker
-              label={
-                data?.name?.is === '' || !data?.name?.is
-                  ? formatMessage(m.datePicker)
-                  : data?.name?.is
-              }
-              placeholderText={formatMessage(m.chooseDate)}
-            />
-          </Box>
-        )}
-        {type === FieldTypesEnum.NATIONAL_ID && <NationalId item={data} />}
-        {type === FieldTypesEnum.FILE && <FileUpload item={data} />}
-        {type === FieldTypesEnum.TEXTBOX && <TextInput item={data} />}
-        {type === FieldTypesEnum.NUMBERBOX && <NumberInput item={data} />}
-        {type === FieldTypesEnum.DROPDOWN_LIST && <List item={data} />}
-        {type === FieldTypesEnum.RADIO_BUTTONS && <Radio item={data} />}
-        {type === FieldTypesEnum.ISK_NUMBERBOX && <CurrencyField item={data} />}
-        {type === FieldTypesEnum.CHECKBOX && <Checkbox item={data} />}
-        {type === FieldTypesEnum.PHONE_NUMBER && <PhoneNumber item={data} />}
-        {type === FieldTypesEnum.TIME_INPUT && <TimeInput item={data} />}
-        {type === FieldTypesEnum.PROPERTY_NUMBER && (
-          <PropertyNumber item={data} />
-        )}
-        {type === FieldTypesEnum.PAYMENT_QUANTITY && (
-          <PaymentQuantity item={data} />
-        )}
-      </Box>
+          {fieldContent}
+        </Box>
+      )}
     </FormProvider>
   )
 }

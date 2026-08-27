@@ -27,6 +27,12 @@ type ZendeskInstanceConfig = {
   serviceSystemBrandID: string
 }
 
+const parseZendeskBrandIds = (brandIds?: string | null) =>
+  brandIds
+    ?.split(';')
+    .map((brandId) => brandId.trim())
+    .filter(Boolean) ?? []
+
 export const ListSettings = () => {
   const {
     control,
@@ -56,6 +62,7 @@ export const ListSettings = () => {
     { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
     { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
     { label: 'Gjaldmiðlar', value: ListTypesEnum.CURRENCIES },
+    { label: 'Stofnanir', value: ListTypesEnum.ORGANIZATIONS },
     { label: 'Listi frá slóð', value: ListTypesEnum.LIST_FROM_URL },
     {
       label: 'Zendesk forhlaðinn listi',
@@ -106,25 +113,35 @@ export const ListSettings = () => {
       return
     }
 
+    const brandIdOptions = parseZendeskBrandIds(parsed.serviceSystemBrandID)
+    const nextZendeskBrandId =
+      brandIdOptions.length === 1
+        ? brandIdOptions[0]
+        : brandIdOptions.includes(
+            form.organizationZendeskInstance?.zendeskBrandId ?? '',
+          )
+        ? form.organizationZendeskInstance?.zendeskBrandId ?? ''
+        : ''
+
     if (
       parsed.serviceSystemInstance !==
         form.organizationZendeskInstance?.zendeskInstance ||
-      parsed.serviceSystemBrandID !==
-        form.organizationZendeskInstance?.zendeskBrandId
+      nextZendeskBrandId !== form.organizationZendeskInstance?.zendeskBrandId
     ) {
       controlDispatch({
         type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
         payload: {
           zendeskInstance: parsed.serviceSystemInstance,
-          zendeskBrandId: parsed.serviceSystemBrandID,
+          zendeskBrandId: nextZendeskBrandId,
         },
       })
       await updateOrganizationZendeskInstance({
         variables: {
           input: {
             zendeskInstance: parsed.serviceSystemInstance,
-            zendeskBrandId: parsed.serviceSystemBrandID,
+            zendeskBrandId: nextZendeskBrandId,
             organizationId: form.organizationId,
+            formId: form.id,
           },
         },
       })
@@ -274,7 +291,9 @@ export const ListSettings = () => {
                   <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
                     <code>
                       Zendesk instance:{' '}
-                      {form.organizationZendeskInstance?.zendeskInstance}
+                      {form.organizationZendeskInstance?.zendeskInstance
+                        ? form.organizationZendeskInstance.zendeskInstance
+                        : 'digitaliceland'}
                       .zendesk.com
                     </code>
                   </Text>

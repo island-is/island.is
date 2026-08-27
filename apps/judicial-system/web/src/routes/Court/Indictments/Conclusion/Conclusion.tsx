@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parse from 'date-fns/parse'
@@ -7,7 +8,6 @@ import router from 'next/router'
 
 import {
   Box,
-  Checkbox,
   FileUploadStatus,
   Input,
   InputFileUpload,
@@ -27,8 +27,10 @@ import {
   hasGeneratedCourtRecordPdf,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
+import type { FormFooterAction } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
+  CheckboxList,
   CourtArrangements,
   CourtCaseInfo,
   FormContentContainer,
@@ -43,20 +45,22 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InputDate from '@island.is/judicial-system-web/src/components/Inputs/InputDate'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
   CourtSessionRulingType,
   CourtSessionType,
-  Defendant,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { CourtCaseNumberInput } from '@island.is/judicial-system-web/src/routes/Court/components'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  UpdateCase,
   useCase,
   useDefendants,
   useFileList,
@@ -71,8 +75,6 @@ import {
   validate,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import InputDate from '../../../../components/Inputs/InputDate'
-import { CourtCaseNumberInput } from '../../components'
 import SelectCandidateMergeCase from './SelectCandidateMergeCase'
 import { strings } from './Conclusion.strings'
 
@@ -570,6 +572,47 @@ const Conclusion: FC = () => {
       : []),
   ]
 
+  const actions: FormFooterAction[] =
+    missingValidGeneratedCourtRecordForCompletion ||
+    missingValidGeneratedCourtRecordForCompletionWithMerge ||
+    missingRulingInGeneratedCourtSessions ||
+    missingValidGeneratedCourtRecordForSplitting
+      ? []
+      : [
+          {
+            text:
+              selectedAction === IndictmentDecision.COMPLETING
+                ? formatMessage(core.continue)
+                : formatMessage(strings.nextButtonTextConfirm),
+            icon: 'arrowForward',
+            onClick: () => {
+              if (
+                selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
+                selectedAction === IndictmentDecision.SPLITTING
+              ) {
+                if (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME) {
+                  setConclusionDate(formatDate(new Date()))
+                  setModalVisible('COMPLETING_FOR_SOME')
+                } else {
+                  setModalVisible('SPLIT')
+                }
+                return
+              }
+
+              handleNavigationTo(
+                selectedAction === IndictmentDecision.COMPLETING
+                  ? DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE
+                  : selectedAction === IndictmentDecision.REDISTRIBUTING
+                  ? getStandardUserDashboardRoute(user)
+                  : DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+              )
+            },
+            disabled: !stepIsValid(),
+            loading: isUpdatingCase,
+            testId: 'continueButton',
+          },
+        ]
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -959,44 +1002,46 @@ const Conclusion: FC = () => {
                       variant="h5"
                       marginBottom={0}
                     />
-                    {selectedDecision ===
-                      CaseIndictmentRulingDecision.RULING && (
-                      <Checkbox
-                        id={`default-judgment-${defendant.id}`}
-                        label="Útivistardómur"
-                        checked={defendant.verdict?.isDefaultJudgement || false}
-                        onChange={(evt) =>
-                          updateDefendantVerdictState(
-                            {
-                              caseId: workingCase.id,
-                              defendantId: defendant.id,
-                              isDefaultJudgement: evt.target.checked,
-                            },
-                            setWorkingCase,
-                          )
-                        }
-                        backgroundColor="white"
-                        large
-                        filled
-                      />
-                    )}
-                    <Checkbox
-                      id={`driving-license-revocation-${defendant.id}`}
-                      label="Svipting ökuréttar"
-                      checked={defendant.isDrivingLicenseSuspended || false}
-                      onChange={(evt) =>
-                        updateDefendantState(
-                          {
-                            caseId: workingCase.id,
-                            defendantId: defendant.id,
-                            isDrivingLicenseSuspended: evt.target.checked,
-                          },
-                          setWorkingCase,
-                        )
-                      }
-                      backgroundColor="white"
-                      large
-                      filled
+                    <CheckboxList
+                      blueBox={false}
+                      fullWidth
+                      checkboxes={[
+                        ...(selectedDecision ===
+                        CaseIndictmentRulingDecision.RULING
+                          ? [
+                              {
+                                id: `default-judgment-${defendant.id}`,
+                                title: 'Útivistardómur',
+                                checked:
+                                  defendant.verdict?.isDefaultJudgement ||
+                                  false,
+                                onChange: (checked: boolean) =>
+                                  updateDefendantVerdictState(
+                                    {
+                                      caseId: workingCase.id,
+                                      defendantId: defendant.id,
+                                      isDefaultJudgement: checked,
+                                    },
+                                    setWorkingCase,
+                                  ),
+                              },
+                            ]
+                          : []),
+                        {
+                          id: `driving-license-revocation-${defendant.id}`,
+                          title: 'Svipting ökuréttar',
+                          checked: defendant.isDrivingLicenseSuspended || false,
+                          onChange: (checked: boolean) =>
+                            updateDefendantState(
+                              {
+                                caseId: workingCase.id,
+                                defendantId: defendant.id,
+                                isDrivingLicenseSuspended: checked,
+                              },
+                              setWorkingCase,
+                            ),
+                        },
+                      ]}
                     />
                   </BlueBox>
                 ))}
@@ -1017,43 +1062,8 @@ const Conclusion: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() => {
-            if (
-              selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
-              selectedAction === IndictmentDecision.SPLITTING
-            ) {
-              if (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME) {
-                setConclusionDate(formatDate(new Date()))
-                setModalVisible('COMPLETING_FOR_SOME')
-              } else {
-                setModalVisible('SPLIT')
-              }
-              return
-            }
-
-            handleNavigationTo(
-              selectedAction === IndictmentDecision.COMPLETING
-                ? DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE
-                : selectedAction === IndictmentDecision.REDISTRIBUTING
-                ? getStandardUserDashboardRoute(user)
-                : DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
-            )
-          }}
-          nextButtonText={
-            selectedAction === IndictmentDecision.COMPLETING
-              ? undefined
-              : formatMessage(strings.nextButtonTextConfirm)
-          }
-          nextIsDisabled={!stepIsValid()}
-          nextIsLoading={isUpdatingCase}
-          hideNextButton={
-            missingValidGeneratedCourtRecordForCompletion ||
-            missingValidGeneratedCourtRecordForCompletionWithMerge ||
-            missingRulingInGeneratedCourtSessions ||
-            missingValidGeneratedCourtRecordForSplitting
-          }
+          actions={actions}
           infoBoxText={
             missingValidGeneratedCourtRecordForCompletion
               ? 'Til að ljúka máli öðruvísi en með sameiningu þarf að staðfesta þingbók á þingbókarskjá.'
@@ -1071,27 +1081,30 @@ const Conclusion: FC = () => {
         <Modal
           title="Viltu kljúfa mál?"
           text={`Ákærði ${selectedDefendant.name} verður klofinn frá málinu og nýtt mál stofnað.`}
-          primaryButton={{
-            text: 'Já, kljúfa mál',
-            onClick: async () => {
-              const newCaseId = await splitDefendantFromCase(
-                workingCase.id,
-                selectedDefendant.id,
-              )
-
-              if (!newCaseId) {
-                return
-              }
-
-              setSplitCaseId(newCaseId)
-              setModalVisible('CREATE_COURT_CASE_NUMBER')
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
             },
-            isLoading: isSplittingDefendantFromCase,
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => setModalVisible(undefined),
-          }}
+            {
+              text: 'Já, kljúfa mál',
+              onClick: async () => {
+                const newCaseId = await splitDefendantFromCase(
+                  workingCase.id,
+                  selectedDefendant.id,
+                )
+
+                if (!newCaseId) {
+                  return
+                }
+
+                setSplitCaseId(newCaseId)
+                setModalVisible('CREATE_COURT_CASE_NUMBER')
+              },
+              isLoading: isSplittingDefendantFromCase,
+            },
+          ]}
           onClose={() => setModalVisible(undefined)}
         />
       )}
@@ -1100,17 +1113,19 @@ const Conclusion: FC = () => {
           title={`Nýtt mál - ${selectedDefendant?.name}`}
           text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
           footerJustifyContent="flexEnd"
-          primaryButton={{
-            text: 'Staðfesta',
-            onClick: () => {
-              router.push(
-                `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
-              )
+          buttons={[
+            {
+              text: 'Staðfesta',
+              onClick: () => {
+                router.push(
+                  `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                )
+              },
+              isDisabled: !validate([
+                [splitCaseCourtCaseNumber, ['empty', 'S-case-number']],
+              ]).isValid,
             },
-            isDisabled: !validate([
-              [splitCaseCourtCaseNumber, ['empty', 'S-case-number']],
-            ]).isValid,
-          }}
+          ]}
         >
           <CourtCaseNumberInput
             caseId={splitCaseId}
@@ -1126,18 +1141,21 @@ const Conclusion: FC = () => {
           <Modal
             title="Skrá lyktir á aðila án þess að ljúka máli"
             text="Lyktir verða skráðar á valda aðila."
-            primaryButton={{
-              text: 'Halda áfram',
-              onClick: () => setModalVisible('CONFIRM_COMPLETION_FOR_SOME'),
-              isDisabled: !(
-                conclusionDate &&
-                validate([[conclusionDate, ['date-of-birth']]]).isValid
-              ),
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => setModalVisible(undefined),
-            }}
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setModalVisible(undefined),
+                variant: 'ghost',
+              },
+              {
+                text: 'Halda áfram',
+                onClick: () => setModalVisible('CONFIRM_COMPLETION_FOR_SOME'),
+                isDisabled: !(
+                  conclusionDate &&
+                  validate([[conclusionDate, ['date-of-birth']]]).isValid
+                ),
+              },
+            ]}
             onClose={() => setModalVisible(undefined)}
           >
             <Box className={grid({ gap: 3, marginBottom: 3 })}>
@@ -1177,39 +1195,42 @@ const Conclusion: FC = () => {
         {modalVisible === 'CONFIRM_COMPLETION_FOR_SOME' && (
           <Modal
             title="Viltu staðfesta lyktir?"
-            primaryButton={{
-              text: 'Staðfesta',
-              onClick: async () => {
-                setIsSubmittingForSome(true)
-                try {
-                  const pendingFiles = uploadFiles.filter(
-                    (file) =>
-                      file.category === CaseFileCategory.DEFENDANT_RULING &&
-                      !file.key,
-                  )
-                  if (pendingFiles.length > 0) {
-                    const result = await handleUpload(
-                      pendingFiles,
-                      updateUploadFile,
-                    )
-                    if (result === 'NONE_SUCCEEDED') {
-                      return
-                    }
-                  }
-                  handleNavigationTo(
-                    DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
-                  )
-                } finally {
-                  setIsSubmittingForSome(false)
-                }
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setModalVisible(undefined),
+                variant: 'ghost',
               },
-              icon: 'checkmark',
-              isLoading: isSubmittingForSome || isUpdatingCase,
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => setModalVisible(undefined),
-            }}
+              {
+                text: 'Staðfesta',
+                onClick: async () => {
+                  setIsSubmittingForSome(true)
+                  try {
+                    const pendingFiles = uploadFiles.filter(
+                      (file) =>
+                        file.category === CaseFileCategory.DEFENDANT_RULING &&
+                        !file.key,
+                    )
+                    if (pendingFiles.length > 0) {
+                      const result = await handleUpload(
+                        pendingFiles,
+                        updateUploadFile,
+                      )
+                      if (result === 'NONE_SUCCEEDED') {
+                        return
+                      }
+                    }
+                    handleNavigationTo(
+                      DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+                    )
+                  } finally {
+                    setIsSubmittingForSome(false)
+                  }
+                },
+                icon: 'checkmark',
+                isLoading: isSubmittingForSome || isUpdatingCase,
+              },
+            ]}
             onClose={() => setModalVisible(undefined)}
           >
             <Box className={grid({ marginBottom: 3 })}>

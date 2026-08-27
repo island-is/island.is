@@ -155,6 +155,67 @@ describe('canDefenceUserViewCivilClaimCaseFile', () => {
     ).toBe(true)
   })
 
+  it("returns true when the requesting user is the claimant's own confirmed spokesperson", () => {
+    expect(
+      canDefenceUserViewCivilClaimCaseFile(defenderNationalId, {
+        ...baseArgs,
+        civilClaimants: [
+          {
+            id: claimantId,
+            policeCaseNumbers: ['007-2024'],
+            hasSpokesperson: true,
+            isSpokespersonConfirmed: true,
+            spokespersonNationalId: defenderNationalId,
+          } as CivilClaimant,
+        ],
+        defendants: [],
+      }),
+    ).toBe(true)
+  })
+
+  it("returns false when the user is the claimant's spokesperson but not confirmed", () => {
+    expect(
+      canDefenceUserViewCivilClaimCaseFile(defenderNationalId, {
+        ...baseArgs,
+        civilClaimants: [
+          {
+            id: claimantId,
+            policeCaseNumbers: ['007-2024'],
+            hasSpokesperson: true,
+            isSpokespersonConfirmed: false,
+            spokespersonNationalId: defenderNationalId,
+          } as CivilClaimant,
+        ],
+        defendants: [],
+      }),
+    ).toBe(false)
+  })
+
+  it('returns false when the user is the confirmed spokesperson of a different claimant', () => {
+    expect(
+      canDefenceUserViewCivilClaimCaseFile(defenderNationalId, {
+        ...baseArgs,
+        civilClaimants: [
+          {
+            id: claimantId,
+            policeCaseNumbers: ['007-2024'],
+            hasSpokesperson: true,
+            isSpokespersonConfirmed: true,
+            spokespersonNationalId: '9999999999',
+          } as CivilClaimant,
+          {
+            id: 'other-claimant',
+            policeCaseNumbers: ['008-2024'],
+            hasSpokesperson: true,
+            isSpokespersonConfirmed: true,
+            spokespersonNationalId: defenderNationalId,
+          } as CivilClaimant,
+        ],
+        defendants: [],
+      }),
+    ).toBe(false)
+  })
+
   it('returns true when any of multiple defendants matches', () => {
     expect(
       canDefenceUserViewCivilClaimCaseFile(defenderNationalId, {

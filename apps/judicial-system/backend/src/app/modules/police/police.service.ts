@@ -14,7 +14,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -50,6 +50,7 @@ import {
   DateLog,
   Defendant,
   IndictmentSubtype,
+  IndictmentSubtypeRepositoryService,
 } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
@@ -61,18 +62,18 @@ import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.resp
 import { policeModuleConfig } from './police.config'
 
 export enum PoliceDocumentType {
-  RVKR = 'RVKR', // Krafa
-  RVTB = 'RVTB', // Þingbók
-  RVUR = 'RVUR', // Úrskurður
-  RVVI = 'RVVI', // Vistunarseðill
-  RVUL = 'RVUL', // Úrskurður Landsréttar
-  RVDO = 'RVDO', // Dómur
-  RVAS = 'RVAS', // Ákæra
-  RVMG = 'RVMG', // Málsgögn
-  RVMV = 'RVMV', // Viðbótargögn verjanda
-  RVVS = 'RVVS', // Viðbótargögn sækjanda
-  RVFK = 'RVFK', // Fyrirkall
-  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms
+  RVKR = 'RVKR', // Krafa í R-málum
+  RVTB = 'RVTB', // Þingbók í R- og S-málum
+  RVUR = 'RVUR', // Úrskurður í R-málum
+  RVVI = 'RVVI', // Vistunarseðill í R-málum
+  RVUL = 'RVUL', // Úrskurður Landsréttar í R- og S-málum
+  RVDO = 'RVDO', // Dómur og úrskurður í S-málum
+  RVAS = 'RVAS', // Ákæra í S-málum
+  RVMG = 'RVMG', // Málsgögn/gagnapakki í S-málum - þetta er svolítil ruslakista
+  RVMV = 'RVMV', // Viðbótargögn verjanda í S-málum
+  RVVS = 'RVVS', // Viðbótargögn sækjandan í S-málum
+  RVFK = 'RVFK', // Fyrirkall í S-málum
+  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
 }
 
 export interface PoliceDocument {
@@ -266,8 +267,8 @@ export class PoliceService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(IndictmentSubtype)
-    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
+    @Inject(forwardRef(() => IndictmentSubtypeRepositoryService))
+    private readonly indictmentSubtypeRepositoryService: IndictmentSubtypeRepositoryService,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
@@ -335,6 +336,20 @@ export class PoliceService {
     }
   }
 
+  /** Winston error log only (no Slack). */
+  private logPoliceFailure(
+    logMessage: string,
+    info: { [key: string]: string | boolean | Date | undefined },
+    reason: unknown,
+  ): void {
+    this.logger.error(logMessage, {
+      ...info,
+      error: reason instanceof Error ? reason : undefined,
+      errorSummary:
+        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+    })
+  }
+
   /** Winston error log plus Slack error webhook (same payload shape as before). */
   private logPoliceFailureAndNotify(
     slackTitle: string,
@@ -342,14 +357,12 @@ export class PoliceService {
     info: { [key: string]: string | boolean | Date | undefined },
     reason: unknown,
   ): void {
-    const errorForSlack = this.reasonToError(reason)
-    this.logger.error(logMessage, {
-      ...info,
-      error: reason instanceof Error ? reason : undefined,
-      errorSummary:
-        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
-    })
-    void this.eventService.postErrorEvent(slackTitle, info, errorForSlack)
+    this.logPoliceFailure(logMessage, info, reason)
+    void this.eventService.postErrorEvent(
+      slackTitle,
+      info,
+      this.reasonToError(reason),
+    )
   }
 
   private async throttleUploadPoliceCaseFile(
@@ -787,7 +800,10 @@ export class PoliceService {
       this.getRVMalseiningarResponseSchema.parse(responseJson)
     const caseUnits = await Promise.all(
       parsedCaseUnits.map(async (unit) => {
-        const subtype = await this.getSubtypeByArticle(unit.artalNrGreinLidur)
+        const subtype = await this.getSubtypeByArticle(
+          unit.artalNrGreinLidur,
+          unit.nanar,
+        )
         const key = Object.keys(IndictmentCaseSubtypes).find(
           (k) =>
             IndictmentCaseSubtypes[k as keyof typeof IndictmentCaseSubtypes] ===
@@ -1291,8 +1307,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create external police document file',
+      // Winston only - VerdictService.deliverVerdictToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
         {
           caseId,
@@ -1457,8 +1475,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create subpoena',
+      // Winston only - SubpoenaService.deliverSubpoenaToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `Failed create subpoena for case ${theCase.id}`,
         {
           caseId: theCase.id,
@@ -1516,9 +1536,11 @@ export class PoliceService {
 
   getSubtypeByArticle(
     article?: string | null,
+    details?: string | null,
   ): Promise<IndictmentSubtype | null> {
-    return this.indictmentSubtypeModel.findOne({
-      where: { article },
-    })
+    return this.indictmentSubtypeRepositoryService.findByArticle(
+      article,
+      details,
+    )
   }
 }

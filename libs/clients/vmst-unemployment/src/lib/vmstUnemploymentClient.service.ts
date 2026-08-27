@@ -17,19 +17,17 @@ import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
   GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
+  GaldurXRoadAPIModelsActivationGrantApplicationOverviewResponse,
   GaldurXRoadAPIModelsApplicationApplicationOverviewItem,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
-  ApplicantInfoApi,
   GaldurXRoadAPIModelsApplicantInfoResponse,
   GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
-  UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
   GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
   GaldurExternalDomainModelsAttachmentAttachmentDTO,
-  GaldurExternalDomainModelsAttachmentAttachmentListItem,
   GaldurXRoadAPIModelsAvailableActions,
   ApplicantUpdateApplicantRequest,
   ApplicantGetApplicantInfoRequest,
@@ -37,8 +35,13 @@ import {
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   ApplicantCreateApplicantRequestedAttachmentRequest,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
-  GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
+  GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
+  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
+  JobSearchConfirmationApi,
+  GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
+  ApplicantWithdrawLatestApplicationRequest,
+  GaldurExternalDomainRequestsHasValidApplicationResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -58,10 +61,10 @@ type VmstApis =
   | UnemploymentApplicationApi
   | ActivationGrantApi
   | AttachmentApi
-  | ApplicantInfoApi
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+  | JobSearchConfirmationApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -207,7 +210,7 @@ export class VmstUnemploymentClientService {
     )
   }
 
-  async canUserWithdrawUnemploymentApplication(
+  async canUserWithdrawBenefitsApplication(
     applicantId: string,
   ): Promise<GaldurExternalDomainRequestsWithdrawOverviewResponse> {
     const api = await this.createApiClient(
@@ -215,7 +218,7 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
 
-    return await api.applicantGetUnemploymentApplicationsWithdrawOverview({
+    return await api.applicantGetWithdrawOverview({
       id: applicantId,
     })
   }
@@ -231,17 +234,15 @@ export class VmstUnemploymentClientService {
     return await api.supportDataGetDelistingReasons()
   }
 
-  async withdrawUnemploymentApplication(
-    requestParameter: UnemploymentApplicationWithdrawApplicationRequest,
+  async withdrawBenefitsApplication(
+    requestParameter: ApplicantWithdrawLatestApplicationRequest,
   ): Promise<GaldurDomainModelsBaseViewModel> {
     const api = await this.createApiClient(
-      UnemploymentApplicationApi,
+      ApplicantApi,
       'clients-vmst-unemployment',
     )
 
-    return await api.unemploymentApplicationWithdrawApplication(
-      requestParameter,
-    )
+    return await api.applicantWithdrawLatestApplication(requestParameter)
   }
 
   async validateVacationInfoUnemploymentApplication(
@@ -279,6 +280,38 @@ export class VmstUnemploymentClientService {
       await api.unemploymentApplicationGetLatestUnemploymentApplicationOverview(
         { ssn: auth.nationalId, language: lang },
       )
+
+    return {
+      ...response,
+      applicationStatus: resolveApplicationStatus(response.applicationStatusId),
+    }
+  }
+
+  /*
+    Fetches activation grant application information for the overview page on My Pages island.is
+  */
+  async getActivationGrantApplicationOverview(
+    auth: User,
+    language?: Locale,
+  ): Promise<
+    GaldurXRoadAPIModelsActivationGrantApplicationOverviewResponse & {
+      applicationStatus: VmstApplicationStatus
+    }
+  > {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    const lang = language ? language.toUpperCase() : null
+
+    const response =
+      await api.applicantGetLatestActivationGrantApplicationOverview({
+        id: applicantId,
+        language: lang,
+      })
 
     return {
       ...response,
@@ -400,7 +433,7 @@ export class VmstUnemploymentClientService {
 
   async getApplicantAttachments(
     applicantId: string,
-  ): Promise<Array<GaldurExternalDomainModelsAttachmentAttachmentListItem>> {
+  ): Promise<GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse> {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
@@ -471,7 +504,7 @@ export class VmstUnemploymentClientService {
   }
 
   async checkCreateAttachmentEligibility(auth: User): Promise<
-    GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse & {
+    GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse & {
       applicantId: string
     }
   > {
@@ -565,5 +598,32 @@ export class VmstUnemploymentClientService {
       id: attachmentId,
       includeData: true,
     })
+  }
+
+  async getEditProfileEligibility(
+    auth: User,
+  ): Promise<GaldurExternalDomainRequestsHasValidApplicationResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.applicantGetProfileEligibility({
+      id: applicantId,
+    })
+  }
+
+  async getQuestionnaire(): Promise<GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse> {
+    const api = await this.createApiClient(
+      JobSearchConfirmationApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.jobSearchConfirmationGetQuestionaireSchema()
   }
 }

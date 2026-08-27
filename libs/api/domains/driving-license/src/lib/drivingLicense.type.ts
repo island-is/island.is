@@ -31,6 +31,11 @@ export interface NewDrivingLicenseInput {
   needsToPresentQualityPhoto: boolean
   licenseCategory: DrivingLicenseCategory
   sendLicenseInMail: number
+  // Biometric photo/signature references from Þjóðskrá temporary storage,
+  // used by the redesigned B-full photo selector. Omitted when the redesign
+  // flag is off, keeping the RLS request byte-identical to the legacy flow.
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
 }
 
 export interface NewTemporaryDrivingLicenseInput {
@@ -125,6 +130,12 @@ export interface ApplicationEligibilityRequirement {
   key: RequirementKey
   requirementMet: boolean
   daysOfResidency?: number
+  // Raw RLS error code (when the unmet requirement came from a can-apply denial)
+  errorCode?: string
+  // RLS's own human-readable description for that code, both languages; the
+  // frontend renders the one matching the current locale.
+  messageIs?: string
+  messageEn?: string
 }
 
 export interface ApplicationEligibility {

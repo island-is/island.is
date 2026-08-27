@@ -1,9 +1,10 @@
-import { Box, Icon, Option, Select, Text } from '@island.is/island-ui/core'
+import type { Option } from '@island.is/island-ui/core'
+import { Box, Icon, Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import ContextMenuCard from '@island.is/judicial-system-web/src/components/Cards/ContextMenuCard/ContextMenuCard'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Defendant,
   PunishmentType,
   ServiceRequirement,
   VerdictAppealDecision,
@@ -88,6 +89,7 @@ export const DefendantPrisonAdminCard = ({
             )}
           </Box>
         }
+        menuLabel={`Valmynd fyrir ${defendant.name}`}
         contextMenuItems={[
           isRegistered
             ? {

@@ -1,5 +1,3 @@
-import addDays from 'date-fns/addDays'
-
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -229,20 +227,11 @@ export enum RequestCaseState {
   DELETED = CaseState.DELETED,
 }
 
-export enum AppealCaseState {
-  APPEALED = 'APPEALED',
-  RECEIVED = 'RECEIVED',
-  COMPLETED = 'COMPLETED',
-  WITHDRAWN = 'WITHDRAWN',
-}
-
 export enum CaseTransition {
   ACCEPT = 'ACCEPT',
-  APPEAL = 'APPEAL',
   ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   COMPLETE = 'COMPLETE',
-  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   CORRECT = 'CORRECT',
   DELETE = 'DELETE',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
@@ -250,47 +239,34 @@ export enum CaseTransition {
   MOVE = 'MOVE',
   OPEN = 'OPEN',
   RECEIVE = 'RECEIVE',
-  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   REJECT = 'REJECT',
   REOPEN = 'REOPEN',
-  REOPEN_APPEAL = 'REOPEN_APPEAL',
   SUBMIT = 'SUBMIT',
-  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
 
 export enum IndictmentCaseTransition {
-  APPEAL = CaseTransition.APPEAL,
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
   ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
   COMPLETE = CaseTransition.COMPLETE,
-  COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
   CORRECT = CaseTransition.CORRECT,
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
   MOVE = CaseTransition.MOVE,
   RECEIVE = CaseTransition.RECEIVE,
-  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   REOPEN = CaseTransition.REOPEN,
-  REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
   SUBMIT = CaseTransition.SUBMIT,
-  WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
 export enum RequestCaseTransition {
   ACCEPT = CaseTransition.ACCEPT,
-  APPEAL = CaseTransition.APPEAL,
-  COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
   DELETE = CaseTransition.DELETE,
   DISMISS = CaseTransition.DISMISS,
   MOVE = CaseTransition.MOVE,
   OPEN = CaseTransition.OPEN,
   RECEIVE = CaseTransition.RECEIVE,
-  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   REJECT = CaseTransition.REJECT,
   REOPEN = CaseTransition.REOPEN,
-  REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
   SUBMIT = CaseTransition.SUBMIT,
-  WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -316,13 +292,6 @@ export enum CaseCustodyRestrictions {
   WORKBAN = 'WORKBAN',
 }
 
-export enum CaseAppealDecision {
-  APPEAL = 'APPEAL',
-  ACCEPT = 'ACCEPT',
-  POSTPONE = 'POSTPONE',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-}
-
 export enum CaseDecision {
   ACCEPTING = 'ACCEPTING',
   REJECTING = 'REJECTING',
@@ -339,17 +308,6 @@ export enum IndictmentDecision {
   SCHEDULING = 'SCHEDULING',
   SPLITTING = 'SPLITTING',
   COMPLETING_FOR_SOME = 'COMPLETING_FOR_SOME',
-}
-
-export enum AppealCaseRulingDecision {
-  ACCEPTING = 'ACCEPTING',
-  REPEAL = 'REPEAL',
-  CHANGED = 'CHANGED',
-  CHANGED_SIGNIFICANTLY = 'CHANGED_SIGNIFICANTLY',
-  DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
-  DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
-  REMAND = 'REMAND',
-  DISCONTINUED = 'DISCONTINUED',
 }
 
 export enum CaseIndictmentRulingDecision {
@@ -505,10 +463,6 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
   )
 }
 
-export const getStatementDeadline = (appealReceived: Date): Date => {
-  return addDays(appealReceived, 1)
-}
-
 export const isIndictmentCaseState = (
   state: string,
 ): state is IndictmentCaseState => {
@@ -537,11 +491,4 @@ export const isRequestCaseTransition = (
   return Object.values(RequestCaseTransition).includes(
     transition as RequestCaseTransition,
   )
-}
-
-export enum AppealCaseTransition {
-  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
-  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
-  REOPEN_APPEAL = 'REOPEN_APPEAL',
-  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }

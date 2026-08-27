@@ -73,6 +73,40 @@ export class DrivingLicenseApi {
       name: c.heiti ?? '',
     }))
   }
+
+  // Static, shared reference data (no jwttoken / national ID), so the full
+  // catalogue is memoised once per instance. Empty and failed responses are not
+  // cached, so a transient blip retries on the next call rather than disabling
+  // descriptions on this pod until restart.
+  private errorCodeDescriptionsCache?: Promise<v5.DtoErrorCodeDescriptionDto[]>
+
+  public async getErrorCodeDescriptions(): Promise<
+    v5.DtoErrorCodeDescriptionDto[]
+  > {
+    if (!this.errorCodeDescriptionsCache) {
+      this.errorCodeDescriptionsCache = this.v5CodeTable
+        .apiCodetablesErrorCodesGet({
+          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        })
+        .then((codeTable) => {
+          // A null/empty body (mirrors the guard in getRemarksCodeTable) is
+          // almost certainly a transient blip rather than RLS having zero
+          // codes, so don't memoise it — clear the cache and retry next call.
+          if (!codeTable || codeTable.length === 0) {
+            this.errorCodeDescriptionsCache = undefined
+            return []
+          }
+          return codeTable
+        })
+        .catch((e) => {
+          this.errorCodeDescriptionsCache = undefined
+          throw e
+        })
+    }
+    return this.errorCodeDescriptionsCache
+  }
+
   public async getCurrentLicenseV5(input: {
     nationalId: string
     token?: string
@@ -488,6 +522,8 @@ export class DrivingLicenseApi {
     sendLicenseInMail: number
     sendLicenseToAddress: string
     category: string
+    photoBiometricsId?: string | null
+    signatureBiometricsId?: string | null
   }): Promise<boolean> {
     const response =
       await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost({
@@ -503,6 +539,8 @@ export class DrivingLicenseApi {
           bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
           sendLicenseInMail: params.sendLicenseInMail,
           sendToAddress: params.sendLicenseToAddress,
+          photoBiometricsId: params.photoBiometricsId,
+          signatureBiometricsId: params.signatureBiometricsId,
         },
       })
 

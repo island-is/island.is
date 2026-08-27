@@ -1,10 +1,15 @@
 import React, { FC, useMemo } from 'react'
 
-import { formatText, formatTextWithLocale } from '@island.is/application/core'
+import {
+  formatText,
+  formatTextWithLocale,
+  resolveFieldId,
+} from '@island.is/application/core'
 import { SubmitField, FieldBaseProps } from '@island.is/application/types'
 import { Text, Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
@@ -25,6 +30,8 @@ export const SubmitFormField: FC<React.PropsWithChildren<Props>> = ({
     marginBottom,
   } = field
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
+  const resolvedId = resolveFieldId({ id }, application, user)
   const actionsAsOptions = useMemo(() => {
     return actions.map((a) => {
       return {
@@ -57,7 +64,11 @@ export const SubmitFormField: FC<React.PropsWithChildren<Props>> = ({
         )}
       </Text>
       <Box paddingTop={1}>
-        <RadioController id={id} options={actionsAsOptions} error={error} />
+        <RadioController
+          id={resolvedId}
+          options={actionsAsOptions}
+          error={error}
+        />
       </Box>
     </Box>
   )

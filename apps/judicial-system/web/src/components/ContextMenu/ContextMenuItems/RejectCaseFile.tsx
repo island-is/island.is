@@ -1,11 +1,9 @@
 import { useState } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import {
-  ContextMenuItem,
-  Modal,
-} from '@island.is/judicial-system-web/src/components'
-import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
+import { Modal } from '@island.is/judicial-system-web/src/components'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useRejectFileMutation } from './rejectCaseFile.generated'
 
@@ -62,16 +60,19 @@ export const useRejectCaseFile = (onComplete: (caseFile: CaseFile) => void) => {
     <Modal
       title="Eyða skjali"
       text="Ertu viss um að þú viljir eyða þessu skjali?"
-      primaryButton={{
-        text: 'Eyða',
-        onClick: handlePrimaryButtonClick,
-        colorScheme: 'destructive',
-        isLoading: isRejectingFile,
-      }}
-      secondaryButton={{
-        text: 'Hætta við',
-        onClick: handleSecondaryButtonClick,
-      }}
+      buttons={[
+        {
+          text: 'Hætta við',
+          onClick: handleSecondaryButtonClick,
+          variant: 'ghost',
+        },
+        {
+          text: 'Eyða',
+          onClick: handlePrimaryButtonClick,
+          colorScheme: 'destructive',
+          isLoading: isRejectingFile,
+        },
+      ]}
     />
   )
 

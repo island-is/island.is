@@ -35,6 +35,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
+import { AppealDecision } from './appealDecision.model'
 import { CaseDefendantPoliceCaseNumber } from './caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
@@ -544,58 +545,6 @@ export class Case extends Model {
   endOfSessionBookings?: string
 
   /**********
-   * The accused's appeal decision - example: APPEAL
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(CaseAppealDecision),
-  })
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  accusedAppealDecision?: CaseAppealDecision
-
-  /**********
-   * The accused's appeal announcement - only used if the accused appeals in court
-   **********/
-  @Column({ type: DataType.TEXT, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  accusedAppealAnnouncement?: string
-
-  /**********
-   * The prosecutor's appeal decision - example: POSTPONE
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(CaseAppealDecision),
-  })
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  prosecutorAppealDecision?: CaseAppealDecision
-
-  /**********
-   * The prosecutor's appeal announcement - only used if the prosecutor appeals in court
-   **********/
-  @Column({ type: DataType.TEXT, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  prosecutorAppealAnnouncement?: string
-
-  /**********
-   * The date and time of the accused's postponed appeal - only used if the accused postponed
-   * her appeal decision and later appealed within the allowed time frame
-   **********/
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  accusedPostponedAppealDate?: Date
-
-  /**********
-   * The date and time of the prosecutor's postponed appeal - only used if the prosecutor
-   * postponed his appeal decision and later appealed within the allowed time frame
-   **********/
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  prosecutorPostponedAppealDate?: Date
-
-  /**********
    * The date and time of the judge's ruling (when the case is completed)
    **********/
   @Column({ type: DataType.DATE, allowNull: true })
@@ -1028,4 +977,12 @@ export class Case extends Model {
   })
   @ApiPropertyOptional({ type: () => AppealCase, isArray: true })
   rulingOrderAppealCases?: AppealCase[]
+
+  /**********
+   * Per-party appeal decisions (Ákvörðun um kæru) - one row per party per
+   * appealable ruling
+   **********/
+  @HasMany(() => AppealDecision, 'caseId')
+  @ApiPropertyOptional({ type: () => AppealDecision, isArray: true })
+  appealDecisions?: AppealDecision[]
 }

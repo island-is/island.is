@@ -6,14 +6,12 @@ import isEqual from 'date-fns/isEqual'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
-  AppealCaseNotificationType,
   CaseState,
   CaseType,
   DataGroups,
@@ -29,6 +27,7 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import {
   AppealCase,
+  AppealEventLog,
   Case,
   CaseRepositoryService,
   DateLog,
@@ -37,7 +36,7 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
-  Notification,
+  InstitutionRepositoryService,
   Offense,
   Subpoena,
   SubpoenaRepositoryService,
@@ -119,8 +118,7 @@ export const partition = <T>(
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectModel(Institution)
-    private readonly institutionModel: typeof Institution,
+    private readonly institutionRepositoryService: InstitutionRepositoryService,
     private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly awsS3Service: AwsS3Service,
@@ -371,17 +369,18 @@ export class StatisticsService {
           separate: true,
         },
         {
-          model: Notification,
-          as: 'notifications',
-          required: false,
-          where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-        {
           model: AppealCase,
           as: 'appealCase',
           required: false,
+          include: [
+            {
+              model: AppealEventLog,
+              as: 'appealEventLogs',
+              required: false,
+              attributes: ['eventType', 'userRole'],
+              separate: true,
+            },
+          ],
         },
       ],
     })
@@ -473,15 +472,10 @@ export class StatisticsService {
 
     // get institutions that are not linked directly to a case but
     // are known to handle certain events
-    const institutions = await this.institutionModel.findAll({
-      where: {
-        active: true,
-        type: [
-          InstitutionType.PRISON_ADMIN,
-          InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-        ],
-      },
-    })
+    const institutions = await this.institutionRepositoryService.findAllActive([
+      InstitutionType.PRISON_ADMIN,
+      InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+    ])
 
     // create events for data analytics for each case
     if (!period) return []
@@ -554,6 +548,7 @@ export class StatisticsService {
               key: 'parentCaseId',
               header: 'Upprunalegt mál',
             },
+            { key: 'isIsolation', header: 'Einangrun' },
           ] as Column[],
           key: `krofur_from_${getDateString(
             period?.fromDate,

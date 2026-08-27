@@ -11,6 +11,7 @@ const fieldMappings = {
     postalCode: 51015920921755,
     phoneNumber: 51016234676763,
     municipality: 51015942835227,
+    subject: 51470027594267,
   },
   heilsa: {
     name: 51216152741531,
@@ -20,6 +21,7 @@ const fieldMappings = {
     postalCode: 51216189258139,
     phoneNumber: 51216190788891,
     municipality: 51216236329371,
+    subject: 51469962354843,
   },
   digitaliceland: {
     name: 29423576358418,
@@ -29,6 +31,7 @@ const fieldMappings = {
     postalCode: 15524096374162,
     phoneNumber: 15359010264850,
     municipality: 35764490214930,
+    subject: 36266941221778,
   },
   digitaliceland1715002531: {
     name: 36033208873618,
@@ -38,6 +41,7 @@ const fieldMappings = {
     postalCode: 36033229111442,
     phoneNumber: 36033299365010,
     municipality: 36033312019346,
+    subject: 123,
   },
 } as const
 
@@ -49,6 +53,7 @@ type Input = {
   postalCode?: string | null
   phoneNumber?: string | null
   municipality?: string | null
+  subject?: string | null
 }
 
 export const mapToCustomFields = (

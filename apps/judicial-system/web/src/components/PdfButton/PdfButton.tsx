@@ -1,10 +1,13 @@
-import { ComponentProps, FC, PropsWithChildren, useContext } from 'react'
+import type { ComponentProps, FC, PropsWithChildren } from 'react'
+import { useContext } from 'react'
 import cn from 'classnames'
 
-import { Box, Button, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text, Tooltip } from '@island.is/island-ui/core'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { api } from '@island.is/judicial-system-web/src/services'
+import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PdfButton.css'
 
 interface Props {
@@ -14,6 +17,7 @@ interface Props {
   subtitle?: string | null
   subtitleIcon?: IconMapIcon
   subtitleIconColor?: ComponentProps<typeof Icon>['color']
+  subtitleIconTooltip?: string
   pdfType?:
     | 'ruling'
     | 'caseFilesRecord'
@@ -42,6 +46,7 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   subtitle,
   subtitleIcon,
   subtitleIconColor,
+  subtitleIconTooltip,
   pdfType,
   disabled,
   renderAs = 'button',
@@ -67,6 +72,20 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
     window.open(url, '_blank')
   }
 
+  const handleRowClick = () => {
+    if (disabled) {
+      return
+    }
+
+    if (handleClick) {
+      return handleClick()
+    }
+
+    if (pdfType) {
+      return handlePdfClick()
+    }
+  }
+
   return renderAs === 'button' ? (
     <Button
       data-testid={`${pdfType || ''}PDFButton`}
@@ -85,19 +104,12 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
       className={`${styles.pdfRow} ${
         disabled ? styles.disabled : styles.cursor
       }`}
-      onClick={() => {
-        if (disabled) {
-          return
-        }
-
-        if (handleClick) {
-          return handleClick()
-        }
-
-        if (pdfType) {
-          return handlePdfClick()
-        }
-      }}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
+      aria-label={title ?? undefined}
+      onClick={handleRowClick}
+      onKeyDown={onEnterOrSpace(handleRowClick)}
     >
       <Box className={styles.pdfRowMain}>
         <span
@@ -109,13 +121,20 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
             {title}
           </Text>
         </span>
-        {children}
+        {children && <Box className={styles.childrenContainer}>{children}</Box>}
       </Box>
       {subtitle && (
         <Box marginTop={1} display="flex" alignItems="center" columnGap={1}>
-          {subtitleIcon && (
-            <Icon icon={subtitleIcon} color={subtitleIconColor} />
-          )}
+          {subtitleIcon &&
+            (subtitleIconTooltip ? (
+              <Tooltip text={subtitleIconTooltip} placement="top">
+                <span>
+                  <Icon icon={subtitleIcon} color={subtitleIconColor} />
+                </span>
+              </Tooltip>
+            ) : (
+              <Icon icon={subtitleIcon} color={subtitleIconColor} />
+            ))}
           <Text variant="small" color="dark400">
             {subtitle}
           </Text>

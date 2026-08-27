@@ -358,7 +358,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const { format } = useDateUtils()
-  const portalRef = useRef()
+  const portalRef = useRef(undefined)
   const processEntryRef = useRef(null)
   const [mounted, setMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
@@ -378,6 +378,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const subArticle = article?.subArticles.find((sub) => {
     return sub.slug.split('/').pop() === query.subSlug
   })
+
+  // On a sub article (Baby Article) page, prefer the sub article's own "last
+  // reviewed" date when it has one; otherwise fall back to the main article's
+  // date so existing parent-level dates keep rendering (no regression).
+  const reviewedContent =
+    subArticle?.showDateOfTheMostRecentReview && subArticle.contentLastReviewed
+      ? subArticle
+      : article
 
   useContentfulId(article?.id ?? '', subArticle?.id)
 
@@ -564,15 +572,15 @@ const ArticleScreen: Screen<ArticleProps> = ({
             activeLocale,
           )}
           <AppendedArticleComponents article={article} />
-          {article?.showDateOfTheMostRecentReview &&
-            article?.contentLastReviewed && (
+          {reviewedContent?.showDateOfTheMostRecentReview &&
+            reviewedContent?.contentLastReviewed && (
               <Box paddingTop={2}>
                 <Text variant="small">
                   {`${n(
                     'contentLastReviewedLabel',
                     activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
                   )}: ${format(
-                    new Date(article.contentLastReviewed),
+                    new Date(reviewedContent.contentLastReviewed),
                     'do MMMM yyyy',
                   )}`}
                 </Text>

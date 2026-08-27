@@ -75,6 +75,37 @@ export class InternalDefendantController {
     )
   }
 
+  @UseGuards(
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    DefendantExistsGuard,
+  )
+  @Post(
+    `${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT]
+    }/:defendantId`,
+  )
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Delivers a request case defendant to court via robot email',
+  })
+  deliverRequestDefendantToCourt(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering defendant ${defendantId} of request case ${caseId} to court`,
+    )
+
+    return this.defendantService.deliverRequestDefendantToCourt(
+      theCase,
+      defendant,
+      deliverDto.user,
+    )
+  }
+
   @UseGuards(new CaseTypeGuard(indictmentCases), DefendantNationalIdExistsGuard)
   @Patch('defense/:defendantNationalId')
   @ApiOkResponse({
@@ -103,14 +134,14 @@ export class InternalDefendantController {
   @UseGuards(new CaseTypeGuard(indictmentCases), DefendantExistsGuard)
   @Post(
     `${
-      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER]
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT]
     }/:defendantId`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers indictment case defender info to court',
+    description: 'Delivers indictment case defendant info to court',
   })
-  deliverIndictmentDefenderToCourt(
+  deliverIndictmentDefendantToCourt(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @CurrentCase() theCase: Case,
@@ -118,10 +149,10 @@ export class InternalDefendantController {
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering defender info for defendant ${defendantId} of case ${caseId} to court`,
+      `Delivering defendant info for defendant ${defendantId} of case ${caseId} to court`,
     )
 
-    return this.defendantService.deliverIndictmentDefenderToCourt(
+    return this.defendantService.deliverIndictmentDefendantToCourt(
       theCase,
       defendant,
       deliverDto.user,

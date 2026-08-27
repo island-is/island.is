@@ -168,15 +168,15 @@ export const en: TranslatedMessages = {
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {Married}
+    MARRIED {Married or registered partnership}
     UNMARRIED {Unmarried}
     WIDOWED {Widowed}
     SEPARATED {Separated}
     DIVORCED {Divorced}
-    MARRIED_LIVING_SEPARATELY {Married}
-    MARRIED_TO_FOREIGN_LAW_PERSON {Married}
-    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
-    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
+    MARRIED_LIVING_SEPARATELY {Married, living separately}
+    MARRIED_TO_FOREIGN_LAW_PERSON {Icelandic citizen married to a foreign citizen that does not fulfil registration requirements}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Icelandic citizen with legal residence in foreign country; married to a non-registered foreign citizen}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Icelandic citizen with legal residence in Iceland; relations with a foreigner not on record}
     other {Unknown}
   }`,
   'user.natreg.citizenship': 'Citizenship',
@@ -269,6 +269,15 @@ export const en: TranslatedMessages = {
   'documentDetail.errorUnknown': 'Error occurred while loading document',
   'documentDetail.buttonReply': 'Reply',
   'documentDetail.buttonCommunications': 'Communications',
+  'documentDetail.archiveSuccess': 'Document archived',
+  'documentDetail.unarchiveSuccess': 'Document unarchived',
+  'documentDetail.bookmarkSuccess': 'Document starred',
+  'documentDetail.unbookmarkSuccess': 'Star removed',
+  'documentDetail.archiveError': 'Could not archive document',
+  'documentDetail.unarchiveError': 'Could not unarchive document',
+  'documentDetail.bookmarkError': 'Could not star document',
+  'documentDetail.unbookmarkError': 'Could not unstar document',
+  'documentDetail.pleaseTryAgain': 'Please try again later',
 
   // document reply
   'documentReply.to': 'To',
@@ -277,9 +286,12 @@ export const en: TranslatedMessages = {
   'documentReply.messagePlaceholder': 'Write message here',
   'documentReply.uploadAttachment': 'Upload document',
   'documentReply.sendMessage': 'Send message',
+  'documentReply.sendMessageError': 'Could not send reply',
+  'documentReply.pleaseTryAgain': 'Please try again later',
 
   // document communications
   'documentCommunications.caseNumber': 'Case number',
+  'documentCommunications.copyCaseNumber': 'Copy case number',
   'documentCommunications.initialReply':
     'The message has been received and a case has been created. You can continue the conversation here or via your personal email {email}.',
   'documentCommunications.cannotReply':
@@ -791,6 +803,8 @@ export const en: TranslatedMessages = {
   'health.questionnaires.action.answer': 'Answer questionnaire',
   'health.questionnaires.action.continue-draft': 'Continue',
   'health.questionnaires.action.view-answer': 'View answers',
+  'health.questionnaires.action.show-expired': 'Show expired',
+  'health.questionnaires.action.hide-expired': 'Hide expired',
   'health.questionnaires.detail.description':
     'Here you can find your answers to questionnaires. You can compare your answers.',
   'health.questionnaires.detail.status': 'Status',
@@ -820,18 +834,23 @@ export const en: TranslatedMessages = {
   'health.appointments.title': 'Appointments',
   'health.appointments.description':
     'Here you can see your appointments in the healthcare system.',
-  'health.appointments.detailTitle': 'Healthcare appointment',
-  'health.appointments.dateAndTime': 'Date and time',
-  'health.appointments.duration': 'Duration',
-  'health.appointments.location': 'Location',
-  'health.appointments.address': 'Address',
   'health.appointments.practitioners': 'Appointment with: {practitioner}',
   'health.appointments.appointmentWith': 'Appointment with',
-  'health.appointments.atTime': 'at {time}',
-  'health.appointments.timePrefix': 'at',
   'health.appointments.instructions': 'Instructions',
   'health.appointments.openMap': 'Open map',
-  'health.appointments.type': 'Type',
+  'health.appointments.locationInstructions': 'More about location',
+  'health.appointments.seeMore': 'See more',
+  'health.appointments.openingHours': 'Opening hours',
+  'health.appointments.phoneNumber': 'Phone number',
+  'health.appointments.organization': 'Organization',
+  'health.appointments.videoCall': 'Video call',
+  'health.appointments.videoCallInfoWithLink':
+    'The video call button becomes active 5 minutes before the booked time.',
+  'health.appointments.videoCallInfoWithLinkActive':
+    'Tap the button to start the video call.',
+  'health.appointments.videoCallInfoNoLink':
+    'This appointment includes a video call. You will receive a link to the video call shortly before the booked time. If no link is found, please contact the relevant institution.',
+  'health.appointments.startVideoCall': 'Start video call',
   'health.appointments.noAppointmentsTitle': 'No appointments',
   'health.appointments.noAppointmentsText':
     'You do not have any upcoming appointments.',
@@ -840,6 +859,80 @@ export const en: TranslatedMessages = {
   'health.appointments.notFoundMessage':
     'Appointment not found. It may have been cancelled.',
   'health.appointments.minutesFormat': '{minutes} minutes',
+  'health.appointments.moreInfo': 'More information',
+
+  // health - messages
+  'health.messages.screenTitle': 'Messages',
+  'health.messages.errorMessage':
+    'Failed to fetch messages. Please try again later.',
+  'health.messages.noMessagesTitle': 'No messages',
+  'health.messages.noMessagesText':
+    'When you receive messages, they will appear here.',
+  'health.messages.searchPlaceholder': 'Search',
+  'health.messages.filter.screenTitle': 'Filter messages',
+  'health.messages.replyButton': 'Reply to message',
+  'health.messages.archiveSuccess': 'Message archived',
+  'health.messages.unarchiveSuccess': 'Message removed from archive',
+  'health.messages.archiveError': 'Could not archive the message',
+  'health.messages.unarchiveError': 'Could not remove the message from archive',
+  'health.messages.starSuccess': 'Message starred',
+  'health.messages.unstarSuccess': 'Star removed',
+  'health.messages.starError': 'Could not star the message',
+  'health.messages.unstarError': 'Could not remove the star',
+  'health.messages.videoCall': 'Video call',
+  'health.messages.videoCallCanceled': 'Canceled',
+  'health.messages.startVideoCall': 'Start video call',
+  'health.messages.replyBlocked.default':
+    "You can't reply to this conversation.",
+  'health.messages.replyBlocked.repliesDisabled':
+    "You can't reply to this conversation because the sender has closed further replies in it.",
+  'health.messages.replyBlocked.outsideWindow':
+    "You can't reply to messages outside opening hours.",
+  'health.messages.replyBlocked.windowExpired':
+    "You can't reply to this conversation because the reply window has passed.",
+  'health.messages.replyBlocked.awaitingStaff':
+    "You can't reply to this conversation until staff have responded to you.",
+  'health.messages.compose.newTitle': 'New message',
+  'health.messages.compose.selectRecipient': 'Select recipient',
+  'health.messages.compose.selectService': 'Select service',
+  'health.messages.compose.selectServicePlaceholder':
+    'Select a service from the dropdown',
+  'health.messages.compose.to': 'To: {name}',
+  'health.messages.compose.messageLabel': 'Message',
+  'health.messages.compose.messagePlaceholder': 'Write your message here',
+  'health.messages.compose.termsAccept': 'I accept the',
+  'health.messages.compose.termsLink': 'terms',
+  'health.messages.compose.termsTitle': 'Terms for messages',
+  'health.messages.compose.termsBody':
+    '- Messages are answered during opening hours, usually within three business days\n- Messages and replies are automatically saved to your medical record\n- The type of message determines who answers your inquiry\n- A healthcare professional will have access to your medical record to answer your inquiry',
+  'health.messages.compose.availabilityWindow':
+    '{name} accepts messages every day from {openTime} to {closeTime}.',
+  'health.messages.compose.availabilityInfo':
+    'Replies are usually within 3 business days. If your matter is urgent and you need a reply the same day, call 1700. In an emergency, call 112 immediately.',
+  'health.messages.compose.closedTitle': 'Closed for new messages right now',
+  'health.messages.compose.notAllowedTitle': 'Cannot send messages',
+  'health.messages.compose.notAllowedText':
+    'This service provider does not offer messaging on Ísland.is.',
+  'health.messages.compose.soleBlockedTitle':
+    'Your health clinic is not open for messages',
+  'health.messages.compose.soleBlockedText':
+    '{name} does not offer a messaging service through Ísland.is',
+  'health.messages.compose.closingSoonTitle': 'Note: messaging is closing soon',
+  'health.messages.compose.send': 'Send message',
+  'health.messages.compose.sendError':
+    'Failed to send message. Please try again later.',
+  'health.messages.compose.noRecipient':
+    'It is not possible to send messages at the moment',
+  'health.messages.compose.certificateTitle':
+    'Certificates cannot be requested in the app',
+  'health.messages.compose.certificateText':
+    'It is currently not possible to request certificates through the Ísland.is app. Please request certificates through Ísland.is My Pages.',
+  'health.messages.compose.certificateLink': 'Request a certificate',
+  'health.messages.attachmentError':
+    'Failed to download the document. Please try again later.',
+  'health.messages.sentTitle': 'Message received',
+  'health.messages.sentText':
+    'We reply during office hours, usually within three working days. If your inquiry is urgent and needs an answer today, call 1700. In case of an emergency, call 112 immediately.',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',
@@ -956,7 +1049,57 @@ export const en: TranslatedMessages = {
   'health.prescriptions.type': 'Type',
   'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Prescribed amount',
-  'health.prescriptions.dosageInstructions': 'Dosage instructions',
+  'health.prescriptions.dosageInstructions': 'Usage',
+  'health.prescriptions.attachment': 'Attachment {arg}',
+  'health.prescriptions.openAttachment': 'Open attachment {arg}',
+  'health.prescriptions.attachmentError':
+    'An error occurred while fetching the document',
+  'health.prescriptions.renewal': 'Renewal',
+  'health.prescriptions.renew': 'Renew',
+  'health.prescriptions.renewalPossible': 'Can be renewed',
+  'health.prescriptions.renewalValid': 'Valid prescription',
+  'health.prescriptions.renewalNotAvailable': 'Renewal not available',
+  'health.prescriptions.renewalBlockedIsRegiment':
+    'Medical treatment courses cannot be renewed here',
+  'health.prescriptions.renewalBlockedNoMedCard': 'No drug card registered',
+  'health.prescriptions.renewalBlockedNoHealthClinic':
+    'No registered health clinic',
+  'health.prescriptions.renewalBlockedNotFullyDispensed':
+    'Renewal is not available because the previous prescription has not been fully dispensed',
+  'health.prescriptions.renewalBlockedPendingRequest':
+    'Renewal request pending',
+  'health.prescriptions.renewalBlockedRejectedRequest':
+    'Prescription renewal request denied',
+  'health.prescriptions.renewalBlockedDismissedRequest':
+    'Renewal request dismissed',
+  'health.prescriptions.renewalBlockedAlreadyRequested':
+    'Renewal request is already in process',
+  'health.prescriptions.renewalBlockedMoreRecentExists':
+    'Renewal is not available because a more recent active prescription was found',
+  'health.prescriptions.renewalBlockedSpecialistOnly':
+    'Renewal is not available because this is a specialist only prescription',
+  'health.prescriptions.renewalBlockedNoRenewalTargets':
+    'Renewal not available',
+  'health.prescriptions.renewalBlockedInvalidRenewalTarget':
+    'Renewal not available',
+  'health.prescriptions.renewalBlockedRecipientExcludesAtc':
+    'Renewal not available',
+  'health.prescriptions.renewalBlockedOther': 'Unknown reason',
+  'health.prescriptions.renewalModal.title': 'Prescription renewal request',
+  'health.prescriptions.renewalModal.description':
+    'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112.',
+  'health.prescriptions.renewalModal.selectRecipient': 'Send to',
+  'health.prescriptions.renewalModal.medicineInformation':
+    'Medicine information',
+  'health.prescriptions.renewalModal.medicineName': 'Medication name',
+  'health.prescriptions.renewalModal.usedFor': 'Used for',
+  'health.prescriptions.renewalModal.cancel': 'Cancel',
+  'health.prescriptions.renewalModal.noTargets':
+    'Could not find an institution to send the renewal request to. Please contact your health clinic.',
+  'health.prescriptions.renewalModal.success':
+    'The renewal request has been sent. Please contact your health clinic if further information is needed.',
+  'health.prescriptions.renewalModal.error':
+    'Could not send the renewal request. Please try again later.',
   'health.prescriptions.issueDate': 'Issue date',
   'health.prescriptions.expiresAt': 'Expires at',
   'health.prescriptions.doctor': 'Doctors',

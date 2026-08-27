@@ -8,7 +8,11 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { CivilClaimant } from '../../../repository'
+import {
+  Case,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  CivilClaimant,
+} from '../../../repository'
 import { UpdateCivilClaimantDto } from '../../dto/updateCivilClaimant.dto'
 
 interface Then {
@@ -17,31 +21,42 @@ interface Then {
 }
 
 type GivenWhenThen = (
-  caseId: string,
+  theCase: Case,
   civilClaimantId: string,
   updateData: UpdateCivilClaimantDto,
+  civilClaimant?: CivilClaimant,
 ) => Promise<Then>
 
 describe('CivilClaimantController - Update', () => {
   const caseId = uuid()
+  const courtCaseNumber = uuid()
   const user = { id: uuid() }
   const civilClaimantId = uuid()
+  const theCase = { id: caseId, courtCaseNumber } as Case
 
   let mockQueuedMessages: Message[]
   let mockCivilClaimantModel: typeof CivilClaimant
+  let mockCaseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, civilClaimantModel, civilClaimantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessages,
+      civilClaimantModel,
+      caseDefendantPoliceCaseNumberRepositoryService,
+      civilClaimantController,
+    } = await createTestingDefendantModule()
 
     mockQueuedMessages = queuedMessages
     mockCivilClaimantModel = civilClaimantModel
+    mockCaseDefendantPoliceCaseNumberRepositoryService =
+      caseDefendantPoliceCaseNumberRepositoryService
 
     givenWhenThen = async (
-      caseId: string,
+      theCase: Case,
       civilClaimantId: string,
       updateData: UpdateCivilClaimantDto,
+      civilClaimant = { id: civilClaimantId } as CivilClaimant,
     ) => {
       const then = {} as Then
 
@@ -49,8 +64,9 @@ describe('CivilClaimantController - Update', () => {
         .update(
           caseId,
           civilClaimantId,
+          theCase,
           user as User,
-          { id: civilClaimantId } as CivilClaimant,
+          civilClaimant,
           updateData,
         )
         .then((result) => (then.result = result))
@@ -73,7 +89,7 @@ describe('CivilClaimantController - Update', () => {
       const mockUpdate = mockCivilClaimantModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
 
-      then = await givenWhenThen(caseId, civilClaimantId, civilClaimantUpdate)
+      then = await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
 
     it('should update the civil claimant', () => {
@@ -92,11 +108,47 @@ describe('CivilClaimantController - Update', () => {
     })
   })
 
+  describe('civil claimant defendants narrowed by police case numbers', () => {
+    const civilClaimantUpdate = {
+      policeCaseNumbers: ['007-1', '007-2'],
+      defendantIds: ['def-a', 'def-b'],
+    }
+    const updatedCivilClaimant = {
+      id: civilClaimantId,
+      caseId,
+      ...civilClaimantUpdate,
+    }
+
+    beforeEach(async () => {
+      const mockFindAssignedDefendantIds =
+        mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds as jest.Mock
+      mockFindAssignedDefendantIds.mockResolvedValueOnce(['def-b'])
+
+      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+
+      await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
+    })
+
+    it('should only keep the defendants still linked to the police case numbers', () => {
+      expect(
+        mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds,
+      ).toHaveBeenCalledWith(caseId, ['007-1', '007-2'], ['def-a', 'def-b'])
+      expect(mockCivilClaimantModel.update).toHaveBeenCalledWith(
+        { policeCaseNumbers: ['007-1', '007-2'], defendantIds: ['def-b'] },
+        { where: { id: civilClaimantId, caseId }, returning: true },
+      )
+    })
+  })
+
   describe('civil claimant spokesperson confirmed', () => {
     const civilClaimantUpdate = { isSpokespersonConfirmed: true }
     const updatedCivilClaimant = {
       id: civilClaimantId,
       caseId,
+      nationalId: '1234567890',
+      name: 'Brotaþoli Brotaþolason',
+      spokespersonNationalId: '0987654321',
       ...civilClaimantUpdate,
     }
     let then: Then
@@ -105,11 +157,17 @@ describe('CivilClaimantController - Update', () => {
       const mockUpdate = mockCivilClaimantModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
 
-      then = await givenWhenThen(caseId, civilClaimantId, civilClaimantUpdate)
+      then = await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
 
-    it('should queue spokesperson assigned message', () => {
+    it('should queue delivery and notification messages', () => {
       expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT,
+          user,
+          caseId,
+          elementId: civilClaimantId,
+        },
         {
           type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
           caseId,
@@ -133,6 +191,114 @@ describe('CivilClaimantController - Update', () => {
     })
   })
 
+  describe('civil claimant spokesperson already confirmed', () => {
+    const civilClaimantUpdate = { isSpokespersonConfirmed: true }
+    const updatedCivilClaimant = {
+      id: civilClaimantId,
+      caseId,
+      ...civilClaimantUpdate,
+    }
+
+    beforeEach(async () => {
+      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+
+      await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate, {
+        id: civilClaimantId,
+        isSpokespersonConfirmed: true,
+      } as CivilClaimant)
+    })
+
+    it('should not queue delivery or notification messages', () => {
+      expect(mockQueuedMessages).toEqual([])
+    })
+  })
+
+  describe('civil claimant spokesperson confirmed without spokesperson', () => {
+    const civilClaimantUpdate = { isSpokespersonConfirmed: true }
+    const updatedCivilClaimant = {
+      id: civilClaimantId,
+      caseId,
+      nationalId: '1234567890',
+      name: 'Brotaþoli Brotaþolason',
+      ...civilClaimantUpdate,
+    }
+
+    beforeEach(async () => {
+      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+
+      await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
+    })
+
+    it('should queue delivery and notification messages', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT,
+          user,
+          caseId,
+          elementId: civilClaimantId,
+        },
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId,
+          elementId: civilClaimantId,
+          body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
+        },
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId,
+          user,
+          elementId: civilClaimantId,
+          body: {
+            type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+          },
+        },
+      ])
+    })
+  })
+
+  describe('civil claimant spokesperson confirmed without court case number', () => {
+    const civilClaimantUpdate = { isSpokespersonConfirmed: true }
+    const updatedCivilClaimant = {
+      id: civilClaimantId,
+      caseId,
+      ...civilClaimantUpdate,
+    }
+    const caseWithoutCourtCaseNumber = { id: caseId } as Case
+
+    beforeEach(async () => {
+      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+
+      await givenWhenThen(
+        caseWithoutCourtCaseNumber,
+        civilClaimantId,
+        civilClaimantUpdate,
+      )
+    })
+
+    it('should queue notifications but not delivery', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId,
+          elementId: civilClaimantId,
+          body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
+        },
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId,
+          user,
+          elementId: civilClaimantId,
+          body: {
+            type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+          },
+        },
+      ])
+    })
+  })
+
   describe('civil claimant update fails', () => {
     let then: Then
 
@@ -140,7 +306,7 @@ describe('CivilClaimantController - Update', () => {
       const mockUpdate = mockCivilClaimantModel.update as jest.Mock
       mockUpdate.mockRejectedValue(new Error('Test error'))
 
-      then = await givenWhenThen(caseId, civilClaimantId, {})
+      then = await givenWhenThen(theCase, civilClaimantId, {})
     })
 
     it('should throw an error', () => {

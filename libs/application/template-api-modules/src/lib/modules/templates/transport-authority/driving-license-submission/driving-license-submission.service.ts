@@ -30,6 +30,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
+import type { Locale } from '@island.is/shared/types'
 import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
 import { messages as drivingLicenseMessages } from '@island.is/application/templates/driving-license'
 import {
@@ -103,6 +104,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   async submitApplication({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const { answers } = application
     const nationalId = application.applicant
@@ -128,26 +130,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       })
 
       if (e instanceof Error && e.name === 'FetchError') {
-        const err = e as unknown as FetchError
-
-        if (err.problem?.title === 'INSTRUCTOR_DOES_NOT_HAVE_BE_CATEGORY') {
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.failedDataProviderSubmit,
-              summary:
-                'Ökukennari er ekki með BE réttindi á ökuskírteini sínu. Vinsamlegast veldu annan ökukennara.',
-            },
-            400,
-          )
-        }
-
-        throw new TemplateApiError(
-          {
-            title:
-              err.problem?.title || coreErrorMessages.failedDataProviderSubmit,
-            summary: err.problem?.detail || '',
-          },
-          err.status || 400,
+        throw await this.toSubmissionError(
+          e as unknown as FetchError,
+          currentUserLocale,
         )
       }
 
@@ -180,6 +165,155 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     this.logger.log(lvl, `[driving-license-submission] ${message}`, meta)
   }
 
+  /**
+   * Turn a failed RLS submission into the error the applicant sees. RLS puts its
+   * error code in `problem.title`; if that code exists in the RLS error-code
+   * table we surface the table's own human-readable text in the user's language
+   * instead of leaking the raw code. Anything we can't resolve (no code, code
+   * not in the table, or a best-effort lookup failure) keeps the previous
+   * behaviour: raw `problem.title` / generic message, with `problem.detail` as
+   * the summary. `describeErrorCode` is best-effort and never throws.
+   */
+  private async toSubmissionError(
+    err: FetchError,
+    locale: Locale,
+  ): Promise<TemplateApiError> {
+    const code = err.problem?.title
+    if (code) {
+      try {
+        const described = await this.drivingLicenseService.describeErrorCode(
+          code,
+        )
+        // The table carries both languages for every code; pick the user's. For
+        // an `en` user with no English text we fall through rather than show
+        // Icelandic (mirrors the eligibility screen).
+        const localized = locale === 'en' ? described?.en : described?.is
+        if (localized) {
+          // Generic header + the RLS text as the body. Both fields must be
+          // non-empty: the payment screen's getErrorReasonIfPresent only treats
+          // a reason as a real provider error (and renders our text) when title
+          // AND summary are set — and RLS often sends a code with no
+          // `problem.detail`, so the text must go in `summary`, not `title`.
+          return new TemplateApiError(
+            {
+              title: coreErrorMessages.failedDataProviderSubmit,
+              summary: localized,
+            },
+            err.status || 400,
+          )
+        }
+      } catch (lookupError) {
+        // describeErrorCode is best-effort; never let resolving the nicer copy
+        // turn a handled submission error into an unhandled 500.
+        this.log('error', 'Failed to resolve RLS error-code description', {
+          lookupError,
+          code,
+        })
+      }
+    }
+
+    // `problem.title` is RLS's raw error *code* (not human text), so it must
+    // never become the user-facing title — always fall back to the generic
+    // message. (An unresolved code with a non-empty `summary` would otherwise
+    // leak the raw code into the opt-in submit-error toast.)
+    return new TemplateApiError(
+      {
+        title: coreErrorMessages.failedDataProviderSubmit,
+        summary: err.problem?.detail || '',
+      },
+      err.status || 400,
+    )
+  }
+
+  /**
+   * Resolves the applicant's redesign photo selection to the biometric IDs RLS
+   * expects. Shared by all four submit branches (65+, B-full, B-temp, BE) —
+   * this logic was previously copy-pasted four times, so a fix had to land in
+   * every copy or one product would silently drift.
+   *
+   * Returns `undefined` when there is no selection at all, so each branch keeps
+   * its OWN default: BE and 65+ initialise to `null`, while B-full and B-temp
+   * initialise to `undefined` so the keys are omitted from the request entirely
+   * and the flag-off call stays byte-identical to the pre-redesign flow. That
+   * distinction is load-bearing — collapsing it to a single default here would
+   * silently change two live request shapes.
+   *
+   * Defensive cases log and continue rather than throwing, deliberately:
+   * `createLicense` runs on entry to `States.DONE`, which is reached from
+   * `States.PAYMENT`, so throwing here would strand an application the
+   * applicant has already PAID for.
+   */
+  private resolveSelectedPhotoBiometrics(
+    answers: FormValue,
+    application: ApplicationWithAttachments,
+  ):
+    | { photoBiometricsId: string | null; signatureBiometricsId: string | null }
+    | undefined {
+    const selectedPhoto = getValueViaPath<string>(answers, 'selectLicensePhoto')
+
+    if (selectedPhoto === 'qualityPhoto') {
+      // RLS already holds the quality photo, so no biometric IDs are sent —
+      // only verify it is actually there, for logging.
+      //
+      // Gate on `imageId`, NOT on the `pohto` binary: legacy RLS records
+      // routinely carry a valid imageId with a null binary, and applicants can
+      // legitimately select those — the picker offers them and falls back to a
+      // placeholder thumbnail (see `hasUsableRlsQualityPhoto`, which is what
+      // the form itself gates on). Checking `pohto` logged an error for every
+      // such applicant even though the submission was entirely correct.
+      const qualityPhotoData = application.externalData
+        ?.qualityPhotoAndSignature?.data as {
+        imageId?: number | null
+        pohto?: string | null
+        imageTypeId?: number | null
+      } | null
+
+      if (qualityPhotoData?.imageId == null) {
+        this.log(
+          'error',
+          'User selected qualityPhoto but no quality photo exists in externalData',
+          {},
+        )
+      }
+
+      return { photoBiometricsId: null, signatureBiometricsId: null }
+    }
+
+    if (!selectedPhoto) {
+      return undefined
+    }
+
+    // A Þjóðskrá photo was selected — validate it against the FACIAL entries.
+    const allThjodskraPhotos =
+      getValueViaPath<
+        Array<{ biometricId: string; contentSpecification: string }>
+      >(application.externalData, 'allPhotosFromThjodskra.data.images') ?? []
+
+    const facialPhotos = allThjodskraPhotos.filter(
+      (p) => p.contentSpecification === 'FACIAL',
+    )
+
+    const isValidFacial = facialPhotos.some(
+      (p) => p.biometricId === selectedPhoto,
+    )
+
+    if (!isValidFacial) {
+      this.log(
+        'error',
+        'Selected photo biometricId does not match any FACIAL Thjodskra photo',
+        { selectedPhoto },
+      )
+    }
+
+    return {
+      photoBiometricsId: isValidFacial ? selectedPhoto : null,
+      signatureBiometricsId: isValidFacial
+        ? allThjodskraPhotos.find((p) => p.contentSpecification === 'SIGNATURE')
+            ?.biometricId ?? null
+        : null,
+    }
+  }
+
   private async createLicense(
     nationalId: string,
     answers: FormValue,
@@ -200,6 +334,24 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       'fakeData.submitToRLS',
     )
     if (useFakeData === YES && fakeDataSubmitToRLS !== YES) {
+      // Dev-only: simulate a failed RLS submission with a chosen error code so
+      // the payment-step error UI can be exercised end-to-end without calling
+      // RLS. The thrown shape matches a real RLS FetchError, so it flows through
+      // the same `submitApplication` catch → `toSubmissionError` path (and the
+      // code is still resolved against the real error-code table).
+      const fakeSubmitErrorCode = getValueViaPath<string>(
+        answers,
+        'fakeData.submitErrorCode',
+      )
+      if (fakeSubmitErrorCode) {
+        const fakeError = new Error(
+          'Simulated RLS submission failure',
+        ) as Error & { problem?: { title: string }; status?: number }
+        fakeError.name = 'FetchError'
+        fakeError.problem = { title: fakeSubmitErrorCode }
+        fakeError.status = 400
+        throw fakeError
+      }
       return {
         success: true,
         errorMessage: null,
@@ -281,57 +433,19 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       const renewalPhone = formatPhoneNumber(
         getValueViaPath<string>(answers, 'phone') ?? '',
       )
-      const selectedRenewalPhoto = getValueViaPath<string>(
-        answers,
-        'selectLicensePhoto',
-      )
-
+      // 65+ initialises to `null`, so an absent selection keeps `null`.
       let renewalPhotoBiometricsId: string | null = null
       let renewalSignatureBiometricsId: string | null = null
 
-      if (selectedRenewalPhoto === 'qualityPhoto') {
-        const qualityPhotoData = application.externalData
-          ?.qualityPhotoAndSignature?.data as {
-          pohto?: string | null
-          imageTypeId?: number | null
-        } | null
+      const resolvedRenewalBiometrics = this.resolveSelectedPhotoBiometrics(
+        answers,
+        application,
+      )
 
-        if (!qualityPhotoData?.pohto) {
-          this.log(
-            'error',
-            'User selected qualityPhoto but no quality photo exists in externalData',
-            {},
-          )
-        }
-      } else if (selectedRenewalPhoto) {
-        const allThjodskraPhotos =
-          getValueViaPath<
-            Array<{ biometricId: string; contentSpecification: string }>
-          >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
-          []
-
-        const facialPhotos = allThjodskraPhotos.filter(
-          (p) => p.contentSpecification === 'FACIAL',
-        )
-
-        const isValidFacial = facialPhotos.some(
-          (p) => p.biometricId === selectedRenewalPhoto,
-        )
-
-        if (!isValidFacial) {
-          this.log(
-            'error',
-            'Selected photo biometricId does not match any FACIAL Thjodskra photo',
-            { selectedPhoto: selectedRenewalPhoto },
-          )
-        }
-
-        renewalPhotoBiometricsId = isValidFacial ? selectedRenewalPhoto : null
-        renewalSignatureBiometricsId = isValidFacial
-          ? allThjodskraPhotos.find(
-              (p) => p.contentSpecification === 'SIGNATURE',
-            )?.biometricId ?? null
-          : null
+      if (resolvedRenewalBiometrics) {
+        renewalPhotoBiometricsId = resolvedRenewalBiometrics.photoBiometricsId
+        renewalSignatureBiometricsId =
+          resolvedRenewalBiometrics.signatureBiometricsId
       }
 
       let renewalContentList:
@@ -396,6 +510,37 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         signatureBiometricsId: renewalSignatureBiometricsId,
       })
     } else if (applicationFor === 'B-full') {
+      // Photo selection only applies to the redesigned B-full flow. The
+      // submission service cannot read the live feature-flag client, so it
+      // branches on the flag value *frozen into answers* at prerequisites.
+      // This is intentionally sticky: a draft keeps the flow it started with
+      // even if the flag is flipped mid-lifecycle. A draft begun while the flag
+      // was ON therefore keeps sending biometric IDs even after a global
+      // rollback; only a NEW draft begun after rollback freezes the flag OFF.
+      // Flag frozen OFF → both IDs stay `undefined`, so the keys are omitted
+      // from the RLS request and the call is byte-identical to the pre-redesign
+      // flow.
+      // NOTE: the health-certificate upload is intentionally not wired here yet
+      // — the full-license RLS endpoint has no `contentList`, so only the photo
+      // is redesigned for now (same as B-temp).
+      const isBFullRedesignEnabled =
+        getValueViaPath<boolean>(answers, 'isBFullRedesignEnabled') === true
+
+      let photoBiometricsId: string | null | undefined
+      let signatureBiometricsId: string | null | undefined
+
+      if (isBFullRedesignEnabled) {
+        const resolved = this.resolveSelectedPhotoBiometrics(
+          answers,
+          application,
+        )
+
+        if (resolved) {
+          photoBiometricsId = resolved.photoBiometricsId
+          signatureBiometricsId = resolved.signatureBiometricsId
+        }
+      }
+
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId
           ? jurisdictionId
@@ -403,10 +548,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
-        licenseCategory:
-          applicationFor === 'B-full'
-            ? DrivingLicenseCategory.B
-            : DrivingLicenseCategory.BE,
+        licenseCategory: DrivingLicenseCategory.B,
+        photoBiometricsId,
+        signatureBiometricsId,
       })
     } else if (applicationFor === 'B-temp') {
       // Photo selection only applies to the redesigned B-temp flow. Gate on
@@ -423,59 +567,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       let signatureBiometricsId: string | null | undefined
 
       if (isBTempRedesignEnabled) {
-        const selectedPhoto = getValueViaPath<string>(
+        const resolved = this.resolveSelectedPhotoBiometrics(
           answers,
-          'selectLicensePhoto',
+          application,
         )
 
-        if (selectedPhoto === 'qualityPhoto') {
-          // User selected the RLS quality photo — RLS already has it, so no
-          // biometric IDs are sent. Verify it actually exists for logging.
-          const qualityPhotoData = application.externalData
-            ?.qualityPhotoAndSignature?.data as {
-            pohto?: string | null
-          } | null
-
-          if (!qualityPhotoData?.pohto) {
-            this.log(
-              'error',
-              'User selected qualityPhoto but no quality photo exists in externalData',
-              {},
-            )
-          }
-
-          photoBiometricsId = null
-          signatureBiometricsId = null
-        } else if (selectedPhoto) {
-          // User selected a Thjodskra photo — validate against FACIAL entries.
-          const allThjodskraPhotos =
-            getValueViaPath<
-              Array<{ biometricId: string; contentSpecification: string }>
-            >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
-            []
-
-          const facialPhotos = allThjodskraPhotos.filter(
-            (p) => p.contentSpecification === 'FACIAL',
-          )
-
-          const isValidFacial = facialPhotos.some(
-            (p) => p.biometricId === selectedPhoto,
-          )
-
-          if (!isValidFacial) {
-            this.log(
-              'error',
-              'Selected photo biometricId does not match any FACIAL Thjodskra photo',
-              { selectedPhoto },
-            )
-          }
-
-          photoBiometricsId = isValidFacial ? selectedPhoto : null
-          signatureBiometricsId = isValidFacial
-            ? allThjodskraPhotos.find(
-                (p) => p.contentSpecification === 'SIGNATURE',
-              )?.biometricId ?? null
-            : null
+        if (resolved) {
+          photoBiometricsId = resolved.photoBiometricsId
+          signatureBiometricsId = resolved.signatureBiometricsId
         }
       }
 
@@ -514,64 +613,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       const bePhone = formatPhoneNumber(
         getValueViaPath<string>(answers, 'phone') ?? '',
       )
-      const selectedPhoto = getValueViaPath<string>(
-        answers,
-        'selectLicensePhoto',
-      )
-
-      // Determine photo biometric IDs based on user selection
+      // BE has no redesign flag — this selector is unconditional and live in
+      // production. It initialises to `null`, so an absent selection keeps
+      // `null` (the keys are always present on the BE request).
       let photoBiometricsId: string | null = null
       let signatureBiometricsId: string | null = null
 
-      if (selectedPhoto === 'qualityPhoto') {
-        // User selected the RLS quality photo — verify it actually exists
-        const qualityPhotoData = application.externalData
-          ?.qualityPhotoAndSignature?.data as {
-          pohto?: string | null
-          imageTypeId?: number | null
-        } | null
+      const resolvedBeBiometrics = this.resolveSelectedPhotoBiometrics(
+        answers,
+        application,
+      )
 
-        if (!qualityPhotoData?.pohto) {
-          this.log(
-            'error',
-            'User selected qualityPhoto but no quality photo exists in externalData',
-            {},
-          )
-        }
-
-        // Backend already has the quality photo — no biometric IDs needed
-        photoBiometricsId = null
-        signatureBiometricsId = null
-      } else if (selectedPhoto) {
-        // User selected a Thjodskra photo — validate against FACIAL entries only
-        const allThjodskraPhotos =
-          getValueViaPath<
-            Array<{ biometricId: string; contentSpecification: string }>
-          >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
-          []
-
-        const facialPhotos = allThjodskraPhotos.filter(
-          (p) => p.contentSpecification === 'FACIAL',
-        )
-
-        const isValidFacial = facialPhotos.some(
-          (p) => p.biometricId === selectedPhoto,
-        )
-
-        if (!isValidFacial) {
-          this.log(
-            'error',
-            'Selected photo biometricId does not match any FACIAL Thjodskra photo',
-            { selectedPhoto },
-          )
-        }
-
-        photoBiometricsId = isValidFacial ? selectedPhoto : null
-        signatureBiometricsId = isValidFacial
-          ? allThjodskraPhotos.find(
-              (p) => p.contentSpecification === 'SIGNATURE',
-            )?.biometricId ?? null
-          : null
+      if (resolvedBeBiometrics) {
+        photoBiometricsId = resolvedBeBiometrics.photoBiometricsId
+        signatureBiometricsId = resolvedBeBiometrics.signatureBiometricsId
       }
 
       // Health certificate handling

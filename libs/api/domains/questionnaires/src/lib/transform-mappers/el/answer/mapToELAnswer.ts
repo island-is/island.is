@@ -12,8 +12,10 @@ export const mapToElAnswer = (
   input: QuestionnaireInput,
   formatMessage: FormatMessage,
 ): SubmitQuestionnaireDto => {
-  const replies: SubmitQuestionnaireDto['replies'] = input.entries.map(
+  const replies: SubmitQuestionnaireDto['replies'] = input.entries.flatMap(
     (entry) => {
+      if (!entry.answers?.length) return []
+
       const questionId = entry.entryId
       const answerValues = entry.answers.map((a) => a.value)
 
@@ -67,11 +69,17 @@ export const mapToElAnswer = (
         entry.type === AnswerOptionType.scale ||
         entry.type === AnswerOptionType.thermometer
       ) {
+        const rawValue = answerValues[0].trim()
+        // Number() rejects partial parses like "12abc" that parseFloat
+        // would accept; the empty check must come first since Number('') is 0
+        const numericValue = Number(rawValue)
+        // No usable value entered - omit the reply instead of persisting a
+        // fabricated 0, which is a valid, distinct answer from "unanswered"
+        if (!rawValue || !Number.isFinite(numericValue)) return []
+
         return {
           questionId,
-          answer: isNaN(parseFloat(answerValues[0]))
-            ? 0
-            : parseFloat(answerValues[0]),
+          answer: numericValue,
         }
       }
 

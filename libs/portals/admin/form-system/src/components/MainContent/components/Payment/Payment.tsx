@@ -19,7 +19,8 @@ import { PaymentItem } from './components/PaymentItem'
 
 export const Payment = () => {
   const { control, controlDispatch, formUpdate } = useContext(ControlContext)
-  const { sections, screens, fields, hasPayment } = control.form
+  const { isReadOnly, form } = control
+  const { sections, screens, fields, hasPayment } = form
   const paymentSection = sections?.find(
     (s) => s?.sectionType === SectionTypes.PAYMENT,
   )
@@ -105,7 +106,12 @@ export const Payment = () => {
       >
         <Column span="12/12">
           <Box width="full" justifyContent="flexEnd" display="flex">
-            <Button variant="primary" icon="add" onClick={addField}>
+            <Button
+              variant="primary"
+              icon="add"
+              disabled={isReadOnly}
+              onClick={addField}
+            >
               Bæta við greiðslu
             </Button>
           </Box>

@@ -17,8 +17,10 @@ import { useLocale } from '@island.is/localization'
 import {
   formatText,
   formatTextWithLocale,
+  resolveFieldId,
   shouldShowFormItem,
 } from '@island.is/application/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Markdown } from '@island.is/shared/components'
 import { useEffect, useRef, useState } from 'react'
 import { useWatch } from 'react-hook-form'
@@ -34,7 +36,15 @@ export const AccordionFormField = ({
 }: Props) => {
   const [items, setItems] = useState<Array<AccordionItemType>>()
   const { formatMessage, lang: locale } = useLocale()
-  const { accordionItems, marginBottom, marginTop, title, titleVariant } = field
+  const user = useUserInfo()
+  const {
+    accordionItems,
+    marginBottom,
+    marginTop,
+    title,
+    titleVariant,
+    singleExpand,
+  } = field
   const formValues = useWatch({ defaultValue: application.answers })
   const prevVisibilityRef = useRef<Record<string, boolean>>({})
 
@@ -66,11 +76,12 @@ export const AccordionFormField = ({
             application.externalData,
             null,
           )
-          newVisibility[child.id] = isVisible
+          const resolvedId = resolveFieldId(child, application, undefined)
+          newVisibility[resolvedId] = isVisible
 
           if (
-            prevVisibilityRef.current[child.id] !== undefined &&
-            prevVisibilityRef.current[child.id] !== isVisible
+            prevVisibilityRef.current[resolvedId] !== undefined &&
+            prevVisibilityRef.current[resolvedId] !== isVisible
           ) {
             conditionChanged = true
           }
@@ -96,7 +107,7 @@ export const AccordionFormField = ({
           </Text>
         </Box>
       )}
-      <Accordion>
+      <Accordion singleExpand={singleExpand}>
         {items.map((item, index) => {
           const hasContent = !!item.itemContent
           const hasChildren = item.children && item.children.length > 0
@@ -105,6 +116,7 @@ export const AccordionFormField = ({
               key={`accordion-item-${index}`}
               id={`accordion-item-${index}`}
               label={formatText(item.itemTitle, application, formatMessage)}
+              startExpanded={item.startExpanded}
             >
               {hasContent && (
                 <Markdown>
@@ -125,9 +137,14 @@ export const AccordionFormField = ({
                         childField.type !== FieldTypes.CHECKBOX &&
                         childField.width === 'half'
                       const span = isHalfColumn ? '1/2' : '1/1'
+                      const resolvedId = resolveFieldId(
+                        childField,
+                        application,
+                        undefined,
+                      )
                       return (
                         <GridColumn
-                          key={childField.id}
+                          key={resolvedId}
                           span={['1/1', '1/1', '1/1', span]}
                           paddingBottom={2}
                         >

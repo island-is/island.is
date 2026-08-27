@@ -4,15 +4,34 @@ import {
   CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 import { CaseWhereOptions, expandCasesWithDefendants } from '../caseTable.types'
 import { publicProsecutionOfficeIndictmentsAccessWhereOptions } from './access'
+import { buildHasEnforceableDefendantNotClosedWithoutEnforcementCondition } from './conditions'
 
 // Public prosecution office indictments
 
+// The appeal window runs until midnight at the end of its last day, counted
+// from the day the verdict was served (see getIndictmentAppealDeadline). A date
+// is therefore still on deadline while it is at or after this cutoff, and past
+// it once it is before - which keeps these lists in step with the deadline the
+// case itself reports, whether or not the date carries a time of day.
+// The day boundary is pinned to UTC rather than left to the database session
+// time zone, so that it matches the deadline computed in Node - which also runs
+// in UTC, the time zone Iceland is in all year round.
+const APPEAL_WINDOW_CUTOFF = `((date_trunc('day', NOW() AT TIME ZONE 'UTC') - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days') AT TIME ZONE 'UTC')`
+
 export const publicProsecutionOfficeIndictmentsNewWhereOptions =
   (): CaseWhereOptions => ({
+    includes: {
+      defendants: {
+        attributes: [],
+        required: true,
+        where: { is_closed_without_enforcement: { [Op.not]: true } },
+      },
+    },
     where: {
       [Op.and]: [
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
@@ -28,7 +47,10 @@ export const publicProsecutionOfficeIndictmentsInReviewWhereOptions =
       defendants: {
         attributes: [],
         required: true,
-        where: { indictment_review_decision: null },
+        where: {
+          indictment_review_decision: null,
+          is_closed_without_enforcement: { [Op.not]: true },
+        },
       },
     },
     where: {
@@ -50,6 +72,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
           [Op.and]: [
             { indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT },
             { is_sent_to_prison_admin: { [Op.not]: true } },
+            { is_closed_without_enforcement: { [Op.not]: true } },
             {
               '$Case.indictment_ruling_decision$':
                 CaseIndictmentRulingDecision.RULING,
@@ -58,7 +81,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
                   [Op.and]: [
                     {
                       '$Case.ruling_date$': {
-                        [Op.gt]: literal(`NOW() - INTERVAL '29 days'`),
+                        [Op.gte]: literal(APPEAL_WINDOW_CUTOFF),
                       },
                     },
                     literal(`
@@ -87,7 +110,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
                       AND verdict.is_acquitted_by_public_prosecution_office IS NOT TRUE
                       AND verdict.defendant_has_requested_appeal IS NOT TRUE
                       AND verdict.appeal_date IS NULL
-                      AND (verdict.service_date IS NULL OR verdict.service_date + INTERVAL '29 days' > NOW())
+                      AND (verdict.service_date IS NULL OR verdict.service_date >= ${APPEAL_WINDOW_CUTOFF})
                       AND verdict.created = (
                         SELECT MAX(v2.created)
                         FROM verdict v2
@@ -119,6 +142,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
           [Op.and]: [
             { indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT },
             { is_sent_to_prison_admin: { [Op.not]: true } },
+            { is_closed_without_enforcement: { [Op.not]: true } },
             {
               [Op.or]: [
                 {
@@ -129,7 +153,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                   [Op.and]: [
                     {
                       '$Case.ruling_date$': {
-                        [Op.lt]: literal(`NOW() - INTERVAL '29 days'`),
+                        [Op.lt]: literal(APPEAL_WINDOW_CUTOFF),
                       },
                     },
                     literal(`
@@ -158,7 +182,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                       AND verdict.is_acquitted_by_public_prosecution_office IS NOT TRUE
                       AND verdict.defendant_has_requested_appeal IS NOT TRUE
                       AND verdict.appeal_date IS NULL
-                      AND verdict.service_date + INTERVAL '29 days' < NOW()
+                      AND verdict.service_date < ${APPEAL_WINDOW_CUTOFF}
                       AND verdict.created = (
                         SELECT MAX(v2.created)
                         FROM verdict v2
@@ -214,19 +238,27 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
         attributes: [],
         required: true,
         where: {
-          [Op.or]: [
-            { indictment_review_decision: IndictmentCaseReviewDecision.APPEAL },
-            literal(`EXISTS (
-              SELECT 1
-              FROM verdict
-              WHERE verdict.defendant_id = "defendants".id
-                AND verdict.appeal_date IS NOT NULL
-                AND verdict.created = (
-                  SELECT MAX(v2.created)
-                  FROM verdict v2
-                  WHERE v2.defendant_id = "defendants".id
-                )
-            )`),
+          [Op.and]: [
+            { is_closed_without_enforcement: { [Op.not]: true } },
+            {
+              [Op.or]: [
+                {
+                  indictment_review_decision:
+                    IndictmentCaseReviewDecision.APPEAL,
+                },
+                literal(`EXISTS (
+                  SELECT 1
+                  FROM verdict
+                  WHERE verdict.defendant_id = "defendants".id
+                    AND verdict.appeal_date IS NOT NULL
+                    AND verdict.created = (
+                      SELECT MAX(v2.created)
+                      FROM verdict v2
+                      WHERE v2.defendant_id = "defendants".id
+                    )
+                )`),
+              ],
+            },
           ],
         },
       },
@@ -248,9 +280,10 @@ export const publicProsecutionOfficeIndictmentsAcquittedWhereOptions =
         required: true,
         where: {
           indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+          is_closed_without_enforcement: { [Op.not]: true },
           [Op.and]: [
             literal(`EXISTS (
-              SELECT 1 
+              SELECT 1
               FROM verdict
               WHERE verdict.defendant_id = defendants.id
                 AND verdict.is_acquitted_by_public_prosecution_office = TRUE
@@ -274,6 +307,28 @@ export const publicProsecutionOfficeIndictmentsAcquittedWhereOptions =
     displayCases: expandCasesWithDefendants,
   })
 
+export const publicProsecutionOfficeIndictmentsClosedWithoutEnforcementWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      defendants: {
+        attributes: [],
+        required: true,
+        where: { is_closed_without_enforcement: true },
+      },
+    },
+    where: {
+      [Op.and]: [
+        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        // Only cases where every defendant that could still enter enforcement
+        // has been closed without enforcement. A case with a defendant that was
+        // sent to the prison admin, or is still in the normal flow, stays in
+        // the other tables.
+        buildHasEnforceableDefendantNotClosedWithoutEnforcementCondition(false),
+      ],
+    },
+    displayCases: expandCasesWithDefendants,
+  })
+
 export const publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
@@ -282,8 +337,9 @@ export const publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions =
         required: true,
         where: {
           [Op.and]: [
+            { is_closed_without_enforcement: { [Op.not]: true } },
             literal(`EXISTS (
-              SELECT 1 
+              SELECT 1
               FROM verdict
               WHERE verdict.defendant_id = defendants.id
                 AND verdict.defendant_has_requested_appeal = TRUE

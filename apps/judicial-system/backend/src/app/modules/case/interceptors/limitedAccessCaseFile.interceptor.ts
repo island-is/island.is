@@ -7,18 +7,12 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import {
-  CaseFileCategory,
-  isDefenceUser,
-  isIndictmentCase,
-  User,
-} from '@island.is/judicial-system/types'
+import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 
 import {
   canLimitedAccessUserViewCaseFile,
-  getDefenderVisiblePoliceCaseNumbers,
+  isRulingOrderInConfirmedCourtSession,
 } from '../../file'
-import { Defendant } from '../../repository'
 
 @Injectable()
 export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
@@ -30,6 +24,7 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
       map((theCase) => {
         const caseFiles = theCase.caseFiles?.filter(
           ({
+            id,
             category,
             submittedBy,
             fileRepresentative,
@@ -37,6 +32,7 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
             created,
             civilClaimantId,
           }: {
+            id: string
             category: CaseFileCategory
             submittedBy: string
             fileRepresentative: string
@@ -56,31 +52,14 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
               defendantId,
               fileCreated: created,
               civilClaimantId,
+              isRulingOrderInConfirmedCourtSession:
+                isRulingOrderInConfirmedCourtSession(id, theCase.courtSessions),
             }),
         )
-
-        let policeCaseNumbers = theCase.policeCaseNumbers
-
-        if (
-          isDefenceUser(user) &&
-          isIndictmentCase(theCase.type) &&
-          theCase.policeCaseNumbers &&
-          Defendant.isConfirmedDefenderOfDefendant(
-            user.nationalId,
-            theCase.defendants,
-          )
-        ) {
-          policeCaseNumbers = getDefenderVisiblePoliceCaseNumbers(
-            user.nationalId,
-            theCase.defendants,
-            theCase.policeCaseNumbers,
-          )
-        }
 
         return {
           ...theCase,
           caseFiles,
-          policeCaseNumbers,
         }
       }),
     )

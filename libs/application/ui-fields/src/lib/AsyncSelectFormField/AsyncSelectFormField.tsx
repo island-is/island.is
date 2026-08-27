@@ -4,6 +4,8 @@ import {
   buildFieldRequired,
   formatText,
   formatTextWithLocale,
+  resolveFieldId,
+  resolveFieldClearOnChange,
 } from '@island.is/application/core'
 import { AsyncSelectField, FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -12,6 +14,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useApolloClient } from '@apollo/client/react'
 import { Option } from '@island.is/application/types'
 
@@ -48,11 +51,13 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     updateOnSelect,
   } = field
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
   const apolloClient = useApolloClient()
   const [options, setOptions] = useState<Option[]>([])
   const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { watch } = useFormContext()
+  const resolvedId = resolveFieldId({ id }, application, user)
   const [lastUpdateOnSelectValue, setLastUpdateOnSelectValue] =
     useState<string>('')
 
@@ -126,7 +131,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
             locale as Locale,
             formatMessage,
           )}
-          name={id}
+          name={resolvedId}
           disabled={disabled || isLoading}
           isLoading={isLoading}
           error={
@@ -135,7 +140,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
               ? formatText(loadingError, application, formatMessage)
               : undefined)
           }
-          id={id}
+          id={resolvedId}
           options={options.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatText(label, application, formatMessage),
@@ -154,7 +159,10 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
           backgroundColor={backgroundColor}
           isSearchable={isSearchable}
           isMulti={isMulti}
-          clearOnChange={clearOnChange}
+          clearOnChange={resolveFieldClearOnChange(
+            { clearOnChange },
+            application,
+          )}
           clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'

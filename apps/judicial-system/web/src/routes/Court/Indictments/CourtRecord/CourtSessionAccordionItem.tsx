@@ -1,6 +1,5 @@
+import type { FC, ForwardedRef } from 'react'
 import {
-  FC,
-  ForwardedRef,
   forwardRef,
   useCallback,
   useContext,
@@ -38,46 +37,54 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
+import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import {
   BlueBox,
+  CheckboxList,
   DateTime,
-  FeatureContext,
   FileNotFoundModal,
   FormContext,
   Modal,
   MultipleValueList,
+  RichTextEditor,
   SectionHeading,
-  TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
-import EditableCaseFile, {
-  Supplement,
-} from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type { Supplement } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type {
+  CourtDocumentResponse,
+  CourtSessionResponse,
+  CourtSessionString,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
-  CourtDocumentResponse,
   CourtDocumentType,
   CourtSessionClosedLegalBasis,
-  CourtSessionResponse,
   CourtSessionRulingType,
-  CourtSessionString,
   CourtSessionStringType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { SelectRepresentative } from '@island.is/judicial-system-web/src/routes/Shared/AddFiles/SelectCaseFileRepresentative'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  TUploadFile,
   useCourtDocuments,
   useCourtSessions,
+  useDebouncedField,
   useFileList,
   useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  applyMergedCaseEntries,
+  reconcileAppealDecisionsForRulingFileChange,
+  rulingOrderAppealCase,
+} from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
+import CourtSessionRuling from './CourtSessionRuling'
 import * as styles from './CourtRecord.css'
 
 interface Props {
@@ -164,10 +171,23 @@ const CourtSessionLabel = forwardRef(
 const CourtSessionAccordionItem: FC<Props> = (props) => {
   const { index, courtSession, isExpanded, onToggle } = props
   const ref = useRef<HTMLDivElement>(null)
-  const { features } = useContext(FeatureContext)
-  const useTinyMCE = features.includes(Feature.TINY_MCE)
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
+  // Moving the ruling type off ORDER removes the ruling, which discards its
+  // decisions and deletes the appeal it produced - not allowed once the appeal
+  // has left the court record's reach (a party filed it itself, or Landsréttur
+  // has the case). courtSession.service.validateRulingRemovalAllowed rejects the
+  // same change server-side. Swapping the ruling onto another file stays open at
+  // every appeal state: it means the same ruling is now a different document, and
+  // everything moves with it.
+  // The reason is kept, not just the boolean, so the section can say which of the
+  // two locks applies - the appeal decision cards next to it report the appeal's
+  // state, not why these controls are locked.
+  const rulingRemovalLock = appealCorrectionLock(
+    rulingOrderAppealCase(workingCase, courtSession.rulingFileId),
+  )
+  const rulingRemovalDisabled =
+    courtSession.isConfirmed || Boolean(rulingRemovalLock)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -177,7 +197,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [readyForInitialization, setReadyForInitialization] = useState(false)
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
-  const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
   const [draggedMergeFileId, setDraggedMergeFileId] = useState<string | null>(
     null,
@@ -193,25 +212,56 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   } = useUsers(workingCase.court?.id)
 
   const patchSession = useCallback(
-    (
+    async (
       courtSessionId: string,
       updates: Partial<CourtSessionResponse>,
       { persist = false } = {},
     ) => {
-      setWorkingCase((prev) => ({
-        ...prev,
-        courtSessions: prev.courtSessions?.map((session) =>
+      setWorkingCase((prev) => {
+        const courtSessions = prev.courtSessions?.map((session) =>
           session.id === courtSessionId ? { ...session, ...updates } : session,
-        ),
-      }))
+        )
+
+        // Changing a session's ruling order file re-keys (swap) or discards
+        // (removal) that ruling's appeal decisions on the backend. Mirror it on
+        // the working case so the decision cards keep their selections.
+        const appealDecisions =
+          'rulingFileId' in updates
+            ? reconcileAppealDecisionsForRulingFileChange(
+                prev.appealDecisions,
+                prev.courtSessions?.find(
+                  (session) => session.id === courtSessionId,
+                )?.rulingFileId,
+                updates.rulingFileId,
+              )
+            : prev.appealDecisions
+
+        return { ...prev, courtSessions, appealDecisions }
+      })
 
       if (persist) {
         const { courtSessionStrings, ...courtSessionUpdate } = updates
-        updateCourtSession({
+        const success = await updateCourtSession({
           ...courtSessionUpdate,
           courtSessionId,
           caseId: workingCase.id,
         })
+
+        // A failed confirm/unconfirm must not leave the UI in the new state
+        // (button re-labelled to "Leiðrétta", read-only mode). Roll the flag
+        // back to what it was. Only isConfirmed is reverted - other optimistic
+        // field edits keep their value so unsaved input is not lost on a
+        // transient failure. (Confirm/unconfirm always toggle the flag.)
+        if (!success && 'isConfirmed' in updates) {
+          setWorkingCase((prev) => ({
+            ...prev,
+            courtSessions: prev.courtSessions?.map((session) =>
+              session.id === courtSessionId
+                ? { ...session, isConfirmed: !updates.isConfirmed }
+                : session,
+            ),
+          }))
+        }
       }
     },
     [setWorkingCase, updateCourtSession, workingCase.id],
@@ -224,39 +274,31 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       updatedCourtSessionString: Pick<CourtSessionString, 'value'>,
       { persist = false } = {},
     ) => {
-      const targetCourtSessionString = courtSession.courtSessionStrings?.find(
-        (courtSessionString) =>
-          courtSessionString.courtSessionId === courtSessionId &&
-          courtSessionString.mergedCaseId === mergedCaseId &&
-          courtSessionString.stringType === CourtSessionStringType.ENTRIES,
-      )
-
-      const updatedCourtSessionsStrings = targetCourtSessionString
-        ? courtSession.courtSessionStrings?.map((courtSessionString) =>
-            courtSessionString.id === targetCourtSessionString?.id
-              ? {
-                  ...courtSessionString,
-                  value: updatedCourtSessionString.value,
-                }
-              : courtSessionString,
-          )
-        : [
-            ...(courtSession.courtSessionStrings ?? []),
-            {
-              caseId: workingCase.id,
-              courtSessionId,
-              mergedCaseId,
-              stringType: CourtSessionStringType.ENTRIES,
-              value: updatedCourtSessionString.value,
-            } as CourtSessionString,
-          ]
+      // The strings are read off `prev` rather than the render this call was
+      // created in. A debounced save fires up to `delay` after the keystroke
+      // that scheduled it, so a closed-over array can be stale by then - and
+      // rebuilding from it would revert an edit made to a sibling merged case
+      // in the meantime.
       setWorkingCase((prev) => ({
         ...prev,
-        courtSessions: prev.courtSessions?.map((session) =>
-          session.id === courtSessionId
-            ? { ...session, courtSessionStrings: updatedCourtSessionsStrings }
-            : session,
-        ),
+        courtSessions: prev.courtSessions?.map((session) => {
+          if (session.id !== courtSessionId) {
+            return session
+          }
+
+          return {
+            ...session,
+            courtSessionStrings: applyMergedCaseEntries(
+              session.courtSessionStrings,
+              {
+                caseId: workingCase.id,
+                courtSessionId,
+                mergedCaseId,
+                value: updatedCourtSessionString.value,
+              },
+            ),
+          }
+        }),
       }))
 
       if (persist) {
@@ -269,12 +311,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         })
       }
     },
-    [
-      courtSession.courtSessionStrings,
-      setWorkingCase,
-      updateCourtSessionString,
-      workingCase.id,
-    ],
+    [setWorkingCase, updateCourtSessionString, workingCase.id],
   )
 
   const getInitialAttendees = useCallback(() => {
@@ -304,8 +341,18 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       })
     }
 
-    return attendees.length > 0 ? attendees.join('') : undefined
+    return `Mættir eru:\n${attendees.join('')}`
   }, [workingCase.prosecutor, workingCase.defendants])
+
+  // No guard against writing into a confirmed session is needed: a confirmed
+  // session renders this field disabled, so nothing can be pending, and
+  // confirming moves focus off the field, which flushes first.
+  const attendeesField = useDebouncedField({
+    value: courtSession.attendees ?? getInitialAttendees(),
+    onChange: (attendees) => patchSession(courtSession.id, { attendees }),
+    onSave: (attendees) =>
+      patchSession(courtSession.id, { attendees }, { persist: true }),
+  })
 
   const initialize = useCallback(() => {
     if (courtSession.startDate) {
@@ -922,31 +969,31 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className={styles.twoColGrid}
                         key="grid"
                       >
-                        {CLOSURE_GROUNDS.map(
-                          ([label, tooltip, legalProvision]) => (
-                            <motion.div
-                              variants={itemVariants}
-                              initial="hidden"
-                              animate="visible"
-                              exit="exit"
-                              key={label}
-                            >
-                              <Checkbox
-                                label={label}
-                                name={`${label}-${courtSession.id}`}
-                                tooltip={tooltip}
-                                checked={courtSession.closedLegalProvisions?.includes(
-                                  legalProvision,
-                                )}
-                                onChange={(evt) => {
+                        <motion.div
+                          variants={itemVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                        >
+                          <CheckboxList
+                            blueBox={false}
+                            checkboxes={CLOSURE_GROUNDS.map(
+                              ([label, tooltip, legalProvision]) => ({
+                                id: `${legalProvision}-${courtSession.id}`,
+                                title: label,
+                                info: tooltip,
+                                checked:
+                                  courtSession.closedLegalProvisions?.includes(
+                                    legalProvision,
+                                  ) ?? false,
+                                disabled: courtSession.isConfirmed || false,
+                                onChange: (checked) => {
                                   const initialValue =
                                     courtSession.closedLegalProvisions || []
 
-                                  const closedLegalProvisions = evt.target
-                                    .checked
+                                  const closedLegalProvisions = checked
                                     ? [...initialValue, legalProvision]
                                     : initialValue.filter(
                                         (v) => v !== legalProvision,
@@ -957,14 +1004,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                     { closedLegalProvisions },
                                     { persist: true },
                                   )
-                                }}
-                                disabled={courtSession.isConfirmed || false}
-                                large
-                                filled
-                              />
-                            </motion.div>
-                          ),
-                        )}
+                                },
+                              }),
+                            )}
+                          />
+                        </motion.div>
                       </motion.div>
                     </>
                   )}
@@ -974,20 +1018,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 data-testid="courtAttendees"
                 name="courtAttendees"
                 label="Mættir eru"
-                value={courtSession.attendees ?? getInitialAttendees()}
+                value={attendeesField.value}
                 placeholder="Skrifa hér..."
-                onChange={(event) => {
-                  patchSession(courtSession.id, {
-                    attendees: event.target.value,
-                  })
-                }}
-                onBlur={(event) => {
-                  patchSession(
-                    courtSession.id,
-                    { attendees: event.target.value },
-                    { persist: true },
-                  )
-                }}
+                onChange={(event) =>
+                  attendeesField.onChange(event.target.value)
+                }
+                onBlur={(event) => attendeesField.onBlur(event.target.value)}
                 textarea
                 rows={7}
                 disabled={courtSession.isConfirmed || false}
@@ -1295,7 +1331,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     )
 
                   return (
-                    <Box key={`merged-case-${courtCaseNumber}`}>
+                    // Keyed by merged case id, not court case number: the
+                    // number falls back to an empty string, so two unnumbered
+                    // merged cases would collide and React would hand one
+                    // row's debounced entries to the other.
+                    <Box key={`merged-case-${mergeDocumentsPerCase.caseId}`}>
                       <CourtSessionMergedCaseEntries
                         courtSessionId={courtSession.id}
                         courtCaseNumber={courtCaseNumber ?? ''}
@@ -1442,77 +1482,62 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               )}
               <Box>
                 <SectionHeading title="Bókanir" />
-                {useTinyMCE ? (
-                  <TinyMCE
-                    data-testid="entries"
-                    label="Afstaða ákærða, málflutningur og aðrar bókanir"
-                    placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                    defaultValue={courtSession.entries || ''}
-                    onChange={(html) => {
-                      setEntriesErrorMessage('')
-                      patchSession(courtSession.id, { entries: html })
-                    }}
-                    onBlur={(html) => {
-                      // Decode entities (e.g. &nbsp;) and strip tags so an
-                      // otherwise-empty paragraph doesn't pass the required check.
-                      const decodedText =
-                        new DOMParser()
-                          .parseFromString(html, 'text/html')
-                          .body.textContent?.trim() ?? ''
-                      validateAndSetErrorMessage(
-                        ['empty'],
-                        decodedText,
-                        setEntriesErrorMessage,
-                      )
-                      patchSession(
-                        courtSession.id,
-                        { entries: html },
-                        { persist: true },
-                      )
-                    }}
-                    errorMessage={entriesErrorMessage || undefined}
-                    disabled={courtSession.isConfirmed || false}
-                    required
-                  />
-                ) : (
-                  <Input
-                    data-testid="entries"
-                    name="entries"
-                    label="Afstaða ákærða, málflutningur og aðrar bókanir"
-                    value={courtSession.entries || ''}
-                    placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                    onChange={(event) => {
-                      setEntriesErrorMessage('')
-                      patchSession(courtSession.id, {
-                        entries: event.target.value,
-                      })
-                    }}
-                    onBlur={(event) => {
-                      validateAndSetErrorMessage(
-                        ['empty'],
-                        event.target.value,
-                        setEntriesErrorMessage,
-                      )
-                      patchSession(
-                        courtSession.id,
-                        { entries: event.target.value },
-                        { persist: true },
-                      )
-                    }}
-                    hasError={entriesErrorMessage !== ''}
-                    errorMessage={entriesErrorMessage}
-                    rows={15}
-                    disabled={courtSession.isConfirmed || false}
-                    textarea
-                    required
-                  />
-                )}
+                <RichTextEditor
+                  data-testid="entries"
+                  label="Afstaða ákærða, málflutningur og aðrar bókanir"
+                  placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                  defaultValue={courtSession.entries || ''}
+                  onChange={(html) => {
+                    setEntriesErrorMessage('')
+                    patchSession(courtSession.id, { entries: html })
+                  }}
+                  onDebouncedChange={(html) =>
+                    patchSession(
+                      courtSession.id,
+                      { entries: html },
+                      { persist: true },
+                    )
+                  }
+                  onBlur={(html) => {
+                    // Visually blank markup arrives normalized to '' (see
+                    // normalizeRichTextHtml), so the html can be validated
+                    // directly.
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      html,
+                      setEntriesErrorMessage,
+                    )
+                    patchSession(
+                      courtSession.id,
+                      { entries: html },
+                      { persist: true },
+                    )
+                  }}
+                  errorMessage={entriesErrorMessage || undefined}
+                  disabled={courtSession.isConfirmed || false}
+                  required
+                />
               </Box>
               <Box>
                 <SectionHeading
                   title="Er kveðinn upp dómur eða úrskurður í þinghaldinu?"
                   required
                 />
+                {/* Only shown while the session is open for correction - a
+                confirmed session disables everything anyway, and the reason is
+                then obvious. */}
+                {rulingRemovalLock && !courtSession.isConfirmed && (
+                  <Box marginBottom={2}>
+                    <AlertMessage
+                      type="info"
+                      message={`${
+                        rulingRemovalLock === 'OUT_OF_COURT'
+                          ? 'Úrskurðurinn hefur verið kærður utan þinghalds'
+                          : 'Kæra úrskurðarins er komin til Landsréttar'
+                      } og því er ekki hægt að fella úrskurðinn úr þingbókinni. Áfram er hægt að velja annað skjal fyrir úrskurðinn.`}
+                    />
+                  </Box>
+                )}
                 <BlueBox className={styles.grid}>
                   <RadioButton
                     name="result_verdict"
@@ -1534,7 +1559,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   <RadioButton
@@ -1556,7 +1581,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   <RadioButton
@@ -1578,7 +1603,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   <RadioButton
@@ -1596,7 +1621,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   {courtSession.rulingType === CourtSessionRulingType.ORDER && (
@@ -1652,86 +1677,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 courtSession.rulingType ===
                   CourtSessionRulingType.DISMISSAL_ORDER ||
                 courtSession.rulingType === CourtSessionRulingType.ORDER) && (
-                <>
-                  <Box>
-                    <SectionHeading
-                      title={
-                        courtSession.rulingType ===
-                        CourtSessionRulingType.JUDGEMENT
-                          ? 'Dómsorð'
-                          : 'Úrskurðarorð'
-                      }
-                    />
-                    <Input
-                      data-testid="ruling"
-                      name="ruling"
-                      label={
-                        courtSession.rulingType ===
-                        CourtSessionRulingType.JUDGEMENT
-                          ? 'Dómsorð'
-                          : 'Úrskurðarorð'
-                      }
-                      value={courtSession.ruling || ''}
-                      placeholder={`Hvert er ${
-                        courtSession.rulingType ===
-                        CourtSessionRulingType.JUDGEMENT
-                          ? 'dómsorðið'
-                          : 'úrskurðarorðið'
-                      }?`}
-                      onChange={(event) => {
-                        setRulingErrorMessage('')
-
-                        patchSession(courtSession.id, {
-                          ruling: event.target.value,
-                        })
-                      }}
-                      onBlur={(event) => {
-                        validateAndSetErrorMessage(
-                          ['empty'],
-                          event.target.value,
-                          setRulingErrorMessage,
-                        )
-
-                        patchSession(
-                          courtSession.id,
-                          { ruling: event.target.value },
-                          { persist: true },
-                        )
-                      }}
-                      hasError={rulingErrorMessage !== ''}
-                      errorMessage={rulingErrorMessage}
-                      rows={15}
-                      disabled={courtSession.isConfirmed || false}
-                      textarea
-                      required
-                    />
-                  </Box>
-                  <Box>
-                    <SectionHeading title="Bókanir í lok þinghalds" />
-                    <Input
-                      data-testid="closingEntries"
-                      name="closingEntries"
-                      label="Bókanir í kjölfar dómsuppsögu eða uppkvaðningu úrskurðar"
-                      value={courtSession.closingEntries || ''}
-                      placeholder="T.d. Dómfelldi er ekki viðstaddur dómsuppsögu og verður lögreglu falið að birta dóminn fyrir honum..."
-                      onChange={(event) =>
-                        patchSession(courtSession.id, {
-                          closingEntries: event.target.value,
-                        })
-                      }
-                      onBlur={(event) =>
-                        patchSession(
-                          courtSession.id,
-                          { closingEntries: event.target.value },
-                          { persist: true },
-                        )
-                      }
-                      rows={15}
-                      disabled={courtSession.isConfirmed || false}
-                      textarea
-                    />
-                  </Box>
-                </>
+                <CourtSessionRuling
+                  courtSession={courtSession}
+                  patchSession={patchSession}
+                />
               )}
               <Box>
                 <SectionHeading title="Vottur" />
@@ -1835,7 +1784,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           )
                         }
                         size="small"
-                        disabled={!isCourtSessionValid(courtSession)}
+                        disabled={
+                          !isCourtSessionValid(courtSession, workingCase)
+                        }
                       >
                         Staðfesta þingbók
                       </Button>
@@ -1849,15 +1800,18 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             <Modal
               title="Ertu viss?"
               text={`Ertu viss um að þú viljir eyða þinghaldi ${index + 1}?`}
-              primaryButton={{
-                text: 'Já, eyða',
-                colorScheme: 'destructive',
-                onClick: () => handleDeleteCourtSession(courtSession.id),
-              }}
-              secondaryButton={{
-                text: 'Hætta við',
-                onClick: () => setModalVisible(undefined),
-              }}
+              buttons={[
+                {
+                  text: 'Hætta við',
+                  onClick: () => setModalVisible(undefined),
+                  variant: 'ghost',
+                },
+                {
+                  text: 'Já, eyða',
+                  colorScheme: 'destructive',
+                  onClick: () => handleDeleteCourtSession(courtSession.id),
+                },
+              ]}
             />
           )}
         </Box>

@@ -1,4 +1,4 @@
-import { caching } from 'cache-manager'
+import { createCache } from 'cache-manager'
 import { Logger } from 'winston'
 import { buildCacheControl } from './withCache/buildCacheControl'
 import { CacheConfig } from './withCache/types'
@@ -122,7 +122,8 @@ export const withAutoAuth = ({
     requestActorToken = false,
     useCache = false,
   } = options.tokenExchange || {}
-  const tokenCacheManagerPromise = caching('memory', { ttl: 0 })
+  // v6: createCache is synchronous; ttl 0 means entries never expire.
+  const tokenCacheManager = createCache({ ttl: 0 })
   const tokenEndpoint =
     options.tokenEndpoint ?? `${options.issuer}/connect/token`
   if (useCache && !cache) {
@@ -167,7 +168,6 @@ export const withAutoAuth = ({
     }
 
     if (!isTokenExchange) {
-      const tokenCacheManager = await tokenCacheManagerPromise
       const authorization = await tokenCacheManager.get<string>(TOKEN_CACHE_KEY)
       if (authorization) {
         return authorization
@@ -238,7 +238,6 @@ export const withAutoAuth = ({
     const authorization = `Bearer ${result.access_token}`
 
     if (!isTokenExchange) {
-      const tokenCacheManager = await tokenCacheManagerPromise
       await tokenCacheManager.set(
         TOKEN_CACHE_KEY,
         authorization,

@@ -1,9 +1,8 @@
-import { FC, PropsWithChildren } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 
 import { Box, LinkV2, Text } from '@island.is/island-ui/core'
-
-import IconButton from '../../IconButton/IconButton'
-import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
+import { link } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper.css'
 
 interface RenderItemProps {
   breakSpaces: boolean
@@ -39,6 +38,7 @@ const RenderPersonalData = ({
                 <IconButton
                   icon="pencil"
                   colorScheme="transparent"
+                  ariaLabel={`Breyta ${name}`}
                   onClick={onClick}
                 />
               </span>

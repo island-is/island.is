@@ -5,15 +5,17 @@ import { renderHook } from '@testing-library/react'
 
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type {
+  Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  Case,
   CaseOrigin,
   CaseState,
   CaseType,
   InstitutionType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -198,5 +200,37 @@ describe('useSections getSections', () => {
       { children: [], isActive: false, name: expect.any(String) },
       { children: [], isActive: false, name: expect.any(String) },
     ])
+  })
+
+  it('should not append extension sections for indictment cases copied to draft (with a parentCase)', () => {
+    const c: Case = {
+      type: CaseType.INDICTMENT,
+      created: faker.date.past().toISOString(),
+      modified: faker.date.past().toISOString(),
+      id: faker.datatype.uuid(),
+      state: CaseState.DRAFT,
+      policeCaseNumbers: [],
+      parentCase: {
+        type: CaseType.INDICTMENT,
+        created: faker.date.past().toISOString(),
+        modified: faker.date.past().toISOString(),
+        id: faker.datatype.uuid(),
+        state: CaseState.COMPLETED,
+        policeCaseNumbers: [],
+      },
+    }
+    const { result } = renderHook(() => useSections(), {
+      wrapper: makeWrapper(c),
+    })
+
+    const sections = result.current.getSections(c, u)
+
+    // A duplicated indictment draft links to its original via `parentCase`,
+    // but must still render only the three normal indictment sections — no
+    // restriction/investigation extension steps ("Krafa um framlengingu" etc.).
+    expect(sections).toHaveLength(3)
+    expect(sections.map((section) => section.name)).not.toContain(
+      'Krafa um framlengingu',
+    )
   })
 })

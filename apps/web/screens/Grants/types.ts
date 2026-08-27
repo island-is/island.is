@@ -3,6 +3,7 @@ export interface Status {
   deadlineStatus?: string
   deadlinePeriod?: string
   note?: string
+  hasTime?: boolean
 }
 
 export const Availability = ['closed', 'open'] as const

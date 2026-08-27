@@ -7,7 +7,6 @@ import { EmailService } from '@island.is/email-service'
 import {
   AppealCaseNotificationType,
   InstitutionType,
-  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -17,7 +16,12 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case, Notification } from '../../../repository'
+import {
+  AppealCase,
+  Case,
+  Notification,
+  NotificationRepositoryService,
+} from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 
@@ -60,11 +64,12 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
   const courtId = uuid()
   const userId = uuid()
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -74,12 +79,12 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
       emailService,
       internalNotificationController,
       notificationConfig,
-      notificationModel,
+      notificationRepositoryService,
     } = await createTestingNotificationModule()
 
     mockConfig = notificationConfig
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
 
     givenWhenThen = async (
       userRole,
@@ -88,9 +93,22 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     ) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealReceivedByCourtDate,
+        appealAssistant: {
+          name: appealAssistant.name,
+          email: appealAssistant.email,
+        },
+        appealJudge1: {
+          name: appealJudge1.name,
+          email: appealJudge1.email,
+        },
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             prosecutor: {
@@ -102,28 +120,19 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealCase: {
-              appealReceivedByCourtDate,
-              appealAssistant: {
-                name: appealAssistant.name,
-                email: appealAssistant.email,
-              },
-              appealJudge1: {
-                name: appealJudge1.name,
-                email: appealJudge1.email,
-              },
-            },
+            appealCase,
             judge: { name: judge.name, email: judge.email },
             registrar: { name: registrar.name, email: registrar.email },
             notifications,
           } as Case,
+          appealCase,
           {
             user: {
               id: userId,
               role: userRole,
               institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
             } as User,
-            type: AppealCaseNotificationType.APPEAL_WITHDRAWN as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_WITHDRAWN,
           },
         )
         .then((result) => (then.result = result))
@@ -177,7 +186,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
+      const mockCreate = mockNotificationRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
 
       then = await givenWhenThen(UserRole.PROSECUTOR, receivedDate, [

@@ -8,7 +8,10 @@ import {
   CaseState,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockTransitionAppealCaseMutation } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCaseTableMembershipQuery,
+  mockTransitionAppealCaseMutation,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
@@ -33,7 +36,10 @@ describe('Summary', () => {
 
     render(
       <MockedProvider
-        mocks={mockTransitionAppealCaseMutation(caseId, appealCaseId)}
+        mocks={[
+          ...mockTransitionAppealCaseMutation(caseId, appealCaseId),
+          ...mockCaseTableMembershipQuery(caseId),
+        ]}
         addTypename={false}
       >
         <IntlProviderWrapper>
@@ -72,7 +78,10 @@ describe('Summary', () => {
 
     render(
       <MockedProvider
-        mocks={mockTransitionAppealCaseMutation(caseId, appealCaseId)}
+        mocks={[
+          ...mockTransitionAppealCaseMutation(caseId, appealCaseId),
+          ...mockCaseTableMembershipQuery(caseId),
+        ]}
         addTypename={false}
       >
         <IntlProviderWrapper>

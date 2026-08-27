@@ -96,6 +96,34 @@ const triggerCognitoReauth = ({
   }
 }
 
+// Tag each GenericUserLicense in the response with the locale used to fetch it.
+// Lets the cache key include the locale so entities for different locales don't
+// overwrite each other in normalised storage.
+const licenseLocaleTagLink = new ApolloLink((operation, forward) => {
+  const locale = (operation.variables as { locale?: string } | undefined)
+    ?.locale
+  return forward(operation).map((response) => {
+    const collection = response.data?.genericLicenseCollection
+    const licenses = collection?.licenses
+    if (!locale || !collection || !Array.isArray(licenses)) {
+      return response
+    }
+    return {
+      ...response,
+      data: {
+        ...response.data,
+        genericLicenseCollection: {
+          ...collection,
+          licenses: licenses.map((license: Record<string, unknown>) => ({
+            ...license,
+            __locale: locale,
+          })),
+        },
+      },
+    }
+  })
+})
+
 const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     graphQLErrors.map((graphQLError) =>
@@ -130,7 +158,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 })
 
-const getAndRefreshToken = async () => {
+export const getAndRefreshToken = async () => {
   const { refresh } = getAuthStoreRef().getState()
   let { authorizeResult } = getAuthStoreRef().getState()
 
@@ -174,6 +202,16 @@ const authLink = setContext(async (_, { headers }) => {
 export const archivedCache = new Map()
 
 const cache = new InMemoryCache({
+  // Union/interface types need possibleTypes so the cache can match inline
+  // fragments when reading; without it a union member's fields (e.g. the
+  // health message content segments) come back undefined.
+  possibleTypes: {
+    HealthDirectorateHealthConversationMessageContent: [
+      'HealthDirectorateHealthConversationTextContent',
+      'HealthDirectorateHealthConversationSegmentedContent',
+      'HealthDirectorateHealthConversationVideoContent',
+    ],
+  },
   dataIdFromObject: (object) => {
     switch (object.__typename) {
       case 'VehiclesVehicle':
@@ -216,28 +254,31 @@ const cache = new InMemoryCache({
     },
     // Custom cache key for GenericUserLicense.
     // The backend does not expose a single stable id, so we synthesise one from
-    // license.type and payload.metadata.licenseId. This must stay in sync with
-    // the fields selected in GenericUserLicenseFragment so list and detail
-    // queries for the same license share the same cache entry.
+    // license.type and payload.metadata.licenseId. We also append the locale
+    // (injected by licenseLocaleTagLink) so entities fetched in different
+    // locales don't overwrite each other.
     GenericUserLicense: {
       keyFields: (object) => {
         const licenseType = (object as GenericUserLicense).license?.type
         const licenseId = (object as GenericUserLicense).payload?.metadata
           ?.licenseId
+        const locale = (object as { __locale?: string }).__locale
 
-        if (licenseType && licenseId) {
-          // Composite key ensures no collisions between different license types
-          // that might share the same licenseId.
-          return `${licenseType}:${licenseId}`
+        const baseKey =
+          licenseType && licenseId
+            ? // Composite key ensures no collisions between different license types
+              // that might share the same licenseId.
+              `${licenseType}:${licenseId}`
+            : // Fallback when type is missing but licenseId is still unique enough.
+              licenseId ??
+              // Last resort – let Apollo fall back to its default normalisation.
+              defaultDataIdFromObject(object) ??
+              undefined
+
+        if (!baseKey) {
+          return undefined
         }
-
-        if (licenseId) {
-          // Fallback when type is missing but licenseId is still unique enough.
-          return licenseId
-        }
-
-        // Last resort – let Apollo fall back to its default normalisation.
-        return defaultDataIdFromObject(object) ?? undefined
+        return locale ? `${baseKey}:${locale}` : baseKey
       },
     },
   },
@@ -266,7 +307,13 @@ const initializeApolloClient = async () => {
   })
 
   return new ApolloClient({
-    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+    link: ApolloLink.from([
+      retryLink,
+      errorLink,
+      authLink,
+      licenseLocaleTagLink,
+      httpLink,
+    ]),
     defaultOptions: {
       watchQuery: {
         fetchPolicy: 'cache-and-network',

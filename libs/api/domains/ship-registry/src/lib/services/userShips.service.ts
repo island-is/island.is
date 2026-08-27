@@ -1,17 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { ShipRegistryClientV2Service } from '@island.is/clients/ship-registry-v2'
 import { UserShipsCollection } from '../models/userShipsCollection.model'
-import { mapToUserShipCollection, mapToUserShipFromDetails } from '../mapper'
+import { mapToUserShipCollection, mapToUserShipFromDetails } from '../mappers'
 import { UserShip } from '../models/userShip.model'
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { LocaleEnum } from '@island.is/nest/graphql'
+import { UserShipInput } from '../dto/userShip.input'
 
 @Injectable()
 export class UserShipsService {
   constructor(
     private readonly shipRegistryClientV2Service: ShipRegistryClientV2Service,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async getUserShips(user: User): Promise<UserShipsCollection> {
@@ -29,18 +27,17 @@ export class UserShipsService {
 
   async getUserShip(
     user: User,
-    registrationNumber: string,
-    locale?: LocaleEnum,
+    input: UserShipInput,
   ): Promise<UserShip | null> {
     const ship = await this.shipRegistryClientV2Service.getShipDetails(
       user,
-      registrationNumber,
+      input.registrationNumber,
     )
 
     if (!ship) {
       return null
     }
 
-    return mapToUserShipFromDetails(ship, locale) ?? null
+    return mapToUserShipFromDetails(ship, input.locale) ?? null
   }
 }

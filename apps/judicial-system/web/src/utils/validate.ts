@@ -1,32 +1,41 @@
 // TODO: Add tests
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
-import {
+import type {
   AppealCase,
+  Case,
+  CourtSessionResponse,
+  DateLog,
+  Defendant,
+  IndictmentCount,
+  User,
+  Victim,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  Case,
+  AppealDecisionPartyRole,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
-  CourtSessionResponse,
   CourtSessionRulingType,
-  DateLog,
-  Defendant,
+  CourtSessionStringType,
   DefenderChoice,
-  IndictmentCount,
   IndictmentCountOffense,
   IndictmentDecision,
   SessionArrangements,
-  User,
-  Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from './arrayHelpers'
 import { isCivilClaimantDefendantSelectionValid } from './civilClaimantUtils'
-import { isBusiness } from './utils'
+import {
+  caseLevelAppealDecision,
+  isBusiness,
+  isMatchingAppealCourtFile,
+} from './utils'
 
 export type Validation =
   | 'empty'
@@ -48,7 +57,9 @@ const getRegexByValidation = (validation: Validation) => {
   switch (validation) {
     case 'empty':
       return {
-        regex: /./,
+        // Requires a non-whitespace character so that whitespace-only input
+        // counts as empty.
+        regex: /\S/,
         errorMessage: 'Reitur má ekki vera tómur',
       }
     case 'time-format':
@@ -58,7 +69,7 @@ const getRegexByValidation = (validation: Validation) => {
       }
     case 'police-casenumber-format':
       return {
-        regex: /^[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-\d{1,99999}$/,
+        regex: POLICE_CASE_NUMBER_REGEX,
         errorMessage: 'Dæmi: 012-3456-7890',
       }
     case 'national-id':
@@ -553,8 +564,14 @@ export const isRulingValidIC = (workingCase: Case): boolean => {
 
 export const isCourtRecordStepValidRC = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.accusedAppealDecision &&
-      workingCase.prosecutorAppealDecision &&
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.DEFENDANT,
+    ) &&
+      caseLevelAppealDecision(
+        workingCase.appealDecisions,
+        AppealDecisionPartyRole.PROSECUTOR,
+      ) &&
       validate([
         [workingCase.courtStartDate, ['empty', 'date-format']],
         [workingCase.courtLocation, ['empty']],
@@ -588,8 +605,14 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
   }
 
   return Boolean(
-    workingCase.accusedAppealDecision &&
-      workingCase.prosecutorAppealDecision &&
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.DEFENDANT,
+    ) &&
+      caseLevelAppealDecision(
+        workingCase.appealDecisions,
+        AppealDecisionPartyRole.PROSECUTOR,
+      ) &&
       validate(validations).isValid,
   )
 }
@@ -645,7 +668,10 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
-export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
+export const isCourtSessionValid = (
+  courtSession: CourtSessionResponse,
+  workingCase: Case,
+) => {
   return (
     (courtSession.isClosed
       ? courtSession.closedLegalProvisions &&
@@ -659,9 +685,13 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
     (courtSession.rulingType === CourtSessionRulingType.ORDER
       ? !!courtSession.rulingFileId
       : true) &&
+    (courtSession.rulingType === CourtSessionRulingType.ORDER
+      ? areAppealDecisionsComplete(courtSession, workingCase)
+      : true) &&
     (courtSession.isAttestingWitness
       ? courtSession.attestingWitnessId
       : true) &&
+    areMergedCaseEntriesComplete(courtSession) &&
     validate([
       [courtSession.startDate, ['empty', 'date-format']],
       [courtSession.location, ['empty']],
@@ -671,6 +701,73 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
       [courtSession.endDate, ['empty', 'date-format']],
     ]).isValid
   )
+}
+
+// Each merged case with documents in a session gets its own entries booking in
+// the court record, and each is required. The set is derived from the filed
+// documents rather than from the strings, so a merged case that has never been
+// written about is missing rather than absent.
+export const areMergedCaseEntriesComplete = (
+  courtSession: CourtSessionResponse,
+): boolean => {
+  const mergedCaseIds = new Set(
+    courtSession.mergedFiledDocuments?.map((document) => document.caseId),
+  )
+
+  return Array.from(mergedCaseIds).every(
+    (mergedCaseId) =>
+      validate([
+        [
+          courtSession.courtSessionStrings?.find(
+            (courtSessionString) =>
+              courtSessionString.mergedCaseId === mergedCaseId &&
+              courtSessionString.stringType === CourtSessionStringType.ENTRIES,
+          )?.value,
+          ['empty'],
+        ],
+      ]).isValid,
+  )
+}
+
+// An ORDER court session can only be confirmed once every party - the
+// prosecution, each defendant and each civil claimant - has recorded a
+// decision on the ruling. Mirrors the backend confirm-time validation.
+export const areAppealDecisionsComplete = (
+  courtSession: CourtSessionResponse,
+  workingCase: Case,
+): boolean => {
+  const { rulingFileId } = courtSession
+  if (!rulingFileId) {
+    return false
+  }
+
+  const decided =
+    workingCase.appealDecisions?.filter(
+      (decision) => decision.rulingFileId === rulingFileId && decision.decision,
+    ) ?? []
+
+  const prosecutorDecided = decided.some(
+    (decision) => decision.partyRole === AppealDecisionPartyRole.PROSECUTOR,
+  )
+
+  const defendantsDecided = (workingCase.defendants ?? []).every((defendant) =>
+    decided.some(
+      (decision) =>
+        decision.partyRole === AppealDecisionPartyRole.DEFENDANT &&
+        decision.defendantId === defendant.id,
+    ),
+  )
+
+  const civilClaimantsDecided = (workingCase.civilClaimants ?? []).every(
+    (civilClaimant) =>
+      decided.some(
+        (decision) =>
+          decision.partyRole === AppealDecisionPartyRole.CIVIL_CLAIMANT &&
+          decision.civilClaimantId === civilClaimant.id,
+      ),
+  )
+
+  return prosecutorDecided && defendantsDecided && civilClaimantsDecided
 }
 
 export const isGeneratedIndictmentCourtRecordValid = (workingCase: Case) => {
@@ -788,8 +885,12 @@ export const isCourtOfAppealRulingStepValid = (
     isCourtOfAppealRulingStepFieldsValid(appealCase) &&
       (appealCase?.appealRulingDecision ===
         AppealCaseRulingDecision.DISCONTINUED ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.APPEAL_RULING,
+        workingCase.caseFiles?.some((file) =>
+          isMatchingAppealCourtFile(
+            file,
+            CaseFileCategory.APPEAL_RULING,
+            appealCase?.rulingFileId,
+          ),
         )),
   )
 }

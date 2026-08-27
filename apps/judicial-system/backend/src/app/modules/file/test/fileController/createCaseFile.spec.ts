@@ -177,6 +177,58 @@ describe('FileController - Create case file', () => {
     })
   })
 
+  describe.each([...restrictionCases, ...investigationCases])(
+    'uncategorized case file created for ordered %s case',
+    (type) => {
+      const caseId = uuid()
+      const theCase = { id: caseId, type } as Case
+      const uuId = uuid()
+      const createCaseFile: CreateFileDto = {
+        type: 'text/plain',
+        key: `${caseId}/${uuId}/test.txt`,
+        size: 99,
+      }
+      const fileId = uuid()
+      const timeStamp = randomDate()
+      const caseFile = {
+        type: 'text/plain',
+        key: `${caseId}/${uuId}/test.txt`,
+        size: 99,
+        id: fileId,
+        created: timeStamp,
+        modified: timeStamp,
+      }
+      let then: Then
+
+      beforeEach(async () => {
+        const mockFindAll = mockFileModel.findAll as jest.Mock
+        mockFindAll.mockResolvedValueOnce([])
+
+        const mockMax = mockFileModel.max as jest.Mock
+        mockMax.mockResolvedValueOnce(2)
+
+        const mockCreate = mockFileModel.create as jest.Mock
+        mockCreate.mockResolvedValueOnce(caseFile)
+
+        then = await givenWhenThen(caseId, createCaseFile, theCase)
+      })
+
+      it('should append orderWithinChapter after existing ordered files', () => {
+        expect(mockFileModel.findAll).toHaveBeenCalledWith({
+          where: { caseId, category: null },
+          attributes: ['id'],
+          lock: Transaction.LOCK.UPDATE,
+          transaction,
+        })
+        expect(mockFileModel.create).toHaveBeenCalledWith(
+          expect.objectContaining({ orderWithinChapter: 3 }),
+          { transaction },
+        )
+        expect(then.result).toBe(caseFile)
+      })
+    },
+  )
+
   describe.each(indictmentCases)(
     'additional case file created for %s case',
     (type) => {

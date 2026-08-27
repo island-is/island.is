@@ -113,6 +113,7 @@ describe('Feature-deployment support', () => {
       DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS:
         '--max-old-space-size=230 --enable-source-maps -r dd-trace/init',
+      DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
       DB_EXTENSIONS: 'foo',
@@ -139,6 +140,7 @@ describe('Feature-deployment support', () => {
       BFF_LOGIN_ATTEMPT_TTL_MS: '604800000',
       NODE_OPTIONS:
         '--max-old-space-size=230 --enable-source-maps -r dd-trace/init',
+      DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
       REDIS_URL_NODE_01: 'b',
@@ -181,20 +183,11 @@ describe('Feature-deployment support', () => {
     )
   })
 
-  it('feature deployment ingress', () => {
-    expect(values.services.api.ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-        },
-        hosts: [
-          {
-            host: 'feature-A-a.dev01.devland.is',
-            paths: ['/'],
-          },
-        ],
-      },
-    })
+  it('feature deployment httpRoute', () => {
+    expect((values.services.api as any).ingress).toBeUndefined()
+    expect(values.services.api.httpRoute).toBeDefined()
+    expect(values.services.api.httpRoute!['primary-gw'].hostnames).toEqual([
+      'feature-A-a.dev01.devland.is',
+    ])
   })
 })

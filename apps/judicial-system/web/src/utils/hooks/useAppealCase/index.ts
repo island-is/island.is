@@ -1,35 +1,29 @@
-import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   AppealCase,
   AppealCaseTransition,
   AppealEventType,
   Case,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
-import {
-  CreateAppealCaseMutation,
-  useCreateAppealCaseMutation,
-} from './createAppealCase.generated'
+import type { CreateAppealCaseMutation } from './createAppealCase.generated'
+import { useCreateAppealCaseMutation } from './createAppealCase.generated'
 import { useCreateAppealEventLogMutation } from './createAppealEventLog.generated'
-import {
-  LimitedAccessCreateAppealCaseMutation,
-  useLimitedAccessCreateAppealCaseMutation,
-} from './limitedAccessCreateAppealCase.generated'
+import type { LimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
+import { useLimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
 import { useLimitedAccessCreateAppealEventLogMutation } from './limitedAccessCreateAppealEventLog.generated'
-import {
-  LimitedAccessTransitionAppealCaseMutation,
-  useLimitedAccessTransitionAppealCaseMutation,
-} from './limitedAccessTransitionAppealCase.generated'
-import {
-  TransitionAppealCaseMutation,
-  useTransitionAppealCaseMutation,
-} from './transitionAppealCase.generated'
+import type { LimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
+import { useLimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
+import type { TransitionAppealCaseMutation } from './transitionAppealCase.generated'
+import { useTransitionAppealCaseMutation } from './transitionAppealCase.generated'
 import { useUpdateAppealCaseMutation } from './updateAppealCase.generated'
 
 type UpdateAppealCase = Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>
@@ -145,13 +139,13 @@ const useAppealCase = () => {
           }
 
           if (setWorkingCase) {
-            setWorkingCase((prevWorkingCase) => ({
-              ...prevWorkingCase,
-              appealCase: {
-                ...prevWorkingCase.appealCase,
-                ...appealCase,
-              } as AppealCase,
-            }))
+            setWorkingCase((prevWorkingCase) =>
+              applyAppealCaseUpdate(
+                prevWorkingCase,
+                appealCaseId,
+                appealCase as Partial<AppealCase>,
+              ),
+            )
           }
 
           return true

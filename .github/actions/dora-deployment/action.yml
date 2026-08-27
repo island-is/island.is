@@ -1,0 +1,49 @@
+name: 'DORA Deployment'
+description: 'Report deployment events to Datadog DORA Metrics. Use mode=start to capture timing, mode=finish to send events.'
+
+inputs:
+  mode:
+    description: '"start" to record the deploy start time, "finish" to send events'
+    required: true
+  dd-api-key:
+    description: 'Datadog API key (required for mode=finish)'
+    required: false
+  dd-site:
+    description: 'Datadog site'
+    required: false
+    default: 'datadoghq.eu'
+  environment:
+    description: 'Deployment environment (required for mode=finish)'
+    required: false
+  services:
+    description: 'Comma-separated service names (required for mode=finish if data-file not set)'
+    required: false
+  data-file:
+    description: 'Path to JSON file with deployed services (objects with .project field)'
+    required: false
+  started-at:
+    description: 'Unix timestamp from mode=start output (used in mode=finish)'
+    required: false
+
+outputs:
+  started-at:
+    description: 'Unix timestamp captured at start (only set in mode=start)'
+    value: ${{ steps.run.outputs.started-at }}
+
+runs:
+  using: composite
+  steps:
+    - name: Run DORA action
+      id: run
+      shell: bash
+      env:
+        DORA_MODE: ${{ inputs.mode }}
+        DD_API_KEY: ${{ inputs.dd-api-key }}
+        DD_SITE: ${{ inputs.dd-site }}
+        DORA_ENV: ${{ inputs.environment }}
+        DORA_SERVICES: ${{ inputs.services }}
+        DORA_DATA_FILE: ${{ inputs.data-file }}
+        DORA_STARTED_AT: ${{ inputs.started-at || '' }}
+        GIT_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        GIT_COMMIT_SHA: ${{ github.sha }}
+      run: node ${{ github.action_path }}/main.mjs

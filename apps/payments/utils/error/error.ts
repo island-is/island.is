@@ -1,15 +1,16 @@
 import { MessageDescriptor } from 'react-intl'
 
 import {
+  BankTransferErrorCode,
   CardErrorCode,
   FjsErrorCode,
   PaymentServiceCode,
 } from '@island.is/shared/constants'
 
-import { cardError, genericError } from '../../messages'
+import { bankTransferError, cardError, genericError } from '../../messages'
 
 export type PaymentError = {
-  code: CardErrorCode
+  code: CardErrorCode | BankTransferErrorCode
   meta?: Record<string, string | number>
 }
 
@@ -18,7 +19,13 @@ export const paymentErrorToTitleAndMessage = (
 ): { title: MessageDescriptor; message: MessageDescriptor } => {
   const { code } = error
 
-  switch (code as CardErrorCode | FjsErrorCode | PaymentServiceCode) {
+  switch (
+    code as
+      | CardErrorCode
+      | FjsErrorCode
+      | PaymentServiceCode
+      | BankTransferErrorCode
+  ) {
     case CardErrorCode.InsufficientFunds:
       return {
         title: cardError.insufficientFundsTitle,
@@ -168,6 +175,43 @@ export const paymentErrorToTitleAndMessage = (
       return {
         title: cardError.errorGettingApplePaySessionTitle,
         message: cardError.errorGettingApplePaySession,
+      }
+    case BankTransferErrorCode.BankTransferRejected:
+      return {
+        title: bankTransferError.rejectedTitle,
+        message: bankTransferError.rejected,
+      }
+    case BankTransferErrorCode.BankTransferCancelled:
+      return {
+        title: bankTransferError.cancelledTitle,
+        message: bankTransferError.cancelled,
+      }
+    case BankTransferErrorCode.BankTransferGenericError:
+      return {
+        title: bankTransferError.genericTitle,
+        message: bankTransferError.generic,
+      }
+    case BankTransferErrorCode.BankTransferExpired:
+      return {
+        title: bankTransferError.expiredTitle,
+        message: bankTransferError.expired,
+      }
+    case BankTransferErrorCode.FailedToCreateBankTransfer:
+    case BankTransferErrorCode.BankTransferAlreadyInProgress:
+      return {
+        title: bankTransferError.failedToCreateTitle,
+        message: bankTransferError.failedToCreate,
+      }
+    case BankTransferErrorCode.MissingBankAccountNumber:
+      return {
+        title: bankTransferError.missingAccountNumberTitle,
+        message: bankTransferError.missingAccountNumber,
+      }
+    case BankTransferErrorCode.FailedToFetchBankTransfer:
+    case BankTransferErrorCode.UnknownBankTransferError:
+      return {
+        title: bankTransferError.genericTitle,
+        message: bankTransferError.generic,
       }
     default:
       return {

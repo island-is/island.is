@@ -56,7 +56,8 @@ export const ReportFieldsRepeater: FC<
 > = ({ application, field, errors }) => {
   const { answers } = application
 
-  const { id, props } = field
+  const id = field.id as string
+  const { props } = field
 
   const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 

@@ -77,6 +77,7 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
     transaction = {} as Transaction
 
     zipFilesSpy = jest
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .spyOn(limitedAccessCaseService as any, 'zipFiles')
       .mockResolvedValue(Buffer.from('zip'))
 

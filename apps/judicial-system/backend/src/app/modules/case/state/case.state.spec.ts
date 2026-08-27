@@ -783,7 +783,14 @@ describe('Transition Case', () => {
         // Act
         const res = transitionCase(
           CaseTransition.REOPEN,
-          { id: uuid(), state: fromState, type } as Case,
+          {
+            id: uuid(),
+            state: fromState,
+            type,
+            // The dates of the previous conclusion, which the reopen clears
+            courtEndTime: new Date(),
+            rulingDate: new Date(),
+          } as Case,
           { id: uuid() } as User,
         )
 
@@ -792,6 +799,8 @@ describe('Transition Case', () => {
           state: CaseState.RECEIVED,
           indictmentDecision: IndictmentDecision.POSTPONING,
           postponedIndefinitelyExplanation: 'Mál enduropnað',
+          courtEndTime: null,
+          rulingDate: null,
           indictmentReviewerId: null,
           courtRecordHash: null,
         })
@@ -827,14 +836,7 @@ describe('Transition Case', () => {
         },
       )
 
-      describe.each(
-        Object.values(CaseIndictmentRulingDecision).filter(
-          (indictmentRulingDecision) =>
-            !allowedIndictmentRulingDecisions.includes(
-              indictmentRulingDecision,
-            ),
-        ),
-      )(
+      describe.each([CaseIndictmentRulingDecision.WITHDRAWAL])(
         'indictment ruling decision %s - should not reopen',
         (indictmentRulingDecision) => {
           // Arrange
@@ -979,14 +981,7 @@ describe('Transition Case', () => {
         },
       )
 
-      describe.each(
-        Object.values(CaseIndictmentRulingDecision).filter(
-          (indictmentRulingDecision) =>
-            !allowedIndictmentRulingDecisions.includes(
-              indictmentRulingDecision,
-            ),
-        ),
-      )(
+      describe.each([CaseIndictmentRulingDecision.WITHDRAWAL])(
         'indictment ruling decision %s - should not correct',
         (indictmentRulingDecision) => {
           // Arrange

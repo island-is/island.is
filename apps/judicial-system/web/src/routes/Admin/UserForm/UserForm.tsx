@@ -1,12 +1,5 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { InputMask } from '@react-input/mask'
 
 import {
@@ -37,20 +30,20 @@ import {
   PageTitle,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Institution,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import { userRoleToString } from '@island.is/judicial-system-web/src/routes/Admin/userRoleToString'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
-
-import { ReactSelectOption } from '../../../types'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   isAdminUserFormValid,
   validate,
-  Validation,
-} from '../../../utils/validate'
-import { userRoleToString } from '../userRoleToString'
+} from '@island.is/judicial-system-web/src/utils/validate'
+
 import * as styles from './UserForm.css'
 
 interface UserRoleRadioButtonProps {
@@ -175,7 +168,13 @@ export const UserForm: FC<Props> = ({
     mobileNumber: existingUser.mobileNumber,
   })
 
-  const { personData, error } = useNationalRegistry(user.nationalId)
+  const isNewUser = user.id.length === 0
+
+  // The national id of an existing user cannot be changed, so only look up
+  // the name of new users in the national registry
+  const { personData, error } = useNationalRegistry(user.nationalId, {
+    skip: !isNewUser,
+  })
 
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
@@ -185,16 +184,11 @@ export const UserForm: FC<Props> = ({
     useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
-  const isNewUser = user.id.length === 0
-
-  const setName = useCallback(
-    (name: string) => {
-      if (name !== user.name) {
-        setUser((prevUser) => ({ ...prevUser, name: name }))
-      }
-    },
-    [user],
-  )
+  const setName = useCallback((name: string) => {
+    setUser((prevUser) =>
+      prevUser.name === name ? prevUser : { ...prevUser, name },
+    )
+  }, [])
 
   useEffect(() => {
     if (error || (personData && personData.items?.length === 0)) {
@@ -486,12 +480,17 @@ export const UserForm: FC<Props> = ({
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          onNextButtonClick={saveUser}
-          nextIsDisabled={!isValid}
-          nextIsLoading={loading}
-          nextButtonText="Vista"
           previousUrl={ADMIN_USERS_ROUTE}
+          actions={[
+            {
+              text: 'Vista',
+              icon: 'arrowForward',
+              onClick: saveUser,
+              disabled: !isValid,
+              loading: loading,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </div>

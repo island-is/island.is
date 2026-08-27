@@ -229,9 +229,10 @@ export class ApplicationValidationService {
 
     const illegalDataProviders: string[] = []
 
-    templateApis.forEach(({ externalDataId }) => {
-      if (permittedDataProviders.indexOf(externalDataId) === -1) {
-        illegalDataProviders.push(externalDataId)
+    templateApis.forEach((api) => {
+      const resolvedId = api.resolveExternalDataId(application, nationalId)
+      if (permittedDataProviders.indexOf(resolvedId) === -1) {
+        illegalDataProviders.push(resolvedId)
       }
     })
     if (illegalDataProviders.length > 0) {

@@ -1,12 +1,7 @@
-import {
-  FC,
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import type { FC } from 'react'
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button } from '@island.is/island-ui/core'
@@ -15,7 +10,7 @@ import {
   DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
   CourtCaseInfo,
@@ -29,12 +24,14 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  CaseState,
-  CourtSessionType,
   Defendant,
   UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  CourtSessionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -102,10 +99,19 @@ const Subpoena: FC = () => {
   )
 
   const toggleNewAlternativeService = (defendant: Defendant) => () => {
+    if (!defendant.isAlternativeService) {
+      setNewAlternativeServices((previous) => [...previous, defendant.id])
+      return
+    }
+
     setNewAlternativeServices((previous) =>
-      defendant.isAlternativeService
-        ? previous.filter((id) => id !== defendant.id)
-        : [...previous, defendant.id],
+      previous.filter((id) => id !== defendant.id),
+    )
+
+    // Turning alternative service off means a new subpoena is being issued,
+    // just like when the new subpoena button is used
+    setNewSubpoenas((previous) =>
+      previous.includes(defendant.id) ? previous : [...previous, defendant.id],
     )
   }
 
@@ -146,10 +152,10 @@ const Subpoena: FC = () => {
           alternativeServiceDescription: defendant.isAlternativeService
             ? defendant.alternativeServiceDescription
             : null,
-          // Only change the subpoena type if the defendant is not
+          // Clear the subpoena type if the defendant is
           // being served by alternative means
           subpoenaType: defendant.isAlternativeService
-            ? undefined
+            ? null
             : defendant.subpoenaType,
         }),
       )
@@ -202,12 +208,16 @@ const Subpoena: FC = () => {
       return
     }
 
-    // Create subpoenas for selected defendants (or all if first-time scheduling)
-    const defendantIdsToCreateSubpoenasFor = isArraignmentScheduled
-      ? newSubpoenas
-      : updates?.defendants
-          ?.filter((defendant) => !defendant.isAlternativeService)
-          .map((defendant) => defendant.id) ?? []
+    // Create subpoenas for selected defendants (or all if first-time scheduling),
+    // never for defendants being served by alternative means
+    const defendantIdsToCreateSubpoenasFor =
+      updates?.defendants
+        ?.filter(
+          (defendant) =>
+            !defendant.isAlternativeService &&
+            (!isArraignmentScheduled || newSubpoenas.includes(defendant.id)),
+        )
+        .map((defendant) => defendant.id) ?? []
 
     if (defendantIdsToCreateSubpoenasFor.length > 0) {
       const arraignmentDate = updates?.theCase.arraignmentDate?.date
@@ -492,41 +502,50 @@ const Subpoena: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() => {
-            if (!isSchedulingArraignmentDate) {
-              router.push(
-                `${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`,
-              )
-            } else {
-              setNavigateTo(DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE)
-            }
-          }}
-          nextButtonText={
-            !isSchedulingArraignmentDate
-              ? undefined
-              : formatMessage(strings.nextButtonText)
-          }
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: !isSchedulingArraignmentDate
+                ? formatMessage(core.continue)
+                : formatMessage(strings.nextButtonText),
+              icon: 'arrowForward',
+              onClick: () => {
+                if (!isSchedulingArraignmentDate) {
+                  router.push(
+                    `${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`,
+                  )
+                } else {
+                  setNavigateTo(DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE)
+                }
+              },
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
-      {modalContent && (
-        <Modal
-          title={modalContent.title}
-          text={modalContent.text}
-          primaryButton={{
-            text: modalContent.primaryButtonText,
-            onClick: () => scheduleArraignmentDate(),
-            isLoading: isCreatingSubpoena,
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.modalSecondaryButtonText),
-            onClick: () => setNavigateTo(undefined),
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {modalContent && (
+          <Modal
+            title={modalContent.title}
+            text={modalContent.text}
+            buttons={[
+              {
+                text: formatMessage(strings.modalSecondaryButtonText),
+                onClick: () => setNavigateTo(undefined),
+                variant: 'ghost',
+              },
+              {
+                text: modalContent.primaryButtonText,
+                onClick: () => scheduleArraignmentDate(),
+                isLoading: isCreatingSubpoena,
+              },
+            ]}
+            onClose={() => setNavigateTo(undefined)}
+          />
+        )}
+      </AnimatePresence>
     </PageLayout>
   )
 }

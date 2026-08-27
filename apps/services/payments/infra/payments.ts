@@ -35,6 +35,19 @@ const env = {
   PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
   PAYMENTS_APPLE_PAY_DOMAIN: 'island.is',
   PAYMENTS_APPLE_PAY_DISPLAY_NAME: 'island.is',
+  BLIKK_API_BASE_URL: {
+    dev: 'https://stage.blikk.tech',
+    staging: 'https://stage.blikk.tech',
+    prod: 'https://api.blikk.tech',
+  },
+  BLIKK_PAYMENT_TTL_SECONDS: {
+    dev: '300', // 5 minutes
+    staging: '300', // 5 minutes
+    prod: '600', // 10 minutes
+  },
+  // Origin of the Blikk onboarding app: a DRAFT payment whose scaRedirectUrl points here
+  // requires payer onboarding before SCA (the FE redirects there instead of rendering SCA).
+  BLIKK_ONBOARDING_URL: 'https://light.blikk.tech',
 }
 
 // common database configuration
@@ -60,6 +73,9 @@ const secrets = {
   PAYMENTS_PREVIOUS_KEY_ID: '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID',
   PAYMENTS_PREVIOUS_PUBLIC_KEY:
     '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY',
+  // Shared by the service and the worker: the worker transitively loads the
+  // bank-transfer/Blikk modules via PaymentFlowModule, so BlikkClientConfig must resolve at boot.
+  BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY',
 }
 
 // service setup

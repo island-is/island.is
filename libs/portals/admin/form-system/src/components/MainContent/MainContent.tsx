@@ -15,7 +15,7 @@ import {
   Select,
   Stack,
 } from '@island.is/island-ui/core'
-import { useContext, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../context/ControlContext'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
@@ -27,8 +27,15 @@ import { Premises } from './components/Premises/Premises'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { Urls } from './components/Urls/Urls'
+import { Delegation } from './components/Delegation/Delegation'
+import { Deadline } from './components/Deadline/Deadline'
 
-export const MainContent = () => {
+interface Props {
+  openPreview: boolean
+  setOpenPreview: Dispatch<SetStateAction<boolean>>
+}
+
+export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
   const {
     control,
     controlDispatch,
@@ -38,11 +45,10 @@ export const MainContent = () => {
     getTranslation,
   } = useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
-  const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
   const showIdentifier =
-    form.useValidate && (activeItem.data as FormSystemScreen)?.shouldValidate
+    form.submissionServiceUrl !== 'zendesk' && activeItem.type === 'Screen'
 
   const activeScreen =
     activeItem.type === 'Screen'
@@ -65,8 +71,12 @@ export const MainContent = () => {
   const disableAllowMultiple =
     (activeScreen?.isMulti ?? false) && screenHasMultisetFields
 
+  if (!activeItem.data) {
+    return null
+  }
+
   return (
-    <Box>
+    <Box style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
       {activeItem.type === 'Field' ? (
         <FieldContent />
       ) : activeItem.type === 'Section' &&
@@ -91,6 +101,12 @@ export const MainContent = () => {
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Lifetime' ? (
         <Lifetime />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).id === 'Delegation' ? (
+        <Delegation />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).id === 'Deadline' ? (
+        <Deadline />
       ) : (activeItem.data as FormSystemSection).sectionType ===
         SectionTypes.PAYMENT ? (
         <Payment />
@@ -214,7 +230,9 @@ export const MainContent = () => {
                             (activeItem.data as FormSystemScreen).multiMax ?? 2,
                           ),
                         }}
-                        onChange={(e) => {
+                        onChange={(
+                          e: { label: string; value: string } | null,
+                        ) => {
                           controlDispatch({
                             type: 'CHANGE_MULTI_MAX',
                             payload: {

@@ -10,6 +10,8 @@ import {
 import {
   AppealCaseNotificationType,
   AppealCaseState,
+  AppealEventType,
+  AppealOrigin,
   CaseFileCategory,
   CaseType,
   User,
@@ -22,8 +24,9 @@ import { nowFactory } from '../../../../factories'
 import {
   AppealCase,
   AppealCaseRepositoryService,
+  AppealDecisionRepositoryService,
+  AppealEventLogRepositoryService,
   Case,
-  CaseRepositoryService,
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
@@ -53,7 +56,8 @@ describe('LimitedAccessAppealCaseController - Create', () => {
   const now = new Date('2024-01-15T10:00:00Z')
 
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
-  let mockCaseRepositoryService: CaseRepositoryService
+  let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
+  let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -63,12 +67,14 @@ describe('LimitedAccessAppealCaseController - Create', () => {
     const {
       limitedAccessAppealCaseController,
       appealCaseRepositoryService,
-      caseRepositoryService,
+      appealDecisionRepositoryService,
+      appealEventLogRepositoryService,
       sequelize,
     } = await createTestingAppealCaseModule()
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
-    mockCaseRepositoryService = caseRepositoryService
+    mockAppealDecisionRepositoryService = appealDecisionRepositoryService
+    mockAppealEventLogRepositoryService = appealEventLogRepositoryService
 
     const mockNowFactory = nowFactory as jest.Mock
     mockNowFactory.mockReturnValue(now)
@@ -95,10 +101,12 @@ describe('LimitedAccessAppealCaseController - Create', () => {
   })
 
   describe('defence user appeals a restriction case', () => {
+    const defendantId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
       caseFiles: [],
+      defendants: [{ id: defendantId }],
     } as unknown as Case
     let then: Then
 
@@ -109,16 +117,30 @@ describe('LimitedAccessAppealCaseController - Create', () => {
     it('should create an appealed appeal case', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
-        { appealState: AppealCaseState.APPEALED },
+        { appealState: AppealCaseState.APPEALED, appealDate: now },
         { transaction },
       )
       expect(then.result).toBe(createdAppealCase)
     })
 
-    it('should stamp the accused postponed appeal date on the case', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        expect.objectContaining({ accusedPostponedAppealDate: now }),
+    it('should not touch appeal_decision rows for an out-of-court appeal', () => {
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+
+    it('should record an APPEALED event for the defence side (no user id)', () => {
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        {
+          caseId,
+          appealCaseId,
+          eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.OUT_OF_COURT,
+          userRole: UserRole.DEFENDER,
+          userId: undefined,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
+        },
         { transaction },
       )
     })
@@ -126,7 +148,7 @@ describe('LimitedAccessAppealCaseController - Create', () => {
     it('should queue the appeal to court of appeals notification', () => {
       expect(addMessagesToQueue).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: MessageType.NOTIFICATION,
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
           body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
         }),
@@ -136,6 +158,7 @@ describe('LimitedAccessAppealCaseController - Create', () => {
 
   describe('defence user appeals a ruling order on an indictment case', () => {
     const rulingFileId = uuid()
+    const defendantId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
@@ -146,24 +169,61 @@ describe('LimitedAccessAppealCaseController - Create', () => {
           category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
         },
       ],
+      defendants: [
+        {
+          id: defendantId,
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId,
+        },
+      ],
     } as unknown as Case
+    const createdRulingOrderAppeal = {
+      ...createdAppealCase,
+      rulingFileId,
+    } as AppealCase
     let then: Then
 
     beforeEach(async () => {
+      const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValue(createdRulingOrderAppeal)
+
       then = await givenWhenThen(theCase, { rulingFileId })
     })
 
-    it('should create a ruling-order appeal tagged with the appellant', () => {
+    it('should create a ruling-order appeal', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
           appealState: AppealCaseState.APPEALED,
           rulingFileId,
-          appealedByNationalId: defenderNationalId,
+          appealDate: now,
         },
         { transaction },
       )
-      expect(then.result).toBe(createdAppealCase)
+      expect(then.result).toBe(createdRulingOrderAppeal)
+    })
+
+    it('should not touch appeal_decision rows for an out-of-court appeal', () => {
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+
+    it('should record an APPEALED event tied to the represented defendant', () => {
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        {
+          caseId,
+          appealCaseId,
+          eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.OUT_OF_COURT,
+          userRole: UserRole.DEFENDER,
+          userId: undefined,
+          defendantId,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
+        },
+        { transaction },
+      )
     })
   })
 

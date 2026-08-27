@@ -2,6 +2,7 @@ import addMilliseconds from 'date-fns/addMilliseconds'
 
 import {
   DefaultStateLifeCycle,
+  getApplicationLink,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -13,7 +14,6 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationWithAttachments,
-  ScheduledNotificationConfig,
 } from '@island.is/application/types'
 import { Unwrap } from '@island.is/shared/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
@@ -26,6 +26,10 @@ import { expandFieldKeys } from '../lifecycle/application-lifecycle.utils'
 import { IdentityClientService } from '@island.is/clients/identity'
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import { ApplicationService } from '@island.is/application/api/core'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import type { User } from '@island.is/auth-nest-tools'
+import { logger } from '@island.is/logging'
+import { environment } from '../../../../environments'
 
 export const getApplicationLifecycle = (
   application: Application,
@@ -177,7 +181,7 @@ export const removeObjectWithKeyFromAnswers = (
   depth = 0,
 ): object => {
   if (depth >= MAX_DEPTH) {
-    console.warn(
+    logger.warn(
       'Maximum recursion depth reached while calling removeObjectWithKeyFromAnswers',
     )
     return answers
@@ -364,6 +368,8 @@ export const handleScheduledNotifications = async (
   application: ApplicationWithAttachments,
   template: Unwrap<typeof getApplicationTemplateByTypeId>,
   newState: string,
+  featureFlagService?: FeatureFlagService,
+  user?: User,
 ) => {
   // 1. Clean up any existing scheduled notifications
   await applicationService.cancelScheduledNotifications(application.id)
@@ -380,26 +386,27 @@ export const handleScheduledNotifications = async (
     return
   }
 
-  // 3. Prepare the new schedules with robustness
-  const notificationsToSchedule = []
-  const configArray = Array.isArray(configs) ? configs : [configs]
+  // 3. Resolve configs
+  const resolved =
+    typeof configs === 'function' ? configs(application) : configs
+  const configArray = Array.isArray(resolved) ? resolved : [resolved]
 
-  for (const configItem of configArray) {
-    let config: ScheduledNotificationConfig
+  // 4. Prepare the new schedules with robustness
+  const notificationsToSchedule = []
+
+  for (const config of configArray) {
     try {
-      if (typeof configItem === 'function') {
-        config = configItem(application)
-      } else {
-        config = configItem
+      // Configs gated behind a feature flag are only scheduled while the
+      // flag is enabled.
+      if (config.featureFlag) {
+        const enabled = await featureFlagService?.getValue(
+          config.featureFlag,
+          false,
+          user,
+        )
+        if (!enabled) continue
       }
-    } catch (error) {
-      console.error(
-        `Failed to evaluate schedule configuration for application ${application.id} in state ${newState}`,
-        error,
-      )
-      continue
-    }
-    try {
+
       let time: Date
 
       if ('delayInMs' in config) {
@@ -423,20 +430,35 @@ export const handleScheduledNotifications = async (
         }
       }
 
+      const args = [
+        ...(config.args ?? []),
+        ...(config.includeApplicationLink
+          ? [
+              {
+                key: 'applicationLink',
+                value: getApplicationLink(
+                  application,
+                  environment.templateApi.clientLocationOrigin,
+                ),
+              },
+            ]
+          : []),
+      ]
+
       notificationsToSchedule.push({
         template: config.template,
         schedule_time: time,
-        args: config.args,
+        args,
       })
     } catch (error) {
-      console.error(
+      logger.error(
         `Failed to evaluate schedule configuration for template ${config.template} in state ${newState} for application ${application.id}`,
         error,
       )
     }
   }
 
-  // 4. Save to the database
+  // 5. Save to the database
   if (notificationsToSchedule.length > 0) {
     await applicationService.createScheduledNotifications(
       application.id,

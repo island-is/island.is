@@ -110,6 +110,33 @@ export const healthNavigation: PortalNavigationItem = {
           navHide: true,
           breadcrumbHide: true,
         },
+        {
+          name: messages.bookAppointmentTitle,
+          path: HealthPaths.HealthBookAppointment,
+          navHide: true,
+          breadcrumbHide: true,
+        },
+      ],
+    },
+    {
+      name: m.messages,
+      path: HealthPaths.HealthConversations,
+      searchTags: [s.healthShorter],
+      children: [
+        {
+          name: m.messages,
+          path: HealthPaths.HealthConversationsDetail,
+          navHide: true,
+          breadcrumbHide: true,
+          mobileTakeover: true,
+        },
+        {
+          name: messages.healthConversationsNewTitle,
+          path: HealthPaths.HealthConversationsNew,
+          navHide: true,
+          breadcrumbHide: true,
+          mobileTakeover: true,
+        },
       ],
     },
     {
@@ -227,6 +254,11 @@ export const healthNavigation: PortalNavigationItem = {
           name: m.aidsAndNutrition,
           description: m.aidsAndNutritionIntro,
           path: HealthPaths.HealthAidsAndNutrition,
+        },
+        {
+          name: messages.movementPrescriptionsTitle,
+          description: messages.movementPrescriptionsIntro,
+          path: HealthPaths.HealthMovementPrescriptions,
         },
       ],
     },

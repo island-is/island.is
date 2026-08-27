@@ -20,6 +20,7 @@ import {
   CaseType,
   DateType,
   DefendantEventType,
+  DefendantNotificationType,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -191,6 +192,18 @@ describe('CaseController - Update', () => {
       )
     })
 
+    it('should not enqueue the completed for some notification', () => {
+      expect(mockQueuedMessages).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            body: {
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            },
+          }),
+        ]),
+      )
+    })
+
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
     })
@@ -253,6 +266,65 @@ describe('CaseController - Update', () => {
         undefined,
       )
     })
+
+    it('should enqueue a completed for some notification per concluded defendant', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId,
+            elementId: defendantId1,
+            body: expect.objectContaining({
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            }),
+          }),
+          expect.objectContaining({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId,
+            elementId: defendantId2,
+            body: expect.objectContaining({
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            }),
+          }),
+        ]),
+      )
+    })
+  })
+
+  describe('indictment completed for some — last remaining defendant (indictmentDecision set to null by frontend)', () => {
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+    } as Case
+
+    const caseToUpdate = {
+      indictmentDecision: null,
+      defendantEventLogDecisions: [
+        {
+          defendantId: defendantId1,
+          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+        },
+      ],
+    } as unknown as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should enqueue the completed for some notification even when indictmentDecision is null', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId,
+            elementId: defendantId1,
+            body: expect.objectContaining({
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            }),
+          }),
+        ]),
+      )
+    })
   })
 
   describe('indictment completed for some defendants with ruling dates', () => {
@@ -307,6 +379,191 @@ describe('CaseController - Update', () => {
         user,
         transaction,
         undefined,
+      )
+    })
+
+    it('should queue indictment conclusion messages only when ruling date is set', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+          user,
+          caseId,
+          body: {
+            defendantId: defendantId1,
+            indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            rulingDate,
+          },
+        },
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId,
+          elementId: defendantId1,
+          body: {
+            type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+          },
+        },
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId,
+          elementId: defendantId2,
+          body: {
+            type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+          },
+        },
+      ])
+    })
+  })
+
+  describe('indictment case completed', () => {
+    const rulingDate = randomDate()
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+      origin: CaseOrigin.LOKE,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      rulingDate,
+    } as Case
+
+    const caseToUpdate = { state: CaseState.COMPLETED } as UpdateCaseDto
+    const updatedCase = {
+      ...indictmentCase,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should queue indictment conclusion message to court', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+            user,
+            caseId,
+          },
+        ]),
+      )
+    })
+  })
+
+  describe('indictment case completed after cancellation request', () => {
+    const rulingDate = randomDate()
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.WAITING_FOR_CANCELLATION,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      rulingDate,
+    } as Case
+
+    const caseToUpdate = { state: CaseState.COMPLETED } as UpdateCaseDto
+    const updatedCase = {
+      ...indictmentCase,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should queue only indictment conclusion message to court', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+          user,
+          caseId,
+        },
+      ])
+    })
+  })
+
+  describe('indictment case completed without ruling date', () => {
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+      origin: CaseOrigin.LOKE,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+    } as Case
+
+    const caseToUpdate = { state: CaseState.COMPLETED } as UpdateCaseDto
+    const updatedCase = {
+      ...indictmentCase,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should not queue indictment conclusion message to court', () => {
+      expect(
+        mockQueuedMessages.filter(
+          (message) =>
+            message.type ===
+            MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+        ),
+      ).toEqual([])
+    })
+  })
+
+  describe('split indictment case court case number assigned', () => {
+    const splitCaseId = uuid()
+    const splitDefendantId = uuid()
+    const newCourtCaseNumber = uuid()
+    const created = new Date('2026-01-15T10:00:00.000Z')
+
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      courtCaseNumber: undefined,
+      splitCaseId,
+      defendants: [{ id: splitDefendantId }],
+      policeCaseNumbers: [policeCaseNumber],
+      caseFiles: [],
+    } as Case
+
+    const caseToUpdate = {
+      courtCaseNumber: newCourtCaseNumber,
+    } as UpdateCaseDto
+    const updatedCase = {
+      ...indictmentCase,
+      courtCaseNumber: newCourtCaseNumber,
+      created,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should queue split-off conclusion message to parent case', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+            user,
+            caseId: splitCaseId,
+            body: {
+              defendantId: splitDefendantId,
+              splitCaseNumber: newCourtCaseNumber,
+              rulingDate: created.toISOString(),
+            },
+          },
+        ]),
       )
     })
   })
@@ -512,7 +769,19 @@ describe('CaseController - Update', () => {
             elementId: defendantId1,
           },
           {
+            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+            user,
+            caseId,
+            elementId: defendantId1,
+          },
+          {
             type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+            user,
+            caseId,
+            elementId: defendantId2,
+          },
+          {
+            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
             user,
             caseId,
             elementId: defendantId2,
@@ -545,7 +814,19 @@ describe('CaseController - Update', () => {
             elementId: defendantId1,
           },
           {
+            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+            user,
+            caseId,
+            elementId: defendantId1,
+          },
+          {
             type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+            user,
+            caseId,
+            elementId: defendantId2,
+          },
+          {
+            type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
             user,
             caseId,
             elementId: defendantId2,
@@ -713,6 +994,175 @@ describe('CaseController - Update', () => {
     },
   )
 
+  describe.each([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY])(
+    'valid to date is updated for accepted %s case',
+    (type) => {
+      const validToDate = randomDate()
+      const modifiedValidToDate = new Date(validToDate.getTime() + 1000)
+      const originalCase = {
+        ...theCase,
+        type,
+        state: CaseState.ACCEPTED,
+        validToDate,
+      } as Case
+      const caseToUdate = {
+        caseModifiedExplanation: 'some explanation',
+        validToDate: modifiedValidToDate,
+      }
+      const updatedCase = {
+        ...originalCase,
+        origin: CaseOrigin.LOKE,
+        caseModifiedExplanation: 'some explanation',
+        validToDate: modifiedValidToDate,
+      }
+
+      beforeEach(async () => {
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUdate)
+      })
+
+      it('should post the case update and the custody notice to queue', async () => {
+        expect(mockQueuedMessages).toEqual([
+          {
+            type: MessageType.NOTIFICATION,
+            user,
+            caseId,
+            body: { type: RequestCaseNotificationType.MODIFIED },
+          },
+          { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+          {
+            type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+            user,
+            caseId,
+          },
+        ])
+      })
+    },
+  )
+
+  describe('isolation to date is updated for accepted custody case', () => {
+    const isolationToDate = randomDate()
+    const modifiedIsolationToDate = new Date(isolationToDate.getTime() + 1000)
+    const originalCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      validToDate: randomDate(),
+      isolationToDate,
+    } as Case
+    const caseToUdate = {
+      caseModifiedExplanation: 'some explanation',
+      isolationToDate: modifiedIsolationToDate,
+    }
+    const updatedCase = {
+      ...originalCase,
+      origin: CaseOrigin.LOKE,
+      caseModifiedExplanation: 'some explanation',
+      isolationToDate: modifiedIsolationToDate,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUdate)
+    })
+
+    it('should post the case update and the custody notice to queue', async () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: RequestCaseNotificationType.MODIFIED },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+          user,
+          caseId,
+        },
+      ])
+    })
+  })
+
+  describe('custody dates are not updated for accepted custody case', () => {
+    const originalCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      validToDate: randomDate(),
+      isolationToDate: randomDate(),
+    } as Case
+    const caseToUdate = { caseModifiedExplanation: 'some explanation' }
+    const updatedCase = {
+      ...originalCase,
+      origin: CaseOrigin.LOKE,
+      caseModifiedExplanation: 'some explanation',
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUdate)
+    })
+
+    it('should not post the custody notice to queue', async () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: RequestCaseNotificationType.MODIFIED },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+      ])
+    })
+  })
+
+  describe('valid to date is updated for accepted travel ban case', () => {
+    const validToDate = randomDate()
+    const modifiedValidToDate = new Date(validToDate.getTime() + 1000)
+    const originalCase = {
+      ...theCase,
+      type: CaseType.TRAVEL_BAN,
+      state: CaseState.ACCEPTED,
+      validToDate,
+    } as Case
+    const caseToUdate = {
+      caseModifiedExplanation: 'some explanation',
+      validToDate: modifiedValidToDate,
+    }
+    const updatedCase = {
+      ...originalCase,
+      origin: CaseOrigin.LOKE,
+      caseModifiedExplanation: 'some explanation',
+      validToDate: modifiedValidToDate,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUdate)
+    })
+
+    it('should not post a custody notice to queue', async () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: RequestCaseNotificationType.MODIFIED },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+      ])
+    })
+  })
+
   describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation updated', () => {
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase, {})
@@ -726,15 +1176,73 @@ describe('CaseController - Update', () => {
   describe('arraignment date updated', () => {
     const arraignmentDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { arraignmentDate }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+    }
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.CUSTODY } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
       expect(mockDateLogModel.create).toHaveBeenCalledWith(
         { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
         { transaction },
+      )
+    })
+
+    it('should log a court date scheduled event, which drives court date notifications', () => {
+      expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+        transaction,
+      )
+    })
+  })
+
+  describe('arraignment date unchanged', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        {
+          ...theCase,
+          type: CaseType.CUSTODY,
+          dateLogs: [
+            { dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate },
+          ],
+        } as Case,
+        {},
+      )
+    })
+
+    it('should not log a court date scheduled event', () => {
+      expect(mockEventLogService.createWithUser).not.toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+        transaction,
       )
     })
   })
@@ -1031,8 +1539,10 @@ describe('CaseController - Update', () => {
     it('should reset defendant fields', () => {
       const resetPayload = {
         isSentToPrisonAdmin: false,
+        isClosedWithoutEnforcement: false,
         indictmentReviewDecision: null,
         publicProsecutorIsRegisteredInPoliceSystem: null,
+        isDrivingLicenseSuspended: null,
       }
       expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,

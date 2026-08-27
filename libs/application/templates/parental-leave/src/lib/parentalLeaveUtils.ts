@@ -563,7 +563,7 @@ export const isEligibleForParentalLeave = (
 }
 
 export const getPeriodIndex = (field?: Field) => {
-  const id = field?.id
+  const id = field?.id as string
 
   if (!id) {
     return -1

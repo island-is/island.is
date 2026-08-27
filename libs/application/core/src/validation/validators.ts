@@ -14,17 +14,50 @@ import {
 import { coreErrorMessages } from '../lib/messages'
 import { AnswerValidationError } from './AnswerValidator'
 
+/**
+ * True when a Zod issue path targets the same logical field as one of the ids on the
+ * current form screen (e.g. extraDataAttachments.exemptionReason vs …custodyAgreement).
+ * Matching only the first path segment wrongly attributes all nested errors to any screen
+ * that shares that prefix.
+ */
+const pathMatchesCurrentScreenFields = (
+  path: (string | number)[],
+  currentScreenFields: string[],
+): boolean => {
+  const dotted = path.map(String).join('.')
+  return currentScreenFields.some((fieldId) => {
+    if (fieldId === dotted) return true
+    if (dotted.startsWith(`${fieldId}.`)) return true
+    if (fieldId.startsWith(`${dotted}.`)) return true
+    return false
+  })
+}
+
 const populateError = (
   error: ZodIssue[],
-  pathToError: string | undefined,
+  aggregatePath: (string | number)[] | undefined,
   formatMessage: FormatMessage,
   currentScreenFields?: string[],
 ) => {
   let errorObject: Record<string, string> = {}
 
   error.forEach((element) => {
+    const path =
+      element.path && element.path.length > 0
+        ? element.path
+        : aggregatePath != null && aggregatePath.length > 0
+        ? aggregatePath
+        : []
+
+    if (
+      currentScreenFields &&
+      currentScreenFields.length > 0 &&
+      !pathMatchesCurrentScreenFields(path, currentScreenFields)
+    ) {
+      return
+    }
+
     const defaultZodError = element.message === 'Invalid input'
-    const path = pathToError || element.path
     let message = formatMessage(coreErrorMessages.defaultError)
     if (element.code === ZodIssueCode.custom) {
       const namespaceRegex = /^[\w.]+:\w+(\.\w+)*$/g
@@ -50,25 +83,14 @@ const populateError = (
    * be able to submit the screen.
    */
   if (currentScreenFields && currentScreenFields.length > 0) {
-    // If we have nested fields, we need to resolve only the top level field
-    const resolvedNestedFields = currentScreenFields.map(
-      (id) => id.split('.')[0],
-    )
-    const relevantErrors = Object.fromEntries(
-      Object.entries(errorObject).filter(([key]) =>
-        resolvedNestedFields.includes(key),
-      ),
-    )
-
-    if (Object.keys(relevantErrors).length === 0) {
-      // No errors on the current screen
+    if (Object.keys(errorObject).length === 0) {
       return undefined
     }
 
     // log to help with debug
-    console.info(relevantErrors)
+    console.info(errorObject)
 
-    return relevantErrors
+    return errorObject
   }
 
   // log to help with debug

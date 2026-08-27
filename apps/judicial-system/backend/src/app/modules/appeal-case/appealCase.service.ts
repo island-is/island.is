@@ -23,6 +23,7 @@ import {
   AppealCaseState,
   AppealCaseTransition,
   AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -38,11 +39,13 @@ import { nowFactory } from '../../factories'
 import {
   AppealCase,
   AppealCaseRepositoryService,
+  AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
+  CivilClaimant,
+  Defendant,
   UpdateAppealCase,
-  UpdateCase,
 } from '../repository'
 import { UpdateAppealCaseDto } from './dto/updateAppealCase.dto'
 import {
@@ -50,6 +53,11 @@ import {
   transitionAppealCase,
 } from './state/appealCase.state'
 import { appealCaseModuleConfig } from './appealCase.config'
+import {
+  findUserRulingOrderAppealDecision,
+  isInCourtRulingOrderAppeal,
+  userRulingOrderAppealDecisions,
+} from './appealCase.helpers'
 
 @Injectable()
 export class AppealCaseService {
@@ -58,42 +66,155 @@ export class AppealCaseService {
     @Inject(forwardRef(() => CaseRepositoryService))
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     @Inject(appealCaseModuleConfig.KEY)
     private readonly config: ConfigType<typeof appealCaseModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private resolveDefencePartyIds(
+  // Every defence party (defendant / civil claimant) the user currently, and
+  // confirmedly, represents on the case. A defence event is recorded once per
+  // party, so a lawyer who represents several clients appeals (or submits a
+  // statement) on behalf of all of them - the backend resolves this, the client
+  // never has to pick. Empty for request cases (collective defence, no party)
+  // and non-defence users.
+  private resolveDefenceParties(
     theCase: Case,
     user: User,
-  ): { defendantId?: string; civilClaimantId?: string } {
+  ): { defendantId?: string; civilClaimantId?: string }[] {
     if (!isIndictmentCase(theCase.type)) {
-      return {}
+      return []
     }
 
-    // Only confirmed defenders / spokespersons can act on behalf of a party —
-    // unconfirmed picks shouldn't be tied to appeal events.
-    const defendant = theCase.defendants?.find(
-      (d) =>
-        d.isDefenderChoiceConfirmed &&
-        d.defenderNationalId &&
-        d.defenderNationalId === user.nationalId,
+    const parties: { defendantId?: string; civilClaimantId?: string }[] = []
+
+    for (const defendant of theCase.defendants ?? []) {
+      if (
+        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+      ) {
+        parties.push({ defendantId: defendant.id })
+      }
+    }
+
+    for (const civilClaimant of theCase.civilClaimants ?? []) {
+      if (
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
+          civilClaimant,
+        ])
+      ) {
+        parties.push({ civilClaimantId: civilClaimant.id })
+      }
+    }
+
+    return parties
+  }
+
+  // Writes appeal event-log rows with an actor snapshot of who performed the
+  // event. Defenders are not system users, so userId is null and
+  // national_id/name identify them (plus the defence party); for
+  // prosecution/court users the system user id is stored. A defence user who
+  // represents several parties gets one row per party. Shared by
+  // registerAppellant and createEventLog.
+  private async writeEventLog(
+    theCase: Case,
+    appealCase: AppealCase,
+    eventType: AppealEventType,
+    user: User,
+    transaction: Transaction,
+  ): Promise<void> {
+    const parties = isDefenceUser(user)
+      ? this.resolveDefenceParties(theCase, user)
+      : []
+    // Prosecution and request-case collective defence carry no party, but still
+    // get a single event row.
+    const partyRows = parties.length > 0 ? parties : [{}]
+
+    await this.writeEventLogRows(
+      theCase,
+      appealCase,
+      eventType,
+      user,
+      partyRows,
+      transaction,
     )
-    if (defendant) {
-      return { defendantId: defendant.id }
-    }
+  }
 
-    const civilClaimant = theCase.civilClaimants?.find(
-      (c) =>
-        c.isSpokespersonConfirmed &&
-        c.spokespersonNationalId &&
-        c.spokespersonNationalId === user.nationalId,
+  // Writes one appeal event-log row per given party. Callers decide which
+  // parties an event applies to: writeEventLog to every party the user
+  // represents (an appeal / statement covers all of them), the withdrawal flow
+  // to only the parties actually being withdrawn.
+  private async writeEventLogRows(
+    theCase: Case,
+    appealCase: AppealCase,
+    eventType: AppealEventType,
+    user: User,
+    partyRows: { defendantId?: string; civilClaimantId?: string }[],
+    transaction: Transaction,
+  ): Promise<void> {
+    const isDefence = isDefenceUser(user)
+
+    await Promise.all(
+      partyRows.map((party) =>
+        this.appealEventLogRepositoryService.create(
+          {
+            caseId: theCase.id,
+            appealCaseId: appealCase.id,
+            eventType,
+            // Everything written here is a party acting outside the court
+            // record; in-court APPEALED events are built by
+            // buildInCourtAppealedEvent instead. Origin is only meaningful for
+            // APPEALED.
+            appealOrigin:
+              eventType === AppealEventType.APPEALED
+                ? AppealOrigin.OUT_OF_COURT
+                : undefined,
+            userRole: user.role,
+            userId: isDefence ? undefined : user.id,
+            ...party,
+            nationalId: user.nationalId,
+            userName: user.name,
+            userTitle: user.title,
+            institutionName: user.institution?.name,
+          },
+          { transaction },
+        ),
+      ),
     )
-    if (civilClaimant) {
-      return { civilClaimantId: civilClaimant.id }
-    }
+  }
 
-    return {}
+  // True iff the user's party recorded an in-court ACCEPT ("unir úrskurðinum")
+  // for this ruling order. Such a party has waived its right to appeal it, so an
+  // out-of-court appeal from it must be rejected.
+  private hasAcceptedRulingOrderInCourt(
+    theCase: Case,
+    rulingFileId: string,
+    user: User,
+  ): boolean {
+    return (
+      findUserRulingOrderAppealDecision(theCase, rulingFileId, user)
+        ?.decision === CaseAppealDecision.ACCEPT
+    )
+  }
+
+  // Records an APPEALED event for an out-of-court appeal - the appellant source
+  // now that the legacy postponed-date / appealed-by columns are gone. In-court
+  // appeals are recorded by the appeal_decision rows instead and never reach
+  // here. Unlike createEventLog it dispatches no notification - the appeal
+  // notification is queued separately by the caller
+  // (addMessagesFor[RulingOrder]AppealedCaseToQueue).
+  private registerAppellant(
+    theCase: Case,
+    appealCase: AppealCase,
+    user: User,
+    transaction: Transaction,
+  ): Promise<void> {
+    return this.writeEventLog(
+      theCase,
+      appealCase,
+      AppealEventType.APPEALED,
+      user,
+      transaction,
+    )
   }
 
   private allAppealRolesAssigned(appealRoles: {
@@ -112,14 +233,19 @@ export class AppealCaseService {
 
   private addMessagesForAppealedCaseToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
     fileCategories: CaseFileCategory[],
   ): void {
-    // If case was appealed in court we don't need to send these messages
-    if (
-      theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-      theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
-    ) {
+    // If case was appealed in court we don't need to send these messages. The
+    // in-court stance is on the case-level appeal_decision rows (ruling_file_id
+    // null) now that the accused/prosecutor appeal decision columns are gone.
+    const appealedInCourt = theCase.appealDecisions?.some(
+      (decision) =>
+        !decision.rulingFileId &&
+        decision.decision === CaseAppealDecision.APPEAL,
+    )
+    if (appealedInCourt) {
       return
     }
 
@@ -141,9 +267,10 @@ export class AppealCaseService {
     }
 
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
     })
   }
@@ -186,16 +313,26 @@ export class AppealCaseService {
         })
       }
     }
+
+    addMessagesToQueue({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
+    })
   }
 
   private addMessagesForReceivedAppealCaseToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT },
     })
   }
@@ -224,9 +361,10 @@ export class AppealCaseService {
 
     addMessagesToQueue(
       {
-        type: MessageType.NOTIFICATION,
+        type: MessageType.APPEAL_CASE_NOTIFICATION,
         user,
         caseId: theCase.id,
+        elementId: appealCase.id,
         body: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
       },
       {
@@ -242,30 +380,35 @@ export class AppealCaseService {
         type: MessageType.DELIVERY_TO_POLICE_APPEAL,
         user,
         caseId: theCase.id,
+        elementId: appealCase.id,
       })
     }
   }
 
   private addMessagesForAppealStatementToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_STATEMENT },
     })
   }
 
   private addMessagesForAppealWithdrawnToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
     })
   }
@@ -322,6 +465,39 @@ export class AppealCaseService {
     })
   }
 
+  // The ids of the appeal roles (assistant + judges) currently assigned.
+  private getAssignedAppealUserIds(appealRoles: {
+    appealAssistantId?: string
+    appealJudge1Id?: string
+    appealJudge2Id?: string
+    appealJudge3Id?: string
+  }): string[] {
+    return [
+      appealRoles.appealAssistantId,
+      appealRoles.appealJudge1Id,
+      appealRoles.appealJudge2Id,
+      appealRoles.appealJudge3Id,
+    ].filter((id): id is string => Boolean(id))
+  }
+
+  private addMessagesForAppealJudgesAssignedToQueue(
+    theCase: Case,
+    appealCase: AppealCase,
+    user: User,
+    userIds: string[],
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED,
+        userIds,
+      },
+    })
+  }
+
   async create(
     theCase: Case,
     user: User,
@@ -349,24 +525,21 @@ export class AppealCaseService {
       )
     }
 
-    const caseUpdate: UpdateCase = {}
     const appealCaseData: UpdateAppealCase = {
       appealState: AppealCaseState.APPEALED,
+      // An appeal filed out-of-court happens now - in-court appeals get
+      // the ruling date instead (see case.service update on completion)
+      appealDate: nowFactory(),
     }
 
     let fileCategories: CaseFileCategory[]
 
     if (isProsecutionUser(user)) {
-      caseUpdate.prosecutorPostponedAppealDate = nowFactory()
       fileCategories = [
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
       ]
     } else if (isDefenceUser(user)) {
-      caseUpdate.accusedPostponedAppealDate = nowFactory()
-      if (isIndictmentCase(theCase.type)) {
-        appealCaseData.appealedByNationalId = user.nationalId
-      }
       fileCategories = [
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
@@ -383,13 +556,14 @@ export class AppealCaseService {
       { transaction },
     )
 
-    if (Object.keys(caseUpdate).length > 0) {
-      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
-        transaction,
-      })
-    }
+    await this.registerAppellant(theCase, appealCase, user, transaction)
 
-    this.addMessagesForAppealedCaseToQueue(theCase, user, fileCategories)
+    this.addMessagesForAppealedCaseToQueue(
+      theCase,
+      appealCase,
+      user,
+      fileCategories,
+    )
 
     return appealCase
   }
@@ -432,13 +606,18 @@ export class AppealCaseService {
       )
     }
 
+    if (this.hasAcceptedRulingOrderInCourt(theCase, rulingFileId, user)) {
+      throw new ForbiddenException(
+        'A party that accepted the ruling order in court cannot appeal it',
+      )
+    }
+
     const appealCaseData: UpdateAppealCase = {
       appealState: AppealCaseState.APPEALED,
       rulingFileId,
-    }
-
-    if (isDefenceUser(user)) {
-      appealCaseData.appealedByNationalId = user.nationalId
+      // An appeal filed out-of-court happens now - in-court appeals get
+      // the court session end time instead
+      appealDate: nowFactory(),
     }
 
     const appealCase = await this.appealCaseRepositoryService.create(
@@ -448,6 +627,8 @@ export class AppealCaseService {
         transaction,
       },
     )
+
+    await this.registerAppellant(theCase, appealCase, user, transaction)
 
     this.addMessagesForRulingOrderAppealedCaseToQueue(theCase, appealCase, user)
 
@@ -509,6 +690,30 @@ export class AppealCaseService {
       this.addMessagesForAssignedAppealRolesToQueue(theCase, appealCase, user)
     }
 
+    // Notify any users that are newly assigned to an appeal role, i.e. users
+    // that were not already assigned to one of the roles before this update.
+    const previouslyAssignedUserIds = this.getAssignedAppealUserIds(appealCase)
+    const newlyAssignedUserIds = [
+      ...new Set(
+        this.getAssignedAppealUserIds({
+          appealAssistantId:
+            update.appealAssistantId ?? appealCase.appealAssistantId,
+          appealJudge1Id: update.appealJudge1Id ?? appealCase.appealJudge1Id,
+          appealJudge2Id: update.appealJudge2Id ?? appealCase.appealJudge2Id,
+          appealJudge3Id: update.appealJudge3Id ?? appealCase.appealJudge3Id,
+        }).filter((id) => !previouslyAssignedUserIds.includes(id)),
+      ),
+    ]
+
+    if (newlyAssignedUserIds.length > 0) {
+      this.addMessagesForAppealJudgesAssignedToQueue(
+        theCase,
+        appealCase,
+        user,
+        newlyAssignedUserIds,
+      )
+    }
+
     return updatedAppealCase
   }
 
@@ -523,20 +728,9 @@ export class AppealCaseService {
       `Recording appeal event ${eventType} for appeal case ${appealCase.id} of case ${theCase.id}`,
     )
 
-    await this.appealEventLogRepositoryService.create(
-      {
-        caseId: theCase.id,
-        appealCaseId: appealCase.id,
-        eventType,
-        userRole: user.role,
-        ...(isDefenceUser(user)
-          ? this.resolveDefencePartyIds(theCase, user)
-          : {}),
-      },
-      { transaction },
-    )
+    await this.writeEventLog(theCase, appealCase, eventType, user, transaction)
 
-    this.dispatchEventNotifications(eventType, theCase, user)
+    this.dispatchEventNotifications(eventType, theCase, appealCase, user)
 
     return appealCase
   }
@@ -546,16 +740,148 @@ export class AppealCaseService {
   private dispatchEventNotifications(
     eventType: AppealEventType,
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     switch (eventType) {
       case AppealEventType.APPEAL_STATEMENT_SENT:
-        this.addMessagesForAppealStatementToQueue(theCase, user)
+        this.addMessagesForAppealStatementToQueue(theCase, appealCase, user)
         break
     }
   }
 
   async transition(
+    theCase: Case,
+    appealCase: AppealCase,
+    transition: AppealCaseTransition,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    // Withdrawing an in-court ruling-order appeal is per party: only the
+    // withdrawing party's decision is marked, and the appeal case is not
+    // withdrawn until every appealing party has withdrawn.
+    if (
+      transition === AppealCaseTransition.WITHDRAW_APPEAL &&
+      appealCase.rulingFileId &&
+      isInCourtRulingOrderAppeal(theCase, appealCase.rulingFileId)
+    ) {
+      return this.withdrawInCourtRulingOrderAppeal(
+        theCase,
+        appealCase,
+        appealCase.rulingFileId,
+        user,
+        transaction,
+      )
+    }
+
+    return this.applyTransition(
+      theCase,
+      appealCase,
+      transition,
+      user,
+      transaction,
+    )
+  }
+
+  // A defence user withdraws its in-court ruling-order appeal. Just as an appeal
+  // is made for every party the lawyer represents, withdrawal covers all of them
+  // at once: every represented party with a standing (APPEAL, not yet withdrawn)
+  // decision for this ruling is withdrawn together. Each such decision row is
+  // stamped with the server's withdrawal time (never the client's) and an
+  // APPEAL_WITHDRAWN event records who did it, per withdrawn party. The appeal
+  // stands - and no party is notified - until every appealing party has
+  // withdrawn, at which point the appeal case itself is withdrawn (the existing
+  // WITHDRAW_APPEAL transition).
+  private async withdrawInCourtRulingOrderAppeal(
+    theCase: Case,
+    appealCase: AppealCase,
+    rulingFileId: string,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    const withdrawable = userRulingOrderAppealDecisions(
+      theCase,
+      rulingFileId,
+      user,
+    ).filter(
+      (decision) =>
+        decision.decision === CaseAppealDecision.APPEAL &&
+        !decision.withdrawnDate,
+    )
+
+    if (withdrawable.length === 0) {
+      throw new ForbiddenException(
+        'Only a party that appealed this ruling in court and has not already withdrawn can withdraw the appeal',
+      )
+    }
+
+    // Serialize concurrent withdrawals for this ruling. Two parties withdrawing
+    // at once would otherwise each stamp only their own row and, under READ
+    // COMMITTED, read a set that still shows the other party as not-withdrawn -
+    // so both skip WITHDRAW_APPEAL and the appeal stands even though everyone
+    // has withdrawn. Locking every party's row up front (in a consistent order,
+    // before we write our own) forces the second transaction to block here and
+    // then re-read the freshly committed set. The lock must precede the update:
+    // taking it after would let each transaction hold a lock on its own updated
+    // row and deadlock on the other's.
+    await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId },
+      order: [['id', 'ASC']],
+      lock: Transaction.LOCK.UPDATE,
+      transaction,
+    })
+
+    const withdrawnDate = nowFactory()
+
+    await Promise.all(
+      withdrawable.map((decision) =>
+        this.appealDecisionRepositoryService.update(
+          decision.id,
+          { withdrawnDate },
+          { transaction },
+        ),
+      ),
+    )
+
+    // One APPEAL_WITHDRAWN event per party actually withdrawn - not per party the
+    // user represents, since a represented party that accepted in court has no
+    // appeal to withdraw.
+    await this.writeEventLogRows(
+      theCase,
+      appealCase,
+      AppealEventType.APPEAL_WITHDRAWN,
+      user,
+      withdrawable.map((decision) => ({
+        defendantId: decision.defendantId ?? undefined,
+        civilClaimantId: decision.civilClaimantId ?? undefined,
+      })),
+      transaction,
+    )
+
+    // The appeal stands until every party that appealed in court has withdrawn.
+    const appealDecisions = await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId },
+      transaction,
+    })
+    const allWithdrawn = appealDecisions
+      .filter((d) => d.decision === CaseAppealDecision.APPEAL)
+      .every((d) => d.withdrawnDate)
+
+    if (allWithdrawn) {
+      return this.applyTransition(
+        theCase,
+        appealCase,
+        AppealCaseTransition.WITHDRAW_APPEAL,
+        user,
+        transaction,
+      )
+    }
+
+    // No state change and no notification - the appeal still stands.
+    return { caseUpdate: {}, appealCaseUpdate: {}, appealCase }
+  }
+
+  private async applyTransition(
     theCase: Case,
     appealCase: AppealCase,
     transition: AppealCaseTransition,
@@ -580,23 +906,20 @@ export class AppealCaseService {
       })
     }
 
-    // Queue messages based on new appeal state. Ruling-order appeals don't
-    // send the case-level appeal notifications — open question #8 will
-    // determine which (if any) notifications they emit.
-    if (!appealCase.rulingFileId) {
-      const newAppealState = result.appealCaseUpdate.appealState
-      const oldAppealState = appealCase.appealState
+    // Queue messages based on new appeal state. This applies to all appeal
+    // cases, including ruling-order appeals.
+    const newAppealState = result.appealCaseUpdate.appealState
+    const oldAppealState = appealCase.appealState
 
-      if (newAppealState === AppealCaseState.RECEIVED) {
-        // Only send received messages when transitioning from APPEALED (not when reopening)
-        if (oldAppealState === AppealCaseState.APPEALED) {
-          this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
-        }
-      } else if (newAppealState === AppealCaseState.COMPLETED) {
-        this.addMessagesForCompletedAppealCaseToQueue(theCase, appealCase, user)
-      } else if (newAppealState === AppealCaseState.WITHDRAWN) {
-        this.addMessagesForAppealWithdrawnToQueue(theCase, user)
+    if (newAppealState === AppealCaseState.RECEIVED) {
+      // Only send received messages when transitioning from APPEALED (not when reopening)
+      if (oldAppealState === AppealCaseState.APPEALED) {
+        this.addMessagesForReceivedAppealCaseToQueue(theCase, appealCase, user)
       }
+    } else if (newAppealState === AppealCaseState.COMPLETED) {
+      this.addMessagesForCompletedAppealCaseToQueue(theCase, appealCase, user)
+    } else if (newAppealState === AppealCaseState.WITHDRAWN) {
+      this.addMessagesForAppealWithdrawnToQueue(theCase, appealCase, user)
     }
 
     return { ...result, appealCase: updatedAppealCase }

@@ -72,7 +72,6 @@ export enum ApplicationTypes {
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
   DEREGISTER_MACHINE = 'DeregisterMachine',
-  GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
   REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
   ID_CARD = 'IdCard',
@@ -99,11 +98,14 @@ export enum ApplicationTypes {
   REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
   MILE_CAR = 'MileCar',
   HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID = 'HeilsugaeslaHofudborgarsvaedisinsNamskeid',
+  HOUSING_BENEFITS = 'HousingBenefits',
   EDIT_UNEMPLOYMENT_INFORMATION = 'EditUnemploymentInformation',
   CONFIRM_JOB_SEARCH = 'ConfirmJobSearch',
   DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
   VMST_SUBMIT_DOCUMENTS = 'VmstSubmitDocuments',
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
+  EQUALITY_REPORT = 'EqualityReport',
+  SALARY_REPORT = 'SalaryReport',
 }
 
 export const ApplicationConfigurations = {
@@ -403,10 +405,6 @@ export const ApplicationConfigurations = {
     slug: 'afskraning-taekis',
     translation: 'aosh.drm.application',
   },
-  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
-    slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
-    translation: ['ghb.application', 'uiForms.application'],
-  },
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
     slug: 'beidni-um-skodun-taekis',
     translation: 'aosh.rifm.application',
@@ -511,8 +509,12 @@ export const ApplicationConfigurations = {
     slug: 'hh-namskeid',
     translation: ['hh.courses.application', 'uiForms.application'],
   },
+  [ApplicationTypes.HOUSING_BENEFITS]: {
+    slug: 'husnaedisbaetur',
+    translation: ['hb.application', 'uiForms.application'],
+  },
   [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
-    slug: 'breyta-upplysingum-atvinnuleysisbaetur',
+    slug: 'vmst-breyta-upplysingum',
     translation: ['vmst.eui.application', 'uiForms.application'],
   },
   [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
@@ -520,7 +522,7 @@ export const ApplicationConfigurations = {
     translation: ['vmst.cjs', 'uiForms.application'],
   },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
-    slug: 'afskraning-atvinnuleysisbota',
+    slug: 'vmst-afskraning-bota',
     translation: ['vmst.dub.application', 'uiForms.application'],
   },
   [ApplicationTypes.VMST_SUBMIT_DOCUMENTS]: {
@@ -528,7 +530,15 @@ export const ApplicationConfigurations = {
     translation: ['vmst.vsd.application', 'uiForms.application'],
   },
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
-    slug: 'atvinnuleysisbaetur-stadfesting-ferda',
+    slug: 'vmst-tilkynning-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.EQUALITY_REPORT]: {
+    slug: 'jafnrettisstofa-jafnrettisaaetlun',
+    translation: ['doe.er.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.SALARY_REPORT]: {
+    slug: 'jafnrettisstofa-skyrslugjof',
+    translation: ['doe.sr.application', 'uiForms.application'],
   },
 }

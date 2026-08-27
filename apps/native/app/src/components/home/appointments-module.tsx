@@ -85,6 +85,7 @@ const AppointmentsModule = React.memo(
           practitioners={appointment.practitioners}
           date={appointment.date ?? ''}
           location={appointment.location?.name ?? ''}
+          modality={appointment.modality}
           onPress={(id) =>
             router.navigate({
               pathname: '/health/appointments/[id]',

@@ -28,6 +28,7 @@ export const estateAssets = buildSection({
           id: 'realEstate',
           title: m.propertiesTitle,
           description: (application) => getAssetDescriptionText(application),
+          nextButtonText: m.saveAndContinue,
           children: [
             buildDescriptionField({
               id: 'realEstateTitle',
@@ -52,6 +53,7 @@ export const estateAssets = buildSection({
           id: 'inventory',
           title: m.propertiesTitle,
           description: (application) => getAssetDescriptionText(application),
+          nextButtonText: m.saveAndContinue,
           children: [
             buildDescriptionField({
               id: 'membersOfEstateTitle',
@@ -76,6 +78,7 @@ export const estateAssets = buildSection({
           id: 'realEstate',
           title: m.propertiesTitle,
           description: (application) => getAssetDescriptionText(application),
+          nextButtonText: m.saveAndContinue,
           children: [
             buildDescriptionField({
               id: 'vehiclesTitle',
@@ -100,6 +103,7 @@ export const estateAssets = buildSection({
           id: 'realEstate',
           title: m.propertiesTitle,
           description: (application) => getAssetDescriptionText(application),
+          nextButtonText: m.saveAndContinue,
           children: [
             buildDescriptionField({
               id: 'gunsTitle',
@@ -135,6 +139,7 @@ export const estateAssets = buildSection({
           id: 'estateBankInfo',
           title: m.propertiesTitle,
           description: (application) => getAssetDescriptionText(application),
+          nextButtonText: m.saveAndContinue,
           children: [
             buildDescriptionField({
               id: 'estateBankInfoTitle',
@@ -196,6 +201,7 @@ export const estateAssets = buildSection({
           id: 'claims',
           title: m.propertiesTitle,
           description: (application) => getAssetDescriptionText(application),
+          nextButtonText: m.saveAndContinue,
           children: [
             buildDescriptionField({
               id: 'claimsTitle',
@@ -230,6 +236,7 @@ export const estateAssets = buildSection({
           id: 'stocks',
           title: m.propertiesTitle,
           description: (application) => getAssetDescriptionText(application),
+          nextButtonText: m.saveAndContinue,
           children: [
             buildDescriptionField({
               id: 'stocksTitle',
@@ -259,6 +266,7 @@ export const estateAssets = buildSection({
           id: 'moneyAndDeposit',
           title: m.propertiesTitle,
           description: (application) => getAssetDescriptionText(application),
+          nextButtonText: m.saveAndContinue,
           children: [
             buildDescriptionField({
               id: 'moneyAndDepositTitle',
@@ -291,6 +299,7 @@ export const estateAssets = buildSection({
           id: 'otherAssets',
           title: m.propertiesTitle,
           description: (application) => getAssetDescriptionText(application),
+          nextButtonText: m.saveAndContinue,
           children: [
             buildDescriptionField({
               id: 'otherAssetsTitle',

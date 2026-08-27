@@ -49,6 +49,11 @@ export const applicantInformation = {
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
     },
+    bankAccountTitle: {
+      id: 'uiForms.application:applicantInfo.labels.bankAccountTitle',
+      defaultMessage: 'Bankareikningur',
+      description: 'Bank account (for applicant information)',
+    },
     alertMessage: {
       id: 'uiForms.application:applicantInfo.labels.alertMessage',
       defaultMessage:
@@ -76,6 +81,17 @@ export const applicantInformation = {
       id: 'uiForms.application:applicantInfo.error.email',
       defaultMessage: 'Netfang verður að vera gilt',
       description: 'Email must be valid',
+    },
+    bankAccountRequired: {
+      id: 'uiForms.application:applicantInfo.error.bankAccountRequired',
+      defaultMessage: 'Bankareikningur er nauðsynlegur',
+      description: 'Bank account is required',
+    },
+    bankAccountIncomplete: {
+      id: 'uiForms.application:applicantInfo.error.bankAccountIncomplete',
+      defaultMessage: 'Vinsamlegast fylltu út alla reiti bankareiknings',
+      description:
+        'All bank account fields must be filled when entering any part',
     },
   }),
 }

@@ -1,0 +1,12 @@
+query ShipRegistrySailorSeaServiceBooks {
+  shipRegistrySailor {
+    certificates {
+      seaServiceBooks {
+        id
+        type
+        dateFrom
+        dateTo
+      }
+    }
+  }
+}

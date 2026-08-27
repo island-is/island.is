@@ -10,6 +10,8 @@ import { FileService } from '../../../file'
 import { IndictmentCountService } from '../../../indictment-count'
 import {
   AppealCase,
+  AppealDecision,
+  AppealDecisionRepositoryService,
   CaseArchiveRepositoryService,
   CaseFile,
   CaseRepositoryService,
@@ -35,6 +37,7 @@ describe('InternalCaseController - Archive', () => {
   let mockCaseStringModel: typeof CaseString
   let mockCaseRepositoryService: CaseRepositoryService
   let mockCaseArchiveRepositoryService: CaseArchiveRepositoryService
+  let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -47,6 +50,7 @@ describe('InternalCaseController - Archive', () => {
       caseStringModel,
       caseRepositoryService,
       caseArchiveRepositoryService,
+      appealDecisionRepositoryService,
       internalCaseController,
     } = await createTestingCaseModule()
 
@@ -56,6 +60,7 @@ describe('InternalCaseController - Archive', () => {
     mockCaseStringModel = caseStringModel
     mockCaseRepositoryService = caseRepositoryService
     mockCaseArchiveRepositoryService = caseArchiveRepositoryService
+    mockAppealDecisionRepositoryService = appealDecisionRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -85,6 +90,7 @@ describe('InternalCaseController - Archive', () => {
     const indictmentCountId2 = uuid()
     const caseStringId1 = uuid()
     const caseStringId2 = uuid()
+    const appealDecisionId = uuid()
     const theCase = {
       id: caseId,
       description: 'original_description',
@@ -109,8 +115,6 @@ describe('InternalCaseController - Archive', () => {
       ruling: 'original_ruling',
       conclusion: 'original_conclusion',
       endOfSessionBookings: 'original_endOfSessionBookings',
-      accusedAppealAnnouncement: 'original_accusedAppealAnnouncement',
-      prosecutorAppealAnnouncement: 'original_prosecutorAppealAnnouncement',
       caseModifiedExplanation: 'original_caseModifiedExplanation',
       caseResentExplanation: 'original_caseResentExplanation',
       indictmentIntroduction: 'original_indictment_introduction',
@@ -166,6 +170,9 @@ describe('InternalCaseController - Archive', () => {
         { id: caseStringId1, value: 'original_comment1' },
         { id: caseStringId2, value: 'original_comment2' },
       ],
+      appealDecisions: [
+        { id: appealDecisionId, announcement: 'original_announcement' },
+      ],
     }
     const archive = JSON.stringify({
       description: 'original_description',
@@ -189,8 +196,6 @@ describe('InternalCaseController - Archive', () => {
       ruling: 'original_ruling',
       conclusion: 'original_conclusion',
       endOfSessionBookings: 'original_endOfSessionBookings',
-      accusedAppealAnnouncement: 'original_accusedAppealAnnouncement',
-      prosecutorAppealAnnouncement: 'original_prosecutorAppealAnnouncement',
       caseModifiedExplanation: 'original_caseModifiedExplanation',
       caseResentExplanation: 'original_caseResentExplanation',
       indictmentIntroduction: 'original_indictment_introduction',
@@ -239,6 +244,7 @@ describe('InternalCaseController - Archive', () => {
         { value: 'original_comment1' },
         { value: 'original_comment2' },
       ],
+      appealDecisions: [{ announcement: 'original_announcement' }],
     })
     let then: Then
 
@@ -270,6 +276,7 @@ describe('InternalCaseController - Archive', () => {
           { model: CaseFile, as: 'caseFiles' },
           { model: CaseString, as: 'caseStrings' },
           { model: AppealCase, as: 'appealCase' },
+          { model: AppealDecision, as: 'appealDecisions' },
         ],
         order: [
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
@@ -285,6 +292,7 @@ describe('InternalCaseController - Archive', () => {
           ],
           [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
           [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
+          [{ model: AppealDecision, as: 'appealDecisions' }, 'created', 'ASC'],
         ],
         where: archiveFilter,
         transaction,
@@ -341,6 +349,11 @@ describe('InternalCaseController - Archive', () => {
         { value: '' },
         { where: { id: caseStringId2, caseId }, transaction },
       )
+      expect(mockAppealDecisionRepositoryService.update).toHaveBeenCalledWith(
+        appealDecisionId,
+        { announcement: '' },
+        { transaction },
+      )
       expect(mockCaseArchiveRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         { archiveJson: archive },
@@ -367,8 +380,6 @@ describe('InternalCaseController - Archive', () => {
           ruling: '',
           conclusion: '',
           endOfSessionBookings: '',
-          accusedAppealAnnouncement: '',
-          prosecutorAppealAnnouncement: '',
           caseModifiedExplanation: '',
           caseResentExplanation: '',
           crimeScenes: null,

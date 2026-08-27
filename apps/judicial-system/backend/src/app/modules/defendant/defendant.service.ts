@@ -1,6 +1,6 @@
 import { literal, Op, Transaction } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -58,16 +58,38 @@ export class DefendantService {
     })
   }
 
+  private hasValidDefendantNationalIdForCourtDelivery(
+    defendant: Defendant,
+  ): defendant is Defendant & { nationalId: string } {
+    const { nationalId } = defendant
+
+    if (defendant.noNationalId || !nationalId) {
+      return false
+    }
+
+    return (
+      nationalId.replace('-', '').length === 10 && !nationalId.endsWith('5') // Temporary national id from the police system
+    )
+  }
+
   private addMessagesForDeliverDefendantToCourtToQueue(
     defendant: Defendant,
     user: User,
   ): void {
-    addMessagesToQueue({
-      type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-      user,
-      caseId: defendant.caseId,
-      elementId: defendant.id,
-    })
+    addMessagesToQueue(
+      {
+        type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+        user,
+        caseId: defendant.caseId,
+        elementId: defendant.id,
+      },
+      {
+        type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+        user,
+        caseId: defendant.caseId,
+        elementId: defendant.id,
+      },
+    )
   }
 
   private addMessagesForIndictmentToPrisonAdminChangesToQueue(
@@ -130,7 +152,7 @@ export class DefendantService {
     ) {
       // Defender choice was just confirmed by the court
       addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT,
         user,
         caseId: theCase.id,
         elementId: updatedDefendant.id,
@@ -314,6 +336,21 @@ export class DefendantService {
       )
     }
 
+    if (
+      update.isClosedWithoutEnforcement &&
+      !defendant.isClosedWithoutEnforcement
+    ) {
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
+          user,
+        },
+        transaction,
+      )
+    }
+
     this.addMessagesForIndictmentCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,
@@ -361,6 +398,28 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
+    // Closing without enforcement is only valid for indictment defendants and
+    // is irreversible through this endpoint - reopening a case resets the flag
+    // in the case reopen workflow.
+    if (update.isClosedWithoutEnforcement !== undefined) {
+      if (
+        !isIndictmentCase(theCase.type) ||
+        update.isClosedWithoutEnforcement !== true
+      ) {
+        throw new BadRequestException(
+          'Closed without enforcement can only be set for indictment case defendants',
+        )
+      }
+
+      // Enforcement is mutually exclusive with closing without enforcement -
+      // a defendant sent to prison admin must be withdrawn first.
+      if (defendant.isSentToPrisonAdmin || update.isSentToPrisonAdmin) {
+        throw new BadRequestException(
+          'Closed without enforcement cannot be set for a defendant sent to prison admin',
+        )
+      }
+    }
+
     if (
       update.defenderNationalId === null &&
       !(
@@ -536,12 +595,7 @@ export class DefendantService {
     defendant: Defendant,
     user: User,
   ): Promise<DeliverResponse> {
-    if (
-      defendant.noNationalId ||
-      !defendant.nationalId ||
-      defendant.nationalId.replace('-', '').length !== 10 ||
-      defendant.nationalId.endsWith('5') // Temporary national id from the police system
-    ) {
+    if (!this.hasValidDefendantNationalIdForCourtDelivery(defendant)) {
       this.addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
         theCase,
         user,
@@ -569,7 +623,37 @@ export class DefendantService {
       })
   }
 
-  async deliverIndictmentDefenderToCourt(
+  async deliverRequestDefendantToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    user: User,
+  ): Promise<DeliverResponse> {
+    if (!this.hasValidDefendantNationalIdForCourtDelivery(defendant)) {
+      return { delivered: true }
+    }
+
+    return this.courtService
+      .updateRequestCaseWithDefenderInfo(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        defendant.nationalId,
+        theCase.defenderName,
+        theCase.defenderEmail,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to deliver defender info for defendant ${defendant.id} of request case ${theCase.id}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverIndictmentDefendantToCourt(
     theCase: Case,
     defendant: Defendant,
     user: User,
@@ -587,7 +671,7 @@ export class DefendantService {
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update defender info for defendant ${defendant.id} of indictment case ${theCase.id}`,
+          `Failed to update defendant info for defendant ${defendant.id} of indictment case ${theCase.id}`,
           { reason },
         )
 

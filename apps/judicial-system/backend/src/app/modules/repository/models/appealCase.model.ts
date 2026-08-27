@@ -232,13 +232,13 @@ export class AppealCase extends Model {
   appealIsolationToDate?: Date
 
   /**********
-   * The national ID of the person who filed the appeal — used for indictment
-   * cases where multiple defenders/civil claimant lawyers exist.
-   * Not used for request cases.
+   * The time of appeal - the court session end time for in-court appeals
+   * (case-level court end time in request cases), the appeal creation time
+   * for appeals filed later
    **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  appealedByNationalId?: string
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  appealDate?: Date
 
   /**********
    * Appeal lifecycle events (statement sent, etc.) anchored to this appeal case

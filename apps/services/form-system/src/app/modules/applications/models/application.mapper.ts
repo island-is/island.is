@@ -25,6 +25,7 @@ import {
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { ValueDto } from './dto/value.dto'
 import { SectionInfo } from '../../../../app/dataTypes/sectionInfo.model'
+import { LanguageType } from '../../../../app/dataTypes/languageType.model'
 
 @Injectable()
 export class ApplicationMapper {
@@ -195,46 +196,11 @@ export class ApplicationMapper {
   ): ApplicationJsonDto {
     const fields: ApplicationJsonFieldDto[] = (applicationDto.sections ?? [])
       .flatMap((section) => section.screens ?? [])
-      .flatMap((screen) =>
-        (screen.fields ?? []).map((field) => ({
-          field,
-          screenIdentifier: screen.identifier,
-        })),
-      )
-      .filter(({ field }) => !field.isHidden)
-      .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
-      .filter(({ field }) => (field.values?.length ?? 0) > 0)
-      .map(({ field, screenIdentifier }) => {
-        const jsonField = new ApplicationJsonFieldDto()
-        jsonField.identifier = field.identifier
-        jsonField.screenIdentifier = screenIdentifier
-        jsonField.fieldType = field.fieldType
-
-        const settings = new ApplicationJsonFieldSettingsDto()
-        if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
-          settings.isDecimal = field.fieldSettings?.isDecimal ?? false
-        }
-        if (field.fieldType === FieldTypesEnum.APPLICANT) {
-          settings.applicantType = field.fieldSettings?.applicantType
-        }
-        if (
-          settings.isDecimal !== undefined ||
-          settings.applicantType !== undefined
-        ) {
-          jsonField.fieldSettings = settings
-        }
-
-        jsonField.values = (field.values ?? []).map((value) => {
-          const jsonValue = new ApplicationJsonValueDto()
-          jsonValue.order = value.order
-          jsonValue.json = value.json ?? {}
-          return jsonValue
-        })
-        return jsonField
-      })
+      .flatMap((screen) => this.mapScreenToApplicationJsonFields(screen))
 
     const jsonDto = new ApplicationJsonDto()
     jsonDto.id = applicationDto.id ?? ''
+    jsonDto.organizationNationalId = applicationDto.organizationNationalId ?? ''
     jsonDto.slug = applicationDto.slug ?? ''
     jsonDto.isTest = applicationDto.isTest ?? false
     jsonDto.status = applicationDto.status ?? ''
@@ -242,6 +208,58 @@ export class ApplicationMapper {
     jsonDto.fields = fields
 
     return jsonDto
+  }
+
+  mapScreenToApplicationJsonFields(
+    screen: ScreenDto,
+  ): ApplicationJsonFieldDto[] {
+    return (screen.fields ?? [])
+      .filter((field) => !field.isHidden)
+      .filter((field) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .filter((field) => (field.values?.length ?? 0) > 0)
+      .map((field) =>
+        this.mapFieldToApplicationJsonField(
+          field,
+          screen.identifier,
+          screen.name,
+        ),
+      )
+  }
+
+  private mapFieldToApplicationJsonField(
+    field: FieldDto,
+    screenIdentifier: string,
+    screenTitle: LanguageType,
+  ): ApplicationJsonFieldDto {
+    const jsonField = new ApplicationJsonFieldDto()
+    jsonField.identifier = field.identifier
+    jsonField.screenIdentifier = screenIdentifier
+    jsonField.screenTitle = screenTitle
+    jsonField.fieldTitle = field.name
+    jsonField.fieldType = field.fieldType
+
+    const settings = new ApplicationJsonFieldSettingsDto()
+    if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
+      settings.isDecimal = field.fieldSettings?.isDecimal ?? false
+    }
+    if (field.fieldType === FieldTypesEnum.APPLICANT) {
+      settings.applicantType = field.fieldSettings?.applicantType
+    }
+    if (
+      settings.isDecimal !== undefined ||
+      settings.applicantType !== undefined
+    ) {
+      jsonField.fieldSettings = settings
+    }
+
+    jsonField.values = (field.values ?? []).map((value) => {
+      const jsonValue = new ApplicationJsonValueDto()
+      jsonValue.order = value.order
+      jsonValue.json = value.json ?? {}
+      return jsonValue
+    })
+
+    return jsonField
   }
 
   private isHidden(

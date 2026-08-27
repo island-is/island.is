@@ -42,12 +42,14 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseType,
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isCompletedCase,
   isDistrictCourtUser,
   isIndictmentCase,
   isPublicProsecutionOfficeUser,
@@ -61,7 +63,6 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
-  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -69,21 +70,24 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { getOrCreateTransaction, registerAfterCommit } from '../../middleware'
 import {
   CivilClaimantService,
   CurrentDefendant,
   DefendantExistsGuard,
 } from '../defendant'
 import { EventService } from '../event'
-import { Case, Defendant } from '../repository'
+import { AppealDecision, Case, Defendant } from '../repository'
 import { UpdateCase } from '../repository'
 import { UserService } from '../user'
+import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
+import { CaseExistsForUpdateGuard } from './guards/caseExistsForUpdate.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTransitionGuard } from './guards/caseTransition.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
@@ -107,7 +111,6 @@ import {
   CaseInterceptor,
   CasesInterceptor,
 } from './interceptors/case.interceptor'
-import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -303,7 +306,50 @@ export class CaseController {
     }
   }
 
-  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch('case/:caseId/appealDecision')
+  @ApiOkResponse({
+    type: AppealDecision,
+    description: 'Creates or updates a case-level party appeal decision',
+  })
+  upsertCaseAppealDecision(
+    @Param('caseId') caseId: string,
+    @Body() appealDecision: CaseAppealDecisionDto,
+    @CurrentCase() theCase: Case,
+  ): Promise<AppealDecision> {
+    this.logger.debug(`Upserting case-level appeal decision for case ${caseId}`)
+
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.upsertCaseAppealDecision(
+        theCase,
+        appealDecision,
+        transaction,
+      ),
+    )
+  }
+
+  // CaseExistsForUpdateGuard has to come first, even though it is the guard
+  // that takes the write lock: prosecutorTransitionRule reads request.case and
+  // denies outright when it is missing, so RolesGuard cannot decide this route
+  // before the case has been read. Reordering these two rejects every
+  // prosecutor transition with a 403 - and no controller test catches it,
+  // because guards do not run in them.
+  //
+  // The cost is that an authenticated but unauthorized caller holds a write
+  // lock on the case row until RolesGuard rejects it. That is unchanged from
+  // before this route was converted, and closing it needs authorization that
+  // does not depend on the case rather than a different guard order.
+  @UseGuards(
+    CaseExistsForUpdateGuard,
+    RolesGuard,
+    CaseWriteGuard,
+    CaseTransitionGuard,
+  )
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -325,37 +371,35 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
+    // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the
+    // transition is decided against a row no one else can change.
     const update = transitionCase(transition.transition, theCase, user)
 
-    const updatedCase = await this.sequelize.transaction((transaction) =>
-      this.caseService.update(
-        theCase,
-        update,
-        user,
-        transaction,
-        update.state !== CaseState.DELETED,
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const updatedCase = await this.caseService.update(
+      theCase,
+      update,
+      user,
+      transaction,
+      update.state !== CaseState.DELETED,
+    )
+
+    // The event asserts that the transition happened, so it waits for the
+    // commit - which TransactionCommitInterceptor does after this handler has
+    // returned. Still fire and forget: a failed announcement is logged, not
+    // returned to the caller.
+    registerAfterCommit(() =>
+      this.eventService.postEvent(
+        transition.transition,
+        updatedCase ?? theCase,
       ),
     )
 
-    // No need to wait
-    this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
-
     return updatedCase ?? theCase
-  }
-
-  @UseGuards(RolesGuard)
-  @RolesRules(defenderRule)
-  @UseInterceptors(CaseListInterceptor)
-  @Get('cases')
-  @ApiOkResponse({
-    type: Case,
-    isArray: true,
-    description: 'Gets all existing cases',
-  })
-  getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
-    this.logger.debug('Getting all cases')
-
-    return this.caseService.getAll(user)
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -996,6 +1040,52 @@ export class CaseController {
     this.eventService.postEvent('EXTEND', extendedCase)
 
     return extendedCase
+  }
+
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+  )
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseInterceptors(CaseInterceptor)
+  @Post('case/:caseId/duplicate')
+  @ApiCreatedResponse({
+    type: Case,
+    description:
+      'Creates a new draft indictment case based on a revoked indictment case',
+  })
+  async duplicate(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case> {
+    this.logger.debug(`Duplicating indictment case ${caseId} into a new draft`)
+
+    const isWaitingForCancellation =
+      theCase.state === CaseState.WAITING_FOR_CANCELLATION
+
+    const isCompletedRevocation =
+      isCompletedCase(theCase.state) &&
+      (theCase.indictmentRulingDecision ===
+        CaseIndictmentRulingDecision.WITHDRAWAL ||
+        theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.CANCELLATION)
+
+    if (!isWaitingForCancellation && !isCompletedRevocation) {
+      throw new ForbiddenException(
+        `Cannot duplicate indictment case ${caseId} - it has not been revoked`,
+      )
+    }
+
+    const duplicatedCase = await this.sequelize.transaction((transaction) =>
+      this.caseService.duplicateIndictmentCase(theCase, user, transaction),
+    )
+
+    this.eventService.postEvent('DUPLICATE', duplicatedCase)
+
+    return duplicatedCase
   }
 
   @UseGuards(

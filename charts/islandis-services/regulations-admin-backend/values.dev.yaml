@@ -24,6 +24,7 @@ env:
   DB_NAME: 'regulations_admin_backend'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'regulations_admin_backend'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
@@ -61,7 +62,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   primary-gw:
@@ -75,15 +76,6 @@ httpRoute:
           - pathPrefix: '/api'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
-ingress:
-  primary-alb:
-    annotations:
-      kubernetes.io/ingress.class: 'nginx-internal-alb'
-      nginx.ingress.kubernetes.io/service-upstream: 'true'
-    hosts:
-      - host: 'regulations-admin-backend-xrd.internal.dev01.devland.is'
-        paths:
-          - '/api'
 initContainer:
   containers:
     - args:
@@ -116,7 +108,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:

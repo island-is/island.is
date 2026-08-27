@@ -8,11 +8,15 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FjsErrorCode } from '@island.is/shared/constants'
 import { retry } from '@island.is/shared/utils/server'
 
+import { Charge } from '@island.is/clients/charge-fjs-v2'
+
 import { FJS_NETWORK_ERROR } from '../../utils/fjsCharge'
 import { environment } from '../../environments'
 import { ChargeItem } from '../../utils/chargeUtils'
+import { generateBankTransferChargeFJSPayload } from '../bankTransferPayment/bankTransfer.utils'
 import { generateCardChargeFJSPayload } from '../cardPayment/cardPayment.utils'
 import type { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
+import type { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlow } from '../paymentFlow/models/paymentFlow.model'
 import type { PaymentWorkerEventAttributes } from '../paymentFlow/models/paymentWorkerEvent.model'
 import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
@@ -20,13 +24,19 @@ import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { WorkerModuleConfig } from './worker.config'
 import { WorkerTaskType } from './workerTaskTypes'
 
-/** Flow with worker events preloaded (from findPaidFlowsWithoutFjsCharge). */
+/** Flow with associations preloaded. */
 type PaymentFlowWithWorkerEvents = InferAttributes<PaymentFlow> & {
   workerEvents?: PaymentWorkerEventAttributes[]
 }
 
+/** Flow tagged with the payment method whose sweep returned it. */
+type FlowToProcess = {
+  flow: PaymentFlowWithWorkerEvents
+  paymentMethod: 'card' | 'bank_transfer'
+}
+
 /**
- * Worker service that creates FJS charges for payment flows paid with card payments.
+ * Worker service that creates FJS charges for payment flows paid with card or bank transfer.
  */
 @Injectable()
 export class WorkerService {
@@ -53,34 +63,43 @@ export class WorkerService {
     )
 
     // Step 2: Filter out flows that have reached the failure limit (manual intervention required)
-    const paymentFlowsToProcess = allFlows.filter((flow) => {
+    const skippedFlowIds: string[] = []
+    const paymentFlowsToProcess = allFlows.filter(({ flow }) => {
       const shouldSkip = this.shouldSkipDueToFailureCount(
         flow.workerEvents ?? [],
         this.workerConfig.workerMaxFailureEventsPerFlow,
       )
 
       if (shouldSkip) {
-        const failureCount = (flow.workerEvents ?? []).filter(
-          (e) => e.status === 'failure',
-        ).length
-        this.logger.warn(
-          `[${flow.id}] Skipping payment flow — exceeded max failure attempts (failures: ${failureCount}, limit: ${this.workerConfig.workerMaxFailureEventsPerFlow}). Manual intervention required.`,
-        )
+        skippedFlowIds.push(flow.id)
       }
 
       return !shouldSkip
     })
 
-    const skippedCount = allFlows.length - paymentFlowsToProcess.length
+    // One aggregate line per run — ops alerting keys on the capped failure events
+    // (self-limiting at the failure limit per flow), not on this recurring log.
+    if (skippedFlowIds.length > 0) {
+      this.logger.info(
+        `Skipping ${
+          skippedFlowIds.length
+        } payment flow(s) that exceeded the failure limit (${
+          this.workerConfig.workerMaxFailureEventsPerFlow
+        }) and require manual intervention: ${skippedFlowIds.join(', ')}`,
+      )
+    }
+
+    const skippedCount = skippedFlowIds.length
 
     let createdFJSCharges = 0
     let failedCount = 0
 
     // Step 3: Process each flow individually
-    for (const paymentFlow of paymentFlowsToProcess) {
+    for (const { flow: paymentFlow, paymentMethod } of paymentFlowsToProcess) {
       try {
         const createdFjsCharge = await this.createFjsChargeForPaymentFlow(
           paymentFlow,
+          paymentMethod,
         )
 
         await this.recordWorkerEvent(
@@ -142,30 +161,12 @@ export class WorkerService {
    */
   private async createFjsChargeForPaymentFlow(
     paymentFlow: PaymentFlowWithWorkerEvents,
+    paymentMethod: 'card' | 'bank_transfer',
   ): Promise<{ receptionId: string }> {
-    const cardPaymentDetails = this.getLatestCardPaymentDetails(
-      paymentFlow.cardPaymentDetails as InferAttributes<CardPaymentDetails>[],
-    )
-
-    const { catalogItems } =
-      await this.paymentFlowService.getPaymentFlowChargeDetails(
-        paymentFlow.organisationId,
-        paymentFlow.charges as ChargeItem[],
-      )
-
-    const chargePayload = generateCardChargeFJSPayload({
-      paymentFlow,
-      charges: catalogItems,
-      cardChargeInfo: {
-        authorizationCode: cardPaymentDetails.authorizationCode,
-        cardScheme: cardPaymentDetails.cardScheme,
-        maskedCardNumber: cardPaymentDetails.maskedCardNumber,
-        cardUsage: cardPaymentDetails.cardUsage,
-      },
-      totalPrice: cardPaymentDetails.totalPrice,
-      systemId: environment.chargeFjs.systemId,
-      merchantReferenceData: cardPaymentDetails.merchantReferenceData,
-    })
+    const chargePayload =
+      paymentMethod === 'bank_transfer'
+        ? await this.buildBankTransferChargePayload(paymentFlow)
+        : await this.buildCardChargePayload(paymentFlow)
 
     const newCharge = await retry(
       () =>
@@ -184,18 +185,108 @@ export class WorkerService {
     return newCharge
   }
 
-  private async findPaymentFlowsToProcess(): Promise<
-    PaymentFlowWithWorkerEvents[]
-  > {
+  /** Builds the FJS charge payload for a settled card payment — payInfo carries PAN, authCode, and card scheme. */
+  private async buildCardChargePayload(
+    paymentFlow: PaymentFlowWithWorkerEvents,
+  ): Promise<Charge> {
+    const cardPaymentDetails = this.getLatestCardPaymentDetails(
+      paymentFlow.cardPaymentDetails,
+    )
+
+    const { catalogItems } =
+      await this.paymentFlowService.getPaymentFlowChargeDetails(
+        paymentFlow.organisationId,
+        paymentFlow.charges as ChargeItem[],
+      )
+
+    return generateCardChargeFJSPayload({
+      paymentFlow,
+      charges: catalogItems,
+      cardChargeInfo: {
+        authorizationCode: cardPaymentDetails.authorizationCode,
+        cardScheme: cardPaymentDetails.cardScheme,
+        maskedCardNumber: cardPaymentDetails.maskedCardNumber,
+        cardUsage: cardPaymentDetails.cardUsage,
+      },
+      totalPrice: cardPaymentDetails.totalPrice,
+      systemId: environment.chargeFjs.systemId,
+      merchantReferenceData: cardPaymentDetails.merchantReferenceData,
+      // CardPaymentDetails.id is the per-attempt correlationId (see createCardPaymentConfirmation).
+      correlationId: cardPaymentDetails.id,
+      // The card confirmation row is created when the payment succeeds — its `created` is the
+      // payment-completion date.
+      effectiveDate: new Date(cardPaymentDetails.created),
+    })
+  }
+
+  /** Builds the FJS charge payload for a settled bank transfer — payInfo carries the provider payment id (RRN) and Milli payment means. */
+  private async buildBankTransferChargePayload(
+    paymentFlow: PaymentFlowWithWorkerEvents,
+  ): Promise<Charge> {
+    const fulfillment = this.getActiveFulfillment(paymentFlow)
+
+    // The fulfillment's confirmationRefId is the bank_transfer_payment row id (== FJS correlationId).
+    const bankTransferPayment = paymentFlow.bankTransferPayments?.find(
+      (row) => row.id === fulfillment.confirmationRefId,
+    )
+
+    if (!bankTransferPayment) {
+      throw new BadRequestException(
+        'No bank transfer payment found for payment flow fulfillment',
+      )
+    }
+
+    const { catalogItems, totalPrice: catalogTotalPrice } =
+      await this.paymentFlowService.getPaymentFlowChargeDetails(
+        paymentFlow.organisationId,
+        paymentFlow.charges as ChargeItem[],
+      )
+
+    // The charge is PAID — payInfo must carry the amount that actually settled, not the
+    // catalog price at worker-run time (prices may have changed since settlement).
+    if (catalogTotalPrice !== bankTransferPayment.amount) {
+      this.logger.warn(
+        `[${paymentFlow.id}] Catalog total (${catalogTotalPrice}) differs from settled bank transfer amount (${bankTransferPayment.amount}) — charging the settled amount`,
+      )
+    }
+
+    return generateBankTransferChargeFJSPayload({
+      paymentFlow,
+      charges: catalogItems,
+      totalPrice: bankTransferPayment.amount,
+      systemId: environment.chargeFjs.systemId,
+      providerPaymentId: bankTransferPayment.providerPaymentId,
+      correlationId: fulfillment.confirmationRefId,
+      // The fulfillment row is created at settlement — its `created` is the payment-completion date.
+      effectiveDate: new Date(fulfillment.created),
+    })
+  }
+
+  private async findPaymentFlowsToProcess(): Promise<FlowToProcess[]> {
     const cutoffTime = new Date()
     cutoffTime.setMinutes(
       cutoffTime.getMinutes() -
         this.workerConfig.workerMinutesToWaitBeforeCreatingFjsCharge,
     )
 
-    return this.paymentFlowService.findPaidFlowsWithoutFjsCharge(
-      cutoffTime,
-    ) as Promise<PaymentFlowWithWorkerEvents[]>
+    const [cardFlows, bankTransferFlows] = await Promise.all([
+      this.paymentFlowService.findPaidFlowsWithoutFjsCharge(cutoffTime, 'card'),
+      this.paymentFlowService.findPaidFlowsWithoutFjsCharge(
+        cutoffTime,
+        'bank_transfer',
+      ),
+    ])
+
+    return [
+      ...(cardFlows as PaymentFlowWithWorkerEvents[]).map((flow) => ({
+        flow,
+        paymentMethod: 'card' as const,
+      })),
+      ...(bankTransferFlows as PaymentFlowWithWorkerEvents[]).map((flow) => ({
+        flow,
+        paymentMethod: 'bank_transfer' as const,
+      })),
+    ]
   }
 
   /**
@@ -232,10 +323,22 @@ export class WorkerService {
     })
   }
 
+  private getActiveFulfillment(
+    paymentFlow: PaymentFlowWithWorkerEvents,
+  ): InferAttributes<PaymentFulfillment> {
+    const fulfillments = paymentFlow.paymentFulfillments ?? []
+
+    // The db query filters to the method's non-deleted, unpaid fulfillments; the service
+    // layer forbids paying twice for the same flow, so at most one is expected.
+    if (fulfillments.length === 0) {
+      throw new BadRequestException('No fulfillment found for payment flow')
+    }
+    return fulfillments[0]
+  }
+
   private getLatestCardPaymentDetails(
-    details: InferAttributes<CardPaymentDetails>[],
+    details?: InferAttributes<CardPaymentDetails>[],
   ): InferAttributes<CardPaymentDetails> {
-    // should not happen because card payment details are required in the db query
     if (!details || details.length === 0) {
       throw new BadRequestException(
         'No card payment details found for payment flow',

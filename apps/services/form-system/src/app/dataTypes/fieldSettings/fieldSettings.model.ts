@@ -1,4 +1,4 @@
-import { ListTypesEnum } from '@island.is/form-system/shared'
+import { ListTypesEnum, AssetTypes } from '@island.is/form-system/enums'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
@@ -132,6 +132,11 @@ export class FieldSettings {
   @IsString()
   @ApiPropertyOptional({ type: String })
   applicantType?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ enum: AssetTypes })
+  assetType?: string
 
   @IsOptional()
   @IsBoolean()

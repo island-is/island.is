@@ -1,9 +1,10 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, IconMapIcon, StatusColor, Text } from '@island.is/island-ui/core'
-import { Colors } from '@island.is/island-ui/theme'
+import type { IconMapIcon, StatusColor } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
+import type { Colors } from '@island.is/island-ui/theme'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import {
   CaseFile,
@@ -97,7 +98,7 @@ const CaseFileList: FC<Props> = (props) => {
             key={file.id}
           >
             <CaseFile
-              name={file.name}
+              name={file.userGeneratedFilename ?? file.name}
               size={file.size}
               color={getBackgroundColor(file)}
               icon={

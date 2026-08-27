@@ -10,6 +10,9 @@ export class NotificationInput {
   nationalId!: string
 
   @Field(() => String, { nullable: false })
+  organizationNationalId!: string
+
+  @Field(() => String, { nullable: false })
   slug!: string
 
   @Field(() => Boolean, { nullable: false })

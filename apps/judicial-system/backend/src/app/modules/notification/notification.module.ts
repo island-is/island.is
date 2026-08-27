@@ -1,24 +1,20 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { EmailModule } from '@island.is/email-service'
 import { SmsModule } from '@island.is/nova-sms'
 
 import {
-  InstitutionContact,
-  InstitutionContactRepositoryService,
-  Notification,
-} from '../repository'
-import {
   CaseModule,
   CourtModule,
   DefendantModule,
   EventModule,
   InstitutionModule,
+  RepositoryModule,
   SubpoenaModule,
   UserModule,
 } from '..'
+import { AppealCaseNotificationService } from './services/appealCaseNotification/appealCaseNotification.service'
 import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
 import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
 import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
@@ -42,10 +38,11 @@ import { NotificationController } from './notification.controller'
     forwardRef(() => CourtModule),
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
-    SequelizeModule.forFeature([Notification, InstitutionContact]),
+    forwardRef(() => RepositoryModule),
   ],
   controllers: [NotificationController, InternalNotificationController],
   providers: [
+    AppealCaseNotificationService,
     CaseNotificationService,
     CivilClaimantNotificationService,
     DefendantNotificationService,
@@ -54,7 +51,6 @@ import { NotificationController } from './notification.controller'
     NotificationService,
     NotificationDispatchService,
     SubpoenaNotificationService,
-    InstitutionContactRepositoryService,
   ],
 })
 export class NotificationModule {}

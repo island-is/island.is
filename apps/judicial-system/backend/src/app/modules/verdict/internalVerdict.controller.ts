@@ -62,6 +62,12 @@ import {
   VerdictServiceCertificateDelivery,
 } from './verdict.service'
 
+// Deliberately stricter than the web path, which lets the public prosecution
+// office register an appeal date after the deadline has run out. This endpoint
+// is the defendant appealing their own verdict from the app, which is the legal
+// act itself rather than bookkeeping about one, so the deadline is hard. Note
+// that it runs until midnight at the end of its last day - see
+// getIndictmentAppealDeadline.
 const validateVerdictAppealUpdate = ({
   caseId,
   indictmentRulingDecision,
@@ -186,6 +192,7 @@ export class InternalVerdictController {
         caseId,
         getDeliveredVerdictNationalCommissionersOfficeLogDetails,
       )
+
       await transaction.commit()
 
       return response
@@ -242,9 +249,11 @@ export class InternalVerdictController {
         })
       }
 
-      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, {
         Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
-        Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',
+        Birt:
+          formatDate(updatedVerdict.serviceDate, 'dd.MM.y HH:mm') ??
+          'ekki skráð',
       })
     }
 

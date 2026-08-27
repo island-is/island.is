@@ -30,7 +30,8 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'APPEAL_RULING_ORDER,TINY_MCE'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -73,21 +74,6 @@ judicial-system-api:
             - pathPrefix: '/api/defender'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'rettarvorslugatt.island.is'
-          paths:
-            - '/api/graphql'
-            - '/api/auth'
-            - '/api/case'
-            - '/api/feature'
-            - '/api/defender'
   namespace: 'judicial-system'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -109,6 +95,7 @@ judicial-system-api:
   secrets:
     AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET'
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
+    AUTH_TOKEN_SECRET_BASE64: '/k8s/judicial-system/AUTH_TOKEN_SECRET_BASE64'
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
@@ -135,6 +122,7 @@ judicial-system-backend:
     DB_NAME: 'judicial_system'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'judicial_system'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DOKOBIT_URL: 'https://ws.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     LOG_LEVEL: 'info'
@@ -277,6 +265,7 @@ judicial-system-digital-mailbox-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -314,15 +303,6 @@ judicial-system-digital-mailbox-api:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-digital-mailbox-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'judicial-system-digital-mailbox-api-xrd.internal.island.is'
-          paths:
-            - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -362,6 +342,7 @@ judicial-system-message-handler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -428,6 +409,7 @@ judicial-system-scheduler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -492,6 +474,7 @@ judicial-system-web:
   enabled: true
   env:
     API_URL: 'https://rettarvorslugatt.island.is'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -529,17 +512,6 @@ judicial-system-web:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'rettarvorslugatt.island.is'
-          paths:
-            - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -571,6 +543,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -607,15 +580,6 @@ judicial-system-xrd-api:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'judicial-system-xrd-api.internal.island.is'
-          paths:
-            - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
     minAvailable: '50%'

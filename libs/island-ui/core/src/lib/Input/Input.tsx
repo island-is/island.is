@@ -90,6 +90,11 @@ export const Input = forwardRef(
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
 
+    const handleTooltipClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation() // Prevent event from bubbling up to the input field (which would cause the tooltip to not open since the input would be focused)
+      e.preventDefault() // Prevent default browser behaviour that focuses input on label click
+    }
+
     return (
       <div>
         {/* If size is xs then the label is above the input box */}
@@ -113,13 +118,16 @@ export const Input = forwardRef(
               </span>
             )}
             {tooltip && (
-              <Box marginLeft={1} display="inlineBlock">
+              <Box
+                marginLeft={1}
+                display="inlineBlock"
+                onClick={handleTooltipClick}
+              >
                 <Tooltip text={tooltip} />
               </Box>
             )}
           </label>
         )}
-
         <Box
           background={containerBackground as UseBoxStylesProps['background']}
           className={styles.container({
@@ -161,7 +169,11 @@ export const Input = forwardRef(
                   </span>
                 )}
                 {tooltip && (
-                  <Box marginLeft={1} display="inlineBlock">
+                  <Box
+                    marginLeft={1}
+                    display="inlineBlock"
+                    onClick={handleTooltipClick}
+                  >
                     <Tooltip text={tooltip} />
                   </Box>
                 )}

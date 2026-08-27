@@ -1,15 +1,10 @@
-import {
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { SingleValue } from 'react-select'
+import type { SingleValue } from 'react-select'
 
-import { Option, Select } from '@island.is/island-ui/core'
+import type { Option } from '@island.is/island-ui/core'
+import { Select } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   FormContext,

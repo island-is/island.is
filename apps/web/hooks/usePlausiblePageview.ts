@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
-import getConfig from 'next/config'
 import { useRouter } from 'next/router'
 
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
+import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
 let newestVisitedUrl = ''
 
@@ -13,7 +12,7 @@ export const usePlausiblePageview = (domain?: string | null) => {
     const onRouteChangeComplete = () => {
       if (
         // Only track pageviews in production
-        publicRuntimeConfig.environment !== 'prod' ||
+        getPublicRuntimeEnv().environment !== 'prod' ||
         !domain ||
         // Only track pageviews if we visit a page we weren't already on
         newestVisitedUrl === window.location.href

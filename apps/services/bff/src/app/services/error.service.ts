@@ -26,6 +26,22 @@ export const OAUTH2_ERROR_CODES: OAuth2ErrorCode[] = [
   'invalid_scope',
 ]
 
+/**
+ * Extracts a known OAuth2 error code from an error thrown by the identity server
+ * (e.g. a FetchError whose `body.error` is `invalid_grant`), or returns undefined
+ * if the error is not a recognized OAuth2 error.
+ * @see https://datatracker.ietf.org/doc/html/rfc6749#section-5.2
+ */
+export const getOAuth2ErrorCode = (
+  error: unknown,
+): OAuth2ErrorCode | undefined => {
+  const code = (error as { body?: { error?: string } })?.body?.error
+
+  return code && OAUTH2_ERROR_CODES.includes(code as OAuth2ErrorCode)
+    ? (code as OAuth2ErrorCode)
+    : undefined
+}
+
 @Injectable()
 export class ErrorService {
   constructor(
@@ -35,14 +51,6 @@ export class ErrorService {
     private readonly cacheService: CacheService,
     private readonly sessionCookieService: SessionCookieService,
   ) {}
-
-  /**
-   * Validates if the given string is a known OAuth2 error code
-   * @see https://datatracker.ietf.org/doc/html/rfc6749#section-5.2
-   */
-  private isKnownOAuth2ErrorCode(code: string): code is OAuth2ErrorCode {
-    return OAUTH2_ERROR_CODES.includes(code as OAuth2ErrorCode)
-  }
 
   /**
    * Handles authorization errors by cleaning up user session and logging the error
@@ -67,13 +75,13 @@ export class ErrorService {
     error: unknown
     tokenResponseKey: string
   }): Promise<never> {
-    const errorCode = (error as { body?: { error?: string } })?.body?.error
+    const errorCode = getOAuth2ErrorCode(error)
 
     // If the error is an OAuth2 error
     // 1. Delete the cached token response
     // 2. Clear the session cookie
     // 3. Throw an UnauthorizedException
-    if (errorCode && this.isKnownOAuth2ErrorCode(errorCode)) {
+    if (errorCode) {
       this.logger.warn(
         `${operation} failed with OAuth2 error: ${errorCode}`,
         error,

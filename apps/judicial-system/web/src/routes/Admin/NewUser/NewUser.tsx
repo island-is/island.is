@@ -10,17 +10,17 @@ import {
   Skeleton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   CreateUserInput,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import UserForm from '@island.is/judicial-system-web/src/routes/Admin/UserForm/UserForm'
+import * as styles from '@island.is/judicial-system-web/src/routes/Admin/Users/Users.css'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import UserForm from '../UserForm/UserForm'
 import { useCreateUserMutation } from './createUser.generated'
 import { strings } from './NewUser.strings'
-import * as styles from '../Users/Users.css'
 
 const user: User = {
   id: '',
@@ -42,8 +42,16 @@ export const NewUser = () => {
   const [createUserMutation, { loading: userCreating }] = useCreateUserMutation(
     {
       onCompleted: () => router.push(ADMIN_USERS_ROUTE),
-      onError: () => {
-        toast.error(formatMessage(strings.createError))
+      onError: (error) => {
+        const code = error.graphQLErrors[0]?.extensions?.code
+
+        if (code === 'https://httpstatuses.org/409') {
+          toast.error(
+            'Notandi með þessa kennitölu, hlutverk og stofnun er nú þegar til',
+          )
+        } else {
+          toast.error(formatMessage(strings.createError))
+        }
       },
     },
   )

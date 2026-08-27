@@ -1,6 +1,7 @@
-import { FC, useContext, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { MultiValue, SingleValue } from 'react-select'
+import type { MultiValue, SingleValue } from 'react-select'
 import isEmpty from 'lodash/isEmpty'
 
 import { Box, Select } from '@island.is/island-ui/core'
@@ -12,11 +13,11 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   CaseFileCategory,
   CaseRepresentative,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './AddFiles.strings'
 import * as styles from './SelectCaseFileRepresentative.css'

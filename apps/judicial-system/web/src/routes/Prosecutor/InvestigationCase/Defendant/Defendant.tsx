@@ -26,12 +26,13 @@ import {
   SectionHeading,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  CaseOrigin,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DefendantInfo } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useDefendants,
   useSyncDefendantsFromPolice,
@@ -40,8 +41,6 @@ import {
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-
-import { DefendantInfo } from '../../components'
 
 const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
   origin === CaseOrigin.LOKE && Boolean(id)
@@ -317,18 +316,22 @@ const Defendant = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
-          nextButtonText={formatMessage(
-            workingCase.id === '' ? core.createCase : core.continue,
-          )}
+          actions={[
+            {
+              text: formatMessage(
+                workingCase.id === '' ? core.createCase : core.continue,
+              ),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

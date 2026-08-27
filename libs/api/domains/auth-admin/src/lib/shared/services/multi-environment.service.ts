@@ -145,7 +145,7 @@ export abstract class MultiEnvironmentService {
 
   /**
    * Like {@link handleSettledPromises} but also collects per-environment
-   * failures and returns them alongside the successful results
+   * failures and returns them alongside the successful results.
    */
   public handleSettledPromisesWithFailures<T, K>(
     settledPromises: PromiseSettledResult<T | undefined | null>[],
@@ -153,9 +153,11 @@ export abstract class MultiEnvironmentService {
     {
       mapper,
       prefixErrorMessage,
+      voidResponse = false,
     }: {
       mapper: (value: PromiseFulfilledResult<T>['value'], index: number) => K
       prefixErrorMessage?: string
+      voidResponse?: boolean
     },
   ): { values: K[]; failures: EnvironmentFailure[] } {
     const values: K[] = []
@@ -165,6 +167,12 @@ export abstract class MultiEnvironmentService {
       const environment = requestedEnvs[index]
       if (resp.status === 'fulfilled' && resp.value) {
         values.push(mapper(resp.value, index))
+      } else if (
+        resp.status === 'fulfilled' &&
+        voidResponse &&
+        this.isEnvironmentConfigured(environment)
+      ) {
+        values.push(mapper(resp.value as T, index))
       } else if (resp.status === 'fulfilled') {
         // makeRequest resolves to null/undefined when the env's API client
         // is not configured, or when the upstream returned an empty body.

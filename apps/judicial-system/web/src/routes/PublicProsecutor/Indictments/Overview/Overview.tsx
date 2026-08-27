@@ -1,8 +1,9 @@
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { type JSX, useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Option } from '@island.is/island-ui/core'
+import type { Option } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -30,14 +31,14 @@ import {
   CaseIndictmentRulingDecision,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
+import {
+  isReviewerAssignedModal,
+  REVIEWER_ASSIGNED,
+} from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import {
-  ConfirmationModal,
-  isReviewerAssignedModal,
-  REVIEWER_ASSIGNED,
-} from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
 
@@ -53,12 +54,18 @@ export const Overview = () => {
     useState<Option<string> | null>()
 
   const [confirmationModal, setConfirmationModal] = useState<
-    ConfirmationModal | undefined
+    ModalId | undefined
   >()
 
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
+  // Defendants whose indictment was cancelled or dismissed (completed for some)
+  // do not receive a verdict, so no review decision is required for them.
+  // The same goes for defendants whose case was closed without enforcement.
   const isReviewMissing = workingCase.defendants?.some(
-    (defendant) => !defendant.indictmentReviewDecision,
+    (defendant) =>
+      !defendant.indictmentCancelledOrDismissedState &&
+      !defendant.isClosedWithoutEnforcement &&
+      !defendant.indictmentReviewDecision,
   )
 
   const assignReviewer = async () => {
@@ -86,6 +93,12 @@ export const Overview = () => {
       verdictTimelineCards: JSX.Element[]
     }>(
       (acc, defendant) => {
+        // Defendants whose indictment was cancelled or dismissed (completed for
+        // some) do not get a verdict, so we show nothing for them here.
+        if (defendant.indictmentCancelledOrDismissedState) {
+          return acc
+        }
+
         const { verdict } = defendant
 
         const isServiceRequired =
@@ -101,7 +114,9 @@ export const Overview = () => {
             (isServiceRequired && !!verdict.serviceDate))
         )
 
-        if (verdict) {
+        // Service and appeal alerts are noise for defendants whose case was
+        // closed without enforcement.
+        if (verdict && !defendant.isClosedWithoutEnforcement) {
           acc.verdictStatusAlerts.push(
             <VerdictStatusAlert
               key={`${defendant.id}_verdict_status_alert`}
@@ -112,11 +127,15 @@ export const Overview = () => {
         }
 
         acc.verdictTimelineCards.push(
-          <VerdictTimelineCard
+          <Box
             key={`${defendant.id}_verdict_timeline_card`}
-            defendant={defendant}
-            canDefendantAppealVerdict={canDefendantAppealVerdict}
-          />,
+            dataTestId="verdictTimelineCard"
+          >
+            <VerdictTimelineCard
+              defendant={defendant}
+              canDefendantAppealVerdict={canDefendantAppealVerdict}
+            />
+          </Box>,
         )
 
         return acc
@@ -188,18 +207,25 @@ export const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          hideNextButton={!isReviewMissing}
-          nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={
-            !selectedIndictmentReviewer ||
-            selectedIndictmentReviewer.value ===
-              workingCase.indictmentReviewer?.id ||
-            isLoadingWorkingCase
+          actions={
+            !isReviewMissing
+              ? []
+              : [
+                  {
+                    text: fm(core.continue),
+                    icon: 'arrowForward',
+                    onClick: assignReviewer,
+                    disabled:
+                      !selectedIndictmentReviewer ||
+                      selectedIndictmentReviewer.value ===
+                        workingCase.indictmentReviewer?.id ||
+                      isLoadingWorkingCase,
+                    loading: isLoadingWorkingCase,
+                    testId: 'continueButton',
+                  },
+                ]
           }
-          onNextButtonClick={assignReviewer}
-          nextButtonText={fm(core.continue)}
         />
       </FormContentContainer>
       {isReviewerAssignedModal(confirmationModal) && (
@@ -209,10 +235,13 @@ export const Overview = () => {
             caseNumber: workingCase.courtCaseNumber,
             reviewer: selectedIndictmentReviewer?.label,
           })}
-          secondaryButton={{
-            text: fm(core.back),
-            onClick: () => router.push(getStandardUserDashboardRoute(user)),
-          }}
+          buttons={[
+            {
+              text: fm(core.back),
+              onClick: () => router.push(getStandardUserDashboardRoute(user)),
+              variant: 'ghost',
+            },
+          ]}
         />
       )}
     </PageLayout>

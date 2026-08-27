@@ -36,6 +36,8 @@ import {
   YES,
 } from '@island.is/application/core'
 import { SharedTemplateApiService } from '../../shared'
+import { Features } from '@island.is/feature-flags'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -70,13 +72,28 @@ export class InheritanceReportService extends BaseTemplateApiService {
     private readonly nationalRegistryService: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
   }
 
+  async checkReviewFlag({ application, auth }: TemplateApiModuleActionProps) {
+    const rawValue = await this.featureFlagService.getValue(
+      Features.inheritanceReportReviewEnabled,
+      false,
+      auth,
+    )
+    const reviewEnabled = !!rawValue
+    this.logger.info('[inheritance-report]: checkReviewFlag result', {
+      applicationId: application.id,
+      reviewEnabled,
+    })
+    return { reviewEnabled }
+  }
+
   // Optionally email a PDF copy of the application to the parties (málsaðilar)
-  // when the applicant opted in via the overview checkbox. Triggered on entry
-  // to the post-submission state; must never block submission (registered with
+  // when the applicant opted in via the overview checkbox. Triggered during
+  // the submission transition; must never block submission (registered with
   // throwOnError: false).
   async sendApplicationCopyToParties({
     application,

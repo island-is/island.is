@@ -1,4 +1,5 @@
-import { FC, PropsWithChildren, useEffect, useState } from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -9,10 +10,10 @@ import {
   Icon,
   LoadingDots,
 } from '@island.is/island-ui/core'
+import { IconAndText } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { IconAndText } from '../../routes/Prosecutor/components'
 import { selectableList as strings } from './SelectableList.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './SelectableList.css'
 
 interface CTAButtonAttributes {
@@ -150,19 +151,25 @@ const SelectableList: FC<Props> = (props) => {
             strong
           />
         </Box>
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {isLoading ? (
-            <Box
-              textAlign="center"
-              paddingTop={1}
-              paddingBottom={2}
-              paddingX={3}
+            <motion.div
               key="loading-dots"
+              initial={{ y: 10 }}
+              animate={{ y: 0 }}
+              exit={{ y: 10 }}
             >
-              <LoadingDots />
-            </Box>
+              <Box
+                textAlign="center"
+                paddingTop={1}
+                paddingBottom={2}
+                paddingX={3}
+              >
+                <LoadingDots />
+              </Box>
+            </motion.div>
           ) : errorMessage ? (
-            <AnimateChildren id="error-message">
+            <AnimateChildren id="error-message" key="error-message">
               <IconAndText
                 icon="close"
                 iconColor="red400"
@@ -170,15 +177,15 @@ const SelectableList: FC<Props> = (props) => {
               />
             </AnimateChildren>
           ) : warningMessage ? (
-            <AnimateChildren id="warning-message">
+            <AnimateChildren id="warning-message" key="warning-message">
               <IconAndText
                 icon="warning"
                 iconColor="yellow400"
                 message={warningMessage}
               />
             </AnimateChildren>
-          ) : !isLoading && successMessage ? (
-            <AnimateChildren id="success-message">
+          ) : successMessage ? (
+            <AnimateChildren id="success-message" key="success-message">
               <IconAndText
                 icon="checkmark"
                 iconColor="blue400"
@@ -186,7 +193,13 @@ const SelectableList: FC<Props> = (props) => {
               />
             </AnimateChildren>
           ) : (
-            <ul className={styles.grid}>
+            <motion.ul
+              className={styles.grid}
+              key="list"
+              initial={{ y: 10 }}
+              animate={{ y: 0 }}
+              exit={{ y: 10 }}
+            >
               {selectableItems.map((item, index) => (
                 <motion.li
                   custom={index}
@@ -245,7 +258,7 @@ const SelectableList: FC<Props> = (props) => {
                   </Box>
                 </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           )}
         </AnimatePresence>
       </Box>

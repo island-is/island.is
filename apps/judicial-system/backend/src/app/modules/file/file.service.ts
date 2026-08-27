@@ -33,8 +33,10 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
+import { findAppealCaseOfCaseFile } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -421,11 +423,7 @@ export class FileService {
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ].includes(file.category)
     ) {
-      const appealCase = file.rulingFileId
-        ? theCase.rulingOrderAppealCases?.find(
-            (a) => a.rulingFileId === file.rulingFileId,
-          )
-        : theCase.appealCase
+      const appealCase = findAppealCaseOfCaseFile(theCase, file)
 
       if (appealCase) {
         addMessagesToQueue({
@@ -483,9 +481,33 @@ export class FileService {
     user: User,
     transaction: Transaction,
   ): Promise<CaseFile> {
+    let finalOrderWithinChapter = createFile.orderWithinChapter
+    if (createFile.orderWithinChapter === undefined && !createFile.category) {
+      // Lock existing uncategorized files so concurrent creates cannot read the
+      // same max orderWithinChapter before either insert commits.
+      await this.fileModel.findAll({
+        where: { caseId: theCase.id, category: null },
+        attributes: ['id'],
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+
+      const maxOrder = await this.fileModel.max<number | null, CaseFile>(
+        'orderWithinChapter',
+        {
+          where: { caseId: theCase.id, category: null },
+          transaction,
+        },
+      )
+      if (maxOrder !== null) {
+        finalOrderWithinChapter = maxOrder + 1
+      }
+    }
+
     const file = await this.fileModel.create(
       {
         ...createFile,
+        orderWithinChapter: finalOrderWithinChapter,
         state: CaseFileState.STORED_IN_RVG,
         caseId: theCase.id,
         name: fileName,
@@ -685,6 +707,32 @@ export class FileService {
     return updatedCaseFiles[0]
   }
 
+  async confirmRulingOrder(
+    theCase: Case,
+    caseFile: CaseFile,
+    transaction?: Transaction,
+  ): Promise<CaseFile> {
+    if (caseFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+      throw new BadRequestException(
+        'Only ruling orders uploaded during the course of a case can be confirmed',
+      )
+    }
+
+    if (caseFile.submissionDate) {
+      throw new BadRequestException('The ruling order is already confirmed')
+    }
+
+    // Setting the submission date marks the ruling order as confirmed by the
+    // registered judge. The RVG confirmation stamp is added lazily on download
+    // based on this date (see confirmIndictmentCaseFile).
+    return this.updateCaseFile(
+      theCase.id,
+      caseFile.id,
+      { submissionDate: nowFactory().toISOString() },
+      transaction,
+    )
+  }
+
   async updateFiles(
     caseId: string,
     caseFileUpdates: UpdateFileDto[],
@@ -766,6 +814,8 @@ export class FileService {
           ? PoliceDocumentType.RVMV
           : file.category === CaseFileCategory.PROSECUTOR_CASE_FILE
           ? PoliceDocumentType.RVVS
+          : file.category === CaseFileCategory.COURT_RECORD
+          ? PoliceDocumentType.RVTB
           : // Should not happen, but we would rather deliver the file than throw an error
             PoliceDocumentType.RVMG
 

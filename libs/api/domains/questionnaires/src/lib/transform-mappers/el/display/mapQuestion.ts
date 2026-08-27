@@ -18,9 +18,6 @@ export const mapItemToQuestion = (
   const answerType = mapAnswerOptionType(item.type, item)
   const triggerDeps = mapTriggers(allQuestions, triggers, item.id)
 
-  // Create unique ID by combining group and item IDs to avoid collisions
-  const uniqueId = groupId ? `${groupId}__${item.id}` : item.id
-
   // Handle options based on question type
   let options: Array<{ label: string; value: string; id: string }> | undefined
 
@@ -40,8 +37,7 @@ export const mapItemToQuestion = (
   }
 
   const answerOptions = {
-    id: uniqueId,
-    originalId: item.id, // Keep original ID for submission
+    id: item.id,
     type: answerType,
     label: undefined,
     options,
@@ -80,8 +76,8 @@ export const mapItemToQuestion = (
   }
 
   return {
-    id: uniqueId,
-    originalId: item.id, // Keep original ID for submission
+    id: item.id,
+    sectionId: groupId ?? '',
     label: item.label,
     htmlLabel: item.htmlLabel,
     sublabel: item.hint,

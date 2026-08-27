@@ -6,11 +6,17 @@ import {
   CaseIndictmentRulingDecision,
   CaseType,
   DefendantEventType,
+  getIndictmentAppealDeadline,
+  InstitutionType,
   StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Defendant, DefendantEventLog } from '../../../repository'
+import {
+  CaseRepositoryService,
+  Defendant,
+  DefendantEventLog,
+} from '../../../repository'
 import { CaseInterceptor, transformDefendants } from '../case.interceptor'
 
 const nationalId = '0101010101'
@@ -107,7 +113,13 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
   const mockHandle = jest.fn()
 
   interface Then {
-    result: { defendants: { defenderNationalId: string }[] }
+    result: {
+      defendants: {
+        defenderNationalId: string
+        verdictAppealDeadline?: Date
+      }[]
+      indictmentAppealDeadline?: Date
+    }
     error: Error
   }
 
@@ -117,7 +129,9 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
 
   beforeEach(() => {
     givenWhenThen = async (): Promise<Then> => {
-      const interceptor = new CaseInterceptor()
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
       const then = {} as Then
 
       await firstValueFrom(
@@ -279,6 +293,47 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
       ).toBe(true)
     })
   })
+
+  describe('when a cancelled defendant belongs to a case with a ruling date', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = {
+        ...makeCase([
+          makeDefendant(nationalId, [
+            makeEventLog(DefendantEventType.INDICTMENT_CANCELLED, cancelledAt),
+          ]),
+          makeDefendant(otherNationalId, []), // another defender's active defendant
+        ]),
+        // A ruling date the defence user is never presented with, since the
+        // case is presented to them as completed on the cancellation date
+        rulingDate: new Date('2024-03-01'),
+      }
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('counts the defendant appeal deadline from the cancellation date', () => {
+      const { deadlineDate } = getIndictmentAppealDeadline({
+        baseDate: cancelledAt,
+      })
+
+      expect(then.result.defendants[0].verdictAppealDeadline).toStrictEqual(
+        deadlineDate,
+      )
+    })
+
+    it('matches the case level indictment appeal deadline', () => {
+      expect(then.result.defendants[0].verdictAppealDeadline).toStrictEqual(
+        then.result.indictmentAppealDeadline,
+      )
+    })
+  })
 })
 
 describe('CaseInterceptor - reopenReason mapping', () => {
@@ -294,7 +349,9 @@ describe('CaseInterceptor - reopenReason mapping', () => {
 
   beforeEach(() => {
     givenWhenThen = async (): Promise<Then> => {
-      const interceptor = new CaseInterceptor()
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
       const then = {} as Then
 
       await firstValueFrom(
@@ -354,6 +411,95 @@ describe('CaseInterceptor - reopenReason mapping', () => {
 
     it('returns undefined for reopenReason', () => {
       expect(then.result.reopenReason).toBeUndefined()
+    })
+  })
+})
+
+describe('CaseInterceptor - rulingModifiedHistory', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  const rulingModifiedHistory = 'the ruling was corrected'
+
+  interface Then {
+    result: { rulingModifiedHistory?: string }
+    error: Error
+  }
+
+  let givenWhenThen: (caseType: CaseType, currentUser: unknown) => Promise<Then>
+
+  beforeEach(() => {
+    givenWhenThen = async (caseType, currentUser): Promise<Then> => {
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
+      const then = {} as Then
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser },
+      }))
+      mockHandle.mockReturnValueOnce(
+        of({ ...makeCase([]), type: caseType, rulingModifiedHistory }),
+      )
+
+      await firstValueFrom(
+        interceptor.intercept(
+          {
+            switchToHttp: () => ({ getRequest: mockRequest }),
+          } as unknown as ExecutionContext,
+          { handle: mockHandle } as unknown as CallHandler,
+        ),
+      )
+        .then((result) => (then.result = result as Then['result']))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  describe('when the user is a defence user in a request case', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(CaseType.CUSTODY, {
+        role: UserRole.DEFENDER,
+        nationalId,
+      })
+    })
+
+    it('includes the rulingModifiedHistory in the response', () => {
+      expect(then.result.rulingModifiedHistory).toBe(rulingModifiedHistory)
+    })
+  })
+
+  describe('when the user is a defence user in an indictment case', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(CaseType.INDICTMENT, {
+        role: UserRole.DEFENDER,
+        nationalId,
+      })
+    })
+
+    it('includes the rulingModifiedHistory in the response', () => {
+      expect(then.result.rulingModifiedHistory).toBe(rulingModifiedHistory)
+    })
+  })
+
+  describe('when the user is a prison system user in a request case', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(CaseType.CUSTODY, {
+        role: UserRole.PRISON_SYSTEM_STAFF,
+        nationalId,
+        institution: { type: InstitutionType.PRISON },
+      })
+    })
+
+    it('returns undefined for rulingModifiedHistory', () => {
+      expect(then.result.rulingModifiedHistory).toBeUndefined()
     })
   })
 })

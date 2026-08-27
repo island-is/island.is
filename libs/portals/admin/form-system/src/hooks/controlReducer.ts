@@ -156,9 +156,16 @@ type ChangeActions =
     }
   | { type: 'CHANGE_DRAFT_DAYS_TO_LIVE'; payload: { value: number } }
   | { type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE'; payload: { value: number } }
-  | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
+  | {
+      type: 'CHANGE_INVALIDATION_DATE'
+      payload: { value: Date | null }
+    }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
+      type: 'CHANGE_IS_INACCESSIBLE'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
@@ -308,6 +315,10 @@ type InputSettingsActions =
     }
   | { type: 'ADD_LIST_ITEM'; payload: { newListItem: FormSystemListItem } }
   | {
+      type: 'SET_LIST_ITEMS'
+      payload: { listItems: FormSystemListItem[] }
+    }
+  | {
       type: 'SET_LIST_TYPE'
       payload: {
         listType: string
@@ -437,11 +448,27 @@ export const controlReducer = (
       }
     }
     case 'REMOVE_SECTION': {
-      const newSections = state.form.sections?.filter(
+      const oldSections = state.form.sections ?? []
+      const removedIndex = oldSections.findIndex(
+        (section) => section?.id === action.payload.id,
+      )
+      const newSections = oldSections.filter(
         (section) => section?.id !== action.payload.id,
       )
+      const isInput = (section: typeof oldSections[number]) =>
+        section?.sectionType === SectionTypes.INPUT
+      const previousInput = oldSections
+        .slice(0, removedIndex)
+        .filter(isInput)
+        .at(-1)
+      const nextInput = oldSections.slice(removedIndex + 1).find(isInput)
+      const newActiveSection = previousInput ?? nextInput ?? undefined
       return {
         ...state,
+        activeItem: {
+          type: 'Section',
+          data: newActiveSection ?? undefined,
+        },
         form: {
           ...form,
           sections: newSections,
@@ -875,6 +902,17 @@ export const controlReducer = (
         form: {
           ...form,
           allowProceedOnValidationFail: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_IS_INACCESSIBLE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          isInaccessible: action.payload.value,
         },
       }
       action.payload.update({ ...updatedState.form })
@@ -1467,6 +1505,25 @@ export const controlReducer = (
       const newField = {
         ...field,
         list: [...(field?.list ?? []), action.payload.newListItem],
+      }
+
+      return {
+        ...state,
+        activeItem: {
+          type: 'Field',
+          data: newField,
+        },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_LIST_ITEMS': {
+      const field = activeItem.data as FormSystemField
+      const newField = {
+        ...field,
+        list: action.payload.listItems,
       }
 
       return {

@@ -15,7 +15,6 @@ type SortKey =
   | 'completed'
   | 'rejected'
   | 'approved'
-  | 'count'
 type SortDirection = 'asc' | 'desc'
 
 const sortableHeaderStyle: React.CSSProperties = {
@@ -55,7 +54,7 @@ export default function StatisticsTable({
   organizations,
 }: Props) {
   const { formatMessage } = useLocale()
-  const [sortKey, setSortKey] = useState<SortKey>('count')
+  const [sortKey, setSortKey] = useState<SortKey>('draft')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
   const handleSort = (key: SortKey) => {
@@ -89,8 +88,6 @@ export default function StatisticsTable({
         return dir * (a.rejected - b.rejected)
       case 'approved':
         return dir * (a.approved - b.approved)
-      case 'count':
-        return dir * (a.count - b.count)
       default:
         return 0
     }
@@ -138,12 +135,12 @@ export default function StatisticsTable({
             </T.HeadData>
             <T.HeadData
               style={sortableHeaderStyle}
-              onClick={() => handleSort('inprogress')}
+              onClick={() => handleSort('draft')}
             >
               <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderInProgress)}
+                {formatMessage(m.tableHeaderDraft)}
                 <SortIcon
-                  colKey="inprogress"
+                  colKey="draft"
                   sortKey={sortKey}
                   sortDirection={sortDirection}
                 />
@@ -151,12 +148,12 @@ export default function StatisticsTable({
             </T.HeadData>
             <T.HeadData
               style={sortableHeaderStyle}
-              onClick={() => handleSort('draft')}
+              onClick={() => handleSort('inprogress')}
             >
               <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderDraft)}
+                {formatMessage(m.tableHeaderInProgress)}
                 <SortIcon
-                  colKey="draft"
+                  colKey="inprogress"
                   sortKey={sortKey}
                   sortDirection={sortDirection}
                 />
@@ -201,19 +198,6 @@ export default function StatisticsTable({
                 />
               </Box>
             </T.HeadData>
-            <T.HeadData
-              style={sortableHeaderStyle}
-              onClick={() => handleSort('count')}
-            >
-              <Box display="flex" alignItems="center">
-                {formatMessage(m.tableHeaderTotal)}
-                <SortIcon
-                  colKey="count"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                />
-              </Box>
-            </T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
@@ -240,14 +224,11 @@ export default function StatisticsTable({
                   </T.Data>
                 )}
                 <T.Data>{row.name || row.typeid}</T.Data>
-                <T.Data>{row.inprogress}</T.Data>
                 <T.Data>{row.draft}</T.Data>
+                <T.Data>{row.inprogress}</T.Data>
                 <T.Data>{row.completed}</T.Data>
                 <T.Data>{row.rejected}</T.Data>
                 <T.Data>{row.approved}</T.Data>
-                <T.Data>
-                  <Text fontWeight="semiBold">{row.count}</Text>
-                </T.Data>
               </T.Row>
             )
           })}

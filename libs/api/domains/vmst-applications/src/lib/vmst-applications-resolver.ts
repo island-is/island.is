@@ -8,10 +8,11 @@ import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput
 import {
   VmstApplicationsValidationUnemploymentApplication,
   VmstApplicationsUnemploymentApplicationOverview,
+  VmstApplicationsActivationGrantApplicationOverview,
   VmstApplicationsOverview,
   VmstApplicationsApplicantOverview,
   VmstApplicationsApplicantRequestedAttachment,
-  VmstApplicationsApplicantAttachment,
+  VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
   VmstApplicationsAttachment,
@@ -84,6 +85,21 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.getApplicationOverview(auth, locale)
   }
 
+  @Query(() => VmstApplicationsActivationGrantApplicationOverview, {
+    name: 'vmstApplicationsActivationGrantApplicationOverview',
+  })
+  @Audit()
+  async getActivationGrantApplicationOverview(
+    @CurrentUser() auth: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale?: Locale,
+  ): Promise<VmstApplicationsActivationGrantApplicationOverview | undefined> {
+    return this.vmstApplicationsService.getActivationGrantApplicationOverview(
+      auth,
+      locale,
+    )
+  }
+
   @Query(() => VmstApplicationsOverview, {
     name: 'vmstApplicationsOverview',
   })
@@ -139,7 +155,7 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.getApplicantActions(applicantId)
   }
 
-  @Query(() => [VmstApplicationsApplicantAttachment], {
+  @Query(() => VmstApplicationsApplicantAttachmentsResponse, {
     name: 'vmstApplicantAttachments',
   })
   @Audit()

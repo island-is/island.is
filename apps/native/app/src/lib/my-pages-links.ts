@@ -25,6 +25,8 @@ const createMyPagesLinks = (baseUrl: string) => ({
   vehicleHistoryReport: `${baseUrl}/umsoknir/okutaekjaferill`,
   // For assets screen
   mortgageCertificate: `${baseUrl}/umsoknir/vedbokarvottord`,
+  // For health messages screen
+  healthMessageNew: `${baseUrl}/minarsidur/heilsa/skilabod/nytt`,
   // For finance screen
   loans: `${baseUrl}/minarsidur/fjarmal/lan`,
   payments: `${baseUrl}/minarsidur/fjarmal/greidslur/greidslusedlar-og-greidslukvittanir`,

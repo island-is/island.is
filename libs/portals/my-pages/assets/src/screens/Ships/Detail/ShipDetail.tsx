@@ -2,14 +2,13 @@ import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
   SAMGONGUSTOFA_SLUG,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { Box, Stack, Tag, Tabs } from '@island.is/island-ui/core'
+import { Box, Stack, Tag, Tabs, Text } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { shipsMessages } from '../../../lib/messages'
 import { useShipDetailQuery } from './ShipDetail.generated'
@@ -37,7 +36,12 @@ export const ShipDetail = () => {
   return (
     <IntroWrapper
       title={ship?.name ?? formatMessage(shipsMessages.title)}
-      intro={formatMessage(shipsMessages.intro)}
+      introComponent={
+        <Stack space={2}>
+          <Text>{formatMessage(shipsMessages.intro)}</Text>
+          <Text>{formatMessage(shipsMessages.shipDetailIntroWarning)}</Text>
+        </Stack>
+      }
       serviceProvider={{
         slug: SAMGONGUSTOFA_SLUG,
         tooltip: formatMessage(coreMessages.shipsTooltip),
@@ -45,7 +49,7 @@ export const ShipDetail = () => {
     >
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && !ship && (
-        <EmptyState description={shipsMessages.notFound} />
+        <Problem type="no_data" noBorder={false} />
       )}
 
       {(ship || loading) && (

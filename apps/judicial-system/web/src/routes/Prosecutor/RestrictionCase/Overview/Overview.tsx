@@ -45,8 +45,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseLegalProvisions,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -338,26 +338,28 @@ export const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={workingCase.state === CaseState.NEW}
-          nextButtonText={
-            workingCase.state === CaseState.NEW ||
-            workingCase.state === CaseState.DRAFT
-              ? 'Senda kröfu á héraðsdóm'
-              : 'Endursenda kröfu á héraðsdóm'
-          }
-          nextIsLoading={
-            workingCase.state !== CaseState.RECEIVED &&
-            (isTransitioningCase || isSendingNotification)
-          }
-          onNextButtonClick={
-            workingCase.state === CaseState.RECEIVED
-              ? () => {
-                  setModal('caseResubmitModal')
-                }
-              : handleNextButtonClick
-          }
+          actions={[
+            {
+              text:
+                workingCase.state === CaseState.NEW ||
+                workingCase.state === CaseState.DRAFT
+                  ? 'Senda kröfu á héraðsdóm'
+                  : 'Endursenda kröfu á héraðsdóm',
+              icon: 'arrowForward',
+              onClick:
+                workingCase.state === CaseState.RECEIVED
+                  ? () => {
+                      setModal('caseResubmitModal')
+                    }
+                  : handleNextButtonClick,
+              disabled: workingCase.state === CaseState.NEW,
+              loading:
+                workingCase.state !== CaseState.RECEIVED &&
+                (isTransitioningCase || isSendingNotification),
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       <AnimatePresence>
@@ -378,10 +380,13 @@ export const Overview = () => {
             })}
             text={modalText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => router.push(getStandardUserDashboardRoute(user)),
-            }}
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => router.push(getStandardUserDashboardRoute(user)),
+                variant: 'ghost',
+              },
+            ]}
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)

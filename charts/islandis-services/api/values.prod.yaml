@@ -39,6 +39,7 @@ env:
   CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi.island.is'
   CONTACT_US_EMAIL: 'island@island.is'
   CONTENTFUL_HOST: 'cdn.contentful.com'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
   ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
   ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -69,11 +70,11 @@ env:
   MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication'
   MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
   NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-  NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-  NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+  NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+  NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-  NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+  NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=2250 --enable-source-maps -r dd-trace/init'
   PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
   RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
@@ -113,6 +114,7 @@ env:
   XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
   XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4'
   XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
+  XROAD_DRIVING_LICENSE_V6_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v6'
   XROAD_ENERGY_FUNDS_PATH: 'IS/GOV/5402697509/FJS-Public/ElectricCarSubSidyService_v1'
   XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Leyfur-V1'
   XROAD_FARMERS_PATH: 'IS/GOV/7108120120/Afurd-Private/baendur'
@@ -242,18 +244,6 @@ httpRoute:
           - pathPrefix: '/api'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
-ingress:
-  primary-alb:
-    annotations:
-      kubernetes.io/ingress.class: 'nginx-external-alb'
-      nginx.ingress.kubernetes.io/service-upstream: 'true'
-    hosts:
-      - host: 'island.is'
-        paths:
-          - '/api'
-      - host: 'www.island.is'
-        paths:
-          - '/api'
 namespace: 'islandis'
 podDisruptionBudget:
   minAvailable: '50%'
@@ -364,6 +354,14 @@ secrets:
   REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
   RLS_CASES_API_KEY: '/k8s/api/RLS_CASES_API_KEY'
   RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
+  SKATTUR_TOLLUR_ALMENNT_API_KEY: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_API_KEY'
+  SKATTUR_TOLLUR_ALMENNT_BASE_URL: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_BASE_URL'
+  SKATTUR_TOLLUR_ALMENNT_PASSWORD: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_PASSWORD'
+  SKATTUR_TOLLUR_ALMENNT_USERNAME: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_USERNAME'
+  SKATTUR_TOLLUR_REIKNIVEL_API_KEY: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_API_KEY'
+  SKATTUR_TOLLUR_REIKNIVEL_BASE_URL: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_BASE_URL'
+  SKATTUR_TOLLUR_REIKNIVEL_PASSWORD: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_PASSWORD'
+  SKATTUR_TOLLUR_REIKNIVEL_USERNAME: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_USERNAME'
   SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
   SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
   SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'

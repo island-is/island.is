@@ -13,7 +13,7 @@ import {
   DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   ArraignmentAlert,
   BlueBox,
@@ -37,7 +37,7 @@ import {
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
   useOnceOn,
@@ -47,6 +47,11 @@ import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/ut
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
+
+enum ModalButtonLoading {
+  PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
+}
 
 const HearingArrangements = () => {
   const {
@@ -59,8 +64,13 @@ const HearingArrangements = () => {
   const { user } = useContext(UserContext)
 
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer, sendNotification, isSendingNotification } =
-    useCase()
+  const {
+    setAndSendCaseToServer,
+    sendNotification,
+    isUpdatingCase,
+    isSendingNotification,
+    sendNotificationError,
+  } = useCase()
   const {
     courtDate,
     courtDateHasChanged,
@@ -70,7 +80,14 @@ const HearingArrangements = () => {
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [modalButtonLoading, setModalButtonLoading] =
+    useState<ModalButtonLoading>()
   const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
+
+  const handleCloseModal = () => {
+    setNavigateTo(undefined)
+    setModalButtonLoading(undefined)
+  }
 
   const initialize = useCallback(() => {
     if (!workingCase.arraignmentDate && workingCase.requestedCourtDate) {
@@ -107,12 +124,11 @@ const HearingArrangements = () => {
   const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
 
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
-    await sendCourtDateToServer()
-
     if (
       isCorrectingRuling ||
       (courtDateNotification.hasSent && !courtDateHasChanged)
     ) {
+      await sendCourtDateToServer()
       router.push(`${destination}/${workingCase.id}`)
     } else {
       setNavigateTo(destination)
@@ -123,6 +139,11 @@ const HearingArrangements = () => {
     workingCase,
     courtDate,
   )
+
+  const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
+  const isModalDeferring = modalButtonLoading === ModalButtonLoading.SECONDARY
+  const isModalLoading = isModalConfirming && isUpdatingCase
+  const isModalDeferringLoading = isModalDeferring && isSendingNotification
 
   return (
     <PageLayout
@@ -335,55 +356,89 @@ const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextButtonText={formatMessage(m.continueButton.label)}
+          actions={[
+            {
+              text: 'Halda áfram',
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(m.modal.heading)}
-          text={formatMessage(
-            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-              ? m.modal.allPresentText
-              : workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? m.modal.allPresentSpokespersonText
-              : m.modal.prosecutorPresentText,
-            { courtDateHasChanged },
-          )}
-          primaryButton={{
-            text: formatMessage(m.modal.primaryButtonText),
-            onClick: async () => {
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-              )
+          title="Viltu staðfesta fyrirtökutíma?"
+          onClose={handleCloseModal}
+          loading={isModalConfirming}
+          text={(() => {
+            const recipients =
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT
+                ? 'saksóknara og verjanda, hafi verjandi verið skráður'
+                : workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'saksóknara og talsmann, hafi talsmaður verið skráður'
+                : 'saksóknara'
 
-              if (notificationSent) {
+            return courtDateHasChanged
+              ? `Fyrirtökutíma hefur verið breytt. Tilkynning um fyrirtöku verður send á ${recipients}.`
+              : `Málið fer á dagskrá og tilkynning um fyrirtöku verður send á ${recipients}.`
+          })()}
+          buttons={[
+            {
+              text: 'Nei, staðfesta seinna',
+              isDisabled: isModalConfirming,
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.SECONDARY)
+
+                // The arraignment date is not confirmed, so we only let registered
+                // advocates know that they are on the case. This is their only
+                // notification, so we do not navigate away until it has been sent.
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  TrackedNotificationType.ADVOCATE_ASSIGNED,
+                )
+
+                if (!notificationSent) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
+
                 router.push(`${navigateTo}/${workingCase.id}`)
-              }
+              },
+              isLoading: isModalDeferringLoading,
+              variant: 'ghost',
             },
-            isLoading: isSendingNotification,
-          }}
-          secondaryButton={{
-            text: formatMessage(m.modal.secondaryButtonText, {
-              courtDateHasChanged,
-            }),
-            onClick: () => {
-              sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-                true,
-              )
+            {
+              text: 'Já, staðfesta',
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
-              router.push(`${navigateTo}/${workingCase.id}`)
+                // Saving the arraignment date triggers the court date notifications
+                const courtDateSaved = await sendCourtDateToServer()
+
+                if (!courtDateSaved) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
+
+                router.push(`${navigateTo}/${workingCase.id}`)
+              },
+              isLoading: isModalLoading,
+              isDisabled: isModalDeferring,
             },
-          }}
+          ]}
+          errorMessage={
+            isModalDeferring && sendNotificationError
+              ? formatMessage(errors.sendNotification)
+              : undefined
+          }
         />
       )}
     </PageLayout>

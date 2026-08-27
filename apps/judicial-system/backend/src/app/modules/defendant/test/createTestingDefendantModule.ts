@@ -20,7 +20,7 @@ import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
-  CaseDefendantPoliceCaseNumber,
+  CaseDefendantPoliceCaseNumberRepositoryService,
   CivilClaimant,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
@@ -30,6 +30,7 @@ import { CivilClaimantController } from '../civilClaimant.controller'
 import { CivilClaimantService } from '../civilClaimant.service'
 import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
+import { InternalCivilClaimantController } from '../internalCivilClaimant.controller'
 import { InternalDefendantController } from '../internalDefendant.controller'
 import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
 
@@ -39,6 +40,9 @@ jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock(
+  '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
+)
 jest.mock('../../event-log/eventLog.service')
 
 export const createTestingDefendantModule = async () => {
@@ -48,6 +52,7 @@ export const createTestingDefendantModule = async () => {
       DefendantController,
       LimitedAccessDefendantController,
       InternalDefendantController,
+      InternalCivilClaimantController,
       CivilClaimantController,
     ],
     providers: [
@@ -58,6 +63,7 @@ export const createTestingDefendantModule = async () => {
       CaseService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      CaseDefendantPoliceCaseNumberRepositoryService,
       EventLogService,
       {
         provide: LOGGER_PROVIDER,
@@ -79,12 +85,6 @@ export const createTestingDefendantModule = async () => {
           findByPk: jest.fn(),
         },
       },
-      {
-        provide: getModelToken(CaseDefendantPoliceCaseNumber),
-        useValue: {
-          findAll: jest.fn(),
-        },
-      },
       DefendantService,
       CivilClaimantService,
     ],
@@ -104,6 +104,11 @@ export const createTestingDefendantModule = async () => {
   const defendantEventLogRepositoryService =
     defendantModule.get<DefendantEventLogRepositoryService>(
       DefendantEventLogRepositoryService,
+    )
+
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    defendantModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
     )
 
   const defendantService =
@@ -133,6 +138,11 @@ export const createTestingDefendantModule = async () => {
     CivilClaimantController,
   )
 
+  const internalCivilClaimantController =
+    defendantModule.get<InternalCivilClaimantController>(
+      InternalCivilClaimantController,
+    )
+
   const queuedMessages: Message[] = []
   const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
   mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
@@ -149,9 +159,11 @@ export const createTestingDefendantModule = async () => {
     sequelize,
     defendantRepositoryService,
     defendantEventLogRepositoryService,
+    caseDefendantPoliceCaseNumberRepositoryService,
     defendantService,
     defendantController,
     internalDefendantController,
+    internalCivilClaimantController,
     limitedAccessDefendantController,
     civilClaimantService,
     civilClaimantController,

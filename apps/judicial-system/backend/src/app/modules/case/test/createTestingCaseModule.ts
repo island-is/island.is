@@ -26,11 +26,16 @@ import { FileService } from '../../file'
 import { IndictmentCountService } from '../../indictment-count'
 import { PoliceService } from '../../police'
 import {
+  AppealCaseRepositoryService,
+  AppealDecisionRepositoryService,
+  AppealEventLogRepositoryService,
+  Case,
   CaseArchiveRepositoryService,
   CaseRepositoryService,
   CaseString,
   DateLog,
   DefendantEventLogRepositoryService,
+  DefendantRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
@@ -46,7 +51,14 @@ import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { PdfService } from '../pdf.service'
 
 jest.mock('@island.is/judicial-system/message')
-jest.mock('../../court/court.service')
+jest.mock('../../court/court.service', () => {
+  const actual = jest.requireActual('../../court/court.service')
+
+  return {
+    ...actual,
+    CourtService: jest.fn().mockImplementation(() => mock()),
+  }
+})
 jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
 jest.mock('../../event-log/eventLog.service')
@@ -58,8 +70,12 @@ jest.mock('../../defendant/civilClaimant.service')
 jest.mock('../../subpoena/subpoena.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../verdict/verdict.service')
+jest.mock('../../repository/services/appealCaseRepository.service')
+jest.mock('../../repository/services/appealDecisionRepository.service')
+jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
 jest.mock('../../repository/services/policeDigitalCaseFileRepository.service')
 
@@ -90,8 +106,12 @@ export const createTestingCaseModule = async () => {
       IndictmentCountService,
       SubpoenaService,
       VerdictService,
+      AppealCaseRepositoryService,
+      AppealDecisionRepositoryService,
+      AppealEventLogRepositoryService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
+      DefendantRepositoryService,
       DefendantEventLogRepositoryService,
       PoliceDigitalCaseFileRepositoryService,
       {
@@ -147,6 +167,8 @@ export const createTestingCaseModule = async () => {
 
   const eventLogService = caseModule.get<EventLogService>(EventLogService)
 
+  const eventService = caseModule.get<EventService>(EventService)
+
   const courtService = caseModule.get<CourtService>(CourtService)
 
   const policeService = caseModule.get<PoliceService>(PoliceService)
@@ -170,12 +192,35 @@ export const createTestingCaseModule = async () => {
     IndictmentCountService,
   )
 
+  const appealCaseRepositoryService =
+    caseModule.get<AppealCaseRepositoryService>(AppealCaseRepositoryService)
+
+  const appealDecisionRepositoryService =
+    caseModule.get<AppealDecisionRepositoryService>(
+      AppealDecisionRepositoryService,
+    )
+
+  const appealEventLogRepositoryService =
+    caseModule.get<AppealEventLogRepositoryService>(
+      AppealEventLogRepositoryService,
+    )
+
   const caseRepositoryService = caseModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
 
+  const mockFindOriginalAncestorId =
+    caseRepositoryService.findOriginalAncestorId as jest.Mock
+  mockFindOriginalAncestorId.mockImplementation((theCase: Case) =>
+    Promise.resolve(theCase.splitCaseId ?? theCase.id),
+  )
+
   const caseArchiveRepositoryService =
     caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
+
+  const defendantRepositoryService = caseModule.get<DefendantRepositoryService>(
+    DefendantRepositoryService,
+  )
 
   const defendantEventLogRepositoryService =
     caseModule.get<DefendantEventLogRepositoryService>(
@@ -229,7 +274,11 @@ export const createTestingCaseModule = async () => {
 
   return {
     queuedMessages,
+    appealCaseRepositoryService,
+    appealDecisionRepositoryService,
+    appealEventLogRepositoryService,
     eventLogService,
+    eventService,
     courtService,
     policeService,
     userService,
@@ -242,6 +291,7 @@ export const createTestingCaseModule = async () => {
     indictmentCountService,
     caseRepositoryService,
     caseArchiveRepositoryService,
+    defendantRepositoryService,
     defendantEventLogRepositoryService,
     policeDigitalCaseFileRepositoryService,
     logger,

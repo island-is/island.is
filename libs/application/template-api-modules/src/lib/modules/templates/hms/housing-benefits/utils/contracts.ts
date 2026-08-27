@@ -1,0 +1,76 @@
+import { Contract } from '@island.is/clients/hms-rental-agreement'
+import { Address } from '@island.is/application/types'
+import { normalizeNationalId } from './application'
+
+const normalizeForAddressComparison = (
+  val: string | number | null | undefined,
+): string =>
+  String(val ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+
+export const getContractAddressKey = (contract: Contract): string => {
+  const prop = contract.contractProperty?.[0]
+  if (!prop) return ''
+  return [
+    normalizeForAddressComparison(prop.streetAndHouseNumber),
+    normalizeForAddressComparison(prop.postalCode),
+  ].join('|')
+}
+
+/** Legal domicile in National Registry vs contract property. */
+export const doesDomicileAddressMatchContractProperty = (
+  address: Pick<Address, 'streetAddress' | 'postalCode'> | null,
+  property: NonNullable<Contract['contractProperty']>[number],
+): boolean => {
+  if (!address) {
+    return false
+  }
+  return (
+    normalizeForAddressComparison(address.streetAddress) ===
+      normalizeForAddressComparison(property.streetAndHouseNumber) &&
+    normalizeForAddressComparison(address.postalCode) ===
+      normalizeForAddressComparison(property.postalCode)
+  )
+}
+
+export const isApplicantTenantOnContract = (
+  contract: Contract,
+  applicantNationalId: string,
+): boolean => {
+  const normalizedApplicant = normalizeNationalId(applicantNationalId)
+  return (
+    contract.contractParty?.some(
+      (party) =>
+        party.partyTypeUseCode === 'TENANT' &&
+        party.kennitala &&
+        normalizeNationalId(party.kennitala) === normalizedApplicant,
+    ) ?? false
+  )
+}
+
+export const isContractValidForHousingBenefits = (
+  contract: Contract,
+): boolean => {
+  if (contract.contractTypeUseCode === 'INDEFINETEAGREEMENT') {
+    return true
+  }
+  if (!contract.dateTo) {
+    return false
+  }
+  const endDate = new Date(contract.dateTo)
+  const threeMonthsFromNow = new Date()
+  threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3)
+  return endDate >= threeMonthsFromNow
+}
+
+export const filterContractsForHousingBenefits = (
+  contracts: Contract[],
+  applicantNationalId: string,
+): Contract[] =>
+  contracts.filter(
+    (contract) =>
+      isApplicantTenantOnContract(contract, applicantNationalId) &&
+      isContractValidForHousingBenefits(contract),
+  )

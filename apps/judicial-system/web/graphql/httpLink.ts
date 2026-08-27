@@ -1,17 +1,20 @@
 import fetch from 'isomorphic-unfetch'
-import getConfig from 'next/config'
 import { createHttpLink } from '@apollo/client'
 
-// TODO: Revisit this - Needed for jest tests to run because next config is not available during tests
-const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}
+import {
+  getPublicRuntimeEnv,
+  getServerRuntimeEnv,
+} from '@island.is/judicial-system-web/environments/runtimeEnvironment'
+import { isServerSide } from '@island.is/next/utils'
 
 // Polyfill fetch() on the server (used by apollo-client)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ;(global as any).fetch = fetch
 
 export default createHttpLink({
-  uri:
-    serverRuntimeConfig.graphqlEndpoint ?? publicRuntimeConfig.graphqlEndpoint,
+  uri: isServerSide()
+    ? getServerRuntimeEnv().graphqlEndpoint
+    : getPublicRuntimeEnv().graphqlEndpoint,
   credentials: 'include',
   fetch,
 })

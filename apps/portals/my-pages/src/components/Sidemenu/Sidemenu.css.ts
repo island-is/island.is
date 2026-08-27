@@ -4,8 +4,8 @@ import {
   keyframes,
   style,
   styleVariants,
+  type StyleRule,
 } from '@vanilla-extract/css'
-import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const wrapperAnimation = keyframes({
@@ -55,7 +55,7 @@ export const itemBlock = style({
   transition: 'border-color 200ms',
 })
 
-const iconBase: StyleWithSelectors = {
+const iconBase: StyleRule = {
   width: 30,
   display: 'flex',
   alignItems: 'center',
@@ -102,16 +102,17 @@ export const container = style({
   }),
 })
 
-const dropdownBase: StyleWithSelectors = {
+const dropdownBase: StyleRule = {
   position: 'fixed',
   right: spacing[0],
   left: spacing[0],
   borderRadius: 'unset',
+  // Fallback for browsers without dvh
   height: `calc(100vh - ${theme.headerHeight.small}px)`,
   maxHeight: `calc(100vh - ${theme.headerHeight.small}px)`,
 }
 
-const dropdownBaseMD: StyleWithSelectors = {
+const dropdownBaseMD: StyleRule = {
   top: spacing[3],
   width: 448,
   borderRadius: theme.border.radius.large,
@@ -119,9 +120,28 @@ const dropdownBaseMD: StyleWithSelectors = {
   height: 'auto',
 }
 
+// Mobile browser chrome (address bar) resizes the visual viewport as the
+// user scrolls, which makes a static 100vh leave a gap at the bottom of
+// this fixed-position drawer. Small dvh upgrade when supported. Scoped to
+// below-md: the desktop dropdown is height:auto, and an unscoped @supports
+// block is emitted after the md media query so it would override it.
+const dvhUpgrade = {
+  '@supports': {
+    '(height: 100dvh)': {
+      '@media': {
+        [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
+          height: `calc(100dvh - ${theme.headerHeight.small}px)`,
+          maxHeight: `calc(100dvh - ${theme.headerHeight.small}px)`,
+        },
+      },
+    },
+  },
+}
+
 export const dropdown = style({
   ...dropdownBase,
   overflow: 'auto',
+  ...dvhUpgrade,
   ...themeUtils.responsiveStyle({
     md: {
       ...dropdownBaseMD,
@@ -137,6 +157,7 @@ export const dropdown = style({
 
 export const fullScreen = style({
   ...dropdownBase,
+  ...dvhUpgrade,
   ...themeUtils.responsiveStyle({
     md: {
       ...dropdownBaseMD,

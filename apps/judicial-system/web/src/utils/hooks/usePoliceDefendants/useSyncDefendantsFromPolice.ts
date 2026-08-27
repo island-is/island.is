@@ -4,14 +4,12 @@ import { useApolloClient } from '@apollo/client'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { PoliceCaseInfoDocument } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapStringToGender } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { PoliceCaseInfoDocument } from '../../../routes/Prosecutor/Indictments/Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
-import {
-  PoliceDefendantsQuery,
-  usePoliceDefendantsQuery,
-} from './policeDefendants.generated'
+import type { PoliceDefendantsQuery } from './policeDefendants.generated'
+import { usePoliceDefendantsQuery } from './policeDefendants.generated'
 
 /**
  * Fetches defendants from the police API (LOKE) and syncs by nationalId:
@@ -21,13 +19,17 @@ import {
  */
 export const useSyncDefendantsFromPolice = () => {
   const client = useApolloClient()
-  const { workingCase, setWorkingCase, refreshCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase, refreshCase, isLoadingWorkingCase } =
+    useContext(FormContext)
   const { createDefendant } = useDefendants()
   const syncingRef = useRef(false)
 
   const { loading, error, refetch } = usePoliceDefendantsQuery({
     variables: { input: { caseId: workingCase.id } },
-    skip: workingCase.origin !== CaseOrigin.LOKE || !workingCase.id,
+    skip:
+      workingCase.origin !== CaseOrigin.LOKE ||
+      !workingCase.id ||
+      isLoadingWorkingCase,
     fetchPolicy: 'cache-first',
     onCompleted: (data: PoliceDefendantsQuery) => {
       const policeDefendants = data?.policeDefendants

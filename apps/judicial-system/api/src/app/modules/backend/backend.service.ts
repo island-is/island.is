@@ -1,7 +1,7 @@
-import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { Request } from 'express'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, Scope } from '@nestjs/common'
+import { CONTEXT } from '@nestjs/graphql'
 
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
@@ -22,13 +22,13 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry } from '../case-list'
 import {
   CaseTableMembershipResponse,
   CaseTableResponse,
   SearchCasesResponse,
 } from '../case-table'
 import {
+  AppealDecisionResponse,
   CourtDocumentResponse,
   CourtSessionResponse,
   CourtSessionString,
@@ -90,27 +90,39 @@ const lawyerTransformer: Transformer<Lawyer> = (data) => mapToLawyer(data)
 const lawyersTransformer: Transformer<Lawyer[]> = (lawyers: []) =>
   lawyers.map((lawyer) => mapToLawyer(lawyer))
 
-@Injectable()
-export class BackendService extends DataSource<{ req: Request }> {
-  private headers!: { [key: string]: string }
-  private secretTokenHeaders!: { [key: string]: string }
+// The GraphQL context is shaped as `{ req }` (see app.module). When the
+// service is resolved outside of a GraphQL request (e.g. from a REST
+// controller such as the auth controller), the injected value is the express
+// request itself, so we fall back to reading headers off of it directly.
+// Only the per-request GraphQL resolvers rely on the forwarded auth headers;
+// the REST callers exclusively use the secret-token endpoints below.
+interface GqlContext {
+  req?: Request
+}
+
+@Injectable({ scope: Scope.REQUEST })
+export class BackendService {
+  private readonly headers: { [key: string]: string }
+  private readonly secretTokenHeaders: { [key: string]: string }
 
   constructor(
     @Inject(backendModuleConfig.KEY)
     private readonly config: ConfigType<typeof backendModuleConfig>,
+    @Inject(CONTEXT) context: GqlContext | Request,
   ) {
-    super()
     this.secretTokenHeaders = {
       'Content-Type': 'application/json',
       authorization: `Bearer ${this.config.secretToken}`,
     }
-  }
 
-  initialize(config: DataSourceConfig<{ req: Request }>): void {
+    const req = (context as GqlContext)?.req ?? (context as Request | undefined)
+
     this.headers = {
       'Content-Type': 'application/json',
-      authorization: config.context.req.headers.authorization as string,
-      cookie: config.context.req.headers.cookie as string,
+      ...(req?.headers?.authorization
+        ? { authorization: req.headers.authorization as string }
+        : {}),
+      ...(req?.headers?.cookie ? { cookie: req.headers.cookie as string } : {}),
     }
   }
 
@@ -219,10 +231,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     updateMessageSuspension: unknown,
   ): Promise<MessageSuspension> {
     return this.patch(`message-suspension/${category}`, updateMessageSuspension)
-  }
-
-  getCases(): Promise<CaseListEntry[]> {
-    return this.get('cases')
   }
 
   getCase(caseId: string): Promise<Case> {
@@ -399,9 +407,28 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/notification`, sendNotification)
   }
 
+  sendAppealNotification(
+    caseId: string,
+    appealCaseId: string,
+    sendAppealNotification: unknown,
+  ): Promise<SendNotificationResponse> {
+    return this.post(
+      `case/${caseId}/appeal/${appealCaseId}/notification`,
+      sendAppealNotification,
+    )
+  }
+
   extendCase(caseId: string): Promise<Case> {
     return this.post<unknown, Case>(
       `case/${caseId}/extend`,
+      undefined,
+      caseTransformer,
+    )
+  }
+
+  duplicateIndictmentCase(caseId: string): Promise<Case> {
+    return this.post<unknown, Case>(
+      `case/${caseId}/duplicate`,
       undefined,
       caseTransformer,
     )
@@ -482,6 +509,10 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   rejectCaseFile(caseId: string, fileId: string): Promise<CaseFile> {
     return this.post(`case/${caseId}/file/${fileId}/reject`)
+  }
+
+  confirmRulingOrder(caseId: string, fileId: string): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/confirm`)
   }
 
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
@@ -735,6 +766,24 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  updateCourtSessionAppealDecision(
+    caseId: string,
+    courtSessionId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/appealDecision`,
+      updateAppealDecision,
+    )
+  }
+
+  updateCaseAppealDecision(
+    caseId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(`case/${caseId}/appealDecision`, updateAppealDecision)
+  }
+
   deleteCourtSession(
     caseId: string,
     courtSessionId: string,
@@ -826,17 +875,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch<unknown, Case>(
       `case/${caseId}/limitedAccess`,
       updateCase,
-      caseTransformer,
-    )
-  }
-
-  limitedAccessTransitionCase(
-    caseId: string,
-    transitionCase: unknown,
-  ): Promise<Case> {
-    return this.patch<unknown, Case>(
-      `case/${caseId}/limitedAccess/state`,
-      transitionCase,
       caseTransformer,
     )
   }

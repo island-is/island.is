@@ -2,6 +2,7 @@ import { ApplicationService } from '@island.is/application/api/core'
 import { HistoryService } from '@island.is/application/api/history'
 import { IntlService } from '@island.is/cms-translations'
 import { Injectable } from '@nestjs/common'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import type { Unwrap, Locale } from '@island.is/shared/types'
 import {
@@ -32,6 +33,7 @@ export class ApplicationActionService {
     private templateApiActionRunner: TemplateApiActionRunner,
     private applicationService: ApplicationService,
     private historyService: HistoryService,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   async performActionOnApplication(
@@ -76,8 +78,11 @@ export class ApplicationActionService {
     )
 
     for (const api of apis) {
-      const result =
-        updatedApplication.externalData[api.externalDataId || api.action]
+      const resolvedId = api.resolveExternalDataId(
+        updatedApplication,
+        auth.nationalId,
+      )
+      const result = updatedApplication.externalData[resolvedId]
 
       this.logger.debug(
         `Performing action ${api.action} on ${JSON.stringify(
@@ -140,9 +145,10 @@ export class ApplicationActionService {
       }
     }
 
+    const stateEvent = { type: event, nationalId: auth.nationalId }
     const [hasChanged, newState, withUpdatedState] =
       new ApplicationTemplateHelper(updatedApplication, template).changeState(
-        event,
+        stateEvent,
       )
     updatedApplication = {
       ...updatedApplication,
@@ -220,6 +226,8 @@ export class ApplicationActionService {
           updatedApplication,
           template,
           newState,
+          this.featureFlagService,
+          auth,
         ),
       ])
     } catch (e) {

@@ -140,6 +140,8 @@ export const GET_ARTICLE_QUERY = gql`
           ${nestedFields}
         }
         showTableOfContents
+        contentLastReviewed
+        showDateOfTheMostRecentReview
         stepper {
           id
           title

@@ -1,4 +1,5 @@
-import { map } from 'rxjs/operators'
+import { from } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
 
 import {
   CallHandler,
@@ -8,37 +9,48 @@ import {
 } from '@nestjs/common'
 
 import {
+  AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
   CaseState,
+  completedRequestCaseStates,
   DefendantEventType,
   EventType,
   getAppealDeadlineDate,
+  getDefendantServiceDate,
   getIndictmentAppealDeadline,
+  getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
+  hasDatePassed,
   isCompletedCase,
   isDefenceUser,
+  isDistrictCourtUser,
   isIndictmentCase,
   isPrisonSystemUser,
   isProsecutionUser,
   isRequestCase,
   prosecutionRoles,
+  RequestSharedWithDefender,
   ServiceRequirement,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { hasOutOfCourtAppeal } from '../../appeal-case'
+import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
   AppealCase,
   AppealEventLog,
   Case,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
+  DateLog,
   Defendant,
   DefendantEventLog,
   EventLog,
@@ -75,15 +87,30 @@ export interface CaseLevelAppealInfo {
   isAppealDeadlineExpired?: boolean
 }
 
+// A case-level party's in-court appeal decision + announcement (the prosecution
+// or the collective defence) now lives on the appeal_decision rows
+// (ruling_file_id NULL) - the accused/prosecutor appeal decision and
+// announcement case columns have been dropped, so read them from there.
+const caseLevelAppealDecisionRow = (
+  theCase: Case,
+  partyRole: AppealDecisionPartyRole,
+) =>
+  theCase.appealDecisions?.find(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )
+
 export const getRequestCaseLevelAppealInfo = (
   theCase: Case,
 ): CaseLevelAppealInfo => {
-  const {
-    rulingDate,
-    accusedAppealDecision,
-    prosecutorAppealDecision,
-    isCompletedWithoutRuling,
-  } = theCase
+  const { rulingDate, isCompletedWithoutRuling } = theCase
+  const accusedAppealDecision = caseLevelAppealDecisionRow(
+    theCase,
+    AppealDecisionPartyRole.DEFENDANT,
+  )?.decision
+  const prosecutorAppealDecision = caseLevelAppealDecisionRow(
+    theCase,
+    AppealDecisionPartyRole.PROSECUTOR,
+  )?.decision
   const { appealState } = theCase.appealCase ?? {}
 
   if (!rulingDate) {
@@ -156,60 +183,104 @@ export const getCaseLevelAppealInfo = (theCase: Case): CaseLevelAppealInfo => {
 
 export interface AppealCaseInfo {
   appealedByRole?: UserRole
+  appealedByDefendantId?: string
+  appealedByCivilClaimantId?: string
   appealedDate?: Date
+  appealedInCourt?: boolean
+  appealedOutOfCourt?: boolean
   statementDeadline?: Date
   isStatementDeadlineExpired?: boolean
+}
+
+// The defence party (defendant / civil claimant) that appealed out of court, from
+// the APPEALED event log. Replaces the frozen appealedByNationalId as the way the
+// web names the appellant and gates its appeal files - the web resolves the
+// party's *current* defender / spokesperson. Empty for prosecution appeals (no
+// party on the event) and for request-case collective defence (no party either);
+// in-court appeals are handled by the caller (appealedInCourt), matching the old
+// single-valued national id, which was null for them.
+export const getAppealedByPartyFromEvents = (
+  appealCase: AppealCase,
+): { appealedByDefendantId?: string; appealedByCivilClaimantId?: string } => {
+  const appealedEvent = (appealCase.appealEventLogs ?? []).find(
+    (eventLog) =>
+      eventLog.eventType === AppealEventType.APPEALED &&
+      (eventLog.defendantId || eventLog.civilClaimantId),
+  )
+
+  return {
+    appealedByDefendantId: appealedEvent?.defendantId,
+    appealedByCivilClaimantId: appealedEvent?.civilClaimantId,
+  }
+}
+
+// The appellant's side as recorded on the APPEALED event log. Every appeal
+// registers one - out-of-court via registerAppellant, in-court via the
+// session-confirmation dual-write, historical rows via backfill. Prosecutor
+// precedence covers the case where several parties appealed in court; that only
+// affects in-court appeals, which are displayed as "Kært í þinghaldi" without
+// naming a side, so the single out-of-court appellant is always shown exactly.
+const getAppealedByRoleFromEvents = (
+  appealCase: AppealCase,
+): UserRole | undefined => {
+  const appealedEvents = (appealCase.appealEventLogs ?? []).filter(
+    (eventLog) => eventLog.eventType === AppealEventType.APPEALED,
+  )
+
+  if (appealedEvents.length === 0) {
+    return undefined
+  }
+
+  return appealedEvents.some((eventLog) =>
+    prosecutionRoles.includes(eventLog.userRole),
+  )
+    ? UserRole.PROSECUTOR
+    : UserRole.DEFENDER
 }
 
 export const getAppealCaseInfo = (
   appealCase: AppealCase,
   theCase: Case,
 ): AppealCaseInfo => {
-  const {
-    appealReceivedByCourtDate,
-    rulingFileId,
-    appealedByNationalId,
-    created,
-  } = appealCase
-  const isRulingOrderAppeal = Boolean(rulingFileId)
+  const { appealReceivedByCourtDate, rulingFileId } = appealCase
 
-  let appealedByRole: UserRole | undefined
-  let appealedDate: Date | undefined
+  // The time of appeal is read straight from the appeal case's own appeal_date
+  // column (populated on every appeal-creation path + backfilled), rather than
+  // derived from the legacy per-side postponed-date columns (case-level) or the
+  // row's `created` timestamp (ruling-order).
+  const appealedDate = appealCase.appealDate
 
-  if (isRulingOrderAppeal) {
-    // Ruling-order appeals record the appellant on the AppealCase row itself.
-    appealedByRole = appealedByNationalId
-      ? UserRole.DEFENDER
-      : UserRole.PROSECUTOR
-    appealedDate = created
-  } else {
-    const { prosecutorPostponedAppealDate, accusedPostponedAppealDate } =
-      theCase
-    if (isRequestCase(theCase.type)) {
-      const didProsecutorAcceptInCourt =
-        theCase.prosecutorAppealDecision === CaseAppealDecision.ACCEPT
-      const didAccusedAcceptInCourt =
-        theCase.accusedAppealDecision === CaseAppealDecision.ACCEPT
-      appealedByRole =
-        prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
-          ? UserRole.PROSECUTOR
-          : accusedPostponedAppealDate && !didAccusedAcceptInCourt
-          ? UserRole.DEFENDER
-          : undefined
-    } else {
-      appealedByRole = prosecutorPostponedAppealDate
-        ? UserRole.PROSECUTOR
-        : accusedPostponedAppealDate
-        ? UserRole.DEFENDER
-        : undefined
-    }
-    appealedDate =
-      appealedByRole === UserRole.PROSECUTOR
-        ? prosecutorPostponedAppealDate
-        : appealedByRole === UserRole.DEFENDER
-        ? accusedPostponedAppealDate
-        : undefined
-  }
+  // The appellant's side is read from the APPEALED event log - every appeal now
+  // registers one (out-of-court, in-court dual-write, and historical backfill).
+  const appealedByRole = getAppealedByRoleFromEvents(appealCase)
+
+  // True when the ruling order was appealed in court ("Kært í þinghaldi") -
+  // i.e. a party recorded a decision = APPEAL for it in the court record. The
+  // court of appeals shows this without naming who appealed.
+  const appealedInCourt = Boolean(
+    rulingFileId &&
+      theCase.appealDecisions?.some(
+        (decision) =>
+          decision.rulingFileId === rulingFileId &&
+          decision.decision === CaseAppealDecision.APPEAL,
+      ),
+  )
+
+  // The appellant party is only meaningful for a single out-of-court appellant;
+  // in-court appeals name no one ("Kært í þinghaldi"), matching the old
+  // appealedByNationalId which was null for them.
+  const { appealedByDefendantId, appealedByCivilClaimantId } = appealedInCourt
+    ? {}
+    : getAppealedByPartyFromEvents(appealCase)
+
+  // A party filed this appeal itself rather than it being recorded in the court
+  // record. Read from the event origin, so it is meaningful for case-level
+  // appeals too - unlike appealedInCourt above, which is derived from the ruling's
+  // decision rows and is therefore always false without a ruling file. The court
+  // record cannot take such an appeal away, so the appeal decision UI locks on it.
+  const appealedOutOfCourt = hasOutOfCourtAppeal(
+    appealCase.appealEventLogs ?? [],
+  )
 
   let statementDeadline: Date | undefined
   let isStatementDeadlineExpired: boolean | undefined
@@ -220,7 +291,11 @@ export const getAppealCaseInfo = (
 
   return {
     appealedByRole,
+    appealedByDefendantId,
+    appealedByCivilClaimantId,
     appealedDate,
+    appealedInCourt,
+    appealedOutOfCourt,
     statementDeadline,
     isStatementDeadlineExpired,
   }
@@ -292,10 +367,16 @@ export const getRulingOrderAppealInfo = (
   // Soft deadline — does not gate canBeAppealed; frontend warns visually.
   const canBeAppealed = !hasBeenAppealed && !isCompletedCase(theCase.state)
 
+  // The ruling time and appeal deadline are based on the end date of the
+  // confirmed court session the ruling order was added to.
+  const confirmedCourtSession = theCase.courtSessions?.find(
+    (session) => session.isConfirmed && session.rulingFileId === caseFile.id,
+  )
+
   let appealDeadline: Date | undefined
   let isAppealDeadlineExpired: boolean | undefined
-  if (caseFile.submissionDate) {
-    appealDeadline = getAppealDeadlineDate(caseFile.submissionDate)
+  if (confirmedCourtSession?.endDate) {
+    appealDeadline = getAppealDeadlineDate(confirmedCourtSession.endDate)
     isAppealDeadlineExpired = Date.now() >= appealDeadline.getTime()
   }
 
@@ -305,6 +386,116 @@ export const getRulingOrderAppealInfo = (
     appealDeadline,
     isAppealDeadlineExpired,
   }
+}
+
+// ---------------------------------------------------------------------------
+// Case type specific info
+//
+// Fields the web reads off every case but that are not stored on it: request
+// cases get their nullable booleans defaulted and their validity evaluated on
+// read, indictment cases get the verdict-appeal status aggregated over their
+// defendants.
+// ---------------------------------------------------------------------------
+
+interface RequestCaseInfo {
+  requestProsecutorOnlySession: boolean
+  isClosedCourtHidden: boolean
+  isHeightenedSecurityLevel: boolean
+  isValidToDateInThePast?: boolean
+}
+
+export const getRequestCaseInfo = (theCase: Case): RequestCaseInfo => {
+  return {
+    requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
+    isClosedCourtHidden: theCase.isClosedCourtHidden ?? false,
+    isHeightenedSecurityLevel: theCase.isHeightenedSecurityLevel ?? false,
+    isValidToDateInThePast: theCase.validToDate
+      ? hasDatePassed(new Date(theCase.validToDate))
+      : undefined,
+  }
+}
+
+interface IndictmentInfo {
+  indictmentAppealDeadline?: Date
+  indictmentVerdictViewedByAll?: boolean
+  indictmentVerdictAppealDeadlineExpired?: boolean
+}
+
+export const getIndictmentInfo = ({
+  indictmentRulingDecision,
+  rulingDate,
+  defendants,
+}: {
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  rulingDate?: Date
+  defendants?: Defendant[]
+}): IndictmentInfo => {
+  if (!rulingDate) {
+    return {}
+  }
+
+  const isFine = indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+  const isRuling =
+    indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+  const { deadlineDate: indictmentAppealDeadline } =
+    getIndictmentAppealDeadline({ baseDate: new Date(rulingDate), isFine })
+
+  const defendantVerdictInfo = defendants?.map((defendant) => ({
+    canAppealVerdict: isRuling || isFine,
+    // Only the latest verdict is relevant
+    serviceDate: getDefendantServiceDate({
+      verdict: defendant.verdicts?.[0],
+      fallbackDate: rulingDate,
+    }),
+  }))
+
+  const {
+    isVerdictViewedByAllRequiredDefendants,
+    hasVerdictAppealDeadlineExpiredForAll,
+  } = getIndictmentVerdictAppealDeadlineStatus(defendantVerdictInfo, isFine)
+
+  return {
+    indictmentAppealDeadline,
+    indictmentVerdictViewedByAll: isVerdictViewedByAllRequiredDefendants,
+    indictmentVerdictAppealDeadlineExpired:
+      hasVerdictAppealDeadlineExpiredForAll,
+  }
+}
+
+// The states in which a request counts as shared with the defence, per the
+// sharing option the prosecutor picked. A completed request is always shared.
+const RequestSharedWithDefenderAllowedStates: {
+  [key in RequestSharedWithDefender]: CaseState[]
+} = {
+  [RequestSharedWithDefender.READY_FOR_COURT]: [
+    CaseState.SUBMITTED,
+    CaseState.RECEIVED,
+    ...completedRequestCaseStates,
+  ],
+  [RequestSharedWithDefender.COURT_DATE]: [
+    CaseState.RECEIVED,
+    ...completedRequestCaseStates,
+  ],
+  [RequestSharedWithDefender.NOT_SHARED]: completedRequestCaseStates,
+}
+
+export const canDefenderViewRequest = (theCase: Case) => {
+  const { requestSharedWithDefender, state } = theCase
+
+  if (!requestSharedWithDefender) {
+    return false
+  }
+
+  const allowedStates =
+    RequestSharedWithDefenderAllowedStates[requestSharedWithDefender]
+
+  return Boolean(
+    state &&
+      allowedStates?.includes(state) &&
+      (requestSharedWithDefender !== RequestSharedWithDefender.COURT_DATE ||
+        Boolean(DateLog.arraignmentDate(theCase.dateLogs)?.date)),
+  )
 }
 
 export const transformDefendants = ({
@@ -376,6 +567,12 @@ export const transformDefendants = ({
       sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
         ? DefendantEventLog.getEventLogDateByEventType(
             DefendantEventType.SENT_TO_PRISON_ADMIN,
+            defendant.eventLogs,
+          )
+        : undefined,
+      closedWithoutEnforcementDate: defendant.isClosedWithoutEnforcement
+        ? DefendantEventLog.getEventLogDateByEventType(
+            DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
             defendant.eventLogs,
           )
         : undefined,
@@ -499,8 +696,12 @@ const getDefenceUserDefendants = (
 const transformCase = (
   theCase: Case,
   user: User | undefined,
+  originalAncestorId?: string,
 ): Record<string, unknown> => {
   const isDefence = isDefenceUser(user)
+  // Defence and prison system users are the only ones reaching this through the
+  // limited access endpoints - no full access route admits their roles.
+  const isLimitedAccess = isDefence || isPrisonSystemUser(user)
   const {
     defendants: transformedDefendants,
     allCancelledOrDismissed,
@@ -513,13 +714,24 @@ const transformCase = (
         latestCancelledOrDismissedDate: undefined,
       }
 
-  const stateOverride =
+  const stateOverride: { state?: CaseState; rulingDate?: Date } =
     isDefence && isIndictmentCase(theCase.type) && allCancelledOrDismissed
       ? {
           state: CaseState.COMPLETED,
           rulingDate: latestCancelledOrDismissedDate,
         }
       : {}
+
+  // Derived off the ruling date the case is presented with, so a defence user
+  // seeing a cancelled indictment as completed gets deadlines counted from the
+  // cancellation rather than from a ruling date they never see.
+  const caseTypeInfo = isRequestCase(theCase.type)
+    ? getRequestCaseInfo(theCase)
+    : getIndictmentInfo({
+        indictmentRulingDecision: theCase.indictmentRulingDecision,
+        rulingDate: stateOverride.rulingDate ?? theCase.rulingDate,
+        defendants: transformedDefendants,
+      })
 
   // Per-appeal statement dates are derived from each appeal's own event log,
   // never from the parent case's union — keeps attribution scoped to the row.
@@ -550,19 +762,35 @@ const transformCase = (
   return {
     ...theCase.toJSON(),
     ...stateOverride,
+    ...caseTypeInfo,
     ...caseLevelAppealInfo,
-    accusedPostponedAppealDate: caseLevelAppealInfo.hasBeenAppealed
-      ? theCase.accusedPostponedAppealDate
-      : undefined,
-    prosecutorPostponedAppealDate: caseLevelAppealInfo.hasBeenAppealed
-      ? theCase.prosecutorPostponedAppealDate
-      : undefined,
+    // The in-court appeal decision + announcement columns were dropped; project
+    // them from the case-level appeal_decision rows so the court record and
+    // appeal-sections UI keep reading the same fields.
+    accusedAppealDecision: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.DEFENDANT,
+    )?.decision,
+    prosecutorAppealDecision: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.PROSECUTOR,
+    )?.decision,
+    accusedAppealAnnouncement: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.DEFENDANT,
+    )?.announcement,
+    prosecutorAppealAnnouncement: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.PROSECUTOR,
+    )?.announcement,
     ...appealCaseOverride,
     ...rulingOrderAppealCasesOverride,
     defendants: transformDefendants({
       defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
-      rulingDate: theCase.rulingDate,
+      // Same effective ruling date the case level uses, so defendant deadlines
+      // never fall back to a ruling date the user is not presented with.
+      rulingDate: stateOverride.rulingDate ?? theCase.rulingDate,
     }),
     civilClaimants: transformCivilClaimants({
       civilClaimants: theCase.civilClaimants,
@@ -601,6 +829,15 @@ const transformCase = (
             defendants: theCase.defendants,
             civilClaimants: theCase.civilClaimants,
           }),
+      )
+      // A ruling order uploaded during the course of a case is hidden from
+      // everyone except district-court users until it has been added to a
+      // confirmed court session.
+      .filter(
+        (file) =>
+          file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER ||
+          isDistrictCourtUser(user) ||
+          isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions),
       )
       .map((file) => ({
         ...file.toJSON(),
@@ -669,12 +906,18 @@ const transformCase = (
       theCase.eventLogs,
     ),
     eventLogs: undefined,
-    // Defence and prison system users should not see rulingModifiedHistory for request cases
+    // Prison system users should not see rulingModifiedHistory for request cases
     rulingModifiedHistory:
-      isRequestCase(theCase.type) &&
-      (isDefenceUser(user) || isPrisonSystemUser(user))
+      isRequestCase(theCase.type) && isPrisonSystemUser(user)
         ? undefined
         : theCase.rulingModifiedHistory,
+    // Nor why a request was resent, until the request itself is shared with them
+    caseResentExplanation:
+      isRequestCase(theCase.type) &&
+      isLimitedAccess &&
+      !canDefenderViewRequest(theCase)
+        ? undefined
+        : theCase.caseResentExplanation,
     parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),
     childCase: theCase.childCase && transformCase(theCase.childCase, user),
     mergeCase: theCase.mergeCase && transformCase(theCase.mergeCase, user),
@@ -685,17 +928,30 @@ const transformCase = (
     splitCases:
       theCase.splitCases &&
       theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
+    originalAncestorId,
   }
 }
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
+  constructor(private readonly caseRepositoryService: CaseRepositoryService) {}
+
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
     const user: User | undefined = request.user?.currentUser
 
-    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
+    return next
+      .handle()
+      .pipe(
+        switchMap((theCase: Case) =>
+          from(this.caseRepositoryService.findOriginalAncestorId(theCase)).pipe(
+            map((originalAncestorId) =>
+              transformCase(theCase, user, originalAncestorId),
+            ),
+          ),
+        ),
+      )
   }
 }
 

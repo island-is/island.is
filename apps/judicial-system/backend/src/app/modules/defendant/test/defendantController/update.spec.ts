@@ -1,9 +1,12 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { BadRequestException } from '@nestjs/common'
+
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseType,
+  DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
   RequestCaseNotificationType,
@@ -15,6 +18,7 @@ import { createTestingDefendantModule } from '../createTestingDefendantModule'
 import {
   Case,
   Defendant,
+  DefendantEventLogRepositoryService,
   DefendantRepositoryService,
 } from '../../../repository'
 import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'
@@ -28,6 +32,7 @@ type GivenWhenThen = (
   defendantUpdate: UpdateDefendantDto,
   type: CaseType,
   courtCaseNumber?: string,
+  existingDefendant?: Defendant,
 ) => Promise<Then>
 
 describe('DefendantController - Update', () => {
@@ -43,6 +48,7 @@ describe('DefendantController - Update', () => {
 
   let mockQueuedMessages: Message[]
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -51,11 +57,13 @@ describe('DefendantController - Update', () => {
       queuedMessages,
       sequelize,
       defendantRepositoryService,
+      defendantEventLogRepositoryService,
       defendantController,
     } = await createTestingDefendantModule()
 
     mockQueuedMessages = queuedMessages
     mockDefendantRepositoryService = defendantRepositoryService
+    mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -70,6 +78,7 @@ describe('DefendantController - Update', () => {
       defendantUpdate: UpdateDefendantDto,
       type: CaseType,
       courtCaseNumber?: string,
+      existingDefendant?: Defendant,
     ) => {
       const then = {} as Then
 
@@ -79,7 +88,7 @@ describe('DefendantController - Update', () => {
           defendantId,
           user,
           { id: caseId, courtCaseNumber, type } as Case,
-          defendant,
+          existingDefendant ?? defendant,
           defendantUpdate,
         )
         .then((result) => (then.result = result))
@@ -148,6 +157,12 @@ describe('DefendantController - Update', () => {
           caseId,
           elementId: defendantId,
         },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
       ])
     })
   })
@@ -175,6 +190,12 @@ describe('DefendantController - Update', () => {
         },
         {
           type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
           user,
           caseId,
           elementId: defendantId,
@@ -207,7 +228,7 @@ describe('DefendantController - Update', () => {
         it('should queue messages if defender has been confirmed', () => {
           expect(mockQueuedMessages).toEqual([
             {
-              type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+              type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT,
               user,
               caseId,
               elementId: defendantId,
@@ -284,6 +305,131 @@ describe('DefendantController - Update', () => {
           },
         },
       ])
+    })
+  })
+
+  describe('defendant in indictment is closed without enforcement', () => {
+    const defendantUpdate = { isClosedWithoutEnforcement: true }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
+
+      await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, caseId)
+    })
+
+    it('should create a defendant event with the user', () => {
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).toHaveBeenCalledWith(
+        DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
+        caseId,
+        defendantId,
+        user,
+        transaction,
+      )
+    })
+
+    it('should not queue messages', () => {
+      expect(mockQueuedMessages).toEqual([])
+    })
+  })
+
+  describe('defendant in indictment is already closed without enforcement', () => {
+    const defendantUpdate = { isClosedWithoutEnforcement: true }
+    const existingDefendant = {
+      ...defendant,
+      isClosedWithoutEnforcement: true,
+    } as Defendant
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(existingDefendant)
+
+      await givenWhenThen(
+        defendantUpdate,
+        CaseType.INDICTMENT,
+        caseId,
+        existingDefendant,
+      )
+    })
+
+    it('should not create a defendant event', () => {
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockDefendantEventLogRepositoryService.create,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant in request case is closed without enforcement', () => {
+    const defendantUpdate = { isClosedWithoutEnforcement: true }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(defendantUpdate, CaseType.CUSTODY, caseId)
+    })
+
+    it('should reject the update', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant in indictment is reopened through a defendant update', () => {
+    const defendantUpdate = { isClosedWithoutEnforcement: false }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, caseId)
+    })
+
+    it('should reject the update', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant sent to prison admin is closed without enforcement', () => {
+    const defendantUpdate = { isClosedWithoutEnforcement: true }
+    const existingDefendant = {
+      ...defendant,
+      isSentToPrisonAdmin: true,
+    } as Defendant
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        defendantUpdate,
+        CaseType.INDICTMENT,
+        caseId,
+        existingDefendant,
+      )
+    })
+
+    it('should reject the update', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant is sent to prison admin and closed without enforcement in the same update', () => {
+    const defendantUpdate = {
+      isClosedWithoutEnforcement: true,
+      isSentToPrisonAdmin: true,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, caseId)
+    })
+
+    it('should reject the update', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 

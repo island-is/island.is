@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import cn from 'classnames'
 import { AnimatePresence, motion } from 'motion/react'
@@ -11,10 +12,13 @@ import {
 import {
   getCaseTableGroups,
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
-import {
+import { ModalContainer } from '@island.is/judicial-system-web/src/components/Modals/Modal/Modal'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
   CaseTableType,
   CaseType,
   SearchCasesRow,
@@ -22,8 +26,6 @@ import {
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { UserContext } from '../../UserProvider/UserProvider'
-import { ModalContainer } from '../Modal/Modal'
 import { useSearchCasesLazyQuery } from './searchCases.generated'
 import * as styles from './SearchModal.css'
 
@@ -240,7 +242,13 @@ const SearchModal: FC<Props> = ({ onClose }) => {
         <Text variant="h3" marginBottom={1}>
           Leit
         </Text>
-        <Box marginBottom={3} columnGap={1} display="flex" flexWrap="wrap">
+        <Box
+          marginBottom={3}
+          columnGap={1}
+          rowGap={1}
+          display="flex"
+          flexWrap="wrap"
+        >
           <Tag outlined disabled>
             Málsnúmer
           </Tag>
@@ -286,8 +294,8 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                       const caseNumber = user
                         ? isProsecutionUser(user)
                           ? row.policeCaseNumbers[0]
-                          : isDistrictCourtUser(user)
-                          ? row.courtCaseNumber
+                          : isDistrictCourtUser(user) || isDefenceUser(user)
+                          ? row.courtCaseNumber ?? row.policeCaseNumbers[0]
                           : isCourtOfAppealsUser(user)
                           ? row.appealCaseNumber
                           : undefined
@@ -311,12 +319,14 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                             caseType={row.caseType}
                             caseNumber={caseNumber}
                             caseTableTitles={caseTableTitles}
-                            descriptor={`${row.matchedValue}${
+                            descriptor={
                               row.matchedField === 'defendantName' ||
                               !row.defendantName
-                                ? ''
-                                : ` - ${row.defendantName}`
-                            }`}
+                                ? row.matchedValue
+                                : row.matchedValue
+                                ? `${row.matchedValue} - ${row.defendantName}`
+                                : row.defendantName
+                            }
                             onClick={onClose}
                           />
                         </li>

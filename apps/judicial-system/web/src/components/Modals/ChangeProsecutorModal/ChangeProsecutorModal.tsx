@@ -1,10 +1,14 @@
-import React, { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import React, { useContext, useState } from 'react'
+import { useRouter } from 'next/router'
 
-import { isRestrictionCase } from '@island.is/judicial-system/types'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { isRequestCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
   ProsecutorSelection,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -16,17 +20,19 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
   const { onClose } = props
   const { updateCase } = useCase()
   const { refreshCase, workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+  const router = useRouter()
 
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
   const [prosecutorsCount, setProsecutorsCount] = useState<number>(0)
   const [selectedProsecutorId, setSelectedProsecutorId] = useState<string>()
-  const title = isRestrictionCase(workingCase.type)
+  const title = isRequestCase(workingCase.type)
     ? 'Breyta um sækjanda'
     : 'Breyta um ákæranda'
-  const text = isRestrictionCase(workingCase.type)
+  const text = isRequestCase(workingCase.type)
     ? 'Nýr sækjandi mun verða skráður sem sækjandi í málinu og fá tilkynningar er það varðar.'
     : 'Nýr ákærandi mun verða skráður sem ákærandi í málinu og fá tilkynningar er það varðar.'
-  const placeholder = isRestrictionCase(workingCase.type)
+  const placeholder = isRequestCase(workingCase.type)
     ? 'Veldu sækjanda til að taka við málinu'
     : 'Veldu ákæranda til að taka við málinu'
 
@@ -48,24 +54,38 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
       title={title}
       text={text}
       onClose={onClose}
-      primaryButton={{
-        text: 'Staðfesta',
-        isDisabled: !selectedProsecutorId,
-        onClick: async () => {
-          if (!selectedProsecutorId) {
-            return
-          }
-          await updateCase(workingCase.id, {
-            prosecutorId: selectedProsecutorId,
-          })
-          refreshCase()
-          onClose()
+      buttons={[
+        {
+          text: 'Loka glugga',
+          onClick: onClose,
+          variant: 'ghost',
         },
-      }}
-      secondaryButton={{
-        text: 'Loka glugga',
-        onClick: onClose,
-      }}
+        {
+          text: 'Staðfesta',
+          isDisabled: !selectedProsecutorId,
+          onClick: async () => {
+            if (!selectedProsecutorId) {
+              return
+            }
+            await updateCase(workingCase.id, {
+              prosecutorId: selectedProsecutorId,
+            })
+
+            const userWouldLoseAccess =
+              workingCase.isHeightenedSecurityLevel &&
+              user?.id !== workingCase.creatingProsecutor?.id &&
+              user?.id !== selectedProsecutorId
+
+            if (userWouldLoseAccess) {
+              router.push(getStandardUserDashboardRoute(user))
+            } else {
+              refreshCase()
+            }
+
+            onClose()
+          },
+        },
+      ]}
     >
       <div
         style={{

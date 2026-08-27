@@ -1,37 +1,25 @@
-import {
-  ChangeEvent,
-  FC,
-  isValidElement,
-  PropsWithChildren,
-  ReactNode,
-  useEffect,
-  useId,
-} from 'react'
+import type { ChangeEvent, FC, PropsWithChildren, ReactNode } from 'react'
+import { isValidElement, useEffect, useId } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import cn from 'classnames'
 import { motion } from 'motion/react'
 
-import {
-  Box,
-  BoxProps,
-  Button,
-  Checkbox,
-  Icon,
-  IconMapIcon,
-  Text,
-} from '@island.is/island-ui/core'
+import type { BoxProps, IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'
 
-interface ButtonProps {
+export interface ModalButton {
   text: string
-  icon?: IconMapIcon
   onClick: () => void
+  icon?: IconMapIcon
   isLoading?: boolean
   isDisabled?: boolean
   colorScheme?: 'default' | 'destructive'
+  variant?: 'primary' | 'ghost'
+  dataTestId?: string
 }
 
 interface FooterCheckbox {
@@ -44,28 +32,24 @@ interface FooterCheckbox {
 interface ModalProps {
   title: string
   text?: string | ReactNode
-  primaryButton?: ButtonProps
-  secondaryButton?: ButtonProps
+  buttons?: ModalButton[]
   footerCheckbox?: FooterCheckbox
   onClose?: () => void
   errorMessage?: string
   children?: ReactNode
-  invertButtonColors?: boolean
   loading?: boolean
   position?: 'center' | 'top' | 'bottom'
   footerJustifyContent?: BoxProps['justifyContent']
 }
 
-const Modal: FC<PropsWithChildren<ModalProps>> = ({
+export const Modal: FC<PropsWithChildren<ModalProps>> = ({
   title,
   text,
-  primaryButton,
-  secondaryButton,
+  buttons,
   footerCheckbox,
   onClose,
   errorMessage,
   children,
-  invertButtonColors,
   loading,
   footerJustifyContent = 'spaceBetween',
 }: ModalProps) => {
@@ -82,6 +66,14 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   }
 
   const footerCheckboxId = useId()
+  const titleId = useId()
+  const lastButtonIndex = buttons ? buttons.length - 1 : -1
+
+  useKeyboardCombo('Escape', () => {
+    if (onClose && !loading) {
+      onClose()
+    }
+  })
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -101,6 +93,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
         exit={{ opacity: 0 }}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={titleId}
         data-testid="modal"
         layout
         transition={{
@@ -131,13 +124,14 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
                 className={styles.closeButton}
                 onClick={onClose}
                 disabled={loading}
+                aria-label="Loka glugga"
               >
                 <Icon icon="close" type="outline" color="blue400" />
               </button>
             </Box>
           )}
           <Box marginBottom={3}>
-            <Text variant="h1" as="h2">
+            <Text id={titleId} variant="h1" as="h2">
               {title}
             </Text>
           </Box>
@@ -174,34 +168,44 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
               />
             )}
             <Box display="flex" columnGap={3}>
-              {secondaryButton && (
-                <Button
-                  data-testid="modalSecondaryButton"
-                  variant={invertButtonColors ? undefined : 'ghost'}
-                  onClick={secondaryButton.onClick}
-                  loading={secondaryButton.isLoading}
-                  disabled={loading || !!secondaryButton.isDisabled}
-                >
-                  {secondaryButton.text}
-                </Button>
-              )}
-              {primaryButton && (
-                <Button
-                  data-testid="modalPrimaryButton"
-                  variant={invertButtonColors ? 'ghost' : undefined}
-                  onClick={primaryButton.onClick}
-                  icon={primaryButton.icon}
-                  loading={loading || !!primaryButton.isLoading}
-                  disabled={loading || !!primaryButton.isDisabled}
-                  colorScheme={primaryButton.colorScheme || 'default'}
-                >
-                  {primaryButton.text}
-                </Button>
-              )}
+              {buttons?.map((button, index) => {
+                const isLastButton = index === lastButtonIndex
+                const defaultTestId =
+                  buttons.length > 2
+                    ? `modalButton-${index}`
+                    : isLastButton &&
+                      !(buttons.length === 1 && button.variant === 'ghost')
+                    ? 'modalPrimaryButton'
+                    : 'modalSecondaryButton'
+
+                return (
+                  <Button
+                    key={`${button.text}-${index}`}
+                    data-testid={button.dataTestId ?? defaultTestId}
+                    variant={button.variant === 'ghost' ? 'ghost' : undefined}
+                    onClick={button.onClick}
+                    icon={button.icon}
+                    loading={(isLastButton && loading) || !!button.isLoading}
+                    disabled={loading || !!button.isDisabled}
+                    colorScheme={
+                      button.variant === 'ghost'
+                        ? button.colorScheme
+                        : button.colorScheme || 'default'
+                    }
+                  >
+                    {button.text}
+                  </Button>
+                )
+              })}
             </Box>
           </Box>
           {errorMessage && (
-            <Box marginTop={1} data-testid="modalErrorMessage">
+            <Box
+              marginTop={1}
+              role="alert"
+              aria-live="assertive"
+              data-testid="modalErrorMessage"
+            >
               <Text variant="eyebrow" color="red600">
                 {errorMessage}
               </Text>
@@ -282,13 +286,11 @@ export const ModalContainer = ({
 const ModalPortal = ({
   title,
   text,
-  primaryButton,
-  secondaryButton,
+  buttons,
   footerCheckbox,
   onClose,
   errorMessage,
   children,
-  invertButtonColors,
   loading,
   footerJustifyContent,
 }: ModalProps) => {
@@ -299,13 +301,11 @@ const ModalPortal = ({
     <Modal
       title={title}
       text={text}
-      primaryButton={primaryButton}
-      secondaryButton={secondaryButton}
+      buttons={buttons}
       footerCheckbox={footerCheckbox}
       onClose={onClose}
       errorMessage={errorMessage}
       children={children}
-      invertButtonColors={invertButtonColors}
       loading={loading}
       footerJustifyContent={footerJustifyContent}
     />,
