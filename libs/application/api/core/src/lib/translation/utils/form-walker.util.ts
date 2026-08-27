@@ -464,7 +464,7 @@ export const walkFormLeaf = (
     alertType =
       typeof amf.alertType === 'function'
         ? 'default'
-        : (amf.alertType ?? 'default')
+        : amf.alertType ?? 'default'
     if (typeof amf.message === 'function') {
       const extracted = tryInvokeFormTextFunction(amf.message)
       for (const d of extracted.descriptors) {
