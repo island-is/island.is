@@ -724,9 +724,19 @@ export class DrivingLicenseService {
         },
       })
 
+    // Reaching here means RLS returned 2xx — enhanced fetch throws on 4xx, which
+    // is how this endpoint signals a business rejection (e.g. 400
+    // APPLICATION_ALREADY_EXISTS). Do NOT gate on the DTO `result` field: RLS
+    // returns the new application's guid in the body on success, and dev showed a
+    // successfully-created application come back with `result` falsy, which then
+    // surfaced to the applicant as a failed submission *after they had paid*.
+    // The client's `postTemporaryLicenseWithHealthDeclarationV6` already maps the
+    // one benign 400 (a lost-response retry) to a resolved value, so a throw here
+    // is a genuine failure and must propagate to `submitApplication`.
+    void response
     return {
-      success: response.result ?? false,
-      errorMessage: response.errorCode ?? null,
+      success: true,
+      errorMessage: null,
     }
   }
 

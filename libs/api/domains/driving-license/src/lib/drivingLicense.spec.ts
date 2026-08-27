@@ -582,51 +582,59 @@ describe('DrivingLicenseService', () => {
       jest.restoreAllMocks()
     })
 
-    // The temporary endpoint returns a DTO, not a boolean. If `result` is not
-    // mapped, `submitApplication` never sees `success: false` and every RLS
-    // business rejection reaches the applicant as "submitted".
-    it('maps a rejected temporary submission to success: false and keeps the code', async () => {
-      jest
-        .spyOn(drivingLicenseApi, 'postTemporaryLicenseWithHealthDeclarationV6')
-        .mockResolvedValue({ result: false, errorCode: 'HAS_B_CATEGORY' })
+    // RLS signals success with 2xx (enhanced fetch throws on 4xx), and returns
+    // the new application's guid — NOT reliably a `result: true`. A created
+    // application was observed on dev coming back with `result` falsy, so gating
+    // on it reported failure to an applicant who had already paid, and their
+    // retry then hit 400 APPLICATION_ALREADY_EXISTS. Any resolved response is a
+    // success, whatever the DTO body looks like.
+    it.each([
+      ['the documented shape', { result: true, driverLicenseId: 1 }],
+      [
+        'a created app with result falsy (the dev regression)',
+        { result: false },
+      ],
+      ['an empty body', {}],
+      [
+        'a body carrying only the guid RLS actually returns',
+        {
+          guid: '3630b0bc-ec51-442e-976d-13a3c21c5e5b',
+        },
+      ],
+    ])(
+      'treats a resolved temporary submission (%s) as success',
+      async (_l, dto) => {
+        jest
+          .spyOn(
+            drivingLicenseApi,
+            'postTemporaryLicenseWithHealthDeclarationV6',
+          )
+          .mockResolvedValue(dto as never)
 
-      await expect(
-        service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
-          ...baseInput,
-          instructorSSN: MOCK_NATIONAL_ID_TEACHER,
-        }),
-      ).resolves.toStrictEqual({
-        success: false,
-        errorMessage: 'HAS_B_CATEGORY',
+        await expect(
+          service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
+            ...baseInput,
+            instructorSSN: MOCK_NATIONAL_ID_TEACHER,
+          }),
+        ).resolves.toStrictEqual({ success: true, errorMessage: null })
+      },
+    )
+
+    it('propagates a rejection so submitApplication surfaces the RLS error', async () => {
+      const problem = Object.assign(new Error('already exists'), {
+        name: 'FetchError',
+        status: 400,
       })
-    })
-
-    it('maps an accepted temporary submission to success: true', async () => {
       jest
         .spyOn(drivingLicenseApi, 'postTemporaryLicenseWithHealthDeclarationV6')
-        .mockResolvedValue({ result: true, driverLicenseId: 1 })
+        .mockRejectedValue(problem)
 
       await expect(
         service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
           ...baseInput,
           instructorSSN: MOCK_NATIONAL_ID_TEACHER,
         }),
-      ).resolves.toStrictEqual({ success: true, errorMessage: null })
-    })
-
-    // An empty DTO is what a 201 with no body deserialises to; it must not read
-    // as success.
-    it('treats an absent result as a failure rather than a success', async () => {
-      jest
-        .spyOn(drivingLicenseApi, 'postTemporaryLicenseWithHealthDeclarationV6')
-        .mockResolvedValue({})
-
-      await expect(
-        service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
-          ...baseInput,
-          instructorSSN: MOCK_NATIONAL_ID_TEACHER,
-        }),
-      ).resolves.toStrictEqual({ success: false, errorMessage: null })
+      ).rejects.toBe(problem)
     })
 
     it('forwards the category as a path param for the full licence', async () => {
