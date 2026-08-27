@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Box, Button, Tag, toast } from '@island.is/island-ui/core'
+import { Box, Button, Tag, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { messages } from '../../../lib/messages'
@@ -41,6 +41,12 @@ const CertificateAction = ({
     const timeout = setTimeout(() => setIsPolling(false), POLL_TIMEOUT_MS)
     return () => clearTimeout(timeout)
   }, [isPolling])
+
+  // A pending payment can appear on an already-mounted message via a
+  // conversation refetch — start polling for it as well, not only on mount.
+  useEffect(() => {
+    if (pendingPaymentId) setIsPolling(true)
+  }, [pendingPaymentId])
 
   const { data: pollData } = useGetHealthCertificateQuery({
     variables: { id: certificateId ?? '' },
@@ -96,32 +102,48 @@ const CertificateAction = ({
   return (
     <Box
       display="flex"
-      flexDirection="row"
-      alignItems="center"
-      columnGap={2}
+      flexDirection="column"
       rowGap={1}
-      flexWrap="wrap"
       marginBottom={3}
+      alignItems="flexStart"
     >
-      <Tag variant="blue" outlined disabled>
-        {formatMessage(messages.healthConversationCertificateTag)}
-      </Tag>
-
-      {isUnpaid && isPolling && (
-        <Tag variant="yellow" outlined disabled>
-          {formatMessage(
-            messages.healthConversationCertificatePaymentInProgress,
-          )}
+      <Box
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        columnGap={2}
+        rowGap={1}
+        flexWrap="wrap"
+      >
+        <Tag variant="blue" outlined disabled>
+          {formatMessage(messages.healthConversationCertificateTag)}
         </Tag>
-      )}
 
-      {isUnpaid && !isPolling && certificateId && (
-        <>
-          <Tag variant="red" outlined disabled>
-            {formatMessage(
-              messages.healthConversationCertificatePaymentPending,
-            )}
-          </Tag>
+        <Box
+          role="status"
+          aria-live="polite"
+          display="flex"
+          alignItems="center"
+          columnGap={2}
+        >
+          {isUnpaid && isPolling && (
+            <Tag variant="yellow" outlined disabled>
+              {formatMessage(
+                messages.healthConversationCertificatePaymentInProgress,
+              )}
+            </Tag>
+          )}
+
+          {isUnpaid && !isPolling && (
+            <Tag variant="red" outlined disabled>
+              {formatMessage(
+                messages.healthConversationCertificatePaymentPending,
+              )}
+            </Tag>
+          )}
+        </Box>
+
+        {isUnpaid && !isPolling && certificateId && (
           <Button
             variant="utility"
             icon="card"
@@ -137,13 +159,15 @@ const CertificateAction = ({
                   messages.healthConversationCertificatePayNoAmount,
                 )}
           </Button>
-        </>
-      )}
+        )}
+      </Box>
 
-      {isUnpaid && !isPolling && !certificateId && (
-        <Tag variant="red" outlined disabled>
-          {formatMessage(messages.healthConversationCertificatePaymentPending)}
-        </Tag>
+      {isUnpaid && isPolling && (
+        <Text variant="small">
+          {formatMessage(
+            messages.healthConversationCertificatePaymentInProgressText,
+          )}
+        </Text>
       )}
     </Box>
   )

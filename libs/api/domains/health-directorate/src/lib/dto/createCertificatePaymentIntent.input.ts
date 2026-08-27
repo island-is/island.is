@@ -12,7 +12,7 @@ export class HealthDirectorateCreateCertificatePaymentIntentInput {
 
   @Field({
     description:
-      "Where to redirect the user's browser after a successful charge. Must be an allow-listed island.is host.",
+      "Where to redirect the user's browser after a successful charge. Host allow-listing is enforced upstream by the Directorate of Health API (PAYMENT_RETURN_URL_ALLOWED_HOSTS), which rejects other hosts with a 400 — this layer only validates URL shape.",
   })
   @IsUrl(
     {
@@ -28,7 +28,7 @@ export class HealthDirectorateCreateCertificatePaymentIntentInput {
   @Field({
     nullable: true,
     description:
-      "Where to redirect the user's browser if they abandon the payment or the gateway session times out. Defaults to returnUrl when omitted.",
+      "Where to redirect the user's browser if they abandon the payment or the gateway session times out. Defaults to returnUrl when omitted. Host allow-listing is enforced upstream by the Directorate of Health API, same as returnUrl.",
   })
   @IsOptional()
   @IsUrl(
