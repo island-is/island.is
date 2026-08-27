@@ -468,7 +468,8 @@ export const m = {
     },
     duplicateCar: {
       id: 'rsk.crdr.application:multi.upload.error.duplicate.car',
-      defaultMessage: 'Sama ökutæki kemur oftar en einu sinni fyrir í skjalinu!',
+      defaultMessage:
+        'Sama ökutæki kemur oftar en einu sinni fyrir í skjalinu!',
       description: 'The same vehicle is listed on more than one row',
     },
     previousPeriodUsageRequired: {
