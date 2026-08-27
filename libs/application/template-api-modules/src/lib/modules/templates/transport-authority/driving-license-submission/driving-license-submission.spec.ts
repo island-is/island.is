@@ -817,6 +817,7 @@ describe('DrivingLicenseSubmissionService', () => {
   describe('BE branch', () => {
     let service: DrivingLicenseSubmissionService
     let applyForBELicense: jest.Mock
+    let getFiles: jest.Mock
 
     const baseAnswers = {
       applicationFor: 'BE',
@@ -825,6 +826,7 @@ describe('DrivingLicenseSubmissionService', () => {
     }
 
     beforeEach(async () => {
+      getFiles = jest.fn(async () => [])
       applyForBELicense = jest.fn(async () => ({
         success: true,
         errorMessage: null,
@@ -852,7 +854,7 @@ describe('DrivingLicenseSubmissionService', () => {
           },
           {
             provide: AttachmentS3Service,
-            useValue: { getFiles: jest.fn(async () => []) },
+            useValue: { getFiles },
           },
           {
             provide: SharedTemplateApiService,
@@ -938,6 +940,179 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(applyForBELicense).toHaveBeenCalledTimes(1)
       const [, , input] = applyForBELicense.mock.calls[0]
       expect(input.sendPlasticToPerson).toBe(false)
+    })
+
+    // The cases below cover the shared health-certificate and health-declaration
+    // helpers on BE, which is the only branch running them unflagged in
+    // production. Before these existed, `baseAnswers` carried no
+    // `healthDeclaration`, so `beNeedsHealthCert` was always false and every BE
+    // test passed whether the builders worked or not.
+    it('builds contentList from the uploaded certificate when a health answer is yes', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          healthDeclaration: { hasEpilepsy: 'yes' },
+          delivery: { deliveryMethod: 'post', jurisdiction: '37' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(applyForBELicense).toHaveBeenCalledTimes(1)
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input.contentList).toHaveLength(1)
+      expect(input.contentList[0]).toMatchObject({
+        fileName: 'cert.pdf',
+        fileExtension: 'pdf',
+        contentType: 'application/pdf',
+        content: 'base64pdfdata',
+        description: 'Laeknisvottord',
+      })
+    })
+
+    it('normalises a jpg upload to the jpeg extension RLS expects', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          healthDeclaration: { hasDiabetes: 'yes' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.JPG', fileContent: 'base64jpgdata' },
+      ])
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input.contentList[0]).toMatchObject({
+        fileExtension: 'jpeg',
+        contentType: 'image/jpeg',
+      })
+    })
+
+    it('rejects when a certificate is required but nothing was uploaded', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          healthDeclaration: { hasEpilepsy: 'yes' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      // getFiles returns [] by default — nothing attached
+      await expect(
+        service.submitApplication({
+          application,
+          auth: user,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            summary: expect.objectContaining({
+              id: 'dl.application:validation.healthCertificateRequired',
+            }),
+          },
+          status: 400,
+        },
+      })
+
+      expect(applyForBELicense).not.toHaveBeenCalled()
+    })
+
+    it('requires a certificate when the glasses check fires, even with all answers no', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          healthDeclaration: { hasEpilepsy: 'no', hasDiabetes: 'no' },
+        },
+        externalData: {
+          glassesCheck: {
+            data: true,
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      await expect(
+        service.submitApplication({
+          application,
+          auth: user,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            summary: expect.objectContaining({
+              id: 'dl.application:validation.healthCertificateRequired',
+            }),
+          },
+          status: 400,
+        },
+      })
+    })
+
+    it('maps every health-declaration answer, defaulting unanswered questions to false', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          healthDeclaration: { hasEpilepsy: 'yes' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      const [, , input] = applyForBELicense.mock.calls[0]
+      // Unanswered questions must be false, not omitted: RLS reads a missing key
+      // as null rather than a negative answer.
+      expect(input.healthDeclarationModel).toEqual({
+        isDisabled: false,
+        hasDiabetes: false,
+        hasEpilepsy: true,
+        isAlcoholic: false,
+        hasHeartDisease: false,
+        hasMentalIllness: false,
+        hasOtherDiseases: false,
+        usesMedicalDrugs: false,
+        usesContactGlasses: false,
+        hasReducedPeripheralVision: false,
+      })
     })
   })
 

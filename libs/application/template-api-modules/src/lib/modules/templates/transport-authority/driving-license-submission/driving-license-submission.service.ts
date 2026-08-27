@@ -43,6 +43,31 @@ const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
 }
 
+/**
+ * Maps the form's yes/no health answers to the booleans RLS expects. Shared by
+ * BE and — behind their redesign flags — B-temp and B-full.
+ *
+ * The ten keys are listed explicitly rather than derived from the answers, so an
+ * unanswered question becomes `false` rather than being omitted. The older mapper
+ * in `utils/healthDeclarationMapper.ts` maps over the answer object instead, which
+ * silently drops unanswered keys — RLS then reads those as null, not false.
+ */
+const toHealthDeclarationModel = (
+  healthDeclaration: Record<string, string> = {},
+) => ({
+  isDisabled: healthDeclaration?.isDisabled === YES,
+  hasDiabetes: healthDeclaration?.hasDiabetes === YES,
+  hasEpilepsy: healthDeclaration?.hasEpilepsy === YES,
+  isAlcoholic: healthDeclaration?.isAlcoholic === YES,
+  hasHeartDisease: healthDeclaration?.hasHeartDisease === YES,
+  hasMentalIllness: healthDeclaration?.hasMentalIllness === YES,
+  hasOtherDiseases: healthDeclaration?.hasOtherDiseases === YES,
+  usesMedicalDrugs: healthDeclaration?.usesMedicalDrugs === YES,
+  usesContactGlasses: healthDeclaration?.usesContactGlasses === YES,
+  hasReducedPeripheralVision:
+    healthDeclaration?.hasReducedPeripheralVision === YES,
+})
+
 const getContentType = (fileName: string): string => {
   const ext = fileName.split('.').pop()?.toLowerCase() ?? ''
   switch (ext) {
@@ -314,6 +339,68 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     }
   }
 
+  /**
+   * Reads the applicant's uploaded health certificate from S3 and maps it to the
+   * contentList shape RLS expects. Shared by every branch that can send one:
+   * 65+, BE, and — behind their redesign flags — B-temp and B-full. This was
+   * copy-pasted per product, so a fix had to land in every copy.
+   *
+   * Throws the applicant-facing "certificate required" error on an empty result:
+   * every caller reaches this only when a certificate IS required, so nothing
+   * attached is always a hard stop rather than an omitted key. Deciding *whether*
+   * a certificate is required stays with the caller — 65+ always needs one, the
+   * other three only when a health answer, a remark or the glasses check fires.
+   */
+  private async readHealthCertificateContentList(
+    application: ApplicationWithAttachments,
+  ): Promise<
+    Array<{
+      fileName: string
+      fileExtension: string
+      contentType: string
+      content: string
+      description: string
+    }>
+  > {
+    let contentList
+    try {
+      const files = await this.attachmentS3Service.getFiles(application, [
+        'healthCertificate',
+      ])
+
+      contentList = files
+        .filter((f) => f.fileContent)
+        .map((f) => {
+          const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
+          const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
+          return {
+            fileName: f.fileName,
+            fileExtension: ext,
+            contentType: getContentType(f.fileName),
+            content: f.fileContent,
+            description: 'Laeknisvottord',
+          }
+        })
+    } catch (e) {
+      this.log('error', 'Failed to read health certificate files from S3', {
+        e,
+      })
+      throw e
+    }
+
+    if (!contentList || contentList.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: drivingLicenseMessages.healthCertificateRequired,
+        },
+        400,
+      )
+    }
+
+    return contentList
+  }
+
   private async createLicense(
     nationalId: string,
     answers: FormValue,
@@ -448,50 +535,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           resolvedRenewalBiometrics.signatureBiometricsId
       }
 
-      let renewalContentList:
-        | Array<{
-            fileName: string
-            fileExtension: string
-            contentType: string
-            content: string
-            description: string
-          }>
-        | undefined
-
-      try {
-        const files = await this.attachmentS3Service.getFiles(application, [
-          'healthCertificate',
-        ])
-
-        renewalContentList = files
-          .filter((f) => f.fileContent)
-          .map((f) => {
-            const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
-            const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
-            return {
-              fileName: f.fileName,
-              fileExtension: ext,
-              contentType: getContentType(f.fileName),
-              content: f.fileContent,
-              description: 'Laeknisvottord',
-            }
-          })
-      } catch (e) {
-        this.log('error', 'Failed to read health certificate files from S3', {
-          e,
-        })
-        throw e
-      }
-
-      if (!renewalContentList || renewalContentList.length === 0) {
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.failedDataProviderSubmit,
-            summary: drivingLicenseMessages.healthCertificateRequired,
-          },
-          400,
-        )
-      }
+      // 65+ always requires a certificate, so this is ungated.
+      const renewalContentList = await this.readHealthCertificateContentList(
+        application,
+      )
 
       return this.drivingLicenseService.applyForRenewal65(auth.authorization, {
         jurisdiction: jurisdictionId
@@ -641,67 +688,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           'glassesCheck.data',
         ) === true
 
-      let contentList:
-        | Array<{
-            fileName: string
-            fileExtension: string
-            contentType: string
-            content: string
-            description: string
-          }>
-        | undefined
-
-      if (beNeedsHealthCert) {
-        try {
-          const files = await this.attachmentS3Service.getFiles(application, [
-            'healthCertificate',
-          ])
-
-          contentList = files
-            .filter((f) => f.fileContent)
-            .map((f) => {
-              const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
-              const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
-              return {
-                fileName: f.fileName,
-                fileExtension: ext,
-                contentType: getContentType(f.fileName),
-                content: f.fileContent,
-                description: 'Laeknisvottord',
-              }
-            })
-        } catch (e) {
-          this.log('error', 'Failed to read health certificate files from S3', {
-            e,
-          })
-          throw e
-        }
-
-        if (!contentList || contentList.length === 0) {
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.failedDataProviderSubmit,
-              summary: drivingLicenseMessages.healthCertificateRequired,
-            },
-            400,
-          )
-        }
-      }
+      const contentList = beNeedsHealthCert
+        ? await this.readHealthCertificateContentList(application)
+        : undefined
 
       // Health declaration model — always sent for BE
-      const healthDeclarationModel = {
-        isDisabled: healthDeclaration?.isDisabled === 'yes',
-        hasDiabetes: healthDeclaration?.hasDiabetes === 'yes',
-        hasEpilepsy: healthDeclaration?.hasEpilepsy === 'yes',
-        isAlcoholic: healthDeclaration?.isAlcoholic === 'yes',
-        hasHeartDisease: healthDeclaration?.hasHeartDisease === 'yes',
-        hasMentalIllness: healthDeclaration?.hasMentalIllness === 'yes',
-        hasOtherDiseases: healthDeclaration?.hasOtherDiseases === 'yes',
-        usesMedicalDrugs: healthDeclaration?.usesMedicalDrugs === 'yes',
-        usesContactGlasses: healthDeclaration?.usesContactGlasses === 'yes',
-        hasReducedPeripheralVision:
-          healthDeclaration?.hasReducedPeripheralVision === 'yes',
-      }
+      const healthDeclarationModel = toHealthDeclarationModel(healthDeclaration)
 
       return this.drivingLicenseService.applyForBELicense(
         nationalId,
