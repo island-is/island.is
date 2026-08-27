@@ -12,9 +12,14 @@ export const mapInterestBenefitResultToRows = (
   }
 
   const rows = [
-    buildRow('maxInterestExpense', 'Hámark vaxtagjalda', result.hamarkVaxtagjalda, {
-      unit: 'ISK',
-    }),
+    buildRow(
+      'maxInterestExpense',
+      'Hámark vaxtagjalda',
+      result.hamarkVaxtagjalda,
+      {
+        unit: 'ISK',
+      },
+    ),
     buildRow(
       'interestExpenseForCalculation',
       'Vaxtagjöld til útreiknings',
@@ -71,12 +76,22 @@ export const mapInterestBenefitResultToRows = (
       result.eignaskerdingarhlutfall,
       { unit: '%' },
     ),
-    buildRow('reductionAct2003', 'Skerðing skv. lögum 2003', result.skerdingLog2003, {
-      unit: 'ISK',
-    }),
-    buildRow('reductionAct2004', 'Skerðing skv. lögum 2004', result.skerdingLog2004, {
-      unit: 'ISK',
-    }),
+    buildRow(
+      'reductionAct2003',
+      'Skerðing skv. lögum 2003',
+      result.skerdingLog2003,
+      {
+        unit: 'ISK',
+      },
+    ),
+    buildRow(
+      'reductionAct2004',
+      'Skerðing skv. lögum 2004',
+      result.skerdingLog2004,
+      {
+        unit: 'ISK',
+      },
+    ),
     buildRow(
       'totalInterestBenefit',
       'Vaxtabætur alls',
