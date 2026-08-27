@@ -98,6 +98,7 @@ query GetDrugPrescriptions($locale: String) {
   healthDirectoratePrescriptions(locale: $locale) {
     prescriptions {
       id
+      productId
       name
       strength
       type
@@ -114,6 +115,7 @@ query GetDrugPrescriptions($locale: String) {
       isRenewable
       renewalBlockedReason
       renewalStatus
+      renewResponseMessage
       amountRemaining
       medCardDrugId
       dispensations {
@@ -126,6 +128,34 @@ query GetDrugPrescriptions($locale: String) {
         itemId
         amount
       }
+    }
+  }
+}
+
+query GetPrescriptionDocuments($input: MedicinePrescriptionDocumentsInput!) {
+  healthDirectoratePrescriptionDocuments(input: $input) {
+    id
+    documents {
+      id
+      name
+      url
+    }
+  }
+}
+
+query GetPrescriptionRenewalTargets($prescriptionId: String!) {
+  healthDirectoratePrescriptionRenewalTargets(prescriptionId: $prescriptionId) {
+    groupId
+    nodeId
+    name
+    description
+  }
+}
+
+mutation PostPrescriptionRenewal($input: HealthDirectorateRenewalInput!) {
+  healthDirectoratePrescriptionRenewal(input: $input) {
+    prescriptions {
+      id
     }
   }
 }

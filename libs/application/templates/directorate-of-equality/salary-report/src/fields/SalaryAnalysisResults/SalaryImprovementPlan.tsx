@@ -18,7 +18,6 @@ import {
 } from '../../components/DraftScreenState'
 import { messages } from '../../lib/messages'
 import { ApiActions, draftActionId } from '../../utils/constants'
-import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import {
   buildOutlierSyncCommands,
   isOutlierGroupComplete,
@@ -32,7 +31,11 @@ import {
   navigationAnswersForAnalysisResult,
   type AnalysisExternalData,
 } from '../../utils/salaryAnalysisNavigation'
-import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
+import type {
+  DraftOutlierGroupDto,
+  ReportEmployeeDto,
+  ReportEmployeeRoleDto,
+} from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
@@ -82,6 +85,15 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     draftActionId(ApiActions.listDraftEmployees),
     'draftEmployees',
   )
+  // Roles carry the job title; ReportEmployeeDto only carries the role's id.
+  // Granted to the DRAFT role only, hence `enabled` — both review states
+  // (POSTPONED and DRAFT_RETRY) show the column empty rather than firing a
+  // provider they cannot call, which the controller rejects outright.
+  const { content: rolesContent } = useDraftQuery<{
+    roles: ReportEmployeeRoleDto[]
+  }>(application, draftActionId(ApiActions.listDraftRoles), 'draftRoles', {
+    enabled: isDraftPhase,
+  })
   const content = useMemo(
     () =>
       outlierGroupsContent && employeesContent
@@ -204,11 +216,18 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     })
   })
 
-  const identifierForOrdinal = useMemo(
-    () => (ordinal: number) =>
-      formatEmployeeIdentifier(application.id, ordinal),
-    [application.id],
-  )
+  const roleTitleForOrdinal = useMemo(() => {
+    const titleByRoleId = new Map(
+      (rolesContent?.roles ?? []).map((role) => [role.id, role.title]),
+    )
+    const titleByOrdinal = new Map(
+      (employeesContent?.employees ?? []).map((employee) => [
+        employee.ordinal,
+        titleByRoleId.get(employee.reportEmployeeRoleId),
+      ]),
+    )
+    return (ordinal: number) => titleByOrdinal.get(ordinal)
+  }, [employeesContent, rolesContent])
 
   const draftOutlierGroups =
     useWatch<DraftOutlierFormValues, 'salaryAnalysis.outlierGroups'>({
@@ -428,7 +447,7 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       outliers={result.outliers ?? []}
       hidePostponeCheckbox={hidePostponeCheckbox}
       errors={errors}
-      identifierForOrdinal={identifierForOrdinal}
+      roleTitleForOrdinal={roleTitleForOrdinal}
       outlierGroupsFormMethods={isDraftPhase ? draftForm : undefined}
     />
   )
