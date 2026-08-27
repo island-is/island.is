@@ -3,7 +3,6 @@ import { parse } from 'csv-parse'
 import { CarUsageError, CarUsageRecord, DayRateRecord } from './types'
 import { isEligibleForReporting } from './dayRateRecordUtils'
 import { m } from '../lib/messages'
-import { MessageDescriptor } from 'react-intl'
 
 // Day counts are whole days, so a decimal comma or stray text is a mistake to
 // report rather than something to silently coerce into a different number
@@ -59,17 +58,24 @@ export const parseFileToCarDayRateUsage = async (
     ]),
   )
 
+  // A plate listed on two rows would otherwise fill the expected record count
+  // on its own, letting through a file that never reports another vehicle
+  const seenPermnos = new Set<string>()
+
   const data: Array<CarUsageRecord | CarUsageError | undefined> = values.map(
     (row, index) => {
+      // Blank rows are kept by the parser so row numbers still line up with the
+      // file, but there is nothing to report on them
+      if (row.every((cell) => !cell?.trim())) return undefined
+
       const carNr = row[carNumberIndex] ?? ''
       // 1-based line in the file, counting the header dropped above, so a row
       // with no plate at all can still be pointed at
       const rowNumber = index + 2
       const prevPeriodTotalDaysStr = row[prevPeriodTotalDaysIndex]?.trim()
       const prevPeriodUsageStr = row[prevPeriodUsageIndex]?.trim()
-      const dayRateRecord = recordsByNormalizedPermno.get(
-        normalizePermno(carNr),
-      )
+      const normalizedPermno = normalizePermno(carNr)
+      const dayRateRecord = recordsByNormalizedPermno.get(normalizedPermno)
 
       if (!dayRateRecord) {
         return {
@@ -85,6 +91,16 @@ export const parseFileToCarDayRateUsage = async (
       // so skip them rather than failing a file that legitimately includes
       // them.
       if (!isEligibleForReporting(dayRateRecord)) return undefined
+
+      if (seenPermnos.has(normalizedPermno)) {
+        return {
+          code: 1,
+          message: m.multiUploadErrors.duplicateCar,
+          carNr,
+          row: rowNumber,
+        }
+      }
+      seenPermnos.add(normalizedPermno)
 
       if (!prevPeriodTotalDaysStr && prevPeriodUsageStr) {
         return {
@@ -158,7 +174,9 @@ export const parseCsvString = (chunk: string): Promise<string[][]> => {
 
     const parser = parse({
       delimiter: [';', ','],
-      skipRecordsWithEmptyValues: true,
+      // Blank rows are kept, not skipped, so a record's index stays its
+      // physical row in the file and error messages point at the right line
+      skipRecordsWithEmptyValues: false,
       trim: true,
     })
 
@@ -192,7 +210,9 @@ const parseXlsx = async (file: FileBytes) => {
 
     const jsonData = XLSX.utils.sheet_to_csv(
       parsedFile.Sheets[parsedFile.SheetNames[0]],
-      { blankrows: false },
+      // Emitted as empty rows rather than dropped, so the row numbers reported
+      // back to the applicant match what they see in the spreadsheet
+      { blankrows: true },
     )
 
     return parseCsvString(jsonData)
@@ -204,7 +224,9 @@ const parseXlsx = async (file: FileBytes) => {
 export const createErrorExcel = async (
   file: FileBytes,
   type: 'csv' | 'xlsx',
-  errors: Map<string, string | MessageDescriptor>,
+  // Keyed by the 1-based file row an error came from, so duplicate or blank
+  // plate cells only mark the row they were reported on
+  errorsByRow: Map<number, string>,
 ) => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
@@ -216,9 +238,9 @@ export const createErrorExcel = async (
   const newHeader = [...header, 'Villa']
 
   // Add error messages to rows and mark error rows
-  const processedRows = values.map((row) => {
-    const carNr = row[0]
-    const errorMessage = errors.get(carNr)
+  const processedRows = values.map((row, index) => {
+    // Same 1-based offset the parser used when it recorded the error row
+    const errorMessage = errorsByRow.get(index + 2)
     return {
       row,
       hasError: !!errorMessage,

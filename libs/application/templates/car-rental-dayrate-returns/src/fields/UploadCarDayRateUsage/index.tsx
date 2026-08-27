@@ -191,9 +191,11 @@ export const UploadCarDayRateUsage = ({
       const errorExcel = await createErrorExcel(
         await file.arrayBuffer(),
         type,
+        // Keyed by row: two rows can share a plate, or have none at all, and
+        // only the row the error came from should be marked
         new Map(
           (parsed.errors as CarUsageError[]).map((error) => [
-            error.carNr,
+            error.row,
             formatMessage(error.message),
           ]),
         ),

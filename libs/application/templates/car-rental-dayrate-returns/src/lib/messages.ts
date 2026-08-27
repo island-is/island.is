@@ -466,6 +466,11 @@ export const m = {
         'Þessi bíll fannst ekki í lista af þínum bílum á daggjaldi í síðasta mánuði!',
       description: 'Car not found',
     },
+    duplicateCar: {
+      id: 'rsk.crdr.application:multi.upload.error.duplicate.car',
+      defaultMessage: 'Sama ökutæki kemur oftar en einu sinni fyrir í skjalinu!',
+      description: 'The same vehicle is listed on more than one row',
+    },
     previousPeriodUsageRequired: {
       id: 'rsk.crdr.application:multi.upload.error.prev.usage.required',
       defaultMessage:
