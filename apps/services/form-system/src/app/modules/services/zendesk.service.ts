@@ -53,9 +53,7 @@ export class ZendeskService {
     storedInstance?: string,
     storedBrandId?: string,
   ): Promise<boolean> {
-    const contactEmail = 'stafraentisland@gmail.com'
-    const username = `${contactEmail}/token`
-
+    let contactEmail = 'stafraentisland@gmail.com'
     let zendeskBrandId: string | undefined = undefined
     let zendeskInstance = this.SANDBOX_INSTANCE
     let apiKey = this.SANDBOX_API_KEY
@@ -68,16 +66,19 @@ export class ZendeskService {
 
     if (zendeskInstance === 'heilsa') {
       apiKey = this.HEILSA_API_KEY
+      contactEmail = 'admin@stafraentisland.is'
     } else if (zendeskInstance === 'haskoliislands') {
       apiKey = this.HASKOLI_ISLANDS_API_KEY
+      contactEmail = 'admin@stafraentisland.is'
     }
 
     if (!zendeskInstance || !apiKey) {
       throw new Error('Zendesk tenant id or API key not configured')
     }
 
-    const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
+    const username = `${contactEmail}/token`
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
+    const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
 
     const { name, email } = this.getNameAndEmail(applicationDto)
     const { body: initialBody, attachmentKeys } =
