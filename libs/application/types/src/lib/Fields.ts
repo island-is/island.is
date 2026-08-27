@@ -1052,6 +1052,9 @@ export interface StickyFooterField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
   widthReferenceTestId: string
   watchFieldIds: string[]
+  labelOffset: number
+  labelWidth: number
+  valueWidth?: number
 }
 
 export type PaginatedSearchableTableRow = Record<

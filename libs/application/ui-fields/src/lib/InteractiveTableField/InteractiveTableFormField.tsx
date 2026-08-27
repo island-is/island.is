@@ -161,8 +161,8 @@ export const InteractiveTableFormField: FC<Props> = ({
                       width
                         ? { width }
                         : hasInputColumn && index === header.length - 1
-                          ? styles.inputColumnHeaderStyle
-                          : undefined
+                        ? styles.inputColumnHeaderStyle
+                        : undefined
                     }
                   >
                     {formatText(label, application, formatMessage)}
