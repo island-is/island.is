@@ -2,12 +2,7 @@ const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 
-const {
-  INTERNAL_API_URL = 'http://localhost:4444',
-  BFF_PROXY_TARGET = 'http://localhost:3010',
-} = process.env
-
-const graphqlPath = '/api/graphql'
+const { BFF_PROXY_TARGET = 'http://localhost:3010' } = process.env
 
 // In every deployed environment this app shares its ingress host with the
 // `web` app, which owns `/` (and therefore `/_next`), and with
@@ -68,12 +63,6 @@ const nextConfig = {
     }
 
     return config
-  },
-  serverRuntimeConfig: {
-    graphqlEndpoint: `${INTERNAL_API_URL}${graphqlPath}`,
-  },
-  publicRuntimeConfig: {
-    graphqlEndpoint: graphqlPath,
   },
   basePath: BASE_PATH,
   async rewrites() {
