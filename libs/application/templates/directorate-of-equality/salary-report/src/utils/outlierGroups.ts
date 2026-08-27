@@ -38,9 +38,7 @@ export type OutlierGroupAnswer = {
 export const isOutlierGroupComplete = (group: OutlierGroupAnswer): boolean =>
   group.employeeOrdinals.length === 0 ||
   Boolean(
-    group.reason?.trim() &&
-      group.action?.trim() &&
-      group.signatureRole?.trim(),
+    group.reason?.trim() && group.action?.trim() && group.signatureRole?.trim(),
   )
 
 export const unassignedOutlierOrdinals = (
