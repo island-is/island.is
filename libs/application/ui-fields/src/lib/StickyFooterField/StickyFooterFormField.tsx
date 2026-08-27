@@ -33,9 +33,7 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
   }
 
   const rows =
-    typeof field.rows === 'function'
-      ? field.rows(liveApplication)
-      : field.rows
+    typeof field.rows === 'function' ? field.rows(liveApplication) : field.rows
 
   const footerRef = useRef<HTMLElement>(null)
 
@@ -101,9 +99,7 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
       bottom={state.isFloating ? 2 : undefined}
       marginTop={state.isFloating ? undefined : 4}
       style={
-        state.isFloating
-          ? { left: state.left, width: state.width }
-          : undefined
+        state.isFloating ? { left: state.left, width: state.width } : undefined
       }
     >
       <Box

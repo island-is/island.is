@@ -76,8 +76,7 @@ export const debtsSection = buildSection({
               0,
             )
             const totalToPay = (
-              getValueViaPath<string[]>(application.answers, 'debtsToPay') ??
-              []
+              getValueViaPath<string[]>(application.answers, 'debtsToPay') ?? []
             ).reduce((total, amount) => total + (parseInt(amount, 10) || 0), 0)
 
             return [
