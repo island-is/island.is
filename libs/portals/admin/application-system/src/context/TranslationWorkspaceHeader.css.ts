@@ -7,6 +7,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
  * matchMedia (overflow menu items — Reakit portals the menu to `document.body`,
  * so container queries would never match).
  *
+ * - 1280: labelled back + history ("Útgáfusaga"); icon-only below
  * - 1140: overflow ("more") appears; IS/EN tabs hide
  * - 1000: Save / Publish move into the overflow menu
  * - 758: history button moves into the overflow menu
@@ -40,7 +41,7 @@ export const back = style({
   },
 })
 
-/** Show the labelled back control from typical laptop width and up. */
+/** Show labelled header controls from typical laptop width and up. */
 const laptopMin = 1280
 
 export const backWide = style({
@@ -149,6 +150,26 @@ export const history = style({
   },
 })
 
+export const historyWide = style({
+  display: 'none',
+  '@container': {
+    [`adminbar (min-width: ${laptopMin}px)`]: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+  },
+})
+
+export const historyCompact = style({
+  display: 'flex',
+  alignItems: 'center',
+  '@container': {
+    [`adminbar (min-width: ${laptopMin}px)`]: {
+      display: 'none',
+    },
+  },
+})
+
 export const save = style({
   display: 'flex',
   alignItems: 'center',
@@ -199,12 +220,12 @@ const iconSquareButton = {
 
 /** Square ghost icon/label buttons, same height as the small header actions. */
 globalStyle(
-  `${locale} > button, ${history} > button, ${overflow} > button`,
+  `${locale} > button, ${historyCompact} > button, ${overflow} > button`,
   iconSquareButton,
 )
 
 globalStyle(
-  `${locale} > button svg, ${history} > button svg, ${overflow} > button svg`,
+  `${locale} > button svg, ${historyCompact} > button svg, ${overflow} > button svg`,
   {
     marginLeft: 0,
     marginRight: 0,

@@ -364,15 +364,31 @@ export const TranslationWorkspaceHeaderHistoryButton = () => {
 
   return (
     <span className={styles.history}>
-      <Button
-        size="small"
-        variant="ghost"
-        icon="time"
-        iconType="outline"
-        onClick={chrome.onOpenHistory}
-        title={label}
-        aria-label={label}
-      />
+      <span className={styles.historyCompact}>
+        <Button
+          size="small"
+          variant="ghost"
+          icon="time"
+          iconType="outline"
+          onClick={chrome.onOpenHistory}
+          title={label}
+          aria-label={label}
+        />
+      </span>
+      <span className={styles.historyWide}>
+        <Button
+          size="small"
+          variant="ghost"
+          preTextIcon="time"
+          preTextIconType="outline"
+          nowrap
+          onClick={chrome.onOpenHistory}
+          title={label}
+          aria-label={label}
+        >
+          {label}
+        </Button>
+      </span>
     </span>
   )
 }
