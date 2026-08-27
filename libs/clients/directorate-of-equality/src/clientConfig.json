@@ -3502,6 +3502,95 @@
           "benchmarkPercent"
         ]
       },
+      "PayDispersionEmployeeDto": {
+        "type": "object",
+        "properties": {
+          "employeeOrdinal": { "type": "number" },
+          "gender": { "type": "string", "enum": ["MALE", "FEMALE", "NEUTRAL"] },
+          "score": { "type": "number" },
+          "regularHourlyWage": {
+            "type": "number",
+            "description": "Raun reglulegt tímakaup (kr./klst.)."
+          },
+          "expectedHourlyWage": {
+            "type": "number",
+            "description": "Væntanlegt tímakaup at this score, from the same pooled log fit every other figure on the report is measured against."
+          },
+          "deviationPercent": {
+            "type": "number",
+            "description": "frávik %: (raun − væntanlegt) / væntanlegt × 100. Signed."
+          },
+          "payStatus": {
+            "type": "string",
+            "enum": ["UNDERPAID", "OVERPAID", "ON_LINE"]
+          },
+          "studentizedResidual": {
+            "type": "number",
+            "description": "Signed studentized residual: the employee's residual divided by the cohort's residual spread, leverage-corrected. |t| >= the reported threshold is why this row is listed. NOT a percentage and not comparable to deviationPercent — it is a count of spreads."
+          }
+        },
+        "required": [
+          "employeeOrdinal",
+          "gender",
+          "score",
+          "regularHourlyWage",
+          "expectedHourlyWage",
+          "deviationPercent",
+          "payStatus",
+          "studentizedResidual"
+        ]
+      },
+      "PayDispersionDto": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean",
+            "description": "False when no list could be produced; `blockers` says why. An empty `employees` array with `available: true` and no blockers is a genuine all-clear and must not be rendered as \"not assessed\"."
+          },
+          "blockers": {
+            "type": "array",
+            "description": "Codes only — the web maps these to Icelandic copy. Empty when available.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "GAP_NOT_COMPUTABLE",
+                "COHORT_TOO_SMALL",
+                "NO_SCORE_VARIATION"
+              ]
+            }
+          },
+          "population": {
+            "type": "string",
+            "enum": ["ALL_EMPLOYEES", "EXCLUDING_MINIMUM_SET"],
+            "description": "⚠️ CLIENTS: render a LIST only for ALL_EMPLOYEES. EXCLUDING_MINIMUM_SET is computed and shipped so the contract is ready, but has not been requested yet — do NOT render its rows. ⚠️ Gate on the list, not on the section: when `available` is false there are no rows to withhold, so render the `blockers` reason whatever the population says. Otherwise a company over the benchmark and under the 12-employee floor is shown nothing at all. Both DMR surfaces do exactly this. This field describes which employees were eligible for the list; it does NOT change how the statistic was computed."
+          },
+          "threshold": {
+            "type": "number",
+            "description": "The |studentizedResidual| cut-off applied, in spreads. 2 today."
+          },
+          "cohortResidualSpreadPercentUp": {
+            "type": "number",
+            "nullable": true,
+            "description": "The cohort's own residual spread, UPWARD, in percent — exp(s) − 1. Context for the reader: it is why the cut-off is not a fixed percentage. Typically 19–26% on real workforces, which is why a fixed 20%-off-expected rule flags a third of a workforce. WARNING: do NOT render this as a symmetric plus-or-minus — the spread is symmetric in log space and asymmetric in percent, so pair it with cohortResidualSpreadPercentDown. Null when not available."
+          },
+          "cohortResidualSpreadPercentDown": {
+            "type": "number",
+            "nullable": true,
+            "description": "The same spread DOWNWARD, in percent — exp(-s) − 1, so always negative and always smaller in magnitude than the upward figure (+19,55% / −16,35% on a real cohort). Exists so a surface can state the band honestly instead of printing one end with a plus-or-minus in front of it. Null when not available."
+          },
+          "employees": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PayDispersionEmployeeDto" }
+          }
+        },
+        "required": [
+          "available",
+          "blockers",
+          "population",
+          "threshold",
+          "employees"
+        ]
+      },
       "SalaryAnalysisResponseDto": {
         "type": "object",
         "properties": {
@@ -3514,12 +3603,17 @@
           },
           "wageGapDecomposition": {
             "$ref": "#/components/schemas/WageGapDecompositionDto"
+          },
+          "payDispersion": {
+            "description": "ÁBENDINGAR um launadreifingu — a SECOND, informational list over the same data, answering a different question from `outliers` above. `outliers` (the lágmarksmengi) is \"who carries the company's gender pay gap\"; ábendingar is \"whose pay is far from what their starfsmatsstig imply\". It exists because óskýrður launamunur is a difference between the cohorts MEAN deviations, so deviations that offset each other inside one cohort cancel exactly — a company can be well under 3,9% while individuals sit a long way off the fitted line. ⚠️ IT ASKS NOTHING: never render it with the reason/action/signature inputs the úrbótaáætlun uses, never require it to be filled in, never submit it. The employer owes no explanation for these rows and they cannot affect how the report is decided. ⚠️ Gate the LIST, not the section: render rows only for population = ALL_EMPLOYEES (EXCLUDING_MINIMUM_SET is shipped so the contract is ready but has not been requested yet), but when `available` is false there are no rows to withhold, so render the `blockers` reason whatever the population says — otherwise a company over the benchmark and under the 12-employee floor is shown nothing at all. Confirm with DMR before rendering those rows. Derived from wageGapDecomposition on read, never stored. See docs/launagreining.md §10.",
+            "allOf": [{ "$ref": "#/components/schemas/PayDispersionDto" }]
           }
         },
         "required": [
           "outliers",
           "regularHourlyWageByScoreAll",
-          "wageGapDecomposition"
+          "wageGapDecomposition",
+          "payDispersion"
         ]
       },
       "EqualityReportSummaryDto": {
@@ -3903,6 +3997,10 @@
           },
           "wageGapDecomposition": {
             "$ref": "#/components/schemas/WageGapDecompositionDto"
+          },
+          "payDispersion": {
+            "description": "ÁBENDINGAR um launadreifingu — the informational counterpart to the lágmarksmengi, asking whose pay is far from what their starfsmatsstig imply rather than who carries the gender gap. Carries NO obligation: no reason, no action, no signature, no reviewer step, never a basis for rejection, and invisible to auto-review. ⚠️ DERIVED ON READ from wageGapDecomposition, not part of the frozen snapshot — an advisory rule must stay tunable without rewriting published history, which is also why it is a sibling of wageGapDecomposition rather than a field inside it. ⚠️ Gate the LIST, not the section: render rows only for population = ALL_EMPLOYEES (EXCLUDING_MINIMUM_SET is shipped so the contract is ready but has not been requested yet), but when `available` is false there are no rows to withhold, so render the `blockers` reason whatever the population says — otherwise a company over the benchmark and under the 12-employee floor is shown nothing at all. See docs/launagreining.md §10.",
+            "allOf": [{ "$ref": "#/components/schemas/PayDispersionDto" }]
           }
         },
         "required": [
@@ -3910,7 +4008,8 @@
           "reportId",
           "calculationVersion",
           "salary",
-          "wageGapDecomposition"
+          "wageGapDecomposition",
+          "payDispersion"
         ]
       },
       "ReportRoleEnum": { "type": "string", "enum": ["REVIEWER", "COMPANY"] },

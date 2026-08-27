@@ -19,6 +19,7 @@ import { OfflineIcon } from '@/components/offline/offline-icon'
 import {
   GetHealthConversationQuery,
   HealthDirectorateHealthConversationDirection,
+  HealthDirectorateHealthConversationReplyBlockedReason,
   useArchiveHealthConversationMutation,
   useGetHealthConversationQuery,
   useMarkHealthConversationAsReadMutation,
@@ -46,6 +47,24 @@ type ConversationMessage = NonNullable<
 >['messages'][number]
 
 type FlatListItem = ConversationMessage | { __typename: 'Skeleton'; id: string }
+
+// Maps a reply-blocked reason to its explanatory message.
+const replyBlockedMessageId = (
+  reason?: HealthDirectorateHealthConversationReplyBlockedReason | null,
+): string => {
+  switch (reason) {
+    case HealthDirectorateHealthConversationReplyBlockedReason.OutsideMessagingWindow:
+      return 'health.messages.replyBlocked.outsideWindow'
+    case HealthDirectorateHealthConversationReplyBlockedReason.ReplyWindowExpired:
+      return 'health.messages.replyBlocked.windowExpired'
+    case HealthDirectorateHealthConversationReplyBlockedReason.AwaitingStaffReply:
+      return 'health.messages.replyBlocked.awaitingStaff'
+    case HealthDirectorateHealthConversationReplyBlockedReason.RepliesDisabled:
+      return 'health.messages.replyBlocked.repliesDisabled'
+    default:
+      return 'health.messages.replyBlocked.default'
+  }
+}
 
 export default function HealthMessageDetailScreen() {
   const { id, justCreated } = useLocalSearchParams<{
@@ -430,7 +449,7 @@ export default function HealthMessageDetailScreen() {
                   type="info"
                   size="small"
                   message={intl.formatMessage({
-                    id: 'health.messages.cannotReply',
+                    id: replyBlockedMessageId(conversation?.replyBlockedReason),
                   })}
                   hasBorder
                 />

@@ -37,3 +37,19 @@ export const getProviderErrorMessage = (
 
   return singleReason(reason)
 }
+
+// Same shapes as getProviderErrorMessage, kept as a list rather than joined —
+// e.g. DMR returns one entry per invalid row in an uploaded workbook, and
+// joining those with ', ' into a single sentence reads worse than a bulleted
+// list of what to fix.
+export const getProviderErrorMessages = (
+  reason: unknown,
+): string[] | undefined => {
+  if (!reason) return undefined
+
+  const list = Array.isArray(reason) ? reason : [reason]
+  const parts = list
+    .map(singleReason)
+    .filter((part): part is string => Boolean(part))
+  return parts.length > 0 ? parts : undefined
+}
