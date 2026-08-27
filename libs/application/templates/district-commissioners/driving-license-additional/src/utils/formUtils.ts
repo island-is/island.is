@@ -101,8 +101,7 @@ const holdsFullBLicense = (
 ): boolean =>
   categories?.some(
     (c) =>
-      categoryCode(c) === 'B' &&
-      c.validToCode !== TEMPORARY_LICENSE_VALID_CODE,
+      categoryCode(c) === 'B' && c.validToCode !== TEMPORARY_LICENSE_VALID_CODE,
   ) ?? false
 
 // Whether the applicant is eligible to apply for BE (trailer rights). Mirrors
