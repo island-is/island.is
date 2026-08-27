@@ -7,6 +7,8 @@ import { LoggingModule } from '@island.is/logging'
 import { DrivingLicenseApiModule } from './drivingLicenseApi.module'
 import { exportedApis } from './apiConfiguration'
 import { CodeTableV5 } from '../v5'
+import { ApplicationApiV6 } from '../v6'
+import type { Auth } from '@island.is/auth-nest-tools'
 
 import {
   lastNewCategoryRequest,
@@ -18,6 +20,7 @@ startMocking(requestHandlers)
 describe('DrivingLicenseDuplicateService', () => {
   let service: DrivingLicenseApi
   let codeTable: CodeTableV5
+  let applicationV6: ApplicationApiV6
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -34,6 +37,7 @@ describe('DrivingLicenseDuplicateService', () => {
 
     service = module.get(DrivingLicenseApi)
     codeTable = module.get(CodeTableV5)
+    applicationV6 = module.get(ApplicationApiV6)
   })
 
   describe('Service', () => {
@@ -153,6 +157,71 @@ describe('DrivingLicenseDuplicateService', () => {
         signatureBiometricsId: null,
       })
       expect(result).toBe(true)
+    })
+  })
+
+  describe('postTemporaryLicenseWithHealthDeclarationV6 resubmission guard', () => {
+    // RLS answers 400 when the licence already exists, which is what a retried
+    // submit looks like after a lost response. The guard re-asks `canapplyfor`
+    // and treats HAS_B_CATEGORY as "created on the previous attempt", so an
+    // already-paid applicant is not left on an error screen. These tests are the
+    // reason not to delete it as dead code.
+    const auth = { authorization: 'Bearer some-token' } as Auth
+    const model = {
+      districtId: 37,
+      instructorSSN: '0101302479',
+      sendPlasticToPerson: false,
+      healthDeclaration: {},
+    }
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    const rejectPostWith = (error: unknown) =>
+      jest
+        .spyOn(
+          applicationV6,
+          'apiApplicationsV6TemporarywithhealthdeclarationPost',
+        )
+        .mockRejectedValue(error)
+
+    it('treats a 400 with HAS_B_CATEGORY as success', async () => {
+      rejectPostWith({ status: 400 })
+      const canApply = jest
+        .spyOn(service, 'getCanApplyForCategoryTemporary')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_B_CATEGORY' })
+
+      await expect(
+        service.postTemporaryLicenseWithHealthDeclarationV6({ auth, model }),
+      ).resolves.toEqual({ result: true })
+
+      // The bare token, not the `Bearer ` prefix — v5 `canapplyfor` reads it as
+      // the `jwttoken` header and rejects the prefixed form.
+      expect(canApply).toHaveBeenCalledWith({ token: 'some-token' })
+    })
+
+    it('rethrows a 400 with any other code, so the description pipeline still runs', async () => {
+      const original = { status: 400, name: 'FetchError' }
+      rejectPostWith(original)
+      jest
+        .spyOn(service, 'getCanApplyForCategoryTemporary')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_DEPRIVATION' })
+
+      await expect(
+        service.postTemporaryLicenseWithHealthDeclarationV6({ auth, model }),
+      ).rejects.toBe(original)
+    })
+
+    it('does not re-check canApply for a non-400 failure', async () => {
+      const original = { status: 500, name: 'FetchError' }
+      rejectPostWith(original)
+      const canApply = jest.spyOn(service, 'getCanApplyForCategoryTemporary')
+
+      await expect(
+        service.postTemporaryLicenseWithHealthDeclarationV6({ auth, model }),
+      ).rejects.toBe(original)
+      expect(canApply).not.toHaveBeenCalled()
     })
   })
 

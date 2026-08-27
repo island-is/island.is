@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
 import {
   CanApplyErrorCodeBFull,
   CanApplyForCategoryResult,
@@ -7,6 +8,7 @@ import {
 } from '..'
 import * as v4 from '../v4'
 import * as v5 from '../v5'
+import * as v6 from '../v6'
 import {
   CanApplyErrorCodeBTemporary,
   CanApplyErrorCodeRenewal65,
@@ -33,7 +35,94 @@ export class DrivingLicenseApi {
     private readonly applicationV5: v5.ApplicationApiV5,
     private readonly v5CodeTable: v5.CodeTableV5,
     private readonly imageApiV5: v5.ImageApiV5,
+    // Appended, not inserted: Nest resolves by type metadata, so appending
+    // keeps the diff to one line.
+    private readonly applicationV6: v6.ApplicationApiV6,
   ) {}
+
+  /**
+   * B-temp submit that carries the health declaration AND the certificate, via
+   * the v6 endpoint RLS added 2026-08-26. Replaces the legacy pair of calls
+   * (`postTemporaryLicenseWithHealthDeclaratio` + `postCreateDrivingLicenseTemporary`)
+   * for applicants whose redesign flag is on.
+   *
+   * The v5 twin above must stay: it is still the flag-off path, and flags are
+   * frozen into application answers, so in-flight drafts keep using it. Hence
+   * the `V6` suffix here — drop it once the v5 method goes.
+   */
+  public async postTemporaryLicenseWithHealthDeclarationV6(input: {
+    auth: Auth
+    model: v6.ModelsV6PostTemporaryLicenseWithHealthDeclaration
+  }): Promise<v6.DtoV6NewTemporaryLicsenseDto> {
+    try {
+      return await withAuthContext(input.auth, () =>
+        this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPost({
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+          modelsV6PostTemporaryLicenseWithHealthDeclaration: input.model,
+        }),
+      )
+    } catch (e) {
+      // Same guard as the v5 `postCreateDrivingLicenseTemporary` path, and for
+      // the same reason: if the licence was created but the response was lost,
+      // the state machine retries and RLS answers 400 on the resubmission. The
+      // generated client does not map that error, so we re-ask `canapplyfor`:
+      // `HAS_B_CATEGORY` means the applicant now holds the licence, i.e. the
+      // previous attempt succeeded.
+      //
+      // A genuine denial would already have been caught by this same check at
+      // prerequisites, so by submit time the code almost always means "created
+      // on the previous attempt" — and the cost is asymmetric: without the
+      // guard an already-paid applicant is left on an error screen. Do not
+      // remove this on the grounds that the single v6 call replaced the old
+      // two-call shape; that is not what causes the 400.
+      if ((e as { status?: number })?.status === 400) {
+        const hasTemp = await this.getCanApplyForCategoryTemporary({
+          token: input.auth.authorization.replace(/^bearer /i, ''),
+        })
+
+        if (hasTemp.errorCode === 'HAS_B_CATEGORY') {
+          return { result: true }
+        }
+      }
+
+      // Unlike the v5 twin, which swallows every other 400 into `false`, rethrow
+      // so the original `FetchError` still reaches `toSubmissionError` and the
+      // applicant gets the RLS error description rather than a generic failure.
+      throw e
+    }
+  }
+
+  /**
+   * B-full counterpart of the above. Unlike the temporary endpoint this returns
+   * a bare number rather than a DTO, and the generated client's `Promise<number>`
+   * is a lie — the raw method ends in `TextApiResponse`, and the service returns
+   * a string on error. `handleCreateResponse` is the existing handler for that.
+   */
+  public async postFullLicenseWithHealthDeclarationV6(input: {
+    auth: Auth
+    category: string
+    model: v6.ModelsV6PostFullLicenseWithHealthDeclaration
+  }): Promise<boolean> {
+    const response = await withAuthContext(input.auth, () =>
+      this.applicationV6.apiApplicationsV6CategoryWithhealthdeclarationPost({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        category: input.category,
+        modelsV6PostFullLicenseWithHealthDeclaration: input.model,
+      }),
+    )
+
+    const handledResponse = handleCreateResponse(response)
+
+    if (!handledResponse.success) {
+      throw new Error(
+        `POST apiApplicationsV6CategoryWithhealthdeclarationPost was not successful, response was: ${handledResponse.error}`,
+      )
+    }
+
+    return handledResponse.success
+  }
 
   public async postTemporaryLicenseWithHealthDeclaratio(input: {
     nationalId: string
