@@ -1070,7 +1070,7 @@ export const en: TranslatedMessages = {
   'health.prescriptions.renewalBlockedInvalidRenewalTarget':
     'Renewal not available',
   'health.prescriptions.renewalBlockedRecipientExcludesAtc':
-    'Renewal not available because',
+    'Renewal not available',
   'health.prescriptions.renewalBlockedOther': 'Unknown reason',
   'health.prescriptions.renewalModal.title': 'Prescription renewal request',
   'health.prescriptions.renewalModal.description':

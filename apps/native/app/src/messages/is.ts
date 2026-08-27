@@ -1061,7 +1061,7 @@ export const is = {
   'health.prescriptions.renewalBlockedInvalidRenewalTarget':
     'Endurnýjun ekki í boði',
   'health.prescriptions.renewalBlockedRecipientExcludesAtc':
-    'Endurnýjun ekki í boði vegna',
+    'Endurnýjun ekki í boði',
   'health.prescriptions.renewalBlockedOther': 'Óþekkt ástæða',
   'health.prescriptions.renewalModal.title': 'Beiðni um endurnýjun á lyfi',
   'health.prescriptions.renewalModal.description':
