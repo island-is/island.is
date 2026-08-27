@@ -22,6 +22,11 @@ export const payment = {
     },
   }),
   summary: defineMessages({
+    forPaymentLabel: {
+      id: 'pd.application:payment.summary.forPaymentLabel',
+      defaultMessage: 'Til greiðslu',
+      description: 'Heading shown above the list of selected debts',
+    },
     totalLabel: {
       id: 'pd.application:payment.summary.totalLabel',
       defaultMessage: 'Samtals',

@@ -41,7 +41,9 @@ export const PaymentChargeOverviewFormField: FC<
         chargeWithInfo.chargeItemCode === charge.chargeItemCode,
     )
     return {
-      ...chargeWithInfo,
+      chargeItemCode: charge.chargeItemCode,
+      chargeItemName: charge.chargeItemName ?? chargeWithInfo?.chargeItemName,
+      priceAmount: charge.chargeItemAmount ?? chargeWithInfo?.priceAmount,
       quantity: charge.chargeItemQuantity,
       extraLabel: charge.extraLabel,
     }
@@ -59,63 +61,96 @@ export const PaymentChargeOverviewFormField: FC<
         <Text variant="h3" as="h4" marginY={2}>
           {formatText(field.forPaymentLabel, application, formatMessage)}
         </Text>
-        {selectedChargeWithInfoList.map((charge, index) => (
-          <Box key={charge?.chargeItemCode}>
-            <Text variant="h5">
-              {charge?.chargeItemName}
-              {charge?.extraLabel
-                ? ` - ${formatMessage(charge.extraLabel)}`
-                : ''}
-            </Text>
-            <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
-              <Text>
-                {field.unitPriceLabel
-                  ? formatMessage(field.unitPriceLabel)
-                  : formatMessage(
-                      coreDefaultFieldMessages.defaultUnitPriceTitle,
-                    )}
-              </Text>
-              <Text> {formatIsk(charge?.priceAmount || 0)}</Text>
-            </Box>
-            <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
-              <Text>
-                {field.quantityLabel
-                  ? formatMessage(field.quantityLabel)
-                  : formatMessage(
-                      coreDefaultFieldMessages.defaultQuantityTitle,
-                    )}
-              </Text>
-              <Text>
-                {charge?.quantity || 1}
-                {field.quantityUnitLabel
-                  ? ` ${formatMessage(field.quantityUnitLabel)}`
-                  : ''}
-              </Text>
-            </Box>
-            {selectedChargeWithInfoList.length > 1 && (
-              <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
-                <Text variant="h5">
-                  {field.totalPerUnitLabel
-                    ? formatMessage(field.totalPerUnitLabel)
-                    : formatMessage(
-                        coreDefaultFieldMessages.defaultTotalPerUnitTitle,
-                      )}
+        {field.simplifiedList
+          ? selectedChargeWithInfoList.map((charge) => (
+              <Box
+                key={charge?.chargeItemCode}
+                paddingTop={1}
+                display="flex"
+                justifyContent="spaceBetween"
+              >
+                <Text>
+                  {charge?.chargeItemName}
+                  {charge?.extraLabel
+                    ? ` - ${formatMessage(charge.extraLabel)}`
+                    : ''}
                 </Text>
-                <Text variant="h5">
-                  {' '}
+                <Text>
                   {formatIsk(
                     (charge?.priceAmount || 0) * (charge?.quantity || 1),
                   )}
                 </Text>
               </Box>
-            )}
-            {index < selectedChargeWithInfoList.length - 1 && (
-              <Box paddingY={3}>
-                <Divider />
+            ))
+          : selectedChargeWithInfoList.map((charge, index) => (
+              <Box key={charge?.chargeItemCode}>
+                <Text variant="h5">
+                  {charge?.chargeItemName}
+                  {charge?.extraLabel
+                    ? ` - ${formatMessage(charge.extraLabel)}`
+                    : ''}
+                </Text>
+                <Box
+                  paddingTop={1}
+                  display="flex"
+                  justifyContent="spaceBetween"
+                >
+                  <Text>
+                    {field.unitPriceLabel
+                      ? formatMessage(field.unitPriceLabel)
+                      : formatMessage(
+                          coreDefaultFieldMessages.defaultUnitPriceTitle,
+                        )}
+                  </Text>
+                  <Text> {formatIsk(charge?.priceAmount || 0)}</Text>
+                </Box>
+                <Box
+                  paddingTop={1}
+                  display="flex"
+                  justifyContent="spaceBetween"
+                >
+                  <Text>
+                    {field.quantityLabel
+                      ? formatMessage(field.quantityLabel)
+                      : formatMessage(
+                          coreDefaultFieldMessages.defaultQuantityTitle,
+                        )}
+                  </Text>
+                  <Text>
+                    {charge?.quantity || 1}
+                    {field.quantityUnitLabel
+                      ? ` ${formatMessage(field.quantityUnitLabel)}`
+                      : ''}
+                  </Text>
+                </Box>
+                {selectedChargeWithInfoList.length > 1 && (
+                  <Box
+                    paddingTop={1}
+                    display="flex"
+                    justifyContent="spaceBetween"
+                  >
+                    <Text variant="h5">
+                      {field.totalPerUnitLabel
+                        ? formatMessage(field.totalPerUnitLabel)
+                        : formatMessage(
+                            coreDefaultFieldMessages.defaultTotalPerUnitTitle,
+                          )}
+                    </Text>
+                    <Text variant="h5">
+                      {' '}
+                      {formatIsk(
+                        (charge?.priceAmount || 0) * (charge?.quantity || 1),
+                      )}
+                    </Text>
+                  </Box>
+                )}
+                {index < selectedChargeWithInfoList.length - 1 && (
+                  <Box paddingY={3}>
+                    <Divider />
+                  </Box>
+                )}
               </Box>
-            )}
-          </Box>
-        ))}
+            ))}
       </Box>
       <Box paddingY={3}>
         <Divider />
