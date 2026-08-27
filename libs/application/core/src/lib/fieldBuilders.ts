@@ -796,6 +796,7 @@ export const buildPaymentChargeOverviewField = (
     quantityUnitLabel,
     unitPriceLabel,
     totalPerUnitLabel,
+    simplifiedList,
     getSelectedChargeItems,
   } = data
   return {
@@ -808,6 +809,7 @@ export const buildPaymentChargeOverviewField = (
     quantityUnitLabel,
     unitPriceLabel,
     totalPerUnitLabel,
+    simplifiedList,
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,

@@ -1,13 +1,10 @@
 import {
   buildDescriptionField,
   buildMultiField,
+  buildPaymentChargeOverviewField,
   buildSection,
-  buildStaticTableField,
 } from '@island.is/application/core'
-import { StaticText } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
-import { debts, payment as messages } from '../../lib/messages'
-import { formatDate } from '../../utils/formatDate'
+import { payment as messages } from '../../lib/messages'
 import { getSelectedDebts } from '../../utils/getSelectedDebts'
 
 export const paymentSection = buildSection({
@@ -20,33 +17,19 @@ export const paymentSection = buildSection({
       children: [
         buildDescriptionField({
           id: 'description',
-          description: messages.description.description,
           space: 'none',
         }),
-        buildStaticTableField({
-          header: [
-            debts.table.chargeTypeNameHeader,
-            debts.table.dueDateHeader,
-            debts.table.finalDueDateHeader,
-            debts.table.toPayLabel,
-          ],
-          rows: (application) =>
-            getSelectedDebts(application).map<StaticText[]>((debt) => [
-              debt.chargeTypeName,
-              formatDate(debt.dueDate),
-              formatDate(debt.finalDueDate),
-              formatCurrency(debt.amountToPay.toString()),
-            ]),
-          summary: (application) => [
-            {
-              label: messages.summary.totalLabel,
-              value: formatCurrency(
-                getSelectedDebts(application)
-                  .reduce((total, debt) => total + debt.amountToPay, 0)
-                  .toString(),
-              ),
-            },
-          ],
+        buildPaymentChargeOverviewField({
+          id: 'paymentChargeOverview',
+          forPaymentLabel: messages.summary.forPaymentLabel,
+          totalLabel: messages.summary.totalLabel,
+          simplifiedList: true,
+          getSelectedChargeItems: (application) =>
+            getSelectedDebts(application).map((debt) => ({
+              chargeItemCode: debt.chargeTypeId,
+              chargeItemName: debt.chargeTypeName,
+              chargeItemAmount: debt.amountToPay,
+            })),
         }),
       ],
     }),
