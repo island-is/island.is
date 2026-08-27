@@ -7,7 +7,6 @@ import {
   StaticText,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { NationalRegistryUser } from '@island.is/api/schema'
 import { Jurisdiction } from '@island.is/clients/driving-license'
 import {
   formatPhoneNumber,
@@ -15,6 +14,7 @@ import {
 } from '@island.is/application/ui-components'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../lib/messages'
+import { NationalRegistryAddress } from '../lib/types'
 import { advancedLicenseMap, B_ADVANCED, BE, Pickup } from './constants'
 import { formatRegisteredAddress, getCodes } from './formUtils'
 
@@ -114,7 +114,7 @@ export const getApplicantOverviewItems = (
     width: 'half',
     keyText: m.overviewStreetAddress,
     valueText: formatRegisteredAddress(
-      getValueViaPath<NationalRegistryUser['address']>(
+      getValueViaPath<NationalRegistryAddress>(
         externalData,
         'nationalRegistry.data.address',
       ),

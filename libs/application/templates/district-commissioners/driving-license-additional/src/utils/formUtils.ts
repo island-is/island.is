@@ -5,8 +5,11 @@ import {
   BasicChargeItem,
   Application,
 } from '@island.is/application/types'
-import { NationalRegistryUser } from '@island.is/api/schema'
-import { DrivingLicense, DrivingLicenseCategory } from '../lib/types'
+import {
+  DrivingLicense,
+  DrivingLicenseCategory,
+  NationalRegistryAddress,
+} from '../lib/types'
 import {
   advancedLicenseMap,
   AdvancedLicense,
@@ -153,7 +156,7 @@ export const meetsAdditionalLicenseRequirements = (
 // present so summaries never render `undefined`. Shared by the applicant-info
 // and summary sections to keep the formatting consistent.
 export const formatRegisteredAddress = (
-  address: NationalRegistryUser['address'],
+  address: NationalRegistryAddress | null | undefined,
 ): string => {
   if (!address) {
     return ''

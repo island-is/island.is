@@ -121,12 +121,9 @@ Events are `SUBMIT`, `PAYMENT`, `APPROVE`, `ABORT` (see
 src/
 ├── dataProviders/           # Sýslumaður payment-catalog data providers
 ├── fields/                  # Custom React fields
-│   ├── AdvancedLicenseSelection/   # category picker (C1/C/D1/D + E + professional)
-│   ├── ApplicationSection/         # summary rows
-│   ├── ApplicationSummary/         # review overview
-│   └── CreatePhoto/                # quality-photo rendering
+│   └── AdvancedLicenseSelection/   # category picker (C1/C/D1/D + E + professional)
 ├── forms/
-│   ├── prerequisitesForm/   # external data, fake data, applicationFor, category select, summary
+│   ├── prerequisitesForm/   # external data + fake data
 │   ├── mainForm/            # applicant info, quality photo, delivery, health declaration, summary
 │   └── completedForm/       # done screen
 ├── lib/
