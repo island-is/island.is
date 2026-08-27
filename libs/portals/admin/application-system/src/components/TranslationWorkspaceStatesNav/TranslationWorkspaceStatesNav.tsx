@@ -139,14 +139,13 @@ export const TranslationWorkspaceStatesNav = ({
                               </Text>
                             </Box>
                           )}
-                          {!role.formLoadError &&
-                            !role.form && (
-                              <Box marginLeft={2} marginBottom={1}>
-                                <Text variant="small" color="dark300">
-                                  No form returned for this role.
-                                </Text>
-                              </Box>
-                            )}
+                          {!role.formLoadError && !role.form && (
+                            <Box marginLeft={2} marginBottom={1}>
+                              <Text variant="small" color="dark300">
+                                No form returned for this role.
+                              </Text>
+                            </Box>
+                          )}
                           {!role.formLoadError &&
                             role.form &&
                             (role.form.sections ?? []).length === 0 && (
@@ -339,7 +338,8 @@ export const TranslationWorkspaceStatesNav = ({
                                   })}
                                 </Box>
                               )
-                            })}
+                            },
+                          )}
                         </AccordionItem>
                       </Box>
                     )
