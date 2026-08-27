@@ -116,7 +116,10 @@ mutation CreateHealthCertificatePaymentIntent(
   $input: HealthDirectorateCreateCertificatePaymentIntentInput!
   $locale: LocaleEnum
 ) {
-  healthDirectorateCreateCertificatePaymentIntent(input: $input, locale: $locale) {
+  healthDirectorateCreateCertificatePaymentIntent(
+    input: $input
+    locale: $locale
+  ) {
     paymentId
     paymentPageUrl
   }
