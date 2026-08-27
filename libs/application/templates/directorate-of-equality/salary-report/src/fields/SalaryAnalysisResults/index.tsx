@@ -19,6 +19,10 @@ import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
 import { getProviderErrorMessage } from '../../utils/providerError'
 import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import type { ReportEmployeeDto } from '../../utils/types'
+import {
+  getProviderSuccessData,
+  type ProviderExternalData,
+} from '../../utils/providerResult'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { buildPayComponentsBreakdown } from '../../utils/payComponents'
 import {
@@ -32,10 +36,6 @@ import { StatisticCard } from './StatisticsCard'
 import { SalaryDistributionChart } from './SalaryDistributionChart'
 
 type Props = FieldBaseProps
-type DraftEmployeesExternalData = {
-  status?: 'success' | 'failure'
-  data?: { employees: ReportEmployeeDto[] }
-}
 
 export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   application,
@@ -62,6 +62,15 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const [draftEmployees, setDraftEmployees] = useState<
     ReportEmployeeDto[] | undefined
   >(() => employeesContent?.employees)
+  // The employees list and the analysis are two providers in one mutation, and
+  // updateApplicationExternalData reports their statuses independently (its
+  // endpoint never applies throwOnError). When only one leg lands, the two
+  // halves of this screen describe different drafts — either way round. The
+  // pay-components table is the one element built from the employees snapshot
+  // rather than from `result`, so it is the one that would caption a component
+  // average from one attempt with a gap figure from another; it stands down
+  // until a paired attempt lands.
+  const [snapshotsOutOfStep, setSnapshotsOutOfStep] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasRequestedAnalysis, setHasRequestedAnalysis] = useState(() =>
     Boolean(getSalaryAnalysisResult(application.externalData)),
@@ -162,21 +171,32 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       const salaryAnalysisResult = externalData.salaryAnalysisResult as
         | AnalysisExternalData
         | undefined
-      const draftEmployeesResult = externalData.draftEmployees as
-        | DraftEmployeesExternalData
-        | undefined
-      if (
-        draftEmployeesResult?.status === 'success' &&
-        draftEmployeesResult.data
-      ) {
-        setDraftEmployees(draftEmployeesResult.data.employees)
+      const employees = getProviderSuccessData(
+        externalData.draftEmployees as
+          | ProviderExternalData<{ employees: ReportEmployeeDto[] }>
+          | undefined,
+      )
+      const analysis = getProviderSuccessData(salaryAnalysisResult)
+
+      // Only a paired attempt clears the skew. If neither leg landed nothing
+      // was replaced, so the standing verdict still describes what is on
+      // screen and resetting it here would show a skewed pair as though it
+      // had been re-checked.
+      if (employees && analysis) {
+        setSnapshotsOutOfStep(false)
+      } else if (employees || analysis) {
+        setSnapshotsOutOfStep(true)
       }
-      if (
-        salaryAnalysisResult?.status === 'success' &&
-        salaryAnalysisResult.data
-      ) {
-        applyNavigationAnswers(salaryAnalysisResult.data, true)
-        setResult(salaryAnalysisResult.data)
+
+      // A failed employees leg is deliberately not surfaced as an error: the
+      // analysis is the artifact this screen gates submission on and it stands
+      // on its own, so a failed side-read must not discard it or block the
+      // applicant. Only the derived table stands down.
+      if (employees) setDraftEmployees(employees.employees)
+
+      if (analysis) {
+        applyNavigationAnswers(analysis, true)
+        setResult(analysis)
       } else {
         setErrorMessage(getProviderErrorMessage(salaryAnalysisResult?.reason))
         setHasError(true)
@@ -538,7 +558,9 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         identifierForOrdinal={identifierForOrdinal}
       />
 
-      <PayComponentsTable data={result ? payComponents : null} />
+      <PayComponentsTable
+        data={result && !snapshotsOutOfStep ? payComponents : null}
+      />
 
       <PayDispersionTable
         payDispersion={result?.payDispersion}
