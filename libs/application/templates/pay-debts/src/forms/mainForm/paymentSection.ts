@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildPaymentChargeOverviewField,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
 import { payment as messages } from '../../lib/messages'
 import { getDebts } from '../../utils/getDebts'
@@ -44,6 +45,18 @@ export const paymentSection = buildSection({
               chargeItemName: debt.chargeTypeName,
               chargeItemAmount: debt.amountToPay,
             })),
+        }),
+        buildSubmitField({
+          id: 'submit',
+          title: messages.buttons.submit,
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: 'SUBMIT',
+              name: messages.buttons.submit,
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

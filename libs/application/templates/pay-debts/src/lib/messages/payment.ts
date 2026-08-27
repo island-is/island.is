@@ -39,4 +39,11 @@ export const payment = {
       description: 'Label for the remaining amount of the selected debts',
     },
   }),
+  buttons: defineMessages({
+    submit: {
+      id: 'pd.application:overview.buttons.submit',
+      defaultMessage: 'Greiða skuld',
+      description: 'Submit application button',
+    },
+  }),
 }
