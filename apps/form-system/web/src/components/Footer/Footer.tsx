@@ -366,6 +366,9 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       const saved = await saveCurrentScreen()
       if (!saved) return
 
+      const updatedDependencies = await updateCurrentDependencies()
+      if (!updatedDependencies) return
+
       const { data } = await submitApplication({
         variables: { input: { id: state.application.id } },
       })
@@ -384,8 +387,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       if (!completedSaved) return
 
       increment()
-      const updatedDependencies = await updateCurrentDependencies()
-      if (!updatedDependencies) return
 
       dispatch({
         type: 'SUBMITTED',
