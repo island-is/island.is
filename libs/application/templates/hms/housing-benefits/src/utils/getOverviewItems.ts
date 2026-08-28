@@ -1146,6 +1146,47 @@ export const assigneeAccessAgreementOverviewAttachments = (
   return out
 }
 
+export const signedAssigneesAccessAgreementOverviewAttachments = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<AttachmentItem> => {
+  const signed =
+    getValueViaPath<string[]>(answers, 'signedAssignees') ?? ([] as string[])
+  const out: Array<AttachmentItem> = []
+  for (const nationalId of signed) {
+    const assigneeName =
+      getValueViaPath<string>(
+        answers,
+        `${sanitizeKennitala(nationalId)}.assigneeInfo.name`,
+      )?.trim() ?? ''
+    for (const file of assigneeAccessAgreementOverviewAttachments(
+      answers,
+      externalData,
+      nationalId,
+    )) {
+      out.push({
+        ...file,
+        fileName: assigneeName
+          ? `${assigneeName} – ${file.fileName}`
+          : file.fileName,
+      })
+    }
+  }
+  return out
+}
+
+export const signedAssigneesAccessAgreementOverviewTitle = (
+  application: Application,
+) => ({
+  ...m.draftMessages.overviewSection.accessAgreementTitle,
+  values: {
+    count: signedAssigneesAccessAgreementOverviewAttachments(
+      application.answers,
+      application.externalData,
+    ).length,
+  },
+})
+
 /** Full key–value list for sign / document overview (file names in text). */
 export const assigneeUmgengnissamningurOverviewItems = (
   answers: FormValue,
