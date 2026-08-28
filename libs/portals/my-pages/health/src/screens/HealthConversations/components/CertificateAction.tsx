@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Box, Button, Tag, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { messages } from '../../../lib/messages'
@@ -10,28 +10,16 @@ import {
 
 const POLL_INTERVAL_MS = 4000
 const POLL_TIMEOUT_MS = 2 * 60 * 1000
-const amountFormatter = new Intl.NumberFormat('de-DE')
 
-interface Props {
-  certificateId?: string | null
-  requiresPayment?: boolean | null
-  paid?: boolean | null
-  amountIsk?: number | null
-  pendingPaymentId?: string | null
-  isReturningFromPayment?: boolean
-  onPaid: () => void
-}
-
-const CertificateAction = ({
+const useCertificatePaymentPolling = ({
   certificateId,
-  requiresPayment,
-  paid,
-  amountIsk,
   pendingPaymentId,
   isReturningFromPayment,
   onPaid,
-}: Props) => {
-  const { formatMessage, lang } = useLocale()
+}: Pick<
+  Props,
+  'certificateId' | 'pendingPaymentId' | 'isReturningFromPayment' | 'onPaid'
+>) => {
   const [isPolling, setIsPolling] = useState(
     Boolean(pendingPaymentId || isReturningFromPayment),
   )
@@ -55,22 +43,46 @@ const CertificateAction = ({
     fetchPolicy: 'network-only',
   })
 
-  const pollResult = pollData?.healthDirectorateCertificate
+  const paid = pollData?.healthDirectorateCertificate?.paid
 
   useEffect(() => {
-    if (isPolling && pollResult?.paid) {
+    if (isPolling && paid) {
       setIsPolling(false)
       onPaid()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPolling, pollResult?.paid])
+  }, [isPolling, paid])
+
+  return isPolling
+}
+
+interface Props {
+  certificateId?: string | null
+  requiresPayment?: boolean | null
+  paid?: boolean | null
+  pendingPaymentId?: string | null
+  isReturningFromPayment?: boolean
+  onPaid: () => void
+}
+
+const CertificateAction = ({
+  certificateId,
+  requiresPayment,
+  paid,
+  pendingPaymentId,
+  isReturningFromPayment,
+  onPaid,
+}: Props) => {
+  const { formatMessage, lang } = useLocale()
+  const isPolling = useCertificatePaymentPolling({
+    certificateId,
+    pendingPaymentId,
+    isReturningFromPayment,
+    onPaid,
+  })
 
   const [createPaymentIntent, { loading: paymentLoading }] =
     useCreateHealthCertificatePaymentIntentMutation()
-
-  if (!requiresPayment && !certificateId) {
-    return null
-  }
 
   const handlePay = async () => {
     if (!certificateId) return
@@ -99,6 +111,17 @@ const CertificateAction = ({
 
   const isUnpaid = requiresPayment && !paid
 
+  /*  
+    Only an unpaid gated certificate needs payment: once paid (or when
+    payment is not required) the attachment row is the download. Without a
+    certificateId there is nothing to open a payment intent against or poll 
+    (the API's "payable in principle but not yet actionable" state) so render
+    nothing there too.
+  */
+  if (!isUnpaid || !certificateId) {
+    return null
+  }
+
   return (
     <Box
       display="flex"
@@ -106,68 +129,24 @@ const CertificateAction = ({
       rowGap={1}
       marginBottom={3}
       alignItems="flexStart"
+      role="status"
+      aria-live="polite"
     >
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        columnGap={2}
-        rowGap={1}
-        flexWrap="wrap"
-      >
-        <Tag variant="blue" outlined disabled>
-          {formatMessage(messages.healthConversationCertificateTag)}
-        </Tag>
-
-        <Box
-          role="status"
-          aria-live="polite"
-          display="flex"
-          alignItems="center"
-          columnGap={2}
-        >
-          {isUnpaid && isPolling && (
-            <Tag variant="yellow" outlined disabled>
-              {formatMessage(
-                messages.healthConversationCertificatePaymentInProgress,
-              )}
-            </Tag>
-          )}
-
-          {isUnpaid && !isPolling && (
-            <Tag variant="red" outlined disabled>
-              {formatMessage(
-                messages.healthConversationCertificatePaymentPending,
-              )}
-            </Tag>
-          )}
-        </Box>
-
-        {isUnpaid && !isPolling && certificateId && (
-          <Button
-            variant="utility"
-            icon="card"
-            iconType="outline"
-            loading={paymentLoading}
-            onClick={handlePay}
-          >
-            {amountIsk
-              ? formatMessage(messages.healthConversationCertificatePay, {
-                  arg: amountFormatter.format(amountIsk),
-                })
-              : formatMessage(
-                  messages.healthConversationCertificatePayNoAmount,
-                )}
+      {isPolling ? (
+        <Box display="flex" alignItems="center" columnGap={2}>
+          <Button disabled size="small">
+            {formatMessage(
+              messages.healthConversationCertificatePaymentInProgress,
+            )}
           </Button>
-        )}
-      </Box>
-
-      {isUnpaid && isPolling && (
-        <Text variant="small">
+          <LoadingDots />
+        </Box>
+      ) : (
+        <Button loading={paymentLoading} onClick={handlePay} size="small">
           {formatMessage(
-            messages.healthConversationCertificatePaymentInProgressText,
+            messages.healthConversationCertificateContinueToPayment,
           )}
-        </Text>
+        </Button>
       )}
     </Box>
   )

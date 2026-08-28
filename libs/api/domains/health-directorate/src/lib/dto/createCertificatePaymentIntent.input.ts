@@ -4,7 +4,7 @@ import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator'
 @InputType()
 export class HealthDirectorateCreateCertificatePaymentIntentInput {
   @Field(() => ID, {
-    description: 'ID of the certificate to open a payment intent for.',
+    description: 'Id of the certificate to open a payment intent for.',
   })
   @IsString()
   @IsNotEmpty()

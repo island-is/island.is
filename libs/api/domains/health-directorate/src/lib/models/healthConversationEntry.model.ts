@@ -37,8 +37,7 @@ export class HealthDirectorateHealthConversationEntry {
 
   @Field({
     nullable: true,
-    description:
-      'Id of the certificate issued for this message, if any. Pass to the certificate query/mutations. Absent when requiresPayment is true but the certificate has not materialised yet — render no pay affordance in that case.',
+    description: 'Id of the certificate issued for this message, if any.',
   })
   certificateId?: string
 

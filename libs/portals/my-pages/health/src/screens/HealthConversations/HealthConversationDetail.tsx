@@ -64,6 +64,7 @@ const HealthConversationDetail = () => {
     if (!certificatePaymentCancelled) return
     toast.warning(
       formatMessage(messages.healthConversationCertificatePaymentCancelled),
+      { toastId: 'certificatePaymentCancelled' },
     )
     searchParams.delete('certificatePaymentCancelled')
     setSearchParams(searchParams, { replace: true })
@@ -99,6 +100,7 @@ const HealthConversationDetail = () => {
   const handleCertificatePaid = () => {
     toast.success(
       formatMessage(messages.healthConversationCertificatePaymentSuccess),
+      { toastId: 'certificatePaymentSuccess' },
     )
     refetch()
     if (certificatePaymentReturnId) {
@@ -361,7 +363,6 @@ const HealthConversationDetail = () => {
                           certificateId={msg.certificateId}
                           requiresPayment={msg.requiresPayment}
                           paid={msg.paid}
-                          amountIsk={msg.amountIsk}
                           pendingPaymentId={msg.pendingPaymentId}
                           isReturningFromPayment={
                             !!msg.certificateId &&
