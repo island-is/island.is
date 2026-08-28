@@ -1,6 +1,6 @@
 import { AccordionCard, Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import type { SubCriterionCatalogEntryDto } from '@island.is/clients/directorate-of-equality'
 import { createDefaultSubCriterion } from '../../utils/constants'
@@ -15,6 +15,14 @@ type Props = {
   criterionWeight: string
   catalogEntries: SubCriterionCatalogEntryDto[]
   startExpanded?: boolean
+  /**
+   * Reported upward rather than only rendered here: the parent disables "Halda
+   * áfram" while ANY panel is out of balance, and deriving that at the top would
+   * mean watching the whole form there — which re-renders every panel, and every
+   * step textarea inside them, on each keystroke. The scoped useWatch below keeps
+   * that work local; only a flip in the verdict travels up.
+   */
+  onWeightMismatchChange: (criterionId: string, hasMismatch: boolean) => void
 }
 
 export const CriterionPanel: FC<Props> = ({
@@ -24,6 +32,7 @@ export const CriterionPanel: FC<Props> = ({
   criterionWeight,
   catalogEntries,
   startExpanded = false,
+  onWeightMismatchChange,
 }) => {
   const { formatMessage } = useLocale()
   const { control } = useFormContext()
@@ -42,10 +51,27 @@ export const CriterionPanel: FC<Props> = ({
   )
   const expectedWeight = Number(criterionWeight) || 0
 
+  // Compare to the PARENT's weight, including 0%. A 0%-weighted criterion can
+  // only carry 0% worth of sub-criteria; otherwise those sub-criteria still write
+  // real step scores below even though the parent contributes no weight.
+  const hasWeightMismatch = Math.abs(subCriteriaTotal - expectedWeight) > 0.001
+
+  useEffect(() => {
+    onWeightMismatchChange(criterionId, hasWeightMismatch)
+    // A panel that unmounts while unbalanced must not leave its id behind in the
+    // parent: that would disable Continue with no visible error left to fix.
+    return () => onWeightMismatchChange(criterionId, false)
+  }, [criterionId, hasWeightMismatch, onWeightMismatchChange])
+
   return (
     <AccordionCard
       id={accordionId}
       label={criterionTitle}
+      // Reddens the header so an out-of-balance criterion is identifiable while
+      // COLLAPSED. Only the first panel of each group starts expanded, so without
+      // this the gate above could disable Continue with its own explanation
+      // hidden inside a shut accordion — a dead button with no visible cause.
+      labelColor={hasWeightMismatch ? 'red600' : undefined}
       visibleContent={formatMessage(
         messages.report.subCriteria.criterionWeightLabel,
         {
@@ -79,22 +105,16 @@ export const CriterionPanel: FC<Props> = ({
         </Button>
       </Box>
 
-      {/* Only meaningful once both sides exist: the parent criterion's own
-          weight can still be blank here (it's entered on the previous screen
-          for personal criteria), and `Number('') || 0` would otherwise make
-          this claim the sub-criteria must total 0%. */}
-      {subCriteriaTotal !== 0 &&
-        expectedWeight !== 0 &&
-        Math.abs(subCriteriaTotal - expectedWeight) > 0.001 && (
-          <Box marginTop={3}>
-            <Text color="red600">
-              {formatMessage(messages.report.subCriteria.weightSumError, {
-                total: subCriteriaTotal,
-                expected: expectedWeight,
-              })}
-            </Text>
-          </Box>
-        )}
+      {hasWeightMismatch && (
+        <Box marginTop={3}>
+          <Text color="red600">
+            {formatMessage(messages.report.subCriteria.weightSumError, {
+              total: subCriteriaTotal,
+              expected: expectedWeight,
+            })}
+          </Text>
+        </Box>
+      )}
     </AccordionCard>
   )
 }
