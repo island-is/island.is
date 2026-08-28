@@ -196,7 +196,9 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
   const totalHits = totalCount
 
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'supplier', desc: false },
+  ])
   const sortBy = sorting[0] ? SORT_FIELD_MAP[sorting[0].id] : undefined
   const sortDirection = sorting[0]
     ? sorting[0].desc
@@ -654,6 +656,8 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
         suppliers: suppliersInput,
         ministries: ministriesInput,
         paymentTypeIds: invoicePaymentTypesInput,
+        sortBy: IcelandicGovernmentInstitutionsOpenInvoiceSortField.SupplierName,
+        sortDirection: IcelandicGovernmentInstitutionsSortDirection.Ascending,
         limit: PAGE_SIZE,
         page: 1,
       },
