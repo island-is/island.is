@@ -31,17 +31,6 @@ const template: ApplicationTemplate<
   institution: application.institutionName,
   translationNamespaces: ApplicationConfigurations.PayDebts.translation,
   dataSchema,
-  // Note: only use this if any data should remain after pruning for better visibility in the admin portal
-  // adminDataConfig: {
-  //   whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
-  //   answers: [
-  //     {
-  //       key: 'pickVehicle.plate',
-  //       isListed: true,
-  //       label: 'Bílnúmer',
-  //     },
-  //   ],
-  // },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
