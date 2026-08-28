@@ -1235,6 +1235,17 @@ export const m = defineMessages({
     defaultMessage: 'Nota þjónustuna til að yfirfara (e. validate) gögnin',
     description: 'Use the service to validate the data',
   },
+  disableUseValidateTitle: {
+    id: 'form.system:disable-use-validate-title',
+    defaultMessage: 'Slökkva á yfirferð gagna?',
+    description: 'Disable data validation title',
+  },
+  disableUseValidateMessage: {
+    id: 'form.system:disable-use-validate-message',
+    defaultMessage:
+      'Ef slökkt er á yfirferð gagna verður yfirferð fjarlægð af öllum skjám í forminu.',
+    description: 'Disable data validation confirmation message',
+  },
   screenValidate: {
     id: 'form.system:screen-validate',
     defaultMessage: 'Senda skjá/umsókn til yfirferðar (e. validation)',
