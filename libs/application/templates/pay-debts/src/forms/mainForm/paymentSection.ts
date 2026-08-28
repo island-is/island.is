@@ -35,8 +35,12 @@ export const paymentSection = buildSection({
             return totalDebts - totalToPay
           },
           getSelectedChargeItems: (application) =>
-            getSelectedDebts(application).map((debt) => ({
-              chargeItemCode: debt.chargeTypeId,
+            // chargeTypeId is a charge *category*, not a unique per-debt id,
+            // so two selected debts can share it - suffix with index to keep
+            // this list's React keys unique. Display-only, unrelated to the
+            // chargeItems used for the actual FJS charge in template.ts.
+            getSelectedDebts(application).map((debt, index) => ({
+              chargeItemCode: `${debt.chargeTypeId}-${index}`,
               chargeItemName: debt.chargeTypeName,
               chargeItemAmount: debt.amountToPay,
             })),
