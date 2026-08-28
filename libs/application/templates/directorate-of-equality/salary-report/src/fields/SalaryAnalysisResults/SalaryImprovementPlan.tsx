@@ -33,10 +33,7 @@ import {
   navigationAnswersForAnalysisResult,
   type AnalysisExternalData,
 } from '../../utils/salaryAnalysisNavigation'
-import type {
-  DraftOutlierGroupDto,
-  ReportEmployeeDto,
-} from '../../utils/types'
+import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQueries } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
