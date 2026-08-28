@@ -27,6 +27,7 @@ interface Props {
   onMenuOpen?: () => void
   onMenuClose?: () => void
   onProsecutorsLoaded?: (count: number) => void
+  excludeUserId?: string
 }
 
 const ProsecutorSelection: FC<Props> = ({
@@ -37,6 +38,7 @@ const ProsecutorSelection: FC<Props> = ({
   onMenuOpen,
   onMenuClose,
   onProsecutorsLoaded,
+  excludeUserId,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isCaseUpToDate } =
@@ -86,7 +88,8 @@ const ProsecutorSelection: FC<Props> = ({
           user.institution?.id ===
             (workingCase.id
               ? workingCase.prosecutorsOffice?.id
-              : currentUser?.institution?.id),
+              : currentUser?.institution?.id) &&
+          (excludeUserId === undefined || user.id !== excludeUserId),
       )
       .map(({ id, name }) => ({
         label: name ?? '',
@@ -95,6 +98,7 @@ const ProsecutorSelection: FC<Props> = ({
   }, [
     currentUser?.institution?.id,
     data?.users,
+    excludeUserId,
     workingCase.id,
     workingCase.prosecutorsOffice?.id,
   ])

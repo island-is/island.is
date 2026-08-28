@@ -2057,6 +2057,68 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
+  //#region INDICTMENT_SENT_FOR_REVIEW notifications
+  private async sendIndictmentSentForReviewNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const subject = this.formatMessage(
+      notifications.indictmentSentForReview.subject,
+    )
+    const html = this.formatMessage(
+      notifications.indictmentSentForReview.body,
+      {
+        caseNumber: theCase.policeCaseNumbers[0],
+        linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: theCase.indictmentApprover?.name,
+      recipientEmail: theCase.indictmentApprover?.email,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.INDICTMENT_SENT_FOR_REVIEW,
+      [recipient],
+    )
+  }
+  //#endregion
+
+  //#region INDICTMENT_REVIEW_DENIED notifications
+  private async sendIndictmentReviewDeniedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const subject = this.formatMessage(
+      notifications.indictmentReviewDenied.subject,
+    )
+    const html = this.formatMessage(
+      notifications.indictmentReviewDenied.body,
+      {
+        caseNumber: theCase.policeCaseNumbers[0],
+        linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: theCase.prosecutor?.name,
+      recipientEmail: theCase.prosecutor?.email,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.INDICTMENT_REVIEW_DENIED,
+      [recipient],
+    )
+  }
+  //#endregion
+
   //#region INDICTMENT_REOPENED notifications
   private async sendIndictmentReopenedNotifications(
     theCase: Case,
@@ -2494,6 +2556,10 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_DENIED:
         return this.sendIndictmentDeniedNotifications(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_SENT_FOR_REVIEW:
+        return this.sendIndictmentSentForReviewNotifications(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_REVIEW_DENIED:
+        return this.sendIndictmentReviewDeniedNotifications(theCase)
       case RequestCaseNotificationType.CASE_FILES_UPDATED:
         return this.sendCaseFilesUpdatedNotifications(theCase, requireUser())
       case IndictmentCaseNotificationType.RULING_ORDER_ADDED:

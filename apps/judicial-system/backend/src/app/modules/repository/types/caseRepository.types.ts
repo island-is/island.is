@@ -153,6 +153,11 @@ export const caseInclude: Includeable[] = [
     include: [{ model: Institution, as: 'institution' }],
   },
   {
+    model: User,
+    as: 'indictmentApprover',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
     model: Case,
     as: 'parentCase',
     include: [
@@ -617,7 +622,9 @@ export interface UpdateCase
   courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
   parentCaseId?: Case['parentCaseId'] | null
   indictmentReviewerId?: Case['indictmentReviewerId'] | null
+  indictmentApproverId?: Case['indictmentApproverId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
+  indictmentReviewReturnedExplanation?: Case['indictmentReviewReturnedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
   withCourtSessions?: Case['withCourtSessions']

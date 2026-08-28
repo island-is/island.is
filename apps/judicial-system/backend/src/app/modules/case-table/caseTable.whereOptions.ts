@@ -63,7 +63,9 @@ import {
   prosecutionIndictmentsCompletedWhereOptions,
   prosecutionIndictmentsInDraftWhereOptions,
   prosecutionIndictmentsInProgressWhereOptions,
+  prosecutionIndictmentsSentForReviewWhereOptions,
   prosecutionIndictmentsWaitingForConfirmationWhereOptions,
+  prosecutionIndictmentsWaitingForReviewWhereOptions,
   prosecutionRequestCasesActiveWhereOptions,
   prosecutionRequestCasesAppealedWhereOptions,
   prosecutionRequestCasesCompletedWhereOptions,
@@ -196,6 +198,10 @@ export const caseTableWhereOptions: Record<
     publicProsecutionIndictmentsReviewedWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_IN_DRAFT]:
     prosecutionIndictmentsInDraftWhereOptions,
+  [CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_REVIEW]:
+    prosecutionIndictmentsWaitingForReviewWhereOptions,
+  [CaseTableType.PROSECUTION_INDICTMENTS_SENT_FOR_REVIEW]:
+    prosecutionIndictmentsSentForReviewWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION]:
     prosecutionIndictmentsWaitingForConfirmationWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_IN_PROGRESS]:

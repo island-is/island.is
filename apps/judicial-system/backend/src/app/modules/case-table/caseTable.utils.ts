@@ -327,6 +327,7 @@ export const canDeleteIndictmentCase = (
 ): boolean => {
   return (
     caseToDelete.state === CaseState.DRAFT ||
+    caseToDelete.state === CaseState.WAITING_FOR_REVIEW ||
     caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
   )
 }

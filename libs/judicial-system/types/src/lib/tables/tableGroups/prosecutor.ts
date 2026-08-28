@@ -44,6 +44,20 @@ export const prosecutorIndictmentsTableGroup: CaseTableGroup = {
       includeCounter: true,
     },
     {
+      type: CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_REVIEW,
+      route: 'sakamal-til-yfirlesturs',
+      title: 'Ákærur til yfirlesturs',
+      description: 'Ákærur sem bíða yfirlesturs.',
+      includeCounter: true,
+    },
+    {
+      type: CaseTableType.PROSECUTION_INDICTMENTS_SENT_FOR_REVIEW,
+      route: 'sakamal-i-yfirlestri',
+      title: 'Ákærur í yfirlestri',
+      description: 'Ákærur sem þú hefur sent í yfirlestur.',
+      includeCounter: true,
+    },
+    {
       type: CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION,
       route: 'sakamal-sem-bida-stadfestingar',
       title: 'Ákærur sem bíða staðfestingar',

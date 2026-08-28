@@ -48,6 +48,16 @@ const indictmentCaseStateMachine: Map<
   IndictmentCaseRule
 > = new Map([
   [
+    IndictmentCaseTransition.ACCEPT_REVIEW,
+    {
+      fromStates: [IndictmentCaseState.WAITING_FOR_REVIEW],
+      transition: (update: UpdateCase): UpdateCase => ({
+        ...update,
+        state: CaseState.WAITING_FOR_CONFIRMATION,
+      }),
+    },
+  ],
+  [
     IndictmentCaseTransition.ASK_FOR_CONFIRMATION,
     {
       fromStates: [IndictmentCaseState.DRAFT, IndictmentCaseState.SUBMITTED],
@@ -58,9 +68,30 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.ASK_FOR_REVIEW,
+    {
+      fromStates: [IndictmentCaseState.DRAFT],
+      transition: (update: UpdateCase): UpdateCase => ({
+        ...update,
+        state: CaseState.WAITING_FOR_REVIEW,
+        indictmentReviewReturnedExplanation: null,
+      }),
+    },
+  ],
+  [
     IndictmentCaseTransition.DENY_INDICTMENT,
     {
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
+      transition: (update: UpdateCase): UpdateCase => ({
+        ...update,
+        state: CaseState.DRAFT,
+      }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.DENY_REVIEW,
+    {
+      fromStates: [IndictmentCaseState.WAITING_FOR_REVIEW],
       transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         state: CaseState.DRAFT,
@@ -138,6 +169,7 @@ const indictmentCaseStateMachine: Map<
     {
       fromStates: [
         IndictmentCaseState.DRAFT,
+        IndictmentCaseState.WAITING_FOR_REVIEW,
         IndictmentCaseState.WAITING_FOR_CONFIRMATION,
       ],
       transition: (update: UpdateCase): UpdateCase => ({
@@ -363,11 +395,21 @@ const transitionIndictmentCase = (
   // Do not allow submitting indictment to court with 0 defendants
   if (
     (transition === IndictmentCaseTransition.ASK_FOR_CONFIRMATION ||
+      transition === IndictmentCaseTransition.ASK_FOR_REVIEW ||
       transition === IndictmentCaseTransition.SUBMIT) &&
     (!theCase.defendants || theCase.defendants.length === 0)
   ) {
     throw new ForbiddenException(
       'Cannot submit indictment to court without at least one defendant',
+    )
+  }
+
+  if (
+    transition === IndictmentCaseTransition.ASK_FOR_REVIEW &&
+    !(update.indictmentApproverId ?? theCase.indictmentApproverId)
+  ) {
+    throw new ForbiddenException(
+      'Cannot ask for review without an indictment approver',
     )
   }
 

@@ -787,6 +787,28 @@ export class Case extends Model {
   indictmentDeniedExplanation?: string
 
   /**********
+   * The surrogate key of the prosecutor assigned to proofread an indictment
+   **********/
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  indictmentApproverId?: string
+
+  /**********
+   * The prosecutor assigned to proofread an indictment before confirmation
+   **********/
+  @BelongsTo(() => User, 'indictmentApproverId')
+  @ApiPropertyOptional({ type: User })
+  indictmentApprover?: User
+
+  /**********
+   * The explanation given when a proofreader returns an indictment to the prosecutor
+   **********/
+  @Column({ type: DataType.TEXT, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  indictmentReviewReturnedExplanation?: string
+
+  /**********
    * The case's notifications
    **********/
   @HasMany(() => Notification, 'caseId')

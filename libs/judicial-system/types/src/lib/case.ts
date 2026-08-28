@@ -193,6 +193,7 @@ export interface CrimeSceneMap {
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
+  WAITING_FOR_REVIEW = 'WAITING_FOR_REVIEW',
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
@@ -207,6 +208,7 @@ export enum CaseState {
 
 export enum IndictmentCaseState {
   DRAFT = CaseState.DRAFT,
+  WAITING_FOR_REVIEW = CaseState.WAITING_FOR_REVIEW,
   WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
   SUBMITTED = CaseState.SUBMITTED,
   RECEIVED = CaseState.RECEIVED,
@@ -229,12 +231,15 @@ export enum RequestCaseState {
 
 export enum CaseTransition {
   ACCEPT = 'ACCEPT',
+  ACCEPT_REVIEW = 'ACCEPT_REVIEW',
   ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
+  ASK_FOR_REVIEW = 'ASK_FOR_REVIEW',
   COMPLETE = 'COMPLETE',
   CORRECT = 'CORRECT',
   DELETE = 'DELETE',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
+  DENY_REVIEW = 'DENY_REVIEW',
   DISMISS = 'DISMISS',
   MOVE = 'MOVE',
   OPEN = 'OPEN',
@@ -245,12 +250,15 @@ export enum CaseTransition {
 }
 
 export enum IndictmentCaseTransition {
+  ACCEPT_REVIEW = CaseTransition.ACCEPT_REVIEW,
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
   ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
+  ASK_FOR_REVIEW = CaseTransition.ASK_FOR_REVIEW,
   COMPLETE = CaseTransition.COMPLETE,
   CORRECT = CaseTransition.CORRECT,
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
+  DENY_REVIEW = CaseTransition.DENY_REVIEW,
   MOVE = CaseTransition.MOVE,
   RECEIVE = CaseTransition.RECEIVE,
   REOPEN = CaseTransition.REOPEN,

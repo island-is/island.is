@@ -184,8 +184,11 @@ describe('caseTable.utils', () => {
   })
 
   describe('canDeleteIndictmentCase', () => {
-    it('returns true for DRAFT and WAITING_FOR_CONFIRMATION', () => {
+    it('returns true for DRAFT, WAITING_FOR_REVIEW, and WAITING_FOR_CONFIRMATION', () => {
       expect(canDeleteIndictmentCase({ state: CaseState.DRAFT })).toBe(true)
+      expect(
+        canDeleteIndictmentCase({ state: CaseState.WAITING_FOR_REVIEW }),
+      ).toBe(true)
       expect(
         canDeleteIndictmentCase({ state: CaseState.WAITING_FOR_CONFIRMATION }),
       ).toBe(true)

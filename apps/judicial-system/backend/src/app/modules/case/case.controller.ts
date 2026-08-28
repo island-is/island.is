@@ -45,6 +45,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
+  CaseTransition,
   CaseType,
   hasGeneratedCourtRecordPdf,
   indictmentCases,
@@ -151,6 +152,68 @@ export class CaseController {
     }
   }
 
+  private async validateIndictmentApprover(
+    approverId: string,
+    theCase: Case,
+    user: User,
+  ) {
+    const approver = await this.userService.findById(approverId)
+
+    if (!approver.active) {
+      throw new ForbiddenException(
+        `User ${approverId} is not an active prosecutor`,
+      )
+    }
+
+    if (approver.role !== UserRole.PROSECUTOR) {
+      throw new ForbiddenException(
+        `User ${approverId} does not have an acceptable role ${UserRole.PROSECUTOR}`,
+      )
+    }
+
+    if (approver.institutionId !== theCase.prosecutorsOfficeId) {
+      throw new ForbiddenException(
+        `User ${approverId} belongs to the wrong institution`,
+      )
+    }
+
+    if (approver.id === user.id) {
+      throw new ForbiddenException(
+        'Cannot assign yourself as indictment approver',
+      )
+    }
+  }
+
+  private assertIndictmentWaitingForReviewUpdateAllowed(
+    theCase: Case,
+    update: UpdateCase,
+    user: User,
+  ) {
+    if (
+      !isIndictmentCase(theCase.type) ||
+      theCase.state !== CaseState.WAITING_FOR_REVIEW
+    ) {
+      return
+    }
+
+    const updatedFields = Object.keys(update).filter(
+      (key) => update[key as keyof UpdateCase] !== undefined,
+    )
+    const allowedFields =
+      user.id === theCase.indictmentApproverId
+        ? ['indictmentReviewReturnedExplanation']
+        : []
+    const disallowedFields = updatedFields.filter(
+      (field) => !allowedFields.includes(field),
+    )
+
+    if (disallowedFields.length > 0) {
+      throw new ForbiddenException(
+        'Cannot update an indictment case while it is waiting for review',
+      )
+    }
+  }
+
   @UseGuards(RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
@@ -196,6 +259,8 @@ export class CaseController {
     try {
       const update: UpdateCase = updateDto
 
+      this.assertIndictmentWaitingForReviewUpdateAllowed(theCase, update, user)
+
       // Make sure valid users are assigned to the case's roles
       if (update.prosecutorId) {
         await this.validateAssignedUser(
@@ -221,6 +286,14 @@ export class CaseController {
             UserRole.DISTRICT_COURT_ASSISTANT,
           ],
           theCase.courtId,
+        )
+      }
+
+      if (update.indictmentApproverId) {
+        await this.validateIndictmentApprover(
+          update.indictmentApproverId,
+          theCase,
+          user,
         )
       }
 
@@ -370,6 +443,20 @@ export class CaseController {
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
+
+    if (transition.transition === CaseTransition.ASK_FOR_REVIEW) {
+      if (!theCase.indictmentApproverId) {
+        throw new BadRequestException(
+          'Cannot ask for review without an indictment approver',
+        )
+      }
+
+      await this.validateIndictmentApprover(
+        theCase.indictmentApproverId,
+        theCase,
+        user,
+      )
+    }
 
     // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the
     // transition is decided against a row no one else can change.
