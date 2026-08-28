@@ -57,6 +57,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
   const hasHealthScope = !!userInfo?.scopes?.includes(ApiScope.health)
 
   const { data, loading, error } = useGetHealthConversationsQuery({
+    fetchPolicy: 'network-only',
     variables: { input: {} },
     skip: !hasHealthScope,
   })

@@ -21,6 +21,15 @@ export const attachmentIcon = style({
   height: 20,
 })
 
+export const detailHeader = style({
+  minHeight: 32,
+  ...themeUtils.responsiveStyle({
+    md: {
+      minHeight: 40,
+    },
+  }),
+})
+
 export const backButton = style({})
 
 globalStyle(

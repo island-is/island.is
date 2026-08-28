@@ -56,6 +56,8 @@ const HealthConversationDetail = () => {
 
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
+
+  const isMobileReplyView = replyOpen && isPhoneWidth
   const replyRef = useRef<HTMLDivElement>(null)
   const replyInputRef = useRef<HTMLTextAreaElement | null>(null)
   const replyTriggerRef = useRef<HTMLElement | null>(null)
@@ -75,6 +77,7 @@ const HealthConversationDetail = () => {
   }, [replyOpen])
 
   const { data, loading, error } = useGetHealthConversationDetailQuery({
+    fetchPolicy: 'network-only',
     variables: { id },
   })
 
@@ -188,7 +191,7 @@ const HealthConversationDetail = () => {
     /* On mobile, replying takes over the screen, so back should return to the
     the thread first. On desktop the reply form is just appended below
     the (still visible) thread, so back always leaves the conversation.  */
-    if (isPhoneWidth && replyOpen) {
+    if (isMobileReplyView) {
       setReplyOpen(false)
     } else {
       navigate(HealthPaths.HealthConversations)
@@ -211,16 +214,19 @@ const HealthConversationDetail = () => {
               justifyContent="spaceBetween"
               alignItems="center"
               marginBottom={1}
+              className={styles.detailHeader}
             >
               <Box className={styles.backButton}>
                 <ConversationBackButton onClick={handleBack} />
               </Box>
-              {!replyOpen && (
+              {!isMobileReplyView && (
                 <MessageActions
                   bookmarked={item.isStarred}
                   archived={item.isArchived}
                   onReply={
-                    item.patientCanReply !== false ? openReply : undefined
+                    !replyOpen && item.patientCanReply !== false
+                      ? openReply
+                      : undefined
                   }
                   onFav={() => {
                     if (item.isStarred) {
@@ -244,7 +250,7 @@ const HealthConversationDetail = () => {
               {item.title}
             </Text>
 
-            {replyOpen && isPhoneWidth ? (
+            {isMobileReplyView ? (
               /* Mobile takes over the screen while replying: the thread is
               hidden and only the recipient + reply form are shown. */
               <ConversationReplyForm
