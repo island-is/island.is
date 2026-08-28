@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid'
 import { NotFoundException } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 
-import { RolesGuard } from '@island.is/judicial-system/auth'
+import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import {
   CaseState,
   CaseTransition,
@@ -33,6 +33,15 @@ import { CaseWriteGuard } from '../../guards/caseWrite.guard'
 // lint and CI, and was found by a person reading the diff. These tests close
 // that gap for the one route that has been converted so far; each further
 // conversion brings its own table.
+// Authentication is out of the picture here: every row supplies a user, and
+// what is being tested is what the route's authorization guards then do with
+// them. Passport's real jwt strategy is not registered in a unit test, so it
+// stands in as a subclass - the chain still refuses to run if the controller
+// gains a class-level guard this spec does not account for.
+class AuthenticatedGuard extends JwtAuthUserGuard {
+  canActivate = () => true
+}
+
 describe('CaseController - Transition guard chain', () => {
   const prosecutorsOfficeId = uuid()
   const courtId = uuid()
@@ -76,9 +85,12 @@ describe('CaseController - Transition guard chain', () => {
     const mockTransaction = (sequelize as Sequelize).transaction as jest.Mock
     mockTransaction.mockResolvedValue(transaction)
 
-    // One instance per guard the route declares. RolesGuard gets a real
-    // Reflector so it resolves the route's rules from its own metadata.
+    // One instance per guard the chain declares, including CaseController's
+    // class-level JwtAuthUserGuard, which Nest runs before the method-level
+    // ones. RolesGuard gets a real Reflector so it resolves the route's rules
+    // from its own metadata.
     const guards = [
+      new AuthenticatedGuard(),
       new CaseExistsForUpdateGuard(caseService, sequelize),
       new RolesGuard(new Reflector()),
       new CaseWriteGuard(),
