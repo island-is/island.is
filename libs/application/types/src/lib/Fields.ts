@@ -279,9 +279,7 @@ export type RepeaterItem = {
     }
   | {
       component: 'vehiclePermnoWithInfo'
-      loadValidation?: (
-        c: VehiclePermnoWithInfoContext,
-      ) => Promise<{
+      loadValidation?: (c: VehiclePermnoWithInfoContext) => Promise<{
         errorMessages?: FormText[]
       }>
       permnoLabel?: FormText
@@ -748,9 +746,7 @@ export interface PaymentChargeOverviewField extends BaseField {
   simplifiedList?: boolean
   additionalSummaryLabel?: StaticText
   getAdditionalSummaryAmount?: (application: Application) => number
-  getSelectedChargeItems: (
-    application: Application,
-  ) => {
+  getSelectedChargeItems: (application: Application) => {
     chargeItemCode: string
     chargeItemQuantity?: number
     extraLabel?: StaticText
@@ -778,9 +774,7 @@ export interface PdfLinkButtonField extends BaseField {
   verificationDescription: StaticText
   verificationLinkTitle: StaticText
   verificationLinkUrl: StaticText
-  getPdfFiles?: (
-    application: Application,
-  ) => {
+  getPdfFiles?: (application: Application) => {
     base64: string
     buttonText?: StaticText
     customButtonText?: { is: string; en: string }
@@ -856,9 +850,7 @@ export type TableRepeaterField = BaseField & {
   editField?: boolean
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
-  onSubmitLoad?(
-    c: TableContext,
-  ): Promise<{
+  onSubmitLoad?(c: TableContext): Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dictionaryOfItems: Array<{ path: string; value: any }>
   }>
@@ -1217,9 +1209,7 @@ export interface CopyLinkField extends BaseField {
 export interface VehiclePermnoWithInfoField extends InputField {
   readonly type: FieldTypes.VEHICLE_PERMNO_WITH_INFO
   component: FieldComponents.VEHICLE_PERMNO_WITH_INFO
-  loadValidation?: (
-    c: VehiclePermnoWithInfoContext,
-  ) => Promise<{
+  loadValidation?: (c: VehiclePermnoWithInfoContext) => Promise<{
     errorMessages?: FormText[]
   }>
   permnoLabel?: FormText
