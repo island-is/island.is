@@ -21,28 +21,9 @@ import {
   Remark,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
+import { extractApplicationGuid } from './utils/extractApplicationGuid'
+import { isApplicationAlreadyExists } from './utils/isApplicationAlreadyExists'
 
-// RLS returns the new application's guid on a successful create, but not in a
-// stable, documented place: the full endpoint sends it as the (text) body, and
-// the temporary endpoint carries it under a field the generated DTO drops. Pull
-// it out defensively — purely for logging/reconciliation, so it must never throw.
-const extractApplicationGuid = (body: unknown): string | null => {
-  const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
-  if (typeof body === 'string') {
-    return body.match(UUID)?.[0] ?? null
-  }
-  if (body && typeof body === 'object') {
-    const rec = body as Record<string, unknown>
-    for (const key of ['guid', 'applicationGuid', 'applicationId']) {
-      const value = rec[key]
-      if (typeof value === 'string' && UUID.test(value)) {
-        return value
-      }
-    }
-    return JSON.stringify(body).match(UUID)?.[0] ?? null
-  }
-  return null
-}
 import {
   DtoV5PracticePermitDto,
   DtoV5DriverLicenseWithoutImagesDto,
@@ -98,34 +79,34 @@ export class DrivingLicenseApi {
         return null
       }
     } catch (e) {
-      // Same guard as the v5 `postCreateDrivingLicenseTemporary` path, and for
-      // the same reason: if the licence was created but the response was lost,
-      // the state machine retries and RLS answers 400 on the resubmission. The
-      // generated client does not map that error, so we re-ask `canapplyfor`:
-      // `HAS_B_CATEGORY` means the applicant now holds the licence, i.e. the
-      // previous attempt succeeded.
-      //
-      // A genuine denial would already have been caught by this same check at
-      // prerequisites, so by submit time the code almost always means "created
-      // on the previous attempt" — and the cost is asymmetric: without the
-      // guard an already-paid applicant is left on an error screen. Do not
-      // remove this on the grounds that the single v6 call replaced the old
-      // two-call shape; that is not what causes the 400.
+      // If the licence application was created but the response was lost, the
+      // state machine retries and RLS answers 400 APPLICATION_ALREADY_EXISTS.
+      // Under v6 a created application is not yet a licence, so the v5-era
+      // `canapplyfor` → HAS_B_CATEGORY check below never fires for it — the
+      // direct duplicate signal is the reliable one. Treat it as success (the
+      // application exists); the guid is not recoverable here, hence null. This
+      // is the asymmetric-cost call: leaving an already-paid applicant on an
+      // error screen is worse than a rare false success for someone who already
+      // had an application in flight (they do).
+      if (isApplicationAlreadyExists(e)) {
+        return null
+      }
+
+      // Legacy fallback: the previous attempt may have completed all the way to a
+      // full B category (`canapplyfor` then reports HAS_B_CATEGORY). Harmless to
+      // keep; retire with the v5 path.
       if ((e as { status?: number })?.status === 400) {
         const hasTemp = await this.getCanApplyForCategoryTemporary({
           token: input.auth.authorization.replace(/^bearer /i, ''),
         })
 
         if (hasTemp.errorCode === 'HAS_B_CATEGORY') {
-          // Created on a previous attempt; treat as success. The guid is not
-          // recoverable on this path, hence null.
           return null
         }
       }
 
-      // Unlike the v5 twin, which swallows every other 400 into `false`, rethrow
-      // so the original `FetchError` still reaches `toSubmissionError` and the
-      // applicant gets the RLS error description rather than a generic failure.
+      // Rethrow every other error so the original `FetchError` still reaches
+      // `toSubmissionError` and the applicant gets the RLS error description.
       throw e
     }
   }
@@ -156,16 +137,27 @@ export class DrivingLicenseApi {
     // documents an int32 here but actually sends the new application's guid as
     // the text body; surface it (never gate on it) for logging and so a tester
     // can deny the created application.
-    const created = await withAuthContext(input.auth, () =>
-      this.applicationV6.apiApplicationsV6CategoryWithhealthdeclarationPost({
-        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
-        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-        category: input.category,
-        modelsV6PostFullLicenseWithHealthDeclaration: input.model,
-      }),
-    )
+    try {
+      const created = await withAuthContext(input.auth, () =>
+        this.applicationV6.apiApplicationsV6CategoryWithhealthdeclarationPost({
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+          category: input.category,
+          modelsV6PostFullLicenseWithHealthDeclaration: input.model,
+        }),
+      )
 
-    return extractApplicationGuid(created)
+      return extractApplicationGuid(created)
+    } catch (e) {
+      // Same lost-response duplicate guard as the temporary endpoint: a retry
+      // after a lost response gets 400 APPLICATION_ALREADY_EXISTS, and an
+      // already-paid applicant should not be stranded on an error screen. The
+      // guid is not recoverable here, hence null.
+      if (isApplicationAlreadyExists(e)) {
+        return null
+      }
+      throw e
+    }
   }
 
   public async postTemporaryLicenseWithHealthDeclaratio(input: {
