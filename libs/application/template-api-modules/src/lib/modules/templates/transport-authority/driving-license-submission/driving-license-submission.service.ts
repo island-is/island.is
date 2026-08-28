@@ -594,26 +594,36 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           application,
         )
 
-        return this.drivingLicenseService.newDrivingLicenseWithHealthDeclaration(
-          auth,
-          {
-            licenseCategory: DrivingLicenseCategory.B,
-            districtId: jurisdictionId
-              ? jurisdictionId
-              : setJurisdictionToKopavogur,
-            sendPlasticToPerson: deliveryMethod === Pickup.POST,
-            email,
-            primaryPhoneNumber: phone,
-            healthDeclaration: toHealthDeclarationModel(
-              healthDeclarationAnswers,
-            ),
-            contentList: needsHealthCertificate
-              ? await this.readHealthCertificateContentList(application)
-              : undefined,
-            photoBiometricsId: resolved?.photoBiometricsId,
-            signatureBiometricsId: resolved?.signatureBiometricsId,
-          },
-        )
+        const fullResult =
+          await this.drivingLicenseService.newDrivingLicenseWithHealthDeclaration(
+            auth,
+            {
+              licenseCategory: DrivingLicenseCategory.B,
+              districtId: jurisdictionId
+                ? jurisdictionId
+                : setJurisdictionToKopavogur,
+              sendPlasticToPerson: deliveryMethod === Pickup.POST,
+              email,
+              primaryPhoneNumber: phone,
+              healthDeclaration: toHealthDeclarationModel(
+                healthDeclarationAnswers,
+              ),
+              contentList: needsHealthCertificate
+                ? await this.readHealthCertificateContentList(application)
+                : undefined,
+              photoBiometricsId: resolved?.photoBiometricsId,
+              signatureBiometricsId: resolved?.signatureBiometricsId,
+            },
+          )
+
+        // Reconciliation record: our application id paired with the RLS-side
+        // application guid (null on the lost-response duplicate path).
+        this.log('info', 'Created full driving-license application in RLS', {
+          applicationId: application.id,
+          applicationGuid: fullResult.applicationGuid,
+        })
+
+        return fullResult
       }
 
       // Legacy B-full — flag frozen OFF, so there is no photo step and no
@@ -647,26 +657,36 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           application,
         )
 
-        return this.drivingLicenseService.newTemporaryDrivingLicenseWithHealthDeclaration(
-          auth,
-          {
-            districtId: jurisdictionId
-              ? jurisdictionId
-              : setJurisdictionToKopavogur,
-            instructorSSN: teacher,
-            sendPlasticToPerson: deliveryMethod === Pickup.POST,
-            email,
-            primaryPhoneNumber: phone,
-            healthDeclaration: toHealthDeclarationModel(
-              healthDeclarationAnswers,
-            ),
-            contentList: needsHealthCertificate
-              ? await this.readHealthCertificateContentList(application)
-              : undefined,
-            photoBiometricsId: resolved?.photoBiometricsId,
-            signatureBiometricsId: resolved?.signatureBiometricsId,
-          },
-        )
+        const tempResult =
+          await this.drivingLicenseService.newTemporaryDrivingLicenseWithHealthDeclaration(
+            auth,
+            {
+              districtId: jurisdictionId
+                ? jurisdictionId
+                : setJurisdictionToKopavogur,
+              instructorSSN: teacher,
+              sendPlasticToPerson: deliveryMethod === Pickup.POST,
+              email,
+              primaryPhoneNumber: phone,
+              healthDeclaration: toHealthDeclarationModel(
+                healthDeclarationAnswers,
+              ),
+              contentList: needsHealthCertificate
+                ? await this.readHealthCertificateContentList(application)
+                : undefined,
+              photoBiometricsId: resolved?.photoBiometricsId,
+              signatureBiometricsId: resolved?.signatureBiometricsId,
+            },
+          )
+
+        // Reconciliation record: our application id paired with the RLS-side
+        // application guid (null on the lost-response duplicate path).
+        this.log('info', 'Created temporary driving-license application in RLS', {
+          applicationId: application.id,
+          applicationGuid: tempResult.applicationGuid,
+        })
+
+        return tempResult
       }
 
       // Legacy B-temp — flag frozen OFF, so no photo step and no biometric IDs.

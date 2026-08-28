@@ -608,7 +608,11 @@ describe('DrivingLicenseService', () => {
             ...baseInput,
             instructorSSN: MOCK_NATIONAL_ID_TEACHER,
           }),
-        ).resolves.toStrictEqual({ success: true, errorMessage: null })
+        ).resolves.toStrictEqual({
+          success: true,
+          errorMessage: null,
+          applicationGuid: guid,
+        })
       },
     )
 
@@ -639,7 +643,11 @@ describe('DrivingLicenseService', () => {
           ...baseInput,
           licenseCategory: DrivingLicenseCategory.B,
         }),
-      ).resolves.toStrictEqual({ success: true, errorMessage: null })
+      ).resolves.toStrictEqual({
+        success: true,
+        errorMessage: null,
+        applicationGuid: '3630b0bc-ec51-442e-976d-13a3c21c5e5b',
+      })
 
       expect(spy).toHaveBeenCalledWith(
         expect.objectContaining({ auth, category: DrivingLicenseCategory.B }),

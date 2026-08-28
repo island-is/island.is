@@ -116,6 +116,10 @@ export interface NewTemporaryDrivingLicenseWithHealthDeclarationInput
 export interface NewDrivingLicenseResult {
   success: boolean
   errorMessage: string | null
+  // The RLS-side application guid returned on a v6 create (null on the
+  // lost-response duplicate path). Distinct from our own application id; the two
+  // together are the reconciliation record for an RLS application.
+  applicationGuid?: string | null
 }
 
 export interface NewDrivingAssessmentResult {

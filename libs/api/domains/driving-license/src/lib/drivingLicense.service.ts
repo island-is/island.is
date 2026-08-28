@@ -690,18 +690,12 @@ export class DrivingLicenseService {
         },
       })
 
-    // Record the RLS application guid returned on creation. It is the only handle
-    // for reconciling or denying the application afterwards (RLS-side id, not our
-    // application id), and its absence is what made a failed create impossible to
-    // clean up during development.
-    this.logger.info(`${LOGTAG} created full driving-license application`, {
-      applicationGuid,
-      category: input.licenseCategory,
-    })
-
+    // Return the RLS application guid so the submission service can log it next
+    // to our own application id — together they are the reconciliation record.
     return {
       success: true,
       errorMessage: null,
+      applicationGuid,
     }
   }
 
@@ -742,18 +736,12 @@ export class DrivingLicenseService {
     // The client's `postTemporaryLicenseWithHealthDeclarationV6` already maps the
     // one benign 400 (a lost-response retry) to a resolved value, so a throw here
     // is a genuine failure and must propagate to `submitApplication`. The value
-    // is the RLS application guid (or null on the lost-response path); log it, as
-    // it is the only handle for reconciling or denying the application later.
-    this.logger.info(
-      `${LOGTAG} created temporary driving-license application`,
-      {
-        applicationGuid,
-      },
-    )
-
+    // is the RLS application guid (or null on the lost-response path); return it
+    // so the submission service can log it next to our own application id.
     return {
       success: true,
       errorMessage: null,
+      applicationGuid,
     }
   }
 
