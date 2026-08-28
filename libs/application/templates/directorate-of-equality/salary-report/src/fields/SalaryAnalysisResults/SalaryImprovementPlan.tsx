@@ -80,6 +80,10 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     application,
     draftActionId(ApiActions.listDraftOutlierGroups),
     'draftOutlierGroups',
+    // Granted to the DRAFT role only, same as the roles read below: the review
+    // states edit the groups as answers and never need this, so a missing
+    // externalData key must not fire a provider the controller rejects.
+    { enabled: isDraftPhase },
   )
   const {
     content: employeesContent,
@@ -90,6 +94,7 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     application,
     draftActionId(ApiActions.listDraftEmployees),
     'draftEmployees',
+    { enabled: isDraftPhase },
   )
   // Roles carry the job title; ReportEmployeeDto only carries the role's id.
   // Granted to the DRAFT role only, hence `enabled` — both review states
@@ -427,10 +432,37 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     )
   }
 
-  if (isAnalyzing || !result) {
+  if (isAnalyzing || (!result && isDraftPhase)) {
     return (
       <Box display="flex" justifyContent="center" paddingY={5}>
         <LoadingDots />
+      </Box>
+    )
+  }
+
+  // The review states never fetch on their own, so a missing snapshot is
+  // terminal there rather than pending — it needs the manual escape hatch, not
+  // a spinner nothing will resolve.
+  if (!result) {
+    return (
+      <Box marginBottom={3}>
+        <AlertMessage
+          type="info"
+          title={formatMessage(messages.salaryAnalysis.results.unknownTitle)}
+          message={formatMessage(
+            messages.salaryAnalysis.results.noAnalysisMessage,
+          )}
+        />
+        <Box marginTop={2}>
+          <Button
+            variant="ghost"
+            size="small"
+            icon="reload"
+            onClick={handleAnalyze}
+          >
+            {formatMessage(messages.salaryAnalysis.results.recalculateButton)}
+          </Button>
+        </Box>
       </Box>
     )
   }

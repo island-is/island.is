@@ -1,6 +1,11 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import type { ExternalData, FormValue } from '@island.is/application/types'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
+import {
+  isOutlierGroupComplete,
+  unassignedOutlierOrdinals,
+  type OutlierGroupAnswer,
+} from './outlierGroups'
 
 export type AnalysisExternalData = {
   status?: 'success' | 'failure'
@@ -45,6 +50,9 @@ export const salaryAnalysisNeedsImprovementPlan = (
   return answerFlag === true
 }
 
+// DRAFT only. Postponing deliberately satisfies this — that is what the
+// postpone choice buys the applicant. The review states must not reuse it; see
+// reviewOutlierPlanIsSubmittable.
 export const salaryAnalysisOutlierPlanIsReviewed = (
   answers: FormValue,
   externalData?: ExternalData,
@@ -77,6 +85,54 @@ export const navigationAnswersForAnalysisResult = (
   }
 
   return { salaryAnalysis }
+}
+
+/**
+ * The review-state submits (POSTPONED, DRAFT_RETRY) judge the plan itself and
+ * never `outlierPlanReviewed`.
+ *
+ * That flag means "the DRAFT phase found the report submittable", and
+ * postponing is one of the ways to make it submittable — so it arrives in
+ * POSTPONED already `true` with no plan behind it, which is exactly the state
+ * salaryAnalysisOutlierPlanIsReviewed reports as reviewed. It is corrected only
+ * once SalaryImprovementPlan's effects have run and OutlierGroupPanel has
+ * cleared `postponed`, which would leave an upstream screen's mount order as
+ * the thing standing between an empty plan and editOutliers.
+ *
+ * Re-derived from the stored answers and the submitted analysis snapshot
+ * instead, so it holds whether or not that screen has run. Fails closed: a
+ * still-set postpone answer is a plan that was never written.
+ */
+export const reviewOutlierPlanIsSubmittable = (
+  answers: FormValue,
+  externalData?: ExternalData,
+): boolean => {
+  if (!salaryAnalysisNeedsImprovementPlan(answers, externalData)) return true
+  if (isPostponeRequested(answers)) return false
+
+  const groups =
+    getValueViaPath<OutlierGroupAnswer[]>(
+      answers,
+      'salaryAnalysis.outlierGroups',
+    ) ?? []
+  // A group whose members were all freed carries no explanation and is dropped
+  // before submission (see the service's editOutliers), so it must not be the
+  // thing that makes a plan look complete — or incomplete.
+  const assignedGroups = groups.filter(
+    (group) => (group.employeeOrdinals?.length ?? 0) > 0,
+  )
+
+  if (assignedGroups.length === 0) return false
+  if (!assignedGroups.every(isOutlierGroupComplete)) return false
+
+  // Every listed outlier has to sit in a group — the same rule the plan
+  // screen's Continue gate applies. Skipped when no snapshot is stored: there
+  // is then no outlier list to check against, and the completeness of the
+  // groups the applicant did write is all this can honestly assert.
+  const outliers = getSalaryAnalysisResult(externalData)?.outliers
+  return outliers
+    ? unassignedOutlierOrdinals(outliers, assignedGroups).length === 0
+    : true
 }
 
 // The applicant asked to hand the úrbótaáætlun in later. Cleared again by

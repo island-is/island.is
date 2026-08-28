@@ -10,6 +10,7 @@ import {
   hasSeenPostponeReceipt,
   isPostponeRequested,
   navigationAnswersForAnalysisResult,
+  reviewOutlierPlanIsSubmittable,
   salaryAnalysisNeedsImprovementPlan,
   salaryAnalysisOutlierPlanIsReviewed,
 } from './salaryAnalysisNavigation'
@@ -299,5 +300,95 @@ describe('isPostponeRequested', () => {
     )
     expect(isPostponeRequested({ salaryAnalysis: {} })).toBe(false)
     expect(isPostponeRequested({})).toBe(false)
+  })
+})
+
+describe('reviewOutlierPlanIsSubmittable', () => {
+  const completeGroup = (ordinals: number[]) => ({
+    name: 'Hópur',
+    reason: 'Ástæða',
+    action: 'Aðgerð',
+    signatureRole: 'Titill',
+    employeeOrdinals: ordinals,
+  })
+
+  // The regression this predicate exists for: the postponing submit persists
+  // outlierPlanReviewed: true, which is exactly what the old condition read.
+  it('refuses a plan that only carries the draft-phase postpone flags', () => {
+    const answers: FormValue = {
+      salaryAnalysis: {
+        postponed: ['yes'],
+        hasMinimumSetOutliers: true,
+        outlierPlanReviewed: true,
+      },
+    }
+
+    expect(salaryAnalysisOutlierPlanIsReviewed(answers)).toBe(true)
+    expect(reviewOutlierPlanIsSubmittable(answers)).toBe(false)
+  })
+
+  it('refuses an empty plan even once the postpone answer is cleared', () => {
+    expect(
+      reviewOutlierPlanIsSubmittable({
+        salaryAnalysis: {
+          postponed: [],
+          hasMinimumSetOutliers: true,
+          outlierPlanReviewed: true,
+        },
+      }),
+    ).toBe(false)
+  })
+
+  it('refuses a group that is missing an explanation', () => {
+    expect(
+      reviewOutlierPlanIsSubmittable({
+        salaryAnalysis: {
+          hasMinimumSetOutliers: true,
+          outlierGroups: [{ ...completeGroup([1]), action: '' }],
+        },
+      }),
+    ).toBe(false)
+  })
+
+  it('refuses while an outlier from the snapshot sits in no group', () => {
+    expect(
+      reviewOutlierPlanIsSubmittable(
+        { salaryAnalysis: { outlierGroups: [completeGroup([1])] } },
+        externalData(result(2)),
+      ),
+    ).toBe(false)
+  })
+
+  it('accepts a complete plan covering every outlier', () => {
+    expect(
+      reviewOutlierPlanIsSubmittable(
+        { salaryAnalysis: { outlierGroups: [completeGroup([1, 2])] } },
+        externalData(result(2)),
+      ),
+    ).toBe(true)
+  })
+
+  // A group whose members were all freed is dropped before submission, so it
+  // must neither complete a plan nor block one.
+  it('ignores a group with no members', () => {
+    const answers = (groups: unknown[]): FormValue => ({
+      salaryAnalysis: { hasMinimumSetOutliers: true, outlierGroups: groups },
+    })
+
+    expect(
+      reviewOutlierPlanIsSubmittable(
+        answers([completeGroup([1]), { ...completeGroup([]), reason: '' }]),
+        externalData(result(1)),
+      ),
+    ).toBe(true)
+    expect(reviewOutlierPlanIsSubmittable(answers([completeGroup([])]))).toBe(
+      false,
+    )
+  })
+
+  it('has nothing to check when no plan is needed at all', () => {
+    expect(reviewOutlierPlanIsSubmittable({}, externalData(result(0)))).toBe(
+      true,
+    )
   })
 })

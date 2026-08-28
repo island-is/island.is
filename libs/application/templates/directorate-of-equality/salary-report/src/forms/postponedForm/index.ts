@@ -13,7 +13,7 @@ import { messages } from '../../lib/messages'
 import { buildOutlierPlanOverviewField } from '../outlierPlanOverview'
 import {
   hasSeenPostponeReceipt,
-  salaryAnalysisOutlierPlanIsReviewed,
+  reviewOutlierPlanIsSubmittable,
 } from '../../utils/salaryAnalysisNavigation'
 
 export const postponedForm = buildForm({
@@ -54,7 +54,7 @@ export const postponedForm = buildForm({
                   event: DefaultEvents.SUBMIT,
                   name: messages.postponed.submitButton,
                   type: 'primary',
-                  condition: salaryAnalysisOutlierPlanIsReviewed,
+                  condition: reviewOutlierPlanIsSubmittable,
                 },
               ],
             }),
