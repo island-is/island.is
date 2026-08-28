@@ -33,11 +33,7 @@ import {
   navigationAnswersForAnalysisResult,
   type AnalysisExternalData,
 } from '../../utils/salaryAnalysisNavigation'
-import type {
-  DraftOutlierGroupDto,
-  ReportEmployeeDto,
-  ReportEmployeeRoleDto,
-} from '../../utils/types'
+import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQueries } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
@@ -67,17 +63,14 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       : false
   const isDraftPhase = !hidePostponeCheckbox
   const { formatMessage, lang: locale } = useLocale()
-  // All three reads in one mutation — see the batching note on useDraftQueries.
+  // Both reads in one mutation — see the batching note on useDraftQueries.
   //
-  // All three are also granted to the DRAFT role only, hence the shared
+  // Both are also granted to the DRAFT role only, hence the shared
   // `enabled`: both review states (POSTPONED and DRAFT_RETRY) grant just the
   // analysis and comment providers, and the controller rejects the whole
   // mutation on the first actionId the role does not hold. They fall back to
   // the persisted snapshot instead, which is correct there — the draft is
   // already submitted, so there is nothing for it to be stale against.
-  //
-  // Roles are in the group because they carry the job title; ReportEmployeeDto
-  // only carries the role's id.
   const {
     contents,
     loading: draftLoading,
@@ -86,19 +79,16 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   } = useDraftQueries<{
     draftOutlierGroups: { groups: DraftOutlierGroupDto[] }
     draftEmployees: { employees: ReportEmployeeDto[] }
-    draftRoles: { roles: ReportEmployeeRoleDto[] }
   }>(
     application,
     {
       draftOutlierGroups: draftActionId(ApiActions.listDraftOutlierGroups),
       draftEmployees: draftActionId(ApiActions.listDraftEmployees),
-      draftRoles: draftActionId(ApiActions.listDraftRoles),
     },
     { enabled: isDraftPhase },
   )
   const outlierGroupsContent = contents.draftOutlierGroups
   const employeesContent = contents.draftEmployees
-  const rolesContent = contents.draftRoles
   const content = useMemo(
     () =>
       outlierGroupsContent && employeesContent
@@ -222,19 +212,6 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       },
     })
   })
-
-  const roleTitleForOrdinal = useMemo(() => {
-    const titleByRoleId = new Map(
-      (rolesContent?.roles ?? []).map((role) => [role.id, role.title]),
-    )
-    const titleByOrdinal = new Map(
-      (employeesContent?.employees ?? []).map((employee) => [
-        employee.ordinal,
-        titleByRoleId.get(employee.reportEmployeeRoleId),
-      ]),
-    )
-    return (ordinal: number) => titleByOrdinal.get(ordinal)
-  }, [employeesContent, rolesContent])
 
   const draftOutlierGroups =
     useWatch<DraftOutlierFormValues, 'salaryAnalysis.outlierGroups'>({
@@ -463,7 +440,6 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       outliers={result.outliers ?? []}
       hidePostponeCheckbox={hidePostponeCheckbox}
       errors={errors}
-      roleTitleForOrdinal={roleTitleForOrdinal}
       outlierGroupsFormMethods={isDraftPhase ? draftForm : undefined}
     />
   )

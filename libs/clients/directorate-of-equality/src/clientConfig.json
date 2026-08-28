@@ -350,7 +350,7 @@
     },
     "/api/v1/application/reports/equality/active": {
       "get": {
-        "description": "Returns the resolved company's currently-APPROVED equality report (if any). The application portal references the returned `id` as `equalityReportId` when submitting a salary report.",
+        "description": "Returns the resolved company's currently-APPROVED equality report (if any). The application portal references the returned `id` as `equalityReportId` when submitting a salary report, and passes the returned `providerId` to `GET /application/reports/:providerId` to read the report itself. Neither `id` nor `identifier` is a lookup handle here: `id` only resolves against the admin-only `GET /reports/:id`, and `identifier` is a human-facing display code.",
         "operationId": "getApplicationActiveEqualityReport",
         "parameters": [],
         "responses": {
@@ -3109,6 +3109,11 @@
         "properties": {
           "employeeOrdinal": { "type": "number" },
           "gender": { "type": "string", "enum": ["MALE", "FEMALE", "NEUTRAL"] },
+          "roleTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Starf — the title of the employee's role, denormalized here so the úrbótaáætlun table needs no client-side join against the draft roles list. Mirrors `ReportEmployeeOutlierDto.roleTitle`, which the submitted-report endpoints already carry. Null only when the caller could not resolve a title for the ordinal."
+          },
           "score": { "type": "number" },
           "regularHourlyWage": {
             "type": "number",
@@ -3621,6 +3626,7 @@
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "identifier": { "type": "string", "nullable": true },
+          "providerId": { "type": "string", "nullable": true },
           "approvedAt": {
             "type": "string",
             "format": "date-time",
@@ -4348,6 +4354,10 @@
             "description": "The payroll month the salary data is based on (`YYYY-MM-01`). Set when `salaryDataBasis` is `MONTH`, always null for `AVERAGE`."
           },
           "equalityReportContent": { "type": "string", "nullable": true },
+          "importedFromExcel": {
+            "type": "boolean",
+            "description": "Whether this draft's scoring content was uploaded as an Excel workbook (`POST …/draft/import`) rather than keyed in through the portal UI. Set by the server when the parser runs; sticky, so hand-editing rows afterwards does not clear it. False on a draft that has never been imported."
+          },
           "counts": { "$ref": "#/components/schemas/DraftCountsDto" },
           "createdAt": {
             "type": "string",
@@ -4362,7 +4372,7 @@
             "nullable": true
           }
         },
-        "required": ["id", "type", "status", "counts"]
+        "required": ["id", "type", "status", "importedFromExcel", "counts"]
       },
       "UpdateDraftDto": {
         "type": "object",
@@ -4603,7 +4613,7 @@
             "type": "string",
             "format": "uuid",
             "nullable": true,
-            "description": "Outlier-group membership (null clears). Applied after detection; the employee must be a currently-detected outlier."
+            "description": "Outlier-group membership (null clears). Recorded as sent; a membership for an employee who is no longer a detected outlier is dropped at submit."
           }
         }
       },

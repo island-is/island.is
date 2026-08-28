@@ -79,11 +79,13 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     (sum, f) => sum + (Number(f.weight) || 0),
     0,
   )
+  const hasCriteria = jobFactors.length + personalFactors.length > 0
+  const hasWeightMismatch = hasCriteria && Math.abs(totalWeight - 100) > 0.001
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
-      if (totalWeight !== 0 && Math.abs(totalWeight - 100) > 0.001) {
+      if (hasWeightMismatch) {
         return [
           false,
           formatMessage(messages.report.criteria.weightSumError, {
@@ -149,6 +151,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     jobFactors,
     personalFactors,
     removedPersonalIds,
+    hasWeightMismatch,
     totalWeight,
     formatMessage,
     sync,
@@ -200,7 +203,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         }}
       />
 
-      {totalWeight !== 0 && totalWeight !== 100 && (
+      {hasWeightMismatch && (
         <Box marginTop={3}>
           <Text color="red600">
             {formatMessage(messages.report.criteria.weightSumError, {
