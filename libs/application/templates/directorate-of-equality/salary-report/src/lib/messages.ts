@@ -1308,41 +1308,13 @@ export const messages = {
         defaultMessage:
           'Launadreifing verður ekki metin því ekki var unnt að reikna væntanlegt tímakaup.',
       },
-      numberHeader: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.numberHeader',
-        defaultMessage: 'Auðkenni',
-      },
-      genderHeader: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.genderHeader',
-        defaultMessage: 'Kyn',
-      },
-      points: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.points',
-        defaultMessage: 'Stig',
-      },
-      salary: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.salary',
-        defaultMessage: 'Tímakaup',
-      },
-      predictedSalary: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.predictedSalary',
-        defaultMessage: 'Væntanlegt tímakaup',
-      },
-      deviationHeader: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.deviationHeader',
-        defaultMessage: 'Launafrávik',
-      },
+      // Every other column of this table reads its header from the
+      // `outlierGroup` namespace, so the two tables cannot be translated apart —
+      // see the note in PayDispersionTable. This is the one column the
+      // úrbótaáætlun table does not have.
       spreadHeader: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.spreadHeader',
         defaultMessage: 'Staðalvik frá línu',
-      },
-      directionBelow: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.directionBelow',
-        defaultMessage: 'undir',
-      },
-      directionAbove: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.directionAbove',
-        defaultMessage: 'yfir',
       },
       genderMale: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.genderMale',

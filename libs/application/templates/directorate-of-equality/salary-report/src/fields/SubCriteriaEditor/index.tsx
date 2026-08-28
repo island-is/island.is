@@ -1,7 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useMemo, useRef } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import {
@@ -33,6 +33,7 @@ export type SubCriteriaFormValues = Record<string, SubCriterion[]>
 export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   setBeforeSubmitCallback,
+  setSubmitButtonDisabled,
 }) => {
   const { formatMessage } = useLocale()
   const { content, loading, hasError, refetch } = useDraftQuery<{
@@ -52,6 +53,41 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     'subCriterionCatalog.data.entries',
     [],
   )
+
+  // Criteria whose sub-criteria weights do not add up to the parent's weight.
+  // Filled by the panels themselves rather than derived here — see the note on
+  // CriterionPanel's onWeightMismatchChange for why the watching stays down there.
+  const [criteriaWithWeightMismatch, setCriteriaWithWeightMismatch] = useState<
+    Set<string>
+  >(() => new Set<string>())
+
+  const handleWeightMismatchChange = useCallback(
+    (criterionId: string, hasMismatch: boolean) => {
+      setCriteriaWithWeightMismatch((prev) => {
+        // Same set identity when the verdict has not flipped, so a keystroke
+        // that leaves a panel just as unbalanced as it already was does not
+        // re-render this screen and every panel under it.
+        if (prev.has(criterionId) === hasMismatch) return prev
+        const next = new Set(prev)
+        if (hasMismatch) next.add(criterionId)
+        else next.delete(criterionId)
+        return next
+      })
+    },
+    [],
+  )
+
+  // Blocks "Halda áfram" outright instead of letting the applicant walk into an
+  // error on the far side: an unbalanced yfirviðmið cannot be scored at all, and
+  // the panel's own message already names which one is off and by how much.
+  useEffect(() => {
+    if (!setSubmitButtonDisabled) return
+    setSubmitButtonDisabled(criteriaWithWeightMismatch.size > 0)
+    // The shell keeps this flag on its Screen component, which is NOT remounted
+    // between screens — a disabled button left set here would follow the
+    // applicant onto the next step with nothing there able to clear it.
+    return () => setSubmitButtonDisabled(false)
+  }, [setSubmitButtonDisabled, criteriaWithWeightMismatch])
 
   // Diffed against the final form value at Continue time: missing => REMOVE, unseen => CREATE.
   const originalSubCriterionIds = useRef<Set<string>>(new Set())
@@ -209,6 +245,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     (e) => e.parentTitle === criterion.title,
                   )}
                   startExpanded={i === 0}
+                  onWeightMismatchChange={handleWeightMismatchChange}
                 />
               ))}
             </Stack>
@@ -236,6 +273,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     criterionWeight={String(criterion.weight)}
                     catalogEntries={personalCatalogEntries}
                     startExpanded={i === 0}
+                    onWeightMismatchChange={handleWeightMismatchChange}
                   />
                 ))}
               </Stack>

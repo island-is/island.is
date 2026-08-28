@@ -610,10 +610,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
 
       <PayComponentsTable data={payComponents} />
 
-      <PayDispersionTable
-        payDispersion={result?.payDispersion}
-        identifierForOrdinal={identifierForOrdinal}
-      />
+      <PayDispersionTable payDispersion={result?.payDispersion} />
     </Box>
   )
 
