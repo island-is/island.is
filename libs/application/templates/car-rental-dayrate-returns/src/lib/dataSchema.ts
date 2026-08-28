@@ -9,7 +9,7 @@ const fileSchema = z.object({
 const vehicleDayRateUsageRowSchema = z.object({
   permno: z.string(),
   prevPeriodUsage: z.number().min(0),
-  dayRateEntryId: z.number(),
+  dayRateEntryId: z.number().optional(),
 })
 
 export const dataSchema = z.object({

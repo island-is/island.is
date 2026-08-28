@@ -133,6 +133,8 @@ const salaryAnalysis = z
   .object({
     postponed: z.array(z.string()).optional(),
     outlierGroups: z.array(outlierGroup).optional(),
+    hasMinimumSetOutliers: z.boolean().optional(),
+    outlierPlanReviewed: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
     // Explanations are only required when there's something to explain (a
@@ -156,13 +158,9 @@ const salaryAnalysis = z
           params: messages.errors.required,
         })
       }
-      if (!group.signatureName) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['outlierGroups', i, 'signatureName'],
-          params: messages.errors.required,
-        })
-      }
+      // No check for signatureName: the responsible party's name is optional.
+      // isOutlierGroupComplete omits it too — that rule gates the Continue
+      // button, so the two have to name the same fields.
       if (!group.signatureRole) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

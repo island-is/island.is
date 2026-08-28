@@ -8,6 +8,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 import { PERIOD_ONE_MONTH } from '../../utils/constants'
+import { salaryAnalysisOutlierPlanIsReviewed } from '../../utils/salaryAnalysisNavigation'
 
 const MONTH_LABELS = [
   messages.aboutTheCompany.period.january,
@@ -203,6 +204,7 @@ export const overviewSection = buildSection({
               event: DefaultEvents.SUBMIT,
               name: messages.overview.submitButton,
               type: 'primary',
+              condition: salaryAnalysisOutlierPlanIsReviewed,
             },
           ],
         }),

@@ -4,7 +4,6 @@ import { RateCategory } from './constants'
 import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
 import { is15DaysOrMoreFromDate } from './dayRateUtils'
 import { m } from '../lib/messages'
-import { MessageDescriptor } from 'react-intl'
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 
@@ -45,8 +44,11 @@ export const parseFileToCarCategory = async (
   const [_, ...values] = parsedLines
 
   const data: Array<CarCategoryRecord | CarCategoryError | undefined> =
-    values.map((row) => {
-      const carNr = row[carNumberIndex]
+    values.map((row, index) => {
+      const carNr = row[carNumberIndex] ?? ''
+      // 1-based line in the file, counting the header dropped above, so a row
+      // with no plate at all can still be pointed at
+      const rowNumber = index + 2
       const prevMileStr = row[prevMilageIndex]?.trim()
       const currMileStr = row[currMilageIndex]?.trim()
 
@@ -70,6 +72,7 @@ export const parseFileToCarCategory = async (
           code: 1,
           message: m.multiUploadErrors.newMileageLowerThanPrevious,
           carNr,
+          row: rowNumber,
         }
       }
 
@@ -78,6 +81,7 @@ export const parseFileToCarCategory = async (
           code: 1,
           message: m.multiUploadErrors.previousMileageRequired,
           carNr,
+          row: rowNumber,
         }
       }
 
@@ -86,6 +90,7 @@ export const parseFileToCarCategory = async (
           code: 1,
           message: m.multiUploadErrors.carNotFound,
           carNr,
+          row: rowNumber,
         }
       }
 
@@ -100,6 +105,7 @@ export const parseFileToCarCategory = async (
               code: 1,
               message: m.multiUploadErrors.dayRateMin15Days,
               carNr,
+              row: rowNumber,
             }
           }
         }
@@ -136,7 +142,9 @@ export const parseCsvString = (chunk: string): Promise<string[][]> => {
 
     const parser = parse({
       delimiter: [';', ','],
-      skipRecordsWithEmptyValues: true,
+      // Blank rows are kept, not skipped, so a record's index stays its
+      // physical row in the file and error messages point at the right line
+      skipRecordsWithEmptyValues: false,
       trim: true,
     })
 
@@ -170,7 +178,9 @@ const parseXlsx = async (file: FileBytes) => {
 
     const jsonData = XLSX.utils.sheet_to_csv(
       parsedFile.Sheets[parsedFile.SheetNames[0]],
-      { blankrows: false },
+      // Emitted as empty rows rather than dropped, so the row numbers reported
+      // back to the applicant match what they see in the spreadsheet
+      { blankrows: true },
     )
 
     return parseCsvString(jsonData)
@@ -182,7 +192,9 @@ const parseXlsx = async (file: FileBytes) => {
 export const createErrorExcel = async (
   file: FileBytes,
   type: 'csv' | 'xlsx',
-  errors: Map<string, string | MessageDescriptor>,
+  // Keyed by the 1-based file row an error came from, so duplicate or blank
+  // plate cells only mark the row they were reported on
+  errorsByRow: Map<number, string>,
 ) => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
@@ -194,9 +206,9 @@ export const createErrorExcel = async (
   const newHeader = [...header, 'Villa']
 
   // Add error messages to rows and mark error rows
-  const processedRows = values.map((row) => {
-    const carNr = row[0]
-    const errorMessage = errors.get(carNr)
+  const processedRows = values.map((row, index) => {
+    // Same 1-based offset the parser used when it recorded the error row
+    const errorMessage = errorsByRow.get(index + 2)
     return {
       row,
       hasError: !!errorMessage,

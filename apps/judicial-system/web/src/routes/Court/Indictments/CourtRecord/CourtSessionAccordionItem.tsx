@@ -46,8 +46,8 @@ import {
   FormContext,
   Modal,
   MultipleValueList,
+  RichTextEditor,
   SectionHeading,
-  TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
 import type { Supplement } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
@@ -1482,7 +1482,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               )}
               <Box>
                 <SectionHeading title="Bókanir" />
-                <TinyMCE
+                <RichTextEditor
                   data-testid="entries"
                   label="Afstaða ákærða, málflutningur og aðrar bókanir"
                   placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
@@ -1499,15 +1499,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     )
                   }
                   onBlur={(html) => {
-                    // Decode entities (e.g. &nbsp;) and strip tags so an
-                    // otherwise-empty paragraph doesn't pass the required check.
-                    const decodedText =
-                      new DOMParser()
-                        .parseFromString(html, 'text/html')
-                        .body.textContent?.trim() ?? ''
+                    // Visually blank markup arrives normalized to '' (see
+                    // normalizeRichTextHtml), so the html can be validated
+                    // directly.
                     validateAndSetErrorMessage(
                       ['empty'],
-                      decodedText,
+                      html,
                       setEntriesErrorMessage,
                     )
                     patchSession(

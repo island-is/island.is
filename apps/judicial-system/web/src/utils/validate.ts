@@ -58,7 +58,9 @@ const getRegexByValidation = (validation: Validation) => {
   switch (validation) {
     case 'empty':
       return {
-        regex: /./,
+        // Requires a non-whitespace character so that whitespace-only input
+        // counts as empty.
+        regex: /\S/,
         errorMessage: 'Reitur má ekki vera tómur',
       }
     case 'time-format':
@@ -717,9 +719,7 @@ export const isCourtSessionValid = (
 // Each merged case with documents in a session gets its own entries booking in
 // the court record, and each is required. The set is derived from the filed
 // documents rather than from the strings, so a merged case that has never been
-// written about is missing rather than absent. The value is trimmed because the
-// backend rejects a whitespace-only booking - without it the confirm button
-// would enable and the confirm itself would then fail.
+// written about is missing rather than absent.
 export const areMergedCaseEntriesComplete = (
   courtSession: CourtSessionResponse,
 ): boolean => {
@@ -731,14 +731,11 @@ export const areMergedCaseEntriesComplete = (
     (mergedCaseId) =>
       validate([
         [
-          courtSession.courtSessionStrings
-            ?.find(
-              (courtSessionString) =>
-                courtSessionString.mergedCaseId === mergedCaseId &&
-                courtSessionString.stringType ===
-                  CourtSessionStringType.ENTRIES,
-            )
-            ?.value?.trim(),
+          courtSession.courtSessionStrings?.find(
+            (courtSessionString) =>
+              courtSessionString.mergedCaseId === mergedCaseId &&
+              courtSessionString.stringType === CourtSessionStringType.ENTRIES,
+          )?.value,
           ['empty'],
         ],
       ]).isValid,

@@ -154,6 +154,28 @@ describe('getIndictmentCountWarningMessage', () => {
   })
 })
 
+describe('Validate empty', () => {
+  test.each(['', undefined, '   ', '\t', '\n'])(
+    'should fail for %j',
+    (value) => {
+      // Act
+      const r = validate([[value, ['empty']]])
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Reitur má ekki vera tómur')
+    },
+  )
+
+  test.each([' a ', '0'])('should be valid for %j', (value) => {
+    // Act
+    const r = validate([[value, ['empty']]])
+
+    // Assert
+    expect(r.isValid).toEqual(true)
+  })
+})
+
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
     // Arrange
