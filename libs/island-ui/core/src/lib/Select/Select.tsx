@@ -58,6 +58,7 @@ export const Select = <
   hideSelectedOptions,
   onMenuOpen,
   onMenuClose,
+  menuPlacement,
 }: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -129,6 +130,7 @@ export const Select = <
         menuShouldScrollIntoView={false}
         onMenuOpen={onMenuOpen}
         onMenuClose={onMenuClose}
+        menuPlacement={menuPlacement}
       />
       {hasError && errorMessage && (
         <div id={errorId} className={styles.errorMessage} aria-live="assertive">
@@ -195,6 +197,7 @@ export const Select = <
         menuShouldScrollIntoView={false}
         onMenuOpen={onMenuOpen}
         onMenuClose={onMenuClose}
+        menuPlacement={menuPlacement}
       />
       {hasError && errorMessage && (
         <div id={errorId} className={styles.errorMessage} aria-live="assertive">

@@ -535,6 +535,7 @@ export interface SelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isMulti?: boolean
   isClearable?: boolean
+  menuPlacement?: 'auto' | 'bottom' | 'top'
 }
 
 export interface CompanySearchField extends InputField {
