@@ -63,9 +63,10 @@ export class HealthConversationsAttachmentController {
         attachmentId,
       )
     } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error))
       this.logger.error('Failed to get health conversation attachment', {
-        errorMessage: error.message,
-        errorStack: error.stack,
+        errorMessage: err.message,
+        errorStack: err.stack,
         conversationId,
         messageId,
         attachmentId,
