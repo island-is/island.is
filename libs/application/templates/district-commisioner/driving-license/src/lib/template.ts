@@ -35,10 +35,6 @@ import {
   B_FULL_RENEWAL_65,
 } from '../utils/constants'
 import { dataSchema } from './dataSchema'
-import {
-  getApplicationFeatureFlags,
-  DrivingLicenseFeatureFlags,
-} from '../utils/getApplicationFeatureFlags'
 import { m } from './messages'
 import { getCodes, hasCompletedPrerequisitesStep } from '../utils/formUtils'
 import {
@@ -94,37 +90,35 @@ const DrivingLicenseTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: async ({ featureFlagClient }) => {
-                const featureFlags = await getApplicationFeatureFlags(
-                  featureFlagClient as FeatureFlagClient,
+                const allowFakeData = Boolean(
+                  await (featureFlagClient as FeatureFlagClient).getValue(
+                    'applicationTemplateDrivingLicenseAllowFakeData',
+                    false,
+                  ),
                 )
 
-                const getForm = await import(
-                  '../forms/prerequisites/getForm'
-                ).then((val) => val.getForm)
+                const allow65Renewal = Boolean(
+                  await (featureFlagClient as FeatureFlagClient).getValue(
+                    'is65RenewalApplicationEnabled',
+                    false,
+                  ),
+                )
+                const allow65RenewalRedesign = Boolean(
+                  await (featureFlagClient as FeatureFlagClient).getValue(
+                    'is65RenewalRedesignEnabled',
+                    false,
+                  ),
+                )
 
-                return getForm({
-                  allowFakeData:
-                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
-                  allowPickLicense:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
-                    ],
-                  allowBELicense:
-                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
-                  allow65Renewal:
-                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
-                  allow65RenewalRedesign:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL_REDESIGN
-                    ],
-                  allowBTempRedesign:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN
-                    ],
-                  allowBFullRedesign:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_B_FULL_REDESIGN
-                    ],
+                // TODO: why do like this? Not import at top?
+                const { buildPrerequisitesForm } = await import(
+                  '../forms/prerequisites'
+                )
+
+                return buildPrerequisitesForm({
+                  allowFakeData,
+                  allow65Renewal,
+                  allow65RenewalRedesign,
                 })
               },
               write: 'all',
@@ -189,8 +183,8 @@ const DrivingLicenseTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: async () =>
-                (await import('../forms/draft/getForm')).draft,
+              formLoader: () =>
+                import('../forms/draft').then((val) => val.draft),
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,

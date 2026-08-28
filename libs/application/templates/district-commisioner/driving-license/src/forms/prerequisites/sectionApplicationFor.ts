@@ -10,14 +10,10 @@ import {
   B_FULL,
   B_FULL_RENEWAL_65,
   B_TEMP,
-  BE,
   DrivingLicenseFakeData,
 } from '../../utils/constants'
 
-export const sectionApplicationFor = (
-  allowBELicense = false,
-  allow65Renewal = false,
-) =>
+export const sectionApplicationFor = (allow65Renewal = false) =>
   buildSubSection({
     id: 'applicationFor',
     title: m.applicationDrivingLicenseTitle,
@@ -37,11 +33,6 @@ export const sectionApplicationFor = (
                 'currentLicense.data',
               ) ?? { currentLicense: null }
 
-              let { categories } = getValueViaPath<DrivingLicense>(
-                app.externalData,
-                'currentLicense.data',
-              ) ?? { categories: null }
-
               let age =
                 getValueViaPath<number>(
                   app.externalData,
@@ -60,17 +51,6 @@ export const sectionApplicationFor = (
                   fakeData.currentLicense && fakeData.currentLicense !== 'none'
                     ? fakeData.currentLicense
                     : null
-                categories =
-                  fakeData.currentLicense === 'temp'
-                    ? [{ nr: 'B', validToCode: 8 }]
-                    : fakeData.currentLicense === 'full'
-                    ? [{ nr: 'B', validToCode: 9 }]
-                    : fakeData.currentLicense === 'BE'
-                    ? [
-                        { nr: 'B', validToCode: 9 },
-                        { nr: 'BE', validToCode: 9 },
-                      ]
-                    : []
 
                 age = fakeData?.age
               }
@@ -96,23 +76,6 @@ export const sectionApplicationFor = (
                   subLabel: m.applicationForRenewalLicenseDescription,
                   value: B_FULL_RENEWAL_65,
                   disabled: !currentLicense || age < 65,
-                })
-              }
-
-              if (allowBELicense) {
-                options = options.concat({
-                  label: m.applicationForBELicenseTitle,
-                  subLabel: m.applicationForBELicenseDescription,
-                  value: BE,
-                  disabled:
-                    !currentLicense ||
-                    age < 18 ||
-                    age >= 65 ||
-                    categories?.some((c) => c.nr.toUpperCase() === 'BE') ||
-                    // validToCode === 8 is temporary license and should not be applicable for BE
-                    !categories?.some(
-                      (c) => c.nr.toUpperCase() === 'B' && c.validToCode !== 8,
-                    ),
                 })
               }
 
