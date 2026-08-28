@@ -11,8 +11,6 @@ interface QuestionInputProps {
   placeholder: string
   /** Accessible name of the send button */
   sendLabel: string
-  /** True while the question just asked is on its way */
-  loading?: boolean
   onChange: (value: string) => void
   onSubmit: () => void
 }
@@ -23,10 +21,10 @@ interface QuestionInputProps {
  * only appears once there is something to send.
  */
 export const QuestionInput = forwardRef<HTMLInputElement, QuestionInputProps>(
-  ({ value, placeholder, sendLabel, loading, onChange, onSubmit }, ref) => {
+  ({ value, placeholder, sendLabel, onChange, onSubmit }, ref) => {
     // Anything typed makes the button live, whatever the chat behind it is
     // doing, so the box always answers what the visitor sees in it
-    const canPress = !loading && value.trim().length > 0
+    const canPress = value.trim().length > 0
 
     return (
       <div className={styles.wrapper}>
@@ -51,24 +49,18 @@ export const QuestionInput = forwardRef<HTMLInputElement, QuestionInputProps>(
         <button
           type="button"
           className={cn(styles.button, {
-            [styles.buttonInactive]: !canPress && !loading,
+            [styles.buttonInactive]: !canPress,
           })}
           aria-label={sendLabel}
           disabled={!canPress}
           onClick={onSubmit}
         >
-          {loading ? (
-            <span className={styles.spinner}>
-              <Icon icon="reload" color="white" size="small" />
-            </span>
-          ) : (
-            <Icon
-              icon="arrowUp"
-              color="white"
-              size="small"
-              className={styles.arrow}
-            />
-          )}
+          <Icon
+            icon="arrowUp"
+            color="white"
+            size="small"
+            className={styles.arrow}
+          />
         </button>
       </div>
     )

@@ -19,7 +19,7 @@ const SCRIPT_ID = 'ze-snippet'
 const BOOT_TIMEOUT_MS = 20000
 const COMMAND_TIMEOUT_MS = 10000
 
-export type MessengerStatus = 'loading' | 'ready' | 'error'
+export type MessengerStatus = 'idle' | 'loading' | 'ready' | 'error'
 
 declare global {
   interface Window {
@@ -37,6 +37,10 @@ declare global {
  * hidden, and exposes the commands the surrounding page needs to act as the
  * launcher: starting a conversation and opening one.
  *
+ * Nothing is loaded until `load` is called, so a visitor who only reads the
+ * page never pays for the third party script. Calling it more than once is a
+ * no-op, since the widget is booted only on the first call.
+ *
  * The widget is rendered once into `containerId`, which must therefore stay
  * mounted for the lifetime of the page. Showing and hiding it is done by the
  * caller, since a second `render` call tears down the conversation in progress.
@@ -51,7 +55,8 @@ export const useZendeskMessenger = ({
   snippetUrl: string
   containerId: string
 }) => {
-  const [status, setStatus] = useState<MessengerStatus>('loading')
+  const [status, setStatus] = useState<MessengerStatus>('idle')
+  const [shouldLoad, setShouldLoad] = useState(false)
   const { activeLocale } = useI18n()
 
   // The locale is read while booting, but re-running the effect on a locale
@@ -59,7 +64,14 @@ export const useZendeskMessenger = ({
   const localeRef = useRef(activeLocale)
   localeRef.current = activeLocale
 
+  /** Boots the widget, on the first call only */
+  const load = useCallback(() => setShouldLoad(true), [])
+
   useEffect(() => {
+    if (!shouldLoad) return
+
+    setStatus('loading')
+
     let hasSettled = false
     const settle = (next: MessengerStatus) => {
       if (hasSettled) return
@@ -131,7 +143,7 @@ export const useZendeskMessenger = ({
       delete window.$zopim
       delete window.zEMessenger
     }
-  }, [snippetUrl, containerId])
+  }, [shouldLoad, snippetUrl, containerId])
 
   /** Starts a conversation whose first message is the visitor's question. */
   const startConversation = useCallback(
@@ -182,6 +194,7 @@ export const useZendeskMessenger = ({
 
   return {
     status,
+    load,
     startConversation,
     openConversation,
   }

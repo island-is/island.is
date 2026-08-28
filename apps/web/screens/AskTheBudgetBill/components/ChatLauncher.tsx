@@ -18,18 +18,19 @@ import * as styles from './ChatLauncher.css'
 const FOCUS_RETRY_DELAYS_MS = [0, 50, 150, 300, 600]
 
 interface ChatLauncherProps {
-  /** True while a conversation is being created for the question just asked */
-  isStarting: boolean
   /** False while the launcher sits hidden underneath an open conversation */
   isVisible: boolean
   status: MessengerStatus
+  /**
+   * Hands the question over and swaps to the chat, which is where the wait for
+   * the widget to boot and the conversation to open is shown.
+   */
   onAsk: (question: string) => void
   /** Target of the <link> tag in the disclaimer, if the text has one */
   disclaimerLinkHref?: string
 }
 
 export const ChatLauncher = ({
-  isStarting,
   isVisible,
   status,
   onAsk,
@@ -72,36 +73,14 @@ export const ChatLauncher = ({
     return () => timeouts.forEach(window.clearTimeout)
   }, [isVisible, focusComposer])
 
-  const isReady = status === 'ready'
-  // A question asked before the widget had booted, waiting on it
-  const [pendingQuestion, setPendingQuestion] = useState<string | null>(null)
-  const isWaiting = isStarting || pendingQuestion !== null
-
   const submit = (question: string) => {
     const trimmed = question.trim()
-    if (status === 'error' || isWaiting || !trimmed) return
+    // A widget that never came up is not worth swapping into, the error under
+    // the box is all there is to show.
+    if (status === 'error' || !trimmed) return
     setValue('')
-    // Held rather than dropped, and sent by the effect below once the widget
-    // finishes booting
-    if (!isReady) {
-      setPendingQuestion(trimmed)
-      return
-    }
     onAsk(trimmed)
   }
-
-  useEffect(() => {
-    if (pendingQuestion === null) return
-    if (status === 'ready') {
-      setPendingQuestion(null)
-      onAsk(pendingQuestion)
-    } else if (status === 'error') {
-      // The widget never came up, so the question is handed back to the box
-      // rather than lost, alongside the error message below it.
-      setPendingQuestion(null)
-      setValue(pendingQuestion)
-    }
-  }, [status, pendingQuestion, onAsk])
 
   return (
     <Box
@@ -121,8 +100,6 @@ export const ChatLauncher = ({
             placeholder={formatMessage(m.inputPlaceholder)}
             sendLabel={formatMessage(m.send)}
             value={value}
-            // The button turns into a spinner while the question is on its way
-            loading={isWaiting}
             onChange={setValue}
             onSubmit={() => submit(value)}
           />

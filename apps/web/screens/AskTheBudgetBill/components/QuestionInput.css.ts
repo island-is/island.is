@@ -1,4 +1,4 @@
-import { globalStyle, keyframes, style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
@@ -106,14 +106,4 @@ export const arrow = style({})
 // with comes out as a hairline once it is scaled down to 16px.
 globalStyle(`${arrow} path`, {
   strokeWidth: 56,
-})
-
-const spin = keyframes({
-  from: { transform: 'rotate(0deg)' },
-  to: { transform: 'rotate(360deg)' },
-})
-
-export const spinner = style({
-  display: 'flex',
-  animation: `${spin} 1s linear infinite`,
 })

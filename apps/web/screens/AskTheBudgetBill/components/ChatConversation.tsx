@@ -15,6 +15,11 @@ import * as styles from './ChatConversation.css'
 
 interface ChatConversationProps {
   status: MessengerStatus
+  /**
+   * True between the question being asked and its conversation opening, since
+   * the swap into the chat happens the moment the question is sent.
+   */
+  isStarting: boolean
   /** The always mounted element the Zendesk widget renders itself into */
   children: ReactNode
   /** Clears the open conversation and returns to the question box */
@@ -28,10 +33,13 @@ interface ChatConversationProps {
  */
 export const ChatConversation = ({
   status,
+  isStarting,
   children,
   onNewChat,
 }: ChatConversationProps) => {
   const { formatMessage } = useIntl()
+
+  const isLoading = status === 'idle' || status === 'loading' || isStarting
 
   return (
     <Box className={styles.conversation}>
@@ -61,9 +69,9 @@ export const ChatConversation = ({
 
       <Box className={styles.widget}>
         {children}
-        {status === 'loading' && (
+        {status !== 'error' && isLoading && (
           <Box className={styles.loadingOverlay}>
-            <LoadingDots size="large" />
+            <LoadingDots size="small" />
           </Box>
         )}
         {status === 'error' && (

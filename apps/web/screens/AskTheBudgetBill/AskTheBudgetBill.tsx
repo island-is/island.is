@@ -18,10 +18,10 @@ import { useZendeskMessenger } from './components/useZendeskMessenger'
 import * as styles from './AskTheBudgetBill.css'
 
 /**
- * Overridable via the 'zendeskSnippetUrl' key in the custom page's configJson.
- * The key is a public client side widget identifier, not a secret.
+ * The key in the url is the public client side identifier of the widget, the
+ * same one the other chat panels on the site carry, and is not a secret.
  */
-const DEFAULT_ZENDESK_SNIPPET_URL =
+const ZENDESK_SNIPPET_URL =
   'https://static.zdassets.com/ekr/snippet.js?key=23812e00-4869-4552-85cd-ccdd7cd9d958'
 
 const CONTAINER_ID = 'zendesk-embedded-chat-container'
@@ -43,19 +43,21 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
 
   useContentfulId(customPageData?.id)
 
-  const snippetUrl = DEFAULT_ZENDESK_SNIPPET_URL
-
   /** Where the <link> tag in the disclaimer text points, the terms for instance */
   const disclaimerLinkHref = customPageData?.configJson?.disclaimerLinkHref as
     | string
     | undefined
 
-  const { status, startConversation, openConversation } = useZendeskMessenger({
-    snippetUrl,
-    containerId: CONTAINER_ID,
-  })
+  const { status, load, startConversation, openConversation } =
+    useZendeskMessenger({
+      snippetUrl: ZENDESK_SNIPPET_URL,
+      containerId: CONTAINER_ID,
+    })
 
-  const [isStarting, setIsStarting] = useState(false)
+  // The question that has been asked but has no conversation yet, either
+  // because the widget is still booting or because it is being created. The
+  // chat is shown the moment it is set, so the waiting happens in there.
+  const [pendingQuestion, setPendingQuestion] = useState<string | null>(null)
   // Accounts that are not in multi conversation mode cannot be told which
   // conversation to show, so the widget is opened on whatever it defaults to.
   const [isFallbackOpen, setIsFallbackOpen] = useState(false)
@@ -103,34 +105,59 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
     [openConversation, router],
   )
 
-  // A conversation opened from a shared or reloaded url has to be handed to the
-  // widget once it is ready, since the query is read before it has booted.
+  // A conversation opened from a shared or reloaded url is the one case where
+  // the widget is needed without the visitor asking anything first, and it can
+  // only be handed the conversation once it has booted.
   useEffect(() => {
-    if (status !== 'ready' || !activeConversationId) return
-    openConversation(activeConversationId)
-  }, [status, activeConversationId, openConversation])
+    if (!activeConversationId) return
+    load()
+    if (status === 'ready') openConversation(activeConversationId)
+  }, [status, activeConversationId, load, openConversation])
 
-  const handleAsk = async (question: string) => {
-    setIsStarting(true)
-    try {
-      const conversationId = await startConversation(question)
-      setIsFallbackOpen(false)
-      showConversation(conversationId)
-    } catch (error) {
-      console.error(error)
-      setIsFallbackOpen(true)
-    } finally {
-      setIsStarting(false)
-    }
-  }
+  const handleAsk = useCallback(
+    (question: string) => {
+      // Swapping to the chat first, so the visitor is not left looking at the
+      // question box while the widget boots. Both the boot and the conversation
+      // being created are waited out behind the chat's own loading state.
+      setPendingQuestion(question)
+      load()
+    },
+    [load],
+  )
+
+  // The question the widget has already been handed, so that a re-render does
+  // not start a second conversation for it.
+  const sentQuestionRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (pendingQuestion === null || status !== 'ready') return
+    if (sentQuestionRef.current === pendingQuestion) return
+    sentQuestionRef.current = pendingQuestion
+
+    startConversation(pendingQuestion)
+      .then((conversationId) => {
+        setPendingQuestion(null)
+        showConversation(conversationId)
+      })
+      .catch((error) => {
+        console.error(error)
+        // The widget is up, so the visitor is left with it on whatever
+        // conversation it defaults to rather than with nothing at all.
+        setPendingQuestion(null)
+        setIsFallbackOpen(true)
+      })
+  }, [status, pendingQuestion, startConversation, showConversation])
 
   /** Leaves the open conversation behind and returns to an empty question box */
   const startNewChat = useCallback(() => {
+    setPendingQuestion(null)
+    sentQuestionRef.current = null
     setIsFallbackOpen(false)
     void router.push({ pathname: PATHNAME }, undefined, { shallow: true })
   }, [router])
 
-  const isChatOpen = Boolean(activeConversationId) || isFallbackOpen
+  const isChatOpen =
+    Boolean(activeConversationId) || isFallbackOpen || pendingQuestion !== null
 
   return (
     <Box
@@ -147,7 +174,11 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
         )}
         aria-hidden={!isChatOpen}
       >
-        <ChatConversation status={status} onNewChat={startNewChat}>
+        <ChatConversation
+          status={status}
+          isStarting={pendingQuestion !== null}
+          onNewChat={startNewChat}
+        >
           {/* Rendered into by Zendesk once, and kept mounted from then on */}
           <Box id={CONTAINER_ID} width="full" height="full" />
         </ChatConversation>
@@ -165,7 +196,6 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
       >
         <Box className={styles.launcherInner}>
           <ChatLauncher
-            isStarting={isStarting}
             isVisible={!isChatOpen}
             status={status}
             onAsk={handleAsk}
