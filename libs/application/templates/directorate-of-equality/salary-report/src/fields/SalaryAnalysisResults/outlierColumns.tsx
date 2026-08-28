@@ -9,24 +9,12 @@ import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS } from '../../utils/constants'
-import { formatPercentMagnitude } from '../../utils/wageGap'
+import { formatDeviationLabel } from '../../utils/salaryAnalysisLabels'
+import { formatWageAmount } from '../EmployeesEditor/utils'
 
 const SELECT_COLUMN_WIDTH = 32
 const DASH = '—'
 const m = messages.salaryAnalysis.outlierGroup
-
-// Bare amount, no "kr./klst." — the shared formatHourlyWage suffix is ~10
-// characters that every row pays for twice, wrapping the cell onto a second
-// line and widening the column past what the container holds. OutlierEditor
-// carries the unit once, under the table.
-// A missing figure is a dash, not a zero: `?? 0` would print "0" as though DMR
-// had reported a wage of nothing. The DTO types both wage fields as required, so
-// this is contract-defensive rather than a path we expect — but a false figure an
-// applicant could act on is the wrong way to fail. Zero itself still formats.
-const formatWageAmount = (value?: number | null): string =>
-  value == null
-    ? DASH
-    : value.toLocaleString('is-IS', { maximumFractionDigits: 0 })
 
 /**
  * InteractiveTable wraps every ordinary cell in `<Text variant="medium">`, which
@@ -222,32 +210,13 @@ const HourlyWageCell = ({ row }: CellProps) =>
 const ExpectedHourlyWageCell = ({ row }: CellProps) =>
   compactCell(formatWageAmount(row.original.expectedHourlyWage), 'right')
 
-// Signed here, unlike the company-level gender gaps: this is a deviation from a
-// fitted line, so the sign is meaningful and the word glosses it. The company
-// figures are magnitude-only because their sign would imply a denominator
-// convention the reader does not have.
-//
-// payStatus is rendered, not inferred from the sign. A row can be listed for
-// being paid ABOVE what their stig imply, which is the opposite of what a reader
-// expects, and deviationPercent's sign only conveys that to someone who already
-// knows the convention.
+// See formatDeviationLabel for why the sign comes from the figure and the word
+// from payStatus. Shared with the ábendingar table, which shows the same column.
 const DeviationCell = ({ row }: CellProps) => {
   const { formatMessage } = useLocale()
   const { deviationPercent, payStatus } = row.original
-  const sign = deviationPercent > 0 ? '+' : deviationPercent < 0 ? '-' : ''
-  const status = formatMessage(
-    payStatus === 'UNDERPAID'
-      ? m.payStatusUnderpaid
-      : payStatus === 'OVERPAID'
-      ? m.payStatusOverpaid
-      : m.payStatusOnLine,
-  )
   return compactCell(
-    formatMessage(m.deviationCell, {
-      sign,
-      value: formatPercentMagnitude(deviationPercent),
-      status,
-    }),
+    formatDeviationLabel(deviationPercent, payStatus, formatMessage),
     'right',
   )
 }

@@ -22,11 +22,15 @@ import type {
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
-import { formatSalaryAnalysisGenderLabel } from '../../utils/salaryAnalysisLabels'
+import {
+  formatPayStatusLabel,
+  formatSalaryAnalysisGenderLabel,
+} from '../../utils/salaryAnalysisLabels'
 import {
   formatSignedPercentMagnitude,
   hasIdentifiableRegressionFit,
 } from '../../utils/wageGap'
+import * as styles from './SalaryDistributionChart.css'
 
 type PayDispersionDto = SalaryAnalysisResponseDto['payDispersion']
 
@@ -120,20 +124,6 @@ const isChartPoint = (datum: unknown): datum is ChartPoint =>
   'employee' in datum &&
   'gender' in datum
 
-const payStatusWord = (
-  payStatus: WageGapEmployeeDto['payStatus'],
-  formatMessage: ReturnType<typeof useLocale>['formatMessage'],
-) => {
-  const m = messages.salaryAnalysis.outlierGroup
-  return formatMessage(
-    payStatus === 'UNDERPAID'
-      ? m.payStatusUnderpaid
-      : payStatus === 'OVERPAID'
-      ? m.payStatusOverpaid
-      : m.payStatusOnLine,
-  )
-}
-
 const ChartTooltip = ({
   active,
   payload,
@@ -176,7 +166,7 @@ const ChartTooltip = ({
       formatMessage(tooltipMessages.deviation),
       `${formatSignedPercentMagnitude(
         employee.deviationPercent,
-      )}% (${payStatusWord(employee.payStatus, formatMessage)})`,
+      )}% (${formatPayStatusLabel(employee.payStatus, formatMessage)})`,
     ])
   }
 
@@ -451,11 +441,12 @@ export const SalaryDistributionChart: FC<Props> = ({
       <Text variant="h4">{formatMessage(m.title)}</Text>
       <Text>{formatMessage(m.intro)}</Text>
 
-      <ResponsiveContainer width="100%" height={420}>
-        <ScatterChart
-          margin={{ top: 24, right: 0, left: 0, bottom: 24 }}
-          style={{ outline: 'none' }}
-        >
+      <ResponsiveContainer
+        width="100%"
+        height={420}
+        className={styles.chartFocus}
+      >
+        <ScatterChart margin={{ top: 24, right: 0, left: 0, bottom: 24 }}>
           <CartesianGrid vertical={false} stroke={theme.color.blue200} />
           <XAxis
             type="number"
