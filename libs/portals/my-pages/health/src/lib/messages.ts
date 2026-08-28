@@ -3009,6 +3009,10 @@ export const messages = defineMessages({
     id: 'sp.health:health-notifications-title',
     defaultMessage: 'Tilkynningar í Heilsu',
   },
+  healthConversationsBoxTitle: {
+    id: 'sp.health:health-conversations-box-title',
+    defaultMessage: 'Skilaboð í Heilsu',
+  },
   contactChat: {
     id: 'sp.health:contact-chat',
     defaultMessage: 'Netspjall Heilsuveru',
@@ -3021,21 +3025,18 @@ export const messages = defineMessages({
     id: 'sp.health:heilsuvera-chat-link',
     defaultMessage: 'https://direct.lc.chat/15092154',
   },
-  contactPhone: {
-    id: 'sp.health:contact-phone',
-    defaultMessage: 'Símaráðgjöf 1700 / 513 1700',
+  contactNow: {
+    id: 'sp.health:contact-now',
+    defaultMessage: 'Fyrir aðstoð samdægurs',
   },
-  contactPhoneNumber: {
-    id: 'sp.health:contact-phone-number',
-    defaultMessage: '+3545131700',
+  contactNowDesc: {
+    id: 'sp.health:contact-now-desc',
+    defaultMessage:
+      'Símaráðgjöf vegna bráðra veikinda eða slysa er opin allan sólarhringinn í síma 1700.',
   },
-  contactPhoneDesc: {
-    id: 'sp.health:contact-phone-desc',
-    defaultMessage: 'Fyrir aðstoð samdægurs.',
-  },
-  contactPhoneEmergencyDesc: {
-    id: 'sp.health:contact-phone-emergency-desc',
-    defaultMessage: 'Ath. í neyð skal hringja í 112.',
+  contactNowEmergencyDesc: {
+    id: 'sp.health:contact-now-emergency-desc',
+    defaultMessage: 'Í neyð skal hringja í 112.',
   },
   contactSendMessage: {
     id: 'sp.health:contact-send-message',

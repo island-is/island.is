@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Text,
   toast,
 } from '@island.is/island-ui/core'
@@ -303,33 +304,52 @@ const HealthConversationDetail = () => {
                       <Box
                         display="flex"
                         flexDirection="row"
+                        justifyContent="spaceBetween"
+                        alignItems="center"
                         paddingTop={index > 0 ? 3 : 0}
                         marginBottom={3}
                       >
-                        {isPatient ? (
-                          <ConversationAvatar
-                            variant="user"
-                            name={userInfo.profile.name ?? ''}
-                          />
-                        ) : (
-                          <ConversationAvatar
-                            variant="organization"
-                            logoUrl={item.organization?.logoUrl ?? undefined}
+                        <Box display="flex" flexDirection="row">
+                          {isPatient ? (
+                            <ConversationAvatar
+                              variant="user"
+                              name={userInfo.profile.name ?? ''}
+                              large
+                            />
+                          ) : (
+                            <ConversationAvatar
+                              variant="organization"
+                              logoUrl={item.organization?.logoUrl ?? undefined}
+                              large
+                            />
+                          )}
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            marginLeft={2}
+                            justifyContent="center"
+                          >
+                            <Text
+                              variant="eyebrow"
+                              fontWeight="medium"
+                              truncate
+                            >
+                              {senderName}
+                            </Text>
+                            <Text variant="medium">
+                              {formatDateWithTime(msg.messageSentAt)}
+                            </Text>
+                          </Box>
+                        </Box>
+                        {msg.attachments.length > 0 && (
+                          <Icon
+                            icon="attach"
+                            size="small"
+                            color="black"
+                            type="outline"
+                            className={styles.attachmentIcon}
                           />
                         )}
-                        <Box
-                          display="flex"
-                          flexDirection="column"
-                          marginLeft={2}
-                          justifyContent="center"
-                        >
-                          <Text variant="eyebrow" fontWeight="medium" truncate>
-                            {senderName}
-                          </Text>
-                          <Text variant="medium">
-                            {formatDateWithTime(msg.messageSentAt)}
-                          </Text>
-                        </Box>
                       </Box>
 
                       {/* Body */}
