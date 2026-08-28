@@ -86,11 +86,20 @@ test.describe.serial('Indictment completing for some tests', () => {
 
     // The overview moves a defendant whose indictment was cancelled out of the
     // defendant list and into a section of its own, titled with the decision.
-    // ('Niðurfellt' is only rendered for defendants still on the list.)
-    await expect(page.getByText('Niðurfelling máls').first()).toBeVisible()
-    await expect(page.getByText(accusedName).first()).toBeVisible()
+    // ('Niðurfellt' is only rendered for defendants still on the list.) The
+    // innermost div carrying the title is the info card item that holds it.
+    const cancelledSection = page
+      .locator('div')
+      .filter({ hasText: 'Niðurfelling máls' })
+      .last()
 
-    // The case is not completed - it remains active for the other defendant
+    // Scoping the names to that section is what makes this an assertion about
+    // the right defendant - page-wide locators would pass either way round.
+    await expect(cancelledSection.getByText(accusedName)).toBeVisible()
+
+    // The case is not completed - the second defendant is still on it, and is
+    // not among the ones whose indictment was cancelled
+    await expect(cancelledSection.getByText(secondAccusedName)).toHaveCount(0)
     await expect(page.getByText(secondAccusedName).first()).toBeVisible()
   })
 })

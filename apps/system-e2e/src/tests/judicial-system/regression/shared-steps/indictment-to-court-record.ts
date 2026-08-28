@@ -67,7 +67,9 @@ export const prosecutorCreatesIndictmentCase = async (
           resp.url().includes('/api/nationalRegistry/getPersonByNationalId') &&
           resp.request().method() === 'GET',
       ),
-      secondNationalIdInput.fill('000000-0000'),
+      // A different Gervimaður than the first defendant - two defendants on
+      // one case must not share a national id.
+      secondNationalIdInput.fill('010130-2399'),
     ])
 
     // Let the looked up data land before overwriting the name, otherwise the
