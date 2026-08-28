@@ -881,6 +881,11 @@ export const m = defineMessages({
   },
   reviewApplication: {
     id: 'form.system:review-application',
+    defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn umsókn.',
+    description: 'Please review before submitting the application.',
+  },
+  reviewApplication2: {
+    id: 'form.system:review-application-2',
     defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn.',
     description: 'Please review before submitting.',
   },
@@ -974,6 +979,11 @@ export const m = defineMessages({
   },
   submitApplication: {
     id: 'form.system:submit-application',
+    defaultMessage: 'Senda inn umsókn',
+    description: 'Submit application',
+  },
+  submitApplication2: {
+    id: 'form.system:submit-application-2',
     defaultMessage: 'Senda inn',
     description: 'Submit',
   },
@@ -1235,6 +1245,17 @@ export const m = defineMessages({
     defaultMessage: 'Nota þjónustuna til að yfirfara (e. validate) gögnin',
     description: 'Use the service to validate the data',
   },
+  disableUseValidateTitle: {
+    id: 'form.system:disable-use-validate-title',
+    defaultMessage: 'Slökkva á yfirferð gagna?',
+    description: 'Disable data validation title',
+  },
+  disableUseValidateMessage: {
+    id: 'form.system:disable-use-validate-message',
+    defaultMessage:
+      'Ef slökkt er á yfirferð gagna verður yfirferð fjarlægð af öllum skjám í forminu.',
+    description: 'Disable data validation confirmation message',
+  },
   screenValidate: {
     id: 'form.system:screen-validate',
     defaultMessage: 'Senda skjá/umsókn til yfirferðar (e. validation)',
@@ -1264,6 +1285,13 @@ export const m = defineMessages({
     id: 'form.system:remove-multi',
     defaultMessage: 'Fjarlægja',
     description: 'Remove',
+  },
+  testApplicationBanner: {
+    id: 'form.system:test-application-banner',
+    defaultMessage:
+      'Þetta form er í þróun og hefur ekki verið útgefið. Innsending mun ekki skila sér til afgreiðslu.',
+    description:
+      'This form is in development and has not been published. Submissions will not be processed.',
   },
   applicationLifetime: {
     id: 'form.system:application-lifetime',
@@ -1330,6 +1358,13 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Zendesk brand ID og Zendesk instance þurfa að vera skilgreind.',
     description:
       'The form cannot be published. Zendesk brand ID and Zendesk instance must be configured.',
+  },
+  unsupportedZendeskInstanceError: {
+    id: 'form.system:unsupported-zendesk-instance-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk instance er ekki stutt.',
+    description:
+      'The form cannot be published. The Zendesk instance is not supported.',
   },
   copyFieldHover: {
     id: 'form.system:copy-field-hover',

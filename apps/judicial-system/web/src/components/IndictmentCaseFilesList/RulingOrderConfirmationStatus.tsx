@@ -17,6 +17,14 @@ interface Props {
 }
 
 /**
+ * A ruling order uploaded during the course of a case is confirmed when the
+ * registered judge signs it off, which the backend records as the file's
+ * submission date.
+ */
+export const isRulingOrderConfirmed = (file: CaseFile): boolean =>
+  Boolean(file.submissionDate)
+
+/**
  * Right-aligned confirmation state of a ruling order uploaded during the
  * course of a case:
  * - confirmed: nothing is rendered,
@@ -33,7 +41,7 @@ const RulingOrderConfirmationStatus: FC<Props> = ({ file }) => {
 
   const [confirmRulingOrder, { loading }] = useConfirmRulingOrderMutation()
 
-  const isConfirmed = Boolean(file.submissionDate)
+  const isConfirmed = isRulingOrderConfirmed(file)
   const isRegisteredJudge = Boolean(
     user?.id && user.id === workingCase.judge?.id,
   )

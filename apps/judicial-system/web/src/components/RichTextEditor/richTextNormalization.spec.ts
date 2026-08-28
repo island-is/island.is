@@ -101,6 +101,25 @@ describe('indent class helpers', () => {
 })
 
 describe('normalizeRichTextHtml', () => {
+  describe('blank content', () => {
+    it('normalizes markup without visible text to an empty string', () => {
+      expect(normalizeRichTextHtml('<p>&nbsp;&nbsp;</p>')).toBe('')
+      expect(normalizeRichTextHtml('<p>   </p>')).toBe('')
+      expect(normalizeRichTextHtml('<p>&nbsp; </p><p></p>')).toBe('')
+      expect(normalizeRichTextHtml('<p><br></p>')).toBe('')
+    })
+
+    it('passes an empty string through unchanged', () => {
+      expect(normalizeRichTextHtml('')).toBe('')
+    })
+
+    it('keeps markup that contains visible text', () => {
+      expect(normalizeRichTextHtml('<p>&nbsp;a&nbsp;</p>')).toBe(
+        '<p>&nbsp;a&nbsp;</p>',
+      )
+    })
+  })
+
   describe('highlights', () => {
     it('converts the Word "background" shorthand to a highlight class', () => {
       // Word emits highlights as "background:yellow" — the shorthand, a
@@ -313,6 +332,32 @@ describe('normalizeRichTextHtml', () => {
           '<ul><li><p style="margin-left: 36pt;">x</p></li></ul>',
         ),
       ).toBe('<ul><li><p class="indent-1">x</p></li></ul>')
+    })
+
+    it('converts margin-left in inches to an indent class', () => {
+      expect(normalizeRichTextHtml('<p style="margin-left:0.5in">x</p>')).toBe(
+        '<p class="indent-1">x</p>',
+      )
+    })
+
+    it('converts each leading tab character to one indent level', () => {
+      expect(normalizeRichTextHtml('<p>\t\tx</p>')).toBe(
+        '<p class="indent-2">x</p>',
+      )
+    })
+
+    it('adds leading tabs on top of an existing indent class', () => {
+      expect(normalizeRichTextHtml('<p class="indent-1">\tx</p>')).toBe(
+        '<p class="indent-2">x</p>',
+      )
+    })
+
+    it('hoists an indent class from a wrapper div onto its paragraph', () => {
+      expect(
+        normalizeRichTextHtml(
+          "<div style='margin-left:36.0pt'><p>Hello</p></div>",
+        ),
+      ).toBe('<p class="indent-1">Hello</p>')
     })
   })
 

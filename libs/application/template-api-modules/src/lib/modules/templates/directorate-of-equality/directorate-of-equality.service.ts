@@ -12,12 +12,10 @@ import {
   getValueViaPath,
   YES,
 } from '@island.is/application/core'
-import {
-  Gender,
-  dataSchema as equalityReportDataSchema,
-} from '@island.is/application/templates/directorate-of-equality/equality-report'
+import { dataSchema as equalityReportDataSchema } from '@island.is/application/templates/directorate-of-equality/equality-report'
 import {
   dataSchema as salaryReportDataSchema,
+  messages as salaryReportMessages,
   PERIOD_ONE_MONTH,
 } from '@island.is/application/templates/directorate-of-equality/salary-report'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -25,7 +23,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ZodTypeAny, z } from 'zod'
 import { mapGender, toNumberOrZero } from './directorate-of-equality.utils'
 
-// Page size for walking listDraftEmployees to completion (SalaryAnalysisResults only).
+// Page size for walking listDraftEmployees to completion on salary-analysis screens.
 const DRAFT_EMPLOYEE_PAGE_SIZE = 100
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
@@ -67,6 +65,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     status?: number
     statusText?: string
     problem?: unknown
+    body?: unknown
     message?: string
   } {
     if (error instanceof FetchError) {
@@ -74,6 +73,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         status: error.status,
         statusText: error.statusText,
         problem: error.problem,
+        body: error.body,
       }
     }
     return {
@@ -81,11 +81,48 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  // Runs `action`, logging and rethrowing as the standard TemplateApiError on failure.
+  private getApiErrorBody(
+    error: unknown,
+  ): { details?: unknown; translatedMessage?: unknown } | undefined {
+    if (!(error instanceof FetchError)) return undefined
+    return error.body as
+      | { details?: unknown; translatedMessage?: unknown }
+      | undefined
+  }
+
+  // DMR returns per-row workbook validation messages in ApiErrorDto.details —
+  // unlike the rest of a FetchError body, these are meant for the applicant to
+  // read and act on, so they're the one case worth surfacing instead of the
+  // generic error.
+  private extractApiErrorDetails(error: unknown): string[] | undefined {
+    const details = this.getApiErrorBody(error)?.details
+    if (!Array.isArray(details)) return undefined
+    const strings = details.filter(
+      (detail): detail is string =>
+        typeof detail === 'string' && detail.trim().length > 0,
+    )
+    return strings.length > 0 ? strings : undefined
+  }
+
+  // ApiErrorDto.translatedMessage is explicitly documented as user-facing and
+  // localized — safe to show directly, unlike the rest of the error body.
+  private extractApiErrorTranslatedMessage(error: unknown): string | undefined {
+    const translatedMessage = this.getApiErrorBody(error)?.translatedMessage
+    return typeof translatedMessage === 'string' &&
+      translatedMessage.trim().length > 0
+      ? translatedMessage
+      : undefined
+  }
+
+  // Runs `action`, logging and rethrowing as the standard TemplateApiError on
+  // failure. `surfaceApiErrorDetails` opts in to forwarding ApiErrorDto.details
+  // to the applicant (e.g. workbook validation errors) instead of the generic
+  // message — only safe where the backend's details are user-facing.
   private async withTemplateApiError<T>(
     applicationId: string,
     errorMessage: string,
     action: () => Promise<T>,
+    options?: { surfaceApiErrorDetails?: boolean },
   ): Promise<T> {
     try {
       return await action()
@@ -101,11 +138,21 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         context: LOGGING_CONTEXT,
         ...errorDetails,
       })
+
+      const apiErrorDetails = options?.surfaceApiErrorDetails
+        ? this.extractApiErrorDetails(error)
+        : undefined
+
       throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
+        apiErrorDetails
+          ? apiErrorDetails.map((detail) => ({
+              title: detail,
+              summary: detail,
+            }))
+          : {
+              title: coreErrorMessages.defaultTemplateApiError,
+              summary: coreErrorMessages.defaultTemplateApiError,
+            },
         errorDetails.status ?? 500,
       )
     }
@@ -141,6 +188,9 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     try {
       return await this.directorateOfEqualityService.getCompany(auth)
     } catch (error) {
+      // getActiveEqualityReport already surfaces DMR's company-not-found
+      // error on this same prerequisites screen (both templates) — stay
+      // silent here so it isn't shown a second time.
       this.logger.error('Failed to get company data from DOE, falling back', {
         applicationId: application.id,
         context: LOGGING_CONTEXT,
@@ -159,6 +209,9 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         auth,
       )
     } catch (error) {
+      // getActiveEqualityReport already surfaces DMR's company-not-found
+      // error on this same prerequisites screen — stay silent here so it
+      // isn't shown a second time; the sub-criteria list just comes up empty.
       this.logger.error('Failed to get sub-criterion catalog, falling back', {
         applicationId: application.id,
         context: LOGGING_CONTEXT,
@@ -168,6 +221,12 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
+  // The one DMR-backed prerequisite provider shared by both the
+  // salary-report and equality-report templates — the single place that
+  // surfaces DMR's curated translatedMessage (e.g. "company not found").
+  // Every other DMR-backed provider on these screens (getDoeCompany,
+  // getSubCriterionCatalog, getBlankExcelTemplate) suppresses it instead of
+  // duplicating the alert.
   async getActiveEqualityReport({
     auth,
     application,
@@ -177,30 +236,24 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         await this.directorateOfEqualityService.getActiveEqualityReport(auth)
       return { hasActiveEqualityReport: true, ...report }
     } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
       this.logger.error('Failed to get active equality report, falling back', {
         applicationId: application.id,
         context: LOGGING_CONTEXT,
-        ...this.extractFetchErrorDetails(error),
+        ...errorDetails,
       })
-      return { hasActiveEqualityReport: false }
-    }
-  }
 
-  async getEqualityReportTemplateHtml({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.getEqualityReportTemplateHtml(
-        auth,
-      )
-    } catch (error) {
-      this.logger.error('Failed to get equality report template html', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...this.extractFetchErrorDetails(error),
-      })
-      throw error
+      const translatedMessage = this.extractApiErrorTranslatedMessage(error)
+      if (translatedMessage) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.errorDataProvider,
+            summary: translatedMessage,
+          },
+          errorDetails.status ?? 500,
+        )
+      }
+      return { hasActiveEqualityReport: false }
     }
   }
 
@@ -229,25 +282,15 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const hasActiveReport = getValueViaPath<boolean>(
-      application.externalData,
-      'activeEqualityReport.data.hasActiveEqualityReport',
-    )
-    if (!hasActiveReport) return null
-
-    // `identifier` is set to the submitting application's id at submit time
-    // (see submitEqualityReport below), the same value stored as `providerId`
-    // — which is what getReport() looks up by.
-    const providerId = getValueViaPath<string>(
-      application.externalData,
-      'activeEqualityReport.data.identifier',
-    )
-    if (!providerId) return null
     try {
-      // TODO: PROVIDER ID VS COMPANY ID.
+      const activeReport =
+        await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+
+      if (!activeReport || !activeReport.identifier) return null
+
       const report = await this.directorateOfEqualityService.getReport(
         auth,
-        providerId,
+        activeReport.identifier,
       )
       return { equalityReportContent: report.equalityReportContent ?? '' }
     } catch (error) {
@@ -267,19 +310,39 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    return this.withTemplateApiError(
-      application.id,
-      'Failed to get blank Excel template',
-      async () => {
-        const blob =
-          await this.directorateOfEqualityService.getBlankExcelTemplate(auth)
-        const arrayBuffer = await blob.arrayBuffer()
-        return {
-          base64: Buffer.from(arrayBuffer).toString('base64'),
-          filename: 'launagreining-sniðmát.xlsx',
-        }
-      },
-    )
+    try {
+      const blob =
+        await this.directorateOfEqualityService.getBlankExcelTemplate(auth)
+      const arrayBuffer = await blob.arrayBuffer()
+      return {
+        base64: Buffer.from(arrayBuffer).toString('base64'),
+        filename: 'launagreining-sniðmát.xlsx',
+      }
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to get blank Excel template', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+
+      // A curated translatedMessage means DMR doesn't recognize the company
+      // (not yet onboarded) — getActiveEqualityReport already surfaces that
+      // on this same prerequisites screen, so showing the generic error here
+      // too would just be a second, uninformative alert for the same cause.
+      // The download-template button simply won't render without base64.
+      if (this.extractApiErrorTranslatedMessage(error)) {
+        return {}
+      }
+
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
   }
 
   async presignImportUpload({
@@ -301,6 +364,22 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       () =>
         this.directorateOfEqualityService.createDraft(auth, {
           type: ReportTypeEnum.SALARY,
+          providerId: application.id,
+        }),
+    )
+  }
+
+  // Idempotent on providerId — reopening this step returns the same draft.
+  async createEqualityDraft({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to create equality report draft',
+      () =>
+        this.directorateOfEqualityService.createDraft(auth, {
+          type: ReportTypeEnum.EQUALITY,
           providerId: application.id,
         }),
     )
@@ -333,6 +412,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           application.id,
           { key },
         ),
+      { surfaceApiErrorDetails: true },
     )
   }
 
@@ -396,9 +476,9 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
-  // Only SalaryAnalysisResults still uses this — outlier-group management
-  // needs the full id<->ordinal mapping across every employee, which can't be
-  // paginated (a group can reference employees from anywhere in the set).
+  // Salary-analysis screens need a full employee list: outlier-group
+  // management needs the id<->ordinal mapping, and the extra-pay table derives
+  // its totals from the same draft rows.
   async listDraftEmployees({
     auth,
     application,
@@ -508,15 +588,124 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           contactName: answers.contactPerson?.name ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
-          averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
+          salaryDataBasis,
+          salaryDataPeriod,
+        })
+
+        try {
+          return await this.directorateOfEqualityService.submitDraft(
+            auth,
+            providerId,
+            {
+              company: {
+                name: answers.generalInformation?.companyName ?? '',
+                nationalId: answers.generalInformation?.nationalId ?? '',
+                address: answers.generalInformation?.address ?? '',
+                city: answers.generalInformation?.municipality ?? '',
+                postcode: answers.generalInformation?.postalCode ?? '',
+                isatCategory:
+                  answers.generalInformation?.isatClassification ?? '',
+              },
+              subsidiaries:
+                answers.subsidiaries?.includesSubsidiaries === 'yes'
+                  ? subsidiaryList.map((s) => ({
+                      name: s.nationalIdWithName.name,
+                      nationalId: s.nationalIdWithName.nationalId,
+                    }))
+                  : [],
+              equalityReportId,
+              outliersPostponed:
+                answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
+            },
+          )
+        } catch (error) {
+          // DMR returns 409 when the company already has a report in progress
+          // with the reviewing body — worth its own message instead of the
+          // generic defaultTemplateApiError text.
+          if (this.extractFetchErrorDetails(error).status === 409) {
+            throw new TemplateApiError(
+              {
+                title: coreErrorMessages.defaultTemplateApiError,
+                summary: salaryReportMessages.errors.submitConflict,
+              },
+              409,
+            )
+          }
+          throw error
+        }
+      },
+    )
+  }
+
+  async editOutliers({ auth, application }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to edit outliers',
+      async () => {
+        const answers = this.parseAnswers(
+          salaryReportDataSchema,
+          application.answers,
+          application.id,
+        )
+
+        const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
+          .filter((g) => g.employeeOrdinals.length > 0)
+          .map((g) => ({
+            name: g.name,
+            reason: g.reason ?? '',
+            action: g.action ?? '',
+            signatureName: g.signatureName ?? '',
+            signatureRole: g.signatureRole ?? '',
+            employeeOrdinals: g.employeeOrdinals,
+          }))
+
+        await this.directorateOfEqualityService.editOutliers(
+          auth,
+          application.id,
+          {
+            groups,
+          },
+        )
+      },
+    )
+  }
+
+  // Finalises the draft; only the pre-dataEntry answers need patching onto
+  // it first — the report's narrative content was already pushed live via
+  // the directorate-of-equality-application GraphQL resolver's
+  // updateEqualityDraftContent mutation as the applicant uploaded it, not
+  // read from application.answers here.
+  async submitEqualityDraft({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const answers = this.parseAnswers(
+      equalityReportDataSchema,
+      application.answers,
+      application.id,
+    )
+    const providerId = application.id
+    const subsidiaryList = answers.subsidiaries?.list ?? []
+
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to submit equality report',
+      async () => {
+        await this.directorateOfEqualityService.updateDraft(auth, providerId, {
+          companyAdminName: answers.chiefExecutive?.name ?? '',
+          companyAdminTitle: answers.chiefExecutive?.jobTitle ?? '',
+          companyAdminEmail: answers.chiefExecutive?.email ?? '',
+          companyAdminGender: mapGender(answers.chiefExecutive?.gender),
+          contactName: answers.contactPerson?.name ?? '',
+          contactEmail: answers.contactPerson?.email ?? '',
+          contactPhone: answers.contactPerson?.phone ?? '',
           averageEmployeeFemaleCount: toNumberOrZero(
             answers.employeeCount?.women,
           ),
+          averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
           averageEmployeeNeutralCount: toNumberOrZero(
             answers.employeeCount?.nonBinary,
           ),
-          salaryDataBasis,
-          salaryDataPeriod,
         })
 
         return await this.directorateOfEqualityService.submitDraft(
@@ -539,141 +728,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
                     nationalId: s.nationalIdWithName.nationalId,
                   }))
                 : [],
-            equalityReportId,
-            outliersPostponed:
-              answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
-          },
-        )
-      },
-    )
-  }
-
-  async editOutliers({ auth, application }: TemplateApiModuleActionProps) {
-    return this.withTemplateApiError(
-      application.id,
-      'Failed to edit outliers',
-      async () => {
-        const answers = this.parseAnswers(
-          salaryReportDataSchema,
-          application.answers,
-          application.id,
-        )
-
-        const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
-          .filter((g) => g.employeeOrdinals.length > 0)
-          .map((g) => ({
-            reason: g.reason ?? '',
-            action: g.action ?? '',
-            signatureName: g.signatureName ?? '',
-            signatureRole: g.signatureRole ?? '',
-            employeeOrdinals: g.employeeOrdinals,
-          }))
-
-        await this.directorateOfEqualityService.editOutliers(
-          auth,
-          application.id,
-          {
-            groups,
-          },
-        )
-      },
-    )
-  }
-
-  async submitEqualityReport({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
-    const answers = this.parseAnswers(
-      equalityReportDataSchema,
-      application.answers,
-      application.id,
-    )
-
-    const genderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
-      [Gender.MALE]: 'MALE',
-      [Gender.FEMALE]: 'FEMALE',
-      [Gender.NON_BINARY]: 'NEUTRAL',
-    }
-    const equalityReportContent = getValueViaPath(
-      answers,
-      'goalsAndActions.customField',
-      '',
-    )
-
-    const subsidiaryList = answers.subsidiaries?.list ?? []
-
-    return this.withTemplateApiError(
-      application.id,
-      'Failed to submit equality report',
-      () =>
-        this.directorateOfEqualityService.submitEqualityReport(auth, {
-          providerId: application.id,
-          companyAdminName: answers.chiefExecutive?.name ?? '',
-          companyAdminEmail: answers.chiefExecutive?.email ?? '',
-          companyAdminGender: answers.chiefExecutive?.gender
-            ? genderMap[answers.chiefExecutive.gender]
-            : 'NEUTRAL',
-          contactName: answers.contactPerson?.name ?? '',
-          contactEmail: answers.contactPerson?.email ?? '',
-          contactPhone: answers.contactPerson?.phone ?? '',
-          equalityReportContent: equalityReportContent ?? '',
-          company: {
-            name: answers.generalInformation?.companyName ?? '',
-            nationalId: answers.generalInformation?.nationalId ?? '',
-            address: answers.generalInformation?.address ?? '',
-            city: answers.generalInformation?.municipality ?? '',
-            postcode: answers.generalInformation?.postalCode ?? '',
-            isatCategory: answers.generalInformation?.isatClassification ?? '',
-          },
-          averageEmployeeFemaleCount: toNumberOrZero(
-            answers.employeeCount?.women,
-          ),
-          averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
-          averageEmployeeNeutralCount: toNumberOrZero(
-            answers.employeeCount?.nonBinary,
-          ),
-
-          subsidiaries:
-            answers.subsidiaries?.includesSubsidiaries === 'yes'
-              ? subsidiaryList.map((s) => ({
-                  name: s.nationalIdWithName.name,
-                  nationalId: s.nationalIdWithName.nationalId,
-                }))
-              : [],
-        }),
-    )
-  }
-
-  // Narrow in-place edit — PUTs just the report's narrative content, unlike
-  // submitEqualityReport's full create call. This is what DRAFT_RETRY's
-  // onExit uses: submitEqualityReport is a one-shot create (POST .../reports/
-  // equality), not something a revision can safely re-invoke.
-  async editEqualityContent({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
-    return this.withTemplateApiError(
-      application.id,
-      'Failed to edit equality content',
-      async () => {
-        const answers = this.parseAnswers(
-          equalityReportDataSchema,
-          application.answers,
-          application.id,
-        )
-
-        const equalityReportContent = getValueViaPath<string>(
-          answers,
-          'goalsAndActions.customField',
-          '',
-        )
-
-        await this.directorateOfEqualityService.editEqualityContent(
-          auth,
-          application.id,
-          {
-            equalityReportContent: equalityReportContent ?? '',
           },
         )
       },

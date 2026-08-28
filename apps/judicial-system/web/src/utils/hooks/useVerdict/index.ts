@@ -44,7 +44,11 @@ const useVerdict = (currentVerdict?: Verdict) => {
     [],
   )
 
-  const [updateVerdictMutation] = useUpdateVerdictMutation()
+  // Verdict updates can move the case between case tables, so active
+  // case table membership queries - the breadcrumbs - must be refetched.
+  const [updateVerdictMutation] = useUpdateVerdictMutation({
+    refetchQueries: ['CaseTableMembership'],
+  })
   const [createVerdictsMutation] = useCreateVerdictsMutation()
 
   const createVerdicts = async (verdictsToCreate: CreateVerdictsInput) => {

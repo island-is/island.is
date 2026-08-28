@@ -10,6 +10,7 @@ import type {
   UpdateIndictmentCountInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
 import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
 import { useReorderIndictmentCountsMutation } from './reorderIndictmentCounts.generated'
@@ -72,7 +73,13 @@ const useIndictmentCounts = () => {
     ) => {
       try {
         const { data } = await updateIndictmentCountMutation({
-          variables: { input: { indictmentCountId, caseId, ...update } },
+          variables: {
+            input: {
+              indictmentCountId,
+              caseId,
+              ...normalizeBlankStrings(update),
+            },
+          },
         })
 
         if (!data) {

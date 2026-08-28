@@ -140,6 +140,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     verdict: defendant.verdict,
     isPublicProsecutionOffice: isPublicProsecutionOfficeUser(user),
     indictmentRulingDecision,
+    isClosedWithoutEnforcement: defendant.isClosedWithoutEnforcement,
   })
 
   return (
@@ -207,6 +208,16 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             })}
           </Text>
         )}
+        {isPublicProsecutionOfficeUser(user) &&
+          defendant.isClosedWithoutEnforcement &&
+          defendant.closedWithoutEnforcementDate && (
+            <Text fontWeight="semiBold">
+              {`Máli lokið án fullnustu ${formatDate(
+                defendant.closedWithoutEnforcementDate,
+                'PPP',
+              )}`}
+            </Text>
+          )}
         {defendant.indictmentCancelledOrDismissedState && (
           <Text fontWeight="semiBold">{`${
             defendant.indictmentCancelledOrDismissedState.type ===
