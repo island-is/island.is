@@ -215,7 +215,8 @@ globalStyle(`${content} .ProseMirror`, {
   // input element's own padding (8px mobile, 16px desktop); the editor has no
   // inner element, so the sum is applied here to line the text up with them.
   padding: `${theme.spacing[2]}px ${theme.spacing[2]}px`,
-  whiteSpace: 'pre-wrap',
+  // TinyMCE used normal white-space; pre-wrap made literal Word tab characters
+  // look indented in the editor even when they were not stored as indent-N.
   overflowWrap: 'break-word',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
