@@ -32,15 +32,9 @@ type Props = {
   errors?: RecordObject
   // draft: pre-submit, DMR-synced, keyed by employee id. postponed: answers-backed, keyed by ordinal.
   mode: 'draft' | 'postponed'
-  roleTitleForOrdinal: (ordinal: number) => string | undefined
 }
 
-export const OutlierEditor: FC<Props> = ({
-  outliers,
-  errors,
-  mode,
-  roleTitleForOrdinal,
-}) => {
+export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
   const { formatMessage } = useLocale()
   const { control, setValue } = useFormContext()
   const m = messages.salaryAnalysis.outlierGroup
@@ -214,15 +208,8 @@ export const OutlierEditor: FC<Props> = ({
       allSelectedOnPage,
       toggleSelect,
       toggleSelectPage,
-      roleTitleForOrdinal,
     }),
-    [
-      selected,
-      allSelectedOnPage,
-      toggleSelect,
-      toggleSelectPage,
-      roleTitleForOrdinal,
-    ],
+    [selected, allSelectedOnPage, toggleSelect, toggleSelectPage],
   )
 
   return (

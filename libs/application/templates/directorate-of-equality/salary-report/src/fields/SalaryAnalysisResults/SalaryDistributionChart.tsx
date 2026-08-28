@@ -22,11 +22,12 @@ import type {
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
-import { formatSalaryAnalysisGenderLabel } from '../../utils/salaryAnalysisLabels'
 import {
-  formatSignedPercentMagnitude,
-  hasIdentifiableRegressionFit,
-} from '../../utils/wageGap'
+  formatDeviationLabel,
+  formatSalaryAnalysisGenderLabel,
+} from '../../utils/salaryAnalysisLabels'
+import { hasIdentifiableRegressionFit } from '../../utils/wageGap'
+import * as styles from './SalaryDistributionChart.css'
 
 type PayDispersionDto = SalaryAnalysisResponseDto['payDispersion']
 
@@ -120,20 +121,6 @@ const isChartPoint = (datum: unknown): datum is ChartPoint =>
   'employee' in datum &&
   'gender' in datum
 
-const payStatusWord = (
-  payStatus: WageGapEmployeeDto['payStatus'],
-  formatMessage: ReturnType<typeof useLocale>['formatMessage'],
-) => {
-  const m = messages.salaryAnalysis.outlierGroup
-  return formatMessage(
-    payStatus === 'UNDERPAID'
-      ? m.payStatusUnderpaid
-      : payStatus === 'OVERPAID'
-      ? m.payStatusOverpaid
-      : m.payStatusOnLine,
-  )
-}
-
 const ChartTooltip = ({
   active,
   payload,
@@ -174,9 +161,15 @@ const ChartTooltip = ({
     ])
     rows.push([
       formatMessage(tooltipMessages.deviation),
-      `${formatSignedPercentMagnitude(
+      // The shared helper, not a locally assembled string: this is the same
+      // figure the úrbótaáætlun and ábendingar tables show, so it goes through
+      // the same localised `deviationCell` template rather than hardcoding the
+      // "{value}% ({status})" shape a third time.
+      formatDeviationLabel(
         employee.deviationPercent,
-      )}% (${payStatusWord(employee.payStatus, formatMessage)})`,
+        employee.payStatus,
+        formatMessage,
+      ),
     ])
   }
 
@@ -451,11 +444,12 @@ export const SalaryDistributionChart: FC<Props> = ({
       <Text variant="h4">{formatMessage(m.title)}</Text>
       <Text>{formatMessage(m.intro)}</Text>
 
-      <ResponsiveContainer width="100%" height={420}>
-        <ScatterChart
-          margin={{ top: 24, right: 0, left: 0, bottom: 24 }}
-          style={{ outline: 'none' }}
-        >
+      <ResponsiveContainer
+        width="100%"
+        height={420}
+        className={styles.chartFocus}
+      >
+        <ScatterChart margin={{ top: 24, right: 0, left: 0, bottom: 24 }}>
           <CartesianGrid vertical={false} stroke={theme.color.blue200} />
           <XAxis
             type="number"
