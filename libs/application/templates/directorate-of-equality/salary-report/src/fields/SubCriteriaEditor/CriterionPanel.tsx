@@ -51,24 +51,10 @@ export const CriterionPanel: FC<Props> = ({
   )
   const expectedWeight = Number(criterionWeight) || 0
 
-  // Guarded on the PARENT's weight only.
-  //
-  // There is deliberately no `subCriteriaTotal !== 0` term. That was harmless
-  // while this only suppressed a red message, but it is now what decides whether
-  // Continue is enabled — and `createDefaultSubCriterion` seeds `weight: ''`, so
-  // a criterion nobody has filled in yet totals 0 and would have sailed straight
-  // through the gate. "Expected 40%, entered nothing" is exactly the mismatch
-  // this is here to catch: on Continue it writes weight 0, which makes maxScore
-  // and every step score 0 — an unscoreable yfirviðmið.
-  //
-  // `expectedWeight !== 0` stays, because a parent that has not been weighted yet
-  // (personal criteria are weighted on the previous screen) must not have this
-  // panel demanding its sub-criteria total 0%. Note this cannot be tightened to a
-  // blank-string check: `criterionWeight` arrives as `String(criterion.weight)`
-  // from a required `number`, so it is never '' — "0" is how "not weighted yet"
-  // reaches us.
-  const hasWeightMismatch =
-    expectedWeight !== 0 && Math.abs(subCriteriaTotal - expectedWeight) > 0.001
+  // Compare to the PARENT's weight, including 0%. A 0%-weighted criterion can
+  // only carry 0% worth of sub-criteria; otherwise those sub-criteria still write
+  // real step scores below even though the parent contributes no weight.
+  const hasWeightMismatch = Math.abs(subCriteriaTotal - expectedWeight) > 0.001
 
   useEffect(() => {
     onWeightMismatchChange(criterionId, hasWeightMismatch)

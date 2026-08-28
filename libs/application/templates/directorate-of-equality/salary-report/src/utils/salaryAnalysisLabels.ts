@@ -55,8 +55,7 @@ export const formatPayStatusLabel = (
  * here from the raw value, because it has to agree with the ROUNDED magnitude it
  * sits in front of. Deriving it from the unrounded figure renders a deviation of
  * −0,04% as "-0,0%" — a signed zero, which wageGap.spec pins as suppressed. So
- * `sign` is passed empty: the message keeps its `{sign}` slot for the published
- * translations, and the signed magnitude arrives whole in `{value}`.
+ * `sign` is passed empty: the signed magnitude arrives whole in `{value}`.
  */
 export const formatDeviationLabel = (
   deviationPercent: number,
