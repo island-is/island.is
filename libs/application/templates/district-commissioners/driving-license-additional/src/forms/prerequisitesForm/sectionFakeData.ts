@@ -3,14 +3,14 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
-  buildSubSection,
+  buildSection,
   buildTextField,
   NO,
   YES,
 } from '@island.is/application/core'
 import { allowFakeCondition, MainAdvancedLicense } from '../../utils'
 
-export const sectionFakeData = buildSubSection({
+export const sectionFakeData = buildSection({
   id: 'fakeData',
   title: 'Gervigögn',
   children: [

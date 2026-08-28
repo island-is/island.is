@@ -2,7 +2,7 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   buildSubmitField,
-  buildSubSection,
+  buildSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
@@ -21,7 +21,7 @@ import {
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
-export const sectionExternalData = buildSubSection({
+export const sectionExternalData = buildSection({
   id: 'externalData',
   title: m.externalDataSection,
   children: [
