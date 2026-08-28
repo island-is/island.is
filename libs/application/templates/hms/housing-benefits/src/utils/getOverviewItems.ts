@@ -19,6 +19,7 @@ import {
 } from '@island.is/application/ui-components'
 import * as m from '../lib/messages'
 import { getRejectedAssigneeNationalIdsFromAnswers } from './assigneeRejectionUtils'
+import { getAssigneeNationalIdForUmgengnissamningurForm } from './assigneeUtils'
 import {
   doesAssigneeAddressMatchRentalContract,
   getHouseholdMembersForTable,
@@ -1006,11 +1007,33 @@ type AssigneeAccessAgreementState =
       forChildName: string
     }
 
+const resolveAssigneeAccessAgreementPrefix = (
+  answers: FormValue,
+  externalData: ExternalData,
+  userNationalId?: string,
+): string => {
+  if (userNationalId && isValidKennitala(userNationalId)) {
+    return sanitizeKennitala(userNationalId)
+  }
+  const resolved = getAssigneeNationalIdForUmgengnissamningurForm({
+    answers,
+    externalData,
+  } as Application)
+  return resolved && isValidKennitala(resolved)
+    ? sanitizeKennitala(resolved)
+    : ''
+}
+
 const getAssigneeAccessAgreementState = (
   answers: FormValue,
+  externalData: ExternalData,
   userNationalId: string | undefined,
 ): AssigneeAccessAgreementState | null => {
-  const prefix = userNationalId ? sanitizeKennitala(userNationalId) : ''
+  const prefix = resolveAssigneeAccessAgreementPrefix(
+    answers,
+    externalData,
+    userNationalId,
+  )
   if (!prefix) {
     return null
   }
@@ -1077,10 +1100,14 @@ const getAssigneeAccessAgreementState = (
 
 export const assigneeAccessAgreementOverviewAttachments = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
   userNationalId?: string,
 ): Array<AttachmentItem> => {
-  const state = getAssigneeAccessAgreementState(answers, userNationalId)
+  const state = getAssigneeAccessAgreementState(
+    answers,
+    externalData,
+    userNationalId,
+  )
   if (!state) {
     return []
   }
@@ -1122,11 +1149,15 @@ export const assigneeAccessAgreementOverviewAttachments = (
 /** Full key–value list for sign / document overview (file names in text). */
 export const assigneeUmgengnissamningurOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
   userNationalId?: string,
   _locale?: Locale,
 ): Array<KeyValueItem> => {
-  const state = getAssigneeAccessAgreementState(answers, userNationalId)
+  const state = getAssigneeAccessAgreementState(
+    answers,
+    externalData,
+    userNationalId,
+  )
   if (!state) {
     return []
   }
