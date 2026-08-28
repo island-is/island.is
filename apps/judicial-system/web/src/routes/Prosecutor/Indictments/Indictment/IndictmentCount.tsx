@@ -70,12 +70,6 @@ interface Props {
 
 type Law = [number, number]
 
-// Decodes entities and strips tags so an otherwise-empty editor document
-// (e.g. a lone &nbsp; paragraph) doesn't pass the required check.
-const htmlToPlainText = (html: string) =>
-  new DOMParser().parseFromString(html, 'text/html').body.textContent?.trim() ??
-  ''
-
 const driversLicenceLaws: Law[] = [[58, 1]]
 const generalLaws: Law[] = [[95, 1]]
 
@@ -655,7 +649,7 @@ export const IndictmentCount: FC<Props> = ({
             onChange={(html) => {
               removeErrorMessageIfValid(
                 ['empty'],
-                htmlToPlainText(html),
+                html,
                 incidentDescriptionErrorMessage,
                 setIncidentDescriptionErrorMessage,
               )
@@ -670,19 +664,13 @@ export const IndictmentCount: FC<Props> = ({
               onChange(indictmentCount.id, { incidentDescription: html })
             }
             onBlur={(html) => {
-              const plainText = htmlToPlainText(html)
-
               validateAndSetErrorMessage(
                 ['empty'],
-                plainText,
+                html,
                 setIncidentDescriptionErrorMessage,
               )
 
-              // An entity-only document (e.g. a lone &nbsp;) still serializes
-              // as markup; store it as empty so validation treats it as missing.
-              onChange(indictmentCount.id, {
-                incidentDescription: plainText ? html : '',
-              })
+              onChange(indictmentCount.id, { incidentDescription: html })
             }}
             required
           />
