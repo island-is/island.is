@@ -18,7 +18,12 @@ import type { ConfigType } from '@island.is/nest/config'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadGatewayException,
+  BadRequestException,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
 import {
@@ -964,7 +969,7 @@ export class HealthDirectorateService {
     auth: Auth,
     input: HealthDirectorateCreateCertificatePaymentIntentInput,
     locale: Locale = 'is',
-  ): Promise<HealthDirectorateCertificatePaymentIntent | null> {
+  ): Promise<HealthDirectorateCertificatePaymentIntent> {
     const body: CreateCertificatePaymentIntentDto = {
       returnUrl: input.returnUrl,
       cancelUrl: input.cancelUrl,
@@ -976,7 +981,13 @@ export class HealthDirectorateService {
       body,
       locale,
     )
-    if (!intent) return null
+    // The upstream contract marks the intent required on success — a missing
+    // body is an upstream fault, and the mutation is non-nullable on it.
+    if (!intent) {
+      throw new BadGatewayException(
+        'Payment intent missing from upstream response',
+      )
+    }
 
     return {
       paymentId: intent.paymentId,

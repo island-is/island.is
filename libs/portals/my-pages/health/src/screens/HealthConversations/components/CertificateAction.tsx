@@ -97,7 +97,7 @@ const CertificateAction = ({
         },
       })
       const paymentPageUrl =
-        data?.healthDirectorateCreateCertificatePaymentIntent?.paymentPageUrl
+        data?.healthDirectorateCreateCertificatePaymentIntent.paymentPageUrl
       if (!paymentPageUrl) {
         throw new Error('Missing paymentPageUrl')
       }

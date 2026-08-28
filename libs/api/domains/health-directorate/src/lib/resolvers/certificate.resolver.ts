@@ -64,7 +64,6 @@ export class CertificateResolver {
 
   @Mutation(() => HealthDirectorateCertificatePaymentIntent, {
     name: 'healthDirectorateCreateCertificatePaymentIntent',
-    nullable: true,
   })
   @Audit()
   @Scopes(ApiScope.health)
@@ -74,7 +73,7 @@ export class CertificateResolver {
     @Args('locale', { type: () => LocaleEnum, nullable: true })
     locale: LocaleEnum = LocaleEnum.Is,
     @CurrentUser() user: User,
-  ): Promise<HealthDirectorateCertificatePaymentIntent | null> {
+  ): Promise<HealthDirectorateCertificatePaymentIntent> {
     return this.api.createCertificatePaymentIntent(user, input, locale)
   }
 }
