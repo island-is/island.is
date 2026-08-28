@@ -1,5 +1,4 @@
 import {
-    buildDescriptionField,
   buildMultiField,
   buildPaymentChargeOverviewField,
   buildSection,
