@@ -15,7 +15,7 @@ export const application = defineMessages({
     id: 'ta.tvo.application:pruneReason',
     defaultMessage: 'Bíður staðfestingar kaupanda og annarra hlutaðeigandi',
     description:
-      'PLACEHOLDER — reason shown in the pre-prune reminder notification, needs content review',
+      "The reason for why this application hasn't moved to the next state",
   },
   actionCardDraft: {
     id: 'ta.tvo.application:actionCardDraft',

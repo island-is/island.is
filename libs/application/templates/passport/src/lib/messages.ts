@@ -367,7 +367,7 @@ export const m = defineMessages({
     id: 'pa.application:pruneReason',
     defaultMessage: 'Bíður staðfestingar frá forsjáraðila 2',
     description:
-      'PLACEHOLDER — reason shown in the pre-prune reminder notification, needs content review',
+      "The reason for why this application hasn't moved to the next state",
   },
 
   /* ParentB Intro Section */

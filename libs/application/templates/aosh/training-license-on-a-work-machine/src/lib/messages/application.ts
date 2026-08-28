@@ -15,7 +15,7 @@ export const application = defineMessages({
     id: 'aosh.tlwm.application:pruneReason',
     defaultMessage: 'Bíður staðfestingar umsagnaraðila',
     description:
-      'PLACEHOLDER — reason shown in the pre-prune reminder notification, needs content review',
+      "The reason for why this application hasn't moved to the next state",
   },
   actionCardDraft: {
     id: 'aosh.tlwm.application:actionCardDraft',

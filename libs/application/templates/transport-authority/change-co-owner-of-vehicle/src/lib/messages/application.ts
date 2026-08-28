@@ -15,7 +15,7 @@ export const application = defineMessages({
     id: 'ta.ccov.application:pruneReason',
     defaultMessage: 'Bíður staðfestingar meðeiganda',
     description:
-      'PLACEHOLDER — reason shown in the pre-prune reminder notification, needs content review',
+      "The reason for why this application hasn't moved to the next state",
   },
   actionCardDraft: {
     id: 'ta.ccov.application:actionCardDraft',

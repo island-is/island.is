@@ -15,7 +15,7 @@ export const application = defineMessages({
     id: 'id.application:pruneReason',
     defaultMessage: 'Bíður staðfestingar frá forsjáraðila 2',
     description:
-      'PLACEHOLDER — reason shown in the pre-prune reminder notification, needs content review',
+      "The reason for why this application hasn't moved to the next state",
   },
   actionCardPrerequisites: {
     id: 'id.application:actionCardPrerequisites',
