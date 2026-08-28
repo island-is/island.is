@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildInteractiveTableField,
   buildMultiField,
   buildSection,
@@ -19,12 +18,8 @@ export const debtsSection = buildSection({
     buildMultiField({
       id: 'debtsSection',
       title: messages.general.sectionTitle,
+      description: messages.description.description,
       children: [
-        buildDescriptionField({
-          id: 'description',
-          description: messages.description.description,
-          space: 'none',
-        }),
         buildInteractiveTableField({
           id: 'selectedDebts',
           dataTestId: 'debts-table',

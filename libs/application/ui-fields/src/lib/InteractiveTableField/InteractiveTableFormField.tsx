@@ -2,7 +2,7 @@ import {
   FieldBaseProps,
   InteractiveTableField,
 } from '@island.is/application/types'
-import { FC, ReactNode, useMemo } from 'react'
+import { FC, ReactNode, useEffect, useMemo } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Box, Checkbox, Table as T, Text } from '@island.is/island-ui/core'
@@ -25,6 +25,7 @@ export const InteractiveTableFormField: FC<Props> = ({
   field,
   application,
   showFieldName,
+  setSubmitButtonDisabled,
 }) => {
   const {
     marginTop,
@@ -78,10 +79,30 @@ export const InteractiveTableFormField: FC<Props> = ({
     | boolean
     | undefined
   )[]
+  const inputValues = (useWatch({
+    name: inputFieldId ?? fieldId,
+    control,
+  }) ?? []) as (string | undefined)[]
   const allSelected =
     !!selectable &&
     rows.length > 0 &&
     rows.every((_, rowIndex) => !!selectedValues[rowIndex])
+
+  const hasCheckedAndFilledRow = rows.some((_, rowIndex) => {
+    if (!selectedValues[rowIndex]) return false
+    const amount = parseFloat(inputValues[rowIndex] ?? '')
+    return !Number.isNaN(amount) && amount > 0
+  })
+
+  useEffect(() => {
+    if (!selectable || !hasInputColumn) return
+    setSubmitButtonDisabled?.(!hasCheckedAndFilledRow)
+  }, [
+    selectable,
+    hasInputColumn,
+    hasCheckedAndFilledRow,
+    setSubmitButtonDisabled,
+  ])
 
   const toggleAll = () => {
     const nowSelected = !allSelected

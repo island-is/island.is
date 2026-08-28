@@ -14,12 +14,6 @@ export const payment = {
       defaultMessage: 'Greiða inn á skuld',
       description: 'Title of payment description field',
     },
-    description: {
-      id: 'pd.application:payment.description.description',
-      defaultMessage:
-        'Yfirlit þeirra skulda sem hægt er að greiða til ríkisins. Nánara yfirlit og sundurliðun skulda er undir Fjármál á Mínum Síðum.',
-      description: 'Description of payment description field',
-    },
   }),
   summary: defineMessages({
     forPaymentLabel: {

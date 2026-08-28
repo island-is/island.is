@@ -44,6 +44,13 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
   }, [selectable, checkboxFieldId, register, unregister])
 
   const checked = !!useWatch({ name: checkboxFieldId, control })
+  const amountFieldId =
+    hasInputColumn && inputFieldId
+      ? `${inputFieldId}[${rowIndex}]`
+      : checkboxFieldId
+  const amountValue = useWatch({ name: amountFieldId, control }) as
+    | string
+    | undefined
 
   const setInputAmount = (nowSelected: boolean) => {
     if (!hasInputColumn || !inputFieldId) {
@@ -86,7 +93,15 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
       {hasInputColumn && inputFieldId && (
         <T.Data
           onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onBlur={() => {
+            setFocused(false)
+            if (checked && !amountValue) {
+              setValue(checkboxFieldId, false, {
+                shouldDirty: true,
+                shouldTouch: true,
+              })
+            }
+          }}
         >
           <InputController
             id={`${inputFieldId}-${rowIndex}`}
@@ -94,7 +109,8 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
             type="number"
             currency
             rightAlign
-            min={0}
+            allowNegative={false}
+            min={1}
             max={inputMaxAmount}
             placeholder={focused ? undefined : inputPlaceholder}
             size="sm"
