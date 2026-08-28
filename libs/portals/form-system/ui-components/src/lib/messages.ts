@@ -1289,9 +1289,9 @@ export const m = defineMessages({
   testApplicationBanner: {
     id: 'form.system:test-application-banner',
     defaultMessage:
-      'Þetta form er í prófun og hefur ekki verið birt. Innsending verður ekki afgreidd.',
+      'Þetta form er í þróun og hefur ekki verið útgefið. Innsending mun ekki skila sér til afgreiðslu.',
     description:
-      'This form is currently being tested and has not been published. Your submission will not be processed.',
+      'This form is in development and has not been published. Submissions will not be processed.',
   },
   applicationLifetime: {
     id: 'form.system:application-lifetime',
