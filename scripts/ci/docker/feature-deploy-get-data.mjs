@@ -24,7 +24,7 @@ function getCommitMsg(context) {
 }
 
 async function getLatestIdsImageTag() {
-  return 'test_ids_feature_deploy_3fwfc3wf';
+  return 'test_ids_feature_deploy_3fwfc3wf'
   // const ecr = new AWS.ECR({ region: 'eu-west-1' })
 
   // // get response from aws.
