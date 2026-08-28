@@ -6,10 +6,11 @@ import { completedForm as messages } from '../../lib/messages'
 export const completedForm = buildForm({
   id: 'completedForm',
   mode: FormModes.COMPLETED,
-  title: messages.alertTitle,
   children: [
     buildFormConclusionSection({
-      alertMessage: messages.alertMessage,
+      multiFieldTitle: messages.alertTitle,
+      alertTitle: messages.alertMessage,
+      alertMessage: 'Takk fyrir',
     }),
   ],
 })
