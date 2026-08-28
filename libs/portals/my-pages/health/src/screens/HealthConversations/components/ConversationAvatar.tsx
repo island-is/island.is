@@ -13,8 +13,6 @@ type Props = (
   | { variant: 'organization'; logoUrl?: string; name?: never }
 ) & {
   large?: boolean
-  // 'light' renders a white circle for tinted surfaces (e.g. unread rows)
-  // where the default tint would blend in
   tone?: 'tinted' | 'light'
 }
 
