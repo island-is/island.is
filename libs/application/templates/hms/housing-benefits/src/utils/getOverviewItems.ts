@@ -943,6 +943,18 @@ export const mainFormAccessAgreementOverviewItems = (
   return items
 }
 
+export const mainFormAccessAgreementOverviewTitle = (
+  application: Application,
+) => ({
+  ...m.draftMessages.overviewSection.accessAgreementTitle,
+  values: {
+    count: mainFormAccessAgreementOverviewItems(
+      application.answers,
+      application.externalData,
+    ).length,
+  },
+})
+
 export const mainFormAccessAgreementOverviewAttachments = (
   answers: FormValue,
   _externalData: ExternalData,
