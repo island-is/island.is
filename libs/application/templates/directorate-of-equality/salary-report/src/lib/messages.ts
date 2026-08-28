@@ -1473,6 +1473,17 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
         defaultMessage: 'Setja í frávikahóp',
       },
+      // Only shown once at least one group exists: the button then opens a
+      // menu of the existing groups plus this entry, instead of silently
+      // always creating a new group.
+      assignToNewGroup: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.assignToNewGroup',
+        defaultMessage: 'Nýr frávikahópur',
+      },
+      assignToGroupMenuLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.assignToGroupMenuLabel',
+        defaultMessage: 'Veldu frávikahóp',
+      },
       // Paging through many pages to select everything is tedious, so this
       // shortcut appears once the table spans more than a handful of pages.
       selectAllOutliersButton: {
@@ -1497,9 +1508,22 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.defaultGroupName',
         defaultMessage: 'Sjálfgefinn hópur {index}',
       },
-      groupMembers: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMembers',
-        defaultMessage: 'Starfsmenn í hóp',
+      // New id rather than new copy on `groupMembers`: a CMS translation keyed
+      // to the old id would win over whatever is written here, and this line
+      // now carries a count instead of the member list — see stigColumn.
+      groupMemberCount: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMemberCount',
+        defaultMessage: 'Fjöldi starfsmanna í hópi',
+      },
+      // New id, not new copy on the retired `groupMembers`: a CMS translation
+      // keyed to the old id would win over what is written here.
+      groupMembersLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMembersLabel',
+        defaultMessage: 'Starfsmenn í hópi',
+      },
+      removeMemberLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeMemberLabel',
+        defaultMessage: 'Taka starfsmann {employee} úr hópnum',
       },
       removeGroupButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupButton',

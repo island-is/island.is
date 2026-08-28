@@ -178,7 +178,9 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       if (invalidRows.length > 0) {
         const uniqueInvalidRows = [...new Set(invalidRows)]
         const errorSummary = uniqueInvalidRows
-          .map((permno) => `${permno}: Invalid or ineligible row`)
+          // " - ", not ": ", so formatDayRateApiErrorMessages keeps the plate
+          // instead of stripping it as a prefix
+          .map((permno) => `${permno} - Invalid or ineligible row`)
           .join('\n')
 
         throw new TemplateApiError(
@@ -240,7 +242,9 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               typeof e.message === 'string'
                 ? e.message
                 : e.message.defaultMessage ?? e.message.id
-            return `${e.carNr}: ${msg}`
+            // " - " keeps the plate through formatDayRateApiErrorMessages and
+            // groups rows that failed for the same reason
+            return `${e.carNr?.trim() || `#${e.row}`} - ${msg}`
           })
           .filter((m) => m.length > 0)
           .join('\n')
