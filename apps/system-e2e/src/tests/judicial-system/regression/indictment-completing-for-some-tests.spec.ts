@@ -51,9 +51,16 @@ test.describe.serial('Indictment completing for some tests', () => {
       .filter({ hasText: 'Skrá lyktir á einstaka aðila án þess að ljúka máli' })
       .click()
 
-    // A conclusion can be registered for all but one defendant -
-    // cancel the indictment against the first defendant
-    await page.getByText('Veldu lyktir ef á við').first().click()
+    // A conclusion can be registered for all but one defendant - cancel the
+    // indictment against the first defendant. Click the select control rather
+    // than the placeholder: react-select lays the input container over the
+    // placeholder in the same grid cell, so a click aimed at the placeholder
+    // never reaches it.
+    await page
+      .locator('.island-select__control')
+      .filter({ hasText: 'Veldu lyktir ef á við' })
+      .first()
+      .click()
     await page.getByRole('option', { name: 'Niðurfelling máls' }).click()
 
     await page.getByTestId('continueButton').click()
@@ -75,8 +82,15 @@ test.describe.serial('Indictment completing for some tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     ])
 
-    // The case is not completed - it remains active for the other defendant
     await expect(page).toHaveURL(`domur/akaera/yfirlit/${caseId}`)
-    await expect(page.getByText('Niðurfellt').first()).toBeVisible()
+
+    // The overview moves a defendant whose indictment was cancelled out of the
+    // defendant list and into a section of its own, titled with the decision.
+    // ('Niðurfellt' is only rendered for defendants still on the list.)
+    await expect(page.getByText('Niðurfelling máls').first()).toBeVisible()
+    await expect(page.getByText(accusedName).first()).toBeVisible()
+
+    // The case is not completed - it remains active for the other defendant
+    await expect(page.getByText(secondAccusedName).first()).toBeVisible()
   })
 })

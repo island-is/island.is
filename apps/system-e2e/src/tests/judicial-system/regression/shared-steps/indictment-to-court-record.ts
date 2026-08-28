@@ -52,19 +52,29 @@ export const prosecutorCreatesIndictmentCase = async (
   if (secondAccusedName) {
     // The case does not exist yet, so this only adds a defendant locally -
     // it is persisted with a CreateDefendant mutation when the case is
-    // created below. The second defendant has no Icelandic national id to
-    // avoid a duplicate national registry lookup.
+    // created below. Every defendant in an indictment must have an Icelandic
+    // national id, and the national registry lookup is also what fills in the
+    // gender the step needs to be valid, so the second defendant is looked up
+    // just like the first one.
     await page.getByTestId('addDefendantButton').click()
-    await page
-      .getByRole('checkbox', {
-        name: 'Varnaraðili er ekki með íslenska kennitölu',
-      })
-      .last()
-      .check()
-    await page.getByTestId('inputNationalId').last().fill('12.12.2000')
+
+    const secondNationalIdInput = page.getByTestId('inputNationalId').last()
     const secondNameInput = page.getByTestId('inputName').last()
+
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes('/api/nationalRegistry/getPersonByNationalId') &&
+          resp.request().method() === 'GET',
+      ),
+      secondNationalIdInput.fill('000000-0000'),
+    ])
+
+    // Let the looked up data land before overwriting the name, otherwise the
+    // lookup overwrites what we type.
+    await expect(secondNameInput).not.toHaveValue('')
+
     await secondNameInput.fill(secondAccusedName)
-    await page.getByTestId('accusedAddress').last().fill('Einhversstaðar 2')
     await secondNameInput.press('Tab')
     await expect(secondNameInput).toHaveValue(secondAccusedName)
   }
@@ -198,17 +208,38 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
 
   await expect(page).toHaveURL(`domur/akaera/mottaka/${caseId}`)
 
-  await page
-    .getByTestId('courtCaseNumber')
-    .fill(randomIndictmentCourtCaseNumber())
-  await page.keyboard.press('Tab')
+  // Navigating to a case screen refreshes the case, and the refresh response
+  // replaces the whole form state - so a court case number or judge entered
+  // while that refresh is still in flight is silently wiped, which leaves the
+  // continue button disabled with nothing to refill it. Enter both until they
+  // survive. The heavier the case, the slower the refresh, so this bites with
+  // more than one defendant.
+  const courtCaseNumber = randomIndictmentCourtCaseNumber()
+  const courtCaseNumberInput = page.getByTestId('courtCaseNumber')
+  const judgeSelect = page.getByTestId('select-judge')
+  const receptionContinueButton = page.getByTestId('continueButton')
 
-  await page.getByText('Veldu dómara/aðstoðarmann').click()
-  await page.getByTestId('select-judge').getByText('Test Dómari').last().click()
+  await expect(async () => {
+    if ((await courtCaseNumberInput.inputValue()) !== courtCaseNumber) {
+      await courtCaseNumberInput.fill(courtCaseNumber)
+      await page.keyboard.press('Tab')
+    }
+
+    // 'Veldu héraðsdómara' is the placeholder, shown only until a judge is
+    // selected - unlike the judge's name it cannot be confused with an option
+    // in a menu left open by a failed attempt. 'Veldu dómara/aðstoðarmann' is
+    // the label, and clicking it opens the menu.
+    if (await judgeSelect.getByText('Veldu héraðsdómara').isVisible()) {
+      await judgeSelect.getByText('Veldu dómara/aðstoðarmann').click()
+      await judgeSelect.getByText('Test Dómari').last().click()
+    }
+
+    await expect(receptionContinueButton).toBeEnabled({ timeout: 2000 })
+  }).toPass({ timeout: 30000 })
 
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    page.getByTestId('continueButton').click(),
+    receptionContinueButton.click(),
   ])
 
   await expect(page).toHaveURL(`domur/akaera/fyrirkall/${caseId}`)
@@ -246,8 +277,17 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
   for (let i = 0; i < defenderChoiceCount; i++) {
     await defenderChoiceOptions.nth(i).click()
   }
-  await page.getByRole('button', { name: 'Staðfesta val' }).click()
-  await page.getByTestId('modalPrimaryButton').click()
+  // One defender choice confirmation per defendant. The confirm button is
+  // removed once the choice is confirmed, so we always act on the first one
+  // still standing and wait for it to disappear before moving on.
+  const confirmDefenderChoiceButtons = page.getByRole('button', {
+    name: 'Staðfesta val',
+  })
+  for (let remaining = defenderChoiceCount; remaining > 0; remaining--) {
+    await confirmDefenderChoiceButtons.first().click()
+    await page.getByTestId('modalPrimaryButton').click()
+    await expect(confirmDefenderChoiceButtons).toHaveCount(remaining - 1)
+  }
 
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
