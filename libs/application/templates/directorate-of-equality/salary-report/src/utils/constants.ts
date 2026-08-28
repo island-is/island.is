@@ -16,6 +16,12 @@ export enum States {
   IN_REVIEW = 'inReview',
   APPROVED = 'approved',
   DENIED = 'denied',
+  // The receipt state: the report is in, the úrbótaáætlun is not. Its whole
+  // form is the "Sending móttekin" screen, and PostponeReceiptCloser moves the
+  // application on to POSTPONED as the applicant leaves it. A state rather than
+  // an answer flag so the receipt cannot be reached again — it belongs to a
+  // form the applicant is no longer in.
+  POSTPONE_RECEIVED = 'postponeReceived',
   POSTPONED = 'postponed',
   NOT_ALLOWED = 'notAllowed',
   DRAFT_RETRY = 'draftRetry',

@@ -5,11 +5,11 @@ import type {
   SalaryAnalysisResponseDto,
 } from '@island.is/clients/directorate-of-equality'
 import {
+  adjustedGapForResult,
   benchmarkVerdictForResult,
+  getAdjustedGap,
   getBenchmarkVerdict,
   hasMinimumSetOutliersInResult,
-  hasNotSeenPostponeReceipt,
-  hasSeenPostponeReceipt,
   isPostponeRequested,
   navigationAnswersForAnalysisResult,
   reviewOutlierPlanIsSubmittable,
@@ -263,36 +263,6 @@ describe('salary analysis outlier navigation flags', () => {
   })
 })
 
-describe('postpone receipt visibility', () => {
-  it('treats a fresh postpone submission as not yet seen', () => {
-    const answers: FormValue = { salaryAnalysis: { postponed: ['yes'] } }
-
-    expect(hasSeenPostponeReceipt(answers)).toBe(false)
-    expect(hasNotSeenPostponeReceipt(answers)).toBe(true)
-  })
-
-  it('skips the receipt once the flag is persisted', () => {
-    const answers: FormValue = {
-      salaryAnalysis: { postponed: ['yes'], postponeReceiptSeen: true },
-    }
-
-    expect(hasSeenPostponeReceipt(answers)).toBe(true)
-    expect(hasNotSeenPostponeReceipt(answers)).toBe(false)
-  })
-
-  // The marker writes `true` and nothing else ever writes the key, but a
-  // falsy-but-present value must still read as "not seen" rather than as
-  // "present, therefore done".
-  it('reads a false flag as not seen', () => {
-    const answers: FormValue = {
-      salaryAnalysis: { postponeReceiptSeen: false },
-    }
-
-    expect(hasSeenPostponeReceipt(answers)).toBe(false)
-    expect(hasNotSeenPostponeReceipt(answers)).toBe(true)
-  })
-})
-
 describe('isPostponeRequested', () => {
   it('reads the postpone checkbox', () => {
     expect(
@@ -365,6 +335,22 @@ describe('reviewOutlierPlanIsSubmittable', () => {
         externalData(result(2)),
       ),
     ).toBe(false)
+  })
+
+  // The postpone answer is cleared by a mount effect and only persisted on the
+  // way off the plan screen, so a finished plan must not depend on it.
+  it('accepts a complete plan while the postpone answer is still set', () => {
+    expect(
+      reviewOutlierPlanIsSubmittable(
+        {
+          salaryAnalysis: {
+            postponed: ['yes'],
+            outlierGroups: [completeGroup([1, 2])],
+          },
+        },
+        externalData(result(2)),
+      ),
+    ).toBe(true)
   })
 
   it('accepts a complete plan covering every outlier', () => {
@@ -475,5 +461,88 @@ describe('benchmark verdict', () => {
       ),
     ).toBe('within')
     expect(getBenchmarkVerdict({})).toBe('unknown')
+  })
+})
+
+// The review screens render the figure from answers, so the gate that decides
+// whether there is a figure at all is pinned here.
+describe('adjusted gap', () => {
+  const withDecomposition = (
+    overrides: Record<string, unknown>,
+  ): SalaryAnalysisResponseDto =>
+    result(0, {
+      wageGapDecomposition: overrides,
+    } as Partial<SalaryAnalysisResponseDto>)
+
+  it('carries the figure and its direction when the gap is available', () => {
+    expect(
+      adjustedGapForResult(
+        withDecomposition({
+          oskyrtAvailable: true,
+          oskyrtPercent: 3.2,
+          oskyrtDirection: 'FEMALE',
+        }),
+      ),
+    ).toEqual({ percent: 3.2, direction: 'FEMALE' })
+  })
+
+  it('has no figure when the decomposition could not compute one', () => {
+    expect(
+      adjustedGapForResult(withDecomposition({ oskyrtAvailable: false })),
+    ).toBeUndefined()
+    expect(
+      adjustedGapForResult(withDecomposition({ oskyrtAvailable: true })),
+    ).toBeUndefined()
+  })
+
+  it('defaults a missing direction to none rather than guessing one', () => {
+    expect(
+      adjustedGapForResult(
+        withDecomposition({ oskyrtAvailable: true, oskyrtPercent: 0 }),
+      ),
+    ).toEqual({ percent: 0, direction: 'NONE' })
+  })
+
+  it('keeps the figure out of the mirrored answers when there is none', () => {
+    expect(
+      navigationAnswersForAnalysisResult(result(1), { resetReviewed: false })
+        .salaryAnalysis,
+    ).not.toHaveProperty('adjustedGapPercent')
+  })
+
+  it('prefers the mirrored answer over the stored snapshot', () => {
+    expect(
+      getAdjustedGap(
+        {
+          salaryAnalysis: {
+            adjustedGapPercent: 1.5,
+            adjustedGapDirection: 'MALE',
+          },
+        },
+        externalData(
+          withDecomposition({
+            oskyrtAvailable: true,
+            oskyrtPercent: 9,
+            oskyrtDirection: 'FEMALE',
+          }),
+        ),
+      ),
+    ).toEqual({ percent: 1.5, direction: 'MALE' })
+  })
+
+  it('falls back to the snapshot, then to nothing', () => {
+    expect(
+      getAdjustedGap(
+        {},
+        externalData(
+          withDecomposition({
+            oskyrtAvailable: true,
+            oskyrtPercent: 9,
+            oskyrtDirection: 'FEMALE',
+          }),
+        ),
+      ),
+    ).toEqual({ percent: 9, direction: 'FEMALE' })
+    expect(getAdjustedGap({})).toBeUndefined()
   })
 })

@@ -60,7 +60,6 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   field,
   errors,
   answerQuestions,
-  goToScreen,
   setBeforeSubmitCallback,
   setSubmitButtonDisabled,
 }) => {
@@ -74,11 +73,6 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   // states own the submitted snapshot — and it is also what decides which draft
   // providers the role grants.
   const isDraftPhase = application.state === States.DRAFT
-  // Set only where the analysis screen follows this one instead of preceding it.
-  const viewAnalysisScreenId =
-    typeof field?.props?.['viewAnalysisScreenId'] === 'string'
-      ? (field.props['viewAnalysisScreenId'] as string)
-      : undefined
   const { formatMessage, lang: locale } = useLocale()
   const {
     content: outlierGroupsContent,
@@ -505,32 +499,12 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box>
-      {/* POSTPONED opens on this screen, so the analysis it explains sits
-          *after* it and the shell's own back button cannot reach it — see
-          postponedSalaryAnalysisSection. */}
-      {viewAnalysisScreenId && (
-        <Box marginBottom={3}>
-          <Button
-            variant="ghost"
-            size="small"
-            preTextIcon="arrowBack"
-            onClick={() => goToScreen?.(viewAnalysisScreenId)}
-          >
-            {formatMessage(
-              messages.salaryAnalysis.improvementPlan.viewAnalysisButton,
-            )}
-          </Button>
-        </Box>
-      )}
-
-      <OutlierGroupPanel
-        outliers={result.outliers ?? []}
-        hidePostponeCheckbox={hidePostponeCheckbox}
-        errors={errors}
-        roleTitleForOrdinal={roleTitleForOrdinal}
-        outlierGroupsFormMethods={isDraftPhase ? draftForm : undefined}
-      />
-    </Box>
+    <OutlierGroupPanel
+      outliers={result.outliers ?? []}
+      hidePostponeCheckbox={hidePostponeCheckbox}
+      errors={errors}
+      roleTitleForOrdinal={roleTitleForOrdinal}
+      outlierGroupsFormMethods={isDraftPhase ? draftForm : undefined}
+    />
   )
 }

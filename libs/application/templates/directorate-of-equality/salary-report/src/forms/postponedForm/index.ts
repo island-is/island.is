@@ -1,68 +1,23 @@
-import {
-  buildForm,
-  buildMultiField,
-  buildSection,
-  buildSubmitField,
-} from '@island.is/application/core'
-import { DefaultEvents, FormModes } from '@island.is/application/types'
+import { buildForm } from '@island.is/application/core'
+import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
-import { postponeReceiptSection } from './postponeReceiptSection'
-import { postponedSalaryAnalysisSection } from './postponedSalaryAnalysisSection'
-import { postponedReportSummarySection } from './postponedReportSummarySection'
-import { messages } from '../../lib/messages'
-import { ScreenIds } from '../../utils/constants'
-import { buildOutlierPlanOverviewField } from '../outlierPlanOverview'
-import {
-  hasSeenPostponeReceipt,
-  reviewOutlierPlanIsSubmittable,
-} from '../../utils/salaryAnalysisNavigation'
+import { postponedReviewSection } from './postponedReviewSection'
+import { buildSalaryAnalysisSection } from '../mainForm/salaryAnalysisSection'
 
+// The úrbótaáætlun flow, entered once the applicant has closed the receipt (see
+// States.POSTPONE_RECEIVED). Nothing here is conditional: the receipt lives in
+// the other state's form, so this one opens on the salary analysis every time.
 export const postponedForm = buildForm({
   id: 'postponedForm',
   logo: DirectorateOfEqualityLogo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  // The receipt screen and the rest of the form are mutually exclusive on
-  // purpose: on the visit that submitted the report the receipt is the only
-  // navigable screen, so the applicant gets the last-screen button instead of
-  // being walked on into the úrbótaáætlun. Every later visit is the mirror
-  // image — see hasSeenPostponeReceipt.
   children: [
-    postponeReceiptSection,
-    postponedSalaryAnalysisSection,
-    postponedReportSummarySection,
-    buildSection({
-      id: 'postponedSubmit',
-      title: messages.postponed.sectionTitle,
-      condition: hasSeenPostponeReceipt,
-      children: [
-        buildMultiField({
-          id: 'postponedSubmitMultiField',
-          title: messages.postponed.title,
-          description: messages.postponed.intro,
-          children: [
-            buildOutlierPlanOverviewField({
-              id: 'postponedSubmitOverview',
-              title: messages.postponed.reviewTitle,
-              backId: ScreenIds.improvementPlan,
-            }),
-            buildSubmitField({
-              id: 'postponedSubmit',
-              title: messages.postponed.submitButton,
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: messages.postponed.submitButton,
-                  type: 'primary',
-                  condition: reviewOutlierPlanIsSubmittable,
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
+    buildSalaryAnalysisSection(
+      { hidePostponeCheckbox: true },
+      { showComments: true },
+    ),
+    postponedReviewSection,
   ],
 })

@@ -139,11 +139,9 @@ const salaryAnalysis = z
     benchmarkVerdict: z
       .enum(['within', 'over', 'notComputable', 'unknown'])
       .optional(),
+    adjustedGapPercent: z.number().optional(),
+    adjustedGapDirection: z.enum(['FEMALE', 'MALE', 'NONE']).optional(),
     outlierPlanReviewed: z.boolean().optional(),
-    // Set by the POSTPONED receipt screen the first time it renders, so a
-    // reopened application skips it and lands on the úrbótaáætlun screen —
-    // see PostponeReceiptMarker.
-    postponeReceiptSeen: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
     // Explanations are only required when there's something to explain (a

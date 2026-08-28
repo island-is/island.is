@@ -27,11 +27,37 @@ export const hasMinimumSetOutliersInResult = (
 // that reads externalData directly reads it as of page load.
 export type BenchmarkVerdict = 'within' | 'over' | 'notComputable' | 'unknown'
 
+export type GapDirection = 'FEMALE' | 'MALE' | 'NONE'
+
+export type AdjustedGap = { percent: number; direction: GapDirection }
+
 export type SalaryAnalysisNavigationAnswers = {
   salaryAnalysis: {
     hasMinimumSetOutliers: boolean
     benchmarkVerdict: BenchmarkVerdict
+    adjustedGapPercent?: number
+    adjustedGapDirection?: GapDirection
     outlierPlanReviewed?: boolean
+  }
+}
+
+// Same gate the analysis screen renders the figure behind: the leiðréttur gap
+// is only a number when the decomposition says it could be computed.
+export const adjustedGapForResult = (
+  result: Pick<SalaryAnalysisResponseDto, 'wageGapDecomposition'>,
+): AdjustedGap | undefined => {
+  const decomposition = result.wageGapDecomposition
+  if (
+    !decomposition ||
+    decomposition.oskyrtAvailable !== true ||
+    typeof decomposition.oskyrtPercent !== 'number'
+  ) {
+    return undefined
+  }
+
+  return {
+    percent: decomposition.oskyrtPercent,
+    direction: decomposition.oskyrtDirection ?? 'NONE',
   }
 }
 
@@ -116,6 +142,29 @@ export const getBenchmarkVerdict = (
   return result ? benchmarkVerdictForResult(result) : 'unknown'
 }
 
+export const getAdjustedGap = (
+  answers: FormValue,
+  externalData?: ExternalData,
+): AdjustedGap | undefined => {
+  const percent = getValueViaPath<number>(
+    answers,
+    'salaryAnalysis.adjustedGapPercent',
+  )
+  if (typeof percent === 'number') {
+    return {
+      percent,
+      direction:
+        getValueViaPath<GapDirection>(
+          answers,
+          'salaryAnalysis.adjustedGapDirection',
+        ) ?? 'NONE',
+    }
+  }
+
+  const result = getSalaryAnalysisResult(externalData)
+  return result ? adjustedGapForResult(result) : undefined
+}
+
 export const navigationAnswersForAnalysisResult = (
   result: Pick<SalaryAnalysisResponseDto, 'outliers' | 'wageGapDecomposition'>,
   { resetReviewed }: { resetReviewed: boolean },
@@ -124,6 +173,14 @@ export const navigationAnswersForAnalysisResult = (
   const salaryAnalysis: SalaryAnalysisNavigationAnswers['salaryAnalysis'] = {
     hasMinimumSetOutliers,
     benchmarkVerdict: benchmarkVerdictForResult(result),
+  }
+
+  // Absent rather than null when the gap could not be computed, so the keys
+  // stay out of the answers entirely instead of mirroring a non-figure.
+  const adjustedGap = adjustedGapForResult(result)
+  if (adjustedGap) {
+    salaryAnalysis.adjustedGapPercent = adjustedGap.percent
+    salaryAnalysis.adjustedGapDirection = adjustedGap.direction
   }
 
   if (!hasMinimumSetOutliers) {
@@ -140,23 +197,25 @@ export const navigationAnswersForAnalysisResult = (
  * never `outlierPlanReviewed`.
  *
  * That flag means "the DRAFT phase found the report submittable", and
- * postponing is one of the ways to make it submittable — so it arrives in
- * POSTPONED already `true` with no plan behind it, which is exactly the state
- * salaryAnalysisOutlierPlanIsReviewed reports as reviewed. It is corrected only
- * once SalaryImprovementPlan's effects have run and OutlierGroupPanel has
- * cleared `postponed`, which would leave an upstream screen's mount order as
- * the thing standing between an empty plan and editOutliers.
+ * postponing is one of the ways to make it submittable — so it arrives in the
+ * review states already `true` with no plan behind it, which is exactly the
+ * state salaryAnalysisOutlierPlanIsReviewed reports as reviewed. This asks the
+ * only question that matters instead: is there a plan, and does it cover every
+ * outlier?
  *
- * Re-derived from the stored answers and the submitted analysis snapshot
- * instead, so it holds whether or not that screen has run. Fails closed: a
- * still-set postpone answer is a plan that was never written.
+ * Deliberately says nothing about `salaryAnalysis.postponed`. That answer is
+ * cleared by a mount effect in OutlierGroupPanel and only persisted when the
+ * applicant navigates off the plan screen, so refusing while it is still set
+ * made the submit button hostage to an upstream screen's effect ordering — a
+ * complete plan with a stale postpone answer would have been unsubmittable. The
+ * completeness checks below already refuse the case that mattered: a postponed
+ * report carries no groups at all.
  */
 export const reviewOutlierPlanIsSubmittable = (
   answers: FormValue,
   externalData?: ExternalData,
 ): boolean => {
   if (!salaryAnalysisNeedsImprovementPlan(answers, externalData)) return true
-  if (isPostponeRequested(answers)) return false
 
   const groups =
     getValueViaPath<OutlierGroupAnswer[]>(
@@ -190,17 +249,3 @@ export const isPostponeRequested = (answers: FormValue): boolean =>
   getValueViaPath<string[]>(answers, 'salaryAnalysis.postponed', [])?.includes(
     YES,
   ) ?? false
-
-// The POSTPONED receipt screen ("Sending móttekin") is a dead end on the visit
-// that submitted the report: it is the only navigable screen there, so the
-// applicant is handed the last-screen button instead of being walked straight
-// into the úrbótaáætlun flow. PostponeReceiptMarker persists the flag while
-// that screen renders — deliberately without telling the form shell, so the
-// screen the applicant is looking at does not restructure under them. The next
-// visit reads the persisted flag and skips the receipt.
-export const hasSeenPostponeReceipt = (answers: FormValue): boolean =>
-  getValueViaPath<boolean>(answers, 'salaryAnalysis.postponeReceiptSeen') ===
-  true
-
-export const hasNotSeenPostponeReceipt = (answers: FormValue): boolean =>
-  !hasSeenPostponeReceipt(answers)

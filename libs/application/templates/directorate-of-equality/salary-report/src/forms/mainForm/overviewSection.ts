@@ -3,18 +3,13 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
-  coreMessages,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents, type FormValue } from '@island.is/application/types'
+import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 import { PERIOD_ONE_MONTH, ScreenIds } from '../../utils/constants'
-import {
-  getBenchmarkVerdict,
-  isPostponeRequested,
-  salaryAnalysisNeedsImprovementPlan,
-  salaryAnalysisOutlierPlanIsReviewed,
-} from '../../utils/salaryAnalysisNavigation'
+import { salaryAnalysisOutlierPlanIsReviewed } from '../../utils/salaryAnalysisNavigation'
+import { buildAnalysisSummaryOverviewField } from '../analysisSummaryOverview'
 import { buildOutlierPlanOverviewField } from '../outlierPlanOverview'
 
 const MONTH_LABELS = [
@@ -32,10 +27,9 @@ const MONTH_LABELS = [
   messages.aboutTheCompany.period.december,
 ]
 
-// Shared with the POSTPONED-state report recap (postponedReportSummarySection)
-// — that screen shows the same submitted-report fields read-only, with no
-// backId, since it has no editable company/contact screens of its own to
-// jump back to.
+// Shared with the POSTPONED-state review screen (postponedReviewSection) —
+// that screen shows the same submitted-report fields read-only, with no backId,
+// since it has no editable company/contact screens of its own to jump back to.
 export const buildReportOverviewFields = (withBackLinks: boolean) => [
   buildOverviewField({
     id: 'overview.companyInfo',
@@ -190,31 +184,6 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
   }),
 ]
 
-// The verdict, not the figures: the analysis screen already renders the gap
-// itself, and this row answers the one question the submission turns on.
-//
-// Read from answers, not from externalData. The form shell freezes its copy of
-// externalData at mount and nothing here can refresh it, so reading
-// salaryAnalysisResult directly would render "Liggur ekki fyrir" for the whole
-// sitting in which the applicant actually ran the analysis. The analysis screen
-// mirrors the verdict into answers for exactly this reason — see
-// BenchmarkVerdict.
-//
-// The three-way mapping is deliberate: WageGapState keeps "no measurable gap"
-// and "no result" apart from both verdicts, so neither may be reported as Nei.
-const withinBenchmarkValue = (answers: FormValue) => {
-  switch (getBenchmarkVerdict(answers)) {
-    case 'within':
-      return coreMessages.radioYes
-    case 'over':
-      return coreMessages.radioNo
-    case 'notComputable':
-      return messages.overview.withinBenchmarkNotComputable
-    default:
-      return messages.overview.withinBenchmarkUnknown
-  }
-}
-
 // Basic overview — mirrors the equality report.
 export const overviewSection = buildSection({
   id: 'overview',
@@ -226,31 +195,10 @@ export const overviewSection = buildSection({
       description: messages.overview.intro,
       children: [
         ...buildReportOverviewFields(true),
-        buildOverviewField({
+        buildAnalysisSummaryOverviewField({
           id: 'overview.salaryAnalysis',
-          title: messages.overview.salaryAnalysisTitle,
-          titleVariant: 'h3',
           backId: ScreenIds.analysisOverview,
-          items: (answers, externalData) => [
-            {
-              width: 'half',
-              keyText: messages.overview.withinBenchmarkLabel,
-              valueText: withinBenchmarkValue(answers),
-            },
-            // Postponing is only offered where there is a plan to postpone, so
-            // the row only means anything there.
-            ...(salaryAnalysisNeedsImprovementPlan(answers, externalData)
-              ? [
-                  {
-                    width: 'half' as const,
-                    keyText: messages.overview.postponeLabel,
-                    valueText: isPostponeRequested(answers)
-                      ? coreMessages.radioYes
-                      : coreMessages.radioNo,
-                  },
-                ]
-              : []),
-          ],
+          showPostponeChoice: true,
         }),
         buildOutlierPlanOverviewField({
           id: 'overview.outlierPlan',

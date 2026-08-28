@@ -34,15 +34,21 @@ Directorate of Equality (Jafnréttisstofa).
   weighting, employee data (imported or entered manually), job classification
   and employee classification, the salary analysis and the úrbótaáætlun.
   Submitting runs `submitSalaryReport` on the way out (`onExit`, so a failed
-  submission blocks the transition) and branches to `postponed` or `inReview`
-  depending on whether the applicant asked to hand the úrbótaáætlun in later
-  (`hasPostponedOutlierPlan`).
-- **`postponed`** — the applicant postponed the úrbótaáætlun. The visit that
-  submitted the report shows only the receipt screen ("Sending móttekin") and
-  ends there; every later visit skips the receipt and opens on the
-  úrbótaáætlun screen instead, with the submitted salary analysis behind it,
-  read-only and never recalculated. Submitting PUTs just the outlier
-  explanations (`editOutliers`) and moves to `inReview`.
+  submission blocks the transition) and branches to `postponeReceived` or
+  `inReview` depending on whether the applicant asked to hand the úrbótaáætlun
+  in later (`hasPostponedOutlierPlan`).
+- **`postponeReceived`** — the report is in, the úrbótaáætlun is not. The whole
+  form is one screen, the receipt ("Sending móttekin"), so the applicant is
+  handed the way out rather than a "Halda áfram" into work they just postponed.
+  `PostponeReceiptCloser` dispatches `SUBMIT` as they leave the page, moving the
+  application to `postponed` — a state rather than an answer flag so the receipt
+  cannot be reached again. From the outside the two look identical: same tag,
+  same pending action.
+- **`postponed`** — the úrbótaáætlun flow: the submitted salary analysis
+  (read-only, never recalculated), the úrbótaáætlun itself, and one review
+  screen recapping the report, the analysis verdict and the plan before it is
+  sent. Submitting PUTs just the outlier explanations (`editOutliers`) and moves
+  to `inReview`.
 - **`draftRetry`** — a case worker sent the application back for revision
   (`EDIT` from `inReview` or `postponed`). Same restricted comments and
   úrbótaáætlun editing as `postponed`; there is no path back to the original

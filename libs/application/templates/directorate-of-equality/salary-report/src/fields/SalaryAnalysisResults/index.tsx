@@ -140,11 +140,22 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       const answers = navigationAnswersForAnalysisResult(analysis, {
         resetReviewed,
       })
-      const { hasMinimumSetOutliers, benchmarkVerdict, outlierPlanReviewed } =
-        answers.salaryAnalysis
+      const {
+        hasMinimumSetOutliers,
+        benchmarkVerdict,
+        adjustedGapPercent,
+        adjustedGapDirection,
+        outlierPlanReviewed,
+      } = answers.salaryAnalysis
 
       setValue('salaryAnalysis.hasMinimumSetOutliers', hasMinimumSetOutliers)
       setValue('salaryAnalysis.benchmarkVerdict', benchmarkVerdict)
+      // Absent means the gap was not computable — leave any earlier figure be
+      // rather than writing undefined over it.
+      if (typeof adjustedGapPercent === 'number') {
+        setValue('salaryAnalysis.adjustedGapPercent', adjustedGapPercent)
+        setValue('salaryAnalysis.adjustedGapDirection', adjustedGapDirection)
+      }
       // Absent means "leave it alone" — a plan already signed off must not be
       // reopened just because this screen re-mounted.
       if (typeof outlierPlanReviewed === 'boolean') {
