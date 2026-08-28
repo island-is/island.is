@@ -11,10 +11,22 @@ import {
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
+// The assertions tell the two defendants apart by name, so the names have to
+// differ - faker will hand out the same one twice often enough to matter.
+const nameOtherThan = (name: string) => {
+  let candidate = faker.name.findName()
+
+  while (candidate === name) {
+    candidate = faker.name.findName()
+  }
+
+  return candidate
+}
+
 test.describe.serial('Indictment completing for some tests', () => {
   let caseId = ''
   const accusedName = faker.name.findName()
-  const secondAccusedName = faker.name.findName()
+  const secondAccusedName = nameOtherThan(accusedName)
 
   test('prosecutor should create a new indictment case with two defendants', async ({
     prosecutorPage,
