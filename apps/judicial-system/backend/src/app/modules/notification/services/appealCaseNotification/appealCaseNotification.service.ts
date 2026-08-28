@@ -1701,9 +1701,10 @@ export class AppealCaseNotificationService extends BaseNotificationService {
             withdrawnByProsecution: wasWithdrawnByProsecution,
             courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           })
-        : this.formatMessage(strings.caseAppealWithdrawn.bodyWithoutAppellant, {
-            courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
-          })
+        : `Kæra í máli ${this.getCourtCaseNumber(
+            theCase,
+            appealCase,
+          )} hefur verið afturkölluð.`
 
     // Notify district court judge
     promises.push(
