@@ -63,11 +63,13 @@ export class DrivingLicenseApi {
     // the application and so can tell a lost-response retry (safe to treat as
     // success) from a fresh application (must surface the error).
     const response = await withAuthContext(input.auth, () =>
-      this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPostRaw({
-        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
-        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-        modelsV6PostTemporaryLicenseWithHealthDeclaration: input.model,
-      }),
+      this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPostRaw(
+        {
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+          modelsV6PostTemporaryLicenseWithHealthDeclaration: input.model,
+        },
+      ),
     )
 
     // Best-effort: guid capture must never turn a successful create into a
