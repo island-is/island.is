@@ -22,6 +22,7 @@ import videoCameraIcon from '@/assets/icons/video-camera.png'
 import {
   AppointmentFragmentFragmentDoc,
   HealthDirectorateAppointment,
+  HealthDirectorateAppointmentAssigneeType,
   HealthDirectorateAppointmentLinkType,
   HealthDirectorateAppointmentModality,
   useGetAppointmentDetailQuery,
@@ -57,6 +58,22 @@ const MapLink = styled.TouchableOpacity`
 
 const LocationItem = styled.View`
   gap: ${({ theme }) => theme.spacing[1]}px;
+`
+
+const InlineLink = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.smallGutter}px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${({ theme }) => theme.color.blue400};
+`
+
+const MoreInfoRow = styled.View`
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
+  gap: ${({ theme }) => theme.spacing[1]}px;
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${({ theme }) => theme.color.blue200};
 `
 
 const EyebrowContainer = styled.View`
@@ -152,15 +169,73 @@ export default function AppointmentDetailScreen() {
     void openExternalUrl(mapsLink)
   }, [mapsLink, openExternalUrl])
 
+  const renderSeeMore = (
+    url: string,
+    alignSelf: 'center' | 'flex-start' = 'center',
+  ) => (
+    <InlineLink
+      style={{ alignSelf }}
+      onPress={() => void openExternalUrl(url)}
+    >
+      <Typography variant="eyebrow" color={theme.color.blue400}>
+        {intl.formatMessage({ id: 'health.appointments.seeMore' })}
+      </Typography>
+      <Icon
+        source={externalLink as ImageSourcePropType}
+        width={16}
+        height={16}
+      />
+    </InlineLink>
+  )
+
   const locationLinks = appointment?.location?.locationLinks
   const locationLink =
     locationLinks?.find((l) => l.type === 'WEBSITE')?.url ??
     locationLinks?.[0]?.url
 
+  // assignees and the finer location fields only exist on the detail type,
+  // not the cached list fragment, so read them off the query result directly.
+  const detail = data?.healthDirectorateAppointment
+
+  const findLink = (type: HealthDirectorateAppointmentLinkType) =>
+    detail?.links?.find((l) => l.type === type)?.url
+  const preparationLink = findLink(
+    HealthDirectorateAppointmentLinkType.Preparation,
+  )
+  const patientInstructionsLink = findLink(
+    HealthDirectorateAppointmentLinkType.PatientInstructions,
+  )
+  const organizationInfoLink = findLink(
+    HealthDirectorateAppointmentLinkType.OrganizationInfo,
+  )
+
+  const assigneeTypeLabel = (type: HealthDirectorateAppointmentAssigneeType) => {
+    switch (type) {
+      case HealthDirectorateAppointmentAssigneeType.Role:
+        return intl.formatMessage({ id: 'health.appointments.assigneeTypeRole' })
+      case HealthDirectorateAppointmentAssigneeType.Room:
+        return intl.formatMessage({ id: 'health.appointments.assigneeTypeRoom' })
+      case HealthDirectorateAppointmentAssigneeType.Equipment:
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeEquipment',
+        })
+      case HealthDirectorateAppointmentAssigneeType.Service:
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeService',
+        })
+      case HealthDirectorateAppointmentAssigneeType.Team:
+        return intl.formatMessage({ id: 'health.appointments.assigneeTypeTeam' })
+      default:
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeOther',
+        })
+    }
+  }
+
   const isVideo =
     appointment?.modality === HealthDirectorateAppointmentModality.Video
 
-  const videoCall = data?.healthDirectorateAppointment?.links?.find(
+  const videoCall = detail?.links?.find(
     (l) => l.type === HealthDirectorateAppointmentLinkType.VideoCall,
   )
   const videoCallLink = videoCall?.url
@@ -213,9 +288,15 @@ export default function AppointmentDetailScreen() {
   const hasMoreInfo =
     !!appointment &&
     ((appointment.practitioners?.length ?? 0) > 0 ||
+      (detail?.assignees?.length ?? 0) > 0 ||
       !!appointment.instruction ||
-      !!appointment.location?.openingHoursText ||
+      !!preparationLink ||
+      !!detail?.location?.department ||
+      !!detail?.location?.wing ||
+      !!detail?.location?.floor ||
+      !!detail?.location?.room ||
       !!appointment.location?.phoneNumber ||
+      !!appointment.location?.openingHoursText ||
       !!appointment.location?.organization)
 
   return (
@@ -227,7 +308,7 @@ export default function AppointmentDetailScreen() {
       />
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 64 }}
+        contentContainerStyle={{ paddingBottom: 240 }}
         contentInsetAdjustmentBehavior="automatic"
       >
         {error && !appointment && (
@@ -422,6 +503,15 @@ export default function AppointmentDetailScreen() {
               </InputRow>
             )}
 
+            {detail?.assignees?.map((assignee, index) => (
+              <InputRow key={`assignee-${index}`}>
+                <Input
+                  label={assigneeTypeLabel(assignee.type)}
+                  value={assignee.name}
+                />
+              </InputRow>
+            ))}
+
             {appointment.instruction && (
               <InputRow>
                 <Input
@@ -429,6 +519,61 @@ export default function AppointmentDetailScreen() {
                     id: 'health.appointments.instructions',
                   })}
                   value={appointment.instruction}
+                  rightElement={
+                    patientInstructionsLink
+                      ? renderSeeMore(patientInstructionsLink)
+                      : undefined
+                  }
+                />
+              </InputRow>
+            )}
+
+            {preparationLink && (
+              <MoreInfoRow>
+                <Typography variant="body3">
+                  {intl.formatMessage({
+                    id: 'health.appointments.preparation',
+                  })}
+                </Typography>
+                {renderSeeMore(preparationLink, 'flex-start')}
+              </MoreInfoRow>
+            )}
+
+            {[
+              {
+                id: 'health.appointments.locationDepartment',
+                value: detail?.location?.department,
+              },
+              {
+                id: 'health.appointments.locationWing',
+                value: detail?.location?.wing,
+              },
+              {
+                id: 'health.appointments.locationFloor',
+                value: detail?.location?.floor,
+              },
+              {
+                id: 'health.appointments.locationRoom',
+                value: detail?.location?.room,
+              },
+            ]
+              .filter((line) => !!line.value)
+              .map((line) => (
+                <InputRow key={line.id}>
+                  <Input
+                    label={intl.formatMessage({ id: line.id })}
+                    value={line.value}
+                  />
+                </InputRow>
+              ))}
+
+            {appointment.location?.phoneNumber && (
+              <InputRow>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.appointments.phoneNumber',
+                  })}
+                  value={appointment.location.phoneNumber}
                 />
               </InputRow>
             )}
@@ -444,17 +589,6 @@ export default function AppointmentDetailScreen() {
               </InputRow>
             )}
 
-            {appointment.location?.phoneNumber && (
-              <InputRow>
-                <Input
-                  label={intl.formatMessage({
-                    id: 'health.appointments.phoneNumber',
-                  })}
-                  value={appointment.location.phoneNumber}
-                />
-              </InputRow>
-            )}
-
             {appointment.location?.organization && (
               <InputRow>
                 <Input
@@ -462,6 +596,11 @@ export default function AppointmentDetailScreen() {
                     id: 'health.appointments.organization',
                   })}
                   value={appointment.location.organization}
+                  rightElement={
+                    organizationInfoLink
+                      ? renderSeeMore(organizationInfoLink)
+                      : undefined
+                  }
                 />
               </InputRow>
             )}

@@ -860,6 +860,17 @@ export const en: TranslatedMessages = {
     'Appointment not found. It may have been cancelled.',
   'health.appointments.minutesFormat': '{minutes} minutes',
   'health.appointments.moreInfo': 'More information',
+  'health.appointments.preparation': 'Preparation',
+  'health.appointments.locationDepartment': 'Department',
+  'health.appointments.locationWing': 'Wing',
+  'health.appointments.locationFloor': 'Floor',
+  'health.appointments.locationRoom': 'Room',
+  'health.appointments.assigneeTypeRole': 'Role',
+  'health.appointments.assigneeTypeRoom': 'Room',
+  'health.appointments.assigneeTypeEquipment': 'Equipment',
+  'health.appointments.assigneeTypeService': 'Service',
+  'health.appointments.assigneeTypeTeam': 'Team',
+  'health.appointments.assigneeTypeOther': 'Other',
 
   // health - messages
   'health.messages.screenTitle': 'Messages',
