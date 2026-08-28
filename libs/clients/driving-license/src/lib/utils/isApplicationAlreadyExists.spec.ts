@@ -24,8 +24,14 @@ describe('isApplicationAlreadyExists', () => {
 
   it.each([
     ['a different 400', { status: 400, body: { errorCode: 'HAS_POINTS' } }],
-    ['a 400 with unrelated problem', { status: 400, problem: { detail: 'Nope' } }],
-    ['a 500', { status: 500, body: { errorCode: 'APPLICATION_ALREADY_EXISTS' } }],
+    [
+      'a 400 with unrelated problem',
+      { status: 400, problem: { detail: 'Nope' } },
+    ],
+    [
+      'a 500',
+      { status: 500, body: { errorCode: 'APPLICATION_ALREADY_EXISTS' } },
+    ],
     ['no status', { body: { errorCode: 'APPLICATION_ALREADY_EXISTS' } }],
     ['a plain error', new Error('boom')],
     ['null', null],

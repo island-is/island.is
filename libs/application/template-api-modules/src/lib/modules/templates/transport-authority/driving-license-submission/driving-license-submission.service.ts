@@ -681,10 +681,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
         // Reconciliation record: our application id paired with the RLS-side
         // application guid (null on the lost-response duplicate path).
-        this.log('info', 'Created temporary driving-license application in RLS', {
-          applicationId: application.id,
-          applicationGuid: tempResult.applicationGuid,
-        })
+        this.log(
+          'info',
+          'Created temporary driving-license application in RLS',
+          {
+            applicationId: application.id,
+            applicationGuid: tempResult.applicationGuid,
+          },
+        )
 
         return tempResult
       }
