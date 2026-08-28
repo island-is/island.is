@@ -71,9 +71,13 @@ export class CertificateResolver {
   createCertificatePaymentIntent(
     @Args('input') input: HealthDirectorateCreateCertificatePaymentIntentInput,
     @Args('locale', { type: () => LocaleEnum, nullable: true })
-    locale: LocaleEnum = LocaleEnum.Is,
+    locale: LocaleEnum | null = LocaleEnum.Is,
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateCertificatePaymentIntent> {
-    return this.api.createCertificatePaymentIntent(user, input, locale)
+    return this.api.createCertificatePaymentIntent(
+      user,
+      input,
+      locale ?? LocaleEnum.Is,
+    )
   }
 }

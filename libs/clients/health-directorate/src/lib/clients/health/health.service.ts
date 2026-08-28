@@ -725,7 +725,9 @@ export class HealthDirectorateHealthService {
       }
 
       if (error instanceof FetchError && error.status === 402) {
-        const body = error.body as PaymentRequiredProblemResponse
+        const body = (error.problem ??
+          error.body ??
+          {}) as PaymentRequiredProblemResponse
         return {
           status: 402,
           resourceType: body.resourceType ?? 'CERTIFICATE',
