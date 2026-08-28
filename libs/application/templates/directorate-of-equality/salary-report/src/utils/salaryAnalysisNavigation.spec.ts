@@ -379,7 +379,9 @@ describe('reviewOutlierPlanIsSubmittable', () => {
   // A group whose members were all freed is dropped before submission, so it
   // must neither complete a plan nor block one.
   it('ignores a group with no members', () => {
-    const answers = (groups: unknown[]): FormValue => ({
+    const answers = (
+      groups: ReturnType<typeof completeGroup>[],
+    ): FormValue => ({
       salaryAnalysis: { hasMinimumSetOutliers: true, outlierGroups: groups },
     })
 
@@ -457,7 +459,9 @@ describe('benchmark verdict', () => {
     expect(
       getBenchmarkVerdict(
         { salaryAnalysis: { benchmarkVerdict: 'within' } },
-        externalData(result(2, decomposition({ oskyrtWithinBenchmark: false }))),
+        externalData(
+          result(2, decomposition({ oskyrtWithinBenchmark: false })),
+        ),
       ),
     ).toBe('within')
   })

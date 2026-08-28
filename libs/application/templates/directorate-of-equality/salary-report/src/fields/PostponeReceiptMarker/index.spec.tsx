@@ -1,4 +1,4 @@
-import { MockedProvider } from '@apollo/client/testing'
+import { MockedProvider, type MockedResponse } from '@apollo/client/testing'
 import { render, waitFor } from '@testing-library/react'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -10,7 +10,10 @@ import {
 import { PostponeReceiptMarker } from './index'
 
 jest.mock('@island.is/localization', () => ({
-  useLocale: () => ({ lang: 'is', formatMessage: (message: unknown) => message }),
+  useLocale: () => ({
+    lang: 'is',
+    formatMessage: (message: unknown) => message,
+  }),
 }))
 
 const application = (answers: Application['answers'] = {}): Application => ({
@@ -42,7 +45,7 @@ const writeVariables = {
 }
 
 const renderMarker = (
-  mocks: Parameters<typeof MockedProvider>[0]['mocks'],
+  mocks: readonly MockedResponse[],
   answers: Application['answers'] = {},
 ) =>
   render(
@@ -57,7 +60,10 @@ describe('PostponeReceiptMarker', () => {
   it('persists the flag once, with the draft progress echoed back', async () => {
     const write = jest.fn(() => ({ data: { updateApplication: null } }))
     const { container } = renderMarker([
-      { request: { query: UPDATE_APPLICATION, variables: writeVariables }, result: write },
+      {
+        request: { query: UPDATE_APPLICATION, variables: writeVariables },
+        result: write,
+      },
     ])
 
     await waitFor(() => expect(write).toHaveBeenCalledTimes(1))
@@ -67,7 +73,12 @@ describe('PostponeReceiptMarker', () => {
   it('does not write again once the flag is already persisted', async () => {
     const write = jest.fn(() => ({ data: { updateApplication: null } }))
     renderMarker(
-      [{ request: { query: UPDATE_APPLICATION, variables: writeVariables }, result: write }],
+      [
+        {
+          request: { query: UPDATE_APPLICATION, variables: writeVariables },
+          result: write,
+        },
+      ],
       { salaryAnalysis: { postponeReceiptSeen: true } },
     )
 
@@ -82,7 +93,10 @@ describe('PostponeReceiptMarker', () => {
         request: { query: UPDATE_APPLICATION, variables: writeVariables },
         error: new Error('network'),
       },
-      { request: { query: UPDATE_APPLICATION, variables: writeVariables }, result: write },
+      {
+        request: { query: UPDATE_APPLICATION, variables: writeVariables },
+        result: write,
+      },
     ])
 
     await waitFor(() => expect(write).toHaveBeenCalledTimes(1))

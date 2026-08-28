@@ -2,7 +2,18 @@ import type { FormValue } from '@island.is/application/types'
 import { messages } from '../lib/messages'
 import { outlierPlanOverviewItems } from './outlierPlanOverview'
 
-const group = (overrides: Record<string, unknown> = {}) => ({
+// Every property required, so the shape satisfies FormValue's index signature
+// (Answer admits no undefined) and the helpers need no cast.
+type SpecGroup = {
+  name: string
+  reason: string
+  action: string
+  signatureName: string
+  signatureRole: string
+  employeeOrdinals: number[]
+}
+
+const group = (overrides: Partial<SpecGroup> = {}): SpecGroup => ({
   name: 'Sérfræðingar',
   reason: 'Ástæða',
   action: 'Aðgerð',
@@ -12,7 +23,7 @@ const group = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 })
 
-const answers = (groups: unknown[]): FormValue => ({
+const answers = (groups: SpecGroup[]): FormValue => ({
   salaryAnalysis: { outlierGroups: groups },
 })
 
