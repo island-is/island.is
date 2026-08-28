@@ -1316,41 +1316,13 @@ export const messages = {
         defaultMessage:
           'Launadreifing verður ekki metin því ekki var unnt að reikna væntanlegt tímakaup.',
       },
-      numberHeader: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.numberHeader',
-        defaultMessage: 'Auðkenni',
-      },
-      genderHeader: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.genderHeader',
-        defaultMessage: 'Kyn',
-      },
-      points: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.points',
-        defaultMessage: 'Stig',
-      },
-      salary: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.salary',
-        defaultMessage: 'Tímakaup',
-      },
-      predictedSalary: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.predictedSalary',
-        defaultMessage: 'Væntanlegt tímakaup',
-      },
-      deviationHeader: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.deviationHeader',
-        defaultMessage: 'Launafrávik',
-      },
+      // Every other column of this table reads its header from the
+      // `outlierGroup` namespace, so the two tables cannot be translated apart —
+      // see the note in PayDispersionTable. This is the one column the
+      // úrbótaáætlun table does not have.
       spreadHeader: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.spreadHeader',
         defaultMessage: 'Staðalvik frá línu',
-      },
-      directionBelow: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.directionBelow',
-        defaultMessage: 'undir',
-      },
-      directionAbove: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.directionAbove',
-        defaultMessage: 'yfir',
       },
       genderMale: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.genderMale',
@@ -1366,13 +1338,31 @@ export const messages = {
       },
     }),
     outlierGroup: defineMessages({
-      employeeColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.employeeColumn',
-        defaultMessage: 'Auðkenni',
+      ordinalColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.ordinalColumn',
+        defaultMessage: '#',
       },
-      scoreColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.scoreColumn',
-        defaultMessage: 'Starfsmatsstig',
+      // The bare ordinal only reads as an identifier if the applicant knows it
+      // is the same number they saw on the earlier screens and in the workbook.
+      employeeColumnTooltip: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.employeeColumnTooltip',
+        defaultMessage:
+          'Númer starfsmanns (#) samsvarar númeri í einstaklingsmati, innsetningu gagna og eða excel skjali',
+      },
+      roleColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.roleColumn',
+        defaultMessage: 'Starf',
+      },
+      genderColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.genderColumn',
+        defaultMessage: 'Kyn',
+      },
+      // New id, not a new defaultMessage on the old one: the CMS translation for
+      // `scoreColumn` ("Stigaflokkur") wins over whatever is written here, so a
+      // renamed header only takes effect under an id Contentful has never seen.
+      stigColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.stigColumn',
+        defaultMessage: 'Stig',
       },
       hourlyWageColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.hourlyWageColumn',
@@ -1381,6 +1371,10 @@ export const messages = {
       expectedHourlyWageColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.expectedHourlyWageColumn',
         defaultMessage: 'Væntanlegt tímakaup',
+      },
+      wageUnitFootnote: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.wageUnitFootnote',
+        defaultMessage: 'Tímakaup er sýnt í kr./klst.',
       },
       deviationColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.deviationColumn',
@@ -1468,6 +1462,17 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
         defaultMessage: 'Setja í frávikahóp',
       },
+      // Only shown once at least one group exists: the button then opens a
+      // menu of the existing groups plus this entry, instead of silently
+      // always creating a new group.
+      assignToNewGroup: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.assignToNewGroup',
+        defaultMessage: 'Nýr frávikahópur',
+      },
+      assignToGroupMenuLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.assignToGroupMenuLabel',
+        defaultMessage: 'Veldu frávikahóp',
+      },
       // Paging through many pages to select everything is tedious, so this
       // shortcut appears once the table spans more than a handful of pages.
       selectAllOutliersButton: {
@@ -1492,9 +1497,22 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.defaultGroupName',
         defaultMessage: 'Sjálfgefinn hópur {index}',
       },
-      groupMembers: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMembers',
-        defaultMessage: 'Starfsmenn í hóp',
+      // New id rather than new copy on `groupMembers`: a CMS translation keyed
+      // to the old id would win over whatever is written here, and this line
+      // now carries a count instead of the member list — see stigColumn.
+      groupMemberCount: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMemberCount',
+        defaultMessage: 'Fjöldi starfsmanna í hópi',
+      },
+      // New id, not new copy on the retired `groupMembers`: a CMS translation
+      // keyed to the old id would win over what is written here.
+      groupMembersLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMembersLabel',
+        defaultMessage: 'Starfsmenn í hópi',
+      },
+      removeMemberLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeMemberLabel',
+        defaultMessage: 'Taka starfsmann {employee} úr hópnum',
       },
       removeGroupButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupButton',

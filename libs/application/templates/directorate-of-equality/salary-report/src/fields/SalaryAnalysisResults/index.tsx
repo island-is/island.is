@@ -19,7 +19,10 @@ import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
 import { getProviderErrorMessage } from '../../utils/providerError'
 import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import type { ReportEmployeeDto } from '../../utils/types'
-import { useDraftQuery } from '../../utils/useDraftQuery'
+import {
+  getProviderSuccessData,
+  type ProviderExternalData,
+} from '../../utils/providerResult'
 import { buildPayComponentsBreakdown } from '../../utils/payComponents'
 import {
   getSalaryAnalysisResult,
@@ -32,10 +35,6 @@ import { StatisticCard } from './StatisticsCard'
 import { SalaryDistributionChart } from './SalaryDistributionChart'
 
 type Props = FieldBaseProps
-type DraftEmployeesExternalData = {
-  status?: 'success' | 'failure'
-  data?: { employees: ReportEmployeeDto[] }
-}
 
 export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   application,
@@ -51,17 +50,40 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       ? field.props['hidePostponeCheckbox']
       : false
   const isDraftPhase = !hidePostponeCheckbox
-  const { content: employeesContent, refetch: refetchEmployees } =
-    useDraftQuery<{
-      employees: ReportEmployeeDto[]
-    }>(
-      application,
-      draftActionId(ApiActions.listDraftEmployees),
-      'draftEmployees',
-    )
-  const [draftEmployees, setDraftEmployees] = useState<
+  /**
+   * The employees list that arrived WITH the analysis now in `result`, and the
+   * only source the pay-components table derives from.
+   *
+   * The list and the analysis are separate providers in one mutation, and
+   * updateApplicationExternalData reports their statuses independently (its
+   * endpoint never applies throwOnError). So the only way to know a component
+   * average and a gap figure describe the same draft is to keep the list that
+   * came back beside the analysis — a tracked "are they still in step?" flag
+   * cannot hold that invariant, because any other writer of the list is free to
+   * replace it without telling the flag.
+   *
+   * Which is why nothing else here fetches employees: handleAnalyze asks for
+   * both legs on every arrival, so a standalone refresh has no reason to exist
+   * and no way to pair a newer list with an older analysis.
+   *
+   * The review states are the one exception, and they seed from the stored
+   * externalData instead. They are not granted the employee read at all, so a
+   * fresh pair is unobtainable there — and unnecessary: neither POSTPONED nor
+   * DRAFT_RETRY exposes a screen that can edit the employee list (DRAFT_RETRY's
+   * editable sections are still empty placeholders), so the stored list is the
+   * one the report was submitted with. Nothing to fall out of step with.
+   */
+  const [analyzedEmployees, setAnalyzedEmployees] = useState<
     ReportEmployeeDto[] | undefined
-  >(() => employeesContent?.employees)
+  >(() =>
+    isDraftPhase
+      ? undefined
+      : getProviderSuccessData(
+          application.externalData.draftEmployees as
+            | ProviderExternalData<{ employees: ReportEmployeeDto[] }>
+            | undefined,
+        )?.employees,
+  )
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasRequestedAnalysis, setHasRequestedAnalysis] = useState(() =>
     Boolean(getSalaryAnalysisResult(application.externalData)),
@@ -82,21 +104,10 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   // hands down a new identity, which re-fires the effect — a render loop. The
   // ref keeps the latest callback while the effect stays keyed to the result.
   const answerQuestionsRef = useRef(answerQuestions)
-  const refreshedEmployeesForRestoredResultRef = useRef(false)
 
   useEffect(() => {
     answerQuestionsRef.current = answerQuestions
   }, [answerQuestions])
-
-  useEffect(() => {
-    if (employeesContent) setDraftEmployees(employeesContent.employees)
-  }, [employeesContent])
-
-  useEffect(() => {
-    if (!result || refreshedEmployeesForRestoredResultRef.current) return
-    refreshedEmployeesForRestoredResultRef.current = true
-    void refetchEmployees({ silent: true })
-  }, [refetchEmployees, result])
 
   /**
    * The navigation flags have to reach the FORM, not just the shell's answer
@@ -134,7 +145,6 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
 
   const handleAnalyze = useCallback(async () => {
     setHasRequestedAnalysis(true)
-    refreshedEmployeesForRestoredResultRef.current = true
     setIsAnalyzing(true)
     setHasError(false)
     setErrorMessage(undefined)
@@ -148,10 +158,19 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
                 actionId: draftActionId(ApiActions.analyzeSalaryReport),
                 order: 0,
               },
-              {
-                actionId: draftActionId(ApiActions.listDraftEmployees),
-                order: 1,
-              },
+              // DRAFT is the only state whose role grants the employee read,
+              // and the controller rejects the entire mutation on the first
+              // ungranted actionId — so asking for it in the review states
+              // takes the analysis down with it, leaving the screen on its
+              // error banner with submission blocked.
+              ...(isDraftPhase
+                ? [
+                    {
+                      actionId: draftActionId(ApiActions.listDraftEmployees),
+                      order: 1,
+                    },
+                  ]
+                : []),
             ],
           },
           locale,
@@ -162,21 +181,30 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       const salaryAnalysisResult = externalData.salaryAnalysisResult as
         | AnalysisExternalData
         | undefined
-      const draftEmployeesResult = externalData.draftEmployees as
-        | DraftEmployeesExternalData
-        | undefined
-      if (
-        draftEmployeesResult?.status === 'success' &&
-        draftEmployeesResult.data
-      ) {
-        setDraftEmployees(draftEmployeesResult.data.employees)
-      }
-      if (
-        salaryAnalysisResult?.status === 'success' &&
-        salaryAnalysisResult.data
-      ) {
-        applyNavigationAnswers(salaryAnalysisResult.data, true)
-        setResult(salaryAnalysisResult.data)
+      const employees = getProviderSuccessData(
+        externalData.draftEmployees as
+          | ProviderExternalData<{ employees: ReportEmployeeDto[] }>
+          | undefined,
+      )
+      const analysis = getProviderSuccessData(salaryAnalysisResult)
+
+      // Both legs, or the table stands down: a new analysis with no list of its
+      // own clears the stored one, since that list belongs to the analysis being
+      // replaced. An analysis that did not land leaves the existing pair alone —
+      // it still describes what is on screen.
+      //
+      // A failed employees leg is deliberately not surfaced as an error: the
+      // analysis is the artifact this screen gates submission on and it stands
+      // on its own, so a failed side-read must not discard it or block the
+      // applicant. Only the derived table stands down.
+      // Draft phase only: the review states never asked for the list, so an
+      // absent one there says nothing about the pair and must not clear the
+      // seed above.
+      if (analysis && isDraftPhase) setAnalyzedEmployees(employees?.employees)
+
+      if (analysis) {
+        applyNavigationAnswers(analysis, true)
+        setResult(analysis)
       } else {
         setErrorMessage(getProviderErrorMessage(salaryAnalysisResult?.reason))
         setHasError(true)
@@ -190,6 +218,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   }, [
     application.id,
     applyNavigationAnswers,
+    isDraftPhase,
     locale,
     updateApplicationExternalData,
   ])
@@ -255,8 +284,9 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const outlierCount = result?.outliers?.length ?? 0
   const gapState = deriveWageGapState(decomposition, outlierCount)
   const payComponents = useMemo(
-    () => (draftEmployees ? buildPayComponentsBreakdown(draftEmployees) : null),
-    [draftEmployees],
+    () =>
+      analyzedEmployees ? buildPayComponentsBreakdown(analyzedEmployees) : null,
+    [analyzedEmployees],
   )
   const r = messages.salaryAnalysis.results
 
@@ -538,12 +568,9 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         identifierForOrdinal={identifierForOrdinal}
       />
 
-      <PayComponentsTable data={result ? payComponents : null} />
+      <PayComponentsTable data={payComponents} />
 
-      <PayDispersionTable
-        payDispersion={result?.payDispersion}
-        identifierForOrdinal={identifierForOrdinal}
-      />
+      <PayDispersionTable payDispersion={result?.payDispersion} />
     </Box>
   )
 

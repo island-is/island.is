@@ -39,6 +39,12 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [jobFactors, setJobFactors] = useState<JobFactor[]>([])
   const [personalFactors, setPersonalFactors] = useState<PersonalFactor[]>([])
   const [removedPersonalIds, setRemovedPersonalIds] = useState<string[]>([])
+  // Ids the draft actually holds, so the flush below can tell an UPDATE from a
+  // CREATE. Job factors need this as much as personal ones do: when the draft
+  // carries no criteria yet (no workbook imported, or an import that produced
+  // none), the four defaults are minted client-side with fresh UUIDs, and
+  // UPDATEing an id DMR has never seen 404s the whole batch.
+  const originalJobIds = useRef<Set<string>>(new Set())
   const originalPersonalIds = useRef<Set<string>>(new Set())
 
   useSeedOnce(Boolean(content), () => {
@@ -65,6 +71,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       jobFromDraft.length > 0 ? jobFromDraft : createDefaultJobFactors(),
     )
     setPersonalFactors(personalFromDraft)
+    originalJobIds.current = new Set(jobFromDraft.map((f) => f.id))
     originalPersonalIds.current = new Set(personalFromDraft.map((f) => f.id))
   })
 
@@ -72,11 +79,13 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     (sum, f) => sum + (Number(f.weight) || 0),
     0,
   )
+  const hasCriteria = jobFactors.length + personalFactors.length > 0
+  const hasWeightMismatch = hasCriteria && Math.abs(totalWeight - 100) > 0.001
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
-      if (totalWeight !== 0 && Math.abs(totalWeight - 100) > 0.001) {
+      if (hasWeightMismatch) {
         return [
           false,
           formatMessage(messages.report.criteria.weightSumError, {
@@ -86,7 +95,9 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       }
 
       const jobCommands: SyncCommand[] = jobFactors.map((f) => ({
-        method: SyncMethodEnum.UPDATE,
+        method: originalJobIds.current.has(f.id)
+          ? SyncMethodEnum.UPDATE
+          : SyncMethodEnum.CREATE,
         id: f.id,
         data: {
           title: f.title,
@@ -116,6 +127,13 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         await sync({
           criteria: [...jobCommands, ...personalCommands, ...removeCommands],
         })
+        // What was just written is now what the draft holds, so the diff
+        // baseline moves with it. Without this a second flush from the same
+        // mount would re-send the same REMOVEs — for rows DMR has already
+        // deleted, which 404s the batch.
+        originalJobIds.current = new Set(jobFactors.map((f) => f.id))
+        originalPersonalIds.current = new Set(personalFactors.map((f) => f.id))
+        setRemovedPersonalIds([])
         // Silent: about to navigate away, so don't flash a loading state.
         await refetch({ silent: true })
       } catch {
@@ -133,6 +151,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     jobFactors,
     personalFactors,
     removedPersonalIds,
+    hasWeightMismatch,
     totalWeight,
     formatMessage,
     sync,
@@ -184,7 +203,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         }}
       />
 
-      {totalWeight !== 0 && totalWeight !== 100 && (
+      {hasWeightMismatch && (
         <Box marginTop={3}>
           <AlertMessage
             type="error"
