@@ -23,13 +23,10 @@ import type {
 import { messages } from '../../lib/messages'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
 import {
-  formatPayStatusLabel,
+  formatDeviationLabel,
   formatSalaryAnalysisGenderLabel,
 } from '../../utils/salaryAnalysisLabels'
-import {
-  formatSignedPercentMagnitude,
-  hasIdentifiableRegressionFit,
-} from '../../utils/wageGap'
+import { hasIdentifiableRegressionFit } from '../../utils/wageGap'
 import * as styles from './SalaryDistributionChart.css'
 
 type PayDispersionDto = SalaryAnalysisResponseDto['payDispersion']
@@ -164,9 +161,15 @@ const ChartTooltip = ({
     ])
     rows.push([
       formatMessage(tooltipMessages.deviation),
-      `${formatSignedPercentMagnitude(
+      // The shared helper, not a locally assembled string: this is the same
+      // figure the úrbótaáætlun and ábendingar tables show, so it goes through
+      // the same localised `deviationCell` template rather than hardcoding the
+      // "{value}% ({status})" shape a third time.
+      formatDeviationLabel(
         employee.deviationPercent,
-      )}% (${formatPayStatusLabel(employee.payStatus, formatMessage)})`,
+        employee.payStatus,
+        formatMessage,
+      ),
     ])
   }
 

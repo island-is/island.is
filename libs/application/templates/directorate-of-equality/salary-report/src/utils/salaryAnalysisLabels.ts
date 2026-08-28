@@ -1,7 +1,7 @@
 import type { FormatMessage } from '@island.is/localization'
 import { messages } from '../lib/messages'
 import type { PayStatus } from './outlierGroups'
-import { formatPercentMagnitude } from './wageGap'
+import { formatSignedPercentMagnitude } from './wageGap'
 
 export type SalaryAnalysisGender = 'MALE' | 'FEMALE' | 'NEUTRAL'
 
@@ -50,6 +50,13 @@ export const formatPayStatusLabel = (
  *
  * The status word is always shown, ON_LINE included — a bare percentage with no
  * gloss is the one rendering that leaves the direction to the reader to guess.
+ *
+ * The sign comes from `formatSignedPercentMagnitude` rather than being derived
+ * here from the raw value, because it has to agree with the ROUNDED magnitude it
+ * sits in front of. Deriving it from the unrounded figure renders a deviation of
+ * −0,04% as "-0,0%" — a signed zero, which wageGap.spec pins as suppressed. So
+ * `sign` is passed empty: the message keeps its `{sign}` slot for the published
+ * translations, and the signed magnitude arrives whole in `{value}`.
  */
 export const formatDeviationLabel = (
   deviationPercent: number,
@@ -57,10 +64,9 @@ export const formatDeviationLabel = (
   formatMessage: FormatMessage,
 ): string => {
   const m = messages.salaryAnalysis.outlierGroup
-  const sign = deviationPercent > 0 ? '+' : deviationPercent < 0 ? '-' : ''
   return formatMessage(m.deviationCell, {
-    sign,
-    value: formatPercentMagnitude(deviationPercent),
+    sign: '',
+    value: formatSignedPercentMagnitude(deviationPercent),
     status: formatPayStatusLabel(payStatus, formatMessage),
   })
 }

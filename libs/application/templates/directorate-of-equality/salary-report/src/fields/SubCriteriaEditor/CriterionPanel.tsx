@@ -51,14 +51,24 @@ export const CriterionPanel: FC<Props> = ({
   )
   const expectedWeight = Number(criterionWeight) || 0
 
-  // Only meaningful once both sides exist: the parent criterion's own weight can
-  // still be blank here (it's entered on the previous screen for personal
-  // criteria), and `Number('') || 0` would otherwise make this claim the
-  // sub-criteria must total 0%.
+  // Guarded on the PARENT's weight only.
+  //
+  // There is deliberately no `subCriteriaTotal !== 0` term. That was harmless
+  // while this only suppressed a red message, but it is now what decides whether
+  // Continue is enabled — and `createDefaultSubCriterion` seeds `weight: ''`, so
+  // a criterion nobody has filled in yet totals 0 and would have sailed straight
+  // through the gate. "Expected 40%, entered nothing" is exactly the mismatch
+  // this is here to catch: on Continue it writes weight 0, which makes maxScore
+  // and every step score 0 — an unscoreable yfirviðmið.
+  //
+  // `expectedWeight !== 0` stays, because a parent that has not been weighted yet
+  // (personal criteria are weighted on the previous screen) must not have this
+  // panel demanding its sub-criteria total 0%. Note this cannot be tightened to a
+  // blank-string check: `criterionWeight` arrives as `String(criterion.weight)`
+  // from a required `number`, so it is never '' — "0" is how "not weighted yet"
+  // reaches us.
   const hasWeightMismatch =
-    subCriteriaTotal !== 0 &&
-    expectedWeight !== 0 &&
-    Math.abs(subCriteriaTotal - expectedWeight) > 0.001
+    expectedWeight !== 0 && Math.abs(subCriteriaTotal - expectedWeight) > 0.001
 
   useEffect(() => {
     onWeightMismatchChange(criterionId, hasWeightMismatch)
@@ -71,6 +81,11 @@ export const CriterionPanel: FC<Props> = ({
     <AccordionCard
       id={accordionId}
       label={criterionTitle}
+      // Reddens the header so an out-of-balance criterion is identifiable while
+      // COLLAPSED. Only the first panel of each group starts expanded, so without
+      // this the gate above could disable Continue with its own explanation
+      // hidden inside a shut accordion — a dead button with no visible cause.
+      labelColor={hasWeightMismatch ? 'red600' : undefined}
       visibleContent={formatMessage(
         messages.report.subCriteria.criterionWeightLabel,
         {
