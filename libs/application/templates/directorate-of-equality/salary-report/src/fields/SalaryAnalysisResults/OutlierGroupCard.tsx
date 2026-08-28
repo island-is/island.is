@@ -1,28 +1,37 @@
 import { FC } from 'react'
 import { getErrorViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
-import { AccordionCard, Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  AccordionCard,
+  Box,
+  Button,
+  Icon,
+  Tag,
+  Text,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import type {
-  GroupDirection,
-  OutlierGroupAnswer,
-} from '../../utils/outlierGroups'
+import type { GroupDirection } from '../../utils/outlierGroups'
 
 type Props = {
   fieldId: string
   fieldName: string
   index: number
-  group: OutlierGroupAnswer
   // Live value of group.name, sourced from useWatch rather than useFieldArray's
   // fields (which only updates on structural changes) so the header updates as
   // the user types instead of only after an append/remove.
   liveName?: string
+  // Live member ordinals, sourced from useWatch for the same reason as
+  // liveName: taking a member out of the group is a setValue, not a field-array
+  // mutation, so `group.employeeOrdinals` would keep showing the old set.
+  memberOrdinals: number[]
   direction: GroupDirection
   mode: 'draft' | 'postponed'
   errors?: RecordObject
   onRemove: () => void
+  onRemoveMember: (ordinal: number) => void
 }
 
 // One accordion card per outlier group, split out of OutlierEditor.
@@ -30,12 +39,13 @@ export const OutlierGroupCard: FC<Props> = ({
   fieldId,
   fieldName,
   index,
-  group,
   liveName,
+  memberOrdinals,
   direction,
   mode,
   errors,
   onRemove,
+  onRemoveMember,
 }) => {
   const { formatMessage } = useLocale()
   const m = messages.salaryAnalysis.outlierGroup
@@ -60,9 +70,9 @@ export const OutlierGroupCard: FC<Props> = ({
       <AccordionCard
         id={fieldId}
         label={liveName || `${formatMessage(m.groupHeading)} ${index + 1}`}
-        visibleContent={`${formatMessage(
-          m.groupMembers,
-        )}: ${group.employeeOrdinals.join(', ')}`}
+        visibleContent={`${formatMessage(m.groupMemberCount)}: ${
+          memberOrdinals.length
+        }`}
         startExpanded
       >
         <Box marginBottom={2} display="flex" justifyContent="flexEnd">
@@ -70,6 +80,58 @@ export const OutlierGroupCard: FC<Props> = ({
             {formatMessage(m.removeGroupButton)}
           </Button>
         </Box>
+        {memberOrdinals.length > 0 && (
+          <Box marginBottom={4}>
+            {/* Label and pills share one wrapping flex row, so the pills carry
+                on beside the label rather than under a heading of their own. */}
+            <Box
+              display="flex"
+              flexWrap="wrap"
+              alignItems="center"
+              rowGap={1}
+              columnGap={1}
+            >
+              <Text variant="small">
+                {`${formatMessage(m.groupMembersLabel)}:`}
+              </Text>
+              {memberOrdinals.map((ordinal) => (
+                <Tag
+                  key={ordinal}
+                  variant="blueberry"
+                  // Without this, Tag paints a mint ground on :focus, which a
+                  // pointer click triggers — keyboard focus still gets it.
+                  focusVisibleOnly
+                  onClick={() => onRemoveMember(ordinal)}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    columnGap="smallGutter"
+                  >
+                    {`#${ordinal}`}
+                    {/* Always rendered rather than revealed on hover: the pill
+                        is a remove control, and a hover-only affordance never
+                        appears on touch at all. */}
+                    <Box
+                      component="span"
+                      display="inlineFlex"
+                      alignItems="center"
+                    >
+                      <Icon icon="close" size="small" ariaHidden />
+                    </Box>
+                    {/* TagProps takes no aria-label, so the button's purpose
+                        rides along inside its label instead. */}
+                    <VisuallyHidden>
+                      {formatMessage(m.removeMemberLabel, {
+                        employee: ordinal,
+                      })}
+                    </VisuallyHidden>
+                  </Box>
+                </Tag>
+              ))}
+            </Box>
+          </Box>
+        )}
         <Box marginBottom={2}>
           <Text variant="small">{formatMessage(prompt)}</Text>
         </Box>
