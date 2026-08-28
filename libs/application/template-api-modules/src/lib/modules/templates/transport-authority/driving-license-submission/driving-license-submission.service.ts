@@ -190,7 +190,18 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     return {
       success: true,
-      applicationGuid: result.applicationGuid ?? null,
+      // Preserve a guid already stored on a prior run: if submitApplication
+      // re-enters (state re-entry, admin re-trigger, retry), the v6 call returns
+      // APPLICATION_ALREADY_EXISTS and the client guard resolves with a null
+      // guid — which would otherwise overwrite the good guid the framework stored
+      // at externalData.submitApplication.data on the first pass.
+      applicationGuid:
+        result.applicationGuid ??
+        getValueViaPath<string>(
+          application.externalData,
+          'submitApplication.data.applicationGuid',
+        ) ??
+        null,
     }
   }
 

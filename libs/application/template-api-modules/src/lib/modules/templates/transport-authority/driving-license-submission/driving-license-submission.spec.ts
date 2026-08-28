@@ -588,6 +588,47 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(input.healthDeclaration.hasEpilepsy).toBe(false)
     })
 
+    it('preserves an existing guid when submitApplication re-runs and RLS says APPLICATION_ALREADY_EXISTS', async () => {
+      // Re-entry/retry: the v6 client guard resolves the duplicate with a null
+      // guid. Without the fallback that null would overwrite the guid the first
+      // run stored at externalData.submitApplication.data.
+      newTemporaryDrivingLicenseWithHealthDeclaration.mockResolvedValueOnce({
+        success: true,
+        errorMessage: null,
+        applicationGuid: null,
+      })
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBTempRedesignEnabled: true,
+          selectLicensePhoto: 'facial-1',
+          drivingInstructor: '0101302399',
+        },
+        externalData: {
+          ...thjodskraExternalData,
+          submitApplication: {
+            data: { applicationGuid: '2e23bf24-d8bd-4353-9faf-3fc5ce04090d' },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toStrictEqual({
+        success: true,
+        applicationGuid: '2e23bf24-d8bd-4353-9faf-3fc5ce04090d',
+      })
+    })
+
     it('sends null biometric IDs when the RLS quality photo is selected', async () => {
       const user = createCurrentUser()
       const application = createApplication({
