@@ -19,6 +19,7 @@ import {
 } from '@island.is/application/ui-components/utilities/formatters'
 import * as m from '../lib/messages'
 import { getRejectedAssigneeNationalIdsFromAnswers } from './assigneeRejectionUtils'
+import { getAssigneeNationalIdForUmgengnissamningurForm } from './assigneeUtils'
 import {
   doesAssigneeAddressMatchRentalContract,
   getHouseholdMembersForTable,
@@ -305,73 +306,75 @@ const householdMembersToOverviewItems = (
   })
 }
 
-const householdMembersOverviewItemsCore = (
+const getHouseholdMembersForOverview = (
   answers: FormValue,
   externalData: ExternalData,
-  excludeRejectedAssignees: boolean,
-): Array<KeyValueItem> => {
+): {
+  members: Array<HouseholdMember>
+  answerByNationalId: Map<
+    string,
+    HouseholdMember & { file?: Array<{ key: string; name: string }> }
+  >
+} => {
   const normalizeId = normalizeHouseholdMemberNationalId
-
+  const answerMembers = getMembersFromAnswers(answers)
+  const answerByNationalId = new Map(
+    answerMembers.map((am) => [normalizeId(am.nationalId), am]),
+  )
   const tableRepeater = getValueViaPath<unknown>(
     answers,
     'householdMembersTableRepeater',
   )
 
   if (Array.isArray(tableRepeater)) {
-    const app = { answers, externalData } as Application
-    const staticTenants = getRentalAgreementTenantsFlat(app)
-    const answerMembers = getMembersFromAnswers(answers)
+    const staticTenants = getRentalAgreementTenantsFlat({
+      answers,
+      externalData,
+    } as Application)
     const tenantIdSet = new Set(
       staticTenants.map((t) => normalizeId(t.nationalId)).filter(Boolean),
     )
-    const answerByNationalId = new Map(
-      answerMembers.map((am) => [normalizeId(am.nationalId), am]),
-    )
-
-    const members: Array<HouseholdMember> = []
-    staticTenants.forEach((t) => {
-      members.push({ name: t.name, nationalId: t.nationalId })
-    })
-    answerMembers.forEach((am) => {
-      if (am.nationalId && !tenantIdSet.has(normalizeId(am.nationalId))) {
-        members.push({ name: am.name, nationalId: am.nationalId })
-      }
-    })
-
-    const filteredMembers = excludeRejectedAssignees
-      ? excludeRejectedHouseholdMembers(members, answers)
-      : members
-
-    return householdMembersToOverviewItems(
-      filteredMembers,
-      answerByNationalId,
-      normalizeId,
-    )
+    const members: Array<HouseholdMember> = [
+      ...staticTenants.map((t) => ({
+        name: t.name,
+        nationalId: t.nationalId,
+      })),
+      ...answerMembers.filter(
+        (am) => am.nationalId && !tenantIdSet.has(normalizeId(am.nationalId)),
+      ),
+    ]
+    return { members, answerByNationalId }
   }
 
   const contractMembers = getHouseholdMembersForTable({
     answers,
     externalData,
   } as Application)
-  const answerMembers = getMembersFromAnswers(answers)
-
   const contractNationalIds = new Set(
     contractMembers.map((cm) => normalizeId(cm.nationalId)).filter(Boolean),
   )
-  const answerByNationalId = new Map(
-    answerMembers.map((am) => [normalizeId(am.nationalId), am]),
+  const members: Array<HouseholdMember> = [
+    ...contractMembers.map((cm) => ({
+      name: cm.name,
+      nationalId: cm.nationalId,
+    })),
+    ...answerMembers.filter(
+      (am) =>
+        am.nationalId && !contractNationalIds.has(normalizeId(am.nationalId)),
+    ),
+  ]
+  return { members, answerByNationalId }
+}
+
+const householdMembersOverviewItemsCore = (
+  answers: FormValue,
+  externalData: ExternalData,
+  excludeRejectedAssignees: boolean,
+): Array<KeyValueItem> => {
+  const { members, answerByNationalId } = getHouseholdMembersForOverview(
+    answers,
+    externalData,
   )
-
-  const members: Array<HouseholdMember> = []
-  contractMembers.forEach((cm) => {
-    members.push({ name: cm.name, nationalId: cm.nationalId })
-  })
-  answerMembers.forEach((am) => {
-    if (am.nationalId && !contractNationalIds.has(normalizeId(am.nationalId))) {
-      members.push({ name: am.name, nationalId: am.nationalId })
-    }
-  })
-
   const filteredMembers = excludeRejectedAssignees
     ? excludeRejectedHouseholdMembers(members, answers)
     : members
@@ -379,9 +382,19 @@ const householdMembersOverviewItemsCore = (
   return householdMembersToOverviewItems(
     filteredMembers,
     answerByNationalId,
-    normalizeId,
+    normalizeHouseholdMemberNationalId,
   )
 }
+
+export const householdMembersOverviewTitle = (application: Application) => ({
+  ...m.draftMessages.overviewSection.householdMembersTitle,
+  values: {
+    count: getHouseholdMembersForOverview(
+      application.answers,
+      application.externalData,
+    ).members.length,
+  },
+})
 
 export const householdMembersOverviewItems = (
   answers: FormValue,
@@ -931,6 +944,18 @@ export const mainFormAccessAgreementOverviewItems = (
   return items
 }
 
+export const mainFormAccessAgreementOverviewTitle = (
+  application: Application,
+) => ({
+  ...m.draftMessages.overviewSection.accessAgreementTitle,
+  values: {
+    count: mainFormAccessAgreementOverviewItems(
+      application.answers,
+      application.externalData,
+    ).length,
+  },
+})
+
 export const mainFormAccessAgreementOverviewAttachments = (
   answers: FormValue,
   _externalData: ExternalData,
@@ -982,11 +1007,33 @@ type AssigneeAccessAgreementState =
       forChildName: string
     }
 
+const resolveAssigneeAccessAgreementPrefix = (
+  answers: FormValue,
+  externalData: ExternalData,
+  userNationalId?: string,
+): string => {
+  if (userNationalId && isValidKennitala(userNationalId)) {
+    return sanitizeKennitala(userNationalId)
+  }
+  const resolved = getAssigneeNationalIdForUmgengnissamningurForm({
+    answers,
+    externalData,
+  } as Application)
+  return resolved && isValidKennitala(resolved)
+    ? sanitizeKennitala(resolved)
+    : ''
+}
+
 const getAssigneeAccessAgreementState = (
   answers: FormValue,
+  externalData: ExternalData,
   userNationalId: string | undefined,
 ): AssigneeAccessAgreementState | null => {
-  const prefix = userNationalId ? sanitizeKennitala(userNationalId) : ''
+  const prefix = resolveAssigneeAccessAgreementPrefix(
+    answers,
+    externalData,
+    userNationalId,
+  )
   if (!prefix) {
     return null
   }
@@ -1053,10 +1100,14 @@ const getAssigneeAccessAgreementState = (
 
 export const assigneeAccessAgreementOverviewAttachments = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
   userNationalId?: string,
 ): Array<AttachmentItem> => {
-  const state = getAssigneeAccessAgreementState(answers, userNationalId)
+  const state = getAssigneeAccessAgreementState(
+    answers,
+    externalData,
+    userNationalId,
+  )
   if (!state) {
     return []
   }
@@ -1095,14 +1146,59 @@ export const assigneeAccessAgreementOverviewAttachments = (
   return out
 }
 
+export const signedAssigneesAccessAgreementOverviewAttachments = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<AttachmentItem> => {
+  const signed =
+    getValueViaPath<string[]>(answers, 'signedAssignees') ?? ([] as string[])
+  const out: Array<AttachmentItem> = []
+  for (const nationalId of signed) {
+    const assigneeName =
+      getValueViaPath<string>(
+        answers,
+        `${sanitizeKennitala(nationalId)}.assigneeInfo.name`,
+      )?.trim() ?? ''
+    for (const file of assigneeAccessAgreementOverviewAttachments(
+      answers,
+      externalData,
+      nationalId,
+    )) {
+      out.push({
+        ...file,
+        fileName: assigneeName
+          ? `${assigneeName} – ${file.fileName}`
+          : file.fileName,
+      })
+    }
+  }
+  return out
+}
+
+export const signedAssigneesAccessAgreementOverviewTitle = (
+  application: Application,
+) => ({
+  ...m.draftMessages.overviewSection.accessAgreementTitle,
+  values: {
+    count: signedAssigneesAccessAgreementOverviewAttachments(
+      application.answers,
+      application.externalData,
+    ).length,
+  },
+})
+
 /** Full key–value list for sign / document overview (file names in text). */
 export const assigneeUmgengnissamningurOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
   userNationalId?: string,
   _locale?: Locale,
 ): Array<KeyValueItem> => {
-  const state = getAssigneeAccessAgreementState(answers, userNationalId)
+  const state = getAssigneeAccessAgreementState(
+    answers,
+    externalData,
+    userNationalId,
+  )
   if (!state) {
     return []
   }

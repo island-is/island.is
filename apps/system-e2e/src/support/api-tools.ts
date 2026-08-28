@@ -48,7 +48,15 @@ export async function verifyRequestCompletion(
     (resp) =>
       resp.url().includes(url) &&
       resp.request().postDataJSON().operationName === op,
+    { timeout: 15000 },
   )
 
-  return await response.json()
+  const body = await response.json()
+  if (body.errors?.length) {
+    throw new Error(
+      `GraphQL operation ${op} returned errors: ${body.errors[0].message}`,
+    )
+  }
+
+  return body
 }
