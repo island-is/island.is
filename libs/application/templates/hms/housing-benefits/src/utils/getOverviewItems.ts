@@ -305,73 +305,75 @@ const householdMembersToOverviewItems = (
   })
 }
 
-const householdMembersOverviewItemsCore = (
+const getHouseholdMembersForOverview = (
   answers: FormValue,
   externalData: ExternalData,
-  excludeRejectedAssignees: boolean,
-): Array<KeyValueItem> => {
+): {
+  members: Array<HouseholdMember>
+  answerByNationalId: Map<
+    string,
+    HouseholdMember & { file?: Array<{ key: string; name: string }> }
+  >
+} => {
   const normalizeId = normalizeHouseholdMemberNationalId
-
+  const answerMembers = getMembersFromAnswers(answers)
+  const answerByNationalId = new Map(
+    answerMembers.map((am) => [normalizeId(am.nationalId), am]),
+  )
   const tableRepeater = getValueViaPath<unknown>(
     answers,
     'householdMembersTableRepeater',
   )
 
   if (Array.isArray(tableRepeater)) {
-    const app = { answers, externalData } as Application
-    const staticTenants = getRentalAgreementTenantsFlat(app)
-    const answerMembers = getMembersFromAnswers(answers)
+    const staticTenants = getRentalAgreementTenantsFlat({
+      answers,
+      externalData,
+    } as Application)
     const tenantIdSet = new Set(
       staticTenants.map((t) => normalizeId(t.nationalId)).filter(Boolean),
     )
-    const answerByNationalId = new Map(
-      answerMembers.map((am) => [normalizeId(am.nationalId), am]),
-    )
-
-    const members: Array<HouseholdMember> = []
-    staticTenants.forEach((t) => {
-      members.push({ name: t.name, nationalId: t.nationalId })
-    })
-    answerMembers.forEach((am) => {
-      if (am.nationalId && !tenantIdSet.has(normalizeId(am.nationalId))) {
-        members.push({ name: am.name, nationalId: am.nationalId })
-      }
-    })
-
-    const filteredMembers = excludeRejectedAssignees
-      ? excludeRejectedHouseholdMembers(members, answers)
-      : members
-
-    return householdMembersToOverviewItems(
-      filteredMembers,
-      answerByNationalId,
-      normalizeId,
-    )
+    const members: Array<HouseholdMember> = [
+      ...staticTenants.map((t) => ({
+        name: t.name,
+        nationalId: t.nationalId,
+      })),
+      ...answerMembers.filter(
+        (am) => am.nationalId && !tenantIdSet.has(normalizeId(am.nationalId)),
+      ),
+    ]
+    return { members, answerByNationalId }
   }
 
   const contractMembers = getHouseholdMembersForTable({
     answers,
     externalData,
   } as Application)
-  const answerMembers = getMembersFromAnswers(answers)
-
   const contractNationalIds = new Set(
     contractMembers.map((cm) => normalizeId(cm.nationalId)).filter(Boolean),
   )
-  const answerByNationalId = new Map(
-    answerMembers.map((am) => [normalizeId(am.nationalId), am]),
+  const members: Array<HouseholdMember> = [
+    ...contractMembers.map((cm) => ({
+      name: cm.name,
+      nationalId: cm.nationalId,
+    })),
+    ...answerMembers.filter(
+      (am) =>
+        am.nationalId && !contractNationalIds.has(normalizeId(am.nationalId)),
+    ),
+  ]
+  return { members, answerByNationalId }
+}
+
+const householdMembersOverviewItemsCore = (
+  answers: FormValue,
+  externalData: ExternalData,
+  excludeRejectedAssignees: boolean,
+): Array<KeyValueItem> => {
+  const { members, answerByNationalId } = getHouseholdMembersForOverview(
+    answers,
+    externalData,
   )
-
-  const members: Array<HouseholdMember> = []
-  contractMembers.forEach((cm) => {
-    members.push({ name: cm.name, nationalId: cm.nationalId })
-  })
-  answerMembers.forEach((am) => {
-    if (am.nationalId && !contractNationalIds.has(normalizeId(am.nationalId))) {
-      members.push({ name: am.name, nationalId: am.nationalId })
-    }
-  })
-
   const filteredMembers = excludeRejectedAssignees
     ? excludeRejectedHouseholdMembers(members, answers)
     : members
@@ -379,9 +381,19 @@ const householdMembersOverviewItemsCore = (
   return householdMembersToOverviewItems(
     filteredMembers,
     answerByNationalId,
-    normalizeId,
+    normalizeHouseholdMemberNationalId,
   )
 }
+
+export const householdMembersOverviewTitle = (application: Application) => ({
+  ...m.draftMessages.overviewSection.householdMembersTitle,
+  values: {
+    count: getHouseholdMembersForOverview(
+      application.answers,
+      application.externalData,
+    ).members.length,
+  },
+})
 
 export const householdMembersOverviewItems = (
   answers: FormValue,

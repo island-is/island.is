@@ -15,6 +15,7 @@ import {
   exemptionSectionOverviewAttachments,
   householdMembersOverviewItems,
   householdMembersOverviewAttachments,
+  householdMembersOverviewTitle,
   mainFormAccessAgreementOverviewItems,
   mainFormAccessAgreementOverviewAttachments,
   incomeSectionOverviewItems,
@@ -62,7 +63,7 @@ export const overviewSection = buildSection({
         }),
         buildOverviewField({
           id: 'householdMembersOverview',
-          title: m.draftMessages.householdMembersSection.title,
+          title: householdMembersOverviewTitle,
           backId: 'householdMembersMultiField',
           items: householdMembersOverviewItems,
           attachments: householdMembersOverviewAttachments,
