@@ -173,10 +173,7 @@ export default function AppointmentDetailScreen() {
     url: string,
     alignSelf: 'center' | 'flex-start' = 'center',
   ) => (
-    <InlineLink
-      style={{ alignSelf }}
-      onPress={() => void openExternalUrl(url)}
-    >
+    <InlineLink style={{ alignSelf }} onPress={() => void openExternalUrl(url)}>
       <Typography variant="eyebrow" color={theme.color.blue400}>
         {intl.formatMessage({ id: 'health.appointments.seeMore' })}
       </Typography>
@@ -209,12 +206,18 @@ export default function AppointmentDetailScreen() {
     HealthDirectorateAppointmentLinkType.OrganizationInfo,
   )
 
-  const assigneeTypeLabel = (type: HealthDirectorateAppointmentAssigneeType) => {
+  const assigneeTypeLabel = (
+    type: HealthDirectorateAppointmentAssigneeType,
+  ) => {
     switch (type) {
       case HealthDirectorateAppointmentAssigneeType.Role:
-        return intl.formatMessage({ id: 'health.appointments.assigneeTypeRole' })
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeRole',
+        })
       case HealthDirectorateAppointmentAssigneeType.Room:
-        return intl.formatMessage({ id: 'health.appointments.assigneeTypeRoom' })
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeRoom',
+        })
       case HealthDirectorateAppointmentAssigneeType.Equipment:
         return intl.formatMessage({
           id: 'health.appointments.assigneeTypeEquipment',
@@ -224,7 +227,9 @@ export default function AppointmentDetailScreen() {
           id: 'health.appointments.assigneeTypeService',
         })
       case HealthDirectorateAppointmentAssigneeType.Team:
-        return intl.formatMessage({ id: 'health.appointments.assigneeTypeTeam' })
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeTeam',
+        })
       default:
         return intl.formatMessage({
           id: 'health.appointments.assigneeTypeOther',
