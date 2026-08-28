@@ -22,7 +22,7 @@ import * as styles from './AskTheBudgetBill.css'
  * The key is a public client side widget identifier, not a secret.
  */
 const DEFAULT_ZENDESK_SNIPPET_URL =
-  'https://static.zdassets.com/ekr/snippet.js?key=981362b3-9805-4375-b7cf-eafa3ac78ff5'
+  'https://static.zdassets.com/ekr/snippet.js?key=23812e00-4869-4552-85cd-ccdd7cd9d958'
 
 const CONTAINER_ID = 'zendesk-embedded-chat-container'
 const PATHNAME = '/spurdu-fjarlagafrumvarpid'
@@ -43,9 +43,7 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
 
   useContentfulId(customPageData?.id)
 
-  const snippetUrl =
-    (customPageData?.configJson?.zendeskSnippetUrl as string | undefined) ||
-    DEFAULT_ZENDESK_SNIPPET_URL
+  const snippetUrl = DEFAULT_ZENDESK_SNIPPET_URL
 
   /** Where the <link> tag in the disclaimer text points, the terms for instance */
   const disclaimerLinkHref = customPageData?.configJson?.disclaimerLinkHref as
