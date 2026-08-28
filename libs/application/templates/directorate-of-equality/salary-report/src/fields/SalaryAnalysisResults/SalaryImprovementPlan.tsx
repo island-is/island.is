@@ -212,25 +212,31 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     void handleAnalyze()
   }, [draftLoading, handleAnalyze, isDraftPhase, result])
 
-  useSeedOnce(isDraftPhase && Boolean(content), () => {
-    if (!content) return
+  // The draft stores members by employee id, the answers by ordinal — so the
+  // employee list is what bridges the two, and both seeds below need the same
+  // crossing.
+  const outlierGroupAnswersFromDraft = useCallback((): OutlierGroupAnswer[] => {
+    if (!content) return []
     const employeeOrdinalById: Record<string, number> = Object.fromEntries(
       content.employees.map((e) => [e.id, e.ordinal]),
     )
+    return content.outlierGroups.map((g) => ({
+      id: g.id,
+      name: g.name ?? '',
+      reason: g.reason ?? '',
+      action: g.action ?? '',
+      signatureName: g.signatureName ?? '',
+      signatureRole: g.signatureRole ?? '',
+      employeeOrdinals: g.memberEmployeeIds
+        .map((id) => employeeOrdinalById[id])
+        .filter((o): o is number => o !== undefined),
+    }))
+  }, [content])
+
+  useSeedOnce(isDraftPhase && Boolean(content), () => {
+    if (!content) return
     draftForm.reset({
-      salaryAnalysis: {
-        outlierGroups: content.outlierGroups.map((g) => ({
-          id: g.id,
-          name: g.name ?? '',
-          reason: g.reason ?? '',
-          action: g.action ?? '',
-          signatureName: g.signatureName ?? '',
-          signatureRole: g.signatureRole ?? '',
-          employeeOrdinals: g.memberEmployeeIds
-            .map((id) => employeeOrdinalById[id])
-            .filter((o): o is number => o !== undefined),
-        })),
-      },
+      salaryAnalysis: { outlierGroups: outlierGroupAnswersFromDraft() },
     })
   })
 
@@ -269,6 +275,30 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     if (!isDraftPhase) return
     setAmbientValue('salaryAnalysis.outlierGroups', draftOutlierGroups)
   }, [draftOutlierGroups, isDraftPhase, setAmbientValue])
+
+  // The mirror above is what puts a DRAFT-phase plan into the answers, and it
+  // only exists as of the postpone-flow change. Applications that left DRAFT
+  // before it carry their groups on the stored draft snapshot alone, so
+  // DRAFT_RETRY — which reads the plan from answers and never seeds from the
+  // draft — would open an empty editor over a plan that exists, and
+  // reviewOutlierPlanIsSubmittable would then refuse the submit.
+  //
+  // DRAFT_RETRY only, deliberately. POSTPONED is reached solely by postponing,
+  // which clears the groups off the draft on the way out (see the isPostponed
+  // branch in beforeSubmit) precisely so the plan is written from scratch there
+  // — seeding it from a snapshot taken before that clear would resurrect a plan
+  // the applicant chose to defer.
+  useSeedOnce(
+    application.state === States.DRAFT_RETRY &&
+      Boolean(content) &&
+      ambientOutlierGroups.length === 0,
+    () => {
+      const groups = outlierGroupAnswersFromDraft()
+      if (groups.length === 0) return
+      setAmbientValue('salaryAnalysis.outlierGroups', groups)
+    },
+  )
+
   const currentOutliers = useMemo(() => result?.outliers ?? [], [result])
   const hasMinimumSetOutliers = currentOutliers.length > 0
   const unassignedOrdinals = useMemo(

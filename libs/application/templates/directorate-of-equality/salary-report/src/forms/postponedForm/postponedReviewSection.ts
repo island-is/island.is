@@ -9,7 +9,10 @@ import { ScreenIds } from '../../utils/constants'
 import { reviewOutlierPlanIsSubmittable } from '../../utils/salaryAnalysisNavigation'
 import { buildAnalysisSummaryOverviewField } from '../analysisSummaryOverview'
 import { buildReportOverviewFields } from '../mainForm/overviewSection'
-import { buildOutlierPlanOverviewField } from '../outlierPlanOverview'
+import {
+  buildOutlierPlanIncompleteAlertField,
+  buildOutlierPlanOverviewField,
+} from '../outlierPlanOverview'
 
 // One screen for the whole review, mirroring the draft's own "Yfirlit": the
 // submitted report, the analysis verdict, the úrbótaáætlun, and the button that
@@ -36,6 +39,9 @@ export const postponedReviewSection = buildSection({
           id: 'postponedReviewOutlierPlan',
           title: messages.postponed.reviewTitle,
           backId: ScreenIds.improvementPlan,
+        }),
+        buildOutlierPlanIncompleteAlertField({
+          id: 'postponedReviewIncomplete',
         }),
         buildSubmitField({
           id: 'postponedSubmit',

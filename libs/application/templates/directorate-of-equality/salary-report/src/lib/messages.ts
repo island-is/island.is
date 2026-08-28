@@ -1539,6 +1539,18 @@ export const messages = {
         defaultMessage:
           'Fylla þarf út allar upplýsingar fyrir hvern frávikahóp til að halda áfram.',
       },
+      // Shown on the review screens in place of the submit button, which
+      // ScreenFooter drops entirely when its action condition is false — with
+      // no explanation of its own.
+      reviewIncompleteTitle: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.reviewIncompleteTitle',
+        defaultMessage: 'Úrbótaáætlun er ekki tilbúin til innsendingar',
+      },
+      reviewIncompleteMessage: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.reviewIncompleteMessage',
+        defaultMessage:
+          'Öll frávik þurfa að tilheyra frávikahópi og fylla þarf út allar upplýsingar fyrir hvern hóp. Farðu aftur á skrefið Úrbótaáætlun til að ljúka við hana.',
+      },
     }),
   },
 

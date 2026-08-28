@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildOverviewField,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -9,6 +10,7 @@ import type {
 } from '@island.is/application/types'
 import { messages } from '../lib/messages'
 import type { OutlierGroupAnswer } from '../utils/outlierGroups'
+import { reviewOutlierPlanIsSubmittable } from '../utils/salaryAnalysisNavigation'
 
 /**
  * Reads the plan from answers in every phase.
@@ -84,4 +86,19 @@ export const buildOutlierPlanOverviewField = ({
     hideIfEmpty: true,
     ...(backId ? { backId } : {}),
     items: outlierPlanOverviewItems,
+  })
+
+// The review screens gate their submit action on reviewOutlierPlanIsSubmittable,
+// and ScreenFooter *filters out* an action whose condition is false rather than
+// disabling it — so without this the applicant gets a review screen with no
+// submit button and nothing saying why. Same predicate, negated, so the two can
+// never disagree about when the plan is ready.
+export const buildOutlierPlanIncompleteAlertField = ({ id }: { id: string }) =>
+  buildAlertMessageField({
+    id,
+    title: messages.salaryAnalysis.outlierGroup.reviewIncompleteTitle,
+    message: messages.salaryAnalysis.outlierGroup.reviewIncompleteMessage,
+    alertType: 'warning',
+    condition: (answers, externalData) =>
+      !reviewOutlierPlanIsSubmittable(answers, externalData),
   })
