@@ -20,19 +20,12 @@ export class HealthDirectorateCertificate {
   @Field(() => GraphQLISODateTime)
   issuedAt!: Date
 
-  @Field({
-    description:
-      'True when the HCP charges patients for this certificate and it is gated behind a successful payment.',
-  })
+  @Field()
   requiresPayment!: boolean
 
   @Field()
   paid!: boolean
 
-  @Field(() => Int, {
-    nullable: true,
-    description:
-      'Price the patient would be charged, in ISK. Only set when requiresPayment is true.',
-  })
+  @Field(() => Int, { nullable: true })
   amountIsk?: number
 }
