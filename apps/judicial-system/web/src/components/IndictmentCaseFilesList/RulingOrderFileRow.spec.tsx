@@ -378,3 +378,110 @@ describe('RulingOrderFileRow - withdraw an in-court appeal', () => {
     expect(screen.queryByText('Afturkalla kæru')).not.toBeInTheDocument()
   })
 })
+
+// A ruling order pronounced orally has no document until the district court
+// writes it up, which it only does if the ruling is appealed. Until then the row
+// says so with a bubble, opens nothing, and offers the court only the upload.
+describe('RulingOrderFileRow - ruling order pronounced orally', () => {
+  const rulingFileId = 'ruling-file-oral'
+  const fileName = 'S-123/2026 Úrskurður 12.11.2026'
+
+  const pronouncedOrally = {
+    id: rulingFileId,
+    name: fileName,
+    userGeneratedFilename: fileName,
+    category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+    isPronouncedOrally: true,
+    key: '',
+    isKeyAccessible: true,
+    canBeAppealed: true,
+    appealDeadline: '2026-11-15T11:37:00.000Z',
+  } as CaseFile
+
+  const onOpenFile = jest.fn()
+
+  const renderRow = (user: User, file: CaseFile = pronouncedOrally) => {
+    const workingCase = {
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.RECEIVED,
+      judge: mockJudge,
+      rulingOrderAppealCases: [],
+    } as Case
+
+    return render(
+      <MockedProvider addTypename={false}>
+        <IntlProviderWrapper>
+          <UserContext.Provider value={{ user }}>
+            <FormContext.Provider
+              value={
+                {
+                  workingCase,
+                  setWorkingCase: jest.fn(),
+                  isLoadingWorkingCase: false,
+                  caseNotFound: false,
+                  isCaseUpToDate: true,
+                  refreshCase: jest.fn(),
+                  getCase: jest.fn(),
+                  isCreating: false,
+                } as unknown as React.ContextType<typeof FormContext>
+              }
+            >
+              <RulingOrderFileRow file={file} onOpenFile={onOpenFile} />
+            </FormContext.Provider>
+          </UserContext.Provider>
+        </IntlProviderWrapper>
+      </MockedProvider>,
+    )
+  }
+
+  afterEach(() => jest.clearAllMocks())
+
+  it('says the ruling was pronounced orally', () => {
+    renderRow(mockJudge)
+
+    expect(
+      screen.getByText('Úrskurður kveðinn upp munnlega'),
+    ).toBeInTheDocument()
+  })
+
+  it('opens nothing, since there is no document behind it', () => {
+    renderRow(mockJudge)
+
+    fireEvent.click(screen.getByText(fileName))
+
+    expect(onOpenFile).not.toHaveBeenCalled()
+  })
+
+  it('offers the district court only the upload', async () => {
+    renderRow(mockJudge)
+
+    fireEvent.click(screen.getByLabelText(`Valmynd fyrir ${fileName}`))
+
+    expect(await screen.findByText('Hlaða upp úrskurði')).toBeInTheDocument()
+    expect(screen.queryByText('Senda til Landsréttar')).not.toBeInTheDocument()
+  })
+
+  it('does not ask the judge to confirm a ruling with no document', () => {
+    renderRow(mockJudge)
+
+    expect(screen.queryByText('Staðfesta')).not.toBeInTheDocument()
+    expect(screen.queryByText('Bíður staðfestingar')).not.toBeInTheDocument()
+  })
+
+  it('asks the judge to confirm once the ruling has been written up', () => {
+    renderRow(mockJudge, {
+      ...pronouncedOrally,
+      key: 'case-id/file-id/urskurdur.pdf',
+    } as CaseFile)
+
+    expect(screen.getByText('Staðfesta')).toBeInTheDocument()
+  })
+
+  it('lets the prosecution appeal the ruling that was pronounced', async () => {
+    renderRow(mockProsecutor)
+
+    fireEvent.click(screen.getByLabelText(`Valmynd fyrir ${fileName}`))
+
+    expect(await screen.findByText('Senda inn kæru')).toBeInTheDocument()
+  })
+})
