@@ -15,6 +15,14 @@ import { dateFormat } from '@island.is/shared/constants'
 const toUTCDateOnly = (date: Date) =>
   new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
 
+const localizedDateArgs = (
+  key: string,
+  date: Date,
+): ScheduledNotificationArg[] => [
+  { key: `${key}Is`, value: format(toUTCDateOnly(date), dateFormat.is) },
+  { key: `${key}En`, value: format(toUTCDateOnly(date), dateFormat.en) },
+]
+
 /**
  * Returns end-of-day, `days` days after the application was created.
  */
@@ -44,14 +52,7 @@ const pruneReminder = (
   featureFlag?: Features,
 ): ScheduledNotificationConfig => {
   const args: ScheduledNotificationArg[] = [
-    {
-      key: 'pruneDateIs',
-      value: format(toUTCDateOnly(pruneDate), dateFormat.is),
-    },
-    {
-      key: 'pruneDateEn',
-      value: format(toUTCDateOnly(pruneDate), dateFormat.en),
-    },
+    ...localizedDateArgs('pruneDate', pruneDate),
     { key: 'daysBeforePrune', value: String(daysBeforePrune) },
     { key: 'reason', message: reason },
   ]
@@ -145,14 +146,5 @@ export const schedulePeriodEndingReminders = (
       includeApplicationLink: true,
       includeApplicationName: true,
       featureFlag,
-      args: [
-        {
-          key: 'periodEndDateIs',
-          value: format(toUTCDateOnly(periodEndDate), dateFormat.is),
-        },
-        {
-          key: 'periodEndDateEn',
-          value: format(toUTCDateOnly(periodEndDate), dateFormat.en),
-        },
-      ],
+      args: localizedDateArgs('periodEndDate', periodEndDate),
     }))
