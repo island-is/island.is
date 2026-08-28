@@ -110,6 +110,7 @@ export const attributes: (keyof Case)[] = [
   'indictmentReviewerId',
   'hasCivilClaims',
   'isCompletedWithoutRuling',
+  'isArraignmentSummonsSkipped',
   'rulingModifiedHistory',
   'withCourtSessions',
 ]
