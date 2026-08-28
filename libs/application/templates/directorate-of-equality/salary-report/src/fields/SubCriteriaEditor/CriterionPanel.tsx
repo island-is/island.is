@@ -111,15 +111,14 @@ export const CriterionPanel: FC<Props> = ({
       </Box>
       {hasWeightMismatch && (
         <Box marginTop={3}>
-           <AlertMessage
-              type="error"
-              title={formatMessage(messages.errors.alertTitle)}
-              message={
-              formatMessage(messages.report.subCriteria.weightSumError, {
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={formatMessage(messages.report.subCriteria.weightSumError, {
               total: subCriteriaTotal,
               expected: expectedWeight,
             })}
-            />
+          />
         </Box>
       )}
     </AccordionCard>
