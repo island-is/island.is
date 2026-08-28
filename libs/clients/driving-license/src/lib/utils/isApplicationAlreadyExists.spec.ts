@@ -10,6 +10,16 @@ describe('isApplicationAlreadyExists', () => {
     ).toBe(true)
   })
 
+  it('matches the full endpoint when the code is in problem.title', () => {
+    // toSubmissionError's convention: RLS puts its raw error code in title.
+    expect(
+      isApplicationAlreadyExists({
+        status: 400,
+        problem: { title: 'APPLICATION_ALREADY_EXISTS' },
+      }),
+    ).toBe(true)
+  })
+
   it('matches the full endpoint problem+json detail', () => {
     expect(
       isApplicationAlreadyExists({

@@ -19,7 +19,16 @@ export const isApplicationAlreadyExists = (error: unknown): boolean => {
     return false
   }
 
+  // Temporary endpoint: machine code in a plain-JSON body.
   if (e.body?.errorCode === 'APPLICATION_ALREADY_EXISTS') {
+    return true
+  }
+
+  // Full endpoint: problem+json. By this codebase's convention (see
+  // `toSubmissionError`) RLS puts its raw error *code* in `problem.title`, so
+  // match that exactly first — the prose `detail` is only a last-resort fallback
+  // that degrades safely if RLS ever changes the wording.
+  if (e.problem?.title === 'APPLICATION_ALREADY_EXISTS') {
     return true
   }
 
