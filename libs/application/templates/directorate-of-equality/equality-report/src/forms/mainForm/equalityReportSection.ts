@@ -29,6 +29,7 @@ export const equalityReportSection = buildSection({
               title: messages.equalityReport.information.detailLinkLabel,
               link: messages.equalityReport.information.detailLink,
               variant: 'text',
+              iconProps: { icon: 'link', type: 'outline' },
             }),
             buildTitleField({
               title: messages.equalityReport.information.listTitle,
@@ -86,9 +87,10 @@ export const equalityReportSection = buildSection({
           children: [
             buildLinkField({
               id: 'goalsAndActions.link',
-              title: messages.equalityReport.information.detailLinkLabel,
-              link: messages.equalityReport.information.detailLink,
+              title: messages.equalityReport.information.instructionsLabel,
+              link: messages.equalityReport.information.instructionsLink,
               variant: 'text',
+              iconProps: { icon: 'link', type: 'outline' },
             }),
             buildCustomField(
               {

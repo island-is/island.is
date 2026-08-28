@@ -1,7 +1,13 @@
 import { FC, useMemo, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { RecordObject } from '@island.is/application/types'
-import { Box, Button, InteractiveTable, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  InteractiveTable,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
@@ -130,6 +136,10 @@ export const OutlierEditor: FC<Props> = ({
     <Box marginTop={4}>
       {unassignedOutliers.length > 0 && (
         <>
+          <Box>
+            <Text variant="h4">{formatMessage(m.tableTitle)}</Text>
+            <Text>{formatMessage(m.tableText)}</Text>
+          </Box>
           <InteractiveTable
             columns={columns}
             data={pageRows}
@@ -210,18 +220,22 @@ export const OutlierEditor: FC<Props> = ({
 
       {unassignedOutliers.length > 0 && (
         <Box marginTop={2}>
-          <Text variant="small" color="red600">
-            {formatMessage(m.unassignedWarning)}
-          </Text>
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={formatMessage(m.unassignedWarning)}
+          />
         </Box>
       )}
       {unassignedOutliers.length === 0 &&
         watchedGroups.some((g) => g.employeeOrdinals.length > 0) &&
         watchedGroups.some((g) => !isOutlierGroupComplete(g)) && (
           <Box marginTop={2}>
-            <Text variant="small" color="red600">
-              {formatMessage(m.incompleteGroupWarning)}
-            </Text>
+            <AlertMessage
+              type="error"
+              title={formatMessage(messages.errors.alertTitle)}
+              message={formatMessage(m.incompleteGroupWarning)}
+            />
           </Box>
         )}
     </Box>

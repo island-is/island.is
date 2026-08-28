@@ -96,6 +96,8 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
         value={content ?? ('' as HTMLText)}
         readOnly
         fileUploader={() => Promise.resolve({} as unknown)}
+        hideWarnings
+        config={{ toolbar: false }}
       />
     </Box>
   )

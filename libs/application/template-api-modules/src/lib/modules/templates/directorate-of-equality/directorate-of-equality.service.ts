@@ -286,11 +286,14 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       const activeReport =
         await this.directorateOfEqualityService.getActiveEqualityReport(auth)
 
-      if (!activeReport || !activeReport.identifier) return null
+      // providerId is the only lookup handle DMR accepts on
+      // GET /application/reports/:providerId — `id` resolves only against the
+      // admin-only endpoint and `identifier` is a human-facing display code.
+      if (!activeReport?.providerId) return null
 
       const report = await this.directorateOfEqualityService.getReport(
         auth,
-        activeReport.identifier,
+        activeReport.providerId,
       )
       return { equalityReportContent: report.equalityReportContent ?? '' }
     } catch (error) {

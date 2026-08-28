@@ -1455,6 +1455,15 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.signatureRoleLabel',
         defaultMessage: 'Starfstitill ábyrgðaraðila',
       },
+      tableTitle: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.tableTitle',
+        defaultMessage: 'Frávikatafla',
+      },
+      tableText: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.tableText',
+        defaultMessage:
+          'Taflan sýnir frávik launagreiningar. Nauðsynlegt er að gera úrbótaáætlun fyrir hvert frávik. Hægt er að velja mörg frávik saman og gera sameiginlega úrbótaáætlun fyrir þann hóp. Einnig er hægt að velja eitt frávik. Þegar frávik hefur verið sett í hóp hverfur það úr töflunni. Athugið að hvert frávik þarf að vera hluti af frávikahópi.',
+      },
       createGroupButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
         defaultMessage: 'Setja í frávikahóp',
@@ -1511,7 +1520,7 @@ export const messages = {
     },
     title: {
       id: 'doe.sr.application:overview.title',
-      defaultMessage: 'Yfirlit',
+      defaultMessage: 'Yfirlit skýrslugjafar',
     },
     intro: {
       id: 'doe.sr.application:overview.intro',

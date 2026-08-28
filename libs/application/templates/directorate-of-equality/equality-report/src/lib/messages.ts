@@ -425,7 +425,15 @@ export const messages = {
       },
       detailLinkLabel: {
         id: 'doe.er.application:equalityReport.information.detailLinkLabel',
-        defaultMessage: 'Nánari upplýsingar um kröfu um jafnréttisáætlun',
+        defaultMessage: 'Nánar um jafnréttisáætlun',
+      },
+      instructionsLabel: {
+        id: 'doe.er.application:equalityReport.information.instructionsLabel',
+        defaultMessage: 'Leiðbeiningar',
+      },
+      instructionsLink: {
+        id: 'doe.er.application:equalityReport.information.instructionsLink',
+        defaultMessage: 'https://island.is/s/jafnrettisstofa/leidbeiningar',
       },
       listTitle: {
         id: 'doe.er.application:equalityReport.information.listTitle',
@@ -531,11 +539,12 @@ export const messages = {
     },
     title: {
       id: 'doe.er.application:overview.title',
-      defaultMessage: 'Yfirlit umsóknar',
+      defaultMessage: 'Yfirlit jafnréttisáætlunar',
     },
     intro: {
       id: 'doe.er.application:overview.intro',
-      defaultMessage: 'Vinsamlegast farðu yfir umsóknina áður en þú sendir.',
+      defaultMessage:
+        'Vinsamlegast farðu yfir innsendinguna áður en þú sendir.',
     },
     submitButton: {
       id: 'doe.er.application:overview.submitButton',
