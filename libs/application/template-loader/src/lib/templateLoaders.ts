@@ -27,6 +27,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.DRIVING_LICENSE]: () =>
     import('@island.is/application/templates/driving-license'),
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: () =>
+    import(
+      '@island.is/application/templates/district-commisioner/driving-license'
+    ),
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: () =>
     import(
       '@island.is/application/templates/transport-authority/driving-assessment-approval'

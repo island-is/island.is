@@ -1,0 +1,62 @@
+import { buildForm, buildSection } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
+import { m } from '../../lib/messages'
+import { subSectionApplicantInfo } from './subSectionApplicantInfo'
+import { subSectionOtherCountry } from './subSectionOtherCountry'
+import { subSectionOtherCountryDirections } from './subSectionOtherCountryDirections'
+import { subSectionQualityPhoto } from './subSectionQualityPhoto'
+import { subSectionQualityPhoto65 } from './subSectionQualityPhoto65'
+import { subSectionQualityPhotoBE } from './subSectionQualityPhotoBE'
+import { subSectionQualityPhotoTemp } from './subSectionQualityPhotoTemp'
+import { subSectionQualityPhotoBFull } from './subSectionQualityPhotoBFull'
+import { subSectionDelivery } from './subSectionDelivery'
+import { subSectionHealthDeclaration } from './subSectionHealthDeclaration'
+import { subSectionSummary } from './subSectionSummary'
+
+export const draft: Form = buildForm({
+  id: 'DrivingLicenseApplicationDraftForm',
+  logo: DistrictCommissionersLogo,
+  mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
+  children: [
+    buildSection({
+      id: 'externalData',
+      title: m.externalDataSection,
+      children: [],
+    }),
+    buildSection({
+      id: 'info',
+      title: m.informationTitle,
+      children: [
+        subSectionApplicantInfo,
+        subSectionOtherCountry,
+        subSectionOtherCountryDirections,
+        subSectionQualityPhoto,
+        subSectionQualityPhoto65,
+        subSectionQualityPhotoBE,
+        subSectionQualityPhotoTemp,
+        subSectionQualityPhotoBFull,
+        subSectionDelivery,
+        subSectionHealthDeclaration,
+        subSectionSummary,
+      ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: m.overviewPaymentCharge,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirm',
+      title: m.overviewSectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'done',
+      title: m.applicationDone,
+      children: [],
+    }),
+  ],
+})

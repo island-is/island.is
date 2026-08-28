@@ -45,6 +45,7 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
   isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
+  isDistrictCommissionerDrivingLicenseEnabled = 'isDistrictCommissionerDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

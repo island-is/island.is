@@ -1,0 +1,28 @@
+{
+  "name": "application-templates-district-commisioner-driving-license",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/district-commisioner/driving-license/src",
+  "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/district-commisioner/driving-license"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/district-commisioner/driving-license/jest.config.ts"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/district-commisioner/driving-license/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}
