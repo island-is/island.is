@@ -22,7 +22,6 @@ import {
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 import { extractApplicationGuid } from './utils/extractApplicationGuid'
-import { isApplicationAlreadyExists } from './utils/isApplicationAlreadyExists'
 
 import {
   DtoV5PracticePermitDto,
@@ -57,57 +56,26 @@ export class DrivingLicenseApi {
     auth: Auth
     model: v6.ModelsV6PostTemporaryLicenseWithHealthDeclaration
   }): Promise<string | null> {
+    // The Raw variant so we can read RLS's guid from the response body before the
+    // generated DTO parser drops it. Enhanced fetch throws on 4xx, so reaching the
+    // read is success; every error propagates. The duplicate-on-retry policy
+    // (400 APPLICATION_ALREADY_EXISTS) lives in the submission service, which has
+    // the application and so can tell a lost-response retry (safe to treat as
+    // success) from a fresh application (must surface the error).
+    const response = await withAuthContext(input.auth, () =>
+      this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPostRaw({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        modelsV6PostTemporaryLicenseWithHealthDeclaration: input.model,
+      }),
+    )
+
+    // Best-effort: guid capture must never turn a successful create into a
+    // failure, so any problem reading the body just yields a null guid.
     try {
-      // The Raw variant so we can read RLS's guid from the response body before
-      // the generated DTO parser drops it. 4xx still throws here (enhanced fetch),
-      // so reaching the read is success.
-      const response = await withAuthContext(input.auth, () =>
-        this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPostRaw(
-          {
-            apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
-            apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-            modelsV6PostTemporaryLicenseWithHealthDeclaration: input.model,
-          },
-        ),
-      )
-
-      // Best-effort: guid capture must never turn a successful create into a
-      // failure, so any problem reading the body just yields a null guid.
-      try {
-        return extractApplicationGuid(await response.raw.clone().json())
-      } catch {
-        return null
-      }
-    } catch (e) {
-      // If the licence application was created but the response was lost, the
-      // state machine retries and RLS answers 400 APPLICATION_ALREADY_EXISTS.
-      // Under v6 a created application is not yet a licence, so the v5-era
-      // `canapplyfor` → HAS_B_CATEGORY check below never fires for it — the
-      // direct duplicate signal is the reliable one. Treat it as success (the
-      // application exists); the guid is not recoverable here, hence null. This
-      // is the asymmetric-cost call: leaving an already-paid applicant on an
-      // error screen is worse than a rare false success for someone who already
-      // had an application in flight (they do).
-      if (isApplicationAlreadyExists(e)) {
-        return null
-      }
-
-      // Legacy fallback: the previous attempt may have completed all the way to a
-      // full B category (`canapplyfor` then reports HAS_B_CATEGORY). Harmless to
-      // keep; retire with the v5 path.
-      if ((e as { status?: number })?.status === 400) {
-        const hasTemp = await this.getCanApplyForCategoryTemporary({
-          token: input.auth.authorization.replace(/^bearer /i, ''),
-        })
-
-        if (hasTemp.errorCode === 'HAS_B_CATEGORY') {
-          return null
-        }
-      }
-
-      // Rethrow every other error so the original `FetchError` still reaches
-      // `toSubmissionError` and the applicant gets the RLS error description.
-      throw e
+      return extractApplicationGuid(await response.raw.clone().json())
+    } catch {
+      return null
     }
   }
 
@@ -137,27 +105,21 @@ export class DrivingLicenseApi {
     // documents an int32 here but actually sends the new application's guid as
     // the text body; surface it (never gate on it) for logging and so a tester
     // can deny the created application.
-    try {
-      const created = await withAuthContext(input.auth, () =>
-        this.applicationV6.apiApplicationsV6CategoryWithhealthdeclarationPost({
-          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
-          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-          category: input.category,
-          modelsV6PostFullLicenseWithHealthDeclaration: input.model,
-        }),
-      )
+    // Enhanced fetch throws on 4xx, so reaching the return is success; every
+    // error propagates. RLS documents an int32 here but actually sends the new
+    // application's guid as the text body; surface it (never gate on it). The
+    // duplicate-on-retry policy lives in the submission service (see the temporary
+    // method above for why).
+    const created = await withAuthContext(input.auth, () =>
+      this.applicationV6.apiApplicationsV6CategoryWithhealthdeclarationPost({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        category: input.category,
+        modelsV6PostFullLicenseWithHealthDeclaration: input.model,
+      }),
+    )
 
-      return extractApplicationGuid(created)
-    } catch (e) {
-      // Same lost-response duplicate guard as the temporary endpoint: a retry
-      // after a lost response gets 400 APPLICATION_ALREADY_EXISTS, and an
-      // already-paid applicant should not be stranded on an error screen. The
-      // guid is not recoverable here, hence null.
-      if (isApplicationAlreadyExists(e)) {
-        return null
-      }
-      throw e
-    }
+    return extractApplicationGuid(created)
   }
 
   public async postTemporaryLicenseWithHealthDeclaratio(input: {

@@ -161,12 +161,12 @@ describe('DrivingLicenseDuplicateService', () => {
     })
   })
 
-  describe('postTemporaryLicenseWithHealthDeclarationV6 resubmission guard', () => {
-    // RLS answers 400 when the licence already exists, which is what a retried
-    // submit looks like after a lost response. The guard re-asks `canapplyfor`
-    // and treats HAS_B_CATEGORY as "created on the previous attempt", so an
-    // already-paid applicant is not left on an error screen. These tests are the
-    // reason not to delete it as dead code.
+  describe('postTemporaryLicenseWithHealthDeclarationV6 error propagation', () => {
+    // The v6 methods no longer swallow anything: on a 400 they propagate the
+    // FetchError. The duplicate-on-retry policy (APPLICATION_ALREADY_EXISTS) now
+    // lives in the submission service, which has the application and can tell a
+    // lost-response retry from a fresh application. Here we only pin that errors
+    // reach the caller intact (so toSubmissionError / the guard upstream can act).
     const auth = { authorization: 'Bearer some-token' } as Auth
     const model = {
       districtId: 37,
@@ -187,58 +187,29 @@ describe('DrivingLicenseDuplicateService', () => {
         )
         .mockRejectedValue(error)
 
-    it('treats a 400 with HAS_B_CATEGORY as success (guid unknown on this path)', async () => {
-      rejectRawWith({ status: 400 })
-      const canApply = jest
-        .spyOn(service, 'getCanApplyForCategoryTemporary')
-        .mockResolvedValue({ result: false, errorCode: 'HAS_B_CATEGORY' })
-
-      await expect(
-        service.postTemporaryLicenseWithHealthDeclarationV6({ auth, model }),
-      ).resolves.toBeNull()
-
-      // The bare token, not the `Bearer ` prefix — v5 `canapplyfor` reads it as
-      // the `jwttoken` header and rejects the prefixed form.
-      expect(canApply).toHaveBeenCalledWith({ token: 'some-token' })
-    })
-
-    it('rethrows a 400 with any other code, so the description pipeline still runs', async () => {
-      const original = { status: 400, name: 'FetchError' }
-      rejectRawWith(original)
-      jest
-        .spyOn(service, 'getCanApplyForCategoryTemporary')
-        .mockResolvedValue({ result: false, errorCode: 'HAS_DEPRIVATION' })
-
-      await expect(
-        service.postTemporaryLicenseWithHealthDeclarationV6({ auth, model }),
-      ).rejects.toBe(original)
-    })
-
-    it('treats a 400 APPLICATION_ALREADY_EXISTS as success without re-checking canApply', async () => {
-      // The v6-native lost-response signal: a created application on retry. This
-      // is the case the old canapplyfor/HAS_B_CATEGORY check missed, because a
-      // created application is not yet a licence.
-      rejectRawWith({
+    it('propagates a 400 APPLICATION_ALREADY_EXISTS instead of swallowing it', async () => {
+      const original = {
         status: 400,
+        name: 'FetchError',
         body: { errorCode: 'APPLICATION_ALREADY_EXISTS' },
-      })
+      }
+      rejectRawWith(original)
       const canApply = jest.spyOn(service, 'getCanApplyForCategoryTemporary')
 
       await expect(
         service.postTemporaryLicenseWithHealthDeclarationV6({ auth, model }),
-      ).resolves.toBeNull()
+      ).rejects.toBe(original)
+      // No canapplyfor round-trip: that v5-era check is gone from the v6 path.
       expect(canApply).not.toHaveBeenCalled()
     })
 
-    it('does not re-check canApply for a non-400 failure', async () => {
+    it('propagates any other error too', async () => {
       const original = { status: 500, name: 'FetchError' }
       rejectRawWith(original)
-      const canApply = jest.spyOn(service, 'getCanApplyForCategoryTemporary')
 
       await expect(
         service.postTemporaryLicenseWithHealthDeclarationV6({ auth, model }),
       ).rejects.toBe(original)
-      expect(canApply).not.toHaveBeenCalled()
     })
   })
 
@@ -357,13 +328,12 @@ describe('DrivingLicenseDuplicateService', () => {
       ).resolves.toBe(expected)
     })
 
-    it('treats a 400 APPLICATION_ALREADY_EXISTS (problem+json) as success', async () => {
-      // The full endpoint had no lost-response guard at all before this.
+    it('propagates a 400 APPLICATION_ALREADY_EXISTS (duplicate handling is the submission service)', async () => {
       const problem = Object.assign(new Error('already exists'), {
         name: 'FetchError',
         status: 400,
         problem: {
-          title: 'Bad Request',
+          title: 'APPLICATION_ALREADY_EXISTS',
           detail: 'An application already exists for this category',
         },
       })
@@ -380,7 +350,7 @@ describe('DrivingLicenseDuplicateService', () => {
           category: 'B',
           model,
         }),
-      ).resolves.toBeNull()
+      ).rejects.toBe(problem)
     })
 
     it('propagates a rejection rather than reporting success', async () => {

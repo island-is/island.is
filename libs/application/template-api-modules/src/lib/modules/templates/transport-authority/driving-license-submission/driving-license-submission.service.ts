@@ -31,7 +31,10 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
-import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
+import {
+  DriverLicenseWithoutImages,
+  isApplicationAlreadyExists,
+} from '@island.is/clients/driving-license'
 import { messages as drivingLicenseMessages } from '@island.is/application/templates/driving-license'
 import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
@@ -420,6 +423,48 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     return contentList
   }
 
+  // A v6 create returns 400 APPLICATION_ALREADY_EXISTS when RLS already holds an
+  // application for this person+category. Treat that as success ONLY when THIS
+  // application already has a `submitApplication` entry — i.e. a lost-response
+  // retry re-running submit on the same application (the framework records that
+  // entry even when the first attempt failed, so it is present on the retry).
+  //
+  // A fresh application with no such entry means a *different* application created
+  // the RLS one; the v6 endpoint is a create, not an upsert, so this submission's
+  // (possibly changed) payload was discarded. Rethrow so the applicant sees RLS's
+  // own error via `toSubmissionError` — the truthful outcome, matching BE — rather
+  // than a false "Umsókn móttekin" that hides the lost edits and the payment.
+  private async createToleratingLostResponse(
+    application: ApplicationWithAttachments,
+    create: () => Promise<NewDrivingLicenseResult>,
+  ): Promise<NewDrivingLicenseResult> {
+    try {
+      return await create()
+    } catch (e) {
+      if (
+        isApplicationAlreadyExists(e) &&
+        getValueViaPath(application.externalData, 'submitApplication') !==
+          undefined
+      ) {
+        this.log(
+          'info',
+          'RLS application already exists on submit retry; treating as success',
+          { applicationId: application.id },
+        )
+        return {
+          success: true,
+          errorMessage: null,
+          applicationGuid:
+            getValueViaPath<string>(
+              application.externalData,
+              'submitApplication.data.applicationGuid',
+            ) ?? null,
+        }
+      }
+      throw e
+    }
+  }
+
   private async createLicense(
     nationalId: string,
     answers: FormValue,
@@ -613,27 +658,30 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           application,
         )
 
-        const fullResult =
-          await this.drivingLicenseService.newDrivingLicenseWithHealthDeclaration(
-            auth,
-            {
-              licenseCategory: DrivingLicenseCategory.B,
-              districtId: jurisdictionId
-                ? jurisdictionId
-                : setJurisdictionToKopavogur,
-              sendPlasticToPerson: deliveryMethod === Pickup.POST,
-              email,
-              primaryPhoneNumber: phone,
-              healthDeclaration: toHealthDeclarationModel(
-                healthDeclarationAnswers,
-              ),
-              contentList: needsHealthCertificate
-                ? await this.readHealthCertificateContentList(application)
-                : undefined,
-              photoBiometricsId: resolved?.photoBiometricsId,
-              signatureBiometricsId: resolved?.signatureBiometricsId,
-            },
-          )
+        const fullResult = await this.createToleratingLostResponse(
+          application,
+          async () =>
+            this.drivingLicenseService.newDrivingLicenseWithHealthDeclaration(
+              auth,
+              {
+                licenseCategory: DrivingLicenseCategory.B,
+                districtId: jurisdictionId
+                  ? jurisdictionId
+                  : setJurisdictionToKopavogur,
+                sendPlasticToPerson: deliveryMethod === Pickup.POST,
+                email,
+                primaryPhoneNumber: phone,
+                healthDeclaration: toHealthDeclarationModel(
+                  healthDeclarationAnswers,
+                ),
+                contentList: needsHealthCertificate
+                  ? await this.readHealthCertificateContentList(application)
+                  : undefined,
+                photoBiometricsId: resolved?.photoBiometricsId,
+                signatureBiometricsId: resolved?.signatureBiometricsId,
+              },
+            ),
+        )
 
         // Reconciliation record: our application id paired with the RLS-side
         // application guid (null on the lost-response duplicate path).
@@ -676,27 +724,30 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           application,
         )
 
-        const tempResult =
-          await this.drivingLicenseService.newTemporaryDrivingLicenseWithHealthDeclaration(
-            auth,
-            {
-              districtId: jurisdictionId
-                ? jurisdictionId
-                : setJurisdictionToKopavogur,
-              instructorSSN: teacher,
-              sendPlasticToPerson: deliveryMethod === Pickup.POST,
-              email,
-              primaryPhoneNumber: phone,
-              healthDeclaration: toHealthDeclarationModel(
-                healthDeclarationAnswers,
-              ),
-              contentList: needsHealthCertificate
-                ? await this.readHealthCertificateContentList(application)
-                : undefined,
-              photoBiometricsId: resolved?.photoBiometricsId,
-              signatureBiometricsId: resolved?.signatureBiometricsId,
-            },
-          )
+        const tempResult = await this.createToleratingLostResponse(
+          application,
+          async () =>
+            this.drivingLicenseService.newTemporaryDrivingLicenseWithHealthDeclaration(
+              auth,
+              {
+                districtId: jurisdictionId
+                  ? jurisdictionId
+                  : setJurisdictionToKopavogur,
+                instructorSSN: teacher,
+                sendPlasticToPerson: deliveryMethod === Pickup.POST,
+                email,
+                primaryPhoneNumber: phone,
+                healthDeclaration: toHealthDeclarationModel(
+                  healthDeclarationAnswers,
+                ),
+                contentList: needsHealthCertificate
+                  ? await this.readHealthCertificateContentList(application)
+                  : undefined,
+                photoBiometricsId: resolved?.photoBiometricsId,
+                signatureBiometricsId: resolved?.signatureBiometricsId,
+              },
+            ),
+        )
 
         // Reconciliation record: our application id paired with the RLS-side
         // application guid (null on the lost-response duplicate path).
