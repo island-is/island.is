@@ -333,6 +333,32 @@ describe('normalizeRichTextHtml', () => {
         ),
       ).toBe('<ul><li><p class="indent-1">x</p></li></ul>')
     })
+
+    it('converts margin-left in inches to an indent class', () => {
+      expect(
+        normalizeRichTextHtml("<p style=\"margin-left:0.5in\">x</p>"),
+      ).toBe('<p class="indent-1">x</p>')
+    })
+
+    it('converts each leading tab character to one indent level', () => {
+      expect(normalizeRichTextHtml('<p>\t\tx</p>')).toBe(
+        '<p class="indent-2">x</p>',
+      )
+    })
+
+    it('adds leading tabs on top of an existing indent class', () => {
+      expect(
+        normalizeRichTextHtml('<p class="indent-1">\tx</p>'),
+      ).toBe('<p class="indent-2">x</p>')
+    })
+
+    it('hoists an indent class from a wrapper div onto its paragraph', () => {
+      expect(
+        normalizeRichTextHtml(
+          "<div style='margin-left:36.0pt'><p>Hello</p></div>",
+        ),
+      ).toBe('<p class="indent-1">Hello</p>')
+    })
   })
 
   describe('inline bold and italic', () => {
