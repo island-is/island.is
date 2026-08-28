@@ -1,4 +1,8 @@
-import { Application, ExternalData, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import {
