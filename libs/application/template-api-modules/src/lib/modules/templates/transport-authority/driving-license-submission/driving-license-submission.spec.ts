@@ -1509,6 +1509,19 @@ describe('DrivingLicenseSubmissionService', () => {
       return err
     }
 
+    // The temporary endpoint's 400 shape: plain JSON, code in `body.errorCode`
+    // (no problem+json), which toSubmissionError must also localise.
+    const makeFetchErrorBody = (errorCode: string, status = 400) => {
+      const err = new Error('rls submission failed') as Error & {
+        body?: unknown
+        status?: number
+      }
+      err.name = 'FetchError'
+      err.body = { errorCode }
+      err.status = status
+      return err
+    }
+
     // No applicationFor → defaults to B-full → newDrivingLicense is the create call.
     const buildApplication = () =>
       createApplication({
@@ -1612,6 +1625,25 @@ describe('DrivingLicenseSubmissionService', () => {
 
       expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
         'Person has points on their license',
+      )
+    })
+
+    it('localises the code from body.errorCode (temporary endpoint plain-JSON 400)', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchErrorBody('APPLICATION_ALREADY_EXISTS'),
+      )
+      describeErrorCode.mockResolvedValue({
+        is: 'Umsókn er þegar til',
+        en: 'An application already exists',
+      })
+
+      const thrown = await submitAndCatch('is')
+
+      expect(describeErrorCode).toHaveBeenCalledWith(
+        'APPLICATION_ALREADY_EXISTS',
+      )
+      expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
+        'Umsókn er þegar til',
       )
     })
 

@@ -225,7 +225,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     err: FetchError,
     locale: Locale,
   ): Promise<TemplateApiError> {
-    const code = err.problem?.title
+    // RLS's error code is in `problem.title` for problem+json responses (the full
+    // endpoint), but the temporary endpoint returns a plain-JSON body carrying it
+    // as `body.errorCode` instead — fall back to that so both go through
+    // describeErrorCode and the applicant gets the localised text, not the
+    // generic "submission failed".
+    const code =
+      err.problem?.title ??
+      (err.body as { errorCode?: string } | undefined)?.errorCode
     if (code) {
       try {
         const described = await this.drivingLicenseService.describeErrorCode(
