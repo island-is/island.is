@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes, UserProfileApi } from '@island.is/application/types'
-import { GetDebtsApi } from '../../dataProviders'
+import { GetDebtsApi, MockPaymentCatalog } from '../../dataProviders'
 import { externalData } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
@@ -34,6 +34,9 @@ export const Prerequisites = buildForm({
               provider: GetDebtsApi,
               title: externalData.finances.title,
               subTitle: externalData.finances.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: MockPaymentCatalog,
             }),
           ],
           submitField: buildSubmitField({
