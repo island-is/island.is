@@ -335,9 +335,9 @@ describe('normalizeRichTextHtml', () => {
     })
 
     it('converts margin-left in inches to an indent class', () => {
-      expect(
-        normalizeRichTextHtml("<p style=\"margin-left:0.5in\">x</p>"),
-      ).toBe('<p class="indent-1">x</p>')
+      expect(normalizeRichTextHtml('<p style="margin-left:0.5in">x</p>')).toBe(
+        '<p class="indent-1">x</p>',
+      )
     })
 
     it('converts each leading tab character to one indent level', () => {
@@ -347,9 +347,9 @@ describe('normalizeRichTextHtml', () => {
     })
 
     it('adds leading tabs on top of an existing indent class', () => {
-      expect(
-        normalizeRichTextHtml('<p class="indent-1">\tx</p>'),
-      ).toBe('<p class="indent-2">x</p>')
+      expect(normalizeRichTextHtml('<p class="indent-1">\tx</p>')).toBe(
+        '<p class="indent-2">x</p>',
+      )
     })
 
     it('hoists an indent class from a wrapper div onto its paragraph', () => {

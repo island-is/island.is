@@ -154,8 +154,7 @@ export const MARKER_NONE_CLASS = 'marker-none'
 
 const MARKER_NONE_REGEX = /list-style-type\s*:\s*none/i
 const BACKGROUND_REGEX = /background(?:-color)?\s*:\s*([^;]+)/i
-const LEFT_OFFSET_REGEX =
-  /(?:margin|padding)-left\s*:\s*([\d.]+)(pt|px|in|cm)/i
+const LEFT_OFFSET_REGEX = /(?:margin|padding)-left\s*:\s*([\d.]+)(pt|px|in|cm)/i
 // Word's AutoFormat turns a Tab at the start of a paragraph into a first-line
 // indent, which reaches the clipboard as text-indent (in pt) — indenting a
 // multi-paragraph selection uses margin-left instead. It can be negative
