@@ -72,10 +72,12 @@ export {
   AppealCaseState,
   AppealCaseRulingDecision,
   AppealCaseTransition,
+  appealCorrectionLock,
   AppealDecisionPartyRole,
   getStatementDeadline,
   CaseAppealDecision,
 } from './lib/appealCase'
+export type { AppealCorrectionLock } from './lib/appealCase'
 
 export { DateType, dateTypes } from './lib/dateLog'
 

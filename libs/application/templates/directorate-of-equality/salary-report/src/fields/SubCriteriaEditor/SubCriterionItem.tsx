@@ -1,16 +1,26 @@
 import { InputController } from '@island.is/shared/form-fields'
-import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Divider,
+  Select,
+  Text,
+  type Option,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { messages } from '../../lib/messages'
+import type { SubCriterionCatalogEntryDto } from '@island.is/clients/directorate-of-equality'
 import type { SubCriterionStep } from '../../utils/types'
+import { useStepCountSync } from './useStepCountSync'
 
 type Props = {
   fieldName: string
   index: number
   isLast: boolean
   canRemove: boolean
+  catalogEntries: SubCriterionCatalogEntryDto[]
   onRemove: () => void
 }
 
@@ -18,36 +28,63 @@ export const SubCriterionItem: FC<Props> = ({
   fieldName,
   isLast,
   canRemove,
+  catalogEntries,
   onRemove,
 }) => {
   const { formatMessage } = useLocale()
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
   const [stepsExpanded, setStepsExpanded] = useState(true)
 
-  const stepCountStr: string =
-    useWatch({ name: `${fieldName}.stepCount` }) ?? '2'
+  // Keyed by index, not title: the personal-criterion list spans four
+  // Yfirviðmið (see SubCriteriaEditor), so two entries can share a title and a
+  // title lookup would silently apply whichever came first.
+  const catalogOptions = catalogEntries.map((entry, i) => ({
+    label: entry.title,
+    value: String(i),
+  }))
+
+  const applyCatalogEntry = (value: string | undefined) => {
+    const entry = value == null ? undefined : catalogEntries[Number(value)]
+    if (!entry) return
+    setValue(`${fieldName}.title`, entry.title)
+    setValue(`${fieldName}.description`, entry.description)
+    if (entry.steps.length > 0) {
+      setValue(`${fieldName}.stepCount`, String(entry.steps.length))
+      setValue(
+        `${fieldName}.steps`,
+        entry.steps.map((description) => ({
+          id: crypto.randomUUID(),
+          description,
+        })),
+      )
+    }
+  }
+
+  useStepCountSync(fieldName)
   const steps: SubCriterionStep[] =
     useWatch({ name: `${fieldName}.steps` }) ?? []
 
-  useEffect(() => {
-    const count = Math.min(8, Math.max(2, Number(stepCountStr) || 2))
-    const currentSteps: SubCriterionStep[] =
-      getValues(`${fieldName}.steps`) ?? []
-    if (count === currentSteps.length) return
-
-    if (count > currentSteps.length) {
-      const extra = Array.from({ length: count - currentSteps.length }, () => ({
-        description: '',
-      }))
-      setValue(`${fieldName}.steps`, [...currentSteps, ...extra])
-    } else {
-      setValue(`${fieldName}.steps`, currentSteps.slice(0, count))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stepCountStr])
-
   return (
     <Box>
+      {catalogOptions.length > 0 && (
+        <Box marginBottom={2}>
+          <Select
+            size="sm"
+            name={`${fieldName}.catalogPicker`}
+            label={formatMessage(messages.report.subCriteria.catalogLabel)}
+            placeholder={formatMessage(
+              messages.report.subCriteria.catalogPlaceholder,
+            )}
+            options={catalogOptions}
+            value={null}
+            backgroundColor="blue"
+            onChange={(option) =>
+              applyCatalogEntry((option as Option<string> | null)?.value)
+            }
+          />
+        </Box>
+      )}
+
       {/* Header row: name input + delete */}
       <Box display="flex" columnGap={2} alignItems="flexEnd" marginBottom={2}>
         <Box style={{ flex: 1 }}>
@@ -144,7 +181,7 @@ export const SubCriterionItem: FC<Props> = ({
       )}
 
       {!isLast && (
-        <Box marginTop={4}>
+        <Box paddingBottom={3}>
           <Divider />
         </Box>
       )}

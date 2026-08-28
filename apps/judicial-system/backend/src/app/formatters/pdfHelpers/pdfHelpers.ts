@@ -676,13 +676,13 @@ const collectListItemBlocks = (
     blocks.push({ runs: [], indent })
   }
 
-  // A marker on the first block means the item holds nothing but a nested
-  // list, whose own first item already owns that block. Give the item a
-  // marker-only line of its own instead of overwriting the child's marker,
-  // which would drop a nested ordered list's starting number.
-  if (blocks[0].marker) {
-    blocks.unshift({ runs: [], indent, marker })
-  } else {
+  // A marker on the first block means the item holds nothing but a nested list,
+  // whose own first item already owns that block. Such an item is a structural
+  // wrapper, not a line of its own: the editor creates one whenever an item is
+  // indented past the nesting available to it, and renders it without a marker.
+  // Leave the child's marker alone — overwriting it would drop a nested ordered
+  // list's starting number, and adding another would draw a stray bullet.
+  if (!blocks[0].marker) {
     blocks[0].marker = marker
   }
 
@@ -843,6 +843,7 @@ export const addRichText = (
   html: string,
   lineGap = 0,
   fontSize = baseFontSize,
+  alignment: 'left' | 'justify' = 'left',
 ): void => {
   const blocks = htmlToBlocks(html)
 
@@ -899,7 +900,42 @@ export const addRichText = (
       doc.text(block.marker, markerX, y, { lineBreak: false })
     }
 
-    const flushLine = () => {
+    // Stretch a wrapped line to the full block width by widening the gaps
+    // between words evenly. Fragment x/width values are adjusted in place
+    // before anything is drawn, so the highlight rects (computed from the same
+    // fragments) widen with the spaces they cover.
+    const justifyLineFragments = () => {
+      const last = lineFragments[lineFragments.length - 1]
+      doc.font(last.font).fontSize(fontSize)
+      const lineEnd = last.x + doc.widthOfString(last.text.trimEnd())
+      const slack = leftX + width - lineEnd
+      if (slack <= 0) return
+
+      // Words carry their single trailing space, and inter-run spaces are lone
+      // ' ' tokens, so every gap is a fragment ending in a space.
+      const gaps = lineFragments.filter(
+        (fragment, index) =>
+          index < lineFragments.length - 1 && fragment.text.endsWith(' '),
+      ).length
+      if (gaps === 0) return
+
+      const extra = slack / gaps
+      let offset = 0
+      for (let i = 0; i < lineFragments.length; i++) {
+        const fragment = lineFragments[i]
+        fragment.x += offset
+        if (i < lineFragments.length - 1 && fragment.text.endsWith(' ')) {
+          fragment.width += extra
+          offset += extra
+        }
+      }
+    }
+
+    const flushLine = (justifyLine = false) => {
+      if (alignment === 'justify' && justifyLine && lineFragments.length > 0) {
+        justifyLineFragments()
+      }
+
       // Draw one rect per contiguous same-colored group, then the text on top.
       let i = 0
       let drewRect = false
@@ -939,8 +975,8 @@ export const addRichText = (
       lineFragments = []
     }
 
-    const newline = () => {
-      flushLine()
+    const newline = (justifyLine = false) => {
+      flushLine(justifyLine)
       x = leftX
       y += lineAdvance
       ensureRoom()
@@ -968,7 +1004,9 @@ export const addRichText = (
           ? doc.widthOfString(token.trimEnd())
           : tokenWidth
         if (x + wordWidth > leftX + width && x > leftX) {
-          newline()
+          // Only wrap-induced breaks justify; hard breaks and the block's last
+          // line keep their natural width, as in any word processor.
+          newline(true)
         }
 
         // A single token wider than the whole line is chopped to fit.

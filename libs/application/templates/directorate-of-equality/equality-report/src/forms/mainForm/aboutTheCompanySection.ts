@@ -202,6 +202,10 @@ export const aboutTheCompanySection = buildSection({
               width: 'full',
               required: true,
               defaultValue: (application: Application) =>
+                getValueViaPath(
+                  application.externalData,
+                  'identity.data.actor.name',
+                ) ??
                 getValueViaPath(application.externalData, 'identity.data.name'),
             }),
             buildTextField({
@@ -263,7 +267,6 @@ export const aboutTheCompanySection = buildSection({
               title: messages.aboutTheCompany.employeeCount.nonBinary,
               width: 'half',
               variant: 'number',
-              required: true,
             }),
           ],
         }),

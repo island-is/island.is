@@ -50,12 +50,18 @@ interface CertificateAlert {
   message?: string
 }
 
+const getRecipientKey = (recipient: { nodeId: string; groupId: number }) =>
+  `${recipient.nodeId}-${recipient.groupId}`
+
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const { isPhoneWidth } = useIsPhoneWidth()
 
+  const [selectedRecipientKey, setSelectedRecipientKey] = useState<
+    string | null
+  >(null)
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
   const [messageText, setMessageText] = useState('')
   const [certificateForm, setCertificateForm] = useState<CertificateFormState>(
@@ -80,8 +86,25 @@ const NewHealthConversation = () => {
     })
 
   const recipients = data?.healthDirectorateHealthConversationRecipients
-  const recipient =
-    recipients?.find((r) => r.allowsMessaging) ?? recipients?.[0]
+  const hasRecipients = !!recipients?.length
+  const hasMultipleRecipients = (recipients?.length ?? 0) > 1
+
+  const recipientOptions =
+    recipients?.map((r) => ({
+      label: r.name,
+      value: getRecipientKey(r),
+    })) ?? []
+
+  const effectiveRecipientKey =
+    selectedRecipientKey ??
+    (recipients?.length === 1 ? getRecipientKey(recipients[0]) : null)
+
+  const recipient = recipients?.find(
+    (r) => getRecipientKey(r) === effectiveRecipientKey,
+  )
+
+  const selectedRecipientOption =
+    recipientOptions.find((o) => o.value === effectiveRecipientKey) ?? null
 
   const typeOptions =
     recipient?.allowedMessageTypes.map((t) => ({
@@ -105,14 +128,19 @@ const NewHealthConversation = () => {
   const hasWindowInfo =
     !!windowInfo.windowOpenLabel &&
     !!windowInfo.windowCloseLabel &&
-    !!recipient?.patientReplyWindowDays
+    recipient?.patientReplyWindowDays !== undefined
 
-  const introText = hasWindowInfo
-    ? formatMessage(messages.healthConversationsNewIntroWithWindow, {
-        openTime: windowInfo.windowOpenLabel,
-        closeTime: windowInfo.windowCloseLabel,
-        days: recipient?.patientReplyWindowDays,
-      })
+  const introText = recipient
+    ? hasWindowInfo
+      ? formatMessage(messages.healthConversationsNewIntroWithWindow, {
+          name: recipient.name,
+          openTime: windowInfo.windowOpenLabel,
+          closeTime: windowInfo.windowCloseLabel,
+          days: recipient.patientReplyWindowDays,
+        })
+      : formatMessage(messages.healthConversationsNewIntroWithRecipient, {
+          name: recipient.name,
+        })
     : formatMessage(messages.healthConversationsNewIntro)
 
   const isCertificateBlocked =
@@ -120,13 +148,13 @@ const NewHealthConversation = () => {
 
   const isConversationBlocked = recipient?.canCreateConversation === false
 
-  const isFormLocked = isConversationBlocked || isCertificateBlocked
-
   const certificateBlockedOutsideWindow =
     recipient?.certificateBlockedReason ===
       HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW &&
     !!windowInfo.windowOpenLabel &&
     !!windowInfo.windowCloseLabel
+
+  const isFormLocked = isConversationBlocked || isCertificateBlocked
 
   const certificateAlert: CertificateAlert | undefined = !isCertificateBlocked
     ? undefined
@@ -147,8 +175,6 @@ const NewHealthConversation = () => {
         ),
       }
 
-  // The single source of the certificate form's required-field rules: it is
-  // undefined until the form is complete.
   const certificateInput = toCertificateRequestInput(certificateForm)
 
   const isFormValid = isCertificateSelected
@@ -160,16 +186,36 @@ const NewHealthConversation = () => {
   const canSubmit = isFormValid && !sendingAny && !isFormLocked
 
   const handleTypeChange = (typeCode: string | null) => {
+    const newType = recipient?.allowedMessageTypes.find(
+      (t) => t.patientInitiatedTypeCode === typeCode,
+    )
+
     setSelectedTypeCode(typeCode)
-    setMessageText('')
     setCertificateForm({})
+    if (newType?.isCertificate) {
+      setMessageText('')
+    }
+  }
+
+  const handleRecipientChange = (recipientKey: string | null) => {
+    setSelectedRecipientKey(recipientKey)
+
+    const newRecipient = recipients?.find(
+      (r) => getRecipientKey(r) === recipientKey,
+    )
+    const typeStillAllowed = newRecipient?.allowedMessageTypes.some(
+      (t) => t.patientInitiatedTypeCode === selectedTypeCode,
+    )
+
+    if (!typeStillAllowed) {
+      handleTypeChange(null)
+    }
   }
 
   const goToConversation = (conversationId?: string | null) => {
     if (conversationId) {
       navigate(
         HealthPaths.HealthConversationsDetail.replace(':id', conversationId),
-        { state: { justCreated: true } },
       )
     } else {
       navigate(HealthPaths.HealthConversations)
@@ -232,7 +278,7 @@ const NewHealthConversation = () => {
       >
         {loading && <CardLoader />}
         {error && <Problem error={error} noBorder={false} />}
-        {!loading && !error && !recipient && (
+        {!loading && !error && !hasRecipients && (
           <Problem
             type="no_data"
             noBorder={false}
@@ -242,7 +288,7 @@ const NewHealthConversation = () => {
         {!loading && !error && recipient && (
           <ConversationAvailabilityAlert recipient={recipient} />
         )}
-        {!loading && !error && recipient && (
+        {!loading && !error && hasRecipients && (
           <Box className={styles.messageCard} background="white">
             <Hidden below="sm">
               <Box
@@ -259,11 +305,13 @@ const NewHealthConversation = () => {
               <Text variant="h4" fontWeight="semiBold">
                 {formatMessage(messages.healthConversationsCreate)}
               </Text>
-              <Text variant="medium">
-                {formatMessage(messages.healthConversationTo, {
-                  arg: recipient?.name ?? '',
-                })}
-              </Text>
+              {!hasMultipleRecipients && recipient && (
+                <Text variant="medium">
+                  {formatMessage(messages.healthConversationTo, {
+                    arg: recipient.name,
+                  })}
+                </Text>
+              )}
             </Box>
 
             <Box
@@ -272,7 +320,37 @@ const NewHealthConversation = () => {
               paddingBottom={[10, 5, 5]}
             >
               <GridRow marginBottom={3}>
-                <GridColumn span={['12/12', '8/12']}>
+                {hasMultipleRecipients && (
+                  <GridColumn
+                    span={['12/12', '6/12']}
+                    paddingBottom={[2, 0, 0]}
+                  >
+                    <Select
+                      name="recipient"
+                      label={formatMessage(
+                        messages.healthConversationsNewSelectRecipient,
+                      )}
+                      placeholder={formatMessage(
+                        messages.healthConversationsNewSelectRecipientPlaceholder,
+                      )}
+                      options={recipientOptions}
+                      value={selectedRecipientOption}
+                      onChange={(opt) =>
+                        handleRecipientChange(opt?.value ?? null)
+                      }
+                      backgroundColor="blue"
+                      size="sm"
+                      required
+                    />
+                  </GridColumn>
+                )}
+                <GridColumn
+                  span={
+                    hasMultipleRecipients
+                      ? ['12/12', '6/12']
+                      : ['12/12', '8/12']
+                  }
+                >
                   <Select
                     name="service-type"
                     label={formatMessage(
@@ -287,7 +365,7 @@ const NewHealthConversation = () => {
                     backgroundColor="blue"
                     size="sm"
                     required
-                    isDisabled={isConversationBlocked}
+                    isDisabled={!recipient || isConversationBlocked}
                   />
                 </GridColumn>
               </GridRow>

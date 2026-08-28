@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -22,6 +23,7 @@ import { OrganizationDelegationDto } from './models/dto/organizationDelegation.d
 import { Form } from '../forms/models/form.model'
 import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
 
 @Injectable()
 export class OrganizationsService {
@@ -110,7 +112,7 @@ export class OrganizationsService {
     user: User,
     organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
   ): Promise<void> {
-    const { zendeskInstance, zendeskBrandId, organizationId } =
+    const { zendeskInstance, zendeskBrandId, organizationId, formId } =
       organizationZendeskInstanceDto
     const organization = await this.organizationModel.findByPk(organizationId)
 
@@ -125,10 +127,38 @@ export class OrganizationsService {
       throw new UnauthorizedException(`User does not have admin privileges`)
     }
 
-    organization.zendeskInstance = zendeskInstance ? zendeskInstance : ''
-    organization.zendeskBrandId = zendeskBrandId ? zendeskBrandId : ''
+    const supportedZendeskInstance = zendeskInstance
+      ? normalizeZendeskInstance(zendeskInstance)
+      : undefined
 
-    await organization.save()
+    organization.zendeskInstance = supportedZendeskInstance
+      ? supportedZendeskInstance
+      : ''
+
+    await this.sequelize.transaction(async (transaction) => {
+      await organization.save({ transaction })
+
+      if (formId) {
+        const form = await this.formModel.findByPk(formId, { transaction })
+
+        if (!form) {
+          throw new NotFoundException(`Form with ID ${formId} not found`)
+        }
+
+        if (form.organizationId !== organization.id) {
+          throw new UnauthorizedException(
+            `Form does not belong to organization ${organization.id}`,
+          )
+        }
+
+        form.zendeskBrandId = zendeskBrandId ? zendeskBrandId : ''
+        await form.save({ transaction })
+      }
+    })
+
+    if (zendeskInstance && !supportedZendeskInstance) {
+      throw new BadRequestException('Unsupported Zendesk tenant')
+    }
   }
 
   async addDelegation(

@@ -45,18 +45,29 @@ export {
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
+export { IndictmentSubtypeRepositoryService } from './services/indictmentSubtypeRepository.service'
 export { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+export { InstitutionRepositoryService } from './services/institutionRepository.service'
 export {
   LawyerRegistryRepositoryService,
   LawyerRegistryData,
 } from './services/lawyerRegistryRepository.service'
 export { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
+export {
+  NotificationRepositoryService,
+  CreateNotification,
+} from './services/notificationRepository.service'
 export { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 export {
   RobotLogRepositoryService,
   CreateRobotLog,
 } from './services/robotLogRepository.service'
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
+export {
+  UserRepositoryService,
+  CreateUser,
+  UpdateUser,
+} from './services/userRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
 
 export {

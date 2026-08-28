@@ -20,7 +20,8 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
-import { randomDate } from '../../../../test'
+import { getOrCreateTransaction } from '../../../../middleware'
+import { randomDate, runInRequestContext } from '../../../../test'
 import {
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
@@ -92,8 +93,15 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
     mockCreate.mockResolvedValue(createdAppealCase)
 
     accept = async (theCase: Case) => {
-      await caseController.transition(caseId, user, theCase, {
-        transition: CaseTransition.ACCEPT,
+      // The transition route is guarded by CaseExistsForUpdateGuard, which
+      // opens the request transaction before the handler runs. Guards do not
+      // execute in controller unit tests, so that is done here instead.
+      await runInRequestContext(async () => {
+        await getOrCreateTransaction(sequelize)
+
+        await caseController.transition(caseId, user, theCase, {
+          transition: CaseTransition.ACCEPT,
+        })
       })
     }
   })

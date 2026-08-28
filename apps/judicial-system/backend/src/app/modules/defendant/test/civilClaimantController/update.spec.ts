@@ -8,7 +8,11 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case, CivilClaimant } from '../../../repository'
+import {
+  Case,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  CivilClaimant,
+} from '../../../repository'
 import { UpdateCivilClaimantDto } from '../../dto/updateCivilClaimant.dto'
 
 interface Then {
@@ -32,14 +36,21 @@ describe('CivilClaimantController - Update', () => {
 
   let mockQueuedMessages: Message[]
   let mockCivilClaimantModel: typeof CivilClaimant
+  let mockCaseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, civilClaimantModel, civilClaimantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessages,
+      civilClaimantModel,
+      caseDefendantPoliceCaseNumberRepositoryService,
+      civilClaimantController,
+    } = await createTestingDefendantModule()
 
     mockQueuedMessages = queuedMessages
     mockCivilClaimantModel = civilClaimantModel
+    mockCaseDefendantPoliceCaseNumberRepositoryService =
+      caseDefendantPoliceCaseNumberRepositoryService
 
     givenWhenThen = async (
       theCase: Case,
@@ -94,6 +105,39 @@ describe('CivilClaimantController - Update', () => {
 
     it('should return the updated civil claimant', () => {
       expect(then.result).toBe(updatedCivilClaimant)
+    })
+  })
+
+  describe('civil claimant defendants narrowed by police case numbers', () => {
+    const civilClaimantUpdate = {
+      policeCaseNumbers: ['007-1', '007-2'],
+      defendantIds: ['def-a', 'def-b'],
+    }
+    const updatedCivilClaimant = {
+      id: civilClaimantId,
+      caseId,
+      ...civilClaimantUpdate,
+    }
+
+    beforeEach(async () => {
+      const mockFindAssignedDefendantIds =
+        mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds as jest.Mock
+      mockFindAssignedDefendantIds.mockResolvedValueOnce(['def-b'])
+
+      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+
+      await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
+    })
+
+    it('should only keep the defendants still linked to the police case numbers', () => {
+      expect(
+        mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds,
+      ).toHaveBeenCalledWith(caseId, ['007-1', '007-2'], ['def-a', 'def-b'])
+      expect(mockCivilClaimantModel.update).toHaveBeenCalledWith(
+        { policeCaseNumbers: ['007-1', '007-2'], defendantIds: ['def-b'] },
+        { where: { id: civilClaimantId, caseId }, returning: true },
+      )
     })
   })
 

@@ -5,7 +5,7 @@ import {
   UPDATE_APPLICATION_EXTERNAL_DATA,
 } from '@island.is/application/graphql'
 import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   Button,
@@ -20,7 +20,9 @@ import type { ApplicationReportCommentDto } from '@island.is/clients/directorate
 import { ApiActions, States } from '../utils/constants'
 import { messages } from '../lib/messages'
 
-export const CommentThread = ({ application }: FieldBaseProps) => {
+export const CommentThread = ({ application, field }: FieldBaseProps) => {
+  const showEmptyState =
+    (field as CustomField)?.props?.['showEmptyState'] === true
   const { formatMessage, lang: locale } = useLocale()
   const { getValues, setValue } = useFormContext()
   const [comments, setComments] = useState<ApplicationReportCommentDto[]>(
@@ -38,7 +40,13 @@ export const CommentThread = ({ application }: FieldBaseProps) => {
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
 
-  const canSend = application.state === States.IN_REVIEW
+  // Communication is only available once DMR/the reviewer has opened it by
+  // leaving the first comment — the applicant can never send the first
+  // message, regardless of application state.
+  const hasReviewerComment = comments.some(
+    (comment) => comment.authorKind === 'REVIEWER',
+  )
+  const canSend = application.state === States.DRAFT_RETRY && hasReviewerComment
 
   useEffect(() => {
     updateApplicationExternalData({
@@ -131,7 +139,19 @@ export const CommentThread = ({ application }: FieldBaseProps) => {
     )
   }
 
-  if (comments.length === 0 && !canSend) return null
+  if (!hasReviewerComment) {
+    if (!showEmptyState) return null
+    return (
+      <Box>
+        <Text variant="h4" marginBottom={3}>
+          {formatMessage(messages.comments.title)}
+        </Text>
+        <Text color="dark400">
+          {formatMessage(messages.comments.emptyState)}
+        </Text>
+      </Box>
+    )
+  }
 
   return (
     <Box>
@@ -139,35 +159,27 @@ export const CommentThread = ({ application }: FieldBaseProps) => {
         {formatMessage(messages.comments.title)}
       </Text>
 
-      {comments.length === 0 ? (
-        <Text color="dark400" marginBottom={3}>
-          {formatMessage(messages.comments.emptyState)}
-        </Text>
-      ) : (
-        <Box marginBottom={3} aria-live="polite">
-          {comments.map((comment) => (
-            <Box
-              key={comment.id}
-              background={
-                comment.authorKind === 'REVIEWER' ? 'blue100' : 'white'
-              }
-              border="standard"
-              borderRadius="large"
-              padding={3}
-              marginBottom={2}
-            >
-              <Text variant="eyebrow" marginBottom={1}>
-                {comment.authorKind === 'REVIEWER'
-                  ? formatMessage(messages.comments.reviewerLabel)
-                  : formatMessage(messages.comments.companyLabel)}
-                {' · '}
-                {new Date(comment.createdAt).toLocaleString(locale)}
-              </Text>
-              <Text>{comment.body}</Text>
-            </Box>
-          ))}
-        </Box>
-      )}
+      <Box marginBottom={3} aria-live="polite">
+        {comments.map((comment) => (
+          <Box
+            key={comment.id}
+            background={comment.authorKind === 'REVIEWER' ? 'blue100' : 'white'}
+            border="standard"
+            borderRadius="large"
+            padding={3}
+            marginBottom={2}
+          >
+            <Text variant="eyebrow" marginBottom={1}>
+              {comment.authorKind === 'REVIEWER'
+                ? formatMessage(messages.comments.reviewerLabel)
+                : formatMessage(messages.comments.companyLabel)}
+              {' · '}
+              {new Date(comment.createdAt).toLocaleString(locale)}
+            </Text>
+            <Text>{comment.body}</Text>
+          </Box>
+        ))}
+      </Box>
 
       {canSend && (
         <Box>
@@ -180,7 +192,12 @@ export const CommentThread = ({ application }: FieldBaseProps) => {
               rows={3}
             />
           </Box>
-          <Button onClick={handleSend} loading={isSending}>
+          <Button
+            onClick={handleSend}
+            loading={isSending}
+            variant="ghost"
+            size="small"
+          >
             {formatMessage(messages.comments.sendButton)}
           </Button>
         </Box>

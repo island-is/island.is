@@ -299,31 +299,43 @@ describe('htmlToBlocks', () => {
       expect(blocks[1].runs[0].text).toBe('inner')
     })
 
-    it('keeps a nested list marker when the parent item has no text', () => {
+    it('draws no marker for an item wrapping only a nested list', () => {
+      // The editor builds such a wrapper when an item is indented past the
+      // nesting available to it, and renders it without a marker of its own.
       const blocks = htmlToBlocks('<ul><li><ul><li>inner</li></ul></li></ul>')
-      expect(blocks).toHaveLength(2)
-      expect(blocks[0]).toMatchObject({
-        marker: '\u2022',
-        indent: 30,
-        runs: [],
-      })
-      expect(blocks[1]).toMatchObject({ marker: '\u2022', indent: 60 })
-      expect(blocks[1].runs[0].text).toBe('inner')
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0]).toMatchObject({ marker: '\u2022', indent: 60 })
+      expect(blocks[0].runs[0].text).toBe('inner')
     })
 
     it('keeps nested ordered numbering when the parent item has no text', () => {
       const blocks = htmlToBlocks(
         '<ul><li><ol start="3"><li>inner</li><li>next</li></ol></li></ul>',
       )
-      expect(blocks).toHaveLength(3)
-      expect(blocks[0]).toMatchObject({
-        marker: '\u2022',
-        indent: 30,
-        runs: [],
-      })
-      expect(blocks[1]).toMatchObject({ marker: '3.', indent: 60 })
-      expect(blocks[1].runs[0].text).toBe('inner')
-      expect(blocks[2]).toMatchObject({ marker: '4.', indent: 60 })
+      expect(blocks).toHaveLength(2)
+      expect(blocks[0]).toMatchObject({ marker: '3.', indent: 60 })
+      expect(blocks[0].runs[0].text).toBe('inner')
+      expect(blocks[1]).toMatchObject({ marker: '4.', indent: 60 })
+    })
+
+    it('draws one marker per item when an item is indented twice', () => {
+      // Exactly what the editor produces for "a / b / c" with b indented
+      // twice: b's item is reached through a marker-less wrapper.
+      const blocks = htmlToBlocks(
+        '<ul><li>a<ul><li style="list-style-type: none;">' +
+          '<ul><li>b</li></ul></li></ul></li><li>c</li></ul>',
+      )
+      expect(
+        blocks.map((b) => [
+          b.marker,
+          b.indent,
+          b.runs.map((r) => r.text).join(''),
+        ]),
+      ).toEqual([
+        ['\u2022', 30, 'a'],
+        ['\u2022', 90, 'b'],
+        ['\u2022', 30, 'c'],
+      ])
     })
 
     it('puts the marker on the first line of a paragraph-wrapped item', () => {
@@ -642,6 +654,120 @@ describe('addRichText layout', () => {
     const inner = findFragmentWith(frags, 'innra')
     expect(inner.x - outer.x).toBe(30)
     doc.end()
+  })
+
+  describe('justified alignment', () => {
+    // Where the trimmed text of the line's rightmost fragment ends.
+    const lineEnd = (doc: typeof PDFDocument.prototype, line: Frag[]) => {
+      const last = line.reduce((a, b) => (a.x > b.x ? a : b), line[0])
+      return last.x + doc.widthOfString(last.text.trimEnd())
+    }
+
+    const fragsByLine = (frags: Frag[]) => {
+      const ys = [...new Set(frags.map((f) => Math.round(f.y)))].sort(
+        (a, b) => a - b,
+      )
+      return ys.map((y) => frags.filter((f) => Math.round(f.y) === y))
+    }
+
+    it('stretches every wrapped line to the right margin, but not the last', () => {
+      const { doc, frags } = createInstrumentedDoc()
+
+      const filler = 'orðalengja stutt já langlokusamsetningarorð '
+        .repeat(12)
+        .trim()
+      addRichText(doc, `<p>${filler}</p>`, 2, 11, 'justify')
+
+      doc.font('Times-Roman').fontSize(11)
+      const edge = doc.page.width - doc.page.margins.right
+      const lines = fragsByLine(frags)
+      expect(lines.length).toBeGreaterThan(2)
+
+      for (const line of lines.slice(0, -1)) {
+        expect(Math.abs(lineEnd(doc, line) - edge)).toBeLessThanOrEqual(0.5)
+      }
+      // The block's last line keeps its natural width.
+      expect(lineEnd(doc, lines[lines.length - 1])).toBeLessThan(edge - 1)
+      doc.end()
+    })
+
+    it('does not stretch lines unless justify is requested', () => {
+      const { doc, frags } = createInstrumentedDoc()
+
+      const filler = 'orðalengja stutt já langlokusamsetningarorð '
+        .repeat(12)
+        .trim()
+      addRichText(doc, `<p>${filler}</p>`, 2)
+
+      // Every word on the first line sits at its natural cumulative position.
+      doc.font('Times-Roman').fontSize(11)
+      const [firstLine] = fragsByLine(frags)
+      const sorted = [...firstLine].sort((a, b) => a.x - b.x)
+      for (let i = 0; i < sorted.length - 1; i++) {
+        expect(
+          Math.abs(
+            sorted[i + 1].x - sorted[i].x - doc.widthOfString(sorted[i].text),
+          ),
+        ).toBeLessThanOrEqual(0.01)
+      }
+      doc.end()
+    })
+
+    it('does not stretch a line ended by a hard break', () => {
+      const { doc, frags } = createInstrumentedDoc()
+
+      addRichText(doc, '<p>stutt brot<br>framhald texta</p>', 2, 11, 'justify')
+
+      const first = findFragmentWith(frags, 'stutt')
+      const second = findFragmentWith(frags, 'brot')
+      doc.font('Times-Roman').fontSize(11)
+      expect(
+        Math.abs(second.x - first.x - doc.widthOfString(first.text)),
+      ).toBeLessThanOrEqual(0.01)
+      doc.end()
+    })
+
+    it('keeps the highlight rect glued to text across a widened gap', () => {
+      const { doc, rects, frags } = createInstrumentedDoc()
+
+      const filler = 'orðalengja '.repeat(30).trim()
+      addRichText(
+        doc,
+        `<p><span style="background-color: #FFF066;">MERKT ORÐ</span> ${filler}</p>`,
+        2,
+        11,
+        'justify',
+      )
+
+      const merkt = findFragmentWith(frags, 'MERKT')
+      const ord = findFragmentWith(frags, 'ORÐ')
+      doc.font('Times-Roman').fontSize(11)
+
+      // The gap inside the highlight was widened by justification...
+      expect(ord.x - merkt.x).toBeGreaterThan(doc.widthOfString(merkt.text))
+
+      // ...and the single rect still spans exactly from the first glyph to the
+      // last (1pt of horizontal padding on each side).
+      expect(rects.length).toBeGreaterThanOrEqual(1)
+      const rect = rects[0]
+      expect(Math.abs(rect.x - (merkt.x - 1))).toBeLessThanOrEqual(0.5)
+      expect(
+        Math.abs(rect.x + rect.w - (ord.x + doc.widthOfString('ORÐ') + 1)),
+      ).toBeLessThanOrEqual(0.5)
+      doc.end()
+    })
+
+    it('handles a chopped over-long token without gaps to stretch', () => {
+      const { doc, frags } = createInstrumentedDoc()
+
+      addRichText(doc, `<p>${'x'.repeat(300)} lok</p>`, 2, 11, 'justify')
+
+      expect(frags.length).toBeGreaterThan(1)
+      for (const frag of frags) {
+        expect(Number.isFinite(frag.x)).toBe(true)
+      }
+      doc.end()
+    })
   })
 })
 

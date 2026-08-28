@@ -1,158 +1,241 @@
+import { gql } from '@apollo/client'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Stack, Table as T } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
+import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import {
-  type Employee,
-  type PersonalFactor,
-  type SubCriterion,
+  ApiActions,
+  draftActionId,
+  DRAFT_EMPLOYEES_PAGE_SIZE,
+  SyncMethodEnum,
+} from '../../utils/constants'
+import type {
+  DisplayAssignment,
+  DraftCriterionWithSubCriteriaDto,
+  DraftEmployeeWithStepsDto,
 } from '../../utils/types'
-import { getLiveOrSavedArray, getPathValue } from '../../utils/answerHelpers'
+import { useDraftQuery } from '../../utils/useDraftQuery'
+import { useDraftEmployeesQuery } from '../../utils/useDraftEmployeesQuery'
+import { useDraftSync } from '../../utils/useDraftSync'
 import {
-  buildMergedStepMetaByTitle,
-  buildStepAssignmentsFromSubCriteria,
-  mergeStepAssignments,
+  DraftErrorState,
+  DraftLoadingState,
+} from '../../components/DraftScreenState'
+import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
+import {
+  buildDisplayAssignments,
+  buildStepMetaBySubCriterionId,
+  resolveStepIds,
 } from '../JobClassificationEditor/utils'
 import { EmployeeClassificationRow } from './EmployeeClassificationRow'
-import { TABLE_PAGE_SIZE, TablePagination } from '../TablePagination'
+import { TablePagination } from '../TablePagination'
 
-const FIELD_NAME = 'employees'
+const DRAFT_EMPLOYEES_WITH_STEPS_QUERY = gql`
+  query DirectorateOfEqualityDraftEmployeesWithSteps(
+    $input: DirectorateOfEqualityDraftEmployeesInput!
+  ) {
+    directorateOfEqualityDraftEmployeesWithSteps(input: $input) {
+      employees {
+        id
+        ordinal
+        field
+        department
+        startDate
+        baseSalary
+        additionalFixedOvertime
+        additionalFixedCarAllowance
+        bonusOccasionalCarAllowance
+        bonusOccasionalOvertime
+        bonusPayments
+        bonusOther
+        additionalSalary
+        bonusSalary
+        gender
+        reportEmployeeRoleId
+        reportId
+        score
+        roleTitle
+        stepIds
+      }
+      paging {
+        page
+        totalPages
+        totalItems
+        nextPage
+        previousPage
+        pageSize
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`
+
+type EmployeeFormEntry = {
+  employeeId: string
+  assignments: DisplayAssignment[]
+}
+type FormValues = { employees: EmployeeFormEntry[] }
 
 export const EmployeeClassificationEditor: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application }) => {
+> = ({ application, setBeforeSubmitCallback }) => {
   const { formatMessage } = useLocale()
-  const { getValues, setValue } = useFormContext()
   const m = messages.report.employees
-
+  const {
+    content: criteriaContent,
+    loading: criteriaLoading,
+    hasError: criteriaHasError,
+    refetch: refetchCriteria,
+  } = useDraftQuery<{ criteria: DraftCriterionWithSubCriteriaDto[] }>(
+    application,
+    draftActionId(ApiActions.getDraftCriteriaTree),
+    'draftCriteriaTree',
+  )
   const [page, setPage] = useState(1)
+  const {
+    employees,
+    paging,
+    loading: employeesLoading,
+    hasError: employeesHasError,
+    refetch: refetchEmployees,
+  } = useDraftEmployeesQuery<DraftEmployeeWithStepsDto>(
+    DRAFT_EMPLOYEES_WITH_STEPS_QUERY,
+    'directorateOfEqualityDraftEmployeesWithSteps',
+    application,
+    page,
+    DRAFT_EMPLOYEES_PAGE_SIZE,
+  )
+  const { sync } = useDraftSync(application)
+  const methods = useForm<FormValues>({ defaultValues: { employees: [] } })
+  const [actionError, setActionError] = useState<string | undefined>()
 
-  const stepMetaByTitle = useMemo(() => {
-    // Only the PERSONAL criteria: the merge is keyed by sub-criterion title
-    // alone, so passing the job criteria too would let a same-titled job
-    // sub-criterion overwrite this screen's scores and weights.
-    const criteria = getPathValue<ParsedCriterionDto[]>(
-      application.externalData,
-      'parsedSalaryReport.data.criteria',
-      [],
-    ).filter((c) => c.type === 'PERSONAL')
-    // Live sub-criteria are the base (so a criterion added after import still
-    // gets metadata) — the imported external criteria overlay authoritative
-    // scores/weights for titles that exist in both.
-    const personalFactors = getLiveOrSavedArray<SubCriterion[]>(
-      getValues,
-      application.answers,
-      'subCriteria.personalFactors',
-    )
-    return buildMergedStepMetaByTitle(criteria, personalFactors)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const loading = criteriaLoading || employeesLoading
+  const hasError = criteriaHasError || employeesHasError
 
-  // Structure for rendering: answers > external > empty (same employees list as
-  // the Starfsmenn screen — this screen only edits personalStepAssignments).
-  const employees = useMemo(() => {
-    const saved = getPathValue<Employee[]>(application.answers, FIELD_NAME, [])
-    const source =
-      saved.length > 0
-        ? saved
-        : getPathValue<Employee[]>(
-            application.externalData,
-            'parsedSalaryReport.data.employees',
-            [],
-          )
+  const personalCriteria = useMemo(
+    () =>
+      (criteriaContent?.criteria ?? []).filter((c) => c.type === 'PERSONAL'),
+    [criteriaContent],
+  )
+  const stepMetaBySubCriterionId = useMemo(
+    () => buildStepMetaBySubCriterionId(personalCriteria),
+    [personalCriteria],
+  )
 
-    // Manually-added employees start with no personalStepAssignments (there's
-    // no import to populate them from) — derive the defaults from the
-    // manually-entered personal-factor sub-criteria so classification is
-    // possible without ever uploading a workbook.
-    const personalFactors = getLiveOrSavedArray<PersonalFactor>(
-      getValues,
-      application.answers,
-      'criteria.personalFactors',
-    )
-    const subCriteriaPersonalFactors = getLiveOrSavedArray<SubCriterion[]>(
-      getValues,
-      application.answers,
-      'subCriteria.personalFactors',
-    )
-    const defaultAssignments = buildStepAssignmentsFromSubCriteria(
-      personalFactors.map((f) => f.title),
-      subCriteriaPersonalFactors,
-    )
-
-    return source.map((emp) => ({
-      ...emp,
-      personalStepAssignments: mergeStepAssignments(
-        emp.personalStepAssignments ?? [],
-        defaultAssignments,
-      ),
-    }))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Ensure the full employee objects are in the form so the whole record is
-  // submitted — the per-step Select controllers only register stepOrder. Rebuild
-  // from the structure source, overlaying any stepOrder already entered so edits
-  // survive. Idempotent under StrictMode's double-invoked effects.
+  // Re-seeds on every page turn — unlike a one-time seed, the form only ever
+  // holds the currently loaded page's employees.
   useEffect(() => {
-    if (employees.length === 0) return
-    const current = getValues(FIELD_NAME) as Employee[] | undefined
-    const merged = employees.map((emp, ei) => ({
-      ...emp,
-      personalStepAssignments: emp.personalStepAssignments.map(
-        (assignment, ai) => ({
-          ...assignment,
-          stepOrder:
-            current?.[ei]?.personalStepAssignments?.[ai]?.stepOrder ??
-            assignment.stepOrder,
-        }),
-      ),
+    if (employeesLoading || !criteriaContent) return
+    const formEmployees: EmployeeFormEntry[] = employees.map((emp) => ({
+      employeeId: emp.id,
+      assignments: buildDisplayAssignments(personalCriteria, emp.stepIds),
     }))
-    setValue(FIELD_NAME, merged)
+    methods.reset({ employees: formEmployees })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [page, employeesLoading, criteriaContent])
 
-  const totalPages = Math.ceil(employees.length / TABLE_PAGE_SIZE)
+  // Syncs whatever's currently in the form for the loaded page — used both on
+  // page turns (the form is about to be replaced with the next page's data)
+  // and on the whole-screen submit.
+  const syncCurrentPage = async () => {
+    const values = methods.getValues().employees
+    if (values.length === 0) return true
+    try {
+      await sync({
+        employees: values.map((entry) => ({
+          method: SyncMethodEnum.UPDATE,
+          id: entry.employeeId,
+          data: {
+            stepIds: resolveStepIds(personalCriteria, entry.assignments),
+          },
+        })),
+      })
+      return true
+    } catch {
+      return false
+    }
+  }
 
-  // The employee list is fixed for the lifetime of this screen (no add/remove
-  // here), so the page only ever changes when the user asks for it.
-  const visibleEmployees = employees
-    .map((employee, index) => ({ employee, index }))
-    .slice((page - 1) * TABLE_PAGE_SIZE, page * TABLE_PAGE_SIZE)
+  const handlePageChange = async (nextPage: number) => {
+    const ok = await syncCurrentPage()
+    if (!ok) {
+      setActionError(formatMessage(messages.errors.draftSyncFailed))
+      return
+    }
+    setActionError(undefined)
+    setPage(nextPage)
+  }
+
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
+    setBeforeSubmitCallback(async () => {
+      const ok = await syncCurrentPage()
+      if (!ok) return [false, formatMessage(messages.errors.draftSyncFailed)]
+      return [true, null]
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setBeforeSubmitCallback, methods, sync, personalCriteria, formatMessage])
+
+  if (loading) {
+    return <DraftLoadingState />
+  }
+
+  if (hasError || !criteriaContent) {
+    return (
+      <DraftErrorState
+        onRetry={() => {
+          refetchCriteria()
+          refetchEmployees()
+        }}
+      />
+    )
+  }
 
   return (
-    <Box>
-      <Stack space={4}>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData></T.HeadData>
-              <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {visibleEmployees.map(({ employee, index }) => (
-              <EmployeeClassificationRow
-                key={`${employee.identifier}-${index}`}
-                employee={employee}
-                employeeIndex={index}
-                stepMetaByTitle={stepMetaByTitle}
-              />
-            ))}
-          </T.Body>
-        </T.Table>
+    <FormProvider {...methods}>
+      <Box>
+        <Stack space={4}>
+          {actionError && <AlertMessage type="error" message={actionError} />}
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                <T.HeadData></T.HeadData>
+                <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {employees.map((employee, index) => (
+                <EmployeeClassificationRow
+                  key={employee.id}
+                  employee={employee}
+                  identifier={formatEmployeeIdentifier(
+                    application.id,
+                    employee.ordinal,
+                  )}
+                  employeeIndex={index}
+                  roleTitle={employee.roleTitle}
+                  assignments={buildDisplayAssignments(
+                    personalCriteria,
+                    employee.stepIds,
+                  )}
+                  stepMetaBySubCriterionId={stepMetaBySubCriterionId}
+                />
+              ))}
+            </T.Body>
+          </T.Table>
 
-        <TablePagination
-          page={page}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
-      </Stack>
-    </Box>
+          <TablePagination
+            page={paging?.page ?? page}
+            totalPages={paging?.totalPages ?? 1}
+            onPageChange={handlePageChange}
+          />
+        </Stack>
+      </Box>
+    </FormProvider>
   )
 }
