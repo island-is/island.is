@@ -881,6 +881,11 @@ export const m = defineMessages({
   },
   reviewApplication: {
     id: 'form.system:review-application',
+    defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn umsókn.',
+    description: 'Please review before submitting the application.',
+  },
+  reviewApplication2: {
+    id: 'form.system:review-application-2',
     defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn.',
     description: 'Please review before submitting.',
   },
@@ -974,6 +979,11 @@ export const m = defineMessages({
   },
   submitApplication: {
     id: 'form.system:submit-application',
+    defaultMessage: 'Senda inn umsókn',
+    description: 'Submit application',
+  },
+  submitApplication2: {
+    id: 'form.system:submit-application-2',
     defaultMessage: 'Senda inn',
     description: 'Submit',
   },
@@ -1278,8 +1288,10 @@ export const m = defineMessages({
   },
   testApplicationBanner: {
     id: 'form.system:test-application-banner',
-    defaultMessage: 'Þetta er prófunarumsókn',
-    description: 'This is a test application',
+    defaultMessage:
+      'Þetta form er í prófun og hefur ekki verið útgefið. Innsending mun ekki vera tekin gild.',
+    description:
+      'This form is in testing and has not been published. Submissions will not be considered valid.',
   },
   applicationLifetime: {
     id: 'form.system:application-lifetime',
