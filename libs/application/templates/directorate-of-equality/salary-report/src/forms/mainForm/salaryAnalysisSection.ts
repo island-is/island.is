@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import type { RecordObject } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
+import { ScreenIds } from '../../utils/constants'
 import { salaryAnalysisNeedsImprovementPlan } from '../../utils/salaryAnalysisNavigation'
 import { hasReviewerComment } from '../commentThreadSection'
 
@@ -24,7 +25,7 @@ export const buildSalaryAnalysisOverviewSubSection = (
     title: messages.salaryAnalysis.overview.sectionTitle,
     children: [
       buildMultiField({
-        id: 'salaryAnalysisOverviewMultiField',
+        id: ScreenIds.analysisOverview,
         title: messages.salaryAnalysis.overview.title,
         description: messages.salaryAnalysis.overview.intro,
         children: [
@@ -60,7 +61,7 @@ export const buildSalaryAnalysisImprovementPlanSubSection = (
     condition: salaryAnalysisNeedsImprovementPlan,
     children: [
       buildMultiField({
-        id: 'salaryAnalysisImprovementPlanMultiField',
+        id: ScreenIds.improvementPlan,
         title: messages.salaryAnalysis.improvementPlan.title,
         description: messages.salaryAnalysis.improvementPlan.intro,
         children: [

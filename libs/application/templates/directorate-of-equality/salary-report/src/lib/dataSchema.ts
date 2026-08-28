@@ -134,6 +134,11 @@ const salaryAnalysis = z
     postponed: z.array(z.string()).optional(),
     outlierGroups: z.array(outlierGroup).optional(),
     hasMinimumSetOutliers: z.boolean().optional(),
+    // Mirrored from the analysis result so the overview screen can read it —
+    // see the comment on BenchmarkVerdict.
+    benchmarkVerdict: z
+      .enum(['within', 'over', 'notComputable', 'unknown'])
+      .optional(),
     outlierPlanReviewed: z.boolean().optional(),
     // Set by the POSTPONED receipt screen the first time it renders, so a
     // reopened application skips it and lands on the úrbótaáætlun screen —

@@ -6,16 +6,15 @@ import {
   coreMessages,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents, type ExternalData } from '@island.is/application/types'
+import { DefaultEvents, type FormValue } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
-import { PERIOD_ONE_MONTH } from '../../utils/constants'
+import { PERIOD_ONE_MONTH, ScreenIds } from '../../utils/constants'
 import {
-  getSalaryAnalysisResult,
+  getBenchmarkVerdict,
   isPostponeRequested,
   salaryAnalysisNeedsImprovementPlan,
   salaryAnalysisOutlierPlanIsReviewed,
 } from '../../utils/salaryAnalysisNavigation'
-import { deriveWageGapState } from '../../utils/wageGap'
 import { buildOutlierPlanOverviewField } from '../outlierPlanOverview'
 
 const MONTH_LABELS = [
@@ -192,25 +191,27 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
 ]
 
 // The verdict, not the figures: the analysis screen already renders the gap
-// itself, and this row answers the one question the submission turns on. The
-// three-way mapping is deliberate — WageGapState keeps "no measurable gap" and
-// "no result" apart from both verdicts, so neither may be reported as Nei.
-const withinBenchmarkValue = (externalData: ExternalData) => {
-  const result = getSalaryAnalysisResult(externalData)
-  const state = deriveWageGapState(
-    result?.wageGapDecomposition,
-    result?.outliers?.length ?? 0,
-  )
-
-  switch (state.kind) {
-    case 'withinBenchmark':
+// itself, and this row answers the one question the submission turns on.
+//
+// Read from answers, not from externalData. The form shell freezes its copy of
+// externalData at mount and nothing here can refresh it, so reading
+// salaryAnalysisResult directly would render "Liggur ekki fyrir" for the whole
+// sitting in which the applicant actually ran the analysis. The analysis screen
+// mirrors the verdict into answers for exactly this reason — see
+// BenchmarkVerdict.
+//
+// The three-way mapping is deliberate: WageGapState keeps "no measurable gap"
+// and "no result" apart from both verdicts, so neither may be reported as Nei.
+const withinBenchmarkValue = (answers: FormValue) => {
+  switch (getBenchmarkVerdict(answers)) {
+    case 'within':
       return coreMessages.radioYes
+    case 'over':
+      return coreMessages.radioNo
     case 'notComputable':
       return messages.overview.withinBenchmarkNotComputable
-    case 'unknown':
-      return messages.overview.withinBenchmarkUnknown
     default:
-      return coreMessages.radioNo
+      return messages.overview.withinBenchmarkUnknown
   }
 }
 
@@ -229,12 +230,12 @@ export const overviewSection = buildSection({
           id: 'overview.salaryAnalysis',
           title: messages.overview.salaryAnalysisTitle,
           titleVariant: 'h3',
-          backId: 'salaryAnalysisOverviewMultiField',
+          backId: ScreenIds.analysisOverview,
           items: (answers, externalData) => [
             {
               width: 'half',
               keyText: messages.overview.withinBenchmarkLabel,
-              valueText: withinBenchmarkValue(externalData),
+              valueText: withinBenchmarkValue(answers),
             },
             // Postponing is only offered where there is a plan to postpone, so
             // the row only means anything there.
@@ -253,7 +254,8 @@ export const overviewSection = buildSection({
         }),
         buildOutlierPlanOverviewField({
           id: 'overview.outlierPlan',
-          backId: 'salaryAnalysisImprovementPlanMultiField',
+          title: messages.overview.outlierPlanTitle,
+          backId: ScreenIds.improvementPlan,
         }),
         buildSubmitField({
           id: 'submit',

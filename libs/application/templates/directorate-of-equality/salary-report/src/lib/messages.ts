@@ -1574,6 +1574,10 @@ export const messages = {
       id: 'doe.sr.application:overview.withinBenchmarkUnknown',
       defaultMessage: 'Liggur ekki fyrir',
     },
+    outlierPlanTitle: {
+      id: 'doe.sr.application:overview.outlierPlanTitle',
+      defaultMessage: 'Yfirlit úrbótaáætlunar',
+    },
     postponeLabel: {
       id: 'doe.sr.application:overview.postponeLabel',
       defaultMessage: 'Fresta úrbótaáætlun?',

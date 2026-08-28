@@ -10,6 +10,7 @@ import { postponeReceiptSection } from './postponeReceiptSection'
 import { postponedSalaryAnalysisSection } from './postponedSalaryAnalysisSection'
 import { postponedReportSummarySection } from './postponedReportSummarySection'
 import { messages } from '../../lib/messages'
+import { ScreenIds } from '../../utils/constants'
 import { buildOutlierPlanOverviewField } from '../outlierPlanOverview'
 import {
   hasSeenPostponeReceipt,
@@ -43,7 +44,8 @@ export const postponedForm = buildForm({
           children: [
             buildOutlierPlanOverviewField({
               id: 'postponedSubmitOverview',
-              backId: 'salaryAnalysisImprovementPlanMultiField',
+              title: messages.postponed.reviewTitle,
+              backId: ScreenIds.improvementPlan,
             }),
             buildSubmitField({
               id: 'postponedSubmit',

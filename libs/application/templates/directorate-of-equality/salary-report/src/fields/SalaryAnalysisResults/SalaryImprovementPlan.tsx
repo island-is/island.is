@@ -17,7 +17,7 @@ import {
   DraftLoadingState,
 } from '../../components/DraftScreenState'
 import { messages } from '../../lib/messages'
-import { ApiActions, draftActionId } from '../../utils/constants'
+import { ApiActions, draftActionId, States } from '../../utils/constants'
 import {
   buildOutlierSyncCommands,
   isOutlierGroupComplete,
@@ -45,6 +45,10 @@ interface Props extends FieldBaseProps {
   field: CustomField
 }
 
+// Shared fallback identity for the two group watches below: `?? []` would mint
+// a new array on every render, and the plan mirror's effect keys on that value.
+const NO_GROUPS: OutlierGroupAnswer[] = []
+
 type DraftOutlierFormValues = {
   salaryAnalysis: {
     outlierGroups: OutlierGroupAnswer[]
@@ -64,7 +68,12 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     field?.props && typeof field.props['hidePostponeCheckbox'] === 'boolean'
       ? (field.props['hidePostponeCheckbox'] as boolean)
       : false
-  const isDraftPhase = !hidePostponeCheckbox
+  // Not derived from hidePostponeCheckbox: that prop says whether to render a
+  // checkbox, while this decides whether the analysis is ever recomputed. The
+  // state is what actually governs that — DRAFT owns the live draft, the review
+  // states own the submitted snapshot — and it is also what decides which draft
+  // providers the role grants.
+  const isDraftPhase = application.state === States.DRAFT
   // Set only where the analysis screen follows this one instead of preceding it.
   const viewAnalysisScreenId =
     typeof field?.props?.['viewAnalysisScreenId'] === 'string'
@@ -246,13 +255,24 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     useWatch<DraftOutlierFormValues, 'salaryAnalysis.outlierGroups'>({
       name: 'salaryAnalysis.outlierGroups',
       control: draftForm.control,
-    }) ?? []
+    }) ?? NO_GROUPS
   const ambientOutlierGroups =
     (useWatch({
       name: 'salaryAnalysis.outlierGroups',
       control: ambientControl,
-    }) as OutlierGroupAnswer[] | undefined) ?? []
+    }) as OutlierGroupAnswer[] | undefined) ?? NO_GROUPS
   const outlierGroups = isDraftPhase ? draftOutlierGroups : ambientOutlierGroups
+
+  // DRAFT keeps the plan in the backend draft, and the form shell freezes its
+  // copy of externalData at mount — so the overview screen, which reads
+  // answers, has no way to see the plan otherwise. setValue only, deliberately:
+  // no ANSWER dispatch per keystroke, and the screen's own submit carries these
+  // values into both the persisted answers and the shell's copy (see
+  // answerAndGoToNextScreen). The same mechanism the navigation flags rely on.
+  useEffect(() => {
+    if (!isDraftPhase) return
+    setAmbientValue('salaryAnalysis.outlierGroups', draftOutlierGroups)
+  }, [draftOutlierGroups, isDraftPhase, setAmbientValue])
   const currentOutliers = useMemo(() => result?.outliers ?? [], [result])
   const hasMinimumSetOutliers = currentOutliers.length > 0
   const unassignedOrdinals = useMemo(

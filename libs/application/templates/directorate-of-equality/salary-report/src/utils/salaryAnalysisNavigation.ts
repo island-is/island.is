@@ -1,6 +1,7 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import type { ExternalData, FormValue } from '@island.is/application/types'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
+import { deriveWageGapState } from './wageGap'
 import {
   isOutlierGroupComplete,
   unassignedOutlierOrdinals,
@@ -17,10 +18,40 @@ export const hasMinimumSetOutliersInResult = (
   result?: Pick<SalaryAnalysisResponseDto, 'outliers'> | null,
 ): boolean => (result?.outliers?.length ?? 0) > 0
 
+// Mirrored into answers rather than read from externalData wherever a form
+// screen needs it: the form shell seeds its reducer's externalData once at
+// mount and only ADD_EXTERNAL_DATA updates it, which nothing in this template
+// dispatches (updateApplicationExternalData writes server-side only, and
+// addExternalData is not handed to custom fields). Answers do reach the
+// reducer, through ANSWER and through each screen's own submit — so a screen
+// that reads externalData directly reads it as of page load.
+export type BenchmarkVerdict = 'within' | 'over' | 'notComputable' | 'unknown'
+
 export type SalaryAnalysisNavigationAnswers = {
   salaryAnalysis: {
     hasMinimumSetOutliers: boolean
+    benchmarkVerdict: BenchmarkVerdict
     outlierPlanReviewed?: boolean
+  }
+}
+
+export const benchmarkVerdictForResult = (
+  result: Pick<SalaryAnalysisResponseDto, 'outliers' | 'wageGapDecomposition'>,
+): BenchmarkVerdict => {
+  const state = deriveWageGapState(
+    result.wageGapDecomposition,
+    result.outliers?.length ?? 0,
+  )
+
+  switch (state.kind) {
+    case 'withinBenchmark':
+      return 'within'
+    case 'notComputable':
+      return 'notComputable'
+    case 'unknown':
+      return 'unknown'
+    default:
+      return 'over'
   }
 }
 
@@ -69,13 +100,30 @@ export const salaryAnalysisOutlierPlanIsReviewed = (
   )
 }
 
+// Falls back to the stored snapshot only as a courtesy to answers written
+// before this mirror existed; the answer is the live source.
+export const getBenchmarkVerdict = (
+  answers: FormValue,
+  externalData?: ExternalData,
+): BenchmarkVerdict => {
+  const mirrored = getValueViaPath<BenchmarkVerdict>(
+    answers,
+    'salaryAnalysis.benchmarkVerdict',
+  )
+  if (mirrored) return mirrored
+
+  const result = getSalaryAnalysisResult(externalData)
+  return result ? benchmarkVerdictForResult(result) : 'unknown'
+}
+
 export const navigationAnswersForAnalysisResult = (
-  result: Pick<SalaryAnalysisResponseDto, 'outliers'>,
+  result: Pick<SalaryAnalysisResponseDto, 'outliers' | 'wageGapDecomposition'>,
   { resetReviewed }: { resetReviewed: boolean },
 ): SalaryAnalysisNavigationAnswers => {
   const hasMinimumSetOutliers = hasMinimumSetOutliersInResult(result)
   const salaryAnalysis: SalaryAnalysisNavigationAnswers['salaryAnalysis'] = {
     hasMinimumSetOutliers,
+    benchmarkVerdict: benchmarkVerdictForResult(result),
   }
 
   if (!hasMinimumSetOutliers) {

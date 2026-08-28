@@ -53,6 +53,15 @@ export enum ApiActions {
   listDraftOutlierGroups = 'listDraftOutlierGroups',
 }
 
+// Screen ids the form builders declare and other screens navigate to.
+// `goToScreen` and `backId` fail silently on an unknown id, so the definitions
+// and the references share one source and a rename becomes a compile error.
+export const ScreenIds = {
+  criteria: 'criteriaMultiField',
+  analysisOverview: 'salaryAnalysisOverviewMultiField',
+  improvementPlan: 'salaryAnalysisImprovementPlanMultiField',
+} as const
+
 const DOE_NAMESPACE = 'DirectorateOfEquality'
 
 // Builds the `actionId` string the updateApplicationExternalData mutation expects,

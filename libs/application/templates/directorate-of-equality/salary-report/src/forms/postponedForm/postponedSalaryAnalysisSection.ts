@@ -1,5 +1,6 @@
 import { buildSection } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
+import { ScreenIds } from '../../utils/constants'
 import {
   buildSalaryAnalysisImprovementPlanSubSection,
   buildSalaryAnalysisOverviewSubSection,
@@ -19,7 +20,7 @@ export const postponedSalaryAnalysisSection = buildSection({
   children: [
     buildSalaryAnalysisImprovementPlanSubSection({
       hidePostponeCheckbox: true,
-      viewAnalysisScreenId: 'salaryAnalysisOverviewMultiField',
+      viewAnalysisScreenId: ScreenIds.analysisOverview,
     }),
     buildSalaryAnalysisOverviewSubSection(
       { hidePostponeCheckbox: true },

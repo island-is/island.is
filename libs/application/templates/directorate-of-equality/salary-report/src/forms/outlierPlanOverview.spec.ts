@@ -1,27 +1,19 @@
-import type { ExternalData, FormValue } from '@island.is/application/types'
+import type { FormValue } from '@island.is/application/types'
 import { messages } from '../lib/messages'
 import { outlierPlanOverviewItems } from './outlierPlanOverview'
 
-const draftExternalData = (
-  groups: Array<Record<string, unknown>>,
-): ExternalData => ({
-  draftOutlierGroups: {
-    status: 'success',
-    data: { groups },
-    date: new Date(),
-  },
-})
-
-const draftGroup = (overrides: Record<string, unknown> = {}) => ({
-  id: 'g1',
-  reportId: 'r1',
+const group = (overrides: Record<string, unknown> = {}) => ({
   name: 'Sérfræðingar',
   reason: 'Ástæða',
   action: 'Aðgerð',
   signatureName: 'Nafn',
   signatureRole: 'Titill',
-  memberEmployeeIds: ['e1'],
+  employeeOrdinals: [1],
   ...overrides,
+})
+
+const answers = (groups: unknown[]): FormValue => ({
+  salaryAnalysis: { outlierGroups: groups },
 })
 
 const groupNames = (items: ReturnType<typeof outlierPlanOverviewItems>) =>
@@ -33,65 +25,41 @@ const groupNames = (items: ReturnType<typeof outlierPlanOverviewItems>) =>
     .map((item) => item.valueText)
 
 describe('outlierPlanOverviewItems', () => {
-  // DRAFT keeps the plan in the backend draft alone, so the recap there has
-  // nothing but the stored provider read to go on.
-  it('reads the backend draft groups when the answers hold none', () => {
-    const items = outlierPlanOverviewItems(
-      {},
-      draftExternalData([draftGroup()]),
-    )
+  it('recaps each group from the answers', () => {
+    const items = outlierPlanOverviewItems(answers([group()]))
 
     expect(groupNames(items)).toEqual(['Sérfræðingar'])
     expect(items).toHaveLength(5)
   })
 
   it('drops a group whose members were all freed', () => {
-    const items = outlierPlanOverviewItems(
-      {},
-      draftExternalData([
-        draftGroup({ name: 'Tómur', memberEmployeeIds: [] }),
-        draftGroup({ name: 'Hópur 2' }),
-      ]),
-    )
-
-    expect(groupNames(items)).toEqual(['Hópur 2'])
-  })
-
-  // The review phases edit the groups as answers; the stored provider read
-  // beside them is only as fresh as the last sync.
-  it('lets the answers outrank the stored draft groups', () => {
-    const answers: FormValue = {
-      salaryAnalysis: {
-        outlierGroups: [
-          {
-            name: 'Úr svörum',
-            reason: 'Ástæða',
-            action: 'Aðgerð',
-            signatureRole: 'Titill',
-            employeeOrdinals: [1],
-          },
-        ],
-      },
-    }
-
     expect(
-      groupNames(outlierPlanOverviewItems(answers, draftExternalData([draftGroup()]))),
-    ).toEqual(['Úr svörum'])
+      groupNames(
+        outlierPlanOverviewItems(
+          answers([
+            group({ name: 'Tómur', employeeOrdinals: [] }),
+            group({ name: 'Hópur 2' }),
+          ]),
+        ),
+      ),
+    ).toEqual(['Hópur 2'])
   })
 
-  it('renders nothing when there is no plan at all', () => {
-    expect(outlierPlanOverviewItems({}, {})).toEqual([])
+  // The draft phase mirrors the plan into answers as it is edited (see
+  // SalaryImprovementPlan) precisely so this reads one source in every phase —
+  // the stored draftOutlierGroups provider is a page-load snapshot.
+  it('renders nothing when the answers hold no plan', () => {
+    expect(outlierPlanOverviewItems({})).toEqual([])
+    expect(outlierPlanOverviewItems(answers([]))).toEqual([])
   })
 
   it('falls back to the group position when it has no name', () => {
-    const items = outlierPlanOverviewItems(
-      {},
-      draftExternalData([
-        draftGroup({ name: '' }),
-        draftGroup({ name: '', id: 'g2' }),
-      ]),
-    )
-
-    expect(groupNames(items)).toEqual(['1', '2'])
+    expect(
+      groupNames(
+        outlierPlanOverviewItems(
+          answers([group({ name: '' }), group({ name: '' })]),
+        ),
+      ),
+    ).toEqual(['1', '2'])
   })
 })

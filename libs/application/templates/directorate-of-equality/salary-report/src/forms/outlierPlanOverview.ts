@@ -1,75 +1,35 @@
 import { buildOverviewField, getValueViaPath } from '@island.is/application/core'
 import type {
-  ExternalData,
+  FormText,
   FormValue,
   KeyValueItem,
 } from '@island.is/application/types'
 import { messages } from '../lib/messages'
 import type { OutlierGroupAnswer } from '../utils/outlierGroups'
-import {
-  getProviderSuccessData,
-  type ProviderExternalData,
-} from '../utils/providerResult'
-import type { DraftOutlierGroupDto } from '../utils/types'
-
-type PlanGroup = Pick<
-  OutlierGroupAnswer,
-  'name' | 'reason' | 'action' | 'signatureName' | 'signatureRole'
-> & { memberCount: number }
 
 /**
- * The two screens that recap the plan read it from different places, because
- * the phases store it in different places: POSTPONED/DRAFT_RETRY edit the groups
- * as application answers, while DRAFT keeps them in the backend draft alone (the
- * plan screen's own react-hook-form syncs to DMR and re-reads the result into
- * `draftOutlierGroups`), so there the answers never hold them.
+ * Reads the plan from answers in every phase.
  *
- * Answers win when they hold anything: in the review phases they are the live
- * copy, and the stored `draftOutlierGroups` beside them is only as fresh as the
- * last sync.
+ * DRAFT edits the groups in the plan screen's own react-hook-form, backed by the
+ * DMR draft rather than by answers — but that screen mirrors them into answers
+ * as it goes, precisely so this recap can exist. Reading the stored
+ * `draftOutlierGroups` provider instead would recap the plan as of page load:
+ * the form shell freezes its copy of externalData at mount, so the sitting in
+ * which the applicant writes the plan is the one sitting where that copy is
+ * wrong.
+ *
+ * A group whose members were all freed carries no explanation and is dropped
+ * before submission (see the service's editOutliers), so it must not be the
+ * thing that makes a plan look filled in.
  */
-const planGroups = (
-  answers: FormValue,
-  externalData: ExternalData,
-): PlanGroup[] => {
-  const fromAnswers =
+export const outlierPlanOverviewItems = (answers: FormValue): KeyValueItem[] =>
+  (
     getValueViaPath<OutlierGroupAnswer[]>(
       answers,
       'salaryAnalysis.outlierGroups',
     ) ?? []
-
-  if (fromAnswers.length > 0) {
-    return fromAnswers.map((group) => ({
-      ...group,
-      memberCount: group.employeeOrdinals?.length ?? 0,
-    }))
-  }
-
-  const draftGroups =
-    getProviderSuccessData(
-      externalData?.['draftOutlierGroups'] as
-        | ProviderExternalData<{ groups: DraftOutlierGroupDto[] }>
-        | undefined,
-    )?.groups ?? []
-
-  return draftGroups.map((group) => ({
-    name: group.name,
-    reason: group.reason ?? undefined,
-    action: group.action ?? undefined,
-    signatureName: group.signatureName ?? undefined,
-    signatureRole: group.signatureRole ?? undefined,
-    memberCount: group.memberEmployeeIds.length,
-  }))
-}
-
-// A group whose members were all freed by an edit has nothing to explain — the
-// same reason isOutlierGroupComplete treats one as vacuously complete.
-export const outlierPlanOverviewItems = (
-  answers: FormValue,
-  externalData: ExternalData,
-): KeyValueItem[] =>
-  planGroups(answers, externalData)
-    .filter((group) => group.memberCount > 0)
+  )
+    .filter((group) => (group.employeeOrdinals?.length ?? 0) > 0)
     .flatMap((group, index) => [
       {
         width: 'full' as const,
@@ -103,17 +63,20 @@ export const outlierPlanOverviewItems = (
 
 // hideIfEmpty so the block disappears entirely when there is no plan to show —
 // a postponed report, or an analysis with no outliers — instead of leaving a
-// heading over nothing.
+// heading over nothing. `title` is the caller's, so neither screen's copy owns
+// the other's.
 export const buildOutlierPlanOverviewField = ({
   id,
+  title,
   backId,
 }: {
   id: string
+  title: FormText
   backId?: string
 }) =>
   buildOverviewField({
     id,
-    title: messages.postponed.reviewTitle,
+    title,
     titleVariant: 'h3',
     hideIfEmpty: true,
     ...(backId ? { backId } : {}),

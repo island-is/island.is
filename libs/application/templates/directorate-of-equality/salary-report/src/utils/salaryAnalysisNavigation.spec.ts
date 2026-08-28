@@ -5,6 +5,8 @@ import type {
   SalaryAnalysisResponseDto,
 } from '@island.is/clients/directorate-of-equality'
 import {
+  benchmarkVerdictForResult,
+  getBenchmarkVerdict,
   hasMinimumSetOutliersInResult,
   hasNotSeenPostponeReceipt,
   hasSeenPostponeReceipt,
@@ -76,6 +78,7 @@ describe('salary analysis outlier navigation flags', () => {
     ).toEqual({
       salaryAnalysis: {
         hasMinimumSetOutliers: true,
+        benchmarkVerdict: 'unknown',
         outlierPlanReviewed: false,
       },
     })
@@ -87,6 +90,7 @@ describe('salary analysis outlier navigation flags', () => {
     ).toEqual({
       salaryAnalysis: {
         hasMinimumSetOutliers: true,
+        benchmarkVerdict: 'unknown',
       },
     })
   })
@@ -128,6 +132,7 @@ describe('salary analysis outlier navigation flags', () => {
     ).toEqual({
       salaryAnalysis: {
         hasMinimumSetOutliers: false,
+        benchmarkVerdict: 'unknown',
         outlierPlanReviewed: false,
       },
     })
@@ -163,9 +168,12 @@ describe('salary analysis outlier navigation flags', () => {
         } as Partial<SalaryAnalysisResponseDto>),
         { resetReviewed: true },
       ),
+      // Over the benchmark with nobody listed is still over the benchmark —
+      // the mirrored verdict must not read that as compliant.
     ).toEqual({
       salaryAnalysis: {
         hasMinimumSetOutliers: false,
+        benchmarkVerdict: 'over',
         outlierPlanReviewed: false,
       },
     })
@@ -390,5 +398,78 @@ describe('reviewOutlierPlanIsSubmittable', () => {
     expect(reviewOutlierPlanIsSubmittable({}, externalData(result(0)))).toBe(
       true,
     )
+  })
+})
+
+// The overview screen reads the verdict from answers, so the mapping is pinned
+// here rather than at the screen: neither "no measurable gap" nor "no result"
+// may collapse into Nei.
+describe('benchmark verdict', () => {
+  const decomposition = (
+    overrides: Record<string, unknown>,
+  ): Partial<SalaryAnalysisResponseDto> =>
+    ({ wageGapDecomposition: overrides } as Partial<SalaryAnalysisResponseDto>)
+
+  it('maps compliance to within', () => {
+    expect(
+      benchmarkVerdictForResult(
+        result(0, decomposition({ oskyrtWithinBenchmark: true })),
+      ),
+    ).toBe('within')
+  })
+
+  it('maps non-compliance to over, listed outliers or not', () => {
+    expect(
+      benchmarkVerdictForResult(
+        result(2, decomposition({ oskyrtWithinBenchmark: false })),
+      ),
+    ).toBe('over')
+    expect(
+      benchmarkVerdictForResult(
+        result(
+          0,
+          decomposition({ oskyrtWithinBenchmark: false, gapCarrierCount: 0 }),
+        ),
+      ),
+    ).toBe('over')
+  })
+
+  it('keeps an unmeasurable gap out of both verdicts', () => {
+    expect(
+      benchmarkVerdictForResult(
+        result(
+          0,
+          decomposition({
+            oskyrtAvailable: false,
+            oskyrtBlockers: ['EMPTY_MALE_COHORT'],
+          }),
+        ),
+      ),
+    ).toBe('notComputable')
+    expect(
+      benchmarkVerdictForResult(
+        result(0, decomposition({ oskyrtWithinBenchmark: null })),
+      ),
+    ).toBe('unknown')
+  })
+
+  it('prefers the mirrored answer over the stored snapshot', () => {
+    expect(
+      getBenchmarkVerdict(
+        { salaryAnalysis: { benchmarkVerdict: 'within' } },
+        externalData(result(2, decomposition({ oskyrtWithinBenchmark: false }))),
+      ),
+    ).toBe('within')
+  })
+
+  // Answers written before the mirror existed, and any state with neither.
+  it('falls back to the snapshot, then to unknown', () => {
+    expect(
+      getBenchmarkVerdict(
+        {},
+        externalData(result(0, decomposition({ oskyrtWithinBenchmark: true }))),
+      ),
+    ).toBe('within')
+    expect(getBenchmarkVerdict({})).toBe('unknown')
   })
 })

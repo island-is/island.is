@@ -13,7 +13,12 @@ import {
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import { ApiActions, draftActionId } from '../../utils/constants'
+import {
+  ApiActions,
+  draftActionId,
+  ScreenIds,
+  States,
+} from '../../utils/constants'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
 import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
 import { getProviderErrorMessage } from '../../utils/providerError'
@@ -38,18 +43,19 @@ type Props = FieldBaseProps
 
 export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   application,
-  field,
   answerQuestions,
   setBeforeSubmitCallback,
   goToScreen,
 }) => {
   const { formatMessage, lang: locale } = useLocale()
-  const hidePostponeCheckbox =
-    'props' in field &&
-    typeof field.props?.['hidePostponeCheckbox'] === 'boolean'
-      ? field.props['hidePostponeCheckbox']
-      : false
-  const isDraftPhase = !hidePostponeCheckbox
+  // Read off the state, not off hidePostponeCheckbox: this decides whether the
+  // analysis is ever recomputed, which the state governs — DRAFT owns the live
+  // draft, the review states own the submitted snapshot. This screen renders no
+  // checkbox of its own, so it no longer reads that prop at all.
+  //
+  // The postpone checkbox itself lives in OutlierGroupPanel, which still takes
+  // hidePostponeCheckbox from SalaryImprovementPlan.
+  const isDraftPhase = application.state === States.DRAFT
   /**
    * The employees list that arrived WITH the analysis now in `result`, and the
    * only source the pay-components table derives from.
@@ -134,10 +140,11 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       const answers = navigationAnswersForAnalysisResult(analysis, {
         resetReviewed,
       })
-      const { hasMinimumSetOutliers, outlierPlanReviewed } =
+      const { hasMinimumSetOutliers, benchmarkVerdict, outlierPlanReviewed } =
         answers.salaryAnalysis
 
       setValue('salaryAnalysis.hasMinimumSetOutliers', hasMinimumSetOutliers)
+      setValue('salaryAnalysis.benchmarkVerdict', benchmarkVerdict)
       // Absent means "leave it alone" — a plan already signed off must not be
       // reopened just because this screen re-mounted.
       if (typeof outlierPlanReviewed === 'boolean') {
@@ -384,7 +391,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             size="small"
             preTextIcon="arrowBack"
             disabled={isAnalyzing}
-            onClick={() => goToScreen?.('criteriaMultiField')}
+            onClick={() => goToScreen?.(ScreenIds.criteria)}
           >
             {formatMessage(messages.salaryAnalysis.results.reviewDataButton)}
           </Button>

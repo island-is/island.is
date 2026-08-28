@@ -37,7 +37,9 @@ export const postponeReceiptSection = buildSection({
           startExpanded: true,
         }),
         buildCustomField({
-          id: 'salaryAnalysis.postponeReceiptSeen',
+          // Not an answer path: the field registers no input and the flag
+          // reaches the server through the component's own mutation.
+          id: 'postponeReceiptMarker',
           title: '',
           component: 'PostponeReceiptMarker',
           doesNotRequireAnswer: true,
