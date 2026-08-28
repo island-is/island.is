@@ -176,6 +176,7 @@ export const NestedLines = ({
 
   return (
     <Box background="blue100" paddingTop={3}>
+      <div className={styles.line} />
       {renderItemizations()}
       <Box paddingY={3} paddingLeft={2} background="blue100">
         <Box
