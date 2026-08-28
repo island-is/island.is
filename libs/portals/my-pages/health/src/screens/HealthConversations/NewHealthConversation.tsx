@@ -72,6 +72,7 @@ const NewHealthConversation = () => {
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
+      fetchPolicy: 'network-only',
       variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
     })
 

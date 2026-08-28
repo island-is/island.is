@@ -58,6 +58,7 @@ const HealthConversations = () => {
   const [searchInput, setSearchInput] = useState('')
 
   const { data, loading, error } = useGetHealthConversationsQuery({
+    fetchPolicy: 'network-only',
     variables: {
       input: {
         ...(filterValues.archived
@@ -289,6 +290,7 @@ const HealthConversations = () => {
                   >
                     <ConversationAvatar
                       variant="organization"
+                      tone={item.isRead ? 'tinted' : 'light'}
                       logoUrl={item.organization?.logoUrl ?? undefined}
                     />
                     <Box minWidth={0}>

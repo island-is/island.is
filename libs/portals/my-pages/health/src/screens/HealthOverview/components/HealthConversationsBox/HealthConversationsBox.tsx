@@ -160,6 +160,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                 >
                   <ConversationAvatar
                     variant="organization"
+                    tone={unread ? 'light' : 'tinted'}
                     logoUrl={item.organization?.logoUrl ?? undefined}
                   />
                   <Box flexGrow={1} overflow="hidden">
