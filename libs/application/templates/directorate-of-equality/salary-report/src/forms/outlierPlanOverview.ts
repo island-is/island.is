@@ -1,4 +1,7 @@
-import { buildOverviewField, getValueViaPath } from '@island.is/application/core'
+import {
+  buildOverviewField,
+  getValueViaPath,
+} from '@island.is/application/core'
 import type {
   FormText,
   FormValue,

@@ -295,9 +295,9 @@ describe('postpone receipt visibility', () => {
 
 describe('isPostponeRequested', () => {
   it('reads the postpone checkbox', () => {
-    expect(isPostponeRequested({ salaryAnalysis: { postponed: ['yes'] } })).toBe(
-      true,
-    )
+    expect(
+      isPostponeRequested({ salaryAnalysis: { postponed: ['yes'] } }),
+    ).toBe(true)
   })
 
   // OutlierGroupPanel empties the array once the applicant reaches the plan
