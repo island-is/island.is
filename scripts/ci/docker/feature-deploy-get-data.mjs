@@ -24,30 +24,31 @@ function getCommitMsg(context) {
 }
 
 async function getLatestIdsImageTag() {
-  const ecr = new AWS.ECR({ region: 'eu-west-1' })
+  return 'test_ids_feature_deploy_3fwfc3wf';
+  // const ecr = new AWS.ECR({ region: 'eu-west-1' })
 
-  // get response from aws.
-  const response = await ecr
-    .describeImages({
-      repositoryName: 'identity-server',
-      filter: { tagStatus: 'TAGGED' },
-      maxResults: 1000,
-    })
-    .promise()
+  // // get response from aws.
+  // const response = await ecr
+  //   .describeImages({
+  //     repositoryName: 'identity-server',
+  //     filter: { tagStatus: 'TAGGED' },
+  //     maxResults: 1000,
+  //   })
+  //   .promise()
 
-  const mainImages = response.imageDetails
-    ?.filter((img) => {
-      return (
-        img.imageTags && img.imageTags.some((tag) => tag.startsWith('main_'))
-      )
-    })
-    .sort((a, b) => {
-      const dateA = a.imagePushedAt ? new Date(a.imagePushedAt).getTime() : 0
-      const dateB = b.imagePushedAt ? new Date(b.imagePushedAt).getTime() : 0
-      return dateB - dateA
-    })
+  // const mainImages = response.imageDetails
+  //   ?.filter((img) => {
+  //     return (
+  //       img.imageTags && img.imageTags.some((tag) => tag.startsWith('main_'))
+  //     )
+  //   })
+  //   .sort((a, b) => {
+  //     const dateA = a.imagePushedAt ? new Date(a.imagePushedAt).getTime() : 0
+  //     const dateB = b.imagePushedAt ? new Date(b.imagePushedAt).getTime() : 0
+  //     return dateB - dateA
+  //   })
 
-  return mainImages?.[0].imageTags?.[0]
+  // return mainImages?.[0].imageTags?.[0]
 }
 
 async function main(testContext = null) {

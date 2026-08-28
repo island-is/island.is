@@ -12,14 +12,14 @@ DB_MASTER_PASSWORD=$(node secrets get "$PGPASSWORD_KEY")
 export PGPASSWORD="$DB_MASTER_PASSWORD"
 
 # Check if database already has tables (skip if restored)
-# echo "Checking if database has existing tables..."
-# TABLE_COUNT=$(psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -t -c \
-#   "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'" || echo "0")
+echo "Checking if database has existing tables..."
+TABLE_COUNT=$(psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -t -c \
+  "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'" || echo "0")
 
-# if [ "$TABLE_COUNT" -gt 0 ]; then
-#   echo "Database already has $TABLE_COUNT tables, skipping restore."
-#   exit 0
-# fi
+if [ "$TABLE_COUNT" -gt 0 ]; then
+  echo "Database already has $TABLE_COUNT tables, skipping restore."
+  exit 0
+fi
 
 echo "-----------restore key---------"
 echo "restore key: $RESTORE_KEY"
