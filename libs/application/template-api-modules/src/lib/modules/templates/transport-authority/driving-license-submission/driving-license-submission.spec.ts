@@ -111,7 +111,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({
+      expect(res).toMatchObject({
         success: true,
       })
     })
@@ -203,7 +203,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(result).toEqual({ success: true })
+      expect(result).toMatchObject({ success: true })
       expect(renewDrivingLicense65AndOver).toHaveBeenCalledTimes(1)
       expect(applyForRenewal65).not.toHaveBeenCalled()
 
@@ -280,7 +280,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      expect(res).toMatchObject({ success: true })
       expect(applyForRenewal65).toHaveBeenCalledTimes(1)
 
       const [auth, input] = applyForRenewal65.mock.calls[0]
@@ -320,7 +320,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      expect(res).toMatchObject({ success: true })
       expect(applyForRenewal65).not.toHaveBeenCalled()
     })
 
@@ -342,7 +342,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      expect(res).toMatchObject({ success: true })
       expect(applyForRenewal65).not.toHaveBeenCalled()
     })
 
@@ -376,7 +376,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      expect(res).toMatchObject({ success: true })
       expect(applyForRenewal65).toHaveBeenCalledTimes(1)
     })
 
@@ -410,7 +410,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      expect(res).toMatchObject({ success: true })
       expect(applyForRenewal65).toHaveBeenCalledTimes(1)
     })
   })
@@ -454,6 +454,7 @@ describe('DrivingLicenseSubmissionService', () => {
       newTemporaryDrivingLicenseWithHealthDeclaration = jest.fn(async () => ({
         success: true,
         errorMessage: null,
+        applicationGuid: '2e23bf24-d8bd-4353-9faf-3fc5ce04090d',
       }))
       getFiles = jest.fn(async () => [])
 
@@ -524,7 +525,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      expect(res).toMatchObject({ success: true })
       expect(newTemporaryDrivingLicense).toHaveBeenCalledTimes(1)
 
       // Flag off → biometric IDs are omitted entirely (not sent as null),
@@ -554,7 +555,13 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      // The RLS application guid is threaded into submitApplication's return, so
+      // the framework persists it at externalData.submitApplication.data — the
+      // durable handle for support/reconciliation, not just the api logs.
+      expect(res).toStrictEqual({
+        success: true,
+        applicationGuid: '2e23bf24-d8bd-4353-9faf-3fc5ce04090d',
+      })
       expect(
         newTemporaryDrivingLicenseWithHealthDeclaration,
       ).toHaveBeenCalledTimes(1)
@@ -789,7 +796,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      expect(res).toMatchObject({ success: true })
       expect(newDrivingLicense).toHaveBeenCalledTimes(1)
 
       // Flag off → biometric IDs are omitted entirely (not sent as null),
@@ -818,7 +825,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      expect(res).toMatchObject({ success: true })
       expect(newDrivingLicenseWithHealthDeclaration).toHaveBeenCalledTimes(1)
       expect(newDrivingLicense).not.toHaveBeenCalled()
 
@@ -1031,7 +1038,7 @@ describe('DrivingLicenseSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({ success: true })
+      expect(res).toMatchObject({ success: true })
       expect(applyForBELicense).toHaveBeenCalledTimes(1)
       const [, , input] = applyForBELicense.mock.calls[0]
       expect(input).toMatchObject({

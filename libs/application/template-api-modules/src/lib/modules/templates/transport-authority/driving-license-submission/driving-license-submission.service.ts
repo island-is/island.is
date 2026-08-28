@@ -130,7 +130,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application,
     auth,
     currentUserLocale,
-  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+  }: TemplateApiModuleActionProps): Promise<{
+    success: boolean
+    // Persisted by the framework at `externalData.submitApplication.data`, so the
+    // RLS application guid is retrievable from the application record for support/
+    // reconciliation — not only from the api logs. Present for the redesigned
+    // B-temp/B-full v6 flows; null for the paths that don't return one.
+    applicationGuid?: string | null
+  }> {
     const { answers } = application
     const nationalId = application.applicant
 
@@ -183,6 +190,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     return {
       success: true,
+      applicationGuid: result.applicationGuid ?? null,
     }
   }
 
