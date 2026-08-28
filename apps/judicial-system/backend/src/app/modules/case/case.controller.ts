@@ -34,6 +34,7 @@ import {
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
+  RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import {
   capitalize,
@@ -333,18 +334,22 @@ export class CaseController {
     )
   }
 
-  // CaseExistsForUpdateGuard has to come first, even though it is the guard
-  // that takes the write lock: prosecutorTransitionRule reads request.case and
-  // denies outright when it is missing, so RolesGuard cannot decide this route
-  // before the case has been read. Reordering these two rejects every
-  // prosecutor transition with a 403 - and no controller test catches it,
-  // because guards do not run in them.
+  // CaseExistsForUpdateGuard has to come before RolesGuard, even though it is
+  // the guard that takes the write lock: prosecutorTransitionRule reads
+  // request.case and denies outright when it is missing, so RolesGuard cannot
+  // decide this route before the case has been read. Reordering those two
+  // rejects every prosecutor transition with a 403 - and no controller test
+  // catches it, because guards do not run in them.
   //
-  // The cost is that an authenticated but unauthorized caller holds a write
-  // lock on the case row until RolesGuard rejects it. That is unchanged from
-  // before this route was converted, and closing it needs authorization that
-  // does not depend on the case rather than a different guard order.
+  // RouteRolesGuard is what keeps that from exposing the lock to everyone. It
+  // reads the same roles rules below, but decides on the user's role alone, so
+  // it needs no case and runs first: a caller in a role this route has no rule
+  // for is rejected before the locking read. What remains is a caller in a
+  // listed role transitioning a case they cannot write - CaseWriteGuard needs
+  // the case, so they still reach the read. That is a much smaller population
+  // than "any authenticated user".
   @UseGuards(
+    RouteRolesGuard,
     CaseExistsForUpdateGuard,
     RolesGuard,
     CaseWriteGuard,
