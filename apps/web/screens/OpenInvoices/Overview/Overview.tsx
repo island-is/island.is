@@ -656,7 +656,8 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
         suppliers: suppliersInput,
         ministries: ministriesInput,
         paymentTypeIds: invoicePaymentTypesInput,
-        sortBy: IcelandicGovernmentInstitutionsOpenInvoiceSortField.SupplierName,
+        sortBy:
+          IcelandicGovernmentInstitutionsOpenInvoiceSortField.SupplierName,
         sortDirection: IcelandicGovernmentInstitutionsSortDirection.Ascending,
         limit: PAGE_SIZE,
         page: 1,
