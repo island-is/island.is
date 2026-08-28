@@ -150,7 +150,10 @@ export const InputController = forwardRef(
             allowNegative={allowNegative}
             isAllowed={(values) => {
               const { floatValue } = values
-              return floatValue && max ? floatValue <= max : true
+              if (floatValue === undefined) return true
+              if (max !== undefined && floatValue > max) return false
+              if (min !== undefined && floatValue < min) return false
+              return true
             }}
             onChange={async (
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

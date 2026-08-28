@@ -1,5 +1,5 @@
 import {
-  buildDescriptionField,
+    buildDescriptionField,
   buildMultiField,
   buildPaymentChargeOverviewField,
   buildSection,
@@ -17,10 +17,6 @@ export const paymentSection = buildSection({
       id: 'paymentSection',
       title: messages.description.title,
       children: [
-        buildDescriptionField({
-          id: 'description',
-          space: 'none',
-        }),
         buildPaymentChargeOverviewField({
           id: 'paymentChargeOverview',
           forPaymentLabel: messages.summary.forPaymentLabel,
