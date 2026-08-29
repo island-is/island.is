@@ -81,6 +81,25 @@ import {
 
 import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 
+const mimeTypeToExtension: Record<string, string> = {
+  'application/pdf': '.pdf',
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/heic': '.heic',
+}
+
+// This should be a temporary fix until the backend reliably returns
+// the correct extension in the content-type.
+const extractExtension = (
+  contentDisposition: string | null,
+  contentType: string,
+): string => {
+  const match = contentDisposition?.match(/\.([a-zA-Z0-9]{1,5})(?:"|;|$)/)
+  if (match) return `.${match[1].toLowerCase()}`
+  const normalizedContentType = contentType.split(';')[0].trim().toLowerCase()
+  return mimeTypeToExtension[normalizedContentType] ?? ''
+}
+
 @Injectable()
 export class HealthDirectorateHealthService {
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
@@ -693,7 +712,11 @@ export class HealthDirectorateHealthService {
     conversationId: string,
     messageId: string,
     attachmentId: number,
-  ): Promise<{ data: ArrayBuffer; contentType: string } | null> {
+  ): Promise<{
+    data: ArrayBuffer
+    contentType: string
+    extension: string
+  } | null> {
     const result = await withAuthContext(auth, () =>
       meConversationControllerGetMessageAttachmentV1({
         path: { id: conversationId, messageId, attachmentId },
@@ -701,11 +724,15 @@ export class HealthDirectorateHealthService {
       }),
     )
     if (!result.data) return null
+    const contentType =
+      result.response.headers.get('content-type') || 'application/octet-stream'
     return {
       data: result.data as ArrayBuffer,
-      contentType:
-        result.response.headers.get('content-type') ??
-        'application/octet-stream',
+      contentType,
+      extension: extractExtension(
+        result.response.headers.get('content-disposition'),
+        contentType,
+      ),
     }
   }
 
