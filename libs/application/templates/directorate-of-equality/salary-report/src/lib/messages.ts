@@ -941,7 +941,7 @@ export const messages = {
       },
       title: {
         id: 'doe.sr.application:salaryAnalysis.overview.title',
-        defaultMessage: 'Yfirlit',
+        defaultMessage: 'Niðurstöður launagreiningar',
       },
       intro: {
         id: 'doe.sr.application:salaryAnalysis.overview.intro#markdown',
@@ -961,7 +961,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:salaryAnalysis.improvementPlan.intro',
         defaultMessage:
-          'Þessir starfsmenn bera leiðréttan launamun fyrirtækisins — laun þeirra víkja frá því sem starfsmatsstig þeirra gefa til kynna. Skráðu ástæður og aðgerðir.\n\nNú er tækifærið til að fara vel yfir starfaflokkunina og öll innslegin gögn til þess að kanna hvort þú þurfir að breyta einhverju.',
+          'Eftirfarandi starfsmenn bera leiðréttan launamun fyrirtækisins. Laun þeirra víkja frá því sem starfsmatsstig þeirra gefa til kynna. ',
       },
     }),
     results: defineMessages({
