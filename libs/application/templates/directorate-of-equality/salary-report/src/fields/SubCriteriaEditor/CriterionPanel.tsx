@@ -19,13 +19,10 @@ type Props = {
   criterionTitle: string
   criterionWeight: string
   catalogEntries: SubCriterionCatalogEntryDto[]
-  startExpanded?: boolean
   /**
-   * Reported upward rather than only rendered here: the parent disables "Halda
-   * áfram" while ANY panel is out of balance, and deriving that at the top would
-   * mean watching the whole form there — which re-renders every panel, and every
-   * step textarea inside them, on each keystroke. The scoped useWatch below keeps
-   * that work local; only a flip in the verdict travels up.
+   * The parent disables "Halda áfram" while ANY panel is unbalanced. Reported
+   * upward rather than derived there, where watching the whole form would
+   * re-render every panel and step textarea on each keystroke.
    */
   onWeightMismatchChange: (criterionId: string, hasMismatch: boolean) => void
 }
@@ -36,7 +33,6 @@ export const CriterionPanel: FC<Props> = ({
   criterionTitle,
   criterionWeight,
   catalogEntries,
-  startExpanded = false,
   onWeightMismatchChange,
 }) => {
   const { formatMessage } = useLocale()
@@ -56,9 +52,8 @@ export const CriterionPanel: FC<Props> = ({
   )
   const expectedWeight = Number(criterionWeight) || 0
 
-  // Compare to the PARENT's weight, including 0%. A 0%-weighted criterion can
-  // only carry 0% worth of sub-criteria; otherwise those sub-criteria still write
-  // real step scores below even though the parent contributes no weight.
+  // Compared to the PARENT's weight, 0% included: a 0%-weighted criterion whose
+  // sub-criteria carry weight still writes real step scores below.
   const hasWeightMismatch = Math.abs(subCriteriaTotal - expectedWeight) > 0.001
 
   useEffect(() => {
@@ -72,10 +67,8 @@ export const CriterionPanel: FC<Props> = ({
     <AccordionCard
       id={accordionId}
       label={criterionTitle}
-      // Reddens the header so an out-of-balance criterion is identifiable while
-      // COLLAPSED. Only the first panel of each group starts expanded, so without
-      // this the gate above could disable Continue with its own explanation
-      // hidden inside a shut accordion — a dead button with no visible cause.
+      // Every panel starts collapsed, so without a red header the gate above
+      // could disable Continue with its explanation hidden inside the accordion.
       labelColor={hasWeightMismatch ? 'red600' : undefined}
       visibleContent={formatMessage(
         messages.report.subCriteria.criterionWeightLabel,
@@ -83,7 +76,6 @@ export const CriterionPanel: FC<Props> = ({
           weight: criterionWeight,
         },
       )}
-      startExpanded={startExpanded}
     >
       <Box>
         {fields.map((field, i) => (

@@ -90,13 +90,17 @@ export const messages = {
       id: 'doe.sr.application:approved.sectionTitle',
       defaultMessage: 'Samþykkt',
     },
+    formTitle: {
+      id: 'doe.sr.application:approved.formTitle',
+      defaultMessage: 'Skýrslugjöf samþykkt!',
+    },
     title: {
       id: 'doe.sr.application:approved.title',
-      defaultMessage: 'Umsókn samþykkt',
+      defaultMessage: 'Skýrslugjöf samþykkt',
     },
     description: {
       id: 'doe.sr.application:approved.description',
-      defaultMessage: 'Umsókn þín hefur verið samþykkt.',
+      defaultMessage: 'Skýrslugjöfin þín hefur verið samþykkt.',
     },
   }),
 
@@ -1632,7 +1636,11 @@ export const messages = {
     },
     sectionTitle: {
       id: 'doe.sr.application:inReview.sectionTitle',
-      defaultMessage: 'Sending móttekin',
+      defaultMessage: 'Innsending móttekin',
+    },
+    formTitle: {
+      id: 'doe.sr.application:inReview.formTitle',
+      defaultMessage: 'Takk fyrir innsendinguna',
     },
     alertTitle: {
       id: 'doe.sr.application:inReview.alertTitle',
@@ -1729,13 +1737,17 @@ export const messages = {
       id: 'doe.sr.application:rejected.sectionTitle',
       defaultMessage: 'Hafnað',
     },
+    formTitle: {
+      id: 'doe.sr.application:rejected.formTitle',
+      defaultMessage: 'Skýrslugjöf hafnað',
+    },
     title: {
       id: 'doe.sr.application:rejected.title',
-      defaultMessage: 'Umsókn hafnað',
+      defaultMessage: 'Skýrslugjöf hafnað',
     },
     description: {
       id: 'doe.sr.application:rejected.description',
-      defaultMessage: 'Umsókn þinni hefur verið hafnað.',
+      defaultMessage: 'Skýrslugjöfinni þinni hefur verið hafnað.',
     },
   }),
 
@@ -1746,7 +1758,7 @@ export const messages = {
     },
     introSectionTitle: {
       id: 'doe.sr.application:postponed.introSectionTitle',
-      defaultMessage: 'Sending móttekin',
+      defaultMessage: 'Innsending móttekin',
     },
     introTitle: {
       id: 'doe.sr.application:postponed.introTitle',

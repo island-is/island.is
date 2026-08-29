@@ -29,3 +29,7 @@ export const decodeHtmlEntities = (value: string) =>
     }
     return HTML_NAMED_ENTITIES[entity.toLowerCase()] ?? match
   })
+
+// The plain-text body of an HTML fragment: tags dropped, entities decoded.
+export const htmlToPlainText = (value: string) =>
+  decodeHtmlEntities(value.replace(/<[^>]*>/g, '')).trim()

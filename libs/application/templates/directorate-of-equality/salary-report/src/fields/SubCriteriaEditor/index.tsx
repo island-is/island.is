@@ -77,9 +77,8 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     [],
   )
 
-  // Blocks "Halda áfram" outright instead of letting the applicant walk into an
-  // error on the far side: an unbalanced yfirviðmið cannot be scored at all, and
-  // the panel's own message already names which one is off and by how much.
+  // An unbalanced yfirviðmið cannot be scored at all, and the panel's own
+  // message already names which one is off — so block rather than let it pass.
   useEffect(() => {
     if (!setSubmitButtonDisabled) return
     setSubmitButtonDisabled(criteriaWithWeightMismatch.size > 0)
@@ -102,12 +101,9 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     [content],
   )
 
-  // Job criteria match the catalog on parentTitle because their four titles are
-  // seeded read-only constants that mirror the catalog's Yfirviðmið. Personal
-  // criterion titles are user-authored free text, so the same match finds
-  // nothing — the catalog groups every employer-authored entry under several
-  // distinct parentTitles (Aukaábyrgð, Þekking og reynsla, Færni, Frammistaða)
-  // and none of them is what the applicant typed. Select on the type instead.
+  // Job criteria match on parentTitle: their four titles are seeded constants
+  // mirroring the catalog's Yfirviðmið. Personal titles are user-authored free
+  // text that matches no parentTitle, so those select on type instead.
   const personalCatalogEntries = useMemo(
     () => catalogEntries.filter((e) => e.criterionType === 'PERSONAL'),
     [catalogEntries],
@@ -197,10 +193,8 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           subCriteria: subCriteriaCommands,
           steps: stepCommands,
         })
-        // The draft now holds exactly what was flushed, so the diff baseline
-        // moves with it — otherwise a second flush from the same mount would
-        // re-send the same REMOVEs against rows DMR has already deleted, and
-        // 404 the batch.
+        // Baseline moves with the draft, or a second flush from the same mount
+        // re-sends its REMOVEs against rows DMR already deleted and 404s.
         originalSubCriterionIds.current = new Set(allGroups.map((sc) => sc.id))
         originalStepIds.current = new Set(
           allGroups.flatMap((sc) => sc.steps.map((step) => step.id)),
@@ -234,7 +228,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               {formatMessage(messages.report.subCriteria.jobFactorGroupIntro)}
             </Text>
             <Stack space={3}>
-              {jobCriteria.map((criterion, i) => (
+              {jobCriteria.map((criterion) => (
                 <CriterionPanel
                   key={criterion.id}
                   criterionId={criterion.id}
@@ -244,7 +238,6 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   catalogEntries={catalogEntries.filter(
                     (e) => e.parentTitle === criterion.title,
                   )}
-                  startExpanded={i === 0}
                   onWeightMismatchChange={handleWeightMismatchChange}
                 />
               ))}
@@ -264,7 +257,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 )}
               </Text>
               <Stack space={3}>
-                {personalCriteria.map((criterion, i) => (
+                {personalCriteria.map((criterion) => (
                   <CriterionPanel
                     key={criterion.id}
                     criterionId={criterion.id}
@@ -272,7 +265,6 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     criterionTitle={criterion.title}
                     criterionWeight={String(criterion.weight)}
                     catalogEntries={personalCatalogEntries}
-                    startExpanded={i === 0}
                     onWeightMismatchChange={handleWeightMismatchChange}
                   />
                 ))}

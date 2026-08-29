@@ -282,31 +282,27 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      const activeReport =
-        await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+    // Propagates rather than falling back to null, so the screen can tell
+    // "no earlier plan" (null) from "DMR did not answer".
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to get previous equality report content',
+      async () => {
+        const activeReport =
+          await this.directorateOfEqualityService.getActiveEqualityReport(auth)
 
-      // providerId is the only lookup handle DMR accepts on
-      // GET /application/reports/:providerId — `id` resolves only against the
-      // admin-only endpoint and `identifier` is a human-facing display code.
-      if (!activeReport?.providerId) return null
+        // providerId is the only lookup handle DMR accepts on
+        // GET /application/reports/:providerId — `id` resolves only against the
+        // admin-only endpoint and `identifier` is a human-facing display code.
+        if (!activeReport?.providerId) return null
 
-      const report = await this.directorateOfEqualityService.getReport(
-        auth,
-        activeReport.providerId,
-      )
-      return { equalityReportContent: report.equalityReportContent ?? '' }
-    } catch (error) {
-      this.logger.error(
-        'Failed to get previous equality report content, falling back',
-        {
-          applicationId: application.id,
-          context: LOGGING_CONTEXT,
-          ...this.extractFetchErrorDetails(error),
-        },
-      )
-      return null
-    }
+        const report = await this.directorateOfEqualityService.getReport(
+          auth,
+          activeReport.providerId,
+        )
+        return { equalityReportContent: report.equalityReportContent ?? '' }
+      },
+    )
   }
 
   async getBlankExcelTemplate({

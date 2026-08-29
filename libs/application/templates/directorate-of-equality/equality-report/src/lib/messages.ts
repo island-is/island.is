@@ -25,6 +25,10 @@ export const messages = {
       id: 'doe.er.application:errors.editorMinLength',
       defaultMessage: 'Texti verður að vera að minnsta kosti 200 stafir',
     },
+    alertTitle: {
+      id: 'doe.er.application:errors.alertTitle',
+      defaultMessage: 'Villa:',
+    },
     invalidCompanyNationalId: {
       id: 'doe.er.application:errors.invalidCompanyNationalId',
       defaultMessage: 'Kennitala er ekki gild kennitala fyrirtækis',
@@ -67,13 +71,17 @@ export const messages = {
       id: 'doe.er.application:approved.sectionTitle',
       defaultMessage: 'Samþykkt',
     },
+    formTitle: {
+      id: 'doe.er.application:approved.formTitle',
+      defaultMessage: 'Jafnréttisáætlun samþykkt!',
+    },
     title: {
       id: 'doe.er.application:approved.title',
-      defaultMessage: 'Umsókn samþykkt',
+      defaultMessage: 'Jafnréttisáætlun samþykkt',
     },
     description: {
       id: 'doe.er.application:approved.description',
-      defaultMessage: 'Umsókn þín hefur verið samþykkt.',
+      defaultMessage: 'Jafnréttisáætlunin þín hefur verið samþykkt.',
     },
   }),
 
@@ -82,13 +90,17 @@ export const messages = {
       id: 'doe.er.application:rejected.sectionTitle',
       defaultMessage: 'Hafnað',
     },
+    formTitle: {
+      id: 'doe.er.application:rejected.formTitle',
+      defaultMessage: 'Jafnréttisáætlun hafnað',
+    },
     title: {
       id: 'doe.er.application:rejected.title',
-      defaultMessage: 'Umsókn hafnað',
+      defaultMessage: 'Jafnréttisáætlun hafnað',
     },
     description: {
       id: 'doe.er.application:rejected.description',
-      defaultMessage: 'Umsókn þinni hefur verið hafnað.',
+      defaultMessage: 'Jafnréttisáætluninni þinni hefur verið hafnað.',
     },
   }),
 
@@ -446,7 +458,7 @@ export const messages = {
       },
       implementationTitle: {
         id: 'doe.er.application:equalityReport.information.implementationTitle',
-        defaultMessage: 'Skipulag og framkvæmd',
+        defaultMessage: 'Skipulag og framkvæmd við gerð Jafnréttisáætlunar',
       },
       implementationList: {
         id: 'doe.er.application:equalityReport.information.implementationList#markdown',
@@ -479,6 +491,16 @@ export const messages = {
         id: 'doe.er.application:equalityReport.information.editorUploadSuccess',
         defaultMessage: 'Jafnréttisáætlun var hlaðið upp.',
       },
+      editorUploadIncomplete: {
+        id: 'doe.er.application:equalityReport.information.editorUploadIncomplete',
+        defaultMessage:
+          'Ljúktu við upphleðslu jafnréttisáætlunar áður en þú heldur áfram.',
+      },
+      editorUploadRequired: {
+        id: 'doe.er.application:equalityReport.information.editorUploadRequired',
+        defaultMessage:
+          'Hlaðið upp jafnréttisáætlun áður en þú heldur áfram.',
+      },
     }),
     previousEqualityPlan: defineMessages({
       sectionTitle: {
@@ -496,7 +518,7 @@ export const messages = {
       },
       copyButton: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.copyButton',
-        defaultMessage: 'Afrita',
+        defaultMessage: 'Afrita innihald eldri áætlunar',
       },
       copied: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.copied',
@@ -513,6 +535,11 @@ export const messages = {
       validUntil: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.validUntil',
         defaultMessage: 'Gildir til',
+      },
+      loadError: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.loadError',
+        defaultMessage:
+          'Ekki tókst að sækja eldri jafnréttisáætlun. Vinsamlegast reynið aftur síðar.',
       },
     }),
     goalsAndActions: defineMessages({
@@ -612,6 +639,10 @@ export const messages = {
     sectionTitle: {
       id: 'doe.er.application:inReview.sectionTitle',
       defaultMessage: 'Sending móttekin',
+    },
+    formTitle: {
+      id: 'doe.er.application:inReview.formTitle',
+      defaultMessage: 'Takk fyrir innsendinguna',
     },
     alertTitle: {
       id: 'doe.er.application:inReview.title',
