@@ -70,6 +70,7 @@ import {
   DefendantExistsGuard,
 } from '../defendant'
 import { Case, CaseFile, Defendant } from '../repository'
+import { AttachRulingOrderDocumentDto } from './dto/attachRulingOrderDocument.dto'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -379,6 +380,45 @@ export class FileController {
 
     return this.sequelize.transaction((transaction) =>
       this.fileService.confirmRulingOrder(theCase, caseFile, transaction),
+    )
+  }
+
+  @UseGuards(
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseFileExistsGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post('file/:fileId/document')
+  @ApiOkResponse({
+    type: CaseFile,
+    description:
+      'Attaches the document the district court wrote up for a ruling order pronounced orally',
+  })
+  attachRulingOrderDocument(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentCaseFile() caseFile: CaseFile,
+    @Body() attachDocument: AttachRulingOrderDocumentDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(
+      `Attaching a document to ruling order ${fileId} of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.attachRulingOrderDocument(
+        theCase,
+        caseFile,
+        attachDocument,
+        user,
+        transaction,
+      ),
     )
   }
 
