@@ -63,6 +63,11 @@ const template: ApplicationTemplate<
         ])
         return context
       }),
+      markRevised: assign((context) => {
+        const { application } = context
+        set(application, 'answers.hasBeenRevised', true)
+        return context
+      }),
     },
   },
   stateMachineConfig: {
@@ -327,6 +332,7 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
+            actions: 'markRevised',
           },
         },
       },

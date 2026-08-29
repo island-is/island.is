@@ -538,7 +538,7 @@ export const messages = {
       importSuccess: {
         id: 'doe.sr.application:report.dataEntry.importSuccess',
         defaultMessage:
-          'Skráin var flutt inn og launagreining fer fram í næsta skrefi.',
+          'Skjalinu var hlaðið upp og launagreining fer fram í næsta skrefi.',
       },
       importSuccessContinueButton: {
         id: 'doe.sr.application:report.dataEntry.importSuccessContinueButton',

@@ -489,7 +489,7 @@ export const messages = {
       },
       editorUploadSuccess: {
         id: 'doe.er.application:equalityReport.information.editorUploadSuccess',
-        defaultMessage: 'Jafnréttisáætlun var hlaðið upp.',
+        defaultMessage: 'Skjalinu var hlaðið upp.',
       },
       editorUploadIncomplete: {
         id: 'doe.er.application:equalityReport.information.editorUploadIncomplete',
@@ -498,8 +498,7 @@ export const messages = {
       },
       editorUploadRequired: {
         id: 'doe.er.application:equalityReport.information.editorUploadRequired',
-        defaultMessage:
-          'Hlaðið upp jafnréttisáætlun áður en þú heldur áfram.',
+        defaultMessage: 'Hlaðið upp jafnréttisáætlun áður en þú heldur áfram.',
       },
     }),
     previousEqualityPlan: defineMessages({
@@ -647,6 +646,10 @@ export const messages = {
     alertTitle: {
       id: 'doe.er.application:inReview.title',
       defaultMessage: 'Jafnréttisáætlun er móttekin',
+    },
+    alertTitleRevised: {
+      id: 'doe.er.application:inReview.alertTitleRevised',
+      defaultMessage: 'Jafnréttisáætlun uppfærð',
     },
     alertDescription: {
       id: 'doe.er.application:inReview.description',
