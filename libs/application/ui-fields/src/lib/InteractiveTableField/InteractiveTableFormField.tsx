@@ -88,21 +88,20 @@ export const InteractiveTableFormField: FC<Props> = ({
     rows.length > 0 &&
     rows.every((_, rowIndex) => !!selectedValues[rowIndex])
 
-  const hasCheckedAndFilledRow = rows.some((_, rowIndex) => {
-    if (!selectedValues[rowIndex]) return false
-    const amount = parseFloat(inputValues[rowIndex] ?? '')
-    return !Number.isNaN(amount) && amount > 0
-  })
+  const { isSubmitDisabled } = field
+  const submitDisabled =
+    isSubmitDisabled?.({
+      selectedRows: rows.map((_, rowIndex) => !!selectedValues[rowIndex]),
+      inputValues: hasInputColumn
+        ? rows.map((_, rowIndex) => inputValues[rowIndex] ?? '')
+        : [],
+      application,
+    }) ?? false
 
   useEffect(() => {
-    if (!selectable || !hasInputColumn) return
-    setSubmitButtonDisabled?.(!hasCheckedAndFilledRow)
-  }, [
-    selectable,
-    hasInputColumn,
-    hasCheckedAndFilledRow,
-    setSubmitButtonDisabled,
-  ])
+    if (!isSubmitDisabled) return
+    setSubmitButtonDisabled?.(submitDisabled)
+  }, [isSubmitDisabled, submitDisabled, setSubmitButtonDisabled])
 
   const toggleAll = () => {
     const nowSelected = !allSelected

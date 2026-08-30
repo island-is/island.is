@@ -1037,6 +1037,11 @@ export interface InteractiveTableField extends BaseField {
     placeholder?: StaticText
   }
   footerRow?: StaticText[] | ((application: Application) => StaticText[])
+  isSubmitDisabled?: (params: {
+    selectedRows: boolean[]
+    inputValues: string[]
+    application: Application
+  }) => boolean
 }
 
 export interface StickyFooterField extends BaseField {

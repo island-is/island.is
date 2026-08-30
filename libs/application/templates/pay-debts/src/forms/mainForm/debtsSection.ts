@@ -50,6 +50,7 @@ export const debtsSection = buildSection({
             getMaxAmount: (application) =>
               getDebts(application).map((debt) => debt.debts),
           },
+          isSubmitDisabled: ({ selectedRows }) => !selectedRows.some(Boolean),
           footerRow: (application) => [
             messages.table.totalDebtsLabel,
             '',
