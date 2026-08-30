@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const completedForm = defineMessages({
+  sectionTitle: {
+    id: 'pd.application:completedForm.sectionTitle',
+    defaultMessage: 'Staðfesting',
+    description: 'Title of the completed form section',
+  },
   alertTitle: {
     id: 'pd.application:completedForm.alertTitle',
     defaultMessage: 'Staðfesting',
