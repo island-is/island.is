@@ -119,7 +119,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // This is the role every unauthorized caller falls through to, so
+              // it gets nothing: the dead-end form reads no answers and no
+              // externalData, only `application.applicant`.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },
@@ -147,7 +152,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // Same dead-end form as the PREREQUISITES fall-through above, and
+              // it reads nothing either — this applicant is authorized, just
+              // ineligible.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },
@@ -302,13 +312,13 @@ const template: ApplicationTemplate<
           // So the comment thread's non-empty check has fresh externalData —
           // see the identical comment on States.DRAFT.
           //
-          // throwOnError: false because this state is entered by
-          // PostponeReceiptCloser's beacon, with nobody watching. An onEntry
-          // runs before the new state is persisted and blocks it by default, so
-          // a hiccup from DMR's comments endpoint would silently leave the
-          // applicant on the receipt. CommentThread refetches on mount anyway —
-          // a failed prefetch costs nothing.
-          onEntry: GetReportCommentsApi.configure({ throwOnError: false }),
+          // This state in particular depends on the provider's
+          // `throwOnError: false`: it is entered by PostponeReceiptCloser's
+          // beacon with nobody watching, and an onEntry runs before the new
+          // state is persisted and blocks it by default — so a hiccup from
+          // DMR's comments endpoint would silently leave the applicant on the
+          // receipt. CommentThread refetches on mount anyway.
+          onEntry: GetReportCommentsApi,
           actionCard: {
             tag: {
               label: messages.postponed.tagLabel,

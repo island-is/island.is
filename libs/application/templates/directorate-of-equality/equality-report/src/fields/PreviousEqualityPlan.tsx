@@ -15,7 +15,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useIntl } from 'react-intl'
 import { toast } from '@island.is/island-ui/core'
-import { ApiActions } from '../utils/constants'
+import { ApiActions, draftActionId } from '../utils/constants'
 import { htmlToPlainText } from '../utils/htmlHelpers'
 import { getProviderErrorMessage } from '../utils/providerError'
 
@@ -37,7 +37,10 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
   const { locale } = useLocale()
   const { formatMessage } = useIntl()
   const [content, setContent] = useState<HTMLText | null>(null)
-  const [loading, setLoading] = useState(false)
+  // Starts true: HTMLEditor seeds itself from the value present at MOUNT and
+  // ignores every later one, so it must not mount before the effect below has
+  // resolved cached or fetched content — otherwise it renders blank for good.
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const [updateApplicationExternalData] = useMutation(
@@ -53,17 +56,19 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
     // on it would render the blank editor forever.
     if (!isBlank(cached)) {
       setContent(cached as HTMLText)
+      setLoading(false)
       return
     }
 
-    setLoading(true)
     updateApplicationExternalData({
       variables: {
         input: {
           id: application.id,
           dataProviders: [
             {
-              actionId: `DirectorateOfEquality.${ApiActions.getPreviousEqualityReportContent}`,
+              actionId: draftActionId(
+                ApiActions.getPreviousEqualityReportContent,
+              ),
               order: 0,
             },
           ],
@@ -99,14 +104,21 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
       .finally(() => setLoading(false))
   }, [])
 
-  const handleCopy = () => {
+  // Rejects on a denied permission, an unfocused document or an insecure
+  // context, and `clipboard` is absent outright in some browsers — left
+  // unhandled the button just does nothing.
+  const handleCopy = async () => {
     if (!content) return
-    const plain = htmlToPlainText(content)
-    navigator.clipboard.writeText(plain).then(() => {
+    try {
+      await navigator.clipboard.writeText(htmlToPlainText(content))
       toast.success(
         formatMessage(messages.equalityReport.previousEqualityPlan.copied),
       )
-    })
+    } catch {
+      toast.error(
+        formatMessage(messages.equalityReport.previousEqualityPlan.copyError),
+      )
+    }
   }
 
   if (loading) {
@@ -133,7 +145,7 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
           size="small"
           icon="copy"
           iconType="outline"
-          onClick={handleCopy}
+          onClick={() => void handleCopy()}
           disabled={!content}
         >
           {formatMessage(

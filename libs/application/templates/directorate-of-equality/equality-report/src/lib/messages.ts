@@ -555,6 +555,11 @@ export const messages = {
         defaultMessage:
           'Ekki tókst að sækja eldri jafnréttisáætlun. Vinsamlegast reynið aftur síðar.',
       },
+      copyError: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.copyError',
+        defaultMessage:
+          'Ekki tókst að afrita. Þú getur valið textann og afritað hann handvirkt.',
+      },
     }),
     goalsAndActions: defineMessages({
       sectionTitle: {

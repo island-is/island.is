@@ -17,7 +17,7 @@ import { FileRejection } from 'react-dropzone'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
-import { ApiActions } from '../utils/constants'
+import { ApiActions, draftActionId } from '../utils/constants'
 import { escapeHtml } from '../utils/htmlHelpers'
 import {
   useEnsureEqualityDraft,
@@ -231,7 +231,9 @@ export const Editor = ({
             id: application.id,
             dataProviders: [
               {
-                actionId: `DirectorateOfEquality.${ApiActions.getEqualityReportTemplateDocx}`,
+                actionId: draftActionId(
+                  ApiActions.getEqualityReportTemplateDocx,
+                ),
                 order: 0,
               },
             ],
@@ -251,7 +253,8 @@ export const Editor = ({
           bytes[i] = binary.charCodeAt(i)
         }
         const blob = new Blob([bytes], {
-          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          type:
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         })
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')

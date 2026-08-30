@@ -20,7 +20,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import type { ApplicationReportCommentDto } from '@island.is/clients/directorate-of-equality'
-import { ApiActions, States } from '../utils/constants'
+import { ApiActions, draftActionId, States } from '../utils/constants'
 import { messages } from '../lib/messages'
 
 // Long threads collapse to the first and last few entries with a "see all"
@@ -86,7 +86,7 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
           id: application.id,
           dataProviders: [
             {
-              actionId: `DirectorateOfEquality.${ApiActions.getReportComments}`,
+              actionId: draftActionId(ApiActions.getReportComments),
               order: 0,
             },
           ],
@@ -117,9 +117,9 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
   }
 
   const handleSend = async () => {
-    const draft = (
-      getValues('comment.newMessage') as string | undefined
-    )?.trim()
+    const draft = (getValues('comment.newMessage') as
+      | string
+      | undefined)?.trim()
     if (!draft) return
 
     setIsSending(true)
@@ -140,7 +140,7 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
             id: application.id,
             dataProviders: [
               {
-                actionId: `DirectorateOfEquality.${ApiActions.submitReportComment}`,
+                actionId: draftActionId(ApiActions.submitReportComment),
                 order: 0,
               },
             ],

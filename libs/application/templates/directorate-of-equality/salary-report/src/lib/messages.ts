@@ -662,6 +662,13 @@ export const messages = {
         id: 'doe.sr.application:report.subCriteria.criterionWeightLabel',
         defaultMessage: 'Vægi yfirviðmiðs: {weight}%',
       },
+      // Shown next to the weight while the panel is COLLAPSED, so the red
+      // header is never the only thing marking it as blocking.
+      criterionWeightMismatchBadge: {
+        id:
+          'doe.sr.application:report.subCriteria.criterionWeightMismatchBadge',
+        defaultMessage: 'Vægi stemmir ekki',
+      },
       catalogLabel: {
         id: 'doe.sr.application:report.subCriteria.catalogLabel',
         defaultMessage: 'Nota sniðmát',
