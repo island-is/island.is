@@ -117,9 +117,9 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
   }
 
   const handleSend = async () => {
-    const draft = (getValues('comment.newMessage') as
-      | string
-      | undefined)?.trim()
+    const draft = (
+      getValues('comment.newMessage') as string | undefined
+    )?.trim()
     if (!draft) return
 
     setIsSending(true)
