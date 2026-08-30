@@ -63,9 +63,17 @@ const template: ApplicationTemplate<
         ])
         return context
       }),
+      // Both transitions into IN_REVIEW write the flag, so whatever a client
+      // may have put in answers while editing is overwritten by the route
+      // actually taken.
       markRevised: assign((context) => {
         const { application } = context
         set(application, 'answers.hasBeenRevised', true)
+        return context
+      }),
+      markNotRevised: assign((context) => {
+        const { application } = context
+        set(application, 'answers.hasBeenRevised', false)
         return context
       }),
     },
@@ -184,6 +192,7 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
+            actions: 'markNotRevised',
           },
         },
       },
