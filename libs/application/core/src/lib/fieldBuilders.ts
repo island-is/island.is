@@ -1170,6 +1170,7 @@ export const buildInteractiveTableField = (
     selectable = false,
     inputColumn,
     footerRow,
+    isSubmitDisabled,
   } = data
 
   return {
@@ -1191,6 +1192,7 @@ export const buildInteractiveTableField = (
     selectable,
     inputColumn,
     footerRow,
+    isSubmitDisabled,
   }
 }
 
