@@ -1035,6 +1035,20 @@ export class CaseService {
     })
   }
 
+  private addMessagesForReviewAcceptedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_REVIEW_ACCEPTED,
+      },
+    })
+  }
+
   private addMessagesForReopenedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -1116,6 +1130,15 @@ export class CaseService {
         isIndictment
       ) {
         this.addMessagesForReviewRequestedIndictmentCaseToQueue(
+          updatedCase,
+          user,
+        )
+      } else if (
+        updatedCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
+        theCase.state === CaseState.WAITING_FOR_REVIEW &&
+        isIndictment
+      ) {
+        this.addMessagesForReviewAcceptedIndictmentCaseToQueue(
           updatedCase,
           user,
         )

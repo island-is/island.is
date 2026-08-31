@@ -432,7 +432,7 @@ const Overview: FC = () => {
                   <Box marginBottom={wantsReview ? 3 : 0}>
                     <Checkbox
                       name="wantsReview"
-                      label="Senda í yfirlestur"
+                      label="Senda ákæru í yfirlestur"
                       checked={wantsReview}
                       onChange={(event) => {
                         const checked = event.target.checked
@@ -452,7 +452,7 @@ const Overview: FC = () => {
                       <ProsecutorSelection
                         label="Veldu aðila sem les yfir"
                         placeholder="Veldu yfirlesara"
-                        isRequired={false}
+                        isRequired={true}
                         shouldInitializeSelector={true}
                         excludeUserId={user?.id}
                         onChange={(prosecutorId, prosecutorName) => {
