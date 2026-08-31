@@ -69,6 +69,12 @@ export {
   UpdateUser,
 } from './services/userRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
+export {
+  VictimRepositoryService,
+  CreateVictim,
+  UpdateVictim,
+  UpdatedVictims,
+} from './services/victimRepository.service'
 
 export {
   caseInclude,
