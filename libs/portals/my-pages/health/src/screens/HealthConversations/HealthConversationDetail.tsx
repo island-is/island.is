@@ -140,13 +140,15 @@ const HealthConversationDetail = () => {
 
   const item = data?.healthDirectorateHealthConversation
 
-  // Mark as read once when the thread first loads and hasn't been read yet
+  // Mark as read when the thread is unread — isRead is a dependency because
+  // cache-and-network can render a read cached thread before the network
+  // result reveals it has become unread
   useEffect(() => {
     if (item?.isRead === false) {
       markAsRead({ variables: { input: { id } } })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item?.id])
+  }, [item?.id, item?.isRead])
 
   if (loading && !data) {
     return (
