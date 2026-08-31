@@ -13,10 +13,10 @@ import {
 import { SortableTable, SortableTableColumn } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 
-import { NotYetInEffectTag } from './customsGeneralUtils'
+import { NotYetInEffectTag, ValidityFields } from './customsGeneralUtils'
 import { m } from './translation.strings'
 
-interface Props<T extends Record<string, any>> {
+interface Props<T extends Record<string, any> & ValidityFields> {
   columns: SortableTableColumn<T>[]
   data: T[]
   loading: boolean
@@ -42,7 +42,9 @@ export const toApiDate = (date: Date) => {
   )}T00:00:00Z`
 }
 
-export const CustomsGeneralDateTable = <T extends Record<string, any>>({
+export const CustomsGeneralDateTable = <
+  T extends Record<string, any> & ValidityFields,
+>({
   columns,
   data,
   loading,
