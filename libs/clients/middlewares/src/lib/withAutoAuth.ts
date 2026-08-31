@@ -77,8 +77,7 @@ export interface AutoAuthOptions {
   audience?: string
 
   /**
-   * Additional headers to include in the token request. Useful when the token
-   * endpoint is behind a proxy (e.g. X-Road) that requires identification headers.
+   * Additional headers to include in the token request. Useful when the token endpoint is behind a proxy (e.g. X-Road) that requires identification headers.
    */
   tokenRequestHeaders?: Record<string, string>
 }
