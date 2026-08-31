@@ -656,8 +656,7 @@ export const messages = {
       // Shown next to the weight while the panel is COLLAPSED, so the red
       // header is never the only thing marking it as blocking.
       criterionWeightMismatchBadge: {
-        id:
-          'doe.sr.application:report.subCriteria.criterionWeightMismatchBadge',
+        id: 'doe.sr.application:report.subCriteria.criterionWeightMismatchBadge',
         defaultMessage: 'Vægi stemmir ekki',
       },
       catalogLabel: {

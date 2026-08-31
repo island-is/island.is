@@ -253,8 +253,7 @@ export const Editor = ({
           bytes[i] = binary.charCodeAt(i)
         }
         const blob = new Blob([bytes], {
-          type:
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         })
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
