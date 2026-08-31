@@ -39,6 +39,14 @@ export const messages = {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
     },
+    // A remedy date can be in range when it is picked and out of range by the
+    // time the plan is submitted, so this is a distinct complaint from
+    // errors.required rather than a variant of it.
+    remedyDateOutOfRange: {
+      id: 'doe.sr.application:errors.remedyDateOutOfRange',
+      defaultMessage:
+        'Dagsetning úrbóta þarf að vera í framtíðinni og ekki meira en þrjú ár fram í tímann.',
+    },
     alertTitle: {
       id: 'doe.sr.application:errors.alertTitle',
       defaultMessage: 'Villa:',
@@ -952,7 +960,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:salaryAnalysis.overview.intro#markdown',
         defaultMessage:
-          'Hér að neðan sérðu launagreiningu sem flokkar saman sömu og jafnverðmæt störf. Launagreiningin byggir á innslegnum gögnum og mati þínu á störfum og starfsfólki.',
+          'Hér að neðan er yfirlit yfir niðurstöður launagreiningar. Launagreiningin byggir á innsetningu gagna og fyrirliggjandi starfsmati og flokkun starfa.',
       },
     }),
     improvementPlan: defineMessages({
@@ -1129,11 +1137,11 @@ export const messages = {
       },
       directionWomen: {
         id: 'doe.sr.application:salaryAnalysis.results.directionWomen',
-        defaultMessage: 'í óhag kvenna',
+        defaultMessage: 'konum í óhag',
       },
       directionMen: {
         id: 'doe.sr.application:salaryAnalysis.results.directionMen',
-        defaultMessage: 'í óhag karla',
+        defaultMessage: 'körlum í óhag',
       },
       directionNone: {
         id: 'doe.sr.application:salaryAnalysis.results.directionNone',
@@ -1148,7 +1156,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:salaryAnalysis.chart.intro',
         defaultMessage:
-          'Viðmiðslínan er væntanlegt tímakaup eftir stigum. Launafrávik hvers starfsmanns er mælt frá henni, og úrbótaáætlun getur tekið til starfsmanna á báða vegu — bæði undir línunni og yfir henni.',
+          'Viðmiðunarlínan sýnir vænt tímakaup miðað við heildarstig. Launafrávik eru metin með hliðsjón af stöðu hvers starfsmanns gagnvart línunni. Úrbótaáætlun skal bæði ávarpa þau frávik sem eru yfir og undir uppgefnu viðmiði stjórnvalda frá viðmiðunarlínunni.',
       },
       xAxisLabel: {
         id: 'doe.sr.application:salaryAnalysis.chart.xAxisLabel',
@@ -1160,7 +1168,7 @@ export const messages = {
       },
       legendCurve: {
         id: 'doe.sr.application:salaryAnalysis.chart.legendCurve',
-        defaultMessage: 'Væntanlegt tímakaup',
+        defaultMessage: 'Vænt tímakaup',
       },
       legendMale: {
         id: 'doe.sr.application:salaryAnalysis.chart.legendMale',
@@ -1175,7 +1183,7 @@ export const messages = {
       note: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.note',
         defaultMessage:
-          'Viðmiðslínan sveigist vegna þess að væntanlegt tímakaup hækkar um fast HLUTFALL á hvert stig, ekki fasta krónutölu — og hlutfallshækkun leggst við sjálfa sig. Í krónum verður hvert 100 stiga þrep því stærra en það síðasta.',
+          'Viðmiðslínan sveigist vegna þess að vænt tímakaup hækkar um fast HLUTFALL á hvert stig, ekki fasta krónutölu — og hlutfallshækkun leggst við sjálfa sig. Í krónum verður hvert 100 stiga þrep því stærra en það síðasta.',
       },
       growthLabel: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.growthLabel',
@@ -1187,7 +1195,7 @@ export const messages = {
       },
       atMeanLabel: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.atMeanLabel',
-        defaultMessage: 'Væntanlegt tímakaup við meðalstig',
+        defaultMessage: 'Vænt tímakaup við meðalstig',
       },
       atMeanHint: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.atMeanHint',
@@ -1195,7 +1203,7 @@ export const messages = {
       },
       unavailable: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.unavailable',
-        defaultMessage: 'Viðmiðslína ekki reiknanleg fyrir þessi gögn',
+        defaultMessage: 'Viðmiðunarlína ekki reiknanleg fyrir þessi gögn',
       },
     }),
     chartMarkedLegend: defineMessages({
@@ -1227,7 +1235,7 @@ export const messages = {
       },
       expected: {
         id: 'doe.sr.application:salaryAnalysis.chartTooltip.expected',
-        defaultMessage: 'Væntanlegt tímakaup',
+        defaultMessage: 'Vænt tímakaup',
       },
       deviation: {
         id: 'doe.sr.application:salaryAnalysis.chartTooltip.deviation',
@@ -1299,7 +1307,7 @@ export const messages = {
       noObligation: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.noObligation',
         defaultMessage:
-          'Engra skýringa er krafist og ekkert þarf að skrá — þetta eru ekki frávik í skilningi úrbótaáætlunar og hafa engin áhrif á afgreiðslu skýrslunnar. Ábendingin er til fyrirtækisins sjálfs: gögnin gætu þurft nánari skoðun innanhúss.',
+          'Eftirfarandi frávik skera sig úr og eru yfir eða undir uppgefnu viðmiði stjórnvalda frá viðmiðunarlínu. Þar sem kynbundinn launamunur mælist ekki í launagreiningu er ekki gerð krafa um skýringar eða skráningu. Hins vegar er bent á að launasetning þessa starfsfólks gæti þurft nánari skoðun innanhúss.',
       },
       spreadNote: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.spreadNote',
@@ -1319,12 +1327,12 @@ export const messages = {
       blockerNoScoreVariation: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.blockerNoScoreVariation',
         defaultMessage:
-          'Öll starfsmatsstig eru eins, því liggur ekkert væntanlegt tímakaup fyrir til að víkja frá.',
+          'Öll starfsmatsstig eru eins, því liggur ekkert vænt tímakaup fyrir til að víkja frá.',
       },
       blockerGapNotComputable: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.blockerGapNotComputable',
         defaultMessage:
-          'Launadreifing verður ekki metin því ekki var unnt að reikna væntanlegt tímakaup.',
+          'Launadreifing verður ekki metin því ekki var unnt að reikna vænt tímakaup.',
       },
       // Every other column of this table reads its header from the
       // `outlierGroup` namespace, so the two tables cannot be translated apart —
@@ -1380,7 +1388,7 @@ export const messages = {
       },
       expectedHourlyWageColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.expectedHourlyWageColumn',
-        defaultMessage: 'Væntanlegt tímakaup',
+        defaultMessage: 'Vænt tímakaup',
       },
       wageUnitFootnote: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.wageUnitFootnote',
@@ -1437,7 +1445,7 @@ export const messages = {
       },
       postponeCheckboxLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
-        defaultMessage: 'Ég vil skila úrbótaáætlun seinna',
+        defaultMessage: 'Ég vil skila úrbótaáætlun innan þriggja mánaða',
       },
       nameLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.nameLabel',
@@ -1450,6 +1458,17 @@ export const messages = {
       actionLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.actionLabel',
         defaultMessage: 'Fyrirhugaðar úrbætur',
+      },
+      remedyDateLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.remedyDateLabel',
+        defaultMessage: 'Dagsetning úrbóta',
+      },
+      // The API rejects a date outside this window, so the bound is stated
+      // rather than left for the applicant to discover from a rejected submit.
+      remedyDateDescription: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.remedyDateDescription',
+        defaultMessage:
+          'Dagsetning úrbóta á við um hvenær úrbótum skal vera lokið. Dagsetningin þarf að vera í framtíðinni og ekki meira en þrjú ár fram í tímann.',
       },
       signatureNameLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.signatureNameLabel',
@@ -1483,18 +1502,36 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.assignToGroupMenuLabel',
         defaultMessage: 'Veldu frávikahóp',
       },
-      // Paging through many pages to select everything is tedious, so this
-      // shortcut appears once the table spans more than a handful of pages.
+      // The one select-everything control, replacing the per-page checkbox the
+      // table header used to carry. `{count}` is the rows still in the table,
+      // so it falls as outliers are assigned into groups and leave it.
       selectAllOutliersButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectAllOutliersButton',
-        defaultMessage: 'Velja alla ({count})',
+        defaultMessage: 'Velja öll ({count})',
       },
-      // The two selection checkboxes carry no visible label (the column is
-      // just a checkbox), so they need an explicit accessible name.
+      // Same button once everything is selected: it is the only way back from a
+      // select-all short of unticking each row.
+      deselectAllOutliersButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.deselectAllOutliersButton',
+        defaultMessage: 'Afvelja öll ({count})',
+      },
+      // Neuter singular takes "valið", plural "valin" — and Icelandic counts 21
+      // and 31 as singular while 11 stays plural, which is exactly CLDR's `one`
+      // category for `is`, so ICU gets this right and a manual n === 1 would
+      // not.
+      selectedOutlierCount: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectedOutlierCount',
+        defaultMessage:
+          '{count, plural, one {# frávik valið} other {# frávik valin}}',
+      },
+      // Both select-all controls carry no visible label — the header one is a
+      // bare checkbox in its column — so they need an explicit accessible name.
       selectAllLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectAllLabel',
-        defaultMessage: 'Velja alla starfsmenn á þessari síðu',
+        defaultMessage: 'Velja öll frávik',
       },
+      // The per-row checkbox carries no visible label — its column is just a
+      // checkbox — so it needs an explicit accessible name.
       selectEmployeeLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectEmployeeLabel',
         defaultMessage: 'Velja starfsmann {employee}',

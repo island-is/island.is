@@ -4,6 +4,7 @@ import type {
   SyncCommand,
 } from './types'
 import { SyncMethodEnum } from './constants'
+import { isRemedyDateInWindow } from './dates'
 import { buildUpsertRemoveCommands } from './syncCommands'
 
 // The outlier-group answer shape and its completeness rule live here because
@@ -22,6 +23,9 @@ export type OutlierGroupAnswer = {
   name?: string
   reason?: string
   action?: string
+  // `yyyy-MM-dd`, the shape DatePickerController reads and writes — see
+  // toDateInputValue for the crossing from what DMR hands back.
+  remedyDate?: string
   signatureName?: string
   signatureRole?: string
   employeeOrdinals: number[]
@@ -49,6 +53,7 @@ export const emptyOutlierGroupAnswer = (
   name: '',
   reason: '',
   action: '',
+  remedyDate: '',
   signatureName: '',
   signatureRole: '',
   employeeOrdinals,
@@ -65,8 +70,28 @@ export const emptyOutlierGroupAnswer = (
 export const isOutlierGroupComplete = (group: OutlierGroupAnswer): boolean =>
   group.employeeOrdinals.length === 0 ||
   Boolean(
-    group.reason?.trim() && group.action?.trim() && group.signatureRole?.trim(),
+    group.reason?.trim() &&
+      group.action?.trim() &&
+      group.remedyDate?.trim() &&
+      group.signatureRole?.trim(),
   )
+
+// What the Continue and submit gates actually need: filled in AND still
+// answerable today. Kept apart from isOutlierGroupComplete because that one
+// mirrors dataSchema's presence checks field for field, and a stale remedyDate
+// is a different complaint from a blank one — the card reports it on the field
+// rather than as "fill everything in".
+//
+// `now` is typed rather than defaulted-and-untyped on purpose: passing this bare
+// to `.every` would hand it the array index as `now`, and the signature makes
+// that a compile error instead of a silently wrong window.
+export const isOutlierGroupSubmittable = (
+  group: OutlierGroupAnswer,
+  now: Date = new Date(),
+): boolean =>
+  isOutlierGroupComplete(group) &&
+  (group.employeeOrdinals.length === 0 ||
+    isRemedyDateInWindow(group.remedyDate, now))
 
 export const unassignedOutlierOrdinals = (
   outliers: { employeeOrdinal: number }[],
@@ -164,6 +189,7 @@ export const buildOutlierSyncCommands = (
         name: g.name || undefined,
         reason: g.reason || null,
         action: g.action || null,
+        remedyDate: g.remedyDate || null,
         signatureName: g.signatureName || null,
         signatureRole: g.signatureRole || null,
       },

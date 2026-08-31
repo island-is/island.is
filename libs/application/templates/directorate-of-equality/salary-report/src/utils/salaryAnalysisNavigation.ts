@@ -3,7 +3,7 @@ import type { ExternalData, FormValue } from '@island.is/application/types'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import { deriveWageGapState } from './wageGap'
 import {
-  isOutlierGroupComplete,
+  isOutlierGroupSubmittable,
   unassignedOutlierOrdinals,
   type OutlierGroupAnswer,
 } from './outlierGroups'
@@ -230,7 +230,8 @@ export const reviewOutlierPlanIsSubmittable = (
   )
 
   if (assignedGroups.length === 0) return false
-  if (!assignedGroups.every(isOutlierGroupComplete)) return false
+  if (!assignedGroups.every((group) => isOutlierGroupSubmittable(group)))
+    return false
 
   // Every listed outlier has to sit in a group — the same rule the plan
   // screen's Continue gate applies. Skipped when no snapshot is stored: there
