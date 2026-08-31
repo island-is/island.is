@@ -56,7 +56,7 @@ import type {
   Case,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { replaceTabs } from './formatters'
+import { normalizeBlankString, replaceTabs } from './formatters'
 import type { UpdateCase } from './hooks'
 import * as validations from './validate'
 
@@ -154,6 +154,10 @@ export const validateAndSendToServer = (
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
+  // Whitespace-only input is persisted as '' - a required field then fails
+  // validation and is not sent, an optional field is cleared on the server.
+  value = normalizeBlankString(value)
+
   const isValid = validateAndSetErrorMessage(
     validations,
     value,

@@ -570,6 +570,12 @@ export const transformDefendants = ({
             defendant.eventLogs,
           )
         : undefined,
+      closedWithoutEnforcementDate: defendant.isClosedWithoutEnforcement
+        ? DefendantEventLog.getEventLogDateByEventType(
+            DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
+            defendant.eventLogs,
+          )
+        : undefined,
       openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,

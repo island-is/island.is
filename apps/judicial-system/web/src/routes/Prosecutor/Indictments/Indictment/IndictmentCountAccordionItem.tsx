@@ -1,4 +1,4 @@
-import type { FC, PointerEvent, ReactNode } from 'react'
+import type { FC, MouseEvent, PointerEvent, ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import type { MotionValue } from 'motion/react'
 import {
@@ -148,6 +148,12 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
     controls.start(evt)
   }
 
+  const handleDragHandleClick = (evt: MouseEvent) => {
+    // Prevent the accordion item from being toggled
+    evt.preventDefault()
+    evt.stopPropagation()
+  }
+
   const handlePointerUp = () => {
     if (isDragging) {
       onReorder()
@@ -170,31 +176,31 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
       drag
     >
       <Box className={styles.itemWrapper}>
-        <Box
-          className={styles.dragHandle}
-          data-testid="indictmentCountDragHandle"
-          onPointerDown={handlePointerDown}
-          style={isDragging ? { cursor: 'grabbing' } : undefined}
-        >
-          <Icon icon="menu" color="blue400" />
-        </Box>
-        <Box className={styles.accordionWrapper}>
-          <AccordionItem
-            id={`indictmentCountAccordionItem-${indictmentCount.id}`}
-            expanded={expanded}
-            onToggle={onToggle}
-            label={
+        <AccordionItem
+          id={`indictmentCountAccordionItem-${indictmentCount.id}`}
+          expanded={expanded}
+          onToggle={onToggle}
+          label={
+            <Box display="flex" alignItems="center">
+              <Box
+                className={styles.dragHandle}
+                data-testid="indictmentCountDragHandle"
+                onPointerDown={handlePointerDown}
+                onClick={handleDragHandleClick}
+              >
+                <Icon icon="menu" color="blue400" />
+              </Box>
               <IndictmentCountLabel
                 index={index}
                 policeCaseNumber={indictmentCount.policeCaseNumber}
                 formattedDate={formattedDate}
                 warningMessage={warningMessage}
               />
-            }
-          >
-            {children}
-          </AccordionItem>
-        </Box>
+            </Box>
+          }
+        >
+          {children}
+        </AccordionItem>
       </Box>
     </Reorder.Item>
   )

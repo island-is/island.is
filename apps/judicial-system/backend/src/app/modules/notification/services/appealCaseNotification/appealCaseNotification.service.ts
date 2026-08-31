@@ -1047,7 +1047,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       )
     }
 
-    if (isProsecutionUser(user)) {
+    if (isProsecutionUser(user) && theCase.defenderEmail) {
       const url =
         theCase.defenderNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
@@ -1641,14 +1641,19 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         recipientName: theCase.prosecutor?.name,
         recipientEmail: theCase.prosecutor?.email,
       }),
-      this.sendEmail({
-        subject,
-        html,
-        recipientName: theCase.defenderName,
-        recipientEmail: theCase.defenderEmail,
-        skipTail: !theCase.defenderNationalId,
-      }),
     )
+
+    if (theCase.defenderEmail) {
+      promises.push(
+        this.sendEmail({
+          subject,
+          html,
+          recipientName: theCase.defenderName,
+          recipientEmail: theCase.defenderEmail,
+          skipTail: !theCase.defenderNationalId,
+        }),
+      )
+    }
 
     return Promise.all(promises)
   }
@@ -1688,14 +1693,23 @@ export class AppealCaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
     const wasWithdrawnByProsecution = isProsecutionUser(user)
+    const wasWithdrawnByDefence = isDefenceUser(user)
 
     const subject = this.formatMessage(strings.caseAppealWithdrawn.subject, {
       courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
     })
-    const html = this.formatMessage(strings.caseAppealWithdrawn.body, {
-      withdrawnByProsecution: wasWithdrawnByProsecution ?? false,
-      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
-    })
+    // A court user ends the appeal by correcting the court record, not by
+    // withdrawing on its own behalf, so no party is named as the appellant.
+    const html =
+      wasWithdrawnByProsecution || wasWithdrawnByDefence
+        ? this.formatMessage(strings.caseAppealWithdrawn.body, {
+            withdrawnByProsecution: wasWithdrawnByProsecution,
+            courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
+          })
+        : `Kæra í máli ${this.getCourtCaseNumber(
+            theCase,
+            appealCase,
+          )} hefur verið afturkölluð.`
 
     // Notify district court judge
     promises.push(
@@ -1732,24 +1746,16 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       )
     }
 
-    if (isProsecutionUser(user)) {
-      // Notify ALL defenders and civil claimant lawyers
-      const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
-
-      for (const recipient of defenceRecipients) {
-        promises.push(
-          this.sendEmail({
-            subject,
-            html,
-            recipientName: recipient.name,
-            recipientEmail: recipient.email,
-            skipTail: !recipient.nationalId,
-          }),
-        )
-      }
-    }
-
-    if (isDefenceUser(user)) {
+    // Every party is notified except the one that just withdrew the appeal. The
+    // exclusion is the acting user alone - not every party that appealed: when
+    // several parties appealed a ruling in court, the appeal stands until the
+    // last of them withdraws, so a party that withdrew earlier has heard nothing
+    // yet and this is the first word it gets that the appeal is over.
+    // A court user can also end the appeal, by correcting the court record so
+    // that no standing appeal remains (see
+    // CourtSessionService.reconcileInCourtRulingOrderAppeal). Nobody withdrew
+    // just now, so every party is notified.
+    if (!wasWithdrawnByProsecution) {
       // Notify prosecutor
       promises.push(
         this.sendEmail({
@@ -1759,24 +1765,24 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           recipientEmail: theCase.prosecutor?.email,
         }),
       )
+    }
 
-      // Notify all OTHER defenders and civil claimant lawyers
-      const defenceRecipients = this.getIndictmentDefenceRecipients(
-        theCase,
-        appellantRepresentativeNationalIds(theCase, appealCase),
+    // Notify all other defenders and civil claimant lawyers
+    const defenceRecipients = this.getIndictmentDefenceRecipients(
+      theCase,
+      wasWithdrawnByDefence ? new Set([user.nationalId]) : undefined,
+    )
+
+    for (const recipient of defenceRecipients) {
+      promises.push(
+        this.sendEmail({
+          subject,
+          html,
+          recipientName: recipient.name,
+          recipientEmail: recipient.email,
+          skipTail: !recipient.nationalId,
+        }),
       )
-
-      for (const recipient of defenceRecipients) {
-        promises.push(
-          this.sendEmail({
-            subject,
-            html,
-            recipientName: recipient.name,
-            recipientEmail: recipient.email,
-            skipTail: !recipient.nationalId,
-          }),
-        )
-      }
     }
 
     // If appeal was already received by CoA → notify CoA email

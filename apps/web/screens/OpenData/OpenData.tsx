@@ -34,6 +34,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import { buildHeaderNavData } from '../../components/Header/buildHeaderNavData'
 import type { HeaderNavData } from '../../components/Header/headerNavData'
@@ -44,7 +45,7 @@ import { GET_ORGANIZATION_LOGOS_QUERY } from '../queries/Organization'
 import * as styles from './OpenData.css'
 
 interface OpenDataProps {
-  page: GetOpenDataPageQuery['getOpenDataPage']
+  page: NonNullable<GetOpenDataPageQuery['getOpenDataPage']>
   headerNavData?: HeaderNavData | null
 }
 
@@ -128,7 +129,9 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, headerNavData }) => {
                 })}
               >
                 <Box className={styles.headerGraphParent}>
-                  <SimpleLineChart graphData={pageHeaderGraph} />
+                  {pageHeaderGraph && (
+                    <SimpleLineChart graphData={pageHeaderGraph} />
+                  )}
                 </Box>
               </Box>
             </GridColumn>
@@ -180,7 +183,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, headerNavData }) => {
           // @ts-ignore make web strict
           image={externalLinkSectionImage}
           description={externalLinkSectionDescription}
-          cards={externalLinkCardSelection.cards}
+          cards={externalLinkCardSelection?.cards ?? []}
         />
       </Section>
     </Box>
@@ -222,6 +225,10 @@ OpenDataPage.getProps = async ({ apolloClient, locale }) => {
       .then((res) => res.data.getOrganizations?.items ?? [])
       .catch(() => []),
   ])
+
+  if (!page) {
+    throw new CustomNextError(404, 'Open data page not found')
+  }
 
   return {
     page,

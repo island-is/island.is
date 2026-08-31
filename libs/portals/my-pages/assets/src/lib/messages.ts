@@ -518,6 +518,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:operator',
     defaultMessage: 'Umráðamaður',
   },
+  mainOperator: {
+    id: 'sp.vehicles:main-operator',
+    defaultMessage: 'Aðalumráðamaður',
+  },
   name: {
     id: 'sp.vehicles:name',
     defaultMessage: 'Nafn',

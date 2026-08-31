@@ -1074,6 +1074,38 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
   },
 }
 
+const closedWithoutEnforcementDate: CaseTableCellGenerator<StringValue> = {
+  includes: {
+    defendants: {
+      attributes: [],
+      includes: { eventLogs: { attributes: ['created', 'eventType'] } },
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    if (!c.defendants) {
+      return generateCell()
+    }
+
+    const dateClosed = c.defendants.reduce<Date | undefined>(
+      (firstClosed, d) => {
+        const dateClosed = DefendantEventLog.getEventLogDateByEventType(
+          DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
+          d.eventLogs,
+        )
+
+        if (dateClosed && (!firstClosed || firstClosed > dateClosed)) {
+          return dateClosed
+        }
+
+        return firstClosed
+      },
+      undefined,
+    )
+
+    return generateDate(dateClosed)
+  },
+}
+
 const indictmentRulingDecision: CaseTableCellGenerator<
   TagValue | TagGroupValue
 > = {
@@ -1194,6 +1226,7 @@ export const caseTableCellGenerators: Record<
   subpoenaServiceState,
   indictmentReviewer,
   sentToPrisonAdminDate,
+  closedWithoutEnforcementDate,
   indictmentReviewDecision,
   caseSentToCourtDate,
   arraignmentDate,

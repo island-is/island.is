@@ -3,6 +3,7 @@ import {
   ConversationAttachmentDto,
   ConversationDetailDto,
   ConversationMessageDto,
+  CreateCertificatePaymentIntentDto,
   CreateCertificateRequestBody,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
@@ -17,13 +18,19 @@ import type { ConfigType } from '@island.is/nest/config'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadGatewayException,
+  BadRequestException,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
+import { HealthDirectorateCreateCertificatePaymentIntentInput } from './dto/createCertificatePaymentIntent.input'
 import { HealthDirectorateCreateCertificateRequestInput } from './dto/createCertificateRequest.input'
 import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
 import { HealthDirectorateReplyToConversationInput } from './dto/replyToHealthConversation.input'
@@ -37,6 +44,7 @@ import {
   getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
   toAppointmentAssigneeTypeEnum,
+  toAppointmentCancelBlockedReason,
   toAppointmentLinkTypeEnum,
   toAppointmentModalityEnum,
   toAppointmentStatusEnum,
@@ -52,6 +60,7 @@ import {
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
 import {
+  mapCertificate,
   mapCertificateRequest,
   toCertificateTypeCode,
 } from './mappers/certificateMapper'
@@ -99,7 +108,9 @@ import { HealthDirectorateHealthConversationDetail } from './models/healthConver
 import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
+import { HealthDirectorateCertificate } from './models/certificate.model'
 import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
+import { HealthDirectorateCertificatePaymentIntent } from './models/paymentIntent.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -725,7 +736,19 @@ export class HealthDirectorateService {
           }
         })
         .filter(isDefined),
+      canCancel: item.canCancel,
+      cancelBlockedReason: toAppointmentCancelBlockedReason(
+        item.canCancel,
+        item.canCancelBefore,
+      ),
     }
+  }
+
+  public async cancelAppointment(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<boolean> {
+    return this.healthApi.cancelAppointment(auth, input.id)
   }
 
   /* Health Conversations */
@@ -771,6 +794,11 @@ export class HealthDirectorateService {
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),
       ),
+      certificateId: m.certificateId,
+      requiresPayment: m.requiresPayment,
+      paid: m.paid,
+      amountIsk: m.amountIsk,
+      pendingPaymentId: m.pendingPaymentId,
     }
   }
 
@@ -780,7 +808,6 @@ export class HealthDirectorateService {
     return {
       id: c.id,
       title: c.title,
-      status: c.status,
       startDate: c.conversationStartDate,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
@@ -813,7 +840,6 @@ export class HealthDirectorateService {
     return items.map((c) => ({
       id: c.id,
       title: c.title,
-      status: c.status,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
@@ -927,5 +953,45 @@ export class HealthDirectorateService {
     if (!request) return null
 
     return mapCertificateRequest(request)
+  }
+
+  async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateCertificate | null> {
+    const certificate = await this.healthApi.getCertificate(auth, id)
+    if (!certificate) return null
+
+    return mapCertificate(certificate)
+  }
+
+  async createCertificatePaymentIntent(
+    auth: Auth,
+    input: HealthDirectorateCreateCertificatePaymentIntentInput,
+    locale: Locale = 'is',
+  ): Promise<HealthDirectorateCertificatePaymentIntent> {
+    const body: CreateCertificatePaymentIntentDto = {
+      returnUrl: input.returnUrl,
+      cancelUrl: input.cancelUrl,
+    }
+
+    const intent = await this.healthApi.createCertificatePaymentIntent(
+      auth,
+      input.id,
+      body,
+      locale,
+    )
+    // The upstream contract marks the intent required on success — a missing
+    // body is an upstream fault, and the mutation is non-nullable on it.
+    if (!intent) {
+      throw new BadGatewayException(
+        'Payment intent missing from upstream response',
+      )
+    }
+
+    return {
+      paymentId: intent.paymentId,
+      paymentPageUrl: intent.paymentPageUrl,
+    }
   }
 }

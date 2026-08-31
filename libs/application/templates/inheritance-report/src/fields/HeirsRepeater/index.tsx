@@ -32,6 +32,8 @@ import {
   formatPhoneNumber,
   getEstateDataFromApplication,
   getPrePaidTotalValueFromApplication,
+  includeSpouse,
+  nationalIdsMatch,
   valueToNumber,
 } from '../../lib/utils/helpers'
 import { HeirsRepeaterProps } from './types'
@@ -388,22 +390,29 @@ export const HeirsRepeater: FC<
   }, [])
 
   useEffect(() => {
-    const executorNationalId = getValueViaPath(
+    if (!isPrePaidApplication) {
+      setHasHeirWithNationalIdSameAsExecutor(false)
+      return
+    }
+
+    const executorNationalId = getValueViaPath<string>(
       answers,
       'executors.executor.nationalId',
     )
-    const spouseNationalId = getValueViaPath(
-      answers,
-      'executors.spouse.nationalId',
-    )
+    const isSpouseIncluded = includeSpouse(answers)
+    const spouseNationalId = isSpouseIncluded
+      ? getValueViaPath<string>(answers, 'executors.spouse.nationalId')
+      : undefined
 
     const match = (heirsData ?? []).some(
-      (field: any) =>
-        field.nationalId === executorNationalId ||
-        field.nationalId === spouseNationalId,
+      (field: EstateMember) =>
+        field?.enabled !== false &&
+        (nationalIdsMatch(field?.nationalId, executorNationalId) ||
+          (isSpouseIncluded &&
+            nationalIdsMatch(field?.nationalId, spouseNationalId))),
     )
     setHasHeirWithNationalIdSameAsExecutor(match)
-  }, [answers, heirsData])
+  }, [answers, heirsData, isPrePaidApplication])
 
   return (
     <Box>

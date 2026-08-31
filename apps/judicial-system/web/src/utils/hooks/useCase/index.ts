@@ -14,6 +14,7 @@ import type {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { applyUpdateToCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
 import { useDuplicateIndictmentCaseMutation } from './duplicateIndictmentCase.generated'
@@ -88,7 +89,7 @@ const useCase = () => {
 
             const { data } = await createCaseMutation({
               variables: {
-                input: {
+                input: normalizeBlankStrings({
                   type: theCase.type,
                   indictmentSubtypes: theCase.indictmentSubtypes,
                   description: theCase.description,
@@ -101,7 +102,7 @@ const useCase = () => {
                   leadInvestigator: theCase.leadInvestigator,
                   crimeScenes: theCase.crimeScenes,
                   prosecutorId: theCase.prosecutor?.id,
-                },
+                }),
               },
             })
 
@@ -148,7 +149,7 @@ const useCase = () => {
         }
 
         const { data } = await mutation({
-          variables: { input: { id, ...updateCase } },
+          variables: { input: { id, ...normalizeBlankStrings(updateCase) } },
         })
 
         const res = data as LimitedAccessUpdateCaseMutation
@@ -171,7 +172,7 @@ const useCase = () => {
         }
 
         const { data } = await mutation({
-          variables: { input: { id, ...updateCase } },
+          variables: { input: { id, ...normalizeBlankStrings(updateCase) } },
         })
 
         const res = data as UpdateCaseMutation
