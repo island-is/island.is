@@ -18,7 +18,10 @@ export const EmployeeOrdinalHeader = () => {
   return (
     <Box component="span" display="flex" alignItems="center" columnGap={1}>
       {formatMessage(m.ordinalColumn)}
-      <Tooltip placement="right" text={formatMessage(m.employeeColumnTooltip)} />
+      <Tooltip
+        placement="right"
+        text={formatMessage(m.employeeColumnTooltip)}
+      />
     </Box>
   )
 }

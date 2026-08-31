@@ -155,7 +155,8 @@ export const overviewSection = buildSection({
               width: 'half',
               keyText: messages.aboutTheCompany.contactPerson.jobTitle,
               valueText:
-                getValueViaPath<string>(answers, 'contactPerson.jobTitle') ?? '',
+                getValueViaPath<string>(answers, 'contactPerson.jobTitle') ??
+                '',
             },
             {
               width: 'half',
