@@ -5,7 +5,7 @@ import addYears from 'date-fns/addYears'
 import startOfDay from 'date-fns/startOfDay'
 import faker from 'faker'
 import differenceWith from 'lodash/differenceWith'
-import { Op } from 'sequelize'
+import { Op, UniqueConstraintError } from 'sequelize'
 import request from 'supertest'
 
 import {
@@ -233,6 +233,64 @@ describe.each(Object.keys(accessOutgoingTestCases))(
               validTo: scope.validTo.toISOString(),
             })),
           })
+        },
+      )
+
+      it.each(accessible)(
+        'POST /v1/me/delegations recovers from a unique-constraint race in $name',
+        async (domain) => {
+          // Arrange: a concurrent request already inserted the delegation row
+          // for (fromNationalId, toNationalId, domainName) with no scopes yet.
+          const delegationModel = app.get<typeof Delegation>(
+            getModelToken(Delegation),
+          )
+          const delegationScopeModel = app.get<typeof DelegationScope>(
+            getModelToken(DelegationScope),
+          )
+          const toNationalId = createNationalId('person')
+          const existing = await factory.createCustomDelegation({
+            fromNationalId: testCase.user.nationalId,
+            toNationalId,
+            domainName: domain.name,
+          })
+
+          // The existence check misses, the insert trips the unique index, and
+          // the fallback lookup must find `existing`.
+          const findOneSpy = jest
+            .spyOn(delegationModel, 'findOne')
+            .mockResolvedValueOnce(null)
+          const createSpy = jest
+            .spyOn(delegationModel, 'create')
+            .mockRejectedValueOnce(new UniqueConstraintError({}))
+
+          const delegationScopeDtos = domain.scopes.map(({ name }) => ({
+            name,
+            validTo: startOfDay(addYears(new Date(), 1)),
+          }))
+          const delegationDto: CreateDelegationDTO = {
+            toNationalId,
+            domainName: domain.name,
+            scopes: delegationScopeDtos,
+          }
+
+          // Act
+          const res = await server
+            .post('/v1/me/delegations')
+            .send(delegationDto)
+
+          // Assert: succeeded instead of surfacing the unique error, and the
+          // scopes were attached to the pre-existing delegation row.
+          expect(createSpy).toHaveBeenCalledTimes(1)
+          expect(res.status).toEqual(201)
+          const scopes = await delegationScopeModel.findAll({
+            where: { delegationId: existing.id },
+          })
+          expect(scopes.map((s) => s.scopeName)).toEqual(
+            expect.arrayContaining(delegationScopeDtos.map((s) => s.name)),
+          )
+
+          findOneSpy.mockRestore()
+          createSpy.mockRestore()
         },
       )
 
