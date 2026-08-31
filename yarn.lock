@@ -21728,23 +21728,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"agentkeepalive@npm:4.2.1":
-  version: 4.2.1
-  resolution: "agentkeepalive@npm:4.2.1"
-  dependencies:
-    debug: "npm:^4.1.0"
-    depd: "npm:^1.1.2"
-    humanize-ms: "npm:^1.2.1"
-  checksum: 10/63961cba1afa26d708da94159f3b9428d46fdc137b783fbc399b848e750c5e28c97d96839efa8cb3c2d11ecd12dd411298c00d164600212f660e8c55369c9e55
-  languageName: node
-  linkType: hard
-
-"agentkeepalive@npm:^4.1.3":
+"agentkeepalive@npm:4.6.0":
   version: 4.6.0
   resolution: "agentkeepalive@npm:4.6.0"
   dependencies:
     humanize-ms: "npm:^1.2.1"
   checksum: 10/80c546bd88dd183376d6a29e5598f117f380b1d567feb1de184241d6ece721e2bdd38f179a1674276de01780ccae229a38c60a77317e2f5ad2f1818856445bd7
+  languageName: node
+  linkType: hard
+
+"agentkeepalive@patch:agentkeepalive@npm%3A4.6.0#~/.yarn/patches/agentkeepalive-npm-4.6.0-6b61ca2a37.patch":
+  version: 4.6.0
+  resolution: "agentkeepalive@patch:agentkeepalive@npm%3A4.6.0#~/.yarn/patches/agentkeepalive-npm-4.6.0-6b61ca2a37.patch::version=4.6.0&hash=9ca671"
+  dependencies:
+    humanize-ms: "npm:^1.2.1"
+  checksum: 10/4a75b42ea0d4a4a42c7dfaa9ad7fde0cf7a4ed7006f3db8b65322040a629944b46d259b560ba3fc921b7df1810f01b0ceb9870969fb6aa9c7af93a940b032c2b
   languageName: node
   linkType: hard
 
@@ -27883,7 +27881,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"depd@npm:^1.1.2, depd@npm:~1.1.2":
+"depd@npm:~1.1.2":
   version: 1.1.2
   resolution: "depd@npm:1.1.2"
   checksum: 10/2ed6966fc14463a9e85451db330ab8ba041efed0b9a1a472dbfc6fbf2f82bab66491915f996b25d8517dddc36c8c74e24c30879b34877f3c4410733444a51d1d
@@ -35837,7 +35835,7 @@ __metadata:
     "@vanilla-extract/webpack-plugin": "npm:2.1.10"
     "@vitejs/plugin-react": "npm:6.0.4"
     "@xstate/react": "npm:0.8.1"
-    agentkeepalive: "npm:4.2.1"
+    agentkeepalive: "patch:agentkeepalive@npm%3A4.6.0#~/.yarn/patches/agentkeepalive-npm-4.6.0-6b61ca2a37.patch"
     amazon-s3-uri: "npm:0.0.3"
     archiver: "npm:6.0.1"
     assert: "npm:2.1.0"
