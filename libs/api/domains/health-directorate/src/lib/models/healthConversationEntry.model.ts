@@ -1,4 +1,4 @@
-import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
 import { HealthConversationDirectionEnum } from './enums'
 import { HealthDirectorateHealthConversationAttachment } from './healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationMessageContent } from './healthConversationMessageContent.model'
@@ -34,4 +34,37 @@ export class HealthDirectorateHealthConversationEntry {
 
   @Field(() => [HealthDirectorateHealthConversationAttachment])
   attachments!: HealthDirectorateHealthConversationAttachment[]
+
+  @Field({
+    nullable: true,
+    description: 'Id of the certificate issued for this message, if any.',
+  })
+  certificateId?: string
+
+  @Field({
+    nullable: true,
+    description:
+      'True when the attached certificate is gated behind a successful payment.',
+  })
+  requiresPayment?: boolean
+
+  @Field({
+    nullable: true,
+    description: 'True when the attached certificate has been paid for.',
+  })
+  paid?: boolean
+
+  @Field(() => Int, {
+    nullable: true,
+    description:
+      'Price the patient would be charged, in ISK. Only set when requiresPayment is true.',
+  })
+  amountIsk?: number
+
+  @Field({
+    nullable: true,
+    description:
+      'A payment the patient has already started for this certificate and which has not yet expired. When set, show a pending-payment state and poll the certificate query rather than opening a new payment intent.',
+  })
+  pendingPaymentId?: string
 }
