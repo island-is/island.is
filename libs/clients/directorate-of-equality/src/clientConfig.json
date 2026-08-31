@@ -3912,6 +3912,7 @@
           "action",
           "signatureName",
           "signatureRole",
+          "remedyDate",
           "employeeOrdinals"
         ]
       },
@@ -4476,6 +4477,7 @@
           "action",
           "signatureName",
           "signatureRole",
+          "remedyDate",
           "employeeOrdinals"
         ]
       },

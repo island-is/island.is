@@ -4,6 +4,7 @@ import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
 import { Gender } from '../utils/types'
 import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from '../utils/constants'
+import { isRemedyDateInWindow } from '../utils/dates'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),
@@ -127,6 +128,7 @@ const outlierGroup = z.object({
   name: z.string().optional(),
   reason: z.string().optional(),
   action: z.string().optional(),
+  remedyDate: z.string().optional(),
   signatureName: z.string().optional(),
   signatureRole: z.string().optional(),
   employeeOrdinals: z.array(z.number()),
@@ -166,6 +168,22 @@ const salaryAnalysis = z
           code: z.ZodIssueCode.custom,
           path: ['outlierGroups', i, 'action'],
           params: messages.errors.required,
+        })
+      }
+      if (!group.remedyDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'remedyDate'],
+          params: messages.errors.required,
+        })
+        // The window is re-checked here, not just where the calendar is drawn:
+        // POSTPONED keeps a draft for 90 days, so a date that was valid when it
+        // was picked can be in the past by the time this runs.
+      } else if (!isRemedyDateInWindow(group.remedyDate, new Date())) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'remedyDate'],
+          params: messages.errors.remedyDateOutOfRange,
         })
       }
       // No check for signatureName: the responsible party's name is optional.
