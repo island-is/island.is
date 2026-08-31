@@ -33,7 +33,7 @@ export class InvoicesService {
       return null
     }
 
-    return mapInvoicePaymentsGroup(data)
+    return mapInvoicePaymentsGroup(data, 'detail', input)
   }
 
   async getOpenInvoicePaymentsGroups(
@@ -48,7 +48,9 @@ export class InvoicesService {
     }
 
     return {
-      data: data.invoiceGroups.map((group) => mapInvoicePaymentsGroup(group)),
+      data: data.invoiceGroups.map((group) =>
+        mapInvoicePaymentsGroup(group, 'list', input ?? {}),
+      ),
       totalPaymentsCount: data.totalPaymentsCount,
       totalPaymentsSum: data.totalPaymentsSum,
       totalCount: data.totalCount,

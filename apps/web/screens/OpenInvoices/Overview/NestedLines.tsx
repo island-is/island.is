@@ -1,7 +1,10 @@
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { Query } from '@island.is/api/schema'
+import {
+  IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
+  QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupArgs,
+} from '@island.is/web/graphql/schema'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { formatCurrency } from '@island.is/shared/utils'
 
@@ -16,6 +19,8 @@ interface Props {
   total: number
   dateFrom?: Date
   dateTo?: Date
+  paymentTypeIds?: string[]
+  ministries?: string[]
 }
 
 export const NestedLines = ({
@@ -23,23 +28,29 @@ export const NestedLines = ({
   erpLegalEntityId,
   dateFrom,
   dateTo,
+  paymentTypeIds,
+  ministries,
   total,
 }: Props) => {
   const { formatDate, formatMessage } = useIntl()
 
-  const { data, error, loading } = useQuery<Query>(
-    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP,
+  const { data, error, loading } = useQuery<
     {
-      variables: {
-        input: {
-          supplierLegalId,
-          erpLegalEntityId,
-          dateFrom: dateFrom,
-          dateTo: dateTo,
-        },
+      icelandicGovernmentInstitutionsInvoicePaymentsGroup?: IcelandicGovernmentInstitutionsInvoicePaymentsGroup
+    },
+    QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupArgs
+  >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP, {
+    variables: {
+      input: {
+        supplierLegalId,
+        erpLegalEntityId,
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+        paymentTypeIds: paymentTypeIds ?? undefined,
+        ministries: ministries ?? undefined,
       },
     },
-  )
+  })
 
   const payments =
     data?.icelandicGovernmentInstitutionsInvoicePaymentsGroup?.payments ?? []
