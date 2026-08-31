@@ -227,9 +227,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             </Text>
             <Box marginBottom={3}>
               <Markdown>
-                {formatMessage(
-                  messages.report.subCriteria.jobFactorGroupIntro,
-                )}
+                {formatMessage(messages.report.subCriteria.jobFactorGroupIntro)}
               </Markdown>
             </Box>
             <Stack space={3}>
