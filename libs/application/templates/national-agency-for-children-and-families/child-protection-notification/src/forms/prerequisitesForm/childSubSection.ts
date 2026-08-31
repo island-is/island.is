@@ -155,19 +155,20 @@ export const childSubSection = buildSubSection({
           id: 'child.over18Error',
           alertType: 'error',
           message: childMessages.nationalIdLookup.childOver18Error,
+          marginTop: 0,
           condition: (answers) =>
             isKnowsNationalId(answers) && isChildOver18(answers),
         }),
         buildSubmitField({
           id: 'submit',
           refetchApplicationAfterSubmit: true,
-          condition: (answers) =>
-            !(isKnowsNationalId(answers) && isChildOver18(answers)),
           actions: [
             {
               event: DefaultEvents.SUBMIT,
               name: prerequisitesMessages.child.startNotification,
               type: 'primary',
+              condition: (answers) =>
+                !(isKnowsNationalId(answers) && isChildOver18(answers)),
             },
           ],
         }),

@@ -24,14 +24,8 @@ export const isChildOver18 = (answers: FormValue): boolean => {
   const { childNationalId, childName } = getApplicationAnswers(answers)
   if (!childNationalId || !childName) return false
   try {
-    const { birthday } = info(childNationalId)
-    const now = new Date()
-    const eighteenthBirthday = new Date(
-      birthday.getFullYear() + 18,
-      birthday.getMonth(),
-      birthday.getDate(),
-    )
-    return now >= eighteenthBirthday
+    const { age } = info(childNationalId)
+    return age >= 18
   } catch {
     return false
   }
