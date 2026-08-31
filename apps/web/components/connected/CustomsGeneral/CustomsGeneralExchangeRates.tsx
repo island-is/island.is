@@ -3,6 +3,10 @@ import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
 import { SortableTableColumn } from '@island.is/web/components'
+import {
+  CustomsGeneralExchangeRatesQuery,
+  CustomsGeneralExchangeRatesQueryVariables,
+} from '@island.is/web/graphql/schema'
 import { GET_CUSTOMS_GENERAL_EXCHANGE_RATES } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CurrencyFlag } from './CurrencyFlag'
@@ -32,20 +36,20 @@ const CustomsGeneralExchangeRates = () => {
     { key: 'rate', label: formatMessage(m.exchangeRateRate) },
   ]
 
-  const { data, loading, error } = useQuery(
-    GET_CUSTOMS_GENERAL_EXCHANGE_RATES,
-    {
-      variables: { input: { date: toApiDate(selectedDate), system: 'I' } },
-    },
-  )
+  const { data, loading, error } = useQuery<
+    CustomsGeneralExchangeRatesQuery,
+    CustomsGeneralExchangeRatesQueryVariables
+  >(GET_CUSTOMS_GENERAL_EXCHANGE_RATES, {
+    variables: { input: { date: toApiDate(selectedDate), system: 'I' } },
+  })
 
   const items: ExchangeRateRow[] = (
     data?.customsGeneralExchangeRates ?? []
-  ).map((item: { code?: string; name?: string; rate?: number }) => ({
+  ).map((item) => ({
     flag: '',
     code: item.code ?? '',
     name: item.name ?? '',
-    rate: item.rate?.toString() ?? '',
+    rate: item.rate ?? '',
   }))
 
   return (
