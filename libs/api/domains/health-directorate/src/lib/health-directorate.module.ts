@@ -10,6 +10,7 @@ import { MedicineResolver } from './resolvers/medicine.resolver'
 import { PatientDataResolver } from './resolvers/patientData.resolver'
 import { BasicInformationResolver } from './resolvers/basicInformation.resolver'
 import { CertificateResolver } from './resolvers/certificate.resolver'
+import { TreatmentsResolver } from './resolvers/treatments.resolver'
 
 @Module({
   imports: [HealthDirectorateClientModule, FeatureFlagModule],
@@ -20,6 +21,7 @@ import { CertificateResolver } from './resolvers/certificate.resolver'
     PatientDataResolver,
     BasicInformationResolver,
     CertificateResolver,
+    TreatmentsResolver,
     HealthDirectorateService,
   ],
 })
