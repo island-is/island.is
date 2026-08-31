@@ -805,8 +805,6 @@ export const en: TranslatedMessages = {
   'health.questionnaires.action.view-answer': 'View answers',
   'health.questionnaires.action.show-expired': 'Show expired',
   'health.questionnaires.action.hide-expired': 'Hide expired',
-  'health.questionnaires.detail.description':
-    'Here you can find your answers to questionnaires. You can compare your answers.',
   'health.questionnaires.detail.status': 'Status',
   'health.questionnaires.detail.institution': 'Institution',
   'health.questionnaires.detail.sentBy': 'Sent by',

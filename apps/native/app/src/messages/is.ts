@@ -803,8 +803,6 @@ export const is = {
   'health.questionnaires.action.view-answer': 'Skoða svör',
   'health.questionnaires.action.show-expired': 'Sýna útrunna',
   'health.questionnaires.action.hide-expired': 'Fela útrunna',
-  'health.questionnaires.detail.description':
-    'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
   'health.questionnaires.detail.status': 'Staða',
   'health.questionnaires.detail.institution': 'Stofnun',
   'health.questionnaires.detail.sentBy': 'Sent af',

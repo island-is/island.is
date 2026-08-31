@@ -184,9 +184,9 @@ export default function QuestionnaireDetailScreen() {
           errorContent
         ) : (
           <Content>
-            <Typography variant="body">
-              <FormattedMessage id="health.questionnaires.detail.description" />
-            </Typography>
+            {base?.description ? (
+              <Typography variant="body">{base.description}</Typography>
+            ) : null}
             <View>
               <ButtonRow>
                 {(isNotAnswered || isDraft) && (
