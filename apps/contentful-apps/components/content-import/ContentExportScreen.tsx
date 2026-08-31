@@ -14,6 +14,19 @@ import { DEFAULT_LOCALE } from '../../constants'
 
 const CSV_DELIMITER = ';'
 
+const encodeCsvField = (value: string) => {
+  if (!value) return ''
+  if (
+    value.includes(CSV_DELIMITER) ||
+    value.includes('"') ||
+    value.includes('\n') ||
+    value.includes('\r')
+  ) {
+    return `"${value.replace(/"/g, '""')}"`
+  }
+  return value
+}
+
 export const ContentExportScreen = () => {
   const cma = useCMA()
   const sdk = useSDK<PageExtensionSDK>()
@@ -293,9 +306,9 @@ export const ContentExportScreen = () => {
             ? `https:${file.url}`
             : file.url
           : ''
-        row.push(JSON.stringify(asset.fields.title?.[locale] ?? ''))
-        row.push(JSON.stringify(asset.fields.description?.[locale] ?? ''))
-        row.push(JSON.stringify(file?.fileName ?? ''))
+        row.push(encodeCsvField(asset.fields.title?.[locale] ?? ''))
+        row.push(encodeCsvField(asset.fields.description?.[locale] ?? ''))
+        row.push(encodeCsvField(file?.fileName ?? ''))
         row.push(fileUrl)
         row.push(file?.contentType ?? '')
         row.push(String(file?.details?.size ?? ''))
