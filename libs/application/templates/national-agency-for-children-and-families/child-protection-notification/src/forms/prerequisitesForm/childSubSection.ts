@@ -79,18 +79,9 @@ export const childSubSection = buildSubSection({
           searchPersons: true,
           condition: isKnowsNationalId,
         }),
-        buildTextField({
-          id: 'child.nationalIdInfo.email',
-          title: sharedMessages.email,
-          variant: 'email',
-          width: 'half',
-          doesNotRequireAnswer: true,
-          condition: isKnowsNationalId,
-        }),
         buildPhoneField({
           id: 'child.nationalIdInfo.phone',
           title: sharedMessages.phone,
-          width: 'half',
           enableCountrySelector: true,
           doesNotRequireAnswer: true,
           condition: isKnowsNationalId,

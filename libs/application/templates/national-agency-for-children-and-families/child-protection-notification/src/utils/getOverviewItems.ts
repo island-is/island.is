@@ -243,7 +243,6 @@ export const getChildWithNationalIdItems = (
     childNoNationalIdReason,
     childNationalId,
     childName,
-    childEmail,
     childPhone,
     childUsePronounAndPreferredName,
     childPreferredName,
@@ -271,12 +270,6 @@ export const getChildWithNationalIdItems = (
             width: 'half' as const,
             keyText: coreMessages.name,
             valueText: childName ?? '',
-          },
-          {
-            width: 'half' as const,
-            keyText: sharedMessages.email,
-            valueText: childEmail ?? '',
-            hideIfEmpty: true,
           },
           {
             width: 'half' as const,

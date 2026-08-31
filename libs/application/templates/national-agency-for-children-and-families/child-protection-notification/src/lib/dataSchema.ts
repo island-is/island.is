@@ -59,7 +59,6 @@ const childSchema = z
         nationalId: z.string().optional(),
         name: z.string().optional(),
         phone: phoneNumberSchema.optional().or(z.literal('')),
-        email: z.string().email().optional().or(z.literal('')),
         usePronounAndPreferredName: z.array(z.string()).optional(),
         preferredName: z.string().optional(),
         preferredPronoun: z.array(z.string()).nullish(),
