@@ -1,6 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 import { FC, useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
 import {
@@ -170,9 +171,11 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Text variant="h4" marginBottom={2}>
         {formatMessage(messages.report.criteria.jobFactorTitle)}
       </Text>
-      <Text marginBottom={3}>
-        {formatMessage(messages.report.criteria.jobFactorIntro)}
-      </Text>
+      <Box marginBottom={3}>
+        <Markdown>
+          {formatMessage(messages.report.criteria.jobFactorIntro)}
+        </Markdown>
+      </Box>
 
       <Box>
         {jobFactors.map((factor, i) => (

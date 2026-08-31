@@ -1,6 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
@@ -224,9 +225,13 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             <Text variant="h4" marginBottom={1}>
               {formatMessage(messages.report.subCriteria.jobFactorGroupTitle)}
             </Text>
-            <Text marginBottom={3}>
-              {formatMessage(messages.report.subCriteria.jobFactorGroupIntro)}
-            </Text>
+            <Box marginBottom={3}>
+              <Markdown>
+                {formatMessage(
+                  messages.report.subCriteria.jobFactorGroupIntro,
+                )}
+              </Markdown>
+            </Box>
             <Stack space={3}>
               {jobCriteria.map((criterion) => (
                 <CriterionPanel
@@ -251,11 +256,13 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   messages.report.subCriteria.personalFactorGroupTitle,
                 )}
               </Text>
-              <Text marginBottom={3}>
-                {formatMessage(
-                  messages.report.subCriteria.personalFactorGroupIntro,
-                )}
-              </Text>
+              <Box marginBottom={3}>
+                <Markdown>
+                  {formatMessage(
+                    messages.report.subCriteria.personalFactorGroupIntro,
+                  )}
+                </Markdown>
+              </Box>
               <Stack space={3}>
                 {personalCriteria.map((criterion) => (
                   <CriterionPanel
