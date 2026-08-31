@@ -66,8 +66,9 @@ export const CustomsGeneralDateTable = <T extends Record<string, any>>({
    * in effect, labelled with the date they take effect on. The label goes on the first
    * column holding a value of its own, so it sits next to what identifies the row.
    */
-  const labelledColumnKey = columns.find((column) => column.sortable !== false)
-    ?.key
+  const labelledColumnKey = columns.find(
+    (column) => column.sortable !== false,
+  )?.key
   const labelledColumns = columns.map((column) =>
     column.key === labelledColumnKey
       ? {

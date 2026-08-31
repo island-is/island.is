@@ -145,12 +145,11 @@ export class CustomsGeneralService {
     date: string,
     system: string,
   ): Promise<CustomsGeneralEntry[]> {
-    const result = await this.customsGeneralClientService.getAfhendingarskilmalar(
-      {
+    const result =
+      await this.customsGeneralClientService.getAfhendingarskilmalar({
         Dags: date,
         Kerfi: system,
-      },
-    )
+      })
     const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
