@@ -21,6 +21,7 @@ import {
   ApiActions,
   createDefaultJobFactors,
   draftActionId,
+  ScreenIds,
   SyncMethodEnum,
 } from '../../utils/constants'
 import type { ReportCriterionDto } from '../../utils/types'
@@ -32,8 +33,8 @@ import { getProviderErrorMessages } from '../../utils/providerError'
 // Manual entry (and the footer's default submit, prior to any successful
 // import) both advance here — a successful Excel import instead jumps
 // straight to ANALYSIS_SCREEN_ID, see importSucceededRef below.
-const MANUAL_ENTRY_NEXT_SCREEN_ID = 'criteriaMultiField'
-const ANALYSIS_SCREEN_ID = 'salaryAnalysisOverviewMultiField'
+const MANUAL_ENTRY_NEXT_SCREEN_ID = ScreenIds.criteria
+const ANALYSIS_SCREEN_ID = ScreenIds.analysisOverview
 
 export const ExcelTemplateDownload: FC<
   React.PropsWithChildren<FieldBaseProps>

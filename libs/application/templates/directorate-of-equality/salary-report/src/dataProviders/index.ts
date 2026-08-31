@@ -159,6 +159,9 @@ export const EditOutliersApi = defineTemplateApi({
 // landing-screen decision).
 // Listed on a role's `api` array purely so updateApplicationExternalData is
 // permitted to invoke it for that role.
+// throwOnError stays false: this runs as an onEntry on DRAFT, POSTPONED and
+// DRAFT_RETRY, and an onEntry blocks the new state from being persisted when it
+// throws — a prefetch failing must never strand an application mid-transition.
 export const GetReportCommentsApi = defineTemplateApi({
   action: ApiActions.getReportComments,
   externalDataId: 'getReportComments',
