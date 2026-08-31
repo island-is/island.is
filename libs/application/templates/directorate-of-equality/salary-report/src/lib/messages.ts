@@ -313,6 +313,14 @@ export const messages = {
         id: 'doe.sr.application:aboutTheCompany.contactPerson.namePlaceholder',
         defaultMessage: 'Nafn tengiliðs',
       },
+      jobTitle: {
+        id: 'doe.sr.application:aboutTheCompany.contactPerson.jobTitle',
+        defaultMessage: 'Starfstitill',
+      },
+      jobTitlePlaceholder: {
+        id: 'doe.sr.application:aboutTheCompany.contactPerson.jobTitlePlaceholder',
+        defaultMessage: 'Starfstitill tengiliðs',
+      },
       email: {
         id: 'doe.sr.application:aboutTheCompany.contactPerson.email',
         defaultMessage: 'Netfang',
@@ -770,9 +778,13 @@ export const messages = {
         id: 'doe.sr.application:report.employees.genderColumn',
         defaultMessage: 'Kyn',
       },
-      identifierLabel: {
-        id: 'doe.sr.application:report.employees.identifierLabel',
-        defaultMessage: 'Auðkenni',
+      // New id, not a renamed defaultMessage on the old `identifierLabel`: the
+      // CMS translation for that id ("Auðkenni") wins over whatever is written
+      // here, so the ordinal only gets a truthful label under an id Contentful
+      // has never seen.
+      ordinalLabel: {
+        id: 'doe.sr.application:report.employees.ordinalLabel',
+        defaultMessage: 'Númer starfsmanns',
       },
       fieldLabel: {
         id: 'doe.sr.application:report.employees.fieldLabel',

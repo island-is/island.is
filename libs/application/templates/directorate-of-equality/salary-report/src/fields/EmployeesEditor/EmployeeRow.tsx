@@ -24,7 +24,6 @@ import * as styles from './EmployeesEditor.css'
 
 type Props = {
   employee: Employee
-  identifier: string
   roleTitleById: Record<string, string>
   onRemove: () => void
   onEdit: () => void
@@ -56,7 +55,6 @@ const DetailItem: FC<{ label: string; value: string; highlight: boolean }> = ({
 
 export const EmployeeRow: FC<Props> = ({
   employee,
-  identifier,
   roleTitleById,
   onRemove,
   onEdit,
@@ -68,7 +66,7 @@ export const EmployeeRow: FC<Props> = ({
   const background = expanded ? 'blue100' : 'transparent'
 
   const leftItems = [
-    { label: formatMessage(m.identifierLabel), value: identifier },
+    { label: formatMessage(m.ordinalLabel), value: String(employee.ordinal) },
     { label: formatMessage(m.fieldLabel), value: employee.field ?? '' },
     {
       label: formatMessage(m.departmentLabel),
@@ -114,7 +112,7 @@ export const EmployeeRow: FC<Props> = ({
             title={formatMessage(m.nameColumn)}
           />
         </T.Data>
-        <T.Data box={{ background }}>{identifier}</T.Data>
+        <T.Data box={{ background }}>{employee.ordinal}</T.Data>
         <T.Data box={{ background }}>
           {roleTitleById[employee.roleId] ?? ''}
         </T.Data>
@@ -136,7 +134,7 @@ export const EmployeeRow: FC<Props> = ({
             />
             <Box marginLeft={1}>
               <DialogPrompt
-                baseId={`employee_remove_dialog_${identifier}`}
+                baseId={`employee_remove_dialog_${employee.id}`}
                 title={formatMessage(m.removeConfirmTitle)}
                 description={formatMessage(m.removeConfirmDescription)}
                 ariaLabel={formatMessage(m.removeButton)}
