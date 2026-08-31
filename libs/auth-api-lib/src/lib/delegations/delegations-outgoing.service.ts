@@ -278,11 +278,6 @@ export class DelegationsOutgoingService {
           toName,
         })
       } catch (error) {
-        // A concurrent request (e.g. a double-submit) can create the same
-        // delegation between our findOne above and this create, tripping the
-        // (domainName, fromNationalId, toNationalId) unique index. Fall back to
-        // the row the other request created and continue adding scopes to it,
-        // instead of surfacing a unique-constraint error.
         if (error instanceof UniqueConstraintError) {
           delegation = await this.delegationModel.findOne({
             where: {
