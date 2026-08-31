@@ -41,12 +41,12 @@ export const vehicleTaxFields: FieldDefinition[] = [
   },
   {
     // Only used when a vehicle changed owners mid-period; the UI gates this
-    // behind a "Skipta upp tímabilinu" toggle section, not a visibleWhen
-    // condition on another field's value.
+    // behind a "Skipta upp tímabilinu" toggle section, authored in
+    // Contentful -- the backend has no conditional opinion on it.
     key: 'periodSplitDate',
     rawKey: 'gjaldskipting',
-    label: 'Skiptidagur (ÁÁÁÁ-MM-DD)',
-    kind: TaxCalculatorFieldKind.TEXT,
+    label: 'Skiptidagur',
+    kind: TaxCalculatorFieldKind.DATE,
     required: false,
     // The real query type declares this as a `Date`, not a `string`.
     parse: parseDate,

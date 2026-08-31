@@ -74,7 +74,6 @@ export const mapChildBenefitResultToRows = (
     ),
     buildRow('totalChildBenefit', 'Barnabætur alls', result.barnabaeturAlls, {
       unit: 'ISK',
-      emphasis: true,
     }),
     buildRow(
       'quarterlyPayment',

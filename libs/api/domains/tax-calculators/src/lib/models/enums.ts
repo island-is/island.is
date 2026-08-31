@@ -5,8 +5,6 @@ export enum TaxCalculatorType {
   CHILD_BENEFIT = 'childBenefit',
   VEHICLE_TAX = 'vehicleTax',
   VEHICLE_BENEFIT = 'vehicleBenefit',
-  VEHICLE_DEPRECIATION = 'vehicleDepreciation',
-  INTEREST_BENEFIT = 'interestBenefit',
 }
 
 registerEnumType(TaxCalculatorType, {
@@ -20,6 +18,7 @@ export enum TaxCalculatorFieldKind {
   BOOLEAN = 'boolean',
   TEXT = 'text',
   CHECKBOX = 'checkbox',
+  DATE = 'date',
 }
 
 registerEnumType(TaxCalculatorFieldKind, {

@@ -26,33 +26,31 @@ export const mapVehicleTaxResultToRows = (
       'totalVehicleTax',
       'Bifreiðagjöld alls',
       result.bifreidagjoldAlls,
-      { unit: 'ISK', emphasis: true },
+      { unit: 'ISK' },
     ),
   ]
 
-  const buildSplitRows = (split: typeof result.fyrraTimabil, group: string) => {
+  const buildSplitRows = (split: typeof result.fyrraTimabil) => {
     if (!split) return []
     return [
       buildRow('splitVehicleTax', 'Bifreiðagjald', split.bifreidagjald, {
         unit: 'ISK',
-        group,
       }),
       buildRow('splitProcessingFee', 'Úrvinnslugjald', split.urvinnslugjald, {
         unit: 'ISK',
-        group,
       }),
       buildRow(
         'splitTotalVehicleTax',
         'Bifreiðagjöld alls',
         split.bifreidagjaldAlls,
-        { unit: 'ISK', group },
+        { unit: 'ISK' },
       ),
     ]
   }
 
   rows.push(
-    ...buildSplitRows(result.fyrraTimabil, 'fyrraTimabil'),
-    ...buildSplitRows(result.seinnaTimabil, 'seinnaTimabil'),
+    ...buildSplitRows(result.fyrraTimabil),
+    ...buildSplitRows(result.seinnaTimabil),
   )
 
   return rows.filter(isDefined)

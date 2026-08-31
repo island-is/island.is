@@ -1,16 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
-  title: {
-    id: 'web.rsk.calculatorSlice:title',
-    defaultMessage: '',
-    description: 'Titill reiknivélar',
-  },
-  disclaimer: {
-    id: 'web.rsk.calculatorSlice:disclaimer',
-    defaultMessage: '',
-    description: 'Fyrirvari undir reiknivél',
-  },
   calculate: {
     id: 'web.rsk.calculatorSlice:calculate',
     defaultMessage: 'Reikna',
@@ -21,39 +11,6 @@ export const messages = defineMessages({
     defaultMessage: 'Endurreikna',
     description:
       'Texti á takka til að endurreikna eftir að niðurstöður birtast',
-  },
-  results: {
-    id: 'web.rsk.calculatorSlice:results',
-    defaultMessage: 'Niðurstöður',
-    description: 'Titill á niðurstöðum',
-  },
-  groupTaxBaseCalculationTitle: {
-    id: 'web.rsk.calculatorSlice:groupTaxBaseCalculationTitle',
-    defaultMessage: 'Útreikningar skattstofns',
-    description: 'Titill á niðurstöðuflokki fyrir skattstofn',
-  },
-  groupWithholdingAndPersonalCreditTitle: {
-    id: 'web.rsk.calculatorSlice:groupWithholdingAndPersonalCreditTitle',
-    defaultMessage: 'Staðgreiðsla og persónuafsláttur',
-    description:
-      'Titill á niðurstöðuflokki fyrir staðgreiðslu og persónuafslátt',
-  },
-  groupEmployerCostsTitle: {
-    id: 'web.rsk.calculatorSlice:groupEmployerCostsTitle',
-    defaultMessage: 'Önnur gjöld launagreiðanda',
-    description: 'Titill á niðurstöðuflokki fyrir gjöld launagreiðanda',
-  },
-  groupFyrraTimabilTitle: {
-    id: 'web.rsk.calculatorSlice:groupFyrraTimabilTitle',
-    defaultMessage: 'Fyrra tímabil',
-    description:
-      'Titill á niðurstöðuflokki fyrir fyrra tímabil við skiptingu bifreiðagjalds',
-  },
-  groupSeinnaTimabilTitle: {
-    id: 'web.rsk.calculatorSlice:groupSeinnaTimabilTitle',
-    defaultMessage: 'Seinna tímabil',
-    description:
-      'Titill á niðurstöðuflokki fyrir seinna tímabil við skiptingu bifreiðagjalds',
   },
   selectPlaceholder: {
     id: 'web.rsk.calculatorSlice:selectPlaceholder',

@@ -1251,24 +1251,19 @@ export interface IEmbeddedVideo extends Entry<IEmbeddedVideoFields> {
   }
 }
 
-// HAND-AUTHORED, NOT GENERATED — delete this block once codegenContentful.ts
-// has run against a real 'calculator' content type in Contentful. The
-// 'calculator' content type does not exist yet in any Contentful environment;
-// this stub unblocks TS compilation for the calculator-config PoC. The
-// `sys.contentType.sys.id` below MUST match whatever API Identifier is
-// actually typed in when the content type is created.
 export interface ICalculatorFields {
-  /** Title */
-  title?: string | undefined
+  /** Internal title */
+  internalTitle: string
 
-  /** Calculator Type */
-  calculatorType?: string | undefined
+  /** Type */
+  type:
+    | 'withholdingTaxOnWages'
+    | 'childBenefit'
+    | 'vehicleTax'
+    | 'vehicleBenefit'
 
-  /** Config JSON */
-  configJson?: Record<string, any> | undefined
-
-  /** Translation namespace */
-  translationNamespace?: INamespace | undefined
+  /** Config json */
+  configJson: Record<string, any>
 }
 
 export interface ICalculator extends Entry<ICalculatorFields> {
@@ -5822,6 +5817,7 @@ export type CONTENT_TYPE =
   | 'auction'
   | 'bigBulletList'
   | 'bloodDonationRestriction'
+  | 'calculator'
   | 'card'
   | 'cardSection'
   | 'chart'

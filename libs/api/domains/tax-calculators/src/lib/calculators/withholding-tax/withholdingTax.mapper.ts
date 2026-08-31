@@ -11,91 +11,79 @@ export const mapWithholdingTaxResultToRows = (
     throw new BadRequestException('No calculation result was returned')
   }
 
+  const bracketRows = (result.skattthrep ?? [])
+    .filter(
+      (bracket) =>
+        bracket.numerThreps !== null && bracket.numerThreps !== undefined,
+    )
+    .map((bracket) =>
+      buildRow(
+        `taxBracket-${bracket.numerThreps}`,
+        `Skattþrep ${bracket.numerThreps} (${bracket.stadgreidsluhlutfall}%)`,
+        bracket.reiknudStadgreidsla,
+        { unit: 'ISK' },
+      ),
+    )
+
   const rows = [
     buildRow('monthlySalary', 'Mánaðarlaun', result.manadarlaun, {
       unit: 'ISK',
     }),
     buildRow(
-      'pensionFundPercentageUsed',
-      'Hlutfall í lífeyrissjóð',
-      result.lifeyrisjodurProsenta,
-      { unit: '%' },
-    ),
-    buildRow(
-      'privatePensionPercentageUsed',
-      'Hlutfall í séreignarsparnað',
-      result.sereignProsenta,
-      { unit: '%' },
-    ),
-    buildRow(
       'pensionFundContribution',
-      'Framlag í lífeyrissjóð',
+      'Greitt í lífeyrissjóð',
       result.lifeyrissjodur,
       { unit: 'ISK' },
     ),
     buildRow(
       'privatePensionContribution',
-      'Framlag í séreignarsparnað',
+      'Greitt í séreignarsparnað',
       result.sereignarsjodur,
       { unit: 'ISK' },
     ),
-    buildRow('totalDeductions', 'Frádráttur alls', result.fradratturAlls, {
-      unit: 'ISK',
-    }),
-    buildRow('personalTaxCredit', 'Persónuafsláttur', result.personuafslattur, {
-      unit: 'ISK',
-    }),
-    buildRow(
-      'personalTaxCreditFromSpouse',
-      'Persónuafsláttur frá maka',
-      result.personuafslatturFraMaka,
-      { unit: 'ISK' },
-    ),
     buildRow('taxBase', 'Skattstofn', result.skattstofn, { unit: 'ISK' }),
+    ...bracketRows,
     buildRow(
       'calculatedWithholdingTax',
-      'Reiknuð staðgreiðsla',
+      'Samanlögð staðgreiðsla',
       result.reiknudStadgreidsla,
       { unit: 'ISK' },
     ),
     buildRow(
-      'paidWithholdingTax',
-      'Greidd staðgreiðsla',
-      result.greiddStadgreidsla,
+      'personalTaxCredit',
+      'Eigin persónuafsláttur',
+      result.personuafslattur,
       { unit: 'ISK' },
     ),
-    buildRow('highIncomeTax', 'Hátekjuskattur', result.hatekjuskattur, {
-      unit: 'ISK',
-    }),
-    buildRow('netPay', 'Útborguð laun', result.utborgudLaun, {
-      unit: 'ISK',
-      emphasis: true,
-    }),
+    buildRow(
+      'personalTaxCreditFromSpouse',
+      'Persónuafsláttur maka',
+      result.personuafslatturFraMaka,
+      { unit: 'ISK' },
+    ),
     buildRow(
       'accumulatedPersonalTaxCredit',
-      'Uppsafnaður persónuafsláttur',
+      'Uppsafnaður persónuafsláttur nýttur',
       result.uppsafnadurPersonuafslattur,
       { unit: 'ISK' },
     ),
     buildRow(
-      'childTaxFreeThreshold',
-      'Frítekjumark vegna barna',
-      result.fritekjumarkBarns,
+      'paidWithholdingTax',
+      'Staðgreiðsla eftir persónuafslátt',
+      result.greiddStadgreidsla,
       { unit: 'ISK' },
     ),
     buildRow(
-      'withholdingTaxRate',
-      'Staðgreiðsluhlutfall',
-      result.stadgreidsluhlutfall,
-      { unit: '%' },
+      'netPay',
+      'Heildarlaun eftir frádrátt',
+      result.utborgudLaun,
+      { unit: 'ISK' },
     ),
     buildRow(
       'employerPensionMatch',
       'Mótframlag í lífeyrissjóð',
       result.motframlag,
-      {
-        unit: 'ISK',
-      },
+      { unit: 'ISK' },
     ),
     buildRow(
       'socialSecurityTaxBase',
@@ -106,32 +94,42 @@ export const mapWithholdingTaxResultToRows = (
     buildRow('socialSecurityTax', 'Tryggingagjald', result.tryggingagjald, {
       unit: 'ISK',
     }),
+    buildRow(
+      'pensionFundPercentageUsed',
+      'Nýtt hlutfall í lífeyrissjóð',
+      result.lifeyrisjodurProsenta,
+      { unit: '%' },
+    ),
+    buildRow(
+      'privatePensionPercentageUsed',
+      'Nýtt hlutfall í séreignarsjóð',
+      result.sereignProsenta,
+      { unit: '%' },
+    ),
+    buildRow('totalDeductions', 'Frádráttur alls', result.fradratturAlls, {
+      unit: 'ISK',
+    }),
+    buildRow('highIncomeTax', 'Hátekjuskattur', result.hatekjuskattur, {
+      unit: 'ISK',
+    }),
+    buildRow(
+      'highIncomeTaxApplied',
+      'Reiknaði hátekjuskatt',
+      result.reiknadiHatekjuskatt,
+    ),
+    buildRow(
+      'childTaxFreeThreshold',
+      'Fritekjumark barna',
+      result.fritekjumarkBarns,
+      { unit: 'ISK' },
+    ),
+    buildRow(
+      'withholdingTaxRate',
+      'Staðgreiðsluhlutfall',
+      result.stadgreidsluhlutfall,
+      { unit: '%' },
+    ),
   ]
-
-  result.skattthrep?.forEach((bracket) => {
-    if (bracket.numerThreps === null || bracket.numerThreps === undefined) {
-      return
-    }
-    const group = `bracket-${bracket.numerThreps}`
-    rows.push(
-      buildRow('taxBracketLowerLimit', 'Neðri mörk', bracket.nedriMork, {
-        unit: 'ISK',
-        group,
-      }),
-      buildRow(
-        'taxBracketRate',
-        'Staðgreiðsluhlutfall',
-        bracket.stadgreidsluhlutfall,
-        { unit: '%', group },
-      ),
-      buildRow(
-        'taxBracketAmount',
-        'Reiknuð staðgreiðsla',
-        bracket.reiknudStadgreidsla,
-        { unit: 'ISK', group },
-      ),
-    )
-  })
 
   return rows.filter(isDefined)
 }

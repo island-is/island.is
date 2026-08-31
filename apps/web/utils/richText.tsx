@@ -421,11 +421,7 @@ const defaultRenderComponent = {
     slice.accordionItems && <AccordionSlice slice={slice} />,
   ConnectedComponent: (slice: ConnectedComponent) =>
     webRenderConnectedComponent(slice),
-  Calculator: (slice: CalculatorSchema) => (
-    <TranslationNamespaceProvider messages={slice.translationStrings ?? {}}>
-      <Calculator slice={slice} />
-    </TranslationNamespaceProvider>
-  ),
+  Calculator: (slice: CalculatorSchema) => <Calculator slice={slice} />,
   GraphCard: (chart: ChartsCardsProps['chart']) => <ChartsCard chart={chart} />,
   OneColumnText: (slice: OneColumnText) => <OneColumnTextSlice slice={slice} />,
   TwoColumnText: (slice: TwoColumnText) => <TwoColumnTextSlice slice={slice} />,

@@ -53,8 +53,6 @@ import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { ErrorPage } from './models/errorPage.model'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
-import { Calculator, mapCalculator } from './models/calculator.model'
-import { mockCalculatorEntries } from './models/calculator.mock'
 import {
   GetOrganizationSubpageByIdInput,
   GetOrganizationSubpageInput,
@@ -1267,18 +1265,5 @@ export class OrganizationResolver {
   async footerConfig(@Parent() organization: Organization) {
     const footer = await this.getFooter(organization)
     return footer?.footerConfig ?? {}
-  }
-}
-
-// TEMPORARY — serves mocked `Calculator` entries so the generic calculator
-// PoC (frontend rendering, Zod validation, conditional visibility) can be
-// exercised end-to-end via a real GraphQL query before the `calculator`
-// content type exists in Contentful. Delete once real entries exist and are
-// reachable through the normal SliceUnion/richtext embedding path.
-@Resolver(() => Calculator)
-export class CalculatorMockResolver {
-  @Query(() => [Calculator], { nullable: true })
-  calculatorMocks(): Calculator[] {
-    return mockCalculatorEntries.map(mapCalculator)
   }
 }

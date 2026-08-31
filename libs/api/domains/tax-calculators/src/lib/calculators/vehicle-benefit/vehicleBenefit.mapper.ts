@@ -16,7 +16,6 @@ export const mapVehicleBenefitResultToRows = (
     buildRow('purchasePrice', 'Kaupverð', result.kaupverd, { unit: 'ISK' }),
     buildRow('monthlyBenefit', 'Mánaðarhlunnindi', result.manadarhlunnindi, {
       unit: 'ISK',
-      emphasis: true,
     }),
     buildRow('annualBenefit', 'Árshlunnindi', result.arshlunnindi, {
       unit: 'ISK',

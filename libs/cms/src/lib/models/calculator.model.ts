@@ -1,6 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import graphqlTypeJson, { GraphQLJSONObject } from 'graphql-type-json'
-import { CacheField } from '@island.is/nest/graphql'
+import graphqlTypeJson from 'graphql-type-json'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ICalculator } from '../generated/contentfulTypes'
 
@@ -14,9 +13,6 @@ export class Calculator {
   @Field(() => ID)
   id!: string
 
-  @Field()
-  title!: string
-
   @Field({ nullable: true })
   calculatorType?: string
 
@@ -27,15 +23,6 @@ export class Calculator {
   // name across union members, so this must match ConnectedComponent's type.
   @Field(() => graphqlTypeJson, { nullable: true })
   configJson?: Record<string, any>
-
-  // Must stay `nullable: true` to match ConnectedComponent's field of the
-  // same name -- both are `Slice` union members, and GraphQL's
-  // overlapping-fields-can-be-merged rule requires identical types for a
-  // shared field name across union members queried through the same
-  // selection (e.g. richtext/Slice queries). The mapper itself never
-  // actually produces null, but the union constraint takes precedence.
-  @CacheField(() => GraphQLJSONObject, { nullable: true })
-  translationStrings!: Record<string, string>
 }
 
 export const mapCalculator = ({
@@ -44,8 +31,6 @@ export const mapCalculator = ({
 }: ICalculator): SystemMetadata<Calculator> => ({
   typename: 'Calculator',
   id: sys.id,
-  title: fields?.title ?? '',
-  calculatorType: fields?.calculatorType,
+  calculatorType: fields?.type,
   configJson: fields?.configJson ?? undefined,
-  translationStrings: fields?.translationNamespace?.fields?.strings ?? {},
 })

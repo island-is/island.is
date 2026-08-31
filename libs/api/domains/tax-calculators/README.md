@@ -12,8 +12,9 @@ instead of a bespoke query per calculator.
 - `CHILD_BENEFIT` — child benefit (Barnabætur)
 - `VEHICLE_TAX` — vehicle tax (Bifreiðagjöld)
 - `VEHICLE_BENEFIT` — vehicle benefit (Bifreiðahlunnindi)
-- `VEHICLE_DEPRECIATION` — vehicle depreciation (Fyrning ökutækja)
-- `INTEREST_BENEFIT` — mortgage interest benefit (Vaxtabætur)
+
+The RSK client also exposes `getVehicleDepreciation` (Fyrning ökutækja) and
+`getInterestBenefit` (Vaxtabætur), but neither is wired up as a calculator type.
 
 ## GraphQL API
 

@@ -2,7 +2,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { CalculatorField } from './models/field.model'
-import { CalculatorResultRow } from './models/resultRow.model'
+import { CalculatorCalculationResult } from './models/calculationResult.model'
 import { CalculatorInputValue } from './dto/inputValue.input'
 import { TaxCalculatorType } from './models/enums'
 import { TaxCalculatorsService } from './tax-calculators.service'
@@ -25,7 +25,7 @@ export class TaxCalculatorsResolver {
     return this.service.getFields(calculatorType)
   }
 
-  @Query(() => [CalculatorResultRow], {
+  @Query(() => CalculatorCalculationResult, {
     name: 'taxCalculatorCalculation',
     nullable: true,
     description:
@@ -36,7 +36,7 @@ export class TaxCalculatorsResolver {
     calculatorType: TaxCalculatorType,
     @Args('input', { type: () => [CalculatorInputValue] })
     input: CalculatorInputValue[],
-  ): Promise<CalculatorResultRow[]> {
+  ): Promise<CalculatorCalculationResult> {
     return this.service.calculate(calculatorType, input)
   }
 }

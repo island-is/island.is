@@ -226,10 +226,8 @@ export const slices = gql`
   fragment CalculatorFields on Calculator {
     __typename
     id
-    title
     calculatorType
     configJson
-    translationStrings
   }
 
   fragment SectionWithImageFields on SectionWithImage {

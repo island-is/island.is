@@ -4,7 +4,7 @@ export const buildRow = (
   key: string,
   label: string,
   value: number | bigint | string | boolean | null | undefined,
-  options?: { unit?: string; group?: string; emphasis?: boolean },
+  options?: { unit?: string },
 ): CalculatorResultRow | undefined => {
   if (value === null || value === undefined) {
     return undefined
@@ -14,7 +14,5 @@ export const buildRow = (
   row.label = label
   row.value = String(value)
   row.unit = options?.unit
-  row.group = options?.group
-  row.emphasis = options?.emphasis
   return row
 }

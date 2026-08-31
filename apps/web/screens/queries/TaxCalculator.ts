@@ -24,12 +24,12 @@ export const GET_TAX_CALCULATOR_CALCULATION = gql`
     $input: [TaxCalculatorInputValue!]!
   ) {
     taxCalculatorCalculation(calculatorType: $calculatorType, input: $input) {
-      key
-      label
-      value
-      unit
-      group
-      emphasis
+      values {
+        key
+        label
+        value
+        unit
+      }
     }
   }
 `
