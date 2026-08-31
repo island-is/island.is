@@ -88,6 +88,8 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const hasMessage = field.message != null || !!field.links?.length
+
   return (
     showAlertMessage.current && (
       <Box
@@ -103,45 +105,47 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
             formatMessage,
           )}
           message={
-            <Box>
-              <Box component="span" display="block">
-                {field.message != null ? (
-                  <Box component="div" className={divWithSmallText}>
-                    <Markdown>
-                      {formatTextWithLocale(
-                        field.message,
-                        updatedApplication,
-                        locale as Locale,
-                        formatMessage,
-                      )}
-                    </Markdown>
-                  </Box>
-                ) : null}
-              </Box>
-              {field.links && (
-                <Box display="flex" flexWrap="wrap" marginTop={2}>
-                  {field.links.map((link, index) => (
-                    <Box component="span" marginRight={2} key={index}>
-                      <a
-                        href={formatMessage(link.url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button
-                          variant="text"
-                          icon={link.isExternal ? 'open' : undefined}
-                          iconType={link.isExternal ? 'outline' : undefined}
-                          size="small"
-                          as="span"
-                        >
-                          {formatMessage(link.title)}
-                        </Button>
-                      </a>
+            hasMessage ? (
+              <Box>
+                <Box component="span" display="block">
+                  {field.message != null ? (
+                    <Box component="div" className={divWithSmallText}>
+                      <Markdown>
+                        {formatTextWithLocale(
+                          field.message,
+                          updatedApplication,
+                          locale as Locale,
+                          formatMessage,
+                        )}
+                      </Markdown>
                     </Box>
-                  ))}
+                  ) : null}
                 </Box>
-              )}
-            </Box>
+                {field.links && (
+                  <Box display="flex" flexWrap="wrap" marginTop={2}>
+                    {field.links.map((link, index) => (
+                      <Box component="span" marginRight={2} key={index}>
+                        <a
+                          href={formatMessage(link.url)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button
+                            variant="text"
+                            icon={link.isExternal ? 'open' : undefined}
+                            iconType={link.isExternal ? 'outline' : undefined}
+                            size="small"
+                            as="span"
+                          >
+                            {formatMessage(link.title)}
+                          </Button>
+                        </a>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            ) : undefined
           }
         />
       </Box>

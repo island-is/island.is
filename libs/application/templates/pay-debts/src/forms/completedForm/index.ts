@@ -27,7 +27,7 @@ export const completedForm = buildForm({
       sectionTitle: messages.sectionTitle,
       multiFieldTitle: messages.alertTitle,
       alertTitle: messages.alertMessage,
-      alertMessage: 'Takk fyrir',
+      alertMessage: undefined,
     }),
   ],
 })
