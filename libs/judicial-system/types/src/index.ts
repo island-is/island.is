@@ -20,6 +20,7 @@ export {
   InformationForDefendant,
   informationForDefendantMap,
   mapPoliceVerdictDeliveryStatus,
+  canDefendantAppealVerdict,
 } from './lib/verdict'
 
 export { CourtSessionStringType } from './lib/courtSessionString'
