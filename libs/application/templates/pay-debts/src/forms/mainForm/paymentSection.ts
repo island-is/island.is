@@ -5,7 +5,6 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { payment as messages } from '../../lib/messages'
-import { getDebts } from '../../utils/getDebts'
 import { getSelectedDebts } from '../../utils/getSelectedDebts'
 
 export const paymentSection = buildSection({
@@ -22,28 +21,26 @@ export const paymentSection = buildSection({
           forPaymentLabelVariant: 'h5',
           totalLabel: messages.summary.totalLabel,
           simplifiedList: true,
-          additionalSummaryLabel: messages.summary.remainingLabel,
-          getAdditionalSummaryAmount: (application) => {
-            const totalDebts = getDebts(application).reduce(
-              (total, debt) => total + debt.debts,
-              0,
-            )
-            const totalToPay = getSelectedDebts(application).reduce(
-              (total, debt) => total + debt.amountToPay,
-              0,
-            )
-            return totalDebts - totalToPay
-          },
           getSelectedChargeItems: (application) =>
             // chargeTypeId is a charge *category*, not a unique per-debt id,
             // so two selected debts can share it - suffix with index to keep
             // this list's React keys unique. Display-only, unrelated to the
             // chargeItems used for the actual FJS charge in template.ts.
-            getSelectedDebts(application).map((debt, index) => ({
-              chargeItemCode: `${debt.chargeTypeId}-${index}`,
-              chargeItemName: debt.chargeTypeName,
-              chargeItemAmount: debt.amountToPay,
-            })),
+            getSelectedDebts(application).map((debt, index) => {
+              const remaining = debt.debts - debt.amountToPay
+
+              return {
+                chargeItemCode: `${debt.chargeTypeId}-${index}`,
+                chargeItemName: debt.chargeTypeName,
+                chargeItemAmount: debt.amountToPay,
+                ...(remaining > 0
+                  ? {
+                      subLabel: messages.summary.remainingLabel,
+                      subAmount: remaining,
+                    }
+                  : {}),
+              }
+            }),
         }),
         buildSubmitField({
           id: 'submit',

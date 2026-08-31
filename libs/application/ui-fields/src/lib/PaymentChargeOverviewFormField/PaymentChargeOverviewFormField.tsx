@@ -6,6 +6,7 @@ import {
 import {
   FieldBaseProps,
   PaymentChargeOverviewField,
+  StaticText,
 } from '@island.is/application/types'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -47,8 +48,20 @@ export const PaymentChargeOverviewFormField: FC<
       priceAmount: charge.chargeItemAmount ?? chargeWithInfo?.priceAmount,
       quantity: charge.chargeItemQuantity,
       extraLabel: charge.extraLabel,
+      subLabel: charge.subLabel,
+      subAmount: charge.subAmount,
     }
   })
+
+  const subRow = (charge: { subLabel?: StaticText; subAmount?: number }) =>
+    charge.subLabel && charge.subAmount !== undefined ? (
+      <Box display="flex" justifyContent="spaceBetween">
+        <Text variant="small">
+          {formatText(charge.subLabel, application, formatMessage)}
+        </Text>
+        <Text variant="small">{formatIsk(charge.subAmount)}</Text>
+      </Box>
+    ) : null
 
   // calculate total price for all selected charge items
   const totalPrice = selectedChargeWithInfoList.reduce(
@@ -69,23 +82,21 @@ export const PaymentChargeOverviewFormField: FC<
         </Text>
         {field.simplifiedList
           ? selectedChargeWithInfoList.map((charge) => (
-              <Box
-                key={charge?.chargeItemCode}
-                paddingTop={1}
-                display="flex"
-                justifyContent="spaceBetween"
-              >
-                <Text>
-                  {charge?.chargeItemName}
-                  {charge?.extraLabel
-                    ? ` - ${formatMessage(charge.extraLabel)}`
-                    : ''}
-                </Text>
-                <Text>
-                  {formatIsk(
-                    (charge?.priceAmount || 0) * (charge?.quantity || 1),
-                  )}
-                </Text>
+              <Box key={charge?.chargeItemCode} paddingTop={1}>
+                <Box display="flex" justifyContent="spaceBetween">
+                  <Text>
+                    {charge?.chargeItemName}
+                    {charge?.extraLabel
+                      ? ` - ${formatMessage(charge.extraLabel)}`
+                      : ''}
+                  </Text>
+                  <Text>
+                    {formatIsk(
+                      (charge?.priceAmount || 0) * (charge?.quantity || 1),
+                    )}
+                  </Text>
+                </Box>
+                {subRow(charge)}
               </Box>
             ))
           : null}
@@ -162,6 +173,7 @@ export const PaymentChargeOverviewFormField: FC<
                   </Text>
                 </Box>
               )}
+              {subRow(charge)}
               {index < selectedChargeWithInfoList.length - 1 && (
                 <Box paddingY={3}>
                   <Divider />
