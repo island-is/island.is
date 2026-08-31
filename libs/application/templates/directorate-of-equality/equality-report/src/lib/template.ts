@@ -124,7 +124,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // This is the role every unauthorized caller falls through to, so
+              // it gets nothing: the dead-end form reads no answers and no
+              // externalData, only `application.applicant`.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },

@@ -69,13 +69,24 @@ export const CriterionPanel: FC<Props> = ({
       label={criterionTitle}
       // Every panel starts collapsed, so without a red header the gate above
       // could disable Continue with its explanation hidden inside the accordion.
+      // The badge below carries the same signal in text — colour alone would
+      // leave it unreadable to anyone who cannot see the difference.
       labelColor={hasWeightMismatch ? 'red600' : undefined}
-      visibleContent={formatMessage(
-        messages.report.subCriteria.criterionWeightLabel,
-        {
-          weight: criterionWeight,
-        },
-      )}
+      visibleContent={
+        <>
+          {formatMessage(messages.report.subCriteria.criterionWeightLabel, {
+            weight: criterionWeight,
+          })}
+          {hasWeightMismatch && (
+            <>
+              {' — '}
+              {formatMessage(
+                messages.report.subCriteria.criterionWeightMismatchBadge,
+              )}
+            </>
+          )}
+        </>
+      }
     >
       <Box>
         {fields.map((field, i) => (

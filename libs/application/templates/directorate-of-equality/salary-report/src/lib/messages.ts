@@ -653,6 +653,12 @@ export const messages = {
         id: 'doe.sr.application:report.subCriteria.criterionWeightLabel',
         defaultMessage: 'Vægi yfirviðmiðs: {weight}%',
       },
+      // Shown next to the weight while the panel is COLLAPSED, so the red
+      // header is never the only thing marking it as blocking.
+      criterionWeightMismatchBadge: {
+        id: 'doe.sr.application:report.subCriteria.criterionWeightMismatchBadge',
+        defaultMessage: 'Vægi stemmir ekki',
+      },
       catalogLabel: {
         id: 'doe.sr.application:report.subCriteria.catalogLabel',
         defaultMessage: 'Nota sniðmát',
@@ -1689,30 +1695,50 @@ export const messages = {
     },
     editHistoryLog: {
       id: 'doe.sr.application:inReview.editHistoryLog',
-      defaultMessage: 'Skilaboð frá Jafnréttisstofu',
+      defaultMessage: 'Athugasemd frá Jafnréttisstofu',
     },
   }),
 
   comments: defineMessages({
     sectionTitle: {
       id: 'doe.sr.application:comments.sectionTitle',
-      defaultMessage: 'Samskipti',
+      defaultMessage: 'Athugasemdir',
     },
     title: {
       id: 'doe.sr.application:comments.title',
-      defaultMessage: 'Samskipti við Jafnréttisstofu',
+      defaultMessage: 'Athugasemdir',
     },
     emptyState: {
       id: 'doe.sr.application:comments.emptyState',
-      defaultMessage: 'Engin skilaboð hafa verið send.',
+      defaultMessage: 'Engar athugasemdir hafa verið sendar.',
     },
     textareaLabel: {
       id: 'doe.sr.application:comments.textareaLabel',
-      defaultMessage: 'Skrifa skilaboð',
+      defaultMessage: 'Athugasemd',
+    },
+    placeholder: {
+      id: 'doe.sr.application:comments.placeholder',
+      defaultMessage: 'Bættu við athugasemd',
+    },
+    replyButton: {
+      id: 'doe.sr.application:comments.replyButton',
+      defaultMessage: 'Svara athugasemd',
     },
     sendButton: {
       id: 'doe.sr.application:comments.sendButton',
-      defaultMessage: 'Senda skilaboð',
+      defaultMessage: 'Senda athugasemd',
+    },
+    cancelButton: {
+      id: 'doe.sr.application:comments.cancelButton',
+      defaultMessage: 'Hætta við',
+    },
+    seeAllComments: {
+      id: 'doe.sr.application:comments.seeAllComments',
+      defaultMessage: 'Sjá allar athugasemdir',
+    },
+    registersComment: {
+      id: 'doe.sr.application:comments.registersComment',
+      defaultMessage: 'skráir athugasemd',
     },
     reviewerLabel: {
       id: 'doe.sr.application:comments.reviewerLabel',
@@ -1722,13 +1748,25 @@ export const messages = {
       id: 'doe.sr.application:comments.companyLabel',
       defaultMessage: 'Þú',
     },
+    today: {
+      id: 'doe.sr.application:comments.today',
+      defaultMessage: 'Í dag',
+    },
+    yesterday: {
+      id: 'doe.sr.application:comments.yesterday',
+      defaultMessage: 'Í gær',
+    },
+    daysAgo: {
+      id: 'doe.sr.application:comments.daysAgo',
+      defaultMessage: 'f. {days} dögum',
+    },
     sendError: {
       id: 'doe.sr.application:comments.sendError',
-      defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að senda athugasemd, reyndu aftur.',
     },
     loadError: {
       id: 'doe.sr.application:comments.loadError',
-      defaultMessage: 'Ekki tókst að sækja skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að sækja athugasemdir, reyndu aftur.',
     },
   }),
 
@@ -1826,7 +1864,7 @@ export const messages = {
   draftRetry: defineMessages({
     tagLabel: {
       id: 'doe.sr.application:draftRetry.tagLabel',
-      defaultMessage: 'Þín bíða skilaboð',
+      defaultMessage: 'Þín bíða athugasemdir',
     },
     aboutTheCompanySectionTitle: {
       id: 'doe.sr.application:draftRetry.aboutTheCompanySectionTitle',
@@ -1855,7 +1893,7 @@ export const messages = {
     pendingActionContent: {
       id: 'doe.sr.application:draftRetry.pendingActionContent',
       defaultMessage:
-        'Farðu yfir skilaboð frá Jafnréttisstofu og lagfærðu úrbótaáætlunina.',
+        'Farðu yfir athugasemdir frá Jafnréttisstofu og lagfærðu úrbótaáætlunina.',
     },
     pendingActionButton: {
       id: 'doe.sr.application:draftRetry.pendingActionButton',
