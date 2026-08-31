@@ -22,6 +22,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
+  AppealCaseType,
   AppealEventType,
   AppealOrigin,
   CaseAppealDecision,
@@ -526,6 +527,7 @@ export class AppealCaseService {
     }
 
     const appealCaseData: UpdateAppealCase = {
+      appealType: AppealCaseType.RULING,
       appealState: AppealCaseState.APPEALED,
       // An appeal filed out-of-court happens now - in-court appeals get
       // the ruling date instead (see case.service update on completion)
@@ -613,6 +615,7 @@ export class AppealCaseService {
     }
 
     const appealCaseData: UpdateAppealCase = {
+      appealType: AppealCaseType.RULING,
       appealState: AppealCaseState.APPEALED,
       rulingFileId,
       // An appeal filed out-of-court happens now - in-court appeals get

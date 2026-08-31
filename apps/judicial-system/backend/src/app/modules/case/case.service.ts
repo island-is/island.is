@@ -36,6 +36,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  AppealCaseType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
   AppealEventType,
@@ -2214,6 +2215,7 @@ export class CaseService {
         const appealCase = await this.appealCaseRepositoryService.create(
           theCase.id,
           {
+            appealType: AppealCaseType.RULING,
             appealState: AppealCaseState.APPEALED,
             // An in-court appeal happened when the case completed
             appealDate: caseUpdate.rulingDate ?? theCase.rulingDate,

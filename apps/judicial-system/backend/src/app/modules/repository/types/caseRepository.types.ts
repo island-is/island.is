@@ -653,6 +653,8 @@ export interface UpdateAppealCase
     | 'appealDate'
   > {
   appealState?: AppealCase['appealState']
+  // Set when the appeal is created and never updated afterwards
+  appealType?: AppealCase['appealType']
 }
 
 export interface UpdateDefendant {
