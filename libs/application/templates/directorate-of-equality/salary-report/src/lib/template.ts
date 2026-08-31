@@ -223,13 +223,68 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: [
             {
-              target: States.POSTPONED,
+              target: States.POSTPONE_RECEIVED,
               cond: hasPostponedOutlierPlan,
             },
             {
               target: States.IN_REVIEW,
             },
           ],
+        },
+      },
+      // Deliberately indistinguishable from POSTPONED on the outside: same tag,
+      // same pending action, same lifecycle. Which of the two the application
+      // sits in is bookkeeping about whether the applicant has closed the
+      // receipt, and Mínar síður should read the same either way.
+      [States.POSTPONE_RECEIVED]: {
+        meta: {
+          name: 'Sending móttekin',
+          progress: 0.9,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: pruneAfterDays(90),
+          actionCard: {
+            tag: {
+              label: messages.postponed.tagLabel,
+              variant: 'blueberry',
+            },
+            pendingAction: {
+              title: messages.postponed.pendingActionTitle,
+              content: messages.postponed.pendingActionContent,
+              button: messages.postponed.pendingActionButton,
+              displayStatus: 'info',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/postponeReceivedForm').then((module) =>
+                  Promise.resolve(module.postponeReceivedForm),
+                ),
+              read: 'all',
+              // Nothing on this screen writes an answer — the closer dispatches
+              // an event. An empty array rather than an absent `write` all the
+              // same, so the shell's answers submission is never rejected
+              // outright (see the identical note on States.IN_REVIEW).
+              write: { answers: [] },
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+        on: {
+          // Dispatched by PostponeReceiptCloser as the applicant leaves, not by
+          // a button. No history log: the applicant did nothing worth logging,
+          // the submission itself was already logged on the way out of DRAFT.
+          [DefaultEvents.SUBMIT]: {
+            target: States.POSTPONED,
+          },
         },
       },
       [States.POSTPONED]: {
@@ -245,7 +300,14 @@ const template: ApplicationTemplate<
           onExit: EditOutliersApi,
           // So the comment thread's non-empty check has fresh externalData —
           // see the identical comment on States.DRAFT.
-          onEntry: GetReportCommentsApi,
+          //
+          // throwOnError: false because this state is entered by
+          // PostponeReceiptCloser's beacon, with nobody watching. An onEntry
+          // runs before the new state is persisted and blocks it by default, so
+          // a hiccup from DMR's comments endpoint would silently leave the
+          // applicant on the receipt. CommentThread refetches on mount anyway —
+          // a failed prefetch costs nothing.
+          onEntry: GetReportCommentsApi.configure({ throwOnError: false }),
           actionCard: {
             tag: {
               label: messages.postponed.tagLabel,

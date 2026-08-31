@@ -16,6 +16,12 @@ export enum States {
   IN_REVIEW = 'inReview',
   APPROVED = 'approved',
   DENIED = 'denied',
+  // The receipt state: the report is in, the úrbótaáætlun is not. Its whole
+  // form is the "Sending móttekin" screen, and PostponeReceiptCloser moves the
+  // application on to POSTPONED as the applicant leaves it. A state rather than
+  // an answer flag so the receipt cannot be reached again — it belongs to a
+  // form the applicant is no longer in.
+  POSTPONE_RECEIVED = 'postponeReceived',
   POSTPONED = 'postponed',
   NOT_ALLOWED = 'notAllowed',
   DRAFT_RETRY = 'draftRetry',
@@ -46,12 +52,21 @@ export enum ApiActions {
   listDraftRolesWithSteps = 'listDraftRolesWithSteps',
   listDraftCriteria = 'listDraftCriteria',
   listDraftRoles = 'listDraftRoles',
-  // Only SalaryAnalysisResults still uses this — it needs the full id<->ordinal
-  // mapping across every employee to seed/sync outlier groups, which can't be
-  // paginated (a group can reference employees from anywhere in the set).
+  // Salary-analysis screens need the full employee list: the extra-pay table
+  // derives totals from it, and outlier-group sync needs the full id<->ordinal
+  // mapping because a group can reference employees from anywhere in the set.
   listDraftEmployees = 'listDraftEmployees',
   listDraftOutlierGroups = 'listDraftOutlierGroups',
 }
+
+// Screen ids the form builders declare and other screens navigate to.
+// `goToScreen` and `backId` fail silently on an unknown id, so the definitions
+// and the references share one source and a rename becomes a compile error.
+export const ScreenIds = {
+  criteria: 'criteriaMultiField',
+  analysisOverview: 'salaryAnalysisOverviewMultiField',
+  improvementPlan: 'salaryAnalysisImprovementPlanMultiField',
+} as const
 
 const DOE_NAMESPACE = 'DirectorateOfEquality'
 

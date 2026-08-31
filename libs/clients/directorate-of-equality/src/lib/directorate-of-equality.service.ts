@@ -13,7 +13,6 @@ import {
   getApplicationDraftAnalysis,
   getApplicationDraftCriteriaTree,
   getApplicationEqualityReportTemplateDocx,
-  getApplicationEqualityReportTemplateHtml,
   getApplicationReport,
   getApplicationReportDraft,
   getApplicationReportOutliers,
@@ -28,7 +27,6 @@ import {
   listApplicationDraftRoles,
   listApplicationDraftRolesWithSteps,
   presignApplicationImportUpload,
-  submitApplicationEqualityReport,
   submitApplicationReportComment,
   submitApplicationReportDraft,
   submitApplicationSalaryReport,
@@ -61,7 +59,6 @@ import type {
   SalaryAnalysisResponseDto,
   SubmitApplicationReportCommentDto,
   SubmitDraftDto,
-  SubmitEqualityReportDto,
   SubmitSalaryReportDto,
   SyncDraftDto,
   UpdateDraftDto,
@@ -104,30 +101,11 @@ export class DirectorateOfEqualityClientService {
     )
   }
 
-  async getEqualityReportTemplateHtml(user: User): Promise<string> {
-    return this.unwrap(
-      user,
-      () => getApplicationEqualityReportTemplateHtml(),
-      'Failed to get equality report template HTML',
-    )
-  }
-
   async getEqualityReportTemplateDocx(user: User): Promise<Blob> {
     return this.unwrap(
       user,
       () => getApplicationEqualityReportTemplateDocx(),
       'Failed to get equality report template DOCX',
-    )
-  }
-
-  async submitEqualityReport(
-    user: User,
-    body: SubmitEqualityReportDto,
-  ): Promise<CreateReportResponseDto> {
-    return this.unwrap(
-      user,
-      () => submitApplicationEqualityReport({ body }),
-      'Failed to submit equality report',
     )
   }
 
