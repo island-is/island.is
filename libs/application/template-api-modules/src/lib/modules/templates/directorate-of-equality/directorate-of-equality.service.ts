@@ -20,6 +20,7 @@ import {
 } from '@island.is/application/templates/directorate-of-equality/salary-report'
 import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import type { ZodTypeAny, z } from 'zod'
 import { mapGender, toNumberOrZero } from './directorate-of-equality.utils'
 
@@ -33,6 +34,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
   constructor(
     private readonly companyRegistryService: CompanyRegistryClientService,
     private readonly directorateOfEqualityService: DirectorateOfEqualityClientService,
+    private readonly applicationApiService: ApplicationApiService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super('DirectorateOfEquality')
@@ -282,28 +284,27 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      const activeReport =
-        await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+    // Propagates rather than falling back to null, so the screen can tell
+    // "no earlier plan" (null) from "DMR did not answer".
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to get previous equality report content',
+      async () => {
+        const activeReport =
+          await this.directorateOfEqualityService.getActiveEqualityReport(auth)
 
-      if (!activeReport || !activeReport.identifier) return null
+        // providerId is the only lookup handle DMR accepts on
+        // GET /application/reports/:providerId — `id` resolves only against the
+        // admin-only endpoint and `identifier` is a human-facing display code.
+        if (!activeReport?.providerId) return null
 
-      const report = await this.directorateOfEqualityService.getReport(
-        auth,
-        activeReport.identifier,
-      )
-      return { equalityReportContent: report.equalityReportContent ?? '' }
-    } catch (error) {
-      this.logger.error(
-        'Failed to get previous equality report content, falling back',
-        {
-          applicationId: application.id,
-          context: LOGGING_CONTEXT,
-          ...this.extractFetchErrorDetails(error),
-        },
-      )
-      return null
-    }
+        const report = await this.directorateOfEqualityService.getReport(
+          auth,
+          activeReport.providerId,
+        )
+        return { equalityReportContent: report.equalityReportContent ?? '' }
+      },
+    )
   }
 
   async getBlankExcelTemplate({
@@ -656,6 +657,19 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             action: g.action ?? '',
             signatureName: g.signatureName ?? '',
             signatureRole: g.signatureRole ?? '',
+            // Passed through as the `yyyy-MM-dd` DatePickerController stored,
+            // which is the date-only form DMR validates for — same as the draft
+            // sync sends in buildOutlierSyncCommands. The cast is because
+            // clientConfig's `format: date` generates the field as `Date`, but
+            // the transformers plugin only converts responses: a `Date` here
+            // would be serialised as a full ISO instant and rejected.
+            //
+            // A blank sends `null` on a required field, so DMR answers 400.
+            // That is the intent: the review screen's submit is gated on
+            // isOutlierGroupSubmittable, which requires this too, so a blank
+            // here is a group that should never have reached submission, and
+            // saying so beats inventing a date the applicant never committed to.
+            remedyDate: (g.remedyDate || null) as unknown as Date,
             employeeOrdinals: g.employeeOrdinals,
           }))
 
@@ -769,7 +783,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         400,
       )
     }
-    return this.withTemplateApiError(
+    const comment = await this.withTemplateApiError(
       application.id,
       'Failed to submit report comment',
       () =>
@@ -779,5 +793,37 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           { body },
         ),
     )
+
+    // Clearing the send buffer belongs here, not in the UI: once DMR has the
+    // comment there is no way for the client to fail the cleanup without
+    // reporting a false send error and leaving a re-sendable body persisted.
+    // Best effort — the comment is already posted, so a failed clear must not
+    // fail the action.
+    try {
+      const existingComment =
+        getValueViaPath<Record<string, unknown>>(
+          application.answers,
+          'comment',
+        ) ?? {}
+      const answers = {
+        ...application.answers,
+        comment: { ...existingComment, newMessage: '' },
+      }
+      await this.applicationApiService.update(application.id, { answers })
+      // The action runner hands the same application object to later actions
+      // and returns it to the caller, so keep it in sync with the row.
+      application.answers = answers
+    } catch (error) {
+      this.logger.warn(
+        'Failed to clear submitted report comment from answers',
+        {
+          applicationId: application.id,
+          context: LOGGING_CONTEXT,
+          ...this.extractFetchErrorDetails(error),
+        },
+      )
+    }
+
+    return comment
   }
 }

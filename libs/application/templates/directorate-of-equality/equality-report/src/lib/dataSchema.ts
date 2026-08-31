@@ -117,6 +117,10 @@ export const dataSchema = z.object({
   employeeCount: employeeCount.optional(),
   subsidiaries: subsidiaries.optional(),
   goalsAndActions: goalsAndActions.optional(),
+  // Set by the state machine on the DRAFT_RETRY -> IN_REVIEW transition, never
+  // by a form: IN_REVIEW is reached from both DRAFT and DRAFT_RETRY and the
+  // conclusion screen has no other way to tell a revision from a first send.
+  hasBeenRevised: z.boolean().optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

@@ -18,10 +18,11 @@ import {
 } from '../../components/DraftScreenState'
 import { messages } from '../../lib/messages'
 import { ApiActions, draftActionId, States } from '../../utils/constants'
+import { toDateInputValue } from '../../utils/dates'
 import {
   buildOutlierClearCommands,
   buildOutlierSyncCommands,
-  isOutlierGroupComplete,
+  isOutlierGroupSubmittable,
   outlierGroupsWithMembers,
   unassignedOutlierOrdinals,
   withFallbackOutlierGroupNames,
@@ -215,6 +216,10 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       name: g.name ?? '',
       reason: g.reason ?? '',
       action: g.action ?? '',
+      // Date-only on DMR, but an ISO instant by the time it has been through
+      // the generated client's response transformer and externalData's JSON
+      // round-trip — normalised back to what the picker reads.
+      remedyDate: toDateInputValue(g.remedyDate),
       signatureName: g.signatureName ?? '',
       signatureRole: g.signatureRole ?? '',
       employeeOrdinals: g.memberEmployeeIds
@@ -282,7 +287,11 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     () => unassignedOutlierOrdinals(currentOutliers, outlierGroups),
     [currentOutliers, outlierGroups],
   )
-  const groupsComplete = outlierGroups.every(isOutlierGroupComplete)
+  // Not memoised: the window this checks against moves with the clock, and the
+  // gate has to notice a remedyDate that went stale while the form sat open.
+  const groupsComplete = outlierGroups.every((group) =>
+    isOutlierGroupSubmittable(group),
+  )
   const outlierPlanReviewed =
     hasMinimumSetOutliers &&
     (isPostponed || (unassignedOrdinals.length === 0 && groupsComplete))
