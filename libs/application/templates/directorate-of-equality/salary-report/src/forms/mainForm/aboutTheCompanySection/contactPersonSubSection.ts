@@ -23,7 +23,7 @@ export const contactPersonSubSection = buildSubSection({
           title: messages.aboutTheCompany.contactPerson.contactInfoTitle,
           titleVariant: 'h4',
         }),
-        // TODO: BÆTA VIÐ STARFSTITLI (WAITING FOR API) --- IGNORE ---
+        // TODO: add the contact person's job title once DMR exposes the field.
         buildTextField({
           id: 'contactPerson.name',
           title: messages.aboutTheCompany.contactPerson.name,

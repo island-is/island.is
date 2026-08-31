@@ -1,6 +1,11 @@
-import { AccordionCard, Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  AccordionCard,
+  AlertMessage,
+  Box,
+  Button,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import type { SubCriterionCatalogEntryDto } from '@island.is/clients/directorate-of-equality'
 import { createDefaultSubCriterion } from '../../utils/constants'
@@ -14,7 +19,12 @@ type Props = {
   criterionTitle: string
   criterionWeight: string
   catalogEntries: SubCriterionCatalogEntryDto[]
-  startExpanded?: boolean
+  /**
+   * The parent disables "Halda áfram" while ANY panel is unbalanced. Reported
+   * upward rather than derived there, where watching the whole form would
+   * re-render every panel and step textarea on each keystroke.
+   */
+  onWeightMismatchChange: (criterionId: string, hasMismatch: boolean) => void
 }
 
 export const CriterionPanel: FC<Props> = ({
@@ -23,7 +33,7 @@ export const CriterionPanel: FC<Props> = ({
   criterionTitle,
   criterionWeight,
   catalogEntries,
-  startExpanded = false,
+  onWeightMismatchChange,
 }) => {
   const { formatMessage } = useLocale()
   const { control } = useFormContext()
@@ -42,17 +52,41 @@ export const CriterionPanel: FC<Props> = ({
   )
   const expectedWeight = Number(criterionWeight) || 0
 
+  // Compared to the PARENT's weight, 0% included: a 0%-weighted criterion whose
+  // sub-criteria carry weight still writes real step scores below.
+  const hasWeightMismatch = Math.abs(subCriteriaTotal - expectedWeight) > 0.001
+
+  useEffect(() => {
+    onWeightMismatchChange(criterionId, hasWeightMismatch)
+    // A panel that unmounts while unbalanced must not leave its id behind in the
+    // parent: that would disable Continue with no visible error left to fix.
+    return () => onWeightMismatchChange(criterionId, false)
+  }, [criterionId, hasWeightMismatch, onWeightMismatchChange])
+
   return (
     <AccordionCard
       id={accordionId}
       label={criterionTitle}
-      visibleContent={formatMessage(
-        messages.report.subCriteria.criterionWeightLabel,
-        {
-          weight: criterionWeight,
-        },
-      )}
-      startExpanded={startExpanded}
+      // Every panel starts collapsed, so without a red header the gate above
+      // could disable Continue with its explanation hidden inside the accordion.
+      // The badge below carries the same signal in text — colour alone would
+      // leave it unreadable to anyone who cannot see the difference.
+      labelColor={hasWeightMismatch ? 'red600' : undefined}
+      visibleContent={
+        <>
+          {formatMessage(messages.report.subCriteria.criterionWeightLabel, {
+            weight: criterionWeight,
+          })}
+          {hasWeightMismatch && (
+            <>
+              {' — '}
+              {formatMessage(
+                messages.report.subCriteria.criterionWeightMismatchBadge,
+              )}
+            </>
+          )}
+        </>
+      }
     >
       <Box>
         {fields.map((field, i) => (
@@ -78,23 +112,18 @@ export const CriterionPanel: FC<Props> = ({
           {formatMessage(messages.report.subCriteria.addButton)}
         </Button>
       </Box>
-
-      {/* Only meaningful once both sides exist: the parent criterion's own
-          weight can still be blank here (it's entered on the previous screen
-          for personal criteria), and `Number('') || 0` would otherwise make
-          this claim the sub-criteria must total 0%. */}
-      {subCriteriaTotal !== 0 &&
-        expectedWeight !== 0 &&
-        Math.abs(subCriteriaTotal - expectedWeight) > 0.001 && (
-          <Box marginTop={3}>
-            <Text color="red600">
-              {formatMessage(messages.report.subCriteria.weightSumError, {
-                total: subCriteriaTotal,
-                expected: expectedWeight,
-              })}
-            </Text>
-          </Box>
-        )}
+      {hasWeightMismatch && (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={formatMessage(messages.report.subCriteria.weightSumError, {
+              total: subCriteriaTotal,
+              expected: expectedWeight,
+            })}
+          />
+        </Box>
+      )}
     </AccordionCard>
   )
 }

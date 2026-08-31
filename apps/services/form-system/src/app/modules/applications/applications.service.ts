@@ -1076,7 +1076,7 @@ export class ApplicationsService {
           }
         }
       }
-    } else {
+    } else if (submitScreenDto.increment === false) {
       if (
         this.doesSectionHaveScreen(currentSection) &&
         !this.isFirstScreenInSection(currentSection, currentScreenId)

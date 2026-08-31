@@ -14,9 +14,11 @@ import { useLocale } from '@island.is/localization'
 import { formatCurrency } from '@island.is/shared/utils'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
+import { formatDateValue } from '../../utils/dates'
 import type { Employee } from '../../utils/types'
 import {
   formatStartDate,
+  formatCurrency,
   formatPaidHours,
   getSalaryComponentLabels,
 } from './utils'
@@ -76,7 +78,7 @@ export const EmployeeRow: FC<Props> = ({
     },
     {
       label: formatMessage(m.startDateLabel),
-      value: formatStartDate(employee.startDate),
+      value: formatDateValue(employee.startDate),
     },
   ]
 

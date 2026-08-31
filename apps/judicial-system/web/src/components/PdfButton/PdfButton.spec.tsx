@@ -46,4 +46,15 @@ describe('<PdfButton />', () => {
 
     expect(handleClick).not.toHaveBeenCalled()
   })
+
+  // A ruling order pronounced orally has no document until the district court
+  // writes it up, so its row has nothing to open. That is not the same as being
+  // disabled: the row is simply not a control, so it stays out of the
+  // accessibility tree rather than announcing itself as unavailable.
+  test('should not be a button when there is nothing to open', () => {
+    render(<PdfButton title="document.pdf" renderAs="row" />)
+
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    expect(screen.getByText('document.pdf')).toBeInTheDocument()
+  })
 })
