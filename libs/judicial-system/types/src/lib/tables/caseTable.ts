@@ -37,9 +37,7 @@ import {
   prosecutionIndictmentsCompleted,
   prosecutionIndictmentsInDraft,
   prosecutionIndictmentsInProgress,
-  prosecutionIndictmentsSentForReview,
   prosecutionIndictmentsWaitingForConfirmation,
-  prosecutionIndictmentsWaitingForReview,
   prosecutionRequestCasesActive,
   prosecutionRequestCasesAppealed,
   prosecutionRequestCasesCompleted,
@@ -122,10 +120,6 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
   PROSECUTION_REQUEST_CASES_APPEALED: prosecutionRequestCasesAppealed,
   PROSECUTION_REQUEST_CASES_COMPLETED: prosecutionRequestCasesCompleted,
   PROSECUTION_INDICTMENTS_IN_DRAFT: prosecutionIndictmentsInDraft,
-  PROSECUTION_INDICTMENTS_WAITING_FOR_REVIEW:
-    prosecutionIndictmentsWaitingForReview,
-  PROSECUTION_INDICTMENTS_SENT_FOR_REVIEW:
-    prosecutionIndictmentsSentForReview,
   PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION:
     prosecutionIndictmentsWaitingForConfirmation,
   PROSECUTION_INDICTMENTS_IN_PROGRESS: prosecutionIndictmentsInProgress,

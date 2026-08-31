@@ -102,6 +102,7 @@ const prosecutionIndictmentsInDraftColumnKeys: CaseTableColumnKey[] = [
   'caseType',
   'prosecutor',
   'created',
+  'indictmentCaseState',
 ]
 
 export const prosecutionIndictmentsInDraft: CaseTable = {
@@ -119,31 +120,6 @@ export const prosecutionIndictmentsWaitingForConfirmation: CaseTable = {
   hasMyCasesFilter: true,
   columnKeys: prosecutionIndictmentsWaitingForConfirmationColumnKeys,
   columns: pickColumns(prosecutionIndictmentsWaitingForConfirmationColumnKeys),
-}
-
-const prosecutionIndictmentsWaitingForReviewColumnKeys: CaseTableColumnKey[] =
-  ['caseNumber', 'defendants', 'caseType', 'created', 'prosecutor']
-
-export const prosecutionIndictmentsWaitingForReview: CaseTable = {
-  title: 'Ákærur til yfirlesturs',
-  hasMyCasesFilter: true,
-  columnKeys: prosecutionIndictmentsWaitingForReviewColumnKeys,
-  columns: pickColumns(prosecutionIndictmentsWaitingForReviewColumnKeys),
-}
-
-const prosecutionIndictmentsSentForReviewColumnKeys: CaseTableColumnKey[] = [
-  'caseNumber',
-  'defendants',
-  'caseType',
-  'created',
-  'prosecutor',
-]
-
-export const prosecutionIndictmentsSentForReview: CaseTable = {
-  title: 'Ákærur í yfirlestri',
-  hasMyCasesFilter: true,
-  columnKeys: prosecutionIndictmentsSentForReviewColumnKeys,
-  columns: pickColumns(prosecutionIndictmentsSentForReviewColumnKeys),
 }
 
 const prosecutionIndictmentsInProgressColumnKeys: CaseTableColumnKey[] = [

@@ -86,7 +86,7 @@ export const prosecutionIndictmentsInDraftWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     ...prosecutionIndictmentsAccessWhereOptions(user),
-    state: CaseState.DRAFT,
+    state: [CaseState.DRAFT, CaseState.WAITING_FOR_REVIEW],
   },
 })
 
@@ -96,26 +96,6 @@ export const prosecutionIndictmentsWaitingForConfirmationWhereOptions = (
   where: {
     ...prosecutionIndictmentsAccessWhereOptions(user),
     state: CaseState.WAITING_FOR_CONFIRMATION,
-  },
-})
-
-export const prosecutionIndictmentsWaitingForReviewWhereOptions = (
-  user: User,
-): CaseWhereOptions => ({
-  where: {
-    ...prosecutionIndictmentsAccessWhereOptions(user),
-    state: CaseState.WAITING_FOR_REVIEW,
-    indictment_approver_id: user.id,
-  },
-})
-
-export const prosecutionIndictmentsSentForReviewWhereOptions = (
-  user: User,
-): CaseWhereOptions => ({
-  where: {
-    ...prosecutionIndictmentsAccessWhereOptions(user),
-    state: CaseState.WAITING_FOR_REVIEW,
-    prosecutor_id: user.id,
   },
 })
 
