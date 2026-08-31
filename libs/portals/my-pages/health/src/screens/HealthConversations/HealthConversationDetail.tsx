@@ -18,6 +18,7 @@ import {
   useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
+import CertificateAction from './components/CertificateAction'
 import ConversationAvatar from './components/ConversationAvatar'
 import ConversationBackButton from './components/ConversationBackButton'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
@@ -28,7 +29,7 @@ import ReplyBlockedAlert from './components/ReplyBlockedAlert'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './HealthConversations.css'
@@ -53,6 +54,22 @@ const HealthConversationDetail = () => {
   const userInfo = useUserInfo()
   const navigate = useNavigate()
   const { isPhoneWidth } = useIsPhoneWidth()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const certificatePaymentReturnId = searchParams.get('certificatePayment')
+  const certificatePaymentCancelled = searchParams.get(
+    'certificatePaymentCancelled',
+  )
+
+  useEffect(() => {
+    if (!certificatePaymentCancelled) return
+    toast.warning(
+      formatMessage(messages.healthConversationCertificatePaymentCancelled),
+      { toastId: 'certificatePaymentCancelled' },
+    )
+    searchParams.delete('certificatePaymentCancelled')
+    setSearchParams(searchParams, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [certificatePaymentCancelled])
 
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
@@ -76,10 +93,23 @@ const HealthConversationDetail = () => {
     }
   }, [replyOpen])
 
-  const { data, loading, error } = useGetHealthConversationDetailQuery({
-    fetchPolicy: 'cache-and-network',
-    variables: { id },
-  })
+  const { data, loading, error, refetch } =
+    useGetHealthConversationDetailQuery({
+      fetchPolicy: 'cache-and-network',
+      variables: { id },
+    })
+
+  const handleCertificatePaid = () => {
+    toast.success(
+      formatMessage(messages.healthConversationCertificatePaymentSuccess),
+      { toastId: 'certificatePaymentSuccess' },
+    )
+    refetch()
+    if (certificatePaymentReturnId) {
+      searchParams.delete('certificatePayment')
+      setSearchParams(searchParams, { replace: true })
+    }
+  }
 
   const [markAsRead] = useMarkHealthConversationAsReadMutation({
     refetchQueries: ['GetHealthConversations'],
@@ -332,30 +362,46 @@ const HealthConversationDetail = () => {
                       {/* Body */}
                       <ConversationMessageBody message={msg} />
 
-                      {/* Attachments */}
-                      {msg.attachments.length > 0 && (
-                        <Box
-                          display="flex"
-                          flexWrap="wrap"
-                          columnGap={2}
-                          rowGap={1}
-                          marginBottom={3}
-                        >
-                          {msg.attachments.map((file) => (
-                            <Button
-                              key={file.id}
-                              variant="utility"
-                              icon="document"
-                              iconType="outline"
-                              onClick={() =>
-                                formSubmit(file.downloadServiceURL)
-                              }
-                            >
-                              {file.fileName}
-                            </Button>
-                          ))}
-                        </Box>
+                      {/* Certificate */}
+                      {(msg.certificateId || msg.requiresPayment) && (
+                        <CertificateAction
+                          certificateId={msg.certificateId}
+                          requiresPayment={msg.requiresPayment}
+                          paid={msg.paid}
+                          pendingPaymentId={msg.pendingPaymentId}
+                          isReturningFromPayment={
+                            !!msg.certificateId &&
+                            msg.certificateId === certificatePaymentReturnId
+                          }
+                          onPaid={handleCertificatePaid}
+                        />
                       )}
+
+                      {/* Attachments */}
+                      {msg.attachments.length > 0 &&
+                        !(msg.requiresPayment && !msg.paid) && (
+                          <Box
+                            display="flex"
+                            flexWrap="wrap"
+                            columnGap={2}
+                            rowGap={1}
+                            marginBottom={3}
+                          >
+                            {msg.attachments.map((file) => (
+                              <Button
+                                key={file.id}
+                                variant="utility"
+                                icon="document"
+                                iconType="outline"
+                                onClick={() =>
+                                  formSubmit(file.downloadServiceURL)
+                                }
+                              >
+                                {file.fileName}
+                              </Button>
+                            ))}
+                          </Box>
+                        )}
                     </Box>
                   )
                 })}

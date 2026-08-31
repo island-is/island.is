@@ -461,6 +461,11 @@ export class UpdateCaseDto {
   readonly isCompletedWithoutRuling?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isArraignmentSummonsSkipped?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly penalties?: string

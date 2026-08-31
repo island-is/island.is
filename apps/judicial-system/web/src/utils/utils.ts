@@ -11,10 +11,13 @@ import {
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
+  isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
 import type {
   AppealCase,
   Case,
+  CaseFile,
+  CourtSessionResponse,
   CourtSessionString,
   Defendant,
   Notification,
@@ -390,6 +393,60 @@ export const rulingOrderAppealCase = (
         (appealCase) => appealCase.rulingFileId === rulingFileId,
       )
     : undefined
+
+/**
+ * The ruling orders a court session can pronounce, as the court record offers
+ * them.
+ *
+ * - `files`: the written rulings that can be picked. A ruling pronounced orally
+ *   that the district court has not written up yet is not a document anyone can
+ *   pick, so it is left out; once written up it becomes an ordinary one.
+ * - `takenIds`: rulings another session already pronounces.
+ * - `pronouncedOrally`: this session's own orally pronounced ruling, if that is
+ *   what it pronounces. Derived from the session's linked ruling, so a session
+ *   is never offered a second one - re-pointing the record at a fresh empty
+ *   ruling would detach the document the court wrote up for the first, and the
+ *   appeal made against it.
+ */
+export const rulingOrderChoices = (
+  workingCase: Case,
+  courtSession: Pick<CourtSessionResponse, 'id' | 'rulingFileId'>,
+): {
+  files: CaseFile[]
+  takenIds: Set<string>
+  pronouncedOrally?: CaseFile
+} => {
+  const rulingOrders = (workingCase.caseFiles ?? []).filter(
+    (file) => file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+  )
+
+  const linkedRuling = rulingOrders.find(
+    (file) => file.id === courtSession.rulingFileId,
+  )
+
+  const pronouncedOrally = linkedRuling?.isPronouncedOrally
+    ? linkedRuling
+    : undefined
+
+  return {
+    // Once the district court writes the session's own orally pronounced ruling
+    // up it is a document like any other, so it would otherwise be offered
+    // twice: as a written ruling and as the oral one. Both would be checked, in
+    // the same radio group.
+    files: rulingOrders.filter(
+      (file) =>
+        !isRulingOrderWithoutDocument(file) && file.id !== pronouncedOrally?.id,
+    ),
+    takenIds: new Set(
+      workingCase.courtSessions
+        ?.filter(
+          (session) => session.id !== courtSession.id && session.rulingFileId,
+        )
+        .map((session) => session.rulingFileId as string) ?? [],
+    ),
+    pronouncedOrally,
+  }
+}
 
 /**
  * Returns a human-readable description of who appealed and when.
@@ -1103,6 +1160,14 @@ export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
   defendants && defendants.length === 1
     ? defendants[0].gender ?? Gender.MALE
     : Gender.MALE
+
+// The arraignment summons can only be skipped when nobody is receiving a
+// subpoena, since a subpoena has to state a time and place
+export const areAllDefendantsServedByAlternativeMeans = (
+  defendants?: { isAlternativeService?: boolean | null }[] | null,
+): boolean =>
+  (defendants?.length ?? 0) > 0 &&
+  Boolean(defendants?.every((defendant) => defendant.isAlternativeService))
 
 // Lets an element with role="button" be activated with the keyboard
 // (Enter or Space) the same way a native button is.
