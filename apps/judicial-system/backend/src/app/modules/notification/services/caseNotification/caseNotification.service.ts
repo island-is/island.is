@@ -2095,14 +2095,11 @@ export class CaseNotificationService extends BaseNotificationService {
     const subject = this.formatMessage(
       notifications.indictmentReviewDenied.subject,
     )
-    const html = this.formatMessage(
-      notifications.indictmentReviewDenied.body,
-      {
-        caseNumber: theCase.policeCaseNumbers[0],
-        linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`,
-        linkEnd: '</a>',
-      },
-    )
+    const html = this.formatMessage(notifications.indictmentReviewDenied.body, {
+      caseNumber: theCase.policeCaseNumbers[0],
+      linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
 
     const recipient = await this.sendEmail({
       subject,

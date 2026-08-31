@@ -236,9 +236,7 @@ const Overview: FC = () => {
   }
 
   const handleRecallReview = async () => {
-    const transitionSuccess = await handleTransition(
-      CaseTransition.DENY_REVIEW,
-    )
+    const transitionSuccess = await handleTransition(CaseTransition.DENY_REVIEW)
 
     if (!transitionSuccess) {
       return
@@ -581,8 +579,7 @@ const Overview: FC = () => {
             buttons={[
               {
                 text: formatMessage(core.closeModal),
-                onClick: () =>
-                  router.push(getStandardUserDashboardRoute(user)),
+                onClick: () => router.push(getStandardUserDashboardRoute(user)),
               },
             ]}
           />

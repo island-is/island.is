@@ -29,9 +29,7 @@ const ReturnIndictmentModal: FC<Props> = ({
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const isExplanationValid = validate([
-    [explanation ?? '', ['empty']],
-  ]).isValid
+  const isExplanationValid = validate([[explanation ?? '', ['empty']]]).isValid
 
   const handleExplanationChange = (value: string) => {
     const { isValid } = validate([[value, ['empty']]])
