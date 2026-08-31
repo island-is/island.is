@@ -53,6 +53,8 @@ interface CertificateAlert {
 const getRecipientKey = (recipient: { nodeId: string; groupId: number }) =>
   `${recipient.nodeId}-${recipient.groupId}`
 
+const MAX_MESSAGE_LENGTH = 300
+
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
@@ -72,9 +74,11 @@ const NewHealthConversation = () => {
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-and-network',
       variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
     })
+
+  const initialLoading = loading && !data
 
   const [createMessage, { loading: sending }] =
     useCreateHealthConversationMutation({
@@ -277,19 +281,19 @@ const NewHealthConversation = () => {
         intro={introText}
         desktopContentSpan="10/12"
       >
-        {loading && <CardLoader />}
+        {initialLoading && <CardLoader />}
         {error && <Problem error={error} noBorder={false} />}
-        {!loading && !error && !hasRecipients && (
+        {!initialLoading && !error && !hasRecipients && (
           <Problem
             type="no_data"
             noBorder={false}
             title={formatMessage(messages.healthConversationsNoRecipient)}
           />
         )}
-        {!loading && !error && recipient && (
+        {!initialLoading && !error && recipient && (
           <ConversationAvailabilityAlert recipient={recipient} />
         )}
-        {!loading && !error && hasRecipients && (
+        {!initialLoading && !error && hasRecipients && (
           <Box className={styles.messageCard} background="white">
             <Hidden below="sm">
               <Box
@@ -396,13 +400,16 @@ const NewHealthConversation = () => {
                     textarea
                     rows={8}
                     name="message-body"
-                    label={formatMessage(m.messages)}
+                    label={`${formatMessage(m.messages)} (${
+                      messageText.length
+                    }/${MAX_MESSAGE_LENGTH})`}
                     placeholder={formatMessage(
                       messages.healthConversationsNewBodyPlaceholder,
                     )}
                     backgroundColor="blue"
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
+                    maxLength={MAX_MESSAGE_LENGTH}
                     disabled={isFormLocked}
                   />
                 </Box>

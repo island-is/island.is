@@ -77,7 +77,7 @@ const HealthConversationDetail = () => {
   }, [replyOpen])
 
   const { data, loading, error } = useGetHealthConversationDetailQuery({
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
     variables: { id },
   })
 
@@ -117,7 +117,7 @@ const HealthConversationDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item?.id])
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <GridContainer>
         <GridRow marginTop={[1, 0, 0]}>

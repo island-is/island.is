@@ -58,7 +58,7 @@ const HealthConversations = () => {
   const [searchInput, setSearchInput] = useState('')
 
   const { data, loading, error } = useGetHealthConversationsQuery({
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
     variables: {
       input: {
         ...(filterValues.archived
@@ -72,6 +72,8 @@ const HealthConversations = () => {
   })
 
   const healthConversations = data?.healthDirectorateHealthConversations
+
+  const initialLoading = loading && !data
 
   const debouncedSetSearchQuery = useMemo(
     () =>
@@ -235,9 +237,9 @@ const HealthConversations = () => {
           />
         </Box>
       </Box>
-      {loading && <CardLoader />}
+      {initialLoading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading &&
+      {!initialLoading &&
         !error &&
         (filteredConversations?.length === 0 ? (
           <EmptyState title={messages.noData} />
@@ -263,6 +265,7 @@ const HealthConversations = () => {
               {filteredConversations?.map((item) => (
                 <Box
                   key={item.id}
+                  className={styles.conversationRow}
                   display="flex"
                   alignItems="center"
                   justifyContent="spaceBetween"
