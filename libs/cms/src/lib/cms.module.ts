@@ -58,7 +58,7 @@ import {
   ],
   providers: [
     CmsResolver,
-      ArticleResolver,
+    ArticleResolver,
     ElasticService,
     CmsContentfulService,
     CmsElasticsearchService,

@@ -406,11 +406,15 @@ const Calculator = ({ slice }: CalculatorProps) => {
                   if (!field) return undefined
                   return { field, sectionField, span: sectionField.span }
                 })
-                .filter((entry): entry is {
-                  field: TaxCalculatorField
-                  sectionField: CalculatorSectionField
-                  span: number
-                } => Boolean(entry))
+                .filter(
+                  (
+                    entry,
+                  ): entry is {
+                    field: TaxCalculatorField
+                    sectionField: CalculatorSectionField
+                    span: number
+                  } => Boolean(entry),
+                )
 
               if (!sectionFields.length) return null
 

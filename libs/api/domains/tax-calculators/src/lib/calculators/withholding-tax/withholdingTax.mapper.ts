@@ -73,12 +73,9 @@ export const mapWithholdingTaxResultToRows = (
       result.greiddStadgreidsla,
       { unit: 'ISK' },
     ),
-    buildRow(
-      'netPay',
-      'Heildarlaun eftir frádrátt',
-      result.utborgudLaun,
-      { unit: 'ISK' },
-    ),
+    buildRow('netPay', 'Heildarlaun eftir frádrátt', result.utborgudLaun, {
+      unit: 'ISK',
+    }),
     buildRow(
       'employerPensionMatch',
       'Mótframlag í lífeyrissjóð',
