@@ -532,14 +532,14 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
   [ApplicationTypes.EQUALITY_REPORT]: {
-    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-    slug: InstitutionTypes.DOMSMALARADUNEYTID,
-    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
   },
   [ApplicationTypes.SALARY_REPORT]: {
-    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-    slug: InstitutionTypes.DOMSMALARADUNEYTID,
-    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
   },
   [ApplicationTypes.U2_CERTIFICATE]: {
     nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
