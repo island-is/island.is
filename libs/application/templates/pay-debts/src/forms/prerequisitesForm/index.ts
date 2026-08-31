@@ -7,12 +7,14 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { FjarsyslaRikisinsLogo } from '@island.is/application/assets/institution-logos'
 import { GetDebtsApi, MockPaymentCatalog } from '../../dataProviders'
 import { externalData } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
+  logo: FjarsyslaRikisinsLogo,
   renderLastScreenButton: true,
   children: [
     buildSection({
