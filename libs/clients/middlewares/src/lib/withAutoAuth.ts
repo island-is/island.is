@@ -75,6 +75,11 @@ export interface AutoAuthOptions {
   tokenEndpoint?: string
 
   audience?: string
+
+  /**
+   * Additional headers to include in the token request. Useful when the token endpoint is behind a proxy (e.g. X-Road) that requires identification headers.
+   */
+  tokenRequestHeaders?: Record<string, string>
 }
 
 export interface AuthMiddlewareOptions {
@@ -209,6 +214,7 @@ export const withAutoAuth = ({
     const response = await innerFetch(tokenEndpoint, {
       method: 'POST',
       headers: {
+        ...options.tokenRequestHeaders,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: params,
