@@ -21,6 +21,7 @@ import {
   ApiActions,
   createDefaultJobFactors,
   draftActionId,
+  ScreenIds,
   SyncMethodEnum,
 } from '../../utils/constants'
 import type { ReportCriterionDto } from '../../utils/types'
@@ -32,8 +33,8 @@ import { getProviderErrorMessages } from '../../utils/providerError'
 // Manual entry (and the footer's default submit, prior to any successful
 // import) both advance here — a successful Excel import instead jumps
 // straight to ANALYSIS_SCREEN_ID, see importSucceededRef below.
-const MANUAL_ENTRY_NEXT_SCREEN_ID = 'criteriaMultiField'
-const ANALYSIS_SCREEN_ID = 'salaryAnalysisOverviewMultiField'
+const MANUAL_ENTRY_NEXT_SCREEN_ID = ScreenIds.criteria
+const ANALYSIS_SCREEN_ID = ScreenIds.analysisOverview
 
 export const ExcelTemplateDownload: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -79,8 +80,10 @@ export const ExcelTemplateDownload: FC<
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
-  // Ensures the draft exists (idempotent); shares the 'draftCriteria' key
-  // with CriteriaEditor so that screen reuses this fetch.
+  // ensureDraft prepends the create-draft provider, so the draft exists before
+  // anything reads it (idempotent). Same 'draftCriteria' key as CriteriaEditor,
+  // which keeps the persisted snapshot in one place — that screen still reads
+  // the draft itself on mount rather than reusing this fetch.
   const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
   }>(

@@ -44,6 +44,12 @@ const defender1AppealedEvent = {
   defendantId: defendant1Id,
 } as AppealEventLog
 
+// Defendant2 appealed the same ruling in court, so both parties are appellants.
+const defender2AppealedEvent = {
+  eventType: AppealEventType.APPEALED,
+  defendantId: defendant2Id,
+} as AppealEventLog
+
 const defendants = [
   {
     id: defendant1Id,
@@ -795,7 +801,27 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
 
   let mockEmailService: EmailService
 
-  type GivenWhenThen = (userRole: UserRole) => Promise<Then>
+  const prosecutionUser = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+  } as User
+  const defender1User = {
+    role: UserRole.DEFENDER,
+    nationalId: defender1NationalId,
+  } as User
+  const defender2User = {
+    role: UserRole.DEFENDER,
+    nationalId: defender2NationalId,
+  } as User
+  const districtCourtUser = {
+    role: UserRole.DISTRICT_COURT_JUDGE,
+    institution: { type: InstitutionType.DISTRICT_COURT },
+  } as User
+
+  type GivenWhenThen = (
+    user: User,
+    appealEventLogs?: AppealEventLog[],
+  ) => Promise<Then>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -806,23 +832,14 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
 
     mockEmailService = emailService
 
-    givenWhenThen = async (userRole: UserRole) => {
+    givenWhenThen = async (
+      user,
+      appealEventLogs = [defender1AppealedEvent],
+    ) => {
       const then = {} as Then
 
-      const user =
-        userRole === UserRole.PROSECUTOR
-          ? ({
-              role: UserRole.PROSECUTOR,
-              institution: {
-                type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
-              },
-            } as User)
-          : ({
-              role: UserRole.DEFENDER,
-            } as User)
-
       const appealCase = {
-        appealEventLogs: [defender1AppealedEvent],
+        appealEventLogs,
         appealState: AppealCaseState.APPEALED,
       } as AppealCase
 
@@ -863,7 +880,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.PROSECUTOR)
+      then = await givenWhenThen(prosecutionUser)
     })
 
     it('should send emails to judge, court, registrar, all defenders and spokesperson', () => {
@@ -924,7 +941,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.DEFENDER)
+      then = await givenWhenThen(defender1User)
     })
 
     it('should send emails to judge, court, registrar, prosecutor, defender2 and spokesperson (NOT defender1)', () => {
@@ -956,7 +973,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
           subject: expect.stringContaining(courtCaseNumber),
         }),
       )
-      // Defender 2 (defender1 excluded as the appellant's current defender)
+      // Defender 2 (defender1 excluded as the withdrawing defender)
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: 'Defender Two', address: 'defender2@omnitrix.is' }],
@@ -978,6 +995,169 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
       // 6 emails: judge + court + registrar + prosecutor + defender2 + spokesperson
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(6)
       expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('the last appellant withdraws after another appellant withdrew earlier', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      // Both parties appealed the ruling in court. Defender1 withdrew earlier -
+      // the appeal stood, so no notification went out - and defender2 now
+      // withdraws the last standing appeal.
+      then = await givenWhenThen(defender2User, [
+        defender1AppealedEvent,
+        defender2AppealedEvent,
+      ])
+    })
+
+    it('should send emails to judge, court, registrar, prosecutor, defender1 and spokesperson (NOT defender2)', () => {
+      // Judge
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: judge.name, address: judge.email }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Court
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: 'Héraðsdómur Reykjavíkur', address: court.email }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Registrar
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: registrar.name, address: registrar.email }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Prosecutor
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Defender 1 - withdrew earlier, but is only now told the appeal is over
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: 'Defender One', address: 'defender1@omnitrix.is' }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Spokesperson
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Spokesperson One',
+              address: 'spokesperson1@omnitrix.is',
+            },
+          ],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Defender 2 withdrew the appeal, so is not notified
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: 'Defender Two', address: 'defender2@omnitrix.is' }],
+        }),
+      )
+      // 6 emails: judge + court + registrar + prosecutor + defender1 + spokesperson
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(6)
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('a district court user ends the appeal by correcting the court record', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      // Both parties appealed and both have withdrawn, and a court record
+      // correction removed the last standing appeal decision, so the appeal case
+      // is withdrawn without any party acting.
+      then = await givenWhenThen(districtCourtUser, [
+        defender1AppealedEvent,
+        defender2AppealedEvent,
+      ])
+    })
+
+    it('should send emails to judge, court, registrar, prosecutor, all defenders and spokesperson', () => {
+      // Judge
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: judge.name, address: judge.email }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Court
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: 'Héraðsdómur Reykjavíkur', address: court.email }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Registrar
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: registrar.name, address: registrar.email }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Prosecutor
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Defender 1
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: 'Defender One', address: 'defender1@omnitrix.is' }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Defender 2
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: 'Defender Two', address: 'defender2@omnitrix.is' }],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // Spokesperson
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Spokesperson One',
+              address: 'spokesperson1@omnitrix.is',
+            },
+          ],
+          subject: expect.stringContaining(courtCaseNumber),
+        }),
+      )
+      // 7 emails: judge + court + registrar + prosecutor + defender1 + defender2 + spokesperson
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(7)
+      expect(then.result).toEqual({ delivered: true })
+    })
+
+    it('should not name a party as the one that withdrew the appeal', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: judge.name, address: judge.email }],
+          html: expect.stringContaining(
+            `Kæra í máli ${courtCaseNumber} hefur verið afturkölluð.`,
+          ),
+        }),
+      )
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          html: expect.stringContaining('hefur afturkallað kæru'),
+        }),
+      )
     })
   })
 })

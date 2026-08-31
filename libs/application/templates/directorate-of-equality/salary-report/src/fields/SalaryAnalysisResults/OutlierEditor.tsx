@@ -1,11 +1,18 @@
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { RecordObject } from '@island.is/application/types'
-import { Box, Button, InteractiveTable, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  DropdownMenu,
+  InteractiveTable,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import {
+  emptyOutlierGroupAnswer,
   foldGroupDirection,
   isOutlierGroupComplete,
 } from '../../utils/outlierGroups'
@@ -25,17 +32,11 @@ type Props = {
   errors?: RecordObject
   // draft: pre-submit, DMR-synced, keyed by employee id. postponed: answers-backed, keyed by ordinal.
   mode: 'draft' | 'postponed'
-  roleTitleForOrdinal: (ordinal: number) => string | undefined
 }
 
-export const OutlierEditor: FC<Props> = ({
-  outliers,
-  errors,
-  mode,
-  roleTitleForOrdinal,
-}) => {
+export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
   const { formatMessage } = useLocale()
-  const { control } = useFormContext()
+  const { control, setValue } = useFormContext()
   const m = messages.salaryAnalysis.outlierGroup
 
   // Only this component holds the outliers; OutlierGroupCard has ordinals and
@@ -60,23 +61,46 @@ export const OutlierEditor: FC<Props> = ({
   // remove) — it does NOT reflect keystrokes in the reason/action/signature
   // inputs below. The completeness warning needs live values, so it reads
   // from useWatch instead.
-  const watchedGroups: OutlierGroupAnswer[] =
-    useWatch({ name: fieldName }) ?? []
+  const watchedGroups =
+    (useWatch({ name: fieldName }) as OutlierGroupAnswer[] | undefined) ?? []
 
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [page, setPage] = useState(1)
 
-  // Once an outlier is put into a group it leaves the table below — the
-  // group card owns it from then on. Removing a group frees its members
-  // back into this list.
-  const unassignedOutliers = useMemo(() => {
-    const assignedOrdinals = new Set(
-      (fields as unknown as (OutlierGroupAnswer & { id: string })[]).flatMap(
-        (g) => g.employeeOrdinals,
+  // Membership is edited with setValue (assigning into an existing group, or a
+  // pill click freeing one member), which useFieldArray's `fields` does not
+  // see — so the live ordinals come from the watched values, positionally
+  // aligned with `fields` and falling back to them on the render where a
+  // structural change has landed in one but not yet the other.
+  //
+  // Keyed on the membership CONTENT, not on `watchedGroups`: useWatch clones its
+  // whole subtree on every change, so depending on its identity would recompute
+  // this — and with it unassignedOutliers and the `data` array handed to
+  // InteractiveTable — on every keystroke in any group's reason/action/signature
+  // field. That is precisely the churn the note on pageRows below exists to
+  // prevent; membership is the only part of the subtree this reads.
+  const memberKey = watchedGroups
+    .map((group) => (group?.employeeOrdinals ?? []).join(','))
+    .join('|')
+  const memberOrdinalsByIndex = useMemo(
+    () =>
+      (fields as unknown as (OutlierGroupAnswer & { id: string })[]).map(
+        (field, index) =>
+          watchedGroups[index]?.employeeOrdinals ??
+          field.employeeOrdinals ??
+          [],
       ),
-    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fields, memberKey],
+  )
+
+  // Once an outlier is put into a group it leaves the table below — the
+  // group card owns it from then on. Removing a group, or clicking a member's
+  // pill, frees it back into this list.
+  const unassignedOutliers = useMemo(() => {
+    const assignedOrdinals = new Set(memberOrdinalsByIndex.flat())
     return outliers.filter((o) => !assignedOrdinals.has(o.employeeOrdinal))
-  }, [fields, outliers])
+  }, [memberOrdinalsByIndex, outliers])
 
   const totalPages = Math.max(
     1,
@@ -106,15 +130,50 @@ export const OutlierEditor: FC<Props> = ({
     [],
   )
 
+  const byOrdinal = (a: number, b: number) => a - b
+
   const handleCreateGroup = () => {
-    append({
-      // Draft mode needs a stable id from creation to track by id, not array position.
-      id: mode === 'draft' ? crypto.randomUUID() : undefined,
-      employeeOrdinals: [...selected],
-    } as OutlierGroupAnswer)
+    append(
+      emptyOutlierGroupAnswer(
+        [...selected].sort(byOrdinal),
+        mode === 'draft' ? crypto.randomUUID() : undefined,
+      ),
+    )
     setSelected(new Set())
     // The current page may no longer exist once its rows leave the table.
     setPage(1)
+  }
+
+  // Adding to a group already on the screen, rather than always minting a new
+  // one: a setValue on that group's ordinals, since useFieldArray has no
+  // in-place member edit that leaves the sibling inputs untouched.
+  const handleAddToGroup = (index: number) => {
+    setValue(
+      `${fieldName}.${index}.employeeOrdinals`,
+      [...new Set([...memberOrdinalsByIndex[index], ...selected])].sort(
+        byOrdinal,
+      ),
+    )
+    setSelected(new Set())
+    setPage(1)
+  }
+
+  const handleRemoveMember = (index: number, ordinal: number) => {
+    setValue(
+      `${fieldName}.${index}.employeeOrdinals`,
+      memberOrdinalsByIndex[index].filter((o) => o !== ordinal),
+    )
+    // The freed row joins the table, which may now need its first page shown.
+    setPage(1)
+  }
+
+  // Suffixed with the index because the name is free text: two groups the
+  // applicant calls "Sölufólk" would otherwise render two identical menu rows
+  // bound to different groups.
+  const groupLabel = (index: number) => {
+    const name = watchedGroups[index]?.name?.trim()
+    const fallback = `${formatMessage(m.groupHeading)} ${index + 1}`
+    return name ? `${name} (${index + 1})` : fallback
   }
 
   const handleSelectAll = () =>
@@ -149,15 +208,8 @@ export const OutlierEditor: FC<Props> = ({
       allSelectedOnPage,
       toggleSelect,
       toggleSelectPage,
-      roleTitleForOrdinal,
     }),
-    [
-      selected,
-      allSelectedOnPage,
-      toggleSelect,
-      toggleSelectPage,
-      roleTitleForOrdinal,
-    ],
+    [selected, allSelectedOnPage, toggleSelect, toggleSelectPage],
   )
 
   return (
@@ -217,15 +269,45 @@ export const OutlierEditor: FC<Props> = ({
             alignItems="center"
             columnGap={2}
           >
-            <Button
-              variant="ghost"
-              size="small"
-              icon="add"
-              disabled={selected.size === 0}
-              onClick={handleCreateGroup}
-            >
-              {formatMessage(m.createGroupButton)}
-            </Button>
+            {fields.length === 0 ? (
+              <Button
+                variant="ghost"
+                size="small"
+                icon="add"
+                disabled={selected.size === 0}
+                onClick={handleCreateGroup}
+              >
+                {formatMessage(m.createGroupButton)}
+              </Button>
+            ) : (
+              // With groups already on the screen, "put in a group" is a
+              // choice, not an implicit "make another one".
+              <DropdownMenu
+                menuLabel={formatMessage(m.assignToGroupMenuLabel)}
+                // No `title`: island-ui reads it only in the branch that builds
+                // its own button, not the `disclosure` one.
+                disclosure={
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    icon="add"
+                    disabled={selected.size === 0}
+                  >
+                    {formatMessage(m.createGroupButton)}
+                  </Button>
+                }
+                items={[
+                  ...fields.map((_field, index) => ({
+                    title: groupLabel(index),
+                    onClick: () => handleAddToGroup(index),
+                  })),
+                  {
+                    title: formatMessage(m.assignToNewGroup),
+                    onClick: handleCreateGroup,
+                  },
+                ]}
+              />
+            )}
             {totalPages > SELECT_ALL_PAGE_THRESHOLD && (
               <Button
                 variant="text"
@@ -244,19 +326,17 @@ export const OutlierEditor: FC<Props> = ({
 
       <Box>
         {fields.map((field, index) => {
-          const group = field as unknown as OutlierGroupAnswer & {
-            id: string
-          }
+          const memberOrdinals = memberOrdinalsByIndex[index]
           return (
             <OutlierGroupCard
               key={field.id}
               fieldId={field.id}
               fieldName={fieldName}
               index={index}
-              group={group}
               liveName={watchedGroups[index]?.name}
+              memberOrdinals={memberOrdinals}
               direction={foldGroupDirection(
-                group.employeeOrdinals.flatMap((ordinal) => {
+                memberOrdinals.flatMap((ordinal) => {
                   const status = payStatusByOrdinal.get(ordinal)
                   return status ? [status] : []
                 }),
@@ -264,6 +344,7 @@ export const OutlierEditor: FC<Props> = ({
               mode={mode}
               errors={errors}
               onRemove={() => remove(index)}
+              onRemoveMember={(ordinal) => handleRemoveMember(index, ordinal)}
             />
           )
         })}

@@ -1,5 +1,8 @@
 import {
+  buildOutlierClearCommands,
+  buildOutlierSyncCommands,
   foldGroupDirection,
+  outlierGroupsWithMembers,
   isOutlierGroupComplete,
   unassignedOutlierOrdinals,
   withFallbackOutlierGroupNames,
@@ -111,5 +114,99 @@ describe('withFallbackOutlierGroupNames', () => {
       { name: 'Skrifstofa', employeeOrdinals: [1] },
       { name: 'Hópur 2', employeeOrdinals: [2] },
     ])
+  })
+})
+
+describe('buildOutlierClearCommands', () => {
+  const content = {
+    outlierGroups: [
+      {
+        id: 'group-1',
+        reportId: 'report-1',
+        name: 'Hópur 1',
+        memberEmployeeIds: ['emp-1', 'emp-2'],
+      },
+      {
+        id: 'group-2',
+        reportId: 'report-1',
+        name: 'Hópur 2',
+        memberEmployeeIds: [],
+      },
+    ],
+  }
+
+  it('frees every member and removes every group', () => {
+    const { employees, outlierGroups } = buildOutlierClearCommands(content)
+
+    expect(employees).toEqual([
+      { method: 'UPDATE', id: 'emp-1', data: { outlierGroupId: null } },
+      { method: 'UPDATE', id: 'emp-2', data: { outlierGroupId: null } },
+    ])
+    expect(outlierGroups).toEqual([
+      { method: 'REMOVE', id: 'group-1' },
+      { method: 'REMOVE', id: 'group-2' },
+    ])
+  })
+
+  it('returns nothing to send when the draft holds no groups', () => {
+    expect(buildOutlierClearCommands({ outlierGroups: [] })).toEqual({
+      employees: [],
+      outlierGroups: [],
+    })
+  })
+})
+
+describe('outlierGroupsWithMembers', () => {
+  it('drops groups whose members have all been freed', () => {
+    expect(
+      outlierGroupsWithMembers([
+        { name: 'Hópur 1', employeeOrdinals: [1, 2] },
+        { name: 'Tæmdur', reason: 'Skrifað en tómt', employeeOrdinals: [] },
+      ]),
+    ).toEqual([{ name: 'Hópur 1', employeeOrdinals: [1, 2] }])
+  })
+})
+
+// The filter above runs on the way in, so what reaches DMR for a group the
+// draft holds but the applicant has emptied is a removal plus the freeing of
+// its recorded members — never a memberless group row.
+describe('buildOutlierSyncCommands with an emptied group', () => {
+  const content = {
+    outlierGroups: [
+      {
+        id: 'group-1',
+        reportId: 'report-1',
+        name: 'Hópur 1',
+        memberEmployeeIds: ['emp-1'],
+      },
+    ],
+    employees: [
+      { id: 'emp-1', ordinal: 1 },
+      { id: 'emp-2', ordinal: 2 },
+    ] as never,
+  }
+
+  it('removes the group and frees its members', () => {
+    const { outlierGroups, employees } = buildOutlierSyncCommands(
+      content,
+      outlierGroupsWithMembers([
+        { id: 'group-1', name: 'Hópur 1', employeeOrdinals: [] },
+      ]),
+    )
+
+    expect(outlierGroups).toEqual([{ method: 'REMOVE', id: 'group-1' }])
+    expect(employees).toEqual([
+      { method: 'UPDATE', id: 'emp-1', data: { outlierGroupId: null } },
+    ])
+  })
+
+  it('sends nothing at all for a group that was never synced', () => {
+    const { outlierGroups, employees } = buildOutlierSyncCommands(
+      { outlierGroups: [], employees: content.employees },
+      outlierGroupsWithMembers([{ id: 'fresh-group', employeeOrdinals: [] }]),
+    )
+
+    expect(outlierGroups).toEqual([])
+    expect(employees).toEqual([])
   })
 })
