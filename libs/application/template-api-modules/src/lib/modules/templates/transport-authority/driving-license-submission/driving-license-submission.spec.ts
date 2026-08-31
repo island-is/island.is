@@ -588,18 +588,21 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(input.healthDeclaration.hasEpilepsy).toBe(false)
     })
 
-    // The duplicate-on-retry cases. RLS returns 400 APPLICATION_ALREADY_EXISTS;
+    // The duplicate-submit cases. RLS returns 400 APPLICATION_ALREADY_EXISTS;
     // the api-domain method throws it (the v6 client no longer swallows). The
     // submission service tolerates it as success ONLY when THIS application
-    // already has a submitApplication entry — a lost-response retry on the same
-    // application — and preserves the guid the first run stored.
+    // provably created the RLS application — a guid stored by a previous
+    // successful run — and returns that guid again. A prior FAILED attempt
+    // (entry present, `data: {}`) must NOT count: the framework persists an
+    // entry on failure too, so gating on entry existence let "Try again" after
+    // a duplicate rejection flip into a false success (seen live on dev01).
     const alreadyExists = Object.assign(new Error('already exists'), {
       name: 'FetchError',
       status: 400,
       body: { errorCode: 'APPLICATION_ALREADY_EXISTS' },
     })
 
-    it('tolerates ALREADY_EXISTS as success on a lost-response retry (same application) and keeps the stored guid', async () => {
+    it('tolerates ALREADY_EXISTS as success when this application already created it (guid on record) and returns the stored guid', async () => {
       newTemporaryDrivingLicenseWithHealthDeclaration.mockRejectedValueOnce(
         alreadyExists,
       )
@@ -613,8 +616,8 @@ describe('DrivingLicenseSubmissionService', () => {
         },
         externalData: {
           ...thjodskraExternalData,
-          // The first (failed) run left a submitApplication entry — the marker
-          // that this is a retry on the same application.
+          // A previous run SUCCEEDED and stored the guid — the only proof that
+          // this application is the one that created the RLS application.
           submitApplication: {
             data: { applicationGuid: '2e23bf24-d8bd-4353-9faf-3fc5ce04090d' },
             status: 'success',
@@ -635,6 +638,47 @@ describe('DrivingLicenseSubmissionService', () => {
         success: true,
         applicationGuid: '2e23bf24-d8bd-4353-9faf-3fc5ce04090d',
       })
+    })
+
+    it('does NOT swallow ALREADY_EXISTS when the prior attempt on this application FAILED (no guid stored) — a duplicate retry keeps failing', async () => {
+      // The case dev01 exposed: another application holds the active RLS one,
+      // so the first submit correctly errors — and the framework persists a
+      // failure entry with `data: {}`. Clicking "Try again" re-runs submit with
+      // that entry present; without the guid gate this flipped to a false
+      // success while RLS had discarded the payload.
+      newTemporaryDrivingLicenseWithHealthDeclaration.mockRejectedValueOnce(
+        alreadyExists,
+      )
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBTempRedesignEnabled: true,
+          selectLicensePhoto: 'facial-1',
+          drivingInstructor: '0101302399',
+        },
+        externalData: {
+          ...thjodskraExternalData,
+          // What templateApiActionRunner persists after a failed attempt.
+          submitApplication: {
+            data: {},
+            status: 'failure',
+            reason: 'some failure',
+            statusCode: 400,
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      await expect(
+        service.submitApplication({
+          application,
+          auth: user,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toBeDefined()
     })
 
     it('does NOT swallow ALREADY_EXISTS for a fresh application (no prior submit entry) — surfaces the error', async () => {
