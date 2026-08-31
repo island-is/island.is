@@ -684,36 +684,6 @@ export const notifications = {
       description: 'Texti í pósti til sækjanda máls þegar ákæru er hafnað',
     },
   }),
-  indictmentSentForReview: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.indictment_sent_for_review.subject',
-      defaultMessage: 'Ákæra til yfirlesturs',
-      description:
-        'Fyrirsögn í pósti til yfirlesara þegar ákæra er send til yfirlesturs',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.indictment_sent_for_review.body',
-      defaultMessage:
-        'Ákæra í máli {caseNumber} bíður yfirlesturs. Þú getur opnað málið í {linkStart}Réttarvörslugátt{linkEnd}.',
-      description:
-        'Texti í pósti til yfirlesara þegar ákæra er send til yfirlesturs',
-    },
-  }),
-  indictmentReviewDenied: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.indictment_review_denied.subject',
-      defaultMessage: 'Ákæra send til baka úr yfirlestri',
-      description:
-        'Fyrirsögn í pósti til sækjanda þegar ákæra er send til baka úr yfirlestri',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.indictment_review_denied.body',
-      defaultMessage:
-        'Ákæra í máli {caseNumber} hefur verið send til baka úr yfirlestri. Þú getur opnað málið í {linkStart}Réttarvörslugátt{linkEnd}.',
-      description:
-        'Texti í pósti til sækjanda þegar ákæra er send til baka úr yfirlestri',
-    },
-  }),
   courtRevokedIndictmentEmail: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.court_revoked_indictment_email.subject',

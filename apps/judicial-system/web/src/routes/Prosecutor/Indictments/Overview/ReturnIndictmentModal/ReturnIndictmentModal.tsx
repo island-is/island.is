@@ -29,12 +29,14 @@ const ReturnIndictmentModal: FC<Props> = ({
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const trimmedExplanation = explanation?.trim() ?? ''
+
   const isExplanationValid = validate([
-    [explanation ?? '', ['empty']],
+    [trimmedExplanation, ['empty']],
   ]).isValid
 
   const handleExplanationChange = (value: string) => {
-    const { isValid } = validate([[value, ['empty']]])
+    const { isValid } = validate([[value.trim(), ['empty']]])
 
     setExplanation(value)
     if (isValid) {
@@ -43,17 +45,18 @@ const ReturnIndictmentModal: FC<Props> = ({
   }
 
   const handleExplanationBlur = (value: string) => {
-    const { isValid, errorMessage: msg } = validate([[value, ['empty']]])
+    const trimmed = value.trim()
+    const { isValid, errorMessage: msg } = validate([[trimmed, ['empty']]])
 
     if (isValid) {
-      setExplanation(value)
+      setExplanation(trimmed)
     } else {
       setErrorMessage(msg)
     }
   }
 
   const handleReturnIndictment = async () => {
-    if (!explanation || !isExplanationValid || isSubmitting) {
+    if (!isExplanationValid || isSubmitting) {
       return
     }
 
@@ -61,7 +64,7 @@ const ReturnIndictmentModal: FC<Props> = ({
 
     try {
       const updatedCase = await updateCase(workingCase.id, {
-        indictmentReviewReturnedExplanation: explanation,
+        indictmentReviewReturnedExplanation: trimmedExplanation,
       })
 
       if (!updatedCase) {

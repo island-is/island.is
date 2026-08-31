@@ -2061,17 +2061,11 @@ export class CaseNotificationService extends BaseNotificationService {
   private async sendIndictmentSentForReviewNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const subject = this.formatMessage(
-      notifications.indictmentSentForReview.subject,
-    )
-    const html = this.formatMessage(
-      notifications.indictmentSentForReview.body,
-      {
-        caseNumber: theCase.policeCaseNumbers[0],
-        linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`,
-        linkEnd: '</a>',
-      },
-    )
+    const caseNumber = theCase.policeCaseNumbers[0]
+    const linkStart = `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`
+    const linkEnd = '</a>'
+    const subject = 'Ákæra til yfirlesturs'
+    const html = `Ákæra í máli ${caseNumber} bíður yfirlesturs. Þú getur opnað málið í ${linkStart}Réttarvörslugátt${linkEnd}.`
 
     const recipient = await this.sendEmail({
       subject,
@@ -2092,17 +2086,11 @@ export class CaseNotificationService extends BaseNotificationService {
   private async sendIndictmentReviewDeniedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const subject = this.formatMessage(
-      notifications.indictmentReviewDenied.subject,
-    )
-    const html = this.formatMessage(
-      notifications.indictmentReviewDenied.body,
-      {
-        caseNumber: theCase.policeCaseNumbers[0],
-        linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`,
-        linkEnd: '</a>',
-      },
-    )
+    const caseNumber = theCase.policeCaseNumbers[0]
+    const linkStart = `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`
+    const linkEnd = '</a>'
+    const subject = 'Ákæra send til baka úr yfirlestri'
+    const html = `Ákæra í máli ${caseNumber} hefur verið send til baka úr yfirlestri. Þú getur opnað málið í ${linkStart}Réttarvörslugátt${linkEnd}.`
 
     const recipient = await this.sendEmail({
       subject,

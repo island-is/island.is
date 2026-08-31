@@ -182,6 +182,12 @@ export class CaseController {
         'Cannot assign yourself as indictment approver',
       )
     }
+
+    if (theCase.prosecutorId && approver.id === theCase.prosecutorId) {
+      throw new ForbiddenException(
+        'Cannot assign the case prosecutor as indictment approver',
+      )
+    }
   }
 
   private assertIndictmentWaitingForReviewUpdateAllowed(
