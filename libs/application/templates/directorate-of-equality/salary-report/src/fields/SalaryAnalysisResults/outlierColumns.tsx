@@ -3,7 +3,6 @@ import {
   Box,
   Checkbox,
   Hidden,
-  Tooltip,
   createColumnHelper,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -11,6 +10,7 @@ import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS } from '../../utils/constants'
 import { formatDeviationLabel } from '../../utils/salaryAnalysisLabels'
+import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 import { formatWageAmount } from '../EmployeesEditor/utils'
 
 const SELECT_COLUMN_WIDTH = 32
@@ -183,23 +183,6 @@ const SelectCell = ({ row }: CellProps) => {
   )
 }
 
-// The ordinal alone, not the ABC-000 identifier: it is the number the applicant
-// already knows from the employee screens and the workbook, and this tooltip is
-// what says so. Sorting is off for this column (see NOT_SORTABLE), which is what
-// keeps the tooltip out of a button.
-const OrdinalHeader = () => {
-  const { formatMessage } = useLocale()
-  return (
-    <Box component="span" display="flex" alignItems="center" columnGap={1}>
-      {formatMessage(m.ordinalColumn)}
-      <Tooltip
-        placement="right"
-        text={formatMessage(m.employeeColumnTooltip)}
-      />
-    </Box>
-  )
-}
-
 const OrdinalCell = ({ row }: CellProps) =>
   compactCell(String(row.original.employeeOrdinal))
 
@@ -278,7 +261,9 @@ export const OUTLIER_COLUMNS = [
   }),
   columnHelper.accessor('employeeOrdinal', {
     id: 'employee',
-    header: OrdinalHeader,
+    // Sorting is off for this column (see NOT_SORTABLE), which is what keeps
+    // the shared header's tooltip out of a button.
+    header: EmployeeOrdinalHeader,
     meta: COMPACT_CELL,
     cell: OrdinalCell,
     ...NOT_SORTABLE,

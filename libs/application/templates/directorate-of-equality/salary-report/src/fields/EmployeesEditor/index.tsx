@@ -29,7 +29,7 @@ import {
   DraftErrorState,
   DraftLoadingState,
 } from '../../components/DraftScreenState'
-import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
+import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 import { EmployeeRow } from './EmployeeRow'
 import { EmployeeForm } from './EmployeeForm'
 import { TablePagination } from '../TablePagination'
@@ -253,7 +253,9 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           <T.Head>
             <T.Row>
               <T.HeadData></T.HeadData>
-              <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
+              <T.HeadData>
+                <EmployeeOrdinalHeader />
+              </T.HeadData>
               <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
               <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
               <T.HeadData></T.HeadData>
@@ -276,10 +278,6 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 <EmployeeRow
                   key={employee.id}
                   employee={employee}
-                  identifier={formatEmployeeIdentifier(
-                    application.id,
-                    employee.ordinal,
-                  )}
                   roleTitleById={roleTitleById}
                   onRemove={() => handleRemove(employee)}
                   onEdit={() => setEditingId(employee.id)}
