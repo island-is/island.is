@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client'
 import { GET_CUSTOMS_GENERAL_SUPPLEMENTARY_DOCUMENTS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import { mapValidityFields, ValidityFieldsInput } from './customsGeneralUtils'
 import { m } from './translation.strings'
 
 const CustomsGeneralSupplementaryDocuments = () => {
@@ -25,9 +26,10 @@ const CustomsGeneralSupplementaryDocuments = () => {
   )
 
   const items = (data?.customsGeneralSupplementaryDocuments ?? []).map(
-    (item: { code?: string; name?: string }) => ({
+    (item: { code?: string; name?: string } & ValidityFieldsInput) => ({
       code: item.code ?? '',
       name: item.name ?? '',
+      ...mapValidityFields(item),
     }),
   )
 

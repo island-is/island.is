@@ -13,6 +13,7 @@ import {
 import { SortableTable, SortableTableColumn } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 
+import { NotYetInEffectTag } from './customsGeneralUtils'
 import { m } from './translation.strings'
 
 interface Props<T extends Record<string, any>> {
@@ -30,7 +31,16 @@ interface Props<T extends Record<string, any>> {
   onRowClick?: (row: T) => void
 }
 
-export const toApiDate = (date: Date) => `${date.toISOString().split('.')[0]}Z`
+/**
+ * The reference date is a calendar day, so it is built from the local date parts the user
+ * picked rather than from `toISOString`, which would shift the day for anyone not on UTC.
+ */
+export const toApiDate = (date: Date) => {
+  const pad = (value: number) => String(value).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate(),
+  )}T00:00:00Z`
+}
 
 export const CustomsGeneralDateTable = <T extends Record<string, any>>({
   columns,
@@ -50,6 +60,33 @@ export const CustomsGeneralDateTable = <T extends Record<string, any>>({
   const { formatMessage } = useIntl()
   const generatedId = useId()
   const id = idProp ?? generatedId
+
+  /**
+   * Rows the upstream API published ahead of time are shown alongside the ones already
+   * in effect, labelled with the date they take effect on. The label goes on the first
+   * column holding a value of its own, so it sits next to what identifies the row.
+   */
+  const labelledColumnKey = columns.find((column) => column.sortable !== false)
+    ?.key
+  const labelledColumns = columns.map((column) =>
+    column.key === labelledColumnKey
+      ? {
+          ...column,
+          render: (value: T[keyof T], row: T) => (
+            <Inline space={1} alignY="center" flexWrap="nowrap">
+              <span>
+                {column.render
+                  ? column.render(value, row)
+                  : String(value ?? '')}
+              </span>
+              {row.notYetInEffect && (
+                <NotYetInEffectTag validFrom={row.validFrom} />
+              )}
+            </Inline>
+          ),
+        }
+      : column,
+  )
 
   return (
     <Stack space={3}>
@@ -91,7 +128,11 @@ export const CustomsGeneralDateTable = <T extends Record<string, any>>({
           <LoadingDots />
         </Box>
       ) : (
-        <SortableTable columns={columns} data={data} onRowClick={onRowClick} />
+        <SortableTable
+          columns={labelledColumns}
+          data={data}
+          onRowClick={onRowClick}
+        />
       )}
     </Stack>
   )

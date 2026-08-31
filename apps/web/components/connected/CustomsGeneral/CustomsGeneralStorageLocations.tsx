@@ -2,14 +2,17 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { AlertMessage, Box, LoadingDots } from '@island.is/island-ui/core'
 import { GET_CUSTOMS_GENERAL_STORAGE_LOCATIONS } from '@island.is/web/screens/queries/CustomsGeneral'
 
-import { SortableTable } from '../../SortableTable/SortableTable'
-import { toApiDate } from './CustomsGeneralDateTable'
+import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import {
+  mapValidityFields,
+  ValidityFields,
+  ValidityFieldsInput,
+} from './customsGeneralUtils'
 import { m } from './translation.strings'
 
-type Item = {
+type Item = ValidityFields & {
   nationalId: string
   code: string
   companyName: string
@@ -44,38 +47,32 @@ const CustomsGeneralStorageLocations = () => {
   )
 
   const items: Item[] = (data?.customsGeneralStorageLocations ?? []).map(
-    (item: {
-      nationalId?: string
-      code?: string
-      companyName?: string
-      location?: string
-    }) => ({
+    (
+      item: {
+        nationalId?: string
+        code?: string
+        companyName?: string
+        location?: string
+      } & ValidityFieldsInput,
+    ) => ({
       nationalId: item.nationalId ?? '',
       code: item.code ?? '',
       companyName: item.companyName ?? '',
       location: item.location ?? '',
+      ...mapValidityFields(item),
     }),
   )
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center">
-        <LoadingDots />
-      </Box>
-    )
-  }
-
-  if (error) {
-    return (
-      <AlertMessage
-        type="error"
-        title={formatMessage(m.errorTitle)}
-        message={formatMessage(m.errorMessage)}
-      />
-    )
-  }
-
-  return <SortableTable columns={columns} data={items} />
+  return (
+    <CustomsGeneralDateTable
+      columns={columns}
+      data={items}
+      loading={loading}
+      error={error}
+      dateLabel={formatMessage(m.dateLabel)}
+      errorTitle={formatMessage(m.errorTitle)}
+    />
+  )
 }
 
 export default CustomsGeneralStorageLocations

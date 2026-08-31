@@ -2,23 +2,26 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_CUSTOMS_GENERAL_PERMITS } from '@island.is/web/screens/queries/CustomsGeneral'
 import { formatDate } from '@island.is/web/utils/formatDate'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
-import { formatValidityDate } from './customsGeneralUtils'
+import {
+  formatValidityDate,
+  mapValidityFields,
+  NotYetInEffectTag,
+  ValidityFields,
+} from './customsGeneralUtils'
 import { m } from './translation.strings'
 import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralPermits.css'
 
-interface PermitItem {
+interface PermitItem extends ValidityFields {
   code: string
   name: string
   description: string
-  validFrom: string
-  validTo: string
   leyfiVeitir: string
 }
 
@@ -91,9 +94,14 @@ const PermitDetailView = ({ item, date, onBack }: DetailViewProps) => {
                 {formatMessage(m.exemptionDetailValidityPeriod)}
               </Text>
             </Box>
-            <Text>
-              {validFrom} - {validTo}
-            </Text>
+            <Inline space={1} alignY="center">
+              <Text>
+                {validFrom} - {validTo}
+              </Text>
+              {item.notYetInEffect && (
+                <NotYetInEffectTag validFrom={item.validFrom} />
+              )}
+            </Inline>
           </Box>
         )}
       </Box>
@@ -153,8 +161,7 @@ const CustomsGeneralPermits = () => {
       code: item.code ?? '',
       name: item.name ?? '',
       description: item.description ?? '',
-      validFrom: item.validFrom ?? '',
-      validTo: item.validTo ?? '',
+      ...mapValidityFields(item),
       leyfiVeitir: item.leyfiVeitir ?? '',
     }),
   )

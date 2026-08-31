@@ -6,6 +6,9 @@ export const GET_CUSTOMS_GENERAL_ADVISORIES = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -19,6 +22,7 @@ export const GET_CUSTOMS_GENERAL_PROHIBITIONS = gql`
       validFrom
       validTo
       exemptionProvider
+      notYetInEffect
     }
   }
 `
@@ -33,6 +37,7 @@ export const GET_CUSTOMS_GENERAL_CHARGES = gql`
       validTo
       taxtiUpphaed
       taxtiProsenta
+      notYetInEffect
     }
   }
 `
@@ -46,6 +51,7 @@ export const GET_CUSTOMS_GENERAL_PERMITS = gql`
       validFrom
       validTo
       leyfiVeitir
+      notYetInEffect
     }
   }
 `
@@ -57,6 +63,7 @@ export const GET_CUSTOMS_GENERAL_TARIFFS = gql`
       description
       validFrom
       validTo
+      notYetInEffect
     }
   }
 `
@@ -69,6 +76,9 @@ export const GET_CUSTOMS_GENERAL_EXEMPTIONS = gql`
       description
       legalArticle
       system
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -79,6 +89,9 @@ export const GET_CUSTOMS_GENERAL_DELIVERY_TERMS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -89,6 +102,9 @@ export const GET_CUSTOMS_GENERAL_TRANSPORT_MODES = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -100,6 +116,9 @@ export const GET_CUSTOMS_GENERAL_STORAGE_LOCATIONS = gql`
       code
       companyName
       location
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -110,6 +129,9 @@ export const GET_CUSTOMS_GENERAL_COSTS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -120,6 +142,9 @@ export const GET_CUSTOMS_GENERAL_QUANTITY_UNITS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -130,6 +155,9 @@ export const GET_CUSTOMS_GENERAL_MARKET_AREAS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -140,6 +168,9 @@ export const GET_CUSTOMS_GENERAL_CLEARANCE_TYPES = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -150,6 +181,9 @@ export const GET_CUSTOMS_GENERAL_TRANSACTION_TYPES = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -160,6 +194,9 @@ export const GET_CUSTOMS_GENERAL_CUSTOMS_PROCEDURES = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -170,6 +207,9 @@ export const GET_CUSTOMS_GENERAL_PACKAGING = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -180,6 +220,9 @@ export const GET_CUSTOMS_GENERAL_ORIGINS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -190,6 +233,9 @@ export const GET_CUSTOMS_GENERAL_SELECTION_KEYS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -200,6 +246,9 @@ export const GET_CUSTOMS_GENERAL_SUPPLEMENTARY_DOCUMENTS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -210,6 +259,9 @@ export const GET_CUSTOMS_GENERAL_ERRORS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -220,6 +272,9 @@ export const GET_CUSTOMS_GENERAL_EXCHANGE_RATES = gql`
       code
       name
       rate
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -231,6 +286,9 @@ export const GET_CUSTOMS_GENERAL_COUNTRY_CURRENCIES = gql`
       countryName
       currencyCode
       currencyName
+      validFrom
+      validTo
+      notYetInEffect
     }
   }
 `
@@ -244,6 +302,7 @@ export const GET_CUSTOMS_GENERAL_TARIFF_KEYS = gql`
       periodTo
       jsonUrl
       textUrl
+      notYetInEffect
     }
   }
 `
