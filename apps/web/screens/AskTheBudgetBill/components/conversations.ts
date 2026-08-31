@@ -8,6 +8,9 @@ export const toConversationTitle = (question: string) => {
   // half into the lone surrogate that would be sent as the conversation name.
   const characters = Array.from(trimmed)
   return characters.length > TITLE_MAX_LENGTH
-    ? `${characters.slice(0, TITLE_MAX_LENGTH - 1).join('').trimEnd()}…`
+    ? `${characters
+        .slice(0, TITLE_MAX_LENGTH - 1)
+        .join('')
+        .trimEnd()}…`
     : trimmed
 }
