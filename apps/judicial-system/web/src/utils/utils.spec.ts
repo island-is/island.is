@@ -439,10 +439,9 @@ describe('Utils', () => {
 
     test('should be false when any defendant is receiving a subpoena', () => {
       expect(
-        canSkipArraignmentSummons(
-          [alternativeDefendant, subpoenaDefendant],
-          { isArraignmentScheduled: false },
-        ),
+        canSkipArraignmentSummons([alternativeDefendant, subpoenaDefendant], {
+          isArraignmentScheduled: false,
+        }),
       ).toBe(false)
     })
 

@@ -1174,9 +1174,7 @@ export const areAllDefendantsServedByAlternativeMeans = (
 // after an arraignment was already scheduled — e.g. after splitting a
 // co-defendant and switching the remaining case to "birt með öðrum hætti".
 export const canSkipArraignmentSummons = (
-  defendants?:
-    | { id: string; isAlternativeService?: boolean | null }[]
-    | null,
+  defendants?: { id: string; isAlternativeService?: boolean | null }[] | null,
   options?: {
     isArraignmentScheduled?: boolean
     newAlternativeServiceDefendantIds?: string[]
