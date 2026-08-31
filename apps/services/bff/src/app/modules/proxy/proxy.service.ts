@@ -30,9 +30,7 @@ const droppedResponseHeaders = [
 ]
 
 // maxFreeSockets tracks maxSockets so the idle pool isn't capped at agentkeepalive's default 256.
-const buildAgentOptions = (
-  maxSockets: number,
-): AgentKeepAlive.HttpOptions => ({
+const buildAgentOptions = (maxSockets: number): AgentKeepAlive.HttpOptions => ({
   keepAlive: true,
   timeout: 0,
   freeSocketTimeout: AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
