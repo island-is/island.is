@@ -79,7 +79,7 @@ export const IndividualApplicant = ({
     setValue,
     unregister,
   ])
-  console.log('applicant', applicant)
+
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
@@ -97,7 +97,7 @@ export const IndividualApplicant = ({
               <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
                 <Input
                   label={formatMessage(m.address)}
-                  name="address"
+                  name={`${applicant.id}.address`}
                   readOnly
                   value={getValue(applicant, 'address') || ''}
                 />
@@ -106,7 +106,7 @@ export const IndividualApplicant = ({
                 <Box marginTop={[2, 2, 0, 0]}>
                   <Input
                     label={formatMessage(m.postalCode)}
-                    name="postalCode"
+                    name={`${applicant.id}.postalCode`}
                     readOnly
                     value={getValue(applicant, 'postalCode') || ''}
                   />
