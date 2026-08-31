@@ -3,7 +3,6 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import { InvoicesService } from '../services/invoices/invoices.service'
 import { InvoicePaymentsGroupsInput } from '../dtos/getInvoicePaymentsGroups.input'
-import type { InvoicePaymentsGroupsWithFilters } from '../types'
 import { InvoicePaymentsGroupCollection } from '../models/invoicePaymentsGroups.model'
 import { Ministries } from '../models/ministries.model'
 import { MinistriesInput } from '../dtos/getMinistries.input'
@@ -27,15 +26,8 @@ export class InvoicePaymentsGroupsResolver {
   async getInvoicePaymentsGroups(
     @Args('input', { type: () => InvoicePaymentsGroupsInput })
     input: InvoicePaymentsGroupsInput,
-  ): Promise<InvoicePaymentsGroupsWithFilters | null> {
-    const groups = await this.invoiceService.getOpenInvoicePaymentsGroups(input)
-    if (!groups) return null
-
-    return {
-      ...groups,
-      dateFrom: input.dateFrom,
-      dateTo: input.dateTo,
-    }
+  ): Promise<InvoicePaymentsGroupCollection | null> {
+    return this.invoiceService.getOpenInvoicePaymentsGroups(input)
   }
 
   @Query(() => Ministries, {

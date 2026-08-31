@@ -1,12 +1,24 @@
 import { InvoicePaymentsGroupDto } from '@island.is/clients/government-invoices'
 import { InvoicePaymentsGroup } from '../models/invoicePaymentsGroup.model'
+import {
+  buildInvoicePaymentsGroupId,
+  ContentFilters,
+  InvoicePaymentsGroupScope,
+} from '../utils/invoicePaymentsGroupId'
 import { mapPayment } from './paymentMapper'
 
 export const mapInvoicePaymentsGroup = (
   data: InvoicePaymentsGroupDto,
+  scope: InvoicePaymentsGroupScope,
+  filters: ContentFilters,
 ): InvoicePaymentsGroup => {
   return {
-    id: `${data.debtor.erpLegalEntityId}-${data.supplier.legalId}`,
+    id: buildInvoicePaymentsGroupId(
+      String(data.debtor.erpLegalEntityId),
+      data.supplier.legalId,
+      scope,
+      filters,
+    ),
     supplier: {
       id: data.supplier.legalId,
       name: data.supplier.name,

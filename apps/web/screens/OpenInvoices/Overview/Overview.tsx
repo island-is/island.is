@@ -77,9 +77,25 @@ const SORT_FIELD_MAP: Record<
 const toDebtorIds = (debtors?: string[] | null) =>
   debtors?.map(Number).filter((id): id is number => Number.isInteger(id))
 
+interface AppliedFilters {
+  dateFrom: Date
+  dateTo: Date
+  debtors?: string[]
+  suppliers?: string[]
+  ministries?: string[]
+  paymentTypeIds?: string[]
+}
+
+interface SerializedAppliedFilters
+  extends Omit<AppliedFilters, 'dateFrom' | 'dateTo'> {
+  dateFrom: string
+  dateTo: string
+}
+
 const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   locale,
   initialInvoiceGroups,
+  initialAppliedFilters,
   customPageData,
   organization,
   today,
@@ -123,6 +139,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }, [today])
 
   const [currentPage, setCurrentPage] = useState<number>(1)
+
+  const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>(() => ({
+    ...initialAppliedFilters,
+    dateFrom: new Date(initialAppliedFilters.dateFrom),
+    dateTo: new Date(initialAppliedFilters.dateTo),
+  }))
 
   const fetchedResult =
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
@@ -206,25 +228,47 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       : IcelandicGovernmentInstitutionsSortDirection.Ascending
     : undefined
 
-  const fetchInvoiceGroups = useCallback(() => {
+  const buildInput = useCallback(
+    (filters: AppliedFilters, page: number) => ({
+      debtors: toDebtorIds(filters.debtors),
+      suppliers: filters.suppliers,
+      ministries: filters.ministries,
+      paymentTypeIds: filters.paymentTypeIds,
+      dateFrom: filters.dateFrom,
+      dateTo: filters.dateTo,
+      sortBy,
+      sortDirection,
+      limit: PAGE_SIZE,
+      page,
+    }),
+    [sortBy, sortDirection],
+  )
+
+  const runInvoiceGroupsQuery = useCallback(
+    (page: number) => {
+      setCurrentPage(page)
+      getInvoiceGroups({
+        variables: { input: buildInput(appliedFilters, page) },
+      })
+    },
+    [appliedFilters, buildInput, getInvoiceGroups],
+  )
+
+  const applyFilters = useCallback(() => {
+    const nextFilters: AppliedFilters = {
+      dateFrom: dateRangeStart ?? initialDates.dateFrom,
+      dateTo: dateRangeEnd ?? initialDates.dateTo,
+      debtors: debtors ?? undefined,
+      suppliers: suppliers ?? undefined,
+      ministries: ministries ?? undefined,
+      paymentTypeIds: invoicePaymentTypes ?? undefined,
+    }
+
+    setAppliedFilters(nextFilters)
     setCurrentPage(1)
-    getInvoiceGroups({
-      variables: {
-        input: {
-          debtors: toDebtorIds(debtors),
-          suppliers,
-          ministries,
-          paymentTypeIds: invoicePaymentTypes,
-          dateFrom: dateRangeStart ?? initialDates.dateFrom,
-          dateTo: dateRangeEnd ?? initialDates.dateTo,
-          sortBy,
-          sortDirection,
-          limit: PAGE_SIZE,
-          page: 1,
-        },
-      },
-    })
+    getInvoiceGroups({ variables: { input: buildInput(nextFilters, 1) } })
   }, [
+    buildInput,
     getInvoiceGroups,
     debtors,
     suppliers,
@@ -232,8 +276,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     invoicePaymentTypes,
     dateRangeStart,
     dateRangeEnd,
-    sortBy,
-    sortDirection,
+    initialDates,
   ])
 
   const isInitialMount = useRef(true)
@@ -242,28 +285,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       isInitialMount.current = false
       return
     }
-    fetchInvoiceGroups()
+    runInvoiceGroupsQuery(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, sortBy, sortDirection])
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-    getInvoiceGroups({
-      variables: {
-        input: {
-          debtors: toDebtorIds(debtors),
-          suppliers,
-          ministries,
-          paymentTypeIds: invoicePaymentTypes,
-          dateFrom: dateRangeStart ?? initialDates.dateFrom,
-          dateTo: dateRangeEnd ?? initialDates.dateTo,
-          sortBy,
-          sortDirection,
-          limit: PAGE_SIZE,
-          page,
-        },
-      },
-    })
+    runInvoiceGroupsQuery(page)
   }
 
   const onResetFilter = () => {
@@ -276,8 +303,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }
 
   const hitsMessage = useMemo(() => {
-    const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
-    const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
+    const dateRangeStartArg = format(appliedFilters.dateFrom, dateFormat.is)
+    const dateRangeEndArg = format(appliedFilters.dateTo, dateFormat.is)
     const totalPaymentsSum =
       invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
         ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
@@ -308,8 +335,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           dateRangeEnd: dateRangeEndArg,
         })
   }, [
-    dateRangeEnd,
-    dateRangeStart,
+    appliedFilters,
     formatMessage,
     initialInvoiceGroups?.totalPaymentsSum,
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
@@ -321,8 +347,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   // short lines instead of one long sentence (matches the Grants Plaza
   // pattern) — the full sentence doesn't fit comfortably on small screens.
   const hitsSummary = useMemo(() => {
-    const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
-    const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
+    const dateRangeStartArg = format(appliedFilters.dateFrom, dateFormat.is)
+    const dateRangeEndArg = format(appliedFilters.dateTo, dateFormat.is)
     const totalPaymentsSum =
       invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
         ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
@@ -342,8 +368,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         : undefined,
     }
   }, [
-    dateRangeEnd,
-    dateRangeStart,
+    appliedFilters,
     formatMessage,
     initialInvoiceGroups?.totalPaymentsSum,
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
@@ -363,7 +388,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       setDisplayedHits({ hitsMessage, hitsSummary })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [invoiceGroupsLoading])
+  }, [invoiceGroupsLoading, appliedFilters])
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
     const filteredValues = values?.length ? [...values] : null
@@ -456,8 +481,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       <Box marginTop={3}>
         <OverviewTable
           invoiceGroups={displayGroups}
-          dateFrom={dateRangeStart}
-          dateTo={dateRangeEnd}
+          dateFrom={appliedFilters.dateFrom}
+          dateTo={appliedFilters.dateTo}
+          paymentTypeIds={appliedFilters.paymentTypeIds}
+          ministries={appliedFilters.ministries}
           loading={invoiceGroupsLoading}
           error={invoiceGroupsError}
           sorting={sorting}
@@ -528,7 +555,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               <OverviewFilter
                 onSearchUpdate={onSearchFilterUpdate}
                 onReset={onResetFilter}
-                onApply={fetchInvoiceGroups}
+                onApply={applyFilters}
                 applyDisabled={invoiceGroupsLoading}
                 url={baseUrl}
                 hits={totalPayments}
@@ -565,7 +592,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               <OverviewFilter
                 onSearchUpdate={onSearchFilterUpdate}
                 onReset={onResetFilter}
-                onApply={fetchInvoiceGroups}
+                onApply={applyFilters}
                 applyDisabled={invoiceGroupsLoading}
                 url={baseUrl}
                 hits={totalPayments}
@@ -588,6 +615,7 @@ interface OpenInvoicesOverviewProps {
   organization?: Organization
   locale: Locale
   initialInvoiceGroups?: IcelandicGovernmentInstitutionsInvoicePaymentsGroups
+  initialAppliedFilters: SerializedAppliedFilters
   today: string
 }
 
@@ -669,6 +697,14 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     locale: locale as Locale,
     initialInvoiceGroups:
       icelandicGovernmentInstitutionsInvoicePaymentsGroups ?? undefined,
+    initialAppliedFilters: {
+      dateFrom: dateFromInput.toISOString(),
+      dateTo: dateToInput.toISOString(),
+      debtors: debtorsInput,
+      suppliers: suppliersInput,
+      ministries: ministriesInput,
+      paymentTypeIds: invoicePaymentTypesInput,
+    },
     organization: getOrganization ?? undefined,
     today: todayIso,
   }

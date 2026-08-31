@@ -228,6 +228,7 @@ codemagic.yaml                                                                  
 /libs/clients/regulations-admin/                                                                                             @island-is/hugsmidjan
 /libs/clients/inna/                                                                                                          @island-is/hugsmidjan
 /libs/clients/government-invoices/                                                                                           @island-is/hugsmidjan
+/libs/api/domains/icelandic-government-institutions/                                                                         @island-is/hugsmidjan
 /libs/clients/grants/                                                                                                        @island-is/hugsmidjan
 /libs/clients/hms-loans/                                                                                                     @island-is/hugsmidjan
 /libs/clients/official-journal-of-iceland/                                                                                   @island-is/hugsmidjan

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { ApolloError } from '@apollo/client'
 
-import { IcelandicGovernmentInstitutionsInvoicePaymentsGroup } from '@island.is/api/schema'
+import { IcelandicGovernmentInstitutionsInvoicePaymentsGroup } from '@island.is/web/graphql/schema'
 import {
   Box,
   createColumnHelper,
@@ -19,6 +19,8 @@ import { NestedLines } from './NestedLines'
 interface Props {
   dateTo?: Date
   dateFrom?: Date
+  paymentTypeIds?: string[]
+  ministries?: string[]
   invoiceGroups: Array<IcelandicGovernmentInstitutionsInvoicePaymentsGroup>
   loading?: boolean
   error?: ApolloError
@@ -32,6 +34,8 @@ const columnHelper =
 export const OverviewTable = ({
   dateTo,
   dateFrom,
+  paymentTypeIds,
+  ministries,
   invoiceGroups,
   loading,
   error,
@@ -95,6 +99,8 @@ export const OverviewTable = ({
             total={row.original.totalPaymentsSum}
             dateFrom={dateFrom}
             dateTo={dateTo}
+            paymentTypeIds={paymentTypeIds}
+            ministries={ministries}
           />
         )}
       />
