@@ -27,6 +27,7 @@ import {
 import * as formatters from './formatters'
 import {
   applyMergedCaseEntries,
+  canSkipArraignmentSummons,
   getAppealActorText,
   getDefaultDefendantGender,
   hasAcceptedRulingOrderInCourt,
@@ -415,6 +416,69 @@ describe('Utils', () => {
 
       // Assert
       expect(gender).toBe(Gender.MALE)
+    })
+  })
+
+  describe('canSkipArraignmentSummons', () => {
+    const alternativeDefendant = {
+      id: 'defendant-1',
+      isAlternativeService: true,
+    }
+    const subpoenaDefendant = {
+      id: 'defendant-2',
+      isAlternativeService: false,
+    }
+
+    test('should be true on first pass when all defendants are served by alternative means', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant], {
+          isArraignmentScheduled: false,
+        }),
+      ).toBe(true)
+    })
+
+    test('should be false when any defendant is receiving a subpoena', () => {
+      expect(
+        canSkipArraignmentSummons(
+          [alternativeDefendant, subpoenaDefendant],
+          { isArraignmentScheduled: false },
+        ),
+      ).toBe(false)
+    })
+
+    test('should be false when arraignment is scheduled and nobody is re-entering alternative service', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant], {
+          isArraignmentScheduled: true,
+          newAlternativeServiceDefendantIds: [],
+        }),
+      ).toBe(false)
+    })
+
+    test('should be true when arraignment is scheduled but every defendant is re-entering alternative service', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant], {
+          isArraignmentScheduled: true,
+          newAlternativeServiceDefendantIds: [alternativeDefendant.id],
+        }),
+      ).toBe(true)
+    })
+
+    test('should be false when only some defendants are re-entering alternative service', () => {
+      const otherAlternativeDefendant = {
+        id: 'defendant-3',
+        isAlternativeService: true,
+      }
+
+      expect(
+        canSkipArraignmentSummons(
+          [alternativeDefendant, otherAlternativeDefendant],
+          {
+            isArraignmentScheduled: true,
+            newAlternativeServiceDefendantIds: [alternativeDefendant.id],
+          },
+        ),
+      ).toBe(false)
     })
   })
 

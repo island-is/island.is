@@ -1169,6 +1169,37 @@ export const areAllDefendantsServedByAlternativeMeans = (
   (defendants?.length ?? 0) > 0 &&
   Boolean(defendants?.every((defendant) => defendant.isAlternativeService))
 
+// Skip is available on the first pass (no arraignment scheduled yet), and
+// again when the court re-enters alternative service for every defendant
+// after an arraignment was already scheduled — e.g. after splitting a
+// co-defendant and switching the remaining case to "birt með öðrum hætti".
+export const canSkipArraignmentSummons = (
+  defendants?:
+    | { id: string; isAlternativeService?: boolean | null }[]
+    | null,
+  options?: {
+    isArraignmentScheduled?: boolean
+    newAlternativeServiceDefendantIds?: string[]
+  },
+): boolean => {
+  if (!areAllDefendantsServedByAlternativeMeans(defendants)) {
+    return false
+  }
+
+  if (!options?.isArraignmentScheduled) {
+    return true
+  }
+
+  const newAlternativeServiceDefendantIds =
+    options.newAlternativeServiceDefendantIds ?? []
+
+  return Boolean(
+    defendants?.every((defendant) =>
+      newAlternativeServiceDefendantIds.includes(defendant.id),
+    ),
+  )
+}
+
 // Lets an element with role="button" be activated with the keyboard
 // (Enter or Space) the same way a native button is.
 export const onEnterOrSpace =
