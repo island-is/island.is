@@ -39,12 +39,16 @@ export const messages = {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
     },
+    alertTitle: {
+      id: 'doe.sr.application:errors.alertTitle',
+      defaultMessage: 'Villa:',
+    },
   }),
 
   general: defineMessages({
     applicationName: {
       id: 'doe.sr.application:general.applicationName',
-      defaultMessage: 'Skýrslugjöf',
+      defaultMessage: 'Skýrslugjöf um kynbundinn launamun',
     },
     institution: {
       id: 'doe.sr.application:general.institution',
@@ -53,6 +57,10 @@ export const messages = {
     tagDraft: {
       id: 'doe.sr.application:general.tagDraft',
       defaultMessage: 'Drög',
+    },
+    newApplicationButtonLabel: {
+      id: 'doe.sr.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný skýrsla',
     },
   }),
 
@@ -82,13 +90,17 @@ export const messages = {
       id: 'doe.sr.application:approved.sectionTitle',
       defaultMessage: 'Samþykkt',
     },
+    formTitle: {
+      id: 'doe.sr.application:approved.formTitle',
+      defaultMessage: 'Skýrslugjöf samþykkt!',
+    },
     title: {
       id: 'doe.sr.application:approved.title',
-      defaultMessage: 'Umsókn samþykkt',
+      defaultMessage: 'Skýrslugjöf samþykkt',
     },
     description: {
       id: 'doe.sr.application:approved.description',
-      defaultMessage: 'Umsókn þín hefur verið samþykkt.',
+      defaultMessage: 'Skýrslugjöfin þín hefur verið samþykkt.',
     },
   }),
 
@@ -526,7 +538,7 @@ export const messages = {
       importSuccess: {
         id: 'doe.sr.application:report.dataEntry.importSuccess',
         defaultMessage:
-          'Skráin var flutt inn og launagreining fer fram í næsta skrefi.',
+          'Skjalinu var hlaðið upp og launagreining fer fram í næsta skrefi.',
       },
       importSuccessContinueButton: {
         id: 'doe.sr.application:report.dataEntry.importSuccessContinueButton',
@@ -640,6 +652,12 @@ export const messages = {
       criterionWeightLabel: {
         id: 'doe.sr.application:report.subCriteria.criterionWeightLabel',
         defaultMessage: 'Vægi yfirviðmiðs: {weight}%',
+      },
+      // Shown next to the weight while the panel is COLLAPSED, so the red
+      // header is never the only thing marking it as blocking.
+      criterionWeightMismatchBadge: {
+        id: 'doe.sr.application:report.subCriteria.criterionWeightMismatchBadge',
+        defaultMessage: 'Vægi stemmir ekki',
       },
       catalogLabel: {
         id: 'doe.sr.application:report.subCriteria.catalogLabel',
@@ -929,7 +947,7 @@ export const messages = {
       },
       title: {
         id: 'doe.sr.application:salaryAnalysis.overview.title',
-        defaultMessage: 'Yfirlit',
+        defaultMessage: 'Niðurstöður launagreiningar',
       },
       intro: {
         id: 'doe.sr.application:salaryAnalysis.overview.intro#markdown',
@@ -949,7 +967,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:salaryAnalysis.improvementPlan.intro',
         defaultMessage:
-          'Þessir starfsmenn bera leiðréttan launamun fyrirtækisins — laun þeirra víkja frá því sem starfsmatsstig þeirra gefa til kynna. Skráðu ástæður og aðgerðir.\n\nNú er tækifærið til að fara vel yfir starfaflokkunina og öll innslegin gögn til þess að kanna hvort þú þurfir að breyta einhverju.',
+          'Eftirfarandi starfsmenn bera leiðréttan launamun fyrirtækisins. Laun þeirra víkja frá því sem starfsmatsstig þeirra gefa til kynna. ',
       },
     }),
     results: defineMessages({
@@ -1441,6 +1459,15 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.signatureRoleLabel',
         defaultMessage: 'Starfstitill ábyrgðaraðila',
       },
+      tableTitle: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.tableTitle',
+        defaultMessage: 'Frávikatafla',
+      },
+      tableText: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.tableText',
+        defaultMessage:
+          'Taflan sýnir frávik launagreiningar. Nauðsynlegt er að gera úrbótaáætlun fyrir hvert frávik. Hægt er að velja mörg frávik saman og gera sameiginlega úrbótaáætlun fyrir þann hóp. Einnig er hægt að velja eitt frávik. Þegar frávik hefur verið sett í hóp hverfur það úr töflunni. Athugið að hvert frávik þarf að vera hluti af frávikahópi.',
+      },
       createGroupButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
         defaultMessage: 'Setja í frávikahóp',
@@ -1533,7 +1560,7 @@ export const messages = {
     },
     title: {
       id: 'doe.sr.application:overview.title',
-      defaultMessage: 'Yfirlit',
+      defaultMessage: 'Yfirlit skýrslugjafar',
     },
     intro: {
       id: 'doe.sr.application:overview.intro',
@@ -1615,7 +1642,11 @@ export const messages = {
     },
     sectionTitle: {
       id: 'doe.sr.application:inReview.sectionTitle',
-      defaultMessage: 'Sending móttekin',
+      defaultMessage: 'Innsending móttekin',
+    },
+    formTitle: {
+      id: 'doe.sr.application:inReview.formTitle',
+      defaultMessage: 'Takk fyrir innsendinguna',
     },
     alertTitle: {
       id: 'doe.sr.application:inReview.alertTitle',
@@ -1664,30 +1695,50 @@ export const messages = {
     },
     editHistoryLog: {
       id: 'doe.sr.application:inReview.editHistoryLog',
-      defaultMessage: 'Skilaboð frá Jafnréttisstofu',
+      defaultMessage: 'Athugasemd frá Jafnréttisstofu',
     },
   }),
 
   comments: defineMessages({
     sectionTitle: {
       id: 'doe.sr.application:comments.sectionTitle',
-      defaultMessage: 'Samskipti',
+      defaultMessage: 'Athugasemdir',
     },
     title: {
       id: 'doe.sr.application:comments.title',
-      defaultMessage: 'Samskipti við Jafnréttisstofu',
+      defaultMessage: 'Athugasemdir',
     },
     emptyState: {
       id: 'doe.sr.application:comments.emptyState',
-      defaultMessage: 'Engin skilaboð hafa verið send.',
+      defaultMessage: 'Engar athugasemdir hafa verið sendar.',
     },
     textareaLabel: {
       id: 'doe.sr.application:comments.textareaLabel',
-      defaultMessage: 'Skrifa skilaboð',
+      defaultMessage: 'Athugasemd',
+    },
+    placeholder: {
+      id: 'doe.sr.application:comments.placeholder',
+      defaultMessage: 'Bættu við athugasemd',
+    },
+    replyButton: {
+      id: 'doe.sr.application:comments.replyButton',
+      defaultMessage: 'Svara athugasemd',
     },
     sendButton: {
       id: 'doe.sr.application:comments.sendButton',
-      defaultMessage: 'Senda skilaboð',
+      defaultMessage: 'Senda athugasemd',
+    },
+    cancelButton: {
+      id: 'doe.sr.application:comments.cancelButton',
+      defaultMessage: 'Hætta við',
+    },
+    seeAllComments: {
+      id: 'doe.sr.application:comments.seeAllComments',
+      defaultMessage: 'Sjá allar athugasemdir',
+    },
+    registersComment: {
+      id: 'doe.sr.application:comments.registersComment',
+      defaultMessage: 'skráir athugasemd',
     },
     reviewerLabel: {
       id: 'doe.sr.application:comments.reviewerLabel',
@@ -1697,13 +1748,25 @@ export const messages = {
       id: 'doe.sr.application:comments.companyLabel',
       defaultMessage: 'Þú',
     },
+    today: {
+      id: 'doe.sr.application:comments.today',
+      defaultMessage: 'Í dag',
+    },
+    yesterday: {
+      id: 'doe.sr.application:comments.yesterday',
+      defaultMessage: 'Í gær',
+    },
+    daysAgo: {
+      id: 'doe.sr.application:comments.daysAgo',
+      defaultMessage: 'f. {days} dögum',
+    },
     sendError: {
       id: 'doe.sr.application:comments.sendError',
-      defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að senda athugasemd, reyndu aftur.',
     },
     loadError: {
       id: 'doe.sr.application:comments.loadError',
-      defaultMessage: 'Ekki tókst að sækja skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að sækja athugasemdir, reyndu aftur.',
     },
   }),
 
@@ -1712,13 +1775,17 @@ export const messages = {
       id: 'doe.sr.application:rejected.sectionTitle',
       defaultMessage: 'Hafnað',
     },
+    formTitle: {
+      id: 'doe.sr.application:rejected.formTitle',
+      defaultMessage: 'Skýrslugjöf hafnað',
+    },
     title: {
       id: 'doe.sr.application:rejected.title',
-      defaultMessage: 'Umsókn hafnað',
+      defaultMessage: 'Skýrslugjöf hafnað',
     },
     description: {
       id: 'doe.sr.application:rejected.description',
-      defaultMessage: 'Umsókn þinni hefur verið hafnað.',
+      defaultMessage: 'Skýrslugjöfinni þinni hefur verið hafnað.',
     },
   }),
 
@@ -1729,7 +1796,7 @@ export const messages = {
     },
     introSectionTitle: {
       id: 'doe.sr.application:postponed.introSectionTitle',
-      defaultMessage: 'Sending móttekin',
+      defaultMessage: 'Innsending móttekin',
     },
     introTitle: {
       id: 'doe.sr.application:postponed.introTitle',
@@ -1797,7 +1864,7 @@ export const messages = {
   draftRetry: defineMessages({
     tagLabel: {
       id: 'doe.sr.application:draftRetry.tagLabel',
-      defaultMessage: 'Þín bíða skilaboð',
+      defaultMessage: 'Þín bíða athugasemdir',
     },
     aboutTheCompanySectionTitle: {
       id: 'doe.sr.application:draftRetry.aboutTheCompanySectionTitle',
@@ -1826,7 +1893,7 @@ export const messages = {
     pendingActionContent: {
       id: 'doe.sr.application:draftRetry.pendingActionContent',
       defaultMessage:
-        'Farðu yfir skilaboð frá Jafnréttisstofu og lagfærðu úrbótaáætlunina.',
+        'Farðu yfir athugasemdir frá Jafnréttisstofu og lagfærðu úrbótaáætlunina.',
     },
     pendingActionButton: {
       id: 'doe.sr.application:draftRetry.pendingActionButton',
