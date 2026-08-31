@@ -1212,6 +1212,186 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/api-keys": {
+      "post": {
+        "description": "Mints an API key for the authenticated company and returns it with the plaintext secret. **The secret is shown exactly once** — it is stored only as a hash and cannot be retrieved again, so a lost key is replaced rather than recovered. Several live keys per company are allowed, which is how a credential is rotated without downtime.",
+        "operationId": "issueApplicationApiKey",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateApiKeyDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IssuedApiKeyDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "get": {
+        "description": "Every API key the authenticated company holds, newest first. Revoked and expired keys are included so the list doubles as an audit view. Never contains a secret — none is recoverable.",
+        "operationId": "getApplicationApiKeys",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApiKeysResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/api-keys/{id}": {
+      "delete": {
+        "description": "Revokes one of the authenticated company's keys. Idempotent — re-revoking leaves the original actor and timestamp intact rather than overwriting the audit trail. A key belonging to another company answers 404, not 403.",
+        "operationId": "revokeApplicationApiKey",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The key's `id` as listed, not the `keyId` inside the credential.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiKeyDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/draft": {
       "post": {
         "description": "Opens a DRAFT report at \"initial contact\" (the applicant leaving the prerequisites step upstream). The report is invisible to reviewers until submitted; the portal builds it up via the bulk sync endpoint. Idempotent on the upstream (provider_type, provider_id) tuple — a retried call returns the existing draft. Auto-provisions the company on first contact.",
@@ -4280,6 +4460,151 @@
           }
         },
         "required": ["groups"]
+      },
+      "CreateApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free-text label to tell this key apart from the others in a list, e.g. the name of the payroll system it was issued for."
+          },
+          "scopes": {
+            "type": "array",
+            "description": "Narrows what the key may do. Omit to grant the full set. An unrecognised scope is rejected rather than stored.",
+            "items": {
+              "type": "string",
+              "enum": ["salary:submit", "equality:submit", "report:read"]
+            }
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When the key stops being accepted. Omit for no expiry."
+          }
+        }
+      },
+      "IssuedApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The full plaintext key. Shown exactly once — it cannot be retrieved again, only replaced."
+          },
+          "id": { "type": "string", "format": "uuid" },
+          "keyId": { "type": "string" },
+          "label": { "type": "string", "nullable": true },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["salary:submit", "equality:submit", "report:read"]
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          }
+        },
+        "required": ["key", "id", "keyId", "scopes", "createdAt"]
+      },
+      "ApiKeyOriginEnum": {
+        "type": "string",
+        "enum": ["ISLAND_IS", "ADMIN"],
+        "description": "Which issuance path minted the key — self-service through island.is, or a DoE reviewer."
+      },
+      "ApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "companyId": { "type": "string", "format": "uuid" },
+          "keyId": {
+            "type": "string",
+            "description": "Public half of the key, as it appears in the issued credential. Not a secret."
+          },
+          "label": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free-text label set by whoever issued the key."
+          },
+          "scopes": {
+            "type": "array",
+            "description": "What this key is permitted to do.",
+            "items": {
+              "type": "string",
+              "enum": ["salary:submit", "equality:submit", "report:read"]
+            }
+          },
+          "createdVia": {
+            "description": "Which issuance path minted the key — self-service through island.is, or a DoE reviewer.",
+            "allOf": [{ "$ref": "#/components/schemas/ApiKeyOriginEnum" }]
+          },
+          "createdByNationalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Kennitala of the person who minted the key on the island.is path. Null on the admin path, where `createdByUserId` names the reviewer instead."
+          },
+          "createdByUserId": {
+            "type": "string",
+            "nullable": true,
+            "description": "DoE reviewer who minted the key. Null on the island.is path."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When the key stops being accepted. Null means no expiry."
+          },
+          "lastUsedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "Last time the key authenticated a request. Written at most once a minute per key, so it is an activity indicator rather than an exact timestamp."
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          },
+          "revokedByNationalId": { "type": "string", "nullable": true },
+          "revokedByUserId": { "type": "string", "nullable": true },
+          "revokedReason": { "type": "string", "nullable": true }
+        },
+        "required": [
+          "id",
+          "companyId",
+          "keyId",
+          "scopes",
+          "createdVia",
+          "createdAt"
+        ]
+      },
+      "GetApiKeysResponseDto": {
+        "type": "object",
+        "properties": {
+          "apiKeys": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApiKeyDto" }
+          }
+        },
+        "required": ["apiKeys"]
       },
       "CreateDraftCompanyDto": {
         "type": "object",

@@ -2,6 +2,7 @@ import { FC, useCallback, useMemo, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { RecordObject } from '@island.is/application/types'
 import {
+  AlertMessage,
   Box,
   Button,
   DropdownMenu,
@@ -216,6 +217,12 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
     <Box marginTop={4}>
       {unassignedOutliers.length > 0 && (
         <>
+          <Box>
+            <Text variant="h4" as="h4">
+              {formatMessage(m.tableTitle)}
+            </Text>
+            <Text>{formatMessage(m.tableText)}</Text>
+          </Box>
           <OutlierTableProvider value={tableContext}>
             <InteractiveTable
               columns={OUTLIER_COLUMNS}
@@ -352,18 +359,22 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
 
       {unassignedOutliers.length > 0 && (
         <Box marginTop={2}>
-          <Text variant="small" color="red600">
-            {formatMessage(m.unassignedWarning)}
-          </Text>
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={formatMessage(m.unassignedWarning)}
+          />
         </Box>
       )}
       {unassignedOutliers.length === 0 &&
         watchedGroups.some((g) => g.employeeOrdinals.length > 0) &&
         watchedGroups.some((g) => !isOutlierGroupComplete(g)) && (
           <Box marginTop={2}>
-            <Text variant="small" color="red600">
-              {formatMessage(m.incompleteGroupWarning)}
-            </Text>
+            <AlertMessage
+              type="error"
+              title={formatMessage(messages.errors.alertTitle)}
+              message={formatMessage(m.incompleteGroupWarning)}
+            />
           </Box>
         )}
     </Box>
