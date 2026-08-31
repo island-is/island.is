@@ -66,6 +66,8 @@ const BffConfigSchema = z.object({
    * Time-to-live (TTL) for caching the login attempts, in milliseconds.
    */
   cacheLoginAttemptTTLms: z.number(),
+  /** Max concurrent outbound sockets for the proxy agent (BFF_PROXY_MAX_SOCKETS). */
+  proxyMaxSockets: z.number(),
 })
 
 export const BffConfig = defineConfig({
@@ -125,6 +127,7 @@ export const BffConfig = defineConfig({
        */
       cacheUserProfileTTLms: env.requiredJSON('BFF_CACHE_USER_PROFILE_TTL_MS'),
       cacheLoginAttemptTTLms: env.requiredJSON('BFF_LOGIN_ATTEMPT_TTL_MS'),
+      proxyMaxSockets: env.optionalJSON('BFF_PROXY_MAX_SOCKETS') ?? 50,
     }
   },
 })

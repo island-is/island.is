@@ -14,10 +14,7 @@ import fetch from 'node-fetch'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
 
-import {
-  AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
-  AGENT_DEFAULT_MAX_SOCKETS,
-} from '@island.is/shared/constants'
+import { AGENT_DEFAULT_FREE_SOCKET_TIMEOUT } from '@island.is/shared/constants'
 import { ErrorService } from '../../services/error.service'
 import { SessionCookieService } from '../../services/sessionCookie.service'
 import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
@@ -32,32 +29,26 @@ const droppedResponseHeaders = [
   'content-encoding',
 ]
 
-/**
- * A custom HTTP/S agent for managing connections efficiently.
- * - Keeps connections alive for reuse, reducing connection setup time.
- * - Configured with custom timeout and socket limits to optimize resource usage.
- */
-const agentOptions: AgentKeepAlive.HttpOptions = {
+// maxFreeSockets tracks maxSockets so the idle pool isn't capped at agentkeepalive's default 256.
+const buildAgentOptions = (
+  maxSockets: number,
+): AgentKeepAlive.HttpOptions => ({
   keepAlive: true,
   timeout: 0,
   freeSocketTimeout: AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
-  maxSockets: AGENT_DEFAULT_MAX_SOCKETS,
-}
-
-const customAgent = new AgentKeepAlive(agentOptions)
-/**
- * Only applies to none same domain requests.
- *
- * When `node-fetch` follows redirects to HTTPS URLs, it still tries to use the HTTP agent internally,
- * even though the protocol has changed to HTTPS
- * This creates a protocol mismatch, when trying to use an HTTP agent for an HTTPS connection
- * @error ERR_INVALID_PROTOCOL
- * @see https://github.com/node-fetch/node-fetch/issues/571
- */
-const customHttpsAgent = new HttpsAgent(agentOptions)
+  maxSockets,
+  maxFreeSockets: maxSockets,
+})
 
 @Injectable()
 export class ProxyService {
+  private readonly customAgent: AgentKeepAlive
+  /**
+   * Separate HTTPS agent: node-fetch reuses the HTTP agent on HTTPS redirects,
+   * causing ERR_INVALID_PROTOCOL. See node-fetch#571.
+   */
+  private readonly customHttpsAgent: HttpsAgent
+
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -70,7 +61,11 @@ export class ProxyService {
     private readonly tokenRefreshService: TokenRefreshService,
     private readonly errorService: ErrorService,
     private readonly sessionCookieService: SessionCookieService,
-  ) {}
+  ) {
+    const agentOptions = buildAgentOptions(this.config.proxyMaxSockets)
+    this.customAgent = new AgentKeepAlive(agentOptions)
+    this.customHttpsAgent = new HttpsAgent(agentOptions)
+  }
 
   /**
    * This method gets access token from the cache by session ID(sid).
@@ -164,10 +159,10 @@ export class ProxyService {
         body: finalBody ? JSON.stringify(finalBody) : undefined,
         agent: (parsedUrl) => {
           if (parsedUrl.protocol == 'http:') {
-            return customAgent
+            return this.customAgent
           }
 
-          return customHttpsAgent
+          return this.customHttpsAgent
         },
       })
 
