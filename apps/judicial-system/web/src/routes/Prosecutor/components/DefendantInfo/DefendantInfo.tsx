@@ -1,4 +1,5 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -17,13 +18,13 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
 import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
-import {
+import type {
   Case,
   Defendant,
-  Gender,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { formatNationalRegistryAddress } from '@island.is/judicial-system-web/src/utils/formatNationalRegistryAddress'
 import {
   removeErrorMessageIfValid,
@@ -259,17 +260,21 @@ const DefendantInfo: FC<Props> = (props) => {
           )
         }}
         onBlur={(evt) => {
-          validateAndSetErrorMessage(
+          const isValid = validateAndSetErrorMessage(
             ['empty'],
             evt.target.value,
             setAccusedAddressErrorMessage,
           )
 
-          onChange({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            address: evt.target.value.trim(),
-          })
+          // Gate the save on validity, like InputName does for the name: a
+          // required field that fails validation is flagged, not persisted.
+          if (isValid) {
+            onChange({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              address: evt.target.value.trim(),
+            })
+          }
         }}
         required
       />

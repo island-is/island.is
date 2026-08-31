@@ -14,11 +14,13 @@ export enum States {
   IN_REVIEW = 'inReview',
   APPROVED = 'approved',
   DENIED = 'denied',
+  DRAFT_RETRY = 'draftRetry',
 }
 
 export enum Roles {
   APPLICANT = 'applicant',
   NOT_ALLOWED = 'notAllowed',
+  ASSIGNEE = 'assignee',
 }
 
 export enum Gender {
@@ -34,14 +36,22 @@ export enum Gender {
 // it would fight the type system, so we don't.)
 export const UNKNOWN_DISPLAY_VALUE = 'Óþekkt'
 
+const DOE_NAMESPACE = 'DirectorateOfEquality'
+
+// Builds the `actionId` string the updateApplicationExternalData mutation expects,
+// from the same ApiActions enum the data providers and the service dispatch on —
+// a renamed action is then caught by the type checker at every call site.
+export const draftActionId = (action: ApiActions) =>
+  `${DOE_NAMESPACE}.${action}`
+
 export enum ApiActions {
   getCompanyData = 'getCompanyData',
   getDoeCompany = 'getDoeCompany',
   getActiveEqualityReport = 'getActiveEqualityReport',
-  getEqualityReportTemplateHtml = 'getEqualityReportTemplateHtml',
   getEqualityReportTemplateDocx = 'getEqualityReportTemplateDocx',
   getPreviousEqualityReportContent = 'getPreviousEqualityReportContent',
-  submitEqualityReport = 'submitEqualityReport',
+  createEqualityDraft = 'createEqualityDraft',
+  submitEqualityDraft = 'submitEqualityDraft',
   getReportComments = 'getReportComments',
   submitReportComment = 'submitReportComment',
 }

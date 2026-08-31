@@ -1,5 +1,7 @@
-import { FC, useCallback, useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useCallback, useContext } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
@@ -32,13 +34,17 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  AppealDecisionPartyRole,
+import type {
   Case,
   CaseAppealDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealDecisionPartyRole,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import AppealSections from '@island.is/judicial-system-web/src/routes/Court/components/AppealSections/AppealSections'
+import { populateEndOfCourtSessionBookingsIntro } from '@island.is/judicial-system-web/src/routes/Court/shared/populateEndOfCourtSessionBookingsIntro'
 import {
   formatDateForServer,
   useCase,
@@ -47,14 +53,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   isCourtRecordStepValidIC,
   isNullOrUndefined,
-  Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-
-import AppealSections from '../../components/AppealSections/AppealSections'
-import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],

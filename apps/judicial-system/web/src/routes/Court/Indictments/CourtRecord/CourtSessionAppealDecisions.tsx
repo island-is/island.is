@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
 
 import {
   AlertMessage,
@@ -13,11 +13,13 @@ import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  Case,
+  CourtSessionResponse,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
-  CourtSessionResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rulingOrderAppealCase } from '@island.is/judicial-system-web/src/utils/utils'
@@ -144,11 +146,11 @@ const CourtSessionAppealDecisions: FC<Props> = ({
         value: CaseAppealDecision.ACCEPT,
         label: `${nominative} unir úrskurðinum`,
       },
-      { value: CaseAppealDecision.NOT_APPLICABLE, label: 'Á ekki við' },
       {
         value: CaseAppealDecision.POSTPONE,
         label: `${nominative} tekur sér lögboðinn frest`,
       },
+      { value: CaseAppealDecision.NOT_APPLICABLE, label: 'Á ekki við' },
     ]
 
     // The announcement (yfirlýsing) becomes part of the court record, so picking

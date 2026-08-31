@@ -1,36 +1,44 @@
 import faker from 'faker'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
+import type {
   AppealCase,
+  Case,
+  CaseFile,
+  CivilClaimant,
+  CourtSessionString,
+  Defendant,
+  Notification,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   AppealCaseState,
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
-  CaseFile,
   CaseFileCategory,
   CaseType,
-  CivilClaimant,
-  Defendant,
+  CourtSessionStringType,
   Gender,
   InstitutionType,
-  Notification,
   TrackedNotificationType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as formatters from './formatters'
 import {
+  applyMergedCaseEntries,
+  canSkipArraignmentSummons,
   getAppealActorText,
   getDefaultDefendantGender,
   hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
   isCurrentAppellantRepresentative,
+  isMatchingAppealCourtFile,
   isSentToPublicProsecutor,
   mapStringToGender,
   reconcileAppealDecisionsForRulingFileChange,
+  rulingOrderChoices,
   userHasActiveInCourtAppeal,
 } from './utils'
 
@@ -411,6 +419,68 @@ describe('Utils', () => {
     })
   })
 
+  describe('canSkipArraignmentSummons', () => {
+    const alternativeDefendant = {
+      id: 'defendant-1',
+      isAlternativeService: true,
+    }
+    const subpoenaDefendant = {
+      id: 'defendant-2',
+      isAlternativeService: false,
+    }
+
+    test('should be true on first pass when all defendants are served by alternative means', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant], {
+          isArraignmentScheduled: false,
+        }),
+      ).toBe(true)
+    })
+
+    test('should be false when any defendant is receiving a subpoena', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant, subpoenaDefendant], {
+          isArraignmentScheduled: false,
+        }),
+      ).toBe(false)
+    })
+
+    test('should be false when arraignment is scheduled and nobody is re-entering alternative service', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant], {
+          isArraignmentScheduled: true,
+          newAlternativeServiceDefendantIds: [],
+        }),
+      ).toBe(false)
+    })
+
+    test('should be true when arraignment is scheduled but every defendant is re-entering alternative service', () => {
+      expect(
+        canSkipArraignmentSummons([alternativeDefendant], {
+          isArraignmentScheduled: true,
+          newAlternativeServiceDefendantIds: [alternativeDefendant.id],
+        }),
+      ).toBe(true)
+    })
+
+    test('should be false when only some defendants are re-entering alternative service', () => {
+      const otherAlternativeDefendant = {
+        id: 'defendant-3',
+        isAlternativeService: true,
+      }
+
+      expect(
+        canSkipArraignmentSummons(
+          [alternativeDefendant, otherAlternativeDefendant],
+          {
+            isArraignmentScheduled: true,
+            newAlternativeServiceDefendantIds: [alternativeDefendant.id],
+          },
+        ),
+      ).toBe(false)
+    })
+  })
+
   describe('getAppealActorText', () => {
     const appealedDate = '2026-04-01T12:00:00.000Z'
     const dateStr = formatDate(appealedDate, 'PPPp') ?? ''
@@ -644,6 +714,87 @@ describe('Utils', () => {
           `Verjandi kærði úrskurðinn ${dateStr}`,
         )
       })
+    })
+  })
+
+  describe('applyMergedCaseEntries', () => {
+    const entries = (
+      mergedCaseId: string,
+      value: string,
+      id?: string,
+    ): CourtSessionString =>
+      ({
+        id,
+        caseId: 'case-1',
+        courtSessionId: 'session-1',
+        mergedCaseId,
+        stringType: CourtSessionStringType.ENTRIES,
+        value,
+      } as CourtSessionString)
+
+    const edit = (mergedCaseId: string, value: string) => ({
+      caseId: 'case-1',
+      courtSessionId: 'session-1',
+      mergedCaseId,
+      value,
+    })
+
+    it('appends a row for a merged case that has not been written about', () => {
+      expect(
+        applyMergedCaseEntries(undefined, edit('merged-1', 'Bókað')),
+      ).toEqual([
+        {
+          caseId: 'case-1',
+          courtSessionId: 'session-1',
+          mergedCaseId: 'merged-1',
+          stringType: CourtSessionStringType.ENTRIES,
+          value: 'Bókað',
+        },
+      ])
+    })
+
+    it('updates the existing row of that merged case', () => {
+      expect(
+        applyMergedCaseEntries(
+          [entries('merged-1', 'Bókað', 'string-1')],
+          edit('merged-1', 'Leiðrétt'),
+        ),
+      ).toEqual([entries('merged-1', 'Leiðrétt', 'string-1')])
+    })
+
+    it('leaves the rows of other merged cases untouched', () => {
+      expect(
+        applyMergedCaseEntries(
+          [
+            entries('merged-1', 'Eitt', 'string-1'),
+            entries('merged-2', 'Tvö', 'string-2'),
+          ],
+          edit('merged-2', 'Tvö, leiðrétt'),
+        ),
+      ).toEqual([
+        entries('merged-1', 'Eitt', 'string-1'),
+        entries('merged-2', 'Tvö, leiðrétt', 'string-2'),
+      ])
+    })
+
+    // Rows appended here have no `id` until the case is refetched. Matching on
+    // `id` would make them collide on `undefined`, so an edit to one merged
+    // case would overwrite the other's booking.
+    it('does not overwrite a sibling row that has no id yet', () => {
+      const inserted = applyMergedCaseEntries(
+        applyMergedCaseEntries(undefined, edit('merged-1', 'Eitt')),
+        edit('merged-2', 'Tvö'),
+      )
+
+      expect(
+        applyMergedCaseEntries(inserted, edit('merged-1', 'Eitt, leiðrétt')),
+      ).toEqual([
+        expect.objectContaining({
+          mergedCaseId: 'merged-1',
+          value: 'Eitt, leiðrétt',
+        }),
+        expect.objectContaining({ mergedCaseId: 'merged-2', value: 'Tvö' }),
+      ])
     })
   })
 
@@ -1508,5 +1659,240 @@ describe('Utils', () => {
         ),
       ).toBe(false)
     })
+  })
+
+  describe('isMatchingAppealCourtFile', () => {
+    test('matches a case level appeal file when no ruling file id is given', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          { category: CaseFileCategory.APPEAL_RULING, rulingFileId: null },
+          CaseFileCategory.APPEAL_RULING,
+          undefined,
+        ),
+      ).toBe(true)
+    })
+
+    test('matches a ruling order appeal file with the same ruling file id', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(true)
+    })
+
+    test('does not match a ruling order appeal file on a case level appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          null,
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a case level appeal file on a ruling order appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          { category: CaseFileCategory.APPEAL_RULING, rulingFileId: null },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a file belonging to another ruling order appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-2',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match another category on the same appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_COURT_RECORD,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a file without a category', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {},
+          CaseFileCategory.APPEAL_RULING,
+          undefined,
+        ),
+      ).toBe(false)
+    })
+  })
+})
+
+// A ruling order pronounced orally exists as a case file from the moment it is
+// pronounced, but has no document until the district court writes it up. The
+// court record therefore offers it as its own choice rather than as one of the
+// documents on the case.
+describe('rulingOrderChoices', () => {
+  const sessionId = 'court-session-1'
+  const otherSessionId = 'court-session-2'
+
+  const writtenRuling = {
+    id: 'written',
+    category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+    key: 'case/file/urskurdur.pdf',
+  } as CaseFile
+
+  const pronouncedOrally = {
+    id: 'oral',
+    category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+    isPronouncedOrally: true,
+    key: '',
+  } as CaseFile
+
+  const otherFile = {
+    id: 'other',
+    category: CaseFileCategory.COURT_RECORD,
+    key: 'case/file/thingbok.pdf',
+  } as CaseFile
+
+  const makeCase = (
+    caseFiles: CaseFile[],
+    courtSessions: { id: string; rulingFileId?: string | null }[] = [],
+  ) => ({ caseFiles, courtSessions } as unknown as Case)
+
+  it('offers only written rulings as documents to pick', () => {
+    const { files } = rulingOrderChoices(
+      makeCase([writtenRuling, pronouncedOrally, otherFile]),
+      { id: sessionId, rulingFileId: null },
+    )
+
+    expect(files).toEqual([writtenRuling])
+  })
+
+  it('offers a ruling pronounced orally as a document once written up', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { files } = rulingOrderChoices(makeCase([writtenUp]), {
+      id: sessionId,
+      rulingFileId: null,
+    })
+
+    expect(files).toEqual([writtenUp])
+  })
+
+  it('marks rulings another session pronounces as taken', () => {
+    const { takenIds } = rulingOrderChoices(
+      makeCase(
+        [writtenRuling],
+        [
+          { id: sessionId, rulingFileId: null },
+          { id: otherSessionId, rulingFileId: writtenRuling.id },
+        ],
+      ),
+      { id: sessionId, rulingFileId: null },
+    )
+
+    expect(takenIds.has(writtenRuling.id)).toBe(true)
+  })
+
+  it('does not mark the session own ruling as taken', () => {
+    const { takenIds } = rulingOrderChoices(
+      makeCase(
+        [writtenRuling],
+        [{ id: sessionId, rulingFileId: writtenRuling.id }],
+      ),
+      { id: sessionId, rulingFileId: writtenRuling.id },
+    )
+
+    expect(takenIds.has(writtenRuling.id)).toBe(false)
+  })
+
+  it('resolves the session own orally pronounced ruling', () => {
+    const { pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([pronouncedOrally]),
+      { id: sessionId, rulingFileId: pronouncedOrally.id },
+    )
+
+    expect(resolved).toBe(pronouncedOrally)
+  })
+
+  // The whole point of deriving it from the session's own ruling: a correction
+  // must not be offered a second oral ruling, which would detach the document
+  // the court wrote up for the first and the appeal made against it.
+  it('keeps resolving it once it has been written up', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([writtenUp]),
+      { id: sessionId, rulingFileId: writtenUp.id },
+    )
+
+    expect(resolved).toBe(writtenUp)
+  })
+
+  // Once written up, the session's own oral ruling is a document like any other
+  // - it must not also be offered as a written ruling, or the same file renders
+  // as two checked radios in one group.
+  it('offers a written-up oral ruling only as the oral one', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { files, pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([writtenRuling, writtenUp]),
+      { id: sessionId, rulingFileId: writtenUp.id },
+    )
+
+    expect(resolved).toBe(writtenUp)
+    expect(files).toEqual([writtenRuling])
+  })
+
+  it('still offers a written-up oral ruling of another session as a document', () => {
+    const writtenUp = { ...pronouncedOrally, key: 'case/file/oral.pdf' }
+
+    const { files, pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase(
+        [writtenUp],
+        [{ id: otherSessionId, rulingFileId: writtenUp.id }],
+      ),
+      { id: sessionId, rulingFileId: null },
+    )
+
+    expect(resolved).toBeUndefined()
+    expect(files).toEqual([writtenUp])
+  })
+
+  it('resolves nothing when the session pronounces a written ruling', () => {
+    const { pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([writtenRuling, pronouncedOrally]),
+      { id: sessionId, rulingFileId: writtenRuling.id },
+    )
+
+    expect(resolved).toBeUndefined()
+  })
+
+  it('resolves nothing when the session pronounces no ruling', () => {
+    const { pronouncedOrally: resolved } = rulingOrderChoices(
+      makeCase([pronouncedOrally]),
+      { id: sessionId, rulingFileId: null },
+    )
+
+    expect(resolved).toBeUndefined()
   })
 })

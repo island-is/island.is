@@ -3,7 +3,6 @@ import * as kennitala from 'kennitala'
 import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
 import { Gender } from '../utils/constants'
-import { decodeEditorHtml } from '../utils/htmlHelpers'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),
@@ -35,6 +34,9 @@ const contactPerson = z.object({
   name: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  jobTitle: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
   email: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required })
@@ -53,9 +55,17 @@ const employeeCount = z.object({
   men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
     params: messages.errors.invalidNonNegativeNumber,
   }),
-  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
+  // Optional — unlike women/men, companies aren't required to report this.
+  nonBinary: z
+    .string()
+    .refine(
+      (v) =>
+        v === '' ||
+        (v.trim() !== '' && Number.isFinite(Number(v)) && Number(v) >= 0),
+      {
+        params: messages.errors.invalidNonNegativeNumber,
+      },
+    ),
 })
 
 const subsidiaries = z.object({
@@ -95,7 +105,7 @@ const subsidiaries = z.object({
 })
 
 const goalsAndActions = z.object({
-  customField: z.string().refine((v) => decodeEditorHtml(v).length > 0, {
+  filename: z.string().refine((v) => v.length > 0, {
     params: messages.errors.required,
   }),
 })
@@ -110,6 +120,10 @@ export const dataSchema = z.object({
   employeeCount: employeeCount.optional(),
   subsidiaries: subsidiaries.optional(),
   goalsAndActions: goalsAndActions.optional(),
+  // Set by the state machine on the DRAFT_RETRY -> IN_REVIEW transition, never
+  // by a form: IN_REVIEW is reached from both DRAFT and DRAFT_RETRY and the
+  // conclusion screen has no other way to tell a revision from a first send.
+  hasBeenRevised: z.boolean().optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

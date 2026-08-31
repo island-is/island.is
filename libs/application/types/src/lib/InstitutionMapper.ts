@@ -532,14 +532,14 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
   [ApplicationTypes.EQUALITY_REPORT]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
   },
   [ApplicationTypes.SALARY_REPORT]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
   },
   // TODO: Replace with real Barna- og fjölskyldustofa institution entries once onboarded
   [ApplicationTypes.CHILD_PROTECTION_NOTIFICATION]: {

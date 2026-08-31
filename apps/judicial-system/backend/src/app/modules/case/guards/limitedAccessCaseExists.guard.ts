@@ -20,7 +20,9 @@ export class LimitedAccessCaseExistsGuard implements CanActivate {
       throw new BadRequestException('Missing case id')
     }
 
-    request.case = await this.limitedAccessCaseService.findById(caseId)
+    request.case = await this.limitedAccessCaseService.findById(caseId, {
+      user: request.user?.currentUser,
+    })
 
     return true
   }

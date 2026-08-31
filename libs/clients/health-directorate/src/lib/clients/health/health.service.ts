@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data, dataOr404Null } from '@island.is/clients/middlewares'
+import { data, dataOr404Null, FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -15,9 +15,12 @@ import {
   UpdateOrganDonorDto,
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
+  meAppointmentControllerCancelAppointmentV1,
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentByIdV1,
   meCertificateControllerCreateCertificateRequestV1,
+  meCertificateControllerCreatePaymentIntentV1,
+  meCertificateControllerGetCertificateV1,
   meConversationControllerArchiveConversationV1,
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
@@ -54,11 +57,13 @@ import {
 import {
   AppointmentBaseDto,
   AppointmentDetailDto,
+  CertificateDto,
   CertificateRequestDto,
   ConsentCountryDto,
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationStatusFilter,
+  CreateCertificatePaymentIntentDto,
   CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
@@ -67,6 +72,8 @@ import {
   EuPatientConsentResponseDto,
   Locale,
   MessagingRecipientDto,
+  PaymentIntentDto,
+  PaymentRequiredProblemResponse,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
@@ -79,6 +86,10 @@ import {
 } from './gen/fetch/types.gen'
 
 import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
+
+export type AttachmentDownloadResult =
+  | { status: 200; data: ArrayBuffer; contentType: string }
+  | { status: 402; resourceType: string; resourceId?: string }
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -580,6 +591,18 @@ export class HealthDirectorateHealthService {
     return appointment ?? null
   }
 
+  public async cancelAppointment(auth: Auth, id: string): Promise<boolean> {
+    await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerCancelAppointmentV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return true
+  }
+
   /* Conversations (Health Messages) */
 
   public async getConversations(
@@ -680,19 +703,38 @@ export class HealthDirectorateHealthService {
     conversationId: string,
     messageId: string,
     attachmentId: number,
-  ): Promise<{ data: ArrayBuffer; contentType: string } | null> {
-    const result = await withAuthContext(auth, () =>
-      meConversationControllerGetMessageAttachmentV1({
-        path: { id: conversationId, messageId, attachmentId },
-        parseAs: 'arrayBuffer',
-      }),
-    )
-    if (!result.data) return null
-    return {
-      data: result.data as ArrayBuffer,
-      contentType:
-        result.response.headers.get('content-type') ??
-        'application/octet-stream',
+  ): Promise<AttachmentDownloadResult | null> {
+    try {
+      const result = await withAuthContext(auth, () =>
+        meConversationControllerGetMessageAttachmentV1({
+          path: { id: conversationId, messageId, attachmentId },
+          parseAs: 'arrayBuffer',
+        }),
+      )
+      if (!result.data) return null
+      return {
+        status: 200,
+        data: result.data as ArrayBuffer,
+        contentType:
+          result.response.headers.get('content-type') ??
+          'application/octet-stream',
+      }
+    } catch (error) {
+      if (error instanceof FetchError && error.status === 404) {
+        return null
+      }
+
+      if (error instanceof FetchError && error.status === 402) {
+        const body = (error.problem ??
+          error.body ??
+          {}) as PaymentRequiredProblemResponse
+        return {
+          status: 402,
+          resourceType: body.resourceType ?? 'CERTIFICATE',
+          resourceId: body.resourceId,
+        }
+      }
+      throw error
     }
   }
 
@@ -727,5 +769,39 @@ export class HealthDirectorateHealthService {
     )
 
     return request ?? null
+  }
+
+  public async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<CertificateDto | null> {
+    const certificate = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meCertificateControllerGetCertificateV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return certificate ?? null
+  }
+
+  public async createCertificatePaymentIntent(
+    auth: Auth,
+    id: string,
+    input: CreateCertificatePaymentIntentDto,
+    locale?: Locale,
+  ): Promise<PaymentIntentDto | null> {
+    const intent = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreatePaymentIntentV1({
+          path: { id },
+          body: input,
+          query: { locale },
+        }),
+      ),
+    )
+
+    return intent ?? null
   }
 }

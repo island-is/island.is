@@ -1,9 +1,16 @@
-import { FC, PropsWithChildren, ReactNode } from 'react'
+import type { FC, PropsWithChildren, ReactNode } from 'react'
 import { IntlProvider } from 'react-intl'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 
-import { FormContext, UserContext } from '../components'
-import { Case, UserRole } from '../graphql/schema'
+import {
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import type {
+  Case,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { mockUser } from './mocks'
 
 export const IntlProviderWrapper: FC<PropsWithChildren> = ({ children }) => {
@@ -53,12 +60,19 @@ export const FormContextWrapper: FC<
 }
 
 export const UserContextWrapper: FC<
-  PropsWithChildren<{ userRole: UserRole; children: ReactNode }>
-> = ({ userRole, children }) => {
+  PropsWithChildren<{
+    userRole: UserRole
+    nationalId?: string
+    children: ReactNode
+  }>
+> = ({ userRole, nationalId, children }) => {
   return (
     <UserContext.Provider
       value={{
-        user: mockUser(userRole),
+        user: {
+          ...mockUser(userRole),
+          ...(nationalId !== undefined ? { nationalId } : {}),
+        },
       }}
     >
       {children}

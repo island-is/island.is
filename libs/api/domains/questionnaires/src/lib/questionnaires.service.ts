@@ -382,6 +382,8 @@ export class QuestionnairesService {
 
     const data = {
       id: LSHdata.gUID,
+      submissionId: LSHdata.gUID,
+      isDraft: false,
       title:
         LSHquestionnaire?.header ?? formatMessage(m.questionnaireWithoutTitle),
       description: LSHquestionnaire?.description ?? undefined,

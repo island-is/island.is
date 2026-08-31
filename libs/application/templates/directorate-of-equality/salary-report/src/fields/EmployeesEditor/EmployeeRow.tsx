@@ -13,12 +13,18 @@ import {
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
-import type { Employee, SalaryComponentKey } from '../../utils/types'
-import { formatCurrency, formatStartDate, formatWorkRatio } from './utils'
+import { formatDateValue } from '../../utils/dates'
+import type { Employee } from '../../utils/types'
+import {
+  formatCurrency,
+  formatPaidHours,
+  getSalaryComponentLabels,
+} from './utils'
 import * as styles from './EmployeesEditor.css'
 
 type Props = {
   employee: Employee
+  roleTitleById: Record<string, string>
   onRemove: () => void
   onEdit: () => void
 }
@@ -47,7 +53,12 @@ const DetailItem: FC<{ label: string; value: string; highlight: boolean }> = ({
   </Box>
 )
 
-export const EmployeeRow: FC<Props> = ({ employee, onRemove, onEdit }) => {
+export const EmployeeRow: FC<Props> = ({
+  employee,
+  roleTitleById,
+  onRemove,
+  onEdit,
+}) => {
   const { formatMessage } = useLocale()
   const [expanded, setExpanded] = useState(false)
   const m = messages.report.employees
@@ -55,7 +66,7 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove, onEdit }) => {
   const background = expanded ? 'blue100' : 'transparent'
 
   const leftItems = [
-    { label: formatMessage(m.identifierLabel), value: employee.identifier },
+    { label: formatMessage(m.ordinalLabel), value: String(employee.ordinal) },
     { label: formatMessage(m.fieldLabel), value: employee.field ?? '' },
     {
       label: formatMessage(m.departmentLabel),
@@ -63,27 +74,16 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove, onEdit }) => {
     },
     {
       label: formatMessage(m.startDateLabel),
-      value: formatStartDate(employee.startDate),
+      value: formatDateValue(employee.startDate),
     },
   ]
 
-  const componentLabels: Record<SalaryComponentKey, string> = {
-    additionalFixedOvertime: formatMessage(m.additionalFixedOvertimeLabel),
-    additionalFixedCarAllowance: formatMessage(
-      m.additionalFixedCarAllowanceLabel,
-    ),
-    bonusOccasionalCarAllowance: formatMessage(
-      m.bonusOccasionalCarAllowanceLabel,
-    ),
-    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
-    bonusPayments: formatMessage(m.bonusPaymentsLabel),
-    bonusOther: formatMessage(m.bonusOtherLabel),
-  }
+  const componentLabels = getSalaryComponentLabels(formatMessage)
 
   const rightItems = [
     {
-      label: formatMessage(m.workRatioLabel),
-      value: formatWorkRatio(employee.workRatio),
+      label: formatMessage(m.paidHoursLabel),
+      value: formatPaidHours(employee.paidHours),
     },
     {
       label: formatMessage(m.baseSalaryLabel),
@@ -112,8 +112,10 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove, onEdit }) => {
             title={formatMessage(m.nameColumn)}
           />
         </T.Data>
-        <T.Data box={{ background }}>{employee.identifier}</T.Data>
-        <T.Data box={{ background }}>{employee.roleTitle}</T.Data>
+        <T.Data box={{ background }}>{employee.ordinal}</T.Data>
+        <T.Data box={{ background }}>
+          {roleTitleById[employee.roleId] ?? ''}
+        </T.Data>
         <T.Data box={{ background }}>
           {GENDER_LABELS[employee.gender] ?? employee.gender}
         </T.Data>
@@ -132,7 +134,7 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove, onEdit }) => {
             />
             <Box marginLeft={1}>
               <DialogPrompt
-                baseId={`employee_remove_dialog_${employee.identifier}`}
+                baseId={`employee_remove_dialog_${employee.id}`}
                 title={formatMessage(m.removeConfirmTitle)}
                 description={formatMessage(m.removeConfirmDescription)}
                 ariaLabel={formatMessage(m.removeButton)}

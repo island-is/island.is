@@ -1,8 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const lorem =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-
 const equalityReportIntro =
   'Fyrirtæki og stofnanir þar sem starfa 25 eða fleiri að jafnaði á ársgrundvelli skulu setja sér jafnréttisáætlun eða samþætta jafnréttissjónarmið í starfsmannastefnu sína. Skal þar meðal annars sérstaklega kveðið á um markmið og gerð áætlunar um hvernig þeim skuli náð til að tryggja starfsfólki þau réttindi sem kveðið er á um í 6.-14. gr. Jafnréttisáætlun og jafnréttissjónarmið í starfsmannastefnu skal endurskoða á þriggja ára fresti.'
 
@@ -28,6 +25,10 @@ export const messages = {
       id: 'doe.er.application:errors.editorMinLength',
       defaultMessage: 'Texti verður að vera að minnsta kosti 200 stafir',
     },
+    alertTitle: {
+      id: 'doe.er.application:errors.alertTitle',
+      defaultMessage: 'Villa:',
+    },
     invalidCompanyNationalId: {
       id: 'doe.er.application:errors.invalidCompanyNationalId',
       defaultMessage: 'Kennitala er ekki gild kennitala fyrirtækis',
@@ -42,6 +43,14 @@ export const messages = {
     institution: {
       id: 'doe.er.application:general.institution',
       defaultMessage: 'Jafnréttisstofa',
+    },
+    tagDraft: {
+      id: 'doe.er.application:general.tagDraft',
+      defaultMessage: 'Drög',
+    },
+    newApplicationButtonLabel: {
+      id: 'doe.er.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný jafnréttisáætlun',
     },
   }),
 
@@ -62,13 +71,17 @@ export const messages = {
       id: 'doe.er.application:approved.sectionTitle',
       defaultMessage: 'Samþykkt',
     },
+    formTitle: {
+      id: 'doe.er.application:approved.formTitle',
+      defaultMessage: 'Jafnréttisáætlun samþykkt!',
+    },
     title: {
       id: 'doe.er.application:approved.title',
-      defaultMessage: 'Umsókn samþykkt',
+      defaultMessage: 'Jafnréttisáætlun samþykkt',
     },
     description: {
       id: 'doe.er.application:approved.description',
-      defaultMessage: 'Umsókn þín hefur verið samþykkt.',
+      defaultMessage: 'Jafnréttisáætlunin þín hefur verið samþykkt.',
     },
   }),
 
@@ -77,13 +90,17 @@ export const messages = {
       id: 'doe.er.application:rejected.sectionTitle',
       defaultMessage: 'Hafnað',
     },
+    formTitle: {
+      id: 'doe.er.application:rejected.formTitle',
+      defaultMessage: 'Jafnréttisáætlun hafnað',
+    },
     title: {
       id: 'doe.er.application:rejected.title',
-      defaultMessage: 'Umsókn hafnað',
+      defaultMessage: 'Jafnréttisáætlun hafnað',
     },
     description: {
       id: 'doe.er.application:rejected.description',
-      defaultMessage: 'Umsókn þinni hefur verið hafnað.',
+      defaultMessage: 'Jafnréttisáætluninni þinni hefur verið hafnað.',
     },
   }),
 
@@ -106,7 +123,7 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:prerequisites.section.intro',
-        defaultMessage: lorem,
+        defaultMessage: equalityReportIntro,
       },
       checkboxLabel: {
         id: 'doe.er.application:prerequisites.section.checkboxLabel',
@@ -179,7 +196,8 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.generalInformation.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Eftirfarandi upplýsingar eru sóttar sjálfkrafa frá fyrirtækjaskrá Skattsins og úr kerfum Jafnréttisstofu. Ef upplýsingar um fjölda starfsmanna vantar, verður fjöldi útreiknaður útfrá skilum á þessari skýrslu.',
       },
       companyName: {
         id: 'doe.er.application:aboutTheCompany.generalInformation.companyName',
@@ -221,7 +239,8 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Óskað er sérstaklega eftir upplýsingum um kyn æðsta stjórnanda til að fylgjast með kynjaskiptingu í æðstu stjórnendastöðum á vinnumarkaði. Þá er hægt að greina þróun yfir tíma, bera saman atvinnugreinar og meta hvort markmið jafnréttislaga um að jafna stöðu kynjanna séu að nást.',
       },
       name: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.name',
@@ -275,7 +294,8 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Tengiliður er sá aðili sem ber ábyrgð á skýrslugjöfinni auk stjórnanda. Við höfum samskipti við tengiliðinn svo mikilvægt er að hann sé með á nótunum.',
       },
       contactInfoTitle: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.contactInfoTitle',
@@ -288,6 +308,14 @@ export const messages = {
       namePlaceholder: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.namePlaceholder',
         defaultMessage: 'Nafn tengiliðs',
+      },
+      jobTitle: {
+        id: 'doe.er.application:aboutTheCompany.contactPerson.jobTitle',
+        defaultMessage: 'Starfstitill',
+      },
+      jobTitlePlaceholder: {
+        id: 'doe.er.application:aboutTheCompany.contactPerson.jobTitlePlaceholder',
+        defaultMessage: 'Starfstitill tengiliðs',
       },
       email: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.email',
@@ -317,7 +345,8 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Hér er óskað eftir upplýsingum um meðalfjölda starfsmanna, skipt eftir kyni.',
       },
       women: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.women',
@@ -343,7 +372,8 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.subsidiaries.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Hægt er að skila inn sameiginlegri áætlun fyrir móður- og dótturfyrirtæki.',
       },
       includesSubsidiariesTitle: {
         id: 'doe.er.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
@@ -415,7 +445,15 @@ export const messages = {
       },
       detailLinkLabel: {
         id: 'doe.er.application:equalityReport.information.detailLinkLabel',
-        defaultMessage: 'Nánari upplýsingar um kröfu um jafnréttisáætlun',
+        defaultMessage: 'Nánar um jafnréttisáætlun',
+      },
+      instructionsLabel: {
+        id: 'doe.er.application:equalityReport.information.instructionsLabel',
+        defaultMessage: 'Leiðbeiningar',
+      },
+      instructionsLink: {
+        id: 'doe.er.application:equalityReport.information.instructionsLink',
+        defaultMessage: 'https://island.is/s/jafnrettisstofa/leidbeiningar',
       },
       listTitle: {
         id: 'doe.er.application:equalityReport.information.listTitle',
@@ -428,32 +466,24 @@ export const messages = {
       },
       implementationTitle: {
         id: 'doe.er.application:equalityReport.information.implementationTitle',
-        defaultMessage: 'Skipulag og framkvæmd',
+        defaultMessage: 'Skipulag og framkvæmd við gerð Jafnréttisáætlunar',
       },
       implementationList: {
         id: 'doe.er.application:equalityReport.information.implementationList#markdown',
         defaultMessage:
           '* Markmiðin eru skýr\n\n* Framkvæmdaáætlun er í samræmi við sett markmið\n\n* Aðgerðir hafa tímaramma\n\n* Áætlunin inniheldur árangursmat\n\n* Ábyrgð er skýr\n\n* Gildistími tilgreindur',
       },
-      editorTitle: {
-        id: 'doe.er.application:equalityReport.information.editorTitle',
-        defaultMessage: 'Innihald efnis',
-      },
-      editorFetchTemplate: {
-        id: 'doe.er.application:equalityReport.information.editorFetchTemplate',
-        defaultMessage: 'Sækja sniðmát',
-      },
       editorFetchTemplateDoc: {
         id: 'doe.er.application:equalityReport.information.editorFetchTemplateDoc',
         defaultMessage: 'Hlaða niður sniðmáti (.docx)',
       },
-      editorFetchTemplateFill: {
-        id: 'doe.er.application:equalityReport.information.editorFetchTemplateFill',
-        defaultMessage: 'Fá sniðmát í ritil',
-      },
       editorUploadFile: {
         id: 'doe.er.application:equalityReport.information.editorUploadFile',
         defaultMessage: 'Hlaða upp skjali',
+      },
+      editorSupportedFileTypes: {
+        id: 'doe.er.application:equalityReport.information.editorSupportedFileTypes',
+        defaultMessage: 'Samþykktar skráartegundir eru: .docx, .txt',
       },
       editorUnsupportedFile: {
         id: 'doe.er.application:equalityReport.information.editorUnsupportedFile',
@@ -464,6 +494,19 @@ export const messages = {
         id: 'doe.er.application:equalityReport.information.editorUploadError',
         defaultMessage:
           'Villa kom upp við lestur skráar. Vinsamlegast reynið aftur.',
+      },
+      editorUploadSuccess: {
+        id: 'doe.er.application:equalityReport.information.editorUploadSuccess',
+        defaultMessage: 'Skjalinu var hlaðið upp.',
+      },
+      editorUploadIncomplete: {
+        id: 'doe.er.application:equalityReport.information.editorUploadIncomplete',
+        defaultMessage:
+          'Ljúktu við upphleðslu jafnréttisáætlunar áður en þú heldur áfram.',
+      },
+      editorUploadRequired: {
+        id: 'doe.er.application:equalityReport.information.editorUploadRequired',
+        defaultMessage: 'Hlaðið upp jafnréttisáætlun áður en þú heldur áfram.',
       },
     }),
     previousEqualityPlan: defineMessages({
@@ -482,7 +525,7 @@ export const messages = {
       },
       copyButton: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.copyButton',
-        defaultMessage: 'Afrita',
+        defaultMessage: 'Afrita innihald eldri áætlunar',
       },
       copied: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.copied',
@@ -499,6 +542,16 @@ export const messages = {
       validUntil: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.validUntil',
         defaultMessage: 'Gildir til',
+      },
+      loadError: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.loadError',
+        defaultMessage:
+          'Ekki tókst að sækja eldri jafnréttisáætlun. Vinsamlegast reynið aftur síðar.',
+      },
+      copyError: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.copyError',
+        defaultMessage:
+          'Ekki tókst að afrita. Þú getur valið textann og afritað hann handvirkt.',
       },
     }),
     goalsAndActions: defineMessages({
@@ -525,11 +578,12 @@ export const messages = {
     },
     title: {
       id: 'doe.er.application:overview.title',
-      defaultMessage: 'Yfirlit umsóknar',
+      defaultMessage: 'Yfirlit jafnréttisáætlunar',
     },
     intro: {
       id: 'doe.er.application:overview.intro',
-      defaultMessage: 'Vinsamlegast farðu yfir umsóknina áður en þú sendir.',
+      defaultMessage:
+        'Vinsamlegast farðu yfir innsendinguna áður en þú sendir.',
     },
     submitButton: {
       id: 'doe.er.application:overview.submitButton',
@@ -559,6 +613,10 @@ export const messages = {
       id: 'doe.er.application:overview.equalityPlan',
       defaultMessage: 'Jafnréttisáætlun',
     },
+    equalityPlanFile: {
+      id: 'doe.er.application:overview.equalityPlanFile',
+      defaultMessage: 'Skjal',
+    },
     women: {
       id: 'doe.er.application:overview.women',
       defaultMessage: 'Konur',
@@ -586,13 +644,25 @@ export const messages = {
   }),
 
   inReview: defineMessages({
+    tagLabel: {
+      id: 'doe.er.application:inReview.tagLabel',
+      defaultMessage: 'Í vinnslu hjá ritstjórn',
+    },
     sectionTitle: {
       id: 'doe.er.application:inReview.sectionTitle',
-      defaultMessage: 'Umsókn móttekin',
+      defaultMessage: 'Sending móttekin',
+    },
+    formTitle: {
+      id: 'doe.er.application:inReview.formTitle',
+      defaultMessage: 'Takk fyrir innsendinguna',
     },
     alertTitle: {
       id: 'doe.er.application:inReview.title',
-      defaultMessage: 'Jafnréttisáætlun hefur verið send til Jafnréttisstofu',
+      defaultMessage: 'Jafnréttisáætlun er móttekin',
+    },
+    alertTitleRevised: {
+      id: 'doe.er.application:inReview.alertTitleRevised',
+      defaultMessage: 'Jafnréttisáætlun uppfærð',
     },
     alertDescription: {
       id: 'doe.er.application:inReview.description',
@@ -601,42 +671,71 @@ export const messages = {
     },
     sentHistoryLog: {
       id: 'doe.er.application:inReview.sentHistoryLog',
-      defaultMessage: 'Jafnréttisáætlun send til Jafnréttisstofu',
+      defaultMessage: 'Jafnréttisáætlun innsend',
     },
     approvedHistoryLog: {
       id: 'doe.er.application:inReview.approvedHistoryLog',
-      defaultMessage: 'Jafnréttisáætlun samþykkt af Jafnréttisstofu',
+      defaultMessage: 'Jafnréttisáætlun samþykkt',
     },
     rejectedHistoryLog: {
       id: 'doe.er.application:inReview.rejectedHistoryLog',
-      defaultMessage: 'Jafnréttisáætlun hafnað af Jafnréttisstofu',
+      defaultMessage: 'Jafnréttisáætlun hafnað',
     },
     editHistoryLog: {
       id: 'doe.er.application:inReview.editHistoryLog',
-      defaultMessage: 'Umsókn send aftur í vinnslu til lagfæringar',
+      defaultMessage: 'Athugasemd frá Jafnréttisstofu',
+    },
+    expandableIntro: {
+      id: 'doe.er.application:inReview.expandableIntro',
+      defaultMessage: 'Jafnréttisáætlunin verður yfirfarin af Jafnréttisstofu',
+    },
+    expandableDescription: {
+      id: 'doe.er.application:inReview.expandableDescription#markdown',
+      defaultMessage:
+        '* Athugasemdir og ábendingar verða sendar á tengilið í gegnum tölvupóst \n\n* Þegar öll lagaskilyrði eru uppfyllt er áætlunin samþykkt.\n\n* Gildistími jafnréttisáætlunar eru þrjú ár frá samþykki.\n\n* Þú færð áminningu frá okkur þegar það eru sex mánuðir í næstu skil.',
     },
   }),
 
   comments: defineMessages({
     sectionTitle: {
       id: 'doe.er.application:comments.sectionTitle',
-      defaultMessage: 'Samskipti',
+      defaultMessage: 'Athugasemdir',
     },
     title: {
       id: 'doe.er.application:comments.title',
-      defaultMessage: 'Samskipti við Jafnréttisstofu',
+      defaultMessage: 'Athugasemdir',
     },
     emptyState: {
       id: 'doe.er.application:comments.emptyState',
-      defaultMessage: 'Engin skilaboð hafa verið send.',
+      defaultMessage: 'Engar athugasemdir hafa verið sendar.',
     },
     textareaLabel: {
       id: 'doe.er.application:comments.textareaLabel',
-      defaultMessage: 'Skrifa skilaboð',
+      defaultMessage: 'Athugasemd',
+    },
+    placeholder: {
+      id: 'doe.er.application:comments.placeholder',
+      defaultMessage: 'Bættu við athugasemd',
+    },
+    replyButton: {
+      id: 'doe.er.application:comments.replyButton',
+      defaultMessage: 'Svara athugasemd',
     },
     sendButton: {
       id: 'doe.er.application:comments.sendButton',
-      defaultMessage: 'Senda',
+      defaultMessage: 'Senda athugasemd',
+    },
+    cancelButton: {
+      id: 'doe.er.application:comments.cancelButton',
+      defaultMessage: 'Hætta við',
+    },
+    seeAllComments: {
+      id: 'doe.er.application:comments.seeAllComments',
+      defaultMessage: 'Sjá allar athugasemdir',
+    },
+    registersComment: {
+      id: 'doe.er.application:comments.registersComment',
+      defaultMessage: 'skráir athugasemd',
     },
     reviewerLabel: {
       id: 'doe.er.application:comments.reviewerLabel',
@@ -646,13 +745,56 @@ export const messages = {
       id: 'doe.er.application:comments.companyLabel',
       defaultMessage: 'Þú',
     },
+    today: {
+      id: 'doe.er.application:comments.today',
+      defaultMessage: 'Í dag',
+    },
+    yesterday: {
+      id: 'doe.er.application:comments.yesterday',
+      defaultMessage: 'Í gær',
+    },
+    daysAgo: {
+      id: 'doe.er.application:comments.daysAgo',
+      defaultMessage: 'f. {days} dögum',
+    },
     sendError: {
       id: 'doe.er.application:comments.sendError',
-      defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að senda athugasemd, reyndu aftur.',
     },
     loadError: {
       id: 'doe.er.application:comments.loadError',
-      defaultMessage: 'Ekki tókst að sækja skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að sækja athugasemdir, reyndu aftur.',
+    },
+  }),
+
+  draftRetry: defineMessages({
+    tagLabel: {
+      id: 'doe.er.application:draftRetry.tagLabel',
+      defaultMessage: 'Þín bíða athugasemdir',
+    },
+    submitButton: {
+      id: 'doe.er.application:draftRetry.submitButton',
+      defaultMessage: 'Senda inn aftur',
+    },
+    pendingActionTitle: {
+      id: 'doe.er.application:draftRetry.pendingActionTitle',
+      defaultMessage: 'Beðið er eftir lagfæringu',
+    },
+    pendingActionContent: {
+      id: 'doe.er.application:draftRetry.pendingActionContent',
+      defaultMessage:
+        'Farðu yfir athugasemdir frá Jafnréttisstofu og lagfærðu jafnréttisáætlunina.',
+    },
+    pendingActionButton: {
+      id: 'doe.er.application:draftRetry.pendingActionButton',
+      defaultMessage: 'Halda áfram',
+    },
+  }),
+
+  historyLogs: defineMessages({
+    draftRetry: {
+      id: 'doe.er.application:historyLogs.draftRetry',
+      defaultMessage: 'Jafnréttisáætlun lagfærð og send aftur',
     },
   }),
 }
