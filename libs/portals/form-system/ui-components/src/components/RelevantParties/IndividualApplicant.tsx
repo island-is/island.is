@@ -1,5 +1,13 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Input, PhoneInput, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Input,
+  PhoneInput,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { Dispatch, useEffect } from 'react'
@@ -71,7 +79,7 @@ export const IndividualApplicant = ({
     setValue,
     unregister,
   ])
-
+  console.log('applicant', applicant)
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
@@ -83,26 +91,29 @@ export const IndividualApplicant = ({
             nationalId={nationalId}
             name={getValue(applicant, 'name')}
           />
-          {/* <GridRow>
-            <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-              <Input
-                label={formatMessage(m.address)}
-                name="address"
-                readOnly
-                value={getValue(applicant, 'address') || ''}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '4/12', '4/12']}>
-              <Box marginTop={[2, 2, 0, 0]}>
+
+          {applicant.fieldSettings?.isAddressRequired && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
                 <Input
-                  label={formatMessage(m.postalCode)}
-                  name="postalCode"
+                  label={formatMessage(m.address)}
+                  name="address"
                   readOnly
-                  value={getValue(applicant, 'postalCode') || ''}
+                  value={getValue(applicant, 'address') || ''}
                 />
-              </Box>
-            </GridColumn>
-          </GridRow> */}
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '4/12', '4/12']}>
+                <Box marginTop={[2, 2, 0, 0]}>
+                  <Input
+                    label={formatMessage(m.postalCode)}
+                    name="postalCode"
+                    readOnly
+                    value={getValue(applicant, 'postalCode') || ''}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
+          )}
 
           {applicant.fieldSettings?.isEmailRequired && (
             <Controller
