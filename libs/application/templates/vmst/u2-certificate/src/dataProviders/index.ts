@@ -1,4 +1,4 @@
-import { ApiActions } from '../utils/constants'
+import { ApiActions } from '../utils/types'
 import { defineTemplateApi } from '@island.is/application/types'
 
 export const EligabilityApi = defineTemplateApi({

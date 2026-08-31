@@ -10,8 +10,16 @@ import {
   ApplicationConfigurations,
   NationalRegistryV3UserApi,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
-import { Events, Roles, States, U2Events } from '../utils/constants'
+import {
+  ApplicationEvents,
+  ApiActions,
+  Events,
+  Roles,
+  States,
+  U2Events,
+} from '../utils/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -20,6 +28,8 @@ import {
 } from '@island.is/application/core'
 import { EESCountriesApi, EligabilityApi } from '../dataProviders'
 import { applicationMessages as m } from './messages'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -50,7 +60,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Prerequisites),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: 'SUBMIT', name: m.submitConfirm, type: 'primary' },
               ],
               write: 'all',
               read: 'all',
@@ -66,20 +76,22 @@ const template: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        // Í vinnslu hjá notanda
         meta: {
           name: 'Main form',
-          progress: 0.5,
           status: FormModes.DRAFT,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 2 * 24 * 3600 * 1000, // 2 days
-          },
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
               variant: 'blue',
               label: m.inDraft,
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: m.draftHistorySubmit,
+              },
+            ],
           },
           roles: [
             {
@@ -89,7 +101,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.MainForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: 'SUBMIT', name: m.submitConfirm, type: 'primary' },
               ],
               write: 'all',
               read: 'all',
@@ -102,36 +114,56 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED, // TODO this should actually go to review
+            target: States.REVIEW,
           },
         },
       },
       [States.REVIEW]: {
+        // Í vinnslu (hjá VMST)
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
         meta: {
           name: 'Review',
-          progress: 0.5, // TODO ?
-          status: FormModes.IN_PROGRESS, // TODO Do we need to seperate status from Revoked vs Denied
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 2 * 24 * 3600 * 1000, // 2 days // TODO Probably needs changing
-          },
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
               variant: 'purple',
               label: m.sentIn,
+            },
+            pendingAction: {
+              title: m.reviewPendingTitle,
+              content: m.reviewPendingContent,
+              displayStatus: 'info',
             },
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                // TODO Replace mainForm
-                import('../forms/mainForm').then((module) =>
-                  Promise.resolve(module.MainForm),
+                import('../forms/reviewForm').then((module) =>
+                  Promise.resolve(module.ReviewForm),
                 ),
               read: 'all',
-              delete: false, // TODO Can user delete a revoked application ? probably not
+              write: 'all',
+              delete: false,
+            },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: ApplicationEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                {
+                  event: ApplicationEvents.REJECT,
+                  name: 'Reject',
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -148,66 +180,71 @@ const template: ApplicationTemplate<
         },
       },
       [States.REVOKED]: {
+        // Notandi afturkallar
         meta: {
           name: 'Revoked',
-          progress: 0.5, // TODO ?
-          status: FormModes.REJECTED, // TODO Do we need to seperate status from Revoked vs Denied
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 2 * 24 * 3600 * 1000, // 2 days // TODO Probably needs changing
-          },
+          status: FormModes.REJECTED,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: ApiActions.revokeApplication,
+            throwOnError: true,
+          }),
           actionCard: {
             tag: {
               variant: 'red',
               label: m.revoked,
             },
+            pendingAction: {
+              title: m.revokedPendingTitle,
+              content: m.revokedPendingContent,
+              displayStatus: 'error',
+            },
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                // TODO Replace mainForm
-                import('../forms/mainForm').then((module) =>
-                  Promise.resolve(module.MainForm),
+                import('../forms/revokedForm').then((module) =>
+                  Promise.resolve(module.RevokedForm),
                 ),
               read: 'all',
-              delete: false, // TODO Can user delete a revoked application ? probably not
+              delete: false,
             },
           ],
         },
       },
       [States.REJECTED]: {
+        // Hafnað (af VMST)
         meta: {
           name: 'Rejected',
-          progress: 0.5, // TODO ?
           status: FormModes.REJECTED,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 2 * 24 * 3600 * 1000, // 2 days // TODO Probably needs changing
-          },
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
               variant: 'red',
               label: m.rejected,
+            },
+            pendingAction: {
+              title: m.rejectedPendingTitle,
+              content: m.rejectedPendingContent,
+              displayStatus: 'error',
             },
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                // TODO Replace mainForm
-                import('../forms/mainForm').then((module) =>
-                  Promise.resolve(module.MainForm),
+                import('../forms/rejectedForm').then((module) =>
+                  Promise.resolve(module.RejectedForm),
                 ),
               read: 'all',
-              delete: false, // TODO Can user delete a rejected application ? probably not
+              delete: false,
             },
           ],
         },
       },
       [States.COMPLETED]: {
+        // Samþykkt (af VMST)
         meta: {
           name: 'Completed form',
           progress: 1,
@@ -218,6 +255,11 @@ const template: ApplicationTemplate<
               variant: 'mint',
               label: m.approved,
             },
+            pendingAction: {
+              title: m.completedPendingTitle,
+              content: m.completedPendingContent,
+              displayStatus: 'success',
+            },
           },
           roles: [
             {
@@ -227,7 +269,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
+              delete: false,
             },
           ],
         },
@@ -240,8 +282,24 @@ const template: ApplicationTemplate<
   ): ApplicationRole | undefined {
     if (nationalId === application.applicant) {
       return Roles.APPLICANT
+    } else if (nationalId === InstitutionNationalIds.VINNUMALASTOFNUN) {
+      return Roles.ORGANISATION_REVIEWER
     }
     return undefined
+  },
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [InstitutionNationalIds.VINNUMALASTOFNUN])
+        return context
+      }),
+      clearAssignees: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [])
+        return context
+      }),
+    },
   },
 }
 

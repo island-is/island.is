@@ -21,9 +21,26 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
+  ORGANISATION_REVIEWER = 'organisationReviewer',
 }
 
 export enum ApiActions {
   getEligibility = 'getEligibility',
   getEESCountries = 'getEESCountries',
+  revokeApplication = 'revokeApplication',
+}
+
+export enum ApplicationEvents {
+  REJECT = 'REJECT',
+  REVOKE = 'REVOKE',
+  APPROVE = 'APPROVE',
+}
+
+export interface Country {
+  id: string
+  abbr: string
+  name: string
+  otherId: number
+  orderNumber: number
+  isInTheEUAndOrEEA: boolean
 }

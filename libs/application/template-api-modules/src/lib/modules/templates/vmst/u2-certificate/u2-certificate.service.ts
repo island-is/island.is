@@ -49,7 +49,6 @@ export class U2CertificateService extends BaseTemplateApiService {
       const reasonText =
         (currentUserLocale === 'is' ? result.reason : result.reasonEN) || ''
 
-      // TODO Remove so exeption is always shown
       const shouldAddException = isU2ErrorCode(result.code)
 
       const summary = shouldAddException
@@ -92,7 +91,6 @@ export class U2CertificateService extends BaseTemplateApiService {
   async completeApplication({
     auth,
     application,
-    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     try {
       const countryId =
@@ -124,19 +122,64 @@ export class U2CertificateService extends BaseTemplateApiService {
         throw new TemplateApiError(
           {
             title: errorMessages.eligibilityErrorTitle,
-            // TODO HAVE VMST RETURN ENGLISH OR ACCEPT LOCALE
             summary:
-              (currentUserLocale === 'is'
-                ? response.errorMessage
-                : response.errorMessage) ||
-              errorMessages.cannotApplyErrorSummary,
+              response.errorMessage || errorMessages.cannotApplyErrorSummary,
           },
           500,
         )
       }
       return true
     } catch (e) {
+      this.logger.error('[VMST-U2-Certificate] - Submit failed', e)
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: errorMessages.dataFetchErrorSummary,
+        },
+        500,
+      )
+    }
+  }
+
+  async revokeApplication({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps): Promise<boolean> {
+    // Defense-in-depth: REVOKE is only wired to the applicant role in the template.
+    if (auth.nationalId !== application.applicant) {
+      this.logger.warn(
+        '[VMST-U2-Certificate] - Revoke invoked by non-applicant, skipping',
+      )
       return false
+    }
+
+    try {
+      const response =
+        await this.vmstUnemploymentClientService.revokeU2Application(auth)
+      return true
+      //return response.success
+      // if (!response.success) {
+      //   this.logger.error(
+      //     '[VMST-U2-Certificate] - Error revoking application',
+      //     response.errorMessage,
+      //   )
+      //   throw new TemplateApiError(
+      //     {
+      //       title: coreErrorMessages.defaultTemplateApiError,
+      //       summary: errorMessages.dataFetchErrorSummary,
+      //     },
+      //     500,
+      //   )
+      // }
+    } catch (e) {
+      this.logger.error('[VMST-U2-Certificate] - Error revoking application', e)
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: errorMessages.dataFetchErrorSummary,
+        },
+        500,
+      )
     }
   }
 }
