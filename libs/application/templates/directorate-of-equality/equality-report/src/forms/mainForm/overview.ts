@@ -23,7 +23,6 @@ export const overviewSection = buildSection({
           id: 'overview.companyInfo',
           title: messages.overview.companyInfo,
           titleVariant: 'h3',
-          backId: 'generalInformationMultiField',
           items: (answers) => [
             {
               width: 'half',

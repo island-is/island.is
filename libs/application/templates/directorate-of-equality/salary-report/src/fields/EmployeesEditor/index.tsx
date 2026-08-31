@@ -242,7 +242,13 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       <Stack space={4}>
-        {actionError && <AlertMessage type="error" message={actionError} />}
+        {actionError && (
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={actionError}
+          />
+        )}
         <T.Table>
           <T.Head>
             <T.Row>

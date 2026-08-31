@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
@@ -205,11 +205,13 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
       {hasWeightMismatch && (
         <Box marginTop={3}>
-          <Text color="red600">
-            {formatMessage(messages.report.criteria.weightSumError, {
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={formatMessage(messages.report.criteria.weightSumError, {
               total: totalWeight,
             })}
-          </Text>
+          />
         </Box>
       )}
     </Box>
