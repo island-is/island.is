@@ -31,9 +31,7 @@ const ReturnIndictmentModal: FC<Props> = ({
 
   const trimmedExplanation = explanation?.trim() ?? ''
 
-  const isExplanationValid = validate([
-    [trimmedExplanation, ['empty']],
-  ]).isValid
+  const isExplanationValid = validate([[trimmedExplanation, ['empty']]]).isValid
 
   const handleExplanationChange = (value: string) => {
     const { isValid } = validate([[value.trim(), ['empty']]])
