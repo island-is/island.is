@@ -34,16 +34,13 @@ interface DrawerProps {
   isVisible?: ModalBaseProps['isVisible']
   onVisibilityChange?: ModalBaseProps['onVisibilityChange']
   hideOnClickOutside?: ModalBaseProps['hideOnClickOutside']
-  preventBodyScroll?: ModalBaseProps['preventBodyScroll']
-  backdropWhite?: ModalBaseProps['backdropWhite']
-  backdropDark?: ModalBaseProps['backdropDark']
-  backdropTransparent?: ModalBaseProps['backdropTransparent']
   /**
-   * Extra classes for the modal panel (e.g. responsive width overrides).
+   * Extra classes for the modal panel (e.g. width overrides).
    */
   panelClassName?: string
   /**
-   * Classes for the scrollable inner container. When set, default overflow is omitted so you can e.g. use overflow-x: hidden with overflow-y: auto.
+   * Classes for the inner container. When set, default padding and overflow
+   * are omitted so the consumer can control scrolling and spacing.
    */
   contentClassName?: string
 }
@@ -57,10 +54,6 @@ export const Drawer = ({
   isVisible,
   onVisibilityChange,
   hideOnClickOutside,
-  preventBodyScroll,
-  backdropWhite,
-  backdropDark,
-  backdropTransparent,
   panelClassName,
   contentClassName,
   children,
@@ -74,24 +67,17 @@ export const Drawer = ({
       isVisible={isVisible}
       onVisibilityChange={onVisibilityChange}
       hideOnClickOutside={hideOnClickOutside}
-      preventBodyScroll={preventBodyScroll}
-      backdropWhite={backdropWhite}
-      backdropDark={backdropDark}
-      backdropTransparent={backdropTransparent}
-      className={cn(
-        styles.drawer,
-        styles.position[position],
-        backdropTransparent && styles.transparentBackdropPanel,
-        panelClassName,
-      )}
+      className={cn(styles.drawer, styles.position[position], panelClassName)}
     >
       {({ closeModal }: { closeModal: () => void }) => {
         return (
           <Box
             background="white"
-            paddingY={[3, 6, 8]}
-            paddingX={[3, 6, 8]}
+            paddingY={contentClassName ? undefined : [3, 6, 8]}
+            paddingX={contentClassName ? undefined : [3, 6, 8]}
             height="full"
+            display={contentClassName ? 'flex' : undefined}
+            flexDirection={contentClassName ? 'column' : undefined}
             overflow={contentClassName ? undefined : 'auto'}
             className={contentClassName}
           >
@@ -105,7 +91,9 @@ export const Drawer = ({
                 size="large"
               />
             </Box>
-            <Box>{children}</Box>
+            <Box className={contentClassName ? styles.contentFill : undefined}>
+              {children}
+            </Box>
           </Box>
         )
       }}

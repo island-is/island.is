@@ -24,12 +24,6 @@ export const drawer = style({
   }),
 })
 
-/** Re-enable hits on the panel when the backdrop uses `pointer-events: none`. */
-export const transparentBackdropPanel = style({
-  pointerEvents: 'auto',
-  zIndex: 1,
-})
-
 export const position = styleVariants({
   left: {
     left: 0,
@@ -46,4 +40,14 @@ export const closeButton = style({
   top: theme.spacing['2'],
   right: theme.spacing['2'],
   zIndex: 2,
+})
+
+/** Used when `contentClassName` is set so children can fill the panel. */
+export const contentFill = style({
+  display: 'flex',
+  flexDirection: 'column',
+  flex: '1 1 0%',
+  minHeight: 0,
+  minWidth: 0,
+  overflow: 'hidden',
 })

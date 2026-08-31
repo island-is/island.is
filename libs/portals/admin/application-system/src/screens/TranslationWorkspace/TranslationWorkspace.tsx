@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
-import { Box, Button, ModalBase, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Drawer,
+  ModalBase,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -50,7 +57,11 @@ const AUTOSAVE_INTERVAL_MS = 60_000
 const NAV_DRAWER_COMPACT_MAX_PX = theme.breakpoints.xl - 1
 
 const useViewportMaxWidth = (maxWidthPx: number) => {
-  const [matches, setMatches] = useState(false)
+  const [matches, setMatches] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia(`(max-width: ${maxWidthPx}px)`).matches
+      : false,
+  )
 
   useEffect(() => {
     const mediaQueryList = window.matchMedia(`(max-width: ${maxWidthPx}px)`)
@@ -148,7 +159,6 @@ export const TranslationWorkspace = () => {
   const [publishConfirmVisible, setPublishConfirmVisible] = useState(false)
   const [navDrawerOpen, setNavDrawerOpen] = useState(false)
   const isCompactNav = useViewportMaxWidth(NAV_DRAWER_COMPACT_MAX_PX)
-  const navPanelInert = isCompactNav && !navDrawerOpen
 
   const getPersistedForMessage = useCallback(
     (messageKey: string, locale: 'is' | 'en') => {
@@ -477,6 +487,7 @@ export const TranslationWorkspace = () => {
       await handleSaveAll()
     }
 
+    setNavDrawerOpen(false)
     setPublishConfirmVisible(true)
   }, [namespace, hasUnsavedChanges, handleSaveAll])
 
@@ -497,6 +508,7 @@ export const TranslationWorkspace = () => {
   }, [namespace, publishMutation, refetchTranslations, formatMessage])
 
   const handleOpenHistory = useCallback(() => {
+    setNavDrawerOpen(false)
     setHistoryOpen(true)
   }, [])
 
@@ -504,24 +516,11 @@ export const TranslationWorkspace = () => {
     setHistoryOpen(false)
   }, [])
 
-  const handleToggleNavDrawer = useCallback(() => {
-    setNavDrawerOpen((open) => !open)
-  }, [])
-
-  const handleCloseNavDrawer = useCallback(() => {
-    setNavDrawerOpen(false)
-  }, [])
-
-  useEffect(() => {
-    if (!navDrawerOpen) return undefined
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setNavDrawerOpen(false)
-      }
+  const handleNavDrawerVisibilityChange = useCallback((visible: boolean) => {
+    if (!visible) {
+      setNavDrawerOpen(false)
     }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [navDrawerOpen])
+  }, [])
 
   useEffect(() => {
     if (!isCompactNav) {
@@ -707,11 +706,46 @@ export const TranslationWorkspace = () => {
     return <TranslationWorkspaceNotFound />
   }
 
+  const navPanel = (
+    <TranslationWorkspaceStatesTabsPanel
+      states={introspection.states as unknown as TemplateStateNav[]}
+      selectedScreenId={selectedScreen?.id}
+      selectedLocation={selectedLocation}
+      onNavClick={handleSidebarNavClick}
+      formatMessage={formatMessage}
+      selectedScreen={selectedScreen}
+      screenMessageDescriptors={screenMessageDescriptors}
+      allApplicationMessageDescriptors={allApplicationMessageDescriptors}
+      editedValues={editedValues}
+      activeLocale={activeLocale}
+      getPersistedForLocale={getPersistedForLocale}
+      onValueChange={handleValueChange}
+      showValidationErrors={showValidationErrors}
+      validationDescriptors={validationDescriptors}
+      persistedByKey={persistedByKey}
+      previewScreens={previewScreens}
+      resolvePreviewString={resolvePreviewString}
+      validationDescriptorsByPath={validationDescriptorsByPath}
+      focusedFieldId={focusedFieldId}
+      onFocusedFieldChange={handleFocusedFieldChange}
+      fieldErrorOverrides={fieldErrorOverrides}
+      onToggleFieldError={handleToggleFieldError}
+      onSetPreviewFieldValue={handleSetPreviewFieldValue}
+      onActiveTabChange={(tab) => setFieldsTabActive(tab === 'fields')}
+      onGoogleTranslate={
+        activeLocale === 'en' ? handleGoogleTranslate : undefined
+      }
+      onGoogleTranslateAll={
+        activeLocale === 'en' ? handleGoogleTranslateAll : undefined
+      }
+      isTranslating={translating}
+    />
+  )
+
+  const openPanelLabel = formatMessage(m.translationWorkspacePanelOpen)
+
   return (
-    <Box
-      className={workspaceStyles.workspaceShell}
-      data-nav-drawer-open={navDrawerOpen ? 'true' : 'false'}
-    >
+    <Box className={workspaceStyles.workspaceShell}>
       <div className={workspaceStyles.workspaceMainRow}>
         <div className={workspaceStyles.workspacePreviewAside}>
           <TranslationWorkspacePreviewArea
@@ -738,80 +772,47 @@ export const TranslationWorkspace = () => {
             footerSubmitScreen={footerSubmitScreen}
           />
         </div>
-        <button
-          type="button"
-          className={workspaceStyles.navDrawerBackdrop}
-          aria-label={formatMessage(m.translationWorkspacePanelClose)}
-          aria-hidden={!navDrawerOpen}
-          tabIndex={-1}
-          onClick={handleCloseNavDrawer}
-        />
-        <div className={workspaceStyles.workspaceNavAside}>
-          <button
-            type="button"
-            className={workspaceStyles.navDrawerToggle}
-            onClick={handleToggleNavDrawer}
-            title={
-              navDrawerOpen
-                ? formatMessage(m.translationWorkspacePanelClose)
-                : formatMessage(m.translationWorkspacePanelOpen)
-            }
-            aria-label={
-              navDrawerOpen
-                ? formatMessage(m.translationWorkspacePanelClose)
-                : formatMessage(m.translationWorkspacePanelOpen)
-            }
-            aria-expanded={navDrawerOpen}
-            aria-controls="translation-workspace-nav-panel"
-          >
-            <span
-              className={workspaceStyles.navDrawerToggleGrip}
-              aria-hidden="true"
-            />
-          </button>
-          <div
-            className={workspaceStyles.navDrawerPanel}
-            id="translation-workspace-nav-panel"
-            inert={navPanelInert}
-            aria-hidden={navPanelInert}
-          >
-            <TranslationWorkspaceStatesTabsPanel
-              states={introspection.states as unknown as TemplateStateNav[]}
-              selectedScreenId={selectedScreen?.id}
-              selectedLocation={selectedLocation}
-              onNavClick={handleSidebarNavClick}
-              formatMessage={formatMessage}
-              selectedScreen={selectedScreen}
-              screenMessageDescriptors={screenMessageDescriptors}
-              allApplicationMessageDescriptors={
-                allApplicationMessageDescriptors
-              }
-              editedValues={editedValues}
-              activeLocale={activeLocale}
-              getPersistedForLocale={getPersistedForLocale}
-              onValueChange={handleValueChange}
-              showValidationErrors={showValidationErrors}
-              validationDescriptors={validationDescriptors}
-              persistedByKey={persistedByKey}
-              previewScreens={previewScreens}
-              resolvePreviewString={resolvePreviewString}
-              validationDescriptorsByPath={validationDescriptorsByPath}
-              focusedFieldId={focusedFieldId}
-              onFocusedFieldChange={handleFocusedFieldChange}
-              fieldErrorOverrides={fieldErrorOverrides}
-              onToggleFieldError={handleToggleFieldError}
-              onSetPreviewFieldValue={handleSetPreviewFieldValue}
-              onActiveTabChange={(tab) => setFieldsTabActive(tab === 'fields')}
-              onGoogleTranslate={
-                activeLocale === 'en' ? handleGoogleTranslate : undefined
-              }
-              onGoogleTranslateAll={
-                activeLocale === 'en' ? handleGoogleTranslateAll : undefined
-              }
-              isTranslating={translating}
-            />
+        {isCompactNav ? (
+          <>
+            {!navDrawerOpen && (
+              <Box className={workspaceStyles.navDrawerOpenButton}>
+                <Button
+                  circle
+                  colorScheme="light"
+                  icon="menu"
+                  iconType="outline"
+                  onClick={() => setNavDrawerOpen(true)}
+                  title={openPanelLabel}
+                  aria-label={openPanelLabel}
+                  aria-expanded={false}
+                  aria-haspopup="dialog"
+                  aria-controls="translation-workspace-nav-panel"
+                />
+              </Box>
+            )}
+            <Drawer
+              baseId="translation-workspace-nav-panel"
+              ariaLabel={formatMessage(m.translationStatesNavDrawerAriaLabel)}
+              position="right"
+              isVisible={navDrawerOpen}
+              hideOnClickOutside
+              onVisibilityChange={handleNavDrawerVisibilityChange}
+              panelClassName={workspaceStyles.navDrawerPanel}
+              contentClassName={workspaceStyles.navDrawerContent}
+            >
+              {navPanel}
+            </Drawer>
+          </>
+        ) : (
+          <div className={workspaceStyles.workspaceNavAside}>
+            <div
+              className={workspaceStyles.navColumn}
+              id="translation-workspace-nav-panel"
+            >
+              {navPanel}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <TranslationPublishHistory
