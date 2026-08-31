@@ -9,7 +9,11 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
-export const sectionRequirements = (allow65RenewalRedesign = false) =>
+export const sectionRequirements = (
+  allow65RenewalRedesign = false,
+  allowBTempRedesign = false,
+  allowBFullRedesign = false,
+) =>
   buildSubSection({
     id: 'requirements',
     title: m.applicationEligibilityTitle,
@@ -25,11 +29,11 @@ export const sectionRequirements = (allow65RenewalRedesign = false) =>
           }),
           buildHiddenInput({
             id: 'isBTempRedesignEnabled',
-            defaultValue: () => true,
+            defaultValue: () => allowBTempRedesign,
           }),
           buildHiddenInput({
             id: 'isBFullRedesignEnabled',
-            defaultValue: () => true,
+            defaultValue: () => allowBFullRedesign,
           }),
           buildCustomField({
             title: m.eligibilityRequirementTitle,
