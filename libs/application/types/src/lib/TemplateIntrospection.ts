@@ -223,6 +223,10 @@ export interface TemplateIntrospection {
   slug: string
   translationNamespaces: string[]
   states: StateIntrospection[]
+  /**
+   * Union of form-tree descriptors, validation messages, and descriptors from the
+   * template library's named exports (typically `export * from './lib/messages'`).
+   */
   allMessageDescriptors: MessageDescriptorInfo[]
   validationMessageDescriptors: ValidationMessageDescriptorInfo[]
 }

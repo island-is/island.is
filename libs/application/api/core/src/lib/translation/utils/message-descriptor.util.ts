@@ -28,6 +28,69 @@ export const isMessageDescriptor = (obj: unknown): obj is MessageDescriptor => {
   )
 }
 
+const toMessageDescriptorInfo = (
+  value: MessageDescriptor,
+): MessageDescriptorInfo => ({
+  id: String(value.id),
+  defaultMessage:
+    typeof value.defaultMessage === 'string' ? value.defaultMessage : undefined,
+  description:
+    typeof value.description === 'string' ? value.description : undefined,
+})
+
+/**
+ * Recursively collects `defineMessages` / MessageDescriptor objects from a messages
+ * module. Continues into extra keys on a descriptor (e.g. nested `paragraphs`) so
+ * those strings are not dropped.
+ */
+export const flattenMessageDescriptors = (
+  root: unknown,
+): MessageDescriptorInfo[] => {
+  const descriptors: MessageDescriptorInfo[] = []
+  const seen = new Set<string>()
+  const visited = new WeakSet<object>()
+
+  const visit = (value: unknown) => {
+    if (value == null) return
+    const valueType = typeof value
+    if (
+      valueType === 'function' ||
+      valueType === 'string' ||
+      valueType === 'number' ||
+      valueType === 'boolean' ||
+      valueType === 'bigint' ||
+      valueType === 'symbol'
+    ) {
+      return
+    }
+    if (typeof value !== 'object') return
+    if (visited.has(value)) return
+    visited.add(value)
+
+    if (isMessageDescriptor(value) && 'defaultMessage' in value) {
+      const info = toMessageDescriptorInfo(value)
+      if (!seen.has(info.id)) {
+        seen.add(info.id)
+        descriptors.push(info)
+      }
+    }
+
+    if (Array.isArray(value)) {
+      for (const el of value) {
+        visit(el)
+      }
+      return
+    }
+
+    for (const nested of Object.values(value as Record<string, unknown>)) {
+      visit(nested)
+    }
+  }
+
+  visit(root)
+  return descriptors
+}
+
 export const tryInvokeFormTextFunction = (
   fn: Function,
 ): {

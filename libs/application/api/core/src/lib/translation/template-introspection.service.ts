@@ -7,6 +7,7 @@ import type { Form } from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
   getApplicationCustomFieldMessageDescriptors,
+  getApplicationMessageRoots,
 } from '@island.is/application/template-loader'
 import type {
   FormIntrospection,
@@ -21,6 +22,7 @@ import {
   resolveTemplateDisplayName,
 } from './utils/template-display-name.util'
 import { extractValidationDescriptors } from './utils/validation-descriptors.util'
+import { flattenMessageDescriptors } from './utils/message-descriptor.util'
 import {
   collectAllDescriptors,
   serializeLoadedFormForApi,
@@ -238,6 +240,33 @@ export class TemplateIntrospectionService {
       }
     } catch {
       // dataSchema extraction may fail for some templates, skip gracefully
+    }
+
+    const namespacePrefixes = [...new Set(translationNamespaces)].map(
+      (namespace) => `${namespace}:`,
+    )
+    const matchesTemplateNamespace = (id: string) =>
+      namespacePrefixes.some((prefix) => id.startsWith(prefix))
+
+    try {
+      const messageRoots = await getApplicationMessageRoots(typeId)
+      const fromMessages = messageRoots
+        .flatMap((root) => flattenMessageDescriptors(root))
+        .filter((d) => matchesTemplateNamespace(d.id))
+        .sort((a, b) => a.id.localeCompare(b.id))
+
+      for (const d of fromMessages) {
+        if (!seenDescriptorIds.has(d.id)) {
+          seenDescriptorIds.add(d.id)
+          allDescriptors.push(d)
+        }
+      }
+    } catch (e) {
+      this.logger.warn(
+        `Failed to collect message-module descriptors for "${typeId}": ${
+          e instanceof Error ? e.message : String(e)
+        }`,
+      )
     }
 
     return {

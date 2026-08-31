@@ -38,6 +38,15 @@ type TemplateLibraryModule = {
     Record<string, CustomFieldMessageDescriptorInfo[]>
   >
 }
+
+const TEMPLATE_LIB_NON_MESSAGE_EXPORTS = new Set([
+  'default',
+  '__esModule',
+  'getDataProviders',
+  'getFields',
+  'getCustomFieldMessageDescriptors',
+])
+
 const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
 
 const loadTemplateLib = async (
@@ -105,6 +114,23 @@ export const getApplicationCustomFieldMessageDescriptors = async (
     return await templateLib.getCustomFieldMessageDescriptors()
   }
   return {}
+}
+
+/**
+ * Message-module roots for Translation Workspace.
+ * Uses named template-library exports (typically `export * from './lib/messages'`).
+ */
+export const getApplicationMessageRoots = async (
+  templateId: ApplicationTypes,
+): Promise<unknown[]> => {
+  const templateLib = await loadTemplateLib(templateId)
+  const roots: unknown[] = []
+  for (const [key, value] of Object.entries(templateLib)) {
+    if (TEMPLATE_LIB_NON_MESSAGE_EXPORTS.has(key)) continue
+    if (typeof value === 'function') continue
+    roots.push(value)
+  }
+  return roots
 }
 
 export const getApplicationDataProviders = async (
