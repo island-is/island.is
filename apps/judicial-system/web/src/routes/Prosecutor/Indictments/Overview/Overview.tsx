@@ -81,6 +81,7 @@ const Overview: FC = () => {
     useState<'confirm' | 'deny'>()
   const [wantsReview, setWantsReview] = useState(false)
   const [selectedApproverId, setSelectedApproverId] = useState<string>()
+  const [selectedApproverName, setSelectedApproverName] = useState<string>()
   const [reviewDecision, setReviewDecision] = useState<'accept' | 'deny'>()
 
   const router = useRouter()
@@ -442,13 +443,15 @@ const Overview: FC = () => {
                   {wantsReview && (
                     <Box>
                       <ProsecutorSelection
+                        label="Veldu aðila sem les yfir"
                         placeholder="Veldu yfirlesara"
                         isRequired={false}
                         shouldInitializeSelector={true}
                         excludeUserId={user?.id}
-                        onChange={(prosecutorId) =>
+                        onChange={(prosecutorId, prosecutorName) => {
                           setSelectedApproverId(prosecutorId)
-                        }
+                          setSelectedApproverName(prosecutorName)
+                        }}
                       />
                     </Box>
                   )}
@@ -574,7 +577,11 @@ const Overview: FC = () => {
         ) : modal === 'caseSentForReviewModal' ? (
           <Modal
             title="Ákæra hefur verið send í yfirlestur"
-            text="Yfirlesari fær tilkynningu og mun fara yfir ákæruna."
+            text={`${
+              selectedApproverName ??
+              workingCase.indictmentApprover?.name ??
+              ''
+            } fær tilkynningu um að lesa yfir ákæruna.`}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[
               {

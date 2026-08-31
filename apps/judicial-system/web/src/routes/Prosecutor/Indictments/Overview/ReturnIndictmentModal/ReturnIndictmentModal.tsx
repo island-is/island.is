@@ -91,7 +91,7 @@ const ReturnIndictmentModal: FC<Props> = ({
   return (
     <Modal
       title="Senda ákæru til baka"
-      text="Skráðu athugasemdir sem ákærandi fær sendar."
+      text="Skráðu athugasemdir eftir yfirlestur. Ákærandi fær athugasemdirnar og skilaboð um endursendingu ákæru."
       onClose={onClose}
       buttons={[
         {

@@ -20,7 +20,8 @@ import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.gen
 import { strings } from './ProsecutorSelection.strings'
 
 interface Props {
-  onChange?: (prosecutorId: string) => void
+  onChange?: (prosecutorId: string, prosecutorName?: string) => void
+  label?: string
   placeholder?: string
   isRequired?: boolean
   shouldInitializeSelector?: boolean
@@ -32,6 +33,7 @@ interface Props {
 
 const ProsecutorSelection: FC<Props> = ({
   onChange,
+  label,
   placeholder,
   isRequired = true,
   shouldInitializeSelector,
@@ -104,7 +106,7 @@ const ProsecutorSelection: FC<Props> = ({
   ])
 
   const handleUpdate = useCallback(
-    (prosecutorId: string) => {
+    (prosecutorId: string, prosecutorName?: string) => {
       if (!workingCase.id || !onChange) {
         const prosecutor = data?.users?.find((p) => p.id === prosecutorId)
 
@@ -113,7 +115,7 @@ const ProsecutorSelection: FC<Props> = ({
           prosecutor,
         }))
       } else {
-        onChange(prosecutorId)
+        onChange(prosecutorId, prosecutorName)
       }
     },
     [data?.users, onChange, setWorkingCase, workingCase.id],
@@ -123,7 +125,7 @@ const ProsecutorSelection: FC<Props> = ({
     const id = value?.value
 
     if (id && typeof id === 'string') {
-      handleUpdate(id)
+      handleUpdate(id, value?.label)
     }
   }
 
@@ -145,9 +147,12 @@ const ProsecutorSelection: FC<Props> = ({
   return (
     <Select
       name="prosecutor"
-      label={formatMessage(strings.label, {
-        isIndictmentCase: isIndictmentCase(workingCase.type),
-      })}
+      label={
+        label ??
+        formatMessage(strings.label, {
+          isIndictmentCase: isIndictmentCase(workingCase.type),
+        })
+      }
       placeholder={
         placeholder ??
         formatMessage(strings.placeholder, {
