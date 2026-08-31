@@ -20,6 +20,7 @@ import {
 } from '@island.is/application/templates/directorate-of-equality/salary-report'
 import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import type { ZodTypeAny, z } from 'zod'
 import { mapGender, toNumberOrZero } from './directorate-of-equality.utils'
 
@@ -33,6 +34,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
   constructor(
     private readonly companyRegistryService: CompanyRegistryClientService,
     private readonly directorateOfEqualityService: DirectorateOfEqualityClientService,
+    private readonly applicationApiService: ApplicationApiService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super('DirectorateOfEquality')
@@ -768,7 +770,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         400,
       )
     }
-    return this.withTemplateApiError(
+    const comment = await this.withTemplateApiError(
       application.id,
       'Failed to submit report comment',
       () =>
@@ -778,5 +780,37 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           { body },
         ),
     )
+
+    // Clearing the send buffer belongs here, not in the UI: once DMR has the
+    // comment there is no way for the client to fail the cleanup without
+    // reporting a false send error and leaving a re-sendable body persisted.
+    // Best effort — the comment is already posted, so a failed clear must not
+    // fail the action.
+    try {
+      const existingComment =
+        getValueViaPath<Record<string, unknown>>(
+          application.answers,
+          'comment',
+        ) ?? {}
+      const answers = {
+        ...application.answers,
+        comment: { ...existingComment, newMessage: '' },
+      }
+      await this.applicationApiService.update(application.id, { answers })
+      // The action runner hands the same application object to later actions
+      // and returns it to the caller, so keep it in sync with the row.
+      application.answers = answers
+    } catch (error) {
+      this.logger.warn(
+        'Failed to clear submitted report comment from answers',
+        {
+          applicationId: application.id,
+          context: LOGGING_CONTEXT,
+          ...this.extractFetchErrorDetails(error),
+        },
+      )
+    }
+
+    return comment
   }
 }

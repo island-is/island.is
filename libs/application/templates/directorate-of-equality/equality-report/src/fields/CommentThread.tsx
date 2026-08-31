@@ -117,9 +117,9 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
   }
 
   const handleSend = async () => {
-    const draft = (getValues('comment.newMessage') as
-      | string
-      | undefined)?.trim()
+    const draft = (
+      getValues('comment.newMessage') as string | undefined
+    )?.trim()
     if (!draft) return
 
     setIsSending(true)
@@ -153,18 +153,11 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
         ?.submitReportComment?.data as ApplicationReportCommentDto | undefined
 
       if (newComment) {
+        // The backend action clears comment.newMessage as part of the submit,
+        // so there is no second round-trip to fail after DMR has the comment.
         setComments((prev) => [...prev, newComment])
         setValue('comment.newMessage', '')
         setIsReplying(false)
-        await updateApplication({
-          variables: {
-            input: {
-              id: application.id,
-              answers: { comment: { newMessage: '' } },
-            },
-            locale,
-          },
-        })
       } else {
         toast.error(formatMessage(messages.comments.sendError))
       }
@@ -178,6 +171,14 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
   const cancelReply = () => {
     setValue('comment.newMessage', '')
     setIsReplying(false)
+  }
+
+  // comment.newMessage is a transient send buffer, never a draft to restore:
+  // anything still persisted in it is a leftover from a submit whose clear did
+  // not land, and must not be re-sent. Reopening always starts empty.
+  const openReply = () => {
+    setValue('comment.newMessage', '')
+    setIsReplying(true)
   }
 
   if (isLoading) {
@@ -256,7 +257,7 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
       marginBottom={3}
     >
       {!hideTitle && (
-        <Text variant="h4" marginBottom={1}>
+        <Text variant="h4" as="h3" marginBottom={1}>
           {formatMessage(messages.comments.title)}
         </Text>
       )}
@@ -329,7 +330,7 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
                 size="small"
                 icon="pencil"
                 iconType="outline"
-                onClick={() => setIsReplying(true)}
+                onClick={openReply}
               >
                 {formatMessage(messages.comments.replyButton)}
               </Button>
