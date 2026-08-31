@@ -21,9 +21,9 @@ export const contactPersonSubSection = buildSubSection({
         buildDescriptionField({
           id: 'contactPerson.contactInfoTitle',
           title: messages.aboutTheCompany.contactPerson.contactInfoTitle,
+          description: '',
           titleVariant: 'h4',
         }),
-        // TODO: add the contact person's job title once DMR exposes the field.
         buildTextField({
           id: 'contactPerson.name',
           title: messages.aboutTheCompany.contactPerson.name,

@@ -2,7 +2,6 @@ import { buildForm, buildSection } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { buildSalaryAnalysisSection } from '../mainForm/salaryAnalysisSection'
-import { buildCommentThreadSection } from '../commentThreadSection'
 import { draftRetryReportSummarySection } from './draftRetryReportSummarySection'
 import { messages } from '../../lib/messages'
 
@@ -26,8 +25,14 @@ export const draftRetryForm = buildForm({
       title: messages.draftRetry.reportSectionTitle,
       children: [],
     }),
-    buildCommentThreadSection({ alwaysVisible: true }),
-    buildSalaryAnalysisSection({ hidePostponeCheckbox: true }),
+    // The comment thread rides along inside the salary analysis section (top of
+    // the úrbótaáætlun screen) rather than on a standalone screen — user
+    // testing showed applicants read the comments and the edit form as one
+    // task.
+    buildSalaryAnalysisSection(
+      { hidePostponeCheckbox: true },
+      { showComments: true, commentsAlwaysVisible: true },
+    ),
     draftRetryReportSummarySection,
   ],
 })
