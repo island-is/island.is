@@ -130,7 +130,6 @@ export const JobClassificationEditor: FC<
               roleIndex={index}
               assignments={buildDisplayAssignments(jobCriteria, role.stepIds)}
               stepMetaBySubCriterionId={stepMetaBySubCriterionId}
-              startExpanded={index === 0}
             />
           ))}
         </Stack>
