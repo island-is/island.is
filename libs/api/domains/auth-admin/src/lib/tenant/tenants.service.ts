@@ -273,39 +273,52 @@ export class TenantsService extends MultiEnvironmentService {
   }
 
   async deleteTenant(user: User, input: DeleteTenantInput): Promise<boolean> {
-    // Only attempt deletion on configured environments.
-    const configuredEnvironments = environments.filter((environment) =>
-      this.isEnvironmentConfigured(environment),
-    )
+    const tenant = await this.getTenantByIdForAdmin(input.tenantId, user)
 
-    if (configuredEnvironments.length === 0) {
-      return false
-    }
+    const existingEnvironments = tenant.environments
+      .map((env) => env.environment)
+      .filter((env) => this.isEnvironmentConfigured(env))
 
-    const results = await Promise.all(
-      configuredEnvironments.map(async (environment) => {
-        try {
-          await this.makeRequest(user, environment, (api) =>
-            api.meTenantsControllerDeleteRaw({
-              tenantId: input.tenantId,
-            }),
-          )
-          return true
-        } catch (error) {
-          this.handleError(error as Error, environment)
-          return false
-        }
-      }),
-    )
-
-    const successes = results.filter(Boolean).length
-    const failures = results.length - successes
-    if (successes > 0 && failures > 0) {
-      this.logger.warn(
-        `Partial delete for tenant ${input.tenantId}: succeeded in ${successes} env(s), failed in ${failures}`,
+    if (existingEnvironments.length === 0) {
+      throw new Error(
+        `Tenant ${input.tenantId} not found in any configured environment`,
       )
     }
 
-    return results.some(Boolean)
+    const results = await Promise.allSettled(
+      existingEnvironments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meTenantsControllerDeleteRaw({
+            tenantId: input.tenantId,
+          }),
+        ),
+      ),
+    )
+
+    const failures = results
+      .map((result, index) => ({
+        result,
+        environment: existingEnvironments[index],
+      }))
+      .filter(
+        (
+          entry,
+        ): entry is {
+          result: PromiseRejectedResult
+          environment: Environment
+        } => entry.result.status === 'rejected',
+      )
+
+    if (failures.length > 0) {
+      failures.forEach(({ result, environment }) => {
+        this.logger.error(
+          `Failed to delete tenant ${input.tenantId} in ${environment}`,
+          result.reason,
+        )
+      })
+      throw failures[0].result.reason
+    }
+
+    return true
   }
 }

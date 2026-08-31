@@ -27,7 +27,7 @@ export const DangerZone = () => {
             text={formatMessage(m.deleteClientDescription)}
             backgroundColor="red"
             cta={{
-              label: formatMessage(m.delete),
+              label: formatMessage(m.archive),
               buttonType: {
                 variant: 'primary',
                 colorScheme: 'destructive',
