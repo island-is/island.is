@@ -11,9 +11,7 @@ interface Props {
 export const ConversationBackButton = ({ onClick }: Props) => {
   const { formatMessage } = useLocale()
   return (
-    <Box
-      className={cn(styles.filterActionButtons, styles.circleActionButtons)}
-    >
+    <Box className={cn(styles.filterActionButtons, styles.circleActionButtons)}>
       <Button
         circle
         icon="arrowBack"

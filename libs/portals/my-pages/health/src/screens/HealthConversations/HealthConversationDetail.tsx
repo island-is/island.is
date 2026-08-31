@@ -93,11 +93,12 @@ const HealthConversationDetail = () => {
     }
   }, [replyOpen])
 
-  const { data, loading, error, refetch } =
-    useGetHealthConversationDetailQuery({
+  const { data, loading, error, refetch } = useGetHealthConversationDetailQuery(
+    {
       fetchPolicy: 'cache-and-network',
       variables: { id },
-    })
+    },
+  )
 
   const handleCertificatePaid = () => {
     toast.success(
