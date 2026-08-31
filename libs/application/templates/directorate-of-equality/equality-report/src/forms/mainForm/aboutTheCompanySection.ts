@@ -209,6 +209,14 @@ export const aboutTheCompanySection = buildSection({
                 getValueViaPath(application.externalData, 'identity.data.name'),
             }),
             buildTextField({
+              id: 'contactPerson.jobTitle',
+              title: messages.aboutTheCompany.contactPerson.jobTitle,
+              placeholder:
+                messages.aboutTheCompany.contactPerson.jobTitlePlaceholder,
+              width: 'full',
+              required: true,
+            }),
+            buildTextField({
               id: 'contactPerson.email',
               title: messages.aboutTheCompany.contactPerson.email,
               placeholder:

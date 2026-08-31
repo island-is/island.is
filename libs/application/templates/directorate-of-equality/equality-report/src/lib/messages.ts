@@ -293,6 +293,14 @@ export const messages = {
         id: 'doe.er.application:aboutTheCompany.contactPerson.namePlaceholder',
         defaultMessage: 'Nafn tengiliðs',
       },
+      jobTitle: {
+        id: 'doe.er.application:aboutTheCompany.contactPerson.jobTitle',
+        defaultMessage: 'Starfstitill',
+      },
+      jobTitlePlaceholder: {
+        id: 'doe.er.application:aboutTheCompany.contactPerson.jobTitlePlaceholder',
+        defaultMessage: 'Starfstitill tengiliðs',
+      },
       email: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.email',
         defaultMessage: 'Netfang',

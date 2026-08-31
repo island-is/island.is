@@ -33,6 +33,9 @@ const contactPerson = z.object({
   name: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  jobTitle: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
   email: z.string().refine((v) => EMAIL_REGEX.test(v), {
     params: messages.errors.invalidEmail,
   }),

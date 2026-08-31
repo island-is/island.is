@@ -586,6 +586,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: mapGender(answers.chiefExecutive?.gender),
           contactName: answers.contactPerson?.name ?? '',
+          contactTitle: answers.contactPerson?.jobTitle ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
           salaryDataBasis,
@@ -697,6 +698,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: mapGender(answers.chiefExecutive?.gender),
           contactName: answers.contactPerson?.name ?? '',
+          contactTitle: answers.contactPerson?.jobTitle ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
           averageEmployeeFemaleCount: toNumberOrZero(
