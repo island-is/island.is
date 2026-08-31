@@ -218,7 +218,9 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
       {unassignedOutliers.length > 0 && (
         <>
           <Box>
-            <Text variant="h4">{formatMessage(m.tableTitle)}</Text>
+            <Text variant="h4" as="h4">
+              {formatMessage(m.tableTitle)}
+            </Text>
             <Text>{formatMessage(m.tableText)}</Text>
           </Box>
           <OutlierTableProvider value={tableContext}>
