@@ -197,9 +197,11 @@ const overwriteArrayMerge = (
   options: DeepmergeOptions,
 ) => {
   const destination = destinationArray.slice()
+  const lastSourceItem = sourceArray[sourceArray.length - 1]
 
   if (
-    typeof sourceArray[sourceArray.length - 1] !== 'object' ||
+    lastSourceItem === null ||
+    typeof lastSourceItem !== 'object' ||
     sourceArray.length < destinationArray.length // an element was removed
   ) {
     return sourceArray
@@ -283,7 +285,7 @@ export const formatText = <T extends FormTextArray | FormText>(
 }
 
 export const formatTextWithLocale = <
-  T extends FormTextArray | FormText | FormTextWithLocale,
+  T extends FormTextArray | FormText | FormTextWithLocale
 >(
   text: T,
   application: Application,
@@ -291,13 +293,11 @@ export const formatTextWithLocale = <
   formatMessage: MessageFormatter,
 ): T extends FormTextArray ? string[] : string => {
   if (typeof text === 'function') {
-    const message = (
-      text as (
-        _: Application,
-        locale: Locale,
-        formatMessage?: MessageFormatter,
-      ) => StaticText | StaticText[]
-    )(application, locale, formatMessage)
+    const message = (text as (
+      _: Application,
+      locale: Locale,
+      formatMessage?: MessageFormatter,
+    ) => StaticText | StaticText[])(application, locale, formatMessage)
     if (Array.isArray(message)) {
       return message.map((m) =>
         handleMessageFormatting(m, formatMessage),

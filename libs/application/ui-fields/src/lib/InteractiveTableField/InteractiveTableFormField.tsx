@@ -75,14 +75,19 @@ export const InteractiveTableFormField: FC<Props> = ({
   const trailingColumn = (content: ReactNode) =>
     hasInputColumn ? content : null
 
-  const selectedValues = (useWatch({ name: fieldId, control }) ?? []) as (
-    | boolean
-    | undefined
-  )[]
-  const inputValues = (useWatch({
+  const watchedSelectedValues = useWatch({ name: fieldId, control })
+  const watchedInputValues = useWatch({
     name: inputFieldId ?? fieldId,
     control,
-  }) ?? []) as (string | undefined)[]
+  })
+  const selectedValues = useMemo(
+    () => (watchedSelectedValues ?? []) as (boolean | null | undefined)[],
+    [watchedSelectedValues],
+  )
+  const inputValues = useMemo(
+    () => (watchedInputValues ?? []) as (string | null | undefined)[],
+    [watchedInputValues],
+  )
   const allSelected =
     !!selectable &&
     rows.length > 0 &&
@@ -102,6 +107,28 @@ export const InteractiveTableFormField: FC<Props> = ({
     if (!isSubmitDisabled) return
     setSubmitButtonDisabled?.(submitDisabled)
   }, [isSubmitDisabled, submitDisabled, setSubmitButtonDisabled])
+
+  useEffect(() => {
+    if (!selectable) return
+    rows.forEach((_, rowIndex) => {
+      const selected = selectedValues[rowIndex]
+      if (selected === undefined || selected === null) {
+        setValue(`${fieldId}[${rowIndex}]`, false)
+      }
+      const inputValue = inputValues[rowIndex]
+      if (inputFieldId && (inputValue === undefined || inputValue === null)) {
+        setValue(`${inputFieldId}[${rowIndex}]`, '')
+      }
+    })
+  }, [
+    selectable,
+    rows,
+    fieldId,
+    inputFieldId,
+    selectedValues,
+    inputValues,
+    setValue,
+  ])
 
   const toggleAll = () => {
     const nowSelected = !allSelected
