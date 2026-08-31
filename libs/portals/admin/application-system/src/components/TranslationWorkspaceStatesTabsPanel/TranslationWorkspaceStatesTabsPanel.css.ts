@@ -1,4 +1,4 @@
-import { globalStyle, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const tabsPanelRoot = style({
@@ -12,63 +12,68 @@ export const tabsPanelRoot = style({
   maxWidth: '100%',
   boxSizing: 'border-box',
   background: theme.color.white,
-  paddingTop: 0,
-  paddingBottom: 0,
-  paddingLeft: 0,
-  paddingRight: 0,
 })
 
-/**
- * The Tabs component renders several intermediate wrapper divs that break the
- * flex-column height chain. These globalStyles thread `flex: 1 / minHeight: 0`
- * through each wrapper so the scrollable content area is properly constrained.
- */
-const flexColumnChild = {
+export const tabList = style({
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'nowrap',
+  flexShrink: 0,
+  width: '100%',
+  height: `${theme.spacing[5]}px`,
+  overflow: 'visible',
+})
+
+const tabListBorder = theme.border.width.large
+
+export const tab = style({
+  flex: '1 1 0%',
+  minWidth: 0,
+  height: `calc(100% + ${tabListBorder * 2}px)`,
+  marginTop: -tabListBorder,
+  marginBottom: -tabListBorder,
+  padding: 0,
+  border: `${theme.border.width.standard}px solid ${theme.color.transparent}`,
+  borderRadius: theme.border.radius.standard,
+  cursor: 'pointer',
+  backgroundColor: 'transparent',
+  appearance: 'none',
+  selectors: {
+    '&:first-child': {
+      marginLeft: -tabListBorder,
+    },
+    '&:last-child': {
+      marginRight: -tabListBorder,
+    },
+    '&:hover': {
+      backgroundColor: theme.color.white,
+      borderColor: theme.color.blue100,
+    },
+    '&:focus': {
+      outline: `2px solid ${theme.color.blue400}`,
+      outlineOffset: -2,
+      zIndex: 1,
+    },
+  },
+})
+
+export const tabSelected = style({
+  backgroundColor: theme.color.white,
+  borderColor: theme.color.blue200,
+  selectors: {
+    '&:hover': {
+      borderColor: theme.color.blue200,
+    },
+  },
+})
+
+export const tabPanel = style({
   display: 'flex',
   flexDirection: 'column',
   flex: '1 1 0%',
   minHeight: 0,
-} as const
-
-globalStyle(`${tabsPanelRoot} > div`, flexColumnChild)
-
-globalStyle(`${tabsPanelRoot} > div > div:last-child`, flexColumnChild)
-
-globalStyle(
-  `${tabsPanelRoot} > div > div:last-child > div:not([role="tablist"])`,
-  flexColumnChild,
-)
-
-globalStyle(`${tabsPanelRoot} [role="tabpanel"]:not([hidden])`, {
-  ...flexColumnChild,
-  padding: 0,
-})
-
-globalStyle(
-  `${tabsPanelRoot} [role="tabpanel"]:not([hidden]) > div`,
-  flexColumnChild,
-)
-
-globalStyle(`${tabsPanelRoot} div:has(+ [role="tablist"])`, {
-  display: 'none',
-})
-
-globalStyle(
-  `${tabsPanelRoot} > div > div:last-child > div:first-child:not([role])`,
-  { display: 'none' },
-)
-
-globalStyle(`${tabsPanelRoot} [role="tablist"]`, {
-  overflow: 'initial',
-  height: `${theme.spacing[5]}px`,
-  display: 'flex',
-  flexDirection: 'row',
-  flexWrap: 'nowrap',
-  width: '100%',
-})
-
-globalStyle(`${tabsPanelRoot} [role="tab"]`, {
-  flex: 1,
+  minWidth: 0,
+  overflow: 'hidden',
 })
 
 export const tabsPanelScroll = style({

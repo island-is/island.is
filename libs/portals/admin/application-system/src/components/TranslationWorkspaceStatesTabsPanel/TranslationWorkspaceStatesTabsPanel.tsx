@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Box, Tabs } from '@island.is/island-ui/core'
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import cn from 'classnames'
+import { Box, Text } from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
   EditedTranslations,
@@ -14,6 +15,7 @@ import { m } from '../../lib/messages'
 import { TranslationWorkspaceStatesNav } from '../TranslationWorkspaceStatesNav/TranslationWorkspaceStatesNav'
 import {
   FIELDS_TAB_ID,
+  STATES_TAB_ID,
   STRINGS_TAB_ID,
   flattenFocusableFields,
 } from '../../utils/translationWorkspaceNavPanel'
@@ -53,6 +55,9 @@ export interface TranslationWorkspaceStatesTabsPanelProps {
   isTranslating?: boolean
 }
 
+const withCount = (label: string, count: number) =>
+  count > 0 ? `${label} (${count})` : label
+
 export const TranslationWorkspaceStatesTabsPanel = ({
   states,
   selectedScreenId,
@@ -81,10 +86,11 @@ export const TranslationWorkspaceStatesTabsPanel = ({
   onGoogleTranslateAll,
   isTranslating,
 }: TranslationWorkspaceStatesTabsPanelProps) => {
-  const [activeTab, setActiveTabRaw] = useState('states')
+  const [activeTab, setActiveTabRaw] = useState(STATES_TAB_ID)
   const [stringsListScope, setStringsListScope] = useState<
     'screen' | 'application'
   >('screen')
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
 
   const stringsTabDescriptors = useMemo(() => {
     const raw =
@@ -133,79 +139,50 @@ export const TranslationWorkspaceStatesTabsPanel = ({
     }
   }, [selectedScreen?.id])
 
-  const statesContent = (
-    <Box className={styles.tabsPanelScroll}>
-      <Box className={styles.tabsPanelInner}>
-        <TranslationWorkspaceStatesNav
-          states={states}
-          selectedScreenId={selectedScreenId}
-          selectedLocation={selectedLocation}
-          onNavClick={onNavClick}
-          persistedByKey={persistedByKey}
-          editedValues={editedValues}
-          activeLocale={activeLocale}
-        />
-      </Box>
-    </Box>
-  )
-
   const totalStringCount =
     stringsTabDescriptors.length +
     (showValidationErrors ? validationDescriptors.length : 0)
 
   const tabs = [
-    { id: 'states', label: 'States', content: statesContent },
+    {
+      id: STATES_TAB_ID,
+      label: formatMessage(m.translationStatesTab),
+    },
     {
       id: STRINGS_TAB_ID,
-      label: `Strings${totalStringCount ? ` (${totalStringCount})` : ''}`,
-      content: (
-        <TabsPanelStringsTab
-          selectedScreen={selectedScreen}
-          visibleDescriptors={stringsTabDescriptors}
-          stringsListScope={stringsListScope}
-          onStringsListScopeChange={setStringsListScope}
-          applicationStringCount={allApplicationMessageDescriptors.length}
-          editedValues={editedValues}
-          activeLocale={activeLocale}
-          getPersistedForLocale={getPersistedForLocale}
-          onValueChange={onValueChange}
-          showValidationErrors={showValidationErrors}
-          validationDescriptors={validationDescriptors}
-          formatMessage={formatMessage}
-          persistedByKey={persistedByKey}
-          onGoogleTranslate={onGoogleTranslate}
-          onGoogleTranslateAll={onGoogleTranslateAll}
-          isTranslating={isTranslating}
-        />
+      label: withCount(
+        formatMessage(m.translationStringsTab),
+        totalStringCount,
       ),
     },
     {
       id: FIELDS_TAB_ID,
-      label: `${formatMessage(m.translationFieldsTab)}${
-        focusableFields.length ? ` (${focusableFields.length})` : ''
-      }`,
-      content: (
-        <TabsPanelFieldsTab
-          focusableFields={focusableFields}
-          focusedIndex={focusedIndex}
-          editedValues={editedValues}
-          activeLocale={activeLocale}
-          getPersistedForLocale={getPersistedForLocale}
-          onValueChange={onValueChange}
-          validationDescriptorsByPath={validationDescriptorsByPath}
-          fieldErrorOverrides={fieldErrorOverrides}
-          onToggleFieldError={onToggleFieldError}
-          onSetPreviewFieldValue={onSetPreviewFieldValue}
-          onFocusedFieldChange={onFocusedFieldChange}
-          formatMessage={formatMessage}
-          persistedByKey={persistedByKey}
-          onGoogleTranslate={onGoogleTranslate}
-          onGoogleTranslateAll={onGoogleTranslateAll}
-          isTranslating={isTranslating}
-        />
+      label: withCount(
+        formatMessage(m.translationFieldsTab),
+        focusableFields.length,
       ),
     },
   ]
+
+  const handleTabKeyDown = (index: number, event: KeyboardEvent) => {
+    const last = tabs.length - 1
+    let next: number | undefined
+    if (event.key === 'ArrowRight') {
+      next = index === last ? 0 : index + 1
+    } else if (event.key === 'ArrowLeft') {
+      next = index === 0 ? last : index - 1
+    } else if (event.key === 'Home') {
+      next = 0
+    } else if (event.key === 'End') {
+      next = last
+    }
+    if (next === undefined) {
+      return
+    }
+    event.preventDefault()
+    setActiveTab(tabs[next].id)
+    tabRefs.current[next]?.focus()
+  }
 
   return (
     <Box
@@ -214,15 +191,113 @@ export const TranslationWorkspaceStatesTabsPanel = ({
       aria-label={formatMessage(m.translationStatesNavDrawerAriaLabel)}
       className={styles.tabsPanelRoot}
     >
-      <Tabs
-        label="Translation workspace panel"
-        tabs={tabs}
-        selected={activeTab}
-        onChange={setActiveTab}
-        contentBackground="white"
-        variant="alternative"
-        size="md"
-      />
+      <Box
+        role="tablist"
+        aria-label={formatMessage(m.translationWorkspaceTabsAriaLabel)}
+        background="blue100"
+        borderRadius="standard"
+        borderColor="blue100"
+        borderWidth="large"
+        flexShrink={0}
+        className={styles.tabList}
+      >
+        {tabs.map((tab, index) => {
+            const isSelected = tab.id === activeTab
+            return (
+              <Box
+                key={tab.id}
+                component="button"
+                type="button"
+                role="tab"
+                id={`translation-workspace-tab-${tab.id}`}
+                aria-selected={isSelected}
+                aria-controls={`translation-workspace-tabpanel-${tab.id}`}
+                tabIndex={isSelected ? 0 : -1}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                className={cn(styles.tab, isSelected && styles.tabSelected)}
+                onClick={() => setActiveTab(tab.id)}
+                onKeyDown={(event) => handleTabKeyDown(index, event)}
+                ref={(node) => {
+                  tabRefs.current[index] = node as HTMLButtonElement | null
+                }}
+              >
+                <Text
+                  variant="small"
+                  fontWeight={isSelected ? 'semiBold' : 'light'}
+                  color={isSelected ? 'blue400' : 'black'}
+                  truncate
+                >
+                  {tab.label}
+                </Text>
+              </Box>
+            )
+          })}
+      </Box>
+
+      <Box
+        role="tabpanel"
+        id={`translation-workspace-tabpanel-${activeTab}`}
+        aria-labelledby={`translation-workspace-tab-${activeTab}`}
+        className={styles.tabPanel}
+      >
+        {activeTab === STATES_TAB_ID && (
+          <Box className={styles.tabsPanelScroll}>
+            <Box className={styles.tabsPanelInner}>
+              <TranslationWorkspaceStatesNav
+                states={states}
+                selectedScreenId={selectedScreenId}
+                selectedLocation={selectedLocation}
+                onNavClick={onNavClick}
+                persistedByKey={persistedByKey}
+                editedValues={editedValues}
+                activeLocale={activeLocale}
+              />
+            </Box>
+          </Box>
+        )}
+        {activeTab === STRINGS_TAB_ID && (
+          <TabsPanelStringsTab
+            selectedScreen={selectedScreen}
+            visibleDescriptors={stringsTabDescriptors}
+            stringsListScope={stringsListScope}
+            onStringsListScopeChange={setStringsListScope}
+            applicationStringCount={allApplicationMessageDescriptors.length}
+            editedValues={editedValues}
+            activeLocale={activeLocale}
+            getPersistedForLocale={getPersistedForLocale}
+            onValueChange={onValueChange}
+            showValidationErrors={showValidationErrors}
+            validationDescriptors={validationDescriptors}
+            formatMessage={formatMessage}
+            persistedByKey={persistedByKey}
+            onGoogleTranslate={onGoogleTranslate}
+            onGoogleTranslateAll={onGoogleTranslateAll}
+            isTranslating={isTranslating}
+          />
+        )}
+        {activeTab === FIELDS_TAB_ID && (
+          <TabsPanelFieldsTab
+            focusableFields={focusableFields}
+            focusedIndex={focusedIndex}
+            editedValues={editedValues}
+            activeLocale={activeLocale}
+            getPersistedForLocale={getPersistedForLocale}
+            onValueChange={onValueChange}
+            validationDescriptorsByPath={validationDescriptorsByPath}
+            fieldErrorOverrides={fieldErrorOverrides}
+            onToggleFieldError={onToggleFieldError}
+            onSetPreviewFieldValue={onSetPreviewFieldValue}
+            onFocusedFieldChange={onFocusedFieldChange}
+            formatMessage={formatMessage}
+            persistedByKey={persistedByKey}
+            onGoogleTranslate={onGoogleTranslate}
+            onGoogleTranslateAll={onGoogleTranslateAll}
+            isTranslating={isTranslating}
+          />
+        )}
+      </Box>
     </Box>
   )
 }

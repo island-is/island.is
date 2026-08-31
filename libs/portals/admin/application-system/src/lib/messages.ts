@@ -278,9 +278,21 @@ export const m = defineMessages({
     defaultMessage:
       'Staður til að sækja tölfræði um umsóknir og skoða gröf tengd þeim.',
   },
+  translationStatesTab: {
+    id: 'admin-portal.application-system:translationStatesTab',
+    defaultMessage: 'Stöður',
+  },
+  translationStringsTab: {
+    id: 'admin-portal.application-system:translationStringsTab',
+    defaultMessage: 'Textar',
+  },
   translationFieldsTab: {
     id: 'admin-portal.application-system:translationFieldsTab',
     defaultMessage: 'Reitir',
+  },
+  translationWorkspaceTabsAriaLabel: {
+    id: 'admin-portal.application-system:translationWorkspaceTabsAriaLabel',
+    defaultMessage: 'Flokkar þýðingaborðs',
   },
   translationFieldAutofill: {
     id: 'admin-portal.application-system:translationFieldAutofill',

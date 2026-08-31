@@ -96,3 +96,30 @@ export const previewStringUsesMarkdown = (
 ): boolean =>
   isMarkdownMessageId(messageId) ||
   TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN.has(screenType)
+
+/** Parse autofill / preview strings (`1234-56-789012` or 12 digits) into bank field parts. */
+export const parseBankAccountPreviewValue = (
+  raw?: string,
+): { bankNumber: string; ledger: string; accountNumber: string } => {
+  const empty = { bankNumber: '', ledger: '', accountNumber: '' }
+  if (!raw) {
+    return empty
+  }
+  const digits = raw.replace(/\D/g, '')
+  if (digits.length >= 12) {
+    return {
+      bankNumber: digits.slice(0, 4),
+      ledger: digits.slice(4, 6),
+      accountNumber: digits.slice(6, 12),
+    }
+  }
+  const parts = raw.split('-')
+  if (parts.length === 3) {
+    return {
+      bankNumber: parts[0] ?? '',
+      ledger: parts[1] ?? '',
+      accountNumber: parts[2] ?? '',
+    }
+  }
+  return empty
+}

@@ -4,7 +4,6 @@ export const INPUT_FIELD_TYPES = new Set([
   'TEXT',
   'PHONE',
   'EMAIL',
-  'BANK_ACCOUNT',
   'COMPANY_SEARCH',
   'ASYNC_SELECT',
   'COPY_LINK',

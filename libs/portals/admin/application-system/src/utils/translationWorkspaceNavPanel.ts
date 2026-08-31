@@ -52,6 +52,7 @@ const randomSentence = (wordCount: number) => {
   return words.join(' ')
 }
 
+export const STATES_TAB_ID = 'states'
 export const STRINGS_TAB_ID = 'strings'
 export const FIELDS_TAB_ID = 'fields'
 

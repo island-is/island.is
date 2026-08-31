@@ -20,6 +20,10 @@ export {
   type CheckboxFieldLeafPreviewProps,
 } from './CheckboxFieldLeafPreview'
 export { NationalIdWithNameFieldPreview } from './NationalIdWithNameFieldPreview'
+export {
+  BankAccountFieldPreview,
+  type BankAccountFieldPreviewProps,
+} from './BankAccountFieldPreview'
 export { FieldsRepeaterFieldPreview } from './FieldsRepeaterFieldPreview'
 export { TableRepeaterFieldPreview } from './TableRepeaterFieldPreview'
 export { TextDisplayPreviewNodes } from './TextDisplayPreviewNodes'

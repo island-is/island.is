@@ -58,6 +58,7 @@ import { ExternalDataSourcePreview } from './ExternalDataSourcePreview'
 import { RadioFieldLeafPreview } from './RadioFieldLeafPreview'
 import { CheckboxFieldLeafPreview } from './CheckboxFieldLeafPreview'
 import { NationalIdWithNameFieldPreview } from './NationalIdWithNameFieldPreview'
+import { BankAccountFieldPreview } from './BankAccountFieldPreview'
 import { FieldsRepeaterFieldPreview } from './FieldsRepeaterFieldPreview'
 import { TableRepeaterFieldPreview } from './TableRepeaterFieldPreview'
 import { TextDisplayPreviewNodes } from './TextDisplayPreviewNodes'
@@ -313,6 +314,18 @@ export const LeafFieldPreview = ({
       <NationalIdWithNameFieldPreview
         screen={screen}
         resolvePreviewString={resolvePreviewString}
+      />
+    )
+  }
+
+  if (screen.type === FieldTypes.BANK_ACCOUNT) {
+    return (
+      <BankAccountFieldPreview
+        screen={screen}
+        resolvePreviewString={resolvePreviewString}
+        formatMessage={formatMessage}
+        previewValue={previewFieldValues?.[screen.id]}
+        errorMessage={fieldErrorMessage}
       />
     )
   }
