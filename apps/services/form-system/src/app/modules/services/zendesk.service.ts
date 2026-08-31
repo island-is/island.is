@@ -516,8 +516,8 @@ export class ZendeskService {
                   (key === 'delegationType' ||
                     key === 'isLoggedInUser' ||
                     key === 'applicantType' ||
-                    key === 'address' ||
-                    key === 'postalCode' ||
+                    ((key === 'address' || key === 'postalCode') &&
+                      field.fieldSettings?.isAddressRequired !== true) ||
                     key === 'municipality')
                 ) {
                   continue
