@@ -20,7 +20,7 @@ describe('Case appeal case associations', () => {
     const models = Object.values(repository).filter(
       (exported) =>
         typeof exported === 'function' && exported.prototype instanceof Model,
-    ) as (typeof Model)[]
+    ) as typeof Model[]
 
     new Sequelize({ dialect: 'postgres', models, logging: false })
   })
