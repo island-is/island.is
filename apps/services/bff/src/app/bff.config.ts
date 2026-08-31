@@ -10,7 +10,7 @@ export const idsSchema = z.strictObject({
   secret: z.string(),
 })
 
-const BffConfigSchema = z.object({
+export const BffConfigSchema = z.object({
   /**
    * Unique name of the BFF
    */
@@ -67,7 +67,7 @@ const BffConfigSchema = z.object({
    */
   cacheLoginAttemptTTLms: z.number(),
   /** Max concurrent outbound sockets for the proxy agent (BFF_PROXY_MAX_SOCKETS). */
-  proxyMaxSockets: z.number(),
+  proxyMaxSockets: z.number().int().positive(),
 })
 
 export const BffConfig = defineConfig({
