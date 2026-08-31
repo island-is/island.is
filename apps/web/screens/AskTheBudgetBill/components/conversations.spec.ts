@@ -21,4 +21,11 @@ describe('toConversationTitle', () => {
     const title = toConversationTitle(`${'a'.repeat(58)} bc`)
     expect(title).toBe(`${'a'.repeat(58)}…`)
   })
+
+  it('should not cut a character outside the basic plane in half', () => {
+    // The emoji sits right on the boundary the question is cut at
+    const title = toConversationTitle(`${'a'.repeat(58)}\u{1f600}bc`)
+    expect(title).toBe(`${'a'.repeat(58)}\u{1f600}…`)
+    expect(Array.from(title)).toHaveLength(60)
+  })
 })

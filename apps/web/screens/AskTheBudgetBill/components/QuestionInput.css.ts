@@ -55,6 +55,15 @@ export const input = style({
   ':hover': {
     borderColor: theme.color.blue400,
   },
+  selectors: {
+    '&:disabled': {
+      cursor: 'default',
+    },
+    // Closed off, so it does not answer the pointer either
+    '&:disabled:hover': {
+      borderColor: theme.color.blue200,
+    },
+  },
   ...themeUtils.responsiveStyle({
     md: {
       height: 64,

@@ -13,6 +13,8 @@ interface QuestionInputProps {
   sendLabel: string
   onChange: (value: string) => void
   onSubmit: () => void
+  /** Closes the box off when there is nothing a question could be sent to */
+  disabled?: boolean
 }
 
 /**
@@ -21,10 +23,10 @@ interface QuestionInputProps {
  * only appears once there is something to send.
  */
 export const QuestionInput = forwardRef<HTMLInputElement, QuestionInputProps>(
-  ({ value, placeholder, sendLabel, onChange, onSubmit }, ref) => {
+  ({ value, placeholder, sendLabel, onChange, onSubmit, disabled }, ref) => {
     // Anything typed makes the button live, whatever the chat behind it is
     // doing, so the box always answers what the visitor sees in it
-    const canPress = value.trim().length > 0
+    const canPress = !disabled && value.trim().length > 0
 
     return (
       <div className={styles.wrapper}>
@@ -38,10 +40,12 @@ export const QuestionInput = forwardRef<HTMLInputElement, QuestionInputProps>(
           aria-label={placeholder}
           placeholder={placeholder}
           value={value}
+          disabled={disabled}
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={(event) => {
             if (event.key !== 'Enter') return
             event.preventDefault()
+            if (disabled) return
             onSubmit()
           }}
         />

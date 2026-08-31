@@ -41,6 +41,13 @@ export const ChatConversation = ({
 
   const isLoading = status === 'idle' || status === 'loading' || isStarting
 
+  // Once the widget is up, the question asked is on its way to becoming a
+  // conversation that the page opens as soon as it lands. Resetting in the
+  // middle of that would be undone the moment it does, so the reset waits it
+  // out. Before the widget is up, and once it has failed, nothing is on its
+  // way and returning to the question box stands.
+  const isConversationPending = isStarting && status === 'ready'
+
   return (
     <Box className={styles.conversation}>
       <Box
@@ -61,6 +68,7 @@ export const ChatConversation = ({
           variant="utility"
           preTextIcon="add"
           preTextIconType="outline"
+          disabled={isConversationPending}
           onClick={onNewChat}
         >
           {formatMessage(m.newChat)}

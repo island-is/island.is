@@ -102,6 +102,9 @@ export const ChatLauncher = ({
             value={value}
             onChange={setValue}
             onSubmit={() => submit(value)}
+            // A widget that never came up leaves nothing to ask, so the box is
+            // closed off rather than taking a question it would drop
+            disabled={status === 'error'}
           />
 
           {status === 'error' && (

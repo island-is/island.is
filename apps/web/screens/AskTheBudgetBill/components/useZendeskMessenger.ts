@@ -38,8 +38,8 @@ declare global {
  * launcher: starting a conversation and opening one.
  *
  * Nothing is loaded until `load` is called, so a visitor who only reads the
- * page never pays for the third party script. Calling it more than once is a
- * no-op, since the widget is booted only on the first call.
+ * page never pays for the third party script. Calling it while the widget is
+ * booting or booted is a no-op; calling it after a boot failed tries again.
  *
  * The widget is rendered once into `containerId`, which must therefore stay
  * mounted for the lifetime of the page. Showing and hiding it is done by the
@@ -56,19 +56,32 @@ export const useZendeskMessenger = ({
   containerId: string
 }) => {
   const [status, setStatus] = useState<MessengerStatus>('idle')
-  const [shouldLoad, setShouldLoad] = useState(false)
+  // Bumped by `load` to start a boot attempt. A counter rather than a flag, so
+  // that an attempt which failed can be followed by another one.
+  const [loadAttempt, setLoadAttempt] = useState(0)
+  // Whether an attempt is in flight or has succeeded, in which case `load` is
+  // a no-op. A failed attempt clears it, since booting again is worth a try.
+  const isLoadingRef = useRef(false)
   const { activeLocale } = useI18n()
 
   // The locale is read while booting, but re-running the effect on a locale
-  // change would tear down an in-progress conversation.
+  // change would tear down an in-progress conversation. Kept up to date from an
+  // effect rather than from render, so that a render React throws away cannot
+  // leave a locale behind that the page never switched to.
   const localeRef = useRef(activeLocale)
-  localeRef.current = activeLocale
+  useEffect(() => {
+    localeRef.current = activeLocale
+  }, [activeLocale])
 
-  /** Boots the widget, on the first call only */
-  const load = useCallback(() => setShouldLoad(true), [])
+  /** Boots the widget, unless it is already booting or booted */
+  const load = useCallback(() => {
+    if (isLoadingRef.current) return
+    isLoadingRef.current = true
+    setLoadAttempt((attempt) => attempt + 1)
+  }, [])
 
   useEffect(() => {
-    if (!shouldLoad) return
+    if (loadAttempt === 0) return
 
     setStatus('loading')
 
@@ -76,6 +89,9 @@ export const useZendeskMessenger = ({
     const settle = (next: MessengerStatus) => {
       if (hasSettled) return
       hasSettled = true
+      // An attempt that got nowhere is dropped rather than held onto, so that
+      // a later `load` call boots the widget again instead of doing nothing.
+      if (next === 'error') isLoadingRef.current = false
       setStatus(next)
     }
 
@@ -143,7 +159,7 @@ export const useZendeskMessenger = ({
       delete window.$zopim
       delete window.zEMessenger
     }
-  }, [shouldLoad, snippetUrl, containerId])
+  }, [loadAttempt, snippetUrl, containerId])
 
   /** Starts a conversation whose first message is the visitor's question. */
   const startConversation = useCallback(

@@ -111,8 +111,12 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
   useEffect(() => {
     if (!activeConversationId) return
     load()
-    if (status === 'ready') openConversation(activeConversationId)
-  }, [status, activeConversationId, load, openConversation])
+  }, [activeConversationId, load])
+
+  useEffect(() => {
+    if (!activeConversationId || status !== 'ready') return
+    openConversation(activeConversationId)
+  }, [status, activeConversationId, openConversation])
 
   const handleAsk = useCallback(
     (question: string) => {
