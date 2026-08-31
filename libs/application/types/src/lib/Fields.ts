@@ -757,6 +757,8 @@ export interface PaymentChargeOverviewField extends BaseField {
     extraLabel?: StaticText
     chargeItemName?: string
     chargeItemAmount?: number
+    subLabel?: StaticText
+    subAmount?: number
   }[]
 }
 
