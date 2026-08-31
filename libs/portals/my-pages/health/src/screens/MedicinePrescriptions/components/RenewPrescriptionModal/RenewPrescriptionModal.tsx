@@ -192,6 +192,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                 setSelectedTarget({ nodeId, groupId: Number(groupId) })
               }}
               backgroundColor="blue"
+              size="sm"
             />
           </Box>
         )}
