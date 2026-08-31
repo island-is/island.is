@@ -214,8 +214,8 @@ export const withAutoAuth = ({
     const response = await innerFetch(tokenEndpoint, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         ...options.tokenRequestHeaders,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: params,
       auth,
