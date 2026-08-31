@@ -15,9 +15,10 @@ entered by wrapping a form field reference in square brackets:
 [3xAmPl3F13ldId] - New request
 ```
 
-A form field can be referenced by its Contentful entry id, its `name` or its `title`
-(case insensitive). Tokens that don't match any field on the form are left untouched, so a typo
-shows up in the subject instead of silently disappearing.
+A form field can be referenced by its Contentful entry id or its `name` (case insensitive).
+The field `title` can not be used, since it's the user facing label and is expected to change.
+Tokens that don't match any field on the form are left untouched, so a typo shows up in the
+subject instead of silently disappearing.
 
 Values are stripped of newlines and truncated to 100 characters. If the subject ends up empty
 (for example when it only consists of fields that the user left blank) the default

@@ -18,7 +18,7 @@ const sanitizeInjectedValue = (value: string) =>
     .trim()
 
 /**
- * Maps every way a CMS editor can refer to a form field (id, name and title)
+ * Maps every way a CMS editor can refer to a form field (id and name)
  * to the value that the user entered for that field
  */
 const createFieldValueLookup = (
@@ -36,7 +36,7 @@ const createFieldValueLookup = (
 
     const sanitizedValue = sanitizeInjectedValue(value)
 
-    for (const key of [field.id, field.name, field.title]) {
+    for (const key of [field.id, field.name]) {
       const trimmedKey = key?.trim()
       if (trimmedKey) {
         lookup.set(trimmedKey.toLowerCase(), sanitizedValue)
@@ -53,7 +53,7 @@ const createFieldValueLookup = (
  *
  *   "[3xAmPl3Id] - Application received" -> "John Doe - Application received"
  *
- * Fields can be referred to by their id, name or title. Tokens that don't match
+ * Fields can be referred to by their id or name. Tokens that don't match
  * a form field are left untouched so that CMS editors notice their typos.
  */
 export const injectFormFieldValuesIntoEmailSubject = (

@@ -29,17 +29,24 @@ describe('injectFormFieldValuesIntoEmailSubject', () => {
     ).toBe('Reykjavíkurborg - Fyrirspurn')
   })
 
-  it('should allow fields to be referenced by name and title', () => {
+  it('should allow fields to be referenced by name', () => {
     expect(
       injectFormFieldValuesIntoEmailSubject(
-        '[institution] - [Tegund erindis]',
+        '[institution] - Nýtt erindi',
         form,
-        [
-          { id: 'abc123', value: 'Reykjavíkurborg' },
-          { id: 'def456', value: 'Fyrirspurn' },
-        ],
+        [{ id: 'abc123', value: 'Reykjavíkurborg' }],
       ),
-    ).toBe('Reykjavíkurborg - Fyrirspurn')
+    ).toBe('Reykjavíkurborg - Nýtt erindi')
+  })
+
+  it('should not allow fields to be referenced by title', () => {
+    expect(
+      injectFormFieldValuesIntoEmailSubject(
+        '[Nafn stofnunar] - Nýtt erindi',
+        form,
+        [{ id: 'abc123', value: 'Reykjavíkurborg' }],
+      ),
+    ).toBe('[Nafn stofnunar] - Nýtt erindi')
   })
 
   it('should ignore casing and whitespace around the token', () => {
