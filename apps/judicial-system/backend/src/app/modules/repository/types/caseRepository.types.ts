@@ -83,6 +83,20 @@ export const caseInclude: Includeable[] = [
   },
   {
     model: AppealCase,
+    as: 'verdictAppealCase',
+    required: false,
+    include: [
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
     as: 'rulingOrderAppealCases',
     required: false,
     separate: true,

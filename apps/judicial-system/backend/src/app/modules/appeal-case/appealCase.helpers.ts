@@ -33,6 +33,41 @@ export const findAppealCaseOfCaseFile = (
       )
     : theCase.appealCase
 
+// The defendants that currently stand as appellants of a verdict appeal
+// (áfrýjun): those whose most recent appeal event on it is an APPEALED rather
+// than an APPEAL_WITHDRAWN. A defendant who withdraws may appeal again while the
+// deadline still runs, so it is the latest event that decides, not the mere
+// presence of a withdrawal.
+//
+// The event log is the appellant source for out-of-court appeals - a verdict
+// appeal has no appeal_decision rows, since a party that appeals out of court is
+// precisely one that did not appeal in court.
+export const standingVerdictAppellantIds = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+): string[] => {
+  const latestByDefendant = new Map<string, AppealEventLog>()
+
+  for (const eventLog of appealCase.appealEventLogs ?? []) {
+    if (
+      !eventLog.defendantId ||
+      (eventLog.eventType !== AppealEventType.APPEALED &&
+        eventLog.eventType !== AppealEventType.APPEAL_WITHDRAWN)
+    ) {
+      continue
+    }
+
+    const latest = latestByDefendant.get(eventLog.defendantId)
+
+    if (!latest || eventLog.created > latest.created) {
+      latestByDefendant.set(eventLog.defendantId, eventLog)
+    }
+  }
+
+  return Array.from(latestByDefendant)
+    .filter(([, eventLog]) => eventLog.eventType === AppealEventType.APPEALED)
+    .map(([defendantId]) => defendantId)
+}
+
 // Resolves the appeal decision (Ákvörðun um kæru) recorded in court for the
 // party the user acts for - the prosecution, or the specific defendant / civil
 // claimant the defence user is the confirmed representative of. Used to decide

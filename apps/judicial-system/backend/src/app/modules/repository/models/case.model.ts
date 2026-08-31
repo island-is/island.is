@@ -981,6 +981,19 @@ export class Case extends Model {
   appealCase?: AppealCase
 
   /**********
+   * The case's áfrýjun - the appeal of the verdict concluding an indictment
+   * case. Case level like `appealCase`, and told apart from it only by the
+   * appeal type, so that everything built for kæra keeps seeing kæra alone.
+   **********/
+  @HasOne(() => AppealCase, {
+    foreignKey: 'caseId',
+    as: 'verdictAppealCase',
+    scope: { appealType: AppealCaseType.VERDICT },
+  })
+  @ApiPropertyOptional({ type: () => AppealCase })
+  verdictAppealCase?: AppealCase
+
+  /**********
    * Appeals of specific ruling orders (Úrskurður undir rekstri máls) filed
    * against this case. Distinct from the case-level appeal above.
    **********/

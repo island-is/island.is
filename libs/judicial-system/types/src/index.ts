@@ -91,6 +91,7 @@ export {
   CaseFileCategory,
   HashAlgorithm,
   partyAppealFileCategories,
+  verdictAppealDeclarationFileCategories,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
   PoliceFileTypeCode,
