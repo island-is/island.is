@@ -578,9 +578,7 @@ const Overview: FC = () => {
           <Modal
             title="Ákæra hefur verið send í yfirlestur"
             text={`${
-              selectedApproverName ??
-              workingCase.indictmentApprover?.name ??
-              ''
+              selectedApproverName ?? workingCase.indictmentApprover?.name ?? ''
             } fær tilkynningu um að lesa yfir ákæruna.`}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[
