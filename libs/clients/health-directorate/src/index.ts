@@ -46,6 +46,8 @@ export {
   CreateEuPatientConsentDto,
 } from './lib/clients'
 export {
+  AttachmentDownloadResult,
+  CertificateDto,
   CertificateRequestDto,
   CertificateTypeCode,
   ContentSegmentDto,
@@ -57,6 +59,7 @@ export {
   ConversationMessageDto,
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
+  CreateCertificatePaymentIntentDto,
   CreateCertificateRequestBody,
   CreateCertificateRequestDto,
   CreateConversationRequestDto,
@@ -64,6 +67,8 @@ export {
   DispensationHistoryItemDto,
   MessageType,
   MessagingRecipientDto,
+  PaymentIntentDto,
+  PaymentRequiredProblemResponse,
   VideoConversationDto,
   RecipientCreateBlockedReason,
   UserVisibleAppointmentStatuses,
