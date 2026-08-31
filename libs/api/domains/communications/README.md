@@ -11,7 +11,7 @@ Run `yarn test api-domains-communications` to execute the unit tests via [Jest](
 The `emailSubject` field on a `form` entry in Contentful can reference the values that the user
 entered by wrapping a form field reference in square brackets:
 
-```
+```text
 [3xAmPl3F13ldId] - New request
 ```
 
