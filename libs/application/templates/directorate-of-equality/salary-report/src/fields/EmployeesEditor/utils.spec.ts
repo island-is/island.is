@@ -1,6 +1,7 @@
 import {
   formatHourlyWage,
   formatPaidHours,
+  formatWageAmount,
   paidHoursFromFormValue,
   paidHoursToFormValue,
 } from './utils'
@@ -45,5 +46,22 @@ describe('formatters', () => {
 
   it('labels wages per hour so they are not read as monthly figures', () => {
     expect(formatHourlyWage(4884)).toBe('4.884 kr./klst.')
+  })
+})
+
+describe('formatWageAmount', () => {
+  // The bare variant for the table columns that carry the unit in a footnote
+  // instead — the suffix is what pushed those cells onto a second line.
+  it('formats the amount with no unit suffix', () => {
+    expect(formatWageAmount(4884)).toBe('4.884')
+    expect(formatWageAmount(4883.6)).toBe('4.884')
+  })
+
+  // A dash, never "0": `?? 0` would print a wage of nothing as though DMR had
+  // reported it. Zero itself is a real figure and still formats.
+  it('dashes a missing figure but formats a real zero', () => {
+    expect(formatWageAmount(null)).toBe('—')
+    expect(formatWageAmount(undefined)).toBe('—')
+    expect(formatWageAmount(0)).toBe('0')
   })
 })

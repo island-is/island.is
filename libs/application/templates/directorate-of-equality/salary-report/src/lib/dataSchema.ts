@@ -134,6 +134,13 @@ const salaryAnalysis = z
     postponed: z.array(z.string()).optional(),
     outlierGroups: z.array(outlierGroup).optional(),
     hasMinimumSetOutliers: z.boolean().optional(),
+    // Mirrored from the analysis result so the overview screen can read it —
+    // see the comment on BenchmarkVerdict.
+    benchmarkVerdict: z
+      .enum(['within', 'over', 'notComputable', 'unknown'])
+      .optional(),
+    adjustedGapPercent: z.number().optional(),
+    adjustedGapDirection: z.enum(['FEMALE', 'MALE', 'NONE']).optional(),
     outlierPlanReviewed: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {

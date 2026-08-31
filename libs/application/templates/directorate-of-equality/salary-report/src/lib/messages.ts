@@ -1308,41 +1308,13 @@ export const messages = {
         defaultMessage:
           'Launadreifing verður ekki metin því ekki var unnt að reikna væntanlegt tímakaup.',
       },
-      numberHeader: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.numberHeader',
-        defaultMessage: 'Auðkenni',
-      },
-      genderHeader: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.genderHeader',
-        defaultMessage: 'Kyn',
-      },
-      points: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.points',
-        defaultMessage: 'Stig',
-      },
-      salary: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.salary',
-        defaultMessage: 'Tímakaup',
-      },
-      predictedSalary: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.predictedSalary',
-        defaultMessage: 'Væntanlegt tímakaup',
-      },
-      deviationHeader: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.deviationHeader',
-        defaultMessage: 'Launafrávik',
-      },
+      // Every other column of this table reads its header from the
+      // `outlierGroup` namespace, so the two tables cannot be translated apart —
+      // see the note in PayDispersionTable. This is the one column the
+      // úrbótaáætlun table does not have.
       spreadHeader: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.spreadHeader',
         defaultMessage: 'Staðalvik frá línu',
-      },
-      directionBelow: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.directionBelow',
-        defaultMessage: 'undir',
-      },
-      directionAbove: {
-        id: 'doe.sr.application:salaryAnalysis.payDispersion.directionAbove',
-        defaultMessage: 'yfir',
       },
       genderMale: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.genderMale',
@@ -1473,6 +1445,17 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
         defaultMessage: 'Setja í frávikahóp',
       },
+      // Only shown once at least one group exists: the button then opens a
+      // menu of the existing groups plus this entry, instead of silently
+      // always creating a new group.
+      assignToNewGroup: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.assignToNewGroup',
+        defaultMessage: 'Nýr frávikahópur',
+      },
+      assignToGroupMenuLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.assignToGroupMenuLabel',
+        defaultMessage: 'Veldu frávikahóp',
+      },
       // Paging through many pages to select everything is tedious, so this
       // shortcut appears once the table spans more than a handful of pages.
       selectAllOutliersButton: {
@@ -1497,9 +1480,22 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.defaultGroupName',
         defaultMessage: 'Sjálfgefinn hópur {index}',
       },
-      groupMembers: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMembers',
-        defaultMessage: 'Starfsmenn í hóp',
+      // New id rather than new copy on `groupMembers`: a CMS translation keyed
+      // to the old id would win over whatever is written here, and this line
+      // now carries a count instead of the member list — see stigColumn.
+      groupMemberCount: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMemberCount',
+        defaultMessage: 'Fjöldi starfsmanna í hópi',
+      },
+      // New id, not new copy on the retired `groupMembers`: a CMS translation
+      // keyed to the old id would win over what is written here.
+      groupMembersLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMembersLabel',
+        defaultMessage: 'Starfsmenn í hópi',
+      },
+      removeMemberLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeMemberLabel',
+        defaultMessage: 'Taka starfsmann {employee} úr hópnum',
       },
       removeGroupButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupButton',
@@ -1514,6 +1510,18 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.incompleteGroupWarning',
         defaultMessage:
           'Fylla þarf út allar upplýsingar fyrir hvern frávikahóp til að halda áfram.',
+      },
+      // Shown on the review screens in place of the submit button, which
+      // ScreenFooter drops entirely when its action condition is false — with
+      // no explanation of its own.
+      reviewIncompleteTitle: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.reviewIncompleteTitle',
+        defaultMessage: 'Úrbótaáætlun er ekki tilbúin til innsendingar',
+      },
+      reviewIncompleteMessage: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.reviewIncompleteMessage',
+        defaultMessage:
+          'Öll frávik þurfa að tilheyra frávikahópi og fylla þarf út allar upplýsingar fyrir hvern hóp. Farðu aftur á skrefið Úrbótaáætlun til að ljúka við hana.',
       },
     }),
   },
@@ -1552,9 +1560,51 @@ export const messages = {
       id: 'doe.sr.application:overview.contactPerson',
       defaultMessage: 'Tengiliður',
     },
+    salaryAnalysisTitle: {
+      id: 'doe.sr.application:overview.salaryAnalysisTitle',
+      defaultMessage: 'Launagreining',
+    },
+    adjustedGapLabel: {
+      id: 'doe.sr.application:overview.adjustedGapLabel',
+      defaultMessage: 'Leiðréttur launamunur',
+    },
+    // The direction word is selected inside the message rather than composed
+    // from results.directionWomen/Men: an overview `items` callback gets no
+    // formatMessage, so a nested descriptor could not be resolved there.
+    adjustedGapValue: {
+      id: 'doe.sr.application:overview.adjustedGapValue',
+      defaultMessage:
+        '{value}% {direction, select, FEMALE {í óhag kvenna} MALE {í óhag karla} other {enginn munur}}',
+    },
+    improvementPlanNeededLabel: {
+      id: 'doe.sr.application:overview.improvementPlanNeededLabel',
+      defaultMessage: 'Er úrbótaáætlunar þörf?',
+    },
+    withinBenchmarkLabel: {
+      id: 'doe.sr.application:overview.withinBenchmarkLabel',
+      defaultMessage: 'Er launamunur undir viðmiði?',
+    },
+    // Neither Já nor Nei: a single-gender workforce has no measurable gap, and
+    // an absent analysis has no verdict at all — see WageGapState.
+    withinBenchmarkNotComputable: {
+      id: 'doe.sr.application:overview.withinBenchmarkNotComputable',
+      defaultMessage: 'Ekki reiknanlegt',
+    },
+    withinBenchmarkUnknown: {
+      id: 'doe.sr.application:overview.withinBenchmarkUnknown',
+      defaultMessage: 'Liggur ekki fyrir',
+    },
+    outlierPlanTitle: {
+      id: 'doe.sr.application:overview.outlierPlanTitle',
+      defaultMessage: 'Yfirlit úrbótaáætlunar',
+    },
+    postponeLabel: {
+      id: 'doe.sr.application:overview.postponeLabel',
+      defaultMessage: 'Fresta úrbótaáætlun?',
+    },
     submitButton: {
       id: 'doe.sr.application:overview.submitButton',
-      defaultMessage: 'Senda inn umsókn',
+      defaultMessage: 'Senda inn',
     },
   }),
 
@@ -1580,6 +1630,25 @@ export const messages = {
       id: 'doe.sr.application:inReview.expandableDescription#markdown',
       defaultMessage:
         '* Fyrirliggjandi úrbótaáætlun verður yfirfarin af Jafnréttisstofu.\n* Athugasemdir og ábendingar eru sendar í gegnum tölvupóst.\n* Næsta skýrslugjöf fer fram að þrem árum liðnum og þarf þá úrbótaáætlun að vera að fullu framkvæmd.\n* Þú færð áminningu frá okkur þegar sex mánuður eru í næstu skil.\n\nSkýrslugjöfin tryggir upplýstar, gagnsæjar og ábyrgar launaákvarðanir.',
+    },
+    // Used when the analysis listed no outliers, so no úrbótaáætlun was
+    // required — the three strings above all speak of a plan that does not
+    // exist in that case. Deliberately does not claim the gap was within the
+    // benchmark: an empty outlier list does not mean compliance (see
+    // WageGapState), only that there was nothing to explain.
+    alertTitleNoPlan: {
+      id: 'doe.sr.application:inReview.alertTitleNoPlan',
+      defaultMessage:
+        'Jafnréttisstofa hefur móttekið skýrslugjöf um kynbundinn launamun.',
+    },
+    expandableIntroNoPlan: {
+      id: 'doe.sr.application:inReview.expandableIntroNoPlan',
+      defaultMessage: 'Skýrslan verður yfirfarin af Jafnréttisstofu.',
+    },
+    expandableDescriptionNoPlan: {
+      id: 'doe.sr.application:inReview.expandableDescriptionNoPlan#markdown',
+      defaultMessage:
+        '* Ekki var þörf á úrbótaáætlun í þessari skýrslugjöf.\n* Athugasemdir og ábendingar eru sendar í gegnum tölvupóst.\n* Næsta skýrslugjöf fer fram að þrem árum liðnum.\n* Þú færð áminningu frá okkur þegar sex mánuðir eru í næstu skil.\n\nSkýrslugjöfin tryggir upplýstar, gagnsæjar og ábyrgar launaákvarðanir.',
     },
     sentHistoryLog: {
       id: 'doe.sr.application:inReview.sentHistoryLog',
@@ -1664,8 +1733,7 @@ export const messages = {
     },
     introTitle: {
       id: 'doe.sr.application:postponed.introTitle',
-      defaultMessage:
-        'Jafnréttisstofa hefur móttekið skýrslugjöf um kynbundinn launamun.',
+      defaultMessage: 'Takk fyrir innsendinguna',
     },
     introDescription: {
       id: 'doe.sr.application:postponed.introDescription',
@@ -1675,6 +1743,10 @@ export const messages = {
     alertTitle: {
       id: 'doe.sr.application:postponed.alertTitle',
       defaultMessage: 'Úrbótaáætlun frestað',
+    },
+    expandableHeader: {
+      id: 'doe.sr.application:postponed.expandableHeader',
+      defaultMessage: 'Hvað gerist næst?',
     },
     expandableIntro: {
       id: 'doe.sr.application:postponed.expandableIntro',
@@ -1693,14 +1765,6 @@ export const messages = {
     reportSummaryTitle: {
       id: 'doe.sr.application:postponed.reportSummaryTitle',
       defaultMessage: 'Yfirlit innsendrar skýrslu',
-    },
-    sectionTitle: {
-      id: 'doe.sr.application:postponed.sectionTitle',
-      defaultMessage: 'Úrbótaáætlun',
-    },
-    title: {
-      id: 'doe.sr.application:postponed.title',
-      defaultMessage: 'Úrbótaáætlun',
     },
     reviewTitle: {
       id: 'doe.sr.application:postponed.reviewTitle',
