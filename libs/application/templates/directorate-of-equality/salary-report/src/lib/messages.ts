@@ -48,7 +48,7 @@ export const messages = {
   general: defineMessages({
     applicationName: {
       id: 'doe.sr.application:general.applicationName',
-      defaultMessage: 'Skýrslugjöf um kynbundin launamun',
+      defaultMessage: 'Skýrslugjöf um kynbundinn launamun',
     },
     institution: {
       id: 'doe.sr.application:general.institution',

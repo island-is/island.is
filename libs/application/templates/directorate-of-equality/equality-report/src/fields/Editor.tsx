@@ -18,7 +18,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { ApiActions } from '../utils/constants'
-import { escapeHtml } from '../utils/htmlHelpers'
+import { escapeHtml, htmlToPlainText } from '../utils/htmlHelpers'
 import {
   useEnsureEqualityDraft,
   useEqualityContentPush,
@@ -90,8 +90,13 @@ export const Editor = ({
   // passes zod. `selectedFile` covers untouched, in-flight and settled alike.
   const hasSettledFile = selectedFile?.status === FileUploadStatus.done
 
+  // The shell keeps this flag in Screen, which does not remount between
+  // screens and resets only setBeforeSubmitCallback — so without the cleanup a
+  // failed upload followed by "Til baka" leaves Continue dead on the PREVIOUS
+  // screen, with nothing mounted there to clear it.
   useEffect(() => {
     setSubmitButtonDisabled?.(uploadUnresolved)
+    return () => setSubmitButtonDisabled?.(false)
   }, [uploadUnresolved, setSubmitButtonDisabled])
 
   // Kept out of the disabled flag above: a button greyed out on arrival
@@ -162,7 +167,7 @@ export const Editor = ({
       }
 
       // Converts to nothing, so there is nothing to send: same as unsupported.
-      const plainTextLength = html.replace(/<[^>]*>/g, '').trim().length
+      const plainTextLength = htmlToPlainText(html).length
       if (plainTextLength === 0) {
         resetAfterFailure()
         setUploadFailed(true)
