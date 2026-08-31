@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -7,6 +8,7 @@ import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
 import { CustomPageUniqueIdentifier as GraphQLCustomPageUniqueIdentifier } from '@island.is/web/graphql/schema'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   type CustomScreen,
@@ -169,6 +171,12 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
       className={styles.shell}
       style={shellHeight === null ? undefined : { height: `${shellHeight}px` }}
     >
+      {Boolean(customPageData?.configJson?.noIndex) && (
+        <Head>
+          <meta name="robots" content="noindex, nofollow" />
+        </Head>
+      )}
+
       <Box
         className={cn(
           styles.layer,
@@ -212,6 +220,15 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
 }
 
 AskTheBudgetBill.getProps = async ({ customPageData }) => {
+  // The page is live unless it is explicitly turned off, so that a missing
+  // field in the CMS can not take it down
+  if (customPageData?.configJson?.showPage === false) {
+    throw new CustomNextError(
+      404,
+      'Ask the budget bill page has been turned off in the CMS',
+    )
+  }
+
   return {
     languageToggleHrefOverride: {
       is: PATHNAME,
