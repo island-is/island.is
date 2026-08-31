@@ -1,7 +1,8 @@
 import {
   buildAlertMessageField,
-  buildDividerField,
   buildForm,
+  buildMessageWithLinkButtonField,
+  buildMultiField,
   buildOverviewField,
 } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
@@ -9,20 +10,32 @@ import { DirectorateOfLabourLogo } from '@island.is/application/assets/instituti
 import { getOverviewItems } from '../../utils/getOverviewItems'
 
 export const RejectedForm = buildForm({
-  id: 'RejctedForm',
+  id: 'RejectedForm',
   mode: FormModes.DRAFT,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
   logo: DirectorateOfLabourLogo,
+  title: 'Umsókn um U2 vottorð vegna atvinnuleitar í EES-landi',
   children: [
-    buildAlertMessageField({
-      id: 'rejectedAlertField',
-      alertType: 'info',
-    }),
-    buildDividerField({}),
-    buildOverviewField({
-      id: 'rejectedOverview',
-      items: getOverviewItems,
+    buildMultiField({
+      id: 'revokedMultiField',
+      title: 'Umsóknin þín',
+      children: [
+        buildAlertMessageField({
+          id: 'rejectedAlertField',
+          alertType: 'error',
+          title: 'Umsókn þín um U2 vottorð hefur því miður verið hafnað',
+        }),
+        buildOverviewField({
+          id: 'rejectedOverview',
+          items: getOverviewItems,
+        }),
+        buildMessageWithLinkButtonField({
+          id: 'rejectBackToApplication',
+          url: '/umsoknir/u2-vottord',
+          buttonTitle: 'Opna umsókn',
+          message:
+            'Þú getur lagt inn nýja umsókn um U2 vottorð ef aðstæður þínar hafa breyst.',
+        }),
+      ],
     }),
   ],
 })

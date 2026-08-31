@@ -1,32 +1,43 @@
 import {
   buildAlertMessageField,
-  buildDividerField,
   buildForm,
+  buildMessageWithLinkButtonField,
   buildMultiField,
   buildOverviewField,
 } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { getOverviewItems } from '../../utils/getOverviewItems'
+import {
+  applicationMessages,
+  revokedForm as rfm,
+  sharedMessages,
+} from '../../lib/messages'
 
 export const RevokedForm = buildForm({
   id: 'RevokedForm',
   mode: FormModes.DRAFT,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
   logo: DirectorateOfLabourLogo,
+  title: applicationMessages.name,
   children: [
     buildMultiField({
       id: 'revokedMultiField',
-      title: 'Umsóknin þín',
+      title: sharedMessages.yourApplicationTitle,
       children: [
         buildAlertMessageField({
-          id: '',
+          id: 'reviewAlertField',
+          alertType: 'error',
+          title: rfm.general.alertTitle,
         }),
-        buildDividerField({}),
         buildOverviewField({
           id: 'revokedOverview',
           items: getOverviewItems,
+        }),
+        buildMessageWithLinkButtonField({
+          id: 'rejectBackToApplication',
+          url: '/umsoknir/u2-vottord',
+          buttonTitle: rfm.general.newApplicationButton,
+          message: rfm.general.newApplicationMessage,
         }),
       ],
     }),

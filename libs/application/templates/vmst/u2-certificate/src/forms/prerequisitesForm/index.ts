@@ -1,9 +1,7 @@
 import {
-  buildAlertMessageField,
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildMultiField,
   buildSection,
   buildSubmitField,
   coreMessages,
@@ -31,8 +29,6 @@ export const Prerequisites = buildForm({
           id: 'approveExternalData',
           title: m.general.externalDataTitle,
           checkboxLabel: m.general.checkbox,
-          //subTitle: m.general.alertTitle,
-          // subDescription: m.general.alertMessage,
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryV3UserApi,

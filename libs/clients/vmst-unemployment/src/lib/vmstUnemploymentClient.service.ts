@@ -37,14 +37,25 @@ import {
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
+<<<<<<< HEAD
+=======
+  U2CertificateApi,
+  GaldurExternalDomainModelsSupportDataNationalityDTO,
+  GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
+  GaldurXRoadAPIModelsApplicantU2EligibilityResponse,
+  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
+>>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
   JobSearchConfirmationApi,
   GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
   ApplicantWithdrawLatestApplicationRequest,
   GaldurExternalDomainRequestsHasValidApplicationResponse,
+<<<<<<< HEAD
   U2CertificateApi,
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
   GaldurExternalDomainModelsSupportDataNationalityDTO,
   GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
+=======
+>>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -67,8 +78,13 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+<<<<<<< HEAD
   | JobSearchConfirmationApi
   | U2CertificateApi
+=======
+  | U2CertificateApi
+  | JobSearchConfirmationApi
+>>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -711,9 +727,13 @@ export class VmstUnemploymentClientService {
     return await api.jobSearchConfirmationGetQuestionaireSchema()
   }
 
+<<<<<<< HEAD
   async revokeU2Application(
     auth: User,
   ): Promise<GaldurDomainModelsBaseViewModel> {
+=======
+  async revokeU2Application(auth: User): Promise<void> {
+>>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
     const { applicantId } = await this.resolveApplicant(auth)
 
     if (!applicantId) {
@@ -724,8 +744,12 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
 
+<<<<<<< HEAD
     return await api.u2CertificateWithdrawU2Certificate({
       applicantId,
     })
+=======
+    return
+>>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
   }
 }

@@ -8,15 +8,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { mainForm as m } from '../../lib/messages'
-
-interface Country {
-  id: string
-  abbr: string
-  name: string
-  otherId: number
-  orderNumber: number
-  isInTheEUAndOrEEA: boolean
-}
+import { Country } from '../../utils/types'
 
 export const countryAndDateSection = buildSection({
   id: 'countryAndDateSection',

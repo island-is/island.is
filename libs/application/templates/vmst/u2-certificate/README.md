@@ -1,8 +1,13 @@
-# u2-certificate
+# U2 CERTIFICATE APPLICATION
 
-This template for an application was generated with the `nx generate-template u2-certificate` command.
+## About
 
-Write documentation here.
+Application for a U2 certificate issued by Vinnumálastofnun (VMST / The
+Directorate of Labour). A U2 certificate lets an unemployed applicant transfer
+their Icelandic unemployment benefits while looking for work in another
+EES country. A certificate is valid for three months and applicants can
+submit an application up to four weeks — but no later than seven days —
+before their departure from Iceland.
 
 The application is only available to users who already have an active
 unemployment application with VMST; eligibility is validated in the
