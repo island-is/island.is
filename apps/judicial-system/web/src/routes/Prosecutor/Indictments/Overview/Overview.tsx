@@ -434,7 +434,14 @@ const Overview: FC = () => {
                       name="wantsReview"
                       label="Senda í yfirlestur"
                       checked={wantsReview}
-                      onChange={(event) => setWantsReview(event.target.checked)}
+                      onChange={(event) => {
+                        const checked = event.target.checked
+                        setWantsReview(checked)
+                        if (!checked) {
+                          setSelectedApproverId(undefined)
+                          setSelectedApproverName(undefined)
+                        }
+                      }}
                       large
                       filled
                       backgroundColor="white"
