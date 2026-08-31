@@ -656,6 +656,19 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             action: g.action ?? '',
             signatureName: g.signatureName ?? '',
             signatureRole: g.signatureRole ?? '',
+            // Answered as `yyyy-MM-dd`; EditOutlierGroupDto types it `Date`,
+            // which is what clientConfig's `format: date` generates, so it is
+            // converted rather than passed through. A `yyyy-MM-dd` string parses
+            // as UTC midnight, so no local zone can shift the date on the way
+            // out.
+            //
+            // A blank yields an Invalid Date, which `JSON.stringify` writes as
+            // `null` — and the field is required, so DMR answers 400. That is
+            // the intent: the review screen's submit is gated on
+            // isOutlierGroupSubmittable, which requires this too, so a blank
+            // here is a group that should never have reached submission, and
+            // saying so beats inventing a date the applicant never committed to.
+            remedyDate: new Date(g.remedyDate ?? ''),
             employeeOrdinals: g.employeeOrdinals,
           }))
 
