@@ -9,6 +9,12 @@ import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/te
 
 import DefenderVerdictTimelineCard from './DefenderVerdictTimelineCard'
 
+/**
+ * Which bullets a verdict comes to is covered directly in
+ * DefenderVerdictTimelineCard.logic.spec.ts. What is left for the rendered card
+ * is that they reach the page, that the tone survives, and that nothing the
+ * public prosecution office keeps to itself appears.
+ */
 describe('DefenderVerdictTimelineCard', () => {
   const name = 'Jón Sigurður Jónsson'
 
@@ -38,7 +44,7 @@ describe('DefenderVerdictTimelineCard', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('shows the service date and the stance the defendant took', async () => {
+  it('renders the heading, the defendant and the bullets', async () => {
     renderComponent(servedDefendant)
 
     expect(await screen.findByText('Birting dóms')).toBeInTheDocument()
@@ -49,29 +55,7 @@ describe('DefenderVerdictTimelineCard', () => {
     ).toBeInTheDocument()
   })
 
-  it('shows that the verdict has to be served while service is pending', async () => {
-    renderComponent({
-      ...servedDefendant,
-      verdict: { serviceRequirement: ServiceRequirement.REQUIRED },
-    } as Defendant)
-
-    expect(
-      await screen.findByText('• Birta skal dómfellda dóminn'),
-    ).toBeInTheDocument()
-  })
-
-  it('shows that the defendant was present when no service was needed', async () => {
-    renderComponent({
-      ...servedDefendant,
-      verdict: { serviceRequirement: ServiceRequirement.NOT_APPLICABLE },
-    } as Defendant)
-
-    expect(
-      await screen.findByText('• Dómfelldi var viðstaddur dómsuppkvaðningu'),
-    ).toBeInTheDocument()
-  })
-
-  it('replaces the stance with the appeal once the verdict has been appealed', async () => {
+  it('renders the appeal in a tone of its own', async () => {
     renderComponent({
       ...servedDefendant,
       verdict: {
@@ -84,12 +68,8 @@ describe('DefenderVerdictTimelineCard', () => {
       '• Dómfelldi áfrýjaði 04.06.2026',
     )
 
-    expect(appealItem).toBeInTheDocument()
     // The appeal stands out from the rest of the timeline, see the design
     expect(appealItem.className).toMatch(/red600/)
-    expect(
-      screen.queryByText('• Dómfelldi tekur áfrýjunarfrest'),
-    ).not.toBeInTheDocument()
   })
 
   // The appeal deadline is already on InfoCardClosedIndictment for defence
