@@ -7,7 +7,6 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  IdentityApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -21,6 +20,7 @@ import {
   GetDraftCriteriaTreeApi,
   GetDraftHeaderApi,
   GetReportCommentsApi,
+  IdentityApiProvider,
   ImportPresignApi,
   ImportSalaryDraftWorkbookApi,
   ListDraftCriteriaApi,
@@ -69,6 +69,7 @@ const template: ApplicationTemplate<
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
+  newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   stateMachineOptions: {
     actions: {
       assignToInstitution: assign((context) => {
@@ -103,7 +104,7 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                IdentityApi,
+                IdentityApiProvider,
                 CompanyRegistryApi,
                 DoeCompanyApi,
                 SubCriterionCatalogApi,
@@ -118,7 +119,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // This is the role every unauthorized caller falls through to, so
+              // it gets nothing: the dead-end form reads no answers and no
+              // externalData, only `application.applicant`.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },
@@ -146,7 +152,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // Same dead-end form as the PREREQUISITES fall-through above, and
+              // it reads nothing either — this applicant is authorized, just
+              // ineligible.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },
@@ -223,13 +234,68 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: [
             {
-              target: States.POSTPONED,
+              target: States.POSTPONE_RECEIVED,
               cond: hasPostponedOutlierPlan,
             },
             {
               target: States.IN_REVIEW,
             },
           ],
+        },
+      },
+      // Deliberately indistinguishable from POSTPONED on the outside: same tag,
+      // same pending action, same lifecycle. Which of the two the application
+      // sits in is bookkeeping about whether the applicant has closed the
+      // receipt, and Mínar síður should read the same either way.
+      [States.POSTPONE_RECEIVED]: {
+        meta: {
+          name: 'Sending móttekin',
+          progress: 0.9,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: pruneAfterDays(90),
+          actionCard: {
+            tag: {
+              label: messages.postponed.tagLabel,
+              variant: 'blueberry',
+            },
+            pendingAction: {
+              title: messages.postponed.pendingActionTitle,
+              content: messages.postponed.pendingActionContent,
+              button: messages.postponed.pendingActionButton,
+              displayStatus: 'info',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/postponeReceivedForm').then((module) =>
+                  Promise.resolve(module.postponeReceivedForm),
+                ),
+              read: 'all',
+              // Nothing on this screen writes an answer — the closer dispatches
+              // an event. An empty array rather than an absent `write` all the
+              // same, so the shell's answers submission is never rejected
+              // outright (see the identical note on States.IN_REVIEW).
+              write: { answers: [] },
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+        on: {
+          // Dispatched by PostponeReceiptCloser as the applicant leaves, not by
+          // a button. No history log: the applicant did nothing worth logging,
+          // the submission itself was already logged on the way out of DRAFT.
+          [DefaultEvents.SUBMIT]: {
+            target: States.POSTPONED,
+          },
         },
       },
       [States.POSTPONED]: {
@@ -245,6 +311,13 @@ const template: ApplicationTemplate<
           onExit: EditOutliersApi,
           // So the comment thread's non-empty check has fresh externalData —
           // see the identical comment on States.DRAFT.
+          //
+          // This state in particular depends on the provider's
+          // `throwOnError: false`: it is entered by PostponeReceiptCloser's
+          // beacon with nobody watching, and an onEntry runs before the new
+          // state is persisted and blocks it by default — so a hiccup from
+          // DMR's comments endpoint would silently leave the applicant on the
+          // receipt. CommentThread refetches on mount anyway.
           onEntry: GetReportCommentsApi,
           actionCard: {
             tag: {
