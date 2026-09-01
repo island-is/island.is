@@ -43,6 +43,7 @@ export const cultureSubSection = buildSubSection({
           title: memmMessages.culture.languageUsageLabel,
           placeholder: memmMessages.culture.languageUsagePlaceholder,
           doesNotRequireAnswer: true,
+          clearOnChange: ['memm.culture.languages', 'memm.culture.preferredLanguage'],
           options: [
             {
               value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
@@ -74,14 +75,20 @@ export const cultureSubSection = buildSubSection({
           isMulti: true,
           clearOnChange: ['memm.culture.preferredLanguage'],
           options: ({ answers }) => {
-            const selected =
-              getApplicationAnswers(answers).memmCultureLanguages ?? []
+            const { memmCultureLanguages, memmCultureLanguageUsage } =
+              getApplicationAnswers(answers)
+            const selected = memmCultureLanguages ?? []
             const atMax = selected.length >= 4
-            return getAllLanguageCodes().map((l) => ({
-              value: l.code,
-              label: l.name,
-              disabled: atMax && !selected.includes(l.code),
-            }))
+            const isOnlyOther =
+              memmCultureLanguageUsage ===
+              LanguageEnvironmentOptions.ONLY_OTHER
+            return getAllLanguageCodes()
+              .filter((l) => !isOnlyOther || l.code !== 'is')
+              .map((l) => ({
+                value: l.code,
+                label: l.name,
+                disabled: atMax && !selected.includes(l.code),
+              }))
           },
           condition: showLanguageSection,
         }),
