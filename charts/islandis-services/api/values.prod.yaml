@@ -250,7 +250,7 @@ lifecycle:
         - '/bin/sh'
         - '-c'
         - 'sleep 10'
-minReadySeconds: 10
+minReadySeconds: 0
 namespace: 'islandis'
 podDisruptionBudget:
   minAvailable: '50%'
