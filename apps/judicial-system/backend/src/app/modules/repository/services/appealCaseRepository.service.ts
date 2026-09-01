@@ -17,6 +17,12 @@ interface FindByIdOptions {
   include?: FindOptions['include']
 }
 
+interface FindAllOptions {
+  where?: FindOptions['where']
+  order?: FindOptions['order']
+  transaction?: Transaction
+}
+
 interface CreateAppealCaseOptions {
   transaction: Transaction
 }
@@ -61,6 +67,36 @@ export class AppealCaseRepositoryService {
       return result
     } catch (error) {
       this.logger.error(`Error finding appeal case ${id}:`, { error })
+
+      throw error
+    }
+  }
+
+  async findAll(options?: FindAllOptions): Promise<AppealCase[]> {
+    try {
+      this.logger.debug('Finding appeal cases')
+
+      const findOptions: FindOptions = {}
+
+      if (options?.where) {
+        findOptions.where = options.where
+      }
+
+      if (options?.order) {
+        findOptions.order = options.order
+      }
+
+      if (options?.transaction) {
+        findOptions.transaction = options.transaction
+      }
+
+      const result = await this.appealCaseModel.findAll(findOptions)
+
+      this.logger.debug(`Found ${result.length} appeal cases`)
+
+      return result
+    } catch (error) {
+      this.logger.error('Error finding appeal cases:', { error })
 
       throw error
     }

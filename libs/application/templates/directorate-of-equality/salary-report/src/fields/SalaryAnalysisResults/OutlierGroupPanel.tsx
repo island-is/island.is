@@ -25,7 +25,6 @@ type Props = {
   // the persistence-mode signal for OutlierEditor's `mode` prop.
   hidePostponeCheckbox?: boolean
   errors?: RecordObject
-  roleTitleForOrdinal: (ordinal: number) => string | undefined
   // Draft phase only: local form scope for outlierGroups (not answers-backed pre-submit); the postponed checkbox stays on the ambient form regardless.
   outlierGroupsFormMethods?: UseFormReturn<{
     salaryAnalysis: { outlierGroups: OutlierGroupAnswer[] }
@@ -36,7 +35,6 @@ export const OutlierGroupPanel: FC<Props> = ({
   outliers,
   hidePostponeCheckbox,
   errors,
-  roleTitleForOrdinal,
   outlierGroupsFormMethods,
 }) => {
   const { formatMessage } = useLocale()
@@ -88,7 +86,6 @@ export const OutlierGroupPanel: FC<Props> = ({
               outliers={outliers}
               errors={errors}
               mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-              roleTitleForOrdinal={roleTitleForOrdinal}
             />
           </FormProvider>
         ) : (
@@ -96,7 +93,6 @@ export const OutlierGroupPanel: FC<Props> = ({
             outliers={outliers}
             errors={errors}
             mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-            roleTitleForOrdinal={roleTitleForOrdinal}
           />
         ))}
     </Box>

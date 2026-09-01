@@ -601,6 +601,7 @@ export interface UpdateCase
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
+    | 'isArraignmentSummonsSkipped'
     | 'hasCivilClaims'
     | 'isArchived'
   > {

@@ -154,6 +154,26 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Referrals"]
@@ -219,6 +239,26 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -384,7 +424,37 @@
               }
             }
           },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -468,6 +538,26 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -716,6 +806,26 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Prescriptions"]
@@ -769,6 +879,26 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -1484,6 +1614,16 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Questionnaire"]
@@ -1566,7 +1706,37 @@
               }
             }
           },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -2076,7 +2246,37 @@
               }
             }
           },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -2516,6 +2716,26 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Conversations"]
@@ -2661,6 +2881,16 @@
               }
             }
           },
+          "402": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequiredProblemResponse"
+                }
+              }
+            }
+          },
           "403": {
             "description": "",
             "content": {
@@ -2682,6 +2912,16 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
             "description": "",
             "content": {
               "application/json": {
@@ -2783,6 +3023,26 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -3234,90 +3494,29 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["MessagingRecipients"]
-      }
-    },
-    "/v1/me/payments/{id}": {
-      "get": {
-        "description": "Fetch a payment intent the patient owns. FE polls this after browser-return from the payment page until status becomes SUCCEEDED.",
-        "operationId": "MePaymentController_getById_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "Payment id",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaymentDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Payments"]
       }
     },
     "/v1/me/certificates": {
@@ -3387,6 +3586,26 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -3495,6 +3714,15 @@
               "format": "uuid",
               "type": "string"
             }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Language of the payment page the patient is sent to. Defaults to 'is'.",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
           }
         ],
         "requestBody": {
@@ -3584,7 +3812,7 @@
     },
     "/v1/me/certificates/{id}/pdf": {
       "get": {
-        "description": "Stream the certificate PDF. Returns 402 with `{ resourceType, resourceId }` when the cert is gated behind an unpaid payment.",
+        "description": "Stream the certificate PDF.",
         "operationId": "MeCertificateController_getCertificatePdf_v1",
         "parameters": [
           {
@@ -3622,6 +3850,16 @@
               }
             }
           },
+          "402": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequiredProblemResponse"
+                }
+              }
+            }
+          },
           "403": {
             "description": "",
             "content": {
@@ -3643,6 +3881,16 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
             "description": "",
             "content": {
               "application/json": {
@@ -3711,6 +3959,26 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Pregnancies"]
@@ -3763,6 +4031,26 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -3826,6 +4114,26 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -3918,6 +4226,26 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Pregnancies"]
@@ -3994,6 +4322,26 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -4107,6 +4455,26 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Pregnancies"]
@@ -4183,6 +4551,26 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
             "description": "",
             "content": {
               "application/json": {
@@ -4275,6 +4663,26 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Pregnancies"]
@@ -4359,6 +4767,26 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Pregnancies"]
@@ -4366,7 +4794,7 @@
     },
     "/v1/me/attachments": {
       "post": {
-        "description": "Upload an attachment ahead of sending a message or submitting a questionnaire. The binary is stored in the object bucket (staged) and the returned id is referenced when committing the attachment.",
+        "description": "Upload an attachment ahead of sending a message. The binary is stored in the object bucket (staged) and the returned id is referenced when committing the attachment.",
         "operationId": "MeAttachmentController_upload_v1",
         "parameters": [],
         "requestBody": {
@@ -4450,6 +4878,16 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Attachments"]
@@ -4516,6 +4954,16 @@
             }
           },
           "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
             "description": "",
             "content": {
               "application/json": {
@@ -4606,9 +5054,399 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": ["Attachments"]
+      }
+    },
+    "/v1/me/treatments": {
+      "get": {
+        "description": "Get the treatments (care-team groups) the user is currently enrolled in. Fetched live from the provider and stored nowhere. Returns an empty array when the user is enrolled in none.",
+        "operationId": "MeTreatmentController_getTreatments_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentBaseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Treatments"]
+      }
+    },
+    "/v1/me/treatments/{id}": {
+      "get": {
+        "description": "Get one treatment the user is enrolled in, with the most recent conversations and the date of the newest questionnaire. Unlike the collection routes below it, this one 404s for a treatment the user is not enrolled in, because it renders the provider payload itself.",
+        "operationId": "MeTreatmentController_getTreatment_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The treatment (care-team group) id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Treatments"]
+      }
+    },
+    "/v1/me/treatments/{id}/conversations": {
+      "get": {
+        "description": "The conversations belonging to this treatment. Returns the same shape as GET /me/conversations, so a client can reuse its existing model. Unbounded, like the main inbox. Returns 200 with an empty array — never 404 — for a treatment the user is not enrolled in, because the id is used only as a filter and is not checked against the provider. Key \"no longer enrolled\" off GET /me/treatments instead.",
+        "operationId": "MeTreatmentController_getTreatmentConversations_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The treatment (care-team group) id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by patient-side status. 'active' (default) excludes archived/deleted. 'archived' returns only archived. 'all' returns both active and archived (deleted is always excluded).",
+            "schema": {
+              "$ref": "#/components/schemas/ConversationStatusFilter"
+            }
+          },
+          {
+            "name": "starred",
+            "required": false,
+            "in": "query",
+            "description": "Filter by starred flag.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConversationBaseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Treatments"]
+      }
+    },
+    "/v1/me/treatments/{id}/questionnaires": {
+      "get": {
+        "description": "The questionnaires belonging to this treatment. Returns the same shape as GET /me/questionnaires. Unbounded, and 200 with an empty array — never 404 — for a treatment the user is not enrolled in, for the same reason as the conversations route.",
+        "operationId": "MeTreatmentController_getTreatmentQuestionnaires_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The treatment (care-team group) id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireBaseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Treatments"]
+      }
+    },
+    "/v1/me/treatments/{id}/documents": {
+      "get": {
+        "description": "The educational documents belonging to this treatment, newest first. Each row carries `links`, which are external https URLs the client opens directly — nothing is downloaded from this API, so there is no companion download route. `links` always holds at least one entry: a document with no usable link is not returned at all. `label` is provider-supplied text and is not HTML-escaped, so render it as text. Unbounded, and 200 with an empty array — never 404 — for a treatment the user is not enrolled in, for the same reason as the two routes above.",
+        "operationId": "MeTreatmentController_getTreatmentDocuments_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The treatment (care-team group) id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreatmentDocumentDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Treatments"]
       }
     }
   },
@@ -4670,12 +5508,31 @@
         },
         "required": ["id"]
       },
+      "HttpProblemType": {
+        "type": "string",
+        "enum": [
+          "https://httpstatuses.org/400",
+          "https://httpstatuses.org/401",
+          "https://httpstatuses.org/402",
+          "https://httpstatuses.org/403",
+          "https://httpstatuses.org/404",
+          "https://httpstatuses.org/409",
+          "https://httpstatuses.org/500",
+          "https://httpstatuses.org/502",
+          "https://httpstatuses.org/504"
+        ],
+        "description": "A URI reference that identifies the problem type"
+      },
       "HttpProblemResponse": {
         "type": "object",
         "properties": {
           "type": {
-            "type": "object",
-            "description": "A URI reference that identifies the problem type"
+            "description": "A URI reference that identifies the problem type",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HttpProblemType"
+              }
+            ]
           },
           "title": {
             "type": "string",
@@ -4692,6 +5549,18 @@
           "instance": {
             "type": "string",
             "description": "A URI reference that identifies the specific occurrence of the problem."
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Why a 409 was refused, so the client can tell the reasons apart rather than showing one generic message. Values come from the refusing endpoint: AppointmentCancellationBlockedReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Absent on every other status."
+          },
+          "resourceType": {
+            "type": "string",
+            "description": "What a 402 wants paid for, so the client can open a payment intent for it. Values come from PaymentResourceType. Absent on every other status."
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "The id of the resource a 402 wants paid for. Absent on every other status."
           }
         },
         "required": ["type", "title"]
@@ -7833,7 +8702,7 @@
           "certificateId": {
             "type": "string",
             "format": "uuid",
-            "description": "Set when this message has an issued certificate attached."
+            "description": "Set when this message has an issued certificate attached. `requiresPayment && !paid && !certificateId` means the certificate is payable in principle but not yet actionable — it has not materialised, or its issuing HCP cannot be resolved. Render no pay affordance in that case: there is nothing to open a payment intent against."
           },
           "requiresPayment": {
             "type": "boolean",
@@ -7846,6 +8715,11 @@
           "amountIsk": {
             "type": "number",
             "description": "Price the patient would be charged, in ISK. Populated only when `requiresPayment` is true."
+          },
+          "pendingPaymentId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "A payment the patient has already started for this certificate and which has not yet expired. Render \"greiðsla í vinnslu\" and poll `GET /v1/me/certificates/{certificateId}` rather than sending them back to the gateway — they may have paid in a tab we cannot see. **A UI hint only:** access is decided by `paid` and nothing else, and this field must never be used to serve a gated resource."
           },
           "attachments": {
             "type": "array",
@@ -7946,6 +8820,50 @@
           "unread",
           "messages"
         ]
+      },
+      "PaymentRequiredProblemResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "A URI reference that identifies the problem type",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HttpProblemType"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Why a 409 was refused, so the client can tell the reasons apart rather than showing one generic message. Values come from the refusing endpoint: AppointmentCancellationBlockedReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Absent on every other status."
+          },
+          "resourceType": {
+            "type": "string",
+            "description": "The kind of resource that requires payment. Today always CERTIFICATE.",
+            "example": "CERTIFICATE"
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "Id of the resource to open a payment intent against — for a certificate, the value POST /v1/me/certificates/{id}/payment-intent expects. Absent in the default-deny case, where the download is refused because the certificate has not materialised or its issuing HCP cannot be resolved: payment is required in principle but there is nothing to pay for yet, so the caller must not offer a pay affordance.",
+            "format": "uuid"
+          }
+        },
+        "required": ["type", "title"]
       },
       "StagedAttachmentRefDto": {
         "type": "object",
@@ -8163,35 +9081,6 @@
           "canRequestCertificate"
         ]
       },
-      "PaymentDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["PENDING", "SUCCEEDED"]
-          },
-          "resourceType": {
-            "type": "string",
-            "enum": ["CERTIFICATE"]
-          },
-          "resourceId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "amountIsk": {
-            "type": "number"
-          },
-          "paidAt": {
-            "format": "date-time",
-            "type": "string"
-          }
-        },
-        "required": ["id", "status", "resourceType", "resourceId", "amountIsk"]
-      },
       "CertificateTypeCode": {
         "type": "string",
         "enum": ["WORK", "SCHOOL"],
@@ -8351,7 +9240,11 @@
         "properties": {
           "returnUrl": {
             "type": "string",
-            "description": "FE-owned URL the gateway redirects the patient's browser to after a successful charge. Forwarded to the gateway as PaymentSuccessfulURL."
+            "description": "FE-owned URL the gateway redirects the patient's browser to after a successful charge. Forwarded to the gateway as PaymentSuccessfulURL. The host must appear in PAYMENT_RETURN_URL_ALLOWED_HOSTS; anything else is rejected with a 400."
+          },
+          "cancelUrl": {
+            "type": "string",
+            "description": "FE-owned URL the gateway returns the patient's browser to if they abandon the payment, forwarded as PaymentCancelledURL. Also used when the gateway session times out. Defaults to returnUrl when omitted, and its host is allowlisted the same way."
           }
         },
         "required": ["returnUrl"]
@@ -8958,6 +9851,167 @@
           }
         },
         "required": ["id", "fileName", "contentType"]
+      },
+      "AllowedInteraction": {
+        "type": "string",
+        "enum": ["messaging", "prescription", "both"],
+        "description": "What the patient may do within this treatment. **Do not offer messaging unless this field is present and permits it.** It is omitted when the provider sends an interaction code this service does not map, and messaging is withheld — the field omitted, or narrowed from \"both\" to \"prescription\" — when the treatment cannot be addressed, which the client has no other way to detect."
+      },
+      "TreatmentBaseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The care-team group id. This is the join key used to scope the treatment's conversations and questionnaires."
+          },
+          "name": {
+            "type": "string",
+            "description": "The treatment name as the healthcare provider wrote it. Free text, single-language, and not translatable. Always present: a treatment the provider sent without a name is omitted from the list rather than returned unlabelled."
+          },
+          "responsibleNode": {
+            "type": "string",
+            "description": "The Hekla node of the provider responsible for the treatment. Optional because the provider may send the element empty or omit it; when it is absent the organisation fields below cannot be resolved either, and allowedInteractions will not offer messaging."
+          },
+          "allowedInteractions": {
+            "description": "What the patient may do within this treatment. **Do not offer messaging unless this field is present and permits it.** It is omitted when the provider sends an interaction code this service does not map, and messaging is withheld — the field omitted, or narrowed from \"both\" to \"prescription\" — when the treatment cannot be addressed, which the client has no other way to detect.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AllowedInteraction"
+              }
+            ]
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "The organisation responsible for the treatment. Resolved from the provider node and group, and omitted when the node is not mapped. Single-language."
+          },
+          "departmentName": {
+            "type": "string",
+            "description": "The department within the responsible organisation, when the group resolves to one."
+          },
+          "organizationNationalId": {
+            "type": "string",
+            "description": "National id of the responsible organisation."
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "TreatmentConversationSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "description": "Conversation title. Nullable in storage, so may be absent."
+          },
+          "lastMessageSentAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the most recent message in the conversation was sent. Absent for a conversation that has no messages yet."
+          },
+          "senderName": {
+            "type": "string",
+            "description": "The group that last wrote to the patient. Absent until a clinician has written — a patient reply does not clear it."
+          }
+        },
+        "required": ["id"]
+      },
+      "TreatmentDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The care-team group id. This is the join key used to scope the treatment's conversations and questionnaires."
+          },
+          "name": {
+            "type": "string",
+            "description": "The treatment name as the healthcare provider wrote it. Free text, single-language, and not translatable. Always present: a treatment the provider sent without a name is omitted from the list rather than returned unlabelled."
+          },
+          "responsibleNode": {
+            "type": "string",
+            "description": "The Hekla node of the provider responsible for the treatment. Optional because the provider may send the element empty or omit it; when it is absent the organisation fields below cannot be resolved either, and allowedInteractions will not offer messaging."
+          },
+          "allowedInteractions": {
+            "description": "What the patient may do within this treatment. **Do not offer messaging unless this field is present and permits it.** It is omitted when the provider sends an interaction code this service does not map, and messaging is withheld — the field omitted, or narrowed from \"both\" to \"prescription\" — when the treatment cannot be addressed, which the client has no other way to detect.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AllowedInteraction"
+              }
+            ]
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "The organisation responsible for the treatment. Resolved from the provider node and group, and omitted when the node is not mapped. Single-language."
+          },
+          "departmentName": {
+            "type": "string",
+            "description": "The department within the responsible organisation, when the group resolves to one."
+          },
+          "organizationNationalId": {
+            "type": "string",
+            "description": "National id of the responsible organisation."
+          },
+          "recentConversations": {
+            "description": "The most recent conversations in this treatment, newest first. Capped server-side; the full list is at GET /me/treatments/{id}/conversations.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TreatmentConversationSummaryDto"
+            }
+          },
+          "lastQuestionnaireSentAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the newest questionnaire in this treatment was sent. Absent when the treatment has none. Not on the same clock as a conversation date: questionnaires are stamped server-local, messaging in UTC."
+          },
+          "lastDocumentSentAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the newest educational document in this treatment was sent. Absent when the treatment has none. Counts only documents the patient can actually open, so it never reports a date for material missing from GET /me/treatments/{id}/documents."
+          }
+        },
+        "required": ["id", "name", "recentConversations"]
+      },
+      "TreatmentDocumentLinkDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Anchor text — the document name, and usually the only human-readable label there is, since `title` is nullable. Provider-supplied text, emitted raw: render it as text, never through `innerHTML`."
+          },
+          "href": {
+            "type": "string",
+            "description": "Sanitized, normalized external https url. The client opens it directly; nothing is downloaded from this API."
+          }
+        },
+        "required": ["label", "href"]
+      },
+      "TreatmentDocumentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The message id. For keying a list — there is no route that takes it."
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the conversation carrying the document. Nullable in storage, so the client labels an untitled document itself."
+          },
+          "messageSentAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "links": {
+            "description": "Never empty — see the class description.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TreatmentDocumentLinkDto"
+            }
+          }
+        },
+        "required": ["id", "messageSentAt", "links"]
       }
     }
   }

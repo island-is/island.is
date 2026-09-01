@@ -1,0 +1,7 @@
+mutation PronounceRulingOrally($input: PronounceRulingOrallyInput!) {
+  pronounceRulingOrally(input: $input) {
+    id
+    rulingType
+    rulingFileId
+  }
+}

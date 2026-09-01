@@ -338,6 +338,7 @@ export class FormsService {
 
     const originalHasPayment = form.hasPayment
     const originalHasSummary = form.hasSummaryScreen
+    const originalUseValidate = form.useValidate
 
     Object.assign(form, updateFormDto)
 
@@ -360,7 +361,30 @@ export class FormsService {
     const response = new UpdateFormResponse()
 
     try {
-      await form.save()
+      await this.sequelize.transaction(async (transaction) => {
+        await form.save({ transaction })
+
+        if (
+          originalUseValidate === true &&
+          updateFormDto.useValidate === false
+        ) {
+          const sections = await this.sectionModel.findAll({
+            attributes: ['id'],
+            where: { formId: id },
+            transaction,
+          })
+
+          await this.screenModel.update(
+            { shouldValidate: false },
+            {
+              where: {
+                sectionId: { [Op.in]: sections.map((section) => section.id) },
+              },
+              transaction,
+            },
+          )
+        }
+      })
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
         const slug = updateFormDto.slug

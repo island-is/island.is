@@ -23,7 +23,6 @@ export const contactPersonSubSection = buildSubSection({
           title: messages.aboutTheCompany.contactPerson.contactInfoTitle,
           titleVariant: 'h4',
         }),
-        // TODO: BÆTA VIÐ STARFSTITLI (WAITING FOR API) --- IGNORE ---
         buildTextField({
           id: 'contactPerson.name',
           title: messages.aboutTheCompany.contactPerson.name,
@@ -36,6 +35,14 @@ export const contactPersonSubSection = buildSubSection({
               'identity.data.actor.name',
             ) ??
             getValueViaPath(application.externalData, 'identity.data.name'),
+        }),
+        buildTextField({
+          id: 'contactPerson.jobTitle',
+          title: messages.aboutTheCompany.contactPerson.jobTitle,
+          placeholder:
+            messages.aboutTheCompany.contactPerson.jobTitlePlaceholder,
+          width: 'full',
+          required: true,
         }),
         buildTextField({
           id: 'contactPerson.email',

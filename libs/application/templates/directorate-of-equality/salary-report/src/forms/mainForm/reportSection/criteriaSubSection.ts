@@ -4,6 +4,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { messages } from '../../../lib/messages'
+import { ScreenIds } from '../../../utils/constants'
 
 // Criteria live on the DMR draft (see CriteriaEditor), not applicationAnswers.
 export const criteriaSubSection = buildSubSection({
@@ -11,7 +12,7 @@ export const criteriaSubSection = buildSubSection({
   title: messages.report.criteria.sectionTitle,
   children: [
     buildMultiField({
-      id: 'criteriaMultiField',
+      id: ScreenIds.criteria,
       title: messages.report.criteria.title,
       description: messages.report.criteria.intro,
       children: [

@@ -39,10 +39,11 @@ test.describe.serial('Indictment tests', () => {
       page.getByRole('button', { name: 'Bæta við þinghaldi' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCourtSession'),
     ])
+    // The rich text editor is TipTap, which renders a contenteditable
+    // element - there is no iframe to reach into.
     await page
       .getByTestId('entries')
-      .frameLocator('iframe')
-      .locator('body')
+      .locator('[contenteditable="true"]')
       .fill('Afstaða, málflutningur, og bókun')
 
     await page.locator('label').filter({ hasText: 'Dómur kveðinn upp' }).click()

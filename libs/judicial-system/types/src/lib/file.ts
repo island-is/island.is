@@ -63,6 +63,25 @@ export const isAppealFileDeletionLocked = (
 ): boolean =>
   isPartyAppealFileCategory(category) && Boolean(appealCase?.appealCaseNumber)
 
+// A ruling order pronounced during the course of a case is usually delivered
+// orally in the court session, and only written up as a document if a party
+// appeals it. Such a ruling exists as a case file from the moment it is
+// pronounced - the court record links to it, and the parties' appeal decisions
+// and any appeal are keyed on it - but nothing is stored in S3 for it until the
+// district court writes the ruling up and uploads it.
+//
+// isPronouncedOrally records how the ruling was delivered and stays true after
+// the document has been uploaded, so it is the empty S3 key that says the
+// document is still missing.
+export const isRulingOrderWithoutDocument = (file: {
+  category?: CaseFileCategory | null
+  isPronouncedOrally?: boolean | null
+  key?: string | null
+}): boolean =>
+  file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
+  Boolean(file.isPronouncedOrally) &&
+  !file.key
+
 // MD5 was used as file hashing algorithm until (TODO: add date) but was updated to SHA256 to avoid the probability
 // of hash collision between files in our system. Since we still store MD5 alg types with each file hash
 // in the db for historical purposes, we support both types here.
