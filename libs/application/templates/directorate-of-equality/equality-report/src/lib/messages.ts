@@ -25,6 +25,10 @@ export const messages = {
       id: 'doe.er.application:errors.editorMinLength',
       defaultMessage: 'Texti verður að vera að minnsta kosti 200 stafir',
     },
+    alertTitle: {
+      id: 'doe.er.application:errors.alertTitle',
+      defaultMessage: 'Villa:',
+    },
     invalidCompanyNationalId: {
       id: 'doe.er.application:errors.invalidCompanyNationalId',
       defaultMessage: 'Kennitala er ekki gild kennitala fyrirtækis',
@@ -43,6 +47,10 @@ export const messages = {
     tagDraft: {
       id: 'doe.er.application:general.tagDraft',
       defaultMessage: 'Drög',
+    },
+    newApplicationButtonLabel: {
+      id: 'doe.er.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný jafnréttisáætlun',
     },
   }),
 
@@ -63,13 +71,17 @@ export const messages = {
       id: 'doe.er.application:approved.sectionTitle',
       defaultMessage: 'Samþykkt',
     },
+    formTitle: {
+      id: 'doe.er.application:approved.formTitle',
+      defaultMessage: 'Jafnréttisáætlun samþykkt!',
+    },
     title: {
       id: 'doe.er.application:approved.title',
-      defaultMessage: 'Umsókn samþykkt',
+      defaultMessage: 'Jafnréttisáætlun samþykkt',
     },
     description: {
       id: 'doe.er.application:approved.description',
-      defaultMessage: 'Umsókn þín hefur verið samþykkt.',
+      defaultMessage: 'Jafnréttisáætlunin þín hefur verið samþykkt.',
     },
   }),
 
@@ -78,13 +90,17 @@ export const messages = {
       id: 'doe.er.application:rejected.sectionTitle',
       defaultMessage: 'Hafnað',
     },
+    formTitle: {
+      id: 'doe.er.application:rejected.formTitle',
+      defaultMessage: 'Jafnréttisáætlun hafnað',
+    },
     title: {
       id: 'doe.er.application:rejected.title',
-      defaultMessage: 'Umsókn hafnað',
+      defaultMessage: 'Jafnréttisáætlun hafnað',
     },
     description: {
       id: 'doe.er.application:rejected.description',
-      defaultMessage: 'Umsókn þinni hefur verið hafnað.',
+      defaultMessage: 'Jafnréttisáætluninni þinni hefur verið hafnað.',
     },
   }),
 
@@ -293,6 +309,14 @@ export const messages = {
         id: 'doe.er.application:aboutTheCompany.contactPerson.namePlaceholder',
         defaultMessage: 'Nafn tengiliðs',
       },
+      jobTitle: {
+        id: 'doe.er.application:aboutTheCompany.contactPerson.jobTitle',
+        defaultMessage: 'Starfstitill',
+      },
+      jobTitlePlaceholder: {
+        id: 'doe.er.application:aboutTheCompany.contactPerson.jobTitlePlaceholder',
+        defaultMessage: 'Starfstitill tengiliðs',
+      },
       email: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.email',
         defaultMessage: 'Netfang',
@@ -421,7 +445,15 @@ export const messages = {
       },
       detailLinkLabel: {
         id: 'doe.er.application:equalityReport.information.detailLinkLabel',
-        defaultMessage: 'Nánari upplýsingar um kröfu um jafnréttisáætlun',
+        defaultMessage: 'Nánar um jafnréttisáætlun',
+      },
+      instructionsLabel: {
+        id: 'doe.er.application:equalityReport.information.instructionsLabel',
+        defaultMessage: 'Leiðbeiningar',
+      },
+      instructionsLink: {
+        id: 'doe.er.application:equalityReport.information.instructionsLink',
+        defaultMessage: 'https://island.is/s/jafnrettisstofa/leidbeiningar',
       },
       listTitle: {
         id: 'doe.er.application:equalityReport.information.listTitle',
@@ -434,7 +466,7 @@ export const messages = {
       },
       implementationTitle: {
         id: 'doe.er.application:equalityReport.information.implementationTitle',
-        defaultMessage: 'Skipulag og framkvæmd',
+        defaultMessage: 'Skipulag og framkvæmd við gerð Jafnréttisáætlunar',
       },
       implementationList: {
         id: 'doe.er.application:equalityReport.information.implementationList#markdown',
@@ -465,7 +497,16 @@ export const messages = {
       },
       editorUploadSuccess: {
         id: 'doe.er.application:equalityReport.information.editorUploadSuccess',
-        defaultMessage: 'Jafnréttisáætlun var hlaðið upp.',
+        defaultMessage: 'Skjalinu var hlaðið upp.',
+      },
+      editorUploadIncomplete: {
+        id: 'doe.er.application:equalityReport.information.editorUploadIncomplete',
+        defaultMessage:
+          'Ljúktu við upphleðslu jafnréttisáætlunar áður en þú heldur áfram.',
+      },
+      editorUploadRequired: {
+        id: 'doe.er.application:equalityReport.information.editorUploadRequired',
+        defaultMessage: 'Hlaðið upp jafnréttisáætlun áður en þú heldur áfram.',
       },
     }),
     previousEqualityPlan: defineMessages({
@@ -484,7 +525,7 @@ export const messages = {
       },
       copyButton: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.copyButton',
-        defaultMessage: 'Afrita',
+        defaultMessage: 'Afrita innihald eldri áætlunar',
       },
       copied: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.copied',
@@ -501,6 +542,16 @@ export const messages = {
       validUntil: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.validUntil',
         defaultMessage: 'Gildir til',
+      },
+      loadError: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.loadError',
+        defaultMessage:
+          'Ekki tókst að sækja eldri jafnréttisáætlun. Vinsamlegast reynið aftur síðar.',
+      },
+      copyError: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.copyError',
+        defaultMessage:
+          'Ekki tókst að afrita. Þú getur valið textann og afritað hann handvirkt.',
       },
     }),
     goalsAndActions: defineMessages({
@@ -527,11 +578,12 @@ export const messages = {
     },
     title: {
       id: 'doe.er.application:overview.title',
-      defaultMessage: 'Yfirlit umsóknar',
+      defaultMessage: 'Yfirlit jafnréttisáætlunar',
     },
     intro: {
       id: 'doe.er.application:overview.intro',
-      defaultMessage: 'Vinsamlegast farðu yfir umsóknina áður en þú sendir.',
+      defaultMessage:
+        'Vinsamlegast farðu yfir innsendinguna áður en þú sendir.',
     },
     submitButton: {
       id: 'doe.er.application:overview.submitButton',
@@ -600,9 +652,17 @@ export const messages = {
       id: 'doe.er.application:inReview.sectionTitle',
       defaultMessage: 'Sending móttekin',
     },
+    formTitle: {
+      id: 'doe.er.application:inReview.formTitle',
+      defaultMessage: 'Takk fyrir innsendinguna',
+    },
     alertTitle: {
       id: 'doe.er.application:inReview.title',
       defaultMessage: 'Jafnréttisáætlun er móttekin',
+    },
+    alertTitleRevised: {
+      id: 'doe.er.application:inReview.alertTitleRevised',
+      defaultMessage: 'Jafnréttisáætlun uppfærð',
     },
     alertDescription: {
       id: 'doe.er.application:inReview.description',
@@ -623,7 +683,7 @@ export const messages = {
     },
     editHistoryLog: {
       id: 'doe.er.application:inReview.editHistoryLog',
-      defaultMessage: 'Skilaboð frá Jafnréttisstofu',
+      defaultMessage: 'Athugasemd frá Jafnréttisstofu',
     },
     expandableIntro: {
       id: 'doe.er.application:inReview.expandableIntro',
@@ -639,23 +699,43 @@ export const messages = {
   comments: defineMessages({
     sectionTitle: {
       id: 'doe.er.application:comments.sectionTitle',
-      defaultMessage: 'Samskipti',
+      defaultMessage: 'Athugasemdir',
     },
     title: {
       id: 'doe.er.application:comments.title',
-      defaultMessage: 'Samskipti við Jafnréttisstofu',
+      defaultMessage: 'Athugasemdir',
     },
     emptyState: {
       id: 'doe.er.application:comments.emptyState',
-      defaultMessage: 'Engin skilaboð hafa verið send.',
+      defaultMessage: 'Engar athugasemdir hafa verið sendar.',
     },
     textareaLabel: {
       id: 'doe.er.application:comments.textareaLabel',
-      defaultMessage: 'Skrifa skilaboð',
+      defaultMessage: 'Athugasemd',
+    },
+    placeholder: {
+      id: 'doe.er.application:comments.placeholder',
+      defaultMessage: 'Bættu við athugasemd',
+    },
+    replyButton: {
+      id: 'doe.er.application:comments.replyButton',
+      defaultMessage: 'Svara athugasemd',
     },
     sendButton: {
       id: 'doe.er.application:comments.sendButton',
-      defaultMessage: 'Senda skilaboð',
+      defaultMessage: 'Senda athugasemd',
+    },
+    cancelButton: {
+      id: 'doe.er.application:comments.cancelButton',
+      defaultMessage: 'Hætta við',
+    },
+    seeAllComments: {
+      id: 'doe.er.application:comments.seeAllComments',
+      defaultMessage: 'Sjá allar athugasemdir',
+    },
+    registersComment: {
+      id: 'doe.er.application:comments.registersComment',
+      defaultMessage: 'skráir athugasemd',
     },
     reviewerLabel: {
       id: 'doe.er.application:comments.reviewerLabel',
@@ -665,20 +745,32 @@ export const messages = {
       id: 'doe.er.application:comments.companyLabel',
       defaultMessage: 'Þú',
     },
+    today: {
+      id: 'doe.er.application:comments.today',
+      defaultMessage: 'Í dag',
+    },
+    yesterday: {
+      id: 'doe.er.application:comments.yesterday',
+      defaultMessage: 'Í gær',
+    },
+    daysAgo: {
+      id: 'doe.er.application:comments.daysAgo',
+      defaultMessage: 'f. {days} dögum',
+    },
     sendError: {
       id: 'doe.er.application:comments.sendError',
-      defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að senda athugasemd, reyndu aftur.',
     },
     loadError: {
       id: 'doe.er.application:comments.loadError',
-      defaultMessage: 'Ekki tókst að sækja skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að sækja athugasemdir, reyndu aftur.',
     },
   }),
 
   draftRetry: defineMessages({
     tagLabel: {
       id: 'doe.er.application:draftRetry.tagLabel',
-      defaultMessage: 'Þín bíða skilaboð',
+      defaultMessage: 'Þín bíða athugasemdir',
     },
     submitButton: {
       id: 'doe.er.application:draftRetry.submitButton',
@@ -691,7 +783,7 @@ export const messages = {
     pendingActionContent: {
       id: 'doe.er.application:draftRetry.pendingActionContent',
       defaultMessage:
-        'Farðu yfir skilaboð frá Jafnréttisstofu og lagfærðu jafnréttisáætlunina.',
+        'Farðu yfir athugasemdir frá Jafnréttisstofu og lagfærðu jafnréttisáætlunina.',
     },
     pendingActionButton: {
       id: 'doe.er.application:draftRetry.pendingActionButton',

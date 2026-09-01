@@ -2023,6 +2023,26 @@ export const messages = defineMessages({
     defaultMessage: 'Skrifaðu stutta lýsingu á veikindunum',
     id: 'sp.health:health-messages-certificate-note-placeholder',
   },
+  healthConversationCertificateContinueToPayment: {
+    defaultMessage: 'Áfram í greiðslu',
+    id: 'sp.health:health-messages-certificate-continue-payment',
+  },
+  healthConversationCertificatePaymentInProgress: {
+    defaultMessage: 'Greiðsla er í vinnslu',
+    id: 'sp.health:health-messages-certificate-payment-in-progress',
+  },
+  healthConversationCertificatePaymentSuccess: {
+    defaultMessage: 'Greiðsla tókst',
+    id: 'sp.health:health-messages-certificate-payment-success',
+  },
+  healthConversationCertificatePaymentError: {
+    defaultMessage: 'Ekki tókst að hefja greiðslu, vinsamlegast reyndu aftur',
+    id: 'sp.health:health-messages-certificate-payment-error',
+  },
+  healthConversationCertificatePaymentCancelled: {
+    defaultMessage: 'Hætt var við greiðslu',
+    id: 'sp.health:health-messages-certificate-payment-cancelled',
+  },
   healthConversationsNewTermsLabel: {
     defaultMessage: 'Ég samþykki <link>skilmála</link>',
     id: 'sp.health:health-messages-new-terms-label',

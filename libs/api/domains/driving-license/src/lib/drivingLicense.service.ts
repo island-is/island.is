@@ -28,10 +28,7 @@ import {
   ModelsV5PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
   DriverLicenseWithoutImages,
 } from '@island.is/clients/driving-license'
-import {
-  BLACKLISTED_JURISDICTION,
-  DRIVING_ASSESSMENT_MAX_AGE,
-} from './util/constants'
+import { BLACKLISTED_JURISDICTION } from './util/constants'
 import sortTeachers from './util/sortTeachers'
 import { StudentAssessment } from '..'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -296,9 +293,12 @@ export class DrivingLicenseService {
         ? [
             {
               key: RequirementKey.drivingAssessmentMissing,
-              requirementMet:
-                (assessmentResult?.created?.getTime() ?? 0) >
-                Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
+              // Only completion matters — a driving assessment does not expire
+              // (Samgongustofa, 2026-08-31), and RLS applies no age rule on its
+              // side either. The 182-day window this replaced dated from the
+              // original 2021 template and wrongly blocked applicants whose
+              // assessment was older than ~6 months.
+              requirementMet: assessmentResult != null,
             },
             {
               key: RequirementKey.drivingSchoolMissing,

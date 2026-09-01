@@ -88,6 +88,10 @@ export const DRAFT_EMPLOYEES_PAGE_SIZE = 25
 export const PAID_HOURS_MIN = 4
 export const PAID_HOURS_MAX = 750
 
+// How far out "Dagsetning úrbóta" may be set, mirrored from the API: past this
+// the date belongs to a reporting period the report can't speak for.
+export const REMEDY_DATE_MAX_YEARS_AHEAD = 3
+
 // Duplicated from the client lib rather than imported — importing it as a value
 // pulls in that package's NestJS module (backend-only deps), breaking the frontend bundle.
 export const SyncMethodEnum = {

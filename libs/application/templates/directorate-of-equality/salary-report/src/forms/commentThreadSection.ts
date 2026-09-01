@@ -51,7 +51,8 @@ export const buildCommentThreadSection = ({
               title: '',
               component: 'CommentThread',
             },
-            alwaysVisible ? { showEmptyState: true } : undefined,
+            // hideTitle: the multiField above already says "Athugasemdir".
+            { hideTitle: true, ...(alwaysVisible && { showEmptyState: true }) },
           ),
         ],
       }),
