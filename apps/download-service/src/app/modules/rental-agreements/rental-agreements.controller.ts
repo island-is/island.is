@@ -33,9 +33,7 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
  * trust the client's declared mime type — sniff the actual file signature
  * instead of assuming everything is a PDF.
  */
-const sniffFileType = (
-  buffer: Buffer,
-): { mime: string; extension: string } => {
+const sniffFileType = (buffer: Buffer): { mime: string; extension: string } => {
   if (buffer.subarray(0, 4).toString('latin1') === '%PDF') {
     return { mime: 'application/pdf', extension: 'pdf' }
   }
