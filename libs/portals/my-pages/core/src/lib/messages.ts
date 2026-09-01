@@ -9,6 +9,10 @@ export const m = defineMessages({
     id: 'service.portal:health-treatment',
     defaultMessage: 'Meðferð',
   },
+  healthTreatments: {
+    id: 'service.portal:health-treatments',
+    defaultMessage: 'Meðferðir',
+  },
   healthTreatmentEducationalContent: {
     id: 'service.portal:health-treatment-educational-content',
     defaultMessage: 'Fræðsluefni',

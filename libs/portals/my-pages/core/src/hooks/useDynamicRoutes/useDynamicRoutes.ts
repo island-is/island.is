@@ -177,10 +177,13 @@ const cloneNavItem = (item: PortalNavigationItem): PortalNavigationItem => ({
 
 /**
  * portals-my-pages/health
- * Adds one nav item per treatment under Heilsa, after the messages entry,
- * each with a hidden fræðsluefni child so breadcrumbs work. Operates on a
- * deep clone — the nav tree is a shared singleton mutated in place elsewhere.
- * systemRoute keeps the concrete paths from being filtered out.
+ * Adds a "Meðferðir" section under Heilsa, after the messages entry, with one
+ * child per treatment (each carrying a hidden fræðsluefni grandchild so
+ * breadcrumbs work). The section only exists when the user has treatments.
+ * Operates on a deep clone — the nav tree is a shared singleton mutated in
+ * place elsewhere. systemRoute keeps the concrete child paths from being
+ * filtered out; the parent path matches its declared route and needs no
+ * exemption.
  */
 const injectHealthTreatmentNavItems = (
   nav: PortalNavigationItem,
@@ -192,8 +195,10 @@ const injectHealthTreatmentNavItems = (
       return child
     }
     const health = cloneNavItem(child)
-    const treatmentItems: PortalNavigationItem[] = treatments.map(
-      (treatment) => ({
+    const treatmentsParent: PortalNavigationItem = {
+      name: m.healthTreatments,
+      path: HEALTH_TREATMENT_BASE_ROUTE,
+      children: treatments.map((treatment) => ({
         name: treatment.name.trim() || m.healthTreatment,
         path: `${HEALTH_TREATMENT_BASE_ROUTE}/${treatment.id}`,
         systemRoute: true,
@@ -205,8 +210,8 @@ const injectHealthTreatmentNavItems = (
             systemRoute: true,
           },
         ],
-      }),
-    )
+      })),
+    }
     const healthChildren = [...(health.children ?? [])]
     const conversationsIndex = healthChildren.findIndex(
       (item) => item.path === HEALTH_CONVERSATIONS_ROUTE,
@@ -214,7 +219,7 @@ const injectHealthTreatmentNavItems = (
     healthChildren.splice(
       conversationsIndex >= 0 ? conversationsIndex + 1 : healthChildren.length,
       0,
-      ...treatmentItems,
+      treatmentsParent,
     )
     health.children = healthChildren
     return health
