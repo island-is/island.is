@@ -627,6 +627,38 @@ export const serviceSetup = (services: {
       min: 3,
       cpuAverageUtilization: 70,
     })
+    .strategy({
+      // dev: fast/cheap rollout. staging/prod: zero-downtime.
+      dev: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: '25%' },
+      },
+      staging: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: 0 },
+      },
+      prod: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: 0 },
+      },
+    })
+    .gracefulShutdown({
+      // Full drain in staging/prod (long XRoad/GraphQL calls); relaxed in dev.
+      dev: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 30,
+      },
+      staging: {
+        minReadySeconds: 10,
+        terminationGracePeriodSeconds: 60,
+        preStopSleepSeconds: 10,
+      },
+      prod: {
+        minReadySeconds: 10,
+        terminationGracePeriodSeconds: 60,
+        preStopSleepSeconds: 10,
+      },
+    })
     .grantNamespaces(
       'nginx-ingress-external',
       'api-catalogue',
