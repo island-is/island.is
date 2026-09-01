@@ -22,6 +22,16 @@ export class U2CertificateService extends BaseTemplateApiService {
     super(ApplicationTypes.U2_CERTIFICATE)
   }
 
+  private throwDefaultError(): never {
+    throw new TemplateApiError(
+      {
+        title: coreErrorMessages.defaultTemplateApiError,
+        summary: errorMessages.dataFetchErrorSummary,
+      },
+      500,
+    )
+  }
+
   async getEligibility({
     auth,
     currentUserLocale,
@@ -31,13 +41,7 @@ export class U2CertificateService extends BaseTemplateApiService {
       result = await this.vmstUnemploymentClientService.checkU2Eligibility(auth)
     } catch (e) {
       this.logger.error('[VMST-U2-Certificate] - Error checking eligibility', e)
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.failedDataProvider,
-        },
-        500,
-      )
+      this.throwDefaultError()
     }
 
     if (!result.isEligible) {
@@ -78,13 +82,7 @@ export class U2CertificateService extends BaseTemplateApiService {
         '[VMST-U2-Certificate] - Error fetching EES countries',
         e,
       )
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: errorMessages.dataFetchErrorSummary,
-        },
-        500,
-      )
+      this.throwDefaultError()
     }
   }
 
@@ -92,94 +90,73 @@ export class U2CertificateService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps): Promise<boolean> {
+    const countryId =
+      getValueViaPath<string>(application.answers, 'countryAndDate.country') ||
+      ''
+    const dateString = getValueViaPath<string>(
+      application.answers,
+      'countryAndDate.departureDate',
+    )
+    const date = dateString ? new Date(dateString) : undefined
+    if (!date) {
+      this.throwDefaultError()
+    }
+
+    let response
     try {
-      const countryId =
-        getValueViaPath<string>(
-          application.answers,
-          'countryAndDate.country',
-        ) || ''
-      const dateString = getValueViaPath<string>(
-        application.answers,
-        'countryAndDate.departureDate',
+      response = await this.vmstUnemploymentClientService.submitU2Application(
+        auth,
+        countryId,
+        date,
+        application.id,
       )
-      const date = dateString ? new Date(dateString) : undefined
-      if (!date) {
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.defaultTemplateApiError,
-            summary: errorMessages.dataFetchErrorSummary,
-          },
-          500,
-        )
-      }
-      const response =
-        await this.vmstUnemploymentClientService.submitU2Application(
-          auth,
-          countryId,
-          date,
-        )
-      if (!response.success) {
-        throw new TemplateApiError(
-          {
-            title: errorMessages.eligibilityErrorTitle,
-            summary:
-              response.errorMessage || errorMessages.cannotApplyErrorSummary,
-          },
-          500,
-        )
-      }
-      return true
     } catch (e) {
       this.logger.error('[VMST-U2-Certificate] - Submit failed', e)
+      this.throwDefaultError()
+    }
+
+    if (!response.success) {
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: errorMessages.dataFetchErrorSummary,
+          title: errorMessages.eligibilityErrorTitle,
+          summary:
+            response.errorMessage || errorMessages.cannotApplyErrorSummary,
         },
         500,
       )
     }
+    return true
   }
 
   async revokeApplication({
     auth,
     application,
-  }: TemplateApiModuleActionProps): Promise<boolean> {
+  }: TemplateApiModuleActionProps): Promise<void> {
     // Defense-in-depth: REVOKE is only wired to the applicant role in the template.
     if (auth.nationalId !== application.applicant) {
       this.logger.warn(
         '[VMST-U2-Certificate] - Revoke invoked by non-applicant, skipping',
       )
-      return false
+      this.throwDefaultError()
     }
 
+    let response
     try {
-      const response =
-        await this.vmstUnemploymentClientService.revokeU2Application(auth)
-      return true
-      //return response.success
-      // if (!response.success) {
-      //   this.logger.error(
-      //     '[VMST-U2-Certificate] - Error revoking application',
-      //     response.errorMessage,
-      //   )
-      //   throw new TemplateApiError(
-      //     {
-      //       title: coreErrorMessages.defaultTemplateApiError,
-      //       summary: errorMessages.dataFetchErrorSummary,
-      //     },
-      //     500,
-      //   )
-      // }
+      response = await this.vmstUnemploymentClientService.revokeU2Application(
+        auth,
+        '123123',
+      )
     } catch (e) {
       this.logger.error('[VMST-U2-Certificate] - Error revoking application', e)
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: errorMessages.dataFetchErrorSummary,
-        },
-        500,
+      this.throwDefaultError()
+    }
+
+    if (!response.success) {
+      this.logger.error(
+        '[VMST-U2-Certificate] - Error revoking application',
+        response.errorMessage,
       )
+      this.throwDefaultError()
     }
   }
 }

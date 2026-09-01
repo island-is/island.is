@@ -10,3 +10,8 @@ export const EESCountriesApi = defineTemplateApi({
   action: ApiActions.getEESCountries,
   externalDataId: 'countries',
 })
+
+export const RevokeApi = defineTemplateApi({
+  action: ApiActions.revokeApplication,
+  externalDataId: 'revoked',
+})

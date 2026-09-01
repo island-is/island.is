@@ -17,6 +17,17 @@ export const sharedMessages = defineMessages({
       '**Þú sækir vottorðið í eigin persónu þegar þú færð meldingu um að það sé tilbúið hjá Vinnumálastofnun**\n\nÞú getur sótt U2 vottorðið á næstu þjónustuskrifstofu Vinnumálastofnunar 1-5 dögum fyrir brottfarardag. Þetta er gert til að tryggja að þú sért enn á Íslandi áður en þú ferð til útlanda í atvinnuleit. ',
     description: 'Shared expandable description text used across forms',
   },
+  newApplicationButton: {
+    id: 'vmst.u2c.application:shared.newApplicationButton',
+    defaultMessage: 'Opna umsókn',
+    description: 'Shared button label to start a new application',
+  },
+  newApplicationMessage: {
+    id: 'vmst.u2c.application:shared.newApplicationMessage',
+    defaultMessage:
+      'Þú getur lagt inn nýja umsókn um U2 vottorð ef aðstæður þínar hafa breyst.',
+    description: 'Shared message about starting a new application',
+  },
 })
 
 export const applicationMessages = defineMessages({
@@ -298,16 +309,15 @@ export const revokedForm = {
       defaultMessage: 'Umsókn þín um U2 vottorð hefur verið afturkölluð',
       description: 'revokedForm alert title',
     },
-    newApplicationButton: {
-      id: 'vmst.u2c.application:revokedForm.general.newApplicationButton',
-      defaultMessage: 'Opna umsókn',
-      description: 'revokedForm button label to start a new application',
-    },
-    newApplicationMessage: {
-      id: 'vmst.u2c.application:revokedForm.general.newApplicationMessage',
-      defaultMessage:
-        'Þú getur lagt inn nýja umsókn um U2 vottorð ef aðstæður þínar hafa breyst.',
-      description: 'revokedForm message about starting a new application',
+  }),
+}
+
+export const rejectedForm = {
+  general: defineMessages({
+    alertTitle: {
+      id: 'vmst.u2c.application:rejectedForm.general.alertTitle',
+      defaultMessage: 'Umsókn þín um U2 vottorð hefur því miður verið hafnað',
+      description: 'rejectedForm alert title',
     },
   }),
 }

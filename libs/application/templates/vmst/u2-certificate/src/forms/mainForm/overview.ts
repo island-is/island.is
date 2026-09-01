@@ -9,13 +9,12 @@ import { mainForm as m } from '../../lib/messages'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: 'Yfirlit',
+  title: m.overviewSection.title,
   children: [
     buildMultiField({
       id: 'overviewSection',
-      title: 'Yfirlit',
-      description:
-        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      title: m.overviewSection.title,
+      description: m.overviewSection.description,
       children: [
         buildOverviewField({
           id: 'overviewField',

@@ -665,6 +665,7 @@ export class VmstUnemploymentClientService {
     auth: User,
     destinationCountryId: string,
     departureDate: Date,
+    applicationId: string,
   ): Promise<GaldurDomainModelsBaseViewModel> {
     const { applicantId } = await this.resolveApplicant(auth)
 
@@ -680,6 +681,7 @@ export class VmstUnemploymentClientService {
       galdurExternalDomainRequestsU2CertificateCreateU2CertificateRequest: {
         destinationCountryId,
         dateWhenLeaving: departureDate,
+        applicationId,
       },
     })
   }
@@ -710,7 +712,10 @@ export class VmstUnemploymentClientService {
     return await api.jobSearchConfirmationGetQuestionaireSchema()
   }
 
-  async revokeU2Application(auth: User): Promise<void> {
+  async revokeU2Application(
+    auth: User,
+    u2CertificateId: string,
+  ): Promise<GaldurDomainModelsBaseViewModel> {
     const { applicantId } = await this.resolveApplicant(auth)
 
     if (!applicantId) {
@@ -721,6 +726,9 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
 
-    return
+    return await api.u2CertificateWithdrawU2Certificate({
+      applicantId,
+      u2CertificateId,
+    })
   }
 }
