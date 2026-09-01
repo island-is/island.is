@@ -217,15 +217,15 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
+          // TODO: Uncomment when createNotification mapping is complete.
+          // onExit: [
+          //   defineTemplateApi({
+          //     action: ApiModuleActions.createNotification,
+          //     namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+          //     throwOnError: true,
+          //   }),
+          // ],
         },
-        // TODO: Uncomment when createNotification mapping is complete.
-        // onExit: [
-        //   defineTemplateApi({
-        //     action: ApiModuleActions.createNotification,
-        //     namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
-        //     throwOnError: true,
-        //   }),
-        // ],
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.COMPLETED,
