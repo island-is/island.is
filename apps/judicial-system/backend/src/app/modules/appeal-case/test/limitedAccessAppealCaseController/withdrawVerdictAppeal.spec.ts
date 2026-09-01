@@ -131,9 +131,9 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     mockTransaction.mockImplementation(
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
-    ;(mockCaseRepositoryService.lockByIdForUpdate as jest.Mock).mockResolvedValue(
-      true,
-    )
+    ;(
+      mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
+    ).mockResolvedValue(true)
     ;(mockAppealCaseRepositoryService.update as jest.Mock).mockResolvedValue({
       ...appealCase,
       appealState: AppealCaseState.WITHDRAWN,
@@ -174,7 +174,9 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
     it('should record an APPEAL_WITHDRAWN event for that defendant alone', () => {
       expect(then.error).toBeUndefined()
-      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(1)
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        1,
+      )
       expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
         expect.objectContaining({
           caseId,
