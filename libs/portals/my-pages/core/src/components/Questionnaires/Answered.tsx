@@ -6,6 +6,7 @@ import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
 import {
   formatDate,
+  formatDateOnly,
   formatDateWithTime,
   isDateOnlyString,
 } from '../../utils/dateUtils'
@@ -38,7 +39,7 @@ const isValidDate = (dateString: string): boolean => {
 const formatValue = (value: string): string => {
   if (isValidDate(value)) {
     return isDateOnlyString(value)
-      ? formatDate(value)
+      ? formatDateOnly(value)
       : formatDateWithTime(value)
   }
   return value
@@ -62,9 +63,14 @@ export const Answered: FC<AnsweredProps> = ({ answers }) => {
         : cell.value
 
     let displayValue = rawValue
-    if (cellType === 'bool') {
+    if (
+      cellType === 'bool' &&
+      (rawValue === 'true' || rawValue === 'false')
+    ) {
       displayValue =
         rawValue === 'true' ? formatMessage(m.yes) : formatMessage(m.no)
+    } else if (rawValue && isDateOnlyString(rawValue)) {
+      displayValue = formatDateOnly(rawValue)
     } else if (rawValue && isValidDate(rawValue)) {
       displayValue = formatDate(rawValue)
     }
