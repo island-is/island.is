@@ -42,9 +42,10 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
 
   const translationRows = translationsData?.applicationTranslations
 
-  const persistedByKey = useMemo(() => buildPersistedByKey(translationRows), [
-    translationRows,
-  ])
+  const persistedByKey = useMemo(
+    () => buildPersistedByKey(translationRows),
+    [translationRows],
+  )
 
   const hasDraftChanges = useMemo(
     () => hasDraftChangesInRows(translationRows),

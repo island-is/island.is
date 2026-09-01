@@ -47,14 +47,10 @@ export const useTranslationWorkspacePersistence = ({
   const [historyOpen, setHistoryOpen] = useState(false)
   const [publishConfirmVisible, setPublishConfirmVisible] = useState(false)
 
-  const [
-    bulkUpdate,
-    { loading: saving },
-  ] = useBulkUpdateApplicationTranslationsMutation()
-  const [
-    publishMutation,
-    { loading: publishing },
-  ] = usePublishApplicationTranslationsMutation()
+  const [bulkUpdate, { loading: saving }] =
+    useBulkUpdateApplicationTranslationsMutation()
+  const [publishMutation, { loading: publishing }] =
+    usePublishApplicationTranslationsMutation()
   const [googleTranslate] = useGoogleTranslateStringsMutation()
   const [translatingIds, setTranslatingIds] = useState<Set<string>>(
     () => new Set(),

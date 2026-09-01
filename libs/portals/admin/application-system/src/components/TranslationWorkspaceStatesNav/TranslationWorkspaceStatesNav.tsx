@@ -210,7 +210,8 @@ export const TranslationWorkspaceStatesNav = ({
                               )}
                             {(role.form?.sections ?? []).map(
                               (section, sectionIndex) => {
-                                const screens = section.screens as ScreenIntrospection[]
+                                const screens =
+                                  section.screens as ScreenIntrospection[]
                                 const { subSections } = section
                                 const sectionNumber = sectionIndex + 1
 
@@ -220,12 +221,13 @@ export const TranslationWorkspaceStatesNav = ({
                                     (s) => s.screens as ScreenIntrospection[],
                                   ),
                                 ]
-                                const sectionCount = countTranslationsForScreens(
-                                  allSectionScreens,
-                                  persistedByKey,
-                                  editedValues,
-                                  activeLocale,
-                                )
+                                const sectionCount =
+                                  countTranslationsForScreens(
+                                    allSectionScreens,
+                                    persistedByKey,
+                                    editedValues,
+                                    activeLocale,
+                                  )
 
                                 const navRow = (
                                   nav: ScreenIntrospection,
@@ -344,16 +346,18 @@ export const TranslationWorkspaceStatesNav = ({
                                       )}
                                     </Box>
                                     {subSections.map((sub) => {
-                                      const subScreens = sub.screens as ScreenIntrospection[]
+                                      const subScreens =
+                                        sub.screens as ScreenIntrospection[]
                                       if (subScreens.length === 0) {
                                         return null
                                       }
-                                      const nav = buildSubSectionNavigationScreen(
-                                        sub.id,
-                                        sub.title,
-                                        sub.titleMessageDescriptor,
-                                        subScreens,
-                                      )
+                                      const nav =
+                                        buildSubSectionNavigationScreen(
+                                          sub.id,
+                                          sub.title,
+                                          sub.titleMessageDescriptor,
+                                          subScreens,
+                                        )
                                       return navRow(
                                         nav,
                                         sub.id,
@@ -371,10 +375,11 @@ export const TranslationWorkspaceStatesNav = ({
                                       )
                                     })}
                                     {screens.map((screen) => {
-                                      const nav = buildSectionLeafNavigationScreen(
-                                        section.id,
-                                        screen,
-                                      )
+                                      const nav =
+                                        buildSectionLeafNavigationScreen(
+                                          section.id,
+                                          screen,
+                                        )
                                       return navRow(
                                         nav,
                                         screen.id,
