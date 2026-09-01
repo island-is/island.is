@@ -45,6 +45,7 @@ import {
   Case,
   CaseRepositoryService,
   CivilClaimant,
+  CreateAppealCase,
   Defendant,
   UpdateAppealCase,
 } from '../repository'
@@ -526,7 +527,7 @@ export class AppealCaseService {
       )
     }
 
-    const appealCaseData: UpdateAppealCase = {
+    const appealCaseData: CreateAppealCase = {
       appealType: AppealCaseType.RULING,
       appealState: AppealCaseState.APPEALED,
       // An appeal filed out-of-court happens now - in-court appeals get
@@ -614,7 +615,7 @@ export class AppealCaseService {
       )
     }
 
-    const appealCaseData: UpdateAppealCase = {
+    const appealCaseData: CreateAppealCase = {
       appealType: AppealCaseType.RULING,
       appealState: AppealCaseState.APPEALED,
       rulingFileId,

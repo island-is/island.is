@@ -72,6 +72,7 @@ export { VerdictRepositoryService } from './services/verdictRepository.service'
 
 export {
   caseInclude,
+  CreateAppealCase,
   UpdateAppealCase,
   UpdateCase,
   UpdateDefendant,

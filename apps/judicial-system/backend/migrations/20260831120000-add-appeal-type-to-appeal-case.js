@@ -20,11 +20,14 @@
 // the model (DataType.ENUM over AppealCaseType) and adding a value to a DB enum
 // needs its own migration. Matches appeal_event_log.appeal_origin.
 //
-// The column is NOT NULL with no default, so an appeal created by the previous
-// deploy in the window between this migration and the new code would be
-// rejected rather than silently typed. That window is narrow and an appeal is a
-// rare, retryable action; a default would instead leave a future áfrýjun path
-// able to omit the type and be stored as a kæra.
+// The column carries a database default of 'RULING' so that a pod from the
+// previous release, which knows nothing about appeal_type, can still create an
+// appeal in the window between this migration and the new code rolling out.
+//
+// The default is not what application code relies on to get the type right:
+// `CreateAppealCase` requires it, so a creation path cannot omit it and quietly
+// produce a kæra. Removing the default later would only reopen the rollout
+// window on the next deploy, so it stays.
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -50,6 +53,7 @@ module.exports = {
         {
           type: Sequelize.STRING,
           allowNull: false,
+          defaultValue: 'RULING',
         },
         { transaction },
       )
