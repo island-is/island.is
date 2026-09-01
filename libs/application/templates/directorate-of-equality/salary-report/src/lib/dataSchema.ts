@@ -82,7 +82,9 @@ const subsidiaries = z
       .preprocess(
         (val) =>
           Array.isArray(val)
-            ? val.filter((item) => !(item as { isRemoved?: boolean })?.isRemoved)
+            ? val.filter(
+                (item) => !(item as { isRemoved?: boolean })?.isRemoved,
+              )
             : val,
         z
           .array(
