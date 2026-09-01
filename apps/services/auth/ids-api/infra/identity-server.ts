@@ -168,6 +168,13 @@ export const serviceSetup = (services: {
         memory: '1024Mi',
       },
     })
+    .replicaCount({
+      default: 3,
+      min: 3,
+      max: 10,
+      cpuAverageUtilization: 90,
+      scaleToProdInDev: true, // TEMPORARY: load-test window
+    })
     .healthPort(5010)
     .targetPort(5000)
     .serviceAccount('identity-server')
