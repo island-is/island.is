@@ -16,12 +16,7 @@ import { messages } from '../../lib/messages'
 import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import { formatDateValue } from '../../utils/dates'
 import type { Employee } from '../../utils/types'
-import {
-  formatStartDate,
-  formatCurrency,
-  formatPaidHours,
-  getSalaryComponentLabels,
-} from './utils'
+import { formatPaidHours, getSalaryComponentLabels } from './utils'
 import * as styles from './EmployeesEditor.css'
 
 type Props = {
