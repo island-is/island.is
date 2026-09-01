@@ -213,26 +213,29 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   }
 
   /**
-   * Turn a failed RLS submission into the error the applicant sees. RLS puts its
-   * error code in `problem.title`; if that code exists in the RLS error-code
-   * table we surface the table's own human-readable text in the user's language
-   * instead of leaking the raw code. Anything we can't resolve (no code, code
-   * not in the table, or a best-effort lookup failure) keeps the previous
-   * behaviour: raw `problem.title` / generic message, with `problem.detail` as
-   * the summary. `describeErrorCode` is best-effort and never throws.
+   * Turn a failed RLS submission into the error the applicant sees. RLS's
+   * machine error code, when we can find one, is looked up in the RLS
+   * error-code table and the table's own human-readable text is surfaced in
+   * the user's language instead of the raw code. Anything we can't resolve (no
+   * code, code not in the table, or a best-effort lookup failure) keeps the
+   * previous behaviour: generic message with `problem.detail` as the summary.
+   * `describeErrorCode` is best-effort and never throws.
    */
   private async toSubmissionError(
     err: FetchError,
     locale: Locale,
   ): Promise<TemplateApiError> {
-    // RLS's error code is in `problem.title` for problem+json responses (the full
-    // endpoint), but the temporary endpoint returns a plain-JSON body carrying it
-    // as `body.errorCode` instead — fall back to that so both go through
-    // describeErrorCode and the applicant gets the localised text, not the
-    // generic "submission failed".
+    // Both v6 endpoints carry the machine code in an `errorCode` field — the
+    // full endpoint as a problem+json extension member, the temporary endpoint
+    // in its plain-JSON body. `problem.title` must come LAST: v5 puts the code
+    // there, but on the v6 full endpoint `title` holds the operation name
+    // ("Sækja um fullnaðarskírteini"), so preferring it looks up a string that
+    // can never be in the table and the applicant loses the localised text
+    // (observed on IS-DEV 2026-08-31).
     const code =
-      err.problem?.title ??
-      (err.body as { errorCode?: string } | undefined)?.errorCode
+      (err.problem as { errorCode?: string } | undefined)?.errorCode ??
+      (err.body as { errorCode?: string } | undefined)?.errorCode ??
+      err.problem?.title
     if (code) {
       try {
         const described = await this.drivingLicenseService.describeErrorCode(

@@ -587,6 +587,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: mapGender(answers.chiefExecutive?.gender),
           contactName: answers.contactPerson?.name ?? '',
+          contactTitle: answers.contactPerson?.jobTitle ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
           salaryDataBasis,
@@ -657,6 +658,19 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             action: g.action ?? '',
             signatureName: g.signatureName ?? '',
             signatureRole: g.signatureRole ?? '',
+            // Passed through as the `yyyy-MM-dd` DatePickerController stored,
+            // which is the date-only form DMR validates for — same as the draft
+            // sync sends in buildOutlierSyncCommands. The cast is because
+            // clientConfig's `format: date` generates the field as `Date`, but
+            // the transformers plugin only converts responses: a `Date` here
+            // would be serialised as a full ISO instant and rejected.
+            //
+            // A blank sends `null` on a required field, so DMR answers 400.
+            // That is the intent: the review screen's submit is gated on
+            // isOutlierGroupSubmittable, which requires this too, so a blank
+            // here is a group that should never have reached submission, and
+            // saying so beats inventing a date the applicant never committed to.
+            remedyDate: (g.remedyDate || null) as unknown as Date,
             employeeOrdinals: g.employeeOrdinals,
           }))
 
@@ -698,6 +712,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: mapGender(answers.chiefExecutive?.gender),
           contactName: answers.contactPerson?.name ?? '',
+          contactTitle: answers.contactPerson?.jobTitle ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
           averageEmployeeFemaleCount: toNumberOrZero(

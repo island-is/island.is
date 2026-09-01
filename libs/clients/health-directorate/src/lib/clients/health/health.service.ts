@@ -47,6 +47,7 @@ import {
   mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
+  meTreatmentControllerGetTreatmentsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
   questionnaireControllerGetAllQuestionnairesV1,
   questionnaireControllerGetQuestionnaireDetailV1,
@@ -82,6 +83,7 @@ import {
   RenewalTargetDto,
   SubmitQuestionnaireDto,
   SubmitQuestionnaireResponseDto,
+  TreatmentBaseDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
 
@@ -803,5 +805,15 @@ export class HealthDirectorateHealthService {
     )
 
     return intent ?? null
+  }
+
+  /* Treatments */
+
+  public async getTreatments(auth: Auth): Promise<TreatmentBaseDto[] | null> {
+    const treatments = await withAuthContext(auth, () =>
+      data(meTreatmentControllerGetTreatmentsV1()),
+    )
+
+    return treatments ?? null
   }
 }
