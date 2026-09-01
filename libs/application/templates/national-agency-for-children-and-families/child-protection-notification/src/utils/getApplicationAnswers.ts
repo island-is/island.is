@@ -84,11 +84,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.nationalIdInfo.phone',
   )
 
-  const childEmail = getValueViaPath<string>(
-    answers,
-    'child.nationalIdInfo.email',
-  )
-
   const childUsePronounAndPreferredName =
     getValueViaPath<string[]>(
       answers,
@@ -335,7 +330,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childNationalId,
     childName,
     childPhone,
-    childEmail,
     childUsePronounAndPreferredName,
     childPreferredName,
     childPreferredPronoun,
