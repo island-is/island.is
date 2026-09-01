@@ -132,10 +132,12 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     ;(mockAppealCaseRepositoryService.create as jest.Mock).mockResolvedValue(
       createdAppealCase,
     )
-    ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue([])
-    ;(mockCaseRepositoryService.lockByIdForUpdate as jest.Mock).mockResolvedValue(
-      true,
+    ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
+      [],
     )
+    ;(
+      mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
+    ).mockResolvedValue(true)
 
     givenWhenThen = async (theCase, createDto) => {
       const then = {} as Then
@@ -184,7 +186,9 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     })
 
     it('should record an APPEALED event for that defendant alone', () => {
-      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(1)
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        1,
+      )
       expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
         {
           caseId,
@@ -231,9 +235,9 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue([
-        existingAppealCase,
-      ])
+      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
+        [existingAppealCase],
+      )
 
       then = await givenWhenThen(buildCase(), dto)
     })
