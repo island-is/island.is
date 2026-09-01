@@ -1,6 +1,5 @@
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -21,7 +20,7 @@ import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
   CaseDefendantPoliceCaseNumberRepositoryService,
-  CivilClaimant,
+  CivilClaimantRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
 } from '../../repository'
@@ -75,14 +74,13 @@ export const createTestingDefendantModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
-        provide: getModelToken(CivilClaimant),
+        provide: CivilClaimantRepositoryService,
         useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
           create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-          findByPk: jest.fn(),
+          updateByIdAndCase: jest.fn(),
+          deleteByIdAndCase: jest.fn(),
+          deleteAllForCase: jest.fn(),
+          findLatestBySpokespersonNationalId: jest.fn(),
         },
       },
       DefendantService,
@@ -98,50 +96,49 @@ export const createTestingDefendantModule = async () => {
 
   const sequelize = defendantModule.get<Sequelize>(Sequelize)
 
-  const defendantRepositoryService =
-    defendantModule.get<DefendantRepositoryService>(DefendantRepositoryService)
+  const defendantRepositoryService = defendantModule.get<DefendantRepositoryService>(
+    DefendantRepositoryService,
+  )
 
-  const defendantEventLogRepositoryService =
-    defendantModule.get<DefendantEventLogRepositoryService>(
-      DefendantEventLogRepositoryService,
-    )
+  const defendantEventLogRepositoryService = defendantModule.get<DefendantEventLogRepositoryService>(
+    DefendantEventLogRepositoryService,
+  )
 
-  const caseDefendantPoliceCaseNumberRepositoryService =
-    defendantModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
-      CaseDefendantPoliceCaseNumberRepositoryService,
-    )
+  const caseDefendantPoliceCaseNumberRepositoryService = defendantModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+    CaseDefendantPoliceCaseNumberRepositoryService,
+  )
 
-  const defendantService =
-    defendantModule.get<DefendantService>(DefendantService)
+  const defendantService = defendantModule.get<DefendantService>(
+    DefendantService,
+  )
 
-  const defendantController =
-    defendantModule.get<DefendantController>(DefendantController)
+  const defendantController = defendantModule.get<DefendantController>(
+    DefendantController,
+  )
 
-  const internalDefendantController =
-    defendantModule.get<InternalDefendantController>(
-      InternalDefendantController,
-    )
+  const internalDefendantController = defendantModule.get<InternalDefendantController>(
+    InternalDefendantController,
+  )
 
-  const limitedAccessDefendantController =
-    defendantModule.get<LimitedAccessDefendantController>(
-      LimitedAccessDefendantController,
-    )
+  const limitedAccessDefendantController = defendantModule.get<LimitedAccessDefendantController>(
+    LimitedAccessDefendantController,
+  )
 
-  const civilClaimantModel = await defendantModule.resolve<
-    typeof CivilClaimant
-  >(getModelToken(CivilClaimant))
+  const civilClaimantRepositoryService = defendantModule.get<CivilClaimantRepositoryService>(
+    CivilClaimantRepositoryService,
+  )
 
-  const civilClaimantService =
-    defendantModule.get<CivilClaimantService>(CivilClaimantService)
+  const civilClaimantService = defendantModule.get<CivilClaimantService>(
+    CivilClaimantService,
+  )
 
   const civilClaimantController = defendantModule.get<CivilClaimantController>(
     CivilClaimantController,
   )
 
-  const internalCivilClaimantController =
-    defendantModule.get<InternalCivilClaimantController>(
-      InternalCivilClaimantController,
-    )
+  const internalCivilClaimantController = defendantModule.get<InternalCivilClaimantController>(
+    InternalCivilClaimantController,
+  )
 
   const queuedMessages: Message[] = []
   const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
@@ -167,6 +164,6 @@ export const createTestingDefendantModule = async () => {
     limitedAccessDefendantController,
     civilClaimantService,
     civilClaimantController,
-    civilClaimantModel,
+    civilClaimantRepositoryService,
   }
 }

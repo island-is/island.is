@@ -12,6 +12,7 @@ import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CivilClaimant,
+  CivilClaimantRepositoryService,
 } from '../../../repository'
 import { UpdateCivilClaimantDto } from '../../dto/updateCivilClaimant.dto'
 
@@ -35,22 +36,21 @@ describe('CivilClaimantController - Update', () => {
   const theCase = { id: caseId, courtCaseNumber } as Case
 
   let mockQueuedMessages: Message[]
-  let mockCivilClaimantModel: typeof CivilClaimant
+  let mockCivilClaimantRepositoryService: CivilClaimantRepositoryService
   let mockCaseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       queuedMessages,
-      civilClaimantModel,
+      civilClaimantRepositoryService,
       caseDefendantPoliceCaseNumberRepositoryService,
       civilClaimantController,
     } = await createTestingDefendantModule()
 
     mockQueuedMessages = queuedMessages
-    mockCivilClaimantModel = civilClaimantModel
-    mockCaseDefendantPoliceCaseNumberRepositoryService =
-      caseDefendantPoliceCaseNumberRepositoryService
+    mockCivilClaimantRepositoryService = civilClaimantRepositoryService
+    mockCaseDefendantPoliceCaseNumberRepositoryService = caseDefendantPoliceCaseNumberRepositoryService
 
     givenWhenThen = async (
       theCase: Case,
@@ -86,20 +86,19 @@ describe('CivilClaimantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate = mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       then = await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
 
     it('should update the civil claimant', () => {
-      expect(mockCivilClaimantModel.update).toHaveBeenCalledWith(
-        civilClaimantUpdate,
-        {
-          where: { id: civilClaimantId, caseId },
-          returning: true,
-        },
-      )
+      expect(
+        mockCivilClaimantRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(civilClaimantId, caseId, civilClaimantUpdate)
       expect(mockQueuedMessages).toEqual([])
     })
 
@@ -120,12 +119,14 @@ describe('CivilClaimantController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindAssignedDefendantIds =
-        mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds as jest.Mock
+      const mockFindAssignedDefendantIds = mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds as jest.Mock
       mockFindAssignedDefendantIds.mockResolvedValueOnce(['def-b'])
 
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate = mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
@@ -134,10 +135,12 @@ describe('CivilClaimantController - Update', () => {
       expect(
         mockCaseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds,
       ).toHaveBeenCalledWith(caseId, ['007-1', '007-2'], ['def-a', 'def-b'])
-      expect(mockCivilClaimantModel.update).toHaveBeenCalledWith(
-        { policeCaseNumbers: ['007-1', '007-2'], defendantIds: ['def-b'] },
-        { where: { id: civilClaimantId, caseId }, returning: true },
-      )
+      expect(
+        mockCivilClaimantRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(civilClaimantId, caseId, {
+        policeCaseNumbers: ['007-1', '007-2'],
+        defendantIds: ['def-b'],
+      })
     })
   })
 
@@ -154,8 +157,11 @@ describe('CivilClaimantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate = mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       then = await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
@@ -180,7 +186,8 @@ describe('CivilClaimantController - Update', () => {
           user,
           elementId: civilClaimantId,
           body: {
-            type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+            type:
+              CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
           },
         },
       ])
@@ -200,8 +207,11 @@ describe('CivilClaimantController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate = mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate, {
         id: civilClaimantId,
@@ -225,8 +235,11 @@ describe('CivilClaimantController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate = mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
@@ -251,7 +264,8 @@ describe('CivilClaimantController - Update', () => {
           user,
           elementId: civilClaimantId,
           body: {
-            type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+            type:
+              CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
           },
         },
       ])
@@ -268,8 +282,11 @@ describe('CivilClaimantController - Update', () => {
     const caseWithoutCourtCaseNumber = { id: caseId } as Case
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+      const mockUpdate = mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [updatedCivilClaimant],
+      })
 
       await givenWhenThen(
         caseWithoutCourtCaseNumber,
@@ -292,7 +309,8 @@ describe('CivilClaimantController - Update', () => {
           user,
           elementId: civilClaimantId,
           body: {
-            type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+            type:
+              CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
           },
         },
       ])
@@ -303,7 +321,7 @@ describe('CivilClaimantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
+      const mockUpdate = mockCivilClaimantRepositoryService.updateByIdAndCase as jest.Mock
       mockUpdate.mockRejectedValue(new Error('Test error'))
 
       then = await givenWhenThen(theCase, civilClaimantId, {})
