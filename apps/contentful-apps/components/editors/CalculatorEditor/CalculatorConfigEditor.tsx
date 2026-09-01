@@ -25,7 +25,7 @@ import {
   CalculatorLocalizedText,
   CalculatorSectionField,
   collectSectionToggles,
-} from '@island.is/shared/calculator-config'
+} from '@island.is/tax-calculators'
 
 // Every piece of editor-authored display text is an inline bilingual pair --
 // the backend has no opinion on this text at all, so both languages are

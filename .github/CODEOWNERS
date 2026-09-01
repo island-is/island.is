@@ -188,6 +188,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/regulations-admin/                                                                                         @island-is/hugsmidjan
 /libs/api/domains/rights-portal                                                                                              @island-is/hugsmidjan
 /libs/api/domains/tax-calculators/                                                                                           @island-is/hugsmidjan
+/libs/tax-calculators/                                                                                                       @island-is/hugsmidjan
 /libs/api/domains/social-insurance                                                                                           @island-is/hugsmidjan @island-is/stefna
 /libs/api/domains/occupational-licenses/                                                                                     @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                                                   @island-is/hugsmidjan

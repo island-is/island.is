@@ -8,7 +8,7 @@ import {
   CalculatorLocalizedText,
   CalculatorSectionField,
   calculatorConfigSchema,
-} from '@island.is/shared/calculator-config'
+} from '@island.is/tax-calculators'
 import {
   AlertMessage,
   Box,

@@ -1,5 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { GraphQLError } from 'graphql'
 import graphqlTypeJson from 'graphql-type-json'
+import {
+  CalculatorConfig,
+  calculatorConfigSchema,
+} from '@island.is/tax-calculators'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ICalculator } from '../generated/contentfulTypes'
 
@@ -22,15 +27,25 @@ export class Calculator {
   // merged validation rejects two differently-scoped scalars sharing a field
   // name across union members, so this must match ConnectedComponent's type.
   @Field(() => graphqlTypeJson, { nullable: true })
-  configJson?: Record<string, any>
+  configJson?: CalculatorConfig
 }
 
 export const mapCalculator = ({
   sys,
   fields,
-}: ICalculator): SystemMetadata<Calculator> => ({
-  typename: 'Calculator',
-  id: sys.id,
-  calculatorType: fields?.type,
-  configJson: fields?.configJson ?? undefined,
-})
+}: ICalculator): SystemMetadata<Calculator> => {
+  const config = calculatorConfigSchema.safeParse(fields?.configJson)
+
+  if (!config.success) {
+    throw new GraphQLError(
+      `Can not map calculator config on entry ${sys.id}: ${config.error.message}`,
+    )
+  }
+
+  return {
+    typename: 'Calculator',
+    id: sys.id,
+    calculatorType: fields?.type,
+    configJson: config.data,
+  }
+}

@@ -416,7 +416,10 @@ export const safelyMapSliceUnion = (
   try {
     return mapSliceUnion(data)
   } catch (error) {
-    logger.warn('Failed to map slice', { error: error.message })
+    logger.warn('Failed to map slice', {
+      error: error.message,
+      stack: error.stack,
+    })
     return null
   }
 }

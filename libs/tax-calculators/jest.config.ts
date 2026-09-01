@@ -1,11 +1,11 @@
 /* eslint-disable */
 module.exports = {
-  displayName: 'shared-calculator-config',
+  displayName: 'tax-calculators',
   preset: './jest.preset.js',
-  rootDir: '../../..',
+  rootDir: '../..',
   roots: [__dirname],
-  detectLeaks: false,
   globals: {},
+  testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',
@@ -13,5 +13,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/shared/calculator-config',
+  coverageDirectory: '<rootDir>/coverage/libs/tax-calculators',
 }
