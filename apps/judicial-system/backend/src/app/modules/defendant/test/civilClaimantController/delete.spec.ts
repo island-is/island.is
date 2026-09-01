@@ -23,14 +23,13 @@ describe('CivilClaimantController - Delete', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      civilClaimantController,
-      civilClaimantRepositoryService,
-    } = await createTestingDefendantModule()
+    const { civilClaimantController, civilClaimantRepositoryService } =
+      await createTestingDefendantModule()
 
     mockCivilClaimantRepositoryService = civilClaimantRepositoryService
 
-    const mockDelete = mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
+    const mockDelete =
+      mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
     mockDelete.mockRejectedValue(new Error('Test error'))
 
     givenWhenThen = async () => {
@@ -53,7 +52,8 @@ describe('CivilClaimantController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDelete = mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
+      const mockDelete =
+        mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
       mockDelete.mockResolvedValue(1)
 
       then = await givenWhenThen(caseId, civilClaimantId)

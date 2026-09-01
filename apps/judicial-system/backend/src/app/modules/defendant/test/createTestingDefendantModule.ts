@@ -96,49 +96,51 @@ export const createTestingDefendantModule = async () => {
 
   const sequelize = defendantModule.get<Sequelize>(Sequelize)
 
-  const defendantRepositoryService = defendantModule.get<DefendantRepositoryService>(
-    DefendantRepositoryService,
-  )
+  const defendantRepositoryService =
+    defendantModule.get<DefendantRepositoryService>(DefendantRepositoryService)
 
-  const defendantEventLogRepositoryService = defendantModule.get<DefendantEventLogRepositoryService>(
-    DefendantEventLogRepositoryService,
-  )
+  const defendantEventLogRepositoryService =
+    defendantModule.get<DefendantEventLogRepositoryService>(
+      DefendantEventLogRepositoryService,
+    )
 
-  const caseDefendantPoliceCaseNumberRepositoryService = defendantModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
-    CaseDefendantPoliceCaseNumberRepositoryService,
-  )
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    defendantModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
+    )
 
-  const defendantService = defendantModule.get<DefendantService>(
-    DefendantService,
-  )
+  const defendantService =
+    defendantModule.get<DefendantService>(DefendantService)
 
-  const defendantController = defendantModule.get<DefendantController>(
-    DefendantController,
-  )
+  const defendantController =
+    defendantModule.get<DefendantController>(DefendantController)
 
-  const internalDefendantController = defendantModule.get<InternalDefendantController>(
-    InternalDefendantController,
-  )
+  const internalDefendantController =
+    defendantModule.get<InternalDefendantController>(
+      InternalDefendantController,
+    )
 
-  const limitedAccessDefendantController = defendantModule.get<LimitedAccessDefendantController>(
-    LimitedAccessDefendantController,
-  )
+  const limitedAccessDefendantController =
+    defendantModule.get<LimitedAccessDefendantController>(
+      LimitedAccessDefendantController,
+    )
 
-  const civilClaimantRepositoryService = defendantModule.get<CivilClaimantRepositoryService>(
-    CivilClaimantRepositoryService,
-  )
+  const civilClaimantRepositoryService =
+    defendantModule.get<CivilClaimantRepositoryService>(
+      CivilClaimantRepositoryService,
+    )
 
-  const civilClaimantService = defendantModule.get<CivilClaimantService>(
-    CivilClaimantService,
-  )
+  const civilClaimantService =
+    defendantModule.get<CivilClaimantService>(CivilClaimantService)
 
   const civilClaimantController = defendantModule.get<CivilClaimantController>(
     CivilClaimantController,
   )
 
-  const internalCivilClaimantController = defendantModule.get<InternalCivilClaimantController>(
-    InternalCivilClaimantController,
-  )
+  const internalCivilClaimantController =
+    defendantModule.get<InternalCivilClaimantController>(
+      InternalCivilClaimantController,
+    )
 
   const queuedMessages: Message[] = []
   const mockAddMessageToQueue = addMessagesToQueue as jest.Mock

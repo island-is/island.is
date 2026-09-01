@@ -64,9 +64,10 @@ describe('CivilClaimantController - Create', () => {
     })
 
     it('should create a civil claimant', () => {
-      expect(
-        mockCivilClaimantRepositoryService.create,
-      ).toHaveBeenCalledWith(caseId, { transaction })
+      expect(mockCivilClaimantRepositoryService.create).toHaveBeenCalledWith(
+        caseId,
+        { transaction },
+      )
     })
 
     it('should return the created civil claimant', () => {
