@@ -1,18 +1,26 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
+import { useWatch } from 'react-hook-form'
 import { getErrorViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
 import {
   AccordionCard,
   Box,
   Button,
+  GridColumn,
+  GridRow,
   Icon,
   Tag,
   Text,
   VisuallyHidden,
 } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  DatePickerController,
+  InputController,
+} from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import type { Locale } from '@island.is/shared/types'
 import { messages } from '../../lib/messages'
+import { isRemedyDateInWindow, remedyDateBounds } from '../../utils/dates'
 import type { GroupDirection } from '../../utils/outlierGroups'
 
 type Props = {
@@ -47,8 +55,26 @@ export const OutlierGroupCard: FC<Props> = ({
   onRemove,
   onRemoveMember,
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const m = messages.salaryAnalysis.outlierGroup
+
+  // DMR rejects a remedy date outside this window, so the calendar doesn't offer
+  // one. Bounds and the error below come from the same helper, so the calendar
+  // cannot offer a date the Continue and submit gates would then refuse.
+  // Computed once — the card re-renders on every keystroke in it, and a fresh
+  // Date each time would churn react-datepicker's own props.
+  const { min: minRemedyDate, max: maxRemedyDate } = useMemo(
+    () => remedyDateBounds(new Date()),
+    [],
+  )
+
+  // Watched rather than taken from the `errors` prop: a date that has gone stale
+  // since it was picked has to surface in draft mode too, and there the groups
+  // live on the DMR draft and never reach dataSchema — groupError is undefined
+  // in that mode by design.
+  const remedyDate = useWatch({
+    name: `${fieldName}.${index}.remedyDate`,
+  }) as string | undefined
 
   // Below and above are different questions, so they get different prompts.
   // A group can hold both — the applicant composes groups freely — which is
@@ -64,6 +90,13 @@ export const OutlierGroupCard: FC<Props> = ({
     mode === 'postponed' && errors
       ? getErrorViaPath(errors, `${fieldName}.${index}.${suffix}`)
       : undefined
+
+  // Only once something is picked: an untouched field is errors.required's
+  // business, and dataSchema reports the two as separate issues for that reason.
+  const remedyDateError =
+    remedyDate && !isRemedyDateInWindow(remedyDate, new Date())
+      ? formatMessage(messages.errors.remedyDateOutOfRange)
+      : groupError('remedyDate')
 
   return (
     <Box marginBottom={3}>
@@ -164,6 +197,43 @@ export const OutlierGroupCard: FC<Props> = ({
             error={groupError('action')}
           />
         </Box>
+        {/* The bound belongs beside the field rather than under it: a date
+            field stretched across the whole card reads as a longer answer than
+            it takes, and the half it doesn't need is where the rule goes. Both
+            halves fall back to full width on a phone, where the hint stacks
+            underneath. */}
+        <GridRow marginTop={2}>
+          <GridColumn span={['12/12', '6/12']}>
+            {/* DatePickerController takes no RHF `rules` and its `required` is
+                label-only, so what actually holds a bad date back is
+                isOutlierGroupSubmittable (the Continue gate, in both modes) and
+                dataSchema's superRefine — plus remedyDateError above, which is
+                the only one of the three that reports on the field in draft
+                mode. */}
+            <DatePickerController
+              id={`${fieldName}.${index}.remedyDate`}
+              name={`${fieldName}.${index}.remedyDate`}
+              label={formatMessage(m.remedyDateLabel)}
+              locale={lang as Locale}
+              minDate={minRemedyDate}
+              maxDate={maxRemedyDate}
+              required
+              backgroundColor="blue"
+              error={remedyDateError}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']} paddingTop={[1, 0]}>
+            {/* Centred over the column rather than pinned to its top: the
+                picker's own label sits above its input, so aligning the hint
+                with the top of the row would leave it floating above the field
+                it describes. */}
+            <Box height="full" display="flex" alignItems="center">
+              <Text variant="small" color="dark400">
+                {formatMessage(m.remedyDateDescription)}
+              </Text>
+            </Box>
+          </GridColumn>
+        </GridRow>
         <Box marginTop={2} display="flex" columnGap={2}>
           <Box style={{ flex: 1 }}>
             <InputController

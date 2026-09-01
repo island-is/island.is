@@ -2,7 +2,11 @@ import { lastValueFrom, of, tap, throwError } from 'rxjs'
 import type { Transaction } from 'sequelize'
 import type { Sequelize } from 'sequelize-typescript'
 
-import { CallHandler, ExecutionContext } from '@nestjs/common'
+import {
+  CallHandler,
+  ExecutionContext,
+  InternalServerErrorException,
+} from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 
@@ -134,6 +138,31 @@ describe('TransactionCommitInterceptor', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'An after commit callback failed',
         { error },
+      )
+    })
+
+    it('should refuse a callback that registers another callback, without failing the request', async () => {
+      const second = jest.fn()
+      const next: CallHandler = { handle: () => of('some value') }
+
+      const value = await runInRequestContext(async () => {
+        await getOrCreateTransaction(sequelize)
+        registerAfterCommit(async () => {
+          // The slot is settled by the time the callbacks are drained, so this
+          // registration is refused: the callback would be appended to the
+          // array being iterated, and would run in a drain that has already
+          // passed the commit it was meant to follow.
+          registerAfterCommit(second)
+        })
+
+        return await lastValueFrom(interceptor.intercept(context, next))
+      })
+
+      expect(second).not.toHaveBeenCalled()
+      expect(value).toBe('some value')
+      expect(logger.error).toHaveBeenCalledWith(
+        'An after commit callback failed',
+        { error: expect.any(InternalServerErrorException) },
       )
     })
 

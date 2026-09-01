@@ -139,6 +139,12 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
       },
       {
         width: 'half',
+        keyText: messages.aboutTheCompany.contactPerson.jobTitle,
+        valueText:
+          getValueViaPath<string>(answers, 'contactPerson.jobTitle') ?? '',
+      },
+      {
+        width: 'half',
         keyText: messages.aboutTheCompany.contactPerson.email,
         valueText:
           getValueViaPath<string>(answers, 'contactPerson.email') ?? '',
