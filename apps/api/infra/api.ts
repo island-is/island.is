@@ -162,8 +162,7 @@ export const serviceSetup = (services: {
       ),
       DOWNLOAD_SERVICE_BASE_PATH: {
         prod: 'https://api.island.is',
-        // TEMP: hardcoded to this feature branch's download-service host for testing, revert before merge
-        dev: 'https://chorecheckout-hms-rental-api.dev01.devland.is',
+        dev: 'https://api.dev01.devland.is',
         staging: 'https://api.staging01.devland.is',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(

@@ -17,8 +17,7 @@ export const serviceSetup = (
     .env({
       BFF_ALLOWED_EXTERNAL_API_URLS: {
         local: json(['http://localhost:3377/download/v1']),
-        // TEMP: hardcoded to this feature branch's download-service host for testing, revert before merge
-        dev: json(['https://chorecheckout-hms-rental-api.dev01.devland.is']),
+        dev: json(['https://api.dev01.devland.is']),
         staging: json(['https://api.staging01.devland.is']),
         prod: json(['https://api.island.is']),
       },
