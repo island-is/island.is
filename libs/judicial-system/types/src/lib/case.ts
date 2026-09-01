@@ -279,6 +279,15 @@ export enum CaseLegalProvisions {
   _97_1 = '_97_1', // 1. mgr. 97. gr. sml.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
+  _115_1 = '_115_1', // 115. gr. útl.
+  _115_1_A = '_115_1_A', // a-lið 1. mgr. 115. gr. útl.
+  _115_1_B = '_115_1_B', // b-lið 1. mgr. 115. gr. útl.
+  _115_1_C = '_115_1_C', // c-lið 1. mgr. 115. gr. útl.
+  _115_1_D = '_115_1_D', // d-lið 1. mgr. 115. gr. útl.
+  _115_1_E = '_115_1_E', // e-lið 1. mgr. 115. gr. útl.
+  _115_1_F = '_115_1_F', // f-lið 1. mgr. 115. gr. útl.
+  _115_1_G = '_115_1_G', // g-lið 1. mgr. 115. gr. útl.
+  _115_1_H = '_115_1_H', // h-lið 1. mgr. 115. gr. útl.
 }
 /* eslint-enable @typescript-eslint/naming-convention */
 
