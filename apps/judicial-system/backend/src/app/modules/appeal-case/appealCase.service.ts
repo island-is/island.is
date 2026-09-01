@@ -23,9 +23,9 @@ import {
   AppealCaseState,
   AppealCaseTransition,
   AppealCaseType,
-  canDefendantAppealVerdict,
   AppealEventType,
   AppealOrigin,
+  canDefendantAppealVerdict,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -741,10 +741,12 @@ export class AppealCaseService {
     // than a joined one.
     await this.caseRepositoryService.lockByIdForUpdate(theCase.id, transaction)
 
-    const [existingAppealCase] = await this.appealCaseRepositoryService.findAll({
-      where: { caseId: theCase.id, appealType: AppealCaseType.VERDICT },
-      transaction,
-    })
+    const [existingAppealCase] = await this.appealCaseRepositoryService.findAll(
+      {
+        where: { caseId: theCase.id, appealType: AppealCaseType.VERDICT },
+        transaction,
+      },
+    )
 
     const appealCase =
       existingAppealCase ??

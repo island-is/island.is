@@ -9,6 +9,7 @@ import {
   prosecutionRoles,
   type User,
   UserRole,
+  verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -22,16 +23,30 @@ import {
 } from '../repository'
 
 // The appeal case a case file belongs to: the ruling-order appeal the file
-// carries in its rulingFileId, or the case-level appeal for files with none.
+// carries in its rulingFileId, the áfrýjun for an áfrýjunaryfirlýsing and what
+// is filed with it, or the case-level kæra for everything else.
+//
+// The declaration needs its own arm because it is case level too - the áfrýjun
+// and the kæra are told apart by appeal type, not by a ruling file.
 export const findAppealCaseOfCaseFile = (
   theCase: Case,
-  file: Pick<CaseFile, 'rulingFileId'>,
-): AppealCase | undefined =>
-  file.rulingFileId
-    ? theCase.rulingOrderAppealCases?.find(
-        (appealCase) => appealCase.rulingFileId === file.rulingFileId,
-      )
-    : theCase.appealCase
+  file: Pick<CaseFile, 'rulingFileId' | 'category'>,
+): AppealCase | undefined => {
+  if (file.rulingFileId) {
+    return theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === file.rulingFileId,
+    )
+  }
+
+  if (
+    file.category &&
+    verdictAppealDeclarationFileCategories.includes(file.category)
+  ) {
+    return theCase.verdictAppealCase
+  }
+
+  return theCase.appealCase
+}
 
 // The defendants that currently stand as appellants of a verdict appeal
 // (áfrýjun): those whose most recent appeal event on it is an APPEALED rather

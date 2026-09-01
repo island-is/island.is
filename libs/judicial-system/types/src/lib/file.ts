@@ -90,7 +90,9 @@ export const isAppealFileDeletionLocked = (
     return true
   }
 
-  return isPartyAppealFileCategory(category) && Boolean(appealCase.appealCaseNumber)
+  return (
+    isPartyAppealFileCategory(category) && Boolean(appealCase.appealCaseNumber)
+  )
 }
 
 // A ruling order pronounced during the course of a case is usually delivered
