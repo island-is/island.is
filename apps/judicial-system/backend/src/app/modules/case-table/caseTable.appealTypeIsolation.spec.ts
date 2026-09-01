@@ -91,7 +91,10 @@ describe('case tables keep áfrýjun out of kæra lists', () => {
         include,
         where: whereOptions.where,
         order,
-      }).catch(() => undefined)
+      })
+    } catch {
+      // Building the query is the subject here; running it is not, and the
+      // stubbed query layer answers with rows Sequelize cannot map.
     } finally {
       anySequelize.query = originalQuery
       anySequelize.queryRaw = originalQueryRaw
