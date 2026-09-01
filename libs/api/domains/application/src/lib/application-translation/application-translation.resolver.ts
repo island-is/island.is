@@ -112,9 +112,11 @@ export class ApplicationTranslationResolver {
   @Mutation(() => GoogleTranslateResultGql)
   @Scopes(...TRANSLATION_SCOPES)
   async googleTranslateStrings(
+    @CurrentUser() user: User,
     @Args('input') input: GoogleTranslateStringsInput,
   ): Promise<GoogleTranslateResultGql> {
     const translations = await this.googleTranslateService.translateTexts(
+      user,
       input.texts,
     )
     return { translations }

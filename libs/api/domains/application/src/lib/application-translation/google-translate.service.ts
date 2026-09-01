@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
+import {
+  assertGoogleTranslateInputLimits,
+  GoogleTranslateRateLimiter,
+} from './google-translate.limits'
 
 @Injectable()
 export class GoogleTranslateService {
@@ -10,11 +16,15 @@ export class GoogleTranslateService {
     timeout: 20000,
     logErrorResponseBody: true,
   })
+  private readonly rateLimiter = new GoogleTranslateRateLimiter()
 
-  async translateTexts(texts: string[]): Promise<string[]> {
+  async translateTexts(user: User, texts: string[]): Promise<string[]> {
     if (texts.length === 0) {
       return []
     }
+
+    const totalChars = assertGoogleTranslateInputLimits(texts)
+    this.rateLimiter.consume(user.nationalId, totalChars)
 
     const apiKey = process.env.FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY
 
