@@ -12,11 +12,12 @@ import {
 import { useTemplateCustomFields } from './useTemplateCustomFields'
 
 export const useTranslationWorkspaceData = (typeId: string | undefined) => {
-  const { customFields } = useTemplateCustomFields(typeId)
+  const { customFields, previewApplicationData } =
+    useTemplateCustomFields(typeId)
 
   const previewApplication = useMemo(
-    () => createWorkspacePreviewApplication(typeId),
-    [typeId],
+    () => createWorkspacePreviewApplication(typeId, previewApplicationData),
+    [typeId, previewApplicationData],
   )
 
   const { data, loading, error } = useGetApplicationTemplateIntrospectionQuery({

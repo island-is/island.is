@@ -1,4 +1,5 @@
 import { Navigate, useLocation, useParams } from 'react-router-dom'
+import { useMemo } from 'react'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -115,6 +116,14 @@ export const TranslationWorkspace = () => {
     selectedLocation,
     selectedScreen,
   })
+
+  const previewApplicationForState = useMemo(
+    () => ({
+      ...previewApplication,
+      state: derivedView.activeStateKey || previewApplication.state,
+    }),
+    [previewApplication, derivedView.activeStateKey],
+  )
 
   const isWorkspaceReady = Boolean(introspection) && !isLoading && !loadError
 
@@ -235,9 +244,10 @@ export const TranslationWorkspace = () => {
           fieldErrorOverrides={fieldErrorOverrides}
           previewFieldValues={previewFieldValues}
           customFields={customFields}
-          previewApplication={previewApplication}
+          previewApplication={previewApplicationForState}
           activeLocale={activeLocale}
           footerSubmitScreen={footerSubmitScreen}
+          extraMessageDescriptors={allApplicationMessageDescriptors}
         />
       }
       navPanel={navPanel}

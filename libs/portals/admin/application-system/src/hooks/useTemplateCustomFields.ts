@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ApplicationTypes } from '@island.is/application/types'
-import { getApplicationUIFields } from '@island.is/application/template-loader'
+import {
+  getApplicationTranslationWorkspacePreview,
+  getApplicationUIFields,
+  type TranslationWorkspacePreviewApplicationData,
+} from '@island.is/application/template-loader'
 import type { PreviewFieldComponent } from '../utils/previewFieldRegistry'
 
 type CustomFieldMap = Record<string, PreviewFieldComponent>
 
 export const useTemplateCustomFields = (typeId: string | undefined) => {
   const [fields, setFields] = useState<CustomFieldMap>({})
+  const [previewApplicationData, setPreviewApplicationData] =
+    useState<TranslationWorkspacePreviewApplicationData>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const loadedRef = useRef<string | null>(null)
@@ -18,8 +24,13 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
     setLoading(true)
     setError(null)
 
-    getApplicationUIFields(typeId as ApplicationTypes)
-      .then((uiFields) => {
+    Promise.all([
+      getApplicationUIFields(typeId as ApplicationTypes),
+      getApplicationTranslationWorkspacePreview(
+        typeId as ApplicationTypes,
+      ).catch(() => ({}) as TranslationWorkspacePreviewApplicationData),
+    ])
+      .then(([uiFields, previewData]) => {
         if (cancelled) return
         console.log(
           '[useTemplateCustomFields] Loaded fields for',
@@ -27,6 +38,7 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
           Object.keys(uiFields),
         )
         setFields(uiFields as CustomFieldMap)
+        setPreviewApplicationData(previewData)
         loadedRef.current = typeId
       })
       .catch((err) => {
@@ -46,5 +58,5 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
     }
   }, [typeId])
 
-  return { customFields: fields, loading, error }
+  return { customFields: fields, previewApplicationData, loading, error }
 }

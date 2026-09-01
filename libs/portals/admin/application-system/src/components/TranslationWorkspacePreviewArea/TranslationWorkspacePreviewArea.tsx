@@ -10,6 +10,7 @@ import {
 import { coreMessages } from '@island.is/application/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
+  MessageDescriptor,
   PreviewFormatMessage,
   ResolvePreviewString,
   ScreenIntrospection,
@@ -121,6 +122,8 @@ export interface TranslationWorkspacePreviewAreaProps {
   activeLocale: 'is' | 'en'
   /** `buildSubmitField` with `placement: 'footer'` — actions rendered in preview chrome. */
   footerSubmitScreen?: ScreenIntrospection
+  /** Full template catalog so custom-field `formatMessage` ids resolve in preview intl. */
+  extraMessageDescriptors?: MessageDescriptor[]
 }
 
 export const TranslationWorkspacePreviewArea = ({
@@ -145,6 +148,7 @@ export const TranslationWorkspacePreviewArea = ({
   previewApplication,
   activeLocale,
   footerSubmitScreen,
+  extraMessageDescriptors,
 }: TranslationWorkspacePreviewAreaProps) => {
   const mergedPreviewFields = useMemo(
     () => mergePreviewFieldRegistry(customFields),
@@ -219,6 +223,7 @@ export const TranslationWorkspacePreviewArea = ({
                 previewScreens={previewScreens}
                 previewFieldValues={previewFieldValues}
                 resolvePreviewString={resolvePreviewString}
+                extraMessageDescriptors={extraMessageDescriptors}
               >
                 {previewScreens.map((screen) => (
                   <TranslationWorkspaceFieldPreview

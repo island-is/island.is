@@ -5,6 +5,7 @@ import {
   getPersistedForMessage,
   hasUnsavedTranslationChanges,
 } from '../utils/translationWorkspaceEditing'
+import { unescapePreviewMarkdownString } from '../utils/translationWorkspaceStaticText'
 import type {
   PersistedByKey,
   TranslationLocale,
@@ -34,14 +35,14 @@ export const useTranslationWorkspaceDrafts = (
   const resolvePreviewString = useCallback(
     (messageKey: string, defaultMessage?: string | null) => {
       const draft = editedValues[activeLocale][messageKey]
+      let value: string
       if (draft !== undefined && draft !== '') {
-        return draft
+        value = draft
+      } else {
+        const persisted = getPersistedValue(messageKey, activeLocale)
+        value = persisted !== '' ? persisted : defaultMessage ?? ''
       }
-      const persisted = getPersistedValue(messageKey, activeLocale)
-      if (persisted !== '') {
-        return persisted
-      }
-      return defaultMessage ?? ''
+      return unescapePreviewMarkdownString(messageKey, value)
     },
     [editedValues, activeLocale, getPersistedValue],
   )

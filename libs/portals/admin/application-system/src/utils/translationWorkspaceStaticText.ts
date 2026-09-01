@@ -94,3 +94,18 @@ export const MARKDOWN_MESSAGE_ID_SUFFIX = '#markdown'
 
 export const isMarkdownMessageId = (messageId: string) =>
   messageId.endsWith(MARKDOWN_MESSAGE_ID_SUFFIX)
+
+/**
+ * Message files escape line breaks as `\\n` so formatjs extract does not strip them.
+ * `extract-strings` unescapes those sequences for `#markdown` ids before Contentful.
+ * Translation Workspace preview uses the raw defaultMessage, so we do the same here
+ * or markdown headings/lists stay on one line and `\n` shows as text.
+ */
+export const unescapeMarkdownLineBreaks = (value: string): string =>
+  value.replace(/\\n/g, '\n')
+
+export const unescapePreviewMarkdownString = (
+  messageId: string,
+  value: string,
+): string =>
+  isMarkdownMessageId(messageId) ? unescapeMarkdownLineBreaks(value) : value

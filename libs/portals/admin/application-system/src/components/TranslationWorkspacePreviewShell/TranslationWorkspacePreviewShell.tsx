@@ -10,6 +10,7 @@ import type { Locale } from '@island.is/shared/types'
 import { LocaleContext } from '@island.is/localization'
 import { noop } from '../../utils/translationWorkspaceFieldConstants'
 import type {
+  MessageDescriptor,
   ResolvePreviewString,
   ScreenIntrospection,
 } from '../../types/translationWorkspace'
@@ -54,6 +55,7 @@ interface TranslationWorkspacePreviewShellProps {
   previewScreens: ScreenIntrospection[]
   previewFieldValues: Record<string, string>
   resolvePreviewString: ResolvePreviewString
+  extraMessageDescriptors?: MessageDescriptor[]
   children: ReactNode
 }
 
@@ -66,6 +68,7 @@ export const TranslationWorkspacePreviewShell = ({
   previewScreens,
   previewFieldValues,
   resolvePreviewString,
+  extraMessageDescriptors,
   children,
 }: TranslationWorkspacePreviewShellProps) => {
   const messages = useMemo(
@@ -73,8 +76,9 @@ export const TranslationWorkspacePreviewShell = ({
       buildTranslationWorkspacePreviewIntlMessages(
         previewScreens,
         resolvePreviewString,
+        extraMessageDescriptors,
       ),
-    [previewScreens, resolvePreviewString],
+    [previewScreens, resolvePreviewString, extraMessageDescriptors],
   )
 
   const defaultValues = useMemo(

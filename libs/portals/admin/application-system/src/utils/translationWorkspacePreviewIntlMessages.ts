@@ -70,6 +70,7 @@ export const collectTranslationWorkspaceScreenDescriptors = (
 export const buildTranslationWorkspacePreviewIntlMessages = (
   previewScreens: ScreenIntrospection[],
   resolvePreviewString: ResolvePreviewString,
+  extraDescriptors: MessageDescriptor[] = [],
 ): Record<string, string> => {
   const messages: Record<string, string> = {}
 
@@ -97,6 +98,14 @@ export const buildTranslationWorkspacePreviewIntlMessages = (
   for (const d of collectTranslationWorkspaceScreenDescriptors(
     previewScreens,
   )) {
+    add(d.id, d.defaultMessage)
+  }
+
+  /**
+   * Custom fields call `formatMessage` with imported descriptors that are not on the
+   * form tree. Include the full template catalog so `#markdown` copy still resolves.
+   */
+  for (const d of extraDescriptors) {
     add(d.id, d.defaultMessage)
   }
 

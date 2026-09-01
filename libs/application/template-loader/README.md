@@ -13,6 +13,7 @@ The admin **Translation Workspace** builds its string list from **form introspec
 - **Strings declared only inside JSX** (or only inside a subcomponent without going through the form) **will not appear** in the workspace until they are represented as discoverable data.
 - Prefer putting user-facing copy on the **`CUSTOM` field itself** (`title`, `description`) and in **`props`**: any `MessageDescriptor` nested under `props` is picked up automatically by introspection (recursive walk with a depth limit).
 - For copy that cannot live in `props`, export **`getCustomFieldMessageDescriptors`** from the same template library module as `getFields`. It must return a map from **`CustomField.component`** string to an array of `{ id, defaultMessage?, description? }`. Those entries are merged into introspection for matching custom screens.
+- Custom field **preview** uses a stub `application` (`answers: {}`, `externalData: {}`). Components that read `externalData.*.data` will crash unless the template also exports **`getTranslationWorkspacePreviewApplication`**, returning `{ answers?, externalData? }` sample data for that template.
 
 ## Running unit tests
 

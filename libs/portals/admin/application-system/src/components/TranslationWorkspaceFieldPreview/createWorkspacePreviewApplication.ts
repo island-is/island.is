@@ -1,4 +1,8 @@
-import type { Application } from '@island.is/application/types'
+import type {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 
 const PREVIEW_APPLICATION_BASE: Application = {
   id: 'preview',
@@ -14,9 +18,17 @@ const PREVIEW_APPLICATION_BASE: Application = {
   modified: new Date(),
 }
 
+export type WorkspacePreviewApplicationPatch = {
+  answers?: FormValue
+  externalData?: ExternalData
+}
+
 export const createWorkspacePreviewApplication = (
   templateTypeId: string | undefined,
+  patch?: WorkspacePreviewApplicationPatch | null,
 ): Application => ({
   ...PREVIEW_APPLICATION_BASE,
   typeId: (templateTypeId ?? '') as Application['typeId'],
+  answers: patch?.answers ?? {},
+  externalData: patch?.externalData ?? {},
 })

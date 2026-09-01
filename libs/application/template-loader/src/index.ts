@@ -10,6 +10,8 @@ import {
   FieldBaseProps,
   RepeaterProps,
   BasicDataProvider,
+  ExternalData,
+  FormValue,
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
@@ -30,6 +32,16 @@ export type CustomFieldMessageDescriptorInfo = {
   description?: string
 }
 
+/**
+ * Optional answers / externalData for Translation Workspace custom-field preview.
+ * Custom components often read `application.externalData.*.data` and crash on the
+ * empty stub application the workspace uses by default.
+ */
+export type TranslationWorkspacePreviewApplicationData = {
+  answers?: FormValue
+  externalData?: ExternalData
+}
+
 type TemplateLibraryModule = {
   default: unknown
   getDataProviders?: () => Promise<Record<string, new () => BasicDataProvider>>
@@ -37,6 +49,7 @@ type TemplateLibraryModule = {
   getCustomFieldMessageDescriptors?: () => Promise<
     Record<string, CustomFieldMessageDescriptorInfo[]>
   >
+  getTranslationWorkspacePreviewApplication?: () => Promise<TranslationWorkspacePreviewApplicationData>
 }
 
 const TEMPLATE_LIB_NON_MESSAGE_EXPORTS = new Set([
@@ -45,6 +58,7 @@ const TEMPLATE_LIB_NON_MESSAGE_EXPORTS = new Set([
   'getDataProviders',
   'getFields',
   'getCustomFieldMessageDescriptors',
+  'getTranslationWorkspacePreviewApplication',
 ])
 
 const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
@@ -112,6 +126,20 @@ export const getApplicationCustomFieldMessageDescriptors = async (
   const templateLib = await loadTemplateLib(templateId)
   if (templateLib.getCustomFieldMessageDescriptors) {
     return await templateLib.getCustomFieldMessageDescriptors()
+  }
+  return {}
+}
+
+/**
+ * Optional mock `answers` / `externalData` for Translation Workspace preview.
+ * Used so `CUSTOM` field components can render without live national-registry data.
+ */
+export const getApplicationTranslationWorkspacePreview = async (
+  templateId: ApplicationTypes,
+): Promise<TranslationWorkspacePreviewApplicationData> => {
+  const templateLib = await loadTemplateLib(templateId)
+  if (templateLib.getTranslationWorkspacePreviewApplication) {
+    return await templateLib.getTranslationWorkspacePreviewApplication()
   }
   return {}
 }
