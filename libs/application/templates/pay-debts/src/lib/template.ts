@@ -7,7 +7,6 @@ import {
   Application,
   DefaultEvents,
   FormModes,
-  UserProfileApi,
   ApplicationConfigurations,
   InstitutionNationalIds,
 } from '@island.is/application/types'
@@ -18,10 +17,7 @@ import { dataSchema } from './dataSchema'
 import { GetDebtsApi, MockPaymentCatalog } from '../dataProviders'
 import { application } from './messages'
 import { getSelectedDebts } from '../utils/getSelectedDebts'
-import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -35,37 +31,8 @@ const template: ApplicationTemplate<
   translationNamespaces: ApplicationConfigurations.PayDebts.translation,
   dataSchema,
   stateMachineConfig: {
-    initial: States.PREREQUISITES,
+    initial: States.DRAFT,
     states: {
-      [States.PREREQUISITES]: {
-        meta: {
-          name: application.stateMetaNamePrerequisites.defaultMessage,
-          progress: 0,
-          status: FormModes.DRAFT,
-          lifecycle: EphemeralStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/prerequisitesForm').then((module) =>
-                  Promise.resolve(module.Prerequisites),
-                ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
-              write: 'all',
-              read: 'all',
-              api: [UserProfileApi, GetDebtsApi, MockPaymentCatalog],
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-          },
-        },
-      },
       [States.DRAFT]: {
         meta: {
           name: application.stateMetaNameDraft.defaultMessage,
@@ -84,6 +51,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              api: [GetDebtsApi, MockPaymentCatalog],
               delete: true,
             },
           ],

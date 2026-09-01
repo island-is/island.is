@@ -1,15 +1,25 @@
 import {
+  buildCustomField,
+  buildHiddenInput,
   buildInteractiveTableField,
   buildMultiField,
   buildSection,
   buildStickyFooterField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, StaticText } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  StaticText,
+} from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { debts as messages } from '../../lib/messages'
 import { formatDate } from '../../utils/formatDate'
-import { getDebts } from '../../utils/getDebts'
+import { getDebts, hasFetchedDebts } from '../../utils/getDebts'
+
+const debtsWereFetched = (_answers: unknown, externalData: ExternalData) =>
+  hasFetchedDebts(externalData)
 
 export const debtsSection = buildSection({
   id: 'debtsSection',
@@ -20,8 +30,14 @@ export const debtsSection = buildSection({
       title: messages.general.sectionTitle,
       description: messages.description.description,
       children: [
+        buildCustomField({
+          id: 'debtsLoader',
+          component: 'DebtsLoader',
+          doesNotRequireAnswer: true,
+        }),
         buildInteractiveTableField({
           id: 'selectedDebts',
+          condition: debtsWereFetched,
           dataTestId: 'debts-table',
           selectable: true,
           header: [
@@ -64,6 +80,7 @@ export const debtsSection = buildSection({
         }),
         buildStickyFooterField({
           id: 'debtsSummaryFooter',
+          condition: debtsWereFetched,
           widthReferenceTestId: 'debts-table',
           watchFieldIds: ['debtsToPay', 'selectedDebts'],
           labelOffset: 56,
@@ -88,6 +105,12 @@ export const debtsSection = buildSection({
               },
             ]
           },
+        }),
+        buildHiddenInput({
+          id: 'shouldUseMockPayment',
+          defaultValue: true,
+          condition: () =>
+            isRunningOnEnvironment('dev') || isRunningOnEnvironment('local'),
         }),
       ],
     }),

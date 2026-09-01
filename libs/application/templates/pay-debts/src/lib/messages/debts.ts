@@ -21,6 +21,36 @@ export const debts = {
       description: 'Description of description field',
     },
   }),
+  fetch: defineMessages({
+    errorTitle: {
+      id: 'pd.application:debts.fetch.errorTitle',
+      defaultMessage: 'Ekki náðist að sækja skuldastöðu',
+      description: 'Title shown when fetching the debts failed',
+    },
+    errorMessage: {
+      id: 'pd.application:debts.fetch.errorMessage',
+      defaultMessage: 'Reyndu aftur eða komdu aftur síðar.',
+      description: 'Message shown when fetching the debts failed',
+    },
+    retryButton: {
+      id: 'pd.application:debts.fetch.retryButton',
+      defaultMessage: 'Reyna aftur',
+      description: 'Label of the button that retries fetching the debts',
+    },
+    refreshedTitle: {
+      id: 'pd.application:debts.fetch.refreshedTitle',
+      defaultMessage: 'Skuldastaðan var uppfærð',
+      description:
+        'Title shown when a refresh returned a different list of debts and the selection was cleared',
+    },
+    refreshedMessage: {
+      id: 'pd.application:debts.fetch.refreshedMessage',
+      defaultMessage:
+        'Skuldastaða þín hefur breyst síðan þú valdir síðast. Veldu að nýju áður en þú heldur áfram.',
+      description:
+        'Message shown when a refresh returned a different list of debts and the selection was cleared',
+    },
+  }),
   table: defineMessages({
     chargeTypeNameHeader: {
       id: 'pd.application:debts.table.chargeTypeNameHeader',
