@@ -13,7 +13,7 @@ import {
   showPreferredLanguage,
 } from '../../../../utils/conditionUtils'
 import { getApplicationAnswers } from '../../../../utils/getApplicationAnswers'
-import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
+import { LanguageEnvironmentOptions } from '../../../../utils/constants'
 
 export const cultureSubSection = buildSubSection({
   id: 'memmCultureSubSection',
@@ -37,21 +37,26 @@ export const cultureSubSection = buildSubSection({
           titleVariant: 'h5',
           space: 2,
         }),
+        // TODO: Replace hardcoded options with values from barnaverndargatt API when available.
         buildSelectField({
           id: 'memm.culture.languageUsage',
           title: memmMessages.culture.languageUsageLabel,
           placeholder: memmMessages.culture.languageUsagePlaceholder,
           doesNotRequireAnswer: true,
-          options: ({ externalData }, _field, locale) => {
-            const { languageEnvironmentOptions } =
-              getApplicationExternalData(externalData)
-            return languageEnvironmentOptions.map((opt) => ({
-              value: opt.key,
-              label:
-                opt.value.find((v) => v.language === locale)?.content ??
-                opt.key,
-            }))
-          },
+          options: [
+            {
+              value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
+              label: memmMessages.culture.languageUsageOnlyIcelandic,
+            },
+            {
+              value: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+              label: memmMessages.culture.languageUsageIcelandicAndOther,
+            },
+            {
+              value: LanguageEnvironmentOptions.ONLY_OTHER,
+              label: memmMessages.culture.languageUsageOnlyOther,
+            },
+          ],
         }),
         buildDescriptionField({
           id: 'memm.culture.languagesSectionTitle',

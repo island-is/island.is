@@ -133,6 +133,21 @@ export const memmMessages = {
       defaultMessage: 'Veldu málnotkun í daglegu lífi barnsins',
       description: 'Placeholder for the language usage dropdown',
     },
+    languageUsageOnlyIcelandic: {
+      id: 'cpn.application:memm.culture.languageUsageOnlyIcelandic',
+      defaultMessage: 'Aðeins töluð íslenska',
+      description: 'Language usage option: only Icelandic',
+    },
+    languageUsageIcelandicAndOther: {
+      id: 'cpn.application:memm.culture.languageUsageIcelandicAndOther',
+      defaultMessage: 'Töluð íslenska og annað eða önnur tungumál',
+      description: 'Language usage option: Icelandic and other language',
+    },
+    languageUsageOnlyOther: {
+      id: 'cpn.application:memm.culture.languageUsageOnlyOther',
+      defaultMessage: 'Aðeins talað annað eða önnur tungumál en íslenska',
+      description: 'Language usage option: only other language than Icelandic',
+    },
     languagesSectionTitle: {
       id: 'cpn.application:memm.culture.languagesSectionTitle',
       defaultMessage: 'Hvaða tungumál er töluð í nærumhverfi barnsins?',

@@ -1,6 +1,5 @@
 import { getApplicationAnswers } from '@island.is/application/templates/national-agency-for-children-and-families/child-protection-notification'
 import { ApplicationTypes } from '@island.is/application/types'
-import { FriggClientService } from '@island.is/clients/mms/frigg'
 import { NationalAgencyForChildrenAndFamiliesClientService } from '@island.is/clients/national-agency-for-children-and-families'
 import { Injectable } from '@nestjs/common'
 
@@ -16,7 +15,6 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
     private readonly nationalAgencyForChildrenAndFamiliesClientService: NationalAgencyForChildrenAndFamiliesClientService,
-    private readonly friggClientService: FriggClientService,
     private readonly nationalRegistryV3Service: NationalRegistryV3Service,
   ) {
     super(ApplicationTypes.CHILD_PROTECTION_NOTIFICATION)
@@ -64,14 +62,6 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     return await this.nationalAgencyForChildrenAndFamiliesClientService.getSchoolTypes(
       auth,
     )
-  }
-
-  async getLanguageEnvironments({ auth }: TemplateApiModuleActionProps) {
-    const keyOptions = await this.friggClientService.getAllKeyOptions(
-      auth,
-      'languageEnvironment',
-    )
-    return keyOptions[0]?.options ?? []
   }
 
   async getChildSafetyLevels({ auth }: TemplateApiModuleActionProps) {
