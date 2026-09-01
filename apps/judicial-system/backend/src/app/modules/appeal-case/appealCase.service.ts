@@ -737,9 +737,10 @@ export class AppealCaseService {
     // at once would otherwise both find no appeal case and both create one;
     // under READ COMMITTED neither sees the other's uncommitted row. The second
     // transaction blocks here instead, and then reads the row the first
-    // committed. The unique index on (case_id, ruling_file_id) is the backstop,
-    // not the mechanism - it would turn the race into a failed appeal rather
-    // than a joined one.
+    // committed. The unique index on (case_id, ruling_file_id) - NULLS NOT
+    // DISTINCT, so it holds for the null ruling file of a case-level appeal - is
+    // the backstop, not the mechanism: it would turn the race into a failed
+    // appeal rather than a joined one.
     await this.caseRepositoryService.lockByIdForUpdate(theCase.id, transaction)
 
     const [existingAppealCase] = await this.appealCaseRepositoryService.findAll(
@@ -748,6 +749,27 @@ export class AppealCaseService {
         transaction,
       },
     )
+
+    // The appealDate check above reads the case as it was loaded before the
+    // transaction, so it cannot see an appeal filed in the meantime - two
+    // requests for the same defendant, a double-clicked filing being the easy
+    // way there, would both pass it. This is the same question asked again under
+    // the lock, against what the appeal case actually records.
+    if (existingAppealCase) {
+      const appealEventLogs =
+        await this.appealEventLogRepositoryService.findAll({
+          where: { appealCaseId: existingAppealCase.id },
+          transaction,
+        })
+
+      if (
+        standingVerdictAppellantIds({ appealEventLogs }).includes(defendantId)
+      ) {
+        throw new ForbiddenException(
+          `The verdict of defendant ${defendantId} has already been appealed`,
+        )
+      }
+    }
 
     const appealCase =
       existingAppealCase ??

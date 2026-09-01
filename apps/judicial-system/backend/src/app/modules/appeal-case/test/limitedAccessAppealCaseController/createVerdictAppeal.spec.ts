@@ -132,10 +132,12 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     ;(mockAppealCaseRepositoryService.create as jest.Mock).mockResolvedValue(
       createdAppealCase,
     )
-    ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue([])
-    ;(mockCaseRepositoryService.lockByIdForUpdate as jest.Mock).mockResolvedValue(
-      true,
+    ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
+      [],
     )
+    ;(
+      mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
+    ).mockResolvedValue(true)
 
     givenWhenThen = async (theCase, createDto) => {
       const then = {} as Then
@@ -184,7 +186,9 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     })
 
     it('should record an APPEALED event for that defendant alone', () => {
-      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(1)
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        1,
+      )
       expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
         {
           caseId,
@@ -231,8 +235,18 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue([
-        existingAppealCase,
+      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
+        [existingAppealCase],
+      )
+      // Another defendant is the standing appellant, not this one.
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        {
+          defendantId: uuid(),
+          eventType: AppealEventType.APPEALED,
+          created: new Date('2026-06-02T09:00:00Z'),
+        },
       ])
 
       then = await givenWhenThen(buildCase(), dto)
@@ -264,6 +278,42 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         { appealDate: existingAppealCase.appealDate },
         { transaction },
       )
+    })
+  })
+
+  // The pre-lock check reads the case as it was loaded before the transaction,
+  // so the same question has to be asked again once the lock is held.
+  describe('a defendant that already appealed, seen only under the lock', () => {
+    const existingAppealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+      appealDate: new Date('2026-06-02T09:00:00Z'),
+    } as AppealCase
+
+    let then: Then
+
+    beforeEach(async () => {
+      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
+        [existingAppealCase],
+      )
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        {
+          defendantId,
+          eventType: AppealEventType.APPEALED,
+          created: new Date('2026-06-02T09:00:00Z'),
+        },
+      ])
+
+      then = await givenWhenThen(buildCase(), dto)
+    })
+
+    it('should reject the second appeal rather than record it twice', () => {
+      expect(then.error).toBeDefined()
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 
