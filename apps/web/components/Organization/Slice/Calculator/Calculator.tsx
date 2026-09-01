@@ -1,14 +1,9 @@
 import { Fragment, useState } from 'react'
 import { Controller, useForm, useFormState } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import { useLazyQuery, useQuery } from '@apollo/client'
 import format from 'date-fns/format'
+import { useLazyQuery, useQuery } from '@apollo/client'
 
-import {
-  CalculatorLocalizedText,
-  CalculatorSectionField,
-  calculatorConfigSchema,
-} from '@island.is/tax-calculators'
 import {
   AlertMessage,
   Box,
@@ -26,6 +21,11 @@ import {
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
+import {
+  calculatorConfigSchema,
+  CalculatorLocalizedText,
+  CalculatorSectionField,
+} from '@island.is/tax-calculators'
 import {
   Calculator as CalculatorSlice,
   GetTaxCalculatorCalculationQuery,
