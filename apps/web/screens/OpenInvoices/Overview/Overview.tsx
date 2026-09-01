@@ -127,7 +127,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: formatMessage(m.overview.title),
+      title: formatMessage(m.shared.title),
       href: baseUrl,
       isTag: true,
     },

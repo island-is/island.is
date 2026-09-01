@@ -1,6 +1,12 @@
 import { defineMessages } from 'react-intl'
 
 export const m = {
+  shared: defineMessages({
+    title: {
+      id: 'web.openinvoices:shared.title',
+      defaultMessage: 'Opnir reikningar',
+    },
+  }),
   overview: defineMessages({
     title: {
       id: 'web.openinvoices:overview.title',
