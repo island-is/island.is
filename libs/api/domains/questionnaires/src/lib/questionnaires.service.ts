@@ -502,6 +502,9 @@ export class QuestionnairesService {
     }
   }
 
+  // `unknown` is deliberate: the generated EL types declare table cell
+  // answers as anyOf without a discriminator (e.g. `Date | unknown`),
+  // so this function is the runtime narrowing boundary
   private formatCellAnswer(
     answer: unknown,
     formatMessage: FormatMessage,
