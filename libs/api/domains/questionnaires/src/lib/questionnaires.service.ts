@@ -515,9 +515,7 @@ export class QuestionnairesService {
         ? answer.toISOString().split('T')[0]
         : String(answer)
     const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
-    return dateMatch
-      ? `${dateMatch[3]}.${dateMatch[2]}.${dateMatch[1]}`
-      : value
+    return dateMatch ? `${dateMatch[3]}.${dateMatch[2]}.${dateMatch[1]}` : value
   }
 
   private formatDate(date?: Date | string | null): string | undefined {
