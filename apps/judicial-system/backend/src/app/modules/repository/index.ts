@@ -49,6 +49,11 @@ export {
   UpdateCourtSessionString,
 } from './services/courtSessionStringRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
+export {
+  DateLogRepositoryService,
+  CreateDateLog,
+  UpdateDateLog,
+} from './services/dateLogRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 export {
