@@ -10,8 +10,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import * as repository from '../repository'
-import { caseTableWhereOptions } from './caseTable.whereOptions'
 import { getGlobalIncludes } from './caseTable.utils'
+import { caseTableWhereOptions } from './caseTable.whereOptions'
 
 /**
  * A verdict appeal (áfrýjun) must not reach a case list built for ruling appeals
