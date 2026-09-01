@@ -57,9 +57,13 @@ export const mapToElAnswer = (
         entry.type === AnswerOptionType.date ||
         entry.type === AnswerOptionType.datetime
       ) {
+        // A cleared date picker submits '' - omit the reply, an empty
+        // string fails EL's date validation
+        if (!answerValues[0]) return []
+
         return {
           questionId,
-          answer: answerValues[0] || '', // Should be ISO date string
+          answer: answerValues[0],
         }
       }
 
@@ -135,6 +139,8 @@ export const mapToElAnswer = (
             const value = cell?.value || ''
             const columnType = cell?.type
 
+            if (!value && columnType !== 'string') return
+
             // Only infer types for legacy untyped values; check date before
             // number since parseFloat("2026-08-05") parses as 2026
             const inferType = !columnType
@@ -159,10 +165,14 @@ export const mapToElAnswer = (
               columnType === 'number' ||
               (inferType && !isNaN(parseFloat(value)) && value.trim() !== '')
             ) {
-              row.push({
-                questionId: columnId,
-                answer: parseFloat(value),
-              })
+              const numericValue = parseFloat(value)
+
+              if (Number.isFinite(numericValue)) {
+                row.push({
+                  questionId: columnId,
+                  answer: numericValue,
+                })
+              }
             } else {
               row.push({
                 questionId: columnId,
@@ -171,8 +181,12 @@ export const mapToElAnswer = (
             }
           })
 
-          rows.push(row)
+          if (row.length) {
+            rows.push(row)
+          }
         }
+
+        if (!rows.length) return []
 
         return {
           questionId,

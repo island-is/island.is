@@ -24,14 +24,11 @@ const isValidDate = (dateString: string): boolean => {
     return false
   }
 
-  // Match various date formats:
-  // - ISO format: 2024-04-23T07:00:58
-  // - Date string format: Tue Apr 23 2024 07:00:58 GMT+0000 (Greenwich Mean Time)
-  // - Simple date: 2024-04-23
+  // The whole value must be a date, not merely contain one - new Date()
   const hasDatePattern =
-    dateString.match(/\d{4}-\d{2}-\d{2}/) !== null || // ISO format
-    dateString.match(/^\w{3}\s\w{3}\s\d{1,2}\s\d{4}/) !== null || // Date string format
-    dateString.includes('GMT') // Contains GMT timezone info
+    isDateOnlyString(dateString) || // Simple date: 2024-04-23
+    /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(dateString) || // ISO format: 2024-04-23T07:00:58
+    /^\w{3}\s\w{3}\s\d{1,2}\s\d{4}/.test(dateString) // Date string format: Tue Apr 23 2024 ...
 
   return hasDatePattern
 }
@@ -49,24 +46,19 @@ export const Answered: FC<AnsweredProps> = ({ answers }) => {
   const { formatMessage } = useLocale()
 
   // Table cells are encoded as "columnId:type:value" (legacy: "columnId:value")
-  const formatTableCell = (cell: {
-    label?: string | undefined
-    value: string
-  }): string => {
-    const parts = cell.value.split(':')
+  const decodeTableCell = (encoded: string) => {
+    const parts = encoded.split(':')
+    const columnId = parts[0] ?? ''
     const cellType = parts.length >= 3 ? parts[1] : undefined
     const rawValue =
       parts.length >= 3
         ? parts.slice(2).join(':')
         : parts.length === 2
         ? parts[1]
-        : cell.value
+        : encoded
 
     let displayValue = rawValue
-    if (
-      cellType === 'bool' &&
-      (rawValue === 'true' || rawValue === 'false')
-    ) {
+    if (cellType === 'bool' && (rawValue === 'true' || rawValue === 'false')) {
       displayValue =
         rawValue === 'true' ? formatMessage(m.yes) : formatMessage(m.no)
     } else if (rawValue && isDateOnlyString(rawValue)) {
@@ -75,7 +67,31 @@ export const Answered: FC<AnsweredProps> = ({ answers }) => {
       displayValue = formatDate(rawValue)
     }
 
-    return cell.label ? `${cell.label}: ${displayValue}` : displayValue
+    return { columnId, displayValue }
+  }
+
+  // One line per table row (cells joined with " | "), matching the
+  // answered-submission view. A repeated columnId marks the next row.
+  const formatTableRows = (
+    answers: Array<{ label?: string; value: string }>,
+  ): string[] => {
+    const rows: string[][] = []
+    let currentRow: string[] = []
+    let seenColumns = new Set<string>()
+
+    answers.forEach((answer) => {
+      const { columnId, displayValue } = decodeTableCell(answer.value)
+      if (seenColumns.has(columnId)) {
+        rows.push(currentRow)
+        currentRow = []
+        seenColumns = new Set()
+      }
+      seenColumns.add(columnId)
+      currentRow.push(displayValue)
+    })
+    if (currentRow.length) rows.push(currentRow)
+
+    return rows.map((row) => row.join(' | '))
   }
 
   return (
@@ -96,7 +112,7 @@ export const Answered: FC<AnsweredProps> = ({ answers }) => {
               title: answer.question,
               value:
                 answer.type === QuestionnaireAnswerOptionType.table
-                  ? answer.answers.map(formatTableCell)
+                  ? formatTableRows(answer.answers)
                   : answer.answers.map((a) => formatValue(a.label ?? a.value)),
               type: 'text' as const,
               boldValue: false,
