@@ -98,6 +98,7 @@ import {
   CourtDocumentRepositoryService,
   CourtSessionRepositoryService,
   DateLog,
+  DateLogRepositoryService,
   Defendant,
   DefendantEventLog,
   DefendantEventLogRepositoryService,
@@ -155,9 +156,9 @@ const APPEAL_PARTY_FILE_CATEGORIES = [
 @Injectable()
 export class CaseService {
   constructor(
-    @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
+    private readonly dateLogRepositoryService: DateLogRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => DefendantService))
@@ -1416,30 +1417,32 @@ export class CaseService {
       if (updateDateLog !== undefined) {
         const dateType = dateLogTypes[dateKey]
 
-        const dateLog = await this.dateLogModel.findOne({
-          where: { caseId: theCase.id, dateType },
-          transaction,
-        })
+        const dateLog = await this.dateLogRepositoryService.findByCaseAndType(
+          theCase.id,
+          dateType,
+          { transaction },
+        )
 
         if (dateLog) {
           if (updateDateLog === null) {
-            await this.dateLogModel.destroy({
-              where: { caseId: theCase.id, dateType },
-              transaction,
-            })
+            await this.dateLogRepositoryService.deleteByCaseAndType(
+              theCase.id,
+              dateType,
+              { transaction },
+            )
           } else {
-            await this.dateLogModel.update(updateDateLog, {
-              where: { caseId: theCase.id, dateType },
-              transaction,
-            })
+            await this.dateLogRepositoryService.updateByCaseAndType(
+              theCase.id,
+              dateType,
+              updateDateLog,
+              { transaction },
+            )
           }
         } else if (updateDateLog !== null) {
-          await this.dateLogModel.create(
-            {
-              caseId: theCase.id,
-              dateType,
-              ...updateDateLog,
-            },
+          await this.dateLogRepositoryService.createForCase(
+            theCase.id,
+            dateType,
+            updateDateLog,
             { transaction },
           )
         }
