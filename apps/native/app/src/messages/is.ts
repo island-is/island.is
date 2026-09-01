@@ -858,6 +858,17 @@ export const is = {
     'Tímabókun fannst ekki. Hún kann að hafa verið felld niður.',
   'health.appointments.minutesFormat': '{minutes} mínútur',
   'health.appointments.moreInfo': 'Nánari upplýsingar',
+  'health.appointments.preparation': 'Undirbúningur',
+  'health.appointments.locationDepartment': 'Deild',
+  'health.appointments.locationWing': 'Álma',
+  'health.appointments.locationFloor': 'Hæð',
+  'health.appointments.locationRoom': 'Herbergi',
+  'health.appointments.assigneeTypeRole': 'Hlutverk',
+  'health.appointments.assigneeTypeRoom': 'Herbergi',
+  'health.appointments.assigneeTypeEquipment': 'Tæki',
+  'health.appointments.assigneeTypeService': 'Þjónusta',
+  'health.appointments.assigneeTypeTeam': 'Teymi',
+  'health.appointments.assigneeTypeOther': 'Annað',
 
   // health - messages
   'health.messages.screenTitle': 'Skilaboð',
