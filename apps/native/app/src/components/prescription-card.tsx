@@ -70,15 +70,12 @@ type PrescriptionCardProps = {
 }
 
 type BlockedReasonInfo = {
-  // The pill label to show for this blocked reason.
-  status: string
+  status: string // pill label
   description: string
-  // Whether the description should surface in the info alert box.
-  showReason: boolean
+  showReason: boolean // whether to show the description in the box
 }
 
-// Mirrors the web portal's mapBlockedStatus (libs/portals/my-pages/health):
-// same per-reason status label + showReason flag, so behaviour stays in parity.
+// Mirrors the web portal's mapBlockedStatus (libs/portals/my-pages/health).
 const getBlockedReasonInfo = (
   reason: HealthDirectoratePrescriptionRenewalBlockedReason | null | undefined,
   intl: IntlShape,
@@ -199,9 +196,7 @@ const getBlockedReasonInfo = (
   }
 }
 
-// Per-status renewal labels, mirroring the web portal's renewalStatusMessageMap
-// (libs/portals/my-pages/health) so each status reads distinctly — notably
-// Pending shows "in progress" rather than collapsing into "not available".
+// Per-status renewal labels, mirroring the web portal's renewalStatusMessageMap.
 const renewalStatusMessageMap: Record<
   HealthDirectoratePrescriptionRenewalStatus,
   string
@@ -260,12 +255,9 @@ export const PrescriptionCard = ({
   const isExpired =
     prescription.expiryDate && new Date(prescription.expiryDate) < new Date()
 
-  // Renewal presentation, mirroring the web portal (PrescriptionsTable):
-  // - the blocked reason is derived from isRenewable ALONE, independent of
-  //   renewalStatus, so its description can surface in the box even when a
-  //   status is present;
-  // - the pill label prefers renewalStatus, else the blocked reason's label;
-  // - the renew action shows only when renewable with no pending status.
+  // Renewal presentation, mirroring web (PrescriptionsTable): blocked reason is
+  // derived from isRenewable alone (so its description can show alongside a
+  // status); the pill prefers renewalStatus, else the blocked reason's label.
   const canRenew = !!prescription.isRenewable && !prescription.renewalStatus
   const blocked = !prescription.isRenewable
     ? getBlockedReasonInfo(prescription.renewalBlockedReason, intl)
