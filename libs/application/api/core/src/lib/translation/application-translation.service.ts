@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import type { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 import type { ApplicationNamespaceTranslations } from '@island.is/islandis-translations'
@@ -51,6 +52,7 @@ export class ApplicationTranslationService {
     private readonly publishModel: typeof ApplicationTranslationPublish,
     @InjectModel(ApplicationTranslationPublishSnapshot)
     private readonly snapshotModel: typeof ApplicationTranslationPublishSnapshot,
+    private readonly sequelize: Sequelize,
   ) {}
 
   /**
@@ -246,60 +248,70 @@ export class ApplicationTranslationService {
   ): Promise<ApplicationTranslationPublish> {
     const { subjectNationalId, actorNationalId } = getTranslationActors(user)
 
-    const rows = await this.translationModel.findAll({
-      where: { namespace },
+    return this.sequelize.transaction(async (transaction) => {
+      const rows = await this.translationModel.findAll({
+        where: { namespace },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      const publish = await this.publishModel.create(
+        {
+          namespace,
+          publishedBy: subjectNationalId,
+          actorNationalId: user.actor?.nationalId,
+          note,
+        },
+        { transaction },
+      )
+
+      // Snapshot current published state before overwriting
+      const snapshotRows = rows.map((r) => ({
+        publishId: publish.id,
+        messageKey: r.messageKey,
+        valueIs: r.valueIs,
+        valueEn: r.valueEn,
+      }))
+      if (snapshotRows.length > 0) {
+        await this.snapshotModel.bulkCreate(snapshotRows, { transaction })
+      }
+
+      // Copy drafts into published columns, then clear drafts
+      for (const row of rows) {
+        const oldValueIs = row.valueIs
+        const updates: Partial<ApplicationTranslation> = {
+          draftValueIs: null,
+          draftValueEn: null,
+        }
+        let changed = false
+
+        if (row.draftValueIs != null) {
+          updates.valueIs = row.draftValueIs
+          changed = true
+        }
+        if (row.draftValueEn != null) {
+          updates.valueEn = row.draftValueEn
+          changed = true
+        }
+
+        await row.update(updates, { transaction })
+
+        if (changed) {
+          await this.logModel.create(
+            {
+              translationId: row.id,
+              oldValue: oldValueIs,
+              newValue: updates.valueIs ?? oldValueIs,
+              changedBy: actorNationalId,
+              action: 'publish',
+            },
+            { transaction },
+          )
+        }
+      }
+
+      return publish
     })
-
-    const publish = await this.publishModel.create({
-      namespace,
-      publishedBy: subjectNationalId,
-      actorNationalId: user.actor?.nationalId,
-      note,
-    })
-
-    // Snapshot current published state before overwriting
-    const snapshotRows = rows.map((r) => ({
-      publishId: publish.id,
-      messageKey: r.messageKey,
-      valueIs: r.valueIs,
-      valueEn: r.valueEn,
-    }))
-    if (snapshotRows.length > 0) {
-      await this.snapshotModel.bulkCreate(snapshotRows)
-    }
-
-    // Copy drafts into published columns, then clear drafts
-    for (const row of rows) {
-      const oldValueIs = row.valueIs
-      const updates: Partial<ApplicationTranslation> = {
-        draftValueIs: null,
-        draftValueEn: null,
-      }
-      let changed = false
-
-      if (row.draftValueIs != null) {
-        updates.valueIs = row.draftValueIs
-        changed = true
-      }
-      if (row.draftValueEn != null) {
-        updates.valueEn = row.draftValueEn
-        changed = true
-      }
-
-      await row.update(updates)
-
-      if (changed) {
-        await this.logModel.create({
-          translationId: row.id,
-          oldValue: oldValueIs,
-          newValue: updates.valueIs ?? oldValueIs,
-          changedBy: actorNationalId,
-          action: 'publish',
-        })
-      }
-    }
-
-    return publish
   }
 
   async getPublishHistory(namespace: string): Promise<PublishHistoryItem[]> {
@@ -328,63 +340,79 @@ export class ApplicationTranslationService {
   ): Promise<ApplicationTranslationPublish | null> {
     const { subjectNationalId, actorNationalId } = getTranslationActors(user)
 
-    const publish = await this.publishModel.findByPk(publishId, {
-      include: [ApplicationTranslationPublishSnapshot],
-    })
+    return this.sequelize.transaction(async (transaction) => {
+      const publish = await this.publishModel.findByPk(publishId, {
+        include: [ApplicationTranslationPublishSnapshot],
+        transaction,
+      })
 
-    if (!publish || publish.namespace !== namespace) {
-      return null
-    }
+      if (!publish || publish.namespace !== namespace) {
+        return null
+      }
 
-    const snapshots = publish.snapshots ?? []
-    const snapshotByKey = new Map(snapshots.map((s) => [s.messageKey, s]))
+      const snapshots = publish.snapshots ?? []
+      const snapshotByKey = new Map(snapshots.map((s) => [s.messageKey, s]))
 
-    const currentRows = await this.translationModel.findAll({
-      where: { namespace },
-    })
+      const currentRows = await this.translationModel.findAll({
+        where: { namespace },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
 
-    const rollbackPublish = await this.publishModel.create({
-      namespace,
-      publishedBy: subjectNationalId,
-      actorNationalId: user.actor?.nationalId,
-      note: `Rollback to version from ${publish.publishedAt.toISOString()}`,
-    })
+      const rollbackPublish = await this.publishModel.create(
+        {
+          namespace,
+          publishedBy: subjectNationalId,
+          actorNationalId: user.actor?.nationalId,
+          note: `Rollback to version from ${publish.publishedAt.toISOString()}`,
+        },
+        { transaction },
+      )
 
-    // Snapshot current state before rollback
-    const preRollbackSnapshots = currentRows.map((r) => ({
-      publishId: rollbackPublish.id,
-      messageKey: r.messageKey,
-      valueIs: r.valueIs,
-      valueEn: r.valueEn,
-    }))
-    if (preRollbackSnapshots.length > 0) {
-      await this.snapshotModel.bulkCreate(preRollbackSnapshots)
-    }
-
-    // Restore published values from snapshot
-    for (const row of currentRows) {
-      const snapshot = snapshotByKey.get(row.messageKey)
-      if (snapshot) {
-        const oldValueIs = row.valueIs
-
-        await row.update({
-          valueIs: snapshot.valueIs,
-          valueEn: snapshot.valueEn,
-          draftValueIs: null,
-          draftValueEn: null,
-        })
-
-        await this.logModel.create({
-          translationId: row.id,
-          oldValue: oldValueIs,
-          newValue: snapshot.valueIs,
-          changedBy: actorNationalId,
-          action: 'rollback',
+      // Snapshot current state before rollback
+      const preRollbackSnapshots = currentRows.map((r) => ({
+        publishId: rollbackPublish.id,
+        messageKey: r.messageKey,
+        valueIs: r.valueIs,
+        valueEn: r.valueEn,
+      }))
+      if (preRollbackSnapshots.length > 0) {
+        await this.snapshotModel.bulkCreate(preRollbackSnapshots, {
+          transaction,
         })
       }
-    }
 
-    return rollbackPublish
+      // Restore published values from snapshot
+      for (const row of currentRows) {
+        const snapshot = snapshotByKey.get(row.messageKey)
+        if (snapshot) {
+          const oldValueIs = row.valueIs
+
+          await row.update(
+            {
+              valueIs: snapshot.valueIs,
+              valueEn: snapshot.valueEn,
+              draftValueIs: null,
+              draftValueEn: null,
+            },
+            { transaction },
+          )
+
+          await this.logModel.create(
+            {
+              translationId: row.id,
+              oldValue: oldValueIs,
+              newValue: snapshot.valueIs,
+              changedBy: actorNationalId,
+              action: 'rollback',
+            },
+            { transaction },
+          )
+        }
+      }
+
+      return rollbackPublish
+    })
   }
 
   async getTranslationStatus(namespace: string): Promise<TranslationStatus> {
