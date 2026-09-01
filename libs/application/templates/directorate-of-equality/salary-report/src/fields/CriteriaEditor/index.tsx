@@ -1,6 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 import { FC, useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
 import {
@@ -79,11 +80,13 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     (sum, f) => sum + (Number(f.weight) || 0),
     0,
   )
+  const hasCriteria = jobFactors.length + personalFactors.length > 0
+  const hasWeightMismatch = hasCriteria && Math.abs(totalWeight - 100) > 0.001
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
-      if (totalWeight !== 0 && Math.abs(totalWeight - 100) > 0.001) {
+      if (hasWeightMismatch) {
         return [
           false,
           formatMessage(messages.report.criteria.weightSumError, {
@@ -149,6 +152,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     jobFactors,
     personalFactors,
     removedPersonalIds,
+    hasWeightMismatch,
     totalWeight,
     formatMessage,
     sync,
@@ -167,9 +171,11 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Text variant="h4" marginBottom={2}>
         {formatMessage(messages.report.criteria.jobFactorTitle)}
       </Text>
-      <Text marginBottom={3}>
-        {formatMessage(messages.report.criteria.jobFactorIntro)}
-      </Text>
+      <Box marginBottom={3}>
+        <Markdown>
+          {formatMessage(messages.report.criteria.jobFactorIntro)}
+        </Markdown>
+      </Box>
 
       <Box>
         {jobFactors.map((factor, i) => (
@@ -200,13 +206,15 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         }}
       />
 
-      {totalWeight !== 0 && totalWeight !== 100 && (
+      {hasWeightMismatch && (
         <Box marginTop={3}>
-          <Text color="red600">
-            {formatMessage(messages.report.criteria.weightSumError, {
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={formatMessage(messages.report.criteria.weightSumError, {
               total: totalWeight,
             })}
-          </Text>
+          />
         </Box>
       )}
     </Box>

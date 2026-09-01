@@ -20,14 +20,10 @@ export const useTranslationWorkspaceNavigation = ({
   typeId,
   isCompactNav,
 }: UseTranslationWorkspaceNavigationArgs) => {
-  const [
-    selectedScreen,
-    setSelectedScreen,
-  ] = useState<ScreenIntrospection | null>(null)
-  const [
-    selectedLocation,
-    setSelectedLocation,
-  ] = useState<SidebarNavLocation | null>(null)
+  const [selectedScreen, setSelectedScreen] =
+    useState<ScreenIntrospection | null>(null)
+  const [selectedLocation, setSelectedLocation] =
+    useState<SidebarNavLocation | null>(null)
   const [navDrawerOpen, setNavDrawerOpen] = useState(false)
   const [fetchRoleForm] = useGetApplicationTemplateRoleFormLazyQuery()
 

@@ -34,14 +34,11 @@ export const SharedNamespaceTranslationWorkspace = () => {
   const namespace = encodedNamespace ? decodeURIComponent(encodedNamespace) : ''
   const { formatMessage } = useLocale()
 
-  const {
-    data,
-    loading,
-    error,
-  } = useGetApplicationSharedNamespaceIntrospectionQuery({
-    variables: { namespace },
-    skip: !namespace,
-  })
+  const { data, loading, error } =
+    useGetApplicationSharedNamespaceIntrospectionQuery({
+      variables: { namespace },
+      skip: !namespace,
+    })
 
   const introspection = data?.applicationSharedNamespaceIntrospection ?? null
 
@@ -57,9 +54,10 @@ export const SharedNamespaceTranslationWorkspace = () => {
 
   const translationRows = translationsData?.applicationTranslations
 
-  const persistedByKey = useMemo(() => buildPersistedByKey(translationRows), [
-    translationRows,
-  ])
+  const persistedByKey = useMemo(
+    () => buildPersistedByKey(translationRows),
+    [translationRows],
+  )
 
   const hasDraftChanges = useMemo(
     () => hasDraftChangesInRows(translationRows),
