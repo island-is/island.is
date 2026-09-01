@@ -2,7 +2,10 @@ import type { FC, MouseEvent } from 'react'
 import { useContext, useState } from 'react'
 
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
-import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  isRulingOrderWithoutDocument,
+} from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
@@ -15,6 +18,14 @@ import { useConfirmRulingOrderMutation } from './confirmRulingOrder.generated'
 interface Props {
   file: CaseFile
 }
+
+/**
+ * A ruling order uploaded during the course of a case is confirmed when the
+ * registered judge signs it off, which the backend records as the file's
+ * submission date.
+ */
+export const isRulingOrderConfirmed = (file: CaseFile): boolean =>
+  Boolean(file.submissionDate)
 
 /**
  * Right-aligned confirmation state of a ruling order uploaded during the
@@ -33,10 +44,16 @@ const RulingOrderConfirmationStatus: FC<Props> = ({ file }) => {
 
   const [confirmRulingOrder, { loading }] = useConfirmRulingOrderMutation()
 
-  const isConfirmed = Boolean(file.submissionDate)
+  const isConfirmed = isRulingOrderConfirmed(file)
   const isRegisteredJudge = Boolean(
     user?.id && user.id === workingCase.judge?.id,
   )
+
+  // There is nothing to confirm until the district court has written the ruling
+  // up: a ruling pronounced orally is confirmed by the judge pronouncing it.
+  if (isRulingOrderWithoutDocument(file)) {
+    return null
+  }
 
   const handleConfirm = async () => {
     try {

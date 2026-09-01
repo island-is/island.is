@@ -31,7 +31,10 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
-import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
+import {
+  DriverLicenseWithoutImages,
+  isApplicationAlreadyExists,
+} from '@island.is/clients/driving-license'
 import { messages as drivingLicenseMessages } from '@island.is/application/templates/driving-license'
 import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
@@ -42,6 +45,31 @@ import { formatPhoneNumber } from './utils'
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
 }
+
+/**
+ * Maps the form's yes/no health answers to the booleans RLS expects. Shared by
+ * BE and — behind their redesign flags — B-temp and B-full.
+ *
+ * The ten keys are listed explicitly rather than derived from the answers, so an
+ * unanswered question becomes `false` rather than being omitted. The older mapper
+ * in `utils/healthDeclarationMapper.ts` maps over the answer object instead, which
+ * silently drops unanswered keys — RLS then reads those as null, not false.
+ */
+const toHealthDeclarationModel = (
+  healthDeclaration: Record<string, string> = {},
+) => ({
+  isDisabled: healthDeclaration?.isDisabled === YES,
+  hasDiabetes: healthDeclaration?.hasDiabetes === YES,
+  hasEpilepsy: healthDeclaration?.hasEpilepsy === YES,
+  isAlcoholic: healthDeclaration?.isAlcoholic === YES,
+  hasHeartDisease: healthDeclaration?.hasHeartDisease === YES,
+  hasMentalIllness: healthDeclaration?.hasMentalIllness === YES,
+  hasOtherDiseases: healthDeclaration?.hasOtherDiseases === YES,
+  usesMedicalDrugs: healthDeclaration?.usesMedicalDrugs === YES,
+  usesContactGlasses: healthDeclaration?.usesContactGlasses === YES,
+  hasReducedPeripheralVision:
+    healthDeclaration?.hasReducedPeripheralVision === YES,
+})
 
 const getContentType = (fileName: string): string => {
   const ext = fileName.split('.').pop()?.toLowerCase() ?? ''
@@ -105,7 +133,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application,
     auth,
     currentUserLocale,
-  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+  }: TemplateApiModuleActionProps): Promise<{
+    success: boolean
+    // Persisted by the framework at `externalData.submitApplication.data`, so the
+    // RLS application guid is retrievable from the application record for support/
+    // reconciliation — not only from the api logs. Present for the redesigned
+    // B-temp/B-full v6 flows; null for the paths that don't return one.
+    applicationGuid?: string | null
+  }> {
     const { answers } = application
     const nationalId = application.applicant
 
@@ -158,6 +193,18 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     return {
       success: true,
+      // Preserve a guid already stored on a prior run: if submitApplication
+      // re-enters (state re-entry, admin re-trigger, retry), the v6 call returns
+      // APPLICATION_ALREADY_EXISTS and the client guard resolves with a null
+      // guid — which would otherwise overwrite the good guid the framework stored
+      // at externalData.submitApplication.data on the first pass.
+      applicationGuid:
+        result.applicationGuid ??
+        getValueViaPath<string>(
+          application.externalData,
+          'submitApplication.data.applicationGuid',
+        ) ??
+        null,
     }
   }
 
@@ -166,19 +213,29 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   }
 
   /**
-   * Turn a failed RLS submission into the error the applicant sees. RLS puts its
-   * error code in `problem.title`; if that code exists in the RLS error-code
-   * table we surface the table's own human-readable text in the user's language
-   * instead of leaking the raw code. Anything we can't resolve (no code, code
-   * not in the table, or a best-effort lookup failure) keeps the previous
-   * behaviour: raw `problem.title` / generic message, with `problem.detail` as
-   * the summary. `describeErrorCode` is best-effort and never throws.
+   * Turn a failed RLS submission into the error the applicant sees. RLS's
+   * machine error code, when we can find one, is looked up in the RLS
+   * error-code table and the table's own human-readable text is surfaced in
+   * the user's language instead of the raw code. Anything we can't resolve (no
+   * code, code not in the table, or a best-effort lookup failure) keeps the
+   * previous behaviour: generic message with `problem.detail` as the summary.
+   * `describeErrorCode` is best-effort and never throws.
    */
   private async toSubmissionError(
     err: FetchError,
     locale: Locale,
   ): Promise<TemplateApiError> {
-    const code = err.problem?.title
+    // Both v6 endpoints carry the machine code in an `errorCode` field — the
+    // full endpoint as a problem+json extension member, the temporary endpoint
+    // in its plain-JSON body. `problem.title` must come LAST: v5 puts the code
+    // there, but on the v6 full endpoint `title` holds the operation name
+    // ("Sækja um fullnaðarskírteini"), so preferring it looks up a string that
+    // can never be in the table and the applicant loses the localised text
+    // (observed on IS-DEV 2026-08-31).
+    const code =
+      (err.problem as { errorCode?: string } | undefined)?.errorCode ??
+      (err.body as { errorCode?: string } | undefined)?.errorCode ??
+      err.problem?.title
     if (code) {
       try {
         const described = await this.drivingLicenseService.describeErrorCode(
@@ -314,6 +371,108 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     }
   }
 
+  /**
+   * Reads the applicant's uploaded health certificate from S3 and maps it to the
+   * contentList shape RLS expects. Shared by every branch that can send one:
+   * 65+, BE, and — behind their redesign flags — B-temp and B-full. This was
+   * copy-pasted per product, so a fix had to land in every copy.
+   *
+   * Throws the applicant-facing "certificate required" error on an empty result:
+   * every caller reaches this only when a certificate IS required, so nothing
+   * attached is always a hard stop rather than an omitted key. Deciding *whether*
+   * a certificate is required stays with the caller — 65+ always needs one, the
+   * other three only when a health answer, a remark or the glasses check fires.
+   */
+  private async readHealthCertificateContentList(
+    application: ApplicationWithAttachments,
+  ): Promise<
+    Array<{
+      fileName: string
+      fileExtension: string
+      contentType: string
+      content: string
+      description: string
+    }>
+  > {
+    let contentList
+    try {
+      const files = await this.attachmentS3Service.getFiles(application, [
+        'healthCertificate',
+      ])
+
+      contentList = files
+        .filter((f) => f.fileContent)
+        .map((f) => {
+          const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
+          const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
+          return {
+            fileName: f.fileName,
+            fileExtension: ext,
+            contentType: getContentType(f.fileName),
+            content: f.fileContent,
+            description: 'Laeknisvottord',
+          }
+        })
+    } catch (e) {
+      this.log('error', 'Failed to read health certificate files from S3', {
+        e,
+      })
+      throw e
+    }
+
+    if (!contentList || contentList.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: drivingLicenseMessages.healthCertificateRequired,
+        },
+        400,
+      )
+    }
+
+    return contentList
+  }
+
+  // A v6 create returns 400 APPLICATION_ALREADY_EXISTS when RLS already holds an
+  // application for this person+category. Treat that as success ONLY when THIS
+  // application provably created it — the guid a previous successful run stored
+  // on `submitApplication.data` — and return that guid again.
+  //
+  // Mere existence of a `submitApplication` entry is NOT proof: the framework
+  // persists one (with `data: {}`) even when the attempt FAILED, so gating on
+  // the entry lets "Try again" after a duplicate rejection flip into a false
+  // "Umsókn móttekin" while RLS discarded this submission's payload. Without a
+  // stored guid, rethrow so the applicant sees RLS's own error via
+  // `toSubmissionError`, matching BE — a genuine lost-response retry then also
+  // shows an error, but that is recoverable (the RLS application exists),
+  // whereas a false success hiding discarded edits and a payment is not.
+  private async createToleratingRerunAfterSuccess(
+    application: ApplicationWithAttachments,
+    create: () => Promise<NewDrivingLicenseResult>,
+  ): Promise<NewDrivingLicenseResult> {
+    try {
+      return await create()
+    } catch (e) {
+      const priorGuid = getValueViaPath<string>(
+        application.externalData,
+        'submitApplication.data.applicationGuid',
+      )
+      if (isApplicationAlreadyExists(e) && priorGuid) {
+        this.log(
+          'info',
+          'RLS application already created by this application; treating re-run as success',
+          { applicationId: application.id, applicationGuid: priorGuid },
+        )
+        return {
+          success: true,
+          errorMessage: null,
+          applicationGuid: priorGuid,
+        }
+      }
+      throw e
+    }
+  }
+
   private async createLicense(
     nationalId: string,
     answers: FormValue,
@@ -366,6 +525,23 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
+    const healthDeclarationAnswers =
+      getValueViaPath<Record<string, string>>(answers, 'healthDeclaration') ??
+      {}
+    // `glassesCheck.data === true` means the applicant's current licence carries
+    // a glasses code — not that their answers contradict it. (The contradiction
+    // is `healthDeclaration.contactGlassesMismatch`, a different answer.)
+    const licenseRequiresGlasses =
+      getValueViaPath<boolean>(
+        application.externalData,
+        'glassesCheck.data',
+      ) === true
+    // Certificate-required predicate, matching BE's rule. Deliberately NOT
+    // merged into `needsHealthCert` above: that one feeds the legacy v5
+    // `needsToPresentHealthCertificate` flags, which must keep their exact
+    // current values for flag-off drafts.
+    const needsHealthCertificate =
+      needsHealthCert || remarks || licenseRequiresGlasses
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const jurisdictionId = Number(
       getValueViaPath(answers, 'delivery.jurisdiction'),
@@ -376,23 +552,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const phone = formatPhoneNumber(answers.phone as string)
     const setJurisdictionToKopavogur = 37
 
+    // Legacy B-temp only: the v5 two-call path. It carried optional biometric-ID
+    // params, but the only flow that ever passed them (flag-on B-temp) now
+    // returns early through the v6 endpoint, so they are gone.
     const postHealthDeclaration = async (
       nationalId: string,
       answers: FormValue,
       auth: User,
-      photoBiometricsId?: string | null,
-      signatureBiometricsId?: string | null,
     ) => {
       await this.drivingLicenseService
         .postHealthDeclaration(
           nationalId,
-          {
-            ...PostTemporaryLicenseWithHealthDeclarationMapper(
-              answers as DrivingLicenseSchema,
-            ),
-            photoBiometricsId,
-            signatureBiometricsId,
-          },
+          PostTemporaryLicenseWithHealthDeclarationMapper(
+            answers as DrivingLicenseSchema,
+          ),
           auth.authorization.split(' ')[1] ?? '',
         )
         .catch((e) => {
@@ -448,50 +621,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           resolvedRenewalBiometrics.signatureBiometricsId
       }
 
-      let renewalContentList:
-        | Array<{
-            fileName: string
-            fileExtension: string
-            contentType: string
-            content: string
-            description: string
-          }>
-        | undefined
-
-      try {
-        const files = await this.attachmentS3Service.getFiles(application, [
-          'healthCertificate',
-        ])
-
-        renewalContentList = files
-          .filter((f) => f.fileContent)
-          .map((f) => {
-            const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
-            const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
-            return {
-              fileName: f.fileName,
-              fileExtension: ext,
-              contentType: getContentType(f.fileName),
-              content: f.fileContent,
-              description: 'Laeknisvottord',
-            }
-          })
-      } catch (e) {
-        this.log('error', 'Failed to read health certificate files from S3', {
-          e,
-        })
-        throw e
-      }
-
-      if (!renewalContentList || renewalContentList.length === 0) {
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.failedDataProviderSubmit,
-            summary: drivingLicenseMessages.healthCertificateRequired,
-          },
-          400,
-        )
-      }
+      // 65+ always requires a certificate, so this is ungated.
+      const renewalContentList = await this.readHealthCertificateContentList(
+        application,
+      )
 
       return this.drivingLicenseService.applyForRenewal65(auth.authorization, {
         jurisdiction: jurisdictionId
@@ -515,32 +648,61 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       // branches on the flag value *frozen into answers* at prerequisites.
       // This is intentionally sticky: a draft keeps the flow it started with
       // even if the flag is flipped mid-lifecycle. A draft begun while the flag
-      // was ON therefore keeps sending biometric IDs even after a global
-      // rollback; only a NEW draft begun after rollback freezes the flag OFF.
-      // Flag frozen OFF → both IDs stay `undefined`, so the keys are omitted
-      // from the RLS request and the call is byte-identical to the pre-redesign
-      // flow.
-      // NOTE: the health-certificate upload is intentionally not wired here yet
-      // — the full-license RLS endpoint has no `contentList`, so only the photo
-      // is redesigned for now (same as B-temp).
+      // was ON therefore keeps the redesigned flow even after a global
+      // rollback; only a NEW draft begun after rollback freezes the flag OFF
+      // and takes the legacy path below unchanged.
       const isBFullRedesignEnabled =
         getValueViaPath<boolean>(answers, 'isBFullRedesignEnabled') === true
 
-      let photoBiometricsId: string | null | undefined
-      let signatureBiometricsId: string | null | undefined
-
       if (isBFullRedesignEnabled) {
+        // Redesigned B-full posts the health declaration and, when required, the
+        // certificate itself, through the v6 `withhealthdeclaration` endpoint.
+        // The declaration is always sent (as BE does) so there is one payload
+        // shape per product rather than one per flag/certificate combination;
+        // previously B-full sent only a derived boolean and dropped the ten
+        // answers entirely.
         const resolved = this.resolveSelectedPhotoBiometrics(
           answers,
           application,
         )
 
-        if (resolved) {
-          photoBiometricsId = resolved.photoBiometricsId
-          signatureBiometricsId = resolved.signatureBiometricsId
-        }
+        const fullResult = await this.createToleratingRerunAfterSuccess(
+          application,
+          async () =>
+            this.drivingLicenseService.newDrivingLicenseWithHealthDeclaration(
+              auth,
+              {
+                licenseCategory: DrivingLicenseCategory.B,
+                districtId: jurisdictionId
+                  ? jurisdictionId
+                  : setJurisdictionToKopavogur,
+                sendPlasticToPerson: deliveryMethod === Pickup.POST,
+                email,
+                primaryPhoneNumber: phone,
+                healthDeclaration: toHealthDeclarationModel(
+                  healthDeclarationAnswers,
+                ),
+                contentList: needsHealthCertificate
+                  ? await this.readHealthCertificateContentList(application)
+                  : undefined,
+                photoBiometricsId: resolved?.photoBiometricsId,
+                signatureBiometricsId: resolved?.signatureBiometricsId,
+              },
+            ),
+        )
+
+        // Reconciliation record: our application id paired with the RLS-side
+        // application guid (null on the lost-response duplicate path).
+        this.log('info', 'Created full driving-license application in RLS', {
+          applicationId: application.id,
+          applicationGuid: fullResult.applicationGuid,
+        })
+
+        return fullResult
       }
 
+      // Legacy B-full — flag frozen OFF, so there is no photo step and no
+      // biometric IDs to send. Byte-identical to the pre-redesign request.
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId
           ? jurisdictionId
@@ -549,43 +711,70 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
         licenseCategory: DrivingLicenseCategory.B,
-        photoBiometricsId,
-        signatureBiometricsId,
       })
     } else if (applicationFor === 'B-temp') {
-      // Photo selection only applies to the redesigned B-temp flow. Gate on
-      // the *persisted* flag (captured into answers by a hidden input during
-      // prerequisites) — not on the mere presence of `selectLicensePhoto` —
-      // so a draft created while the flag was on does not keep sending
-      // biometric IDs after the flag is turned off. Flag off → both IDs stay
-      // `undefined`, so the keys are omitted from the RLS request bodies
-      // entirely and the calls are byte-identical to the pre-redesign flow.
+      // The redesigned B-temp flow (photo selection plus the health-certificate
+      // upload) is gated on the *persisted* flag — captured into answers by a
+      // hidden input during prerequisites — not on the mere presence of
+      // `selectLicensePhoto`, so a draft created while the flag was on keeps
+      // that flow and a draft created after a rollback takes the legacy path
+      // below unchanged.
       const isBTempRedesignEnabled =
         getValueViaPath<boolean>(answers, 'isBTempRedesignEnabled') === true
 
-      let photoBiometricsId: string | null | undefined
-      let signatureBiometricsId: string | null | undefined
-
       if (isBTempRedesignEnabled) {
+        // Redesigned B-temp: one call instead of two. The legacy path below
+        // posts the declaration and then submits, both of which RLS documents as
+        // "Apply for…" and both of which return NewTemporaryLicsenseDto; the v6
+        // endpoint does both jobs.
         const resolved = this.resolveSelectedPhotoBiometrics(
           answers,
           application,
         )
 
-        if (resolved) {
-          photoBiometricsId = resolved.photoBiometricsId
-          signatureBiometricsId = resolved.signatureBiometricsId
-        }
+        const tempResult = await this.createToleratingRerunAfterSuccess(
+          application,
+          async () =>
+            this.drivingLicenseService.newTemporaryDrivingLicenseWithHealthDeclaration(
+              auth,
+              {
+                districtId: jurisdictionId
+                  ? jurisdictionId
+                  : setJurisdictionToKopavogur,
+                instructorSSN: teacher,
+                sendPlasticToPerson: deliveryMethod === Pickup.POST,
+                email,
+                primaryPhoneNumber: phone,
+                healthDeclaration: toHealthDeclarationModel(
+                  healthDeclarationAnswers,
+                ),
+                contentList: needsHealthCertificate
+                  ? await this.readHealthCertificateContentList(application)
+                  : undefined,
+                photoBiometricsId: resolved?.photoBiometricsId,
+                signatureBiometricsId: resolved?.signatureBiometricsId,
+              },
+            ),
+        )
+
+        // Reconciliation record: our application id paired with the RLS-side
+        // application guid (null on the lost-response duplicate path).
+        this.log(
+          'info',
+          'Created temporary driving-license application in RLS',
+          {
+            applicationId: application.id,
+            applicationGuid: tempResult.applicationGuid,
+          },
+        )
+
+        return tempResult
       }
 
+      // Legacy B-temp — flag frozen OFF, so no photo step and no biometric IDs.
+      // Two calls: the declaration first, then the application itself.
       if (needsHealthCert) {
-        await postHealthDeclaration(
-          nationalId,
-          answers,
-          auth,
-          photoBiometricsId,
-          signatureBiometricsId,
-        )
+        await postHealthDeclaration(nationalId, answers, auth)
       }
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
@@ -600,8 +789,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           teacherNationalId: teacher,
           email: email,
           phone: phone,
-          photoBiometricsId,
-          signatureBiometricsId,
         },
       )
     } else if (applicationFor === 'BE') {
@@ -629,79 +816,17 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         signatureBiometricsId = resolvedBeBiometrics.signatureBiometricsId
       }
 
-      // Health certificate handling
-      const healthDeclaration =
-        getValueViaPath<Record<string, string>>(answers, 'healthDeclaration') ??
-        {}
-      const beNeedsHealthCert =
-        calculateNeedsHealthCert(healthDeclaration) ||
-        remarks ||
-        getValueViaPath<boolean>(
-          application.externalData,
-          'glassesCheck.data',
-        ) === true
-
-      let contentList:
-        | Array<{
-            fileName: string
-            fileExtension: string
-            contentType: string
-            content: string
-            description: string
-          }>
-        | undefined
-
-      if (beNeedsHealthCert) {
-        try {
-          const files = await this.attachmentS3Service.getFiles(application, [
-            'healthCertificate',
-          ])
-
-          contentList = files
-            .filter((f) => f.fileContent)
-            .map((f) => {
-              const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
-              const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
-              return {
-                fileName: f.fileName,
-                fileExtension: ext,
-                contentType: getContentType(f.fileName),
-                content: f.fileContent,
-                description: 'Laeknisvottord',
-              }
-            })
-        } catch (e) {
-          this.log('error', 'Failed to read health certificate files from S3', {
-            e,
-          })
-          throw e
-        }
-
-        if (!contentList || contentList.length === 0) {
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.failedDataProviderSubmit,
-              summary: drivingLicenseMessages.healthCertificateRequired,
-            },
-            400,
-          )
-        }
-      }
+      // BE uses the shared predicate above — it recomputed an identical one from
+      // the same inputs until the redesigned B-temp/B-full flows needed the same
+      // rule and it was hoisted.
+      const contentList = needsHealthCertificate
+        ? await this.readHealthCertificateContentList(application)
+        : undefined
 
       // Health declaration model — always sent for BE
-      const healthDeclarationModel = {
-        isDisabled: healthDeclaration?.isDisabled === 'yes',
-        hasDiabetes: healthDeclaration?.hasDiabetes === 'yes',
-        hasEpilepsy: healthDeclaration?.hasEpilepsy === 'yes',
-        isAlcoholic: healthDeclaration?.isAlcoholic === 'yes',
-        hasHeartDisease: healthDeclaration?.hasHeartDisease === 'yes',
-        hasMentalIllness: healthDeclaration?.hasMentalIllness === 'yes',
-        hasOtherDiseases: healthDeclaration?.hasOtherDiseases === 'yes',
-        usesMedicalDrugs: healthDeclaration?.usesMedicalDrugs === 'yes',
-        usesContactGlasses: healthDeclaration?.usesContactGlasses === 'yes',
-        hasReducedPeripheralVision:
-          healthDeclaration?.hasReducedPeripheralVision === 'yes',
-      }
+      const healthDeclarationModel = toHealthDeclarationModel(
+        healthDeclarationAnswers,
+      )
 
       return this.drivingLicenseService.applyForBELicense(
         nationalId,

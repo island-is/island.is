@@ -7,21 +7,20 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  IdentityApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
+  CreateEqualityDraftApi,
   DoeCompanyApi,
-  EditEqualityContentApi,
   EqualityReportTemplateDocxApi,
-  EqualityReportTemplateHtmlApi,
   GetReportCommentsApi,
+  IdentityApiProvider,
   PreviousEqualityReportContentApi,
   SubmitReportCommentApi,
-  SubmitEqualityReportApi,
+  SubmitEqualityDraftApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { mapUserToRole } from '../utils/mapUserToRole'
@@ -51,6 +50,7 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.EQUALITY_REPORT].translation,
   dataSchema,
+  newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
@@ -61,6 +61,19 @@ const template: ApplicationTemplate<
         set(application, 'assignees', [
           InstitutionNationalIds.DOMSMALA_RADUNEYTID,
         ])
+        return context
+      }),
+      // Both transitions into IN_REVIEW write the flag, so whatever a client
+      // may have put in answers while editing is overwritten by the route
+      // actually taken.
+      markRevised: assign((context) => {
+        const { application } = context
+        set(application, 'answers.hasBeenRevised', true)
+        return context
+      }),
+      markNotRevised: assign((context) => {
+        const { application } = context
+        set(application, 'answers.hasBeenRevised', false)
         return context
       }),
     },
@@ -98,7 +111,7 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                IdentityApi,
+                IdentityApiProvider,
                 CompanyRegistryApi,
                 ActiveEqualityReportApi,
                 DoeCompanyApi,
@@ -111,7 +124,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // This is the role every unauthorized caller falls through to, so
+              // it gets nothing: the dead-end form reads no answers and no
+              // externalData, only `application.applicant`.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },
@@ -143,7 +161,7 @@ const template: ApplicationTemplate<
           // onExit (not onEntry on IN_REVIEW) so a failed submission blocks
           // the transition instead of silently landing the applicant on a
           // fake "in review" screen with a stale backend record.
-          onExit: SubmitEqualityReportApi,
+          onExit: SubmitEqualityDraftApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -161,7 +179,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                EqualityReportTemplateHtmlApi,
+                CreateEqualityDraftApi,
                 EqualityReportTemplateDocxApi,
                 PreviousEqualityReportContentApi,
               ],
@@ -179,6 +197,7 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
+            actions: 'markNotRevised',
           },
         },
       },
@@ -262,11 +281,11 @@ const template: ApplicationTemplate<
           // So the comment thread's non-empty check has fresh externalData —
           // see the identical comment on States.DRAFT.
           onEntry: GetReportCommentsApi,
-          // PUTs just the report's narrative content in place — NOT
-          // SubmitEqualityReportApi, which is a one-shot create call
-          // (POST .../reports/equality) that a revision can't safely
-          // re-invoke. Mirrors salary-report's EditOutliersApi/onExit here.
-          onExit: EditEqualityContentApi,
+          // No onExit for content — Editor.tsx pushes the revised content
+          // straight to DMR's already-submitted (IN_REVIEW) report via the
+          // directorateOfEqualityEditEqualityContent GraphQL mutation the
+          // moment a file is uploaded, so there's nothing left to commit at
+          // transition time.
           actionCard: {
             tag: {
               label: messages.draftRetry.tagLabel,
@@ -302,9 +321,17 @@ const template: ApplicationTemplate<
               read: 'all',
               write: {
                 answers: ['comment', 'goalsAndActions'],
-                externalData: ['getReportComments', 'submitReportComment'],
+                externalData: [
+                  'getReportComments',
+                  'submitReportComment',
+                  'equalityReportTemplateDocx',
+                ],
               },
-              api: [GetReportCommentsApi, SubmitReportCommentApi],
+              api: [
+                GetReportCommentsApi,
+                SubmitReportCommentApi,
+                EqualityReportTemplateDocxApi,
+              ],
               delete: false,
             },
             {
@@ -319,6 +346,7 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
+            actions: 'markRevised',
           },
         },
       },

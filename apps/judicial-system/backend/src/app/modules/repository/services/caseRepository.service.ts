@@ -5,6 +5,7 @@ import {
   FindAndCountOptions,
   FindAttributeOptions,
   FindOptions,
+  Op,
   Transaction,
   UpdateOptions,
 } from 'sequelize'
@@ -45,7 +46,7 @@ import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
-import { UpdateCase } from '../types/caseRepository.types'
+import { caseInclude, UpdateCase } from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
 interface FindByIdOptions {
@@ -280,6 +281,53 @@ export class CaseRepositoryService {
 
       throw error
     }
+  }
+
+  /**
+   * Reads a live case - neither deleted nor archived - with its row locked for
+   * the rest of the transaction, so the caller can decide a mutation against a
+   * case no one else can change in the meantime.
+   *
+   * The lock is taken by a query of its own rather than by locking the
+   * aggregate read: Postgres cannot lock the nullable side of an outer join,
+   * and `caseInclude` is a tree of them. Scoping the lock to the case row
+   * (`FOR UPDATE OF "Case"`) does not help either, because Sequelize passes
+   * `lock` down to the `separate: true` includes, where that table is not in
+   * the FROM clause. The aggregate read that follows runs in the same
+   * transaction and therefore sees the row it just locked.
+   */
+  async findLiveByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+  ): Promise<Case | null> {
+    const where = {
+      id,
+      state: { [Op.not]: CaseState.DELETED },
+      isArchived: false,
+    }
+
+    try {
+      this.logger.debug(`Locking case ${id} for update`)
+
+      const lockedCase = await this.caseModel.findOne({
+        attributes: ['id'],
+        where,
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+
+      if (!lockedCase) {
+        this.logger.debug(`Case ${id} not found`)
+
+        return null
+      }
+    } catch (error) {
+      this.logger.error(`Error locking case ${id} for update:`, { error })
+
+      throw error
+    }
+
+    return this.findOne({ include: caseInclude, where, transaction })
   }
 
   async findAll(options?: FindAllOptions): Promise<Case[]> {

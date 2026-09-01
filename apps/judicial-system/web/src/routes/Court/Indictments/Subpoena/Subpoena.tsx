@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox } from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
@@ -12,6 +12,7 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   CourtArrangements,
   CourtCaseInfo,
   FormContentContainer,
@@ -41,6 +42,7 @@ import {
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { canSkipArraignmentSummons as isArraignmentSummonsSkippable } from '@island.is/judicial-system-web/src/utils/utils'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
@@ -69,11 +71,38 @@ const Subpoena: FC = () => {
   >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
 
+  const [skipArraignmentSummons, setSkipArraignmentSummons] =
+    useState<boolean>(false)
+
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
+  const hasSkippedArraignmentSummons = Boolean(
+    workingCase.isArraignmentSummonsSkipped,
+  )
+  // The step is settled once the court has either scheduled an arraignment
+  // or decided not to summon to one at all
+  const hasArraignmentBeenSettled =
+    isArraignmentScheduled || hasSkippedArraignmentSummons
+
+  // Skipping is only on the table while nobody is receiving a subpoena.
+  // After an arraignment has already been scheduled, it also unlocks when
+  // the court re-enters alternative service for every defendant.
+  const canSkipArraignmentSummons = isArraignmentSummonsSkippable(
+    // Fall back to the server's defendants for the first render, before the
+    // effect below seeds `updates`, so the step does not flash as invalid
+    updates?.defendants ?? workingCase.defendants,
+    {
+      isArraignmentScheduled,
+      newAlternativeServiceDefendantIds: newAlternativeServices,
+    },
+  )
+  const isSkippingArraignmentSummons =
+    canSkipArraignmentSummons && skipArraignmentSummons
+
   const isSchedulingArraignmentDate = Boolean(
-    !isArraignmentScheduled ||
+    !hasArraignmentBeenSettled ||
       newSubpoenas.length > 0 ||
-      newAlternativeServices.length > 0,
+      newAlternativeServices.length > 0 ||
+      isSkippingArraignmentSummons !== hasSkippedArraignmentSummons,
   )
   const [modalContent, setModalContent] = useState<ModalContent>()
 
@@ -84,7 +113,7 @@ const Subpoena: FC = () => {
 
   const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
     !defendant.isAlternativeService &&
-    (!isArraignmentScheduled || newSubpoenas.includes(defendant.id))
+    (!hasArraignmentBeenSettled || newSubpoenas.includes(defendant.id))
 
   const isIssuingSubpoenas = updates?.defendants?.some((defendant) =>
     isIssuingSubpoenaForDefendant(defendant),
@@ -92,7 +121,8 @@ const Subpoena: FC = () => {
 
   const isRegisteringAlternativeServiceForDefendant = (defendant: Defendant) =>
     defendant.isAlternativeService &&
-    (!isArraignmentScheduled || newAlternativeServices.includes(defendant.id))
+    (!hasArraignmentBeenSettled ||
+      newAlternativeServices.includes(defendant.id))
 
   const isIssuingAlternativeServices = updates?.defendants?.some((defendant) =>
     isRegisteringAlternativeServiceForDefendant(defendant),
@@ -131,7 +161,7 @@ const Subpoena: FC = () => {
     setIsCreatingSubpoena(true)
 
     // When rescheduling, only update defendants we're issuing new subpoenas or alternative services for
-    const defendantsToUpdate = isArraignmentScheduled
+    const defendantsToUpdate = hasArraignmentBeenSettled
       ? updates?.defendants?.filter(
           (defendant) =>
             newSubpoenas.includes(defendant.id) ||
@@ -175,7 +205,7 @@ const Subpoena: FC = () => {
         courtSessionType: CourtSessionType.ARRAIGNMENT,
         // if the case is being rescheduled after the court has met,
         // then clear the current conclusion
-        ...(isArraignmentScheduled && workingCase.indictmentDecision
+        ...(hasArraignmentBeenSettled && workingCase.indictmentDecision
           ? {
               indictmentDecision: null,
               courtDate: null,
@@ -192,10 +222,18 @@ const Subpoena: FC = () => {
       [
         ...additionalUpdates,
         {
-          arraignmentDate: {
-            date: updates?.theCase.arraignmentDate?.date,
-            location: updates?.theCase.arraignmentDate?.location,
-          },
+          ...(isSkippingArraignmentSummons
+            ? {
+                isArraignmentSummonsSkipped: true,
+                arraignmentDate: null,
+              }
+            : {
+                isArraignmentSummonsSkipped: false,
+                arraignmentDate: {
+                  date: updates?.theCase.arraignmentDate?.date,
+                  location: updates?.theCase.arraignmentDate?.location,
+                },
+              }),
           force: true,
         },
       ],
@@ -215,7 +253,7 @@ const Subpoena: FC = () => {
         ?.filter(
           (defendant) =>
             !defendant.isAlternativeService &&
-            (!isArraignmentScheduled || newSubpoenas.includes(defendant.id)),
+            (!hasArraignmentBeenSettled || newSubpoenas.includes(defendant.id)),
         )
         .map((defendant) => defendant.id) ?? []
 
@@ -242,7 +280,8 @@ const Subpoena: FC = () => {
     router.push(`${navigateTo}/${workingCase.id}`)
   }, [
     createSubpoenas,
-    isArraignmentScheduled,
+    hasArraignmentBeenSettled,
+    isSkippingArraignmentSummons,
     navigateTo,
     newAlternativeServices,
     newSubpoenas,
@@ -310,7 +349,14 @@ const Subpoena: FC = () => {
 
   useEffect(() => {
     setUpdates({ defendants: workingCase.defendants, theCase: workingCase })
+    setSkipArraignmentSummons(Boolean(workingCase.isArraignmentSummonsSkipped))
   }, [workingCase])
+
+  useEffect(() => {
+    if (!canSkipArraignmentSummons) {
+      setSkipArraignmentSummons(false)
+    }
+  }, [canSkipArraignmentSummons])
 
   useEffect(() => {
     if (navigateTo === undefined) {
@@ -322,27 +368,51 @@ const Subpoena: FC = () => {
       return
     }
 
-    if (isIssuingAlternativeServices) {
+    const hasCivilClaimants =
+      workingCase.civilClaimants && workingCase.civilClaimants.length > 0
+    const subpoenaText = hasCivilClaimants
+      ? 'Ákæra, fyrirkall og bótakrafa verða send til ákæranda.\nÁkærða verður birt ákæran, fyrirkallið og bótakrafan rafrænt á island.is eða af lögreglu.'
+      : 'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is eða af lögreglu.'
+
+    if (isSkippingArraignmentSummons) {
+      setModalContent({
+        title: strings.modalAlternativeServiceTitle,
+        text: 'Ekki verður send boðun í þingfestingu.',
+        primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
+      })
+    } else if (isIssuingAlternativeServices && isIssuingSubpoenas) {
+      // Some defendants were served by other means while others are being
+      // summoned, so the modal has to cover both
+      setModalContent({
+        title: strings.modalAlternativeServiceTitle,
+        text: `${strings.modalAlternativeServiceText}\n\n${subpoenaText}`,
+        primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
+      })
+    } else if (isIssuingAlternativeServices) {
       setModalContent({
         title: strings.modalAlternativeServiceTitle,
         text: strings.modalAlternativeServiceText,
         primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
       })
     } else if (isIssuingSubpoenas) {
-      const hasCivilClaimants =
-        workingCase.civilClaimants && workingCase.civilClaimants.length > 0
       setModalContent({
         title: formatMessage(strings.modalTitle),
-        text: hasCivilClaimants
-          ? 'Ákæra, fyrirkall og bótakrafa verða send til ákæranda.\nÁkærða verður birt ákæran, fyrirkallið og bótakrafan rafrænt á island.is eða af lögreglu.'
-          : 'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is eða af lögreglu.',
+        text: subpoenaText,
         primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
+      })
+    } else if (isSchedulingArraignmentDate) {
+      setModalContent({
+        title: strings.modalAlternativeServiceTitle,
+        text: strings.modalAlternativeServiceText,
+        primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
       })
     }
   }, [
     navigateTo,
+    isSkippingArraignmentSummons,
     isIssuingAlternativeServices,
     isIssuingSubpoenas,
+    isSchedulingArraignmentDate,
     formatMessage,
     modalContent,
     workingCase.civilClaimants,
@@ -352,6 +422,7 @@ const Subpoena: FC = () => {
     workingCase,
     updates?.defendants,
     updates?.theCase.arraignmentDate,
+    isSkippingArraignmentSummons,
   )
 
   return (
@@ -374,7 +445,7 @@ const Subpoena: FC = () => {
                 alternativeServiceDescriptionDisabled:
                   !isRegisteringAlternativeServiceForDefendant(defendant),
                 subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
-                toggleNewAlternativeService: isArraignmentScheduled
+                toggleNewAlternativeService: hasArraignmentBeenSettled
                   ? toggleNewAlternativeService(defendant)
                   : undefined,
                 onUpdate: handleDefendantUpdates,
@@ -412,7 +483,7 @@ const Subpoena: FC = () => {
                   >
                     Hætta við
                   </Button>
-                ) : isArraignmentScheduled ? (
+                ) : hasArraignmentBeenSettled ? (
                   <Button
                     variant="text"
                     icon="reload"
@@ -441,20 +512,51 @@ const Subpoena: FC = () => {
             <SectionHeading
               title={formatMessage(strings.courtArrangementsHeading)}
             />
-            <CourtArrangements
-              handleCourtDateChange={handleCourtDateChange}
-              handleCourtRoomChange={handleCourtRoomChange}
-              courtDate={updates?.theCase.arraignmentDate}
-              dateTimeDisabled={
-                !isSchedulingArraignmentDate ||
-                workingCase.state === CaseState.CORRECTING
-              }
-              courtRoomDisabled={
-                !isSchedulingArraignmentDate ||
-                workingCase.state === CaseState.CORRECTING
-              }
-              courtRoomRequired
-            />
+            <BlueBox>
+              {canSkipArraignmentSummons && (
+                <Box marginBottom={2}>
+                  <Checkbox
+                    id="skipArraignmentSummons"
+                    name="skipArraignmentSummons"
+                    label="Ekki boða til þingfestingar"
+                    checked={skipArraignmentSummons}
+                    onChange={() => {
+                      const nextSkipArraignmentSummons = !skipArraignmentSummons
+
+                      setSkipArraignmentSummons(nextSkipArraignmentSummons)
+
+                      // Drop anything already typed so a stale date is not
+                      // submitted along with the skip
+                      if (nextSkipArraignmentSummons) {
+                        updateCourtArrangement({ date: null, location: '' })
+                      }
+                    }}
+                    tooltip="Ef ekki er þörf á því að boða til þingfestingar, til dæmis vegna sameiningu mála, er hægt að haka við þennan reit."
+                    disabled={workingCase.state === CaseState.CORRECTING}
+                    backgroundColor="white"
+                    large
+                    filled
+                  />
+                </Box>
+              )}
+              <CourtArrangements
+                blueBox={false}
+                handleCourtDateChange={handleCourtDateChange}
+                handleCourtRoomChange={handleCourtRoomChange}
+                courtDate={updates?.theCase.arraignmentDate}
+                dateTimeDisabled={
+                  !isSchedulingArraignmentDate ||
+                  isSkippingArraignmentSummons ||
+                  workingCase.state === CaseState.CORRECTING
+                }
+                courtRoomDisabled={
+                  !isSchedulingArraignmentDate ||
+                  isSkippingArraignmentSummons ||
+                  workingCase.state === CaseState.CORRECTING
+                }
+                courtRoomRequired
+              />
+            </BlueBox>
           </Box>
           <Box component="section" className={pdfButtonGrid}>
             {updates?.defendants?.map((defendant) => {

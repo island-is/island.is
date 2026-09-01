@@ -54,11 +54,25 @@ export const mapLshQuestionnaireOverview = (
     description: data.description ?? undefined,
     organization: QuestionnairesOrganizationEnum.LSH,
     department: data.department ?? undefined,
+    lastSubmitted: data.answerDateTime ?? undefined,
+    // LSH has a single answer set per questionnaire, addressed by the
+    // questionnaire gUID rather than a separate submission id
+    lastSubmissionId: data.answerDateTime ? data.gUID ?? undefined : undefined,
   },
   expirationDate: data.validToDateTime ?? undefined,
   canSubmit:
     !data.answerDateTime &&
     (data.validToDateTime == null || data.validToDateTime >= new Date()),
+  submissions:
+    data.answerDateTime && data.gUID
+      ? [
+          {
+            id: data.gUID,
+            isDraft: false,
+            lastUpdated: data.answerDateTime,
+          },
+        ]
+      : undefined,
 })
 
 export const mapLshQuestionnaireListItem = (
@@ -76,4 +90,6 @@ export const mapLshQuestionnaireListItem = (
     : data.validToDateTime != null && data.validToDateTime < new Date()
     ? QuestionnairesStatusEnum.expired
     : QuestionnairesStatusEnum.notAnswered,
+  lastSubmitted: data.answerDateTime ?? undefined,
+  lastSubmissionId: data.answerDateTime ? data.gUID ?? undefined : undefined,
 })
