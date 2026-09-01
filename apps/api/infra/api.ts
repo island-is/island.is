@@ -628,14 +628,14 @@ export const serviceSetup = (services: {
       cpuAverageUtilization: 70,
     })
     .strategy({
-      // dev: fast/cheap rollout. staging/prod: zero-downtime.
+      // prod: zero-downtime. dev/staging: downtime is fine, roll faster.
       dev: {
         type: 'RollingUpdate',
         rollingUpdate: { maxSurge: '25%', maxUnavailable: '25%' },
       },
       staging: {
         type: 'RollingUpdate',
-        rollingUpdate: { maxSurge: '25%', maxUnavailable: 0 },
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: '25%' },
       },
       prod: {
         type: 'RollingUpdate',
@@ -643,18 +643,18 @@ export const serviceSetup = (services: {
       },
     })
     .gracefulShutdown({
-      // Full drain in staging/prod (long XRoad/GraphQL calls); relaxed in dev.
+      // Full drain in prod (long XRoad/GraphQL calls); relaxed elsewhere.
+      // minReadySeconds kept at 0 for now — knob to tune if needed.
       dev: {
         minReadySeconds: 0,
         terminationGracePeriodSeconds: 30,
       },
       staging: {
-        minReadySeconds: 10,
-        terminationGracePeriodSeconds: 60,
-        preStopSleepSeconds: 10,
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 30,
       },
       prod: {
-        minReadySeconds: 10,
+        minReadySeconds: 0,
         terminationGracePeriodSeconds: 60,
         preStopSleepSeconds: 10,
       },
