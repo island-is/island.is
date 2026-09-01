@@ -140,6 +140,12 @@ export const formatAutosaveTime = (date: Date): string => {
 
 export type GoogleTranslateItem = { id: string; sourceText: string }
 
+export const isTranslatingEveryId = (
+  ids: readonly string[],
+  translatingIds: ReadonlySet<string> | undefined,
+): boolean =>
+  ids.length > 0 && ids.every((id) => Boolean(translatingIds?.has(id)))
+
 export type GoogleTranslateFn = (input: {
   texts: string[]
 }) => Promise<string[] | undefined | null>

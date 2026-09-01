@@ -1,6 +1,12 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import { FieldTypes } from '@island.is/application/types'
 import type { CustomField } from '@island.is/application/types'
-import type { ScreenIntrospection } from '../../types/translationWorkspace'
+import type {
+  PreviewFormatMessage,
+  ResolvePreviewString,
+  ScreenIntrospection,
+  ValidationMessageDescriptor,
+} from '../../types/translationWorkspace'
 import {
   HALF_WIDTH_IGNORED_TYPES,
   TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN,
@@ -122,4 +128,34 @@ export const parseBankAccountPreviewValue = (
     }
   }
   return empty
+}
+
+export const resolveLeafFieldErrorMessage = (
+  screen: ScreenIntrospection,
+  resolvePreviewString: ResolvePreviewString,
+  formatMessage: PreviewFormatMessage,
+  showValidationErrors?: boolean,
+  validationDescriptorsByPath?: Record<string, ValidationMessageDescriptor[]>,
+  fieldErrorOverrides?: Set<string>,
+): string | undefined => {
+  const hasErrorOverride = fieldErrorOverrides?.has(screen.id) === true
+  if (hasErrorOverride) {
+    const descriptors = validationDescriptorsByPath?.[screen.id]
+    if (descriptors && descriptors.length > 0) {
+      return resolvePreviewString(
+        descriptors[0].id,
+        descriptors[0].defaultMessage,
+      )
+    }
+    return formatMessage(coreErrorMessages.defaultError)
+  }
+  if (!showValidationErrors || !validationDescriptorsByPath) {
+    return undefined
+  }
+  const descriptors = validationDescriptorsByPath[screen.id]
+  if (!descriptors || descriptors.length === 0) {
+    return undefined
+  }
+  const descriptor = descriptors[0]
+  return resolvePreviewString(descriptor.id, descriptor.defaultMessage)
 }

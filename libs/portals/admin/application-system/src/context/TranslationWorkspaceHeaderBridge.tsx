@@ -12,30 +12,6 @@ import {
   type SetStateAction,
 } from 'react'
 
-import type { FormatMessage } from '@island.is/localization'
-import { useNavigate } from 'react-router-dom'
-import { Button, DropdownMenu, Icon, Text } from '@island.is/island-ui/core'
-
-import { m } from '../lib/messages'
-import { ApplicationSystemPaths } from '../lib/paths'
-import * as styles from './TranslationWorkspaceHeader.css'
-
-const useViewportMaxWidth = (maxWidthPx: number, initialMatches = false) => {
-  const [matches, setMatches] = useState(initialMatches)
-
-  useEffect(() => {
-    const mediaQueryList = window.matchMedia(`(max-width: ${maxWidthPx}px)`)
-    const update = () => {
-      setMatches(mediaQueryList.matches)
-    }
-    update()
-    mediaQueryList.addEventListener('change', update)
-    return () => mediaQueryList.removeEventListener('change', update)
-  }, [maxWidthPx])
-
-  return matches
-}
-
 export type TranslationWorkspacePreviewLocale = 'is' | 'en'
 
 export type TranslationWorkspaceHeaderChrome = {
@@ -45,7 +21,6 @@ export type TranslationWorkspaceHeaderChrome = {
   unsavedCount: number
   saving: boolean
   onSaveAll: () => void | Promise<boolean>
-  formatMessage: FormatMessage
   showValidationErrors: boolean
   onToggleValidationErrors: () => void
   showValidationToggle?: boolean
@@ -111,7 +86,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
   unsavedCount,
   saving,
   onSaveAll,
-  formatMessage,
   showValidationErrors,
   onToggleValidationErrors,
   showValidationToggle = true,
@@ -127,7 +101,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
   const onLocaleChangeRef = useRef(onLocaleChange)
   const onSaveAllRef = useRef(onSaveAll)
   const onToggleValidationErrorsRef = useRef(onToggleValidationErrors)
-  const formatMessageRef = useRef(formatMessage)
   const onPublishRef = useRef(onPublish)
   const onOpenHistoryRef = useRef(onOpenHistory)
 
@@ -142,10 +115,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
   useEffect(() => {
     onToggleValidationErrorsRef.current = onToggleValidationErrors
   }, [onToggleValidationErrors])
-
-  useEffect(() => {
-    formatMessageRef.current = formatMessage
-  }, [formatMessage])
 
   useEffect(() => {
     onPublishRef.current = onPublish
@@ -168,12 +137,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
     [],
   )
 
-  const stableFormatMessage = useCallback<FormatMessage>(
-    ((descriptor: any, values?: any) =>
-      formatMessageRef.current(descriptor, values)) as FormatMessage,
-    [],
-  )
-
   const stableOnPublish = useCallback(() => onPublishRef.current(), [])
 
   const stableOnOpenHistory = useCallback(() => onOpenHistoryRef.current(), [])
@@ -186,7 +149,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
       unsavedCount,
       saving,
       onSaveAll: stableOnSaveAll,
-      formatMessage: stableFormatMessage,
       showValidationErrors,
       onToggleValidationErrors: stableOnToggleValidationErrors,
       showValidationToggle,
@@ -203,7 +165,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
       unsavedCount,
       saving,
       stableOnSaveAll,
-      stableFormatMessage,
       showValidationErrors,
       stableOnToggleValidationErrors,
       showValidationToggle,
@@ -229,347 +190,4 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
     setWorkspaceChrome(chrome)
     return undefined
   }, [isReady, chrome, setWorkspaceChrome])
-}
-
-export const TranslationWorkspaceHeaderBackButton = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-  const chrome = ctx?.workspaceChrome
-  const navigate = useNavigate()
-  const [navigating, setNavigating] = useState(false)
-
-  const handleBack = useCallback(async () => {
-    if (!chrome || navigating || chrome.saving) {
-      return
-    }
-
-    setNavigating(true)
-    try {
-      if (chrome.hasUnsavedChanges) {
-        const saved = await chrome.onSaveAll()
-        if (saved === false) {
-          return
-        }
-      }
-      navigate(ApplicationSystemPaths.Root)
-    } finally {
-      setNavigating(false)
-    }
-  }, [chrome, navigate, navigating])
-
-  if (!chrome) {
-    return null
-  }
-
-  const label = chrome.formatMessage(m.translationBackToList)
-
-  return (
-    <div className={styles.back}>
-      <span className={styles.backCompact}>
-        <Button
-          circle
-          colorScheme="light"
-          icon="chevronBack"
-          loading={navigating || chrome.saving}
-          onClick={handleBack}
-          title={label}
-          aria-label={label}
-        />
-      </span>
-      <span className={styles.backWide}>
-        <Button
-          variant="text"
-          size="small"
-          preTextIcon="arrowBack"
-          loading={navigating || chrome.saving}
-          onClick={handleBack}
-          title={label}
-          aria-label={label}
-        >
-          {label}
-        </Button>
-      </span>
-    </div>
-  )
-}
-
-export const TranslationWorkspaceHeaderAutosave = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-  const chrome = ctx?.workspaceChrome
-
-  if (!chrome?.lastAutosaveTime) {
-    return null
-  }
-
-  return (
-    <div className={styles.autosave} role="status">
-      <span className={styles.srOnly}>
-        {chrome.formatMessage(m.translationAutosaved, {
-          time: chrome.lastAutosaveTime,
-        })}
-      </span>
-      <Icon icon="checkmark" size="small" color="blue400" ariaHidden />
-      <Text variant="small" color="dark300" as="span">
-        <span className={styles.autosaveLabel} aria-hidden="true">
-          {chrome.formatMessage(m.translationAutosaveLabel)}{' '}
-        </span>
-        <span className={styles.autosaveTime} aria-hidden="true">
-          {chrome.lastAutosaveTime}
-        </span>
-      </Text>
-    </div>
-  )
-}
-
-export const TranslationWorkspaceHeaderLocaleButton = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-  const chrome = ctx?.workspaceChrome
-
-  if (!chrome) {
-    return null
-  }
-
-  const nextLocale: TranslationWorkspacePreviewLocale =
-    chrome.activeLocale === 'is' ? 'en' : 'is'
-  const label =
-    nextLocale === 'en'
-      ? chrome.formatMessage(m.translationLocaleEnglish)
-      : chrome.formatMessage(m.translationLocaleIcelandic)
-  const shortLabel = nextLocale === 'en' ? 'EN' : 'IS'
-
-  return (
-    <span className={styles.locale}>
-      <Button
-        size="small"
-        variant="ghost"
-        onClick={() => chrome.onLocaleChange(nextLocale)}
-        title={label}
-        aria-label={label}
-        lang={nextLocale}
-      >
-        {shortLabel}
-      </Button>
-    </span>
-  )
-}
-
-export const TranslationWorkspaceHeaderHistoryButton = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-  const chrome = ctx?.workspaceChrome
-
-  if (!chrome) {
-    return null
-  }
-
-  const label = chrome.formatMessage(m.translationPublishHistory)
-
-  return (
-    <span className={styles.history}>
-      <span className={styles.historyCompact}>
-        <Button
-          size="small"
-          variant="ghost"
-          icon="time"
-          iconType="outline"
-          onClick={chrome.onOpenHistory}
-          title={label}
-          aria-label={label}
-        />
-      </span>
-      <span className={styles.historyWide}>
-        <Button
-          size="small"
-          variant="ghost"
-          preTextIcon="time"
-          preTextIconType="outline"
-          nowrap
-          onClick={chrome.onOpenHistory}
-          title={label}
-          aria-label={label}
-        >
-          {label}
-        </Button>
-      </span>
-    </span>
-  )
-}
-
-export const TranslationWorkspaceHeaderSaveButton = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-  const chrome = ctx?.workspaceChrome
-
-  if (!chrome?.hasUnsavedChanges) {
-    return null
-  }
-
-  return (
-    <span className={styles.save}>
-      <Button
-        size="small"
-        variant="ghost"
-        loading={chrome.saving}
-        onClick={chrome.onSaveAll}
-      >
-        {chrome.formatMessage(m.translationSaveDraft)} ({chrome.unsavedCount})
-      </Button>
-    </span>
-  )
-}
-
-export const TranslationWorkspaceHeaderPublishButton = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-  const chrome = ctx?.workspaceChrome
-
-  if (!chrome) {
-    return null
-  }
-
-  if (!chrome.hasDraftChanges && !chrome.hasUnsavedChanges) {
-    return null
-  }
-
-  return (
-    <span className={styles.publish}>
-      <Button
-        size="small"
-        loading={chrome.publishing}
-        onClick={chrome.onPublish}
-      >
-        {chrome.formatMessage(m.translationPublish)}
-      </Button>
-    </span>
-  )
-}
-
-export const TranslationWorkspaceHeaderValidationToggle = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-  const chrome = ctx?.workspaceChrome
-
-  if (!chrome || chrome.showValidationToggle === false) {
-    return null
-  }
-
-  return (
-    <Button
-      size="small"
-      variant={chrome.showValidationErrors ? 'primary' : 'ghost'}
-      onClick={chrome.onToggleValidationErrors}
-    >
-      {chrome.formatMessage(m.translationValidationErrors)}
-    </Button>
-  )
-}
-
-export const TranslationWorkspaceHeaderOverflowMenu = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-  const chrome = ctx?.workspaceChrome
-  const localeInOverflow = useViewportMaxWidth(styles.overflowMenuMaxPx, true)
-  const saveInOverflow = useViewportMaxWidth(styles.compactActionsMaxPx, true)
-  const historyInOverflow = useViewportMaxWidth(
-    styles.historyCompactMaxPx,
-    true,
-  )
-
-  if (!chrome) {
-    return null
-  }
-
-  const nextLocale: TranslationWorkspacePreviewLocale =
-    chrome.activeLocale === 'is' ? 'en' : 'is'
-  const localeTitle =
-    nextLocale === 'en'
-      ? chrome.formatMessage(m.translationLocaleEnglish)
-      : chrome.formatMessage(m.translationLocaleIcelandic)
-  const historyTitle = chrome.formatMessage(m.translationPublishHistory)
-  const moreActions = chrome.formatMessage(m.translationMoreActions)
-  const saveTitle = chrome.hasUnsavedChanges
-    ? `${chrome.formatMessage(m.translationSaveDraft)} (${chrome.unsavedCount})`
-    : null
-  const publishTitle =
-    chrome.hasDraftChanges || chrome.hasUnsavedChanges
-      ? chrome.formatMessage(m.translationPublish)
-      : null
-
-  const items = [
-    ...(saveTitle && saveInOverflow
-      ? [
-          {
-            title: saveTitle,
-            icon: 'save' as const,
-            iconType: 'outline' as const,
-            onClick: () => chrome.onSaveAll(),
-          },
-        ]
-      : []),
-    ...(publishTitle && saveInOverflow
-      ? [
-          {
-            title: publishTitle,
-            icon: 'upload' as const,
-            iconType: 'outline' as const,
-            onClick: () => chrome.onPublish(),
-          },
-        ]
-      : []),
-    ...(localeInOverflow
-      ? [
-          {
-            title: localeTitle,
-            icon: 'globe' as const,
-            iconType: 'outline' as const,
-            onClick: () => chrome.onLocaleChange(nextLocale),
-          },
-        ]
-      : []),
-    ...(historyInOverflow
-      ? [
-          {
-            title: historyTitle,
-            icon: 'time' as const,
-            iconType: 'outline' as const,
-            onClick: () => chrome.onOpenHistory(),
-          },
-        ]
-      : []),
-  ]
-
-  if (items.length === 0) {
-    return null
-  }
-
-  return (
-    <div className={styles.overflow}>
-      <DropdownMenu
-        menuLabel={moreActions}
-        disclosure={
-          <Button
-            size="small"
-            variant="ghost"
-            icon="ellipsisHorizontal"
-            title={moreActions}
-            aria-label={moreActions}
-          />
-        }
-        items={items}
-      />
-    </div>
-  )
-}
-
-/** Trail actions in the shell header. Renders nothing when workspace chrome is not registered. */
-export const TranslationWorkspaceHeaderActions = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-
-  if (!ctx?.workspaceChrome) {
-    return null
-  }
-
-  return (
-    <div className={styles.trailActions}>
-      <TranslationWorkspaceHeaderLocaleButton />
-      <TranslationWorkspaceHeaderHistoryButton />
-      <TranslationWorkspaceHeaderSaveButton />
-      <TranslationWorkspaceHeaderPublishButton />
-      <TranslationWorkspaceHeaderOverflowMenu />
-    </div>
-  )
 }

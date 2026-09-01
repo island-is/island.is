@@ -1,4 +1,8 @@
-import type { SectionIntrospection } from '@island.is/application/types'
+import type {
+  MessageDescriptorInfo,
+  SectionIntrospection,
+  ValidationMessageDescriptorInfo,
+} from '@island.is/application/types'
 
 export type {
   MessageDescriptorInfo as MessageDescriptor,
@@ -38,15 +42,28 @@ export type PreviewFormatMessage = (
   values?: Record<string, string | number | boolean | null | undefined>,
 ) => string
 
+export interface TemplateFormNav {
+  title?: string | null
+  logoKey?: string | null
+  sections: SectionIntrospection[]
+}
+
 export interface TemplateStateNav {
   stateKey: string
   stateName: string
   roles: Array<{
     roleId: string
     formLoadError?: string | null
-    form?: {
-      logoKey?: string | null
-      sections: SectionIntrospection[]
-    } | null
+    form?: TemplateFormNav | null
   }>
+}
+
+export interface WorkspaceTemplateIntrospection {
+  typeId?: string | null
+  name: string
+  slug?: string | null
+  translationNamespaces: string[]
+  states: TemplateStateNav[]
+  allMessageDescriptors?: MessageDescriptorInfo[] | null
+  validationMessageDescriptors?: ValidationMessageDescriptorInfo[] | null
 }

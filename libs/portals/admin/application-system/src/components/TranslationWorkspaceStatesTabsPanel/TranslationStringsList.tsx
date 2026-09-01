@@ -5,6 +5,7 @@ import type {
   MessageDescriptor,
 } from '../../types/translationWorkspace'
 import { m } from '../../lib/messages'
+import { isTranslatingEveryId } from '../../utils/translationWorkspaceEditing'
 import { TranslationDescriptorCard } from './TranslationDescriptorCard'
 
 type PersistedByKey = Record<
@@ -25,7 +26,7 @@ export interface TranslationStringsListProps {
   onGoogleTranslateAll?: (
     items: Array<{ id: string; sourceText: string }>,
   ) => void
-  isTranslating?: boolean
+  translatingIds?: ReadonlySet<string>
   emptyMessage?: string
 }
 
@@ -40,7 +41,7 @@ export const TranslationStringsList = ({
   persistedByKey,
   onGoogleTranslate,
   onGoogleTranslateAll,
-  isTranslating,
+  translatingIds,
   emptyMessage,
 }: TranslationStringsListProps) => {
   const getReferenceForDescriptor = (descriptor: MessageDescriptor) => {
@@ -77,6 +78,10 @@ export const TranslationStringsList = ({
   }
 
   const showTranslateButtons = activeLocale === 'en' && !!onGoogleTranslate
+  const translatableIds = descriptors
+    .filter((descriptor) => getSourceText(descriptor))
+    .map((descriptor) => descriptor.id)
+  const isTranslatingAll = isTranslatingEveryId(translatableIds, translatingIds)
 
   return (
     <>
@@ -104,8 +109,8 @@ export const TranslationStringsList = ({
               preTextIcon="swapHorizontal"
               preTextIconType="outline"
               onClick={handleTranslateAll}
-              disabled={isTranslating}
-              loading={isTranslating}
+              disabled={isTranslatingAll}
+              loading={isTranslatingAll}
             >
               {formatMessage(m.translationGoogleTranslateAll)}
             </Button>
@@ -138,7 +143,7 @@ export const TranslationStringsList = ({
                   ? () => onGoogleTranslate(descriptor.id, sourceText)
                   : undefined
               }
-              isTranslating={isTranslating}
+              isTranslating={translatingIds?.has(descriptor.id)}
             />
           )
         })}

@@ -9,3 +9,4 @@ export {
 } from './lib/paths'
 export * from './lib/navigation'
 export * from './context/TranslationWorkspaceHeaderBridge'
+export * from './components/TranslationWorkspaceHeader/TranslationWorkspaceHeader'

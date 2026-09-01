@@ -67,22 +67,6 @@ export const workspacePreviewAside = style({
   WebkitOverflowScrolling: 'touch',
 })
 
-export const publishConfirmModal = style({
-  position: 'relative',
-  maxWidth: `calc(100% - ${theme.spacing[6]}px)`,
-  maxHeight: `calc(100% - ${theme.spacing[6]}px)`,
-  margin: 'auto',
-  marginTop: '25vh',
-  borderRadius: theme.border.radius.large,
-  overflowY: 'auto',
-  boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
-  ...themeUtils.responsiveStyle({
-    md: {
-      width: 600,
-    },
-  }),
-})
-
 export const workspaceNavAside = style({
   flex: '0 0 30vw',
   maxWidth: '30vw',

@@ -35,7 +35,7 @@ export interface TabsPanelStringsTabProps {
   onGoogleTranslateAll?: (
     items: Array<{ id: string; sourceText: string }>,
   ) => void
-  isTranslating?: boolean
+  translatingIds?: ReadonlySet<string>
 }
 
 export const TabsPanelStringsTab = ({
@@ -54,7 +54,7 @@ export const TabsPanelStringsTab = ({
   persistedByKey,
   onGoogleTranslate,
   onGoogleTranslateAll,
-  isTranslating,
+  translatingIds,
 }: TabsPanelStringsTabProps) => {
   const visibleValidationDescriptors = useMemo(() => {
     if (!showValidationErrors) return []
@@ -136,7 +136,7 @@ export const TabsPanelStringsTab = ({
               persistedByKey={persistedByKey}
               onGoogleTranslate={onGoogleTranslate}
               onGoogleTranslateAll={onGoogleTranslateAll}
-              isTranslating={isTranslating}
+              translatingIds={translatingIds}
               emptyMessage={
                 stringsListScope === 'application'
                   ? 'No translatable strings found for this application template.'
@@ -181,7 +181,7 @@ export const TabsPanelStringsTab = ({
                           ? () => onGoogleTranslate!(descriptor.id, sourceText)
                           : undefined
                       }
-                      isTranslating={isTranslating}
+                      isTranslating={translatingIds?.has(descriptor.id)}
                     />
                   )
                 })}

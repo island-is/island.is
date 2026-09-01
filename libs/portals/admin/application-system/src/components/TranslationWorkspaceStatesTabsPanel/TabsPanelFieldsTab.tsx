@@ -11,6 +11,7 @@ import {
   generatePreviewValueForField,
   getFieldProperties,
 } from '../../utils/translationWorkspaceNavPanel'
+import { isTranslatingEveryId } from '../../utils/translationWorkspaceEditing'
 import { TranslationDescriptorCard } from './TranslationDescriptorCard'
 import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
 
@@ -37,7 +38,7 @@ export interface TabsPanelFieldsTabProps {
   onGoogleTranslateAll?: (
     items: Array<{ id: string; sourceText: string }>,
   ) => void
-  isTranslating?: boolean
+  translatingIds?: ReadonlySet<string>
 }
 
 export const TabsPanelFieldsTab = ({
@@ -56,7 +57,7 @@ export const TabsPanelFieldsTab = ({
   persistedByKey,
   onGoogleTranslate,
   onGoogleTranslateAll,
-  isTranslating,
+  translatingIds,
 }: TabsPanelFieldsTabProps) => {
   const getReferenceForDescriptor = (descriptor: {
     id: string
@@ -93,6 +94,14 @@ export const TabsPanelFieldsTab = ({
         ? getFieldProperties(currentField, validationDescriptorsByPath)
         : [],
     [currentField, validationDescriptorsByPath],
+  )
+
+  const translatablePropertyIds = currentFieldProperties
+    .filter((p) => p.descriptor && getSourceText(p.descriptor))
+    .map((p) => p.descriptor!.id)
+  const isTranslatingAll = isTranslatingEveryId(
+    translatablePropertyIds,
+    translatingIds,
   )
 
   const handleAutofill = () => {
@@ -164,8 +173,8 @@ export const TabsPanelFieldsTab = ({
                         onGoogleTranslateAll(items)
                       }
                     }}
-                    disabled={isTranslating}
-                    loading={isTranslating}
+                    disabled={isTranslatingAll}
+                    loading={isTranslatingAll}
                   >
                     {formatMessage(m.translationGoogleTranslateAll)}
                   </Button>
@@ -208,7 +217,7 @@ export const TabsPanelFieldsTab = ({
                         ? () => onGoogleTranslate(descriptor.id, sourceText)
                         : undefined
                     }
-                    isTranslating={isTranslating}
+                    isTranslating={translatingIds?.has(descriptor.id)}
                   />
                 )
               })}
