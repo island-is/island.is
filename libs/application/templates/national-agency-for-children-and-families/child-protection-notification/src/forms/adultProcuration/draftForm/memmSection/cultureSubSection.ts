@@ -43,7 +43,10 @@ export const cultureSubSection = buildSubSection({
           title: memmMessages.culture.languageUsageLabel,
           placeholder: memmMessages.culture.languageUsagePlaceholder,
           doesNotRequireAnswer: true,
-          clearOnChange: ['memm.culture.languages', 'memm.culture.preferredLanguage'],
+          clearOnChange: [
+            'memm.culture.languages',
+            'memm.culture.preferredLanguage',
+          ],
           options: [
             {
               value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
@@ -80,8 +83,7 @@ export const cultureSubSection = buildSubSection({
             const selected = memmCultureLanguages ?? []
             const atMax = selected.length >= 4
             const isOnlyOther =
-              memmCultureLanguageUsage ===
-              LanguageEnvironmentOptions.ONLY_OTHER
+              memmCultureLanguageUsage === LanguageEnvironmentOptions.ONLY_OTHER
             return getAllLanguageCodes()
               .filter((l) => !isOnlyOther || l.code !== 'is')
               .map((l) => ({
