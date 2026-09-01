@@ -1,5 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
+import { Features } from '@island.is/react/feature-flags'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
@@ -157,6 +158,10 @@ const NewHealthConversation = lazy(() =>
 
 const HealthConversationDetail = lazy(() =>
   import('./screens/HealthConversations/HealthConversationDetail'),
+)
+
+const TreatmentOverview = lazy(() =>
+  import('./screens/Treatments/TreatmentOverview'),
 )
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
@@ -674,6 +679,20 @@ export const healthModule: PortalModule = {
       key: 'HealthMessages',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthConversationDetail />,
+    },
+    {
+      name: hm.treatment,
+      path: HealthPaths.HealthTreatments,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Navigate to={HealthPaths.HealthRoot} replace />,
+    },
+    {
+      name: hm.treatment,
+      path: HealthPaths.HealthTreatment,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <TreatmentOverview />,
     },
   ],
 }

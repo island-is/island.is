@@ -1,0 +1,8 @@
+query GetHealthTreatmentsOverview {
+  healthDirectorateTreatments {
+    id
+    name
+    organizationName
+    departmentName
+  }
+}

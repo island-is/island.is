@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
@@ -6,8 +6,14 @@ import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import uniq from 'lodash/uniq'
 import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { DynamicPaths } from './paths'
+import { m } from '../../lib/messages'
 import { orderRoutes } from '../../utils/orderRoutes'
 export { parseMenuConfig } from '../../utils/orderRoutes'
+
+// Hardcoded — core can't import HealthPaths (health imports core).
+const HEALTH_ROUTE = '/heilsa'
+const HEALTH_CONVERSATIONS_ROUTE = '/heilsa/skilabod'
+const HEALTH_TREATMENT_BASE_ROUTE = '/heilsa/medferd'
 
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
@@ -39,6 +45,15 @@ export const GET_VMST_APPLICATIONS_OVERVIEW_QUERY = gql`
       activationGrant {
         isVisible
       }
+    }
+  }
+`
+
+export const GET_HEALTH_TREATMENTS_NAV_QUERY = gql`
+  query GetHealthTreatmentsNavigation {
+    healthDirectorateTreatments {
+      id
+      name
     }
   }
 `
@@ -155,6 +170,57 @@ export const useDynamicRoutes = () => {
   }
 }
 
+const cloneNavItem = (item: PortalNavigationItem): PortalNavigationItem => ({
+  ...item,
+  children: item.children?.map(cloneNavItem),
+})
+
+/**
+ * portals-my-pages/health
+ * Adds one nav item per treatment under Heilsa, after the messages entry,
+ * each with a hidden fræðsluefni child so breadcrumbs work. Operates on a
+ * deep clone — the nav tree is a shared singleton mutated in place elsewhere.
+ * systemRoute keeps the concrete paths from being filtered out.
+ */
+const injectHealthTreatmentNavItems = (
+  nav: PortalNavigationItem,
+  treatments: Array<{ id: string; name: string }>,
+): PortalNavigationItem => ({
+  ...nav,
+  children: nav.children?.map((child) => {
+    if (child.path !== HEALTH_ROUTE) {
+      return child
+    }
+    const health = cloneNavItem(child)
+    const treatmentItems: PortalNavigationItem[] = treatments.map(
+      (treatment) => ({
+        name: treatment.name.trim() || m.healthTreatment,
+        path: `${HEALTH_TREATMENT_BASE_ROUTE}/${treatment.id}`,
+        systemRoute: true,
+        children: [
+          {
+            name: m.healthTreatmentEducationalContent,
+            path: `${HEALTH_TREATMENT_BASE_ROUTE}/${treatment.id}/fraedsluefni`,
+            navHide: true,
+            systemRoute: true,
+          },
+        ],
+      }),
+    )
+    const healthChildren = [...(health.children ?? [])]
+    const conversationsIndex = healthChildren.findIndex(
+      (item) => item.path === HEALTH_CONVERSATIONS_ROUTE,
+    )
+    healthChildren.splice(
+      conversationsIndex >= 0 ? conversationsIndex + 1 : healthChildren.length,
+      0,
+      ...treatmentItems,
+    )
+    health.children = healthChildren
+    return health
+  }),
+})
+
 export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
   const { activeDynamicRoutes } = useDynamicRoutes()
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
@@ -166,7 +232,32 @@ export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
     },
   })
 
+  const { value: treatmentsEnabled } = useFeatureFlag(
+    Features.isServicePortalHealthTreatmentsPageEnabled,
+    false,
+  )
+
+  // Kept out of useDynamicRoutes so its loading never delays DynamicWrapper
+  // screens — the nav items simply appear once the query resolves.
+  const { data: treatmentsData } = useQuery<Query>(
+    GET_HEALTH_TREATMENTS_NAV_QUERY,
+    {
+      skip: !treatmentsEnabled,
+    },
+  )
+
   const sortedNavigation = orderRoutes(nav, data?.getNamespace?.fields)
 
-  return useNavigation(sortedNavigation, activeDynamicRoutes)
+  // Memoized so useNavigation sees a stable object. The namespace fields are
+  // a dep because orderRoutes re-sorts the tree in place when they load.
+  const navigation = useMemo(() => {
+    const treatments = treatmentsData?.healthDirectorateTreatments
+    if (!treatments?.length) {
+      return sortedNavigation
+    }
+    return injectHealthTreatmentNavItems(sortedNavigation, treatments)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortedNavigation, treatmentsData, data?.getNamespace?.fields])
+
+  return useNavigation(navigation, activeDynamicRoutes)
 }

@@ -5,6 +5,14 @@ export const m = defineMessages({
     id: 'service.portal:reference',
     defaultMessage: 'Tilvísun',
   },
+  healthTreatment: {
+    id: 'service.portal:health-treatment',
+    defaultMessage: 'Meðferð',
+  },
+  healthTreatmentEducationalContent: {
+    id: 'service.portal:health-treatment-educational-content',
+    defaultMessage: 'Fræðsluefni',
+  },
   goToPage: {
     id: 'service.portal:go-to-page',
     defaultMessage: 'Fara á síðu',

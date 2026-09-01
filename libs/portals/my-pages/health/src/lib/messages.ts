@@ -2383,6 +2383,15 @@ export const messages = defineMessages({
     defaultMessage: 'Meðferð',
     id: 'sp.health:treatment',
   },
+  treatmentIntro: {
+    defaultMessage:
+      'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt.',
+    id: 'sp.health:treatment-intro',
+  },
+  landlaeknirTreatmentTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar meðferðir.',
+    id: 'sp.health:landlaeknir-treatment-tooltip',
+  },
   sentFrom: {
     defaultMessage: 'Sent af',
     id: 'sp.health:sent-from',
