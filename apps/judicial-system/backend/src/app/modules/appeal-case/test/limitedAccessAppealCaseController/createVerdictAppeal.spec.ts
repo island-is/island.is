@@ -212,7 +212,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         caseId,
         defendantId,
         verdictId,
-        { appealDate: createdAppealCase.appealDate },
+        { appealDate: now },
         { transaction },
       )
     })
@@ -270,12 +270,75 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       )
     })
 
-    it('should mirror the existing appeal date onto the verdict', () => {
+    // The mirror is per defendant, so it carries when this defendant appealed
+    // rather than when the appeal case was first filed.
+    it('should mirror its own appeal date onto the verdict', () => {
       expect(mockVerdictRepositoryService.update).toHaveBeenCalledWith(
         caseId,
         defendantId,
         verdictId,
-        { appealDate: existingAppealCase.appealDate },
+        { appealDate: now },
+        { transaction },
+      )
+    })
+
+    it('should leave the appeal case state alone', () => {
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('appealing again after every appellant had withdrawn', () => {
+    const withdrawnAppealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+      appealState: AppealCaseState.WITHDRAWN,
+      appealDate: new Date('2026-06-02T09:00:00Z'),
+    } as AppealCase
+
+    let then: Then
+
+    beforeEach(async () => {
+      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
+        [withdrawnAppealCase],
+      )
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        {
+          defendantId,
+          eventType: AppealEventType.APPEALED,
+          created: new Date('2026-06-02T09:00:00Z'),
+        },
+        {
+          defendantId,
+          eventType: AppealEventType.APPEAL_WITHDRAWN,
+          created: new Date('2026-06-03T09:00:00Z'),
+        },
+      ])
+
+      then = await givenWhenThen(buildCase(), dto)
+    })
+
+    // The same Landsréttur case comes back to life; leaving it WITHDRAWN would
+    // stand it withdrawn while it carries a standing appellant.
+    it('should bring the appeal case back to APPEALED', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealState: AppealCaseState.APPEALED, appealDate: now },
+        { transaction },
+      )
+    })
+
+    it('should record the new APPEALED event', () => {
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          appealCaseId,
+          eventType: AppealEventType.APPEALED,
+          defendantId,
+        }),
         { transaction },
       )
     })

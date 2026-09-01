@@ -771,6 +771,8 @@ export class AppealCaseService {
       }
     }
 
+    const appealedAt = nowFactory()
+
     const appealCase =
       existingAppealCase ??
       (await this.appealCaseRepositoryService.create(
@@ -778,10 +780,27 @@ export class AppealCaseService {
         {
           appealType: AppealCaseType.VERDICT,
           appealState: AppealCaseState.APPEALED,
-          appealDate: nowFactory(),
+          appealDate: appealedAt,
         },
         { transaction },
       ))
+
+    // A defendant may appeal again within the deadline after every appellant had
+    // withdrawn, which left this shared appeal case WITHDRAWN. It is the same
+    // Landsréttur case coming back to life rather than a new one, so it returns
+    // to APPEALED - otherwise it would stand withdrawn while carrying a standing
+    // appellant. Only from WITHDRAWN: once Landsréttur has received the appeal a
+    // late appellant is its own problem, and must not reset the state under it.
+    if (existingAppealCase?.appealState === AppealCaseState.WITHDRAWN) {
+      await this.appealCaseRepositoryService.update(
+        existingAppealCase.id,
+        {
+          appealState: AppealCaseState.APPEALED,
+          appealDate: appealedAt,
+        },
+        { transaction },
+      )
+    }
 
     await this.writeEventLogRows(
       theCase,
@@ -795,11 +814,15 @@ export class AppealCaseService {
     // AppealCase is the source of truth for who appealed; verdict.appealDate is
     // kept as a one-way mirror so the public prosecution office's existing
     // screen keeps working untouched. To be retired with that screen.
+    //
+    // It mirrors when *this* defendant appealed, which is not the appeal case's
+    // own appealDate for a defendant joining an appeal someone else filed - that
+    // screen shows the date per defendant.
     await this.verdictRepositoryService.update(
       theCase.id,
       defendantId,
       verdict.id,
-      { appealDate: appealCase.appealDate },
+      { appealDate: appealedAt },
       { transaction },
     )
 
