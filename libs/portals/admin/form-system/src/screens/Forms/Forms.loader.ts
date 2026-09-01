@@ -80,21 +80,17 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       )
 
     // Only enrich titles if we have organizations
-    if (organizations.length > 0) {
-      await Promise.all(
-        organizations.map(async (org) => {
-          try {
-            const { data: titleData } = await client.query({
-              query: GET_ORGANIZATION_TITLE,
-              variables: { input: { nationalId: org.value } },
-              fetchPolicy: 'cache-first',
-            })
-            org.label = titleData?.formSystemOrganizationTitle || org.value
-          } catch (e) {
-            // swallow errors; keep original label/value
-          }
-        }),
-      )
+    for (const org of organizations) {
+      try {
+        const { data: titleData } = await client.query({
+          query: GET_ORGANIZATION_TITLE,
+          variables: { input: { nationalId: org.value } },
+          fetchPolicy: 'cache-first',
+        })
+        org.label = titleData?.formSystemOrganizationTitle || org.value
+      } catch (e) {
+        // swallow errors; keep original label/value
+      }
     }
 
     const isAdmin = userInfo?.scopes.includes(
