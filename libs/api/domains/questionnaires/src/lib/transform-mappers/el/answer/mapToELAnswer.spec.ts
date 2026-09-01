@@ -36,7 +36,9 @@ const entry = (
 describe('mapToElAnswer', () => {
   it('maps text answers to string replies', () => {
     const result = mapToElAnswer(
-      buildInput([entry('10', AnswerOptionType.textarea, [{ value: 'hello' }])]),
+      buildInput([
+        entry('10', AnswerOptionType.textarea, [{ value: 'hello' }]),
+      ]),
       formatMessage,
     )
     expect(result.replies).toEqual([{ questionId: '10', answer: 'hello' }])
