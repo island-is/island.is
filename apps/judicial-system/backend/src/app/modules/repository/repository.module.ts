@@ -55,6 +55,7 @@ import { RobotLogRepositoryService } from './services/robotLogRepository.service
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { UserRepositoryService } from './services/userRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
+import { VictimRepositoryService } from './services/victimRepository.service'
 import { repositoryModuleConfig } from './repository.config'
 
 @Module({
@@ -116,6 +117,7 @@ import { repositoryModuleConfig } from './repository.config'
     SubpoenaRepositoryService,
     UserRepositoryService,
     VerdictRepositoryService,
+    VictimRepositoryService,
   ],
   exports: [
     AppealCaseRepositoryService,
@@ -139,6 +141,7 @@ import { repositoryModuleConfig } from './repository.config'
     SubpoenaRepositoryService,
     UserRepositoryService,
     VerdictRepositoryService,
+    VictimRepositoryService,
   ],
 })
 export class RepositoryModule {}
