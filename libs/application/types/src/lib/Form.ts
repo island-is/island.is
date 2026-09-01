@@ -5,7 +5,7 @@ import { MessageDescriptor } from 'react-intl'
 import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
-import { Application, FormValue } from './Application'
+import { Application, ExternalData, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { BffUser, Locale } from '@island.is/shared/types'
 import { FormatMessage } from './external'
@@ -228,6 +228,7 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   goToScreen?: (id: string) => void
   answerQuestions?: (answers: FormValue) => void
   refetch?: () => void
+  addExternalData?: (data: ExternalData) => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
   setSubmitButtonDisabled?: SetSubmitButtonDisabled

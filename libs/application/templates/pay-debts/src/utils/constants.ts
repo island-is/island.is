@@ -5,7 +5,6 @@ export type Events = {
 }
 
 export enum States {
-  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   COMPLETED = 'completed',
   PAYMENT = 'payment',

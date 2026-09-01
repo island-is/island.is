@@ -11,12 +11,6 @@ export const application = defineMessages({
     defaultMessage: 'Fjársýsla ríkisins',
     description: `Institution's name`,
   },
-  actionCardPrerequisites: {
-    id: 'pd.application:actionCardPrerequisites',
-    defaultMessage: 'Gagnaöflun',
-    description:
-      'Description of application state/status when the application is in prerequisites',
-  },
   actionCardDraft: {
     id: 'pd.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
@@ -28,12 +22,6 @@ export const application = defineMessages({
     defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when the application is completed',
-  },
-  stateMetaNamePrerequisites: {
-    id: 'pd.application:stateMetaNamePrerequisites',
-    defaultMessage: 'Skilyrði',
-    description:
-      'Meta name of application state when the application is in prerequisites',
   },
   stateMetaNameDraft: {
     id: 'pd.application:stateMetaNameDraft',
