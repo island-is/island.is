@@ -100,7 +100,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   organization,
   today,
 }) => {
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('openinvoices')
   useContentfulId(customPageData?.id)
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
