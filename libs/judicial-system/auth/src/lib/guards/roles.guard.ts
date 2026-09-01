@@ -4,6 +4,7 @@ import { Reflector } from '@nestjs/core'
 import type { User } from '@island.is/judicial-system/types'
 
 import { RolesRule, RulesType } from '../auth.types'
+import { matchesRolesRuleRole } from './rolesRuleMatching'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -29,9 +30,7 @@ export class RolesGuard implements CanActivate {
     }
 
     // Pick the first matching rule
-    const rule = rolesRules.find((rule) =>
-      typeof rule === 'string' ? rule === user.role : rule?.role === user.role,
-    )
+    const rule = rolesRules.find((rule) => matchesRolesRuleRole(rule, user))
 
     // Deny if no rule matches the user's role
     if (!rule) {
