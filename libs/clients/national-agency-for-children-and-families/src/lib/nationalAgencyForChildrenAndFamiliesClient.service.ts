@@ -5,16 +5,27 @@ import {
   DropDownDto,
   ExternalCategoryResponse,
   ExternalDropdownApi,
+  ExternalNotificationApi,
   ExternalNotifierRoleSubTypeResponse,
+  NotificationCreateResponse,
+  NotificationGeneralPublicRequest,
   ProtectiveFactorSectionDto,
 } from '../../gen/fetch'
 
 @Injectable()
 export class NationalAgencyForChildrenAndFamiliesClientService {
-  constructor(private readonly externalDropdownApi: ExternalDropdownApi) {}
+  constructor(
+    private readonly externalDropdownApi: ExternalDropdownApi,
+    private readonly externalNotificationApi: ExternalNotificationApi,
+  ) {}
 
   private externalDropdownApiWithAuth = (user: User) =>
     this.externalDropdownApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private externalNotificationApiWithAuth = (user: User) =>
+    this.externalNotificationApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
   async getCategories(user: User): Promise<ExternalCategoryResponse[]> {
     return await this.externalDropdownApiWithAuth(user).externalCategories()
@@ -78,5 +89,16 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
     return await this.externalDropdownApiWithAuth(
       user,
     ).externalNotifierRoleSubTypes()
+  }
+
+  async createNotification(
+    user: User,
+    body: NotificationGeneralPublicRequest,
+  ): Promise<NotificationCreateResponse> {
+    return await this.externalNotificationApiWithAuth(
+      user,
+    ).externalCreateNotificationGeneralPublic({
+      notificationGeneralPublicRequest: body,
+    })
   }
 }
