@@ -1,4 +1,10 @@
-import { Box, GridRow, GridColumn, Input, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridRow,
+  GridColumn,
+  Input,
+  Text,
+} from '@island.is/island-ui/core'
 import { coreDefaultFieldMessages } from '@island.is/application/core'
 import {
   fieldPreviewLayoutProps,

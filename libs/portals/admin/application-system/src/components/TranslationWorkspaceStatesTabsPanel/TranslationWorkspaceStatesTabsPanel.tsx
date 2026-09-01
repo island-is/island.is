@@ -202,38 +202,38 @@ export const TranslationWorkspaceStatesTabsPanel = ({
         className={styles.tabList}
       >
         {tabs.map((tab, index) => {
-            const isSelected = tab.id === activeTab
-            return (
-              <Box
-                key={tab.id}
-                component="button"
-                type="button"
-                role="tab"
-                id={`translation-workspace-tab-${tab.id}`}
-                aria-selected={isSelected}
-                aria-controls={`translation-workspace-tabpanel-${tab.id}`}
-                tabIndex={isSelected ? 0 : -1}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                className={cn(styles.tab, isSelected && styles.tabSelected)}
-                onClick={() => setActiveTab(tab.id)}
-                onKeyDown={(event) => handleTabKeyDown(index, event)}
-                ref={(node) => {
-                  tabRefs.current[index] = node as HTMLButtonElement | null
-                }}
+          const isSelected = tab.id === activeTab
+          return (
+            <Box
+              key={tab.id}
+              component="button"
+              type="button"
+              role="tab"
+              id={`translation-workspace-tab-${tab.id}`}
+              aria-selected={isSelected}
+              aria-controls={`translation-workspace-tabpanel-${tab.id}`}
+              tabIndex={isSelected ? 0 : -1}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              className={cn(styles.tab, isSelected && styles.tabSelected)}
+              onClick={() => setActiveTab(tab.id)}
+              onKeyDown={(event) => handleTabKeyDown(index, event)}
+              ref={(node) => {
+                tabRefs.current[index] = node as HTMLButtonElement | null
+              }}
+            >
+              <Text
+                variant="small"
+                fontWeight={isSelected ? 'semiBold' : 'light'}
+                color={isSelected ? 'blue400' : 'black'}
+                truncate
               >
-                <Text
-                  variant="small"
-                  fontWeight={isSelected ? 'semiBold' : 'light'}
-                  color={isSelected ? 'blue400' : 'black'}
-                  truncate
-                >
-                  {tab.label}
-                </Text>
-              </Box>
-            )
-          })}
+                {tab.label}
+              </Text>
+            </Box>
+          )
+        })}
       </Box>
 
       <Box
