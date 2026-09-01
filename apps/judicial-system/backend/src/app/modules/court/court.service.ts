@@ -140,12 +140,23 @@ export class CourtService {
     courtCaseNumber: string,
     fileName: string,
   ): Promise<void> {
-    const theCase = await this.caseRepositoryService.findById(caseId, {
-      include: [
-        { model: UserModel, as: 'judge' },
-        { model: UserModel, as: 'registrar' },
-      ],
-    })
+    let theCase: Awaited<
+      ReturnType<CaseRepositoryService['findById']>
+    > = null
+
+    try {
+      theCase = await this.caseRepositoryService.findById(caseId, {
+        include: [
+          { model: UserModel, as: 'judge' },
+          { model: UserModel, as: 'registrar' },
+        ],
+      })
+    } catch (reason) {
+      this.logger.error(
+        `Failed to look up case ${caseId} when notifying that a file was too large for the court service`,
+        { reason },
+      )
+    }
 
     const recipients: { name: string; address: string }[] = []
 
