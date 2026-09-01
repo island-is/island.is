@@ -5,7 +5,7 @@ import {
   Stack,
 } from '@contentful/f36-components'
 
-import {
+import type {
   CalculatorFieldSection,
   CalculatorLocalizedText,
   CalculatorSectionToggle,

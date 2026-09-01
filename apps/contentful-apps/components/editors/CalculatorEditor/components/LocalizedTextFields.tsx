@@ -1,6 +1,6 @@
 import { FormControl, Stack, TextInput } from '@contentful/f36-components'
 
-import { CalculatorLocalizedText } from '@island.is/tax-calculators'
+import type { CalculatorLocalizedText } from '@island.is/tax-calculators'
 
 // Kept at module scope: a component redefined inside a parent's render body is
 // remounted by React on every parent re-render, which drops input focus on

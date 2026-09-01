@@ -19,8 +19,8 @@ import {
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import {
-  calculatorConfigSchema,
+import { calculatorConfigSchema } from '@island.is/tax-calculators'
+import type {
   CalculatorLocalizedText,
   CalculatorSectionField,
 } from '@island.is/tax-calculators'

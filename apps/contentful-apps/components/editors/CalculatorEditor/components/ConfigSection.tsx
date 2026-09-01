@@ -6,7 +6,7 @@ import {
 } from '@contentful/f36-components'
 import { DeleteIcon, PlusIcon } from '@contentful/f36-icons'
 
-import {
+import type {
   CalculatorFieldSection,
   CalculatorSectionToggle,
 } from '@island.is/tax-calculators'

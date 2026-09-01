@@ -7,7 +7,7 @@ import {
 } from '@contentful/f36-components'
 import { DeleteIcon } from '@contentful/f36-icons'
 
-import { CalculatorSectionField } from '@island.is/tax-calculators'
+import type { CalculatorSectionField } from '@island.is/tax-calculators'
 
 import { AvailableField } from '../types'
 import { LocalizedTextFields } from './LocalizedTextFields'

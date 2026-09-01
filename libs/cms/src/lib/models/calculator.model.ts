@@ -1,10 +1,10 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 import {
-  CalculatorConfig,
   calculatorConfigSchema,
   TaxCalculatorType,
 } from '@island.is/tax-calculators'
+import type { CalculatorConfig } from '@island.is/tax-calculators'
 import { logger } from '@island.is/logging'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ICalculator, ICalculatorFields } from '../generated/contentfulTypes'

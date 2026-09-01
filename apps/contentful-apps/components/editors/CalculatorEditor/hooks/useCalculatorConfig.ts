@@ -3,12 +3,14 @@ import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 
 import {
-  CalculatorConfig,
   calculatorConfigSchema,
+  collectSectionToggles,
+} from '@island.is/tax-calculators'
+import type {
+  CalculatorConfig,
   CalculatorFieldSection,
   CalculatorSectionField,
   CalculatorSectionToggle,
-  collectSectionToggles,
 } from '@island.is/tax-calculators'
 
 import { DEBOUNCE_TIME } from '../constants'
