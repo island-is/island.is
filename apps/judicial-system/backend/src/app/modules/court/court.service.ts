@@ -140,9 +140,7 @@ export class CourtService {
     courtCaseNumber: string,
     fileName: string,
   ): Promise<void> {
-    let theCase: Awaited<
-      ReturnType<CaseRepositoryService['findById']>
-    > = null
+    let theCase: Awaited<ReturnType<CaseRepositoryService['findById']>> = null
 
     try {
       theCase = await this.caseRepositoryService.findById(caseId, {
