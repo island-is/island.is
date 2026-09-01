@@ -1,5 +1,9 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import { defineTemplateApi, IdentityApi } from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
+
+export const IdentityApiProvider = IdentityApi.configure({
+  params: { includeActorInfo: true },
+})
 
 // PREREQUISITES providers — independent of each other, order is inconsequential
 export const CompanyRegistryApi = defineTemplateApi({
@@ -32,13 +36,6 @@ export const PreviousEqualityReportContentApi = defineTemplateApi({
   order: 0,
 })
 
-export const EqualityReportTemplateHtmlApi = defineTemplateApi({
-  action: ApiActions.getEqualityReportTemplateHtml,
-  externalDataId: 'equalityReportTemplateHtml',
-  namespace: 'DirectorateOfEquality',
-  order: 0,
-})
-
 export const EqualityReportTemplateDocxApi = defineTemplateApi({
   action: ApiActions.getEqualityReportTemplateDocx,
   externalDataId: 'equalityReportTemplateDocx',
@@ -65,8 +62,18 @@ export const SubmitReportCommentApi = defineTemplateApi({
   throwOnError: false,
 })
 
-export const SubmitEqualityReportApi = defineTemplateApi({
-  action: ApiActions.submitEqualityReport,
+// Idempotent on providerId — reopening this step returns the same draft.
+export const CreateEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.createEqualityDraft,
+  externalDataId: 'equalityDraft',
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: false,
+  throwOnError: true,
+})
+
+export const SubmitEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.submitEqualityDraft,
+  externalDataId: 'submitEqualityDraft',
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
   throwOnError: true,

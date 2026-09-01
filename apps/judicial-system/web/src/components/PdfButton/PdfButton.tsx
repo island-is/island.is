@@ -1,24 +1,21 @@
-import { ComponentProps, FC, PropsWithChildren, useContext } from 'react'
+import type { ComponentProps, FC, PropsWithChildren } from 'react'
+import { useContext } from 'react'
 import cn from 'classnames'
 
-import {
-  Box,
-  Button,
-  Icon,
-  IconMapIcon,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text, Tooltip } from '@island.is/island-ui/core'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PdfButton.css'
 
 interface Props {
   caseId?: string
   connectedCaseParentId?: string
   title?: string | null
+  titleIcon?: IconMapIcon
+  titleIconTooltip?: string
   subtitle?: string | null
   subtitleIcon?: IconMapIcon
   subtitleIconColor?: ComponentProps<typeof Icon>['color']
@@ -48,6 +45,8 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   // For access control purposes, the data must be accessed through the parent case.
   connectedCaseParentId,
   title,
+  titleIcon,
+  titleIconTooltip,
   subtitle,
   subtitleIcon,
   subtitleIconColor,
@@ -77,8 +76,16 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
     window.open(url, '_blank')
   }
 
+  // Three states, not two. A row with nothing to open - a ruling order
+  // pronounced orally has no document until the district court writes it up -
+  // is not a control at all, so it stays out of the accessibility tree and
+  // keeps its ordinary appearance. A disabled row is a control that happens to
+  // be unavailable, so it remains a button that reports itself as disabled.
+  const hasAction = Boolean(handleClick || pdfType)
+  const isInteractive = hasAction && !disabled
+
   const handleRowClick = () => {
-    if (disabled) {
+    if (!isInteractive) {
       return
     }
 
@@ -86,9 +93,7 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
       return handleClick()
     }
 
-    if (pdfType) {
-      return handlePdfClick()
-    }
+    return handlePdfClick()
   }
 
   return renderAs === 'button' ? (
@@ -106,11 +111,12 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   ) : (
     <Box
       data-testid={`${pdfType || ''}PDFButton`}
-      className={`${styles.pdfRow} ${
-        disabled ? styles.disabled : styles.cursor
-      }`}
-      role="button"
-      tabIndex={disabled ? -1 : 0}
+      className={cn(styles.pdfRow, {
+        [styles.disabled]: disabled,
+        [styles.cursor]: isInteractive,
+      })}
+      role={hasAction ? 'button' : undefined}
+      tabIndex={hasAction ? (disabled ? -1 : 0) : undefined}
       aria-disabled={disabled}
       aria-label={title ?? undefined}
       onClick={handleRowClick}
@@ -124,6 +130,21 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
         >
           <Text color="blue400" variant="h4">
             {title}
+            {titleIcon &&
+              (titleIconTooltip ? (
+                // fullWidth lifts the 240px cap the tooltip otherwise wraps a
+                // short label at, which broke "Úrskurður kveðinn upp munnlega"
+                // across two lines.
+                <Tooltip text={titleIconTooltip} placement="top" fullWidth>
+                  <span className={styles.titleIcon}>
+                    <Icon icon={titleIcon} type="outline" size="small" />
+                  </span>
+                </Tooltip>
+              ) : (
+                <span className={styles.titleIcon}>
+                  <Icon icon={titleIcon} type="outline" size="small" />
+                </span>
+              ))}
           </Text>
         </span>
         {children && <Box className={styles.childrenContainer}>{children}</Box>}

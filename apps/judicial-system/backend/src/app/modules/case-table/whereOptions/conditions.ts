@@ -73,6 +73,29 @@ export const buildEventLogOrderCondition = (
     )
   `)
 
+export const buildHasEnforceableDefendantNotClosedWithoutEnforcementCondition =
+  (exists: boolean) =>
+    Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM defendant
+      WHERE defendant.case_id = "Case".id
+        AND defendant.is_closed_without_enforcement IS NOT TRUE
+        -- Defendants whose indictment was cancelled or dismissed (completed for
+        -- some) never enter enforcement, so they must not keep a case out of
+        -- the closed-without-enforcement table.
+        AND NOT EXISTS (
+          SELECT 1
+          FROM defendant_event_log
+          WHERE defendant_event_log.defendant_id = defendant.id
+            AND defendant_event_log.event_type IN (
+              '${DefendantEventType.INDICTMENT_CANCELLED}',
+              '${DefendantEventType.INDICTMENT_DISMISSED}'
+            )
+        )
+    )
+  `)
+
 export const buildHasDefendantWithNullReviewDecisionCondition = (
   exists: boolean,
 ) =>

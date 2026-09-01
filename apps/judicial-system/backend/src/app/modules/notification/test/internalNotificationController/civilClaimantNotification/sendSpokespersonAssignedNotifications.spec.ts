@@ -11,7 +11,11 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case, CivilClaimant, Notification } from '../../../../repository'
+import {
+  Case,
+  CivilClaimant,
+  NotificationRepositoryService,
+} from '../../../../repository'
 import { CivilClaimantNotificationDto } from '../../../dto/civilClaimantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 import { notificationModuleConfig } from '../../../notification.config'
@@ -38,7 +42,7 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   let civilClaimantNotificationDTO: CivilClaimantNotificationDto
@@ -48,7 +52,7 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
       emailService,
       notificationConfig,
       internalNotificationController,
-      notificationModel,
+      notificationRepositoryService,
     } = await createTestingNotificationModule()
 
     civilClaimantNotificationDTO = {
@@ -57,7 +61,7 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -145,17 +149,21 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
               `Héraðsdómur Reykjavíkur hefur skráð þig lögmann einkaréttarkröfuhafa í máli R-123-456`,
             ),
           })
-          expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
-          expect(mockNotificationModel.create).toHaveBeenCalledWith({
-            caseId,
-            type: civilClaimantNotificationDTO.type,
-            recipients: [
-              {
-                address: civilClaimant.spokespersonEmail,
-                success: shouldSendEmail,
-              },
-            ],
-          })
+          expect(
+            mockNotificationRepositoryService.create,
+          ).toHaveBeenCalledTimes(1)
+          expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith(
+            {
+              caseId,
+              type: civilClaimantNotificationDTO.type,
+              recipients: [
+                {
+                  address: civilClaimant.spokespersonEmail,
+                  success: shouldSendEmail,
+                },
+              ],
+            },
+          )
         } else {
           expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
         }

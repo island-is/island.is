@@ -1,7 +1,7 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Button } from '@island.is/island-ui/core'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { downloadUsersCsv } from './usersCsv'
 

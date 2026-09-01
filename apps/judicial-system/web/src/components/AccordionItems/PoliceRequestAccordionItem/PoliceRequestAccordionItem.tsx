@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
@@ -17,13 +17,13 @@ import {
   restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
-import {
+import AccordionListItem from '@island.is/judicial-system-web/src/components/AccordionListItem/AccordionListItem'
+import type {
   Case,
   CaseLegalProvisions,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
-import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
 
 interface Props {

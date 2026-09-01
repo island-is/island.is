@@ -2,12 +2,11 @@ import { useCallback } from 'react'
 import { useRouter } from 'next/router'
 import type { ApolloError } from '@apollo/client'
 
-import { usePoliceDigitalCaseFileTokenUrlLazyQuery } from '@island.is/judicial-system-web/src/utils/hooks/usePoliceDigitalCaseFile/policeDigitalCaseFileTokenUrl.generated'
-import { findProblemInApolloError } from '@island.is/shared/problem'
-
 import RouteHandler, {
   policeDigitalCaseFileNotPublishedResult,
-} from '../RouteHandler/RouteHandler'
+} from '@island.is/judicial-system-web/src/routes/Shared/RouteHandler/RouteHandler'
+import { usePoliceDigitalCaseFileTokenUrlLazyQuery } from '@island.is/judicial-system-web/src/utils/hooks/usePoliceDigitalCaseFile/policeDigitalCaseFileTokenUrl.generated'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 const HTTP_STATUS_TOO_EARLY = 425
 

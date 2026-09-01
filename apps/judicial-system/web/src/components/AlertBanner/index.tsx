@@ -1,13 +1,9 @@
-import { FC, PropsWithChildren, useState } from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { useState } from 'react'
 
-import {
-  alertBannerStyles,
-  Box,
-  Icon,
-  IconMapIcon,
-  Text,
-} from '@island.is/island-ui/core'
-import { Colors } from '@island.is/island-ui/theme'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { alertBannerStyles, Box, Icon, Text } from '@island.is/island-ui/core'
+import type { Colors } from '@island.is/island-ui/theme'
 
 export type AlertBannerVariants =
   | 'error'

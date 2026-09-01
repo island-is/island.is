@@ -23,7 +23,6 @@ export const overviewSection = buildSection({
           id: 'overview.companyInfo',
           title: messages.overview.companyInfo,
           titleVariant: 'h3',
-          backId: 'generalInformationMultiField',
           items: (answers) => [
             {
               width: 'half',
@@ -150,6 +149,13 @@ export const overviewSection = buildSection({
               keyText: messages.aboutTheCompany.contactPerson.name,
               valueText:
                 getValueViaPath<string>(answers, 'contactPerson.name') ?? '',
+            },
+            {
+              width: 'half',
+              keyText: messages.aboutTheCompany.contactPerson.jobTitle,
+              valueText:
+                getValueViaPath<string>(answers, 'contactPerson.jobTitle') ??
+                '',
             },
             {
               width: 'half',

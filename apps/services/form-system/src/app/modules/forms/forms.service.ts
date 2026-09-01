@@ -74,6 +74,7 @@ import {
   ApplicationJsonValueDto,
 } from '../applications/models/dto/application.json.dto'
 import { FormDelegationDto } from './models/dto/formDelegation.dto'
+import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
 
 const MAX_COPY_SLUG_RETRIES = 5
 
@@ -146,6 +147,7 @@ export class FormsService {
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'isTranslated',
       'hasPayment',
       'beenPublished',
@@ -336,6 +338,7 @@ export class FormsService {
 
     const originalHasPayment = form.hasPayment
     const originalHasSummary = form.hasSummaryScreen
+    const originalUseValidate = form.useValidate
 
     Object.assign(form, updateFormDto)
 
@@ -358,7 +361,30 @@ export class FormsService {
     const response = new UpdateFormResponse()
 
     try {
-      await form.save()
+      await this.sequelize.transaction(async (transaction) => {
+        await form.save({ transaction })
+
+        if (
+          originalUseValidate === true &&
+          updateFormDto.useValidate === false
+        ) {
+          const sections = await this.sectionModel.findAll({
+            attributes: ['id'],
+            where: { formId: id },
+            transaction,
+          })
+
+          await this.screenModel.update(
+            { shouldValidate: false },
+            {
+              where: {
+                sectionId: { [Op.in]: sections.map((section) => section.id) },
+              },
+              transaction,
+            },
+          )
+        }
+      })
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
         const slug = updateFormDto.slug
@@ -576,6 +602,10 @@ export class FormsService {
     const { newStatus } = updateFormStatusDto
     const currentStatus = form.status
 
+    if (newStatus === FormStatus.PUBLISHED) {
+      await this.validateZendeskSettingsForPublish(form)
+    }
+
     switch (currentStatus) {
       case FormStatus.IN_DEVELOPMENT:
         if (newStatus === FormStatus.PUBLISHED) {
@@ -606,6 +636,29 @@ export class FormsService {
     throw new BadRequestException(
       `Invalid status transition from '${currentStatus}' to '${newStatus}'`,
     )
+  }
+
+  private async validateZendeskSettingsForPublish(form: Form): Promise<void> {
+    if (form.submissionServiceUrl !== 'zendesk') {
+      return
+    }
+
+    const organization = await this.organizationModel.findByPk(
+      form.organizationId,
+    )
+    const zendeskBrandId = form.zendeskBrandId?.trim()
+    const zendeskInstance = organization?.zendeskInstance?.trim()
+    const supportedZendeskInstance = normalizeZendeskInstance(zendeskInstance)
+
+    if (!zendeskBrandId || !zendeskInstance) {
+      throw new BadRequestException(
+        'Zendesk instance and brand ID must be configured before publishing a Zendesk form.',
+      )
+    }
+
+    if (!supportedZendeskInstance) {
+      throw new BadRequestException('Unsupported Zendesk tenant')
+    }
   }
 
   private async getUniqueCopySlug(baseSlug: string): Promise<string> {
@@ -1082,6 +1135,7 @@ export class FormsService {
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'hasSummaryScreen',
       'sectionInfo',
       'dependencies',
@@ -1197,7 +1251,7 @@ export class FormsService {
     formDto.organizationZendeskInstance.zendeskInstance =
       organization?.zendeskInstance ?? ''
     formDto.organizationZendeskInstance.zendeskBrandId =
-      organization?.zendeskBrandId ?? ''
+      form.zendeskBrandId ?? ''
 
     return formDto
   }
@@ -1331,6 +1385,9 @@ export class FormsService {
     newForm.submissionServiceUrl = copyToDifferentOrganization
       ? ''
       : existingForm.submissionServiceUrl
+    newForm.zendeskBrandId = copyToDifferentOrganization
+      ? ''
+      : existingForm.zendeskBrandId
     newForm.zendeskInternal = copyToDifferentOrganization
       ? false
       : existingForm.zendeskInternal
