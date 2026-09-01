@@ -133,12 +133,6 @@ export const TranslationWorkspaceStatesTabsPanel = ({
     }
   }, [focusableFields, focusedFieldId, onFocusedFieldChange])
 
-  useEffect(() => {
-    if (selectedScreen) {
-      setActiveTab(STRINGS_TAB_ID)
-    }
-  }, [selectedScreen?.id])
-
   const totalStringCount =
     stringsTabDescriptors.length +
     (showValidationErrors ? validationDescriptors.length : 0)
