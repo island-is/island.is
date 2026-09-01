@@ -42,9 +42,20 @@ export {
   CourtSessionRepositoryService,
   UpdateCourtSession,
 } from './services/courtSessionRepository.service'
+export {
+  CourtSessionStringRepositoryService,
+  CourtSessionStringKey,
+  CreateCourtSessionString,
+  UpdateCourtSessionString,
+} from './services/courtSessionStringRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
+export {
+  EventLogRepositoryService,
+  CreateEventLog,
+  LoginCount,
+} from './services/eventLogRepository.service'
 export { IndictmentSubtypeRepositoryService } from './services/indictmentSubtypeRepository.service'
 export { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
 export { InstitutionRepositoryService } from './services/institutionRepository.service'
@@ -69,6 +80,12 @@ export {
   UpdateUser,
 } from './services/userRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
+export {
+  VictimRepositoryService,
+  CreateVictim,
+  UpdateVictim,
+  UpdatedVictims,
+} from './services/victimRepository.service'
 
 export {
   caseInclude,

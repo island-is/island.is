@@ -99,6 +99,8 @@ import { PrescriptionRenewalTarget } from './models/renewalTarget.model'
 import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import { HealthDirectorateTreatment } from './models/treatment.model'
+import { mapTreatment } from './mappers/treatmentMapper'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
@@ -823,6 +825,17 @@ export class HealthDirectorateService {
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
+  }
+
+  /* Treatments */
+
+  async getTreatments(
+    auth: Auth,
+  ): Promise<HealthDirectorateTreatment[] | null> {
+    const items = await this.healthApi.getTreatments(auth)
+    if (!items) return null
+
+    return items.map(mapTreatment)
   }
 
   async getHealthConversations(

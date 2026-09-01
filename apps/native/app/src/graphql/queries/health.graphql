@@ -287,15 +287,24 @@ query getAppointmentDetail($id: String!) {
     duration
     modality
     practitioners
+    assignees {
+      type
+      name
+    }
     links {
       type
       url
+      activatesAt
+      expiresAt
     }
     location {
       name
       organization
-      directions
       address
+      department
+      wing
+      floor
+      room
       city
       postalCode
       country
