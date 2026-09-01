@@ -39,12 +39,24 @@ export const messages = {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
     },
+    // A remedy date can be in range when it is picked and out of range by the
+    // time the plan is submitted, so this is a distinct complaint from
+    // errors.required rather than a variant of it.
+    remedyDateOutOfRange: {
+      id: 'doe.sr.application:errors.remedyDateOutOfRange',
+      defaultMessage:
+        'Dagsetning úrbóta þarf að vera í framtíðinni og ekki meira en þrjú ár fram í tímann.',
+    },
+    alertTitle: {
+      id: 'doe.sr.application:errors.alertTitle',
+      defaultMessage: 'Villa:',
+    },
   }),
 
   general: defineMessages({
     applicationName: {
       id: 'doe.sr.application:general.applicationName',
-      defaultMessage: 'Skýrslugjöf',
+      defaultMessage: 'Skýrslugjöf um kynbundinn launamun',
     },
     institution: {
       id: 'doe.sr.application:general.institution',
@@ -53,6 +65,10 @@ export const messages = {
     tagDraft: {
       id: 'doe.sr.application:general.tagDraft',
       defaultMessage: 'Drög',
+    },
+    newApplicationButtonLabel: {
+      id: 'doe.sr.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný skýrsla',
     },
   }),
 
@@ -82,13 +98,17 @@ export const messages = {
       id: 'doe.sr.application:approved.sectionTitle',
       defaultMessage: 'Samþykkt',
     },
+    formTitle: {
+      id: 'doe.sr.application:approved.formTitle',
+      defaultMessage: 'Skýrslugjöf samþykkt!',
+    },
     title: {
       id: 'doe.sr.application:approved.title',
-      defaultMessage: 'Umsókn samþykkt',
+      defaultMessage: 'Skýrslugjöf samþykkt',
     },
     description: {
       id: 'doe.sr.application:approved.description',
-      defaultMessage: 'Umsókn þín hefur verið samþykkt.',
+      defaultMessage: 'Skýrslugjöfin þín hefur verið samþykkt.',
     },
   }),
 
@@ -292,6 +312,14 @@ export const messages = {
       namePlaceholder: {
         id: 'doe.sr.application:aboutTheCompany.contactPerson.namePlaceholder',
         defaultMessage: 'Nafn tengiliðs',
+      },
+      jobTitle: {
+        id: 'doe.sr.application:aboutTheCompany.contactPerson.jobTitle',
+        defaultMessage: 'Starfstitill',
+      },
+      jobTitlePlaceholder: {
+        id: 'doe.sr.application:aboutTheCompany.contactPerson.jobTitlePlaceholder',
+        defaultMessage: 'Starfstitill tengiliðs',
       },
       email: {
         id: 'doe.sr.application:aboutTheCompany.contactPerson.email',
@@ -526,7 +554,7 @@ export const messages = {
       importSuccess: {
         id: 'doe.sr.application:report.dataEntry.importSuccess',
         defaultMessage:
-          'Skráin var flutt inn og launagreining fer fram í næsta skrefi.',
+          'Skjalinu var hlaðið upp og launagreining fer fram í næsta skrefi.',
       },
       importSuccessContinueButton: {
         id: 'doe.sr.application:report.dataEntry.importSuccessContinueButton',
@@ -581,7 +609,7 @@ export const messages = {
       personalFactorIntro: {
         id: 'doe.sr.application:report.criteria.personalFactorIntro#markdown',
         defaultMessage:
-          'Í þessu skrefi þarf að ákveða einstaklingsbundin yfirviðmið og vægi þeirra. \n\n* Ef einstaklingsbundin hæfni starfsfólks er metin til launa þá þarftu að ákveða hlutlæg og kynhlutlaus yfirviðmið fyrir þá hæfni. \n\n*Samanlagt vægi starfsbundinna og einstaklingsbundinna yfirviðmiða þarf að vera 100%. Þú getur bætt við yfirviðmiðum fyrir einstaklingsbundna þætti eftir því sem við á.',
+          'Í þessu skrefi þarf að ákveða einstaklingsbundin yfirviðmið og vægi þeirra. \n\n* Ef einstaklingsbundin hæfni starfsfólks er metin til launa þá þarftu að ákveða hlutlæg og kynhlutlaus yfirviðmið fyrir þá hæfni. \n\n* Samanlagt vægi starfsbundinna og einstaklingsbundinna yfirviðmiða þarf að vera 100%. Þú getur bætt við yfirviðmiðum fyrir einstaklingsbundna þætti eftir því sem við á.',
       },
       personalFactorInstructions: {
         id: 'doe.sr.application:report.criteria.personalFactorInstructions',
@@ -641,6 +669,12 @@ export const messages = {
         id: 'doe.sr.application:report.subCriteria.criterionWeightLabel',
         defaultMessage: 'Vægi yfirviðmiðs: {weight}%',
       },
+      // Shown next to the weight while the panel is COLLAPSED, so the red
+      // header is never the only thing marking it as blocking.
+      criterionWeightMismatchBadge: {
+        id: 'doe.sr.application:report.subCriteria.criterionWeightMismatchBadge',
+        defaultMessage: 'Vægi stemmir ekki',
+      },
       catalogLabel: {
         id: 'doe.sr.application:report.subCriteria.catalogLabel',
         defaultMessage: 'Nota sniðmát',
@@ -688,7 +722,7 @@ export const messages = {
       jobFactorGroupIntro: {
         id: 'doe.sr.application:report.subCriteria.jobFactorGroupIntro#markdown',
         defaultMessage:
-          'Í þessu skrefi þarf að ákveða undirviðmið fyrir störf, vægi (%) þeirra og fjölda þrepa sem í boði eru fyrir hvert þeirra. \n\n* Hér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði og tillögur að skilgreiningum, en þú getur bætt við eigin viðmiðum eftir því sem við á. Öll viðmiðin sem valin eru þurfa að vera málefnaleg og viðeigandi fyrir starfsemina sem um ræðir.\n\n* Veldu vægi fyrir hvert undirviðmið þannig að þau nái að fullu upp í vægi hvers yfirviðmiðs.\n\n*Þú getur breytt textanum í boxunum eða búið til nýjan eftir því sem við á.',
+          'Í þessu skrefi þarf að ákveða undirviðmið fyrir störf, vægi (%) þeirra og fjölda þrepa sem í boði eru fyrir hvert þeirra. \n\n* Hér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði og tillögur að skilgreiningum, en þú getur bætt við eigin viðmiðum eftir því sem við á. Öll viðmiðin sem valin eru þurfa að vera málefnaleg og viðeigandi fyrir starfsemina sem um ræðir.\n\n* Veldu vægi fyrir hvert undirviðmið þannig að þau nái að fullu upp í vægi hvers yfirviðmiðs.\n\n* Þú getur breytt textanum í boxunum eða búið til nýjan eftir því sem við á.',
       },
       personalFactorGroupTitle: {
         id: 'doe.sr.application:report.subCriteria.personalFactorGroupTitle',
@@ -744,9 +778,13 @@ export const messages = {
         id: 'doe.sr.application:report.employees.genderColumn',
         defaultMessage: 'Kyn',
       },
-      identifierLabel: {
-        id: 'doe.sr.application:report.employees.identifierLabel',
-        defaultMessage: 'Auðkenni',
+      // New id, not a renamed defaultMessage on the old `identifierLabel`: the
+      // CMS translation for that id ("Auðkenni") wins over whatever is written
+      // here, so the ordinal only gets a truthful label under an id Contentful
+      // has never seen.
+      ordinalLabel: {
+        id: 'doe.sr.application:report.employees.ordinalLabel',
+        defaultMessage: 'Númer starfsmanns',
       },
       fieldLabel: {
         id: 'doe.sr.application:report.employees.fieldLabel',
@@ -929,12 +967,12 @@ export const messages = {
       },
       title: {
         id: 'doe.sr.application:salaryAnalysis.overview.title',
-        defaultMessage: 'Yfirlit',
+        defaultMessage: 'Niðurstöður launagreiningar',
       },
       intro: {
         id: 'doe.sr.application:salaryAnalysis.overview.intro#markdown',
         defaultMessage:
-          'Hér að neðan sérðu launagreiningu sem flokkar saman sömu og jafnverðmæt störf. Launagreiningin byggir á innslegnum gögnum og mati þínu á störfum og starfsfólki.',
+          'Hér að neðan er yfirlit yfir niðurstöður launagreiningar. Launagreiningin byggir á innsetningu gagna og fyrirliggjandi starfsmati og flokkun starfa.',
       },
     }),
     improvementPlan: defineMessages({
@@ -949,7 +987,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:salaryAnalysis.improvementPlan.intro',
         defaultMessage:
-          'Þessir starfsmenn bera leiðréttan launamun fyrirtækisins — laun þeirra víkja frá því sem starfsmatsstig þeirra gefa til kynna. Skráðu ástæður og aðgerðir.\n\nNú er tækifærið til að fara vel yfir starfaflokkunina og öll innslegin gögn til þess að kanna hvort þú þurfir að breyta einhverju.',
+          'Eftirfarandi starfsmenn bera leiðréttan launamun fyrirtækisins. Laun þeirra víkja frá því sem starfsmatsstig þeirra gefa til kynna. ',
       },
     }),
     results: defineMessages({
@@ -1111,11 +1149,11 @@ export const messages = {
       },
       directionWomen: {
         id: 'doe.sr.application:salaryAnalysis.results.directionWomen',
-        defaultMessage: 'í óhag kvenna',
+        defaultMessage: 'konum í óhag',
       },
       directionMen: {
         id: 'doe.sr.application:salaryAnalysis.results.directionMen',
-        defaultMessage: 'í óhag karla',
+        defaultMessage: 'körlum í óhag',
       },
       directionNone: {
         id: 'doe.sr.application:salaryAnalysis.results.directionNone',
@@ -1130,7 +1168,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:salaryAnalysis.chart.intro',
         defaultMessage:
-          'Viðmiðslínan er væntanlegt tímakaup eftir stigum. Launafrávik hvers starfsmanns er mælt frá henni, og úrbótaáætlun getur tekið til starfsmanna á báða vegu — bæði undir línunni og yfir henni.',
+          'Viðmiðunarlínan sýnir vænt tímakaup miðað við heildarstig. Launafrávik eru metin með hliðsjón af stöðu hvers starfsmanns gagnvart línunni. Úrbótaáætlun skal bæði ávarpa þau frávik sem eru yfir og undir uppgefnu viðmiði stjórnvalda frá viðmiðunarlínunni.',
       },
       xAxisLabel: {
         id: 'doe.sr.application:salaryAnalysis.chart.xAxisLabel',
@@ -1142,7 +1180,7 @@ export const messages = {
       },
       legendCurve: {
         id: 'doe.sr.application:salaryAnalysis.chart.legendCurve',
-        defaultMessage: 'Væntanlegt tímakaup',
+        defaultMessage: 'Vænt tímakaup',
       },
       legendMale: {
         id: 'doe.sr.application:salaryAnalysis.chart.legendMale',
@@ -1157,7 +1195,7 @@ export const messages = {
       note: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.note',
         defaultMessage:
-          'Viðmiðslínan sveigist vegna þess að væntanlegt tímakaup hækkar um fast HLUTFALL á hvert stig, ekki fasta krónutölu — og hlutfallshækkun leggst við sjálfa sig. Í krónum verður hvert 100 stiga þrep því stærra en það síðasta.',
+          'Viðmiðslínan sveigist vegna þess að vænt tímakaup hækkar um fast HLUTFALL á hvert stig, ekki fasta krónutölu — og hlutfallshækkun leggst við sjálfa sig. Í krónum verður hvert 100 stiga þrep því stærra en það síðasta.',
       },
       growthLabel: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.growthLabel',
@@ -1169,7 +1207,7 @@ export const messages = {
       },
       atMeanLabel: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.atMeanLabel',
-        defaultMessage: 'Væntanlegt tímakaup við meðalstig',
+        defaultMessage: 'Vænt tímakaup við meðalstig',
       },
       atMeanHint: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.atMeanHint',
@@ -1177,7 +1215,7 @@ export const messages = {
       },
       unavailable: {
         id: 'doe.sr.application:salaryAnalysis.chartRegression.unavailable',
-        defaultMessage: 'Viðmiðslína ekki reiknanleg fyrir þessi gögn',
+        defaultMessage: 'Viðmiðunarlína ekki reiknanleg fyrir þessi gögn',
       },
     }),
     chartMarkedLegend: defineMessages({
@@ -1209,7 +1247,7 @@ export const messages = {
       },
       expected: {
         id: 'doe.sr.application:salaryAnalysis.chartTooltip.expected',
-        defaultMessage: 'Væntanlegt tímakaup',
+        defaultMessage: 'Vænt tímakaup',
       },
       deviation: {
         id: 'doe.sr.application:salaryAnalysis.chartTooltip.deviation',
@@ -1281,7 +1319,7 @@ export const messages = {
       noObligation: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.noObligation',
         defaultMessage:
-          'Engra skýringa er krafist og ekkert þarf að skrá — þetta eru ekki frávik í skilningi úrbótaáætlunar og hafa engin áhrif á afgreiðslu skýrslunnar. Ábendingin er til fyrirtækisins sjálfs: gögnin gætu þurft nánari skoðun innanhúss.',
+          'Eftirfarandi frávik skera sig úr og eru yfir eða undir uppgefnu viðmiði stjórnvalda frá viðmiðunarlínu. Þar sem kynbundinn launamunur mælist ekki í launagreiningu er ekki gerð krafa um skýringar eða skráningu. Hins vegar er bent á að launasetning þessa starfsfólks gæti þurft nánari skoðun innanhúss.',
       },
       spreadNote: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.spreadNote',
@@ -1301,12 +1339,12 @@ export const messages = {
       blockerNoScoreVariation: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.blockerNoScoreVariation',
         defaultMessage:
-          'Öll starfsmatsstig eru eins, því liggur ekkert væntanlegt tímakaup fyrir til að víkja frá.',
+          'Öll starfsmatsstig eru eins, því liggur ekkert vænt tímakaup fyrir til að víkja frá.',
       },
       blockerGapNotComputable: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.blockerGapNotComputable',
         defaultMessage:
-          'Launadreifing verður ekki metin því ekki var unnt að reikna væntanlegt tímakaup.',
+          'Launadreifing verður ekki metin því ekki var unnt að reikna vænt tímakaup.',
       },
       // Every other column of this table reads its header from the
       // `outlierGroup` namespace, so the two tables cannot be translated apart —
@@ -1362,7 +1400,7 @@ export const messages = {
       },
       expectedHourlyWageColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.expectedHourlyWageColumn',
-        defaultMessage: 'Væntanlegt tímakaup',
+        defaultMessage: 'Vænt tímakaup',
       },
       wageUnitFootnote: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.wageUnitFootnote',
@@ -1419,7 +1457,7 @@ export const messages = {
       },
       postponeCheckboxLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
-        defaultMessage: 'Ég vil skila úrbótaáætlun seinna',
+        defaultMessage: 'Ég vil skila úrbótaáætlun innan þriggja mánaða',
       },
       nameLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.nameLabel',
@@ -1433,6 +1471,17 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.actionLabel',
         defaultMessage: 'Fyrirhugaðar úrbætur',
       },
+      remedyDateLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.remedyDateLabel',
+        defaultMessage: 'Dagsetning úrbóta',
+      },
+      // The API rejects a date outside this window, so the bound is stated
+      // rather than left for the applicant to discover from a rejected submit.
+      remedyDateDescription: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.remedyDateDescription',
+        defaultMessage:
+          'Dagsetning úrbóta á við um hvenær úrbótum skal vera lokið. Dagsetningin þarf að vera í framtíðinni og ekki meira en þrjú ár fram í tímann.',
+      },
       signatureNameLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.signatureNameLabel',
         defaultMessage: 'Nafn ábyrgðaraðila',
@@ -1440,6 +1489,15 @@ export const messages = {
       signatureRoleLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.signatureRoleLabel',
         defaultMessage: 'Starfstitill ábyrgðaraðila',
+      },
+      tableTitle: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.tableTitle',
+        defaultMessage: 'Frávikatafla',
+      },
+      tableText: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.tableText#markdown',
+        defaultMessage:
+          'Taflan sýnir frávik launagreiningar. Nauðsynlegt er að gera úrbótaáætlun fyrir hvert frávik. Hægt er að velja mörg frávik saman og gera sameiginlega úrbótaáætlun fyrir þann hóp. Einnig er hægt að velja eitt frávik. Þegar frávik hefur verið sett í hóp hverfur það úr töflunni. Athugið að hvert frávik þarf að vera hluti af frávikahópi.',
       },
       createGroupButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
@@ -1456,18 +1514,36 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.assignToGroupMenuLabel',
         defaultMessage: 'Veldu frávikahóp',
       },
-      // Paging through many pages to select everything is tedious, so this
-      // shortcut appears once the table spans more than a handful of pages.
+      // The one select-everything control, replacing the per-page checkbox the
+      // table header used to carry. `{count}` is the rows still in the table,
+      // so it falls as outliers are assigned into groups and leave it.
       selectAllOutliersButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectAllOutliersButton',
-        defaultMessage: 'Velja alla ({count})',
+        defaultMessage: 'Velja öll ({count})',
       },
-      // The two selection checkboxes carry no visible label (the column is
-      // just a checkbox), so they need an explicit accessible name.
+      // Same button once everything is selected: it is the only way back from a
+      // select-all short of unticking each row.
+      deselectAllOutliersButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.deselectAllOutliersButton',
+        defaultMessage: 'Afvelja öll ({count})',
+      },
+      // Neuter singular takes "valið", plural "valin" — and Icelandic counts 21
+      // and 31 as singular while 11 stays plural, which is exactly CLDR's `one`
+      // category for `is`, so ICU gets this right and a manual n === 1 would
+      // not.
+      selectedOutlierCount: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectedOutlierCount',
+        defaultMessage:
+          '{count, plural, one {# frávik valið} other {# frávik valin}}',
+      },
+      // Both select-all controls carry no visible label — the header one is a
+      // bare checkbox in its column — so they need an explicit accessible name.
       selectAllLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectAllLabel',
-        defaultMessage: 'Velja alla starfsmenn á þessari síðu',
+        defaultMessage: 'Velja öll frávik',
       },
+      // The per-row checkbox carries no visible label — its column is just a
+      // checkbox — so it needs an explicit accessible name.
       selectEmployeeLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectEmployeeLabel',
         defaultMessage: 'Velja starfsmann {employee}',
@@ -1533,7 +1609,7 @@ export const messages = {
     },
     title: {
       id: 'doe.sr.application:overview.title',
-      defaultMessage: 'Yfirlit',
+      defaultMessage: 'Yfirlit skýrslugjafar',
     },
     intro: {
       id: 'doe.sr.application:overview.intro',
@@ -1615,7 +1691,11 @@ export const messages = {
     },
     sectionTitle: {
       id: 'doe.sr.application:inReview.sectionTitle',
-      defaultMessage: 'Sending móttekin',
+      defaultMessage: 'Innsending móttekin',
+    },
+    formTitle: {
+      id: 'doe.sr.application:inReview.formTitle',
+      defaultMessage: 'Takk fyrir innsendinguna',
     },
     alertTitle: {
       id: 'doe.sr.application:inReview.alertTitle',
@@ -1664,30 +1744,50 @@ export const messages = {
     },
     editHistoryLog: {
       id: 'doe.sr.application:inReview.editHistoryLog',
-      defaultMessage: 'Skilaboð frá Jafnréttisstofu',
+      defaultMessage: 'Athugasemd frá Jafnréttisstofu',
     },
   }),
 
   comments: defineMessages({
     sectionTitle: {
       id: 'doe.sr.application:comments.sectionTitle',
-      defaultMessage: 'Samskipti',
+      defaultMessage: 'Athugasemdir',
     },
     title: {
       id: 'doe.sr.application:comments.title',
-      defaultMessage: 'Samskipti við Jafnréttisstofu',
+      defaultMessage: 'Athugasemdir',
     },
     emptyState: {
       id: 'doe.sr.application:comments.emptyState',
-      defaultMessage: 'Engin skilaboð hafa verið send.',
+      defaultMessage: 'Engar athugasemdir hafa verið sendar.',
     },
     textareaLabel: {
       id: 'doe.sr.application:comments.textareaLabel',
-      defaultMessage: 'Skrifa skilaboð',
+      defaultMessage: 'Athugasemd',
+    },
+    placeholder: {
+      id: 'doe.sr.application:comments.placeholder',
+      defaultMessage: 'Bættu við athugasemd',
+    },
+    replyButton: {
+      id: 'doe.sr.application:comments.replyButton',
+      defaultMessage: 'Svara athugasemd',
     },
     sendButton: {
       id: 'doe.sr.application:comments.sendButton',
-      defaultMessage: 'Senda skilaboð',
+      defaultMessage: 'Senda athugasemd',
+    },
+    cancelButton: {
+      id: 'doe.sr.application:comments.cancelButton',
+      defaultMessage: 'Hætta við',
+    },
+    seeAllComments: {
+      id: 'doe.sr.application:comments.seeAllComments',
+      defaultMessage: 'Sjá allar athugasemdir',
+    },
+    registersComment: {
+      id: 'doe.sr.application:comments.registersComment',
+      defaultMessage: 'skráir athugasemd',
     },
     reviewerLabel: {
       id: 'doe.sr.application:comments.reviewerLabel',
@@ -1697,13 +1797,25 @@ export const messages = {
       id: 'doe.sr.application:comments.companyLabel',
       defaultMessage: 'Þú',
     },
+    today: {
+      id: 'doe.sr.application:comments.today',
+      defaultMessage: 'Í dag',
+    },
+    yesterday: {
+      id: 'doe.sr.application:comments.yesterday',
+      defaultMessage: 'Í gær',
+    },
+    daysAgo: {
+      id: 'doe.sr.application:comments.daysAgo',
+      defaultMessage: 'f. {days} dögum',
+    },
     sendError: {
       id: 'doe.sr.application:comments.sendError',
-      defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að senda athugasemd, reyndu aftur.',
     },
     loadError: {
       id: 'doe.sr.application:comments.loadError',
-      defaultMessage: 'Ekki tókst að sækja skilaboð, reyndu aftur.',
+      defaultMessage: 'Ekki tókst að sækja athugasemdir, reyndu aftur.',
     },
   }),
 
@@ -1712,13 +1824,17 @@ export const messages = {
       id: 'doe.sr.application:rejected.sectionTitle',
       defaultMessage: 'Hafnað',
     },
+    formTitle: {
+      id: 'doe.sr.application:rejected.formTitle',
+      defaultMessage: 'Skýrslugjöf hafnað',
+    },
     title: {
       id: 'doe.sr.application:rejected.title',
-      defaultMessage: 'Umsókn hafnað',
+      defaultMessage: 'Skýrslugjöf hafnað',
     },
     description: {
       id: 'doe.sr.application:rejected.description',
-      defaultMessage: 'Umsókn þinni hefur verið hafnað.',
+      defaultMessage: 'Skýrslugjöfinni þinni hefur verið hafnað.',
     },
   }),
 
@@ -1729,7 +1845,7 @@ export const messages = {
     },
     introSectionTitle: {
       id: 'doe.sr.application:postponed.introSectionTitle',
-      defaultMessage: 'Sending móttekin',
+      defaultMessage: 'Innsending móttekin',
     },
     introTitle: {
       id: 'doe.sr.application:postponed.introTitle',
@@ -1797,7 +1913,7 @@ export const messages = {
   draftRetry: defineMessages({
     tagLabel: {
       id: 'doe.sr.application:draftRetry.tagLabel',
-      defaultMessage: 'Þín bíða skilaboð',
+      defaultMessage: 'Þín bíða athugasemdir',
     },
     aboutTheCompanySectionTitle: {
       id: 'doe.sr.application:draftRetry.aboutTheCompanySectionTitle',
@@ -1826,7 +1942,7 @@ export const messages = {
     pendingActionContent: {
       id: 'doe.sr.application:draftRetry.pendingActionContent',
       defaultMessage:
-        'Farðu yfir skilaboð frá Jafnréttisstofu og lagfærðu úrbótaáætlunina.',
+        'Farðu yfir athugasemdir frá Jafnréttisstofu og lagfærðu úrbótaáætlunina.',
     },
     pendingActionButton: {
       id: 'doe.sr.application:draftRetry.pendingActionButton',

@@ -7,7 +7,6 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  IdentityApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -18,6 +17,7 @@ import {
   DoeCompanyApi,
   EqualityReportTemplateDocxApi,
   GetReportCommentsApi,
+  IdentityApiProvider,
   PreviousEqualityReportContentApi,
   SubmitReportCommentApi,
   SubmitEqualityDraftApi,
@@ -50,6 +50,7 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.EQUALITY_REPORT].translation,
   dataSchema,
+  newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
@@ -60,6 +61,19 @@ const template: ApplicationTemplate<
         set(application, 'assignees', [
           InstitutionNationalIds.DOMSMALA_RADUNEYTID,
         ])
+        return context
+      }),
+      // Both transitions into IN_REVIEW write the flag, so whatever a client
+      // may have put in answers while editing is overwritten by the route
+      // actually taken.
+      markRevised: assign((context) => {
+        const { application } = context
+        set(application, 'answers.hasBeenRevised', true)
+        return context
+      }),
+      markNotRevised: assign((context) => {
+        const { application } = context
+        set(application, 'answers.hasBeenRevised', false)
         return context
       }),
     },
@@ -97,7 +111,7 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                IdentityApi,
+                IdentityApiProvider,
                 CompanyRegistryApi,
                 ActiveEqualityReportApi,
                 DoeCompanyApi,
@@ -110,7 +124,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // This is the role every unauthorized caller falls through to, so
+              // it gets nothing: the dead-end form reads no answers and no
+              // externalData, only `application.applicant`.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },
@@ -178,6 +197,7 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
+            actions: 'markNotRevised',
           },
         },
       },
@@ -326,6 +346,7 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
+            actions: 'markRevised',
           },
         },
       },
