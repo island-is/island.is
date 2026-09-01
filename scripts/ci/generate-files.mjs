@@ -1,5 +1,6 @@
 // @ts-check
 import { execSync } from 'child_process'
+import crypto from 'crypto'
 import fs from 'fs/promises'
 import { globSync } from 'glob'
 import yaml from 'js-yaml'
@@ -215,9 +216,20 @@ async function main() {
   console.log(`Existing files: ${existingFiles.length}`)
   console.log(`Missing files or patterns: ${missingFiles.length}`)
 
+  // Include a content hash for each input so the generated-files cache key
+  // changes when an input's content changes, not only when the set of input
+  // files changes.
+  const hashedInputs = await Promise.all(
+    inputs.map(async (file) => {
+      const content = await fs.readFile(file)
+      const hash = crypto.createHash('sha256').update(content).digest('hex')
+      return `${file} ${hash}`
+    }),
+  )
+
   await fs.mkdir(listDir, { recursive: true })
   await fs.writeFile(generatedList, existingFiles.join('\n'))
-  await fs.writeFile(inputsList, inputs.join('\n'))
+  await fs.writeFile(inputsList, hashedInputs.join('\n'))
 
   console.log(`::group::Creating archive (${outputFileName})`)
   execSync(`tar zcvf "${outputFileName}" -T ${generatedList}`, {
