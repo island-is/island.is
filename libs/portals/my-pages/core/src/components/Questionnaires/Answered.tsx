@@ -1,9 +1,14 @@
+import { QuestionnaireAnswerOptionType } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
-import { formatDateWithTime } from '../../utils/dateUtils'
+import {
+  formatDate,
+  formatDateWithTime,
+  isDateOnlyString,
+} from '../../utils/dateUtils'
 import { NestedLines } from '../NestedLines/NestedLines'
 
 interface AnsweredProps {
@@ -32,13 +37,41 @@ const isValidDate = (dateString: string): boolean => {
 
 const formatValue = (value: string): string => {
   if (isValidDate(value)) {
-    return formatDateWithTime(value)
+    return isDateOnlyString(value)
+      ? formatDate(value)
+      : formatDateWithTime(value)
   }
   return value
 }
 
 export const Answered: FC<AnsweredProps> = ({ answers }) => {
   const { formatMessage } = useLocale()
+
+  // Table cells are encoded as "columnId:type:value" (legacy: "columnId:value")
+  const formatTableCell = (cell: {
+    label?: string | undefined
+    value: string
+  }): string => {
+    const parts = cell.value.split(':')
+    const cellType = parts.length >= 3 ? parts[1] : undefined
+    const rawValue =
+      parts.length >= 3
+        ? parts.slice(2).join(':')
+        : parts.length === 2
+        ? parts[1]
+        : cell.value
+
+    let displayValue = rawValue
+    if (cellType === 'bool') {
+      displayValue =
+        rawValue === 'true' ? formatMessage(m.yes) : formatMessage(m.no)
+    } else if (rawValue && isValidDate(rawValue)) {
+      displayValue = formatDate(rawValue)
+    }
+
+    return cell.label ? `${cell.label}: ${displayValue}` : displayValue
+  }
+
   return (
     <Box>
       <NestedLines
@@ -55,7 +88,10 @@ export const Answered: FC<AnsweredProps> = ({ answers }) => {
           ...(answers?.map((answer) => {
             return {
               title: answer.question,
-              value: answer.answers.map((a) => formatValue(a.label ?? a.value)),
+              value:
+                answer.type === QuestionnaireAnswerOptionType.table
+                  ? answer.answers.map(formatTableCell)
+                  : answer.answers.map((a) => formatValue(a.label ?? a.value)),
               type: 'text' as const,
               boldValue: false,
               boldTitle: false,

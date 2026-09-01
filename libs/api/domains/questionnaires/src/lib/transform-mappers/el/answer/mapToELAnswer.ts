@@ -135,12 +135,12 @@ export const mapToElAnswer = (
             const value = cell?.value || ''
             const columnType = cell?.type
 
-            // Use column type if available, otherwise infer from value
-            // Check in order: boolean, date, number, string (date before number to avoid year-only confusion)
+            // Only infer types for legacy untyped values; check date before
+            // number since parseFloat("2026-08-05") parses as 2026
+            const inferType = !columnType
             if (
-              columnType === 'boolean' ||
-              value === 'true' ||
-              value === 'false'
+              columnType === 'bool' ||
+              (inferType && (value === 'true' || value === 'false'))
             ) {
               row.push({
                 questionId: columnId,
@@ -148,7 +148,8 @@ export const mapToElAnswer = (
               })
             } else if (
               columnType === 'date' ||
-              /^\d{4}-\d{2}-\d{2}/.test(value)
+              columnType === 'datetime' ||
+              (inferType && /^\d{4}-\d{2}-\d{2}/.test(value))
             ) {
               row.push({
                 questionId: columnId,
@@ -156,7 +157,7 @@ export const mapToElAnswer = (
               })
             } else if (
               columnType === 'number' ||
-              (!isNaN(parseFloat(value)) && value.trim() !== '')
+              (inferType && !isNaN(parseFloat(value)) && value.trim() !== '')
             ) {
               row.push({
                 questionId: columnId,
