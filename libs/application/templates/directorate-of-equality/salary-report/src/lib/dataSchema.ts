@@ -76,36 +76,52 @@ const subsidiaries = z
     includesSubsidiaries: z
       .enum(['yes', 'no'])
       .refine((v) => !!v, { params: messages.errors.required }),
+    // TableRepeaterFormField soft-deletes rows (isRemoved: true) and only
+    // physically drops them from the answers later, in its own beforeSubmit
+    // callback — after this schema has already validated the still-present
+    // row. Filtering isRemoved rows out here first keeps a "deleted" row
+    // from either being required to have valid data or counting towards
+    // the non-empty check below.
     list: z
-      .array(
-        z.object({
-          nationalIdWithName: z.object({
-            name: z.string().refine((v) => v && v.length > 0, {
-              params: messages.errors.required,
-            }),
-            nationalId: z
-              .string()
-              .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-                params: messages.errors.invalidCompany,
+      .preprocess(
+        (val) =>
+          Array.isArray(val)
+            ? val.filter((item) => !(item as { isRemoved?: boolean })?.isRemoved)
+            : val,
+        z
+          .array(
+            z.object({
+              nationalIdWithName: z.object({
+                name: z.string().refine((v) => v && v.length > 0, {
+                  params: messages.errors.required,
+                }),
+                nationalId: z
+                  .string()
+                  .refine(
+                    (v) => kennitala.isValid(v) && kennitala.isCompany(v),
+                    {
+                      params: messages.errors.invalidCompany,
+                    },
+                  ),
               }),
-          }),
-        }),
-      )
-      .superRefine((items, ctx) => {
-        const seen = new Set<string>()
-        items.forEach((item, i) => {
-          const id = item.nationalIdWithName?.nationalId
-          if (id && seen.has(id)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [i, 'nationalIdWithName', 'nationalId'],
-              params: messages.errors.duplicateSubsidiary,
+            }),
+          )
+          .superRefine((items, ctx) => {
+            const seen = new Set<string>()
+            items.forEach((item, i) => {
+              const id = item.nationalIdWithName?.nationalId
+              if (id && seen.has(id)) {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  path: [i, 'nationalIdWithName', 'nationalId'],
+                  params: messages.errors.duplicateSubsidiary,
+                })
+              } else if (id) {
+                seen.add(id)
+              }
             })
-          } else if (id) {
-            seen.add(id)
-          }
-        })
-      })
+          }),
+      )
       .optional(),
   })
   .superRefine((val, ctx) => {

@@ -68,41 +68,70 @@ const employeeCount = z.object({
     ),
 })
 
-const subsidiaries = z.object({
-  includesSubsidiaries: z
-    .enum(['yes', 'no'])
-    .refine((v) => !!v, { params: messages.errors.required }),
-  list: z.optional(
-    z
-      .array(
-        z.object({
-          nationalIdWithName: z.object({
-            name: z.string().min(1),
-            nationalId: z
-              .string()
-              .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-                params: messages.errors.invalidCompanyNationalId,
+const subsidiaries = z
+  .object({
+    includesSubsidiaries: z
+      .enum(['yes', 'no'])
+      .refine((v) => !!v, { params: messages.errors.required }),
+    // TableRepeaterFormField soft-deletes rows (isRemoved: true) and only
+    // physically drops them from the answers later, in its own beforeSubmit
+    // callback — after this schema has already validated the still-present
+    // row. Filtering isRemoved rows out here first keeps a "deleted" row
+    // from either being required to have valid data or counting towards
+    // the non-empty check below.
+    list: z.optional(
+      z.preprocess(
+        (val) =>
+          Array.isArray(val)
+            ? val.filter((item) => !(item as { isRemoved?: boolean })?.isRemoved)
+            : val,
+        z
+          .array(
+            z.object({
+              nationalIdWithName: z.object({
+                name: z.string().min(1),
+                nationalId: z
+                  .string()
+                  .refine(
+                    (v) => kennitala.isValid(v) && kennitala.isCompany(v),
+                    {
+                      params: messages.errors.invalidCompanyNationalId,
+                    },
+                  ),
               }),
-          }),
-        }),
-      )
-      .superRefine((items, ctx) => {
-        const seen = new Set<string>()
-        items.forEach((item, i) => {
-          const id = item.nationalIdWithName?.nationalId
-          if (id && seen.has(id)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [i, 'nationalIdWithName', 'nationalId'],
-              params: messages.errors.duplicateSubsidiary,
+            }),
+          )
+          .superRefine((items, ctx) => {
+            const seen = new Set<string>()
+            items.forEach((item, i) => {
+              const id = item.nationalIdWithName?.nationalId
+              if (id && seen.has(id)) {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  path: [i, 'nationalIdWithName', 'nationalId'],
+                  params: messages.errors.duplicateSubsidiary,
+                })
+              } else if (id) {
+                seen.add(id)
+              }
             })
-          } else if (id) {
-            seen.add(id)
-          }
-        })
-      }),
-  ),
-})
+          }),
+      ),
+    ),
+  })
+  .superRefine((val, ctx) => {
+    // If the applicant says they have subsidiaries, the list can't be empty.
+    if (
+      val.includesSubsidiaries === 'yes' &&
+      (!val.list || val.list.length === 0)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['list'],
+        params: messages.errors.required,
+      })
+    }
+  })
 
 const goalsAndActions = z.object({
   filename: z.string().refine((v) => v.length > 0, {

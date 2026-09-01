@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -31,6 +32,9 @@ export const subsidiariesSubSection = buildSubSection({
           largeButtons: true,
           width: 'half',
           required: true,
+          // Clears stray rows so 'no' can't leave one behind unvalidated.
+          clearOnChange: ['subsidiaries.list'],
+          clearOnChangeDefaultValue: [],
           options: [
             {
               value: YES,
@@ -72,6 +76,13 @@ export const subsidiariesSubSection = buildSubSection({
           condition: (answers) =>
             getValueViaPath(answers, 'subsidiaries.includesSubsidiaries') ===
             YES,
+        }),
+        buildCustomField({
+          // Not an answer path: registers no input, only clears the guard above.
+          id: 'subsidiaries.formGuard',
+          title: '',
+          component: 'SubsidiariesFormGuard',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),
