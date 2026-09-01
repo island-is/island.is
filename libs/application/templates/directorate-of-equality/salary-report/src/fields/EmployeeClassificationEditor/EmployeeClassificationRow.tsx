@@ -19,7 +19,6 @@ import * as styles from '../EmployeesEditor/EmployeesEditor.css'
 
 type Props = {
   employee: DraftEmployeeWithStepsDto
-  identifier: string
   employeeIndex: number
   roleTitle: string
   assignments: DisplayAssignment[]
@@ -28,7 +27,6 @@ type Props = {
 
 export const EmployeeClassificationRow: FC<Props> = ({
   employee,
-  identifier,
   employeeIndex,
   roleTitle,
   assignments,
@@ -66,7 +64,7 @@ export const EmployeeClassificationRow: FC<Props> = ({
             title={formatMessage(m.nameColumn)}
           />
         </T.Data>
-        <T.Data box={{ background }}>{identifier}</T.Data>
+        <T.Data box={{ background }}>{employee.ordinal}</T.Data>
         <T.Data box={{ background }}>{roleTitle}</T.Data>
         <T.Data box={{ background }}>
           {GENDER_LABELS[employee.gender] ?? employee.gender}

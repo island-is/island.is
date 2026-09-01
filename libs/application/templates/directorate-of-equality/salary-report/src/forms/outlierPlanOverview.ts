@@ -9,6 +9,7 @@ import type {
   KeyValueItem,
 } from '@island.is/application/types'
 import { messages } from '../lib/messages'
+import { formatDateValue } from '../utils/dates'
 import type { OutlierGroupAnswer } from '../utils/outlierGroups'
 import { reviewOutlierPlanIsSubmittable } from '../utils/salaryAnalysisNavigation'
 
@@ -53,6 +54,11 @@ export const outlierPlanOverviewItems = (answers: FormValue): KeyValueItem[] =>
         width: 'half' as const,
         keyText: messages.salaryAnalysis.outlierGroup.actionLabel,
         valueText: group.action ?? '',
+      },
+      {
+        width: 'half' as const,
+        keyText: messages.salaryAnalysis.outlierGroup.remedyDateLabel,
+        valueText: formatDateValue(group.remedyDate),
       },
       {
         width: 'half' as const,

@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   DropdownMenu,
+  Hidden,
   InteractiveTable,
   Text,
 } from '@island.is/island-ui/core'
@@ -21,12 +22,9 @@ import type { OutlierGroupAnswer, PayStatus } from '../../utils/outlierGroups'
 import { TablePagination } from '../TablePagination'
 import { OUTLIER_COLUMNS, OutlierTableProvider } from './outlierColumns'
 import { OutlierGroupCard } from './OutlierGroupCard'
+import { Markdown } from '@island.is/shared/components'
 
 const OUTLIERS_PAGE_SIZE = 10
-// The header checkbox only reaches the current page, which is fine for a
-// couple of pages but not for a long table — past this many pages the
-// select-everything shortcut appears.
-const SELECT_ALL_PAGE_THRESHOLD = 5
 
 type Props = {
   outliers: SalaryAnalysisOutlierDto[]
@@ -177,28 +175,29 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
     return name ? `${name} (${index + 1})` : fallback
   }
 
-  const handleSelectAll = () =>
-    setSelected(new Set(unassignedOutliers.map((o) => o.employeeOrdinal)))
+  // Guarded on the length: with nothing left in the table both sides are 0,
+  // which would otherwise read as "everything is selected" and show the header
+  // checkbox ticked over an empty selection.
+  const allSelected =
+    unassignedOutliers.length > 0 && selected.size === unassignedOutliers.length
 
-  const allSelected = selected.size === unassignedOutliers.length
+  // Drives the header checkbox's indeterminate state, so a partial selection
+  // reads as partial instead of as "nothing selected" — the native flag also
+  // gives the input aria-checked="mixed".
+  const someSelected = selected.size > 0 && !allSelected
 
-  const allSelectedOnPage =
-    pageRows.length > 0 &&
-    pageRows.every((o) => selected.has(o.employeeOrdinal))
-
-  const toggleSelectPage = useCallback(
+  // Every row still in the table, not just the page on screen: the outliers an
+  // applicant wants in one group are rarely all on one page, and paging through
+  // to tick them was the tedium this replaces. Clears as well as selects — it is
+  // the only way back from a select-all short of unticking each row.
+  const toggleSelectAll = useCallback(
     () =>
-      setSelected((prev) => {
-        const next = new Set(prev)
-        const allOnPage = pageRows.every((o) => next.has(o.employeeOrdinal))
-        pageRows.forEach((o) =>
-          allOnPage
-            ? next.delete(o.employeeOrdinal)
-            : next.add(o.employeeOrdinal),
-        )
-        return next
-      }),
-    [pageRows],
+      setSelected((prev) =>
+        prev.size === unassignedOutliers.length && prev.size > 0
+          ? new Set()
+          : new Set(unassignedOutliers.map((o) => o.employeeOrdinal)),
+      ),
+    [unassignedOutliers],
   )
 
   // The column defs are module-level constants (see outlierColumns.tsx), so
@@ -206,23 +205,27 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
   const tableContext = useMemo(
     () => ({
       selected,
-      allSelectedOnPage,
+      allSelected,
+      someSelected,
       toggleSelect,
-      toggleSelectPage,
+      toggleSelectAll,
     }),
-    [selected, allSelectedOnPage, toggleSelect, toggleSelectPage],
+    [selected, allSelected, someSelected, toggleSelect, toggleSelectAll],
   )
 
   return (
     <Box marginTop={4}>
+      {/* Outside the table's own guard: the table empties as outliers are
+          assigned to groups, and this copy is what explains that. */}
+      <Box marginBottom={2}>
+        <Text variant="h4" as="h4">
+          {formatMessage(m.tableTitle)}
+        </Text>
+        <Markdown>{formatMessage(m.tableText)}</Markdown>
+      </Box>
+
       {unassignedOutliers.length > 0 && (
         <>
-          <Box>
-            <Text variant="h4" as="h4">
-              {formatMessage(m.tableTitle)}
-            </Text>
-            <Text>{formatMessage(m.tableText)}</Text>
-          </Box>
           <OutlierTableProvider value={tableContext}>
             <InteractiveTable
               columns={OUTLIER_COLUMNS}
@@ -254,6 +257,29 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
               }}
             />
           </OutlierTableProvider>
+
+          {/* Counts what is ticked, however it got ticked — the header checkbox
+              and the row checkboxes write to the same set. Directly under the
+              table so it reads as the table's own tally, above the unit
+              footnote. Hidden at zero rather than reading "0 frávik valin" over
+              an untouched table.
+
+              The live region is the outer Box, which stays mounted and carries
+              no margin of its own: a region announces only changes that happen
+              while it is already in the DOM, so mounting it with the count would
+              announce nothing, and an empty bordered-off Box would still take up
+              its margin over an untouched table. */}
+          <Box aria-live="polite">
+            {selected.size > 0 && (
+              <Box marginTop={1}>
+                <Text variant="small" fontWeight="semiBold">
+                  {formatMessage(m.selectedOutlierCount, {
+                    count: selected.size,
+                  })}
+                </Text>
+              </Box>
+            )}
+          </Box>
 
           <Box marginTop={1}>
             <Text variant="small" color="dark400">
@@ -315,18 +341,21 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
                 ]}
               />
             )}
-            {totalPages > SELECT_ALL_PAGE_THRESHOLD && (
-              <Button
-                variant="text"
-                size="small"
-                disabled={allSelected}
-                onClick={handleSelectAll}
-              >
-                {formatMessage(m.selectAllOutliersButton, {
-                  count: unassignedOutliers.length,
-                })}
+            {/* The header checkbox is the select-all on the desktop table, but
+                InteractiveTable's mobile card view has no header row to put it
+                in — so below `md`, where that table is hidden, this button
+                stands in for it. Same two breakpoints InteractiveTable splits
+                its own views on, so exactly one of the two is ever reachable. */}
+            <Hidden above="sm">
+              <Button variant="text" size="small" onClick={toggleSelectAll}>
+                {formatMessage(
+                  allSelected
+                    ? m.deselectAllOutliersButton
+                    : m.selectAllOutliersButton,
+                  { count: unassignedOutliers.length },
+                )}
               </Button>
-            )}
+            </Hidden>
           </Box>
         </>
       )}
@@ -360,8 +389,7 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
       {unassignedOutliers.length > 0 && (
         <Box marginTop={2}>
           <AlertMessage
-            type="error"
-            title={formatMessage(messages.errors.alertTitle)}
+            type="warning"
             message={formatMessage(m.unassignedWarning)}
           />
         </Box>
@@ -371,8 +399,7 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
         watchedGroups.some((g) => !isOutlierGroupComplete(g)) && (
           <Box marginTop={2}>
             <AlertMessage
-              type="error"
-              title={formatMessage(messages.errors.alertTitle)}
+              type="warning"
               message={formatMessage(m.incompleteGroupWarning)}
             />
           </Box>

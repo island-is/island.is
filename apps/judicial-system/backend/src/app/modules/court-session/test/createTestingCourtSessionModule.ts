@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended'
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -13,7 +12,7 @@ import {
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   CourtSessionRepositoryService,
-  CourtSessionString,
+  CourtSessionStringRepositoryService,
 } from '../../repository'
 import { CourtSessionController } from '../courtSession.controller'
 import { CourtSessionService } from '../courtSession.service'
@@ -41,11 +40,11 @@ export const createTestingCourtSessionModule = async () => {
         },
       },
       {
-        provide: getModelToken(CourtSessionString),
+        provide: CourtSessionStringRepositoryService,
         useValue: {
+          findByKey: jest.fn(),
+          updateByKey: jest.fn(),
           create: jest.fn(),
-          findOne: jest.fn(),
-          update: jest.fn(),
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },

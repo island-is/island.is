@@ -3895,6 +3895,12 @@
           "action": { "type": "string", "minLength": 1 },
           "signatureName": { "type": "string", "minLength": 1 },
           "signatureRole": { "type": "string", "minLength": 1 },
+          "remedyDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the company commits to having this group’s improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`. Required alongside the rest of the explanation. Must be in the future and no more than three years out — the next reporting cycle, beyond which the date belongs to a period this report cannot speak for."
+          },
           "employeeOrdinals": {
             "description": "Ordinals of the employees in `parsed.employees[]` this group covers.",
             "type": "array",
@@ -3906,6 +3912,7 @@
           "action",
           "signatureName",
           "signatureRole",
+          "remedyDate",
           "employeeOrdinals"
         ]
       },
@@ -3931,6 +3938,11 @@
             "enum": ["MALE", "FEMALE", "NEUTRAL"]
           },
           "contactName": { "type": "string" },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string" },
           "contactPhone": { "type": "string" },
           "averageEmployeeMaleCount": { "type": "number" },
@@ -4012,6 +4024,11 @@
             "enum": ["MALE", "FEMALE", "NEUTRAL"]
           },
           "contactName": { "type": "string" },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string" },
           "contactPhone": { "type": "string" },
           "equalityReportContent": {
@@ -4341,6 +4358,13 @@
           "action": { "type": "string", "nullable": true },
           "signatureName": { "type": "string", "nullable": true },
           "signatureRole": { "type": "string", "nullable": true },
+          "remedyDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the group commits to having its improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`. Denormalized from the outlier group like the rest of the explanation — every outlier in the same group carries the same value."
+          },
           "regularHourlyWage": {
             "type": "number",
             "nullable": true,
@@ -4436,6 +4460,12 @@
           "action": { "type": "string", "minLength": 1 },
           "signatureName": { "type": "string", "minLength": 1 },
           "signatureRole": { "type": "string", "minLength": 1 },
+          "remedyDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the company commits to having this group’s improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`. Required alongside the rest of the explanation. Must be in the future and no more than three years out."
+          },
           "employeeOrdinals": {
             "description": "Ordinals of the outlier employees in this group (1-indexed, matches the `report_employee.ordinal` snapshot). Resolved against the canonical detected set from `report_result.outlier_analysis_snapshot`.",
             "type": "array",
@@ -4447,6 +4477,7 @@
           "action",
           "signatureName",
           "signatureRole",
+          "remedyDate",
           "employeeOrdinals"
         ]
       },
@@ -4663,6 +4694,11 @@
             "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
           },
           "contactName": { "type": "string", "nullable": true },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string", "nullable": true },
           "contactPhone": { "type": "string", "nullable": true },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },
@@ -4714,6 +4750,11 @@
             "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
           },
           "contactName": { "type": "string", "nullable": true },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string", "nullable": true },
           "contactPhone": { "type": "string", "nullable": true },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },
@@ -4964,7 +5005,14 @@
           "reason": { "type": "string", "nullable": true },
           "action": { "type": "string", "nullable": true },
           "signatureName": { "type": "string", "nullable": true },
-          "signatureRole": { "type": "string", "nullable": true }
+          "signatureRole": { "type": "string", "nullable": true },
+          "remedyDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the company commits to having this group’s improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`. Must be in the future and no more than three years out."
+          }
         }
       },
       "ChangeOutlierGroupDto": {
@@ -5346,6 +5394,13 @@
           "action": { "type": "string", "nullable": true },
           "signatureName": { "type": "string", "nullable": true },
           "signatureRole": { "type": "string", "nullable": true },
+          "remedyDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the company commits to having this group’s improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`."
+          },
           "memberEmployeeIds": {
             "description": "Ids of the employees in this group.",
             "type": "array",

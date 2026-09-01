@@ -8,6 +8,7 @@ type SpecGroup = {
   name: string
   reason: string
   action: string
+  remedyDate: string
   signatureName: string
   signatureRole: string
   employeeOrdinals: number[]
@@ -17,6 +18,7 @@ const group = (overrides: Partial<SpecGroup> = {}): SpecGroup => ({
   name: 'Sérfræðingar',
   reason: 'Ástæða',
   action: 'Aðgerð',
+  remedyDate: '2027-03-01',
   signatureName: 'Nafn',
   signatureRole: 'Titill',
   employeeOrdinals: [1],
@@ -40,7 +42,19 @@ describe('outlierPlanOverviewItems', () => {
     const items = outlierPlanOverviewItems(answers([group()]))
 
     expect(groupNames(items)).toEqual(['Sérfræðingar'])
-    expect(items).toHaveLength(5)
+    expect(items).toHaveLength(6)
+  })
+
+  // Answered as yyyy-MM-dd, recapped the way an Icelandic reader writes it.
+  it('recaps the remedy date in day-first form', () => {
+    expect(
+      outlierPlanOverviewItems(answers([group({ remedyDate: '2027-03-01' })])),
+    ).toContainEqual(
+      expect.objectContaining({
+        keyText: messages.salaryAnalysis.outlierGroup.remedyDateLabel,
+        valueText: '1.3.2027',
+      }),
+    )
   })
 
   it('drops a group whose members were all freed', () => {

@@ -58,8 +58,8 @@ export type SalaryComponentKey =
   | 'bonusPayments'
   | 'bonusOther'
 
-// id is the client-minted UUID join key; the human-facing ABC-000 label is
-// derived from ordinal at display time (see utils/employeeIdentifier.ts).
+// id is the client-minted UUID join key; `ordinal` is the human-facing number
+// shown on every screen and in the workbook.
 export type Employee = {
   id: string
   ordinal: number

@@ -247,6 +247,7 @@ const template: ApplicationTemplate<
             schedulePruneReminderBefore(
               endOfDayFromCreation(application, pruneLifeTimeInReview),
               2,
+              applicationMessage.pruneReason,
               Features.trainingLicenseOnWorkMachineScheduledNotifications,
             ),
           roles: [

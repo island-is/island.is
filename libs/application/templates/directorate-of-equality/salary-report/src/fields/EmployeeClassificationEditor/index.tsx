@@ -23,7 +23,7 @@ import {
   DraftErrorState,
   DraftLoadingState,
 } from '../../components/DraftScreenState'
-import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
+import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 import {
   buildDisplayAssignments,
   buildStepMetaBySubCriterionId,
@@ -209,7 +209,9 @@ export const EmployeeClassificationEditor: FC<
             <T.Head>
               <T.Row>
                 <T.HeadData></T.HeadData>
-                <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
+                <T.HeadData>
+                  <EmployeeOrdinalHeader />
+                </T.HeadData>
                 <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
                 <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
               </T.Row>
@@ -219,10 +221,6 @@ export const EmployeeClassificationEditor: FC<
                 <EmployeeClassificationRow
                   key={employee.id}
                   employee={employee}
-                  identifier={formatEmployeeIdentifier(
-                    application.id,
-                    employee.ordinal,
-                  )}
                   employeeIndex={index}
                   roleTitle={employee.roleTitle}
                   assignments={buildDisplayAssignments(
