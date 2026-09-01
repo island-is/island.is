@@ -44,21 +44,21 @@
 
 // The court case number of the parent case the two cases were joined to.
 // This case is not in RVG, so it is recorded as a number, not as a link.
-const MERGE_CASE_NUMBER = 'S-UUU/2025'
+const MERGE_CASE_NUMBER = 'S-744/2025'
 
 // When the cases were joined and concluded in court - both court_end_time and
 // ruling_date are set to this. Use the date of the court session in the parent
 // case, not the date this migration runs: ruling_date is what the case lists
 // show as the closing date and what the statistics module reports the ruling
 // decision on.
-const CONCLUSION_DATE = '2026-06-01 00:00:00.000000+00'
+const CONCLUSION_DATE = '2026-04-29 12:00:00.000000+00'
 
 // The cases to complete. The court case number is not a unique key on its own,
 // so the id decides which row is updated and the number is carried along as a
 // guard - a mistyped id then updates nothing instead of the wrong case.
 const CASES = [
-  { id: '00000000-0000-0000-0000-000000000000', courtCaseNumber: 'S-YYY/2026' },
-  { id: '00000000-0000-0000-0000-000000000000', courtCaseNumber: 'S-ZZZ/2026' },
+  { id: '1e40f871-3034-427b-a7ea-d7b72917c23d', courtCaseNumber: 'S-146/2026' },
+  { id: '3526995d-c136-40d0-afb6-c5499f79ab4a', courtCaseNumber: 'S-154/2026' },
 ]
 
 // ---------------------------------------------------------------------------
