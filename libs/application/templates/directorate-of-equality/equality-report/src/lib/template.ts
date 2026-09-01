@@ -348,6 +348,12 @@ const template: ApplicationTemplate<
             target: States.IN_REVIEW,
             actions: 'markRevised',
           },
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
+          },
         },
       },
       [States.APPROVED]: {
