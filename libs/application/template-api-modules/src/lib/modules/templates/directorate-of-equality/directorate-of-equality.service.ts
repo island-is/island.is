@@ -541,6 +541,43 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
+  // The id captured at PREREQUISITES goes stale whenever the company's
+  // equality report is approved again while this salary draft sits open — DMR
+  // keys the new approval to a new id and answers the old one with a 404 at
+  // submit. So resolve it live here; the persisted id is only a fallback for
+  // when DMR cannot answer at all.
+  private async resolveEqualityReportId(
+    auth: TemplateApiModuleActionProps['auth'],
+    application: TemplateApiModuleActionProps['application'],
+  ): Promise<string | undefined> {
+    const persistedId = getValueViaPath<string>(
+      application.externalData,
+      'activeEqualityReport.data.id',
+    )
+
+    try {
+      const activeReport =
+        await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+      return activeReport?.id ?? persistedId
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error(
+        'Failed to resolve active equality report before salary submit',
+        {
+          applicationId: application.id,
+          context: LOGGING_CONTEXT,
+          ...errorDetails,
+        },
+      )
+
+      // 404 is DMR's definitive "no approved equality report right now", which
+      // makes the persisted id known-stale: re-sending it would only earn the
+      // same 404 from submit under a less helpful message.
+      if (errorDetails.status === 404) return undefined
+      return persistedId
+    }
+  }
+
   // Finalises the draft; only the pre-dataEntry answers need patching onto it first.
   async submitSalaryReport({
     auth,
@@ -552,15 +589,15 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       application.id,
     )
 
-    const equalityReportId = getValueViaPath<string>(
-      application.externalData,
-      'activeEqualityReport.data.id',
+    const equalityReportId = await this.resolveEqualityReportId(
+      auth,
+      application,
     )
     if (!equalityReportId) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
+          summary: salaryReportMessages.errors.missingEqualityReport,
         },
         400,
       )

@@ -35,6 +35,14 @@ export const messages = {
       defaultMessage:
         'Fyrirtæki er nú þegar með innsenda skýrslu sem er í vinnslu hjá ritstjórn.',
     },
+    // The equality report can lose its approval (or be replaced by one still
+    // awaiting approval) while this draft sits open, so this is a submit-time
+    // complaint, not a repeat of the prerequisites eligibility check.
+    missingEqualityReport: {
+      id: 'doe.sr.application:errors.missingEqualityReport',
+      defaultMessage:
+        'Engin samþykkt jafnréttisáætlun fannst hjá Jafnréttisstofu. Ekki er hægt að senda inn launagreiningu fyrr en jafnréttisáætlun fyrirtækisins hefur verið samþykkt.',
+    },
     retryButton: {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
