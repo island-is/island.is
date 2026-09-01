@@ -809,7 +809,7 @@ export const en: TranslatedMessages = {
   'health.questionnaires.detail.status': 'Status',
   'health.questionnaires.detail.institution': 'Institution',
   'health.questionnaires.detail.sentBy': 'Sent by',
-  'health.questionnaires.detail.sentDate': 'Sent date',
+  'health.questionnaires.detail.sentDate': 'Date',
   'health.questionnaires.detail.expirationDate': 'Valid until',
   'health.questionnaires.detail.notFound': 'Questionnaire not found',
 
