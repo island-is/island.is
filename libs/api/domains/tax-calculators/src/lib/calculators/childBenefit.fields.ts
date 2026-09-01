@@ -1,19 +1,16 @@
-import { TaxCalculatorFieldKind } from '../../models/enums'
+import { TaxCalculatorFieldKind } from '../models/enums'
 import {
   FieldDefinition,
   MAX_SANE_NUMBER_VALUE,
-  parseBoolean,
-  parseNumber,
-} from '../../utils/parsing'
+} from '../utils/fieldDefinition'
 import {
   buildCountOptions,
   previousYearIncomeYearOptions,
-} from '../../utils/fieldOptions'
+} from '../utils/fieldOptions'
 
 export const childBenefitFields: FieldDefinition[] = [
   {
     key: 'marriedOrCohabiting',
-    rawKey: 'hjuskaparstada',
     label: 'Hjúskaparstaða',
     kind: TaxCalculatorFieldKind.SELECT,
     required: true,
@@ -21,70 +18,55 @@ export const childBenefitFields: FieldDefinition[] = [
       { value: 'true', label: 'Hjón / Í sambúð' },
       { value: 'false', label: 'Einhleypingur' },
     ],
-    parse: parseBoolean,
   },
   {
     key: 'incomeYear',
-    rawKey: 'tekjuar',
     label: 'Tekjuár',
     kind: TaxCalculatorFieldKind.SELECT,
     required: true,
     options: previousYearIncomeYearOptions,
-    parse: parseNumber,
   },
   {
     key: 'incomeBase',
-    rawKey: 'tekjustofn',
     label: 'Tekjustofn ársins',
     kind: TaxCalculatorFieldKind.NUMBER,
     required: true,
     unit: 'ISK',
     min: 0,
     max: MAX_SANE_NUMBER_VALUE,
-    parse: parseNumber,
   },
   {
     key: 'numberOfChildren',
-    rawKey: 'fjoldiBarna',
     label: 'Börn alls',
     kind: TaxCalculatorFieldKind.SELECT,
     required: true,
     options: buildCountOptions(10),
-    parse: parseNumber,
   },
   {
     key: 'numberOfChildrenUnder7',
-    rawKey: 'fjoldiBarnaUndir7ara',
     label: 'Börn undir 7 ára',
     kind: TaxCalculatorFieldKind.SELECT,
     required: true,
     options: buildCountOptions(10),
-    parse: parseNumber,
   },
   {
     key: 'splitCustody',
-    rawKey: 'skiptBuseta',
     label: 'Er um að ræða skipta búsetu?',
     kind: TaxCalculatorFieldKind.BOOLEAN,
     required: true,
-    parse: parseBoolean,
   },
   {
     key: 'splitCustodyChildrenOver7',
-    rawKey: 'skiptBornYfir7ara',
     label: 'Börn alls',
     kind: TaxCalculatorFieldKind.SELECT,
     required: false,
     options: buildCountOptions(10),
-    parse: parseNumber,
   },
   {
     key: 'splitCustodyChildrenUnder7',
-    rawKey: 'skiptBornUndir7ara',
     label: 'Börn undir 7 ára',
     kind: TaxCalculatorFieldKind.SELECT,
     required: false,
     options: buildCountOptions(10),
-    parse: parseNumber,
   },
 ]

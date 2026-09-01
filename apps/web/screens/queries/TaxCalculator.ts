@@ -17,19 +17,3 @@ export const GET_TAX_CALCULATOR_FIELDS = gql`
     }
   }
 `
-
-export const GET_TAX_CALCULATOR_CALCULATION = gql`
-  query GetTaxCalculatorCalculation(
-    $calculatorType: TaxCalculatorType!
-    $input: [TaxCalculatorInputValue!]!
-  ) {
-    taxCalculatorCalculation(calculatorType: $calculatorType, input: $input) {
-      values {
-        key
-        label
-        value
-        unit
-      }
-    }
-  }
-`

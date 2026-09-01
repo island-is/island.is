@@ -5,8 +5,7 @@ import { FieldOption } from './fieldOption.model'
 @ObjectType('TaxCalculatorField')
 export class CalculatorField {
   @Field(() => String, {
-    description:
-      'The key to use for this field when submitting values to taxCalculatorCalculation.',
+    description: 'Stable identifier for this field.',
   })
   key!: string
 

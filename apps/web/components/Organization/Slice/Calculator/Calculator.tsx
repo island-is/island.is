@@ -2,12 +2,11 @@ import { Fragment, useState } from 'react'
 import { Controller, useForm, useFormState } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
-import { useLazyQuery, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
   Box,
-  Button,
   Checkbox,
   DatePicker,
   GridColumn,
@@ -28,18 +27,13 @@ import {
 } from '@island.is/tax-calculators'
 import {
   Calculator as CalculatorSlice,
-  GetTaxCalculatorCalculationQuery,
-  GetTaxCalculatorCalculationQueryVariables,
   GetTaxCalculatorFieldsQuery,
   GetTaxCalculatorFieldsQueryVariables,
   TaxCalculatorField,
   TaxCalculatorFieldKind,
   TaxCalculatorType,
 } from '@island.is/web/graphql/schema'
-import {
-  GET_TAX_CALCULATOR_CALCULATION,
-  GET_TAX_CALCULATOR_FIELDS,
-} from '@island.is/web/screens/queries/TaxCalculator'
+import { GET_TAX_CALCULATOR_FIELDS } from '@island.is/web/screens/queries/TaxCalculator'
 
 import { messages } from './messages'
 
@@ -302,11 +296,9 @@ const Calculator = ({ slice }: CalculatorProps) => {
   const { formatMessage, locale } = useIntl()
   // A field in a section hidden by its toggle gate unmounts (its
   // Controller/InputController stops rendering). Without shouldUnregister,
-  // react-hook-form would keep
-  // that field registered -- submitting its stale last value, and (if
-  // required) permanently failing `trigger()` since the user has no way to
-  // fix a field that's no longer rendered.
-  const { control, getValues, trigger } = useForm({
+  // react-hook-form would keep that field registered, holding a stale value
+  // the user has no way to reach.
+  const { control } = useForm({
     shouldUnregister: true,
   })
   // Toggle switches are UI-only: they gate sections and are never submitted,
@@ -329,33 +321,9 @@ const Calculator = ({ slice }: CalculatorProps) => {
     skip: !calculatorType,
   })
 
-  const [
-    fetchCalculation,
-    { loading: calculating, called, error: calculationError },
-  ] = useLazyQuery<
-    GetTaxCalculatorCalculationQuery,
-    GetTaxCalculatorCalculationQueryVariables
-  >(GET_TAX_CALCULATOR_CALCULATION)
-
   const fields = fieldsResponse.data?.taxCalculatorFields ?? []
   const fieldsByKey = new Map(fields.map((field) => [field.key, field]))
   const sections = config?.sections ?? []
-
-  const calculate = async () => {
-    if (!calculatorType) return
-    const isValid = await trigger()
-    if (!isValid) return
-    const values = getValues()
-    fetchCalculation({
-      variables: {
-        calculatorType,
-        input: fields.map((field) => ({
-          key: field.key,
-          value: String(values[field.key] ?? ''),
-        })),
-      },
-    })
-  }
 
   if (!calculatorType || !parsedConfig.success) {
     return null
@@ -375,140 +343,116 @@ const Calculator = ({ slice }: CalculatorProps) => {
     return <SkeletonLoader height={40} repeat={4} space={2} />
   }
 
-  const hasCalculated = called && !calculationError
-
   return (
-    <Stack space={5}>
-      <Box background="overlay" borderRadius="large" padding={6}>
-        <Stack space={5}>
-          <Stack space={6}>
-            {sections.map((section) => {
-              // Conditional behaviour lives on the section, not the field,
-              // and is driven entirely by editor-declared toggles rather than
-              // by any field's value. A section owning a toggle keeps its
-              // switch rendered and hides only its body while off; a section
-              // suppressed by someone else's toggle either unmounts (taking
-              // every field inside it with it) or greys out.
-              const ownToggle = section.toggle
-              const isOwnToggleOn = ownToggle
-                ? Boolean(toggleStates[ownToggle.key])
-                : true
+    <Box background="overlay" borderRadius="large" padding={6}>
+      <Stack space={6}>
+        {sections.map((section) => {
+          // Conditional behaviour lives on the section, not the field,
+          // and is driven entirely by editor-declared toggles rather than
+          // by any field's value. A section owning a toggle keeps its
+          // switch rendered and hides only its body while off; a section
+          // suppressed by someone else's toggle either unmounts (taking
+          // every field inside it with it) or greys out.
+          const ownToggle = section.toggle
+          const isOwnToggleOn = ownToggle
+            ? Boolean(toggleStates[ownToggle.key])
+            : true
 
-              const isSuppressed = Boolean(
-                section.gate && toggleStates[section.gate.toggle],
-              )
-              if (isSuppressed && !section.gate?.disableOnly) return null
-              const isSectionDisabled = isSuppressed
+          const isSuppressed = Boolean(
+            section.gate && toggleStates[section.gate.toggle],
+          )
+          if (isSuppressed && !section.gate?.disableOnly) return null
+          const isSectionDisabled = isSuppressed
 
-              const sectionFields = section.fields
-                .map((sectionField) => {
-                  const field = fieldsByKey.get(sectionField.key)
-                  if (!field) return undefined
-                  return { field, sectionField, span: sectionField.span }
-                })
-                .filter(
-                  (
-                    entry,
-                  ): entry is {
-                    field: TaxCalculatorField
-                    sectionField: CalculatorSectionField
-                    span: number
-                  } => Boolean(entry),
-                )
+          const sectionFields = section.fields
+            .map((sectionField) => {
+              const field = fieldsByKey.get(sectionField.key)
+              if (!field) return undefined
+              return { field, sectionField, span: sectionField.span }
+            })
+            .filter(
+              (
+                entry,
+              ): entry is {
+                field: TaxCalculatorField
+                sectionField: CalculatorSectionField
+                span: number
+              } => Boolean(entry),
+            )
 
-              if (!sectionFields.length) return null
+          if (!sectionFields.length) return null
 
-              const sectionTitle = pickLocalizedText(section.title, locale)
-              const sectionDescription = pickLocalizedText(
-                section.description,
-                locale,
-              )
+          const sectionTitle = pickLocalizedText(section.title, locale)
+          const sectionDescription = pickLocalizedText(
+            section.description,
+            locale,
+          )
 
-              const body = (
-                <Stack space={3}>
-                  {(sectionTitle || sectionDescription) && (
-                    <Stack space={1}>
-                      {sectionTitle && (
-                        <Text variant="h4" as="h4">
-                          {sectionTitle}
-                        </Text>
-                      )}
-                      {sectionDescription && (
-                        <Text variant="medium">{sectionDescription}</Text>
-                      )}
-                    </Stack>
+          const body = (
+            <Stack space={3}>
+              {(sectionTitle || sectionDescription) && (
+                <Stack space={1}>
+                  {sectionTitle && (
+                    <Text variant="h4" as="h4">
+                      {sectionTitle}
+                    </Text>
                   )}
-                  <GridRow rowGap={3}>
-                    {sectionFields.map(({ field, span, sectionField }) => (
-                      <GridColumn key={field.key} span={spanToGridColumn(span)}>
-                        <CalculatorFieldInput
-                          field={field}
-                          control={control}
-                          label={pickLocalizedText(
-                            sectionField.label,
-                            locale,
-                            field.label,
-                          )}
-                          locale={locale}
-                          placeholder={pickLocalizedText(
-                            sectionField.placeholder,
-                            locale,
-                          )}
-                          disabled={isSectionDisabled}
-                        />
-                      </GridColumn>
-                    ))}
-                  </GridRow>
-                </Stack>
-              )
-
-              if (!ownToggle) {
-                return <Fragment key={section.key}>{body}</Fragment>
-              }
-
-              return (
-                <Stack key={section.key} space={3}>
-                  <ToggleSwitchCheckbox
-                    label={pickLocalizedText(ownToggle.label, locale)}
-                    checked={isOwnToggleOn}
-                    onChange={(checked) =>
-                      setToggleStates((previous) => ({
-                        ...previous,
-                        [ownToggle.key]: checked,
-                      }))
-                    }
-                  />
-                  {/* Revealed content sits on its own card, per the design. */}
-                  {isOwnToggleOn && (
-                    <Box background="white" borderRadius="large" padding={4}>
-                      {body}
-                    </Box>
+                  {sectionDescription && (
+                    <Text variant="medium">{sectionDescription}</Text>
                   )}
                 </Stack>
-              )
-            })}
-          </Stack>
-          <Box>
-            <Button
-              loading={calculating}
-              onClick={calculate}
-              icon={hasCalculated ? 'reload' : undefined}
-            >
-              {formatMessage(
-                hasCalculated ? messages.recalculate : messages.calculate,
               )}
-            </Button>
-          </Box>
-        </Stack>
-      </Box>
-      {!calculating && called && calculationError && (
-        <AlertMessage
-          type="error"
-          title={formatMessage(messages.errorOccurredTitle)}
-          message={formatMessage(messages.errorOccurredMessage)}
-        />
-      )}
-    </Stack>
+              <GridRow rowGap={3}>
+                {sectionFields.map(({ field, span, sectionField }) => (
+                  <GridColumn key={field.key} span={spanToGridColumn(span)}>
+                    <CalculatorFieldInput
+                      field={field}
+                      control={control}
+                      label={pickLocalizedText(
+                        sectionField.label,
+                        locale,
+                        field.label,
+                      )}
+                      locale={locale}
+                      placeholder={pickLocalizedText(
+                        sectionField.placeholder,
+                        locale,
+                      )}
+                      disabled={isSectionDisabled}
+                    />
+                  </GridColumn>
+                ))}
+              </GridRow>
+            </Stack>
+          )
+
+          if (!ownToggle) {
+            return <Fragment key={section.key}>{body}</Fragment>
+          }
+
+          return (
+            <Stack key={section.key} space={3}>
+              <ToggleSwitchCheckbox
+                label={pickLocalizedText(ownToggle.label, locale)}
+                checked={isOwnToggleOn}
+                onChange={(checked) =>
+                  setToggleStates((previous) => ({
+                    ...previous,
+                    [ownToggle.key]: checked,
+                  }))
+                }
+              />
+              {/* Revealed content sits on its own card, per the design. */}
+              {isOwnToggleOn && (
+                <Box background="white" borderRadius="large" padding={4}>
+                  {body}
+                </Box>
+              )}
+            </Stack>
+          )
+        })}
+      </Stack>
+    </Box>
   )
 }
 

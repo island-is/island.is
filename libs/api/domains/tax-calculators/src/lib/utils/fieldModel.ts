@@ -1,5 +1,5 @@
 import { CalculatorField } from '../models/field.model'
-import { FieldDefinition } from './parsing'
+import { FieldDefinition } from './fieldDefinition'
 
 export const buildFieldModels = (
   definitions: FieldDefinition[],

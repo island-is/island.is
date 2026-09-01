@@ -1,17 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
-  calculate: {
-    id: 'web.rsk.calculatorSlice:calculate',
-    defaultMessage: 'Reikna',
-    description: 'Texti á takka til að reikna',
-  },
-  recalculate: {
-    id: 'web.rsk.calculatorSlice:recalculate',
-    defaultMessage: 'Endurreikna',
-    description:
-      'Texti á takka til að endurreikna eftir að niðurstöður birtast',
-  },
   selectPlaceholder: {
     id: 'web.rsk.calculatorSlice:selectPlaceholder',
     defaultMessage: 'Veldu',
@@ -31,11 +20,6 @@ export const messages = defineMessages({
     id: 'web.rsk.calculatorSlice:errorOccurredTitle',
     defaultMessage: 'Villa kom upp',
     description: 'Titill þegar villa kemur upp',
-  },
-  errorOccurredMessage: {
-    id: 'web.rsk.calculatorSlice:errorOccurredMessage',
-    defaultMessage: 'Ekki tókst að sækja niðurstöður',
-    description: 'Skilaboð þegar villa kemur upp',
   },
   fieldsErrorMessage: {
     id: 'web.rsk.calculatorSlice:fieldsErrorMessage',
