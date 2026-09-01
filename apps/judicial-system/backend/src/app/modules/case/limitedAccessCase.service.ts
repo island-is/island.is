@@ -462,6 +462,8 @@ export const getInclude = (user?: TUser): Includeable[] => [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
         CaseFileCategory.APPEAL_COURT_RECORD,
         CaseFileCategory.COURT_RECORD,
