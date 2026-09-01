@@ -514,6 +514,18 @@ describe('normalizeRichTextHtml', () => {
         '<table><tbody><tr><td><p>outer</p><p>inner1</p><p>inner2</p></td></tr></tbody></table>',
       )
     })
+
+    it('keeps loose text next to elements when unwrapping a nested table', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<table><tbody><tr><td>' +
+            '<table><tbody><tr><td>before <p>middle</p> after</td></tr></tbody></table>' +
+            '</td></tr></tbody></table>',
+        ),
+      ).toBe(
+        '<table><tbody><tr><td><p>before </p><p>middle</p><p> after</p></td></tr></tbody></table>',
+      )
+    })
   })
 
   it('never leaves a style attribute in the output', () => {

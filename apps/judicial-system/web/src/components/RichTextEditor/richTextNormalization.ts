@@ -369,13 +369,18 @@ const normalizeTables = (doc: Document) => {
   ).reverse()) {
     const blocks: Element[] = []
     for (const cell of Array.from(inner.querySelectorAll('td, th'))) {
-      if (cell.children.length > 0) {
-        blocks.push(...Array.from(cell.children))
-      } else if (cell.textContent?.trim()) {
-        // A cell holding bare text keeps it via a paragraph wrapper.
-        const p = doc.createElement('p')
-        p.textContent = cell.textContent ?? ''
-        blocks.push(p)
+      for (const node of Array.from(cell.childNodes)) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          blocks.push(node as Element)
+        } else if (
+          node.nodeType === Node.TEXT_NODE &&
+          node.textContent?.trim()
+        ) {
+          // Loose cell text keeps its place via a paragraph wrapper.
+          const p = doc.createElement('p')
+          p.textContent = node.textContent
+          blocks.push(p)
+        }
       }
     }
     inner.replaceWith(...blocks)
