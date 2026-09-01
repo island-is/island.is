@@ -980,6 +980,36 @@ describe('addRichText layout', () => {
       doc.end()
     })
 
+    it('still draws a table whose accumulated indent exceeds the page width', () => {
+      const { doc, rects, frags } = createInstrumentedDoc()
+
+      // Two indent-10 wrappers accumulate 600pt of indentation — more than
+      // the 455pt writable width. The table must be pulled back and drawn,
+      // not silently dropped.
+      addRichText(
+        doc,
+        '<div class="indent-10"><div class="indent-10">' +
+          '<table><tbody><tr><td><p>efni</p></td></tr></tbody></table>' +
+          '</div></div>',
+        2,
+      )
+
+      const borders = strokes(rects)
+      expect(borders).toHaveLength(1)
+      expect(borders[0].x).toBeGreaterThanOrEqual(CONTENT_LEFT)
+      expect(borders[0].x).toBeLessThan(CONTENT_LEFT + CONTENT_WIDTH)
+      expect(borders[0].w).toBeGreaterThan(0)
+      // The sliver-wide cell chops the word across lines, so the fragments
+      // only spell it out together — and each starts inside the borders.
+      const cellFrags = frags.filter((f) => f.text.trim())
+      expect(cellFrags.map((f) => f.text).join('')).toContain('efni')
+      for (const frag of cellFrags) {
+        expect(frag.x).toBeGreaterThanOrEqual(borders[0].x)
+        expect(frag.x).toBeLessThan(borders[0].x + borders[0].w)
+      }
+      doc.end()
+    })
+
     it('sizes a row to its tallest cell', () => {
       const { doc, rects } = createInstrumentedDoc()
 

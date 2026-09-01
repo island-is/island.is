@@ -1205,12 +1205,24 @@ const renderTable = (
   fontSize: number,
   lineGap: number,
 ) => {
-  const leftX = doc.page.margins.left + indent
-  const tableWidth = doc.page.width - doc.page.margins.right - leftX
   const columnCount = Math.max(...table.rows.map((row) => row.cells.length))
-  if (columnCount <= 0 || tableWidth <= 0) return
+  if (columnCount <= 0) return
 
-  const columnWidth = tableWidth / columnCount
+  // Indentation accumulates through nested wrappers and can exceed the
+  // writable width. The table is pulled back toward the left margin rather
+  // than dropped, and every column keeps a drawable minimum width so cell
+  // text stays inside its borders.
+  const minColumnWidth = fontSize + 2 * TABLE_CELL_PADDING
+  const rightX = doc.page.width - doc.page.margins.right
+  const leftX = Math.max(
+    doc.page.margins.left,
+    Math.min(
+      doc.page.margins.left + indent,
+      rightX - columnCount * minColumnWidth,
+    ),
+  )
+  const tableWidth = rightX - leftX
+  const columnWidth = Math.max(tableWidth / columnCount, minColumnWidth)
   const innerWidth = columnWidth - 2 * TABLE_CELL_PADDING
   const metrics = getLineMetrics(doc, fontSize, lineGap)
   const pageBottomY = () => doc.page.height - doc.page.margins.bottom
