@@ -293,7 +293,9 @@ describe('ApplicationTranslationService', () => {
 
     it('rejects when a translation update fails so history is not committed', async () => {
       const firstUpdate = jest.fn().mockResolvedValue(undefined)
-      const secondUpdate = jest.fn().mockRejectedValue(new Error('update failed'))
+      const secondUpdate = jest
+        .fn()
+        .mockRejectedValue(new Error('update failed'))
       findAllTranslationsSpy.mockResolvedValue([
         {
           id: 'row-1',
@@ -320,18 +322,15 @@ describe('ApplicationTranslationService', () => {
         service.publishTranslations('test.ns', user),
       ).rejects.toThrow('update failed')
 
-      expect(createPublishSpy).toHaveBeenCalledWith(
-        expect.anything(),
-        { transaction: mockTransaction },
-      )
-      expect(firstUpdate).toHaveBeenCalledWith(
-        expect.anything(),
-        { transaction: mockTransaction },
-      )
-      expect(secondUpdate).toHaveBeenCalledWith(
-        expect.anything(),
-        { transaction: mockTransaction },
-      )
+      expect(createPublishSpy).toHaveBeenCalledWith(expect.anything(), {
+        transaction: mockTransaction,
+      })
+      expect(firstUpdate).toHaveBeenCalledWith(expect.anything(), {
+        transaction: mockTransaction,
+      })
+      expect(secondUpdate).toHaveBeenCalledWith(expect.anything(), {
+        transaction: mockTransaction,
+      })
     })
 
     it('rejects when an audit-log write fails so history is not committed', async () => {
@@ -436,7 +435,9 @@ describe('ApplicationTranslationService', () => {
       })
 
       const firstUpdate = jest.fn().mockResolvedValue(undefined)
-      const secondUpdate = jest.fn().mockRejectedValue(new Error('update failed'))
+      const secondUpdate = jest
+        .fn()
+        .mockRejectedValue(new Error('update failed'))
       findAllTranslationsSpy.mockResolvedValue([
         {
           id: 'row-1',
@@ -459,14 +460,12 @@ describe('ApplicationTranslationService', () => {
         service.rollbackToPublish('publish-id', 'test.ns', user),
       ).rejects.toThrow('update failed')
 
-      expect(createPublishSpy).toHaveBeenCalledWith(
-        expect.anything(),
-        { transaction: mockTransaction },
-      )
-      expect(firstUpdate).toHaveBeenCalledWith(
-        expect.anything(),
-        { transaction: mockTransaction },
-      )
+      expect(createPublishSpy).toHaveBeenCalledWith(expect.anything(), {
+        transaction: mockTransaction,
+      })
+      expect(firstUpdate).toHaveBeenCalledWith(expect.anything(), {
+        transaction: mockTransaction,
+      })
     })
 
     it('rejects when an audit-log write fails so history is not committed', async () => {
