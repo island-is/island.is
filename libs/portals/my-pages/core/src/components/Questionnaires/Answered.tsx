@@ -16,6 +16,9 @@ interface AnsweredProps {
   answers?: QuestionAnswer[]
 }
 
+// EL column types that can appear in the "columnId:type:value" encoding
+const TABLE_CELL_TYPES = ['string', 'number', 'date', 'datetime', 'bool', 'list']
+
 const isValidDate = (dateString: string): boolean => {
   const date = new Date(dateString)
 
@@ -49,13 +52,16 @@ export const Answered: FC<AnsweredProps> = ({ answers }) => {
   const decodeTableCell = (encoded: string) => {
     const parts = encoded.split(':')
     const columnId = parts[0] ?? ''
-    const cellType = parts.length >= 3 ? parts[1] : undefined
-    const rawValue =
-      parts.length >= 3
-        ? parts.slice(2).join(':')
-        : parts.length === 2
-        ? parts[1]
-        : encoded
+    // Legacy values may contain ':', so only treat the middle segment
+    // as a type when it is a known column type
+    const isTyped =
+      parts.length >= 3 && TABLE_CELL_TYPES.includes(parts[1])
+    const cellType = isTyped ? parts[1] : undefined
+    const rawValue = isTyped
+      ? parts.slice(2).join(':')
+      : parts.length >= 2
+      ? parts.slice(1).join(':')
+      : encoded
 
     let displayValue = rawValue
     if (cellType === 'bool' && (rawValue === 'true' || rawValue === 'false')) {

@@ -5,6 +5,16 @@ import { QuestionnaireInput } from '../../../dto/questionnaire.input'
 import { m } from '../../../utils/messages'
 import { Reply } from '../types'
 
+// EL column types that can appear in the "columnId:type:value" encoding
+const TABLE_CELL_TYPES = [
+  'string',
+  'number',
+  'date',
+  'datetime',
+  'bool',
+  'list',
+]
+
 /**
  * Maps a QuestionnaireInput to the Health Directorate submission format
  */
@@ -103,15 +113,17 @@ export const mapToElAnswer = (
             let columnType: string | undefined
             let value = ''
 
-            if (parts.length >= 3) {
+            // Legacy "columnId:value" cells may contain ':' in the value,
+            // so only treat the middle segment as a type when it is one
+            if (parts.length >= 3 && TABLE_CELL_TYPES.includes(parts[1])) {
               // New format: "columnId:type:value"
               columnId = parts[0]
               columnType = parts[1]
               value = parts.slice(2).join(':') // In case value contains ':'
-            } else if (parts.length === 2) {
+            } else if (parts.length >= 2) {
               // Old format: "columnId:value". Keep it for backward compatibility on dev lists
               columnId = parts[0]
-              value = parts[1]
+              value = parts.slice(1).join(':')
             }
 
             if (!columnData[columnId]) {
@@ -163,11 +175,15 @@ export const mapToElAnswer = (
               })
             } else if (
               columnType === 'number' ||
-              (inferType && !isNaN(parseFloat(value)) && value.trim() !== '')
+              (inferType &&
+                value.trim() !== '' &&
+                Number.isFinite(Number(value.trim())))
             ) {
-              const numericValue = parseFloat(value)
+              // Number() rejects partial parses like "12abc" that
+              // parseFloat would accept
+              const numericValue = Number(value.trim())
 
-              if (Number.isFinite(numericValue)) {
+              if (value.trim() !== '' && Number.isFinite(numericValue)) {
                 row.push({
                   questionId: columnId,
                   answer: numericValue,

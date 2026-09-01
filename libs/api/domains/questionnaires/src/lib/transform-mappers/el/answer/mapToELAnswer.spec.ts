@@ -300,6 +300,54 @@ describe('mapToElAnswer', () => {
       ])
     })
 
+    it('skips number cells with partially numeric values', () => {
+      const result = mapToElAnswer(
+        buildInput([
+          entry('70', AnswerOptionType.table, [
+            { value: '71:string:Lyf' },
+            { value: '75:number:12abc' },
+          ]),
+        ]),
+        formatMessage,
+      )
+      expect(result.replies).toEqual([
+        {
+          questionId: '70',
+          rows: [[{ questionId: '71', answer: 'Lyf' }]],
+        },
+      ])
+    })
+
+    it('treats a legacy value with colons as a string, not a typed cell', () => {
+      const result = mapToElAnswer(
+        buildInput([
+          entry('70', AnswerOptionType.table, [{ value: 'note:08:30' }]),
+        ]),
+        formatMessage,
+      )
+      expect(result.replies).toEqual([
+        {
+          questionId: '70',
+          rows: [[{ questionId: 'note', answer: '08:30' }]],
+        },
+      ])
+    })
+
+    it('keeps partially numeric legacy values as strings', () => {
+      const result = mapToElAnswer(
+        buildInput([
+          entry('70', AnswerOptionType.table, [{ value: '72:12abc' }]),
+        ]),
+        formatMessage,
+      )
+      expect(result.replies).toEqual([
+        {
+          questionId: '70',
+          rows: [[{ questionId: '72', answer: '12abc' }]],
+        },
+      ])
+    })
+
     it('omits the table reply when no row has any valid cell', () => {
       const result = mapToElAnswer(
         buildInput([
