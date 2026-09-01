@@ -154,18 +154,110 @@ export const MARKER_NONE_CLASS = 'marker-none'
 
 const MARKER_NONE_REGEX = /list-style-type\s*:\s*none/i
 const BACKGROUND_REGEX = /background(?:-color)?\s*:\s*([^;]+)/i
-const LEFT_OFFSET_REGEX = /(?:margin|padding)-left\s*:\s*([\d.]+)(pt|px)/i
+const LEFT_OFFSET_REGEX = /(?:margin|padding)-left\s*:\s*([\d.]+)(pt|px|in|cm)/i
 // Word's AutoFormat turns a Tab at the start of a paragraph into a first-line
 // indent, which reaches the clipboard as text-indent (in pt) — indenting a
 // multi-paragraph selection uses margin-left instead. It can be negative
 // (hanging indents), so the sign is captured and the offsets are summed.
-const TEXT_INDENT_REGEX = /text-indent\s*:\s*(-?[\d.]+)(pt|px)/i
+const TEXT_INDENT_REGEX = /text-indent\s*:\s*(-?[\d.]+)(pt|px|in|cm)/i
 const BOLD_REGEX = /font-weight\s*:\s*(?:bold|bolder|[6-9]00)/i
 const ITALIC_REGEX = /font-style\s*:\s*(?:italic|oblique)/i
 
 const offsetToPx = (offset: RegExpMatchArray): number => {
   const numeric = parseFloat(offset[1])
-  return offset[2].toLowerCase() === 'pt' ? numeric * (96 / 72) : numeric
+  switch (offset[2].toLowerCase()) {
+    case 'pt':
+      return numeric * (96 / 72)
+    case 'in':
+      return numeric * 96
+    case 'cm':
+      return numeric * (96 / 2.54)
+    default:
+      return numeric
+  }
+}
+
+const indentLevelFromElement = (el: Element): number => {
+  let level = 0
+  for (const className of Array.from(el.classList)) {
+    const parsed = levelFromIndentClass(className)
+    if (parsed !== null) {
+      level = Math.max(level, parsed)
+    }
+  }
+  return level
+}
+
+const setIndentLevelOnElement = (el: Element, level: number) => {
+  for (const className of Array.from(el.classList)) {
+    if (levelFromIndentClass(className) !== null) {
+      el.classList.remove(className)
+    }
+  }
+  if (level > 0) {
+    el.classList.add(indentClassFromLevel(level))
+  } else if (el.classList.length === 0) {
+    el.removeAttribute('class')
+  }
+}
+
+const addIndentLevelOnElement = (el: Element, delta: number) => {
+  if (delta <= 0) return
+  setIndentLevelOnElement(
+    el,
+    Math.min(MAX_INDENT_LEVEL, indentLevelFromElement(el) + delta),
+  )
+}
+
+// Word sometimes wraps an indented paragraph in a div/blockquote. The editor
+// schema only keeps indent on <p>, so hoist the class down and unwrap a lone
+// div wrapper — the same block indent TinyMCE kept on the paragraph itself.
+const hoistWrapperIndentToParagraph = (doc: Document) => {
+  for (const wrapper of Array.from(
+    doc.body.querySelectorAll('div, blockquote'),
+  )) {
+    const wrapperLevel = indentLevelFromElement(wrapper)
+    if (wrapperLevel === 0) continue
+
+    const paragraphs = Array.from(wrapper.querySelectorAll(':scope > p'))
+    if (paragraphs.length !== 1) continue
+
+    const paragraph = paragraphs[0]
+    setIndentLevelOnElement(
+      paragraph,
+      Math.min(
+        MAX_INDENT_LEVEL,
+        wrapperLevel + indentLevelFromElement(paragraph),
+      ),
+    )
+    setIndentLevelOnElement(wrapper, 0)
+
+    if (
+      wrapper.tagName === 'DIV' &&
+      wrapper.childNodes.length === 1 &&
+      wrapper.firstChild === paragraph
+    ) {
+      wrapper.replaceWith(paragraph)
+    }
+  }
+}
+
+// When Word emits literal Tab characters (common for 2+ tabs at line start)
+// instead of a larger text-indent, map each leading tab to one indent step.
+// TinyMCE's paste filter retained text-indent CSS; this covers the remainder.
+const convertLeadingTabsToIndent = (doc: Document) => {
+  for (const paragraph of Array.from(doc.body.querySelectorAll('p'))) {
+    const walker = doc.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT)
+    const firstText = walker.nextNode()
+    if (!firstText) continue
+
+    const content = firstText.textContent ?? ''
+    const match = content.match(/^\t+/)
+    if (!match) continue
+
+    addIndentLevelOnElement(paragraph, match[0].length)
+    firstText.textContent = content.slice(match[0].length)
+  }
 }
 
 // LI is deliberately absent: a list item's level is expressed by how deeply it
@@ -471,6 +563,9 @@ const normalizeDoc = (doc: Document) => {
       item.removeAttribute('class')
     }
   }
+
+  hoistWrapperIndentToParagraph(doc)
+  convertLeadingTabsToIndent(doc)
 }
 
 // --- External-paste pipeline -----------------------------------------------

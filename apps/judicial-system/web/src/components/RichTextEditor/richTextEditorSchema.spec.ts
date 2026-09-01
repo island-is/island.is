@@ -1,6 +1,7 @@
 import { Editor } from '@tiptap/core'
 
 import { buildEditorExtensions } from './richTextEditorExtensions'
+import { normalizeRichTextHtml } from './richTextNormalization'
 
 // The schema is the paste whitelist: whatever it cannot represent is dropped
 // at parse time and can never be serialized towards the API. These tests
@@ -16,6 +17,17 @@ const roundTrip = (html: string): string => {
 }
 
 describe('rich text editor schema', () => {
+  it('serializes an empty document as markup that normalizes to an empty string', () => {
+    const editor = new Editor({
+      extensions: buildEditorExtensions(''),
+      content: '',
+    })
+    const html = editor.getHTML()
+    editor.destroy()
+    expect(html).toMatch(/<p/)
+    expect(normalizeRichTextHtml(html)).toBe('')
+  })
+
   describe('representable content survives', () => {
     it('keeps paragraphs, bold and italic', () => {
       expect(roundTrip('<p>a <strong>b</strong> <em>c</em></p>')).toBe(

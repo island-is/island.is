@@ -20,7 +20,6 @@ import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/ty
 import {
   BlueBox,
   CheckboxList,
-  hasVisibleContent,
   IndictmentInfo,
   RichTextEditor,
   SectionHeading,
@@ -650,7 +649,7 @@ export const IndictmentCount: FC<Props> = ({
             onChange={(html) => {
               removeErrorMessageIfValid(
                 ['empty'],
-                hasVisibleContent(html) ? html : '',
+                html,
                 incidentDescriptionErrorMessage,
                 setIncidentDescriptionErrorMessage,
               )
@@ -665,23 +664,13 @@ export const IndictmentCount: FC<Props> = ({
               onChange(indictmentCount.id, { incidentDescription: html })
             }
             onBlur={(html) => {
-              // Validation and persistence share one emptiness notion: an
-              // entity-only document (e.g. a lone &nbsp;) is empty, while a
-              // table counts as content even before anything is typed into
-              // it — it is stored (a '' would sync back and wipe the table
-              // the user just inserted), so it must not flag as missing
-              // either.
-              const storedValue = hasVisibleContent(html) ? html : ''
-
               validateAndSetErrorMessage(
                 ['empty'],
-                storedValue,
+                html,
                 setIncidentDescriptionErrorMessage,
               )
 
-              onChange(indictmentCount.id, {
-                incidentDescription: storedValue,
-              })
+              onChange(indictmentCount.id, { incidentDescription: html })
             }}
             required
           />

@@ -1,7 +1,8 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useMemo, useRef } from 'react'
+import { Markdown } from '@island.is/shared/components'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import {
@@ -33,6 +34,7 @@ export type SubCriteriaFormValues = Record<string, SubCriterion[]>
 export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   setBeforeSubmitCallback,
+  setSubmitButtonDisabled,
 }) => {
   const { formatMessage } = useLocale()
   const { content, loading, hasError, refetch } = useDraftQuery<{
@@ -53,6 +55,40 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     [],
   )
 
+  // Criteria whose sub-criteria weights do not add up to the parent's weight.
+  // Filled by the panels themselves rather than derived here — see the note on
+  // CriterionPanel's onWeightMismatchChange for why the watching stays down there.
+  const [criteriaWithWeightMismatch, setCriteriaWithWeightMismatch] = useState<
+    Set<string>
+  >(() => new Set<string>())
+
+  const handleWeightMismatchChange = useCallback(
+    (criterionId: string, hasMismatch: boolean) => {
+      setCriteriaWithWeightMismatch((prev) => {
+        // Same set identity when the verdict has not flipped, so a keystroke
+        // that leaves a panel just as unbalanced as it already was does not
+        // re-render this screen and every panel under it.
+        if (prev.has(criterionId) === hasMismatch) return prev
+        const next = new Set(prev)
+        if (hasMismatch) next.add(criterionId)
+        else next.delete(criterionId)
+        return next
+      })
+    },
+    [],
+  )
+
+  // An unbalanced yfirviðmið cannot be scored at all, and the panel's own
+  // message already names which one is off — so block rather than let it pass.
+  useEffect(() => {
+    if (!setSubmitButtonDisabled) return
+    setSubmitButtonDisabled(criteriaWithWeightMismatch.size > 0)
+    // The shell keeps this flag on its Screen component, which is NOT remounted
+    // between screens — a disabled button left set here would follow the
+    // applicant onto the next step with nothing there able to clear it.
+    return () => setSubmitButtonDisabled(false)
+  }, [setSubmitButtonDisabled, criteriaWithWeightMismatch])
+
   // Diffed against the final form value at Continue time: missing => REMOVE, unseen => CREATE.
   const originalSubCriterionIds = useRef<Set<string>>(new Set())
   const originalStepIds = useRef<Set<string>>(new Set())
@@ -66,12 +102,9 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     [content],
   )
 
-  // Job criteria match the catalog on parentTitle because their four titles are
-  // seeded read-only constants that mirror the catalog's Yfirviðmið. Personal
-  // criterion titles are user-authored free text, so the same match finds
-  // nothing — the catalog groups every employer-authored entry under several
-  // distinct parentTitles (Aukaábyrgð, Þekking og reynsla, Færni, Frammistaða)
-  // and none of them is what the applicant typed. Select on the type instead.
+  // Job criteria match on parentTitle: their four titles are seeded constants
+  // mirroring the catalog's Yfirviðmið. Personal titles are user-authored free
+  // text that matches no parentTitle, so those select on type instead.
   const personalCatalogEntries = useMemo(
     () => catalogEntries.filter((e) => e.criterionType === 'PERSONAL'),
     [catalogEntries],
@@ -161,6 +194,12 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           subCriteria: subCriteriaCommands,
           steps: stepCommands,
         })
+        // Baseline moves with the draft, or a second flush from the same mount
+        // re-sends its REMOVEs against rows DMR already deleted and 404s.
+        originalSubCriterionIds.current = new Set(allGroups.map((sc) => sc.id))
+        originalStepIds.current = new Set(
+          allGroups.flatMap((sc) => sc.steps.map((step) => step.id)),
+        )
         // Silent: about to navigate away, so don't flash a loading state.
         await refetch({ silent: true })
       } catch {
@@ -186,11 +225,13 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             <Text variant="h4" marginBottom={1}>
               {formatMessage(messages.report.subCriteria.jobFactorGroupTitle)}
             </Text>
-            <Text marginBottom={3}>
-              {formatMessage(messages.report.subCriteria.jobFactorGroupIntro)}
-            </Text>
+            <Box marginBottom={3}>
+              <Markdown>
+                {formatMessage(messages.report.subCriteria.jobFactorGroupIntro)}
+              </Markdown>
+            </Box>
             <Stack space={3}>
-              {jobCriteria.map((criterion, i) => (
+              {jobCriteria.map((criterion) => (
                 <CriterionPanel
                   key={criterion.id}
                   criterionId={criterion.id}
@@ -200,7 +241,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   catalogEntries={catalogEntries.filter(
                     (e) => e.parentTitle === criterion.title,
                   )}
-                  startExpanded={i === 0}
+                  onWeightMismatchChange={handleWeightMismatchChange}
                 />
               ))}
             </Stack>
@@ -213,13 +254,15 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   messages.report.subCriteria.personalFactorGroupTitle,
                 )}
               </Text>
-              <Text marginBottom={3}>
-                {formatMessage(
-                  messages.report.subCriteria.personalFactorGroupIntro,
-                )}
-              </Text>
+              <Box marginBottom={3}>
+                <Markdown>
+                  {formatMessage(
+                    messages.report.subCriteria.personalFactorGroupIntro,
+                  )}
+                </Markdown>
+              </Box>
               <Stack space={3}>
-                {personalCriteria.map((criterion, i) => (
+                {personalCriteria.map((criterion) => (
                   <CriterionPanel
                     key={criterion.id}
                     criterionId={criterion.id}
@@ -227,7 +270,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     criterionTitle={criterion.title}
                     criterionWeight={String(criterion.weight)}
                     catalogEntries={personalCatalogEntries}
-                    startExpanded={i === 0}
+                    onWeightMismatchChange={handleWeightMismatchChange}
                   />
                 ))}
               </Stack>

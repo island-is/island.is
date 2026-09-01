@@ -129,7 +129,10 @@ const RichTextEditor = ({
     immediatelyRender: false,
     editorProps,
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML()
+      // Every read goes through normalizeRichTextHtml — same as TinyMCE's
+      // GetContent hook — so blank documents serialize as '' and required-field
+      // validation sees an empty string, not '<p></p>'.
+      const html = normalizeRichTextHtml(editor.getHTML())
       onChange?.(html)
       if (!disabled) {
         debouncedSave(html, onDebouncedChange)
@@ -138,7 +141,7 @@ const RichTextEditor = ({
     onFocus: () => setFocused(true),
     onBlur: ({ editor }) => {
       setFocused(false)
-      onBlur?.(editor.getHTML())
+      onBlur?.(normalizeRichTextHtml(editor.getHTML()))
       // Blur already persisted; drop any pending debounced save.
       debouncedSave.cancel()
     },
@@ -149,15 +152,15 @@ const RichTextEditor = ({
   }, [editor, disabled])
 
   // Sync externally-driven value changes (e.g. autofill regeneration) into
-  // the editor. Editor-originated changes round-trip through onChange and
-  // match getHTML(), so this only writes on genuinely external updates.
+  // the editor. Editor-originated changes round-trip through onChange as
+  // normalized HTML, so this only writes on genuinely external updates.
   // A focused editor is left alone so the user's typing isn't clobbered.
   useEffect(() => {
     if (
       !editor ||
       value === undefined ||
       editor.isFocused ||
-      value === editor.getHTML()
+      value === normalizeRichTextHtml(editor.getHTML())
     ) {
       return
     }

@@ -16,6 +16,12 @@ export enum States {
   IN_REVIEW = 'inReview',
   APPROVED = 'approved',
   DENIED = 'denied',
+  // The receipt state: the report is in, the úrbótaáætlun is not. Its whole
+  // form is the "Sending móttekin" screen, and PostponeReceiptCloser moves the
+  // application on to POSTPONED as the applicant leaves it. A state rather than
+  // an answer flag so the receipt cannot be reached again — it belongs to a
+  // form the applicant is no longer in.
+  POSTPONE_RECEIVED = 'postponeReceived',
   POSTPONED = 'postponed',
   NOT_ALLOWED = 'notAllowed',
   DRAFT_RETRY = 'draftRetry',
@@ -53,6 +59,15 @@ export enum ApiActions {
   listDraftOutlierGroups = 'listDraftOutlierGroups',
 }
 
+// Screen ids the form builders declare and other screens navigate to.
+// `goToScreen` and `backId` fail silently on an unknown id, so the definitions
+// and the references share one source and a rename becomes a compile error.
+export const ScreenIds = {
+  criteria: 'criteriaMultiField',
+  analysisOverview: 'salaryAnalysisOverviewMultiField',
+  improvementPlan: 'salaryAnalysisImprovementPlanMultiField',
+} as const
+
 const DOE_NAMESPACE = 'DirectorateOfEquality'
 
 // Builds the `actionId` string the updateApplicationExternalData mutation expects,
@@ -72,6 +87,10 @@ export const DRAFT_EMPLOYEES_PAGE_SIZE = 25
 // otherwise pass validation and inflate reglulegt tímakaup ~173x.
 export const PAID_HOURS_MIN = 4
 export const PAID_HOURS_MAX = 750
+
+// How far out "Dagsetning úrbóta" may be set, mirrored from the API: past this
+// the date belongs to a reporting period the report can't speak for.
+export const REMEDY_DATE_MAX_YEARS_AHEAD = 3
 
 // Duplicated from the client lib rather than imported — importing it as a value
 // pulls in that package's NestJS module (backend-only deps), breaking the frontend bundle.

@@ -146,6 +146,11 @@ export class FieldSettings {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
+  isAddressRequired?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
   isPhoneRequired?: boolean
 
   @IsOptional()

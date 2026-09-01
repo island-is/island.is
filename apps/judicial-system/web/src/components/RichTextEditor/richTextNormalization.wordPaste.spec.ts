@@ -128,6 +128,12 @@ describe('normalizePastedHtml — Word artifacts', () => {
       '<p class="indent-1">Inndregið</p>',
     )
   })
+
+  it('converts literal leading tabs in pasted paragraphs to indent classes', () => {
+    expect(normalizePastedHtml('<p>\t\tInndregið</p>')).toBe(
+      '<p class="indent-2">Inndregið</p>',
+    )
+  })
 })
 
 describe('normalizePastedHtml — tables', () => {

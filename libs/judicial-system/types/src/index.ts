@@ -91,6 +91,7 @@ export {
   HashAlgorithm,
   partyAppealFileCategories,
   isAppealFileDeletionLocked,
+  isRulingOrderWithoutDocument,
   PoliceFileTypeCode,
 } from './lib/file'
 

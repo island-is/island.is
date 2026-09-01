@@ -57,6 +57,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
   const hasHealthScope = !!userInfo?.scopes?.includes(ApiScope.health)
 
   const { data, loading, error } = useGetHealthConversationsQuery({
+    fetchPolicy: 'network-only',
     variables: { input: {} },
     skip: !hasHealthScope,
   })
@@ -160,6 +161,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                 >
                   <ConversationAvatar
                     variant="organization"
+                    tone={unread ? 'light' : 'tinted'}
                     logoUrl={item.organization?.logoUrl ?? undefined}
                   />
                   <Box flexGrow={1} overflow="hidden">
