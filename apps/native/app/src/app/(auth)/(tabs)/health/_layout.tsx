@@ -82,10 +82,7 @@ export default function HealthLayout() {
           }),
         }}
       />
-      <Stack.Screen
-        name="questionnaires/[id]"
-        options={modalScreenOptions}
-      />
+      <Stack.Screen name="questionnaires/[id]" options={modalScreenOptions} />
       {/* New health screen */}
       <Stack.Screen
         name="medicine/index"

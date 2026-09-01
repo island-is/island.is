@@ -152,7 +152,11 @@ export default function QuestionnaireDetailScreen() {
 
   return (
     <>
-      <StackScreen closeable networkStatus={networkStatus} options={{ title: '' }} />
+      <StackScreen
+        closeable
+        networkStatus={networkStatus}
+        options={{ title: '' }}
+      />
       <ScrollView
         style={{ flex: 1 }}
         refreshControl={
@@ -164,61 +168,62 @@ export default function QuestionnaireDetailScreen() {
         ) : (
           <>
             <Content>
-            <Typography variant="heading2">{title}</Typography>
-            {base?.description ? (
-              <Typography variant="body">{base.description}</Typography>
-            ) : null}
-            <View
-              style={
-                base?.description ? { marginTop: theme.spacing[1] } : undefined
-              }
-            >
-              <ButtonRow>
-                {(isNotAnswered || isDraft) && (
-                  <Button
-                    title={intl.formatMessage({
-                      id: isDraft
-                        ? 'health.questionnaires.action.continue-draft'
-                        : 'health.questionnaires.action.answer',
-                    })}
-                    onPress={onAnswer}
-                    isFilledUtilityButton
-                    icon={externalLinkIcon}
-                    ellipsis
-                    // Match the outlined button's 1px border box so both
-                    // buttons render at the same height.
-                    style={{ borderWidth: 1, borderColor: 'transparent' }}
-                  />
-                )}
-                {!isDraft && canSubmitAgain && (
-                  <Button
-                    title={intl.formatMessage({
-                      id: 'health.questionnaires.action.answer-again',
-                    })}
-                    onPress={onAnswer}
-                    isFilledUtilityButton
-                    icon={externalLinkIcon}
-                    ellipsis
-                    // Match the outlined button's 1px border box so both
-                    // buttons render at the same height.
-                    style={{ borderWidth: 1, borderColor: 'transparent' }}
-                  />
-                )}
-                {(isAnswered || isDraft) && hasSubmissions && (
-                  <Button
-                    title={intl.formatMessage({
-                      id: 'health.questionnaires.action.view-answer',
-                    })}
-                    onPress={onView}
-                    isUtilityButton
-                    isOutlined
-                    icon={externalLinkIcon}
-                    ellipsis
-                  />
-                )}
-              </ButtonRow>
-            </View>
-
+              <Typography variant="heading2">{title}</Typography>
+              {base?.description ? (
+                <Typography variant="body">{base.description}</Typography>
+              ) : null}
+              <View
+                style={
+                  base?.description
+                    ? { marginTop: theme.spacing[1] }
+                    : undefined
+                }
+              >
+                <ButtonRow>
+                  {(isNotAnswered || isDraft) && (
+                    <Button
+                      title={intl.formatMessage({
+                        id: isDraft
+                          ? 'health.questionnaires.action.continue-draft'
+                          : 'health.questionnaires.action.answer',
+                      })}
+                      onPress={onAnswer}
+                      isFilledUtilityButton
+                      icon={externalLinkIcon}
+                      ellipsis
+                      // Match the outlined button's 1px border box so both
+                      // buttons render at the same height.
+                      style={{ borderWidth: 1, borderColor: 'transparent' }}
+                    />
+                  )}
+                  {!isDraft && canSubmitAgain && (
+                    <Button
+                      title={intl.formatMessage({
+                        id: 'health.questionnaires.action.answer-again',
+                      })}
+                      onPress={onAnswer}
+                      isFilledUtilityButton
+                      icon={externalLinkIcon}
+                      ellipsis
+                      // Match the outlined button's 1px border box so both
+                      // buttons render at the same height.
+                      style={{ borderWidth: 1, borderColor: 'transparent' }}
+                    />
+                  )}
+                  {(isAnswered || isDraft) && hasSubmissions && (
+                    <Button
+                      title={intl.formatMessage({
+                        id: 'health.questionnaires.action.view-answer',
+                      })}
+                      onPress={onView}
+                      isUtilityButton
+                      isOutlined
+                      icon={externalLinkIcon}
+                      ellipsis
+                    />
+                  )}
+                </ButtonRow>
+              </View>
             </Content>
 
             <InputRow>
