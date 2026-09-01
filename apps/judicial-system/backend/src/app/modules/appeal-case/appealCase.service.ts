@@ -773,7 +773,7 @@ export class AppealCaseService {
 
     const appealedAt = nowFactory()
 
-    const appealCase =
+    let appealCase =
       existingAppealCase ??
       (await this.appealCaseRepositoryService.create(
         theCase.id,
@@ -792,7 +792,7 @@ export class AppealCaseService {
     // appellant. Only from WITHDRAWN: once Landsréttur has received the appeal a
     // late appellant is its own problem, and must not reset the state under it.
     if (existingAppealCase?.appealState === AppealCaseState.WITHDRAWN) {
-      await this.appealCaseRepositoryService.update(
+      appealCase = await this.appealCaseRepositoryService.update(
         existingAppealCase.id,
         {
           appealState: AppealCaseState.APPEALED,

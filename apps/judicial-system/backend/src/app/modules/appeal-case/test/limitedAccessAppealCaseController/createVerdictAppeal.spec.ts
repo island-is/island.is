@@ -295,12 +295,20 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       appealState: AppealCaseState.WITHDRAWN,
       appealDate: new Date('2026-06-02T09:00:00Z'),
     } as AppealCase
+    const reactivatedAppealCase = {
+      ...withdrawnAppealCase,
+      appealState: AppealCaseState.APPEALED,
+      appealDate: now,
+    } as AppealCase
 
     let then: Then
 
     beforeEach(async () => {
       ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
         [withdrawnAppealCase],
+      )
+      ;(mockAppealCaseRepositoryService.update as jest.Mock).mockResolvedValue(
+        reactivatedAppealCase,
       )
       ;(
         mockAppealEventLogRepositoryService.findAll as jest.Mock
@@ -341,6 +349,12 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         }),
         { transaction },
       )
+    })
+
+    // Returning the row as it was read would tell the client the appeal it just
+    // filed is withdrawn.
+    it('should return the reactivated appeal case, not the stale one', () => {
+      expect(then.result).toBe(reactivatedAppealCase)
     })
   })
 
