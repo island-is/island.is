@@ -1,4 +1,4 @@
-import { buildForm } from '@island.is/application/core'
+import { buildForm, getValueViaPath } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
@@ -10,9 +10,13 @@ export const inReviewForm = buildForm({
   mode: FormModes.IN_PROGRESS,
   children: [
     buildFormConclusionSection({
+      multiFieldTitle: messages.inReview.formTitle,
       sectionTitle: messages.inReview.sectionTitle,
       tabTitle: messages.inReview.sectionTitle,
-      alertTitle: messages.inReview.alertTitle,
+      alertTitle: (application) =>
+        getValueViaPath<boolean>(application.answers, 'hasBeenRevised') === true
+          ? messages.inReview.alertTitleRevised
+          : messages.inReview.alertTitle,
       expandableIntro: messages.inReview.expandableIntro,
       expandableDescription: messages.inReview.expandableDescription,
     }),

@@ -443,6 +443,11 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isArraignmentSummonsSkipped?: boolean
+
+  @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly penalties?: string
 

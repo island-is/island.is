@@ -17,11 +17,12 @@ import {
   DraftLoadingState,
 } from '../../components/DraftScreenState'
 import { messages } from '../../lib/messages'
-import { ApiActions, draftActionId } from '../../utils/constants'
+import { ApiActions, draftActionId, States } from '../../utils/constants'
+import { toDateInputValue } from '../../utils/dates'
 import {
   buildOutlierClearCommands,
   buildOutlierSyncCommands,
-  isOutlierGroupComplete,
+  isOutlierGroupSubmittable,
   outlierGroupsWithMembers,
   unassignedOutlierOrdinals,
   withFallbackOutlierGroupNames,
@@ -33,11 +34,7 @@ import {
   navigationAnswersForAnalysisResult,
   type AnalysisExternalData,
 } from '../../utils/salaryAnalysisNavigation'
-import type {
-  DraftOutlierGroupDto,
-  ReportEmployeeDto,
-  ReportEmployeeRoleDto,
-} from '../../utils/types'
+import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQueries } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
@@ -46,6 +43,10 @@ import { OutlierGroupPanel } from './OutlierGroupPanel'
 interface Props extends FieldBaseProps {
   field: CustomField
 }
+
+// Shared fallback identity for the two group watches below: `?? []` would mint
+// a new array on every render, and the plan mirror's effect keys on that value.
+const NO_GROUPS: OutlierGroupAnswer[] = []
 
 type DraftOutlierFormValues = {
   salaryAnalysis: {
@@ -65,19 +66,21 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     field?.props && typeof field.props['hidePostponeCheckbox'] === 'boolean'
       ? (field.props['hidePostponeCheckbox'] as boolean)
       : false
-  const isDraftPhase = !hidePostponeCheckbox
+  // Not derived from hidePostponeCheckbox: that prop says whether to render a
+  // checkbox, while this decides whether the analysis is ever recomputed. The
+  // state is what actually governs that — DRAFT owns the live draft, the review
+  // states own the submitted snapshot — and it is also what decides which draft
+  // providers the role grants.
+  const isDraftPhase = application.state === States.DRAFT
   const { formatMessage, lang: locale } = useLocale()
-  // All three reads in one mutation — see the batching note on useDraftQueries.
+  // Both reads in one mutation — see the batching note on useDraftQueries.
   //
-  // All three are also granted to the DRAFT role only, hence the shared
+  // Both are also granted to the DRAFT role only, hence the shared
   // `enabled`: both review states (POSTPONED and DRAFT_RETRY) grant just the
   // analysis and comment providers, and the controller rejects the whole
   // mutation on the first actionId the role does not hold. They fall back to
   // the persisted snapshot instead, which is correct there — the draft is
   // already submitted, so there is nothing for it to be stale against.
-  //
-  // Roles are in the group because they carry the job title; ReportEmployeeDto
-  // only carries the role's id.
   const {
     contents,
     loading: draftLoading,
@@ -86,19 +89,16 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   } = useDraftQueries<{
     draftOutlierGroups: { groups: DraftOutlierGroupDto[] }
     draftEmployees: { employees: ReportEmployeeDto[] }
-    draftRoles: { roles: ReportEmployeeRoleDto[] }
   }>(
     application,
     {
       draftOutlierGroups: draftActionId(ApiActions.listDraftOutlierGroups),
       draftEmployees: draftActionId(ApiActions.listDraftEmployees),
-      draftRoles: draftActionId(ApiActions.listDraftRoles),
     },
     { enabled: isDraftPhase },
   )
   const outlierGroupsContent = contents.draftOutlierGroups
   const employeesContent = contents.draftEmployees
-  const rolesContent = contents.draftRoles
   const content = useMemo(
     () =>
       outlierGroupsContent && employeesContent
@@ -187,73 +187,111 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     }
   }, [application.id, locale, updateApplicationExternalData])
 
-  // Only when arriving without a result — e.g. straight into the POSTPONED
-  // review, where nothing has been analysed in this session yet.
+  // Draft phase only. The review states seed from the stored snapshot — the
+  // analysis the report was submitted with, and the one the úrbótaáætlun
+  // explains — so recomputing there would replace what the plan was written
+  // against, and resetReviewed would clear outlierPlanReviewed underneath the
+  // applicant.
   //
-  // Held until the draft group has settled so the two don't overlap:
-  // updateApplicationExternalData merges its results onto a snapshot of the
-  // whole externalData column taken before its providers run, so two calls in
-  // flight together lose whichever keys the loser added (see useDraftQueries).
-  // In the review states draftLoading is false from the first render — nothing
-  // is fetched there — so this waits on nothing.
+  // Held until the draft group has settled as well, so the two calls never
+  // overlap: updateApplicationExternalData merges its results onto a snapshot
+  // of the whole externalData column taken before its providers run, so two
+  // calls in flight together lose whichever keys the loser added (see
+  // useDraftQueries).
   useEffect(() => {
-    if (result || draftLoading) return
+    if (!isDraftPhase || result || draftLoading) return
     void handleAnalyze()
-  }, [draftLoading, handleAnalyze, result])
+  }, [draftLoading, handleAnalyze, isDraftPhase, result])
 
-  useSeedOnce(isDraftPhase && Boolean(content), () => {
-    if (!content) return
+  // The draft stores members by employee id, the answers by ordinal — so the
+  // employee list is what bridges the two, and both seeds below need the same
+  // crossing.
+  const outlierGroupAnswersFromDraft = useCallback((): OutlierGroupAnswer[] => {
+    if (!content) return []
     const employeeOrdinalById: Record<string, number> = Object.fromEntries(
       content.employees.map((e) => [e.id, e.ordinal]),
     )
+    return content.outlierGroups.map((g) => ({
+      id: g.id,
+      name: g.name ?? '',
+      reason: g.reason ?? '',
+      action: g.action ?? '',
+      // Date-only on DMR, but an ISO instant by the time it has been through
+      // the generated client's response transformer and externalData's JSON
+      // round-trip — normalised back to what the picker reads.
+      remedyDate: toDateInputValue(g.remedyDate),
+      signatureName: g.signatureName ?? '',
+      signatureRole: g.signatureRole ?? '',
+      employeeOrdinals: g.memberEmployeeIds
+        .map((id) => employeeOrdinalById[id])
+        .filter((o): o is number => o !== undefined),
+    }))
+  }, [content])
+
+  useSeedOnce(isDraftPhase && Boolean(content), () => {
+    if (!content) return
     draftForm.reset({
-      salaryAnalysis: {
-        outlierGroups: content.outlierGroups.map((g) => ({
-          id: g.id,
-          name: g.name ?? '',
-          reason: g.reason ?? '',
-          action: g.action ?? '',
-          signatureName: g.signatureName ?? '',
-          signatureRole: g.signatureRole ?? '',
-          employeeOrdinals: g.memberEmployeeIds
-            .map((id) => employeeOrdinalById[id])
-            .filter((o): o is number => o !== undefined),
-        })),
-      },
+      salaryAnalysis: { outlierGroups: outlierGroupAnswersFromDraft() },
     })
   })
-
-  const roleTitleForOrdinal = useMemo(() => {
-    const titleByRoleId = new Map(
-      (rolesContent?.roles ?? []).map((role) => [role.id, role.title]),
-    )
-    const titleByOrdinal = new Map(
-      (employeesContent?.employees ?? []).map((employee) => [
-        employee.ordinal,
-        titleByRoleId.get(employee.reportEmployeeRoleId),
-      ]),
-    )
-    return (ordinal: number) => titleByOrdinal.get(ordinal)
-  }, [employeesContent, rolesContent])
 
   const draftOutlierGroups =
     useWatch<DraftOutlierFormValues, 'salaryAnalysis.outlierGroups'>({
       name: 'salaryAnalysis.outlierGroups',
       control: draftForm.control,
-    }) ?? []
+    }) ?? NO_GROUPS
   const ambientOutlierGroups =
     (useWatch({
       name: 'salaryAnalysis.outlierGroups',
       control: ambientControl,
-    }) as OutlierGroupAnswer[] | undefined) ?? []
+    }) as OutlierGroupAnswer[] | undefined) ?? NO_GROUPS
   const outlierGroups = isDraftPhase ? draftOutlierGroups : ambientOutlierGroups
+
+  // DRAFT keeps the plan in the backend draft, and the form shell freezes its
+  // copy of externalData at mount — so the overview screen, which reads
+  // answers, has no way to see the plan otherwise. setValue only, deliberately:
+  // no ANSWER dispatch per keystroke, and the screen's own submit carries these
+  // values into both the persisted answers and the shell's copy (see
+  // answerAndGoToNextScreen). The same mechanism the navigation flags rely on.
+  useEffect(() => {
+    if (!isDraftPhase) return
+    setAmbientValue('salaryAnalysis.outlierGroups', draftOutlierGroups)
+  }, [draftOutlierGroups, isDraftPhase, setAmbientValue])
+
+  // The mirror above is what puts a DRAFT-phase plan into the answers, and it
+  // only exists as of the postpone-flow change. Applications that left DRAFT
+  // before it carry their groups on the stored draft snapshot alone, so
+  // DRAFT_RETRY — which reads the plan from answers and never seeds from the
+  // draft — would open an empty editor over a plan that exists, and
+  // reviewOutlierPlanIsSubmittable would then refuse the submit.
+  //
+  // DRAFT_RETRY only, deliberately. POSTPONED is reached solely by postponing,
+  // which clears the groups off the draft on the way out (see the isPostponed
+  // branch in beforeSubmit) precisely so the plan is written from scratch there
+  // — seeding it from a snapshot taken before that clear would resurrect a plan
+  // the applicant chose to defer.
+  useSeedOnce(
+    application.state === States.DRAFT_RETRY &&
+      Boolean(content) &&
+      ambientOutlierGroups.length === 0,
+    () => {
+      const groups = outlierGroupAnswersFromDraft()
+      if (groups.length === 0) return
+      setAmbientValue('salaryAnalysis.outlierGroups', groups)
+    },
+  )
+
   const currentOutliers = useMemo(() => result?.outliers ?? [], [result])
   const hasMinimumSetOutliers = currentOutliers.length > 0
   const unassignedOrdinals = useMemo(
     () => unassignedOutlierOrdinals(currentOutliers, outlierGroups),
     [currentOutliers, outlierGroups],
   )
-  const groupsComplete = outlierGroups.every(isOutlierGroupComplete)
+  // Not memoised: the window this checks against moves with the clock, and the
+  // gate has to notice a remedyDate that went stale while the form sat open.
+  const groupsComplete = outlierGroups.every((group) =>
+    isOutlierGroupSubmittable(group),
+  )
   const outlierPlanReviewed =
     hasMinimumSetOutliers &&
     (isPostponed || (unassignedOrdinals.length === 0 && groupsComplete))
@@ -425,25 +463,54 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
             formatMessage(messages.salaryAnalysis.results.analyzeError)
           }
         />
+        {isDraftPhase && (
+          <Box marginTop={2}>
+            <Button
+              variant="ghost"
+              size="small"
+              icon="reload"
+              onClick={handleAnalyze}
+              disabled={isAnalyzing}
+            >
+              {formatMessage(messages.salaryAnalysis.results.recalculateButton)}
+            </Button>
+          </Box>
+        )}
+      </Box>
+    )
+  }
+
+  if (isAnalyzing || (!result && isDraftPhase)) {
+    return (
+      <Box display="flex" justifyContent="center" paddingY={5}>
+        <LoadingDots />
+      </Box>
+    )
+  }
+
+  // The review states never fetch on their own, so a missing snapshot is
+  // terminal there rather than pending — it needs the manual escape hatch, not
+  // a spinner nothing will resolve.
+  if (!result) {
+    return (
+      <Box marginBottom={3}>
+        <AlertMessage
+          type="info"
+          title={formatMessage(messages.salaryAnalysis.results.unknownTitle)}
+          message={formatMessage(
+            messages.salaryAnalysis.results.noAnalysisMessage,
+          )}
+        />
         <Box marginTop={2}>
           <Button
             variant="ghost"
             size="small"
             icon="reload"
             onClick={handleAnalyze}
-            disabled={isAnalyzing}
           >
             {formatMessage(messages.salaryAnalysis.results.recalculateButton)}
           </Button>
         </Box>
-      </Box>
-    )
-  }
-
-  if (isAnalyzing || !result) {
-    return (
-      <Box display="flex" justifyContent="center" paddingY={5}>
-        <LoadingDots />
       </Box>
     )
   }
@@ -463,7 +530,6 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       outliers={result.outliers ?? []}
       hidePostponeCheckbox={hidePostponeCheckbox}
       errors={errors}
-      roleTitleForOrdinal={roleTitleForOrdinal}
       outlierGroupsFormMethods={isDraftPhase ? draftForm : undefined}
     />
   )
