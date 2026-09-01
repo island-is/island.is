@@ -35,8 +35,10 @@ export const isDateAfterToday = (date: Date | string | undefined) => {
 export const isDateOnlyString = (value: string): boolean =>
   /^\d{4}-\d{2}-\d{2}$/.test(value)
 
-export const formatDateOnly = (value: string, dateFormat?: string) =>
-  formatDate(parseISO(value), dateFormat)
+export const formatDateOnly = (value: string, dateFormat?: string) => {
+  const parsed = parseISO(value)
+  return isNaN(parsed.getTime()) ? value : formatDate(parsed, dateFormat)
+}
 
 // Takes in date string or date, with optional format
 export const formatDate = (
