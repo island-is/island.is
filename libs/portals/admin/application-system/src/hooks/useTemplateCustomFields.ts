@@ -28,7 +28,7 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
       getApplicationUIFields(typeId as ApplicationTypes),
       getApplicationTranslationWorkspacePreview(
         typeId as ApplicationTypes,
-      ).catch(() => ({}) as TranslationWorkspacePreviewApplicationData),
+      ).catch(() => ({} as TranslationWorkspacePreviewApplicationData)),
     ])
       .then(([uiFields, previewData]) => {
         if (cancelled) return
