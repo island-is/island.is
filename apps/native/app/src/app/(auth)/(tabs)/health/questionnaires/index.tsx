@@ -56,10 +56,11 @@ export default function QuestionnairesScreen() {
       id: string,
       organization?: QuestionnaireQuestionnairesOrganizationEnum,
       title?: string,
+      description?: string,
     ) => {
       router.navigate({
         pathname: '/health/questionnaires/[id]',
-        params: { id, organization, title },
+        params: { id, organization, title, description },
       })
     },
     [router],
@@ -68,7 +69,12 @@ export default function QuestionnairesScreen() {
   const renderItem = useCallback(
     ({ item }: { item: Item }) => {
       const open = () =>
-        openDetail(item.id, item.organization ?? undefined, item.title)
+        openDetail(
+          item.id,
+          item.organization ?? undefined,
+          item.title,
+          item.description ?? undefined,
+        )
       return (
         <QuestionnaireCard
           key={item.id}

@@ -45,10 +45,12 @@ export default function QuestionnaireDetailScreen() {
     id,
     organization: orgParam,
     title: titleParam,
+    description: descriptionParam,
   } = useLocalSearchParams<{
     id: string
     organization?: string
     title?: string
+    description?: string
   }>()
   const organization = orgParam as
     | QuestionnaireQuestionnairesOrganizationEnum
@@ -78,6 +80,8 @@ export default function QuestionnaireDetailScreen() {
     () => base?.title || titleParam || '',
     [base?.title, titleParam],
   )
+
+  const description = base?.description || descriptionParam
 
   const [refetching, setRefetching] = useState(false)
 
@@ -169,12 +173,12 @@ export default function QuestionnaireDetailScreen() {
           <>
             <Content>
               <Typography variant="heading2">{title}</Typography>
-              {base?.description ? (
-                <Typography variant="body">{base.description}</Typography>
+              {description ? (
+                <Typography variant="body">{description}</Typography>
               ) : null}
               <View
                 style={
-                  base?.description
+                  description
                     ? { marginTop: theme.spacing[1] }
                     : undefined
                 }
