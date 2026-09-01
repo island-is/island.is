@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Box, Table as T, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
@@ -9,6 +9,7 @@ import {
   formatSalaryAnalysisGenderLabel,
 } from '../../utils/salaryAnalysisLabels'
 import { formatSignedPercentMagnitude } from '../../utils/wageGap'
+import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 
 type PayDispersionDto = SalaryAnalysisResponseDto['payDispersion']
 type PayDispersionBlocker = PayDispersionDto['blockers'][number]
@@ -179,18 +180,7 @@ export const PayDispersionTable = ({ payDispersion }: Props) => {
             <T.Head>
               <T.Row>
                 <HeadCell>
-                  {/* The bare ordinal, as in the úrbótaáætlun table — it is the
-                      number the applicant already knows from the employee
-                      screens and the workbook, which the ABC-000 identifier
-                      this column used to show is not. The tooltip is what says
-                      so, and is the same one. */}
-                  <Box display="flex" alignItems="center" columnGap={1}>
-                    {formatMessage(o.ordinalColumn)}
-                    <Tooltip
-                      placement="right"
-                      text={formatMessage(o.employeeColumnTooltip)}
-                    />
-                  </Box>
+                  <EmployeeOrdinalHeader />
                 </HeadCell>
                 <HeadCell>{formatMessage(o.genderColumn)}</HeadCell>
                 <HeadCell align="right">{formatMessage(o.stigColumn)}</HeadCell>

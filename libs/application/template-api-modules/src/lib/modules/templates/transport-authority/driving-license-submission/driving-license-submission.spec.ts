@@ -1538,9 +1538,11 @@ describe('DrivingLicenseSubmissionService', () => {
     let describeErrorCode: jest.Mock
 
     // A FetchError as the submission catch recognises it: name === 'FetchError'
-    // with RLS's `problem` (code in `title`) and an http `status`.
+    // with RLS's `problem` and an http `status`. v5 carries the code in `title`;
+    // the v6 full endpoint carries it in an `errorCode` extension member and
+    // uses `title` for the operation name.
     const makeFetchError = (
-      problem: { title?: string; detail?: string },
+      problem: { title?: string; detail?: string; errorCode?: string },
       status = 400,
     ) => {
       const err = new Error('rls submission failed') as Error & {
@@ -1685,6 +1687,35 @@ describe('DrivingLicenseSubmissionService', () => {
 
       expect(describeErrorCode).toHaveBeenCalledWith(
         'APPLICATION_ALREADY_EXISTS',
+      )
+      expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
+        'Umsókn er þegar til',
+      )
+    })
+
+    it('localises the code from problem.errorCode (v6 full endpoint), not the operation-name title', async () => {
+      // The v6 full endpoint's 400, exactly as observed on IS-DEV: the machine
+      // code rides in an `errorCode` extension member while `title` holds the
+      // Icelandic operation name — looking THAT up misses the table forever.
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({
+          title: 'Sækja um fullnaðarskírteini',
+          detail: 'An application already exists for this category',
+          errorCode: 'APPLICATION_ALREADY_EXISTS',
+        }),
+      )
+      describeErrorCode.mockResolvedValue({
+        is: 'Umsókn er þegar til',
+        en: 'An application already exists',
+      })
+
+      const thrown = await submitAndCatch('is')
+
+      expect(describeErrorCode).toHaveBeenCalledWith(
+        'APPLICATION_ALREADY_EXISTS',
+      )
+      expect(describeErrorCode).not.toHaveBeenCalledWith(
+        'Sækja um fullnaðarskírteini',
       )
       expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
         'Umsókn er þegar til',

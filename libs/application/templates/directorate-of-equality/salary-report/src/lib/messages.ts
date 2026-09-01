@@ -313,6 +313,14 @@ export const messages = {
         id: 'doe.sr.application:aboutTheCompany.contactPerson.namePlaceholder',
         defaultMessage: 'Nafn tengiliðs',
       },
+      jobTitle: {
+        id: 'doe.sr.application:aboutTheCompany.contactPerson.jobTitle',
+        defaultMessage: 'Starfstitill',
+      },
+      jobTitlePlaceholder: {
+        id: 'doe.sr.application:aboutTheCompany.contactPerson.jobTitlePlaceholder',
+        defaultMessage: 'Starfstitill tengiliðs',
+      },
       email: {
         id: 'doe.sr.application:aboutTheCompany.contactPerson.email',
         defaultMessage: 'Netfang',
@@ -601,7 +609,7 @@ export const messages = {
       personalFactorIntro: {
         id: 'doe.sr.application:report.criteria.personalFactorIntro#markdown',
         defaultMessage:
-          'Í þessu skrefi þarf að ákveða einstaklingsbundin yfirviðmið og vægi þeirra. \n\n* Ef einstaklingsbundin hæfni starfsfólks er metin til launa þá þarftu að ákveða hlutlæg og kynhlutlaus yfirviðmið fyrir þá hæfni. \n\n*Samanlagt vægi starfsbundinna og einstaklingsbundinna yfirviðmiða þarf að vera 100%. Þú getur bætt við yfirviðmiðum fyrir einstaklingsbundna þætti eftir því sem við á.',
+          'Í þessu skrefi þarf að ákveða einstaklingsbundin yfirviðmið og vægi þeirra. \n\n* Ef einstaklingsbundin hæfni starfsfólks er metin til launa þá þarftu að ákveða hlutlæg og kynhlutlaus yfirviðmið fyrir þá hæfni. \n\n* Samanlagt vægi starfsbundinna og einstaklingsbundinna yfirviðmiða þarf að vera 100%. Þú getur bætt við yfirviðmiðum fyrir einstaklingsbundna þætti eftir því sem við á.',
       },
       personalFactorInstructions: {
         id: 'doe.sr.application:report.criteria.personalFactorInstructions',
@@ -714,7 +722,7 @@ export const messages = {
       jobFactorGroupIntro: {
         id: 'doe.sr.application:report.subCriteria.jobFactorGroupIntro#markdown',
         defaultMessage:
-          'Í þessu skrefi þarf að ákveða undirviðmið fyrir störf, vægi (%) þeirra og fjölda þrepa sem í boði eru fyrir hvert þeirra. \n\n* Hér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði og tillögur að skilgreiningum, en þú getur bætt við eigin viðmiðum eftir því sem við á. Öll viðmiðin sem valin eru þurfa að vera málefnaleg og viðeigandi fyrir starfsemina sem um ræðir.\n\n* Veldu vægi fyrir hvert undirviðmið þannig að þau nái að fullu upp í vægi hvers yfirviðmiðs.\n\n*Þú getur breytt textanum í boxunum eða búið til nýjan eftir því sem við á.',
+          'Í þessu skrefi þarf að ákveða undirviðmið fyrir störf, vægi (%) þeirra og fjölda þrepa sem í boði eru fyrir hvert þeirra. \n\n* Hér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði og tillögur að skilgreiningum, en þú getur bætt við eigin viðmiðum eftir því sem við á. Öll viðmiðin sem valin eru þurfa að vera málefnaleg og viðeigandi fyrir starfsemina sem um ræðir.\n\n* Veldu vægi fyrir hvert undirviðmið þannig að þau nái að fullu upp í vægi hvers yfirviðmiðs.\n\n* Þú getur breytt textanum í boxunum eða búið til nýjan eftir því sem við á.',
       },
       personalFactorGroupTitle: {
         id: 'doe.sr.application:report.subCriteria.personalFactorGroupTitle',
@@ -770,9 +778,13 @@ export const messages = {
         id: 'doe.sr.application:report.employees.genderColumn',
         defaultMessage: 'Kyn',
       },
-      identifierLabel: {
-        id: 'doe.sr.application:report.employees.identifierLabel',
-        defaultMessage: 'Auðkenni',
+      // New id, not a renamed defaultMessage on the old `identifierLabel`: the
+      // CMS translation for that id ("Auðkenni") wins over whatever is written
+      // here, so the ordinal only gets a truthful label under an id Contentful
+      // has never seen.
+      ordinalLabel: {
+        id: 'doe.sr.application:report.employees.ordinalLabel',
+        defaultMessage: 'Númer starfsmanns',
       },
       fieldLabel: {
         id: 'doe.sr.application:report.employees.fieldLabel',
@@ -1483,7 +1495,7 @@ export const messages = {
         defaultMessage: 'Frávikatafla',
       },
       tableText: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.tableText',
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.tableText#markdown',
         defaultMessage:
           'Taflan sýnir frávik launagreiningar. Nauðsynlegt er að gera úrbótaáætlun fyrir hvert frávik. Hægt er að velja mörg frávik saman og gera sameiginlega úrbótaáætlun fyrir þann hóp. Einnig er hægt að velja eitt frávik. Þegar frávik hefur verið sett í hóp hverfur það úr töflunni. Athugið að hvert frávik þarf að vera hluti af frávikahópi.',
       },

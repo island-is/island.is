@@ -142,7 +142,7 @@ export default function VehicleDetailScreen() {
                         source={require('@/assets/icons/Ellipsis-vertical.png')}
                         width={24}
                         height={24}
-                        tintColor={theme.shade.foreground}
+                        tintColor={theme.color.blue400}
                       />
                     </Pressable>
                   </ContextMenu>
