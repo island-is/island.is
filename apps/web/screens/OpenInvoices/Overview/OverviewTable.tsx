@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { ApolloError } from '@apollo/client'
 
-import { IcelandicGovernmentInstitutionsInvoicePaymentsGroup } from '@island.is/web/graphql/schema'
 import {
   Box,
   createColumnHelper,
@@ -11,6 +10,7 @@ import {
   SortingState,
 } from '@island.is/island-ui/core'
 import { formatCurrency } from '@island.is/shared/utils'
+import { IcelandicGovernmentInstitutionsInvoicePaymentsGroup } from '@island.is/web/graphql/schema'
 
 import { NoResults } from '../components/NoResults/NoResults'
 import { m } from '../messages'

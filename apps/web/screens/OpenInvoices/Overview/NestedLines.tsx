@@ -1,12 +1,12 @@
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { formatCurrency } from '@island.is/shared/utils'
 import {
   IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
   QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupArgs,
 } from '@island.is/web/graphql/schema'
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
-import { formatCurrency } from '@island.is/shared/utils'
 
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
 import { m } from '../messages'
