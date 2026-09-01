@@ -77,7 +77,10 @@ describe('CourtSessionStringRepositoryService', () => {
       expect(result).toBe(courtSessionString)
     })
 
-    it('passes no merged case when the string belongs to the session itself', async () => {
+    // An absent key column is forwarded as undefined rather than dropped, so
+    // Sequelize rejects the query instead of silently widening it to every
+    // merged case in the session.
+    it('forwards an absent key column rather than dropping it', async () => {
       await service.findByKey({
         caseId,
         courtSessionId,

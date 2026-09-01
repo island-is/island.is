@@ -11,9 +11,15 @@ import { CourtSessionString } from '../models/courtSessionString.model'
 
 // A court session string is addressed by all four columns together - a merged
 // case contributes its own string of each type to a session - so the key is a
-// named type rather than a caller-supplied where clause. mergedCaseId is absent
-// for the session's own strings; stringType is optional only because the DTO the
-// only caller receives it from declares it so.
+// named type rather than a caller-supplied where clause.
+//
+// mergedCaseId and stringType are optional because CourtSessionStringDto, the
+// only source a caller gets them from, declares them so. Both are forwarded
+// verbatim: Sequelize rejects an undefined value in a where clause outright
+// ('WHERE parameter "<column>" has invalid "undefined" value'), so a partial key
+// fails at the read rather than writing a partial row. The only caller of the
+// endpoint always sends all four, so this is a latent gap in the DTO contract,
+// not a live one - tightening it is an API change, not a repository one.
 export type CourtSessionStringKey = {
   caseId: string
   courtSessionId: string
