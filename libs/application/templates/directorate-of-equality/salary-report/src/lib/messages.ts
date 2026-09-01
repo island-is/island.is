@@ -35,9 +35,7 @@ export const messages = {
       defaultMessage:
         'Fyrirtæki er nú þegar með innsenda skýrslu sem er í vinnslu hjá ritstjórn.',
     },
-    // The equality report can lose its approval (or be replaced by one still
-    // awaiting approval) while this draft sits open, so this is a submit-time
-    // complaint, not a repeat of the prerequisites eligibility check.
+    // Shown at submit, not prerequisites — approval can lapse while the draft sits open.
     missingEqualityReport: {
       id: 'doe.sr.application:errors.missingEqualityReport',
       defaultMessage:

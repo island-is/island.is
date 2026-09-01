@@ -76,12 +76,8 @@ const subsidiaries = z
     includesSubsidiaries: z
       .enum(['yes', 'no'])
       .refine((v) => !!v, { params: messages.errors.required }),
-    // TableRepeaterFormField soft-deletes rows (isRemoved: true) and only
-    // physically drops them from the answers later, in its own beforeSubmit
-    // callback — after this schema has already validated the still-present
-    // row. Filtering isRemoved rows out here first keeps a "deleted" row
-    // from either being required to have valid data or counting towards
-    // the non-empty check below.
+    // Filters out soft-deleted rows, which the table only drops from
+    // answers after this schema has already validated them.
     list: z
       .preprocess(
         (val) =>

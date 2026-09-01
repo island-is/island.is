@@ -541,11 +541,8 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
-  // The id captured at PREREQUISITES goes stale whenever the company's
-  // equality report is approved again while this salary draft sits open — DMR
-  // keys the new approval to a new id and answers the old one with a 404 at
-  // submit. So resolve it live here; the persisted id is only a fallback for
-  // when DMR cannot answer at all.
+  // The id captured at PREREQUISITES goes stale if the equality report is
+  // re-approved while this draft sits open, so re-resolve it live here.
   private async resolveEqualityReportId(
     auth: TemplateApiModuleActionProps['auth'],
     application: TemplateApiModuleActionProps['application'],
@@ -570,9 +567,8 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         },
       )
 
-      // 404 is DMR's definitive "no approved equality report right now", which
-      // makes the persisted id known-stale: re-sending it would only earn the
-      // same 404 from submit under a less helpful message.
+      // 404 is DMR's definitive "no approved report" — the persisted id is
+      // known-stale, so don't fall back to it.
       if (errorDetails.status === 404) return undefined
       return persistedId
     }

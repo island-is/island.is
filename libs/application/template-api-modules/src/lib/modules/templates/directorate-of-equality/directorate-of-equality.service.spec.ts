@@ -125,10 +125,8 @@ describe('DirectorateOfEqualityService', () => {
     })
   })
 
-  // The equality-report id lives in externalData collected once at
-  // PREREQUISITES, and DMR rejects it as soon as the company's equality report
-  // is re-approved under a new id — so what matters is which id reaches
-  // submitDraft, not that submit was called.
+  // What matters is which equality-report id reaches submitDraft, not that
+  // submit was called — see resolveEqualityReportId's staleness handling.
   describe('submitSalaryReport', () => {
     const run = async () => {
       const auth = createCurrentUser()
@@ -158,8 +156,7 @@ describe('DirectorateOfEqualityService', () => {
       expect(body.equalityReportId).toBe('fresh-id')
     })
 
-    // A DMR outage is no reason to lose a finished report: the stored id is
-    // still the best guess when nothing contradicts it.
+    // The stored id is still the best guess when DMR gives no answer.
     it('falls back to the stored id when DMR cannot answer', async () => {
       getActiveEqualityReport.mockRejectedValue(
         await FetchError.buildMock({ status: 500 }),
