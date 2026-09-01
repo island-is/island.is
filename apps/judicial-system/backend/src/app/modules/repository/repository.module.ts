@@ -42,6 +42,7 @@ import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseD
 import { CaseRepositoryService } from './services/caseRepository.service'
 import { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 import { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
+import { CourtSessionStringRepositoryService } from './services/courtSessionStringRepository.service'
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
 import { EventLogRepositoryService } from './services/eventLogRepository.service'
@@ -104,6 +105,7 @@ import { repositoryModuleConfig } from './repository.config'
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
+    CourtSessionStringRepositoryService,
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
@@ -129,6 +131,7 @@ import { repositoryModuleConfig } from './repository.config'
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
+    CourtSessionStringRepositoryService,
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
