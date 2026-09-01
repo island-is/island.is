@@ -63,10 +63,7 @@ export const Answered: FC<AnsweredProps> = ({ answers }) => {
         : cell.value
 
     let displayValue = rawValue
-    if (
-      cellType === 'bool' &&
-      (rawValue === 'true' || rawValue === 'false')
-    ) {
+    if (cellType === 'bool' && (rawValue === 'true' || rawValue === 'false')) {
       displayValue =
         rawValue === 'true' ? formatMessage(m.yes) : formatMessage(m.no)
     } else if (rawValue && isDateOnlyString(rawValue)) {
