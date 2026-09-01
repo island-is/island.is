@@ -1,5 +1,3 @@
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import type { FormatMessage } from '@island.is/localization'
 import { SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
@@ -142,12 +140,3 @@ export const formatWageAmount = (value?: number | null): string =>
   value == null
     ? '—'
     : value.toLocaleString('is-IS', { maximumFractionDigits: 0 })
-
-export const formatStartDate = (value?: string): string => {
-  if (!value) return ''
-  try {
-    return format(parseISO(value), 'd.M.yyyy')
-  } catch {
-    return value
-  }
-}

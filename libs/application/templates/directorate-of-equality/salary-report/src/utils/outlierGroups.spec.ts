@@ -4,6 +4,7 @@ import {
   foldGroupDirection,
   outlierGroupsWithMembers,
   isOutlierGroupComplete,
+  isOutlierGroupSubmittable,
   unassignedOutlierOrdinals,
   withFallbackOutlierGroupNames,
 } from './outlierGroups'
@@ -42,6 +43,7 @@ describe('isOutlierGroupComplete', () => {
   const complete = {
     reason: 'Ástæða',
     action: 'Aðgerð',
+    remedyDate: '2027-03-01',
     signatureName: 'Nafn',
     signatureRole: 'Starfstitill',
     employeeOrdinals: [1],
@@ -59,6 +61,14 @@ describe('isOutlierGroupComplete', () => {
     expect(isOutlierGroupComplete({ ...complete, reason: '   ' })).toBe(false)
   })
 
+  // Required alongside the rest of the explanation on DMR's side, so it has to
+  // gate Continue exactly as the reason and the action do.
+  it('rejects a group with no remedy date', () => {
+    expect(isOutlierGroupComplete({ ...complete, remedyDate: '' })).toBe(false)
+    const { remedyDate: _omitted, ...withoutDate } = complete
+    expect(isOutlierGroupComplete(withoutDate)).toBe(false)
+  })
+
   it('rejects a group missing its signature role', () => {
     expect(isOutlierGroupComplete({ ...complete, signatureRole: '' })).toBe(
       false,
@@ -73,6 +83,55 @@ describe('isOutlierGroupComplete', () => {
     )
     const { signatureName: _omitted, ...withoutName } = complete
     expect(isOutlierGroupComplete(withoutName)).toBe(true)
+  })
+})
+
+describe('isOutlierGroupSubmittable', () => {
+  // Fixed clock: the window moves with the date, and a literal fixture would
+  // start failing once it fell out of range.
+  const now = new Date(2026, 7, 31)
+  const complete = {
+    reason: 'Ástæða',
+    action: 'Aðgerð',
+    remedyDate: '2027-03-01',
+    signatureRole: 'Starfstitill',
+    employeeOrdinals: [1],
+  }
+
+  it('accepts a complete group whose remedy date is still ahead', () => {
+    expect(isOutlierGroupSubmittable(complete, now)).toBe(true)
+  })
+
+  // The whole reason this is separate from isOutlierGroupComplete: the date is
+  // filled in, so nothing is missing — it has simply gone stale in POSTPONED's
+  // 90-day window.
+  it('refuses a group whose remedy date has passed', () => {
+    expect(
+      isOutlierGroupSubmittable({ ...complete, remedyDate: '2020-01-01' }, now),
+    ).toBe(false)
+  })
+
+  it('refuses a remedy date past the far end of the window', () => {
+    expect(
+      isOutlierGroupSubmittable({ ...complete, remedyDate: '2031-01-01' }, now),
+    ).toBe(false)
+  })
+
+  // Vacuously submittable for the same reason it is vacuously complete: a group
+  // with no members is dropped before submission.
+  it('ignores the window for a group with no members', () => {
+    expect(
+      isOutlierGroupSubmittable(
+        { ...complete, remedyDate: '2020-01-01', employeeOrdinals: [] },
+        now,
+      ),
+    ).toBe(true)
+  })
+
+  it('still refuses a group that is merely incomplete', () => {
+    expect(isOutlierGroupSubmittable({ ...complete, action: '' }, now)).toBe(
+      false,
+    )
   })
 })
 

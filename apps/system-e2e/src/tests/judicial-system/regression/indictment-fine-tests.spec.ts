@@ -46,10 +46,11 @@ test.describe.serial('Indictment fine tests', () => {
     await expect(page.getByTestId('entries')).toBeVisible({ timeout: 15000 })
     await expect(page.getByTestId('confirm-court-record')).toBeVisible()
 
+    // The rich text editor is TipTap, which renders a contenteditable
+    // element - there is no iframe to reach into.
     await page
       .getByTestId('entries')
-      .frameLocator('iframe')
-      .locator('body')
+      .locator('[contenteditable="true"]')
       .fill('Þinghald vegna viðurlagaákvörðunar')
 
     // No judgement or order is pronounced in the session
