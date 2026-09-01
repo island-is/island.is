@@ -25,6 +25,9 @@ const localizedTextSchema = z.object({
 })
 
 const sectionFieldSchema = z.object({
+  // Row identity. `key` can't serve: it's empty on a new row and repeats when
+  // the same backend field is placed twice.
+  uid: z.string().min(1),
   key: z.string().min(1),
   // Editor-controlled display label. Falls back to the backend's own
   // (Icelandic-only) default label from taxCalculatorFields when unset.
@@ -53,9 +56,53 @@ const calculatorFieldSectionSchema = z.object({
   fields: z.array(sectionFieldSchema),
 })
 
-export const calculatorConfigSchema = z.object({
-  sections: z.array(calculatorFieldSectionSchema),
-})
+/* A gate naming a toggle that no longer exists reads as "off" on the web side,
+ * so the section renders unconditionally -- a conditional section silently
+ * becoming always-visible. Deleting the section that owned a toggle is all it
+ * takes, so the reference has to be checked here rather than trusted. */
+export const calculatorConfigSchema = z
+  .object({
+    sections: z.array(calculatorFieldSectionSchema),
+  })
+  .superRefine((config, ctx) => {
+    const toggleKeys = new Set(
+      config.sections
+        .map((section) => section.toggle?.key)
+        .filter((key): key is string => Boolean(key)),
+    )
+    const seenSectionKeys = new Set<string>()
+    const seenFieldUids = new Set<string>()
+
+    config.sections.forEach((section, sectionIndex) => {
+      if (seenSectionKeys.has(section.key)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['sections', sectionIndex, 'key'],
+          message: `Duplicate section key "${section.key}"`,
+        })
+      }
+      seenSectionKeys.add(section.key)
+
+      if (section.gate && !toggleKeys.has(section.gate.toggle)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['sections', sectionIndex, 'gate', 'toggle'],
+          message: `Gate references toggle "${section.gate.toggle}", which no section declares`,
+        })
+      }
+
+      section.fields.forEach((field, fieldIndex) => {
+        if (seenFieldUids.has(field.uid)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['sections', sectionIndex, 'fields', fieldIndex, 'uid'],
+            message: `Duplicate field uid "${field.uid}"`,
+          })
+        }
+        seenFieldUids.add(field.uid)
+      })
+    })
+  })
 
 export type CalculatorLocalizedText = z.infer<typeof localizedTextSchema>
 export type CalculatorSectionToggle = z.infer<typeof sectionToggleSchema>

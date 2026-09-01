@@ -1,16 +1,10 @@
 import { registerEnumType } from '@nestjs/graphql'
+import { TaxCalculatorType } from '@island.is/tax-calculators'
 
-export enum TaxCalculatorType {
-  WITHHOLDING_TAX_ON_WAGES = 'withholdingTaxOnWages',
-  CHILD_BENEFIT = 'childBenefit',
-  VEHICLE_TAX = 'vehicleTax',
-  VEHICLE_BENEFIT = 'vehicleBenefit',
-}
-
-registerEnumType(TaxCalculatorType, {
-  name: 'TaxCalculatorType',
-  description: 'The tax calculator to use.',
-})
+// Declared in @island.is/tax-calculators (plain TS, shared with the web and
+// Contentful clients) and registered with GraphQL by libs/cms, which exposes
+// the same enum on the Calculator slice.
+export { TaxCalculatorType }
 
 export enum TaxCalculatorFieldKind {
   NUMBER = 'number',

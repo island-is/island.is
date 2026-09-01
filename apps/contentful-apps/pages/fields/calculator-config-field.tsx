@@ -1,4 +1,4 @@
-import { CalculatorConfigEditor } from '../../components/editors/CalculatorEditor/CalculatorConfigEditor'
+import { CalculatorConfigEditor } from '../../components/editors/CalculatorEditor'
 
 const CalculatorConfigField = () => <CalculatorConfigEditor />
 

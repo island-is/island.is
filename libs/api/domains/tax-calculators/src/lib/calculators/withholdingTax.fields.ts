@@ -56,7 +56,6 @@ export const withholdingTaxFields: FieldDefinition[] = [
     label: 'Í lífeyrissjóð',
     kind: TaxCalculatorFieldKind.SELECT,
     required: false,
-    unit: '%',
     // 4% is the statutory minimum employee contribution to a pension fund.
     options: [{ value: '4', label: '4%' }],
   },
@@ -65,7 +64,6 @@ export const withholdingTaxFields: FieldDefinition[] = [
     label: 'Í séreignarsjóð',
     kind: TaxCalculatorFieldKind.SELECT,
     required: false,
-    unit: '%',
     // Voluntary private pension savings are commonly 0% (opt out), 2%, or 4%.
     options: [
       { value: '0', label: '0%' },

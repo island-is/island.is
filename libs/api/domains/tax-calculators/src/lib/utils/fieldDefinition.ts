@@ -1,15 +1,12 @@
-import { TaxCalculatorFieldKind } from '../models/enums'
+import { CalculatorField } from '../models/field.model'
 
-export interface FieldDefinition {
-  key: string
-  label: string
-  kind: TaxCalculatorFieldKind
-  required: boolean
-  unit?: string
-  min?: number
-  max?: number
-  options?: { value: string; label: string }[]
-}
+/* Derived, not restated: a property added to CalculatorField that this
+ * shape does not carry becomes a compile error in buildFieldModels rather
+ * than a field that silently resolves to null for every calculator. */
+export type FieldDefinition = Pick<
+  CalculatorField,
+  'key' | 'label' | 'kind' | 'required' | 'unit' | 'min' | 'max' | 'options'
+>
 
 // 32-bit signed int max. A generic overflow guard for NUMBER fields with no
 // real business-defined upper bound -- not a business rule itself.

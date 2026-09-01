@@ -96,14 +96,10 @@ export const numberOfLinks = (contentList: object[]) => {
     return !url.hostname.includes('island.is')
   }).length
 
-  const pdfAssets = getAssetsByContentType(
-    contentList,
-    'application/pdf',
-  ).length
-  const wordAssets = getAssetsByContentType(
-    contentList,
-    'application/msword',
-  ).length
+  const pdfAssets = getAssetsByContentType(contentList, 'application/pdf')
+    .length
+  const wordAssets = getAssetsByContentType(contentList, 'application/msword')
+    .length
 
   return {
     fillAndSignLinks: fillAndSignProcessLinks,
@@ -222,13 +218,19 @@ export const removeEntryHyperlinkFields = (node: any) => {
 
 export const pruneNonSearchableSliceUnionFields = (
   slice: typeof SliceUnion,
-) => {
+): typeof SliceUnion => {
   if ((slice as { typename?: string })?.typename === 'ConnectedComponent') {
     return {
       ...slice,
       json: {},
       configJson: {},
       translationStrings: {},
+    }
+  }
+  if ((slice as { typename?: string })?.typename === 'Calculator') {
+    return {
+      ...slice,
+      configJson: {},
     }
   }
   if ((slice as { typename?: string })?.typename === 'EmailSignup') {

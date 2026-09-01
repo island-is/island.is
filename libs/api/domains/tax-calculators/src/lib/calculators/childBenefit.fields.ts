@@ -57,14 +57,14 @@ export const childBenefitFields: FieldDefinition[] = [
   },
   {
     key: 'splitCustodyChildrenOver7',
-    label: 'Börn alls',
+    label: 'Börn alls (skipt forsjá)',
     kind: TaxCalculatorFieldKind.SELECT,
     required: false,
     options: buildCountOptions(10),
   },
   {
     key: 'splitCustodyChildrenUnder7',
-    label: 'Börn undir 7 ára',
+    label: 'Börn undir 7 ára (skipt forsjá)',
     kind: TaxCalculatorFieldKind.SELECT,
     required: false,
     options: buildCountOptions(10),

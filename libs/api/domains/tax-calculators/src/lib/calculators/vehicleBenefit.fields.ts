@@ -20,8 +20,10 @@ export const vehicleBenefitFields: FieldDefinition[] = [
     label: 'Kaupár',
     kind: TaxCalculatorFieldKind.NUMBER,
     required: true,
-    min: 0,
-    max: MAX_SANE_NUMBER_VALUE,
+    // A year has a real upper bound, so MAX_SANE_NUMBER_VALUE (the guard for
+    // fields with none) would be the wrong tool here.
+    min: 1900,
+    max: new Date().getFullYear(),
   },
   {
     key: 'purchasePrice',

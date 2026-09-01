@@ -1,6 +1,5 @@
 import { Fragment, useState } from 'react'
 import { Controller, useForm, useFormState } from 'react-hook-form'
-import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import { useQuery } from '@apollo/client'
 
@@ -33,25 +32,8 @@ import {
   TaxCalculatorFieldKind,
   TaxCalculatorType,
 } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 import { GET_TAX_CALCULATOR_FIELDS } from '@island.is/web/screens/queries/TaxCalculator'
-
-import { messages } from './messages'
-
-// `slice.calculatorType` (the entry's own `type` field in Contentful) is
-// locale-independent and selects which calculator this slice instance
-// calls. It is intentionally English/camelCase and does not need to match
-// the GraphQL enum's wire value.
-const CALCULATOR_TYPE_BY_CONFIG_VALUE: Record<string, TaxCalculatorType> = {
-  withholdingTaxOnWages: TaxCalculatorType.WithholdingTaxOnWages,
-  childBenefit: TaxCalculatorType.ChildBenefit,
-  vehicleTax: TaxCalculatorType.VehicleTax,
-  vehicleBenefit: TaxCalculatorType.VehicleBenefit,
-}
-
-const getCalculatorType = (value: unknown): TaxCalculatorType | undefined => {
-  if (typeof value !== 'string') return undefined
-  return CALCULATOR_TYPE_BY_CONFIG_VALUE[value]
-}
 
 // GridColumn's `span` type is a finite string-literal union (e.g. '4/12'),
 // not `${number}/12` in general, so a 1-12 count needs an explicit lookup
@@ -115,16 +97,12 @@ const CalculatorFieldInput = ({
   placeholder,
   disabled,
 }: CalculatorFieldProps) => {
-  const { formatMessage } = useIntl()
   const { errors } = useFormState({ control, name: field.key })
   const fieldError = errors[field.key]
   const errorMessage = fieldError
-    ? formatMessage(
-        // 'validate' is only used by the CHECKBOX branch's required check.
-        fieldError.type === 'required' || fieldError.type === 'validate'
-          ? messages.fieldRequiredError
-          : messages.fieldRangeError,
-      )
+    ? locale === 'is'
+      ? 'Þennan reit þarf að fylla út'
+      : 'This field is required'
     : undefined
   // A field greyed out by a toggle gate (`disableOnly`) stays mounted but
   // the user cannot edit it -- a `required` rule would otherwise block
@@ -147,9 +125,7 @@ const CalculatorFieldInput = ({
         render={({ field: { onChange, value } }) => (
           <Select
             label={label}
-            placeholder={
-              placeholder || formatMessage(messages.selectPlaceholder)
-            }
+            placeholder={placeholder}
             required={isRequired}
             isDisabled={disabled}
             hasError={Boolean(errorMessage)}
@@ -293,7 +269,7 @@ interface CalculatorProps {
 }
 
 const Calculator = ({ slice }: CalculatorProps) => {
-  const { formatMessage, locale } = useIntl()
+  const { activeLocale: locale } = useI18n()
   // A field in a section hidden by its toggle gate unmounts (its
   // Controller/InputController stops rendering). Without shouldUnregister,
   // react-hook-form would keep that field registered, holding a stale value
@@ -307,7 +283,7 @@ const Calculator = ({ slice }: CalculatorProps) => {
 
   const parsedConfig = calculatorConfigSchema.safeParse(slice.configJson)
   const config = parsedConfig.success ? parsedConfig.data : undefined
-  const calculatorType = getCalculatorType(slice.calculatorType)
+  const calculatorType = slice.calculatorType ?? undefined
 
   const fieldsResponse = useQuery<
     GetTaxCalculatorFieldsQuery,
@@ -333,8 +309,12 @@ const Calculator = ({ slice }: CalculatorProps) => {
     return (
       <AlertMessage
         type="error"
-        title={formatMessage(messages.errorOccurredTitle)}
-        message={formatMessage(messages.fieldsErrorMessage)}
+        title={locale === 'is' ? 'Villa kom upp' : 'An error occurred'}
+        message={
+          locale === 'is'
+            ? 'Ekki tókst að sækja reiknivél'
+            : 'Could not load the calculator'
+        }
       />
     )
   }
@@ -370,17 +350,16 @@ const Calculator = ({ slice }: CalculatorProps) => {
               if (!field) return undefined
               return { field, sectionField, span: sectionField.span }
             })
-            .filter(
-              (
-                entry,
-              ): entry is {
-                field: TaxCalculatorField
-                sectionField: CalculatorSectionField
-                span: number
-              } => Boolean(entry),
-            )
+            .filter((entry): entry is {
+              field: TaxCalculatorField
+              sectionField: CalculatorSectionField
+              span: number
+            } => Boolean(entry))
 
-          if (!sectionFields.length) return null
+          /* A section may exist only to carry the toggle that gates other
+           * sections -- bailing on "no fields" would hide the switch and
+           * strand every section gated on it. */
+          if (!sectionFields.length && !ownToggle) return null
 
           const sectionTitle = pickLocalizedText(section.title, locale)
           const sectionDescription = pickLocalizedText(
@@ -402,27 +381,32 @@ const Calculator = ({ slice }: CalculatorProps) => {
                   )}
                 </Stack>
               )}
-              <GridRow rowGap={3}>
-                {sectionFields.map(({ field, span, sectionField }) => (
-                  <GridColumn key={field.key} span={spanToGridColumn(span)}>
-                    <CalculatorFieldInput
-                      field={field}
-                      control={control}
-                      label={pickLocalizedText(
-                        sectionField.label,
-                        locale,
-                        field.label,
-                      )}
-                      locale={locale}
-                      placeholder={pickLocalizedText(
-                        sectionField.placeholder,
-                        locale,
-                      )}
-                      disabled={isSectionDisabled}
-                    />
-                  </GridColumn>
-                ))}
-              </GridRow>
+              {sectionFields.length > 0 && (
+                <GridRow rowGap={3}>
+                  {sectionFields.map(({ field, span, sectionField }) => (
+                    <GridColumn
+                      key={sectionField.uid}
+                      span={spanToGridColumn(span)}
+                    >
+                      <CalculatorFieldInput
+                        field={field}
+                        control={control}
+                        label={pickLocalizedText(
+                          sectionField.label,
+                          locale,
+                          field.label,
+                        )}
+                        locale={locale}
+                        placeholder={pickLocalizedText(
+                          sectionField.placeholder,
+                          locale,
+                        )}
+                        disabled={isSectionDisabled}
+                      />
+                    </GridColumn>
+                  ))}
+                </GridRow>
+              )}
             </Stack>
           )
 
