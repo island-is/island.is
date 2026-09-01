@@ -70,128 +70,152 @@ type PrescriptionCardProps = {
 }
 
 type BlockedReasonInfo = {
+  // The pill label to show for this blocked reason.
+  status: string
   description: string
-  // Whether the prescription itself is still valid (positive state).
-  isValid: boolean
   // Whether the description should surface in the info alert box.
   showReason: boolean
 }
 
-// Mirrors the web portal's mapBlockedStatus (libs/portals/my-pages/health).
+// Mirrors the web portal's mapBlockedStatus (libs/portals/my-pages/health):
+// same per-reason status label + showReason flag, so behaviour stays in parity.
 const getBlockedReasonInfo = (
   reason: HealthDirectoratePrescriptionRenewalBlockedReason | null | undefined,
   intl: IntlShape,
 ): BlockedReasonInfo => {
   const Reason = HealthDirectoratePrescriptionRenewalBlockedReason
   const describe = (id: string) => intl.formatMessage({ id })
+  const notAvailable = describe('health.prescriptions.renewalNotAvailable')
+  const valid = describe('health.prescriptions.renewalValid')
+  const processing = describe('health.prescriptions.renewalStatusPending')
+  const rejected = describe('health.prescriptions.renewalStatusRejected')
   switch (reason) {
     case Reason.IsRegiment:
       return {
+        status: notAvailable,
         description: describe('health.prescriptions.renewalBlockedIsRegiment'),
-        isValid: false,
         showReason: true,
       }
     case Reason.NoMedCard:
       return {
+        status: notAvailable,
         description: describe('health.prescriptions.renewalBlockedNoMedCard'),
-        isValid: false,
         showReason: true,
       }
     case Reason.NoHealthClinic:
       return {
+        status: notAvailable,
         description: describe(
           'health.prescriptions.renewalBlockedNoHealthClinic',
         ),
-        isValid: false,
         showReason: true,
       }
     case Reason.NotFullyDispensed:
       return {
+        status: valid,
         description: describe(
           'health.prescriptions.renewalBlockedNotFullyDispensed',
         ),
-        isValid: true,
         showReason: false,
       }
     case Reason.PendingRequest:
       return {
+        status: processing,
         description: describe(
           'health.prescriptions.renewalBlockedPendingRequest',
         ),
-        isValid: false,
         showReason: false,
       }
     case Reason.RejectedRequest:
       return {
+        status: rejected,
         description: describe(
           'health.prescriptions.renewalBlockedRejectedRequest',
         ),
-        isValid: false,
         showReason: false,
       }
     case Reason.DismissedRequest:
       return {
+        status: notAvailable,
         description: describe(
           'health.prescriptions.renewalBlockedDismissedRequest',
         ),
-        isValid: false,
         showReason: true,
       }
     case Reason.AlreadyRequested:
       return {
+        status: processing,
         description: describe(
           'health.prescriptions.renewalBlockedAlreadyRequested',
         ),
-        isValid: false,
         showReason: false,
       }
     case Reason.MoreRecentPrescriptionExists:
       return {
+        status: notAvailable,
         description: describe(
           'health.prescriptions.renewalBlockedMoreRecentExists',
         ),
-        isValid: false,
         showReason: true,
       }
     case Reason.SpecialistOnlyPrescription:
       return {
+        status: notAvailable,
         description: describe(
           'health.prescriptions.renewalBlockedSpecialistOnly',
         ),
-        isValid: false,
         showReason: true,
       }
     case Reason.NoRenewalTargets:
       return {
+        status: notAvailable,
         description: describe(
           'health.prescriptions.renewalBlockedNoRenewalTargets',
         ),
-        isValid: false,
         showReason: true,
       }
     case Reason.InvalidRenewalTarget:
       return {
+        status: notAvailable,
         description: describe(
           'health.prescriptions.renewalBlockedInvalidRenewalTarget',
         ),
-        isValid: false,
         showReason: true,
       }
     case Reason.RecipientExcludesAtc:
       return {
+        status: notAvailable,
         description: describe(
           'health.prescriptions.renewalBlockedRecipientExcludesAtc',
         ),
-        isValid: false,
         showReason: true,
       }
     default:
       return {
+        status: notAvailable,
         description: describe('health.prescriptions.renewalBlockedOther'),
-        isValid: false,
         showReason: true,
       }
   }
+}
+
+// Per-status renewal labels, mirroring the web portal's renewalStatusMessageMap
+// (libs/portals/my-pages/health) so each status reads distinctly — notably
+// Pending shows "in progress" rather than collapsing into "not available".
+const renewalStatusMessageMap: Record<
+  HealthDirectoratePrescriptionRenewalStatus,
+  string
+> = {
+  [HealthDirectoratePrescriptionRenewalStatus.Approved]:
+    'health.prescriptions.renewalStatusApproved',
+  [HealthDirectoratePrescriptionRenewalStatus.Pending]:
+    'health.prescriptions.renewalStatusPending',
+  [HealthDirectoratePrescriptionRenewalStatus.Rejected]:
+    'health.prescriptions.renewalStatusRejected',
+  [HealthDirectoratePrescriptionRenewalStatus.Dismissed]:
+    'health.prescriptions.renewalStatusDismissed',
+  [HealthDirectoratePrescriptionRenewalStatus.Unknown]:
+    'health.prescriptions.renewalStatusUnknown',
 }
 
 export const PrescriptionCard = ({
@@ -236,39 +260,25 @@ export const PrescriptionCard = ({
   const isExpired =
     prescription.expiryDate && new Date(prescription.expiryDate) < new Date()
 
-  // Renewal presentation, mirroring the web portal's decision order:
-  // renewalStatus wins → else renewable shows the action → else blocked reason.
+  // Renewal presentation, mirroring the web portal (PrescriptionsTable):
+  // - the blocked reason is derived from isRenewable ALONE, independent of
+  //   renewalStatus, so its description can surface in the box even when a
+  //   status is present;
+  // - the pill label prefers renewalStatus, else the blocked reason's label;
+  // - the renew action shows only when renewable with no pending status.
   const canRenew = !!prescription.isRenewable && !prescription.renewalStatus
-  const renewalInfo = ((): { statusLabel: string; alertMessage?: string } => {
-    if (prescription.renewalStatus) {
-      const isValid =
-        prescription.renewalStatus ===
-        HealthDirectoratePrescriptionRenewalStatus.Approved
-      return {
-        statusLabel: intl.formatMessage({
-          id: isValid
-            ? 'health.prescriptions.renewalValid'
-            : 'health.prescriptions.renewalNotAvailable',
-        }),
-        alertMessage: prescription.renewResponseMessage ?? undefined,
-      }
-    }
-    const blocked = getBlockedReasonInfo(
-      prescription.renewalBlockedReason,
-      intl,
-    )
-    return {
-      statusLabel: intl.formatMessage({
-        id: blocked.isValid
-          ? 'health.prescriptions.renewalValid'
-          : 'health.prescriptions.renewalNotAvailable',
-      }),
-      alertMessage:
-        blocked.showReason || prescription.renewResponseMessage
-          ? prescription.renewResponseMessage || blocked.description
-          : undefined,
-    }
-  })()
+  const blocked = !prescription.isRenewable
+    ? getBlockedReasonInfo(prescription.renewalBlockedReason, intl)
+    : null
+  const statusLabel = prescription.renewalStatus
+    ? intl.formatMessage({
+        id: renewalStatusMessageMap[prescription.renewalStatus],
+      })
+    : blocked?.status ?? ''
+  const alertMessage =
+    blocked?.showReason || prescription.renewResponseMessage
+      ? prescription.renewResponseMessage || blocked?.description
+      : undefined
 
   const attachmentRows: PrescriptionRow[] = documentsLoading
     ? [
@@ -386,7 +396,7 @@ export const PrescriptionCard = ({
     />
   ) : (
     <StatusPill>
-      <Typography variant="body3">{renewalInfo.statusLabel}</Typography>
+      <Typography variant="body3">{statusLabel}</Typography>
     </StatusPill>
   )
 
@@ -418,9 +428,9 @@ export const PrescriptionCard = ({
       footer={renewalElement}
     >
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
-        {renewalInfo.alertMessage ? (
+        {alertMessage ? (
           <View style={{ marginBottom: theme.spacing[2] }}>
-            <Alert type="info" hasBorder message={renewalInfo.alertMessage} />
+            <Alert type="info" hasBorder message={alertMessage} />
           </View>
         ) : null}
         <View>

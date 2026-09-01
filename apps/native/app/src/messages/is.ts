@@ -1052,6 +1052,11 @@ export const is = {
   'health.prescriptions.renewalPossible': 'Hægt að endurnýja',
   'health.prescriptions.renewalValid': 'Gild lyfjaávísun',
   'health.prescriptions.renewalNotAvailable': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalStatusApproved': 'Endurnýjun samþykkt',
+  'health.prescriptions.renewalStatusPending': 'Endurnýjun í vinnslu',
+  'health.prescriptions.renewalStatusRejected': 'Endurnýjun hafnað',
+  'health.prescriptions.renewalStatusDismissed': 'Endurnýjun vísað frá',
+  'health.prescriptions.renewalStatusUnknown': 'Staða endurnýjunar óþekkt',
   'health.prescriptions.renewalBlockedIsRegiment':
     'Ekki er hægt að endurnýja lyfjakúr',
   'health.prescriptions.renewalBlockedNoMedCard': 'Ekkert lyfjakort skráð',
