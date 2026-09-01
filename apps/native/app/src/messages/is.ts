@@ -801,12 +801,14 @@ export const is = {
   'health.questionnaires.action.answer': 'Svara lista',
   'health.questionnaires.action.continue-draft': 'Halda áfram',
   'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.action.answer-again': 'Svara aftur',
   'health.questionnaires.action.show-expired': 'Sýna útrunna',
   'health.questionnaires.action.hide-expired': 'Fela útrunna',
   'health.questionnaires.detail.status': 'Staða',
   'health.questionnaires.detail.institution': 'Stofnun',
   'health.questionnaires.detail.sentBy': 'Sent af',
-  'health.questionnaires.detail.sentDate': 'Sent dags',
+  'health.questionnaires.detail.sentDate': 'Dagsetning',
+  'health.questionnaires.detail.expirationDate': 'Gildir til',
   'health.questionnaires.detail.notFound': 'Spurningalisti fannst ekki',
 
   // health - vaccinations

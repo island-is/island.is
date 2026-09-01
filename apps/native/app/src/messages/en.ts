@@ -803,12 +803,14 @@ export const en: TranslatedMessages = {
   'health.questionnaires.action.answer': 'Answer questionnaire',
   'health.questionnaires.action.continue-draft': 'Continue',
   'health.questionnaires.action.view-answer': 'View answers',
+  'health.questionnaires.action.answer-again': 'Answer again',
   'health.questionnaires.action.show-expired': 'Show expired',
   'health.questionnaires.action.hide-expired': 'Hide expired',
   'health.questionnaires.detail.status': 'Status',
   'health.questionnaires.detail.institution': 'Institution',
   'health.questionnaires.detail.sentBy': 'Sent by',
   'health.questionnaires.detail.sentDate': 'Sent date',
+  'health.questionnaires.detail.expirationDate': 'Valid until',
   'health.questionnaires.detail.notFound': 'Questionnaire not found',
 
   // health - vaccinations
