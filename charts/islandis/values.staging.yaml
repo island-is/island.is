@@ -337,8 +337,8 @@ api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 2
-        min: 1
+        max: 50
+        min: 3
   httpRoute:
     primary-gw:
       hostnames:
@@ -359,9 +359,9 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 3
+    max: 50
+    min: 3
   resources:
     limits:
       cpu: '3000m'
@@ -2446,8 +2446,8 @@ service-portal-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 2
-        min: 1
+        max: 30
+        min: 2
   httpRoute:
     internal-gw:
       hostnames:
@@ -2491,9 +2491,9 @@ service-portal-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 2
+    max: 30
+    min: 2
   resources:
     limits:
       cpu: '800m'
@@ -4043,8 +4043,8 @@ user-notification:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 2
-        min: 1
+        max: 10
+        min: 3
   httpRoute:
     internal-gw:
       hostnames:
@@ -4074,9 +4074,9 @@ user-notification:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 3
+    max: 10
+    min: 3
   resources:
     limits:
       cpu: '400m'
@@ -4495,8 +4495,8 @@ web:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 2
-        min: 1
+        max: 50
+        min: 3
   httpRoute:
     primary-gw:
       hostnames:
@@ -4517,9 +4517,9 @@ web:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 3
+    max: 50
+    min: 3
   resources:
     limits:
       cpu: '3000m'
