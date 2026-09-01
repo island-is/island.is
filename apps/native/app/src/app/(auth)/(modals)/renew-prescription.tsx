@@ -67,7 +67,12 @@ export default function RenewPrescriptionScreen() {
 
   const [postRenewal, { loading: submitting }] =
     usePostPrescriptionRenewalMutation({
+      // The backend returns nothing renewal-state-related from the mutation, so
+      // we must refetch the list to observe the new pending state. awaitRefetch
+      // keeps the submit button in its loading state until that refetch resolves
+      // — so by the time we pop back, the list is already up to date.
       refetchQueries: ['GetDrugPrescriptions'],
+      awaitRefetchQueries: true,
     })
 
   const noTargets = !targetsLoading && options.length === 0
