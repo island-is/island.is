@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
-import {
-  AlertMessage,
-  Box,
-  LinkV2,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
 
-import { m } from '../translations.strings'
+import { exampleQuestionMessages, m } from '../translations.strings'
+import { DisclaimerText } from './DisclaimerText'
+import { ExampleQuestions } from './ExampleQuestions'
 import { QuestionInput } from './QuestionInput'
+import { toExampleQuestions } from './questions'
 import type { MessengerStatus } from './useZendeskMessenger'
 import * as styles from './ChatLauncher.css'
 
@@ -26,17 +23,15 @@ interface ChatLauncherProps {
    * the widget to boot and the conversation to open is shown.
    */
   onAsk: (question: string) => void
-  /** Target of the <link> tag in the disclaimer, if the text has one */
-  disclaimerLinkHref?: string
 }
 
 export const ChatLauncher = ({
   isVisible,
   status,
   onAsk,
-  disclaimerLinkHref,
 }: ChatLauncherProps) => {
-  const { formatMessage } = useIntl()
+  const intl = useIntl()
+  const { formatMessage } = intl
   const [value, setValue] = useState('')
   const rootRef = useRef<HTMLDivElement>(null)
   const composerRef = useRef<HTMLInputElement>(null)
@@ -73,14 +68,23 @@ export const ChatLauncher = ({
     return () => timeouts.forEach(window.clearTimeout)
   }, [isVisible, focusComposer])
 
-  const submit = (question: string) => {
-    const trimmed = question.trim()
-    // A widget that never came up is not worth swapping into, the error under
-    // the box is all there is to show.
-    if (status === 'error' || !trimmed) return
-    setValue('')
-    onAsk(trimmed)
-  }
+  const submit = useCallback(
+    (question: string) => {
+      const trimmed = question.trim()
+      // A widget that never came up is not worth swapping into, the error under
+      // the box is all there is to show.
+      if (status === 'error' || !trimmed) return
+      setValue('')
+      onAsk(trimmed)
+    },
+    [status, onAsk],
+  )
+
+  const exampleQuestions = toExampleQuestions(
+    exampleQuestionMessages,
+    intl.messages,
+    formatMessage,
+  )
 
   return (
     <Box
@@ -116,31 +120,20 @@ export const ChatLauncher = ({
           )}
         </Stack>
 
-        <Text variant="small" color="dark400">
-          <FormattedMessage
-            {...m.disclaimer}
-            values={{
-              // The disclaimer is editable in Contentful, so the text can wrap
-              // a term in <link> to point it at the url from the page config.
-              // Without a url configured the wrapped text is left as plain text
-              // rather than rendered as a dead link.
-              link: (chunks) =>
-                disclaimerLinkHref ? (
-                  <LinkV2
-                    href={disclaimerLinkHref}
-                    color="blue400"
-                    underline="small"
-                    underlineVisibility="always"
-                    newTab
-                  >
-                    {chunks}
-                  </LinkV2>
-                ) : (
-                  <>{chunks}</>
-                ),
-            }}
-          />
-        </Text>
+        <DisclaimerText>{formatMessage(m.disclaimer)}</DisclaimerText>
+
+        {exampleQuestions.length > 0 && (
+          // Set apart from the disclaimer, which belongs to the question box
+          // above it rather than to the questions
+          <Box paddingTop={[1, 1, 2]}>
+            <ExampleQuestions
+              title={formatMessage(m.exampleQuestionsTitle)}
+              questions={exampleQuestions}
+              onSelect={submit}
+              disabled={status === 'error'}
+            />
+          </Box>
+        )}
       </Stack>
     </Box>
   )

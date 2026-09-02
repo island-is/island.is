@@ -31,7 +31,30 @@ export const m = defineMessages({
     defaultMessage:
       'Svörin eru búin til af gervigreind og geta verið ónákvæm. Þau eru ekki bindandi og koma ekki í stað fjárlagafrumvarpsins sjálfs.',
     description:
-      'Fyrirvari um svör gervigreindarinnar. Texti sem er vafinn í <link> verður hlekkur á slóðina í disclaimerLinkHref í configJson síðunnar, t.d. á skilmála.',
+      'Fyrirvari um svör gervigreindarinnar. Hlekkir eru skrifaðir beint inn í textann með markdown, t.d. „sjá [skilmála](https://island.is/skilmalar)“, og mega vera fleiri en einn.',
+  },
+  exampleQuestionsTitle: {
+    id: 'web.askTheBudgetBill:exampleQuestionsTitle',
+    defaultMessage: 'Dæmi um spurningar',
+    description: 'Fyrirsögn yfir spurningum sem hægt er að smella á',
+  },
+  exampleQuestion1: {
+    id: 'web.askTheBudgetBill:exampleQuestion1',
+    defaultMessage: 'Hvernig breytast framlög til heilbrigðismála?',
+    description:
+      'Fyrsta dæmið um spurningu. Tómur strengur fjarlægir spurninguna af síðunni.',
+  },
+  exampleQuestion2: {
+    id: 'web.askTheBudgetBill:exampleQuestion2',
+    defaultMessage: 'Hvað segir frumvarpið um menntamál?',
+    description:
+      'Annað dæmið um spurningu. Tómur strengur fjarlægir spurninguna af síðunni.',
+  },
+  exampleQuestion3: {
+    id: 'web.askTheBudgetBill:exampleQuestion3',
+    defaultMessage: 'Hver er áætluð afkoma ríkissjóðs?',
+    description:
+      'Þriðja dæmið um spurningu. Tómur strengur fjarlægir spurninguna af síðunni.',
   },
   chatErrorTitle: {
     id: 'web.askTheBudgetBill:chatErrorTitle',
@@ -44,3 +67,14 @@ export const m = defineMessages({
     description: 'Villuskilaboð ef spjallið hleðst ekki',
   },
 })
+
+/**
+ * The example questions, in the order they are shown. Each one is a string of
+ * its own in the CMS, so both the wording and how many of them there are can be
+ * changed there, in either language, without the page being touched.
+ */
+export const exampleQuestionMessages = [
+  m.exampleQuestion1,
+  m.exampleQuestion2,
+  m.exampleQuestion3,
+]
