@@ -18,7 +18,11 @@ import {
   prerequisitesMessages,
   sharedMessages,
 } from '../../lib/messages'
-import { isKnowsNationalId, isNoNationalId } from '../../utils/conditionUtils'
+import {
+  isChildOver18,
+  isKnowsNationalId,
+  isNoNationalId,
+} from '../../utils/conditionUtils'
 import { KnowsNationalId } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
@@ -79,18 +83,9 @@ export const childSubSection = buildSubSection({
           searchPersons: true,
           condition: isKnowsNationalId,
         }),
-        buildTextField({
-          id: 'child.nationalIdInfo.email',
-          title: sharedMessages.email,
-          variant: 'email',
-          width: 'half',
-          doesNotRequireAnswer: true,
-          condition: isKnowsNationalId,
-        }),
         buildPhoneField({
           id: 'child.nationalIdInfo.phone',
           title: sharedMessages.phone,
-          width: 'half',
           enableCountrySelector: true,
           doesNotRequireAnswer: true,
           condition: isKnowsNationalId,
@@ -147,6 +142,14 @@ export const childSubSection = buildSubSection({
             isKnowsNationalId(answers) &&
             !!getApplicationAnswers(answers).childName,
         }),
+        buildAlertMessageField({
+          id: 'child.over18Error',
+          alertType: 'error',
+          message: childMessages.nationalIdLookup.childOver18Error,
+          marginTop: 0,
+          condition: (answers) =>
+            isKnowsNationalId(answers) && isChildOver18(answers),
+        }),
         buildSubmitField({
           id: 'submit',
           refetchApplicationAfterSubmit: true,
@@ -155,6 +158,8 @@ export const childSubSection = buildSubSection({
               event: DefaultEvents.SUBMIT,
               name: prerequisitesMessages.child.startNotification,
               type: 'primary',
+              condition: (answers) =>
+                !(isKnowsNationalId(answers) && isChildOver18(answers)),
             },
           ],
         }),

@@ -13,7 +13,6 @@ import {
   GendersApi,
   GuardianNotAwareReasonsApi,
   IdentityApiProvider,
-  LanguageEnvironmentsApi,
   NationalRegistryV3UserApi,
   NotifierRolesApi,
   NotifierRoleSubTypesApi,
@@ -106,9 +105,6 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: SchoolTypesApi,
-        }),
-        buildDataProviderItem({
-          provider: LanguageEnvironmentsApi,
         }),
         buildDataProviderItem({
           provider: NotifierRolesApi,

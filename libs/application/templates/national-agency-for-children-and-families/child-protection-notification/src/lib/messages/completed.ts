@@ -31,7 +31,7 @@ export const completedMessages = defineMessages({
   bottomButtonMessage: {
     id: 'cpn.application:completed.bottomButtonMessage',
     defaultMessage:
-      'Á Mínum síðum Ísland.is getur þú nálgast stöðu tilkynningar ásamt öðrum upplýsingum',
+      'Á Mínum síðum Ísland.is getur þú nálgast yfirlit yfir þínar tilkynningar ásamt öðrum upplýsingum',
     description: 'Bottom button message on the completed page',
   },
 })
