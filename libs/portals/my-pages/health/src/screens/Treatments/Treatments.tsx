@@ -4,6 +4,7 @@ import {
   CardLoader,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
+  m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
@@ -33,7 +34,7 @@ const Treatments: React.FC = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.treatments)}
+      title={formatMessage(m.healthTreatments)}
       intro={messages.treatmentsIntro}
       serviceProvider={{
         slug: HEALTH_DIRECTORATE_SLUG,
@@ -57,7 +58,7 @@ const Treatments: React.FC = () => {
               <ActionCard
                 key={treatment.id}
                 heading={
-                  treatment.name.trim() || formatMessage(messages.treatment)
+                  treatment.name.trim() || formatMessage(m.healthTreatment)
                 }
                 headingVariant="h4"
                 eyebrow={treatment.organizationName ?? undefined}

@@ -4,6 +4,7 @@ import {
   CardLoader,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
+  m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
@@ -29,7 +30,7 @@ const TreatmentOverview: React.FC = () => {
 
   return (
     <IntroWrapper
-      title={treatment?.name ?? formatMessage(messages.treatment)}
+      title={treatment?.name ?? formatMessage(m.healthTreatment)}
       intro={messages.treatmentIntro}
       serviceProvider={{
         slug: HEALTH_DIRECTORATE_SLUG,

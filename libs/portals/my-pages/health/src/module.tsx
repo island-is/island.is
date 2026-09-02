@@ -683,14 +683,14 @@ export const healthModule: PortalModule = {
       element: <HealthConversationDetail />,
     },
     {
-      name: hm.treatments,
+      name: m.healthTreatments,
       path: HealthPaths.HealthTreatments,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Treatments />,
     },
     {
-      name: hm.treatment,
+      name: m.healthTreatment,
       path: HealthPaths.HealthTreatment,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),

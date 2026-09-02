@@ -2383,10 +2383,6 @@ export const messages = defineMessages({
     defaultMessage: 'Meðferð',
     id: 'sp.health:treatment',
   },
-  treatments: {
-    defaultMessage: 'Meðferðir',
-    id: 'sp.health:treatments',
-  },
   treatmentsIntro: {
     defaultMessage:
       'Hér finnur þú yfirlit yfir þær meðferðir sem þú ert skráð í.',
