@@ -1,29 +1,21 @@
 import { useRouter } from 'expo-router'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { FlatList, RefreshControl } from 'react-native'
+import { FlatList, Image, Pressable, RefreshControl } from 'react-native'
+import { ContextMenu } from 'react-native-platform-components'
 import { useTheme } from 'styled-components/native'
 
 import { StackScreen } from '@/components/stack-screen'
-import externalLinkIcon from '@/assets/icons/external-link.png'
 import {
   GetQuestionnairesQueryResult,
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
   useGetQuestionnairesQuery,
 } from '@/graphql/types/schema'
-import { useBrowser } from '@/hooks/use-browser'
 import { useLocale } from '@/hooks/use-locale'
-import {
-  fontByWeight,
-  Problem,
-  QuestionnaireCard,
-  type QuestionnaireCardAction,
-  Skeleton,
-} from '@/ui'
+import { Problem, QuestionnaireCard, Skeleton } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { getQuestionnaireOrganizationLabelId } from '@/utils/questionnaire-utils'
-import { questionnaireUrls } from '@/utils/url-builder'
 
 type Item = NonNullable<
   NonNullable<
@@ -32,69 +24,11 @@ type Item = NonNullable<
 >[number]
 
 export default function QuestionnairesScreen() {
-  const { openBrowser } = useBrowser()
   const router = useRouter()
 
   const theme = useTheme()
   const intl = useIntl()
   const locale = useLocale()
-
-  const getActionList = useCallback(
-    (
-      status: QuestionnaireQuestionnairesStatusEnum | null | undefined,
-      organization:
-        | QuestionnaireQuestionnairesOrganizationEnum
-        | null
-        | undefined,
-      id: string | null | undefined,
-      submissionId?: string,
-    ): QuestionnaireCardAction[] => {
-      if (!status || !organization || !id) {
-        return []
-      }
-
-      const urlParams = { organization, id }
-
-      const getActionData = (messageid: string, link: string) => {
-        return {
-          icon: externalLinkIcon,
-          onPress: () => openBrowser(link),
-          text: intl.formatMessage({ id: messageid }),
-        }
-      }
-
-      switch (status) {
-        case QuestionnaireQuestionnairesStatusEnum.NotAnswered:
-          return [
-            getActionData(
-              'health.questionnaires.action.answer',
-              questionnaireUrls.answer(urlParams),
-            ),
-          ]
-        case QuestionnaireQuestionnairesStatusEnum.Answered:
-          return [
-            getActionData(
-              'health.questionnaires.action.view-answer',
-              questionnaireUrls.viewAnswer({ ...urlParams, submissionId }),
-            ),
-          ]
-        case QuestionnaireQuestionnairesStatusEnum.Draft:
-          return [
-            getActionData(
-              'health.questionnaires.action.continue-draft',
-              questionnaireUrls.continueDraft(urlParams),
-            ),
-            getActionData(
-              'health.questionnaires.action.view-answer',
-              questionnaireUrls.viewAnswer({ ...urlParams, submissionId }),
-            ),
-          ]
-        default:
-          return []
-      }
-    },
-    [intl, openBrowser],
-  )
 
   const { data, loading, error, refetch, networkStatus } =
     useGetQuestionnairesQuery({
@@ -106,6 +40,7 @@ export default function QuestionnairesScreen() {
   const isInitialLoading = loading && !data
   const [refetching, setRefetching] = useState(false)
   const [showExpired, setShowExpired] = useState(false)
+  const [showContext, setShowContext] = useState(false)
 
   const onRefresh = useCallback(async () => {
     setRefetching(true)
@@ -138,27 +73,24 @@ export default function QuestionnairesScreen() {
         <QuestionnaireCard
           key={item.id}
           title={item.title}
-          organization={intl.formatMessage({
-            id: getQuestionnaireOrganizationLabelId(item.organization),
-          })}
+          organization={
+            item.senderGroupName ||
+            intl.formatMessage({
+              id: getQuestionnaireOrganizationLabelId(item.organization),
+            })
+          }
           date={new Date(item.sentDate)}
           status={
             item.status ?? QuestionnaireQuestionnairesStatusEnum.NotAnswered
           }
           onPress={open}
-          actionList={getActionList(
-            item.status,
-            item.organization,
-            item.id,
-            item.lastSubmissionId ?? undefined,
-          )}
           style={{
             marginBottom: theme.spacing[2],
           }}
         />
       )
     },
-    [getActionList, intl, openDetail],
+    [intl, openDetail],
   )
 
   const questionnaires = useMemo(() => {
@@ -187,20 +119,38 @@ export default function QuestionnairesScreen() {
             ? []
             : [
                 {
-                  type: 'button',
-                  label: intl.formatMessage({
-                    id: showExpired
-                      ? 'health.questionnaires.action.hide-expired'
-                      : 'health.questionnaires.action.show-expired',
-                  }),
-                  labelStyle: {
-                    fontSize: 15,
-                    fontWeight: '400',
-                    fontFamily: fontByWeight('400'),
-                  },
-                  onPress() {
-                    setShowExpired((v) => !v)
-                  },
+                  type: 'custom',
+                  element: (
+                    <ContextMenu
+                      trigger="tap"
+                      android={{ visible: showContext }}
+                      actions={[
+                        {
+                          id: 'toggle-expired',
+                          title: intl.formatMessage({
+                            id: showExpired
+                              ? 'health.questionnaires.action.hide-expired'
+                              : 'health.questionnaires.action.show-expired',
+                          }),
+                        },
+                      ]}
+                      onPressAction={(id) => {
+                        if (id === 'toggle-expired') {
+                          setShowExpired((v) => !v)
+                        }
+                      }}
+                      onMenuClose={() => setShowContext(false)}
+                    >
+                      <Pressable onPress={() => setShowContext(true)}>
+                        <Image
+                          source={require('@/assets/icons/Ellipsis-vertical.png')}
+                          width={24}
+                          height={24}
+                          tintColor={theme.color.blue400}
+                        />
+                      </Pressable>
+                    </ContextMenu>
+                  ),
                 },
               ],
         }}

@@ -4,10 +4,7 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { TableRepeaterFormField } from '@island.is/application/ui-fields'
 import { format as formatKennitala } from 'kennitala'
 import React, { FC } from 'react'
