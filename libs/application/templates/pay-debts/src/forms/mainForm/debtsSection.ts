@@ -14,13 +14,14 @@ import {
 } from '@island.is/application/types'
 import { formatCurrency, isRunningOnEnvironment } from '@island.is/shared/utils'
 import { debts as messages } from '../../lib/messages'
+import { formatDate } from '../../utils/formatDate'
 import { formatTimePeriod } from '../../utils/formatTimePeriod'
 import { getDebts, hasFetchedDebts } from '../../utils/getDebts'
 
+const PRINCIPAL_AND_INTEREST_UNAVAILABLE = '—'
+
 const debtsWereFetched = (_answers: unknown, externalData: ExternalData) =>
   hasFetchedDebts(externalData)
-
-const showChargeTypeDetails = (_rowIndex: number) => undefined
 
 export const debtsSection = buildSection({
   id: 'debtsSection',
@@ -44,7 +45,7 @@ export const debtsSection = buildSection({
           header: [
             {
               label: messages.table.chargeTypeNameHeader,
-              onCellClick: showChargeTypeDetails,
+              expandable: true,
             },
             {
               label: messages.table.chargeItemSubjectHeader,
@@ -68,6 +69,23 @@ export const debtsSection = buildSection({
               formatTimePeriod(debt.timePeriod),
               formatCurrency(debt.debts),
             ])
+          },
+          expandedRows: {
+            header: [
+              messages.table.dueDateHeader,
+              messages.table.finalDueDateHeader,
+              messages.table.principalHeader,
+              messages.table.interestHeader,
+            ],
+            rows: (application) =>
+              getDebts(application).map<StaticText[][]>((debt) => [
+                [
+                  formatDate(debt.dueDate),
+                  formatDate(debt.finalDueDate),
+                  PRINCIPAL_AND_INTEREST_UNAVAILABLE,
+                  PRINCIPAL_AND_INTEREST_UNAVAILABLE,
+                ],
+              ]),
           },
           inputColumn: {
             id: 'debtsToPay',

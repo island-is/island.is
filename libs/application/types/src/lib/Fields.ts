@@ -1031,7 +1031,7 @@ export type InteractiveTableHeaderCell =
       label: StaticText
       width?: number
       truncate?: boolean
-      onCellClick?: (rowIndex: number) => void
+      expandable?: boolean
     }
 
 export interface InteractiveTableField extends BaseField {
@@ -1049,6 +1049,10 @@ export interface InteractiveTableField extends BaseField {
     placeholder?: StaticText
   }
   footerRow?: StaticText[] | ((application: Application) => StaticText[])
+  expandedRows?: {
+    header: StaticText[] | ((application: Application) => StaticText[])
+    rows: StaticText[][][] | ((application: Application) => StaticText[][][])
+  }
   isSubmitDisabled?: (params: {
     selectedRows: boolean[]
     inputValues: string[]

@@ -1,5 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const tableWrapper = style({})
 
@@ -38,11 +38,53 @@ globalStyle(`${tableWrapper} div:has(> input:not([type="checkbox"]))`, {
   padding: 0,
 })
 
+globalStyle(`${tableWrapper} div:has(> div > input:not([type="checkbox"]))`, {
+  background: theme.color.white,
+})
+
 export const checkboxColumnStyle = { width: 56 }
 export const inputColumnHeaderStyle = { width: 155 }
 
 export const footerRowTestId = 'interactive-table-footer-row'
 
 globalStyle(`${tableWrapper} tr[data-testid="${footerRowTestId}"] td`, {
+  borderBottomWidth: 0,
+})
+
+export const line = style({
+  borderLeft: `2px solid ${theme.color.blue400}`,
+  width: 0,
+  height: 'calc(100% + 1px)',
+  left: 0,
+  top: 0,
+  zIndex: 10,
+  position: 'absolute',
+})
+
+export const expandedTable = style({})
+
+globalStyle(`${tableWrapper} ${expandedTable} table`, {
+  tableLayout: 'auto',
+  minWidth: 0,
+})
+
+const expandedCell = {
+  height: 'auto',
+  padding: '12px 16px',
+  fontSize: 14,
+  lineHeight: '18px',
+} as const
+
+globalStyle(`${tableWrapper} ${expandedTable} th`, {
+  ...expandedCell,
+  fontWeight: theme.typography.semiBold,
+})
+
+globalStyle(`${tableWrapper} ${expandedTable} td`, {
+  ...expandedCell,
+  fontWeight: theme.typography.regular,
+})
+
+globalStyle(`${tableWrapper} ${expandedTable} tbody tr:last-child td`, {
   borderBottomWidth: 0,
 })

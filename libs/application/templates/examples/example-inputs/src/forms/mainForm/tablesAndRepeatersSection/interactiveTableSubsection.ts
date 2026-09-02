@@ -10,9 +10,22 @@ import { Application } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/shared/utils'
 
 const invoices = [
-  { name: 'Invoice 1', dueDate: '15.01.2024', amount: 25000 },
-  { name: 'Invoice 2', dueDate: '15.02.2024', amount: 12500 },
-  { name: 'Invoice 3', dueDate: '15.03.2024', amount: 8000 },
+  {
+    name: 'Invoice 1',
+    dueDate: '15.01.2024',
+    amount: 25000,
+    lines: [
+      { description: 'Base fee', amount: 20000 },
+      { description: 'Interest', amount: 5000 },
+    ],
+  },
+  {
+    name: 'Invoice 2',
+    dueDate: '15.02.2024',
+    amount: 12500,
+    lines: [{ description: 'Base fee', amount: 12500 }],
+  },
+  { name: 'Invoice 3', dueDate: '15.03.2024', amount: 8000, lines: [] },
 ]
 
 export const interactiveTableSubsection = buildSubSection({
@@ -26,7 +39,7 @@ export const interactiveTableSubsection = buildSubSection({
         buildDescriptionField({
           id: 'interactiveTableDescription',
           description:
-            'The interactive table lets users select rows and, optionally, enter an amount per row capped by a max value - for example choosing which invoices to pay and how much to pay towards each one. Pair it with a sticky footer field (referencing the table via widthReferenceTestId/watchFieldIds) to show a live running total as the user edits values.',
+            'The interactive table lets users select rows and, optionally, enter an amount per row capped by a max value - for example choosing which invoices to pay and how much to pay towards each one. Pair it with a sticky footer field (referencing the table via widthReferenceTestId/watchFieldIds) to show a live running total as the user edits values. A column marked expandable turns into a chevron toggle that opens the row into a sub-table defined by expandedRows; rows with no sub-table entries stay closed.',
           marginBottom: 2,
         }),
         buildInteractiveTableField({
@@ -34,7 +47,7 @@ export const interactiveTableSubsection = buildSubSection({
           dataTestId: 'interactive-table',
           selectable: true,
           header: [
-            { label: 'Invoice', width: 200 },
+            { label: 'Invoice', width: 200, expandable: true },
             'Due date',
             'Amount due',
             'Amount to pay',
@@ -44,6 +57,15 @@ export const interactiveTableSubsection = buildSubSection({
             invoice.dueDate,
             formatCurrency(invoice.amount.toString()),
           ]),
+          expandedRows: {
+            header: ['Description', 'Amount'],
+            rows: invoices.map((invoice) =>
+              invoice.lines.map((line) => [
+                line.description,
+                formatCurrency(line.amount.toString()),
+              ]),
+            ),
+          },
           inputColumn: {
             id: 'interactiveTableAmountToPay',
             getMaxAmount: () => invoices.map((invoice) => invoice.amount),
