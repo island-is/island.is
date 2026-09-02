@@ -12,7 +12,6 @@ globalStyle(`${tableWrapper} table`, {
 globalStyle(`${tableWrapper} th`, {
   height: 56,
   padding: 16,
-  overflowWrap: 'break-word',
 })
 
 globalStyle(`${tableWrapper} td`, {

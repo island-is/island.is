@@ -4,14 +4,14 @@ export const debts = {
   general: defineMessages({
     sectionTitle: {
       id: 'pd.application:debts.general.sectionTitle',
-      defaultMessage: 'Skuldastaða',
+      defaultMessage: 'Ógreiddir reikningar',
       description: 'Title of first section',
     },
   }),
   description: defineMessages({
     title: {
       id: 'pd.application:debts.description.title',
-      defaultMessage: 'Skuldastaða',
+      defaultMessage: 'Ógreiddir reikningar',
       description: 'Title of description field',
     },
     description: {
