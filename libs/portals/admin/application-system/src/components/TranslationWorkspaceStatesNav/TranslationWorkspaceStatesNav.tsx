@@ -168,10 +168,7 @@ export const TranslationWorkspaceStatesNav = ({
             mergeMessageDescriptorLists(
               sectionTitleDescriptors,
               ...section.subSections.map((sub) =>
-                descriptorsForSectionNavigation(
-                  sub.titleMessageDescriptor,
-                  [],
-                ),
+                descriptorsForSectionNavigation(sub.titleMessageDescriptor, []),
               ),
             ),
           )
@@ -184,10 +181,7 @@ export const TranslationWorkspaceStatesNav = ({
             countScreens(
               `${roleKey}:sub:${sub.id}`,
               sub.screens as ScreenIntrospection[],
-              descriptorsForSectionNavigation(
-                sub.titleMessageDescriptor,
-                [],
-              ),
+              descriptorsForSectionNavigation(sub.titleMessageDescriptor, []),
             )
           }
           for (const screen of screens) {
@@ -306,10 +300,10 @@ export const TranslationWorkspaceStatesNav = ({
                                 const { subSections } = section
                                 const sectionNumber = sectionIndex + 1
 
-                                const sectionCount =
-                                  translationCounts.byScreens[
-                                    `${roleKey}:section-all:${section.id}`
-                                  ] ?? { translated: 0, total: 0 }
+                                const sectionCount = translationCounts
+                                  .byScreens[
+                                  `${roleKey}:section-all:${section.id}`
+                                ] ?? { translated: 0, total: 0 }
 
                                 const navRow = (
                                   nav: ScreenIntrospection,

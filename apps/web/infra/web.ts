@@ -83,6 +83,7 @@ export const serviceSetup = (services: {
       max: 50,
       min: 3,
       cpuAverageUtilization: 70,
+      scaleToProdInDev: true, // TEMPORARY: load-test window
     })
     .extraAttributes({
       dev: {},

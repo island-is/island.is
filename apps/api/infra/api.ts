@@ -358,6 +358,8 @@ export const serviceSetup = (services: {
         prod: 'hh_env_prod',
       },
       MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication',
+      // Outbound socket cap for enhancedFetch clients; raise to reduce queueing.
+      FETCH_MAX_SOCKETS: { dev: '50', staging: '50', prod: '50' },
     })
     .secrets({
       HH_ZENDESK_SUBDOMAIN:
@@ -626,6 +628,7 @@ export const serviceSetup = (services: {
       max: 50,
       min: 3,
       cpuAverageUtilization: 70,
+      scaleToProdInDev: true, // TEMPORARY: load-test window
     })
     .grantNamespaces(
       'nginx-ingress-external',
