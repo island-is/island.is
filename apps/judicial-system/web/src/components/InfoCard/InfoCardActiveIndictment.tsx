@@ -1,11 +1,6 @@
 import { useContext } from 'react'
 
-import {
-  isCompletedCase,
-  isDefenceUser,
-} from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
 import InfoCard from './InfoCard'
@@ -24,9 +19,9 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     onProsecutorClick,
   } = props
   const { workingCase } = useContext(FormContext)
-  const { user } = useContext(UserContext)
   const {
     defendants,
+    excludedDefendants,
     cancelledAndDismissedDefendants,
     indictmentCreated,
     prosecutor,
@@ -45,13 +40,6 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     splitCases,
     splitCase,
   } = useInfoCardItems()
-
-  const excludedDefendants =
-    isDefenceUser(user) && isCompletedCase(workingCase.state)
-      ? []
-      : workingCase.defendants?.filter(
-          (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
-        )
 
   return (
     <InfoCard
@@ -106,10 +94,9 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           ? [
               {
                 id: 'cancelled-and-dismissed-defendants-section',
-                items:
-                  excludedDefendants.map((defendant) =>
-                    cancelledAndDismissedDefendants(defendant),
-                  ) || [],
+                items: excludedDefendants.map((defendant) =>
+                  cancelledAndDismissedDefendants(defendant),
+                ),
                 columns: 2,
               },
             ]
