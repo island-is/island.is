@@ -84,3 +84,13 @@ export const thermoMeterSegment = style({
 export const isRequiredStar = style({
   color: theme.color.red600,
 })
+
+// Numeric fields hold a handful of digits - cap their width on larger
+// screens instead of letting them span the content column
+export const numberInput = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      maxWidth: 300,
+    },
+  },
+})

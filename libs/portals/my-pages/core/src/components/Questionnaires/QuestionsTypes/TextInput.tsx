@@ -1,6 +1,6 @@
 import { Box, Input } from '@island.is/island-ui/core'
 import React from 'react'
-import { useIsMobile } from '../../..'
+import * as styles from './QuestionTypes.css'
 
 export interface TextInputProps {
   id: string
@@ -37,7 +37,6 @@ export const TextInput: React.FC<TextInputProps> = ({
   max,
   backgroundColor = 'blue',
 }) => {
-  const isMobile = useIsMobile()
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -80,12 +79,11 @@ export const TextInput: React.FC<TextInputProps> = ({
 
   return (
     <Box
-      width={
-        isMobile
-          ? 'full'
-          : type === 'number' || type === 'decimal'
-          ? 'half'
-          : 'full'
+      width="full"
+      className={
+        type === 'number' || type === 'decimal'
+          ? styles.numberInput
+          : undefined
       }
     >
       <Input
