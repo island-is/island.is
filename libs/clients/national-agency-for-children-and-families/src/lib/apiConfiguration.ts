@@ -23,7 +23,7 @@ export const ApiConfiguration = {
           tokenEndpoint: `${xroadConfig.xRoadBasePath}/r1/${config.xroadAuthPath}/connect/token`,
           clientId: config.clientId,
           clientSecret: config.clientSecret,
-          scope: config.scope,
+          scope: [],
           tokenRequestHeaders: { 'X-Road-Client': xroadConfig.xRoadClient },
         },
       }),

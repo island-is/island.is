@@ -1174,3 +1174,18 @@ export const RecyclingFund = new XroadConf({
     },
   },
 })
+
+export const NationalAgencyForChildrenAndFamilies = new XroadConf({
+  env: {
+    XROAD_NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_API_PATH: {
+      dev: 'IS-DEV/GOV/10077/BOFS-Protected/bvg-digital-iceland',
+      staging: 'IS-TEST/GOV/10077/BOFS-Protected/bvg-digital-iceland', // TODO: confirm staging X-Road path with BVG
+      prod: 'IS-TEST/GOV/10077/BOFS-Protected/bvg-digital-iceland', // TODO: confirm prod X-Road path with BVG
+    },
+    XROAD_NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_AUTH_PATH: {
+      dev: 'IS-DEV/GOV/10077/BOFS-Protected/bvg-auth',
+      staging: 'IS-TEST/GOV/10077/BOFS-Protected/bvg-auth', // TODO: confirm staging X-Road path with BVG
+      prod: 'IS-TEST/GOV/10077/BOFS-Protected/bvg-auth', // TODO: confirm prod X-Road path with BVG
+    },
+  },
+})

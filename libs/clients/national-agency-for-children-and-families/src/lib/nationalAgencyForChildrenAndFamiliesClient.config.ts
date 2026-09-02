@@ -6,7 +6,6 @@ const schema = z.object({
   xroadAuthPath: z.string(),
   clientId: z.string(),
   clientSecret: z.string(),
-  scope: z.array(z.string()),
 })
 
 export const NationalAgencyForChildrenAndFamiliesClientConfig = defineConfig({
@@ -15,16 +14,19 @@ export const NationalAgencyForChildrenAndFamiliesClientConfig = defineConfig({
   load(env) {
     return {
       xroadApiPath: env.required(
-        'XROAD_BARNAVERND_API_PATH',
+        'XROAD_NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_API_PATH',
         'IS-DEV/GOV/10077/BOFS-Protected/bvg-digital-iceland',
       ),
       xroadAuthPath: env.required(
-        'XROAD_BARNAVERND_AUTH_PATH',
+        'XROAD_NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_AUTH_PATH',
         'IS-DEV/GOV/10077/BOFS-Protected/bvg-auth',
       ),
-      clientId: env.required('BARNAVERND_API_CLIENT_ID'),
-      clientSecret: env.required('BARNAVERND_API_CLIENT_SECRET'),
-      scope: env.optionalJSON('BARNAVERND_API_SCOPE') ?? [],
+      clientId: env.required(
+        'NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_CLIENT_ID',
+      ),
+      clientSecret: env.required(
+        'NATIONAL_AGENCY_FOR_CHILDREN_AND_FAMILIES_CLIENT_SECRET',
+      ),
     }
   },
 })
