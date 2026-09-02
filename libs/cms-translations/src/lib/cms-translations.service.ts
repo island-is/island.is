@@ -98,7 +98,7 @@ export class CmsTranslationsService {
     await this.cacheManager.set(
       cacheKey,
       messages,
-      this.config.memCacheExpiryMilliseconds + 120000 * Math.random(),
+      this.config.memCacheExpiryMilliseconds + Math.round(120000 * Math.random()),
     )
 
     return messages
