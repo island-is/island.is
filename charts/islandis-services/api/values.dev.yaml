@@ -230,8 +230,8 @@ hpa:
       cpuAverageUtilization: 70
       nginxRequestsIrate: 5
     replicas:
-      max: 2
-      min: 1
+      max: 50
+      min: 3
 httpRoute:
   primary-gw:
     hostnames:
@@ -253,9 +253,9 @@ podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 1
-  max: 2
-  min: 1
+  default: 3
+  max: 50
+  min: 3
 resources:
   limits:
     cpu: '3000m'

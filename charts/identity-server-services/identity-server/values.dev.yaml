@@ -81,8 +81,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 2
-      min: 1
+      max: 10
+      min: 3
 httpRoute:
   primary-gw:
     hostnames:
@@ -109,9 +109,9 @@ pvcs:
     storageClass: 'efs-csi'
     useExisting: false
 replicaCount:
-  default: 1
-  max: 2
-  min: 1
+  default: 3
+  max: 10
+  min: 3
 resources:
   limits:
     cpu: '4000m'
