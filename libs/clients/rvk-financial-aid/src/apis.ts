@@ -26,11 +26,20 @@ export const exportedApis = [
         fetchApi: createEnhancedFetch({
           name: Api.name,
           organizationSlug: 'reykjavikurborg',
+          autoAuth: {
+            mode: 'token',
+            issuer: '',
+            tokenEndpoint:
+              'https://login.microsoftonline.com/6aed0be3-a6ff-4c6c-83b5-bb72bdd10088/oauth2/v2.0/token',
+            clientId: config.rvkVeitaClientId,
+            clientSecret: config.rvkVeitaClientSecret,
+            scope: ['api://veita-api.test.reykjavik.is/.default'],
+          },
         }),
         // headers: { 'X-Road-Client': xRoadConfig.xRoadClient },
         headers: { 'X-Tenant-Identifier': 'reykjavik' },
         // basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-        basePath: 'https://app-veita-api-test.azurewebsites.net',
+        basePath: config.rvkVeitaBaseUrl,
       }),
     )
   },

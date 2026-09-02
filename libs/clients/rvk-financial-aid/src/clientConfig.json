@@ -295,17 +295,175 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StatusUpdateRequest"
+                "$ref": "#/components/schemas/ApplicationStatusUpdateRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/StatusUpdateRequest"
+                "$ref": "#/components/schemas/ApplicationStatusUpdateRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/StatusUpdateRequest"
+                "$ref": "#/components/schemas/ApplicationStatusUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{applicationId}/calculationAmounts": {
+      "get": {
+        "tags": ["Applications"],
+        "operationId": "GetCalculationAmountsForApplication",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{id}/calculationAmounts": {
+      "put": {
+        "tags": ["Applications"],
+        "operationId": "UpsertCalculationAmounts",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculationAmountsUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculationAmountsUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculationAmountsUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{id}/approve": {
+      "patch": {
+        "tags": ["Applications"],
+        "operationId": "ApproveApplication",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationApprovalRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationApprovalRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationApprovalRequest"
               }
             }
           }
@@ -413,17 +571,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StatusUpdateRequest"
+                "$ref": "#/components/schemas/ApplicationStatusUpdateRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/StatusUpdateRequest"
+                "$ref": "#/components/schemas/ApplicationStatusUpdateRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/StatusUpdateRequest"
+                "$ref": "#/components/schemas/ApplicationStatusUpdateRequest"
               }
             }
           }
@@ -848,6 +1006,94 @@
         }
       }
     },
+    "/islandis/application": {
+      "post": {
+        "tags": ["ForIslandis"],
+        "operationId": "CreateIslandisApplication",
+        "parameters": [
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/islandis/settings": {
+      "get": {
+        "tags": ["ForIslandis"],
+        "operationId": "GetFinaidServiceSettingsForIslandis",
+        "parameters": [
+          {
+            "name": "municipalityCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/notifications/email": {
       "post": {
         "tags": ["Notifications"],
@@ -904,7 +1150,7 @@
         "operationId": "GetFinaidServiceSettings",
         "parameters": [
           {
-            "name": "tenantIdentifier",
+            "name": "municipalityCode",
             "in": "query",
             "schema": {
               "type": "string"
@@ -935,9 +1181,9 @@
           }
         }
       },
-      "patch": {
+      "put": {
         "tags": ["Settings"],
-        "operationId": "PatchFinaidServiceSettings",
+        "operationId": "UpsertFinaidServiceSettings",
         "parameters": [
           {
             "name": "X-Tenant-Identifier",
@@ -983,10 +1229,164 @@
           }
         }
       }
+    },
+    "/settings/baseAmountAndCategory": {
+      "get": {
+        "tags": ["Settings"],
+        "operationId": "GetBaseAmountAndCategory",
+        "parameters": [
+          {
+            "name": "municipalityCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hasSpouse",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "homeCircumstance",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/HomeCircumstance"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "ApplicationApprovalRequest": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "calculationAmounts": {
+            "$ref": "#/components/schemas/CalculationAmountsUpdateRequest"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "notifyApplicant": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationStatusUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "newStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "notifyApplicant": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CalculationAmountsUpdateRequest": {
+        "required": ["changedBy"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "applicationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "baseAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "income": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "childrenAidAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "decemberAidAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "personalTaxCredit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spousePersonalTaxCredit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tax": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "assistanceAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "payoutAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "df": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeductionFactors"
+            },
+            "nullable": true
+          },
+          "changedBy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ChildDto": {
         "required": ["kennitala"],
         "type": "object",
@@ -1129,20 +1529,12 @@
             "type": "string",
             "nullable": true
           },
-          "state": {
-            "type": "string",
-            "nullable": true
-          },
           "files": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CreateApplicationDocument"
             },
             "nullable": true
-          },
-          "amount": {
-            "type": "number",
-            "format": "double"
           },
           "spouseName": {
             "type": "string",
@@ -1213,9 +1605,51 @@
         },
         "additionalProperties": false
       },
-      "FinaidServiceSettingsRequest": {
+      "DeductionFactors": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tenantIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "calculationAmountsId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deductionFactorAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deductionFactorDescription": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FinaidServiceSettingsRequest": {
+        "required": ["municipalityCode", "municipalityName"],
+        "type": "object",
+        "properties": {
+          "municipalityCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "municipalityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
           "decBonusPercentage": {
             "type": "integer",
             "format": "int32"
@@ -1224,6 +1658,14 @@
             "type": "boolean"
           },
           "personalTaxAllowance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "baseTaxPercentage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amountPerChild": {
             "type": "integer",
             "format": "int32"
           },
@@ -1278,6 +1720,17 @@
         },
         "additionalProperties": false
       },
+      "HomeCircumstance": {
+        "enum": [
+          "OwnHousehold",
+          "RegisteredLease",
+          "UnregisteredLease",
+          "RentOther",
+          "LivingWithParents",
+          "Other"
+        ],
+        "type": "string"
+      },
       "SendMessageRequest": {
         "type": "object",
         "properties": {
@@ -1296,23 +1749,6 @@
           "body": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "StatusUpdateRequest": {
-        "type": "object",
-        "properties": {
-          "newStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "notifyApplicant": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false
