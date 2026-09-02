@@ -177,7 +177,6 @@ const cloneNavItem = (item: PortalNavigationItem): PortalNavigationItem => ({
 })
 
 /**
- * portals-my-pages/health
  * Adds a "Meðferðir" section under Heilsa with one child per treatment.
  * Operates on a deep clone — the nav tree is a shared singleton mutated in
  * place elsewhere. systemRoute keeps concrete paths from being filtered out.
