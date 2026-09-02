@@ -25,6 +25,9 @@ export type ProgressMarkers = Partial<Record<ProgressStep, true>>
  * `undefined` as given, so writing `false` for an unfinished step would mark it
  * complete.
  *
+ * The write resolves to whether it was persisted, so a caller that would
+ * otherwise write its marker only once per mount can retry a failed one.
+ *
  * The returned function is stable, so it is safe as an effect dependency —
  * every caller registers its marker write from inside an effect. answerQuestions
  * is a fresh arrow on every shell render and the ANSWER it dispatches triggers
@@ -46,6 +49,7 @@ export const useProgressMarker = (
   return useCallback(
     async (markers: ProgressMarkers, extraAnswers?: FormValue) => {
       const answers: FormValue = { progress: markers, ...extraAnswers }
+      let persisted = true
 
       try {
         await updateApplication({
@@ -55,10 +59,18 @@ export const useProgressMarker = (
         // Never block navigation on a marker: the applicant's actual work is
         // already on the DMR draft by the time this runs, and the only cost of
         // a lost marker is that they resume a screen earlier than they could.
-        return
+        persisted = false
       }
 
+      // Mirrored even when the write failed. `hasPersonalCriteria` rides along
+      // in extraAnswers and decides whether the employee-classification screen
+      // exists at all, so leaving the shell on the stale value would skip a
+      // required step for the rest of the session. What is only mirrored is
+      // lost on reload — the return value is how a caller that latches on a
+      // marker (EmployeesEditor) knows to try again.
       answerQuestionsRef.current?.(answers)
+
+      return persisted
     },
     [applicationId, locale, updateApplication],
   )

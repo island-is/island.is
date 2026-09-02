@@ -213,8 +213,10 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           (command) => command.method !== SyncMethodEnum.REMOVE,
         )
       ) {
-        employeesMarkedRef.current = true
-        await markProgress({ employees: true })
+        // Latched only on a confirmed write, so a marker lost to a failed
+        // mutation is retried by the next successful sync instead of being
+        // skipped for the rest of the mount.
+        employeesMarkedRef.current = await markProgress({ employees: true })
       }
       return true
     } catch {

@@ -31,6 +31,21 @@ import { useProgressMarker } from '../../utils/useProgressMarker'
 import { messages } from '../../lib/messages'
 import { getProviderErrorMessages } from '../../utils/providerError'
 
+// The criteria the import just wrote, or undefined if that read leg failed —
+// which is not the same as an empty list, and is why the two cases are kept
+// apart (see step 5 in handleFileSelected).
+const readImportedCriteria = (
+  externalData: Record<string, unknown> | undefined,
+) => {
+  const read = externalData?.draftCriteria as
+    | {
+        status?: 'success' | 'failure'
+        data?: { criteria?: ReportCriterionDto[] }
+      }
+    | undefined
+  return read?.status === 'success' ? read.data?.criteria ?? [] : undefined
+}
+
 // Manual entry (and the footer's default submit, prior to any successful
 // import) both advance here — a successful Excel import instead jumps
 // straight to ANALYSIS_SCREEN_ID, see importSucceededRef below.
@@ -225,17 +240,49 @@ export const ExcelTemplateDownload: FC<
         return
       }
 
-      const importedCriteria = resultExternalData?.draftCriteria as
-        | {
-            status?: 'success' | 'failure'
-            data?: { criteria?: ReportCriterionDto[] }
-          }
-        | undefined
+      let importedCriteria = readImportedCriteria(resultExternalData)
 
       // 4. Re-fetch so downstream screens read from DMR, not this response —
       //    except the answers-backed navigation signals below (see
-      //    `hasPersonalCriteria` and `progress` in dataSchema.ts).
+      //    `hasPersonalCriteria` and `progress` in dataSchema.ts). It also
+      //    refreshes `content`, which is what keeps the footer's default
+      //    submit from seeding default job factors on top of the import.
       await refetch({ silent: true })
+
+      // 5. `hasPersonalCriteria` is what makes the employee-classification
+      //    screen exist at all (see employeeClassificationSubSection.ts), so an
+      //    unread criteria list must not be persisted as `false` — that would
+      //    silently drop a required step for a workbook that does define
+      //    PERSONAL factors. The read leg can fail on its own while the import
+      //    leg succeeded, so retry it once before giving up on it.
+      if (!importedCriteria) {
+        const retry = await updateApplicationExternalData({
+          variables: {
+            input: {
+              id: application.id,
+              dataProviders: [
+                {
+                  actionId: draftActionId(ApiActions.listDraftCriteria),
+                  order: 0,
+                },
+              ],
+            },
+            locale,
+          },
+        })
+        importedCriteria = readImportedCriteria(
+          retry.data?.updateApplicationExternalData.externalData,
+        )
+      }
+
+      if (!importedCriteria) {
+        // Still unknown. The workbook's own content is already on the draft and
+        // the import is REPLACE, so re-importing is safe — better than jumping
+        // the applicant to the analysis on a navigation state we can't trust.
+        failImport()
+        return
+      }
+
       // The workbook populates every report step in one go (REPLACE semantics
       // on the whole scoring graph: criteria, sub-criteria, steps, roles,
       // employees and both sets of step assignments), and the applicant is
@@ -252,12 +299,9 @@ export const ExcelTemplateDownload: FC<
           employeeClassification: true,
         },
         {
-          hasPersonalCriteria:
-            importedCriteria?.status === 'success'
-              ? (importedCriteria.data?.criteria ?? []).some(
-                  (c) => c.type === 'PERSONAL',
-                )
-              : false,
+          hasPersonalCriteria: importedCriteria.some(
+            (c) => c.type === 'PERSONAL',
+          ),
         },
       )
       importSucceededRef.current = true
