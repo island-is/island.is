@@ -57,17 +57,24 @@ async function listJobs(token, owner, repo, runId) {
   return jobs
 }
 
-async function fetchLog(token, owner, repo, jobId) {
+async function fetchLog(token, owner, repo, jobId, attempts = 6) {
   // 302 redirects to a signed storage URL; fetch follows it and strips the
-  // Authorization header on the cross-origin hop (per spec).
-  try {
-    const url = `https://api.github.com/repos/${owner}/${repo}/actions/jobs/${jobId}/logs`
-    const res = await fetch(url, { headers: ghHeaders(token) })
-    if (!res.ok) return null
-    return await res.text()
-  } catch {
-    return null
+  // Authorization header on the cross-origin hop (per spec). Job logs can 404
+  // briefly right after completion, so retry before giving up.
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/jobs/${jobId}/logs`
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(url, { headers: ghHeaders(token) })
+      if (res.ok) {
+        const text = await res.text()
+        if (text && text.length > 0) return text
+      }
+    } catch {
+      /* transient network error; retry */
+    }
+    if (i < attempts - 1) await new Promise((r) => setTimeout(r, 3000))
   }
+  return null
 }
 
 function classify(logText) {
