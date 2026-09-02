@@ -34,6 +34,9 @@ const contactPerson = z.object({
   name: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  jobTitle: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
   email: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required })
@@ -65,41 +68,80 @@ const employeeCount = z.object({
     ),
 })
 
-const subsidiaries = z.object({
-  includesSubsidiaries: z
-    .enum(['yes', 'no'])
-    .refine((v) => !!v, { params: messages.errors.required }),
-  list: z.optional(
-    z
-      .array(
-        z.object({
-          nationalIdWithName: z.object({
-            name: z.string().min(1),
-            nationalId: z
-              .string()
-              .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-                params: messages.errors.invalidCompanyNationalId,
-              }),
-          }),
-        }),
-      )
-      .superRefine((items, ctx) => {
-        const seen = new Set<string>()
-        items.forEach((item, i) => {
-          const id = item.nationalIdWithName?.nationalId
-          if (id && seen.has(id)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [i, 'nationalIdWithName', 'nationalId'],
-              params: messages.errors.duplicateSubsidiary,
-            })
-          } else if (id) {
-            seen.add(id)
-          }
-        })
-      }),
-  ),
+// A TableRepeater row carries the table's own bookkeeping: a row the applicant
+// just added is `{ isUnsaved: true }` with no fields on it yet, and a deleted
+// one is only flagged `isRemoved` — the real splice happens in the table's
+// beforeSubmit callback, which runs after this schema. Both shapes have to
+// parse, so the row is all-optional here and the actual rules live in the
+// refinement below, which can skip the rows that aren't really there.
+const subsidiaryRow = z.object({
+  nationalIdWithName: z
+    .object({
+      name: z.string().optional(),
+      nationalId: z.string().optional(),
+    })
+    .optional(),
+  isRemoved: z.boolean().optional(),
 })
+
+const subsidiaries = z
+  .object({
+    includesSubsidiaries: z
+      .enum(['yes', 'no'])
+      .refine((v) => !!v, { params: messages.errors.required }),
+    list: z.array(subsidiaryRow).optional(),
+  })
+  .superRefine((val, ctx) => {
+    // The list is only part of the answer when the applicant said yes — the
+    // service discards it otherwise. Validating it anyway would block the
+    // screen on rows the table no longer renders.
+    if (val.includesSubsidiaries !== 'yes') return
+
+    const rows = val.list ?? []
+    if (rows.every((row) => row.isRemoved)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['list'],
+        params: messages.errors.required,
+      })
+      return
+    }
+
+    const seen = new Set<string>()
+    // Indices are those of the unfiltered array so the error paths line up
+    // with the rows react-hook-form is still rendering.
+    rows.forEach((row, i) => {
+      if (row.isRemoved) return
+      const { name, nationalId } = row.nationalIdWithName ?? {}
+
+      if (!name) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['list', i, 'nationalIdWithName', 'name'],
+          params: messages.errors.required,
+        })
+      }
+
+      if (
+        !nationalId ||
+        !(kennitala.isValid(nationalId) && kennitala.isCompany(nationalId))
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['list', i, 'nationalIdWithName', 'nationalId'],
+          params: messages.errors.invalidCompanyNationalId,
+        })
+      } else if (seen.has(nationalId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['list', i, 'nationalIdWithName', 'nationalId'],
+          params: messages.errors.duplicateSubsidiary,
+        })
+      } else {
+        seen.add(nationalId)
+      }
+    })
+  })
 
 const goalsAndActions = z.object({
   filename: z.string().refine((v) => v.length > 0, {

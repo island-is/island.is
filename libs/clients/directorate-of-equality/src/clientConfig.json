@@ -3938,6 +3938,11 @@
             "enum": ["MALE", "FEMALE", "NEUTRAL"]
           },
           "contactName": { "type": "string" },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string" },
           "contactPhone": { "type": "string" },
           "averageEmployeeMaleCount": { "type": "number" },
@@ -4019,6 +4024,11 @@
             "enum": ["MALE", "FEMALE", "NEUTRAL"]
           },
           "contactName": { "type": "string" },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string" },
           "contactPhone": { "type": "string" },
           "equalityReportContent": {
@@ -4684,6 +4694,11 @@
             "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
           },
           "contactName": { "type": "string", "nullable": true },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string", "nullable": true },
           "contactPhone": { "type": "string", "nullable": true },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },
@@ -4735,6 +4750,11 @@
             "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
           },
           "contactName": { "type": "string", "nullable": true },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string", "nullable": true },
           "contactPhone": { "type": "string", "nullable": true },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },

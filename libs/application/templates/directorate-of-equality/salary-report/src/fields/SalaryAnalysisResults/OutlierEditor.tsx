@@ -22,6 +22,7 @@ import type { OutlierGroupAnswer, PayStatus } from '../../utils/outlierGroups'
 import { TablePagination } from '../TablePagination'
 import { OUTLIER_COLUMNS, OutlierTableProvider } from './outlierColumns'
 import { OutlierGroupCard } from './OutlierGroupCard'
+import { Markdown } from '@island.is/shared/components'
 
 const OUTLIERS_PAGE_SIZE = 10
 
@@ -214,14 +215,17 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
 
   return (
     <Box marginTop={4}>
+      {/* Outside the table's own guard: the table empties as outliers are
+          assigned to groups, and this copy is what explains that. */}
+      <Box marginBottom={2}>
+        <Text variant="h4" as="h4">
+          {formatMessage(m.tableTitle)}
+        </Text>
+        <Markdown>{formatMessage(m.tableText)}</Markdown>
+      </Box>
+
       {unassignedOutliers.length > 0 && (
         <>
-          <Box>
-            <Text variant="h4" as="h4">
-              {formatMessage(m.tableTitle)}
-            </Text>
-            <Text>{formatMessage(m.tableText)}</Text>
-          </Box>
           <OutlierTableProvider value={tableContext}>
             <InteractiveTable
               columns={OUTLIER_COLUMNS}
@@ -385,8 +389,7 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
       {unassignedOutliers.length > 0 && (
         <Box marginTop={2}>
           <AlertMessage
-            type="error"
-            title={formatMessage(messages.errors.alertTitle)}
+            type="warning"
             message={formatMessage(m.unassignedWarning)}
           />
         </Box>
@@ -396,8 +399,7 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
         watchedGroups.some((g) => !isOutlierGroupComplete(g)) && (
           <Box marginTop={2}>
             <AlertMessage
-              type="error"
-              title={formatMessage(messages.errors.alertTitle)}
+              type="warning"
               message={formatMessage(m.incompleteGroupWarning)}
             />
           </Box>

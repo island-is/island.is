@@ -237,11 +237,6 @@ export const messages = {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.title',
         defaultMessage: 'Æðsti stjórnandi',
       },
-      intro: {
-        id: 'doe.er.application:aboutTheCompany.chiefExecutive.intro',
-        defaultMessage:
-          'Óskað er sérstaklega eftir upplýsingum um kyn æðsta stjórnanda til að fylgjast með kynjaskiptingu í æðstu stjórnendastöðum á vinnumarkaði. Þá er hægt að greina þróun yfir tíma, bera saman atvinnugreinar og meta hvort markmið jafnréttislaga um að jafna stöðu kynjanna séu að nást.',
-      },
       name: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.name',
         defaultMessage: 'Nafn',
@@ -308,6 +303,14 @@ export const messages = {
       namePlaceholder: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.namePlaceholder',
         defaultMessage: 'Nafn tengiliðs',
+      },
+      jobTitle: {
+        id: 'doe.er.application:aboutTheCompany.contactPerson.jobTitle',
+        defaultMessage: 'Starfstitill',
+      },
+      jobTitlePlaceholder: {
+        id: 'doe.er.application:aboutTheCompany.contactPerson.jobTitlePlaceholder',
+        defaultMessage: 'Starfstitill tengiliðs',
       },
       email: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.email',

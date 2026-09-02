@@ -653,6 +653,9 @@
       "@island.is/application/templates/social-insurance-administration/pension-supplement": [
         "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
       ],
+      "@island.is/application/templates/district-commissioners/driving-license-additional": [
+        "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],

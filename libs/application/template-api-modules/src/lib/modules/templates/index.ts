@@ -196,6 +196,8 @@ import { ExemptionForTransportationModule } from './transport-authority/exemptio
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 import { CarRentalDayrateReturnsModule } from './car-rental-dayrate-returns/car-rental-dayrate-returns.module'
 import { CarRentalDayrateReturnsService } from './car-rental-dayrate-returns/car-rental-dayrate-returns.service'
+import { DrivingLicenseAdditionalModule } from './district-commissioner/driving-license-additional/driving-license-additional.module'
+import { DrivingLicenseAdditionalService } from './district-commissioner/driving-license-additional/driving-license-additional.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -295,6 +297,7 @@ export const modules = [
   DeRegisterUnemploymentBenefitsModule,
   SubmitDocumentsModule,
   ConfirmTravelModule,
+  DrivingLicenseAdditionalModule,
   DirectorateOfEqualityModule,
   PayDebtsModule,
 ]
@@ -396,6 +399,7 @@ export const services = [
   DeRegisterUnemploymentBenefitsService,
   SubmitDocumentsService,
   ConfirmTravelService,
+  DrivingLicenseAdditionalService,
   DirectorateOfEqualityService,
   PayDebtsService,
 ]

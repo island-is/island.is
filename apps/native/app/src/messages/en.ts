@@ -803,14 +803,14 @@ export const en: TranslatedMessages = {
   'health.questionnaires.action.answer': 'Answer questionnaire',
   'health.questionnaires.action.continue-draft': 'Continue',
   'health.questionnaires.action.view-answer': 'View answers',
+  'health.questionnaires.action.answer-again': 'Answer again',
   'health.questionnaires.action.show-expired': 'Show expired',
   'health.questionnaires.action.hide-expired': 'Hide expired',
-  'health.questionnaires.detail.description':
-    'Here you can find your answers to questionnaires. You can compare your answers.',
   'health.questionnaires.detail.status': 'Status',
   'health.questionnaires.detail.institution': 'Institution',
   'health.questionnaires.detail.sentBy': 'Sent by',
   'health.questionnaires.detail.sentDate': 'Sent date',
+  'health.questionnaires.detail.expirationDate': 'Valid until',
   'health.questionnaires.detail.notFound': 'Questionnaire not found',
 
   // health - vaccinations
@@ -860,6 +860,17 @@ export const en: TranslatedMessages = {
     'Appointment not found. It may have been cancelled.',
   'health.appointments.minutesFormat': '{minutes} minutes',
   'health.appointments.moreInfo': 'More information',
+  'health.appointments.preparation': 'Preparation',
+  'health.appointments.locationDepartment': 'Department',
+  'health.appointments.locationWing': 'Wing',
+  'health.appointments.locationFloor': 'Floor',
+  'health.appointments.locationRoom': 'Room',
+  'health.appointments.assigneeTypeRole': 'Role',
+  'health.appointments.assigneeTypeRoom': 'Room',
+  'health.appointments.assigneeTypeEquipment': 'Equipment',
+  'health.appointments.assigneeTypeService': 'Service',
+  'health.appointments.assigneeTypeTeam': 'Team',
+  'health.appointments.assigneeTypeOther': 'Other',
 
   // health - messages
   'health.messages.screenTitle': 'Messages',
@@ -1059,6 +1070,11 @@ export const en: TranslatedMessages = {
   'health.prescriptions.renewalPossible': 'Can be renewed',
   'health.prescriptions.renewalValid': 'Valid prescription',
   'health.prescriptions.renewalNotAvailable': 'Renewal not available',
+  'health.prescriptions.renewalStatusApproved': 'Renewal approved',
+  'health.prescriptions.renewalStatusPending': 'Renewal in progress',
+  'health.prescriptions.renewalStatusRejected': 'Renewal rejected',
+  'health.prescriptions.renewalStatusDismissed': 'Renewal dismissed',
+  'health.prescriptions.renewalStatusUnknown': 'Renewal status unknown',
   'health.prescriptions.renewalBlockedIsRegiment':
     'Medical treatment courses cannot be renewed here',
   'health.prescriptions.renewalBlockedNoMedCard': 'No drug card registered',

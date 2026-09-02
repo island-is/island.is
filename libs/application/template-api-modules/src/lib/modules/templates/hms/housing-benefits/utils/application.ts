@@ -504,6 +504,7 @@ export const mapApplicationToHousingBenefitsModel = (
     ) ?? false
 
   return {
+    islandIsApplicationNumber: application.id,
     kennitala: applicantKennitala,
     address: getValueViaPath<string>(answers, 'applicant.address') ?? '',
     municipality: getValueViaPath<string>(answers, 'applicant.city') ?? '',

@@ -22,7 +22,11 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import type { ZodTypeAny, z } from 'zod'
-import { mapGender, toNumberOrZero } from './directorate-of-equality.utils'
+import {
+  mapGender,
+  mapSubsidiaries,
+  toNumberOrZero,
+} from './directorate-of-equality.utils'
 
 // Page size for walking listDraftEmployees to completion on salary-analysis screens.
 const DRAFT_EMPLOYEE_PAGE_SIZE = 100
@@ -255,6 +259,21 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           errorDetails.status ?? 500,
         )
       }
+
+      // 404 is DMR's definitive "this company has no approved report" — the
+      // one case where a false flag is the truth. Anything else means DMR
+      // didn't answer, and reporting that as "no approved plan" would tell
+      // the applicant they're ineligible when the service is merely down.
+      if (errorDetails.status !== 404) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.errorDataProvider,
+            summary: coreErrorMessages.failedDataProvider,
+          },
+          errorDetails.status ?? 500,
+        )
+      }
+
       return { hasActiveEqualityReport: false }
     }
   }
@@ -541,6 +560,39 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
+  // The id captured at PREREQUISITES goes stale if the equality report is
+  // re-approved while this draft sits open, so re-resolve it live here.
+  private async resolveEqualityReportId(
+    auth: TemplateApiModuleActionProps['auth'],
+    application: TemplateApiModuleActionProps['application'],
+  ): Promise<string | undefined> {
+    const persistedId = getValueViaPath<string>(
+      application.externalData,
+      'activeEqualityReport.data.id',
+    )
+
+    try {
+      const activeReport =
+        await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+      return activeReport?.id ?? persistedId
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error(
+        'Failed to resolve active equality report before salary submit',
+        {
+          applicationId: application.id,
+          context: LOGGING_CONTEXT,
+          ...errorDetails,
+        },
+      )
+
+      // 404 is DMR's definitive "no approved report" — the persisted id is
+      // known-stale, so don't fall back to it.
+      if (errorDetails.status === 404) return undefined
+      return persistedId
+    }
+  }
+
   // Finalises the draft; only the pre-dataEntry answers need patching onto it first.
   async submitSalaryReport({
     auth,
@@ -552,22 +604,21 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       application.id,
     )
 
-    const equalityReportId = getValueViaPath<string>(
-      application.externalData,
-      'activeEqualityReport.data.id',
+    const equalityReportId = await this.resolveEqualityReportId(
+      auth,
+      application,
     )
     if (!equalityReportId) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
+          summary: salaryReportMessages.errors.missingEqualityReport,
         },
         400,
       )
     }
 
     const providerId = application.id
-    const subsidiaryList = answers.subsidiaries?.list ?? []
     const salaryDataBasis =
       answers.period?.period === PERIOD_ONE_MONTH ? 'MONTH' : 'AVERAGE'
     const salaryDataPeriod =
@@ -587,6 +638,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: mapGender(answers.chiefExecutive?.gender),
           contactName: answers.contactPerson?.name ?? '',
+          contactTitle: answers.contactPerson?.jobTitle ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
           salaryDataBasis,
@@ -607,13 +659,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
                 isatCategory:
                   answers.generalInformation?.isatClassification ?? '',
               },
-              subsidiaries:
-                answers.subsidiaries?.includesSubsidiaries === 'yes'
-                  ? subsidiaryList.map((s) => ({
-                      name: s.nationalIdWithName.name,
-                      nationalId: s.nationalIdWithName.nationalId,
-                    }))
-                  : [],
+              subsidiaries: mapSubsidiaries(answers.subsidiaries),
               equalityReportId,
               outliersPostponed:
                 answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
@@ -699,7 +745,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       application.id,
     )
     const providerId = application.id
-    const subsidiaryList = answers.subsidiaries?.list ?? []
 
     return this.withTemplateApiError(
       application.id,
@@ -711,6 +756,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: mapGender(answers.chiefExecutive?.gender),
           contactName: answers.contactPerson?.name ?? '',
+          contactTitle: answers.contactPerson?.jobTitle ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
           averageEmployeeFemaleCount: toNumberOrZero(
@@ -735,13 +781,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
               isatCategory:
                 answers.generalInformation?.isatClassification ?? '',
             },
-            subsidiaries:
-              answers.subsidiaries?.includesSubsidiaries === 'yes'
-                ? subsidiaryList.map((s) => ({
-                    name: s.nationalIdWithName.name,
-                    nationalId: s.nationalIdWithName.nationalId,
-                  }))
-                : [],
+            subsidiaries: mapSubsidiaries(answers.subsidiaries),
           },
         )
       },
