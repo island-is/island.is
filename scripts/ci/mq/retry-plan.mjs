@@ -160,9 +160,15 @@ async function main() {
       stage === 'tests'
         ? origTestKeys
         : stage === 'docker'
-          ? new Set(dockerByProject.keys())
-          : null
-    const { infra, key } = await inspectJob(token, owner, repo, job.id, knownKeys)
+        ? new Set(dockerByProject.keys())
+        : null
+    const { infra, key } = await inspectJob(
+      token,
+      owner,
+      repo,
+      job.id,
+      knownKeys,
+    )
 
     if (!infra) {
       genuine.push(name)
