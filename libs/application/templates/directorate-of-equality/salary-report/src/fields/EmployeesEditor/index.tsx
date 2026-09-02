@@ -8,7 +8,7 @@ import {
   Table as T,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
 import {
   ApiActions,
@@ -25,6 +25,7 @@ import {
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftEmployeesQuery } from '../../utils/useDraftEmployeesQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
+import { useProgressMarker } from '../../utils/useProgressMarker'
 import {
   DraftErrorState,
   DraftLoadingState,
@@ -101,6 +102,7 @@ const toEmployee = (e: ReportEmployeeDto): Employee => ({
 
 export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
+  answerQuestions,
 }) => {
   const { formatMessage } = useLocale()
   const m = messages.report.employees
@@ -130,6 +132,10 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     'draftRoles',
   )
   const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
+  // The marker says nothing more after the first employee lands, so write it
+  // once per mount rather than on every row a company adds.
+  const employeesMarkedRef = useRef(false)
 
   const [isAdding, setIsAdding] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -197,6 +203,19 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       await sync(batch)
       if (batch.roles?.length) await refetchRoles({ silent: true })
       await refetchEmployees()
+      // This screen has no setBeforeSubmitCallback — every change goes straight
+      // to the draft, row by row — so the marker is written here rather than on
+      // the way out. Only for a batch that puts an employee on the draft: a
+      // REMOVE that empties the list must not claim the step is done.
+      if (
+        !employeesMarkedRef.current &&
+        batch.employees?.some(
+          (command) => command.method !== SyncMethodEnum.REMOVE,
+        )
+      ) {
+        employeesMarkedRef.current = true
+        await markProgress({ employees: true })
+      }
       return true
     } catch {
       setActionError(formatMessage(messages.errors.draftSyncFailed))

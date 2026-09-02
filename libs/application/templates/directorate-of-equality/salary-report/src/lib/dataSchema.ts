@@ -202,6 +202,8 @@ const salaryAnalysis = z
 
 // criteria, subCriteria, employees, and roles live on the DMR draft report
 // (see utils/useDraftQuery.ts / useDraftSync.ts), never in applicationAnswers.
+// `progress` below is the one exception in spirit but not in kind: it holds no
+// DMR data, only a per-step "this reached the draft" marker used for navigation.
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((value) => value === true, {
     params: messages.prerequisites.errors.approveExternalData,
@@ -216,6 +218,27 @@ export const dataSchema = z.object({
   // a synchronous update, but externalData writes don't reach the visibility
   // reducer without a full refetch that would reset in-flight navigation.
   hasPersonalCriteria: z.boolean().optional(),
+  // Navigation-only signals too (see ProgressPaths in utils/constants.ts): which
+  // report steps the applicant has completed, so a returning applicant resumes on
+  // the first step still to do instead of the Excel-import screen.
+  //
+  // Declared here because they have to be: an answer key absent from this schema
+  // is stripped when the answers are parsed, which would silently drop the
+  // markers on the way to the database.
+  //
+  // Only ever written `true`. The shell treats any value that is not `undefined`
+  // as answered, so a `false` marker would read as a completed step.
+  progress: z
+    .object({
+      dataEntry: z.literal(true),
+      criteria: z.literal(true),
+      subCriteria: z.literal(true),
+      employees: z.literal(true),
+      jobClassification: z.literal(true),
+      employeeClassification: z.literal(true),
+    })
+    .partial()
+    .optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

@@ -27,6 +27,7 @@ import {
 import type { ReportCriterionDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
+import { useProgressMarker } from '../../utils/useProgressMarker'
 import { messages } from '../../lib/messages'
 import { getProviderErrorMessages } from '../../utils/providerError'
 
@@ -95,6 +96,7 @@ export const ExcelTemplateDownload: FC<
     },
   )
   const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
 
   const base64Template = getValueViaPath<string>(
     application.externalData,
@@ -180,7 +182,15 @@ export const ExcelTemplateDownload: FC<
       }
 
       // 3. Trigger the import — REPLACE semantics: DMR bulk-seeds the draft's
-      //    scoring content from the workbook.
+      //    scoring content from the workbook — and read the criteria back in
+      //    the same call, at order 1 so it sees what the import just wrote.
+      //
+      //    The read is needed because the import's own response cannot answer
+      //    the PERSONAL question: it returns a DraftDetailDto, which carries
+      //    `counts` and `importedFromExcel` but no criteria array (the
+      //    `{ criteria: [...] }` shape belongs to ParsedReportDto, from an
+      //    endpoint this template never calls) — so reading it off there
+      //    silently yielded `false` for every workbook.
       const result = await updateApplicationExternalData({
         variables: {
           input: {
@@ -190,17 +200,22 @@ export const ExcelTemplateDownload: FC<
                 actionId: draftActionId(ApiActions.importSalaryDraftWorkbook),
                 order: 0,
               },
+              {
+                actionId: draftActionId(ApiActions.listDraftCriteria),
+                order: 1,
+              },
             ],
           },
           locale,
         },
       })
 
-      const importData = result.data?.updateApplicationExternalData.externalData
-        ?.importSalaryDraftWorkbook as
+      const resultExternalData =
+        result.data?.updateApplicationExternalData.externalData
+
+      const importData = resultExternalData?.importSalaryDraftWorkbook as
         | {
             status?: 'success' | 'failure'
-            data?: { criteria?: { type?: string }[] }
             reason?: string | string[] | { title?: string; summary?: string }
           }
         | undefined
@@ -210,15 +225,41 @@ export const ExcelTemplateDownload: FC<
         return
       }
 
+      const importedCriteria = resultExternalData?.draftCriteria as
+        | {
+            status?: 'success' | 'failure'
+            data?: { criteria?: ReportCriterionDto[] }
+          }
+        | undefined
+
       // 4. Re-fetch so downstream screens read from DMR, not this response —
-      //    except the PERSONAL-criteria signal below, which must stay
-      //    answers-backed (see `hasPersonalCriteria` in dataSchema.ts).
+      //    except the answers-backed navigation signals below (see
+      //    `hasPersonalCriteria` and `progress` in dataSchema.ts).
       await refetch({ silent: true })
-      answerQuestions?.({
-        hasPersonalCriteria:
-          importData.data?.criteria?.some((c) => c.type === 'PERSONAL') ??
-          false,
-      })
+      // The workbook populates every report step in one go (REPLACE semantics
+      // on the whole scoring graph: criteria, sub-criteria, steps, roles,
+      // employees and both sets of step assignments), and the applicant is
+      // about to be jumped past all of them to the analysis. Without these
+      // markers a returning applicant is sent back here to re-upload a workbook
+      // whose data is already on the draft — the whole point of this exercise.
+      await markProgress(
+        {
+          dataEntry: true,
+          criteria: true,
+          subCriteria: true,
+          employees: true,
+          jobClassification: true,
+          employeeClassification: true,
+        },
+        {
+          hasPersonalCriteria:
+            importedCriteria?.status === 'success'
+              ? (importedCriteria.data?.criteria ?? []).some(
+                  (c) => c.type === 'PERSONAL',
+                )
+              : false,
+        },
+      )
       importSucceededRef.current = true
       setImportStatus('success')
     } catch {
@@ -300,6 +341,9 @@ export const ExcelTemplateDownload: FC<
       failImport()
       return
     }
+    // Choosing manual entry settles this screen, so a later visit resumes on
+    // the criteria screen rather than offering the workbook again.
+    await markProgress({ dataEntry: true })
     goToScreen?.(MANUAL_ENTRY_NEXT_SCREEN_ID)
   }
 
@@ -324,10 +368,14 @@ export const ExcelTemplateDownload: FC<
       } catch {
         return [false, formatMessage(messages.errors.draftSyncFailed)]
       }
+      // Same as manual entry — this screen is settled either way. Written with
+      // the mutation rather than left to the screen's own submit, which only
+      // persists answers under this field's own id (see useProgressMarker).
+      await markProgress({ dataEntry: true })
       return [true, null]
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setBeforeSubmitCallback, content, hasError])
+  }, [setBeforeSubmitCallback, content, hasError, markProgress])
 
   if (loading) {
     return (
