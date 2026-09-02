@@ -214,6 +214,13 @@ export type ReplicaCount = {
    */
   scalingMagicNumber?: number
   cpuAverageUtilization?: number
+  /**
+   * TEMPORARY (load-test window): opt this service out of the dev/staging
+   * `min: 1, max: 2, default: 1` clamp so its explicit min/max/default and
+   * cpuAverageUtilization are used in dev/staging too. Leave unset for normal
+   * cost-saving behaviour. Remove once the load test is over.
+   */
+  scaleToProdInDev?: boolean
 }
 
 type Container = {

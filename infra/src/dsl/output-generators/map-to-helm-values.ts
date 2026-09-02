@@ -115,7 +115,10 @@ const serializeService: SerializeMethod<HelmService> = async (
   // replicas
   if (
     (env1.type == 'staging' || env1.type == 'dev') &&
-    service.name.indexOf('search-indexer') == -1
+    service.name.indexOf('search-indexer') == -1 &&
+    // TEMPORARY (load-test window): services with scaleToProdInDev opt out of
+    // the dev/staging replica clamp and use their explicit replicaCount instead.
+    !serviceDef.replicaCount?.scaleToProdInDev
   ) {
     result.replicaCount = {
       min: 1,
