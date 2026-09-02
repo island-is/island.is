@@ -164,8 +164,10 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
     ...(withBackLinks ? { backId: 'subsidiariesMultiField' } : {}),
     items: (answers) => {
       const hasSubsidiaries =
-        getValueViaPath<string>(answers, 'subsidiaries.includesSubsidiaries') ===
-        'yes'
+        getValueViaPath<string>(
+          answers,
+          'subsidiaries.includesSubsidiaries',
+        ) === 'yes'
       const subsidiaryList = hasSubsidiaries
         ? getValueViaPath<
             Array<{
