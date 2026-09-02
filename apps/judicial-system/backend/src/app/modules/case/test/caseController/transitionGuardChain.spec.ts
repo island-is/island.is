@@ -5,7 +5,11 @@ import { v4 as uuid } from 'uuid'
 import { NotFoundException } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 
-import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import {
+  JwtAuthUserGuard,
+  RolesGuard,
+  RouteRolesGuard,
+} from '@island.is/judicial-system/auth'
 import {
   CaseState,
   CaseTransition,
@@ -87,10 +91,11 @@ describe('CaseController - Transition guard chain', () => {
 
     // One instance per guard the chain declares, including CaseController's
     // class-level JwtAuthUserGuard, which Nest runs before the method-level
-    // ones. RolesGuard gets a real Reflector so it resolves the route's rules
-    // from its own metadata.
+    // ones. RouteRolesGuard and RolesGuard get a real Reflector so they resolve
+    // the route's rules from its own metadata.
     const guards = [
       new AuthenticatedGuard(),
+      new RouteRolesGuard(new Reflector()),
       new CaseExistsForUpdateGuard(caseService, sequelize),
       new RolesGuard(new Reflector()),
       new CaseWriteGuard(),
@@ -179,9 +184,19 @@ describe('CaseController - Transition guard chain', () => {
       then = await runChain(defender, CaseTransition.SUBMIT, caseId)
     })
 
-    it('should be rejected by RolesGuard', () => {
+    it('should be rejected by RouteRolesGuard', () => {
       expect(then.allowed).toBe(false)
-      expect(then.rejectedBy).toBe(RolesGuard.name)
+      expect(then.rejectedBy).toBe(RouteRolesGuard.name)
+    })
+
+    // The point of the pre-filter: this caller is turned away before the case
+    // is read, so no FOR UPDATE lock is taken on its behalf. The repository
+    // stub is primed with a case above, so this fails if the read happens -
+    // rather than passing because the read would have failed anyway.
+    it('should not read the case', () => {
+      expect(
+        mockCaseRepositoryService.findLiveByIdForUpdate,
+      ).not.toHaveBeenCalled()
     })
   })
 

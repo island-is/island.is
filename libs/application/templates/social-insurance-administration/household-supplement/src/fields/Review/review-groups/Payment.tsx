@@ -1,8 +1,5 @@
-import {
-  DataValue,
-  ReviewGroup,
-  formatBankInfo,
-} from '@island.is/application/ui-components'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import { formatBankInfo } from '@island.is/shared/utils'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'

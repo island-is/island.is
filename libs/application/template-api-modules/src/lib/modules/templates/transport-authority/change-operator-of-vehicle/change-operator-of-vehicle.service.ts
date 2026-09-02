@@ -13,7 +13,6 @@ import { getPaymentIdFromExternalData } from '@island.is/clients/charge-fjs-v2'
 import { ChangeOperatorOfVehicleAnswers } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
-import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -42,7 +41,6 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
-    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
     private readonly paymentService: PaymentService,
@@ -100,7 +98,6 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
         if (totalRecords > 5) {
           return mapVehicle(auth, vehicle, false, {
             vehicleOperatorsClient: this.vehicleOperatorsClient,
-            vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
             mileageReadingApi: this.mileageReadingApi,
           })
         }
@@ -109,7 +106,6 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
         // Display radio buttons, validate all vehicles now
         return mapVehicle(auth, vehicle, true, {
           vehicleOperatorsClient: this.vehicleOperatorsClient,
-          vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
           mileageReadingApi: this.mileageReadingApi,
         })
       }),
