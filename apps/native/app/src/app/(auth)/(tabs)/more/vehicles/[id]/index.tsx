@@ -140,8 +140,16 @@ export default function VehicleDetailScreen() {
       <ScrollView
         refreshControl={
           <RefreshControl
-            refreshing={res.networkStatus === NetworkStatus.refetch}
-            onRefresh={() => res.refetch()}
+            refreshing={
+              res.networkStatus === NetworkStatus.refetch ||
+              mileageRes.networkStatus === NetworkStatus.refetch
+            }
+            onRefresh={() => {
+              res.refetch()
+              if (allowMileageRegistration) {
+                mileageRes.refetch()
+              }
+            }}
           />
         }
         style={{ flex: 1 }}
@@ -362,7 +370,7 @@ export default function VehicleDetailScreen() {
           ) : null}
 
           <InputRow>
-            {mainInfo?.co2 ? (
+            {mainInfo?.co2 != null ? (
               <Input
                 loading={inputLoading}
                 label={intl.formatMessage({ id: 'vehicleDetail.nedc' })}
