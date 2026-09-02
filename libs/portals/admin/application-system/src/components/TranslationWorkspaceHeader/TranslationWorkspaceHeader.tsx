@@ -78,7 +78,25 @@ export const TranslationWorkspaceHeaderBackButton = () => {
 export const TranslationWorkspaceHeaderAutosave = () => {
   const { chrome, formatMessage } = useHeaderChrome()
 
-  if (!chrome?.lastAutosaveTime) {
+  if (!chrome) {
+    return null
+  }
+
+  if (chrome.autosaveFailed) {
+    const failedLabel = formatMessage(m.translationAutosaveFailed)
+
+    return (
+      <div className={styles.autosave} role="status">
+        <span className={styles.srOnly}>{failedLabel}</span>
+        <Icon icon="warning" size="small" color="red400" ariaHidden />
+        <Text variant="small" color="red600" as="span" aria-hidden="true">
+          {failedLabel}
+        </Text>
+      </div>
+    )
+  }
+
+  if (!chrome.lastAutosaveTime) {
     return null
   }
 

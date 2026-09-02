@@ -82,6 +82,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
     publishing,
     translatingIds,
     lastAutosaveTime,
+    autosaveFailed,
     historyOpen,
     publishConfirmVisible,
     handleSaveAll,
@@ -134,6 +135,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
     onPublish: handlePublish,
     onOpenHistory: handleOpenHistory,
     lastAutosaveTime,
+    autosaveFailed,
     isReady: isWorkspaceReady,
   })
 

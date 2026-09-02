@@ -44,6 +44,7 @@ export const useTranslationWorkspacePersistence = ({
   onBeforeDialogOpen,
 }: UseTranslationWorkspacePersistenceArgs) => {
   const [lastAutosaveTime, setLastAutosaveTime] = useState<string | null>(null)
+  const [autosaveFailed, setAutosaveFailed] = useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
   const [publishConfirmVisible, setPublishConfirmVisible] = useState(false)
 
@@ -147,6 +148,7 @@ export const useTranslationWorkspacePersistence = ({
       ) {
         await refetchTranslations()
         clearEditedValues()
+        setAutosaveFailed(false)
         toast.success(formatMessage(m.translationSave))
         return true
       }
@@ -191,8 +193,13 @@ export const useTranslationWorkspacePersistence = ({
   useEffect(() => {
     const id = setInterval(async () => {
       if (hasUnsavedChangesRef.current && !savingRef.current) {
-        await handleSaveAllRef.current()
-        setLastAutosaveTime(formatAutosaveTime(new Date()))
+        const ok = await handleSaveAllRef.current()
+        if (ok) {
+          setLastAutosaveTime(formatAutosaveTime(new Date()))
+          setAutosaveFailed(false)
+        } else {
+          setAutosaveFailed(true)
+        }
       }
     }, AUTOSAVE_INTERVAL_MS)
     return () => clearInterval(id)
@@ -202,7 +209,8 @@ export const useTranslationWorkspacePersistence = ({
     if (!namespace) return
 
     if (hasUnsavedChanges) {
-      await handleSaveAll()
+      const ok = await handleSaveAll()
+      if (!ok) return
     }
 
     onBeforeDialogOpen?.()
@@ -210,6 +218,11 @@ export const useTranslationWorkspacePersistence = ({
   }, [namespace, hasUnsavedChanges, handleSaveAll, onBeforeDialogOpen])
 
   const handlePublishConfirm = useCallback(async () => {
+    if (hasUnsavedChanges) {
+      const ok = await handleSaveAll()
+      if (!ok) return
+    }
+
     setPublishConfirmVisible(false)
 
     try {
@@ -223,7 +236,14 @@ export const useTranslationWorkspacePersistence = ({
       console.error('publishApplicationTranslations failed', err)
       toast.error(formatMessage(m.translationPublishFailed, { detail }))
     }
-  }, [namespace, publishMutation, refetchTranslations, formatMessage])
+  }, [
+    hasUnsavedChanges,
+    handleSaveAll,
+    namespace,
+    publishMutation,
+    refetchTranslations,
+    formatMessage,
+  ])
 
   const handleOpenHistory = useCallback(() => {
     onBeforeDialogOpen?.()
@@ -249,6 +269,7 @@ export const useTranslationWorkspacePersistence = ({
     publishing,
     translatingIds,
     lastAutosaveTime,
+    autosaveFailed,
     historyOpen,
     publishConfirmVisible,
     handleSaveAll,

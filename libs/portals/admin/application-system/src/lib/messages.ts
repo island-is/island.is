@@ -440,6 +440,10 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationAutosaveLabel',
     defaultMessage: 'Sjálfvirk vistun',
   },
+  translationAutosaveFailed: {
+    id: 'admin-portal.application-system:translationAutosaveFailed',
+    defaultMessage: 'Ekki tókst að vista sjálfvirkt',
+  },
   translationMoreActions: {
     id: 'admin-portal.application-system:translationMoreActions',
     defaultMessage: 'Fleiri valkostir',

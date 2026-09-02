@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -9,6 +10,7 @@ import {
 } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
 import type { User } from '@island.is/auth-nest-tools'
+import { ApplicationTypes } from '@island.is/application/types'
 import {
   FetchError,
   type EnhancedFetchAPI,
@@ -24,6 +26,8 @@ import type {
   TemplateIntrospectionGql,
   TranslationPublishGql,
 } from './application-translation.model'
+
+const APPLICATION_TYPE_IDS = new Set<string>(Object.values(ApplicationTypes))
 
 @Injectable()
 export class ApplicationTranslationClient {
@@ -118,6 +122,12 @@ export class ApplicationTranslationClient {
   private encodeNamespace(namespace: string): string {
     // Dots are not encoded by encodeURIComponent; match application-system URL encoding.
     return encodeURIComponent(namespace).replace(/\./g, '%2E')
+  }
+
+  private assertKnownTypeId(typeId: string): void {
+    if (!APPLICATION_TYPE_IDS.has(typeId)) {
+      throw new BadRequestException('Unknown application template typeId')
+    }
   }
 
   private namespacePath(namespace: string, suffix: string): string {
@@ -218,22 +228,24 @@ export class ApplicationTranslationClient {
     return this.request(user, '/templates/list')
   }
 
-  introspectTemplate(
+  async introspectTemplate(
     user: User,
     typeId: string,
   ): Promise<TemplateIntrospectionGql> {
+    this.assertKnownTypeId(typeId)
     return this.request<TemplateIntrospectionGql>(
       user,
       `/templates/${encodeURIComponent(typeId)}/introspect`,
     )
   }
 
-  loadRoleForm(
+  async loadRoleForm(
     user: User,
     typeId: string,
     stateKey: string,
     roleId: string,
   ): Promise<unknown> {
+    this.assertKnownTypeId(typeId)
     const params = new URLSearchParams({ stateKey, roleId })
     return this.request<unknown>(
       user,

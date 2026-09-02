@@ -75,6 +75,7 @@ export const TranslationWorkspace = () => {
     publishing,
     translatingIds,
     lastAutosaveTime,
+    autosaveFailed,
     historyOpen,
     publishConfirmVisible,
     handleSaveAll,
@@ -141,6 +142,7 @@ export const TranslationWorkspace = () => {
     onPublish: handlePublish,
     onOpenHistory: handleOpenHistory,
     lastAutosaveTime,
+    autosaveFailed,
     isReady: isWorkspaceReady,
   })
 
