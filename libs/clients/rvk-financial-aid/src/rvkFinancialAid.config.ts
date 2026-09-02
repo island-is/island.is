@@ -17,8 +17,8 @@ export const RvkFinancialAidConfig = defineConfig({
         'XROAD_FINANCIAL_AID_BACKEND_PATH',
         'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend',
       ),
-      rvkVeitaClientId: env.required('RVK_VEITA_CLIENT_ID'),
-      rvkVeitaClientSecret: env.required('RVK_VEITA_CLIENT_SECRET'),
+      rvkVeitaClientId: env.required('RVK_VEITA_CLIENT_ID', ''),
+      rvkVeitaClientSecret: env.required('RVK_VEITA_CLIENT_SECRET', ''),
       rvkVeitaBaseUrl: env.required(
         'RVK_VEITA_BASE_URL',
         'https://app-sdg-api-test-swe-01-eudeebgxashkhvhx.swedencentral-01.azurewebsites.net/veita-api/islandis/application',
