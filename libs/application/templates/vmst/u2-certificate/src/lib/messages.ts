@@ -1,5 +1,35 @@
 import { defineMessages } from 'react-intl'
 
+export const sharedMessages = defineMessages({
+  yourApplicationTitle: {
+    id: 'vmst.u2c.application:shared.yourApplicationTitle',
+    defaultMessage: 'Umsóknin þín',
+    description: 'Shared multi field title used across forms',
+  },
+  whatHappensNextTitle: {
+    id: 'vmst.u2c.application:shared.whatHappensNextTitle',
+    defaultMessage: 'Hvað gerist næst?',
+    description: 'Shared expandable description title used across forms',
+  },
+  whatHappensNextDescription: {
+    id: 'vmst.u2c.application:shared.whatHappensNextDescription#markdown',
+    defaultMessage:
+      '**Þú sækir vottorðið í eigin persónu þegar þú færð meldingu um að það sé tilbúið hjá Vinnumálastofnun**\n\nÞú getur sótt U2 vottorðið á næstu þjónustuskrifstofu Vinnumálastofnunar 1-5 dögum fyrir brottfarardag. Þetta er gert til að tryggja að þú sért enn á Íslandi áður en þú ferð til útlanda í atvinnuleit. ',
+    description: 'Shared expandable description text used across forms',
+  },
+  newApplicationButton: {
+    id: 'vmst.u2c.application:shared.newApplicationButton',
+    defaultMessage: 'Opna umsókn',
+    description: 'Shared button label to start a new application',
+  },
+  newApplicationMessage: {
+    id: 'vmst.u2c.application:shared.newApplicationMessage',
+    defaultMessage:
+      'Þú getur lagt inn nýja umsókn um U2 vottorð ef aðstæður þínar hafa breyst.',
+    description: 'Shared message about starting a new application',
+  },
+})
+
 export const applicationMessages = defineMessages({
   actionCardPrerequisites: {
     id: 'vmst.u2c.application:applicationMessages.actionCardPrerequisites',
@@ -28,7 +58,7 @@ export const applicationMessages = defineMessages({
   },
   inDraft: {
     id: 'vmst.u2c.application:inDraft',
-    defaultMessage: 'Í vinnslu hjá innsendanda',
+    defaultMessage: 'Í vinnslu hjá umsækjanda',
     description: `action card tag for draft state`,
   },
   approved: {
@@ -48,8 +78,59 @@ export const applicationMessages = defineMessages({
   },
   sentIn: {
     id: 'vmst.u2c.application:sentIn',
-    defaultMessage: 'Hafnað',
+    defaultMessage: 'Í vinnslu',
     description: `action card tag for sent in state`,
+  },
+  submitConfirm: {
+    id: 'vmst.u2c.application:submitConfirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Submit/confirm button label used across state transitions',
+  },
+  draftHistorySubmit: {
+    id: 'vmst.u2c.application:draftHistorySubmit',
+    defaultMessage: 'Umsókn innsend',
+    description: 'History log message when the draft is submitted',
+  },
+  reviewPendingTitle: {
+    id: 'vmst.u2c.application:reviewPendingTitle',
+    defaultMessage: 'Umsókn afgreidd af Vinnumálastofnun',
+    description: 'Pending action title for review state',
+  },
+  reviewPendingContent: {
+    id: 'vmst.u2c.application:reviewPendingContent',
+    defaultMessage: 'Umsókn er í vinnslu hjá Vinnumálastofnun',
+    description: 'Pending action content for review state',
+  },
+  revokedPendingTitle: {
+    id: 'vmst.u2c.application:revokedPendingTitle',
+    defaultMessage: 'Umsókn afturkölluð',
+    description: 'Pending action title for revoked state',
+  },
+  revokedPendingContent: {
+    id: 'vmst.u2c.application:revokedPendingContent',
+    defaultMessage: 'Umsókn þín hefur verið afturkölluð',
+    description: 'Pending action content for revoked state',
+  },
+  rejectedPendingTitle: {
+    id: 'vmst.u2c.application:rejectedPendingTitle',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Pending action title for rejected state',
+  },
+  rejectedPendingContent: {
+    id: 'vmst.u2c.application:rejectedPendingContent',
+    defaultMessage: 'Umsókn þín hefur því miður verið hafnað',
+    description: 'Pending action content for rejected state',
+  },
+  completedPendingTitle: {
+    id: 'vmst.u2c.application:completedPendingTitle',
+    defaultMessage: 'Umsókn samþykkt',
+    description: 'Pending action title for completed state',
+  },
+  completedPendingContent: {
+    id: 'vmst.u2c.application:completedPendingContent',
+    defaultMessage:
+      'Umsóknin þín hefur verið samþykkt. Svo að U2 Vottorð taki gildi þarf að sækja það í eigin persónu.',
+    description: 'Pending action content for completed state',
   },
 })
 
@@ -70,17 +151,6 @@ export const prerequisitesForm = {
       defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
       description: 'Prerequisite checkbox text',
     },
-    // alertTitle: {
-    //   id: 'vmst.u2c.application:prerequisitesForm.general.alertTitle',
-    //   defaultMessage: 'Undanþága',
-    //   description: 'Prerequisite info title',
-    // },
-    // alertMessage: {
-    //   id: 'vmst.u2c.application:prerequisitesForm.general.alertMessage#markdown',
-    //   defaultMessage:
-    //     'Vinnumálastofnun er heimilt að veita undanþágu fyrir atvinnuleit í ákveðnu landi ef:\n- foreldri, maki, sambúðarmaki eða samvistarmaki þinn er við nám eða störf í því landi.\n- þú átt börn undir 18 ára aldri sem eru búsett í landinu með hinu foreldri sínu.\n- þú hefur þegar fengið tilboð um starf í landinu.\nEf þú telur þig uppfylla þessi skilyrði getur þú sent okkur skilaboð í gegnum Mínar síður Vinnumálastofnunar.',
-    //   description: 'Prerequisite info message',
-    // },
   }),
   dataProviders: defineMessages({
     vmstTitle: {
@@ -210,7 +280,75 @@ export const mainForm = {
   }),
 }
 
-export const completedForm = defineMessages({})
+export const reviewForm = {
+  general: defineMessages({
+    alertInfoTitle: {
+      id: 'vmst.u2c.application:reviewForm.general.alertInfoTitle',
+      defaultMessage:
+        'Umsókn þín um U2 vottorð hefur borist til Vinnumálastofnunar',
+      description: 'reviewForm alert info title',
+    },
+    alertInfoDescription: {
+      id: 'vmst.u2c.application:reviewForm.general.alertInfoDescription',
+      defaultMessage:
+        'Hún er nú í vinnslu og má búast við afgreiðslu innan 5–7 virkra daga.',
+      description: 'reviewForm alert info description',
+    },
+    revokeButton: {
+      id: 'vmst.u2c.application:reviewForm.general.revokeButton',
+      defaultMessage: 'Afturkalla umsókn',
+      description: 'reviewForm revoke application button label',
+    },
+  }),
+}
+
+export const revokedForm = {
+  general: defineMessages({
+    alertTitle: {
+      id: 'vmst.u2c.application:revokedForm.general.alertTitle',
+      defaultMessage: 'Umsókn þín um U2 vottorð hefur verið afturkölluð',
+      description: 'revokedForm alert title',
+    },
+  }),
+}
+
+export const rejectedForm = {
+  general: defineMessages({
+    alertTitle: {
+      id: 'vmst.u2c.application:rejectedForm.general.alertTitle',
+      defaultMessage: 'Umsókn þín um U2 vottorð hefur því miður verið hafnað',
+      description: 'rejectedForm alert title',
+    },
+  }),
+}
+
+export const completedForm = {
+  general: defineMessages({
+    alertSuccessTitle: {
+      id: 'vmst.u2c.application:completedForm.general.alertSuccessTitle',
+      defaultMessage: 'Umsókn þín um U2 vottorð hefur verið samþykkt! ',
+      description: 'completedForm success alert title',
+    },
+    alertSuccessMessage: {
+      id: 'vmst.u2c.application:completedForm.general.alertSuccessMessage',
+      defaultMessage:
+        '**Þú þarft að sækja vottorðið í eigin persónu** á næstu þjónustuskrifstofu Vinnumálastofnunar þegar þú færð tilkynningu um að vottorðið sé tilbúið. Þetta er gert til að tryggja að þú sért enn á Íslandi áður en þú ferð erlendis í atvinnuleit. ',
+      description: 'completedForm success alert message',
+    },
+    alertInfoTitle: {
+      id: 'vmst.u2c.application:completedForm.general.alertInfoTitle',
+      defaultMessage:
+        'Ef hættir við atvinnuleit erlendis þarft þú að afturkalla umsóknina',
+      description: 'completedForm info alert title',
+    },
+    alertInfoMessage: {
+      id: 'vmst.u2c.application:completedForm.general.alertInfoMessage',
+      defaultMessage:
+        'Ef þú hættir við að fara erlendis í atvinnuleit þarf að tilkynna Vinnumálastofnun það með því að mæta á þjónustuskrifstofu Vinnumálastofnunar og afturkalla umsóknina í eigin persónu. ',
+      description: 'completedForm info alert message',
+    },
+  }),
+}
 
 export const errorMessages = defineMessages({
   eligibilityErrorTitle: {
@@ -228,5 +366,11 @@ export const errorMessages = defineMessages({
     id: 'vmst.u2c.application:error.dataFetchErrorSummary',
     defaultMessage: 'Ekki tókst að sækja gögn, vinsamlegast reyndu aftur síðar',
     description: 'Generic error summary when data could not be fetched',
+  },
+  errorWithException: {
+    id: 'vmst.u2c.application:error.errorWithException#markdown',
+    defaultMessage:
+      '{value}\n\n**Undanþága**\n\nVinnumálastofnun er heimilt að veita undanþágu fyrir atvinnuleit í ákveðnu landi ef:\n\n- foreldri, maki, sambúðarmaki eða samvistarmaki þinn er við nám eða störf í því landi.\n- þú átt börn undir 18 ára aldri sem eru búsett í landinu með hinu foreldri sínu.\n- þú hefur þegar fengið tilboð um starf í landinu.\n\nEf þú telur þig uppfylla þessi skilyrði getur þú sent okkur skilaboð í gegnum Mínar síður Vinnumálastofnunar.',
+    description: 'Error with exception',
   },
 })
