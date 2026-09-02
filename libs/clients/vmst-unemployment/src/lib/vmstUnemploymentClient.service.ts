@@ -37,26 +37,15 @@ import {
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
-<<<<<<< HEAD
-=======
-  U2CertificateApi,
-  GaldurExternalDomainModelsSupportDataNationalityDTO,
-  GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
-  GaldurXRoadAPIModelsApplicantU2EligibilityResponse,
-  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
->>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
   JobSearchConfirmationApi,
   GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
   ApplicantWithdrawLatestApplicationRequest,
   GaldurExternalDomainRequestsHasValidApplicationResponse,
-<<<<<<< HEAD
   U2CertificateApi,
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
   GaldurExternalDomainModelsSupportDataNationalityDTO,
   GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
   GaldurXRoadAPIModelsApplicantU2EligibilityResponse,
-=======
->>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -79,13 +68,8 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
-<<<<<<< HEAD
-  | JobSearchConfirmationApi
-  | U2CertificateApi
-=======
   | U2CertificateApi
   | JobSearchConfirmationApi
->>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
 
 @Injectable()
 export class VmstUnemploymentClientService {
