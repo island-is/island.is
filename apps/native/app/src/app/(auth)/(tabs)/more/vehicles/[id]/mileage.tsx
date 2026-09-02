@@ -96,6 +96,10 @@ export default function VehicleMileageScreen() {
       ? +data[0].mileage
       : 0
 
+  const mileageUnit = info.data?.vehiclesDetail?.mainInfo?.hasMilesOdometer
+    ? 'mi'
+    : 'km'
+
   const isFormEditable = !!res.data?.vehicleMileageDetails?.editing
   const canRegisterMileage =
     !!res.data?.vehicleMileageDetails?.canRegisterMileage
@@ -251,7 +255,9 @@ export default function VehicleMileageScreen() {
               }
               accessory={
                 item.mileage
-                  ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`
+                  ? `${intl.formatNumber(
+                      parseInt(item.mileage, 10),
+                    )} ${mileageUnit}`
                   : '-'
               }
               editable={!shouldDisableMileageEdit && index === 0}

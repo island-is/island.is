@@ -90,6 +90,7 @@ export default function VehicleDetailScreen() {
   const allowMileageRegistration =
     mainInfo?.requiresMileageRegistration ||
     mainInfo?.availableMileageRegistration
+  const mileageUnit = mainInfo?.hasMilesOdometer ? 'mi' : 'km'
 
   return (
     <>
@@ -249,7 +250,7 @@ export default function VehicleDetailScreen() {
                   data?.vehiclesDetail?.lastMileage?.mileage
                     ? `${intl.formatNumber(
                         parseInt(data.vehiclesDetail.lastMileage.mileage, 10),
-                      )} km`
+                      )} ${mileageUnit}`
                     : '-'
                 }
               />
