@@ -94,7 +94,7 @@ import {
   Case,
   caseInclude,
   CaseRepositoryService,
-  CaseString,
+  CaseStringRepositoryService,
   CourtDocumentRepositoryService,
   CourtSessionRepositoryService,
   DateLog,
@@ -156,8 +156,7 @@ const APPEAL_PARTY_FILE_CATEGORIES = [
 export class CaseService {
   constructor(
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
-    @InjectModel(CaseString)
-    private readonly caseStringModel: typeof CaseString,
+    private readonly caseStringRepositoryService: CaseStringRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => DefendantService))
@@ -1468,21 +1467,17 @@ export class CaseService {
         const stringType = caseStringTypes[caseStringKey]
 
         if (updateCaseString === null) {
-          await this.caseStringModel.destroy({
-            where: { caseId: theCase.id, stringType },
-            transaction,
-          })
+          await this.caseStringRepositoryService.deleteByCaseAndType(
+            theCase.id,
+            stringType,
+            { transaction },
+          )
         } else {
-          await this.caseStringModel.upsert(
-            {
-              caseId: theCase.id,
-              stringType,
-              value: updateCaseString,
-            },
-            {
-              conflictFields: ['case_id', 'string_type'],
-              transaction,
-            },
+          await this.caseStringRepositoryService.upsertByCaseAndType(
+            theCase.id,
+            stringType,
+            updateCaseString,
+            { transaction },
           )
         }
 
