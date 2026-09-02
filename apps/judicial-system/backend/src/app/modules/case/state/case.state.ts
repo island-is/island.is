@@ -55,7 +55,12 @@ const assertHasIndictmentApprover = (
   update: UpdateCase,
   theCase: Case,
 ): void => {
-  if (!(update.indictmentApproverId ?? theCase.indictmentApproverId)) {
+  const indictmentApproverId =
+    update.indictmentApproverId !== undefined
+      ? update.indictmentApproverId
+      : theCase.indictmentApproverId
+
+  if (!indictmentApproverId) {
     throw new ForbiddenException(
       'Cannot ask for review without an indictment approver',
     )

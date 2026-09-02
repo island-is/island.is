@@ -289,6 +289,27 @@ describe('Transition Case', () => {
       )
     })
 
+    it('should throw when indictment approver is explicitly cleared on update', () => {
+      const act = () =>
+        transitionCase(
+          CaseTransition.ASK_FOR_REVIEW,
+          {
+            id: uuid(),
+            state: CaseState.DRAFT,
+            type,
+            defendants: [{ id: uuid(), name: 'Test Defendant' }],
+            indictmentApproverId: uuid(),
+          } as Case,
+          { id: uuid() } as User,
+          { indictmentApproverId: null },
+        )
+
+      expect(act).toThrow(ForbiddenException)
+      expect(act).toThrow(
+        'Cannot ask for review without an indictment approver',
+      )
+    })
+
     it('should ask for review when indictment approver is set on update', () => {
       const res = transitionCase(
         CaseTransition.ASK_FOR_REVIEW,
