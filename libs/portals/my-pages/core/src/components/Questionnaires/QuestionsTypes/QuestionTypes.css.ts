@@ -80,3 +80,7 @@ export const thermoMeterSegment = style({
   justifyContent: 'center',
   transition: 'background-color 0.2s ease',
 })
+
+export const isRequiredStar = style({
+  color: theme.color.red600,
+})
