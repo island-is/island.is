@@ -20,66 +20,44 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     super(ApplicationTypes.CHILD_PROTECTION_NOTIFICATION)
   }
 
-  async getCategories({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getCategories(
-      auth,
-    )
+  async getCategories() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getCategories()
   }
 
-  async getProtectiveFactors({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getProtectiveFactors(
-      auth,
-    )
+  async getProtectiveFactors() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getProtectiveFactors()
   }
 
-  async getGenders({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getGenders(
-      auth,
-    )
+  async getGenders() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getGenders()
   }
 
-  async getPostalCodes({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getPostalCodes(
-      auth,
-    )
+  async getPostalCodes() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getPostalCodes()
   }
 
-  async getChildUnknownNationalIdStates({
-    auth,
-  }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getChildUnknownNationalIdStates(
-      auth,
-    )
+  async getChildUnknownNationalIdStates() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getChildUnknownNationalIdStates()
   }
 
-  async getGuardianNotAwareReasons({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getGuardianNotAwareReasons(
-      auth,
-    )
+  async getGuardianNotAwareReasons() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getGuardianNotAwareReasons()
   }
 
-  async getSchoolTypes({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getSchoolTypes(
-      auth,
-    )
+  async getSchoolTypes() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getSchoolTypes()
   }
 
-  async getChildSafetyLevels({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getChildSafetyLevels(
-      auth,
-    )
+  async getChildSafetyLevels() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getChildSafetyLevels()
   }
 
-  async getPronouns({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getPronouns(
-      auth,
-    )
+  async getPronouns() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getPronouns()
   }
 
-  async getDisabilityStatuses({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getDisabilityStatuses(
-      auth,
-    )
+  async getDisabilityStatuses() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getDisabilityStatuses()
   }
 
   // TODO: Submit the notification to the National Agency for Children and Families
@@ -114,15 +92,11 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
-  async getNotifierRoles({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getNotifierRoles(
-      auth,
-    )
+  async getNotifierRoles() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getNotifierRoles()
   }
 
-  async getNotifierRoleSubTypes({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getNotifierRoleSubTypes(
-      auth,
-    )
+  async getNotifierRoleSubTypes() {
+    return this.nationalAgencyForChildrenAndFamiliesClientService.getNotifierRoleSubTypes()
   }
 }
