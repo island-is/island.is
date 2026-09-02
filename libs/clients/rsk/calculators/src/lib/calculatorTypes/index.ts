@@ -20,10 +20,7 @@ export type {
   VehicleTaxInput,
   VehicleTaxKey,
 } from './vehicleTax'
-export type {
-  VehicleBenefitInput,
-  VehicleBenefitKey,
-} from './vehicleBenefit'
+export type { VehicleBenefitInput, VehicleBenefitKey } from './vehicleBenefit'
 export type {
   VehicleDepreciationInput,
   VehicleDepreciationKey,
