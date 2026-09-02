@@ -32,9 +32,7 @@ export const useTranslationWorkspaceDerivedView = ({
 }: UseTranslationWorkspaceDerivedViewArgs) => {
   const ownedNamespaces = useMemo(
     () =>
-      getOwnedTranslationNamespaces(
-        introspection?.translationNamespaces ?? [],
-      ),
+      getOwnedTranslationNamespaces(introspection?.translationNamespaces ?? []),
     [introspection],
   )
 

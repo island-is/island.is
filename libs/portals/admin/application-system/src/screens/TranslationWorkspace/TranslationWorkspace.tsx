@@ -244,7 +244,9 @@ export const TranslationWorkspace = () => {
         isCompactNav={isCompactNav}
         navDrawerOpen={navDrawerOpen}
         openPanelLabel={formatMessage(m.translationWorkspacePanelOpen)}
-        navDrawerAriaLabel={formatMessage(m.translationStatesNavDrawerAriaLabel)}
+        navDrawerAriaLabel={formatMessage(
+          m.translationStatesNavDrawerAriaLabel,
+        )}
         onOpenNavDrawer={openNavDrawer}
         onNavDrawerVisibilityChange={handleNavDrawerVisibilityChange}
       >
