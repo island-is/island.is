@@ -33,7 +33,7 @@ import {
   isRedesignedBTempOrBFull,
   needsHealthCertificateCondition,
 } from '../../lib/utils'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { Pickup } from '../../lib/types'
 
 const isRedesigned65 = (answers: FormValue) =>
