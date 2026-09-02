@@ -49,7 +49,7 @@ export const m = {
     },
     noResultsTitle: {
       id: 'web.openinvoices:overview.noResultsTitle',
-      defaultMessage: 'Engir reikningar fundust',
+      defaultMessage: 'Engir greiðslur fundust',
     },
     noResultsDescription: {
       id: 'web.openinvoices:overview.noResultsDescription',
@@ -147,7 +147,7 @@ export const m = {
     },
     types: {
       id: 'web.openinvoices:search.types',
-      defaultMessage: 'Tegundir',
+      defaultMessage: 'Flokkun',
     },
     suppliers: {
       id: 'web.openinvoices:search.suppliers',
@@ -159,7 +159,7 @@ export const m = {
     },
     ministries: {
       id: 'web.openinvoices:search.ministries',
-      defaultMessage: 'Ráðuneyti',
+      defaultMessage: 'Stofnanir ráðuneyta',
     },
     viewResults: {
       id: 'web.openinvoices:search.viewResults',
