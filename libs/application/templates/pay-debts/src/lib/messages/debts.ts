@@ -64,7 +64,7 @@ export const debts = {
     },
     timePeriodHeader: {
       id: 'pd.application:debts.table.timePeriodHeader',
-      defaultMessage: 'Ár og tímabil',
+      defaultMessage: 'Tímabil',
       description: 'Time period table header',
     },
     amountHeader: {
