@@ -126,6 +126,7 @@ type CaseStringKeys = keyof Pick<
   | 'civilDemands'
   | 'penalties'
   | 'reopenReason'
+  | 'indictmentReviewReturnedExplanation'
 >
 
 const caseStringTypes: Record<CaseStringKeys, StringType> = {
@@ -134,6 +135,8 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
   civilDemands: StringType.CIVIL_DEMANDS,
   penalties: StringType.PENALTIES,
   reopenReason: StringType.REOPEN_REASON,
+  indictmentReviewReturnedExplanation:
+    StringType.INDICTMENT_REVIEW_RETURNED_EXPLANATION,
 }
 
 // Files parties upload for an appeal - removed when the appeal case they belong

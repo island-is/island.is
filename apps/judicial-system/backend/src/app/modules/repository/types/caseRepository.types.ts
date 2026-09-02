@@ -624,9 +624,6 @@ export interface UpdateCase
   indictmentReviewerId?: Case['indictmentReviewerId'] | null
   indictmentApproverId?: Case['indictmentApproverId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
-  indictmentReviewReturnedExplanation?:
-    | Case['indictmentReviewReturnedExplanation']
-    | null
   indictmentHash?: Case['indictmentHash'] | null
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
   withCourtSessions?: Case['withCourtSessions']
@@ -638,6 +635,7 @@ export interface UpdateCase
   penalties?: string
   defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
   reopenReason?: string
+  indictmentReviewReturnedExplanation?: string | null
 }
 
 export interface UpdateAppealCase

@@ -802,13 +802,6 @@ export class Case extends Model {
   indictmentApprover?: User
 
   /**********
-   * The explanation given when a proofreader returns an indictment to the prosecutor
-   **********/
-  @Column({ type: DataType.TEXT, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  indictmentReviewReturnedExplanation?: string
-
-  /**********
    * The case's notifications
    **********/
   @HasMany(() => Notification, 'caseId')
