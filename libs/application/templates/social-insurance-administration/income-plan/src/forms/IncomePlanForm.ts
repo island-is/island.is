@@ -34,8 +34,8 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/types'
-import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { formatCurrencyWithoutSuffix } from '@island.is/shared/utils'
 import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,

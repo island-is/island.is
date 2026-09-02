@@ -128,7 +128,7 @@ export class ZendeskService {
       missingFilenames,
     )
 
-    return await this.createTicket(
+    const success = await this.createTicket(
       applicationId,
       subject,
       body,
@@ -141,6 +141,23 @@ export class ZendeskService {
       isInternal,
       zendeskBrandId,
     )
+
+    if (success) {
+      this.logger.info('form system application sent to zendesk', {
+        applicationId,
+        formId: applicationDto.formId,
+        formSlug: applicationDto.slug,
+        organizationNationalId: applicationDto.organizationNationalId,
+        isTest: applicationDto.isTest,
+        zendeskInstance: supportedZendeskInstance,
+        zendeskBrandId,
+        attachmentCount: attachmentTokens.length,
+        missingAttachmentCount: missingFilenames.length,
+        datadogEvent: 'form_system_application_sent_zendesk',
+      })
+    }
+
+    return success
   }
 
   private async createTicket(
@@ -191,7 +208,19 @@ export class ZendeskService {
       if (!response.ok) {
         this.logger.error(
           `Failed to create ticket for application ${applicationId}`,
-          { status: response.status, statusText: response.statusText },
+          {
+            applicationId,
+            zendeskHost: serviceUrl.host,
+            zendeskPath: serviceUrl.pathname,
+            zendeskBrandId,
+            hasBrandId: brandId !== undefined,
+            isInternal,
+            uploadTokenCount: uploadTokens.length,
+            customFieldCount: customFields.length,
+            status: response.status,
+            statusText: response.statusText,
+            datadogEvent: 'form_system_zendesk_error',
+          },
         )
         return false
       }
@@ -201,7 +230,18 @@ export class ZendeskService {
     } catch (error) {
       this.logger.error(
         `Unexpected error while creating ticket for application ${applicationId}`,
-        { error },
+        {
+          applicationId,
+          zendeskHost: serviceUrl.host,
+          zendeskPath: serviceUrl.pathname,
+          zendeskBrandId,
+          hasBrandId: brandId !== undefined,
+          isInternal,
+          uploadTokenCount: uploadTokens.length,
+          customFieldCount: customFields.length,
+          datadogEvent: 'form_system_zendesk_error',
+          error,
+        },
       )
       return false
     }
@@ -251,7 +291,13 @@ export class ZendeskService {
     } catch (error) {
       this.logger.error(
         `Unexpected error while attaching S3 file ${s3Key} for application ${applicationId}`,
-        { error },
+        {
+          applicationId,
+          s3Key,
+          zendeskHost: new URL(url).host,
+          datadogEvent: 'form_system_zendesk_error',
+          error,
+        },
       )
       return undefined
     }
@@ -283,7 +329,17 @@ export class ZendeskService {
       if (!response.ok) {
         this.logger.error(
           `Failed to upload attachment ${filename} for application ${applicationId}`,
-          { status: response.status, statusText: response.statusText },
+          {
+            applicationId,
+            filename,
+            contentType,
+            contentLength: data.byteLength,
+            zendeskHost: serviceUrl.host,
+            zendeskPath: serviceUrl.pathname,
+            status: response.status,
+            statusText: response.statusText,
+            datadogEvent: 'form_system_zendesk_error',
+          },
         )
         return undefined
       }
@@ -293,7 +349,16 @@ export class ZendeskService {
     } catch (error) {
       this.logger.error(
         `Unexpected error while uploading attachment ${filename} for application ${applicationId}`,
-        { error },
+        {
+          applicationId,
+          filename,
+          contentType,
+          contentLength: data.byteLength,
+          zendeskHost: serviceUrl.host,
+          zendeskPath: serviceUrl.pathname,
+          datadogEvent: 'form_system_zendesk_error',
+          error,
+        },
       )
       return undefined
     }

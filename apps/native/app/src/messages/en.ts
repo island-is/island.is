@@ -1070,6 +1070,11 @@ export const en: TranslatedMessages = {
   'health.prescriptions.renewalPossible': 'Can be renewed',
   'health.prescriptions.renewalValid': 'Valid prescription',
   'health.prescriptions.renewalNotAvailable': 'Renewal not available',
+  'health.prescriptions.renewalStatusApproved': 'Renewal approved',
+  'health.prescriptions.renewalStatusPending': 'Renewal in progress',
+  'health.prescriptions.renewalStatusRejected': 'Renewal rejected',
+  'health.prescriptions.renewalStatusDismissed': 'Renewal dismissed',
+  'health.prescriptions.renewalStatusUnknown': 'Renewal status unknown',
   'health.prescriptions.renewalBlockedIsRegiment':
     'Medical treatment courses cannot be renewed here',
   'health.prescriptions.renewalBlockedNoMedCard': 'No drug card registered',

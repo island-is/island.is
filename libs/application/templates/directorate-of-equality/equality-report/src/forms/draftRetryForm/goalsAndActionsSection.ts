@@ -25,6 +25,7 @@ export const draftRetryGoalsAndActionsSection = buildSection({
           title: messages.equalityReport.information.detailLinkLabel,
           link: messages.equalityReport.information.detailLink,
           variant: 'text',
+          iconProps: { icon: 'open', type: 'outline' },
         }),
         // Between the screen's own intro and the editor: the comments are what
         // the applicant is here to act on, so they come before the thing they
