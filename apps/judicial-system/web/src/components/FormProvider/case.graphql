@@ -454,6 +454,22 @@ query Case($input: CaseQueryInput!) {
       appealIsolationToDate
       rulingFileId
     }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
+    }
     rulingOrderAppealCases {
       id
       appealState
