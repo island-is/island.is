@@ -22,7 +22,6 @@ const Treatments: React.FC = () => {
 
   const treatments = data?.healthDirectorateTreatments
 
-  // A single treatment needs no chooser — go straight to it.
   if (!loading && !error && treatments?.length === 1) {
     return (
       <Navigate
