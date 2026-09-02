@@ -238,7 +238,11 @@ export default function VehicleMileageScreen() {
 
   return (
     <>
-      <StackScreen networkStatus={[res.networkStatus, info.networkStatus]} />
+      <StackScreen
+        closeable
+        options={{ title: '' }}
+        networkStatus={[res.networkStatus, info.networkStatus]}
+      />
       <FlatList
         data={data}
         renderItem={({ item, index }) =>
@@ -270,6 +274,12 @@ export default function VehicleMileageScreen() {
         keyExtractor={(item, index) => String(item.internalId ?? index)}
         ListHeaderComponent={
           <View key="list-header">
+            <Typography
+              variant="heading3"
+              style={{ marginTop: 8, marginBottom: 16 }}
+            >
+              {intl.formatMessage({ id: 'vehicles.registerMileage' })}
+            </Typography>
             <NavigationBarSheet
               componentId="vehicle-mileage"
               title={
