@@ -2,16 +2,28 @@ export { CalculatorsClientModule } from './lib/calculators.module'
 export { CalculatorsClientConfig } from './lib/calculators.config'
 export { CalculatorsClientService } from './lib/calculators.service'
 export type {
-  GetChildBenefitData,
+  ChildBenefitInput,
+  ChildBenefitKey,
+  InterestBenefitInput,
+  InterestBenefitKey,
+  InterestBenefitMaritalStatus,
+  PaymentFrequency,
+  VehicleBenefitInput,
+  VehicleBenefitKey,
+  VehicleDepreciationInput,
+  VehicleDepreciationKey,
+  VehicleTaxInput,
+  VehicleTaxKey,
+  VehicleTaxPeriod,
+  WithholdingMaritalStatus,
+  WithholdingTaxInput,
+  WithholdingTaxKey,
+} from './lib/inputs'
+export type {
   GetChildBenefitResponse,
-  GetVehicleTaxData,
   GetVehicleTaxResponse,
-  GetVehicleBenefitData,
   GetVehicleBenefitResponse,
-  GetVehicleDepreciationData,
   GetVehicleDepreciationResponse,
-  GetWithholdingTaxData,
   GetWithholdingTaxResponse,
-  GetInterestBenefitData,
   GetInterestBenefitResponse,
 } from '../gen/fetch/types.gen'

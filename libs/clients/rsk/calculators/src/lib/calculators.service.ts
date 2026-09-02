@@ -7,44 +7,63 @@ import {
   getVehicleTax,
   getWithholdingTax,
 } from '../../gen/fetch'
+
+import {
+  toChildBenefitQuery,
+  toInterestBenefitQuery,
+  toVehicleBenefitQuery,
+  toVehicleDepreciationQuery,
+  toVehicleTaxQuery,
+  toWithholdingTaxQuery,
+} from './inputs'
 import type {
-  GetChildBenefitData,
-  GetInterestBenefitData,
-  GetVehicleBenefitData,
-  GetVehicleDepreciationData,
-  GetVehicleTaxData,
-  GetWithholdingTaxData,
-} from '../../gen/fetch'
+  ChildBenefitInput,
+  InterestBenefitInput,
+  VehicleBenefitInput,
+  VehicleDepreciationInput,
+  VehicleTaxInput,
+  WithholdingTaxInput,
+} from './inputs'
 
 @Injectable()
 export class CalculatorsClientService {
-  async getChildBenefit(query: GetChildBenefitData['query']) {
-    const { data } = await getChildBenefit({ query })
+  async getChildBenefit(input: ChildBenefitInput) {
+    const { data } = await getChildBenefit({
+      query: toChildBenefitQuery(input),
+    })
     return data
   }
 
-  async getVehicleTax(query: GetVehicleTaxData['query']) {
-    const { data } = await getVehicleTax({ query })
+  async getVehicleTax(input: VehicleTaxInput) {
+    const { data } = await getVehicleTax({ query: toVehicleTaxQuery(input) })
     return data
   }
 
-  async getVehicleBenefit(query: GetVehicleBenefitData['query']) {
-    const { data } = await getVehicleBenefit({ query })
+  async getVehicleBenefit(input: VehicleBenefitInput) {
+    const { data } = await getVehicleBenefit({
+      query: toVehicleBenefitQuery(input),
+    })
     return data
   }
 
-  async getVehicleDepreciation(query: GetVehicleDepreciationData['query']) {
-    const { data } = await getVehicleDepreciation({ query })
+  async getVehicleDepreciation(input: VehicleDepreciationInput) {
+    const { data } = await getVehicleDepreciation({
+      query: toVehicleDepreciationQuery(input),
+    })
     return data
   }
 
-  async getWithholdingTax(query?: GetWithholdingTaxData['query']) {
-    const { data } = await getWithholdingTax({ query })
+  async getWithholdingTax(input?: WithholdingTaxInput) {
+    const { data } = await getWithholdingTax({
+      query: input && toWithholdingTaxQuery(input),
+    })
     return data
   }
 
-  async getInterestBenefit(query: GetInterestBenefitData['query']) {
-    const { data } = await getInterestBenefit({ query })
+  async getInterestBenefit(input: InterestBenefitInput) {
+    const { data } = await getInterestBenefit({
+      query: toInterestBenefitQuery(input),
+    })
     return data
   }
 }
