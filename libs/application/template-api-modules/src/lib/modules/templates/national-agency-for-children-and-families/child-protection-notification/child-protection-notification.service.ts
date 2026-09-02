@@ -50,7 +50,6 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
 
   async getChildSafetyLevels() {
     return this.nationalAgencyForChildrenAndFamiliesClientService.getChildSafetyLevels()
-
   }
 
   async getPronouns() {
