@@ -36,8 +36,8 @@ export const RevokedForm = buildForm({
         buildMessageWithLinkButtonField({
           id: 'rejectBackToApplication',
           url: '/umsoknir/u2-vottord',
-          buttonTitle: rfm.general.newApplicationButton,
-          message: rfm.general.newApplicationMessage,
+          buttonTitle: sharedMessages.newApplicationButton,
+          message: sharedMessages.newApplicationMessage,
         }),
       ],
     }),

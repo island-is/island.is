@@ -8,21 +8,26 @@ import {
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { getOverviewItems } from '../../utils/getOverviewItems'
+import {
+  applicationMessages,
+  rejectedForm as rfm,
+  sharedMessages,
+} from '../../lib/messages'
 
 export const RejectedForm = buildForm({
   id: 'RejectedForm',
   mode: FormModes.DRAFT,
   logo: DirectorateOfLabourLogo,
-  title: 'Umsókn um U2 vottorð vegna atvinnuleitar í EES-landi',
+  title: applicationMessages.name,
   children: [
     buildMultiField({
       id: 'revokedMultiField',
-      title: 'Umsóknin þín',
+      title: sharedMessages.yourApplicationTitle,
       children: [
         buildAlertMessageField({
           id: 'rejectedAlertField',
           alertType: 'error',
-          title: 'Umsókn þín um U2 vottorð hefur því miður verið hafnað',
+          title: rfm.general.alertTitle,
         }),
         buildOverviewField({
           id: 'rejectedOverview',
@@ -31,9 +36,8 @@ export const RejectedForm = buildForm({
         buildMessageWithLinkButtonField({
           id: 'rejectBackToApplication',
           url: '/umsoknir/u2-vottord',
-          buttonTitle: 'Opna umsókn',
-          message:
-            'Þú getur lagt inn nýja umsókn um U2 vottorð ef aðstæður þínar hafa breyst.',
+          buttonTitle: sharedMessages.newApplicationButton,
+          message: sharedMessages.newApplicationMessage,
         }),
       ],
     }),

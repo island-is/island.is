@@ -54,6 +54,7 @@ import {
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
   GaldurExternalDomainModelsSupportDataNationalityDTO,
   GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
+  GaldurXRoadAPIModelsApplicantU2EligibilityResponse,
 =======
 >>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
 } from '../../gen/fetch'
@@ -727,13 +728,9 @@ export class VmstUnemploymentClientService {
     return await api.jobSearchConfirmationGetQuestionaireSchema()
   }
 
-<<<<<<< HEAD
   async revokeU2Application(
     auth: User,
   ): Promise<GaldurDomainModelsBaseViewModel> {
-=======
-  async revokeU2Application(auth: User): Promise<void> {
->>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
     const { applicantId } = await this.resolveApplicant(auth)
 
     if (!applicantId) {
@@ -744,12 +741,8 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
 
-<<<<<<< HEAD
     return await api.u2CertificateWithdrawU2Certificate({
       applicantId,
     })
-=======
-    return
->>>>>>> 4216742a2a (Further work, still missing revoke and applicationId in submit)
   }
 }
