@@ -10,7 +10,7 @@
 import fs from 'node:fs'
 
 const SHUTDOWN_SIGNATURE = 'The runner has received a shutdown signal'
-const KEY_RE = /MQ_JOB_KEY=([^\r\n']+)/
+const KEY_RE_G = /MQ_JOB_KEY=([^\r\n']+)/g
 
 const STAGE = {
   tests: (name) => /^tests \(/.test(name),
@@ -58,31 +58,51 @@ async function listJobs(token, owner, repo, runId) {
   return jobs
 }
 
-async function fetchLog(token, owner, repo, jobId, attempts = 6) {
+async function fetchLogOnce(token, owner, repo, jobId) {
   // 302 redirects to a signed storage URL; fetch follows it and strips the
-  // Authorization header on the cross-origin hop (per spec). Job logs can 404
-  // briefly right after completion, so retry before giving up.
-  const url = `https://api.github.com/repos/${owner}/${repo}/actions/jobs/${jobId}/logs`
-  for (let i = 0; i < attempts; i++) {
-    try {
-      const res = await fetch(url, { headers: ghHeaders(token) })
-      if (res.ok) {
-        const text = await res.text()
-        if (text && text.length > 0) return text
-      }
-    } catch {
-      /* transient network error; retry */
+  // Authorization header on the cross-origin hop (per spec).
+  try {
+    const url = `https://api.github.com/repos/${owner}/${repo}/actions/jobs/${jobId}/logs`
+    const res = await fetch(url, { headers: ghHeaders(token) })
+    if (res.ok) {
+      const text = await res.text()
+      if (text && text.length > 0) return text
     }
-    if (i < attempts - 1) await new Promise((r) => setTimeout(r, 3000))
+  } catch {
+    /* transient network error */
   }
   return null
 }
 
-function classify(logText) {
-  if (logText == null) return { infra: false, key: null }
-  const infra = logText.includes(SHUTDOWN_SIGNATURE)
-  const m = logText.match(KEY_RE)
-  return { infra, key: m ? m[1].trim() : null }
+function extractKey(log, knownKeys) {
+  // The run-script header logs the literal "MQ_JOB_KEY=${AFFECTED_PROJECTS}";
+  // only the executed output has the real value. Pick the match that validates
+  // against the known chunk set (the literal never validates).
+  const keys = [...log.matchAll(KEY_RE_G)].map((m) => m[1].trim())
+  if (!knownKeys) return null
+  return keys.find((k) => knownKeys.has(k)) ?? null
+}
+
+// Poll the job log until the shutdown signature appears (infra) or we time out
+// (treated as genuine). Handles both the post-completion log-availability race
+// and partially-flushed logs.
+async function inspectJob(
+  token,
+  owner,
+  repo,
+  jobId,
+  knownKeys,
+  attempts = 8,
+  delayMs = 3000,
+) {
+  for (let i = 0; i < attempts; i++) {
+    const log = await fetchLogOnce(token, owner, repo, jobId)
+    if (log && log.includes(SHUTDOWN_SIGNATURE)) {
+      return { infra: true, key: extractKey(log, knownKeys) }
+    }
+    if (i < attempts - 1) await new Promise((r) => setTimeout(r, delayMs))
+  }
+  return { infra: false, key: null }
 }
 
 async function main() {
@@ -136,8 +156,13 @@ async function main() {
       continue
     }
 
-    const log = await fetchLog(token, owner, repo, job.id)
-    const { infra, key } = classify(log)
+    const knownKeys =
+      stage === 'tests'
+        ? origTestKeys
+        : stage === 'docker'
+          ? new Set(dockerByProject.keys())
+          : null
+    const { infra, key } = await inspectJob(token, owner, repo, job.id, knownKeys)
 
     if (!infra) {
       genuine.push(name)
@@ -148,12 +173,12 @@ async function main() {
       continue
     }
     if (stage === 'tests') {
-      if (key && origTestKeys.has(key)) retryTests.add(key)
+      if (key) retryTests.add(key)
       else genuine.push(name)
       continue
     }
     if (stage === 'docker') {
-      if (key && dockerByProject.has(key)) retryDocker.add(key)
+      if (key) retryDocker.add(key)
       else genuine.push(name)
     }
   }
