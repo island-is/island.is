@@ -142,19 +142,20 @@ export class ZendeskService {
       zendeskBrandId,
     )
 
-    this.logger.info('form system application sent to zendesk', {
-      applicationId,
-      formId: applicationDto.formId,
-      formSlug: applicationDto.slug,
-      organizationNationalId: applicationDto.organizationNationalId,
-      isTest: applicationDto.isTest,
-      zendeskInstance: supportedZendeskInstance,
-      zendeskBrandId,
-      attachmentCount: attachmentTokens.length,
-      missingAttachmentCount: missingFilenames.length,
-      success,
-      datadogEvent: 'form_system_application_sent_zendesk',
-    })
+    if (success) {
+      this.logger.info('form system application sent to zendesk', {
+        applicationId,
+        formId: applicationDto.formId,
+        formSlug: applicationDto.slug,
+        organizationNationalId: applicationDto.organizationNationalId,
+        isTest: applicationDto.isTest,
+        zendeskInstance: supportedZendeskInstance,
+        zendeskBrandId,
+        attachmentCount: attachmentTokens.length,
+        missingAttachmentCount: missingFilenames.length,
+        datadogEvent: 'form_system_application_sent_zendesk',
+      })
+    }
 
     return success
   }

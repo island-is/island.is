@@ -81,14 +81,14 @@ export class FileService {
             }
 
             await value.save({ transaction })
+          })
 
-            this.logger.info('form system file uploaded', {
-              applicationId,
-              key,
-              fieldId,
-              valueId,
-              datadogEvent: 'form_system_file_uploaded',
-            })
+          this.logger.info('form system file uploaded', {
+            applicationId,
+            key,
+            fieldId,
+            valueId,
+            datadogEvent: 'form_system_file_uploaded',
           })
 
           return
