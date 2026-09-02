@@ -1,12 +1,12 @@
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatCurrency } from '@island.is/shared/utils'
 import { messages } from '../../lib/messages'
 import {
   hasNoPayComponents,
   type PayComponentsBreakdown,
 } from '../../utils/payComponents'
 import { formatSignedPercentMagnitude } from '../../utils/wageGap'
-import { formatCurrency } from '../EmployeesEditor/utils'
 
 type Row = {
   label: string
