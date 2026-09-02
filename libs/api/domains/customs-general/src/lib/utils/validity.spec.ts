@@ -4,7 +4,7 @@ const REFERENCE = '2026-01-20T00:00:00Z'
 
 describe('parseApiDate', () => {
   it('parses the non ISO format the upstream API returns', () => {
-    expect(parseApiDate('Fri Jan 01 00:00:00 GMT 2027')?.getFullYear()).toBe(
+    expect(parseApiDate('Fri Jan 01 00:00:00 GMT 2027')?.getUTCFullYear()).toBe(
       2027,
     )
   })
@@ -26,8 +26,8 @@ describe('getValidity', () => {
     )
 
     expect(validity.notYetInEffect).toBe(true)
-    expect(validity.validFrom?.getFullYear()).toBe(2027)
-    expect(validity.validTo?.getFullYear()).toBe(2300)
+    expect(validity.validFrom?.getUTCFullYear()).toBe(2027)
+    expect(validity.validTo?.getUTCFullYear()).toBe(2300)
   })
 
   it('does not flag entries that are already in effect', () => {
@@ -66,8 +66,8 @@ describe('getCombinedValidity', () => {
       },
     )
 
-    expect(validity.validFrom?.getFullYear()).toBe(2027)
-    expect(validity.validTo?.getFullYear()).toBe(2050)
+    expect(validity.validFrom?.getUTCFullYear()).toBe(2027)
+    expect(validity.validTo?.getUTCFullYear()).toBe(2050)
     expect(validity.notYetInEffect).toBe(true)
   })
 

@@ -19,7 +19,7 @@ export const formatValidityDate = (
 ): string => {
   if (!iso) return indefinite
   const date = new Date(iso)
-  if (isNaN(date.getTime()) || date.getFullYear() >= INDEFINITE_YEAR) {
+  if (isNaN(date.getTime()) || date.getUTCFullYear() >= INDEFINITE_YEAR) {
     return indefinite
   }
   return formatDate(date, locale as 'is' | 'en', 'dd.MM.yyyy') ?? indefinite
