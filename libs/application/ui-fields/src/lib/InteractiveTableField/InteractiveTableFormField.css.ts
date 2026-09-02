@@ -12,11 +12,13 @@ globalStyle(`${tableWrapper} table`, {
 globalStyle(`${tableWrapper} th`, {
   height: 56,
   padding: 16,
+  overflowWrap: 'break-word',
 })
 
 globalStyle(`${tableWrapper} td`, {
   height: 56,
   padding: '12px 16px',
+  overflowWrap: 'break-word',
 })
 
 globalStyle(`${tableWrapper} [data-column-index="0"]:not(:first-child)`, {
@@ -35,10 +37,6 @@ globalStyle(`${tableWrapper} input:not([type="checkbox"])`, {
 
 globalStyle(`${tableWrapper} div:has(> input:not([type="checkbox"]))`, {
   padding: 0,
-})
-
-export const cellButtonLabel = style({
-  textDecoration: 'underline',
 })
 
 export const checkboxColumnStyle = { width: 56 }
