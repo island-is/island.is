@@ -1022,7 +1022,12 @@ export interface StaticTableField extends BaseField {
 
 export type InteractiveTableHeaderCell =
   | StaticText
-  | { label: StaticText; width?: number; truncate?: boolean }
+  | {
+      label: StaticText
+      width?: number
+      truncate?: boolean
+      onCellClick?: (rowIndex: number) => void
+    }
 
 export interface InteractiveTableField extends BaseField {
   readonly type: FieldTypes.INTERACTIVE_TABLE

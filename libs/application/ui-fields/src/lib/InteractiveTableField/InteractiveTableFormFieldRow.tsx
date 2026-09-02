@@ -1,10 +1,16 @@
 import { FC, memo, useEffect, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { Application, StaticText } from '@island.is/application/types'
-import { Checkbox, Table as T } from '@island.is/island-ui/core'
+import { Button, Checkbox, Table as T } from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
+import * as styles from './InteractiveTableFormField.css'
+
+export type InteractiveTableColumn = {
+  truncate: boolean
+  onCellClick?: (rowIndex: number) => void
+}
 
 interface Props {
   row: StaticText[]
@@ -16,7 +22,7 @@ interface Props {
   inputFieldId?: string
   inputMaxAmount?: number
   inputPlaceholder: string
-  truncateColumns: boolean[]
+  columns: InteractiveTableColumn[]
 }
 
 const InteractiveTableFormFieldRowComponent: FC<Props> = ({
@@ -29,7 +35,7 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
   inputFieldId,
   inputMaxAmount,
   inputPlaceholder,
-  truncateColumns,
+  columns,
 }) => {
   const { formatMessage } = useLocale()
   const { control, setValue, register, unregister } = useFormContext()
@@ -89,15 +95,29 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
       )}
       {row.map((cell, cellIndex) => {
         const value = formatText(cell, application, formatMessage)
-        const truncate = truncateColumns[cellIndex]
+        const { truncate, onCellClick } = columns[cellIndex] ?? {
+          truncate: false,
+        }
 
         return (
           <T.Data
             key={`row-${rowIndex}-cell-${cellIndex}`}
+            data-column-index={cellIndex}
             text={truncate ? { truncate: true } : undefined}
             title={truncate ? value : undefined}
           >
-            {value}
+            {onCellClick ? (
+              <Button
+                variant="text"
+                size="small"
+                icon="chevronDown"
+                onClick={() => onCellClick(rowIndex)}
+              >
+                {value}
+              </Button>
+            ) : (
+              value
+            )}
           </T.Data>
         )
       })}
@@ -143,9 +163,11 @@ const arePropsEqual = (prev: Props, next: Props) =>
   prev.inputPlaceholder === next.inputPlaceholder &&
   prev.row.length === next.row.length &&
   prev.row.every((cell, index) => cell === next.row[index]) &&
-  prev.truncateColumns.length === next.truncateColumns.length &&
-  prev.truncateColumns.every(
-    (truncate, index) => truncate === next.truncateColumns[index],
+  prev.columns.length === next.columns.length &&
+  prev.columns.every(
+    (column, index) =>
+      column.truncate === next.columns[index].truncate &&
+      column.onCellClick === next.columns[index].onCellClick,
   )
 
 export const InteractiveTableFormFieldRow = memo(

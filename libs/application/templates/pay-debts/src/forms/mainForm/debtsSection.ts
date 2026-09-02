@@ -21,6 +21,8 @@ import { getDebts, hasFetchedDebts } from '../../utils/getDebts'
 const debtsWereFetched = (_answers: unknown, externalData: ExternalData) =>
   hasFetchedDebts(externalData)
 
+const showChargeTypeDetails = (_rowIndex: number) => undefined
+
 export const debtsSection = buildSection({
   id: 'debtsSection',
   title: messages.general.sectionTitle,
@@ -41,10 +43,17 @@ export const debtsSection = buildSection({
           dataTestId: 'debts-table',
           selectable: true,
           header: [
-            messages.table.chargeTypeNameHeader,
-            { label: messages.table.chargeItemSubjectHeader, truncate: true },
-            messages.table.timePeriodHeader,
-            messages.table.amountHeader,
+            {
+              label: messages.table.chargeTypeNameHeader,
+              onCellClick: showChargeTypeDetails,
+            },
+            {
+              label: messages.table.chargeItemSubjectHeader,
+              truncate: true,
+              width: 150,
+            },
+            { label: messages.table.timePeriodHeader, width: 110 },
+            { label: messages.table.amountHeader, width: 120 },
             messages.table.toPayLabel,
           ],
           rows: (application) => {

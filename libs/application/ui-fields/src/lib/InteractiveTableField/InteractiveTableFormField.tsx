@@ -17,7 +17,10 @@ import {
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { Locale } from '@island.is/shared/types'
 import * as styles from './InteractiveTableFormField.css'
-import { InteractiveTableFormFieldRow } from './InteractiveTableFormFieldRow'
+import {
+  InteractiveTableColumn,
+  InteractiveTableFormFieldRow,
+} from './InteractiveTableFormFieldRow'
 
 interface Props extends FieldBaseProps {
   field: InteractiveTableField
@@ -51,8 +54,13 @@ export const InteractiveTableFormField: FC<Props> = ({
     typeof field.header === 'function'
       ? field.header(application)
       : field.header
-  const truncateColumns = header.map(
-    (headerCell) => isHeaderColumnConfig(headerCell) && !!headerCell.truncate,
+  const columns = header.map<InteractiveTableColumn>((headerCell) =>
+    isHeaderColumnConfig(headerCell)
+      ? {
+          truncate: !!headerCell.truncate,
+          onCellClick: headerCell.onCellClick,
+        }
+      : { truncate: false },
   )
   const rows = useMemo(
     () =>
@@ -237,7 +245,7 @@ export const InteractiveTableFormField: FC<Props> = ({
                 inputFieldId={inputFieldId}
                 inputMaxAmount={inputMaxAmounts[rowIndex]}
                 inputPlaceholder={inputPlaceholder}
-                truncateColumns={truncateColumns}
+                columns={columns}
               />
             ))}
             {footerRow && (
@@ -246,6 +254,7 @@ export const InteractiveTableFormField: FC<Props> = ({
                 {footerRow.map((cell, cellIndex) => (
                   <T.Data
                     key={`footer-cell-${cellIndex}`}
+                    data-column-index={cellIndex}
                     text={
                       cellIndex === footerRow.length - 1
                         ? { fontWeight: 'semiBold' }
