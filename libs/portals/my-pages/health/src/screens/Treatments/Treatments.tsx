@@ -57,7 +57,9 @@ const Treatments: React.FC = () => {
           ? treatments.map((treatment) => (
               <ActionCard
                 key={treatment.id}
-                heading={treatment.name.trim() || formatMessage(messages.treatment)}
+                heading={
+                  treatment.name.trim() || formatMessage(messages.treatment)
+                }
                 headingVariant="h4"
                 eyebrow={treatment.organizationName ?? undefined}
                 text={
