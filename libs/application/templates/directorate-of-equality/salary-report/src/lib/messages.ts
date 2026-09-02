@@ -1642,6 +1642,22 @@ export const messages = {
       id: 'doe.sr.application:overview.contactPerson',
       defaultMessage: 'Tengiliður',
     },
+    subsidiaries: {
+      id: 'doe.sr.application:overview.subsidiaries',
+      defaultMessage: 'Dótturfyrirtæki',
+    },
+    hasSubsidiaries: {
+      id: 'doe.sr.application:overview.hasSubsidiaries',
+      defaultMessage: 'Inniheldur dótturfyrirtæki',
+    },
+    yesSubsidiaries: {
+      id: 'doe.sr.application:overview.yesSubsidiaries',
+      defaultMessage: 'Já',
+    },
+    noSubsidiaries: {
+      id: 'doe.sr.application:overview.noSubsidiaries',
+      defaultMessage: 'Nei',
+    },
     salaryAnalysisTitle: {
       id: 'doe.sr.application:overview.salaryAnalysisTitle',
       defaultMessage: 'Launagreining',

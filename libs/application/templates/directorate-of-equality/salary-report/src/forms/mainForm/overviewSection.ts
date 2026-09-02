@@ -158,6 +158,42 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
     ],
   }),
   buildOverviewField({
+    id: 'overview.subsidiaries',
+    title: messages.overview.subsidiaries,
+    titleVariant: 'h3',
+    ...(withBackLinks ? { backId: 'subsidiariesMultiField' } : {}),
+    items: (answers) => {
+      const hasSubsidiaries =
+        getValueViaPath<string>(answers, 'subsidiaries.includesSubsidiaries') ===
+        'yes'
+      const subsidiaryList = hasSubsidiaries
+        ? getValueViaPath<
+            Array<{
+              nationalIdWithName?: { name?: string; nationalId?: string }
+              isRemoved?: boolean
+            }>
+          >(answers, 'subsidiaries.list') ?? []
+        : []
+
+      return [
+        {
+          width: 'full' as const,
+          keyText: messages.overview.hasSubsidiaries,
+          valueText: hasSubsidiaries
+            ? messages.overview.yesSubsidiaries
+            : messages.overview.noSubsidiaries,
+        },
+        ...subsidiaryList
+          .filter((s) => !s.isRemoved)
+          .map((s) => ({
+            width: 'half' as const,
+            keyText: s.nationalIdWithName?.name ?? '',
+            valueText: s.nationalIdWithName?.nationalId ?? '',
+          })),
+      ]
+    },
+  }),
+  buildOverviewField({
     id: 'overview.period',
     title: messages.overview.periodLabel,
     titleVariant: 'h3',
