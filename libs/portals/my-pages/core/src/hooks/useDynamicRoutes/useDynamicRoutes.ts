@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
@@ -177,13 +178,9 @@ const cloneNavItem = (item: PortalNavigationItem): PortalNavigationItem => ({
 
 /**
  * portals-my-pages/health
- * Adds a "Meðferðir" section under Heilsa, after the messages entry, with one
- * child per treatment (each carrying a hidden fræðsluefni grandchild so
- * breadcrumbs work). The section only exists when the user has treatments.
+ * Adds a "Meðferðir" section under Heilsa with one child per treatment.
  * Operates on a deep clone — the nav tree is a shared singleton mutated in
- * place elsewhere. systemRoute keeps the concrete child paths from being
- * filtered out; the parent path matches its declared route and needs no
- * exemption.
+ * place elsewhere. systemRoute keeps concrete paths from being filtered out.
  */
 const injectHealthTreatmentNavItems = (
   nav: PortalNavigationItem,
@@ -242,19 +239,23 @@ export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
     false,
   )
 
-  // Kept out of useDynamicRoutes so its loading never delays DynamicWrapper
-  // screens — the nav items simply appear once the query resolves.
+  const { pathname } = useLocation()
+  const onHealthPage = pathname.startsWith(HEALTH_ROUTE)
+
+  // Only fetches on health pages; the cache then serves every consumer.
+  // Kept out of useDynamicRoutes so it never delays other dynamic screens.
   const { data: treatmentsData } = useQuery<Query>(
     GET_HEALTH_TREATMENTS_NAV_QUERY,
     {
       skip: !treatmentsEnabled,
+      fetchPolicy: onHealthPage ? 'cache-first' : 'cache-only',
     },
   )
 
   const sortedNavigation = orderRoutes(nav, data?.getNamespace?.fields)
 
-  // Memoized so useNavigation sees a stable object. The namespace fields are
-  // a dep because orderRoutes re-sorts the tree in place when they load.
+  // Memoized so useNavigation sees a stable object; namespace fields re-sort
+  // the tree when they load.
   const navigation = useMemo(() => {
     const treatments = treatmentsData?.healthDirectorateTreatments
     if (!treatments?.length) {

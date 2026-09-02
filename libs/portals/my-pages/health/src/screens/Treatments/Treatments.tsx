@@ -60,7 +60,12 @@ const Treatments: React.FC = () => {
                 heading={treatment.name.trim() || formatMessage(messages.treatment)}
                 headingVariant="h4"
                 eyebrow={treatment.organizationName ?? undefined}
-                text={treatment.departmentName ?? undefined}
+                text={
+                  treatment.departmentName?.trim() !==
+                  treatment.organizationName?.trim()
+                    ? treatment.departmentName ?? undefined
+                    : undefined
+                }
                 cta={{
                   onClick: () =>
                     navigate(

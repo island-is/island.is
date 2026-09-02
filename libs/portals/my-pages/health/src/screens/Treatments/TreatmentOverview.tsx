@@ -1,4 +1,4 @@
-import { Stack, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -43,13 +43,8 @@ const TreatmentOverview: React.FC = () => {
       ) : !treatment ? (
         <Problem type="no_data" noBorder={false} />
       ) : (
-        // TODO: replace stub with the full overview in PR 3
-        <Stack space={1}>
-          {treatment.organizationName && (
-            <Text>{treatment.organizationName}</Text>
-          )}
-          {treatment.departmentName && <Text>{treatment.departmentName}</Text>}
-        </Stack>
+        // Stub — the full overview lands in the next PR.
+        <Text>TODO</Text>
       )}
     </IntroWrapper>
   )
