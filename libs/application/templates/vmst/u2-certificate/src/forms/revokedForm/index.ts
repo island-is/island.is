@@ -16,7 +16,7 @@ import {
 
 export const RevokedForm = buildForm({
   id: 'RevokedForm',
-  mode: FormModes.DRAFT,
+  mode: FormModes.REJECTED,
   logo: DirectorateOfLabourLogo,
   title: applicationMessages.name,
   children: [
