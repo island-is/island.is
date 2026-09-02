@@ -1,6 +1,8 @@
 import {
   FieldBaseProps,
   InteractiveTableField,
+  InteractiveTableHeaderCell,
+  StaticText,
 } from '@island.is/application/types'
 import { FC, ReactNode, useEffect, useMemo } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
@@ -20,6 +22,11 @@ import { InteractiveTableFormFieldRow } from './InteractiveTableFormFieldRow'
 interface Props extends FieldBaseProps {
   field: InteractiveTableField
 }
+
+const isHeaderColumnConfig = (
+  headerCell: InteractiveTableHeaderCell,
+): headerCell is Exclude<InteractiveTableHeaderCell, StaticText> =>
+  typeof headerCell === 'object' && headerCell !== null && 'label' in headerCell
 
 export const InteractiveTableFormField: FC<Props> = ({
   field,
@@ -44,6 +51,9 @@ export const InteractiveTableFormField: FC<Props> = ({
     typeof field.header === 'function'
       ? field.header(application)
       : field.header
+  const truncateColumns = header.map(
+    (headerCell) => isHeaderColumnConfig(headerCell) && !!headerCell.truncate,
+  )
   const rows = useMemo(
     () =>
       typeof field.rows === 'function' ? field.rows(application) : field.rows,
@@ -173,9 +183,7 @@ export const InteractiveTableFormField: FC<Props> = ({
       <Box
         marginTop={description ? 3 : 0}
         dataTestId={field.dataTestId}
-        className={
-          hasInputColumn || footerRow ? styles.tableWrapper : undefined
-        }
+        className={styles.tableWrapper}
       >
         <T.Table>
           <T.Head>
@@ -194,16 +202,14 @@ export const InteractiveTableFormField: FC<Props> = ({
                 </T.HeadData>,
               )}
               {header.map((headerCell, index) => {
-                const hasWidth =
-                  typeof headerCell === 'object' &&
-                  headerCell !== null &&
-                  'label' in headerCell
-                const label = hasWidth ? headerCell.label : headerCell
-                const width = hasWidth ? headerCell.width : undefined
+                const isColumnConfig = isHeaderColumnConfig(headerCell)
+                const label = isColumnConfig ? headerCell.label : headerCell
+                const width = isColumnConfig ? headerCell.width : undefined
 
                 return (
                   <T.HeadData
                     key={`${label}-${index}`}
+                    data-column-index={index}
                     style={
                       width
                         ? { width }
@@ -231,6 +237,7 @@ export const InteractiveTableFormField: FC<Props> = ({
                 inputFieldId={inputFieldId}
                 inputMaxAmount={inputMaxAmounts[rowIndex]}
                 inputPlaceholder={inputPlaceholder}
+                truncateColumns={truncateColumns}
               />
             ))}
             {footerRow && (

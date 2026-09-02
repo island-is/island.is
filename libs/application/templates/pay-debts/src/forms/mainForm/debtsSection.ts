@@ -15,7 +15,7 @@ import {
 import { formatCurrency } from '@island.is/application/ui-components'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { debts as messages } from '../../lib/messages'
-import { formatDate } from '../../utils/formatDate'
+import { formatTimePeriod } from '../../utils/formatTimePeriod'
 import { getDebts, hasFetchedDebts } from '../../utils/getDebts'
 
 const debtsWereFetched = (_answers: unknown, externalData: ExternalData) =>
@@ -41,9 +41,9 @@ export const debtsSection = buildSection({
           dataTestId: 'debts-table',
           selectable: true,
           header: [
-            { label: messages.table.chargeTypeNameHeader, width: 200 },
-            messages.table.dueDateHeader,
-            messages.table.finalDueDateHeader,
+            messages.table.chargeTypeNameHeader,
+            { label: messages.table.chargeItemSubjectHeader, truncate: true },
+            messages.table.timePeriodHeader,
             messages.table.amountHeader,
             messages.table.toPayLabel,
           ],
@@ -56,8 +56,8 @@ export const debtsSection = buildSection({
 
             return debts.map<StaticText[]>((debt) => [
               debt.chargeTypeName,
-              formatDate(debt.dueDate),
-              formatDate(debt.finalDueDate),
+              debt.chargeItemSubject,
+              formatTimePeriod(debt.timePeriod),
               formatCurrency(debt.debts.toString()),
             ])
           },
@@ -83,8 +83,6 @@ export const debtsSection = buildSection({
           condition: debtsWereFetched,
           widthReferenceTestId: 'debts-table',
           watchFieldIds: ['debtsToPay', 'selectedDebts'],
-          labelOffset: 56,
-          labelWidth: 200,
           rows: (application: Application) => {
             const totalDebts = getDebts(application).reduce(
               (total, debt) => total + debt.debts,

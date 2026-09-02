@@ -57,15 +57,15 @@ export const debts = {
       defaultMessage: 'Gjaldflokkur',
       description: 'Charge type table header',
     },
-    dueDateHeader: {
-      id: 'pd.application:debts.table.dueDateHeader',
-      defaultMessage: 'Gjalddagi',
-      description: 'Due date table header',
+    chargeItemSubjectHeader: {
+      id: 'pd.application:debts.table.chargeItemSubjectHeader',
+      defaultMessage: 'Gjaldgrunnur',
+      description: 'Charge item subject table header',
     },
-    finalDueDateHeader: {
-      id: 'pd.application:debts.table.finalDueDateHeader',
-      defaultMessage: 'Eindagi',
-      description: 'Final due date table header',
+    timePeriodHeader: {
+      id: 'pd.application:debts.table.timePeriodHeader',
+      defaultMessage: 'Ár og tímabil',
+      description: 'Time period table header',
     },
     amountHeader: {
       id: 'pd.application:debts.table.amountHeader',
