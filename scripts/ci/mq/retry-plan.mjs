@@ -3,9 +3,11 @@
 // (runner/Spot shutdown) vs genuine failures, and emits targeted retry
 // matrices. Identity comes from a per-job log marker (MQ_JOB_KEY=...), never
 // from the (truncated) job name. Defaults to "genuine" on any ambiguity.
+//
+// Dependency-free: uses only Node 20 built-ins (global fetch, fs) so it runs
+// with just actions/setup-node, no yarn install / load-deps required.
 
-import core from '@actions/core'
-import github from '@actions/github'
+import fs from 'node:fs'
 
 const SHUTDOWN_SIGNATURE = 'The runner has received a shutdown signal'
 const KEY_RE = /MQ_JOB_KEY=([^\r\n']+)/
@@ -14,6 +16,12 @@ const STAGE = {
   tests: (name) => /^tests \(/.test(name),
   docker: (name) => /^docker-build \(/.test(name),
   typecheck: (name) => name === 'typecheck',
+}
+
+function setOutput(name, value) {
+  const line = `${name}=${value}\n`
+  if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, line)
+  else process.stdout.write(line)
 }
 
 function parseJson(env, fallback) {
@@ -26,41 +34,57 @@ function parseJson(env, fallback) {
   }
 }
 
-async function fetchLog(octokit, owner, repo, jobId) {
+function ghHeaders(token) {
+  return {
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/vnd.github+json',
+    'User-Agent': 'islandis-retry-plan',
+    'X-GitHub-Api-Version': '2022-11-28',
+  }
+}
+
+async function listJobs(token, owner, repo, runId) {
+  const jobs = []
+  for (let page = 1; ; page++) {
+    const url = `https://api.github.com/repos/${owner}/${repo}/actions/runs/${runId}/jobs?per_page=100&page=${page}`
+    const res = await fetch(url, { headers: ghHeaders(token) })
+    if (!res.ok) throw new Error(`list jobs failed: ${res.status}`)
+    const data = await res.json()
+    jobs.push(...(data.jobs || []))
+    if (!data.jobs || data.jobs.length < 100 || jobs.length >= data.total_count)
+      break
+  }
+  return jobs
+}
+
+async function fetchLog(token, owner, repo, jobId) {
+  // 302 redirects to a signed storage URL; fetch follows it and strips the
+  // Authorization header on the cross-origin hop (per spec).
   try {
-    const resp = await octokit.rest.actions.downloadJobLogsForWorkflowRun({
-      owner,
-      repo,
-      job_id: jobId,
-    })
-    if (typeof resp.data === 'string') return resp.data
-    if (resp.url) return await (await fetch(resp.url)).text()
-    if (resp.data) return Buffer.from(resp.data).toString('utf8')
+    const url = `https://api.github.com/repos/${owner}/${repo}/actions/jobs/${jobId}/logs`
+    const res = await fetch(url, { headers: ghHeaders(token) })
+    if (!res.ok) return null
+    return await res.text()
   } catch {
     return null
   }
-  return null
 }
 
 function classify(logText) {
-  // Returns { infra: boolean, key: string|null }. No log => cannot classify.
   if (logText == null) return { infra: false, key: null }
   const infra = logText.includes(SHUTDOWN_SIGNATURE)
   const m = logText.match(KEY_RE)
-  const key = m ? m[1].trim() : null
-  return { infra, key }
+  return { infra, key: m ? m[1].trim() : null }
 }
 
 async function main() {
   const token = process.env.GH_TOKEN
   if (!token) throw new Error('GH_TOKEN is required')
-  const octokit = github.getOctokit(token)
   const [owner, repo] = (process.env.GITHUB_REPOSITORY || '').split('/')
-  const runId = Number(process.env.GITHUB_RUN_ID)
+  const runId = process.env.GITHUB_RUN_ID
 
   const origTests = parseJson('ORIG_TESTS', { projects: [] })
   const origTestKeys = new Set(origTests.projects || [])
-  // DOCKER_CHUNKS is an array of stringified chunk objects.
   const origDocker = parseJson('ORIG_DOCKER', [])
   const dockerByProject = new Map()
   for (const entry of origDocker) {
@@ -72,7 +96,6 @@ async function main() {
     }
   }
 
-  // Optional simulation for workflow_dispatch validation (no real kill needed).
   const simTests = (process.env.SIMULATE_TESTS || '')
     .split(',')
     .map((s) => s.trim())
@@ -82,10 +105,7 @@ async function main() {
     .map((s) => s.trim())
     .filter(Boolean)
 
-  const jobs = await octokit.paginate(
-    octokit.rest.actions.listJobsForWorkflowRun,
-    { owner, repo, run_id: runId, per_page: 100 },
-  )
+  const jobs = await listJobs(token, owner, repo, runId)
 
   const retryTests = new Set()
   const retryDocker = new Set()
@@ -97,32 +117,31 @@ async function main() {
     const stage = STAGE.tests(name)
       ? 'tests'
       : STAGE.docker(name)
-      ? 'docker'
-      : STAGE.typecheck(name)
-      ? 'typecheck'
-      : null
+        ? 'docker'
+        : STAGE.typecheck(name)
+          ? 'typecheck'
+          : null
     if (!stage) continue
     if (job.conclusion === 'success' || job.conclusion === 'skipped') continue
     if (job.status !== 'completed') {
-      genuine.push(name) // still running/queued at plan time is unexpected
+      genuine.push(name)
       continue
     }
 
-    const log = await fetchLog(octokit, owner, repo, job.id)
+    const log = await fetchLog(token, owner, repo, job.id)
     const { infra, key } = classify(log)
 
     if (!infra) {
       genuine.push(name)
       continue
     }
-    // Infra cancellation: map back to the original matrix entry via MQ_JOB_KEY.
     if (stage === 'typecheck') {
       retryTypecheck = true
       continue
     }
     if (stage === 'tests') {
       if (key && origTestKeys.has(key)) retryTests.add(key)
-      else genuine.push(name) // could not map reliably => fail-safe
+      else genuine.push(name)
       continue
     }
     if (stage === 'docker') {
@@ -131,23 +150,20 @@ async function main() {
     }
   }
 
-  // Apply simulation overrides (workflow_dispatch only).
   for (const k of simTests) if (origTestKeys.has(k)) retryTests.add(k)
   for (const k of simDocker) if (dockerByProject.has(k)) retryDocker.add(k)
 
-  const testsOut = JSON.stringify({ projects: [...retryTests] })
-  const dockerOut = JSON.stringify(
-    [...retryDocker].map((p) => dockerByProject.get(p)),
+  setOutput('tests', JSON.stringify({ projects: [...retryTests] }))
+  setOutput(
+    'docker',
+    JSON.stringify([...retryDocker].map((p) => dockerByProject.get(p))),
   )
+  setOutput('has_tests', retryTests.size > 0 ? 'true' : 'false')
+  setOutput('has_docker', retryDocker.size > 0 ? 'true' : 'false')
+  setOutput('typecheck', retryTypecheck ? 'true' : 'false')
+  setOutput('genuine', JSON.stringify(genuine))
 
-  core.setOutput('tests', testsOut)
-  core.setOutput('docker', dockerOut)
-  core.setOutput('has_tests', retryTests.size > 0 ? 'true' : 'false')
-  core.setOutput('has_docker', retryDocker.size > 0 ? 'true' : 'false')
-  core.setOutput('typecheck', retryTypecheck ? 'true' : 'false')
-  core.setOutput('genuine', JSON.stringify(genuine))
-
-  core.info(
+  console.log(
     `retry-plan: tests=${retryTests.size} docker=${retryDocker.size} ` +
       `typecheck=${retryTypecheck} genuine=${genuine.length}`,
   )

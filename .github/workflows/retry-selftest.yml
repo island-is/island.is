@@ -74,10 +74,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-      - name: load-deps
-        uses: ./.github/actions/load-deps
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - name: Plan retries
         id: plan
         env:
