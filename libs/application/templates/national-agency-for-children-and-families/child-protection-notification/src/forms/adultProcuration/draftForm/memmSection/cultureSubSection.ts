@@ -42,7 +42,6 @@ export const cultureSubSection = buildSubSection({
           id: 'memm.culture.languageUsage',
           title: memmMessages.culture.languageUsageLabel,
           placeholder: memmMessages.culture.languageUsagePlaceholder,
-          doesNotRequireAnswer: true,
           clearOnChange: ['memm.culture.languages'],
           clearOnChangeDefaultValue: [],
           options: [
@@ -72,7 +71,6 @@ export const cultureSubSection = buildSubSection({
           id: 'memm.culture.languages',
           title: sharedMessages.language,
           placeholder: memmMessages.culture.languagesPlaceholder,
-          doesNotRequireAnswer: true,
           isMulti: true,
           clearOnChange: ['memm.culture.preferredLanguage'],
           options: ({ answers }) => {
@@ -103,7 +101,6 @@ export const cultureSubSection = buildSubSection({
           id: 'memm.culture.preferredLanguage',
           title: sharedMessages.language,
           placeholder: sharedMessages.languagePlaceholder,
-          doesNotRequireAnswer: true,
           options: ({ answers }) => {
             const selectedCodes =
               getApplicationAnswers(answers).memmCultureLanguages ?? []
