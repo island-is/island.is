@@ -142,7 +142,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         subject: `Héraðsdómur Reykjavíkur - aðgangur að máli`,
         html: expect.stringContaining(DEFENDER_INDICTMENT_CASE_ROUTE),
         text: expect.stringContaining(
-          'Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli R-123-456/2024',
+          'Héraðsdómur Reykjavíkur hefur skráð þig sem verjanda í máli R-123-456/2024',
         ),
       })
     })

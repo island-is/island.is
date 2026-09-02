@@ -247,27 +247,19 @@ export class DefendantNotificationService extends BaseNotificationService {
       const courtName = theCase.court?.name
       const defenderHasAccessToRVG = !!defendant.defenderNationalId
 
-      const formattedSubject = this.formatMessage(
-        strings.defenderAssignedSubject,
-        {
-          courtName,
-        },
-      )
+      const subject = `${courtName} - aðgangur að máli`
 
-      const formattedBody = this.formatMessage(strings.defenderAssignedBody, {
-        courtName,
-        courtCaseNumber: theCase.courtCaseNumber,
-        defenderHasAccessToRVG,
-        // This link only works if the user is already logged in
-        linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">`,
-        linkEnd: '</a>',
-      })
+      // This link only works if the user is already logged in
+      const accessInfo = defenderHasAccessToRVG
+        ? `Hægt er að nálgast málið á <a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt</a>`
+        : 'Þú getur nálgast málið hjá dómstólnum'
+      const body = `${courtName} hefur skráð þig sem verjanda í máli ${theCase.courtCaseNumber}.<br /><br />${accessInfo}.`
 
       return this.sendEmails(
         theCase,
         TrackedNotificationType.DEFENDER_ASSIGNED,
-        formattedSubject,
-        formattedBody,
+        subject,
+        body,
         [{ name: defendant.defenderName, email: defendant.defenderEmail }],
       )
     }

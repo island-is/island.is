@@ -146,7 +146,7 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
             subject: `Héraðsdómur Reykjavíkur - aðgangur að máli`,
             html: expect.stringContaining(DEFENDER_INDICTMENT_CASE_ROUTE),
             text: expect.stringContaining(
-              `Héraðsdómur Reykjavíkur hefur skráð þig lögmann einkaréttarkröfuhafa í máli R-123-456`,
+              `Héraðsdómur Reykjavíkur hefur skráð þig sem lögmann einkaréttarkröfuhafa í máli R-123-456`,
             ),
           })
           expect(
