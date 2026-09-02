@@ -33,6 +33,7 @@ import { FileService } from '../file'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
+  CaseRepositoryService,
   Defendant,
   Verdict,
   VerdictRepositoryService,
@@ -71,6 +72,7 @@ export type VerdictServiceCertificateDelivery = {
 export class VerdictService {
   constructor(
     private readonly verdictRepositoryService: VerdictRepositoryService,
+    private readonly caseRepositoryService: CaseRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
@@ -322,6 +324,7 @@ export class VerdictService {
     theCase: Case,
     defendant: Defendant,
     verdict: Verdict,
+    originalAncestorCaseId: string,
   ): { code: string; value: string }[] {
     const receiverSsn = defendant.nationalId ?? ''
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
@@ -334,7 +337,8 @@ export class VerdictService {
       )?.ruling ?? theCase.ruling
 
     return [
-      { code: 'RVG_CASE_ID', value: theCase.id },
+      // LÖKE only knows the original case; split cases must use the ancestor id
+      { code: 'RVG_CASE_ID', value: originalAncestorCaseId },
       { code: 'RVG_DOCUMENT_ID', value: verdict.id },
       ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
       ...(theCase.courtCaseNumber
@@ -453,6 +457,9 @@ export class VerdictService {
       // add two months because we don't want the order by date to be in the past when delivered to the police
       orderByDate.setMonth(orderByDate.getMonth() + 2)
 
+      const originalAncestorCaseId =
+        await this.caseRepositoryService.findOriginalAncestorId(theCase)
+
       // deliver the verdict by creating the document at the police
       const createdDocument = await this.policeService.createDocument({
         caseId: theCase.id,
@@ -476,6 +483,7 @@ export class VerdictService {
           theCase,
           defendant,
           verdict,
+          originalAncestorCaseId,
         ),
       })
 
