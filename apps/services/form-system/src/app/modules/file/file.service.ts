@@ -43,6 +43,8 @@ export class FileService {
       const exists = await this.fileExists(sourceKey)
       this.logger.info(`Starting attempt ${attempts + 1}`)
       if (exists) {
+        let applicationId = ''
+        let key = ''
         try {
           await this.sequelize.transaction(async (transaction) => {
             const value = await this.valueModel.findByPk(valueId, {
@@ -54,8 +56,8 @@ export class FileService {
               throw new Error(`Value with PK: ${valueId} not found`)
             }
 
-            const applicationId = value.applicationId
-            const key = `${applicationId}/${sourceKey}`
+            applicationId = value.applicationId
+            key = `${applicationId}/${sourceKey}`
 
             const res =
               await this.fileStorageService.copyObjectFromUploadBucket(
@@ -79,15 +81,26 @@ export class FileService {
             }
 
             await value.save({ transaction })
+          })
 
-            this.logger.info(
-              `✅ Updated field ${fieldId} with new S3 key ${key}`,
-            )
+          this.logger.info('form system file uploaded', {
+            applicationId,
+            key,
+            fieldId,
+            valueId,
+            datadogEvent: 'form_system_file_uploaded',
           })
 
           return
         } catch (error) {
-          this.logger.error(`❌ Copy failed: ${error}`)
+          this.logger.error('form system file upload failed', {
+            applicationId,
+            key,
+            fieldId,
+            valueId,
+            datadogEvent: 'form_system_file_upload_failed',
+            error,
+          })
           throw error
         }
       }

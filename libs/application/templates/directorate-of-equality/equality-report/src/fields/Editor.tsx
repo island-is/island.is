@@ -11,14 +11,14 @@ import {
 } from '@island.is/island-ui/core'
 import { messages } from '../lib/messages'
 import { useIntl } from 'react-intl'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import mammoth from 'mammoth'
 import { FileRejection } from 'react-dropzone'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
-import { ApiActions } from '../utils/constants'
-import { escapeHtml } from '../utils/htmlHelpers'
+import { ApiActions, draftActionId } from '../utils/constants'
+import { escapeHtml, htmlToPlainText } from '../utils/htmlHelpers'
 import {
   useEnsureEqualityDraft,
   useEqualityContentPush,
@@ -28,7 +28,13 @@ interface Props extends FieldBaseProps {
   field: CustomField
 }
 
-export const Editor = ({ application, errors, field }: Props) => {
+export const Editor = ({
+  application,
+  errors,
+  field,
+  setBeforeSubmitCallback,
+  setSubmitButtonDisabled,
+}: Props) => {
   const { formatMessage } = useIntl()
   const { locale } = useLocale()
   const { setValue } = useFormContext()
@@ -47,54 +53,98 @@ export const Editor = ({ application, errors, field }: Props) => {
     'goalsAndActions.filename',
   )
 
-  // No content lives in application.answers anymore, so the only signal a
-  // resumed screen has is `filename` — a synthetic entry (status: done) is
-  // enough for InputFileUpload to render the already-uploaded state.
+  // Content lives in DMR, not answers, so `filename` is a resumed screen's only
+  // signal — a synthetic done entry is enough to render the uploaded state.
   const [selectedFile, setSelectedFile] = useState<UploadFile | null>(() =>
     initialFilename
       ? { name: initialFilename, status: FileUploadStatus.done }
       : null,
   )
   const [uploadSuccess, setUploadSuccess] = useState(!!initialFilename)
-  // Conversion/read failures and the download-template failure — distinct
-  // from `rejectionMessage` below, which feeds InputFileUpload's own
-  // `errorMessage` slot instead of a standalone alert.
+  // Standalone alert, unlike `rejectionMessage` below, which feeds
+  // InputFileUpload's own `errorMessage` slot.
   const [actionError, setActionError] = useState<string | undefined>()
   const [rejectionMessage, setRejectionMessage] = useState<string | undefined>()
   const [loadingDocx, setLoadingDocx] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
-  // The filename last known to actually match DMR's stored content — restored
-  // on a failed replacement so a bad re-upload attempt can't strand the user
-  // on an invalid, unrecoverable field.
+  // A failed REPLACEMENT restores the previous filename, which validates — so
+  // zod alone would let the applicant submit the old plan believing the new one
+  // landed. Mount-local, so navigating away and back is a way out.
+  const [uploadFailed, setUploadFailed] = useState(false)
+  // The shell files beforeSubmit errors under the SCREEN id, which no field
+  // looks up — returning the message alone would refuse the press silently.
+  const [blockMessage, setBlockMessage] = useState<string | undefined>()
+  // Last filename known to match DMR's stored content. Both pushes replace
+  // wholesale, so a failed one leaves DMR still holding exactly this file.
   const lastGoodFilenameRef = useRef(initialFilename ?? '')
 
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
 
+  // Drives both footer buttons: on draftRetryForm the submit button shares this
+  // screen with the uploader, so continue and submit are one guard.
+  const uploadUnresolved = isUploading || uploadFailed
+  // `goalsAndActions` is optional in the schema and nothing registers
+  // `filename`, so an untouched screen submits the key absent — and absent
+  // passes zod. `selectedFile` covers untouched, in-flight and settled alike.
+  const hasSettledFile = selectedFile?.status === FileUploadStatus.done
+
+  // The shell keeps this flag in Screen, which does not remount between
+  // screens and resets only setBeforeSubmitCallback — so without the cleanup a
+  // failed upload followed by "Til baka" leaves Continue dead on the PREVIOUS
+  // screen, with nothing mounted there to clear it.
+  useEffect(() => {
+    setSubmitButtonDisabled?.(uploadUnresolved)
+    return () => setSubmitButtonDisabled?.(false)
+  }, [uploadUnresolved, setSubmitButtonDisabled])
+
+  // Kept out of the disabled flag above: a button greyed out on arrival
+  // explains nothing, so the untouched case blocks on press with a reason.
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
+    setBeforeSubmitCallback(async () => {
+      if (uploadUnresolved) {
+        // The failure alert is already on screen; no second copy.
+        return [false, formatMessage(m.editorUploadIncomplete)]
+      }
+      if (!hasSettledFile) {
+        const message = formatMessage(m.editorUploadRequired)
+        setBlockMessage(message)
+        return [false, message]
+      }
+      return [true, null]
+    })
+  }, [
+    uploadUnresolved,
+    hasSettledFile,
+    setBeforeSubmitCallback,
+    formatMessage,
+    m,
+  ])
+
+  // retry keeps the previous file: it is a submitted plan that a failed
+  // replacement leaves untouched. draft has submitted nothing, so a failure
+  // clears the field — the applicant must end on an upload they saw succeed.
+  const resetAfterFailure = () => {
+    const fallback = mode === 'retry' ? lastGoodFilenameRef.current : ''
+    setValue('goalsAndActions.filename', fallback, { shouldValidate: true })
+    setSelectedFile(
+      fallback ? { name: fallback, status: FileUploadStatus.done } : null,
+    )
+  }
+
   const handleFile = async (file: File) => {
     setActionError(undefined)
     setRejectionMessage(undefined)
     setUploadSuccess(false)
+    setUploadFailed(false)
+    setBlockMessage(undefined)
     setIsUploading(true)
-    // Clear the (possibly still-valid, previously pushed) filename for the
-    // duration of this attempt so the required-field check fails and
-    // Continue is blocked — otherwise a replacement upload could still be
-    // in flight to DMR while the stale-but-valid old filename lets the user
-    // navigate straight to Submit.
+    // Cleared for the duration of the attempt, so a replacement still in flight
+    // to DMR cannot leave the old valid filename waving the applicant through.
     setValue('goalsAndActions.filename', '', { shouldValidate: true })
     setSelectedFile({ name: file.name, status: FileUploadStatus.uploading })
-
-    const restoreLastGood = () => {
-      setValue('goalsAndActions.filename', lastGoodFilenameRef.current, {
-        shouldValidate: true,
-      })
-      setSelectedFile(
-        lastGoodFilenameRef.current
-          ? { name: lastGoodFilenameRef.current, status: FileUploadStatus.done }
-          : null,
-      )
-    }
 
     try {
       let html = ''
@@ -110,16 +160,17 @@ export const Editor = ({ application, errors, field }: Props) => {
           .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br />')}</p>`)
           .join('')
       } else {
-        restoreLastGood()
+        resetAfterFailure()
+        setUploadFailed(true)
         setRejectionMessage(formatMessage(m.editorUnsupportedFile))
         return
       }
 
-      // A .docx/.txt that converts to blank/whitespace-only content is
-      // treated the same as an unsupported file — there's nothing to send.
-      const plainTextLength = html.replace(/<[^>]*>/g, '').trim().length
+      // Converts to nothing, so there is nothing to send: same as unsupported.
+      const plainTextLength = htmlToPlainText(html).length
       if (plainTextLength === 0) {
-        restoreLastGood()
+        resetAfterFailure()
+        setUploadFailed(true)
         setRejectionMessage(formatMessage(m.editorUnsupportedFile))
         return
       }
@@ -138,7 +189,8 @@ export const Editor = ({ application, errors, field }: Props) => {
       setSelectedFile({ name: file.name, status: FileUploadStatus.done })
       setUploadSuccess(true)
     } catch {
-      restoreLastGood()
+      resetAfterFailure()
+      setUploadFailed(true)
       setActionError(formatMessage(m.editorUploadError))
     } finally {
       setIsUploading(false)
@@ -154,11 +206,8 @@ export const Editor = ({ application, errors, field }: Props) => {
   const handleUploadRejection = (rejections: FileRejection[]) => {
     setActionError(undefined)
     setUploadSuccess(false)
-    setSelectedFile(
-      lastGoodFilenameRef.current
-        ? { name: lastGoodFilenameRef.current, status: FileUploadStatus.done }
-        : null,
-    )
+    setUploadFailed(true)
+    resetAfterFailure()
     setRejectionMessage(
       rejections[0]?.errors[0]?.code === 'file-invalid-type'
         ? formatMessage(m.editorUnsupportedFile)
@@ -171,6 +220,8 @@ export const Editor = ({ application, errors, field }: Props) => {
     setValue('goalsAndActions.filename', '', { shouldValidate: true })
     setSelectedFile(null)
     setUploadSuccess(false)
+    // Not a failure — the empty filename blocks from here, with zod's message.
+    setUploadFailed(false)
     setActionError(undefined)
     setRejectionMessage(undefined)
   }
@@ -185,7 +236,9 @@ export const Editor = ({ application, errors, field }: Props) => {
             id: application.id,
             dataProviders: [
               {
-                actionId: `DirectorateOfEquality.${ApiActions.getEqualityReportTemplateDocx}`,
+                actionId: draftActionId(
+                  ApiActions.getEqualityReportTemplateDocx,
+                ),
                 order: 0,
               },
             ],
@@ -246,7 +299,11 @@ export const Editor = ({ application, errors, field }: Props) => {
 
       {actionError && (
         <Box marginBottom={3}>
-          <AlertMessage type="error" message={actionError} />
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={actionError}
+          />
         </Box>
       )}
 
@@ -261,7 +318,7 @@ export const Editor = ({ application, errors, field }: Props) => {
         onChange={handleFilesChanged}
         onRemove={handleRemove}
         onUploadRejection={handleUploadRejection}
-        errorMessage={rejectionMessage ?? fieldError}
+        errorMessage={rejectionMessage ?? blockMessage ?? fieldError}
       />
 
       {uploadSuccess && (

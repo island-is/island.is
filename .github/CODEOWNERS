@@ -22,6 +22,7 @@
 
 # Subfolders containing application templates and template-api-modules
 /libs/application/templates/aosh/                                                                                            @island-is/norda
+/libs/application/templates/district-commissioners                                                                           @island-is/norda  
 /libs/application/templates/examples/                                                                                        @island-is/norda
 /libs/application/templates/family-matters/                                                                                  @island-is/norda
 /libs/application/templates/hms/                                                                                             @island-is/norda
@@ -40,6 +41,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/signature-collection/                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/                                        @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/                                                       @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/district-commissioner                                       @island-is/norda
 
 /*                                                                                                                           @island-is/core
 /libs/api/domains/identity/                                                                                                  @island-is/core
@@ -113,6 +115,7 @@
 /libs/application/templates/signature-collection/presidential-list-signing                                                   @island-is/juni
 /libs/application/templates/signature-collection/municipal-list-creation                                                     @island-is/juni
 /libs/application/templates/signature-collection/municipal-list-signing                                                      @island-is/juni
+/libs/application/templates/district-commissioners/driving-license-additional                                                @island-is/juni
 /libs/api/domains/disability-license                                                                                         @island-is/juni
 /libs/portals/admin/petition                                                                                                 @island-is/juni
 /libs/portals/admin/signature-collection                                                                                     @island-is/juni
@@ -121,6 +124,7 @@
 /libs/clients/signature-collection                                                                                           @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/signature-collection                                        @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/general-petition                                            @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/district-commissioner/driving-license-additional            @island-is/juni
 
 /apps/portals/admin/                                                                                                         @island-is/aranja
 /libs/api/domains/auth-admin/                                                                                                @island-is/aranja
