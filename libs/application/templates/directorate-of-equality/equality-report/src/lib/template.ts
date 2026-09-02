@@ -51,7 +51,14 @@ const template: ApplicationTemplate<
     ApplicationConfigurations[ApplicationTypes.EQUALITY_REPORT].translation,
   dataSchema,
   newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
   stateMachineOptions: {

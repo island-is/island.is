@@ -66,7 +66,14 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.SALARY_REPORT].translation,
   dataSchema,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
   newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
