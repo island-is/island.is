@@ -1,7 +1,18 @@
 name: Validate code in the merge queue (post merge)
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      simulate_tests:
+        description: 'CSV of TEST_CHUNKS keys to force-retry (validation only)'
+        required: false
+        type: string
+        default: ''
+      simulate_docker:
+        description: 'CSV of docker project names to force-retry (validation only)'
+        required: false
+        type: string
+        default: ''
   merge_group:
 
 defaults:
@@ -80,6 +91,8 @@ jobs:
       matrix:
         chunk: ${{ fromJson(needs.prepare.outputs.DOCKER_CHUNKS) }}
     steps:
+      - name: Job identity
+        run: echo "MQ_JOB_KEY=$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
       - name: Gather apps
         id: gather
         run: |
@@ -218,6 +231,9 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
+      - name: Job identity
+        run: echo "MQ_JOB_KEY=${AFFECTED_PROJECTS}"
+
       - name: checkout
         uses: actions/checkout@v4
 
@@ -263,6 +279,244 @@ jobs:
       - name: Type checking
         run: yarn nx affected --target=typecheck
 
+  retry-plan:
+    needs:
+      - prepare
+      - tests
+      - typecheck
+      - docker-build
+    if: ${{ always() && !cancelled() }}
+    # TODO: switch to arc-mergequeue (on-demand) once the scale set is deployed
+    runs-on: arc-shared
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      tests: ${{ steps.plan.outputs.tests }}
+      docker: ${{ steps.plan.outputs.docker }}
+      has_tests: ${{ steps.plan.outputs.has_tests }}
+      has_docker: ${{ steps.plan.outputs.has_docker }}
+      typecheck: ${{ steps.plan.outputs.typecheck }}
+      genuine: ${{ steps.plan.outputs.genuine }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+      - name: Plan retries
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ORIG_TESTS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
+          ORIG_DOCKER: ${{ needs.prepare.outputs.DOCKER_CHUNKS }}
+          SIMULATE_TESTS: ${{ github.event.inputs.simulate_tests }}
+          SIMULATE_DOCKER: ${{ github.event.inputs.simulate_docker }}
+        run: node scripts/ci/mq/retry-plan.mjs
+
+  tests-retry:
+    needs:
+      - prepare
+      - retry-plan
+    if: ${{ always() && !cancelled() && needs.retry-plan.outputs.has_tests == 'true' }}
+    # TODO: switch to arc-mergequeue (on-demand) once the scale set is deployed
+    runs-on: arc-shared
+    timeout-minutes: 45
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.retry-plan.outputs.tests) }}
+    steps:
+      - name: Job identity
+        run: echo "MQ_JOB_KEY=${AFFECTED_PROJECTS}"
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Run unit tests
+        uses: ./.github/actions/unit-test
+        with:
+          dd-api-key: '${{ secrets.DD_API_KEY }}'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
+  typecheck-retry:
+    needs:
+      - prepare
+      - retry-plan
+    if: ${{ always() && !cancelled() && needs.retry-plan.outputs.typecheck == 'true' }}
+    permissions:
+      contents: 'read'
+    # TODO: switch to arc-mergequeue (on-demand) once the scale set is deployed
+    runs-on: arc-shared
+    timeout-minutes: 35
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch NX_BASE commit
+        run: git fetch --depth=1 origin ${{ needs.prepare.outputs.NX_BASE }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Type checking
+        run: yarn nx affected --target=typecheck
+
+  docker-build-retry:
+    needs:
+      - prepare
+      - pre-checks
+      - retry-plan
+    if: ${{ always() && !cancelled() && needs.retry-plan.outputs.has_docker == 'true' }}
+    # TODO: switch to arc-mergequeue (on-demand) once the scale set is deployed
+    runs-on: arc-shared
+    permissions:
+      actions: read
+      contents: read
+    env:
+      AFFECTED_ALL: ''
+      DOCKER_TAG: ${{ needs.prepare.outputs.MQ_DOCKER_TAG}}
+      GIT_BRANCH: ${{ needs.prepare.outputs.MQ_GIT_BRANCH }}
+      GIT_COMMIT_SHA: ${{ needs.prepare.outputs.MQ_SHA }}
+      NODE_IMAGE_VERSION: ${{ needs.pre-checks.outputs.NODE_IMAGE_VERSION}}
+      PUBLISH: true
+      DISABLE_CHUNKS: true
+      MAX_JOBS: 3
+      NX_PARALLEL: 1
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJson(needs.retry-plan.outputs.docker) }}
+    steps:
+      - name: Job identity
+        run: echo "MQ_JOB_KEY=$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+      - name: Gather apps
+        id: gather
+        run: |
+          set -euo pipefail
+          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
+          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
+          APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
+          {
+            echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS"
+            echo "DOCKER_TYPE=$DOCKER_TYPE"
+            echo "APP_HOME=$APP_HOME"
+            echo "APP_DIST_HOME=$APP_DIST_HOME"
+          } >> "$GITHUB_ENV"
+        continue-on-error: true
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Set id for matrix
+        run: |
+          node ./scripts/ci/docker/create-id.mjs
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+      - name: Docker login to ECR repo
+        if: steps.gather.outcome == 'success'
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Prepare Docker build arguments
+        id: dockerargs
+        if: steps.gather.outcome == 'success'
+        env:
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          set -x
+          # Strip protocol prefix and .git postfix
+          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+          SERVER_URL="${SERVER_URL#*://}"
+          SERVER_URL="${SERVER_URL%.git}"
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
+            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
+            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+            --build-arg="NX_TASKS_RUNNER=ci"
+          )
+          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+
+          # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
+          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+
+          # Add secret to EXTRA_DOCKER_BUILD_ARGS
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
+
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
+
+      - name: Building Docker images
+        continue-on-error: true
+        id: dockerbuild
+        if: steps.gather.outcome == 'success'
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+        run: |
+          set -x
+          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+
+      - name: Building Docker images Retry
+        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+        run: |
+          set -x
+          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+      - name: Docker build output
+        uses: cloudposse/github-action-matrix-outputs-write@v1
+        with:
+          matrix-step-name: ${{ github.job }}
+          matrix-key: ${{ env.MATRIX_ID }}
+          outputs: |-
+            value: ${{ env.JSON_value }}
+            project: ${{ env.JSON_project }}
+            target: ${{ env.JSON_target }}
+            imageName: ${{ env.JSON_imageName }}
+            imageTag: ${{ env.JSON_imageTag }}
+
   success:
     runs-on: arc-shared
     if: ${{ !cancelled() }}
@@ -271,20 +525,50 @@ jobs:
       - tests
       - typecheck
       - docker-build
+      - retry-plan
+      - tests-retry
+      - typecheck-retry
+      - docker-build-retry
     steps:
-      - name: Check prepare success
-        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" && ${{ needs.tests.result }} != "cancelled" ]] || exit 1'
-      - name: Check typecheck success
-        run: '[[ ${{ needs.typecheck.result }} == "success" ]] || exit 1'
-      - name: Check build success
-        run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
+      - name: Gate
+        env:
+          PREPARE: ${{ needs.prepare.result }}
+          PLAN: ${{ needs.retry-plan.result }}
+          GENUINE: ${{ needs.retry-plan.outputs.genuine }}
+          TESTS: ${{ needs.tests.result }}
+          TESTS_RETRY: ${{ needs.tests-retry.result }}
+          TYPECHECK: ${{ needs.typecheck.result }}
+          TYPECHECK_RETRY: ${{ needs.typecheck-retry.result }}
+          DOCKER: ${{ needs.docker-build.result }}
+          DOCKER_RETRY: ${{ needs.docker-build-retry.result }}
+        run: |
+          fail() { echo "GATE FAIL: $1"; exit 1; }
+          # A stage is satisfied if the original passed/was empty, or its retry passed.
+          ok() { [[ "$1" == "success" || "$1" == "skipped" || "$2" == "success" ]]; }
+          [[ "$PREPARE" == "success" ]] || fail "prepare=$PREPARE"
+          [[ "$PLAN" == "success" ]] || fail "retry-plan=$PLAN"
+          [[ "$GENUINE" == "[]" ]] || fail "genuine failures present: $GENUINE"
+          ok "$TESTS" "$TESTS_RETRY" || fail "tests=$TESTS retry=$TESTS_RETRY"
+          ok "$TYPECHECK" "$TYPECHECK_RETRY" || fail "typecheck=$TYPECHECK retry=$TYPECHECK_RETRY"
+          ok "$DOCKER" "$DOCKER_RETRY" || fail "docker-build=$DOCKER retry=$DOCKER_RETRY"
+          echo "GATE PASS"
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
         with:
           matrix-step-name: docker-build
+      - name: Get docker-build-retry output
+        uses: cloudposse/github-action-matrix-outputs-read@v1
+        id: read_retry
+        continue-on-error: true
+        with:
+          matrix-step-name: docker-build-retry
+      - name: Merge docker outputs
+        id: merge
+        env:
+          ORIG: ${{ steps.read.outputs.result }}
+          RETRY: ${{ steps.read_retry.outputs.result }}
+        run: node scripts/ci/mq/merge-docker-outputs.mjs
       - name: checkout
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         uses: actions/checkout@v4
@@ -306,7 +590,7 @@ jobs:
       - name: Prepare artifact to be uploaded
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         env:
-          JSON_DATA: ${{ steps.read.outputs.result }}
+          JSON_DATA: ${{ steps.merge.outputs.result }}
         run: |
           node scripts/ci/docker/write-data.mjs
       - name: Get manifest data
