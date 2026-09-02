@@ -10,21 +10,21 @@ export const m = {
   overview: defineMessages({
     title: {
       id: 'web.openinvoices:overview.title',
-      defaultMessage: 'Yfirlit reikninga',
+      defaultMessage: 'Yfirlit yfir greiðslur',
     },
     description: {
       id: 'web.openinvoices:overview.description',
       defaultMessage:
-        'Hér má skoða þá reikninga sem greiddir hafa verið á völdu tímabili. Hver seljandi birtist í eigin línu og með því að opna staka línu sjást einstakir reikningar. Nota má leit og síun til að þrengja listann.',
+        'Yfirlitið sýnir heildargreiðslur á völdu tímabili. Með því að opna staka línu sést sundurliðun á greiðslum og reikningum sem þær tengjast. Nota má leit og síun til að þrengja listann.',
     },
     featuredImage: {
       id: 'web.openinvoices:overview.featuredImage',
       defaultMessage:
-        'https://images.ctfassets.net/8k0h54kbe6bj/3SAzg9pelYc1wtrlgAZlag/dee0db5d44b5bfd6a9b9a436ccb6372a/LE_-_Jobs_-_M1.png',
+        'https://images.ctfassets.net/8k0h54kbe6bj/4tLK38mf8CR1ktUQjhFQl1/2de64c6115fc70d8168fa597715c17a3/LE_-_Company_-_M3.svg',
     },
     featuredImageAlt: {
       id: 'web.openinvoices:overview.featuredImageAlt',
-      defaultMessage: 'Mynd af konu við tölvu',
+      defaultMessage: 'Mynd af skrifborði og skrifborðsstól',
     },
     supplier: {
       id: 'web.openinvoices:overview.supplier',
