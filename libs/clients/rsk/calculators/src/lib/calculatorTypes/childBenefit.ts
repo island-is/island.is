@@ -1,21 +1,27 @@
+import { z } from 'zod'
+
 import type { GetChildBenefitData } from '../../../gen/fetch'
 import type { AllKeys } from './types'
 
-type ChildBenefitSplitCustody =
-  | { splitCustody: false }
-  | {
-      splitCustody: true
-      splitCustodyChildrenOver7?: number
-      splitCustodyChildrenUnder7?: number
-    }
+const childBenefitBaseFields = {
+  marriedOrCohabiting: z.boolean(),
+  incomeYear: z.number(),
+  incomeBase: z.number(),
+  numberOfChildren: z.number(),
+  numberOfChildrenUnder7: z.number(),
+}
 
-export type ChildBenefitInput = {
-  marriedOrCohabiting: boolean
-  incomeYear: number
-  incomeBase: number
-  numberOfChildren: number
-  numberOfChildrenUnder7: number
-} & ChildBenefitSplitCustody
+export const childBenefitInputSchema = z.discriminatedUnion('splitCustody', [
+  z.object({ ...childBenefitBaseFields, splitCustody: z.literal(false) }),
+  z.object({
+    ...childBenefitBaseFields,
+    splitCustody: z.literal(true),
+    splitCustodyChildrenOver7: z.number().optional(),
+    splitCustodyChildrenUnder7: z.number().optional(),
+  }),
+])
+
+export type ChildBenefitInput = z.infer<typeof childBenefitInputSchema>
 
 export type ChildBenefitKey = AllKeys<ChildBenefitInput>
 

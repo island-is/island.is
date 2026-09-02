@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 import type { GetInterestBenefitData } from '../../../gen/fetch'
 
 export type InterestBenefitMaritalStatus =
@@ -16,14 +18,16 @@ const RSK_VALUE_BY_INTEREST_BENEFIT_MARITAL_STATUS: Record<
   marriedOrCohabiting: 3,
 }
 
-export interface InterestBenefitInput {
-  maritalStatus: InterestBenefitMaritalStatus
-  incomeYear: number
-  incomeBase: number
-  assetBase: number
-  loanBalance: number
-  paidInterest: number
-}
+export const interestBenefitInputSchema = z.object({
+  maritalStatus: z.enum(['single', 'singleParent', 'marriedOrCohabiting']),
+  incomeYear: z.number(),
+  incomeBase: z.number(),
+  assetBase: z.number(),
+  loanBalance: z.number(),
+  paidInterest: z.number(),
+})
+
+export type InterestBenefitInput = z.infer<typeof interestBenefitInputSchema>
 
 export type InterestBenefitKey = keyof InterestBenefitInput
 

@@ -1,5 +1,7 @@
+import { z } from 'zod'
+
 import type { GetWithholdingTaxData } from '../../../gen/fetch'
-import { toRskValue } from './types'
+import { toRskValue } from './toRskValue'
 
 export type PaymentFrequency = 'weekly' | 'monthly'
 
@@ -23,24 +25,28 @@ const RSK_VALUE_BY_WITHHOLDING_MARITAL_STATUS: Record<
 }
 
 /* Ratios are given as a number between 0 and 1, per the RSK spec. */
-export interface WithholdingTaxInput {
-  paymentFrequency?: PaymentFrequency
-  maritalStatus?: WithholdingMaritalStatus
-  incomeYear?: number
-  payMonth?: number
-  salary?: number
-  pensionFundRatio?: number
-  privatePensionRatio?: number
-  taxCardUtilization?: number
-  spouseTaxCardUtilization?: number
-  accumulatedPersonalTaxCredit?: number
-  vacationPay?: number
-  unionDues?: number
-  otherDeduction?: number
-  employerPensionMatchRatio?: number
-  vehicleAllowance?: number
-  seamenAccidentInsurancePremium?: number
-}
+export const withholdingTaxInputSchema = z.object({
+  paymentFrequency: z.enum(['weekly', 'monthly']).optional(),
+  maritalStatus: z
+    .enum(['single', 'singleParent', 'marriedOrCohabiting'])
+    .optional(),
+  incomeYear: z.number().optional(),
+  payMonth: z.number().optional(),
+  salary: z.number().optional(),
+  pensionFundRatio: z.number().optional(),
+  privatePensionRatio: z.number().optional(),
+  taxCardUtilization: z.number().optional(),
+  spouseTaxCardUtilization: z.number().optional(),
+  accumulatedPersonalTaxCredit: z.number().optional(),
+  vacationPay: z.number().optional(),
+  unionDues: z.number().optional(),
+  otherDeduction: z.number().optional(),
+  employerPensionMatchRatio: z.number().optional(),
+  vehicleAllowance: z.number().optional(),
+  seamenAccidentInsurancePremium: z.number().optional(),
+})
+
+export type WithholdingTaxInput = z.infer<typeof withholdingTaxInputSchema>
 
 export type WithholdingTaxKey = keyof WithholdingTaxInput
 

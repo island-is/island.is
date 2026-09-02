@@ -15,7 +15,7 @@ import {
   toVehicleDepreciationQuery,
   toVehicleTaxQuery,
   toWithholdingTaxQuery,
-} from './inputs'
+} from './calculatorTypes'
 import type {
   ChildBenefitInput,
   InterestBenefitInput,
@@ -23,7 +23,7 @@ import type {
   VehicleDepreciationInput,
   VehicleTaxInput,
   WithholdingTaxInput,
-} from './inputs'
+} from './calculatorTypes'
 
 @Injectable()
 export class CalculatorsClientService {

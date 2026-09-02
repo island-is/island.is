@@ -1,13 +1,17 @@
+import { z } from 'zod'
+
 import type { GetVehicleBenefitData } from '../../../gen/fetch'
 
-export interface VehicleBenefitInput {
-  purchaseYear: number
-  purchasePrice: number
+export const vehicleBenefitInputSchema = z.object({
+  purchaseYear: z.number(),
+  purchasePrice: z.number(),
   // RSK requires these, but each means "no" unless stated.
-  isElectric?: boolean
-  employeePaysCharging?: boolean
-  employeePaysRunningCosts?: boolean
-}
+  isElectric: z.boolean().optional(),
+  employeePaysCharging: z.boolean().optional(),
+  employeePaysRunningCosts: z.boolean().optional(),
+})
+
+export type VehicleBenefitInput = z.infer<typeof vehicleBenefitInputSchema>
 
 export type VehicleBenefitKey = keyof VehicleBenefitInput
 

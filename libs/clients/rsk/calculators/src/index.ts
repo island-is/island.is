@@ -1,6 +1,8 @@
 export { CalculatorsClientModule } from './lib/calculators.module'
 export { CalculatorsClientConfig } from './lib/calculators.config'
 export { CalculatorsClientService } from './lib/calculators.service'
+export type { CalculatorKey, InputProp } from './lib/calculatorTypes'
+export { getCalculatorInputProps } from './lib/calculatorTypes'
 export type {
   ChildBenefitInput,
   ChildBenefitKey,
@@ -18,7 +20,7 @@ export type {
   WithholdingMaritalStatus,
   WithholdingTaxInput,
   WithholdingTaxKey,
-} from './lib/inputs'
+} from './lib/calculatorTypes'
 export type {
   GetChildBenefitResponse,
   GetVehicleTaxResponse,

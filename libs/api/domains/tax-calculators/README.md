@@ -26,9 +26,13 @@ The module keeps its NX scaffolding, `TaxCalculatorsModule`, and empty
 
 The replacement source is the RSK client library added alongside this module:
 
-- `libs/clients/rsk/calculators/src/lib/inputs/*.inputs.ts` — the real per-calculator
-  input definitions (`childBenefit`, `withholdingTax`, `vehicleTax`,
-  `vehicleBenefit`, `vehicleDepreciation`, `interestBenefit`)
+- `libs/clients/rsk/calculators/src/lib/calculatorTypes/*.ts` — the real per-calculator
+  type definitions (`childBenefit`, `withholdingTax`, `vehicleTax`,
+  `vehicleBenefit`, `vehicleDepreciation`, `interestBenefit`), each backed by a zod
+  schema
+- `libs/clients/rsk/calculators/src/lib/calculatorTypes/inputProps.ts` —
+  `getCalculatorInputProps(key)` derives a normalized, runtime-introspectable field
+  list from those schemas, keyed by `CalculatorKey`
 
 The field schema should be derived from those rather than restated here.
 
