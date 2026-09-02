@@ -145,6 +145,8 @@ query getApplicationSharedNamespaceList {
 query getApplicationSharedNamespaceIntrospection($namespace: String!) {
   applicationSharedNamespaceIntrospection(namespace: $namespace) {
     namespace
+    usedByCount
+    usedByTypeIds
     messageDescriptors {
       id
       defaultMessage

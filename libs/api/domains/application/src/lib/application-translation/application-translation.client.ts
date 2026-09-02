@@ -255,6 +255,8 @@ export class ApplicationTranslationClient {
     namespace: string,
   ): Promise<{
     namespace: string
+    usedByCount: number
+    usedByTypeIds: string[]
     messageDescriptors: Array<{
       id: string
       defaultMessage?: string

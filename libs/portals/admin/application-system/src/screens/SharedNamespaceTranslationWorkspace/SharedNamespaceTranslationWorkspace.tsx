@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
-import { Box, Input } from '@island.is/island-ui/core'
+import { Box, Input, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { buildSharedNamespaceTranslationPath } from '../../lib/paths'
@@ -168,9 +168,21 @@ export const SharedNamespaceTranslationWorkspace = () => {
     return <TranslationWorkspaceNotFound />
   }
 
+  const usedByCount = introspection.usedByCount ?? 0
+  const usedByMessage =
+    usedByCount > 0
+      ? formatMessage(m.sharedTranslationUsedByCount, {
+          count: usedByCount,
+        })
+      : formatMessage(m.sharedTranslationUsedByAllApplications)
+
   return (
     <Box className={styles.sharedNamespaceShell}>
       <Box paddingY={3}>
+        <Box marginBottom={3}>
+          <AlertMessage type="info" message={usedByMessage} />
+        </Box>
+
         <Box marginBottom={3}>
           <Input
             name="search-shared-namespace-strings"

@@ -48,6 +48,36 @@ describe('TranslationAccessService', () => {
     ).toThrow(ForbiddenException)
   })
 
+  it('allows institution user to read a shared namespace used by their templates', () => {
+    expect(() =>
+      service.assertNamespaceAccess(hmsUser, 'uiForms.application'),
+    ).not.toThrow()
+  })
+
+  it('allows institution user to write their own exclusive namespace', () => {
+    expect(() =>
+      service.assertNamespaceWriteAccess(hmsUser, 'ra.application'),
+    ).not.toThrow()
+  })
+
+  it('throws for institution user writing a shared namespace even when they own a using template', () => {
+    expect(() =>
+      service.assertNamespaceWriteAccess(hmsUser, 'uiForms.application'),
+    ).toThrow(ForbiddenException)
+  })
+
+  it('allows super admin to write a shared namespace', () => {
+    expect(() =>
+      service.assertNamespaceWriteAccess(superAdminUser, 'uiForms.application'),
+    ).not.toThrow()
+  })
+
+  it('throws for institution user asserting global translation access', () => {
+    expect(() => service.assertGlobalTranslationAccess(hmsUser)).toThrow(
+      ForbiddenException,
+    )
+  })
+
   it('filters type IDs for institution users', () => {
     const filtered = service.filterTypeIds(hmsUser, [
       ApplicationTypes.RENTAL_AGREEMENT,

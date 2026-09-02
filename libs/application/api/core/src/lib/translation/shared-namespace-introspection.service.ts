@@ -29,6 +29,8 @@ import type { MessageDescriptorInfo } from '@island.is/application/types'
 
 export interface SharedNamespaceIntrospection {
   namespace: string
+  usedByCount: number
+  usedByTypeIds: string[]
   messageDescriptors: MessageDescriptorInfo[]
 }
 
@@ -128,6 +130,10 @@ export class SharedNamespaceIntrospectionService {
       )
     }
 
+    const sharedInfo = getSharedTranslationNamespaces().find(
+      (entry) => entry.namespace === namespace,
+    )
+
     const prefix = getNamespacePrefix(namespace)
     const messageDescriptors = roots
       .flatMap((root) => flattenMessageDescriptors(root))
@@ -136,6 +142,8 @@ export class SharedNamespaceIntrospectionService {
 
     return {
       namespace,
+      usedByCount: sharedInfo?.usedByCount ?? 0,
+      usedByTypeIds: sharedInfo?.usedByTypeIds ?? [],
       messageDescriptors,
     }
   }

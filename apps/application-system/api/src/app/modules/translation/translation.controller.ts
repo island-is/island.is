@@ -112,7 +112,7 @@ export class TranslationController {
       throw new BadRequestException('Query parameter namespace is required')
     }
 
-    this.translationAccessService.assertNamespaceAccess(user, namespace)
+    this.translationAccessService.assertGlobalTranslationAccess(user)
     return this.sharedNamespaceIntrospectionService.introspectSharedNamespace(
       namespace,
     )
@@ -136,7 +136,10 @@ export class TranslationController {
     @Body() body: UpdateTranslationDto,
     @CurrentUser() user: User,
   ) {
-    this.translationAccessService.assertNamespaceAccess(user, body.namespace)
+    this.translationAccessService.assertNamespaceWriteAccess(
+      user,
+      body.namespace,
+    )
 
     return this.translationService.upsertTranslation(
       {
@@ -159,7 +162,7 @@ export class TranslationController {
       ...new Set(body.translations.map((translation) => translation.namespace)),
     ]
     for (const namespace of namespaces) {
-      this.translationAccessService.assertNamespaceAccess(user, namespace)
+      this.translationAccessService.assertNamespaceWriteAccess(user, namespace)
     }
 
     return this.translationService.bulkUpsertTranslations(
@@ -176,7 +179,7 @@ export class TranslationController {
       throw new NotFoundException('Translation not found')
     }
 
-    this.translationAccessService.assertNamespaceAccess(
+    this.translationAccessService.assertNamespaceWriteAccess(
       user,
       translation.namespace,
     )
@@ -221,7 +224,7 @@ export class TranslationController {
     @Body() body: PublishTranslationsDto,
     @CurrentUser() user: User,
   ) {
-    this.translationAccessService.assertNamespaceAccess(user, namespace)
+    this.translationAccessService.assertNamespaceWriteAccess(user, namespace)
 
     const publish = await this.translationService.publishTranslations(
       namespace,
@@ -241,7 +244,7 @@ export class TranslationController {
     @Param('publishId') publishId: string,
     @CurrentUser() user: User,
   ) {
-    this.translationAccessService.assertNamespaceAccess(user, namespace)
+    this.translationAccessService.assertNamespaceWriteAccess(user, namespace)
 
     const rollback = await this.translationService.rollbackToPublish(
       publishId,

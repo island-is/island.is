@@ -201,6 +201,16 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:sharedTranslationUsedBy',
     defaultMessage: 'Notað af',
   },
+  sharedTranslationUsedByCount: {
+    id: 'admin-portal.application-system:sharedTranslationUsedByCount',
+    defaultMessage:
+      'Notað af {count} umsóknum. Breytingar birtast í öllum þeim umsóknum.',
+  },
+  sharedTranslationUsedByAllApplications: {
+    id: 'admin-portal.application-system:sharedTranslationUsedByAllApplications',
+    defaultMessage:
+      'Notað af öllum umsóknum. Breytingar birtast í öllum umsóknum.',
+  },
   sharedTranslationNamespaceEmpty: {
     id: 'admin-portal.application-system:sharedTranslationNamespaceEmpty',
     defaultMessage: 'Engir þýðanlegar strengir fundust fyrir þetta svæði.',

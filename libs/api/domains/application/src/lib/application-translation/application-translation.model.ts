@@ -513,6 +513,12 @@ export class SharedNamespaceIntrospectionGql {
   @Field()
   namespace!: string
 
+  @Field(() => Int)
+  usedByCount!: number
+
+  @Field(() => [String])
+  usedByTypeIds!: string[]
+
   @Field(() => [MessageDescriptorGql])
   messageDescriptors!: MessageDescriptorGql[]
 }

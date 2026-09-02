@@ -3,6 +3,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   getAllowedTranslationTypeIds,
   hasGlobalTranslationAccess,
+  isSharedTranslationNamespace,
   isTranslationNamespaceAllowed,
   isTranslationTypeIdAllowed,
 } from '@island.is/application/utils'
@@ -22,6 +23,13 @@ export class TranslationAccessService {
       throw new ForbiddenException(
         'You do not have access to translate this namespace',
       )
+    }
+  }
+
+  assertNamespaceWriteAccess(user: User, namespace: string): void {
+    this.assertNamespaceAccess(user, namespace)
+    if (isSharedTranslationNamespace(namespace)) {
+      this.assertGlobalTranslationAccess(user)
     }
   }
 
