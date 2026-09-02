@@ -42,6 +42,7 @@ export const debtsSignature = (debts: CustomerDebt[]): string =>
       [
         debt.chargeTypeId,
         debt.chargeItemSubject,
+        debt.timePeriod,
         debt.dueDate,
         debt.debts,
       ].join(':'),

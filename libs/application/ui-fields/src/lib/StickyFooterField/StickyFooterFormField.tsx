@@ -6,6 +6,7 @@ import {
 import { FC, useEffect, useRef, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { Box, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import * as styles from './StickyFooterFormField.css'
@@ -15,6 +16,31 @@ interface Props extends FieldBaseProps {
 }
 
 const BOTTOM_GAP = 16
+
+const FOOTER_PADDING_X = theme.spacing[2]
+
+const contentLeft = (cell: Element) => {
+  const paddingLeft = parseFloat(window.getComputedStyle(cell).paddingLeft)
+
+  return (
+    cell.getBoundingClientRect().left +
+    (Number.isNaN(paddingLeft) ? 0 : paddingLeft)
+  )
+}
+
+const measureColumns = (target: Element, targetLeft: number) => {
+  const labelColumn = target.querySelector('thead th[data-column-index="0"]')
+  const valueColumn = target.querySelector('thead th[data-column-index="1"]')
+
+  if (!labelColumn || !valueColumn) {
+    return null
+  }
+
+  return {
+    labelOffset: contentLeft(labelColumn) - targetLeft - FOOTER_PADDING_X,
+    labelWidth: contentLeft(valueColumn) - contentLeft(labelColumn),
+  }
+}
 
 export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
   const { formatMessage } = useLocale()
@@ -41,6 +67,7 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
     isFloating: boolean
     left: number
     width: number
+    columns: { labelOffset: number; labelWidth: number } | null
   } | null>(null)
 
   useEffect(() => {
@@ -63,6 +90,7 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
         isFloating: targetRect.bottom > floatingTopY,
         left: targetRect.left,
         width: targetRect.width,
+        columns: measureColumns(target, targetRect.left),
       })
     }
 
@@ -123,8 +151,8 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
           >
             <Box
               style={{
-                marginLeft: field.labelOffset,
-                width: field.labelWidth,
+                marginLeft: state.columns?.labelOffset ?? field.labelOffset,
+                width: state.columns?.labelWidth ?? field.labelWidth,
                 flexShrink: 0,
               }}
             >

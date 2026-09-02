@@ -16,6 +16,7 @@ const debt = (overrides: Partial<CustomerDebt> = {}): CustomerDebt => ({
   chargeTypeId: 'AB',
   chargeTypeName: 'Gjaldflokkur',
   chargeItemSubject: '2024-1',
+  timePeriod: '202601',
   dueDate: '2026-01-01',
   finalDueDate: '2026-02-01',
   debts: 1000,
@@ -86,6 +87,9 @@ describe('debtsSignature', () => {
     )
     expect(debtsSignature([debt({ dueDate: '2026-01-01' })])).not.toBe(
       debtsSignature([debt({ dueDate: '2026-03-01' })]),
+    )
+    expect(debtsSignature([debt({ timePeriod: '202601' })])).not.toBe(
+      debtsSignature([debt({ timePeriod: '202603' })]),
     )
   })
 })

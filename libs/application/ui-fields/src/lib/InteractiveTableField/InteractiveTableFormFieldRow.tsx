@@ -16,6 +16,7 @@ interface Props {
   inputFieldId?: string
   inputMaxAmount?: number
   inputPlaceholder: string
+  truncateColumns: boolean[]
 }
 
 const InteractiveTableFormFieldRowComponent: FC<Props> = ({
@@ -28,6 +29,7 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
   inputFieldId,
   inputMaxAmount,
   inputPlaceholder,
+  truncateColumns,
 }) => {
   const { formatMessage } = useLocale()
   const { control, setValue, register, unregister } = useFormContext()
@@ -85,11 +87,20 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
           />
         </T.Data>
       )}
-      {row.map((cell, cellIndex) => (
-        <T.Data key={`row-${rowIndex}-cell-${cellIndex}`}>
-          {formatText(cell, application, formatMessage)}
-        </T.Data>
-      ))}
+      {row.map((cell, cellIndex) => {
+        const value = formatText(cell, application, formatMessage)
+        const truncate = truncateColumns[cellIndex]
+
+        return (
+          <T.Data
+            key={`row-${rowIndex}-cell-${cellIndex}`}
+            text={truncate ? { truncate: true } : undefined}
+            title={truncate ? value : undefined}
+          >
+            {value}
+          </T.Data>
+        )
+      })}
       {hasInputColumn && inputFieldId && (
         <T.Data
           onFocus={() => setFocused(true)}
@@ -131,7 +142,11 @@ const arePropsEqual = (prev: Props, next: Props) =>
   prev.inputMaxAmount === next.inputMaxAmount &&
   prev.inputPlaceholder === next.inputPlaceholder &&
   prev.row.length === next.row.length &&
-  prev.row.every((cell, index) => cell === next.row[index])
+  prev.row.every((cell, index) => cell === next.row[index]) &&
+  prev.truncateColumns.length === next.truncateColumns.length &&
+  prev.truncateColumns.every(
+    (truncate, index) => truncate === next.truncateColumns[index],
+  )
 
 export const InteractiveTableFormFieldRow = memo(
   InteractiveTableFormFieldRowComponent,

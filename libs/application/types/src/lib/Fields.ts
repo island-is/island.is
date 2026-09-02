@@ -1022,7 +1022,7 @@ export interface StaticTableField extends BaseField {
 
 export type InteractiveTableHeaderCell =
   | StaticText
-  | { label: StaticText; width?: number }
+  | { label: StaticText; width?: number; truncate?: boolean }
 
 export interface InteractiveTableField extends BaseField {
   readonly type: FieldTypes.INTERACTIVE_TABLE
@@ -1054,8 +1054,8 @@ export interface StickyFooterField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
   widthReferenceTestId: string
   watchFieldIds: string[]
-  labelOffset: number
-  labelWidth: number
+  labelOffset?: number
+  labelWidth?: number
   valueWidth?: number
 }
 
