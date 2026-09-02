@@ -139,6 +139,8 @@ export type ServiceDefinition = ServiceDefinitionCore & {
   extraAttributes?: ExtraValues
   xroadConfig: XroadConfig[]
   scheduledJob?: ScheduledJobConfig
+  strategy?: RolloutStrategyInput
+  gracefulShutdown?: GracefulShutdownInput
 }
 
 /**
@@ -152,6 +154,8 @@ export type ServiceDefinitionForEnv = ServiceDefinitionCore & {
   redis?: RedisInfoForEnv
   extraAttributes?: ExtraValuesForEnv
   scheduledJob?: ScheduledJobConfigForEnv
+  strategy?: RolloutStrategy
+  gracefulShutdown?: GracefulShutdown
 }
 
 export interface Ingress {
@@ -180,6 +184,44 @@ export type PodDisruptionBudget = {
   maxUnavailable?: number | string
   unhealthyPodEvictionPolicy?: 'IfHealthyBudget' | 'AlwaysAllow'
 }
+
+/**
+ * Deployment rollout strategy, mapped to `Deployment.spec.strategy`. Set
+ * `rollingUpdate.maxUnavailable: 0` for zero-downtime rollouts.
+ *
+ * NOTE: this is safe. Do NOT mirror `maxUnavailable: 0` onto the PDB
+ * (`.podDisruption()`) — there it blocks node drains and deadlocks.
+ */
+export type RolloutStrategy = {
+  type?: 'RollingUpdate' | 'Recreate'
+  rollingUpdate?: {
+    maxSurge?: number | string
+    maxUnavailable?: number | string
+  }
+}
+
+/** RolloutStrategy applied to all envs, or keyed per-env. */
+export type RolloutStrategyByEnv = Partial<{ [env in OpsEnv]: RolloutStrategy }>
+export type RolloutStrategyInput = RolloutStrategy | RolloutStrategyByEnv
+
+/**
+ * Graceful shutdown knobs. `maxUnavailable: 0` guarantees replica count but not
+ * that in-flight requests finish; these close that gap.
+ */
+export type GracefulShutdown = {
+  /** Time a new pod must stay Ready before it counts as available. */
+  minReadySeconds?: number
+  /** Drain window after SIGTERM before force-kill. */
+  terminationGracePeriodSeconds?: number
+  /** preStop `sleep` so the pod keeps serving while endpoints are removed. */
+  preStopSleepSeconds?: number
+}
+
+/** GracefulShutdown applied to all envs, or keyed per-env. */
+export type GracefulShutdownByEnv = Partial<{
+  [env in OpsEnv]: GracefulShutdown
+}>
+export type GracefulShutdownInput = GracefulShutdown | GracefulShutdownByEnv
 export type PersistentVolumeClaim = {
   name?: string
   size: '1Gi' | '5Gi' | '10Gi' | string

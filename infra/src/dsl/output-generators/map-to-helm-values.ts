@@ -109,6 +109,36 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.podDisruptionBudget) {
     result.podDisruptionBudget = serviceDef.podDisruptionBudget
   }
+
+  // rollout strategy
+  if (serviceDef.strategy) {
+    result.strategy = serviceDef.strategy
+  }
+
+  // graceful shutdown
+  if (serviceDef.gracefulShutdown) {
+    const {
+      minReadySeconds,
+      terminationGracePeriodSeconds,
+      preStopSleepSeconds,
+    } = serviceDef.gracefulShutdown
+    if (minReadySeconds !== undefined) {
+      result.minReadySeconds = minReadySeconds
+    }
+    if (terminationGracePeriodSeconds !== undefined) {
+      result.terminationGracePeriodSeconds = terminationGracePeriodSeconds
+    }
+    if (preStopSleepSeconds !== undefined) {
+      result.lifecycle = {
+        preStop: {
+          exec: {
+            command: ['/bin/sh', '-c', `sleep ${preStopSleepSeconds}`],
+          },
+        },
+      }
+    }
+  }
+
   // resources
   result.resources = serviceDef.resources
 
