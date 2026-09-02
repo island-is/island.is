@@ -5,7 +5,10 @@ import { useRouter } from 'next/router'
 import type { Option } from '@island.is/island-ui/core'
 import { Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
+import {
+  canDefendantAppealVerdict,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
@@ -29,7 +32,6 @@ import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/Ve
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
-  ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import {
@@ -60,9 +62,11 @@ export const Overview = () => {
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
   // Defendants whose indictment was cancelled or dismissed (completed for some)
   // do not receive a verdict, so no review decision is required for them.
+  // The same goes for defendants whose case was closed without enforcement.
   const isReviewMissing = workingCase.defendants?.some(
     (defendant) =>
       !defendant.indictmentCancelledOrDismissedState &&
+      !defendant.isClosedWithoutEnforcement &&
       !defendant.indictmentReviewDecision,
   )
 
@@ -99,20 +103,11 @@ export const Overview = () => {
 
         const { verdict } = defendant
 
-        const isServiceRequired =
-          verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+        const canAppealVerdict = canDefendantAppealVerdict(verdict)
 
-        const isServiceNotApplicable =
-          verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-
-        const canDefendantAppealVerdict = !!(
-          verdict &&
-          !verdict.isDefaultJudgement &&
-          (isServiceNotApplicable ||
-            (isServiceRequired && !!verdict.serviceDate))
-        )
-
-        if (verdict) {
+        // Service and appeal alerts are noise for defendants whose case was
+        // closed without enforcement.
+        if (verdict && !defendant.isClosedWithoutEnforcement) {
           acc.verdictStatusAlerts.push(
             <VerdictStatusAlert
               key={`${defendant.id}_verdict_status_alert`}
@@ -129,7 +124,7 @@ export const Overview = () => {
           >
             <VerdictTimelineCard
               defendant={defendant}
-              canDefendantAppealVerdict={canDefendantAppealVerdict}
+              canDefendantAppealVerdict={canAppealVerdict}
             />
           </Box>,
         )

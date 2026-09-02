@@ -53,6 +53,8 @@ describe('DrivingLicenseService', () => {
           provide: LOGGER_PROVIDER,
           useValue: {
             warn: () => undefined,
+            info: () => undefined,
+            error: () => undefined,
           },
         },
         {
@@ -313,6 +315,23 @@ describe('DrivingLicenseService', () => {
       })
     })
 
+    it('accepts a driving assessment regardless of its age — only completion matters', async () => {
+      // The mock assessment is 8 months old, past the 182-day window the
+      // original template enforced. Samgongustofa confirmed (2026-08-31) an
+      // assessment does not expire, so age must not block eligibility.
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        'B-full',
+      )
+
+      expect(response.isEligible).toBe(true)
+      expect(response.requirements).toContainEqual({
+        key: 'DrivingAssessmentMissing',
+        requirementMet: true,
+      })
+    })
+
     it('all checks should pass for applicable students for temporary license', async () => {
       const response = await service.getApplicationEligibility(
         MOCK_USER,
@@ -555,6 +574,103 @@ describe('DrivingLicenseService', () => {
           },
         )
         .catch((e) => expect(e).toBeTruthy())
+    })
+  })
+
+  describe('withHealthDeclaration (v6)', () => {
+    const auth = { authorization: 'Bearer token' } as never
+    const allNo = {
+      isDisabled: false,
+      hasDiabetes: false,
+      hasEpilepsy: false,
+      isAlcoholic: false,
+      hasHeartDisease: false,
+      hasMentalIllness: false,
+      hasOtherDiseases: false,
+      usesMedicalDrugs: false,
+      usesContactGlasses: false,
+      hasReducedPeripheralVision: false,
+    }
+    const baseInput = {
+      districtId: 37,
+      sendPlasticToPerson: false,
+      healthDeclaration: allNo,
+    }
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    // RLS signals success with 2xx (enhanced fetch throws on 4xx), and returns
+    // the new application's guid — NOT reliably a `result: true`. A created
+    // application was observed on dev coming back with `result` falsy, so gating
+    // on it reported failure to an applicant who had already paid, and their
+    // retry then hit 400 APPLICATION_ALREADY_EXISTS. Any resolved response is a
+    // success, whatever the DTO body looks like.
+    it.each([
+      ['a guid', '3630b0bc-ec51-442e-976d-13a3c21c5e5b'],
+      ['null (guid unreadable / lost-response retry)', null],
+    ])(
+      'treats a resolved temporary submission (%s) as success',
+      async (_l, guid) => {
+        jest
+          .spyOn(
+            drivingLicenseApi,
+            'postTemporaryLicenseWithHealthDeclarationV6',
+          )
+          .mockResolvedValue(guid as never)
+
+        await expect(
+          service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
+            ...baseInput,
+            instructorSSN: MOCK_NATIONAL_ID_TEACHER,
+          }),
+        ).resolves.toStrictEqual({
+          success: true,
+          errorMessage: null,
+          applicationGuid: guid,
+        })
+      },
+    )
+
+    it('propagates a rejection so submitApplication surfaces the RLS error', async () => {
+      const problem = Object.assign(new Error('already exists'), {
+        name: 'FetchError',
+        status: 400,
+      })
+      jest
+        .spyOn(drivingLicenseApi, 'postTemporaryLicenseWithHealthDeclarationV6')
+        .mockRejectedValue(problem)
+
+      await expect(
+        service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
+          ...baseInput,
+          instructorSSN: MOCK_NATIONAL_ID_TEACHER,
+        }),
+      ).rejects.toBe(problem)
+    })
+
+    it('forwards the category as a path param for the full licence', async () => {
+      const spy = jest
+        .spyOn(drivingLicenseApi, 'postFullLicenseWithHealthDeclarationV6')
+        .mockResolvedValue('3630b0bc-ec51-442e-976d-13a3c21c5e5b')
+
+      await expect(
+        service.newDrivingLicenseWithHealthDeclaration(auth, {
+          ...baseInput,
+          licenseCategory: DrivingLicenseCategory.B,
+        }),
+      ).resolves.toStrictEqual({
+        success: true,
+        errorMessage: null,
+        applicationGuid: '3630b0bc-ec51-442e-976d-13a3c21c5e5b',
+      })
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({ auth, category: DrivingLicenseCategory.B }),
+      )
+      // `licenseCategory` travels in the path, so it must not also be in the body.
+      expect('licenseCategory' in spy.mock.calls[0][0].model).toBe(false)
     })
   })
 })

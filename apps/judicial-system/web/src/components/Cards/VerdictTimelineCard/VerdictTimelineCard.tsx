@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -32,6 +32,8 @@ import {
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import type { VerdictTimelineItem } from './VerdictTimelineBody'
+import VerdictTimelineBody from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
 
 interface Props {
@@ -45,6 +47,10 @@ type VisibleModal =
       defendant: Defendant
     }
   | {
+      type: 'CLOSE_WITHOUT_ENFORCEMENT'
+      defendant: Defendant
+    }
+  | {
       type: 'CONFIRM_APPEAL_AFTER_DEADLINE'
       appealDate: Date
     }
@@ -55,11 +61,9 @@ const VerdictTimelineCard: FC<Props> = (props) => {
   const { verdict } = defendant
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
+  const { setAndSendDefendantToServer, updateDefendant, isUpdatingDefendant } =
+    useDefendants()
   const { setAndSendVerdictToServer } = useVerdict()
-
-  const hasMountedRef = useRef<boolean>(false)
-  const previousTextCountRef = useRef<number>(0)
 
   const [modalVisible, setModalVisible] = useState<VisibleModal>()
   const [pendingServiceDate, setPendingServiceDate] = useState<Date>()
@@ -82,7 +86,10 @@ const VerdictTimelineCard: FC<Props> = (props) => {
   const isServiceRequired =
     verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
-  const showDatePickers = !defendant.isSentToPrisonAdmin && !isFine
+  const showDatePickers =
+    !defendant.isSentToPrisonAdmin &&
+    !defendant.isClosedWithoutEnforcement &&
+    !isFine
 
   // The appeal date records when an appeal actually happened, which the public
   // prosecution office may well need to register after the deadline has run out
@@ -131,23 +138,23 @@ const VerdictTimelineCard: FC<Props> = (props) => {
   )
 
   const textItems = useMemo(() => {
-    const texts: string[] = []
+    const items: VerdictTimelineItem[] = []
 
     const pushIf = (condition: boolean, message: string | null) => {
       if (condition && message) {
-        texts.push(message)
+        items.push({ text: message })
       }
     }
 
     pushIf(!!serviceRequirementText, serviceRequirementText)
 
     if (isFine) {
-      texts.push(
-        formatMessage(strings.fineAppealDeadline, {
+      items.push({
+        text: formatMessage(strings.fineAppealDeadline, {
           appealDeadlineIsInThePast: defendant.isVerdictAppealDeadlineExpired,
           appealDeadline: formatDate(defendant.verdictAppealDeadline),
         }),
-      )
+      })
     } else if (verdict?.serviceDate) {
       pushIf(
         !!isServiceRequired,
@@ -156,14 +163,14 @@ const VerdictTimelineCard: FC<Props> = (props) => {
         }),
       )
 
-      texts.push(
-        formatMessage(appealExpirationInfo.message, {
+      items.push({
+        text: formatMessage(appealExpirationInfo.message, {
           appealExpirationDate: appealExpirationInfo.date,
           deadlineType: verdict?.isDefaultJudgement
             ? 'Endurupptökufrestur'
             : 'Áfrýjunarfrestur',
         }),
-      )
+      })
 
       pushIf(
         !!verdict?.appealDate,
@@ -180,7 +187,17 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       }),
     )
 
-    return texts
+    pushIf(
+      !!(
+        defendant.isClosedWithoutEnforcement &&
+        defendant.closedWithoutEnforcementDate
+      ),
+      `Máli lokið án fullnustu ${formatDate(
+        defendant.closedWithoutEnforcementDate,
+      )}`,
+    )
+
+    return items
   }, [
     appealExpirationInfo.date,
     appealExpirationInfo.message,
@@ -272,11 +289,6 @@ const VerdictTimelineCard: FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    hasMountedRef.current = true
-    previousTextCountRef.current = textItems.length
-  }, [textItems.length])
-
-  useEffect(() => {
     if (isServiceDatePickerClosing && verdict?.serviceDate) {
       setIsServiceDatePickerClosing(false)
       setPendingServiceDate(undefined)
@@ -352,6 +364,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           ...(!verdict?.isAcquittedByPublicProsecutionOffice &&
           !verdict?.defendantHasRequestedAppeal &&
           !defendant.isSentToPrisonAdmin &&
+          !defendant.isClosedWithoutEnforcement &&
           (defendant.indictmentReviewDecision ||
             (!isFine && verdict?.serviceDate && isServiceRequired))
             ? [
@@ -379,9 +392,24 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
+          ...(!defendant.isSentToPrisonAdmin &&
+          !defendant.isClosedWithoutEnforcement
+            ? [
+                {
+                  title: 'Ljúka máli án fullnustu',
+                  onClick: () => {
+                    setModalVisible({
+                      type: 'CLOSE_WITHOUT_ENFORCEMENT',
+                      defendant,
+                    })
+                  },
+                },
+              ]
+            : []),
           ...(Boolean(verdict) &&
           !isFine &&
           !defendant.isSentToPrisonAdmin &&
+          !defendant.isClosedWithoutEnforcement &&
           !verdict?.defendantHasRequestedAppeal
             ? [
                 {
@@ -404,7 +432,9 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
-          ...(Boolean(verdict) && !verdict?.isAcquittedByPublicProsecutionOffice
+          ...(Boolean(verdict) &&
+          !verdict?.isAcquittedByPublicProsecutionOffice &&
+          !defendant.isClosedWithoutEnforcement
             ? [
                 {
                   title: `${
@@ -426,45 +456,10 @@ const VerdictTimelineCard: FC<Props> = (props) => {
             : []),
         ]}
       >
-        <Box className={styles.container}>
-          <Text variant="eyebrow">
-            {isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
-          </Text>
-          <AnimatePresence initial={false}>
-            {textItems.map((text, index) => {
-              const addedStartIndex = previousTextCountRef.current
-              const isNewItem =
-                hasMountedRef.current && index >= addedStartIndex
-              const staggerIndex = isNewItem ? index - addedStartIndex : 0
-
-              return (
-                <motion.div
-                  key={`${defendant.id}-${text}`}
-                  initial={
-                    isNewItem
-                      ? {
-                          opacity: 0,
-                          y: 20,
-                          height: 0,
-                        }
-                      : false
-                  }
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    height: 'auto',
-                  }}
-                  exit={{ opacity: 0, y: 20, height: 0 }}
-                  transition={{
-                    delay: isNewItem ? staggerIndex * 0.2 : 0,
-                    duration: 0.3,
-                  }}
-                >
-                  <Text>{`• ${text}`}</Text>
-                </motion.div>
-              )
-            })}
-          </AnimatePresence>
+        <VerdictTimelineBody
+          eyebrow={isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
+          items={textItems}
+        >
           {showDatePickers && (
             <AnimatePresence
               onExitComplete={() => {
@@ -578,11 +573,14 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               <VerdictAppealDecisionChoice
                 defendant={defendant}
                 verdict={verdict}
-                disabled={!!defendant.isSentToPrisonAdmin}
+                disabled={
+                  !!defendant.isSentToPrisonAdmin ||
+                  !!defendant.isClosedWithoutEnforcement
+                }
               />
             </motion.div>
           )}
-        </Box>
+        </VerdictTimelineBody>
       </ContextMenuCard>
       {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
         <Modal
@@ -605,6 +603,54 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                   },
                   setWorkingCase,
                 )
+
+                setModalVisible(undefined)
+              },
+              isLoading: isUpdatingDefendant,
+            },
+          ]}
+        />
+      )}
+      {modalVisible?.type === 'CLOSE_WITHOUT_ENFORCEMENT' && (
+        <Modal
+          title="Ljúka máli án fullnustu"
+          text={`Máli ${workingCase.courtCaseNumber} verður lokið án fullnustu gagnvart ákærða ${modalVisible.defendant.name}.\nAthugið að ekki er hægt að afturkalla þessa aðgerð.`}
+          buttons={[
+            {
+              text: formatMessage(core.cancel),
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Ljúka máli',
+              onClick: async () => {
+                const updated = await updateDefendant({
+                  caseId: workingCase.id,
+                  defendantId: defendant.id,
+                  isClosedWithoutEnforcement: true,
+                })
+
+                if (!updated) {
+                  return
+                }
+
+                // The closed date is derived from an event log created on the
+                // server, so it only arrives with a case refetch. Set it
+                // optimistically for immediate display - the server records
+                // the same moment.
+                setWorkingCase((prevWorkingCase) => ({
+                  ...prevWorkingCase,
+                  defendants: prevWorkingCase.defendants?.map((d) =>
+                    d.id === defendant.id
+                      ? {
+                          ...d,
+                          isClosedWithoutEnforcement: true,
+                          closedWithoutEnforcementDate:
+                            new Date().toISOString(),
+                        }
+                      : d,
+                  ),
+                }))
 
                 setModalVisible(undefined)
               },

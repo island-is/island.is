@@ -40,6 +40,8 @@ interface ModalProps {
   loading?: boolean
   position?: 'center' | 'top' | 'bottom'
   footerJustifyContent?: BoxProps['justifyContent']
+  // Smooth reposition when content size changes (e.g. select menu expanding)
+  animateLayout?: boolean
 }
 
 export const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -52,6 +54,7 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
   children,
   loading,
   footerJustifyContent = 'spaceBetween',
+  animateLayout = false,
 }: ModalProps) => {
   const modalVariants = {
     open: {
@@ -95,27 +98,24 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
         aria-modal="true"
         aria-labelledby={titleId}
         data-testid="modal"
-        layout
-        transition={{
-          layout: {
-            duration: 0.3,
-            ease: 'easeInOut',
-          },
-        }}
       >
         <motion.div
           className={styles.modalContainer}
           initial="closed"
           animate="open"
           exit="closed"
-          layout="position"
-          transition={{
-            layout: {
-              duration: 0.3,
-              ease: 'easeInOut',
-              type: 'tween',
-            },
-          }}
+          layout={animateLayout ? 'position' : false}
+          transition={
+            animateLayout
+              ? {
+                  layout: {
+                    duration: 0.3,
+                    ease: 'easeInOut',
+                    type: 'tween',
+                  },
+                }
+              : undefined
+          }
           variants={modalVariants}
         >
           {onClose && (
@@ -293,6 +293,7 @@ const ModalPortal = ({
   children,
   loading,
   footerJustifyContent,
+  animateLayout,
 }: ModalProps) => {
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
@@ -308,6 +309,7 @@ const ModalPortal = ({
       children={children}
       loading={loading}
       footerJustifyContent={footerJustifyContent}
+      animateLayout={animateLayout}
     />,
     modalRoot,
   )

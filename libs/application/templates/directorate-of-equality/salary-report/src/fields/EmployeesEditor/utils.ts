@@ -1,5 +1,3 @@
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import type { FormatMessage } from '@island.is/localization'
 import { SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
@@ -94,9 +92,6 @@ export const getSalaryComponentLabels = (
   }
 }
 
-export const formatCurrency = (value?: number | null): string =>
-  `${(value ?? 0).toLocaleString('is-IS')} kr.`
-
 // Greiddar stundir is an absolute count of hours, not a percentage — there is
 // deliberately no scaling in either direction here. The old workRatio field
 // stored a fraction and multiplied by 100 for display; carrying that over would
@@ -125,11 +120,20 @@ export const formatHourlyWage = (value?: number | null): string =>
     maximumFractionDigits: 0,
   })} kr./klst.`
 
-export const formatStartDate = (value?: string): string => {
-  if (!value) return ''
-  try {
-    return format(parseISO(value), 'd.M.yyyy')
-  } catch {
-    return value
-  }
-}
+/**
+ * The bare amount, for the wage columns of the úrbótaáætlun and ábendingar
+ * tables — both of which carry the unit once in a footnote beneath the table
+ * instead. `formatHourlyWage`'s " kr./klst." suffix is ~10 characters that
+ * every row pays for twice, wrapping the cell onto a second line and widening
+ * the column past what the surrounding card holds.
+ *
+ * A missing figure is a dash, not a zero: `?? 0` would print "0" as though DMR
+ * had reported a wage of nothing. Both DTOs type their wage fields as required,
+ * so this is contract-defensive rather than a path we expect — but a false
+ * figure an applicant could act on is the wrong way to fail. Zero itself still
+ * formats.
+ */
+export const formatWageAmount = (value?: number | null): string =>
+  value == null
+    ? '—'
+    : value.toLocaleString('is-IS', { maximumFractionDigits: 0 })

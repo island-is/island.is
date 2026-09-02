@@ -6,7 +6,7 @@ import {
   UseFormReturn,
 } from 'react-hook-form'
 import { YES } from '@island.is/application/core'
-import { Application, RecordObject } from '@island.is/application/types'
+import { RecordObject } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -16,7 +16,6 @@ import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { OutlierEditor } from './OutlierEditor'
 
 type Props = {
-  application: Application
   outliers: SalaryAnalysisOutlierDto[]
   // True on the POSTPONED-state review screen: the applicant already chose
   // to postpone earlier and can't un-postpone here, so the checkbox is
@@ -26,28 +25,21 @@ type Props = {
   // the persistence-mode signal for OutlierEditor's `mode` prop.
   hidePostponeCheckbox?: boolean
   errors?: RecordObject
-  identifierForOrdinal: (ordinal: number) => string
   // Draft phase only: local form scope for outlierGroups (not answers-backed pre-submit); the postponed checkbox stays on the ambient form regardless.
   outlierGroupsFormMethods?: UseFormReturn<{
     salaryAnalysis: { outlierGroups: OutlierGroupAnswer[] }
   }>
 }
 
-// Rendered inline by SalaryAnalysisResults, sharing its already-fetched
-// analysis result — this must NOT independently re-read
-// application.externalData, since a sibling custom field reading that prop
-// can be stale relative to the mutation response the parent just received.
 export const OutlierGroupPanel: FC<Props> = ({
   outliers,
   hidePostponeCheckbox,
   errors,
-  identifierForOrdinal,
   outlierGroupsFormMethods,
 }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const m = messages.salaryAnalysis.outlierGroup
-  const improvementPlanMessages = messages.salaryAnalysis.improvementPlan
 
   const postponed: string[] =
     useWatch({ name: 'salaryAnalysis.postponed' }) ?? []
@@ -63,14 +55,7 @@ export const OutlierGroupPanel: FC<Props> = ({
   if (outliers.length === 0) return null
 
   return (
-    <Box marginTop={5}>
-      <Text variant="h3" marginBottom={1}>
-        {formatMessage(improvementPlanMessages.title)}
-      </Text>
-      <Text marginBottom={3}>
-        {formatMessage(improvementPlanMessages.intro)}
-      </Text>
-
+    <Box>
       {!hidePostponeCheckbox && (
         <Box
           background="blue100"
@@ -101,7 +86,6 @@ export const OutlierGroupPanel: FC<Props> = ({
               outliers={outliers}
               errors={errors}
               mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-              identifierForOrdinal={identifierForOrdinal}
             />
           </FormProvider>
         ) : (
@@ -109,7 +93,6 @@ export const OutlierGroupPanel: FC<Props> = ({
             outliers={outliers}
             errors={errors}
             mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-            identifierForOrdinal={identifierForOrdinal}
           />
         ))}
     </Box>

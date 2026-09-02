@@ -138,6 +138,34 @@ describe('DefendantInfo', () => {
   })
 
   describe('getDefendantTagConfig', () => {
+    test('should return closed without enforcement tag for public prosecution users, even when a verdict exists', () => {
+      const tag = getDefendantTagConfig({
+        verdict: {
+          isAcquittedByPublicProsecutionOffice: true,
+          defendantHasRequestedAppeal: true,
+          isDefaultJudgement: true,
+        },
+        isPublicProsecutionOffice: true,
+        isClosedWithoutEnforcement: true,
+      })
+
+      expect(tag).toStrictEqual({
+        key: 'closedWithoutEnforcement',
+        label: 'Lokið',
+        variant: 'rose',
+      })
+    })
+
+    test('should not return closed without enforcement tag for non-public prosecution users', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        isClosedWithoutEnforcement: true,
+      })
+
+      expect(tag).toBeNull()
+    })
+
     test('should return acquitted tag for public prosecution users', () => {
       const tag = getDefendantTagConfig({
         verdict: {

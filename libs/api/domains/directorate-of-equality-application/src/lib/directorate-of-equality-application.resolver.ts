@@ -21,7 +21,9 @@ import {
   DraftEmployeesResponseModel,
   DraftEmployeesWithStepsResponseModel,
 } from './dto/draftEmployeesResponse.model'
+import { EditEqualityContentInput } from './dto/editEqualityContent.input'
 import { SyncSalaryReportDraftInput } from './dto/syncSalaryReportDraft.input'
+import { UpdateEqualityDraftContentInput } from './dto/updateEqualityDraftContent.input'
 import { DirectorateOfEqualityApplicationService } from './directorate-of-equality-application.service'
 
 // Sync carries an arbitrary per-screen payload, and the employee list queries
@@ -74,6 +76,34 @@ export class DirectorateOfEqualityApplicationResolver {
     @CurrentUser() user: User,
   ) {
     return this.directorateOfEqualityApplicationService.listDraftEmployeesWithSteps(
+      input,
+      user,
+    )
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'directorateOfEqualityUpdateEqualityDraftContent',
+  })
+  @Audit()
+  updateEqualityDraftContent(
+    @Args('input') input: UpdateEqualityDraftContentInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfEqualityApplicationService.updateEqualityDraftContent(
+      input,
+      user,
+    )
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'directorateOfEqualityEditEqualityContent',
+  })
+  @Audit()
+  editEqualityContent(
+    @Args('input') input: EditEqualityContentInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfEqualityApplicationService.editEqualityContent(
       input,
       user,
     )
