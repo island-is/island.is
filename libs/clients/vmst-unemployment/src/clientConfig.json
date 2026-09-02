@@ -3044,7 +3044,7 @@
         ]
       }
     },
-    "/api/applicants/{applicantId}/u2Certificates/{u2CertificateId}/withdraw": {
+    "/api/applicants/{applicantId}/u2Certificates/withdraw": {
       "post": {
         "tags": ["U2Certificate"],
         "summary": "Withdraw U2 certificate for applicant",
@@ -3059,16 +3059,6 @@
               "format": "guid"
             },
             "x-position": 1
-          },
-          {
-            "name": "u2CertificateId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
           }
         ],
         "responses": {

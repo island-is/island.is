@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDateField,
   buildDescriptionField,
   buildMultiField,
@@ -48,6 +49,10 @@ export const countryAndDateSection = buildSection({
           width: 'half',
           marginTop: 2,
           required: true,
+        }),
+        buildCustomField({
+          id: 'customDateValidation',
+          component: 'DateValidation',
         }),
       ],
     }),

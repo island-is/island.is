@@ -9,6 +9,7 @@ import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { errorMessages } from '@island.is/application/templates/vmst/u2-certificate'
 import { U2ErrorCode } from './constants'
+import { FetchError } from '@island.is/clients/middlewares'
 
 const isU2ErrorCode = (code: unknown): code is U2ErrorCode =>
   typeof code === 'string' &&
@@ -78,7 +79,7 @@ export class U2CertificateService extends BaseTemplateApiService {
     try {
       return await this.vmstUnemploymentClientService.getEESCountries()
     } catch (e) {
-      this.logger.error(
+      this.logger.warn(
         '[VMST-U2-Certificate] - Error fetching EES countries',
         e,
       )
@@ -89,6 +90,7 @@ export class U2CertificateService extends BaseTemplateApiService {
   async completeApplication({
     auth,
     application,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     const countryId =
       getValueViaPath<string>(application.answers, 'countryAndDate.country') ||
@@ -102,25 +104,25 @@ export class U2CertificateService extends BaseTemplateApiService {
       this.throwDefaultError()
     }
 
-    let response
     try {
-      response = await this.vmstUnemploymentClientService.submitU2Application(
+      await this.vmstUnemploymentClientService.submitU2Application(
         auth,
         countryId,
         date,
         application.id,
       )
     } catch (e) {
-      this.logger.error('[VMST-U2-Certificate] - Submit failed', e)
-      this.throwDefaultError()
-    }
-
-    if (!response.success) {
+      const body =
+        e instanceof FetchError
+          ? (e.body as { reason?: string; reasonEn?: string })
+          : undefined
+      const erroMessage =
+        currentUserLocale === 'is' ? body?.reason : body?.reasonEn
+      this.logger.warn('[VMST-U2-Certificate] - Submit failed', e)
       throw new TemplateApiError(
         {
           title: errorMessages.eligibilityErrorTitle,
-          summary:
-            response.errorMessage || errorMessages.cannotApplyErrorSummary,
+          summary: erroMessage || errorMessages.cannotApplyErrorSummary,
         },
         500,
       )
@@ -144,7 +146,6 @@ export class U2CertificateService extends BaseTemplateApiService {
     try {
       response = await this.vmstUnemploymentClientService.revokeU2Application(
         auth,
-        '123123',
       )
     } catch (e) {
       this.logger.error('[VMST-U2-Certificate] - Error revoking application', e)
@@ -152,7 +153,7 @@ export class U2CertificateService extends BaseTemplateApiService {
     }
 
     if (!response.success) {
-      this.logger.error(
+      this.logger.warn(
         '[VMST-U2-Certificate] - Error revoking application',
         response.errorMessage,
       )

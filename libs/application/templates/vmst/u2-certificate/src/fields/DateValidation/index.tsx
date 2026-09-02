@@ -34,9 +34,7 @@ export const DateValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
       getValueViaPath<string>(answers, 'countryAndDate.departureDate') ?? ''
     const country =
       getValueViaPath<string>(answers, 'countryAndDate.country') ?? ''
-
     const response = await getValidateU2Callback(departureDate, country)
-
     if (response?.vmstApplicationsU2Validation?.isValid) {
       setValidationError('')
       return [true, null]
@@ -49,7 +47,6 @@ export const DateValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
     setValidationError(errMsg)
     return [false, '']
   })
-
   if (validationError) {
     return (
       <Box marginTop={4}>

@@ -145,9 +145,9 @@ Used to fetch the applicant's information.
 
 ## Testing
 
-- **Gervimaður 201-1489**
+- **Gervimaður 201-1489 and 010-1450**
   - Use as the applicant.
-  - **Prerequisite:** this gervimaður must already have an _active
+  - **Prerequisite:** Gervimaður must already have an _active
     unemployment application_ on VMST's side. Without that, the eligibility
     check in Prerequisites will fail and the application cannot proceed.
     Coordinate with VMST if the test user needs to be (re-)activated.

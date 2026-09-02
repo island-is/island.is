@@ -714,7 +714,6 @@ export class VmstUnemploymentClientService {
 
   async revokeU2Application(
     auth: User,
-    u2CertificateId: string,
   ): Promise<GaldurDomainModelsBaseViewModel> {
     const { applicantId } = await this.resolveApplicant(auth)
 
@@ -728,7 +727,6 @@ export class VmstUnemploymentClientService {
 
     return await api.u2CertificateWithdrawU2Certificate({
       applicantId,
-      u2CertificateId,
     })
   }
 }
