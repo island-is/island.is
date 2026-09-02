@@ -164,7 +164,9 @@ export const serviceSetup = (services: {
         dev: ref(
           (ctx) =>
             `https://${
-              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}.api.dev01.devland.is` : 'api.dev01.devland.is'
+              ctx.featureDeploymentName
+                ? `${ctx.featureDeploymentName}.api.dev01.devland.is`
+                : 'api.dev01.devland.is'
             }`,
         ),
         staging: 'https://api.staging01.devland.is',
