@@ -42,6 +42,12 @@ export {
   CourtSessionRepositoryService,
   UpdateCourtSession,
 } from './services/courtSessionRepository.service'
+export {
+  CourtSessionStringRepositoryService,
+  CourtSessionStringKey,
+  CreateCourtSessionString,
+  UpdateCourtSessionString,
+} from './services/courtSessionStringRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
