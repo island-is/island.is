@@ -32,7 +32,6 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../../factories'
 import { getCaseFileHash } from '../../formatters'
 import { PdfService } from '../case/pdf.service'
 import {
@@ -194,8 +193,6 @@ export class SubpoenaService {
       }
     }
 
-    this.queueSubpoenaRevocationMessages(theCase, defendantsToProcess, user)
-
     // Queue messages for delivering subpoenas to court and national commissioners office
     await this.queueSubpoenaDeliveryMessages(
       theCase,
@@ -211,44 +208,6 @@ export class SubpoenaService {
     })
 
     return subpoenas
-  }
-
-  private shouldRevokeSubpoena(subpoena: Subpoena, now: Date): boolean {
-    if (!subpoena.policeSubpoenaId) {
-      return false
-    }
-
-    if (isSuccessfulServiceStatus(subpoena.serviceStatus)) {
-      return false
-    }
-
-    return subpoena.arraignmentDate.getTime() > now.getTime()
-  }
-
-  private queueSubpoenaRevocationMessages(
-    theCase: Case,
-    defendants: Defendant[],
-    user: TUser,
-  ): void {
-    const now = nowFactory()
-    const messages = []
-
-    for (const defendant of defendants) {
-      for (const subpoena of defendant.subpoenas ?? []) {
-        if (this.shouldRevokeSubpoena(subpoena, now)) {
-          messages.push({
-            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
-            user,
-            caseId: theCase.id,
-            elementId: [defendant.id, subpoena.id],
-          })
-        }
-      }
-    }
-
-    if (messages.length > 0) {
-      addMessagesToQueue(...messages)
-    }
   }
 
   private async queueSubpoenaDeliveryMessages(

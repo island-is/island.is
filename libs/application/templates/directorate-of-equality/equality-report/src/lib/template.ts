@@ -302,6 +302,14 @@ const template: ApplicationTemplate<
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: messages.historyLogs.draftRetry,
               },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: messages.inReview.approvedHistoryLog,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: messages.inReview.rejectedHistoryLog,
+              },
             ],
           },
           roles: [
@@ -347,6 +355,12 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
             actions: 'markRevised',
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
           },
         },
       },
