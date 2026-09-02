@@ -250,6 +250,7 @@ import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { VerdictsClientConfig } from '@island.is/clients/verdicts'
+import { CalculatorsClientModule } from '@island.is/clients/rsk/calculators'
 import {
   VerdictsApiModuleConfig,
   VerdictsModule,
@@ -365,6 +366,7 @@ const environment = getConfig
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
     LegalGazetteClientModule,
+    CalculatorsClientModule,
     DisabilityLicenseModule,
     FiskistofaModule,
     WatsonAssistantChatModule,

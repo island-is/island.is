@@ -1,25 +1,12 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Resolver } from '@nestjs/graphql'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { CalculatorField } from './models/field.model'
-import { TaxCalculatorType } from './models/enums'
-import { TaxCalculatorsService } from './tax-calculators.service'
 
+/* Intentionally empty. The previous `taxCalculatorFields` query served a
+ * hardcoded field list that did not match RSK's own input contract; it was
+ * removed rather than left to drift further. A resolver contributing no
+ * fields adds nothing to the schema, so this class is a placeholder for the
+ * rebuild against @island.is/clients/rsk/calculators -- see the README. */
 @CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver()
-export class TaxCalculatorsResolver {
-  constructor(private readonly service: TaxCalculatorsService) {}
-
-  @Query(() => [CalculatorField], {
-    name: 'taxCalculatorFields',
-    nullable: true,
-    description:
-      'The dynamic form schema for a given tax calculator type. The web client renders a generic form from this schema.',
-  })
-  fields(
-    @Args('calculatorType', { type: () => TaxCalculatorType })
-    calculatorType: TaxCalculatorType,
-  ): CalculatorField[] {
-    return this.service.getFields(calculatorType)
-  }
-}
+export class TaxCalculatorsResolver {}

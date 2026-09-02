@@ -1,12 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { CalculatorField } from './models/field.model'
-import { TaxCalculatorType } from './models/enums'
-import { fieldsByCalculatorType } from './calculators.constants'
-import { buildFieldModels } from './utils/fieldModel'
 
+/* Intentionally empty -- see TaxCalculatorsResolver and the README. */
 @Injectable()
-export class TaxCalculatorsService {
-  getFields(calculatorType: TaxCalculatorType): CalculatorField[] {
-    return buildFieldModels(fieldsByCalculatorType[calculatorType])
-  }
-}
+export class TaxCalculatorsService {}
