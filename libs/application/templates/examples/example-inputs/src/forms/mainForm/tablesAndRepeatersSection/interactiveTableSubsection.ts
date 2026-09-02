@@ -7,7 +7,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 
 const invoices = [
   { name: 'Invoice 1', dueDate: '15.01.2024', amount: 25000 },

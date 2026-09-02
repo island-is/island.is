@@ -12,8 +12,7 @@ import {
   ExternalData,
   StaticText,
 } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { formatCurrency, isRunningOnEnvironment } from '@island.is/shared/utils'
 import { debts as messages } from '../../lib/messages'
 import { formatTimePeriod } from '../../utils/formatTimePeriod'
 import { getDebts, hasFetchedDebts } from '../../utils/getDebts'
@@ -67,7 +66,7 @@ export const debtsSection = buildSection({
               debt.chargeTypeName,
               debt.chargeItemSubject,
               formatTimePeriod(debt.timePeriod),
-              formatCurrency(debt.debts.toString()),
+              formatCurrency(debt.debts),
             ])
           },
           inputColumn: {
@@ -81,9 +80,10 @@ export const debtsSection = buildSection({
             '',
             '',
             formatCurrency(
-              getDebts(application)
-                .reduce((total, debt) => total + debt.debts, 0)
-                .toString(),
+              getDebts(application).reduce(
+                (total, debt) => total + debt.debts,
+                0,
+              ),
             ),
           ],
         }),
@@ -104,11 +104,11 @@ export const debtsSection = buildSection({
             return [
               {
                 label: messages.table.totalToPayLabel,
-                value: formatCurrency(totalToPay.toString()),
+                value: formatCurrency(totalToPay),
               },
               {
                 label: messages.table.totalLeftLabel,
-                value: formatCurrency((totalDebts - totalToPay).toString()),
+                value: formatCurrency(totalDebts - totalToPay),
               },
             ]
           },

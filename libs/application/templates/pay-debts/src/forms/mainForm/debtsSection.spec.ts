@@ -5,12 +5,6 @@ import {
   InteractiveTableField,
   MultiField,
 } from '@island.is/application/types'
-
-jest.mock('@island.is/application/ui-components', () => ({
-  formatCurrency: (value: string) => value,
-}))
-
-// eslint-disable-next-line import/first
 import { debtsSection } from './debtsSection'
 
 const multiField = debtsSection.children[0] as MultiField
