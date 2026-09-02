@@ -101,6 +101,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'mergeCaseId',
   'mergeCaseNumber',
   'isCompletedWithoutRuling',
+  'isArraignmentSummonsSkipped',
   'defendantEventLogDecisions',
   'reopenReason',
 ]

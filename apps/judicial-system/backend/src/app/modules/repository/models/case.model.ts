@@ -19,7 +19,6 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -722,6 +721,14 @@ export class Case extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   @ApiPropertyOptional({ type: Boolean })
   withCourtSessions!: boolean
+
+  /**********
+   * Indicates whether the court chose not to summon to an arraignment, for
+   * example because the case will be merged into an already arraigned case -
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isArraignmentSummonsSkipped?: boolean
 
   /**********
    * The case's court sessions

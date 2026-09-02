@@ -429,6 +429,15 @@ export class ApplicationsService {
         application.submittedAt = applicationDto.submittedAt
         application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
         await application.save()
+        this.logger.info('form system application submitted', {
+          applicationId: application.id,
+          formId: form.id,
+          formSlug: form.slug,
+          organizationNationalId: applicationDto.organizationNationalId,
+          isTest: application.isTest,
+          submittedWithPayment: !user,
+          datadogEvent: 'form_system_application_submitted',
+        })
       } catch (error) {
         await applicationEvent.destroy()
         throw error
@@ -1076,7 +1085,7 @@ export class ApplicationsService {
           }
         }
       }
-    } else {
+    } else if (submitScreenDto.increment === false) {
       if (
         this.doesSectionHaveScreen(currentSection) &&
         !this.isFirstScreenInSection(currentSection, currentScreenId)

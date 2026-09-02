@@ -5,7 +5,10 @@ import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { BE } from '../lib/constants'
-import { needsHealthCertificateCondition } from '../lib/utils/formUtils'
+import {
+  isRedesignedBTempOrBFull,
+  needsHealthCertificateCondition,
+} from '../lib/utils/formUtils'
 import { useFormContext } from 'react-hook-form'
 
 import type { JSX } from 'react'
@@ -26,7 +29,21 @@ const HealthDeclaration = ({
   const { setValue, getValues } = useFormContext()
 
   const clearHealthCertificateIfNotNeeded = (value: string) => {
-    if (getValueViaPath(application.answers, 'applicationFor') !== BE) {
+    // Only products whose upload is *conditional* need clearing: BE, and the
+    // redesigned B-temp/B-full flows that now follow BE's rules. 65+ is excluded
+    // because its upload is unconditional, so there is never a state where a
+    // previously-uploaded certificate is no longer wanted.
+    //
+    // Without this, an applicant who answers "yes", uploads, then switches to
+    // "no" keeps an orphaned file in answers: it is neither shown in the summary
+    // nor sent as contentList (both gate on the same predicate), but it stays on
+    // the application, reappears pre-filled if they flip back, and becomes a
+    // real transmission bug the moment contentList is ever sent unconditionally.
+    const usesConditionalUpload =
+      getValueViaPath(application.answers, 'applicationFor') === BE ||
+      isRedesignedBTempOrBFull(application.answers)
+
+    if (!usesConditionalUpload) {
       return
     }
 

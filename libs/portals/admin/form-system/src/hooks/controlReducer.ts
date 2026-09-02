@@ -278,6 +278,7 @@ type InputSettingsActions =
       payload: {
         field: FormSystemField
         property:
+          | 'isAddressRequired'
           | 'isPhoneRequired'
           | 'isEmailRequired'
           | 'fetchEmailFromMyPages'
@@ -949,6 +950,8 @@ export const controlReducer = (
     case 'CHANGE_SUBMISSION_URL': {
       const nextUrl = action.payload.value
       const useValidate = action.payload.useValidate
+      const nextUseValidate =
+        useValidate !== undefined ? useValidate : form.useValidate
 
       // Only force these flags when switching to Zendesk
       const nextFields =
@@ -976,6 +979,12 @@ export const controlReducer = (
               }
             })
           : fields
+      const nextScreens =
+        form.useValidate === true && nextUseValidate === false
+          ? screens?.map((screen) =>
+              screen ? { ...screen, shouldValidate: false } : screen,
+            )
+          : screens
 
       const updatedState = {
         ...state,
@@ -983,8 +992,8 @@ export const controlReducer = (
           ...form,
           submissionServiceUrl: nextUrl,
           fields: nextFields,
-          useValidate:
-            useValidate !== undefined ? useValidate : form.useValidate,
+          screens: nextScreens,
+          useValidate: nextUseValidate,
         },
       }
       return updatedState
@@ -1014,10 +1023,18 @@ export const controlReducer = (
       return updatedState
     }
     case 'CHANGE_USE_VALIDATE': {
+      const nextScreens =
+        form.useValidate === true && action.payload.value === false
+          ? screens?.map((screen) =>
+              screen ? { ...screen, shouldValidate: false } : screen,
+            )
+          : screens
+
       const updatedState = {
         ...state,
         form: {
           ...form,
+          screens: nextScreens,
           useValidate: action.payload.value,
         },
       }

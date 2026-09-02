@@ -437,9 +437,11 @@ const canDefenceUserAccessIndictmentCase = (
     return false
   }
 
-  // Check received case access
+  // Check received case access - defence users get access once an arraignment
+  // has been scheduled, or once the court has decided not to summon to one
   const canDefenderAccessReceivedCase = Boolean(
-    DateLog.arraignmentDate(theCase.dateLogs),
+    DateLog.arraignmentDate(theCase.dateLogs) ||
+      theCase.isArraignmentSummonsSkipped,
   )
 
   if (theCase.state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {

@@ -2,31 +2,20 @@ import { createContext, useContext, type ReactNode } from 'react'
 import {
   Box,
   Checkbox,
-  Tooltip,
+  Hidden,
   createColumnHelper,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS } from '../../utils/constants'
-import { formatPercentMagnitude } from '../../utils/wageGap'
+import { formatDeviationLabel } from '../../utils/salaryAnalysisLabels'
+import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
+import { formatWageAmount } from '../EmployeesEditor/utils'
 
 const SELECT_COLUMN_WIDTH = 32
 const DASH = '—'
 const m = messages.salaryAnalysis.outlierGroup
-
-// Bare amount, no "kr./klst." — the shared formatHourlyWage suffix is ~10
-// characters that every row pays for twice, wrapping the cell onto a second
-// line and widening the column past what the container holds. OutlierEditor
-// carries the unit once, under the table.
-// A missing figure is a dash, not a zero: `?? 0` would print "0" as though DMR
-// had reported a wage of nothing. The DTO types both wage fields as required, so
-// this is contract-defensive rather than a path we expect — but a false figure an
-// applicant could act on is the wrong way to fail. Zero itself still formats.
-const formatWageAmount = (value?: number | null): string =>
-  value == null
-    ? DASH
-    : value.toLocaleString('is-IS', { maximumFractionDigits: 0 })
 
 /**
  * InteractiveTable wraps every ordinary cell in `<Text variant="medium">`, which
@@ -60,13 +49,10 @@ const compactCell = (children: ReactNode, align?: 'right'): ReactNode => (
  */
 type OutlierTableContextValue = {
   selected: Set<number>
-  allSelectedOnPage: boolean
+  allSelected: boolean
+  someSelected: boolean
   toggleSelect: (ordinal: number) => void
-  toggleSelectPage: () => void
-  // Absent for an employee whose role can't be resolved — neither the POSTPONED
-  // nor the DRAFT_RETRY review is granted the draft's employee/role reads, so
-  // the column is blank in both rather than wrong.
-  roleTitleForOrdinal: (ordinal: number) => string | undefined
+  toggleSelectAll: () => void
 }
 
 const OutlierTableContext = createContext<OutlierTableContextValue | undefined>(
@@ -140,26 +126,38 @@ const HourlyWageHeader = headerFor(m.hourlyWageColumn, 'right')
 const ExpectedHourlyWageHeader = headerFor(m.expectedHourlyWageColumn, 'right')
 const DeviationHeader = headerFor(m.deviationColumn, 'right')
 
-// The span is for the same reason as in headerFor. Checkbox's own root is a
-// Box, so this header still nests a div inside the mobile `<p>` — pre-existing
-// in island-ui and not something a caller can fix from here.
+/**
+ * Selects and clears every row in the table, not just the page on screen — see
+ * toggleSelectAll in OutlierEditor.
+ *
+ * Hidden below `md`, the breakpoint at which the desktop table itself appears.
+ * InteractiveTable's mobile card view renders each column's *header* component
+ * once per row, so left visible this would put a select-everything checkbox
+ * beside every row's own checkbox, and a caller can't unmount it from there.
+ * OutlierEditor carries a button below the table for that viewport instead.
+ * `inline` keeps this a span: the mobile card wraps header content in a `<p>`,
+ * which a div may not sit inside.
+ */
 const SelectAllHeader = () => {
   const { formatMessage } = useLocale()
-  const { allSelectedOnPage, toggleSelectPage } = useOutlierTable()
+  const { allSelected, someSelected, toggleSelectAll } = useOutlierTable()
   return (
-    <Box
-      component="span"
-      display="flex"
-      justifyContent="center"
-      style={{ maxWidth: SELECT_COLUMN_WIDTH }}
-    >
-      <Checkbox
-        label=""
-        ariaLabel={formatMessage(m.selectAllLabel)}
-        checked={allSelectedOnPage}
-        onChange={toggleSelectPage}
-      />
-    </Box>
+    <Hidden below="md" inline>
+      <Box
+        component="span"
+        display="flex"
+        justifyContent="center"
+        style={{ maxWidth: SELECT_COLUMN_WIDTH }}
+      >
+        <Checkbox
+          label=""
+          ariaLabel={formatMessage(m.selectAllLabel)}
+          checked={allSelected}
+          indeterminate={someSelected}
+          onChange={toggleSelectAll}
+        />
+      </Box>
+    </Hidden>
   )
 }
 
@@ -185,30 +183,20 @@ const SelectCell = ({ row }: CellProps) => {
   )
 }
 
-// The ordinal alone, not the ABC-000 identifier: it is the number the applicant
-// already knows from the employee screens and the workbook, and this tooltip is
-// what says so. Sorting is off for this column (see NOT_SORTABLE), which is what
-// keeps the tooltip out of a button.
-const OrdinalHeader = () => {
-  const { formatMessage } = useLocale()
-  return (
-    <Box component="span" display="flex" alignItems="center" columnGap={1}>
-      {formatMessage(m.ordinalColumn)}
-      <Tooltip
-        placement="right"
-        text={formatMessage(m.employeeColumnTooltip)}
-      />
-    </Box>
-  )
-}
-
 const OrdinalCell = ({ row }: CellProps) =>
   compactCell(String(row.original.employeeOrdinal))
 
-const RoleCell = ({ row }: CellProps) => {
-  const { roleTitleForOrdinal } = useOutlierTable()
-  return compactCell(roleTitleForOrdinal(row.original.employeeOrdinal) || DASH)
-}
+// Read straight off the outlier row: DMR denormalises `roleTitle` onto it, so
+// there is no roles list to join against and nothing to resolve per ordinal.
+// That also means the column now fills in during the POSTPONED and DRAFT_RETRY
+// reviews, which are granted neither the draft employee nor the draft role read
+// and so used to show this blank for every row.
+//
+// A dash covers both null (DMR could not resolve a title) and '' (a role saved
+// without one) — neither is a title worth printing, and the distinction is not
+// one an applicant could act on.
+const RoleCell = ({ row }: CellProps) =>
+  compactCell(row.original.roleTitle || DASH)
 
 const GenderCell = ({ row }: CellProps) =>
   compactCell(GENDER_LABELS[row.original.gender] ?? row.original.gender)
@@ -222,32 +210,13 @@ const HourlyWageCell = ({ row }: CellProps) =>
 const ExpectedHourlyWageCell = ({ row }: CellProps) =>
   compactCell(formatWageAmount(row.original.expectedHourlyWage), 'right')
 
-// Signed here, unlike the company-level gender gaps: this is a deviation from a
-// fitted line, so the sign is meaningful and the word glosses it. The company
-// figures are magnitude-only because their sign would imply a denominator
-// convention the reader does not have.
-//
-// payStatus is rendered, not inferred from the sign. A row can be listed for
-// being paid ABOVE what their stig imply, which is the opposite of what a reader
-// expects, and deviationPercent's sign only conveys that to someone who already
-// knows the convention.
+// See formatDeviationLabel for why the sign comes from the figure and the word
+// from payStatus. Shared with the ábendingar table, which shows the same column.
 const DeviationCell = ({ row }: CellProps) => {
   const { formatMessage } = useLocale()
   const { deviationPercent, payStatus } = row.original
-  const sign = deviationPercent > 0 ? '+' : deviationPercent < 0 ? '-' : ''
-  const status = formatMessage(
-    payStatus === 'UNDERPAID'
-      ? m.payStatusUnderpaid
-      : payStatus === 'OVERPAID'
-      ? m.payStatusOverpaid
-      : m.payStatusOnLine,
-  )
   return compactCell(
-    formatMessage(m.deviationCell, {
-      sign,
-      value: formatPercentMagnitude(deviationPercent),
-      status,
-    }),
+    formatDeviationLabel(deviationPercent, payStatus, formatMessage),
     'right',
   )
 }
@@ -292,7 +261,9 @@ export const OUTLIER_COLUMNS = [
   }),
   columnHelper.accessor('employeeOrdinal', {
     id: 'employee',
-    header: OrdinalHeader,
+    // Sorting is off for this column (see NOT_SORTABLE), which is what keeps
+    // the shared header's tooltip out of a button.
+    header: EmployeeOrdinalHeader,
     meta: COMPACT_CELL,
     cell: OrdinalCell,
     ...NOT_SORTABLE,

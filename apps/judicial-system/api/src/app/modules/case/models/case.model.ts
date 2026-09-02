@@ -392,6 +392,9 @@ export class Case {
   @Field(() => Boolean, { nullable: true })
   readonly isCompletedWithoutRuling?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  readonly isArraignmentSummonsSkipped?: boolean
+
   @Field(() => String, { nullable: true })
   readonly caseSentToCourtDate?: string
 

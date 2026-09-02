@@ -54,6 +54,7 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
       title={title}
       text={text}
       onClose={onClose}
+      animateLayout
       buttons={[
         {
           text: 'Loka glugga',
