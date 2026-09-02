@@ -81,9 +81,7 @@ export const TextInput: React.FC<TextInputProps> = ({
     <Box
       width="full"
       className={
-        type === 'number' || type === 'decimal'
-          ? styles.numberInput
-          : undefined
+        type === 'number' || type === 'decimal' ? styles.numberInput : undefined
       }
     >
       <Input
