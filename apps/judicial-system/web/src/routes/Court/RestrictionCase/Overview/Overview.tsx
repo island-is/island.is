@@ -33,7 +33,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  InfoCard,
+  InfoCardRequestCase,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -41,7 +41,6 @@ import {
   PoliceDigitalCaseFilesAccordionItem,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseOrigin,
@@ -65,14 +64,6 @@ export const JudgeOverview = () => {
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
-  const {
-    defendants,
-    policeCaseNumbers,
-    prosecutor,
-    prosecutorsOffice,
-    requestedCourtDate,
-    parentCaseValidToDate,
-  } = useInfoCardItems()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
@@ -133,25 +124,7 @@ export const JudgeOverview = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCard
-            sections={[
-              {
-                id: 'defendants-section',
-                items: [defendants({ caseType: workingCase.type })],
-              },
-              {
-                id: 'case-info-section',
-                items: [
-                  policeCaseNumbers,
-                  requestedCourtDate,
-                  prosecutorsOffice,
-                  parentCaseValidToDate,
-                  prosecutor(workingCase.type),
-                ],
-                columns: 2,
-              },
-            ]}
-          />
+          <InfoCardRequestCase displayRequestDetails />
         </Box>
         <Box marginBottom={5}>
           <Box marginBottom={9}>

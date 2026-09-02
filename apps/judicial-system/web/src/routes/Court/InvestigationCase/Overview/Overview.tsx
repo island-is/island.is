@@ -31,7 +31,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  InfoCard,
+  InfoCardRequestCase,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -40,7 +40,6 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseOrigin,
   CaseState,
@@ -63,15 +62,6 @@ const Overview = () => {
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-  const {
-    defendants,
-    policeCaseNumbers,
-    prosecutorsOffice,
-    requestedCourtDate,
-    prosecutor,
-    caseType,
-    victims,
-  } = useInfoCardItems()
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -129,29 +119,7 @@ const Overview = () => {
           )}
         <div className={grid({ gap: 5, marginBottom: 10 })}>
           <Box component="section">
-            <InfoCard
-              sections={[
-                {
-                  id: 'defendants-section',
-                  items: [defendants({ caseType: workingCase.type })],
-                },
-                {
-                  id: 'victims-section',
-                  items: [victims],
-                },
-                {
-                  id: 'case-info-section',
-                  items: [
-                    policeCaseNumbers,
-                    requestedCourtDate,
-                    prosecutorsOffice,
-                    caseType,
-                    prosecutor(workingCase.type),
-                  ],
-                  columns: 2,
-                },
-              ]}
-            />
+            <InfoCardRequestCase displayRequestDetails />
           </Box>
           {workingCase.description && (
             <SectionHeading
