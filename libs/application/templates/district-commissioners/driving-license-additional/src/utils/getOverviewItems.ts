@@ -8,10 +8,7 @@ import {
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { Jurisdiction } from '@island.is/clients/driving-license'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../lib/messages'
 import { NationalRegistryAddress } from '../lib/types'
