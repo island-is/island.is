@@ -202,8 +202,9 @@ export class ApplicationTranslationClient {
       user,
       `/${encodeURIComponent(id)}/review`,
       {
-      method: 'POST',
-    })
+        method: 'POST',
+      },
+    )
   }
 
   listTemplates(user: User): Promise<
