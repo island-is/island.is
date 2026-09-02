@@ -72,6 +72,27 @@ export const debts = {
       defaultMessage: 'Skuldastaða',
       description: 'Debt amount table header',
     },
+    dueDateHeader: {
+      id: 'pd.application:debts.table.dueDateHeader',
+      defaultMessage: 'Gjalddagi',
+      description: 'Due date header of the expanded charge type sub-table',
+    },
+    finalDueDateHeader: {
+      id: 'pd.application:debts.table.finalDueDateHeader',
+      defaultMessage: 'Eindagi',
+      description:
+        'Final due date header of the expanded charge type sub-table',
+    },
+    principalHeader: {
+      id: 'pd.application:debts.table.principalHeader',
+      defaultMessage: 'Höfuðstóll',
+      description: 'Principal header of the expanded charge type sub-table',
+    },
+    interestHeader: {
+      id: 'pd.application:debts.table.interestHeader',
+      defaultMessage: 'Vextir',
+      description: 'Interest header of the expanded charge type sub-table',
+    },
     emptyMessage: {
       id: 'pd.application:debts.table.emptyMessage',
       defaultMessage: 'Engar skuldir fundust',

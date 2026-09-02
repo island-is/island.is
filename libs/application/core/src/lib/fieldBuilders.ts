@@ -1164,6 +1164,7 @@ export const buildInteractiveTableField = (
     selectable = false,
     inputColumn,
     footerRow,
+    expandedRows,
     isSubmitDisabled,
   } = data
 
@@ -1186,6 +1187,7 @@ export const buildInteractiveTableField = (
     selectable,
     inputColumn,
     footerRow,
+    expandedRows,
     isSubmitDisabled,
   }
 }

@@ -58,7 +58,7 @@ export const InteractiveTableFormField: FC<Props> = ({
     isHeaderColumnConfig(headerCell)
       ? {
           truncate: !!headerCell.truncate,
-          onCellClick: headerCell.onCellClick,
+          expandable: !!headerCell.expandable,
         }
       : { truncate: false },
   )
@@ -75,6 +75,15 @@ export const InteractiveTableFormField: FC<Props> = ({
     [field.footerRow, application],
   )
 
+  const expandedHeader = useMemo(() => {
+    const config = field.expandedRows?.header
+    return typeof config === 'function' ? config(application) : config
+  }, [field.expandedRows, application])
+  const expandedRows = useMemo(() => {
+    const config = field.expandedRows?.rows
+    return typeof config === 'function' ? config(application) : config
+  }, [field.expandedRows, application])
+
   const hasInputColumn = !!field.inputColumn
   const inputFieldId = field.inputColumn
     ? resolveFieldId({ id: field.inputColumn.id }, application, user)
@@ -86,6 +95,8 @@ export const InteractiveTableFormField: FC<Props> = ({
   const inputPlaceholder = field.inputColumn?.placeholder
     ? formatText(field.inputColumn.placeholder, application, formatMessage)
     : 'kr.'
+
+  const colSpan = header.length + (selectable ? 1 : 0)
 
   const fillerCell = (key: string) => <T.Data key={key} />
 
@@ -246,6 +257,9 @@ export const InteractiveTableFormField: FC<Props> = ({
                 inputMaxAmount={inputMaxAmounts[rowIndex]}
                 inputPlaceholder={inputPlaceholder}
                 columns={columns}
+                expandedHeader={expandedHeader}
+                expandedRows={expandedRows?.[rowIndex]}
+                colSpan={colSpan}
               />
             ))}
             {footerRow && (
