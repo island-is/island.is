@@ -42,6 +42,26 @@ export const shortenForToast = (text: string): string => {
   return `${firstLine.slice(0, TOAST_ERROR_MAX_LENGTH)}…`
 }
 
+export const getTranslationLoadErrorDetail = (
+  error: ApolloError | Error,
+): string => {
+  if (error instanceof ApolloError) {
+    const fromGraphQl = error.graphQLErrors
+      .map((graphQlError) => graphQlError.message)
+      .filter(Boolean)
+      .join('\n')
+    const fromNetwork =
+      error.networkError instanceof Error
+        ? error.networkError.message
+        : error.networkError
+        ? String(error.networkError)
+        : ''
+    return fromGraphQl || fromNetwork || error.message || 'Unknown error'
+  }
+
+  return error.message || 'Unknown error'
+}
+
 export const getTranslationSaveErrorDetail = (err: unknown): string => {
   let raw = ''
   if (err instanceof ApolloError) {

@@ -5,6 +5,7 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 import type { ApolloError } from '@apollo/client'
+import { getTranslationLoadErrorDetail } from '../../utils/translationWorkspaceErrors'
 
 export const TranslationWorkspaceLoading = () => (
   <GridContainer>
@@ -21,18 +22,7 @@ export const TranslationWorkspaceError = ({
   loadError: ApolloError | Error
   title?: string
 }) => {
-  const fromGraphQl = loadError.graphQLErrors
-    ?.map((e) => e.message)
-    .filter(Boolean)
-    .join('\n')
-  const fromNetwork =
-    loadError.networkError instanceof Error
-      ? loadError.networkError.message
-      : loadError.networkError
-      ? String(loadError.networkError)
-      : ''
-  const detailMessage =
-    fromGraphQl || fromNetwork || loadError.message || 'Unknown error'
+  const detailMessage = getTranslationLoadErrorDetail(loadError)
 
   return (
     <GridContainer>
