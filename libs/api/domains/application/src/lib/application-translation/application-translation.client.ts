@@ -198,7 +198,10 @@ export class ApplicationTranslationClient {
     user: User,
     id: string,
   ): Promise<ApplicationTranslationGql> {
-    return this.request<ApplicationTranslationGql>(user, `/${id}/review`, {
+    return this.request<ApplicationTranslationGql>(
+      user,
+      `/${encodeURIComponent(id)}/review`,
+      {
       method: 'POST',
     })
   }
@@ -220,7 +223,7 @@ export class ApplicationTranslationClient {
   ): Promise<TemplateIntrospectionGql> {
     return this.request<TemplateIntrospectionGql>(
       user,
-      `/templates/${typeId}/introspect`,
+      `/templates/${encodeURIComponent(typeId)}/introspect`,
     )
   }
 
