@@ -18,9 +18,20 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
   const loadedRef = useRef<string | null>(null)
 
   useEffect(() => {
-    if (!typeId || loadedRef.current === typeId) return
+    if (!typeId) {
+      setFields({})
+      setPreviewApplicationData({})
+      setLoading(false)
+      setError(null)
+      loadedRef.current = null
+      return
+    }
+
+    if (loadedRef.current === typeId) return
 
     let cancelled = false
+    setFields({})
+    setPreviewApplicationData({})
     setLoading(true)
     setError(null)
 

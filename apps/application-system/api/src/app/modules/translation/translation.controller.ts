@@ -252,9 +252,11 @@ export class TranslationController {
       user,
     )
 
-    if (rollback) {
-      await this.translationCacheService.invalidate(namespace)
+    if (!rollback) {
+      throw new NotFoundException('Publish version not found')
     }
+
+    await this.translationCacheService.invalidate(namespace)
 
     return rollback
   }

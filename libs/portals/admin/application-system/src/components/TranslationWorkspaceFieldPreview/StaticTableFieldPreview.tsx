@@ -13,7 +13,6 @@ export const StaticTableFieldPreview = ({
   screen,
   resolvePreviewString,
 }: FieldPreviewBaseProps) => {
-  const key = screen.id
   const layout = fieldPreviewLayoutProps(screen)
   const titleV = staticTableTitleVariantToText(
     screen.staticTableTitleVariant ?? 'h4',
@@ -61,7 +60,6 @@ export const StaticTableFieldPreview = ({
   if (!hasStructuredPreview) {
     return (
       <Box
-        key={key}
         padding={2}
         border="standard"
         borderRadius="standard"
@@ -79,7 +77,7 @@ export const StaticTableFieldPreview = ({
   }
 
   return (
-    <Box key={key} {...layout}>
+    <Box {...layout}>
       {mainTitle.trim() !== '' && (
         <Text variant={titleV} as="p" marginBottom={2}>
           {mainTitle}

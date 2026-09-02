@@ -469,6 +469,19 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationPublishCancel',
     defaultMessage: 'Hætta við',
   },
+  translationUnsavedChangesTitle: {
+    id: 'admin-portal.application-system:translationUnsavedChangesTitle',
+    defaultMessage: 'Óvistaðar breytingar',
+  },
+  translationUnsavedChangesMessage: {
+    id: 'admin-portal.application-system:translationUnsavedChangesMessage',
+    defaultMessage:
+      'Þú átt óvistaðar breytingar. Viltu vista þær áður en þú ferð?',
+  },
+  translationUnsavedChangesDiscard: {
+    id: 'admin-portal.application-system:translationUnsavedChangesDiscard',
+    defaultMessage: 'Fara án vistunar',
+  },
   translationPublishSuccess: {
     id: 'admin-portal.application-system:translationPublishSuccess',
     defaultMessage: 'Þýðingar hafa verið birtar.',

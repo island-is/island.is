@@ -1,9 +1,10 @@
+import { isOwnedTranslationMessageId } from '@island.is/application/utils'
 import type {
   EditedTranslations,
   MessageDescriptor,
 } from '../types/translationWorkspace'
 
-export const AUTOSAVE_INTERVAL_MS = 60_000
+export const AUTOSAVE_INTERVAL_MS = 15_000
 export const GOOGLE_TRANSLATE_BATCH_SIZE = 100
 
 export type PersistedTranslationRow = {
@@ -96,11 +97,15 @@ export const buildTranslationsToSave = (
     }
   }
 
-  return Array.from(dirtyByKey.entries()).map(([messageKey, fields]) => ({
-    namespace,
-    messageKey,
-    ...fields,
-  }))
+  return Array.from(dirtyByKey.entries())
+    .filter(([messageKey]) =>
+      isOwnedTranslationMessageId(messageKey, [namespace]),
+    )
+    .map(([messageKey, fields]) => ({
+      namespace,
+      messageKey,
+      ...fields,
+    }))
 }
 
 export const hasUnsavedTranslationChanges = (

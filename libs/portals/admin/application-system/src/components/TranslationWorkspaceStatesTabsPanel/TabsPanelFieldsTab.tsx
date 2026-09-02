@@ -39,6 +39,7 @@ export interface TabsPanelFieldsTabProps {
     items: Array<{ id: string; sourceText: string }>,
   ) => void
   translatingIds?: ReadonlySet<string>
+  ownedNamespaces?: readonly string[]
 }
 
 export const TabsPanelFieldsTab = ({
@@ -58,6 +59,7 @@ export const TabsPanelFieldsTab = ({
   onGoogleTranslate,
   onGoogleTranslateAll,
   translatingIds,
+  ownedNamespaces = [],
 }: TabsPanelFieldsTabProps) => {
   const getReferenceForDescriptor = (descriptor: {
     id: string
@@ -91,9 +93,13 @@ export const TabsPanelFieldsTab = ({
   const currentFieldProperties = useMemo(
     () =>
       currentField
-        ? getFieldProperties(currentField, validationDescriptorsByPath)
+        ? getFieldProperties(
+            currentField,
+            validationDescriptorsByPath,
+            ownedNamespaces,
+          )
         : [],
-    [currentField, validationDescriptorsByPath],
+    [currentField, validationDescriptorsByPath, ownedNamespaces],
   )
 
   const translatablePropertyIds = currentFieldProperties

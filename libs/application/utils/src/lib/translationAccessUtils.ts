@@ -14,7 +14,6 @@ export interface SharedTranslationNamespaceInfo {
 export interface TranslationAccessContext {
   nationalId: string
   scope: string[]
-  actor?: { scope: string[] }
 }
 
 const GLOBAL_TRANSLATION_SCOPES: string[] = [
@@ -22,27 +21,13 @@ const GLOBAL_TRANSLATION_SCOPES: string[] = [
 ]
 
 /**
- * Merges token scopes with actor (delegation) scopes so a super admin acting on
- * behalf of an institution keeps global translation access from their own scopes.
+ * Uses the token's subject scopes only. Actor (delegation) scopes are ignored so
+ * a super admin acting as an institution is narrowed to that institution.
  */
-export const getEffectiveTranslationScopes = (
-  user: TranslationAccessContext,
-): string[] => {
-  const scopes = [...(user.scope ?? [])]
-  if (user.actor?.scope) {
-    for (const scope of user.actor.scope) {
-      if (!scopes.includes(scope)) {
-        scopes.push(scope)
-      }
-    }
-  }
-  return scopes
-}
-
 export const hasGlobalTranslationAccess = (
   user: TranslationAccessContext,
 ): boolean => {
-  const scopes = getEffectiveTranslationScopes(user)
+  const scopes = user.scope ?? []
   return GLOBAL_TRANSLATION_SCOPES.some((scope) => scopes.includes(scope))
 }
 
@@ -162,6 +147,44 @@ export const isSharedTranslationNamespace = (namespace: string): boolean =>
   getSharedTranslationNamespaces().some(
     (entry) => entry.namespace === namespace,
   )
+
+/**
+ * Namespaces that belong to a single application. Shared namespaces
+ * (`uiForms.application`, `sia.application`, `application.system`, …) are
+ * translated in the shared-namespace workspace instead.
+ *
+ * If every configured namespace is shared, the original list is returned so
+ * the application workspace is not left empty.
+ */
+export const getOwnedTranslationNamespaces = (
+  namespaces: readonly string[],
+): string[] => {
+  const unique = [...new Set(namespaces.filter(Boolean))]
+  const shared = new Set(
+    getSharedTranslationNamespaces().map((entry) => entry.namespace),
+  )
+  const owned = unique.filter((namespace) => !shared.has(namespace))
+  return owned.length > 0 ? owned : unique
+}
+
+export const isOwnedTranslationMessageId = (
+  messageId: string,
+  ownedNamespaces: readonly string[],
+): boolean =>
+  ownedNamespaces.some((namespace) => messageId.startsWith(`${namespace}:`))
+
+export const filterOwnedTranslationDescriptors = <T extends { id: string }>(
+  descriptors: readonly T[],
+  namespaces: readonly string[],
+): T[] => {
+  const owned = getOwnedTranslationNamespaces(namespaces)
+  if (owned.length === 0) {
+    return [...descriptors]
+  }
+  return descriptors.filter((descriptor) =>
+    isOwnedTranslationMessageId(descriptor.id, owned),
+  )
+}
 
 /** Encodes namespace for URL path segments (dots are not encoded by encodeURIComponent). */
 export const encodeTranslationNamespaceForUrlPath = (

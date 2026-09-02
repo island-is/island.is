@@ -53,6 +53,7 @@ export interface TranslationWorkspaceStatesTabsPanelProps {
     items: Array<{ id: string; sourceText: string }>,
   ) => void
   translatingIds?: ReadonlySet<string>
+  ownedNamespaces?: readonly string[]
 }
 
 const withCount = (label: string, count: number) =>
@@ -85,6 +86,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
   onGoogleTranslate,
   onGoogleTranslateAll,
   translatingIds,
+  ownedNamespaces = [],
 }: TranslationWorkspaceStatesTabsPanelProps) => {
   const [activeTab, setActiveTabRaw] = useState(STATES_TAB_ID)
   const [stringsListScope, setStringsListScope] = useState<
@@ -236,25 +238,22 @@ export const TranslationWorkspaceStatesTabsPanel = ({
         aria-labelledby={`translation-workspace-tab-${activeTab}`}
         className={styles.tabPanel}
       >
-        <Box
-          className={cn(
-            styles.tabsPanelScroll,
-            activeTab !== STATES_TAB_ID && styles.tabPanelHidden,
-          )}
-          hidden={activeTab !== STATES_TAB_ID}
-        >
-          <Box className={styles.tabsPanelInner}>
-            <TranslationWorkspaceStatesNav
-              states={states}
-              selectedScreenId={selectedScreenId}
-              selectedLocation={selectedLocation}
-              onNavClick={onNavClick}
-              persistedByKey={persistedByKey}
-              editedValues={editedValues}
-              activeLocale={activeLocale}
-            />
+        {activeTab === STATES_TAB_ID && (
+          <Box className={styles.tabsPanelScroll}>
+            <Box className={styles.tabsPanelInner}>
+              <TranslationWorkspaceStatesNav
+                states={states}
+                selectedScreenId={selectedScreenId}
+                selectedLocation={selectedLocation}
+                onNavClick={onNavClick}
+                persistedByKey={persistedByKey}
+                editedValues={editedValues}
+                activeLocale={activeLocale}
+                ownedNamespaces={ownedNamespaces}
+              />
+            </Box>
           </Box>
-        </Box>
+        )}
         {activeTab === STRINGS_TAB_ID && (
           <TabsPanelStringsTab
             selectedScreen={selectedScreen}
@@ -293,6 +292,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
             onGoogleTranslate={onGoogleTranslate}
             onGoogleTranslateAll={onGoogleTranslateAll}
             translatingIds={translatingIds}
+            ownedNamespaces={ownedNamespaces}
           />
         )}
       </Box>

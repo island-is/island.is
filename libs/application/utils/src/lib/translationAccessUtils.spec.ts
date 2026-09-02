@@ -10,7 +10,10 @@ import {
   getSharedTranslationNamespaces,
   getTypeIdsForNamespace,
   encodeTranslationNamespaceForUrlPath,
+  filterOwnedTranslationDescriptors,
+  getOwnedTranslationNamespaces,
   hasGlobalTranslationAccess,
+  isOwnedTranslationMessageId,
   isSharedTranslationNamespace,
   isTranslationNamespaceAllowed,
   isTranslationTypeIdAllowed,
@@ -28,17 +31,14 @@ const superAdminUser = {
 
 const delegatedHmsUser = {
   nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
-  scope: [],
-  actor: {
-    scope: [AdminPortalScope.applicationSystemInstitution],
-  },
+  scope: [AdminPortalScope.applicationSystemInstitution],
 }
 
 const superAdminActingAsInstitution = {
   nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
-  scope: [AdminPortalScope.applicationSystemAdmin],
+  scope: [AdminPortalScope.applicationSystemInstitution],
   actor: {
-    scope: [AdminPortalScope.applicationSystemInstitution],
+    scope: [AdminPortalScope.applicationSystemAdmin],
   },
 }
 
@@ -52,13 +52,13 @@ describe('translationAccessUtils', () => {
       expect(hasGlobalTranslationAccess(hmsUser)).toBe(false)
     })
 
-    it('uses actor scopes when delegating', () => {
+    it('returns false for a delegated institution session', () => {
       expect(hasGlobalTranslationAccess(delegatedHmsUser)).toBe(false)
     })
 
-    it('keeps global access when super admin scopes are on the token while acting', () => {
+    it('does not escalate via actor scopes when a super admin acts as an institution', () => {
       expect(hasGlobalTranslationAccess(superAdminActingAsInstitution)).toBe(
-        true,
+        false,
       )
     })
   })
@@ -68,10 +68,13 @@ describe('translationAccessUtils', () => {
       expect(getAllowedTranslationTypeIds(superAdminUser)).toBeNull()
     })
 
-    it('returns null for super admin acting on behalf of an institution', () => {
-      expect(
-        getAllowedTranslationTypeIds(superAdminActingAsInstitution),
-      ).toBeNull()
+    it('narrows to the institution when a super admin acts as that institution', () => {
+      const allowed = getAllowedTranslationTypeIds(
+        superAdminActingAsInstitution,
+      )
+      expect(allowed).toContain(ApplicationTypes.RENTAL_AGREEMENT)
+      expect(allowed).toContain(ApplicationTypes.HOUSING_BENEFITS)
+      expect(allowed).not.toContain(ApplicationTypes.PASSPORT)
     })
 
     it('returns HMS type IDs for HMS institution user', () => {
@@ -109,6 +112,24 @@ describe('translationAccessUtils', () => {
         isTranslationTypeIdAllowed(hmsUser, ApplicationTypes.PASSPORT),
       ).toBe(false)
     })
+
+    it('denies other institutions when a super admin acts as HMS', () => {
+      expect(
+        isTranslationTypeIdAllowed(
+          superAdminActingAsInstitution,
+          ApplicationTypes.PASSPORT,
+        ),
+      ).toBe(false)
+    })
+
+    it('allows HMS applications when a super admin acts as HMS', () => {
+      expect(
+        isTranslationTypeIdAllowed(
+          superAdminActingAsInstitution,
+          ApplicationTypes.RENTAL_AGREEMENT,
+        ),
+      ).toBe(true)
+    })
   })
 
   describe('getTypeIdsForNamespace', () => {
@@ -140,6 +161,15 @@ describe('translationAccessUtils', () => {
     it('denies core namespace for institution user', () => {
       expect(
         isTranslationNamespaceAllowed(hmsUser, CORE_TRANSLATION_NAMESPACE),
+      ).toBe(false)
+    })
+
+    it('denies core namespace when a super admin acts as an institution', () => {
+      expect(
+        isTranslationNamespaceAllowed(
+          superAdminActingAsInstitution,
+          CORE_TRANSLATION_NAMESPACE,
+        ),
       ).toBe(false)
     })
   })
@@ -180,6 +210,71 @@ describe('translationAccessUtils', () => {
 
     it('returns false for single-app namespaces', () => {
       expect(isSharedTranslationNamespace('ra.application')).toBe(false)
+    })
+  })
+
+  describe('getOwnedTranslationNamespaces', () => {
+    it('drops shared namespaces used by housing benefits', () => {
+      expect(
+        getOwnedTranslationNamespaces([
+          'hb.application',
+          'uiForms.application',
+        ]),
+      ).toEqual(['hb.application'])
+    })
+
+    it('drops sia.application and uiForms.application for SIA templates', () => {
+      expect(
+        getOwnedTranslationNamespaces([
+          'oap.application',
+          'sia.application',
+          'uiForms.application',
+        ]),
+      ).toEqual(['oap.application'])
+    })
+
+    it('keeps a single-app namespace', () => {
+      expect(getOwnedTranslationNamespaces(['pa.application'])).toEqual([
+        'pa.application',
+      ])
+    })
+
+    it('falls back to the configured list when every namespace is shared', () => {
+      expect(getOwnedTranslationNamespaces(['uiForms.application'])).toEqual([
+        'uiForms.application',
+      ])
+    })
+  })
+
+  describe('isOwnedTranslationMessageId', () => {
+    it('matches ids in owned namespaces only', () => {
+      expect(
+        isOwnedTranslationMessageId('hb.application:draft.title', [
+          'hb.application',
+        ]),
+      ).toBe(true)
+      expect(
+        isOwnedTranslationMessageId(
+          'uiForms.application:applicantInfo.labels.name',
+          ['hb.application'],
+        ),
+      ).toBe(false)
+    })
+  })
+
+  describe('filterOwnedTranslationDescriptors', () => {
+    it('keeps application-namespace strings and drops shared ones', () => {
+      const filtered = filterOwnedTranslationDescriptors(
+        [
+          { id: 'hb.application:draft.title' },
+          { id: 'uiForms.application:applicantInfo.labels.name' },
+          { id: 'application.system:button.next' },
+        ],
+        ['hb.application', 'uiForms.application'],
+      )
+      expect(filtered.map((descriptor) => descriptor.id)).toEqual([
+        'hb.application:draft.title',
+      ])
     })
   })
 

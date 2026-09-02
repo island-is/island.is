@@ -1,3 +1,4 @@
+import { isOwnedTranslationMessageId } from '@island.is/application/utils'
 import type {
   MessageDescriptor,
   ScreenIntrospection,
@@ -126,9 +127,15 @@ export interface FieldProperty {
 export const getFieldProperties = (
   field: ScreenIntrospection,
   validationDescriptorsByPath: Record<string, ValidationMessageDescriptor[]>,
+  ownedNamespaces: readonly string[] = [],
 ): FieldProperty[] => {
   const props: FieldProperty[] = []
-  const descriptors = field.messageDescriptors
+  const descriptors =
+    ownedNamespaces.length > 0
+      ? field.messageDescriptors.filter((descriptor) =>
+          isOwnedTranslationMessageId(descriptor.id, ownedNamespaces),
+        )
+      : field.messageDescriptors
 
   const titleDescriptor = field.title
     ? descriptors.find((d) => d.defaultMessage === field.title) ?? null
@@ -159,6 +166,12 @@ export const getFieldProperties = (
   const errorDescs = validationDescriptorsByPath[field.id]
   if (errorDescs) {
     for (const d of errorDescs) {
+      if (
+        ownedNamespaces.length > 0 &&
+        !isOwnedTranslationMessageId(d.id, ownedNamespaces)
+      ) {
+        continue
+      }
       props.push({ role: 'error', label: 'Error message', descriptor: d })
     }
   }

@@ -99,7 +99,3 @@ export const tabsPanelInner = style({
     },
   },
 })
-
-export const tabPanelHidden = style({
-  display: 'none',
-})

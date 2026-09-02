@@ -155,16 +155,6 @@ query getApplicationSharedNamespaceIntrospection($namespace: String!) {
   }
 }
 
-query getApplicationTranslationAllStatus {
-  applicationTranslationAllStatus {
-    namespace
-    total
-    translatedEn
-    untranslatedEn
-    reviewed
-  }
-}
-
 query getApplicationTranslations($namespace: String!) {
   applicationTranslations(namespace: $namespace) {
     id
@@ -271,19 +261,6 @@ query getApplicationTemplateIntrospection($typeId: String!) {
   }
 }
 
-mutation updateApplicationTranslation(
-  $input: UpdateApplicationTranslationInput!
-) {
-  updateApplicationTranslation(input: $input) {
-    id
-    namespace
-    messageKey
-    valueIs
-    valueEn
-    isReviewed
-  }
-}
-
 mutation bulkUpdateApplicationTranslations(
   $input: BulkUpdateApplicationTranslationsInput!
 ) {
@@ -293,13 +270,6 @@ mutation bulkUpdateApplicationTranslations(
     messageKey
     valueIs
     valueEn
-    isReviewed
-  }
-}
-
-mutation reviewApplicationTranslation($id: String!) {
-  reviewApplicationTranslation(id: $id) {
-    id
     isReviewed
   }
 }

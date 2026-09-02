@@ -12,7 +12,6 @@ export const DescriptionFieldPreview = ({
   screen,
   resolvePreviewString,
 }: FieldPreviewBaseProps) => {
-  const key = screen.id
   const layout = fieldPreviewLayoutProps(screen)
   const titleText =
     screen.title != null && screen.title !== ''
@@ -50,7 +49,7 @@ export const DescriptionFieldPreview = ({
   const titleV = descriptionTitleVariantToText(screen.titleVariant)
 
   return (
-    <Box key={key} {...layout}>
+    <Box {...layout}>
       {titleText !== '' && (
         <Text
           variant={titleV}

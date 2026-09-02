@@ -3,7 +3,7 @@ import { PortalModule, PortalModuleRoutesProps } from '@island.is/portals/core'
 import React, { lazy } from 'react'
 import { m } from './lib/messages'
 import { ApplicationSystemPaths } from './lib/paths'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 
 const Root = lazy(() => import('./screens/Root/Root'))
 const TranslationWorkspace = lazy(() =>
@@ -18,6 +18,16 @@ const SharedNamespaceTranslationWorkspace = lazy(() =>
     default: m.SharedNamespaceTranslationWorkspace,
   })),
 )
+
+const TranslationWorkspaceRoute = () => {
+  const { typeId } = useParams<{ typeId: string }>()
+  return <TranslationWorkspace key={typeId} />
+}
+
+const SharedNamespaceTranslationWorkspaceRoute = () => {
+  const { namespace } = useParams<{ namespace: string }>()
+  return <SharedNamespaceTranslationWorkspace key={namespace} />
+}
 
 const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemAdmin,
@@ -52,17 +62,17 @@ export const applicationSystemAdminModule: PortalModule = {
     {
       name: m.translations,
       path: '/umsoknakerfi/thydingar/shared/:namespace',
-      element: <SharedNamespaceTranslationWorkspace />,
+      element: <SharedNamespaceTranslationWorkspaceRoute />,
     },
     {
       name: m.translations,
       path: ApplicationSystemPaths.SharedNamespaceTranslationWorkspace,
-      element: <SharedNamespaceTranslationWorkspace />,
+      element: <SharedNamespaceTranslationWorkspaceRoute />,
     },
     {
       name: m.translations,
       path: ApplicationSystemPaths.TranslationWorkspace,
-      element: <TranslationWorkspace />,
+      element: <TranslationWorkspaceRoute />,
     },
   ],
 }

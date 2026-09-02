@@ -1,3 +1,4 @@
+import { getOwnedTranslationNamespaces } from '@island.is/application/utils'
 import { useMemo } from 'react'
 import { createWorkspacePreviewApplication } from '../components/TranslationWorkspaceFieldPreview'
 import {
@@ -12,8 +13,12 @@ import {
 import { useTemplateCustomFields } from './useTemplateCustomFields'
 
 export const useTranslationWorkspaceData = (typeId: string | undefined) => {
-  const { customFields, previewApplicationData } =
-    useTemplateCustomFields(typeId)
+  const {
+    customFields,
+    previewApplicationData,
+    loading: customFieldsLoading,
+    error: customFieldsError,
+  } = useTemplateCustomFields(typeId)
 
   const previewApplication = useMemo(
     () => createWorkspacePreviewApplication(typeId, previewApplicationData),
@@ -29,7 +34,12 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
   const introspection = (data?.applicationTemplateIntrospection ??
     null) as WorkspaceTemplateIntrospection | null
 
-  const namespace = introspection?.translationNamespaces[0] ?? typeId ?? ''
+  const namespace =
+    getOwnedTranslationNamespaces(
+      introspection?.translationNamespaces ?? [],
+    )[0] ??
+    typeId ??
+    ''
 
   const {
     data: translationsData,
@@ -53,8 +63,11 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
     [translationRows],
   )
 
-  const isLoading = loading || Boolean(introspection && translationsLoading)
-  const loadError = error ?? translationsError
+  const isLoading =
+    loading ||
+    customFieldsLoading ||
+    Boolean(introspection && translationsLoading)
+  const loadError = error ?? translationsError ?? customFieldsError
 
   return {
     introspection,

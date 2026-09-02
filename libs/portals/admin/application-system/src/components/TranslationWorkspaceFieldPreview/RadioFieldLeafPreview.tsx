@@ -68,7 +68,7 @@ export const RadioFieldLeafPreview = ({
   }
 
   return (
-    <Box key={key} {...layout}>
+    <Box {...layout}>
       {label.trim() !== '' && (
         <Text variant="small" fontWeight="semiBold" marginBottom={1}>
           {label}

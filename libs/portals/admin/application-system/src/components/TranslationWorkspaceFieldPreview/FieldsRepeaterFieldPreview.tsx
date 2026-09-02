@@ -27,7 +27,6 @@ export const FieldsRepeaterFieldPreview = ({
   previewFields,
   previewApplication,
 }: FieldPreviewWithFormatMessageProps) => {
-  const key = screen.id
   const layout = fieldPreviewLayoutProps(screen)
   const formChildren = filterPreviewMultiFieldChildren(screen.children)
   const mainTitle = resolveTranslatableStaticText(
@@ -60,7 +59,6 @@ export const FieldsRepeaterFieldPreview = ({
   if (formChildren.length === 0) {
     return (
       <Box
-        key={key}
         padding={2}
         border="standard"
         borderRadius="standard"
@@ -76,7 +74,7 @@ export const FieldsRepeaterFieldPreview = ({
   }
 
   return (
-    <Box key={key} marginBottom={2} {...layout}>
+    <Box marginBottom={2} {...layout}>
       {mainTitle.trim() !== '' && (
         <Text as="h2" variant="h2" marginTop={1} marginBottom={1}>
           {mainTitle}

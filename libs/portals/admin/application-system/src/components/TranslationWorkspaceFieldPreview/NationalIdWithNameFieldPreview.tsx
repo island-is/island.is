@@ -68,7 +68,7 @@ export const NationalIdWithNameFieldPreview = ({
     : ''
 
   return (
-    <Box key={key} {...layout}>
+    <Box {...layout}>
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
           <Input

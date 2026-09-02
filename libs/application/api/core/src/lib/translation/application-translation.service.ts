@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import type { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
@@ -87,26 +86,6 @@ export class ApplicationTranslationService {
   ): Promise<Record<string, string>> {
     const translations = await this.getTranslationsForAllLocales(namespace)
     return translations[locale]
-  }
-
-  async getTranslationsForNamespaces(
-    namespaces: string[],
-    locale: Locale,
-  ): Promise<Record<string, string>> {
-    const valueColumn = locale === 'en' ? 'valueEn' : 'valueIs'
-    const translations = await this.translationModel.findAll({
-      where: { namespace: { [Op.in]: namespaces } },
-      attributes: ['messageKey', valueColumn],
-    })
-
-    const result: Record<string, string> = {}
-    for (const t of translations) {
-      const value = locale === 'en' ? t.valueEn ?? t.valueIs : t.valueIs
-      if (value != null && value !== '') {
-        result[t.messageKey] = value
-      }
-    }
-    return result
   }
 
   /**

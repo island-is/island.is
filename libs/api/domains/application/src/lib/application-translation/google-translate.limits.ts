@@ -18,10 +18,56 @@ export const GOOGLE_TRANSLATE_RATE_LIMIT_WINDOW_MS = 60_000
 export const GOOGLE_TRANSLATE_MAX_REQUESTS_PER_WINDOW = 20
 export const GOOGLE_TRANSLATE_MAX_CHARS_PER_WINDOW = 60_000
 
-type WindowUsage = {
+/** Shared across replicas. Caps total Google Translate spend per UTC day. */
+export const GOOGLE_TRANSLATE_MAX_REQUESTS_PER_DAY = 2_000
+export const GOOGLE_TRANSLATE_MAX_CHARS_PER_DAY = 2_000_000
+
+export const GOOGLE_TRANSLATE_USAGE_KEY_PREFIX = 'google-translate:rl:'
+export const GOOGLE_TRANSLATE_DAILY_KEY_PREFIX = 'google-translate:daily:'
+
+export type WindowUsage = {
   windowStartedAt: number
   requestCount: number
   characterCount: number
+}
+
+export type DailyUsage = {
+  requestCount: number
+  characterCount: number
+}
+
+export type GoogleTranslateUsageStore = {
+  get<T>(key: string): Promise<T | undefined>
+  set<T>(key: string, value: T, ttlMs: number): Promise<void>
+}
+
+export const createGoogleTranslateCacheStore = (cache: {
+  get<T>(key: string): Promise<T | null | undefined>
+  set<T>(key: string, value: T, ttl?: number): Promise<unknown>
+}): GoogleTranslateUsageStore => ({
+  get: async <T>(key: string) => (await cache.get<T>(key)) ?? undefined,
+  set: async (key, value, ttlMs) => {
+    await cache.set(key, value, ttlMs)
+  },
+})
+
+export const googleTranslateUserUsageKey = (userKey: string): string =>
+  `${GOOGLE_TRANSLATE_USAGE_KEY_PREFIX}${userKey}`
+
+export const googleTranslateDailyUsageKey = (day: string): string =>
+  `${GOOGLE_TRANSLATE_DAILY_KEY_PREFIX}${day}`
+
+export const utcDateKey = (nowMs: number): string =>
+  new Date(nowMs).toISOString().slice(0, 10)
+
+export const msUntilNextUtcDay = (nowMs: number): number => {
+  const now = new Date(nowMs)
+  const next = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate() + 1,
+  )
+  return Math.max(next - nowMs, 1)
 }
 
 export const totalTranslateCharacterCount = (texts: string[]): number =>
@@ -64,22 +110,36 @@ export const assertGoogleTranslateInputLimits = (texts: string[]): number => {
   return totalChars
 }
 
+const rateLimitExceeded = () =>
+  new HttpException(
+    'Google Translate rate limit exceeded. Try again later.',
+    HttpStatus.TOO_MANY_REQUESTS,
+  )
+
 export class GoogleTranslateRateLimiter {
   private readonly usageByUser = new Map<string, WindowUsage>()
+  private readonly dailyUsage = new Map<string, DailyUsage>()
 
   constructor(
     private readonly now: () => number = Date.now,
     private readonly windowMs = GOOGLE_TRANSLATE_RATE_LIMIT_WINDOW_MS,
     private readonly maxRequests = GOOGLE_TRANSLATE_MAX_REQUESTS_PER_WINDOW,
     private readonly maxChars = GOOGLE_TRANSLATE_MAX_CHARS_PER_WINDOW,
+    private readonly store?: GoogleTranslateUsageStore,
+    private readonly maxDailyRequests = GOOGLE_TRANSLATE_MAX_REQUESTS_PER_DAY,
+    private readonly maxDailyChars = GOOGLE_TRANSLATE_MAX_CHARS_PER_DAY,
   ) {}
 
-  consume(userKey: string, characterCount: number): void {
+  async consume(userKey: string, characterCount: number): Promise<void> {
     const now = this.now()
     this.prune(now)
 
-    const current = this.usageByUser.get(userKey)
-    const usage =
+    const userKeyName = googleTranslateUserUsageKey(userKey)
+    const current = await this.readUsage<WindowUsage>(
+      userKeyName,
+      this.usageByUser.get(userKey),
+    )
+    const usage: WindowUsage =
       !current || now - current.windowStartedAt >= this.windowMs
         ? { windowStartedAt: now, requestCount: 0, characterCount: 0 }
         : current
@@ -88,25 +148,88 @@ export class GoogleTranslateRateLimiter {
       usage.requestCount + 1 > this.maxRequests ||
       usage.characterCount + characterCount > this.maxChars
     ) {
-      throw new HttpException(
-        'Google Translate rate limit exceeded. Try again later.',
-        HttpStatus.TOO_MANY_REQUESTS,
-      )
+      throw rateLimitExceeded()
+    }
+
+    const day = utcDateKey(now)
+    const dailyKey = googleTranslateDailyUsageKey(day)
+    const dailyCurrent = await this.readUsage<DailyUsage>(
+      dailyKey,
+      this.dailyUsage.get(day),
+    )
+    const daily: DailyUsage = dailyCurrent ?? {
+      requestCount: 0,
+      characterCount: 0,
+    }
+
+    if (
+      daily.requestCount + 1 > this.maxDailyRequests ||
+      daily.characterCount + characterCount > this.maxDailyChars
+    ) {
+      throw rateLimitExceeded()
     }
 
     usage.requestCount += 1
     usage.characterCount += characterCount
-    this.usageByUser.set(userKey, usage)
+    daily.requestCount += 1
+    daily.characterCount += characterCount
+
+    const windowTtl = Math.max(this.windowMs - (now - usage.windowStartedAt), 1)
+    await this.writeUsage(userKeyName, usage, windowTtl, (value) => {
+      this.usageByUser.set(userKey, value)
+    })
+    await this.writeUsage(dailyKey, daily, msUntilNextUtcDay(now), (value) => {
+      this.dailyUsage.set(day, value)
+    })
   }
 
-  private prune(now: number): void {
-    if (this.usageByUser.size < 500) {
+  private async readUsage<T>(
+    key: string,
+    fallback: T | undefined,
+  ): Promise<T | undefined> {
+    if (!this.store) {
+      return fallback
+    }
+
+    try {
+      return (await this.store.get<T>(key)) ?? fallback
+    } catch {
+      return fallback
+    }
+  }
+
+  private async writeUsage<T>(
+    key: string,
+    value: T,
+    ttlMs: number,
+    writeLocal: (value: T) => void,
+  ): Promise<void> {
+    writeLocal(value)
+
+    if (!this.store) {
       return
     }
 
-    for (const [key, usage] of this.usageByUser) {
-      if (now - usage.windowStartedAt >= this.windowMs) {
-        this.usageByUser.delete(key)
+    try {
+      await this.store.set(key, value, ttlMs)
+    } catch {
+      // Shared store is best-effort; local write still applies on this replica.
+    }
+  }
+
+  private prune(now: number): void {
+    if (this.usageByUser.size >= 500) {
+      for (const [key, usage] of this.usageByUser) {
+        if (now - usage.windowStartedAt >= this.windowMs) {
+          this.usageByUser.delete(key)
+        }
+      }
+    }
+
+    const today = utcDateKey(now)
+    for (const day of this.dailyUsage.keys()) {
+      if (day !== today) {
+        this.dailyUsage.delete(day)
       }
     }
   }

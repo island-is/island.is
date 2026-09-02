@@ -95,4 +95,43 @@ describe('TemplateIntrospectionService HousingBenefits', () => {
     ])
     expect(housingBenefits?.name).toBe('Húsnæðisbætur')
   })
+
+  it('lists only hb.application strings for editing, keeping shared labels on screens', async () => {
+    const svc = new TemplateIntrospectionService()
+    const result = await svc.introspectTemplate(
+      ApplicationTypes.HOUSING_BENEFITS,
+    )
+
+    expect(
+      result.allMessageDescriptors.some((descriptor) =>
+        descriptor.id.startsWith('hb.application:'),
+      ),
+    ).toBe(true)
+    expect(
+      result.allMessageDescriptors.some((descriptor) =>
+        descriptor.id.startsWith('uiForms.application:'),
+      ),
+    ).toBe(false)
+
+    const draft = result.states.find((state) => state.stateName === 'Main form')
+    const applicant = draft?.roles.find((role) => role.roleId === 'applicant')
+    const personalInfoSection = applicant?.form?.sections.find(
+      (section) => section.id === 'personalInformationSection',
+    )
+    const screenDescriptors = [
+      ...(personalInfoSection?.screens ?? []),
+      ...(personalInfoSection?.subSections.flatMap(
+        (subSection) => subSection.screens,
+      ) ?? []),
+    ].flatMap((screen) => [
+      ...screen.messageDescriptors,
+      ...(screen.children ?? []).flatMap((child) => child.messageDescriptors),
+    ])
+
+    expect(
+      screenDescriptors.some((descriptor) =>
+        descriptor.id.startsWith('uiForms.application:'),
+      ),
+    ).toBe(true)
+  })
 })

@@ -1,4 +1,8 @@
 import { useMemo } from 'react'
+import {
+  filterOwnedTranslationDescriptors,
+  getOwnedTranslationNamespaces,
+} from '@island.is/application/utils'
 import type {
   MessageDescriptor,
   ScreenIntrospection,
@@ -26,6 +30,14 @@ export const useTranslationWorkspaceDerivedView = ({
   selectedLocation,
   selectedScreen,
 }: UseTranslationWorkspaceDerivedViewArgs) => {
+  const ownedNamespaces = useMemo(
+    () =>
+      getOwnedTranslationNamespaces(
+        introspection?.translationNamespaces ?? [],
+      ),
+    [introspection],
+  )
+
   const activeForm = useMemo(
     () => getActiveForm(introspection, selectedLocation),
     [introspection, selectedLocation],
@@ -42,28 +54,45 @@ export const useTranslationWorkspaceDerivedView = ({
   )
 
   const screenMessageDescriptors = useMemo(
-    () => collectScreenMessageDescriptors(selectedScreen),
-    [selectedScreen],
+    () =>
+      filterOwnedTranslationDescriptors(
+        collectScreenMessageDescriptors(selectedScreen),
+        ownedNamespaces,
+      ),
+    [selectedScreen, ownedNamespaces],
   )
 
-  const allApplicationMessageDescriptors = useMemo(
+  const previewCatalogDescriptors = useMemo(
     () => (introspection?.allMessageDescriptors ?? []) as MessageDescriptor[],
     [introspection],
   )
 
-  const validationDescriptors = useMemo(
-    (): ValidationMessageDescriptor[] =>
-      (introspection?.validationMessageDescriptors ??
-        []) as ValidationMessageDescriptor[],
+  const allApplicationMessageDescriptors = useMemo(
+    () =>
+      filterOwnedTranslationDescriptors(
+        previewCatalogDescriptors,
+        ownedNamespaces,
+      ),
+    [previewCatalogDescriptors, ownedNamespaces],
+  )
+
+  const validationDescriptors = useMemo((): ValidationMessageDescriptor[] => {
+    const all = (introspection?.validationMessageDescriptors ??
+      []) as ValidationMessageDescriptor[]
+    return filterOwnedTranslationDescriptors(all, ownedNamespaces)
+  }, [introspection, ownedNamespaces])
+
+  const validationDescriptorsByPath = useMemo(
+    () =>
+      groupValidationDescriptorsByPath(
+        (introspection?.validationMessageDescriptors ??
+          []) as ValidationMessageDescriptor[],
+      ),
     [introspection],
   )
 
-  const validationDescriptorsByPath = useMemo(
-    () => groupValidationDescriptorsByPath(validationDescriptors),
-    [validationDescriptors],
-  )
-
   return {
+    ownedNamespaces,
     activeForm,
     activeSections: (activeForm?.sections ?? []) as TemplateSectionNav[],
     activeFormTitle: activeForm?.title ?? null,
@@ -71,6 +100,7 @@ export const useTranslationWorkspaceDerivedView = ({
     footerSubmitScreen,
     screenMessageDescriptors,
     allApplicationMessageDescriptors,
+    previewCatalogDescriptors,
     validationDescriptors,
     validationDescriptorsByPath,
     activeStateKey: selectedLocation?.stateKey ?? '',

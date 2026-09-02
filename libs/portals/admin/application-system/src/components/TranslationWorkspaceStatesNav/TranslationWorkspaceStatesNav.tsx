@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Box, Text, AccordionItem, Accordion } from '@island.is/island-ui/core'
 import type {
   EditedTranslations,
+  MessageDescriptor,
   ScreenIntrospection,
   SidebarNavLocation,
   TemplateStateNav,
@@ -10,6 +11,8 @@ import {
   buildSectionLeafNavigationScreen,
   buildSectionNavigationScreen,
   buildSubSectionNavigationScreen,
+  descriptorsForSectionNavigation,
+  mergeMessageDescriptorLists,
   countTranslationsForRole,
   countTranslationsForScreens,
   countTranslationsForState,
@@ -58,6 +61,7 @@ export interface TranslationWorkspaceStatesNavProps {
   persistedByKey: PersistedByKey
   editedValues: EditedTranslations
   activeLocale: 'is' | 'en'
+  ownedNamespaces?: readonly string[]
 }
 
 const roleAccordionId = (stateKey: string, roleId: string) =>
@@ -81,6 +85,7 @@ export const TranslationWorkspaceStatesNav = ({
   persistedByKey,
   editedValues,
   activeLocale,
+  ownedNamespaces = [],
 }: TranslationWorkspaceStatesNavProps) => {
   const [expandedIds, setExpandedIds] = useState(
     () => new Set(selectedAccordionIds(selectedLocation)),
@@ -109,16 +114,100 @@ export const TranslationWorkspaceStatesNav = ({
     })
   }, [])
 
+  const translationCounts = useMemo(() => {
+    const byState: Record<string, TranslationCount> = {}
+    const byRole: Record<string, TranslationCount> = {}
+    const byScreens: Record<string, TranslationCount> = {}
+
+    const countScreens = (
+      key: string,
+      screens: ScreenIntrospection[],
+      extraDescriptors: readonly MessageDescriptor[] = [],
+    ): TranslationCount => {
+      const count = countTranslationsForScreens(
+        screens,
+        persistedByKey,
+        editedValues,
+        activeLocale,
+        ownedNamespaces,
+        extraDescriptors,
+      )
+      byScreens[key] = count
+      return count
+    }
+
+    for (const state of states) {
+      byState[state.stateKey] = countTranslationsForState(
+        state,
+        persistedByKey,
+        editedValues,
+        activeLocale,
+        ownedNamespaces,
+      )
+      for (const role of state.roles) {
+        const roleKey = roleAccordionId(state.stateKey, role.roleId)
+        byRole[roleKey] = countTranslationsForRole(
+          role,
+          persistedByKey,
+          editedValues,
+          activeLocale,
+          ownedNamespaces,
+        )
+        for (const section of role.form?.sections ?? []) {
+          const screens = section.screens as ScreenIntrospection[]
+          const subScreens = section.subSections.flatMap(
+            (sub) => sub.screens as ScreenIntrospection[],
+          )
+          const sectionTitleDescriptors = descriptorsForSectionNavigation(
+            section.titleMessageDescriptor,
+            [],
+          )
+          countScreens(
+            `${roleKey}:section-all:${section.id}`,
+            [...screens, ...subScreens],
+            mergeMessageDescriptorLists(
+              sectionTitleDescriptors,
+              ...section.subSections.map((sub) =>
+                descriptorsForSectionNavigation(
+                  sub.titleMessageDescriptor,
+                  [],
+                ),
+              ),
+            ),
+          )
+          countScreens(
+            `${roleKey}:section:${section.id}`,
+            screens,
+            sectionTitleDescriptors,
+          )
+          for (const sub of section.subSections) {
+            countScreens(
+              `${roleKey}:sub:${sub.id}`,
+              sub.screens as ScreenIntrospection[],
+              descriptorsForSectionNavigation(
+                sub.titleMessageDescriptor,
+                [],
+              ),
+            )
+          }
+          for (const screen of screens) {
+            countScreens(`${roleKey}:leaf:${screen.id}`, [screen])
+          }
+        }
+      }
+    }
+
+    return { byState, byRole, byScreens }
+  }, [states, persistedByKey, editedValues, activeLocale, ownedNamespaces])
+
   return (
     <Box width="full" style={{ minWidth: 0 }}>
       <Accordion singleExpand={false}>
         {states.map((state) => {
-          const stateCount = countTranslationsForState(
-            state,
-            persistedByKey,
-            editedValues,
-            activeLocale,
-          )
+          const stateCount = translationCounts.byState[state.stateKey] ?? {
+            translated: 0,
+            total: 0,
+          }
 
           const isStateSelected = selectedLocation?.stateKey === state.stateKey
 
@@ -143,12 +232,14 @@ export const TranslationWorkspaceStatesNav = ({
                 <Box paddingLeft={2}>
                   <Accordion singleExpand={false}>
                     {state.roles.map((role) => {
-                      const roleCount = countTranslationsForRole(
-                        role,
-                        persistedByKey,
-                        editedValues,
-                        activeLocale,
+                      const roleKey = roleAccordionId(
+                        state.stateKey,
+                        role.roleId,
                       )
+                      const roleCount = translationCounts.byRole[roleKey] ?? {
+                        translated: 0,
+                        total: 0,
+                      }
 
                       const isRoleSelected =
                         isStateSelected &&
@@ -215,34 +306,20 @@ export const TranslationWorkspaceStatesNav = ({
                                 const { subSections } = section
                                 const sectionNumber = sectionIndex + 1
 
-                                const allSectionScreens = [
-                                  ...screens,
-                                  ...subSections.flatMap(
-                                    (s) => s.screens as ScreenIntrospection[],
-                                  ),
-                                ]
                                 const sectionCount =
-                                  countTranslationsForScreens(
-                                    allSectionScreens,
-                                    persistedByKey,
-                                    editedValues,
-                                    activeLocale,
-                                  )
+                                  translationCounts.byScreens[
+                                    `${roleKey}:section-all:${section.id}`
+                                  ] ?? { translated: 0, total: 0 }
 
                                 const navRow = (
                                   nav: ScreenIntrospection,
                                   key: string,
                                   location: SidebarNavLocation,
                                   labelWeight?: 'semiBold',
-                                  rowScreens?: ScreenIntrospection[],
+                                  screensKey?: string,
                                 ) => {
-                                  const rowCount = rowScreens
-                                    ? countTranslationsForScreens(
-                                        rowScreens,
-                                        persistedByKey,
-                                        editedValues,
-                                        activeLocale,
-                                      )
+                                  const rowCount = screensKey
+                                    ? translationCounts.byScreens[screensKey]
                                     : undefined
 
                                   return (
@@ -310,7 +387,7 @@ export const TranslationWorkspaceStatesNav = ({
                                           sectionTitle: section.title,
                                         },
                                         'semiBold',
-                                        screens,
+                                        `${roleKey}:section:${section.id}`,
                                       )}
                                     </Box>
                                   )
@@ -371,7 +448,7 @@ export const TranslationWorkspaceStatesNav = ({
                                           subsectionTitle: sub.title,
                                         },
                                         undefined,
-                                        subScreens,
+                                        `${roleKey}:sub:${sub.id}`,
                                       )
                                     })}
                                     {screens.map((screen) => {
@@ -392,7 +469,7 @@ export const TranslationWorkspaceStatesNav = ({
                                           leafSourceScreenId: screen.id,
                                         },
                                         undefined,
-                                        [screen],
+                                        `${roleKey}:leaf:${screen.id}`,
                                       )
                                     })}
                                   </Box>

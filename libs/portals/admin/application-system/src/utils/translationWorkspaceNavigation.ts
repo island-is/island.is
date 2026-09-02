@@ -1,3 +1,4 @@
+import { isOwnedTranslationMessageId } from '@island.is/application/utils'
 import type {
   EditedTranslations,
   MessageDescriptor,
@@ -26,47 +27,49 @@ const toMessageDescriptor = (
   }
 }
 
-/** Deduped union of `messageDescriptors` on each screen (already flattened for multifields on the API). */
-export const mergeScreensMessageDescriptors = (
-  screens: ScreenIntrospection[],
+export const mergeMessageDescriptorLists = (
+  ...lists: Array<readonly MessageDescriptor[] | undefined>
 ): MessageDescriptor[] => {
   const seen = new Set<string>()
   const out: MessageDescriptor[] = []
-  for (const screen of screens) {
-    for (const d of screen.messageDescriptors) {
-      if (!seen.has(d.id)) {
-        seen.add(d.id)
-        out.push(d)
-      }
-    }
-    for (const d of screen.tableRepeaterColumnHeaders ?? []) {
-      if (!seen.has(d.id)) {
-        seen.add(d.id)
-        out.push(d)
-      }
-    }
-    for (const d of screen.staticTableHeaderDescriptors ?? []) {
-      if (!seen.has(d.id)) {
-        seen.add(d.id)
-        out.push(d)
-      }
-    }
-    for (const d of screen.staticTableRowCellDescriptors ?? []) {
-      if (!seen.has(d.id)) {
-        seen.add(d.id)
-        out.push(d)
-      }
-    }
-    for (const row of screen.staticTableSummary ?? []) {
-      for (const d of [row.label, row.value]) {
-        if (!seen.has(d.id)) {
-          seen.add(d.id)
-          out.push(d)
-        }
+  for (const list of lists) {
+    for (const descriptor of list ?? []) {
+      if (!seen.has(descriptor.id)) {
+        seen.add(descriptor.id)
+        out.push(descriptor)
       }
     }
   }
   return out
+}
+
+/** Deduped union of `messageDescriptors` on each screen (already flattened for multifields on the API). */
+export const mergeScreensMessageDescriptors = (
+  screens: ScreenIntrospection[],
+): MessageDescriptor[] => {
+  const lists: MessageDescriptor[][] = []
+  for (const screen of screens) {
+    lists.push(screen.messageDescriptors)
+    lists.push(screen.tableRepeaterColumnHeaders ?? [])
+    lists.push(screen.staticTableHeaderDescriptors ?? [])
+    lists.push(screen.staticTableRowCellDescriptors ?? [])
+    for (const row of screen.staticTableSummary ?? []) {
+      lists.push([row.label, row.value])
+    }
+  }
+  return mergeMessageDescriptorLists(...lists)
+}
+
+/** Same descriptors the sidebar strings tab shows for a section/subsection nav item. */
+export const descriptorsForSectionNavigation = (
+  titleMessageDescriptor: GraphqlMessageDescriptor | null | undefined,
+  screens: ScreenIntrospection[],
+): MessageDescriptor[] => {
+  const titleDescriptor = toMessageDescriptor(titleMessageDescriptor)
+  return mergeMessageDescriptorLists(
+    titleDescriptor ? [titleDescriptor] : [],
+    mergeScreensMessageDescriptors(screens),
+  )
 }
 
 /** One sidebar entry for a whole section (matches stepper when there are no subsections). */
@@ -76,7 +79,6 @@ export const buildSectionNavigationScreen = (
   titleMessageDescriptor: GraphqlMessageDescriptor | null | undefined,
   screens: ScreenIntrospection[],
 ): ScreenIntrospection => {
-  const titleDescriptor = toMessageDescriptor(titleMessageDescriptor)
   return {
     id: `__navigation:section:${sectionId}`,
     type: 'SECTION_NAV_GROUP',
@@ -88,10 +90,10 @@ export const buildSectionNavigationScreen = (
     checkboxLabel: null,
     width: null,
     space: null,
-    messageDescriptors: [
-      ...(titleDescriptor ? [titleDescriptor] : []),
-      ...mergeScreensMessageDescriptors(screens),
-    ],
+    messageDescriptors: descriptorsForSectionNavigation(
+      titleMessageDescriptor,
+      screens,
+    ),
   }
 }
 
@@ -102,7 +104,6 @@ export const buildSubSectionNavigationScreen = (
   titleMessageDescriptor: GraphqlMessageDescriptor | null | undefined,
   screens: ScreenIntrospection[],
 ): ScreenIntrospection => {
-  const titleDescriptor = toMessageDescriptor(titleMessageDescriptor)
   return {
     id: `__navigation:subsection:${subSectionId}`,
     type: 'SUBSECTION_NAV_GROUP',
@@ -114,10 +115,10 @@ export const buildSubSectionNavigationScreen = (
     checkboxLabel: null,
     width: null,
     space: null,
-    messageDescriptors: [
-      ...(titleDescriptor ? [titleDescriptor] : []),
-      ...mergeScreensMessageDescriptors(screens),
-    ],
+    messageDescriptors: descriptorsForSectionNavigation(
+      titleMessageDescriptor,
+      screens,
+    ),
   }
 }
 
@@ -152,9 +153,16 @@ export const countTranslatedDescriptors = (
   persistedByKey: Record<string, { valueIs: string; valueEn?: string | null }>,
   editedValues: EditedTranslations,
   activeLocale: 'is' | 'en',
+  ownedNamespaces: readonly string[] = [],
 ): TranslationCount => {
+  const countable =
+    ownedNamespaces.length > 0
+      ? descriptors.filter((descriptor) =>
+          isOwnedTranslationMessageId(descriptor.id, ownedNamespaces),
+        )
+      : descriptors
   let translated = 0
-  for (const d of descriptors) {
+  for (const d of countable) {
     const edited = editedValues[activeLocale][d.id]
     if (edited !== undefined && edited !== '') {
       translated++
@@ -169,21 +177,31 @@ export const countTranslatedDescriptors = (
       }
     }
   }
-  return { translated, total: descriptors.length }
+  return { translated, total: countable.length }
 }
 
-const collectAllScreensForRole = (
+export const collectRoleMessageDescriptors = (
   role: TemplateStateNav['roles'][number],
-): ScreenIntrospection[] => {
+): MessageDescriptor[] => {
   if (!role.form) return []
-  const all: ScreenIntrospection[] = []
+  const lists: MessageDescriptor[][] = []
   for (const section of role.form.sections) {
-    all.push(...(section.screens as ScreenIntrospection[]))
+    lists.push(
+      descriptorsForSectionNavigation(
+        section.titleMessageDescriptor,
+        section.screens as ScreenIntrospection[],
+      ),
+    )
     for (const sub of section.subSections) {
-      all.push(...(sub.screens as ScreenIntrospection[]))
+      lists.push(
+        descriptorsForSectionNavigation(
+          sub.titleMessageDescriptor,
+          sub.screens as ScreenIntrospection[],
+        ),
+      )
     }
   }
-  return all
+  return mergeMessageDescriptorLists(...lists)
 }
 
 export const countTranslationsForState = (
@@ -191,14 +209,17 @@ export const countTranslationsForState = (
   persistedByKey: Record<string, { valueIs: string; valueEn?: string | null }>,
   editedValues: EditedTranslations,
   activeLocale: 'is' | 'en',
+  ownedNamespaces: readonly string[] = [],
 ): TranslationCount => {
-  const allScreens = state.roles.flatMap(collectAllScreensForRole)
-  const descriptors = mergeScreensMessageDescriptors(allScreens)
+  const descriptors = mergeMessageDescriptorLists(
+    ...state.roles.map(collectRoleMessageDescriptors),
+  )
   return countTranslatedDescriptors(
     descriptors,
     persistedByKey,
     editedValues,
     activeLocale,
+    ownedNamespaces,
   )
 }
 
@@ -207,14 +228,14 @@ export const countTranslationsForRole = (
   persistedByKey: Record<string, { valueIs: string; valueEn?: string | null }>,
   editedValues: EditedTranslations,
   activeLocale: 'is' | 'en',
+  ownedNamespaces: readonly string[] = [],
 ): TranslationCount => {
-  const allScreens = collectAllScreensForRole(role)
-  const descriptors = mergeScreensMessageDescriptors(allScreens)
   return countTranslatedDescriptors(
-    descriptors,
+    collectRoleMessageDescriptors(role),
     persistedByKey,
     editedValues,
     activeLocale,
+    ownedNamespaces,
   )
 }
 
@@ -223,13 +244,19 @@ export const countTranslationsForScreens = (
   persistedByKey: Record<string, { valueIs: string; valueEn?: string | null }>,
   editedValues: EditedTranslations,
   activeLocale: 'is' | 'en',
+  ownedNamespaces: readonly string[] = [],
+  extraDescriptors: readonly MessageDescriptor[] = [],
 ): TranslationCount => {
-  const descriptors = mergeScreensMessageDescriptors(screens)
+  const descriptors = mergeMessageDescriptorLists(
+    extraDescriptors,
+    mergeScreensMessageDescriptors(screens),
+  )
   return countTranslatedDescriptors(
     descriptors,
     persistedByKey,
     editedValues,
     activeLocale,
+    ownedNamespaces,
   )
 }
 

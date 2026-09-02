@@ -30,7 +30,6 @@ export const TableRepeaterFieldPreview = ({
   previewFields,
   previewApplication,
 }: FieldPreviewWithFormatMessageProps) => {
-  const key = screen.id
   const layout = fieldPreviewLayoutProps(screen)
   const formChildren = filterPreviewMultiFieldChildren(screen.children)
   const headers = screen.tableRepeaterColumnHeaders ?? []
@@ -85,7 +84,6 @@ export const TableRepeaterFieldPreview = ({
   if (!hasStructuredPreview) {
     return (
       <Box
-        key={key}
         padding={2}
         border="standard"
         borderRadius="standard"
@@ -103,7 +101,7 @@ export const TableRepeaterFieldPreview = ({
   }
 
   return (
-    <Box key={key} {...layout}>
+    <Box {...layout}>
       {mainTitle.trim() !== '' && (
         <Text variant="h4" marginBottom={2}>
           {mainTitle}

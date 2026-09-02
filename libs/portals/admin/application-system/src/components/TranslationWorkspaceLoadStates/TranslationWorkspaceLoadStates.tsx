@@ -18,7 +18,7 @@ export const TranslationWorkspaceError = ({
   loadError,
   title = 'Error loading template',
 }: {
-  loadError: ApolloError
+  loadError: ApolloError | Error
   title?: string
 }) => {
   const fromGraphQl = loadError.graphQLErrors

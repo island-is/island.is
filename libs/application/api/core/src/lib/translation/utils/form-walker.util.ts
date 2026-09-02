@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common'
 import type {
   AlertMessageField,
   CheckboxField,
@@ -13,6 +14,7 @@ import type {
   NationalIdWithNameField,
   OverviewField,
   RadioField,
+  Repeater,
   Section,
   StaticTableField,
   StaticText,
@@ -58,6 +60,8 @@ import {
   walkFieldsRepeaterScreen,
   walkTableRepeaterScreen,
 } from './repeater-introspection.util'
+
+const logger = new Logger('FormWalker')
 
 export const walkExternalDataSourceItem = (
   syntheticId: string,
@@ -256,6 +260,20 @@ export const walkFormLeaf = (
       for (const child of multiField.children) {
         const childScreen = walkFormLeaf(child, customFieldManifest)
         children.push(childScreen)
+        descriptors.push(...childScreen.messageDescriptors)
+      }
+    }
+  } else if (leaf.type === FormItemTypes.REPEATER) {
+    descriptors.push(...extractMessageDescriptorsFromFormText(leaf.title))
+    const repeater = leaf as Repeater
+    const repeaterId = extractStaticId(repeater.id) || 'repeater'
+    if (repeater.children) {
+      for (const child of repeater.children) {
+        const childScreen = walkFormLeaf(child, customFieldManifest)
+        children.push({
+          ...childScreen,
+          id: `${repeaterId}::${childScreen.id || 'field'}`,
+        })
         descriptors.push(...childScreen.messageDescriptors)
       }
     }
@@ -674,6 +692,14 @@ export const walkForm = (
   for (const child of form.children) {
     if (child.type === FormItemTypes.SECTION) {
       sections.push(walkSection(child as Section, customFieldManifest))
+    } else {
+      logger.warn(
+        `walkForm dropped non-SECTION root child of type "${
+          child.type
+        }" on form "${form.id}"${
+          extractStaticId(child.id) ? ` / "${extractStaticId(child.id)}"` : ''
+        }`,
+      )
     }
   }
 

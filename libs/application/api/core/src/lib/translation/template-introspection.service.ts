@@ -4,11 +4,6 @@ import {
   ApplicationConfigurations,
 } from '@island.is/application/types'
 import type { Form } from '@island.is/application/types'
-import {
-  getApplicationTemplateByTypeId,
-  getApplicationCustomFieldMessageDescriptors,
-  getApplicationMessageRoots,
-} from '@island.is/application/template-loader'
 import type {
   FormIntrospection,
   MessageDescriptorInfo,
@@ -17,6 +12,15 @@ import type {
   TemplateIntrospection,
   ValidationMessageDescriptorInfo,
 } from '@island.is/application/types'
+import {
+  getApplicationTemplateByTypeId,
+  getApplicationCustomFieldMessageDescriptors,
+  getApplicationMessageRoots,
+} from '@island.is/application/template-loader'
+import {
+  getOwnedTranslationNamespaces,
+  isOwnedTranslationMessageId,
+} from '@island.is/application/utils'
 import {
   getTemplateDisplayName,
   resolveTemplateDisplayName,
@@ -242,17 +246,16 @@ export class TemplateIntrospectionService {
       // dataSchema extraction may fail for some templates, skip gracefully
     }
 
-    const namespacePrefixes = [...new Set(translationNamespaces)].map(
-      (namespace) => `${namespace}:`,
-    )
-    const matchesTemplateNamespace = (id: string) =>
-      namespacePrefixes.some((prefix) => id.startsWith(prefix))
+    const uniqueNamespaces = [...new Set(translationNamespaces)]
+    const ownedNamespaces = getOwnedTranslationNamespaces(uniqueNamespaces)
+    const matchesOwnedNamespace = (id: string) =>
+      isOwnedTranslationMessageId(id, ownedNamespaces)
 
     try {
       const messageRoots = await getApplicationMessageRoots(typeId)
       const fromMessages = messageRoots
         .flatMap((root) => flattenMessageDescriptors(root))
-        .filter((d) => matchesTemplateNamespace(d.id))
+        .filter((d) => matchesOwnedNamespace(d.id))
         .sort((a, b) => a.id.localeCompare(b.id))
 
       for (const d of fromMessages) {
@@ -273,9 +276,11 @@ export class TemplateIntrospectionService {
       typeId,
       name: resolveTemplateDisplayName(template, config.slug),
       slug: config.slug,
-      translationNamespaces: [...new Set(translationNamespaces)],
+      translationNamespaces: uniqueNamespaces,
       states,
-      allMessageDescriptors: allDescriptors,
+      allMessageDescriptors: allDescriptors.filter((d) =>
+        matchesOwnedNamespace(d.id),
+      ),
       validationMessageDescriptors: validationDescriptors,
     }
   }

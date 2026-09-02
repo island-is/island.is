@@ -1,4 +1,5 @@
 import { Module, DynamicModule } from '@nestjs/common'
+import { CmsTranslationCacheModule } from '@island.is/cms-translations'
 import { ApplicationResolver } from './application.resolver'
 import { ApplicationV2Resolver } from './applicationV2.resolver'
 import { ApplicationService } from './application.service'
@@ -27,6 +28,7 @@ export class ApplicationModule {
   static register(config: Config): DynamicModule {
     return {
       module: ApplicationModule,
+      imports: [CmsTranslationCacheModule],
       providers: [
         ApplicationResolver,
         ApplicationV2Resolver,

@@ -1,10 +1,16 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, Optional } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import type { Cache as CacheManager } from 'cache-manager'
 import type { User } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 import {
   assertGoogleTranslateInputLimits,
+  createGoogleTranslateCacheStore,
+  GOOGLE_TRANSLATE_MAX_CHARS_PER_WINDOW,
+  GOOGLE_TRANSLATE_MAX_REQUESTS_PER_WINDOW,
+  GOOGLE_TRANSLATE_RATE_LIMIT_WINDOW_MS,
   GoogleTranslateRateLimiter,
 } from './google-translate.limits'
 
@@ -16,7 +22,21 @@ export class GoogleTranslateService {
     timeout: 20000,
     logErrorResponseBody: true,
   })
-  private readonly rateLimiter = new GoogleTranslateRateLimiter()
+  private readonly rateLimiter: GoogleTranslateRateLimiter
+
+  constructor(
+    @Optional()
+    @Inject(CACHE_MANAGER)
+    cacheManager?: CacheManager,
+  ) {
+    this.rateLimiter = new GoogleTranslateRateLimiter(
+      Date.now,
+      GOOGLE_TRANSLATE_RATE_LIMIT_WINDOW_MS,
+      GOOGLE_TRANSLATE_MAX_REQUESTS_PER_WINDOW,
+      GOOGLE_TRANSLATE_MAX_CHARS_PER_WINDOW,
+      cacheManager ? createGoogleTranslateCacheStore(cacheManager) : undefined,
+    )
+  }
 
   async translateTexts(user: User, texts: string[]): Promise<string[]> {
     if (texts.length === 0) {
@@ -24,7 +44,7 @@ export class GoogleTranslateService {
     }
 
     const totalChars = assertGoogleTranslateInputLimits(texts)
-    this.rateLimiter.consume(user.nationalId, totalChars)
+    await this.rateLimiter.consume(user.nationalId, totalChars)
 
     const apiKey = process.env.FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY
 

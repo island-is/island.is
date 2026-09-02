@@ -49,7 +49,7 @@ export const BankAccountFieldPreview = ({
   const titleV = descriptionTitleVariantToText(screen.titleVariant)
 
   return (
-    <Box key={key} {...layout}>
+    <Box {...layout}>
       {titleText !== '' && (
         <Box marginBottom={1}>
           <Text variant={titleV}>{titleText}</Text>

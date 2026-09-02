@@ -8,8 +8,12 @@ import {
 export const TOAST_ERROR_MAX_LENGTH = 240
 
 export const isTranslationAccessForbiddenError = (
-  error: ApolloError,
+  error: ApolloError | Error,
 ): boolean => {
+  if (!(error instanceof ApolloError)) {
+    return false
+  }
+
   const problem = findProblemInApolloError(error, [ProblemType.HTTP_FORBIDDEN])
   if (problem) {
     return true

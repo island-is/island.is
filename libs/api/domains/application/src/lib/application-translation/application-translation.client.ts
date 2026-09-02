@@ -113,7 +113,7 @@ export class ApplicationTranslationClient {
           ...init?.headers,
         },
       })
-      return response.json() as Promise<T>
+      return await response.json()
     } catch (error) {
       this.handleError(error, url)
     }

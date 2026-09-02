@@ -24,6 +24,17 @@ describe('TranslationAccessService', () => {
     client: 'client',
   }
 
+  const superAdminActingAsHms = {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    scope: [AdminPortalScope.applicationSystemInstitution],
+    actor: {
+      nationalId: '0101302989',
+      scope: [AdminPortalScope.applicationSystemAdmin],
+    },
+    authorization: 'Bearer token',
+    client: 'client',
+  }
+
   it('does not throw for super admin accessing any typeId', () => {
     expect(() =>
       service.assertTypeIdAccess(superAdminUser, ApplicationTypes.PASSPORT),
@@ -70,6 +81,27 @@ describe('TranslationAccessService', () => {
     expect(() =>
       service.assertNamespaceWriteAccess(superAdminUser, 'uiForms.application'),
     ).not.toThrow()
+  })
+
+  it('narrows a super admin acting as an institution to that institution', () => {
+    expect(() =>
+      service.assertTypeIdAccess(
+        superAdminActingAsHms,
+        ApplicationTypes.RENTAL_AGREEMENT,
+      ),
+    ).not.toThrow()
+    expect(() =>
+      service.assertTypeIdAccess(
+        superAdminActingAsHms,
+        ApplicationTypes.PASSPORT,
+      ),
+    ).toThrow(ForbiddenException)
+    expect(() =>
+      service.assertNamespaceWriteAccess(
+        superAdminActingAsHms,
+        'uiForms.application',
+      ),
+    ).toThrow(ForbiddenException)
   })
 
   it('throws for institution user asserting global translation access', () => {

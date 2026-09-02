@@ -75,7 +75,7 @@ export const CheckboxFieldLeafPreview = ({
     : ''
 
   return (
-    <Box key={key} {...layout}>
+    <Box {...layout}>
       {descriptionResolved.length > 0 && (
         <Box marginBottom={1}>
           <Markdown>{descriptionResolved}</Markdown>

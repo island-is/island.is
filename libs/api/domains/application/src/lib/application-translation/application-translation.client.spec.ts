@@ -1,4 +1,8 @@
-import { BadRequestException, UnauthorizedException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApplicationTypes } from '@island.is/application/types'
 import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
@@ -96,6 +100,20 @@ describe('ApplicationTranslationClient', () => {
       expect(new URL(requestedUrl).pathname).toBe(
         '/admin/translations/..%2F..%2F..%2Fpublic%2Ftranslations%2Ffoo/review',
       )
+    })
+  })
+
+  describe('request', () => {
+    it('maps a JSON parse failure through handleError', async () => {
+      fetchMock.mockResolvedValue({
+        json: async () => {
+          throw new SyntaxError('Unexpected end of JSON input')
+        },
+      } as unknown as Response)
+
+      await expect(
+        client.getPublishHistory(user, 'test.ns'),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException)
     })
   })
 
