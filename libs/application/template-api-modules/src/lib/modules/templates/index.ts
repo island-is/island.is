@@ -1,4 +1,3 @@
-
 import { U2CertificateModule } from './vmst/u2-certificate/u2-certificate.module'
 import { U2CertificateService } from './vmst/u2-certificate/u2-certificate.service'
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
@@ -298,7 +297,7 @@ export const modules = [
   ConfirmTravelModule,
   DirectorateOfEqualityModule,
   U2CertificateModule,
-            ]
+]
 
 export const services = [
   ExampleCommonActionsService,
@@ -399,4 +398,4 @@ export const services = [
   ConfirmTravelService,
   DirectorateOfEqualityService,
   U2CertificateService,
-            ]
+]
