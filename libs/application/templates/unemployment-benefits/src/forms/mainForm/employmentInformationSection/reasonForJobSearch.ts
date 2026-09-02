@@ -8,6 +8,7 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
+  buildTextField,
   coreMessages,
   getValueViaPath,
   NO,
@@ -19,7 +20,11 @@ import {
   contentfulIdMapReasonsForJobSearch,
 } from '../../../lib/messages'
 import { GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO } from '@island.is/clients/vmst-unemployment'
-import { getReasonBasedOnChoice, getReasonsBasedOnChoice } from '../../../utils'
+import {
+  getChosenReasonCategory,
+  getReasonBasedOnChoice,
+  getReasonsBasedOnChoice,
+} from '../../../utils'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared/constants'
 import { Application } from '@island.is/application/types'
 
@@ -41,6 +46,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         buildSelectField({
           id: 'reasonForJobSearch.mainReason',
           required: true,
+          clearOnChange: ['reasonForJobSearch.furtherReasonText'],
           title:
             employmentMessages.reasonForJobSearch.labels
               .reasonForJobSearchLabel,
@@ -378,6 +384,26 @@ export const reasonForJobSearchSubSection = buildSubSection({
           message: employmentMessages.reasonForJobSearch.labels.informationBox,
           alertType: 'info',
           doesNotRequireAnswer: true,
+        }),
+        buildTextField({
+          id: 'reasonForJobSearch.furtherReasonText',
+          variant: 'textarea',
+          required: true,
+          rows: 5,
+          showMaxLength: true,
+          title:
+            employmentMessages.reasonForJobSearch.labels.resignationReasonLabel,
+          placeholder:
+            employmentMessages.reasonForJobSearch.labels
+              .resignationReasonPlaceholder,
+          condition: (answers, externalData) => {
+            const chosenReasonCategory = getChosenReasonCategory(
+              answers,
+              externalData,
+            )
+            // TODO change this to use something like displayAdditionalInformationField
+            return chosenReasonCategory?.english === 'Resignation by applicant'
+          },
         }),
         buildHiddenInputWithWatchedValue({
           id: 'reasonForJobSearch.bankruptsyReasonRequired',

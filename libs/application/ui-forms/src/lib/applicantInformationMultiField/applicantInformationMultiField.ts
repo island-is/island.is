@@ -44,6 +44,7 @@ export const applicantInformationArray = (
     cityRequired = true,
     baseInfoReadOnly = false,
     emailAndPhoneReadOnly = false,
+    makePhoneEditableIfMissing = false,
     compactFields = false,
     customAddressLabel,
     includeBankAccount = false,
@@ -194,7 +195,13 @@ export const applicantInformationArray = (
       condition: phoneCondition,
       required: phoneRequired,
       disabled: phoneDisabled && !emailAndPhoneReadOnly,
-      readOnly: emailAndPhoneReadOnly,
+      readOnly:
+        emailAndPhoneReadOnly && makePhoneEditableIfMissing
+          ? (_, externalData) =>
+              !!(
+                externalData as unknown as ApplicantInformationInterface['externalData']
+              )?.userProfile?.data?.mobilePhoneNumber
+          : emailAndPhoneReadOnly,
       enableCountrySelector: phoneEnableCountrySelector,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
