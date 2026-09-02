@@ -67,8 +67,7 @@ const canProsecutionUserAccessCase = (
     user.institution?.id !== theCase.prosecutorsOfficeId &&
     (forUpdate ||
       user.institution?.id !== theCase.sharedWithProsecutorsOfficeId) &&
-    user.id !== theCase.indictmentReviewerId &&
-    user.id !== theCase.indictmentApproverId
+    user.id !== theCase.indictmentReviewerId
   ) {
     return false
   }
@@ -77,8 +76,7 @@ const canProsecutionUserAccessCase = (
   if (
     theCase.isHeightenedSecurityLevel &&
     user.id !== theCase.creatingProsecutorId &&
-    user.id !== theCase.prosecutorId &&
-    user.id !== theCase.indictmentApproverId
+    user.id !== theCase.prosecutorId
   ) {
     return false
   }

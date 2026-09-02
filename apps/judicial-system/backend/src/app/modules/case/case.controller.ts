@@ -450,13 +450,10 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    if (transition.transition === CaseTransition.ASK_FOR_REVIEW) {
-      if (!theCase.indictmentApproverId) {
-        throw new BadRequestException(
-          'Cannot ask for review without an indictment approver',
-        )
-      }
-
+    if (
+      transition.transition === CaseTransition.ASK_FOR_REVIEW &&
+      theCase.indictmentApproverId
+    ) {
       await this.validateIndictmentApprover(
         theCase.indictmentApproverId,
         theCase,

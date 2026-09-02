@@ -94,32 +94,6 @@ const continueFromCreatingProsecutor = (
         expect(hasWriteAccess).toBe(Boolean(prosecutorsOfficeId) && true)
       })
     })
-
-    describe('user is assigned indictment approver', () => {
-      const theCase = {
-        type,
-        state,
-        creatingProsecutorId: uuid(),
-        prosecutorId: uuid(),
-        indictmentApproverId: user.id,
-        isHeightenedSecurityLevel: true,
-        prosecutorsOfficeId,
-      } as Case
-
-      let hasReadAccess: boolean
-      let hasWriteAccess: boolean
-
-      beforeEach(() => {
-        hasReadAccess = canUserAccessCase(theCase, user, false)
-        hasWriteAccess = canUserAccessCase(theCase, user, true)
-      })
-
-      it('should have full access', () => {
-        // Indictment approver is exempt from the prosecutors-office check
-        expect(hasReadAccess).toBe(true)
-        expect(hasWriteAccess).toBe(true)
-      })
-    })
   })
 
   describe('not hightened security', () => {

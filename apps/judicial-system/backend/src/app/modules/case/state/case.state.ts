@@ -43,6 +43,25 @@ interface RequestCaseRule {
   transition: Transition
 }
 
+const assertHasDefendants = (theCase: Case): void => {
+  if (!theCase.defendants || theCase.defendants.length === 0) {
+    throw new ForbiddenException(
+      'Cannot submit indictment to court without at least one defendant',
+    )
+  }
+}
+
+const assertHasIndictmentApprover = (
+  update: UpdateCase,
+  theCase: Case,
+): void => {
+  if (!(update.indictmentApproverId ?? theCase.indictmentApproverId)) {
+    throw new ForbiddenException(
+      'Cannot ask for review without an indictment approver',
+    )
+  }
+}
+
 const indictmentCaseStateMachine: Map<
   IndictmentCaseTransition,
   IndictmentCaseRule
@@ -61,21 +80,30 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.ASK_FOR_CONFIRMATION,
     {
       fromStates: [IndictmentCaseState.DRAFT, IndictmentCaseState.SUBMITTED],
-      transition: (update: UpdateCase): UpdateCase => ({
-        ...update,
-        state: CaseState.WAITING_FOR_CONFIRMATION,
-      }),
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        assertHasDefendants(theCase)
+
+        return {
+          ...update,
+          state: CaseState.WAITING_FOR_CONFIRMATION,
+        }
+      },
     },
   ],
   [
     IndictmentCaseTransition.ASK_FOR_REVIEW,
     {
       fromStates: [IndictmentCaseState.DRAFT],
-      transition: (update: UpdateCase): UpdateCase => ({
-        ...update,
-        state: CaseState.WAITING_FOR_REVIEW,
-        indictmentReviewReturnedExplanation: null,
-      }),
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        assertHasDefendants(theCase)
+        assertHasIndictmentApprover(update, theCase)
+
+        return {
+          ...update,
+          state: CaseState.WAITING_FOR_REVIEW,
+          indictmentReviewReturnedExplanation: null,
+        }
+      },
     },
   ],
   [
@@ -102,11 +130,15 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.SUBMIT,
     {
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
-      transition: (update: UpdateCase): UpdateCase => ({
-        ...update,
-        state: CaseState.SUBMITTED,
-        indictmentDeniedExplanation: null,
-      }),
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        assertHasDefendants(theCase)
+
+        return {
+          ...update,
+          state: CaseState.SUBMITTED,
+          indictmentDeniedExplanation: null,
+        }
+      },
     },
   ],
   [
@@ -389,27 +421,6 @@ const transitionIndictmentCase = (
   if (!rule?.fromStates.some((state) => state === currentState)) {
     throw new ForbiddenException(
       `The transition ${transition} cannot be applied to an indictment case in state ${currentState}`,
-    )
-  }
-
-  // Do not allow submitting indictment to court with 0 defendants
-  if (
-    (transition === IndictmentCaseTransition.ASK_FOR_CONFIRMATION ||
-      transition === IndictmentCaseTransition.ASK_FOR_REVIEW ||
-      transition === IndictmentCaseTransition.SUBMIT) &&
-    (!theCase.defendants || theCase.defendants.length === 0)
-  ) {
-    throw new ForbiddenException(
-      'Cannot submit indictment to court without at least one defendant',
-    )
-  }
-
-  if (
-    transition === IndictmentCaseTransition.ASK_FOR_REVIEW &&
-    !(update.indictmentApproverId ?? theCase.indictmentApproverId)
-  ) {
-    throw new ForbiddenException(
-      'Cannot ask for review without an indictment approver',
     )
   }
 
