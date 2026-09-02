@@ -59,7 +59,7 @@ export const countryAndDateSection = buildSection({
           required: true,
         }),
         buildCustomField({
-          id: 'countryAndDate.dateValidation',
+          id: 'customDateValidation',
           component: 'DateValidation',
         }),
       ],
