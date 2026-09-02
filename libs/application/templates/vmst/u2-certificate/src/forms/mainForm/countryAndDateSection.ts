@@ -7,6 +7,7 @@ import {
   buildSelectField,
   getValueViaPath,
 } from '@island.is/application/core'
+import addDays from 'date-fns/addDays'
 import { mainForm as m } from '../../lib/messages'
 import { Country } from '../../utils/types'
 
@@ -49,6 +50,8 @@ export const countryAndDateSection = buildSection({
           width: 'half',
           marginTop: 2,
           required: true,
+          minDate: () => addDays(new Date(), 7),
+          maxDate: () => addDays(new Date(), 28),
         }),
         buildCustomField({
           id: 'customDateValidation',

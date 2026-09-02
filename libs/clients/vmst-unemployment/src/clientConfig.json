@@ -8,7 +8,9 @@
   "paths": {
     "/ping": {
       "get": {
-        "tags": ["Diagnostic"],
+        "tags": [
+          "Diagnostic"
+        ],
         "operationId": "Diagnostic_Ping",
         "responses": {
           "200": {
@@ -26,7 +28,9 @@
     },
     "/status": {
       "get": {
-        "tags": ["Diagnostic"],
+        "tags": [
+          "Diagnostic"
+        ],
         "operationId": "Diagnostic_Status",
         "responses": {
           "200": {
@@ -42,11 +46,13 @@
         }
       }
     },
-    "/api/applicants/{applicantId}/incomes/jobs/irregular": {
+    "/api/applicants/{applicantId}/incomes": {
       "get": {
-        "tags": ["Income"],
-        "summary": "Get irregularJob periods",
-        "operationId": "Income_GetIrregularJobs",
+        "tags": [
+          "Income"
+        ],
+        "summary": "Get all income and uncompensated period information for an applicant.",
+        "operationId": "Income_Get",
         "parameters": [
           {
             "name": "applicantId",
@@ -65,10 +71,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_IrregularJobDTO"
-                  }
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_IncomesDTO"
                 }
               }
             }
@@ -81,9 +84,11 @@
         ]
       },
       "post": {
-        "tags": ["Income"],
-        "summary": "Update irregularJob period",
-        "operationId": "Income_CreateIrregularJob",
+        "tags": [
+          "Income"
+        ],
+        "summary": "Add income and uncompensated period information for an applicant.",
+        "operationId": "Income_Post",
         "parameters": [
           {
             "name": "applicantId",
@@ -101,7 +106,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateIrregularJobRequest"
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateIncomesRequest"
               }
             }
           },
@@ -114,684 +119,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_IrregularJobDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/jobs/irregular/{id}": {
-      "put": {
-        "tags": ["Income"],
-        "summary": "Update irregularJob period",
-        "operationId": "Income_UpdateIrregularJob",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 3
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateIrregularJobRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_IrregularJobDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/jobs/partTime": {
-      "get": {
-        "tags": ["Income"],
-        "summary": "Get partTimeJob periods",
-        "operationId": "Income_GetPartTimeJobs",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_PartTimeJobDTO"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "post": {
-        "tags": ["Income"],
-        "summary": "Create partTimeJob period",
-        "operationId": "Income_CreatePartTimeJob",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreatePartTimeJobRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_PartTimeJobDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/jobs/partTime/{id}": {
-      "put": {
-        "tags": ["Income"],
-        "summary": "Update partTimeJob period",
-        "operationId": "Income_UpdatePartTimeJob",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 3
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreatePartTimeJobRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_PartTimeJobDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/payments/pension": {
-      "get": {
-        "tags": ["Income"],
-        "summary": "Get pensionPayment periods",
-        "operationId": "Income_GetPensionPayments",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_PensionPaymentDTO"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "post": {
-        "tags": ["Income"],
-        "summary": "Create pension payment",
-        "operationId": "Income_CreatePensionPayment",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreatePensionPaymentRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_PensionPaymentDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/payments/pension/{id}": {
-      "put": {
-        "tags": ["Income"],
-        "summary": "Update pension payment",
-        "operationId": "Income_UpdatePensionPayment",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 3
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreatePensionPaymentRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_PensionPaymentDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/payments/capital": {
-      "get": {
-        "tags": ["Income"],
-        "summary": "Get capitalIncome periods",
-        "operationId": "Income_GetCapitalIncome",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_CapitalIncomePaymentDTO"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "post": {
-        "tags": ["Income"],
-        "summary": "Create capitalIncome payment",
-        "operationId": "Income_CreateCapitalIncomePayment",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateCapitalIncomePaymentRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_CapitalIncomePaymentDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/payments/capital/{id}": {
-      "put": {
-        "tags": ["Income"],
-        "summary": "Update capital income payment",
-        "operationId": "Income_UpdateCapitalIncomePayment",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 3
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateCapitalIncomePaymentRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_CapitalIncomePaymentDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/payments/tr": {
-      "get": {
-        "tags": ["Income"],
-        "summary": "Get trPayments periods",
-        "operationId": "Income_GetTRPayments",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_TRPaymentDTO"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "post": {
-        "tags": ["Income"],
-        "summary": "Create trPayments payment",
-        "operationId": "Income_CreateTRPayment",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateTRPaymentRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_TRPaymentDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/payments/tr/{id}": {
-      "put": {
-        "tags": ["Income"],
-        "summary": "Update trPayments payment",
-        "operationId": "Income_UpdateTRPayment",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 3
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateTRPaymentRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_TRPaymentDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/incomes/{id}": {
-      "delete": {
-        "tags": ["Income"],
-        "summary": "Delete income period",
-        "operationId": "Income_DeleteIncome",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_CreateIncomesResponse"
                 }
               }
             }
@@ -806,7 +134,9 @@
     },
     "/api/incomes/types": {
       "get": {
-        "tags": ["IncomeSupportData"],
+        "tags": [
+          "IncomeSupportData"
+        ],
         "summary": "Get income types",
         "operationId": "IncomeSupportData_GetIncomeTypes",
         "parameters": [
@@ -859,7 +189,9 @@
     },
     "/OpenApi": {
       "get": {
-        "tags": ["OpenApi"],
+        "tags": [
+          "OpenApi"
+        ],
         "operationId": "OpenApi_Get",
         "responses": {
           "200": {
@@ -878,7 +210,9 @@
     },
     "/api/pensionFunds": {
       "get": {
-        "tags": ["PensionFunds"],
+        "tags": [
+          "PensionFunds"
+        ],
         "summary": "Get pension funds",
         "operationId": "PensionFunds_GetPensionFunds",
         "responses": {
@@ -903,199 +237,11 @@
         ]
       }
     },
-    "/api/applicants/{applicantId}/uncompensatedPeriods/jobs/contractor": {
-      "get": {
-        "tags": ["UncompensatedPeriods"],
-        "summary": "Get contractorJob periods",
-        "operationId": "UncompensatedPeriods_GetContractorJobs",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_ContractorJobDTO"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "post": {
-        "tags": ["UncompensatedPeriods"],
-        "summary": "Create contractorJob period",
-        "operationId": "UncompensatedPeriods_CreateContractorJob",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateContractorJobRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_ContractorJobDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/uncompensatedPeriods/jobs/contractor/{id}": {
-      "put": {
-        "tags": ["UncompensatedPeriods"],
-        "summary": "Update contractorJob period",
-        "operationId": "UncompensatedPeriods_UpdateContractorJob",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 3
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateContractorJobRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_ContractorJobDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/uncompensatedPeriods/{id}": {
-      "delete": {
-        "tags": ["UncompensatedPeriods"],
-        "summary": "DeleteUncompensatedPeriod",
-        "operationId": "UncompensatedPeriods_DeleteUncompensatedPeriod",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/api/ActivationGrant": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "summary": "Creates a new activation grant application",
         "operationId": "ActivationGrant_CreateActivationGrant",
         "requestBody": {
@@ -1132,7 +278,9 @@
     },
     "/api/ActivationGrant/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "summary": "Returns an empty application with profile data filled, and all support data",
         "operationId": "ActivationGrant_GetEmptyActivationGrantWithProfile",
         "parameters": [
@@ -1167,7 +315,9 @@
     },
     "/api/ActivationGrant/canapply/{applicantSSN}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_CanApply",
         "parameters": [
           {
@@ -1201,7 +351,9 @@
     },
     "/api/ActivationGrant/validate": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_ValidateApplication",
         "requestBody": {
           "x-name": "command",
@@ -1236,7 +388,9 @@
     },
     "/api/ActivationGrant/validatebankinformation": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_ValidateBankInformation",
         "requestBody": {
           "x-name": "command",
@@ -1271,7 +425,9 @@
     },
     "/api/ActivationGrant/validateincomepage": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_ValidateIncomePage",
         "requestBody": {
           "x-name": "incomeForm",
@@ -1306,7 +462,9 @@
     },
     "/api/ActivationGrant/withdraw": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "summary": "Withdraws the latest activation grant for the given applicant",
         "operationId": "ActivationGrant_WithdrawApplication",
         "requestBody": {
@@ -1376,7 +534,9 @@
     },
     "/api/applicants/resolve": {
       "post": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Takes in SSN and returns ApplicantId",
         "operationId": "Applicant_Resolve",
         "requestBody": {
@@ -1422,7 +582,9 @@
     },
     "/api/applicants/{id}/actions": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir aðgerðir sem umsækjandi getur framkvæmt",
         "operationId": "Applicant_GetActions",
         "parameters": [
@@ -1468,7 +630,9 @@
     },
     "/api/applicants/profile/supportData": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir stoðgögn fyrir umsækjanda upplýsingar",
         "operationId": "Applicant_GetApplicantInfoSupportData",
         "responses": {
@@ -1495,7 +659,9 @@
     },
     "/api/applicants/{id}/overview": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Takes in ApplicantId and returns readonly overview of the applicant.",
         "operationId": "Applicant_Overview",
         "parameters": [
@@ -1553,7 +719,9 @@
     },
     "/api/applicants/{id}/profile": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir upplýsingar umsækjanda sem notaðar eru til að uppfæra applicant profile",
         "operationId": "Applicant_GetApplicantInfo",
         "parameters": [
@@ -1602,7 +770,9 @@
     },
     "/api/applicants/{id}/profile/eligibility": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Athugar hvort umsækjandi sé með gilda umsókn um atvinnuleysisbætur eða virknistyrk og megi því breyta prófíl sínum.",
         "operationId": "Applicant_GetProfileEligibility",
         "parameters": [
@@ -1642,7 +812,9 @@
     },
     "/api/applicants/{applicantId}/profile": {
       "patch": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Uppfæra upplýsingar einstaklings",
         "operationId": "Applicant_UpdateApplicant",
         "parameters": [
@@ -1703,7 +875,9 @@
     },
     "/api/applicants/{id}/jobSearchConfirmations/eligibility": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Athugar hvort umsækjandi uppfylli skilyrði til að stofna staðfestingu atvinnuleitar.",
         "operationId": "Applicant_GetJobSearchConfirmationEligibility",
         "parameters": [
@@ -1743,7 +917,9 @@
     },
     "/api/applicants/{id}/jobSearchConfirmations": {
       "post": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Stofna staðfestingu atvinnuleit",
         "operationId": "Applicant_CreateJobSearchConfirmations",
         "parameters": [
@@ -1836,7 +1012,9 @@
     },
     "/api/applicants/{id}/foreignTravel/eligibility": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Athugar hvort umsækjandi uppfylli skilyrði til að skrá dvöl erlendis.",
         "operationId": "Applicant_GetForeignTravelEligibility",
         "parameters": [
@@ -1873,7 +1051,9 @@
     },
     "/api/applicants/{id}/attachments/eligibility": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Athugar hvort umsækjandi uppfylli skilyrði til að stofna fylgiskjöl.",
         "operationId": "Applicant_GetCreateAttachmentEligibility",
         "parameters": [
@@ -1913,7 +1093,9 @@
     },
     "/api/applicants/{id}/foreignTravel": {
       "post": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Stofnar bótalaustímabil fyrir umsækjanda vegna dvalar erlendis.",
         "operationId": "Applicant_CreateForeignTravel",
         "parameters": [
@@ -1976,7 +1158,9 @@
     },
     "/api/applicants/{id}/applications/overview": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Returns an overview of active or recently active applications for an applicant.",
         "operationId": "Applicant_ApplicationsOverview",
         "parameters": [
@@ -2024,7 +1208,9 @@
     },
     "/api/applicants/{id}/unemploymentapplications/overview": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir upplýsingar umsóknar fyrir yfirlitssíðu á mínar síður island.is",
         "operationId": "Applicant_GetLatestUnemploymentApplicationOverview",
         "parameters": [
@@ -2072,7 +1258,9 @@
     },
     "/api/applicants/{id}/activationgrantapplications/overview": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir upplýsingar virknistyrksumsóknar fyrir yfirlitssíðu á mínar síður island.is",
         "operationId": "Applicant_GetLatestActivationGrantApplicationOverview",
         "parameters": [
@@ -2120,7 +1308,9 @@
     },
     "/api/applicants/{id}/withdraw/overview": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir upplýsingar um hvort umsækjandi geti dregið nýjustu virku umsókn sína til baka og hvaða umsókn það á við um.\nBótaumsókn er skoðuð fyrst, síðan virknistyrksumsókn.",
         "operationId": "Applicant_GetWithdrawOverview",
         "parameters": [
@@ -2160,7 +1350,9 @@
     },
     "/api/applicants/{applicantId}/attachments": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir viðhengi umsækjanda",
         "operationId": "Applicant_GetApplicantAttachments",
         "parameters": [
@@ -2198,7 +1390,9 @@
         ]
       },
       "post": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Skrá umbeðið fylgiskjal",
         "operationId": "Applicant_CreateApplicantRequestedAttachment",
         "parameters": [
@@ -2253,7 +1447,9 @@
     },
     "/api/applicants/{applicantId}/attachments/requests": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir tegundir viðhengja sem umsækjanda vantar",
         "operationId": "Applicant_GetApplicantRequestedAttachments",
         "parameters": [
@@ -2296,7 +1492,9 @@
     },
     "/api/applicants/{id}/external/rvk": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Gets applicant info for Reykjavikurborg",
         "operationId": "Applicant_GetApplicantInfoForRVK",
         "parameters": [
@@ -2332,7 +1530,9 @@
     },
     "/api/applicants/{id}/external/sjukratryggingar": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Gets applicant info for Sjukratryggingar islands",
         "operationId": "Applicant_GetApplicantInfoForSI",
         "parameters": [
@@ -2368,7 +1568,9 @@
     },
     "/api/applicants/{id}/external/sjukratryggingar/status": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Nær í stöðu umsækjanda hjá VMST - er til virk umsókn í mánuði, er til umsókn í vinnslu, dags. umsóknar",
         "operationId": "Applicant_GetApplicantStatusForSI",
         "parameters": [
@@ -2412,7 +1614,9 @@
     },
     "/api/applicants/{applicantId}/withdraw": {
       "post": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Afskráir virkar umsóknir umsækjanda, bæði atvinnuleysisumsókn og virknistyrksumsókn ef þær eru til staðar.",
         "operationId": "Applicant_WithdrawLatestApplication",
         "parameters": [
@@ -2493,7 +1697,9 @@
     },
     "/api/applicants/{id}/unemploymentapplications/withdraw/overview": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir upplýsingar um hvort umsækjandi geti dregið atvinnuleysisumsókn til baka og hvaða umsókn það á við um.",
         "operationId": "Applicant_GetUnemploymentApplicationsWithdrawOverview",
         "parameters": [
@@ -2534,7 +1740,9 @@
     },
     "/api/applicants/{id}/activationgrantapplications/withdraw/overview": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "summary": "Sækir upplýsingar um hvort umsækjandi geti dregið virknistyrksumsókn til baka og hvaða umsókn það á við um.",
         "operationId": "Applicant_GetActivationGrantsWithdrawOverview",
         "parameters": [
@@ -2575,7 +1783,9 @@
     },
     "/api/applications/overview": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "summary": "Returns overview of applications that should be shown for an applicant.",
         "operationId": "Application_Overview",
         "requestBody": {
@@ -2612,7 +1822,9 @@
     },
     "/api/Attachment": {
       "post": {
-        "tags": ["Attachment"],
+        "tags": [
+          "Attachment"
+        ],
         "summary": "Creates an attachment",
         "operationId": "Attachment_CreateAttachment",
         "requestBody": {
@@ -2648,7 +1860,9 @@
     },
     "/api/Attachment/{id}": {
       "get": {
-        "tags": ["Attachment"],
+        "tags": [
+          "Attachment"
+        ],
         "operationId": "Attachment_GetAttachment",
         "parameters": [
           {
@@ -2692,7 +1906,9 @@
     },
     "/api/Attachment/attachmenttypes": {
       "get": {
-        "tags": ["Attachment"],
+        "tags": [
+          "Attachment"
+        ],
         "summary": "Get all attachment types",
         "operationId": "Attachment_AttachmentTypes",
         "parameters": [
@@ -2727,7 +1943,9 @@
     },
     "/api/Auth/login": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Method for login in and receiving an token for authoriaztion",
         "operationId": "Auth_Login",
         "requestBody": {
@@ -2759,7 +1977,9 @@
     },
     "/api/jobadvertisements": {
       "get": {
-        "tags": ["JobAdvertisement"],
+        "tags": [
+          "JobAdvertisement"
+        ],
         "summary": "Gets a list of job advertisements",
         "operationId": "JobAdvertisement_GetAllJobAdvertisements",
         "parameters": [
@@ -2807,7 +2027,9 @@
     },
     "/api/jobSearchConfirmations/questionaire": {
       "get": {
-        "tags": ["JobSearchConfirmation"],
+        "tags": [
+          "JobSearchConfirmation"
+        ],
         "summary": "Sækir uppbyggingu spurningalista (skimun) sem fylgir staðfestingu atvinnuleitar.",
         "operationId": "JobSearchConfirmation_GetQuestionaireSchema",
         "responses": {
@@ -2834,7 +2056,9 @@
     },
     "/api/SupportData/delistingReasons": {
       "get": {
-        "tags": ["SupportData"],
+        "tags": [
+          "SupportData"
+        ],
         "summary": "Get delisting reasons (only those that are visible for applicant)",
         "operationId": "SupportData_GetDelistingReasons",
         "responses": {
@@ -2861,7 +2085,9 @@
     },
     "/api/SupportData/nationalities": {
       "get": {
-        "tags": ["SupportData"],
+        "tags": [
+          "SupportData"
+        ],
         "summary": "Get countries (only those that are visible for applicant)",
         "operationId": "SupportData_GetAllNationalities",
         "parameters": [
@@ -2896,9 +2122,40 @@
         ]
       }
     },
+    "/api/SupportData/workShiftPeriods": {
+      "get": {
+        "tags": [
+          "SupportData"
+        ],
+        "summary": "Get work shift periods",
+        "operationId": "SupportData_GetAllWorkShiftPeriods",
+        "responses": {
+          "200": {
+            "description": "All work shift periods that are visible for applicant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_WorkShiftPeriods_WorkShiftPeriodDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/applicants/{applicantId}/u2Certificates/eligibility": {
       "get": {
-        "tags": ["U2Certificate"],
+        "tags": [
+          "U2Certificate"
+        ],
         "summary": "Check if an applicant is eligible to create a U2 certificate",
         "operationId": "U2Certificate_CanCreateU2Certificate",
         "parameters": [
@@ -2937,7 +2194,9 @@
     },
     "/api/applicants/{applicantId}/u2Certificates": {
       "post": {
-        "tags": ["U2Certificate"],
+        "tags": [
+          "U2Certificate"
+        ],
         "summary": "Create U2 certificate for applicant",
         "operationId": "U2Certificate_CreateU2Certificate",
         "parameters": [
@@ -2995,7 +2254,9 @@
     },
     "/api/applicants/{applicantId}/u2Certificates/validate": {
       "post": {
-        "tags": ["U2Certificate"],
+        "tags": [
+          "U2Certificate"
+        ],
         "summary": "Validate U2 certificate for applicant",
         "operationId": "U2Certificate_ValidateU2Certificate",
         "parameters": [
@@ -3046,7 +2307,9 @@
     },
     "/api/applicants/{applicantId}/u2Certificates/withdraw": {
       "post": {
-        "tags": ["U2Certificate"],
+        "tags": [
+          "U2Certificate"
+        ],
         "summary": "Withdraw U2 certificate for applicant",
         "operationId": "U2Certificate_WithdrawU2Certificate",
         "parameters": [
@@ -3085,7 +2348,9 @@
     },
     "/api/UnemploymentApplication": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "summary": "Creates a new unemployment application",
         "operationId": "UnemploymentApplication_CreateUnemploymentApplication",
         "requestBody": {
@@ -3122,7 +2387,9 @@
     },
     "/api/UnemploymentApplication/overview/{ssn}": {
       "get": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "summary": "Sækir upplýsingar umsóknar fyrir yfirlitssíðu á mínar síður island.is",
         "operationId": "UnemploymentApplication_GetLatestUnemploymentApplicationOverview",
         "parameters": [
@@ -3167,7 +2434,9 @@
     },
     "/api/UnemploymentApplication/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "summary": "Returns an empty application with profile data filled, and all support data",
         "operationId": "UnemploymentApplication_GetEmptyUnemploymentApplicationWithProfile",
         "parameters": [
@@ -3202,7 +2471,9 @@
     },
     "/api/UnemploymentApplication/validatepaymentpage": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "summary": "Validates Payment Page",
         "operationId": "UnemploymentApplication_ValidatePaymentPage",
         "requestBody": {
@@ -3238,7 +2509,9 @@
     },
     "/api/UnemploymentApplication/validateunpaidvacation": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "summary": "Validates Unpaid Vacation Page",
         "operationId": "UnemploymentApplication_ValidatePaymentPage2",
         "requestBody": {
@@ -3274,7 +2547,9 @@
     },
     "/api/UnemploymentApplication/withdraw": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "summary": "Withdraws the latest unemployment application for the given applicant",
         "operationId": "UnemploymentApplication_WithdrawApplication",
         "requestBody": {
@@ -3358,6 +2633,48 @@
           }
         }
       },
+      "Galdur_External_Domain_Models_Income_IncomesDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "irregularJobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_IrregularJobDTO"
+            }
+          },
+          "partTimeJobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_PartTimeJobDTO"
+            }
+          },
+          "pensionPayments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_PensionPaymentDTO"
+            }
+          },
+          "capitalIncomePayments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_CapitalIncomePaymentDTO"
+            }
+          },
+          "trPayments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_TRPaymentDTO"
+            }
+          },
+          "contractorJobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_ContractorJobDTO"
+            }
+          }
+        }
+      },
       "Galdur_External_Domain_Models_Income_IrregularJobDTO": {
         "type": "object",
         "additionalProperties": false,
@@ -3378,32 +2695,19 @@
           },
           "periodTo": {
             "type": "string",
-            "format": ""
+            "format": "",
+            "nullable": true
           },
           "estimatedIncome": {
             "type": "number",
             "format": "decimal"
-          }
-        }
-      },
-      "Galdur_External_Domain_Requests_Income_CreateIrregularJobRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "employerSSN": {
-            "type": "string"
           },
-          "periodFrom": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "periodTo": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "estimatedIncome": {
-            "type": "integer",
-            "format": "int64"
+          "workShiftPeriodIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "guid"
+            }
           }
         }
       },
@@ -3441,6 +2745,196 @@
           }
         }
       },
+      "Galdur_External_Domain_Models_Income_PensionPaymentDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "incomeTypeId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "pensionFundId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "estimatedIncome": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": ""
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_Income_CapitalIncomePaymentDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "incomeTypeId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "estimatedIncome": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": ""
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_Income_TRPaymentDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "incomeTypeId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "estimatedIncome": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": ""
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_Income_ContractorJobDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "startDate": {
+            "type": "string",
+            "format": ""
+          },
+          "endDate": {
+            "type": "string",
+            "format": ""
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_Income_CreateIncomesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_Income_CreateIncomesRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "irregularJobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateIrregularJobRequest"
+            }
+          },
+          "partTimeJobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreatePartTimeJobRequest"
+            }
+          },
+          "pensionPayments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreatePensionPaymentRequest"
+            }
+          },
+          "capitalIncomePayments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateCapitalIncomePaymentRequest"
+            }
+          },
+          "trPayments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateTRPaymentRequest"
+            }
+          },
+          "contractorJobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateContractorJobRequest"
+            }
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_Income_CreateIrregularJobRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employerSSN": {
+            "type": "string"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "estimatedIncome": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "workShiftPeriodIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        }
+      },
       "Galdur_External_Domain_Requests_Income_CreatePartTimeJobRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -3467,42 +2961,11 @@
           }
         }
       },
-      "Galdur_External_Domain_Models_Income_PensionPaymentDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid"
-          },
-          "typeId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "pensionFundId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "estimatedIncome": {
-            "type": "number",
-            "format": "decimal"
-          },
-          "periodFrom": {
-            "type": "string",
-            "format": ""
-          },
-          "periodTo": {
-            "type": "string",
-            "format": "",
-            "nullable": true
-          }
-        }
-      },
       "Galdur_External_Domain_Requests_Income_CreatePensionPaymentRequest": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "typeId": {
+          "incomeTypeId": {
             "type": "string",
             "format": "guid"
           },
@@ -3521,33 +2984,6 @@
           "periodTo": {
             "type": "string",
             "format": "date-time",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_External_Domain_Models_Income_CapitalIncomePaymentDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid"
-          },
-          "typeId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "estimatedIncome": {
-            "type": "number",
-            "format": "decimal"
-          },
-          "periodFrom": {
-            "type": "string",
-            "format": ""
-          },
-          "periodTo": {
-            "type": "string",
-            "format": "",
             "nullable": true
           }
         }
@@ -3575,38 +3011,11 @@
           }
         }
       },
-      "Galdur_External_Domain_Models_Income_TRPaymentDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid"
-          },
-          "typeId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "estimatedIncome": {
-            "type": "number",
-            "format": "decimal"
-          },
-          "periodFrom": {
-            "type": "string",
-            "format": ""
-          },
-          "periodTo": {
-            "type": "string",
-            "format": "",
-            "nullable": true
-          }
-        }
-      },
       "Galdur_External_Domain_Requests_Income_CreateTRPaymentRequest": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "typeId": {
+          "incomeTypeId": {
             "type": "string",
             "format": "guid"
           },
@@ -3622,6 +3031,20 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_Income_CreateContractorJobRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "periodFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -3686,38 +3109,6 @@
           },
           "privateFund": {
             "type": "boolean"
-          }
-        }
-      },
-      "Galdur_External_Domain_Models_Income_ContractorJobDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid"
-          },
-          "startDate": {
-            "type": "string",
-            "format": ""
-          },
-          "endDate": {
-            "type": "string",
-            "format": ""
-          }
-        }
-      },
-      "Galdur_External_Domain_Requests_Income_CreateContractorJobRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "periodFrom": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "periodTo": {
-            "type": "string",
-            "format": "date-time"
           }
         }
       },
@@ -4728,7 +4119,12 @@
           "JobAdvertisement",
           "DontKnow"
         ],
-        "enum": [0, 1, 2, 3]
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
       },
       "Galdur_Domain_Models_Settings_AttachmentStatus_AttachmentStatusDTO": {
         "allOf": [
@@ -4975,8 +4371,18 @@
       "Galdur_Domain_Enumerations_EWSApplicantCurrentStatus": {
         "type": "integer",
         "description": "",
-        "x-enumNames": ["HasNoJob", "HasJob", "IsInSchool", "Other"],
-        "enum": [0, 1, 2, 3]
+        "x-enumNames": [
+          "HasNoJob",
+          "HasJob",
+          "IsInSchool",
+          "Other"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
       },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_OtherInformationDTO": {
         "type": "object",
@@ -5713,8 +5119,14 @@
       "Galdur_Domain_Enumerations_PensionType": {
         "type": "integer",
         "description": "",
-        "x-enumNames": ["PensionFund", "PrivatePensionFund"],
-        "enum": [0, 1]
+        "x-enumNames": [
+          "PensionFund",
+          "PrivatePensionFund"
+        ],
+        "enum": [
+          0,
+          1
+        ]
       },
       "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_Union": {
         "type": "object",
@@ -6665,7 +6077,16 @@
           "Suðurland",
           "Suðurnes"
         ],
-        "enum": [0, 1, 2, 3, 4, 5, 6, 7]
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
       },
       "Galdur_Domain_Enumerations_PostcodeDistrict": {
         "type": "integer",
@@ -6679,7 +6100,15 @@
           "Hafnarfjörður",
           "Mosfellsbær"
         ],
-        "enum": [0, 1, 2, 3, 4, 5, 6]
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
       },
       "Galdur_Domain_Models_Settings_ApplicationStatus_ApplicationStatusDTO": {
         "allOf": [
@@ -8924,6 +8353,17 @@
           }
         ]
       },
+      "Galdur_Domain_Models_Settings_WorkShiftPeriods_WorkShiftPeriodDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
+          }
+        ]
+      },
       "Galdur_XRoad_API_Models_Applicant_U2EligibilityResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -10040,6 +9480,15 @@
             "type": "string",
             "description": "UnionSSN",
             "nullable": true
+          },
+          "workShiftPeriodIds": {
+            "type": "array",
+            "description": "WorkShiftPeriodIds",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "format": "guid"
+            }
           },
           "periodString": {
             "type": "string",
