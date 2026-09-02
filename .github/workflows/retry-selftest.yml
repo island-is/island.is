@@ -6,6 +6,7 @@ name: Retry mechanism self-test
 # No deployments, no merge queue, no Spot interruption required.
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       fail_mode:
@@ -46,7 +47,7 @@ jobs:
           if [[ "${AFFECTED_PROJECTS}" != "beta" ]]; then
             echo "chunk ${AFFECTED_PROJECTS} ok"; exit 0
           fi
-          case "${{ inputs.fail_mode }}" in
+          case "${{ inputs.fail_mode || 'infra' }}" in
             infra)
               echo "The runner has received a shutdown signal"
               echo "The operation was canceled"
@@ -132,7 +133,7 @@ jobs:
     steps:
       - name: Assert gate matches expectation
         env:
-          MODE: ${{ inputs.fail_mode }}
+          MODE: ${{ inputs.fail_mode || 'infra' }}
           GATE: ${{ needs.gate.result }}
         run: |
           # genuine => gate must fail; infra/none => gate must pass.
