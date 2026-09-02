@@ -44,6 +44,7 @@ import {
   isSchoolType,
   isUnborn,
   showDisabilityService,
+  showPreferredLanguage,
   showWellbeingContactFields,
   showWellbeingManagerFields,
 } from './conditionUtils'
@@ -735,15 +736,15 @@ export const getMemmCultureItems = (
       ),
       hideIfEmpty: true,
     },
-    {
-      width: 'full',
-      keyText: memmMessages.culture.preferredLanguageTitle,
-      valueText:
-        getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
-      hideIfEmpty: true,
-    },
-    ...(memmCulturePreferredLanguage
+    ...(showPreferredLanguage(answers)
       ? [
+          {
+            width: 'full' as const,
+            keyText: memmMessages.culture.preferredLanguageTitle,
+            valueText:
+              getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
+            hideIfEmpty: true,
+          },
           {
             width: 'full' as const,
             keyText: sharedMessages.needsInterpreter,

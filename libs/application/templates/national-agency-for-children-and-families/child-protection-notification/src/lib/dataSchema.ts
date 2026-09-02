@@ -210,7 +210,7 @@ const memmSchema = z.object({
     .object({
       languageUsage: z.string().optional(),
       languages: z.array(z.string()).optional(),
-      preferredLanguage: z.string().optional(),
+      preferredLanguage: z.string().nullish(),
       needsInterpreter: z.array(z.string()).nullish(),
     })
     .optional(),
