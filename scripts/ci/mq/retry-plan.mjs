@@ -97,10 +97,10 @@ async function main() {
     const stage = STAGE.tests(name)
       ? 'tests'
       : STAGE.docker(name)
-        ? 'docker'
-        : STAGE.typecheck(name)
-          ? 'typecheck'
-          : null
+      ? 'docker'
+      : STAGE.typecheck(name)
+      ? 'typecheck'
+      : null
     if (!stage) continue
     if (job.conclusion === 'success' || job.conclusion === 'skipped') continue
     if (job.status !== 'completed') {
