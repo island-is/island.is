@@ -12,7 +12,8 @@ const FIELDS = ['value', 'project', 'target', 'imageName', 'imageTag']
 
 function setOutput(name, value) {
   const line = `${name}=${value}\n`
-  if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, line)
+  if (process.env.GITHUB_OUTPUT)
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, line)
   else process.stdout.write(line)
 }
 

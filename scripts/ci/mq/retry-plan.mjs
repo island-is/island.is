@@ -20,7 +20,8 @@ const STAGE = {
 
 function setOutput(name, value) {
   const line = `${name}=${value}\n`
-  if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, line)
+  if (process.env.GITHUB_OUTPUT)
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, line)
   else process.stdout.write(line)
 }
 
@@ -124,10 +125,10 @@ async function main() {
     const stage = STAGE.tests(name)
       ? 'tests'
       : STAGE.docker(name)
-        ? 'docker'
-        : STAGE.typecheck(name)
-          ? 'typecheck'
-          : null
+      ? 'docker'
+      : STAGE.typecheck(name)
+      ? 'typecheck'
+      : null
     if (!stage) continue
     if (job.conclusion === 'success' || job.conclusion === 'skipped') continue
     if (job.status !== 'completed') {
