@@ -1,6 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Option } from '@island.is/clients/mms/frigg'
 import {
   DetailedDropDownDto,
   DropDownDto,
@@ -60,9 +59,6 @@ export const getApplicationExternalData = (
   const genders =
     getValueViaPath<DropDownDto[]>(externalData, 'genders.data') ?? []
 
-  const languageEnvironmentOptions =
-    getValueViaPath<Option[]>(externalData, 'languageEnvironments.data') ?? []
-
   const childSafetyLevels =
     getValueViaPath<DetailedDropDownDto[]>(
       externalData,
@@ -119,7 +115,6 @@ export const getApplicationExternalData = (
     categories,
     protectiveFactorSections,
     genders,
-    languageEnvironmentOptions,
     childSafetyLevels,
     postalCodes,
     pronounOptions,

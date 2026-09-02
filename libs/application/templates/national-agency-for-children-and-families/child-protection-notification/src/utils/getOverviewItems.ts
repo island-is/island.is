@@ -29,6 +29,7 @@ import {
   DO_NOT_KNOW,
   IS,
   KnowsNationalId,
+  LanguageEnvironmentOptions,
   NOT_APPLICABLE,
   RISK_TO_UNBORN,
 } from '../utils/constants'
@@ -43,6 +44,7 @@ import {
   isSchoolType,
   isUnborn,
   showDisabilityService,
+  showPreferredLanguage,
   showWellbeingContactFields,
   showWellbeingManagerFields,
 } from './conditionUtils'
@@ -54,6 +56,16 @@ const knowsNationalIdLabelMap = {
   [KnowsNationalId.YES]: sharedMessages.radioYes,
   [KnowsNationalId.NO]: sharedMessages.radioNo,
   [KnowsNationalId.UNBORN]: childMessages.nationalIdLookup.radioOptionUnborn,
+} as const
+
+// TODO: Replace with values from barnaverndargatt API when available.
+const languageUsageLabelMap = {
+  [LanguageEnvironmentOptions.ONLY_ICELANDIC]:
+    memmMessages.culture.languageUsageOnlyIcelandic,
+  [LanguageEnvironmentOptions.ICELANDIC_AND_OTHER]:
+    memmMessages.culture.languageUsageIcelandicAndOther,
+  [LanguageEnvironmentOptions.ONLY_OTHER]:
+    memmMessages.culture.languageUsageOnlyOther,
 } as const
 
 const receptionRadioLabelMap = {
@@ -686,9 +698,9 @@ export const getMemmReceptionItems = (
 
 export const getMemmCultureItems = (
   answers: FormValue,
-  externalData: ExternalData,
+  _externalData: ExternalData,
   _userNationalId: string,
-  locale: Locale,
+  _locale: Locale,
 ): Array<KeyValueItem> => {
   const {
     memmCultureLanguageUsage,
@@ -697,17 +709,14 @@ export const getMemmCultureItems = (
     memmCultureNeedsInterpreter,
   } = getApplicationAnswers(answers)
 
-  const { languageEnvironmentOptions } =
-    getApplicationExternalData(externalData)
-
   return [
     {
       width: 'full',
       keyText: memmMessages.culture.languageUsageLabel,
       valueText:
-        languageEnvironmentOptions
-          .find((opt) => opt.key === memmCultureLanguageUsage)
-          ?.value.find((v) => v.language === locale)?.content ??
+        languageUsageLabelMap[
+          memmCultureLanguageUsage as keyof typeof languageUsageLabelMap
+        ] ??
         memmCultureLanguageUsage ??
         '',
       hideIfEmpty: true,
@@ -720,15 +729,15 @@ export const getMemmCultureItems = (
       ),
       hideIfEmpty: true,
     },
-    {
-      width: 'full',
-      keyText: memmMessages.culture.preferredLanguageTitle,
-      valueText:
-        getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
-      hideIfEmpty: true,
-    },
-    ...(memmCulturePreferredLanguage
+    ...(showPreferredLanguage(answers)
       ? [
+          {
+            width: 'full' as const,
+            keyText: memmMessages.culture.preferredLanguageTitle,
+            valueText:
+              getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
+            hideIfEmpty: true,
+          },
           {
             width: 'full' as const,
             keyText: sharedMessages.needsInterpreter,
