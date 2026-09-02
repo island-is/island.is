@@ -97,9 +97,6 @@ export const hasDuplicateApplicants = (
   return false
 }
 
-export const formatCurrency = (answer: string) =>
-  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-
 export const parseCurrency = (value: string): number | undefined => {
   const numeric = value.replace(/[^\d]/g, '')
   return numeric ? Number(numeric) : undefined
