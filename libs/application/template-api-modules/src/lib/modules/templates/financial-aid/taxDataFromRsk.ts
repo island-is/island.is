@@ -24,10 +24,6 @@ export const fetchDirectTaxPaymentsFromRsk = async (
   return rskApi
     .directTaxPayments(nationalId, createPeriod(3), createPeriod(1))
     .then((res) => {
-      console.log('--------------------------------')
-      console.log('taxdata res')
-      console.dir(res, { depth: null })
-      console.log('--------------------------------')
       return {
         directTaxPayments: res.salaryBreakdown
           ? res.salaryBreakdown.map((salary) => {
