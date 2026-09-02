@@ -154,7 +154,15 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     )
 
     if (shouldSend) {
-      const courtName = capitalize(theCase.court?.name)
+      if (!theCase.court?.name) {
+        this.logger.error(
+          `Missing court name for case ${theCase.id} when sending spokesperson assigned notification`,
+        )
+
+        return { delivered: false }
+      }
+
+      const courtName = capitalize(theCase.court.name)
       const spokespersonHasAccessToRVG = !!civilClaimant.spokespersonNationalId
       const role = civilClaimant.spokespersonIsLawyer
         ? 'lögmann einkaréttarkröfuhafa'

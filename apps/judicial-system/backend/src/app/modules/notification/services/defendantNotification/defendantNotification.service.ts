@@ -245,6 +245,15 @@ export class DefendantNotificationService extends BaseNotificationService {
 
     if (shouldSend) {
       const courtName = theCase.court?.name
+
+      if (!courtName) {
+        this.logger.error(
+          `Missing court name for case ${theCase.id} when sending defender assigned notification`,
+        )
+
+        return { delivered: false }
+      }
+
       const defenderHasAccessToRVG = !!defendant.defenderNationalId
 
       const subject = `${courtName} - aðgangur að máli`

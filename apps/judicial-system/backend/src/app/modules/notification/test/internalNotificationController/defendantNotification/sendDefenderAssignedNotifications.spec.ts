@@ -192,6 +192,41 @@ describe('InternalNotificationController - Send defender assigned notifications'
     })
   })
 
+  describe('when the case has no court name', () => {
+    const defendant = {
+      id: defendantId,
+      defenderNationalId: '1234567890',
+      defenderName: defender.name,
+      defenderEmail: defender.email,
+      isDefenderChoiceConfirmed: true,
+    } as Defendant
+
+    const theCase = {
+      id: caseId,
+      courtCaseNumber: 'R-123-456/2024',
+      type: CaseType.INDICTMENT,
+      defendants: [defendant],
+    } as Case
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        caseId,
+        defendantId,
+        theCase,
+        defendant,
+        defendantNotificationDTO,
+      )
+    })
+
+    it('should not send a notification and return a failed delivery', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
+      expect(mockNotificationRepositoryService.create).not.toHaveBeenCalled()
+      expect(then.result).toEqual({ delivered: false })
+    })
+  })
+
   describe('when sending defender assigned notification to defender without email', () => {
     const defendant = {
       id: defendantId,

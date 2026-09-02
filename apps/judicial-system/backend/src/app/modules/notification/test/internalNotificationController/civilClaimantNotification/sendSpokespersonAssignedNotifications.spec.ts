@@ -170,4 +170,40 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
       })
     },
   )
+
+  describe('when the case has no court name', () => {
+    const civilClaimant = {
+      id: civilClaimantId,
+      caseId,
+      isSpokespersonConfirmed: true,
+      spokespersonIsLawyer: true,
+      spokespersonNationalId: '1234567890',
+      spokespersonName: 'Ben 10',
+      spokespersonEmail: 'ben10@omnitrix.is',
+    } as CivilClaimant
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        caseId,
+        civilClaimantId,
+        {
+          id: caseId,
+          courtCaseNumber: 'R-123-456',
+          type: CaseType.INDICTMENT,
+          civilClaimants: [civilClaimant],
+          hasCivilClaims: true,
+        } as Case,
+        civilClaimant,
+        civilClaimantNotificationDTO,
+      )
+    })
+
+    it('should not send a notification and return a failed delivery', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
+      expect(mockNotificationRepositoryService.create).not.toHaveBeenCalled()
+      expect(then.result).toEqual({ delivered: false })
+    })
+  })
 })
