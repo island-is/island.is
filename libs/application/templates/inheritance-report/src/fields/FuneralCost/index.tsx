@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
 import {
   FC,

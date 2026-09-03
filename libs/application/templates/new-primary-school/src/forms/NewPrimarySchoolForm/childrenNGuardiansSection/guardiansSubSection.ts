@@ -11,9 +11,9 @@ import {
 import { Application } from '@island.is/application/types'
 import {
   formatPhoneNumber,
+  getAllLanguageCodes,
   removeCountryCode,
-} from '@island.is/application/ui-components'
-import { getAllLanguageCodes } from '@island.is/shared/utils'
+} from '@island.is/shared/utils'
 import {
   childrenNGuardiansMessages,
   sharedMessages,
