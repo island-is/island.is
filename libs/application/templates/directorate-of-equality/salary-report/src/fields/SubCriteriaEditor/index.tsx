@@ -154,6 +154,9 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
+      if (!content) {
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
       const values = methods.getValues()
       const allGroups = Object.values(values).flat()
 
@@ -207,7 +210,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       }
       return [true, null]
     })
-  }, [setBeforeSubmitCallback, methods, sync, refetch, formatMessage])
+  }, [setBeforeSubmitCallback, methods, sync, refetch, formatMessage, content])
 
   if (loading) {
     return <DraftLoadingState />

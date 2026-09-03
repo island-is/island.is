@@ -134,6 +134,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [isAdding, setIsAdding] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | undefined>()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const loading = employeesLoading || rolesLoading
   const hasError = employeesHasError || rolesHasError
@@ -193,6 +194,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const runSync = async (batch: Parameters<typeof sync>[0]) => {
     setActionError(undefined)
+    setIsSubmitting(true)
     try {
       await sync(batch)
       if (batch.roles?.length) await refetchRoles({ silent: true })
@@ -201,6 +203,8 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     } catch {
       setActionError(formatMessage(messages.errors.draftSyncFailed))
       return false
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -271,6 +275,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                       roleTitleById={roleTitleById}
                       onSubmit={(values) => handleSave(employee, values)}
                       onCancel={() => setEditingId(null)}
+                      isSubmitting={isSubmitting}
                     />
                   </T.Data>
                 </T.Row>
@@ -281,6 +286,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   roleTitleById={roleTitleById}
                   onRemove={() => handleRemove(employee)}
                   onEdit={() => setEditingId(employee.id)}
+                  isSubmitting={isSubmitting}
                 />
               ),
             )}
@@ -301,6 +307,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             roleTitleById={roleTitleById}
             onSubmit={handleAdd}
             onCancel={() => setIsAdding(false)}
+            isSubmitting={isSubmitting}
           />
         ) : (
           <Box display="flex" justifyContent="flexStart">
@@ -308,6 +315,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               variant="ghost"
               type="button"
               icon="add"
+              disabled={isSubmitting}
               onClick={() => setIsAdding(true)}
             >
               {formatMessage(m.addButton)}

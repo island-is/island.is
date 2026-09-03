@@ -36,6 +36,7 @@ type Props = {
   roleTitleById: Record<string, string>
   onSubmit: (values: EmployeeFormValues) => void
   onCancel: () => void
+  isSubmitting?: boolean
 }
 
 export const EmployeeForm: FC<Props> = ({
@@ -43,6 +44,7 @@ export const EmployeeForm: FC<Props> = ({
   roleTitleById,
   onSubmit,
   onCancel,
+  isSubmitting,
 }) => {
   const { formatMessage, lang } = useLocale()
   const m = messages.report.employees
@@ -206,11 +208,21 @@ export const EmployeeForm: FC<Props> = ({
           justifyContent="flexEnd"
           marginTop={3}
         >
-          <Button variant="ghost" type="button" onClick={onCancel}>
+          <Button
+            variant="ghost"
+            type="button"
+            disabled={isSubmitting}
+            onClick={onCancel}
+          >
             {formatMessage(m.cancelButton)}
           </Button>
           <Box marginLeft={2}>
-            <Button type="button" onClick={methods.handleSubmit(onValid)}>
+            <Button
+              type="button"
+              disabled={isSubmitting}
+              loading={isSubmitting}
+              onClick={methods.handleSubmit(onValid)}
+            >
               {formatMessage(m.saveButton)}
             </Button>
           </Box>

@@ -24,6 +24,7 @@ type Props = {
   roleTitleById: Record<string, string>
   onRemove: () => void
   onEdit: () => void
+  isSubmitting?: boolean
 }
 
 // Alternating white / transparent (blue container shows through) rows.
@@ -55,6 +56,7 @@ export const EmployeeRow: FC<Props> = ({
   roleTitleById,
   onRemove,
   onEdit,
+  isSubmitting,
 }) => {
   const { formatMessage } = useLocale()
   const [expanded, setExpanded] = useState(false)
@@ -127,6 +129,7 @@ export const EmployeeRow: FC<Props> = ({
               size="small"
               type="button"
               variant="ghost"
+              disabled={isSubmitting}
               title={formatMessage(m.editButton)}
             />
             <Box marginLeft={1}>
@@ -144,6 +147,7 @@ export const EmployeeRow: FC<Props> = ({
                     size="small"
                     type="button"
                     variant="ghost"
+                    disabled={isSubmitting}
                     title={formatMessage(m.removeButton)}
                   />
                 }

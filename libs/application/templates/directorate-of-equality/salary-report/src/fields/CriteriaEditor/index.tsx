@@ -86,6 +86,9 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
+      if (!content) {
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
       if (hasWeightMismatch) {
         return [
           false,
@@ -146,6 +149,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       return [true, null]
     })
   }, [
+    content,
     refetch,
     answerQuestions,
     setBeforeSubmitCallback,

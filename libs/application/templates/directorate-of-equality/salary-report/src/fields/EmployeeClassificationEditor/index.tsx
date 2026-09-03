@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import {
@@ -140,7 +140,8 @@ export const EmployeeClassificationEditor: FC<
   // Syncs whatever's currently in the form for the loaded page — used both on
   // page turns (the form is about to be replaced with the next page's data)
   // and on the whole-screen submit.
-  const syncCurrentPage = async () => {
+  const syncCurrentPage = useCallback(async () => {
+    if (!criteriaContent) return false
     const values = methods.getValues().employees
     if (values.length === 0) return true
     try {
@@ -157,7 +158,7 @@ export const EmployeeClassificationEditor: FC<
     } catch {
       return false
     }
-  }
+  }, [criteriaContent, methods, sync, personalCriteria])
 
   const handlePageChange = async (nextPage: number) => {
     const ok = await syncCurrentPage()
@@ -176,8 +177,7 @@ export const EmployeeClassificationEditor: FC<
       if (!ok) return [false, formatMessage(messages.errors.draftSyncFailed)]
       return [true, null]
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setBeforeSubmitCallback, methods, sync, personalCriteria, formatMessage])
+  }, [setBeforeSubmitCallback, syncCurrentPage, formatMessage])
 
   if (loading) {
     return <DraftLoadingState />
