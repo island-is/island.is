@@ -1,7 +1,20 @@
-import { FC, memo, useEffect, useId, useState } from 'react'
+import {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { Application, StaticText } from '@island.is/application/types'
-import { Button, Checkbox, Table as T } from '@island.is/island-ui/core'
+import {
+  Button,
+  Checkbox,
+  HoverTooltip,
+  Table as T,
+} from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -12,6 +25,39 @@ import { InteractiveTableFormFieldExpandedRow } from './InteractiveTableFormFiel
 export type InteractiveTableColumn = {
   truncate: boolean
   expandable?: boolean
+}
+
+const TruncatedCell: FC<{ value: string }> = ({ value }) => {
+  const ref = useRef<HTMLSpanElement>(null)
+  const [isTruncated, setIsTruncated] = useState(false)
+
+  const measure = useCallback(() => {
+    const element = ref.current
+
+    if (!element) {
+      return
+    }
+
+    setIsTruncated(element.scrollWidth > element.clientWidth)
+  }, [])
+
+  useEffect(() => {
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [measure, value])
+
+  const anchor = (
+    <span ref={ref} className={styles.truncatedText}>
+      {value}
+    </span>
+  )
+
+  if (!isTruncated) {
+    return anchor
+  }
+
+  return <HoverTooltip text={value}>{anchor}</HoverTooltip>
 }
 
 interface Props {
@@ -134,8 +180,6 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
             <T.Data
               key={`row-${rowIndex}-cell-${cellIndex}`}
               data-column-index={cellIndex}
-              text={truncate ? { truncate: true } : undefined}
-              title={truncate ? value : undefined}
               box={cellBox(isFirstCell ? 'relative' : undefined)}
             >
               {isFirstCell && isOpen && <div className={styles.line} />}
@@ -150,6 +194,8 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
                 >
                   {value}
                 </Button>
+              ) : truncate ? (
+                <TruncatedCell value={value} />
               ) : (
                 value
               )}
