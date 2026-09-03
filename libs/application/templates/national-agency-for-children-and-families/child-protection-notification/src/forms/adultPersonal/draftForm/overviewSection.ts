@@ -1,13 +1,14 @@
 import {
+  buildCheckboxField,
   buildMultiField,
-  buildOverviewField,
   buildSection,
   buildSubmitField,
+  YES,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 
 import { overviewMessages } from '../../../lib/messages'
-import { getOverviewItems } from '../../../utils/getOverviewItems'
+import { adultPersonalOverviewFields } from '../../../utils/adultPersonalOverviewFields'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -18,12 +19,16 @@ export const overviewSection = buildSection({
       title: overviewMessages.sectionTitle,
       description: overviewMessages.description,
       children: [
-        buildOverviewField({
-          id: 'overview',
-          title: overviewMessages.sectionTitle,
-          backId: 'idToSomeField',
-          bottomLine: false,
-          items: getOverviewItems,
+        ...adultPersonalOverviewFields(true),
+        buildCheckboxField({
+          id: 'overviewAccuracyConfirmation',
+          required: true,
+          options: [
+            {
+              value: YES,
+              label: overviewMessages.accuracyConfirmation,
+            },
+          ],
         }),
         buildSubmitField({
           id: 'submit',
