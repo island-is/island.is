@@ -24,7 +24,6 @@ import {
   Select,
   Tag,
   Text,
-  toast,
   Tooltip,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -77,6 +76,7 @@ import {
   useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import {
   applyMergedCaseEntries,
   reconcileAppealDecisionsForRulingFileChange,

@@ -2,7 +2,6 @@ import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import type {
   Case,
@@ -10,6 +9,7 @@ import type {
   CreateCivilClaimantInput,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCivilClaimantMutation } from './createCivilClaimant.generated'

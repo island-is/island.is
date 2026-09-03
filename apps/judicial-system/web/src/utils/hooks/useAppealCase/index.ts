@@ -2,7 +2,6 @@ import type { Dispatch, SetStateAction } from 'react'
 import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type {
@@ -12,6 +11,7 @@ import type {
   Case,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
 import type { CreateAppealCaseMutation } from './createAppealCase.generated'

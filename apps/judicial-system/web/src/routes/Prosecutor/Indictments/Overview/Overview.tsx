@@ -10,7 +10,6 @@ import {
   Button,
   RadioButton,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
@@ -52,6 +51,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
 import { overview as strings } from './Overview.strings'

@@ -4,13 +4,7 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import router from 'next/router'
 
-import {
-  Accordion,
-  Box,
-  PdfViewer,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Accordion, Box, PdfViewer, Text } from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
@@ -54,6 +48,7 @@ import {
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { strings } from './Summary.strings'
 import * as styles from './Summary.css'

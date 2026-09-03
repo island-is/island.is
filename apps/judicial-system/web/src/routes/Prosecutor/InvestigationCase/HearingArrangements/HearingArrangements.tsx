@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, toast } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
@@ -41,6 +41,7 @@ import {
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 

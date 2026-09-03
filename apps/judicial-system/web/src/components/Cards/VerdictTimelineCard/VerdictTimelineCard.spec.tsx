@@ -2,7 +2,6 @@ import faker from 'faker'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { toast } from '@island.is/island-ui/core'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
@@ -14,6 +13,7 @@ import {
   FormContextWrapper,
   IntlProviderWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import VerdictTimelineCard from './VerdictTimelineCard'
 
