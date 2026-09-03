@@ -37,13 +37,15 @@ export class U2CertificateService extends BaseTemplateApiService {
     auth,
     currentUserLocale,
   }: TemplateApiModuleActionProps) {
-    let result
-    try {
-      result = await this.vmstUnemploymentClientService.checkU2Eligibility(auth)
-    } catch (e) {
-      this.logger.error('[VMST-U2-Certificate] - Error checking eligibility', e)
-      this.throwDefaultError()
-    }
+    const result = await this.vmstUnemploymentClientService
+      .checkU2Eligibility(auth)
+      .catch((e) => {
+        this.logger.error(
+          '[VMST-U2-Certificate] - Error checking eligibility',
+          e,
+        )
+        this.throwDefaultError()
+      })
 
     if (!result.isEligible) {
       const title =
@@ -116,13 +118,13 @@ export class U2CertificateService extends BaseTemplateApiService {
         e instanceof FetchError
           ? (e.body as { reason?: string; reasonEn?: string })
           : undefined
-      const erroMessage =
+      const errorMessage =
         currentUserLocale === 'is' ? body?.reason : body?.reasonEn
       this.logger.warn('[VMST-U2-Certificate] - Submit failed', e)
       throw new TemplateApiError(
         {
           title: errorMessages.eligibilityErrorTitle,
-          summary: erroMessage || errorMessages.cannotApplyErrorSummary,
+          summary: errorMessage || errorMessages.cannotApplyErrorSummary,
         },
         500,
       )

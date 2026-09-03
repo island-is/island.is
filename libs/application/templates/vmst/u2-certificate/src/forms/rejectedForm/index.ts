@@ -21,7 +21,7 @@ export const RejectedForm = buildForm({
   title: applicationMessages.name,
   children: [
     buildMultiField({
-      id: 'revokedMultiField',
+      id: 'rejectedMultiField',
       title: sharedMessages.yourApplicationTitle,
       children: [
         buildAlertMessageField({

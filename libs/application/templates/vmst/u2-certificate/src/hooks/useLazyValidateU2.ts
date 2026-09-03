@@ -1,9 +1,9 @@
+import { useLazyQuery } from '@apollo/client'
 import { VALIDATE_U2_QUERY } from '../graphql/queries'
-import { useLazyQuery } from './useLazyQuery'
 import { VmstApplicationsU2ValidationResponse } from '@island.is/api/schema'
 
 export const useLazyValidateU2 = () => {
-  return useLazyQuery<
+  const [execute] = useLazyQuery<
     {
       vmstApplicationsU2Validation: VmstApplicationsU2ValidationResponse
     },
@@ -14,4 +14,5 @@ export const useLazyValidateU2 = () => {
       }
     }
   >(VALIDATE_U2_QUERY)
+  return execute
 }

@@ -18,9 +18,11 @@ export const DateValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const getValidateU2Callback = useCallback(
     async (dateWhenLeaving: string, destinationCountryId: string) => {
       const { data } = await getValidateU2({
-        input: {
-          dateWhenLeaving,
-          destinationCountryId,
+        variables: {
+          input: {
+            dateWhenLeaving,
+            destinationCountryId,
+          },
         },
       })
       return data

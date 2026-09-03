@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
 import { prerequisitesForm as m } from '../../lib/messages'
-import { EESCountriesApi, EligabilityApi } from '../../dataProviders'
+import { EESCountriesApi, EligibilityApi } from '../../dataProviders'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites = buildForm({
@@ -40,7 +40,7 @@ export const Prerequisites = buildForm({
               subTitle: m.dataProviders.nationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              provider: EligabilityApi,
+              provider: EligibilityApi,
               title: m.dataProviders.vmstTitle,
               subTitle: m.dataProviders.vmstSubTitle,
             }),

@@ -1,9 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ExternalData } from '@island.is/application/types'
-
-import { FormValue } from '@island.is/application/types'
-
-import { KeyValueItem } from '@island.is/application/types'
+import {
+  ExternalData,
+  FormValue,
+  KeyValueItem,
+} from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import { mainForm as m } from '../lib/messages'

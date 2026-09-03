@@ -10,6 +10,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { getOverviewItems } from '../../utils/getOverviewItems'
 import { HandShake } from '@island.is/application/assets/graphics'
 import {
@@ -18,17 +19,18 @@ import {
   sharedMessages,
 } from '../../lib/messages'
 
-export const completedForm = buildForm({
-  id: 'completedForm',
+export const CompletedForm = buildForm({
+  id: 'CompletedForm',
   mode: FormModes.COMPLETED,
+  logo: DirectorateOfLabourLogo,
   title: applicationMessages.name,
   children: [
     buildMultiField({
-      id: 'reviewMultiField',
+      id: 'completedMultiField',
       title: sharedMessages.yourApplicationTitle,
       children: [
         buildAlertMessageField({
-          id: 'reviewAlertField',
+          id: 'completedAlertField',
           alertType: 'success',
           title: cfm.general.alertSuccessTitle,
           message: cfm.general.alertSuccessMessage,
@@ -39,11 +41,11 @@ export const completedForm = buildForm({
           description: sharedMessages.whatHappensNextDescription,
         }),
         buildOverviewField({
-          id: 'reviewOverview',
+          id: 'completedOverview',
           items: getOverviewItems,
         }),
         buildAlertMessageField({
-          id: 'reviewAlertInfo',
+          id: 'completedAlertInfo',
           alertType: 'info',
           title: cfm.general.alertInfoTitle,
           message: cfm.general.alertInfoMessage,
@@ -56,7 +58,7 @@ export const completedForm = buildForm({
           marginBottom: 2,
         }),
         buildMessageWithLinkButtonField({
-          id: 'reviewBackToServicePortal',
+          id: 'completedBackToServicePortal',
           url: '/minarsidur/umsoknir',
           buttonTitle: coreMessages.openServicePortalButtonTitle,
           message: coreMessages.openServicePortalMessageText,

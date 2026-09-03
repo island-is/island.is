@@ -14,7 +14,7 @@ export const sharedMessages = defineMessages({
   whatHappensNextDescription: {
     id: 'vmst.u2c.application:shared.whatHappensNextDescription#markdown',
     defaultMessage:
-      '**Þú sækir vottorðið í eigin persónu þegar þú færð meldingu um að það sé tilbúið hjá Vinnumálastofnun**\n\nÞú getur sótt U2 vottorðið á næstu þjónustuskrifstofu Vinnumálastofnunar 1-5 dögum fyrir brottfarardag. Þetta er gert til að tryggja að þú sért enn á Íslandi áður en þú ferð til útlanda í atvinnuleit. ',
+      '**Þú sækir vottorðið í eigin persónu þegar þú færð meldingu um að það sé tilbúið hjá Vinnumálastofnun**\n\nÞú getur sótt U2 vottorðið á næstu þjónustuskrifstofu Vinnumálastofnunar 1-5 dögum fyrir brottfarardag. Þetta er gert til að tryggja að þú sért enn á Íslandi áður en þú ferð til útlanda í atvinnuleit.',
     description: 'Shared expandable description text used across forms',
   },
   newApplicationButton: {
@@ -31,21 +31,6 @@ export const sharedMessages = defineMessages({
 })
 
 export const applicationMessages = defineMessages({
-  actionCardPrerequisites: {
-    id: 'vmst.u2c.application:applicationMessages.actionCardPrerequisites',
-    defaultMessage: 'Gagnaöflun',
-    description: 'Action card tag for prerequisites',
-  },
-  actionCardDraft: {
-    id: 'vmst.u2c.application:applicationMessages.actionCardDraft',
-    defaultMessage: 'Í vinnslu',
-    description: 'Action card tag for draft application',
-  },
-  actionCardSubmitted: {
-    id: 'vmst.u2c.application:applicationMessages.actionCardSubmitted',
-    defaultMessage: 'Umsókn send inn',
-    description: 'Action card tag for submitted application',
-  },
   institutionName: {
     id: 'vmst.u2c.application:institution',
     defaultMessage: 'Vinnumálastofnun',
@@ -236,7 +221,7 @@ export const mainForm = {
     },
     checkboxLabel: {
       id: 'vmst.u2c.application:mainForm.importantInfoSection.checkboxLabel',
-      defaultMessage: 'Ég hef kynnt mér upplýsingar um U2 vottorð ',
+      defaultMessage: 'Ég hef kynnt mér upplýsingar um U2 vottorð',
       description: 'checkbox label',
     },
   }),
@@ -326,25 +311,25 @@ export const completedForm = {
   general: defineMessages({
     alertSuccessTitle: {
       id: 'vmst.u2c.application:completedForm.general.alertSuccessTitle',
-      defaultMessage: 'Umsókn þín um U2 vottorð hefur verið samþykkt! ',
+      defaultMessage: 'Umsókn þín um U2 vottorð hefur verið samþykkt!',
       description: 'completedForm success alert title',
     },
     alertSuccessMessage: {
       id: 'vmst.u2c.application:completedForm.general.alertSuccessMessage',
       defaultMessage:
-        '**Þú þarft að sækja vottorðið í eigin persónu** á næstu þjónustuskrifstofu Vinnumálastofnunar þegar þú færð tilkynningu um að vottorðið sé tilbúið. Þetta er gert til að tryggja að þú sért enn á Íslandi áður en þú ferð erlendis í atvinnuleit. ',
+        '**Þú þarft að sækja vottorðið í eigin persónu** á næstu þjónustuskrifstofu Vinnumálastofnunar þegar þú færð tilkynningu um að vottorðið sé tilbúið. Þetta er gert til að tryggja að þú sért enn á Íslandi áður en þú ferð erlendis í atvinnuleit.',
       description: 'completedForm success alert message',
     },
     alertInfoTitle: {
       id: 'vmst.u2c.application:completedForm.general.alertInfoTitle',
       defaultMessage:
-        'Ef hættir við atvinnuleit erlendis þarft þú að afturkalla umsóknina',
+        'Ef þú hættir við atvinnuleit erlendis þarft þú að afturkalla umsóknina',
       description: 'completedForm info alert title',
     },
     alertInfoMessage: {
       id: 'vmst.u2c.application:completedForm.general.alertInfoMessage',
       defaultMessage:
-        'Ef þú hættir við að fara erlendis í atvinnuleit þarf að tilkynna Vinnumálastofnun það með því að mæta á þjónustuskrifstofu Vinnumálastofnunar og afturkalla umsóknina í eigin persónu. ',
+        'Ef þú hættir við að fara erlendis í atvinnuleit þarf að tilkynna Vinnumálastofnun það með því að mæta á þjónustuskrifstofu Vinnumálastofnunar og afturkalla umsóknina í eigin persónu.',
       description: 'completedForm info alert message',
     },
   }),

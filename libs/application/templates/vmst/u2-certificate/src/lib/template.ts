@@ -26,7 +26,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { EESCountriesApi, EligabilityApi } from '../dataProviders'
+import { EESCountriesApi, EligibilityApi } from '../dataProviders'
 import { applicationMessages as m } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
@@ -64,7 +64,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [NationalRegistryV3UserApi, EESCountriesApi, EligabilityApi],
+              api: [NationalRegistryV3UserApi, EESCountriesApi, EligibilityApi],
               delete: true,
             },
           ],
@@ -266,7 +266,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
+                  Promise.resolve(module.CompletedForm),
                 ),
               read: 'all',
               delete: false,

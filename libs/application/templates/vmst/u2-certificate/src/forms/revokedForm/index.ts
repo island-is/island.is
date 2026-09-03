@@ -25,7 +25,7 @@ export const RevokedForm = buildForm({
       title: sharedMessages.yourApplicationTitle,
       children: [
         buildAlertMessageField({
-          id: 'reviewAlertField',
+          id: 'revokedAlertField',
           alertType: 'error',
           title: rfm.general.alertTitle,
         }),
