@@ -39,6 +39,11 @@ export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 export {
+  CivilClaimantRepositoryService,
+  UpdateCivilClaimant,
+  UpdatedCivilClaimants,
+} from './services/civilClaimantRepository.service'
+export {
   CourtSessionRepositoryService,
   UpdateCourtSession,
 } from './services/courtSessionRepository.service'
@@ -49,6 +54,11 @@ export {
   UpdateCourtSessionString,
 } from './services/courtSessionStringRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
+export {
+  DateLogRepositoryService,
+  CreateDateLog,
+  UpdateDateLog,
+} from './services/dateLogRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 export {

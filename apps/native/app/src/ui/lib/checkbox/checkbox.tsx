@@ -53,6 +53,7 @@ export const Checkbox = ({
     >
       <Typography
         style={{
+          flexShrink: 1,
           fontWeight: checked ? '600' : '300',
         }}
       >

@@ -4,7 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
 
-import { CaseString, DateLog } from '../repository'
+import { CaseString } from '../repository'
 import {
   AwsS3Module,
   CourtModule,
@@ -46,7 +46,7 @@ import { PdfService } from './pdf.service'
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
     forwardRef(() => VictimModule),
-    SequelizeModule.forFeature([DateLog, CaseString]),
+    SequelizeModule.forFeature([CaseString]),
   ],
   providers: [
     CaseService,
