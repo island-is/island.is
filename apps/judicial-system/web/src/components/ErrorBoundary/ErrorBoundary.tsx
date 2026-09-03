@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type PropsWithChildren } from 'react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 interface State {
   hasError: boolean
@@ -24,25 +25,21 @@ class ErrorBoundary extends Component<PropsWithChildren, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          paddingY={10}
-          paddingX={3}
-        >
-          <Box marginBottom={2}>
-            <Text variant="h1">Eitthvað fór úrskeiðis</Text>
-          </Box>
-          <Box marginBottom={4}>
-            <Text>
+        <Box paddingY={10} paddingX={3}>
+          <div className={grid({ gap: 2, marginBottom: 4 })}>
+            <Text variant="h1" textAlign="center">
+              Eitthvað fór úrskeiðis
+            </Text>
+            <Text textAlign="center">
               Óvænt villa kom upp. Vinsamlegast endurhlaðið síðuna til að halda
               áfram.
             </Text>
+          </div>
+          <Box display="flex" justifyContent="center">
+            <Button onClick={() => window.location.reload()}>
+              Endurhlaða síðu
+            </Button>
           </Box>
-          <Button onClick={() => window.location.reload()}>
-            Endurhlaða síðu
-          </Button>
         </Box>
       )
     }
