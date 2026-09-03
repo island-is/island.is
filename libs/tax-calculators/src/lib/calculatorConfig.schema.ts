@@ -29,8 +29,9 @@ const sectionFieldSchema = z.object({
   // the same backend field is placed twice.
   uid: z.string().min(1),
   key: z.string().min(1),
-  // Editor-controlled display label. Falls back to the backend's own
-  // (Icelandic-only) default label from taxCalculatorFields when unset.
+  // Editor-authored display label. The backend supplies no label of its own --
+  // taxCalculatorFields returns only the input contract (key, dataType,
+  // options, required), so an unset label means the field renders without one.
   label: localizedTextSchema.optional(),
   placeholder: localizedTextSchema.optional(),
   span: z.number().int().min(1).max(12),
