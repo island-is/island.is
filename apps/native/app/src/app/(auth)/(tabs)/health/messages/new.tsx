@@ -400,13 +400,15 @@ export default function HealthMessageComposeScreen() {
                   </View>
 
                   {!isReply && (
-                    <Checkbox
-                      checked={termsAccepted}
-                      onPress={() => setTermsAccepted(!termsAccepted)}
-                      label={intl.formatMessage({
-                        id: 'health.messages.compose.termsAccept',
-                      })}
-                    />
+                    <View style={{ marginTop: -theme.spacing[2] }}>
+                      <Checkbox
+                        checked={termsAccepted}
+                        onPress={() => setTermsAccepted(!termsAccepted)}
+                        label={intl.formatMessage({
+                          id: 'health.messages.compose.termsAccept',
+                        })}
+                      />
+                    </View>
                   )}
                 </>
               )}
