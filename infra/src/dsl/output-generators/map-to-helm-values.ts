@@ -537,6 +537,13 @@ function serializeHTTPRoute(
     ingressConf.extraAnnotations?.['nginx.ingress.kubernetes.io/rewrite-target']
   const rewritePrefix = rewriteTarget === '/$2' ? '/' : undefined
 
+  // Carry the legacy global-auth opt-out onto the route so a no-auth
+  // SecurityPolicy is rendered (Cognito wall bypass).
+  const noAuth =
+    ingressConf.extraAnnotations?.[
+      'nginx.ingress.kubernetes.io/enable-global-auth'
+    ] === 'false'
+
   return {
     parentRefs: [
       {
@@ -561,6 +568,7 @@ function serializeHTTPRoute(
         ...(rewritePrefix ? { rewritePrefix } : {}),
       },
     ],
+    ...(noAuth ? { noAuth } : {}),
   }
 }
 
