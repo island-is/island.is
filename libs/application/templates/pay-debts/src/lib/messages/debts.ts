@@ -69,7 +69,7 @@ export const debts = {
     },
     amountHeader: {
       id: 'pd.application:debts.table.amountHeader',
-      defaultMessage: 'Skuldastaða',
+      defaultMessage: 'Skuld',
       description: 'Debt amount table header',
     },
     dueDateHeader: {
