@@ -5,6 +5,7 @@ import { ApolloProvider } from '@apollo/client'
 
 import type { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { Box, ToastContainer } from '@island.is/island-ui/core'
+import { getPublicRuntimeEnv } from '@island.is/judicial-system-web/environments/runtimeEnvironment'
 import client from '@island.is/judicial-system-web/graphql/client'
 import {
   FeatureProvider,
@@ -16,6 +17,20 @@ import {
   ViewportProvider,
 } from '@island.is/judicial-system-web/src/components'
 import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
+import { userMonitoring } from '@island.is/user-monitoring'
+
+if (typeof window !== 'undefined') {
+  const { ddLogsClientToken, environment, appVersion } = getPublicRuntimeEnv()
+
+  if (ddLogsClientToken) {
+    userMonitoring.initDdLogs({
+      service: 'judicial-system-web',
+      clientToken: ddLogsClientToken,
+      env: environment || 'local',
+      version: appVersion || 'unknown',
+    })
+  }
+}
 
 const getTranslationStrings = (apolloClient: typeof client) => {
   if (!apolloClient) {
