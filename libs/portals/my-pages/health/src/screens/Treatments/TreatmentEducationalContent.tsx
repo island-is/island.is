@@ -1,11 +1,4 @@
-import {
-  Box,
-  Inline,
-  Input,
-  Stack,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Inline, Input, Stack, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
