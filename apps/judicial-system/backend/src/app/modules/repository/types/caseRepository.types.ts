@@ -42,6 +42,7 @@ import { Subpoena } from '../models/subpoena.model'
 import { User } from '../models/user.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
+import { UpdateDateLog } from '../services/dateLogRepository.service'
 
 export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -532,11 +533,6 @@ export const caseInclude: Includeable[] = [
     separate: true,
   },
 ]
-
-interface UpdateDateLog {
-  date?: Date
-  location?: string
-}
 
 export interface UpdateCaseDefendantEventLogDecision {
   defendantId: string
