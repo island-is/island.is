@@ -4,10 +4,7 @@ import { AnimatePresence } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import {
-  formatDate,
-  formatFileSubmittedBy,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
 import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
@@ -18,6 +15,14 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { getVerdictAppealFileGroups } from './VerdictAppealFiles.logic'
+
+// Appeal documents are "sent in" (design, 2026-09-03), unlike the case files
+// the shared formatter describes as "lagt fram".
+const formatSentInBy = (defenderName?: string | null): string => {
+  const initials = getInitials(defenderName)
+
+  return initials ? `Verjandi (${initials}) sendi inn` : 'Verjandi sendi inn'
+}
 
 /**
  * The "Áfrýjunarferli" section of a completed indictment: the
@@ -73,7 +78,7 @@ const VerdictAppealFiles: FC = () => {
                     )}`}
                   </Text>
                   <Text whiteSpace="nowrap" variant="small">
-                    {formatFileSubmittedBy('Verjandi', defendant.defenderName)}
+                    {formatSentInBy(defendant.defenderName)}
                   </Text>
                 </Box>
                 <Box marginLeft={3}>

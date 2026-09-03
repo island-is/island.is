@@ -78,7 +78,7 @@ describe('VerdictAppealFiles', () => {
     expect(await screen.findByText('Áfrýjunarferli')).toBeInTheDocument()
     expect(screen.getByText('yfirlysing.pdf')).toBeInTheDocument()
     expect(screen.getByText(/04\.06\.2026 kl\. \d\d:\d\d/)).toBeInTheDocument()
-    expect(screen.getByText('Verjandi (LL) lagði fram')).toBeInTheDocument()
+    expect(screen.getByText('Verjandi (LL) sendi inn')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Valmynd fyrir yfirlysing.pdf' }),
     ).toBeInTheDocument()
