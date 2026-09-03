@@ -163,8 +163,8 @@ export class CivilClaimantService {
     civilClaimant: CivilClaimant,
     user: User,
   ): Promise<DeliverResponse> {
-    return this.courtService
-      .updateIndictmentCaseWithSpokespersonInfo(
+    try {
+      await this.courtService.updateIndictmentCaseWithSpokespersonInfo(
         user,
         theCase.id,
         theCase.court?.name,
@@ -172,17 +172,19 @@ export class CivilClaimantService {
         civilClaimant.nationalId,
         civilClaimant.name,
         civilClaimant.spokespersonNationalId,
+        civilClaimant.spokespersonName,
         civilClaimant.spokespersonIsLawyer,
       )
-      .then(() => ({ delivered: true }))
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to update civil claimant info for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
-          { reason },
-        )
 
-        return { delivered: false }
-      })
+      return { delivered: true }
+    } catch (reason) {
+      this.logger.error(
+        `Failed to update civil claimant info for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
   }
 
   async delete(caseId: string, civilClaimantId: string): Promise<boolean> {
