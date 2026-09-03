@@ -403,25 +403,9 @@ export default function HealthMessageComposeScreen() {
                     <Checkbox
                       checked={termsAccepted}
                       onPress={() => setTermsAccepted(!termsAccepted)}
-                      label={
-                        <>
-                          {intl.formatMessage({
-                            id: 'health.messages.compose.termsAccept',
-                          })}{' '}
-                          <Typography
-                            weight="600"
-                            color={theme.color.blue400}
-                            style={{ textDecorationLine: 'underline' }}
-                            onPress={() =>
-                              router.push('/health/messages/terms')
-                            }
-                          >
-                            {intl.formatMessage({
-                              id: 'health.messages.compose.termsLink',
-                            })}
-                          </Typography>
-                        </>
-                      }
+                      label={intl.formatMessage({
+                        id: 'health.messages.compose.termsAccept',
+                      })}
                     />
                   )}
                 </>
