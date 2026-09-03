@@ -90,7 +90,14 @@ export const requestHandlers = [
       authorization: req.headers.get('authorization'),
     }
     lastV6BeRequest.body = await req.json()
-    return res(ctx.status(200), ctx.json({ category: 'BE', result: true }))
+    return res(
+      ctx.status(200),
+      ctx.json({
+        category: 'BE',
+        result: true,
+        applicationGuid: 'be-guid-0001',
+      }),
+    )
   }),
 
   // v6 identity travels in the `jwttoken` header (see apiConfiguration.ts); this
@@ -103,6 +110,7 @@ export const requestHandlers = [
       ctx.json({
         category: 'B',
         result: true,
+        applicationGuid: 'renewal65-guid-0001',
       }),
     )
   }),

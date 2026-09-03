@@ -602,8 +602,9 @@ export class DrivingLicenseService {
     })
 
     return {
-      success: response,
+      success: response.success,
       errorMessage: null,
+      applicationGuid: response.applicationGuid,
     }
   }
 
@@ -655,8 +656,9 @@ export class DrivingLicenseService {
     })
 
     return {
-      success: response,
+      success: response.success,
       errorMessage: null,
+      applicationGuid: response.applicationGuid,
     }
   }
 
