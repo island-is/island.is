@@ -589,8 +589,12 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
 
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
-
-    const idsServices = ['identity-server-admin','identity-server-admin','identity-server','services-auth-public-api'];
+    const idsServices = [
+      'identity-server-admin',
+      'identity-server-admin',
+      'identity-server',
+      'services-auth-public-api',
+    ]
 
     Object.values(s.ingress).forEach((ingress) => {
       if (!Array.isArray(ingress.host.dev)) {
