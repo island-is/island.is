@@ -188,31 +188,16 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
       </T.Row>
       {isExpandable && (
         <tr aria-hidden={!isOpen}>
-          {selectable && (
-            <T.Data
-              style={{ padding: 0, height: 'auto' }}
-              box={{
-                position: 'relative',
-                background: isOpen ? 'blue100' : undefined,
-                borderBottomWidth: isOpen ? 'standard' : undefined,
-              }}
-            >
-              {isOpen && <div className={styles.line} />}
-            </T.Data>
-          )}
           <T.Data
-            colSpan={colSpan - (selectable ? 1 : 0)}
-            style={{
-              padding: 0,
-              paddingLeft: selectable ? 8 : 16,
-              height: 'auto',
-            }}
+            colSpan={colSpan}
+            style={{ padding: 0, paddingLeft: 16, height: 'auto' }}
             box={{
               position: 'relative',
               background: isOpen ? 'blue100' : undefined,
               borderBottomWidth: isOpen ? 'standard' : undefined,
             }}
           >
+            {isOpen && <div className={styles.line} />}
             <AnimateHeight
               id={expandedRowId}
               duration={300}
@@ -224,14 +209,11 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
               }}
             >
               {isOpen && (
-                <>
-                  {!selectable && <div className={styles.line} />}
-                  <InteractiveTableFormFieldExpandedRow
-                    header={expandedHeader}
-                    rows={expandedRows}
-                    application={application}
-                  />
-                </>
+                <InteractiveTableFormFieldExpandedRow
+                  header={expandedHeader}
+                  rows={expandedRows}
+                  application={application}
+                />
               )}
             </AnimateHeight>
           </T.Data>

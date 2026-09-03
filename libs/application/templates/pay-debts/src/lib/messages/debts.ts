@@ -93,6 +93,11 @@ export const debts = {
       defaultMessage: 'Vextir',
       description: 'Interest header of the expanded charge type sub-table',
     },
+    costHeader: {
+      id: 'pd.application:debts.table.costHeader',
+      defaultMessage: 'Kostnaður',
+      description: 'Cost header of the expanded charge type sub-table',
+    },
     emptyMessage: {
       id: 'pd.application:debts.table.emptyMessage',
       defaultMessage: 'Engar skuldir fundust',

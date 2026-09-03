@@ -18,7 +18,7 @@ import { formatDate } from '../../utils/formatDate'
 import { formatTimePeriod } from '../../utils/formatTimePeriod'
 import { getDebts, hasFetchedDebts } from '../../utils/getDebts'
 
-const PRINCIPAL_AND_INTEREST_UNAVAILABLE = '—'
+const AMOUNT_UNAVAILABLE = '—'
 
 const debtsWereFetched = (_answers: unknown, externalData: ExternalData) =>
   hasFetchedDebts(externalData)
@@ -52,7 +52,7 @@ export const debtsSection = buildSection({
               truncate: true,
               width: 150,
             },
-            { label: messages.table.timePeriodHeader, width: 110 },
+            { label: messages.table.finalDueDateHeader, width: 110 },
             { label: messages.table.amountHeader, width: 120 },
             messages.table.toPayLabel,
           ],
@@ -66,24 +66,26 @@ export const debtsSection = buildSection({
             return debts.map<StaticText[]>((debt) => [
               debt.chargeTypeName,
               debt.chargeItemSubject,
-              formatTimePeriod(debt.timePeriod),
+              formatDate(debt.finalDueDate),
               formatCurrency(debt.debts),
             ])
           },
           expandedRows: {
             header: [
               messages.table.dueDateHeader,
-              messages.table.finalDueDateHeader,
+              messages.table.timePeriodHeader,
               messages.table.principalHeader,
               messages.table.interestHeader,
+              messages.table.costHeader,
             ],
             rows: (application) =>
               getDebts(application).map<StaticText[][]>((debt) => [
                 [
                   formatDate(debt.dueDate),
-                  formatDate(debt.finalDueDate),
-                  PRINCIPAL_AND_INTEREST_UNAVAILABLE,
-                  PRINCIPAL_AND_INTEREST_UNAVAILABLE,
+                  formatTimePeriod(debt.timePeriod),
+                  AMOUNT_UNAVAILABLE,
+                  AMOUNT_UNAVAILABLE,
+                  AMOUNT_UNAVAILABLE,
                 ],
               ]),
           },
