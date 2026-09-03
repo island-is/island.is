@@ -1,10 +1,4 @@
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -61,7 +55,7 @@ const TreatmentOverview = () => {
       lastSentAt: treatment?.lastQuestionnaireSentAt,
     },
     {
-      label: formatMessage(messages.educationalContent),
+      label: formatMessage(m.healthTreatmentEducationalContent),
       to: HealthPaths.HealthTreatmentEducationalContent.replace(':id', id),
       lastSentAt: treatment?.lastDocumentSentAt,
     },
@@ -89,7 +83,7 @@ const TreatmentOverview = () => {
       ) : !treatment ? (
         <Problem type="no_data" noBorder={false} />
       ) : (
-        <Stack space={2}>
+        <>
           <Appointments
             data={{
               data: { data: firstTwoAppointments },
@@ -98,39 +92,30 @@ const TreatmentOverview = () => {
             }}
             showLinkButton
           />
-
-          <Box>
-            <Text
-              variant="eyebrow"
-              color="purple400"
-              fontWeight="semiBold"
-              marginBottom={2}
-            >
-              {formatMessage(m.myInfo)}
-            </Text>
+          <Stack space={2}>
             <TreatmentMessages
               conversations={treatment.recentConversations ?? []}
             />
-          </Box>
 
-          <GridRow rowGap={2} marginTop={1}>
-            {linkCards.map((card) => (
-              <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
-                <TreatmentLinkCard
-                  label={card.label}
-                  to={card.to}
-                  text={
-                    card.lastSentAt
-                      ? formatMessage(messages.lastSent, {
-                          date: formatDate(card.lastSentAt),
-                        })
-                      : undefined
-                  }
-                />
-              </GridColumn>
-            ))}
-          </GridRow>
-        </Stack>
+            <GridRow rowGap={2} marginTop={1}>
+              {linkCards.map((card) => (
+                <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
+                  <TreatmentLinkCard
+                    label={card.label}
+                    to={card.to}
+                    text={
+                      card.lastSentAt
+                        ? formatMessage(messages.lastSent, {
+                            date: formatDate(card.lastSentAt),
+                          })
+                        : undefined
+                    }
+                  />
+                </GridColumn>
+              ))}
+            </GridRow>
+          </Stack>
+        </>
       )}
     </IntroWrapper>
   )

@@ -701,7 +701,7 @@ export const healthModule: PortalModule = {
       element: <TreatmentOverview />,
     },
     {
-      name: hm.educationalContent,
+      name: m.healthTreatmentEducationalContent,
       path: HealthPaths.HealthTreatmentEducationalContent,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),

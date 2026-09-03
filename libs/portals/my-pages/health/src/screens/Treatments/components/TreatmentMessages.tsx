@@ -30,15 +30,9 @@ export const TreatmentMessages = ({ conversations }: Props) => {
       border="standard"
       borderColor="blue200"
       borderRadius="large"
-      paddingY={3}
+      padding={3}
     >
-      <Box
-        display="flex"
-        alignItems="center"
-        columnGap={2}
-        marginBottom={2}
-        paddingX={3}
-      >
+      <Box display="flex" alignItems="center" columnGap={2} marginBottom={2}>
         <Icon icon="chatbubble" type="outline" color="blue400" size="medium" />
         <Text variant="h4" as="h2" color="blue400">
           {formatMessage(messages.treatmentMessagesFromTeam)}
@@ -58,37 +52,41 @@ export const TreatmentMessages = ({ conversations }: Props) => {
           )}
           className={conversationStyles.conversationLink}
         >
-          <Box paddingX={3}>
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              columnGap={2}
-              borderTopWidth="standard"
-              borderColor="blue200"
-              style={{ paddingTop: 12, paddingBottom: 12 }}
-            >
-              <Box overflow="hidden">
-                <Text variant="medium" marginBottom="smallGutter">
-                  {conversation.senderName?.trim() ||
-                    formatMessage(messages.treatmentTeam)}
-                </Text>
-                <Text color="blue400" fontWeight="regular" truncate>
-                  {conversation.title ??
-                    formatMessage(messages.treatmentMessagesFromTeam)}
-                </Text>
-              </Box>
-              {conversation.lastMessageSentAt && (
-                <Text variant="medium" whiteSpace="nowrap">
-                  {formatDate(conversation.lastMessageSentAt)}
-                </Text>
-              )}
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="flexStart"
+            columnGap={2}
+            padding={2}
+            borderTopWidth="standard"
+            borderColor="blue200"
+          >
+            <Box overflow="hidden">
+              <Text variant="medium" marginBottom="smallGutter">
+                {conversation.senderName?.trim() ||
+                  formatMessage(messages.treatmentTeam)}
+              </Text>
+              <Text color="blue400" fontWeight="regular" truncate>
+                {conversation.title?.trim() ||
+                  formatMessage(messages.treatmentMessagesFromTeam)}
+              </Text>
             </Box>
+            {conversation.lastMessageSentAt && (
+              <Text variant="medium" whiteSpace="nowrap">
+                {formatDate(conversation.lastMessageSentAt)}
+              </Text>
+            )}
           </Box>
         </LinkResolver>
       ))}
 
-      <Box display="flex" justifyContent="center" paddingTop={3}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        paddingTop={3}
+        borderTopWidth="standard"
+        borderColor="blue200"
+      >
         <LinkButton
           to={HealthPaths.HealthConversations}
           text={formatMessage(messages.seeAllMessages)}

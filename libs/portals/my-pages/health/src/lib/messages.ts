@@ -2426,10 +2426,6 @@ export const messages = defineMessages({
     defaultMessage: 'Sjá öll skilaboð',
     id: 'sp.health:see-all-messages',
   },
-  educationalContent: {
-    defaultMessage: 'Fræðsluefni',
-    id: 'sp.health:educational-content',
-  },
   educationalContentIntro: {
     defaultMessage:
       'Hér finnur þú fræðsluefni sem getur hjálpað þér að skilja betur meðferðina þína og það sem henni tengist.',
@@ -2440,7 +2436,7 @@ export const messages = defineMessages({
     id: 'sp.health:open-document',
   },
   sent: {
-    defaultMessage: 'Sent',
+    defaultMessage: 'Sent: {date}',
     id: 'sp.health:sent',
   },
   sentFrom: {

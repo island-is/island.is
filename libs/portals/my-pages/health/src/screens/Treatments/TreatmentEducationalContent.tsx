@@ -1,11 +1,4 @@
-import {
-  Box,
-  Inline,
-  Input,
-  Stack,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Input, Stack, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -36,15 +29,29 @@ const TreatmentEducationalContent = () => {
     variables: { treatmentId: id },
   })
 
-  const documents = data?.healthDirectorateTreatmentDocuments?.filter(
-    (document) =>
-      !searchQuery ||
-      document.title?.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+  // One card per link; the parent document supplies the sent date and a
+  // title fallback for links with an empty label.
+  const cards = data?.healthDirectorateTreatmentDocuments
+    ?.flatMap((document) =>
+      document.links.map((link, index) => ({
+        key: `${document.id}-${index}`,
+        title:
+          link.label?.trim() ||
+          document.title?.trim() ||
+          formatMessage(m.healthTreatmentEducationalContent),
+        sentAt: document.sentAt,
+        href: link.href,
+      })),
+    )
+    .filter(
+      (card) =>
+        !searchQuery ||
+        card.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.educationalContent)}
+      title={formatMessage(m.healthTreatmentEducationalContent)}
       intro={messages.educationalContentIntro}
       serviceProvider={{
         slug: HEALTH_DIRECTORATE_SLUG,
@@ -60,6 +67,7 @@ const TreatmentEducationalContent = () => {
           <Box width="half">
             <Input
               name="treatment-documents-search"
+              aria-label={formatMessage(m.searchPlaceholder)}
               placeholder={formatMessage(m.searchPlaceholder)}
               icon={{ name: 'search' }}
               size="xs"
@@ -69,13 +77,13 @@ const TreatmentEducationalContent = () => {
             />
           </Box>
 
-          {!documents?.length ? (
+          {!cards?.length ? (
             <Problem type="no_data" noBorder={false} />
           ) : (
             <Stack space={2}>
-              {documents.map((document) => (
+              {cards.map((card) => (
                 <Box
-                  key={document.id}
+                  key={card.key}
                   background="white"
                   border="standard"
                   borderColor="blue200"
@@ -90,25 +98,19 @@ const TreatmentEducationalContent = () => {
                   >
                     <Box>
                       <Text variant="h4" as="h2" marginBottom={3}>
-                        {document.title ??
-                          formatMessage(messages.educationalContent)}
+                        {card.title}
                       </Text>
                       <Tag variant="purple" outlined disabled>
-                        {`${formatMessage(messages.sent)}: ${formatDate(
-                          document.sentAt,
-                        )}`}
+                        {formatMessage(messages.sent, {
+                          date: formatDate(card.sentAt),
+                        })}
                       </Tag>
                     </Box>
-                    <Inline space={2}>
-                      {document.links.map((link) => (
-                        <LinkButton
-                          key={link.href}
-                          to={link.href}
-                          text={formatMessage(messages.openDocument)}
-                          variant="text"
-                        />
-                      ))}
-                    </Inline>
+                    <LinkButton
+                      to={card.href}
+                      text={formatMessage(messages.openDocument)}
+                      variant="text"
+                    />
                   </Box>
                 </Box>
               ))}
