@@ -21,6 +21,7 @@ import { useCreateAppealEventLogMutation } from './createAppealEventLog.generate
 import type { LimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
 import { useLimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
 import { useLimitedAccessCreateAppealEventLogMutation } from './limitedAccessCreateAppealEventLog.generated'
+import { useLimitedAccessCreateVerdictAppealMutation } from './limitedAccessCreateVerdictAppeal.generated'
 import type { LimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
 import { useLimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
 import type { TransitionAppealCaseMutation } from './transitionAppealCase.generated'
@@ -39,6 +40,10 @@ const useAppealCase = () => {
     limitedAccessCreateAppealCaseMutation,
     { loading: isLimitedAccessCreatingAppealCase },
   ] = useLimitedAccessCreateAppealCaseMutation()
+  const [
+    limitedAccessCreateVerdictAppealMutation,
+    { loading: isCreatingVerdictAppeal },
+  ] = useLimitedAccessCreateVerdictAppealMutation()
   const [transitionAppealCaseMutation, { loading: isTransitioningAppealCase }] =
     useTransitionAppealCaseMutation()
   const [
@@ -116,7 +121,7 @@ const useAppealCase = () => {
         defendantId: string,
       ): Promise<AppealCase | undefined> => {
         try {
-          const { data } = await limitedAccessCreateAppealCaseMutation({
+          const { data } = await limitedAccessCreateVerdictAppealMutation({
             variables: {
               input: {
                 caseId,
@@ -132,7 +137,7 @@ const useAppealCase = () => {
           return undefined
         }
       },
-    [limitedAccessCreateAppealCaseMutation, formatMessage],
+    [limitedAccessCreateVerdictAppealMutation, formatMessage],
   )
 
   const transitionAppealCase = useMemo(
@@ -255,7 +260,9 @@ const useAppealCase = () => {
     createAppealCase,
     createVerdictAppeal,
     isCreatingAppealCase:
-      isCreatingAppealCase || isLimitedAccessCreatingAppealCase,
+      isCreatingAppealCase ||
+      isLimitedAccessCreatingAppealCase ||
+      isCreatingVerdictAppeal,
     transitionAppealCase,
     isTransitioningAppealCase:
       isTransitioningAppealCase || isLimitedAccessTransitioningAppealCase,
