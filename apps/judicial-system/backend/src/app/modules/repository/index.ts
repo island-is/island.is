@@ -56,6 +56,12 @@ export {
   CreateEventLog,
   LoginCount,
 } from './services/eventLogRepository.service'
+export {
+  IndictmentCountRepositoryService,
+  CreateIndictmentCount,
+  UpdateIndictmentCount,
+  UpdatedIndictmentCounts,
+} from './services/indictmentCountRepository.service'
 export { IndictmentSubtypeRepositoryService } from './services/indictmentSubtypeRepository.service'
 export { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
 export { InstitutionRepositoryService } from './services/institutionRepository.service'
@@ -68,6 +74,11 @@ export {
   NotificationRepositoryService,
   CreateNotification,
 } from './services/notificationRepository.service'
+export {
+  OffenseRepositoryService,
+  UpdateOffense,
+  UpdatedOffenses,
+} from './services/offenseRepository.service'
 export { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 export {
   RobotLogRepositoryService,
