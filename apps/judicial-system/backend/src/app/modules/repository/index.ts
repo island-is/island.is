@@ -39,6 +39,11 @@ export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 export {
+  CivilClaimantRepositoryService,
+  UpdateCivilClaimant,
+  UpdatedCivilClaimants,
+} from './services/civilClaimantRepository.service'
+export {
   CourtSessionRepositoryService,
   UpdateCourtSession,
 } from './services/courtSessionRepository.service'
