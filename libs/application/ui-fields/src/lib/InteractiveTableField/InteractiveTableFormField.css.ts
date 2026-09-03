@@ -44,6 +44,13 @@ globalStyle(`${tableWrapper} div:has(> div > input:not([type="checkbox"]))`, {
   background: theme.color.white,
 })
 
+export const truncatedText = style({
+  display: 'block',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+})
+
 export const checkboxColumnStyle = { width: 56 }
 export const inputColumnHeaderStyle = { width: 155 }
 
