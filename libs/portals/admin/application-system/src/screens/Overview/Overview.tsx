@@ -26,7 +26,7 @@ interface OverviewProps {
   isLoadingOrganizations: boolean
 }
 
-const pageSize = 12
+const pageSize = 8
 
 const Overview = ({
   isSuperAdmin,

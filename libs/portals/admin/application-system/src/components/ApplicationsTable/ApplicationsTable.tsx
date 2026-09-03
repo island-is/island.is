@@ -100,11 +100,31 @@ export const ApplicationsTable = ({
   if (applications.length === 0) {
     const beyondCap = maxPage !== undefined && page > maxPage
     return (
-      <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
-        <Text variant="h4">
-          {formatMessage(beyondCap ? m.pageBeyondLimit : m.notFound)}
-        </Text>
-      </Box>
+      <>
+        <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
+          <Text variant="h4">
+            {formatMessage(beyondCap ? m.pageBeyondLimit : m.notFound)}
+          </Text>
+        </Box>
+        {beyondCap && maxPage ? (
+          <Box marginTop={[4, 4, 4, 6]}>
+            <Pagination
+              page={page}
+              totalPages={maxPage}
+              renderLink={(page, className, children) => (
+                <button
+                  className={className}
+                  onClick={() => {
+                    setPage(page)
+                  }}
+                >
+                  {children}
+                </button>
+              )}
+            />
+          </Box>
+        ) : null}
+      </>
     )
   }
 
