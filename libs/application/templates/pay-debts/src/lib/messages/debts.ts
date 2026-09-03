@@ -17,7 +17,7 @@ export const debts = {
     description: {
       id: 'pd.application:debts.description.description',
       defaultMessage:
-        'Yfirlit þeirra skulda sem hægt er að greiða til ríkisins. Nánara yfirlit og sundurliðun skulda er undir Fjármál á Mínum Síðum.',
+        'Yfirlit þeirra skulda sem hægt er að greiða til ríkisins. Nánara yfirlit og sundurliðun skulda er undir [Fjármál á Mínum síðum](/minarsidur/fjarmal).',
       description: 'Description of description field',
     },
   }),
