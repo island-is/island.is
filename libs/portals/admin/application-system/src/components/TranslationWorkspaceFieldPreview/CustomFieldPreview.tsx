@@ -60,7 +60,11 @@ export const CustomFieldPreview = ({
     if (builtField) {
       return (
         <Box {...layout}>
-          <CustomFieldErrorBoundary componentName={componentName}>
+          <CustomFieldErrorBoundary
+            key={screen.id}
+            resetKey={screen.id}
+            componentName={componentName}
+          >
             <PreviewCtrl
               application={previewApplication}
               field={builtField}
@@ -82,7 +86,11 @@ export const CustomFieldPreview = ({
       const mockField = buildMockCustomField(screen)
       return (
         <Box {...layout}>
-          <CustomFieldErrorBoundary componentName={screen.component}>
+          <CustomFieldErrorBoundary
+            key={screen.id}
+            resetKey={screen.id}
+            componentName={screen.component}
+          >
             <CustomComponent
               application={previewApplication}
               field={mockField}

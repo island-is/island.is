@@ -1,14 +1,28 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsString, IsOptional, IsArray, ValidateNested } from 'class-validator'
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator'
 import { Type } from 'class-transformer'
+import {
+  TRANSLATION_NAMESPACE_MAX_LENGTH,
+  TRANSLATION_MESSAGE_KEY_MAX_LENGTH,
+  TRANSLATION_BULK_MAX_ITEMS,
+} from '@island.is/application/utils'
 
 export class UpdateTranslationDto {
   @ApiProperty()
   @IsString()
+  @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
   namespace!: string
 
   @ApiProperty()
   @IsString()
+  @MaxLength(TRANSLATION_MESSAGE_KEY_MAX_LENGTH)
   messageKey!: string
 
   @ApiPropertyOptional()
@@ -25,10 +39,12 @@ export class UpdateTranslationDto {
 export class TranslationItemDto {
   @ApiProperty()
   @IsString()
+  @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
   namespace!: string
 
   @ApiProperty()
   @IsString()
+  @MaxLength(TRANSLATION_MESSAGE_KEY_MAX_LENGTH)
   messageKey!: string
 
   @ApiPropertyOptional()
@@ -45,6 +61,7 @@ export class TranslationItemDto {
 export class BulkUpdateTranslationsDto {
   @ApiProperty({ type: [TranslationItemDto] })
   @IsArray()
+  @ArrayMaxSize(TRANSLATION_BULK_MAX_ITEMS)
   @ValidateNested({ each: true })
   @Type(() => TranslationItemDto)
   translations!: TranslationItemDto[]

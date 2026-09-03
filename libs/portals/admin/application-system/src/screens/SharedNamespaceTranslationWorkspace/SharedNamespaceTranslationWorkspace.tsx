@@ -74,6 +74,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
     handleValueChange,
     getPersistedForLocale,
     clearEditedValues,
+    clearSavedEditedValues,
     hasUnsavedChanges,
     unsavedCount,
   } = useTranslationWorkspaceDrafts(persistedByKey)
@@ -101,6 +102,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
     persistedByKey,
     hasUnsavedChanges,
     clearEditedValues,
+    clearSavedEditedValues,
     refetchTranslations,
     formatMessage,
     onValueChange: handleValueChange,

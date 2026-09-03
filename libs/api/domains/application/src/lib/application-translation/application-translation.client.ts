@@ -52,22 +52,9 @@ export class ApplicationTranslationClient {
     }
   }
 
-  private formatErrorDetail(error: FetchError): string {
-    if (typeof error.body === 'string') {
-      return error.body.slice(0, 800)
-    }
-    if (error.body) {
-      return JSON.stringify(error.body).slice(0, 800)
-    }
-    return ''
-  }
-
-  private handleError(error: unknown, url: string): never {
+  private handleError(error: unknown, _url: string): never {
     if (error instanceof FetchError) {
-      const detail = this.formatErrorDetail(error)
-      const message = detail
-        ? `Translation API error: ${error.status} ${error.statusText} — ${detail}`
-        : `Translation API error: ${error.status} ${error.statusText}`
+      const message = `Translation API error: ${error.status} ${error.statusText}`
 
       switch (error.status) {
         case 401:
@@ -83,16 +70,15 @@ export class ApplicationTranslationClient {
       }
     }
 
-    const hint =
+    const isLocal =
       this.config.baseApiUrl.includes('localhost') ||
       this.config.baseApiUrl.includes('127.0.0.1')
-        ? ' Ensure application-system-api is running (dev default: http://localhost:3333).'
-        : ''
+    const hint = isLocal
+      ? ' Ensure application-system-api is running (dev default: http://localhost:3333).'
+      : ''
 
     throw new ServiceUnavailableException(
-      `Could not reach application system API at ${url}: ${
-        error instanceof Error ? error.message : String(error)
-      }.${hint}`,
+      `Could not reach application system API.${hint}`,
     )
   }
 

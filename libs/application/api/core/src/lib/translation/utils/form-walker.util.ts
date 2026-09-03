@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common'
 import type {
   AlertMessageField,
   CheckboxField,
@@ -8,6 +7,7 @@ import type {
   Form,
   FormLeaf,
   FormText,
+  FormTextWithLocale,
   LinkField,
   MessageWithLinkButtonField,
   MultiField,
@@ -61,7 +61,37 @@ import {
   walkTableRepeaterScreen,
 } from './repeater-introspection.util'
 
-const logger = new Logger('FormWalker')
+const uniquifyId = (seen: Map<string, number>, id: string): string => {
+  const base = id || 'item'
+  const count = seen.get(base) ?? 0
+  seen.set(base, count + 1)
+  return count === 0 ? base : `${base}__${count}`
+}
+
+const extractFormItemExtraDescriptors = (item: {
+  tabTitle?: FormText | FormTextWithLocale
+  nextButtonText?: FormText
+}): MessageDescriptorInfo[] =>
+  mergeMessageDescriptors(
+    extractMessageDescriptorsFromFormText(item.tabTitle),
+    extractMessageDescriptorsFromFormText(item.nextButtonText),
+  )
+
+const attachDescriptorsToFirstScreen = (
+  screens: ScreenIntrospection[],
+  extra: MessageDescriptorInfo[],
+): void => {
+  if (extra.length === 0 || screens.length === 0) {
+    return
+  }
+  screens[0] = {
+    ...screens[0],
+    messageDescriptors: mergeMessageDescriptors(
+      extra,
+      screens[0].messageDescriptors,
+    ),
+  }
+}
 
 export const walkExternalDataSourceItem = (
   syntheticId: string,
@@ -214,6 +244,11 @@ export const walkFormLeaf = (
   const descriptors: MessageDescriptorInfo[] = []
   const children: ScreenIntrospection[] = []
   const leafRecord = leaf as unknown as Record<string, unknown>
+  descriptors.push(
+    ...extractMessageDescriptorsFromFormText(
+      leafRecord.nextButtonText as FormText | undefined,
+    ),
+  )
   const nifMeta: {
     nationalIdWithNameCustomNationalIdLabelText?: string | null
     nationalIdWithNameCustomNameLabelText?: string | null
@@ -308,6 +343,13 @@ export const walkFormLeaf = (
     checkboxLabel = extractStaticText(
       edp.checkboxLabel as StaticText | undefined,
     )
+
+    const submitField = edp.submitField as SubmitField | undefined
+    if (submitField) {
+      const submitScreen = walkFormLeaf(submitField, customFieldManifest)
+      children.push(submitScreen)
+      descriptors.push(...submitScreen.messageDescriptors)
+    }
 
     const externalDataLeafId = extractStaticId(leaf.id) || 'external'
     const dataProviders =
@@ -625,14 +667,26 @@ export const walkSection = (
 ): SectionIntrospection => {
   const subSections: SubSectionIntrospection[] = []
   const screens: ScreenIntrospection[] = []
+  const seenSubIds = new Map<string, number>()
 
   for (const child of section.children) {
     if (child.type === FormItemTypes.SUB_SECTION) {
-      subSections.push(walkSubSection(child as SubSection, customFieldManifest))
+      const sub = walkSubSection(child as SubSection, customFieldManifest)
+      subSections.push({
+        ...sub,
+        id: uniquifyId(seenSubIds, sub.id || 'subsection'),
+      })
     } else {
       screens.push(walkFormLeaf(child as FormLeaf, customFieldManifest))
     }
   }
+
+  attachDescriptorsToFirstScreen(
+    screens.length > 0
+      ? screens
+      : (subSections[0]?.screens as ScreenIntrospection[] | undefined) ?? [],
+    extractFormItemExtraDescriptors(section),
+  )
 
   return {
     id: extractStaticId(section.id),
@@ -655,12 +709,38 @@ export const walkSubSection = (
     screens.push(walkFormLeaf(child, customFieldManifest))
   }
 
+  attachDescriptorsToFirstScreen(
+    screens,
+    extractFormItemExtraDescriptors(subSection),
+  )
+
   return {
     id: extractStaticId(subSection.id),
     title: extractStaticText(subSection.title as StaticText | undefined),
     titleMessageDescriptor:
       extractMessageDescriptorsFromFormText(subSection.title as FormText)[0] ??
       null,
+    screens,
+  }
+}
+
+const wrapRootLeafAsSection = (
+  leaf: FormLeaf,
+  index: number,
+  customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
+): SectionIntrospection => {
+  const screens = [walkFormLeaf(leaf, customFieldManifest)]
+  const leafId = extractStaticId(leaf.id) || screens[0].id || `root-${index}`
+  attachDescriptorsToFirstScreen(screens, extractFormItemExtraDescriptors(leaf))
+  return {
+    id: leafId,
+    title:
+      extractStaticText(leaf.title as StaticText | undefined) ??
+      screens[0].title ??
+      null,
+    titleMessageDescriptor:
+      extractMessageDescriptorsFromFormText(leaf.title as FormText)[0] ?? null,
+    subSections: [],
     screens,
   }
 }
@@ -688,20 +768,19 @@ export const walkForm = (
   customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
 ): FormIntrospection => {
   const sections: SectionIntrospection[] = []
+  const seenSectionIds = new Map<string, number>()
 
-  for (const child of form.children) {
-    if (child.type === FormItemTypes.SECTION) {
-      sections.push(walkSection(child as Section, customFieldManifest))
-    } else {
-      logger.warn(
-        `walkForm dropped non-SECTION root child of type "${
-          child.type
-        }" on form "${form.id}"${
-          extractStaticId(child.id) ? ` / "${extractStaticId(child.id)}"` : ''
-        }`,
-      )
-    }
-  }
+  form.children.forEach((child, index) => {
+    const section =
+      child.type === FormItemTypes.SECTION
+        ? walkSection(child as Section, customFieldManifest)
+        : wrapRootLeafAsSection(child as FormLeaf, index, customFieldManifest)
+
+    sections.push({
+      ...section,
+      id: uniquifyId(seenSectionIds, section.id || `section-${index}`),
+    })
+  })
 
   return {
     id: form.id,

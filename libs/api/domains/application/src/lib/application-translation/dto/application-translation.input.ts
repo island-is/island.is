@@ -1,6 +1,19 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { ArrayMaxSize, IsArray, IsString, MaxLength } from 'class-validator'
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator'
+import { Type } from 'class-transformer'
 
+import {
+  TRANSLATION_NAMESPACE_MAX_LENGTH,
+  TRANSLATION_MESSAGE_KEY_MAX_LENGTH,
+  TRANSLATION_BULK_MAX_ITEMS,
+} from '@island.is/application/utils'
 import {
   GOOGLE_TRANSLATE_MAX_CHARS_PER_REQUEST,
   GOOGLE_TRANSLATE_MAX_CHARS_PER_TEXT,
@@ -11,54 +24,81 @@ import {
 @InputType()
 export class UpdateApplicationTranslationInput {
   @Field()
+  @IsString()
+  @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
   namespace!: string
 
   @Field()
+  @IsString()
+  @MaxLength(TRANSLATION_MESSAGE_KEY_MAX_LENGTH)
   messageKey!: string
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
   valueIs?: string
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
   valueEn?: string
 }
 
 @InputType()
 export class TranslationItemInput {
   @Field()
+  @IsString()
+  @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
   namespace!: string
 
   @Field()
+  @IsString()
+  @MaxLength(TRANSLATION_MESSAGE_KEY_MAX_LENGTH)
   messageKey!: string
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
   valueIs?: string
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
   valueEn?: string
 }
 
 @InputType()
 export class BulkUpdateApplicationTranslationsInput {
   @Field(() => [TranslationItemInput])
+  @IsArray()
+  @ArrayMaxSize(TRANSLATION_BULK_MAX_ITEMS)
+  @ValidateNested({ each: true })
+  @Type(() => TranslationItemInput)
   translations!: TranslationItemInput[]
 }
 
 @InputType()
 export class PublishTranslationsInput {
   @Field()
+  @IsString()
+  @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
   namespace!: string
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
   note?: string
 }
 
 @InputType()
 export class RollbackTranslationsInput {
   @Field()
+  @IsString()
+  @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
   namespace!: string
 
   @Field()
+  @IsString()
   publishId!: string
 }
 

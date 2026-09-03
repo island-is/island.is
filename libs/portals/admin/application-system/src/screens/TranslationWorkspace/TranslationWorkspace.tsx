@@ -51,6 +51,7 @@ export const TranslationWorkspace = () => {
     getPersistedForLocale,
     resolvePreviewString,
     clearEditedValues,
+    clearSavedEditedValues,
     hasUnsavedChanges,
     unsavedCount,
   } = useTranslationWorkspaceDrafts(persistedByKey)
@@ -92,6 +93,7 @@ export const TranslationWorkspace = () => {
     persistedByKey,
     hasUnsavedChanges,
     clearEditedValues,
+    clearSavedEditedValues,
     refetchTranslations,
     formatMessage,
     onValueChange: handleValueChange,

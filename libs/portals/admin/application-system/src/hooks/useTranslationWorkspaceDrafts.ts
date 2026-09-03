@@ -36,11 +36,27 @@ export const useTranslationWorkspaceDrafts = (
     (messageKey: string, defaultMessage?: string | null) => {
       const draft = editedValues[activeLocale][messageKey]
       let value: string
-      if (draft !== undefined && draft !== '') {
-        value = draft
+      if (draft !== undefined) {
+        if (draft !== '') {
+          value = draft
+        } else if (activeLocale === 'en') {
+          const icelandicDraft = editedValues.is[messageKey]
+          value =
+            icelandicDraft !== undefined && icelandicDraft !== ''
+              ? icelandicDraft
+              : getPersistedValue(messageKey, 'is') || defaultMessage || ''
+        } else {
+          value = defaultMessage ?? ''
+        }
       } else {
         const persisted = getPersistedValue(messageKey, activeLocale)
-        value = persisted !== '' ? persisted : defaultMessage ?? ''
+        if (persisted !== '') {
+          value = persisted
+        } else if (activeLocale === 'en') {
+          value = getPersistedValue(messageKey, 'is') || defaultMessage || ''
+        } else {
+          value = defaultMessage ?? ''
+        }
       }
       return unescapePreviewMarkdownString(messageKey, value)
     },
@@ -61,6 +77,39 @@ export const useTranslationWorkspaceDrafts = (
     setEditedValues(createEmptyEditedValues())
   }, [])
 
+  const clearSavedEditedValues = useCallback(
+    (
+      saved: Array<{
+        messageKey: string
+        valueIs?: string
+        valueEn?: string
+      }>,
+    ) => {
+      setEditedValues((prev) => {
+        const next: EditedTranslations = {
+          is: { ...prev.is },
+          en: { ...prev.en },
+        }
+        for (const item of saved) {
+          if (
+            item.valueIs !== undefined &&
+            next.is[item.messageKey] === item.valueIs
+          ) {
+            delete next.is[item.messageKey]
+          }
+          if (
+            item.valueEn !== undefined &&
+            next.en[item.messageKey] === item.valueEn
+          ) {
+            delete next.en[item.messageKey]
+          }
+        }
+        return next
+      })
+    },
+    [],
+  )
+
   const hasUnsavedChanges = useMemo(
     () => hasUnsavedTranslationChanges(editedValues, persistedByKey),
     [editedValues, persistedByKey],
@@ -79,6 +128,7 @@ export const useTranslationWorkspaceDrafts = (
     getPersistedForLocale,
     resolvePreviewString,
     clearEditedValues,
+    clearSavedEditedValues,
     hasUnsavedChanges,
     unsavedCount,
   }

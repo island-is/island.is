@@ -26,6 +26,13 @@ type UseTranslationWorkspacePersistenceArgs = {
   persistedByKey: PersistedByKey
   hasUnsavedChanges: boolean
   clearEditedValues: () => void
+  clearSavedEditedValues: (
+    saved: Array<{
+      messageKey: string
+      valueIs?: string
+      valueEn?: string
+    }>,
+  ) => void
   refetchTranslations: () => Promise<unknown>
   formatMessage: FormatMessage
   onValueChange: (messageKey: string, value: string) => void
@@ -38,6 +45,7 @@ export const useTranslationWorkspacePersistence = ({
   persistedByKey,
   hasUnsavedChanges,
   clearEditedValues,
+  clearSavedEditedValues,
   refetchTranslations,
   formatMessage,
   onValueChange,
@@ -93,11 +101,14 @@ export const useTranslationWorkspacePersistence = ({
     async (descriptorId: string, sourceText: string) => {
       await withTranslatingIds([descriptorId], async () => {
         try {
-          await applyGoogleTranslateBatches(
+          const result = await applyGoogleTranslateBatches(
             [{ id: descriptorId, sourceText }],
             ({ texts }) => translateTexts(texts),
             onValueChange,
           )
+          if (result.failedBatches > 0 || result.skippedOversized > 0) {
+            toast.error('Translation failed')
+          }
         } catch (err) {
           console.error('Google Translate failed', err)
           toast.error('Translation failed')
@@ -113,11 +124,14 @@ export const useTranslationWorkspacePersistence = ({
         items.map((item) => item.id),
         async () => {
           try {
-            await applyGoogleTranslateBatches(
+            const result = await applyGoogleTranslateBatches(
               items,
               ({ texts }) => translateTexts(texts),
               onValueChange,
             )
+            if (result.failedBatches > 0 || result.skippedOversized > 0) {
+              toast.error('Translation failed')
+            }
           } catch (err) {
             console.error('Google Translate all failed', err)
             toast.error('Translation failed')
@@ -147,7 +161,7 @@ export const useTranslationWorkspacePersistence = ({
         mutationData.bulkUpdateApplicationTranslations.length > 0
       ) {
         await refetchTranslations()
-        clearEditedValues()
+        clearSavedEditedValues(translationsToSave)
         setAutosaveFailed(false)
         toast.success(formatMessage(m.translationSave))
         return true
@@ -172,7 +186,7 @@ export const useTranslationWorkspacePersistence = ({
     formatMessage,
     bulkUpdate,
     refetchTranslations,
-    clearEditedValues,
+    clearSavedEditedValues,
   ])
 
   const handleSaveAllRef = useRef(handleSaveAll)

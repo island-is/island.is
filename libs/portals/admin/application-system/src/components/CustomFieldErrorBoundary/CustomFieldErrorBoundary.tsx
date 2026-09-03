@@ -3,6 +3,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 
 interface Props {
   componentName: string
+  resetKey?: string
   children: ReactNode
 }
 
@@ -15,6 +16,16 @@ export class CustomFieldErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     return { error }
+  }
+
+  override componentDidUpdate(prevProps: Props) {
+    if (
+      this.state.error &&
+      (prevProps.resetKey !== this.props.resetKey ||
+        prevProps.componentName !== this.props.componentName)
+    ) {
+      this.setState({ error: null })
+    }
   }
 
   override componentDidCatch(error: Error, info: ErrorInfo) {
@@ -33,12 +44,17 @@ export class CustomFieldErrorBoundary extends Component<Props, State> {
           border="standard"
           borderRadius="standard"
           background="red100"
+          cursor="pointer"
+          onClick={() => this.setState({ error: null })}
         >
           <Text variant="eyebrow" color="red600">
             Preview · {this.props.componentName}
           </Text>
           <Text variant="small" color="dark300">
             {this.state.error.message}
+          </Text>
+          <Text variant="small" color="blue400">
+            Click to retry
           </Text>
         </Box>
       )

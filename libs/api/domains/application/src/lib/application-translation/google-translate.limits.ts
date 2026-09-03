@@ -116,9 +116,58 @@ const rateLimitExceeded = () =>
     HttpStatus.TOO_MANY_REQUESTS,
   )
 
+const mergeWindowUsage = (
+  stored: WindowUsage | undefined,
+  local: WindowUsage | undefined,
+): WindowUsage | undefined => {
+  if (!stored) {
+    return local
+  }
+  if (!local) {
+    return stored
+  }
+  if (stored.windowStartedAt !== local.windowStartedAt) {
+    return stored.windowStartedAt >= local.windowStartedAt ? stored : local
+  }
+  return {
+    windowStartedAt: stored.windowStartedAt,
+    requestCount: Math.max(stored.requestCount, local.requestCount),
+    characterCount: Math.max(stored.characterCount, local.characterCount),
+  }
+}
+
+const mergeDailyUsage = (
+  stored: DailyUsage | undefined,
+  local: DailyUsage | undefined,
+): DailyUsage | undefined => {
+  if (!stored) {
+    return local
+  }
+  if (!local) {
+    return stored
+  }
+  return {
+    requestCount: Math.max(stored.requestCount, local.requestCount),
+    characterCount: Math.max(stored.characterCount, local.characterCount),
+  }
+}
+
+/**
+ * In-process rate limiter for Google Translate API calls.
+ *
+ * The `consumeQueue` serializes concurrent `consume` calls within a single
+ * Node.js replica to prevent read-modify-write races on the shared store.
+ *
+ * TODO: This does NOT protect against cross-replica races. Two pods can both
+ * read the same usage value, increment locally, and write back — undercounting
+ * by 1 per concurrent request. For true multi-replica safety, replace the
+ * read+check+write pattern with Redis INCRBY or a Lua script that atomically
+ * increments and checks the limit in a single round-trip.
+ */
 export class GoogleTranslateRateLimiter {
   private readonly usageByUser = new Map<string, WindowUsage>()
   private readonly dailyUsage = new Map<string, DailyUsage>()
+  private consumeQueue: Promise<void> = Promise.resolve()
 
   constructor(
     private readonly now: () => number = Date.now,
@@ -131,18 +180,32 @@ export class GoogleTranslateRateLimiter {
   ) {}
 
   async consume(userKey: string, characterCount: number): Promise<void> {
+    const run = this.consumeQueue.then(() =>
+      this.consumeSerialized(userKey, characterCount),
+    )
+    this.consumeQueue = run.then(
+      () => undefined,
+      () => undefined,
+    )
+    return run
+  }
+
+  private async consumeSerialized(
+    userKey: string,
+    characterCount: number,
+  ): Promise<void> {
     const now = this.now()
     this.prune(now)
 
     const userKeyName = googleTranslateUserUsageKey(userKey)
-    const current = await this.readUsage<WindowUsage>(
-      userKeyName,
+    const current = mergeWindowUsage(
+      await this.readUsage<WindowUsage>(userKeyName),
       this.usageByUser.get(userKey),
     )
     const usage: WindowUsage =
       !current || now - current.windowStartedAt >= this.windowMs
         ? { windowStartedAt: now, requestCount: 0, characterCount: 0 }
-        : current
+        : { ...current }
 
     if (
       usage.requestCount + 1 > this.maxRequests ||
@@ -153,14 +216,16 @@ export class GoogleTranslateRateLimiter {
 
     const day = utcDateKey(now)
     const dailyKey = googleTranslateDailyUsageKey(day)
-    const dailyCurrent = await this.readUsage<DailyUsage>(
-      dailyKey,
+    const dailyCurrent = mergeDailyUsage(
+      await this.readUsage<DailyUsage>(dailyKey),
       this.dailyUsage.get(day),
     )
-    const daily: DailyUsage = dailyCurrent ?? {
-      requestCount: 0,
-      characterCount: 0,
-    }
+    const daily: DailyUsage = dailyCurrent
+      ? { ...dailyCurrent }
+      : {
+          requestCount: 0,
+          characterCount: 0,
+        }
 
     if (
       daily.requestCount + 1 > this.maxDailyRequests ||
@@ -183,18 +248,15 @@ export class GoogleTranslateRateLimiter {
     })
   }
 
-  private async readUsage<T>(
-    key: string,
-    fallback: T | undefined,
-  ): Promise<T | undefined> {
+  private async readUsage<T>(key: string): Promise<T | undefined> {
     if (!this.store) {
-      return fallback
+      return undefined
     }
 
     try {
-      return (await this.store.get<T>(key)) ?? fallback
+      return await this.store.get<T>(key)
     } catch {
-      return fallback
+      return undefined
     }
   }
 

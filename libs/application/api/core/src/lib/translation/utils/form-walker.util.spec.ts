@@ -1,7 +1,7 @@
-import { Logger } from '@nestjs/common'
 import {
   buildCustomField,
   buildForm,
+  buildKeyValueField,
   buildMultiField,
   buildRepeater,
   buildSection,
@@ -177,9 +177,7 @@ describe('walkFormLeaf legacy REPEATER', () => {
 })
 
 describe('walkForm', () => {
-  it('keeps SECTION children and warns when dropping other root leaves', () => {
-    const warnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation()
-
+  it('wraps root-level FormLeaf children as synthetic sections', () => {
     const form = walkForm(
       buildForm({
         id: 'orphan-root',
@@ -203,18 +201,77 @@ describe('walkForm', () => {
           }),
           buildTextField({
             id: 'rootField',
-            title: 'Dropped',
+            title: 'Kept',
           }),
         ],
       }),
     )
 
-    expect(form.sections).toHaveLength(1)
+    expect(form.sections).toHaveLength(2)
     expect(form.sections[0].id).toBe('section')
-    expect(warnSpy).toHaveBeenCalledWith(
-      'walkForm dropped non-SECTION root child of type "TEXT" on form "orphan-root" / "rootField"',
+    expect(form.sections[1].id).toBe('rootField')
+    expect(form.sections[1].screens.map((screen) => screen.id)).toEqual([
+      'rootField',
+    ])
+  })
+
+  it('disambiguates duplicate section ids so each row is independently selectable', () => {
+    const form = walkForm(
+      buildForm({
+        id: 'duplicate-sections',
+        title: 'Duplicate sections',
+        children: [
+          buildSection({
+            id: 'cancelationSection',
+            title: 'Cancel',
+            children: [
+              buildTextField({
+                id: 'cancelField',
+                title: 'Cancel field',
+              }),
+            ],
+          }),
+          buildSection({
+            id: 'cancelationSection',
+            title: 'Warning',
+            children: [
+              buildTextField({
+                id: 'warningField',
+                title: 'Warning field',
+              }),
+            ],
+          }),
+        ],
+      }),
     )
 
-    warnSpy.mockRestore()
+    expect(form.sections.map((section) => section.id)).toEqual([
+      'cancelationSection',
+      'cancelationSection__1',
+    ])
+    expect(form.sections[0].screens[0].id).toBe('cancelField')
+    expect(form.sections[1].screens[0].id).toBe('warningField')
+  })
+
+  it('extracts KEY_VALUE label and value descriptors', () => {
+    const screen = walkFormLeaf(
+      buildKeyValueField({
+        label: {
+          id: 'hms.application:key.label',
+          defaultMessage: 'Label',
+        },
+        value: {
+          id: 'hms.application:key.value',
+          defaultMessage: 'Value',
+        },
+      }),
+    )
+
+    expect(screen.messageDescriptors.map((d) => d.id)).toEqual(
+      expect.arrayContaining([
+        'hms.application:key.label',
+        'hms.application:key.value',
+      ]),
+    )
   })
 })

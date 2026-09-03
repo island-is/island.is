@@ -4,6 +4,7 @@ import type {
   Field,
   FormLeaf,
   FormText,
+  FormTextArray,
   FormTextWithLocale,
   ImageField,
   RepeaterItem,
@@ -13,6 +14,7 @@ import type {
 import { FieldTypes } from '@island.is/application/types'
 import type { MessageDescriptorInfo } from '@island.is/application/types'
 import {
+  extractDescriptorsFromFormTextMaybeArray,
   extractMessageDescriptorsFromFormText,
   extractMessageDescriptorsFromPropsDeep,
   isMessageDescriptor,
@@ -161,6 +163,67 @@ export const extractMessageDescriptorsFromField = (
       f.message as FormText | FormTextWithLocale | undefined,
     ),
   )
+  descriptors.push(
+    ...extractMessageDescriptorsFromFormText(f.label as FormText | undefined),
+  )
+  descriptors.push(
+    ...extractDescriptorsFromFormTextMaybeArray(
+      f.value as FormText | FormTextArray | undefined,
+    ),
+  )
+
+  const sliderLabel = f.label
+  if (
+    sliderLabel &&
+    typeof sliderLabel === 'object' &&
+    !Array.isArray(sliderLabel) &&
+    !isMessageDescriptor(sliderLabel)
+  ) {
+    const labelRecord = sliderLabel as {
+      singular?: FormText
+      plural?: FormText
+    }
+    descriptors.push(
+      ...extractMessageDescriptorsFromFormText(labelRecord.singular),
+    )
+    descriptors.push(
+      ...extractMessageDescriptorsFromFormText(labelRecord.plural),
+    )
+  }
+
+  const accordionItems = f.accordionItems
+  if (Array.isArray(accordionItems)) {
+    for (const item of accordionItems) {
+      if (item && typeof item === 'object') {
+        const accordionItem = item as Record<string, unknown>
+        descriptors.push(
+          ...extractMessageDescriptorsFromFormText(
+            accordionItem.itemTitle as FormText | undefined,
+          ),
+        )
+        descriptors.push(
+          ...extractMessageDescriptorsFromFormText(
+            accordionItem.itemContent as FormText | undefined,
+          ),
+        )
+      }
+    }
+  }
+
+  for (const paymentLabelKey of [
+    'forPaymentLabel',
+    'totalLabel',
+    'unitPriceLabel',
+    'quantityLabel',
+    'quantityUnitLabel',
+    'totalPerUnitLabel',
+  ]) {
+    descriptors.push(
+      ...extractMessageDescriptorsFromFormText(
+        f[paymentLabelKey] as FormText | undefined,
+      ),
+    )
+  }
 
   const links = f.links
   if (Array.isArray(links)) {

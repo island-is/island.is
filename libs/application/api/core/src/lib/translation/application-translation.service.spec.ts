@@ -1,6 +1,8 @@
+import { BadRequestException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 import { Sequelize } from 'sequelize-typescript'
+import { UniqueConstraintError } from 'sequelize'
 import type { User } from '@island.is/auth-nest-tools'
 
 import { ApplicationTranslationService } from './application-translation.service'
@@ -28,6 +30,11 @@ describe('ApplicationTranslationService', () => {
     authorization: '',
     client: 'test',
   }
+
+  const applyUpdate = (row: Record<string, unknown>) =>
+    jest.fn(async (updates: Record<string, unknown>) => {
+      Object.assign(row, updates)
+    })
 
   beforeEach(async () => {
     findOneSpy = jest.fn()
@@ -72,7 +79,12 @@ describe('ApplicationTranslationService', () => {
         },
         {
           provide: Sequelize,
-          useValue: { transaction: sequelizeTransactionSpy },
+          useValue: {
+            transaction: sequelizeTransactionSpy,
+            fn: jest.fn((name: string) => name),
+            col: jest.fn((name: string) => name),
+            literal: jest.fn((sql: string) => sql),
+          },
         },
       ],
     }).compile()
@@ -86,18 +98,23 @@ describe('ApplicationTranslationService', () => {
     it('returns published Icelandic and English strings in one pass', async () => {
       findAllTranslationsSpy.mockResolvedValue([
         {
-          messageKey: 'key.both',
+          messageKey: 'test.ns:key.both',
           valueIs: 'Íslenska',
           valueEn: 'English',
         },
         {
-          messageKey: 'key.fallback',
+          messageKey: 'test.ns:key.fallback',
           valueIs: 'Aðeins íslenska',
           valueEn: null,
         },
         {
-          messageKey: 'key.empty',
+          messageKey: 'test.ns:key.empty',
           valueIs: '',
+          valueEn: '',
+        },
+        {
+          messageKey: 'test.ns:key.clearedEn',
+          valueIs: 'Íslenska',
           valueEn: '',
         },
       ])
@@ -106,12 +123,14 @@ describe('ApplicationTranslationService', () => {
         service.getTranslationsForAllLocales('test.ns'),
       ).resolves.toEqual({
         is: {
-          'key.both': 'Íslenska',
-          'key.fallback': 'Aðeins íslenska',
+          'test.ns:key.both': 'Íslenska',
+          'test.ns:key.fallback': 'Aðeins íslenska',
+          'test.ns:key.clearedEn': 'Íslenska',
         },
         en: {
-          'key.both': 'English',
-          'key.fallback': 'Aðeins íslenska',
+          'test.ns:key.both': 'English',
+          'test.ns:key.fallback': 'Aðeins íslenska',
+          'test.ns:key.clearedEn': 'Íslenska',
         },
       })
 
@@ -126,7 +145,7 @@ describe('ApplicationTranslationService', () => {
     it('returns a single locale from the bilingual result', async () => {
       findAllTranslationsSpy.mockResolvedValue([
         {
-          messageKey: 'key.both',
+          messageKey: 'test.ns:key.both',
           valueIs: 'Íslenska',
           valueEn: 'English',
         },
@@ -135,12 +154,28 @@ describe('ApplicationTranslationService', () => {
       await expect(
         service.getTranslationsForNamespace('test.ns', 'en'),
       ).resolves.toEqual({
-        'key.both': 'English',
+        'test.ns:key.both': 'English',
       })
     })
   })
 
   describe('upsertTranslation', () => {
+    it('rejects message keys outside the authorized namespace', async () => {
+      await expect(
+        service.upsertTranslation(
+          {
+            namespace: 'ra.application',
+            messageKey: 'application.system:button.next',
+            valueEn: 'Hijack',
+          },
+          user,
+        ),
+      ).rejects.toBeInstanceOf(BadRequestException)
+
+      expect(findOneSpy).not.toHaveBeenCalled()
+      expect(createTranslationSpy).not.toHaveBeenCalled()
+    })
+
     it('creates a row with empty published valueIs and draft content only', async () => {
       findOneSpy.mockResolvedValue(null)
       createTranslationSpy.mockResolvedValue({ id: 'new-id' })
@@ -148,7 +183,7 @@ describe('ApplicationTranslationService', () => {
       await service.upsertTranslation(
         {
           namespace: 'test.ns',
-          messageKey: 'key.one',
+          messageKey: 'test.ns:key.one',
           valueIs: 'Draft Icelandic',
           valueEn: 'Draft English',
         },
@@ -157,7 +192,7 @@ describe('ApplicationTranslationService', () => {
 
       expect(createTranslationSpy).toHaveBeenCalledWith({
         namespace: 'test.ns',
-        messageKey: 'key.one',
+        messageKey: 'test.ns:key.one',
         valueIs: '',
         draftValueIs: 'Draft Icelandic',
         draftValueEn: 'Draft English',
@@ -174,47 +209,97 @@ describe('ApplicationTranslationService', () => {
     })
 
     it('updates only draft columns on existing rows', async () => {
-      const updateSpy = jest.fn().mockResolvedValue(undefined)
-      const existing = {
+      const existing: Record<string, unknown> = {
         id: 'existing-id',
         valueIs: 'Published Icelandic',
         valueEn: 'Published English',
         draftValueIs: undefined,
         draftValueEn: undefined,
-        update: updateSpy,
       }
+      existing.update = applyUpdate(existing)
       findOneSpy.mockResolvedValue(existing)
 
       await service.upsertTranslation(
         {
           namespace: 'test.ns',
-          messageKey: 'key.one',
+          messageKey: 'test.ns:key.one',
           valueIs: 'Draft Icelandic',
         },
         user,
       )
 
-      expect(updateSpy).toHaveBeenCalledWith({
+      expect(existing.update).toHaveBeenCalledWith({
         draftValueIs: 'Draft Icelandic',
         translatedBy: '0101302989',
         isReviewed: false,
       })
       expect(createTranslationSpy).not.toHaveBeenCalled()
     })
+
+    it('recovers from a unique-constraint race by updating the existing row', async () => {
+      findOneSpy.mockResolvedValueOnce(null).mockResolvedValueOnce({
+        id: 'raced-id',
+        draftValueIs: undefined,
+        draftValueEn: undefined,
+        valueIs: '',
+        valueEn: null,
+        update: jest.fn().mockResolvedValue(undefined),
+      })
+      createTranslationSpy.mockRejectedValue(new UniqueConstraintError({}))
+
+      const raced = await service.upsertTranslation(
+        {
+          namespace: 'test.ns',
+          messageKey: 'test.ns:key.one',
+          valueEn: 'Draft English',
+        },
+        user,
+      )
+
+      expect(raced.id).toBe('raced-id')
+      expect(raced.update).toHaveBeenCalledWith({
+        draftValueEn: 'Draft English',
+        translatedBy: '0101302989',
+        isReviewed: false,
+      })
+    })
+  })
+
+  describe('bulkUpsertTranslations', () => {
+    it('runs upserts inside a transaction', async () => {
+      findOneSpy.mockResolvedValue(null)
+      createTranslationSpy.mockResolvedValue({ id: 'new-id' })
+
+      await service.bulkUpsertTranslations(
+        [
+          {
+            namespace: 'test.ns',
+            messageKey: 'test.ns:key.one',
+            valueIs: 'Draft',
+          },
+        ],
+        user,
+      )
+
+      expect(sequelizeTransactionSpy).toHaveBeenCalledTimes(1)
+      expect(createTranslationSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ messageKey: 'test.ns:key.one' }),
+        { transaction: mockTransaction },
+      )
+    })
   })
 
   describe('publishTranslations', () => {
-    it('copies drafts to published columns, clears drafts with null, and logs pre-update values', async () => {
-      const updateSpy = jest.fn().mockResolvedValue(undefined)
-      const row = {
+    it('copies drafts to published columns, snapshots the published version, and logs pre-update values', async () => {
+      const row: Record<string, unknown> = {
         id: 'row-id',
-        messageKey: 'key.one',
+        messageKey: 'test.ns:key.one',
         valueIs: 'Old published',
         valueEn: 'Old English',
         draftValueIs: 'New published',
         draftValueEn: 'New English',
-        update: updateSpy,
       }
+      row.update = applyUpdate(row)
 
       findAllTranslationsSpy.mockResolvedValue([row])
       createPublishSpy.mockResolvedValue({ id: 'publish-id' })
@@ -231,24 +316,24 @@ describe('ApplicationTranslationService', () => {
         expect.objectContaining({ namespace: 'test.ns' }),
         { transaction: mockTransaction },
       )
-      expect(bulkCreateSnapshotSpy).toHaveBeenCalledWith(
-        [
-          {
-            publishId: 'publish-id',
-            messageKey: 'key.one',
-            valueIs: 'Old published',
-            valueEn: 'Old English',
-          },
-        ],
-        { transaction: mockTransaction },
-      )
-      expect(updateSpy).toHaveBeenCalledWith(
+      expect(row.update).toHaveBeenCalledWith(
         {
           draftValueIs: null,
           draftValueEn: null,
           valueIs: 'New published',
           valueEn: 'New English',
         },
+        { transaction: mockTransaction },
+      )
+      expect(bulkCreateSnapshotSpy).toHaveBeenCalledWith(
+        [
+          {
+            publishId: 'publish-id',
+            messageKey: 'test.ns:key.one',
+            valueIs: 'New published',
+            valueEn: 'New English',
+          },
+        ],
         { transaction: mockTransaction },
       )
 
@@ -264,11 +349,11 @@ describe('ApplicationTranslationService', () => {
       )
     })
 
-    it('clears drafts with null even when there are no draft changes', async () => {
+    it('skips no-op updates when there are no drafts', async () => {
       const updateSpy = jest.fn().mockResolvedValue(undefined)
       const row = {
         id: 'row-id',
-        messageKey: 'key.one',
+        messageKey: 'test.ns:key.one',
         valueIs: 'Published',
         valueEn: null,
         draftValueIs: null,
@@ -281,14 +366,19 @@ describe('ApplicationTranslationService', () => {
 
       await service.publishTranslations('test.ns', user)
 
-      expect(updateSpy).toHaveBeenCalledWith(
-        {
-          draftValueIs: null,
-          draftValueEn: null,
-        },
+      expect(updateSpy).not.toHaveBeenCalled()
+      expect(createLogSpy).not.toHaveBeenCalled()
+      expect(bulkCreateSnapshotSpy).toHaveBeenCalledWith(
+        [
+          {
+            publishId: 'publish-id',
+            messageKey: 'test.ns:key.one',
+            valueIs: 'Published',
+            valueEn: null,
+          },
+        ],
         { transaction: mockTransaction },
       )
-      expect(createLogSpy).not.toHaveBeenCalled()
     })
 
     it('rejects when a translation update fails so history is not committed', async () => {
@@ -299,7 +389,7 @@ describe('ApplicationTranslationService', () => {
       findAllTranslationsSpy.mockResolvedValue([
         {
           id: 'row-1',
-          messageKey: 'key.one',
+          messageKey: 'test.ns:key.one',
           valueIs: 'Old 1',
           valueEn: 'Old En 1',
           draftValueIs: 'New 1',
@@ -308,7 +398,7 @@ describe('ApplicationTranslationService', () => {
         },
         {
           id: 'row-2',
-          messageKey: 'key.two',
+          messageKey: 'test.ns:key.two',
           valueIs: 'Old 2',
           valueEn: 'Old En 2',
           draftValueIs: 'New 2',
@@ -334,18 +424,16 @@ describe('ApplicationTranslationService', () => {
     })
 
     it('rejects when an audit-log write fails so history is not committed', async () => {
-      const updateSpy = jest.fn().mockResolvedValue(undefined)
-      findAllTranslationsSpy.mockResolvedValue([
-        {
-          id: 'row-id',
-          messageKey: 'key.one',
-          valueIs: 'Old published',
-          valueEn: 'Old English',
-          draftValueIs: 'New published',
-          draftValueEn: 'New English',
-          update: updateSpy,
-        },
-      ])
+      const row: Record<string, unknown> = {
+        id: 'row-id',
+        messageKey: 'test.ns:key.one',
+        valueIs: 'Old published',
+        valueEn: 'Old English',
+        draftValueIs: 'New published',
+        draftValueEn: 'New English',
+      }
+      row.update = applyUpdate(row)
+      findAllTranslationsSpy.mockResolvedValue([row])
       createPublishSpy.mockResolvedValue({ id: 'publish-id' })
       createLogSpy.mockRejectedValue(new Error('log failed'))
 
@@ -368,23 +456,21 @@ describe('ApplicationTranslationService', () => {
         publishedAt: new Date('2026-01-01T00:00:00.000Z'),
         snapshots: [
           {
-            messageKey: 'key.one',
+            messageKey: 'test.ns:key.one',
             valueIs: 'Snapshot Icelandic',
             valueEn: 'Snapshot English',
           },
         ],
       })
 
-      const updateSpy = jest.fn().mockResolvedValue(undefined)
-      findAllTranslationsSpy.mockResolvedValue([
-        {
-          id: 'row-id',
-          messageKey: 'key.one',
-          valueIs: 'Current published',
-          valueEn: 'Current English',
-          update: updateSpy,
-        },
-      ])
+      const row: Record<string, unknown> = {
+        id: 'row-id',
+        messageKey: 'test.ns:key.one',
+        valueIs: 'Current published',
+        valueEn: 'Current English',
+      }
+      row.update = applyUpdate(row)
+      findAllTranslationsSpy.mockResolvedValue([row])
       createPublishSpy.mockResolvedValue({ id: 'rollback-publish-id' })
 
       await service.rollbackToPublish('publish-id', 'test.ns', user)
@@ -394,7 +480,7 @@ describe('ApplicationTranslationService', () => {
         include: [ApplicationTranslationPublishSnapshot],
         transaction: mockTransaction,
       })
-      expect(updateSpy).toHaveBeenCalledWith(
+      expect(row.update).toHaveBeenCalledWith(
         {
           valueIs: 'Snapshot Icelandic',
           valueEn: 'Snapshot English',
@@ -415,6 +501,53 @@ describe('ApplicationTranslationService', () => {
       )
     })
 
+    it('clears keys added after the restored publish', async () => {
+      findByPkPublishSpy.mockResolvedValue({
+        id: 'publish-id',
+        namespace: 'test.ns',
+        publishedAt: new Date('2026-01-01T00:00:00.000Z'),
+        snapshots: [
+          {
+            messageKey: 'test.ns:key.one',
+            valueIs: 'Snapshot Icelandic',
+            valueEn: 'Snapshot English',
+          },
+        ],
+      })
+
+      const kept: Record<string, unknown> = {
+        id: 'row-1',
+        messageKey: 'test.ns:key.one',
+        valueIs: 'Current 1',
+        valueEn: 'Current En 1',
+      }
+      kept.update = applyUpdate(kept)
+      const extra: Record<string, unknown> = {
+        id: 'row-2',
+        messageKey: 'test.ns:key.later',
+        valueIs: 'Added later',
+        valueEn: 'Added later EN',
+        draftValueIs: 'Unsaved draft',
+        draftValueEn: 'Unsaved EN',
+      }
+      extra.update = applyUpdate(extra)
+
+      findAllTranslationsSpy.mockResolvedValue([kept, extra])
+      createPublishSpy.mockResolvedValue({ id: 'rollback-publish-id' })
+
+      await service.rollbackToPublish('publish-id', 'test.ns', user)
+
+      expect(extra.update).toHaveBeenCalledWith(
+        {
+          valueIs: '',
+          valueEn: null,
+          draftValueIs: null,
+          draftValueEn: null,
+        },
+        { transaction: mockTransaction },
+      )
+    })
+
     it('rejects when a translation update fails so history is not committed', async () => {
       findByPkPublishSpy.mockResolvedValue({
         id: 'publish-id',
@@ -422,12 +555,12 @@ describe('ApplicationTranslationService', () => {
         publishedAt: new Date('2026-01-01T00:00:00.000Z'),
         snapshots: [
           {
-            messageKey: 'key.one',
+            messageKey: 'test.ns:key.one',
             valueIs: 'Snapshot Icelandic',
             valueEn: 'Snapshot English',
           },
           {
-            messageKey: 'key.two',
+            messageKey: 'test.ns:key.two',
             valueIs: 'Snapshot 2',
             valueEn: 'Snapshot En 2',
           },
@@ -441,14 +574,14 @@ describe('ApplicationTranslationService', () => {
       findAllTranslationsSpy.mockResolvedValue([
         {
           id: 'row-1',
-          messageKey: 'key.one',
+          messageKey: 'test.ns:key.one',
           valueIs: 'Current 1',
           valueEn: 'Current En 1',
           update: firstUpdate,
         },
         {
           id: 'row-2',
-          messageKey: 'key.two',
+          messageKey: 'test.ns:key.two',
           valueIs: 'Current 2',
           valueEn: 'Current En 2',
           update: secondUpdate,
@@ -475,7 +608,7 @@ describe('ApplicationTranslationService', () => {
         publishedAt: new Date('2026-01-01T00:00:00.000Z'),
         snapshots: [
           {
-            messageKey: 'key.one',
+            messageKey: 'test.ns:key.one',
             valueIs: 'Snapshot Icelandic',
             valueEn: 'Snapshot English',
           },
@@ -484,7 +617,7 @@ describe('ApplicationTranslationService', () => {
       findAllTranslationsSpy.mockResolvedValue([
         {
           id: 'row-id',
-          messageKey: 'key.one',
+          messageKey: 'test.ns:key.one',
           valueIs: 'Current published',
           valueEn: 'Current English',
           update: jest.fn().mockResolvedValue(undefined),

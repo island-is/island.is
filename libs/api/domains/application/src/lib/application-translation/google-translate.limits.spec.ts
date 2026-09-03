@@ -169,6 +169,49 @@ describe('GoogleTranslateRateLimiter', () => {
     )
     expect(daily?.requestCount).toBe(2)
   })
+
+  it('serializes concurrent consumes so the window cap cannot be bypassed', async () => {
+    const limiter = new GoogleTranslateRateLimiter(() => 1_000, 60_000, 2, 100)
+
+    const results = await Promise.allSettled([
+      limiter.consume('user-1', 10),
+      limiter.consume('user-1', 10),
+      limiter.consume('user-1', 10),
+    ])
+
+    const fulfilled = results.filter((result) => result.status === 'fulfilled')
+    const rejected = results.filter((result) => result.status === 'rejected')
+
+    expect(fulfilled).toHaveLength(2)
+    expect(rejected).toHaveLength(1)
+  })
+
+  it('keeps counting locally when the shared store accepts reads but rejects writes', async () => {
+    const frozen: WindowUsage = {
+      windowStartedAt: 1_000,
+      requestCount: 1,
+      characterCount: 10,
+    }
+    const store: GoogleTranslateUsageStore = {
+      get: async () => frozen as never,
+      set: async () => {
+        throw new Error('read-only replica')
+      },
+    }
+    const limiter = new GoogleTranslateRateLimiter(
+      () => 1_000,
+      60_000,
+      3,
+      100,
+      store,
+    )
+
+    await limiter.consume('user-1', 10)
+    await limiter.consume('user-1', 10)
+    await expect(limiter.consume('user-1', 10)).rejects.toBeInstanceOf(
+      HttpException,
+    )
+  })
 })
 
 describe('createGoogleTranslateCacheStore', () => {

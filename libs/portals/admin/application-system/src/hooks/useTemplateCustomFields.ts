@@ -43,11 +43,6 @@ export const useTemplateCustomFields = (typeId: string | undefined) => {
     ])
       .then(([uiFields, previewData]) => {
         if (cancelled) return
-        console.log(
-          '[useTemplateCustomFields] Loaded fields for',
-          typeId,
-          Object.keys(uiFields),
-        )
         setFields(uiFields as CustomFieldMap)
         setPreviewApplicationData(previewData)
         loadedRef.current = typeId

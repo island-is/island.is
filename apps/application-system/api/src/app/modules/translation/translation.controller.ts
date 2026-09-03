@@ -26,7 +26,10 @@ import {
   TemplateIntrospectionService,
   TranslationAccessService,
 } from '@island.is/application/api/core'
-import { getAllowedTranslationTypeIds } from '@island.is/application/utils'
+import {
+  getAllowedTranslationNamespaces,
+  getAllowedTranslationTypeIds,
+} from '@island.is/application/utils'
 import { ApplicationTranslationCacheService } from '@island.is/islandis-translations'
 import { ApplicationTypes } from '@island.is/application/types'
 import type { Locale } from '@island.is/shared/types'
@@ -121,11 +124,15 @@ export class TranslationController {
   @Scopes(...TRANSLATION_SCOPES)
   @Get()
   async getAllNamespacesWithStatus(@CurrentUser() user: User) {
-    const statuses = await this.translationService.getAllNamespacesWithStatus()
-    const allowedNamespaces = this.translationAccessService.filterNamespaces(
-      user,
-      statuses.map((status) => status.namespace),
+    const allowedNamespaces = getAllowedTranslationNamespaces(user)
+    const statuses = await this.translationService.getAllNamespacesWithStatus(
+      allowedNamespaces ?? undefined,
     )
+
+    if (allowedNamespaces === null) {
+      return statuses
+    }
+
     const allowedSet = new Set(allowedNamespaces)
     return statuses.filter((status) => allowedSet.has(status.namespace))
   }

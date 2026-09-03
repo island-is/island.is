@@ -6,6 +6,10 @@ import type {
 
 export const AUTOSAVE_INTERVAL_MS = 15_000
 export const GOOGLE_TRANSLATE_BATCH_SIZE = 100
+/** Keep in sync with GOOGLE_TRANSLATE_MAX_CHARS_PER_REQUEST on the API. */
+export const GOOGLE_TRANSLATE_MAX_CHARS_PER_REQUEST = 30_000
+/** Keep in sync with GOOGLE_TRANSLATE_MAX_CHARS_PER_TEXT on the API. */
+export const GOOGLE_TRANSLATE_MAX_CHARS_PER_TEXT = 5_000
 
 export type PersistedTranslationRow = {
   valueIs: string
@@ -155,25 +159,86 @@ export type GoogleTranslateFn = (input: {
   texts: string[]
 }) => Promise<string[] | undefined | null>
 
+export type GoogleTranslateBatchResult = {
+  completedBatches: number
+  failedBatches: number
+  skippedOversized: number
+}
+
+export const packGoogleTranslateBatches = (
+  items: GoogleTranslateItem[],
+  batchSize = GOOGLE_TRANSLATE_BATCH_SIZE,
+  maxCharsPerRequest = GOOGLE_TRANSLATE_MAX_CHARS_PER_REQUEST,
+  maxCharsPerText = GOOGLE_TRANSLATE_MAX_CHARS_PER_TEXT,
+): { batches: GoogleTranslateItem[][]; skippedOversized: number } => {
+  const batches: GoogleTranslateItem[][] = []
+  let current: GoogleTranslateItem[] = []
+  let currentChars = 0
+  let skippedOversized = 0
+
+  const flush = () => {
+    if (current.length === 0) {
+      return
+    }
+    batches.push(current)
+    current = []
+    currentChars = 0
+  }
+
+  for (const item of items) {
+    const length = item.sourceText.length
+    if (length > maxCharsPerText) {
+      skippedOversized += 1
+      continue
+    }
+    if (
+      current.length >= batchSize ||
+      (current.length > 0 && currentChars + length > maxCharsPerRequest)
+    ) {
+      flush()
+    }
+    current.push(item)
+    currentChars += length
+  }
+  flush()
+
+  return { batches, skippedOversized }
+}
+
 export const applyGoogleTranslateBatches = async (
   items: GoogleTranslateItem[],
   translate: GoogleTranslateFn,
   onTranslated: (id: string, text: string) => void,
   batchSize = GOOGLE_TRANSLATE_BATCH_SIZE,
-): Promise<void> => {
-  if (items.length === 0) return
+): Promise<GoogleTranslateBatchResult> => {
+  if (items.length === 0) {
+    return { completedBatches: 0, failedBatches: 0, skippedOversized: 0 }
+  }
 
-  for (let offset = 0; offset < items.length; offset += batchSize) {
-    const slice = items.slice(offset, offset + batchSize)
-    const translations =
-      (await translate({
-        texts: slice.map((item) => item.sourceText),
-      })) ?? []
+  const { batches, skippedOversized } = packGoogleTranslateBatches(
+    items,
+    batchSize,
+  )
+  let completedBatches = 0
+  let failedBatches = 0
 
-    for (let i = 0; i < slice.length; i++) {
-      if (translations[i]) {
-        onTranslated(slice[i].id, translations[i])
+  for (const slice of batches) {
+    try {
+      const translations =
+        (await translate({
+          texts: slice.map((item) => item.sourceText),
+        })) ?? []
+
+      for (let i = 0; i < slice.length; i++) {
+        if (translations[i]) {
+          onTranslated(slice[i].id, translations[i])
+        }
       }
+      completedBatches += 1
+    } catch {
+      failedBatches += 1
     }
   }
+
+  return { completedBatches, failedBatches, skippedOversized }
 }
