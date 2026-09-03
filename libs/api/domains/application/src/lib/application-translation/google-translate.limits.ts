@@ -297,10 +297,10 @@ export class GoogleTranslateRateLimiter {
   }
 }
 
-export function MaxTotalChars(
+export const MaxTotalChars = (
   max: number,
   validationOptions?: ValidationOptions,
-) {
+) => {
   return (object: object, propertyName: string) => {
     registerDecorator({
       name: 'maxTotalChars',

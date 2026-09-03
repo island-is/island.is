@@ -10,16 +10,17 @@ import {
 import { Type } from 'class-transformer'
 
 import {
-  TRANSLATION_NAMESPACE_MAX_LENGTH,
-  TRANSLATION_MESSAGE_KEY_MAX_LENGTH,
-  TRANSLATION_BULK_MAX_ITEMS,
-} from '@island.is/application/utils'
-import {
   GOOGLE_TRANSLATE_MAX_CHARS_PER_REQUEST,
   GOOGLE_TRANSLATE_MAX_CHARS_PER_TEXT,
   GOOGLE_TRANSLATE_MAX_TEXTS_PER_REQUEST,
   MaxTotalChars,
 } from '../google-translate.limits'
+
+/** Must match application_translation.namespace STRING(255). */
+const TRANSLATION_NAMESPACE_MAX_LENGTH = 255
+/** Must match application_translation.message_key STRING(512). */
+const TRANSLATION_MESSAGE_KEY_MAX_LENGTH = 512
+const TRANSLATION_BULK_MAX_ITEMS = 500
 
 @InputType()
 export class UpdateApplicationTranslationInput {
