@@ -122,8 +122,14 @@ export const ChatLauncher = ({
 
         {/* The disclaimer is edited in Contentful, so any links it carries are
             written into it as markdown, `[texti](slóð)`, next to the words they
-            belong to */}
-        <MarkdownText variant="small" color="dark400">
+            belong to. They are opened in a tab of their own, so that a question
+            half typed into the box is not lost to a link followed on the way. */}
+        <MarkdownText
+          variant="small"
+          color="dark400"
+          openLinksInNewTab={true}
+          newTabLabel={formatMessage(m.disclaimerLinkNewTab)}
+        >
           {formatMessage(m.disclaimer)}
         </MarkdownText>
 

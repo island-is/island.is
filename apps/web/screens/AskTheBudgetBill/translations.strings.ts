@@ -33,6 +33,12 @@ export const m = defineMessages({
     description:
       'Fyrirvari um svör gervigreindarinnar. Hlekkir eru skrifaðir beint inn í textann með markdown, t.d. „sjá [skilmála](https://island.is/skilmalar)“, og mega vera fleiri en einn.',
   },
+  disclaimerLinkNewTab: {
+    id: 'web.askTheBudgetBill:disclaimerLinkNewTab',
+    defaultMessage: 'Opnast í nýjum flipa',
+    description:
+      'Lesið upp fyrir skjálesara á eftir hlekk í fyrirvaranum, sem opnast í nýjum flipa',
+  },
   exampleQuestionsTitle: {
     id: 'web.askTheBudgetBill:exampleQuestionsTitle',
     defaultMessage: 'Dæmi um spurningar',
