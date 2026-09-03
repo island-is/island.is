@@ -145,7 +145,8 @@ const UserContractsOverview = () => {
               )
             })}
           </Stack>
-          {(data.hmsRentalAgreements.totalCount ?? 0) > DEFAULT_PAGE_SIZE && (
+          {(data.hmsRentalAgreements.totalCount ?? 0) >
+            (data.hmsRentalAgreements.pageSize ?? DEFAULT_PAGE_SIZE) && (
             <Box marginTop={3}>
               <Pagination
                 page={page}

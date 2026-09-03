@@ -12,7 +12,10 @@ export const HmsRentalAgreementClientConfig = defineConfig({
   name: 'HmsRentalAgreementClientConfig',
   schema,
   load(env) {
-    const tenantId = env.required('HMS_CONTRACTS_AUTH_TENANT_ID')
+    const tenantId = env.required(
+      'HMS_CONTRACTS_AUTH_TENANT_ID',
+      'c7256472-2622-417e-8955-a54eeb0a110e',
+    )
     const tokenEndpointTemplate = env.required(
       'HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT',
       'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
