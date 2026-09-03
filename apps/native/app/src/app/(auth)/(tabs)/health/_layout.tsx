@@ -64,17 +64,6 @@ export default function HealthLayout() {
       />
       <Stack.Screen name="messages/new" options={modalScreenOptions} />
       <Stack.Screen
-        name="messages/terms"
-        options={{
-          ...modalScreenOptions,
-          // Empty header title (keeps the close button) — the real title is
-          // rendered in the body so it can't be truncated.
-          title: '',
-          presentation: 'formSheet',
-          sheetAllowedDetents: 'fitToContents',
-        }}
-      />
-      <Stack.Screen
         name="questionnaires/index"
         options={{
           title: intl.formatMessage({
