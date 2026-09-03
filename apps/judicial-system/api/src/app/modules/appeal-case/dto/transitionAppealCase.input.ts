@@ -1,4 +1,4 @@
-import { Allow } from 'class-validator'
+import { Allow, IsOptional, IsUUID } from 'class-validator'
 
 import { Field, ID, InputType, registerEnumType } from '@nestjs/graphql'
 
@@ -19,4 +19,13 @@ export class TransitionAppealCaseInput {
   @Allow()
   @Field(() => AppealCaseTransition)
   readonly transition!: AppealCaseTransition
+
+  // The defendant the transition applies to. Required when withdrawing an
+  // áfrýjun, which is withdrawn for one defendant at a time; meaningless for
+  // every other transition.
+  @Allow()
+  @IsOptional()
+  @IsUUID()
+  @Field(() => ID, { nullable: true })
+  readonly defendantId?: string
 }
