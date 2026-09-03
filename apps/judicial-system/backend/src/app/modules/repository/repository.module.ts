@@ -21,6 +21,7 @@ import { Defendant } from './models/defendant.model'
 import { DefendantEventLog } from './models/defendantEventLog.model'
 import { EventLog } from './models/eventLog.model'
 import { IndictmentCount } from './models/indictmentCount.model'
+import { IndictmentSubtype } from './models/indictmentSubtype.model'
 import { Institution } from './models/institution.model'
 import { InstitutionContact } from './models/institutionContact.model'
 import { LawyerRegistry } from './models/lawyerRegistry.model'
@@ -41,8 +42,11 @@ import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseD
 import { CaseRepositoryService } from './services/caseRepository.service'
 import { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 import { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
+import { CourtSessionStringRepositoryService } from './services/courtSessionStringRepository.service'
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
+import { EventLogRepositoryService } from './services/eventLogRepository.service'
+import { IndictmentSubtypeRepositoryService } from './services/indictmentSubtypeRepository.service'
 import { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
 import { InstitutionRepositoryService } from './services/institutionRepository.service'
 import { LawyerRegistryRepositoryService } from './services/lawyerRegistryRepository.service'
@@ -53,6 +57,7 @@ import { RobotLogRepositoryService } from './services/robotLogRepository.service
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { UserRepositoryService } from './services/userRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
+import { VictimRepositoryService } from './services/victimRepository.service'
 import { repositoryModuleConfig } from './repository.config'
 
 @Module({
@@ -75,6 +80,7 @@ import { repositoryModuleConfig } from './repository.config'
       DefendantEventLog,
       EventLog,
       IndictmentCount,
+      IndictmentSubtype,
       Institution,
       InstitutionContact,
       LawyerRegistry,
@@ -99,9 +105,12 @@ import { repositoryModuleConfig } from './repository.config'
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
+    CourtSessionStringRepositoryService,
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    EventLogRepositoryService,
+    IndictmentSubtypeRepositoryService,
     InstitutionContactRepositoryService,
     InstitutionRepositoryService,
     LawyerRegistryRepositoryService,
@@ -112,6 +121,7 @@ import { repositoryModuleConfig } from './repository.config'
     SubpoenaRepositoryService,
     UserRepositoryService,
     VerdictRepositoryService,
+    VictimRepositoryService,
   ],
   exports: [
     AppealCaseRepositoryService,
@@ -121,9 +131,12 @@ import { repositoryModuleConfig } from './repository.config'
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
+    CourtSessionStringRepositoryService,
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    EventLogRepositoryService,
+    IndictmentSubtypeRepositoryService,
     InstitutionContactRepositoryService,
     InstitutionRepositoryService,
     LawyerRegistryRepositoryService,
@@ -134,6 +147,7 @@ import { repositoryModuleConfig } from './repository.config'
     SubpoenaRepositoryService,
     UserRepositoryService,
     VerdictRepositoryService,
+    VictimRepositoryService,
   ],
 })
 export class RepositoryModule {}

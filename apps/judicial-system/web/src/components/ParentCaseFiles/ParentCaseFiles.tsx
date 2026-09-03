@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -7,7 +7,7 @@ import {
   Box,
   UploadedFile,
 } from '@island.is/island-ui/core'
-import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { parentCaseFiles as m } from './ParentCaseFiles.strings'
 

@@ -44,6 +44,7 @@ env:
   ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
   ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
   ENVIRONMENT: 'staging'
+  FETCH_MAX_SOCKETS: '50'
   FILE_DOWNLOAD_BUCKET: 'island-is-staging-download-cache-api'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
   FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'
@@ -114,6 +115,7 @@ env:
   XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
   XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4'
   XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
+  XROAD_DRIVING_LICENSE_V6_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v6'
   XROAD_ENERGY_FUNDS_PATH: 'IS-TEST/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1'
   XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
   XROAD_FARMERS_PATH: 'IS-TEST/GOV/7108120120/Afurd-Private/baendur'
@@ -228,8 +230,8 @@ hpa:
       cpuAverageUtilization: 70
       nginxRequestsIrate: 5
     replicas:
-      max: 2
-      min: 1
+      max: 50
+      min: 3
 httpRoute:
   primary-gw:
     hostnames:
@@ -242,6 +244,7 @@ httpRoute:
           - pathPrefix: '/api'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
+minReadySeconds: 0
 namespace: 'islandis'
 podDisruptionBudget:
   minAvailable: '50%'
@@ -250,9 +253,9 @@ podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 1
-  max: 2
-  min: 1
+  default: 3
+  max: 50
+  min: 3
 resources:
   limits:
     cpu: '3000m'
@@ -398,3 +401,9 @@ serviceAccount:
     eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/api'
   create: true
   name: 'api'
+strategy:
+  rollingUpdate:
+    maxSurge: '25%'
+    maxUnavailable: '25%'
+  type: 'RollingUpdate'
+terminationGracePeriodSeconds: 30

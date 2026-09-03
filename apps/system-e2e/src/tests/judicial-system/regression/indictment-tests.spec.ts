@@ -3,12 +3,12 @@ import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
+import { getDaysFromNow, chooseDocument } from '../utils/helpers'
 import {
-  randomPoliceCaseNumber,
-  getDaysFromNow,
-  randomIndictmentCourtCaseNumber,
-  chooseDocument,
-} from '../utils/helpers'
+  prosecutorCreatesIndictmentCase,
+  prosecutorSendsIndictmentToCourt,
+  judgeReceivesIndictmentThroughAdvocates,
+} from './shared-steps/indictment-to-court-record'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -19,234 +19,31 @@ test.describe.serial('Indictment tests', () => {
   test('prosecutor should create a new indictment case', async ({
     prosecutorPage,
   }) => {
-    const page = prosecutorPage
-    const today = getDaysFromNow()
-
-    const policeCaseNumber = randomPoliceCaseNumber()
-
-    // Case list groups
-    await page.goto('/malalistar')
-    await expect(page).toHaveURL('/malalistar')
-    await page.getByRole('button', { name: 'Nýtt mál' }).click()
-    await page.getByRole('menuitem', { name: 'Ákæra' }).click()
-    await expect(page).toHaveURL('/akaera/ny')
-
-    // New indictment case
-    await page.getByTestId('policeCaseNumber0').click()
-    await page.getByTestId('policeCaseNumber0').fill(policeCaseNumber)
-
-    await page.getByText('Sakarefni *Veldu sakarefni').click()
-    await page.getByRole('option', { name: 'Umferðarlagabrot' }).click()
-    await page.getByPlaceholder('Sláðu inn vettvang').click()
-    await page.getByPlaceholder('Sláðu inn vettvang').fill('Reykjavík')
-    await page
-      .locator(`input[id=crime-scene-date-${policeCaseNumber}]`)
-      .fill(today)
-    await page.keyboard.press('Escape')
-    const nationalIdInput = page.getByTestId('inputNationalId')
-    const nameInput = page.getByTestId('inputName')
-
-    await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes('/api/nationalRegistry/getPersonByNationalId') &&
-          resp.request().method() === 'GET',
-      ),
-      nationalIdInput.fill('000000-0000'),
-    ])
-
-    await nameInput.fill(accusedName)
-    await nameInput.press('Tab')
-    await expect(nameInput).toHaveValue(accusedName)
-    await Promise.all([
-      page.getByRole('button', { name: 'Stofna mál' }).click(),
-      verifyRequestCompletion(page, '/api/graphql', 'CreateCase').then(
-        (res) => (caseId = res.data.createCase.id),
-      ),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Police case files (Málsgögn)
-    await expect(page).toHaveURL(`/akaera/malsgogn/${caseId}`)
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Case file
-    await expect(page).toHaveURL(`/akaera/skjalaskra/${caseId}`)
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Case files
-    await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-    ])
-
-    // Processing
-    await expect(page).toHaveURL(`/akaera/malsmedferd/${caseId}`)
-
-    await Promise.all([
-      page.getByText('Játar sök').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
-    ])
-
-    await Promise.all([
-      page.getByText('Nei').last().click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-    ])
-
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Indictment
-    // The auto-created indictment count is expanded by default (open state is
-    // persisted in local storage), so no "Opna alla" toggle is needed.
-
-    await page.getByPlaceholder('AB123').fill('AB123')
-
-    await Promise.all([
-      page.keyboard.press('Tab'),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
-    ])
-
-    await Promise.all([
-      page.getByText('Brot *Veldu brot').click(),
-      page.getByRole('option', { name: 'Sviptingarakstur' }).click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
-    ])
-
-    await Promise.all([
-      page.getByLabel('Krefjast sviptingarKrefjast').check(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-    ])
-
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Overview
-    await expect(page).toHaveURL(`/akaera/stadfesta/${caseId}`)
-
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
-    ])
-    await page.getByTestId('modalPrimaryButton').click()
+    caseId = await prosecutorCreatesIndictmentCase(prosecutorPage, accusedName)
   })
 
   test('prosecutor should accept and send indictment case to court', async ({
     prosecutorPage,
   }) => {
-    const page = prosecutorPage
-
-    // Case list
-    await page.goto('/malalistar/sakamal-sem-bida-stadfestingar')
-    await expect(page).toHaveURL('/malalistar/sakamal-sem-bida-stadfestingar')
-    await page.getByText(accusedName).click()
-
-    // Indictment case
-    await expect(page).toHaveURL(`/akaera/stadfesta/${caseId}`)
-
-    await page.getByText('Staðfesta ákæru og senda á dómstól').click()
-    await page.getByTestId('continueButton').click()
-
-    await Promise.all([
-      page.getByTestId('modalPrimaryButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
-    ])
+    await prosecutorSendsIndictmentToCourt(prosecutorPage, caseId, accusedName)
   })
 
   test('judge should receive indictment case', async ({ judgePage }) => {
     const page = judgePage
-    const nextWeek = getDaysFromNow(7)
 
-    // Case list
-    await page.goto('/malalistar/sakamal-sem-bida-uthlutunar')
-    await expect(page).toHaveURL('/malalistar/sakamal-sem-bida-uthlutunar')
-    await page.getByText(accusedName).click()
-
-    // Indictment Overview
-    await expect(page).toHaveURL(`domur/akaera/yfirlit/${caseId}`)
-
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Reception and assignment
-    await expect(page).toHaveURL(`domur/akaera/mottaka/${caseId}`)
-
-    await page
-      .getByTestId('courtCaseNumber')
-      .fill(randomIndictmentCourtCaseNumber())
-    await page.keyboard.press('Tab')
-
-    await page.getByText('Veldu dómara/aðstoðarmann').click()
-    await page
-      .getByTestId('select-judge')
-      .getByText('Test Dómari')
-      .last()
-      .click()
-
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Subpoena
-    await expect(page).toHaveURL(`domur/akaera/fyrirkall/${caseId}`)
-
-    await page
-      .locator('label')
-      .filter({ hasText: 'Útivistarfyrirkall' })
-      .click()
-
-    await page.locator('input[id=courtDate]').fill(nextWeek)
-    await page.keyboard.press('Escape')
-
-    await page.getByTestId('courtDate-time').fill('11:00')
-    await page.getByTestId('courtroom').press('Tab')
-
-    await page.getByTestId('courtroom').fill('12')
-    await page.getByTestId('courtroom').press('Tab')
-
-    await page.getByTestId('continueButton').click()
-    await page.getByTestId('modalPrimaryButton').click()
-
-    // Advocates and civil claimants
-    await expect(page).toHaveURL(`domur/akaera/malflytjendur/${caseId}`)
-
-    await page
-      .locator('label')
-      .filter({ hasText: 'Ákærði óskar ekki eftir að sé' })
-      .click()
-    await page.getByRole('button', { name: 'Staðfesta val' }).click()
-    await page.getByTestId('modalPrimaryButton').click()
-
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
+    // Case list through subpoena, advocates and on to the court record
+    await judgeReceivesIndictmentThroughAdvocates(page, caseId, accusedName)
 
     // Indictment court record
-    await expect(page).toHaveURL(`domur/akaera/thingbok/${caseId}`)
     await Promise.all([
       page.getByRole('button', { name: 'Bæta við þinghaldi' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCourtSession'),
     ])
+    // The rich text editor is TipTap, which renders a contenteditable
+    // element - there is no iframe to reach into.
     await page
       .getByTestId('entries')
-      .frameLocator('iframe')
-      .locator('body')
+      .locator('[contenteditable="true"]')
       .fill('Afstaða, málflutningur, og bókun')
 
     await page.locator('label').filter({ hasText: 'Dómur kveðinn upp' }).click()

@@ -7,7 +7,6 @@ import {
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
-  Blockquote,
   Box,
   Button,
   Checkbox,
@@ -15,6 +14,7 @@ import {
   GridRow as Row,
   Icon,
   Input,
+  ModalBase,
   RadioButton,
   Stack,
   Text,
@@ -28,6 +28,15 @@ type ZendeskInstanceConfig = {
   serviceSystemInstance: string
   serviceSystemBrandID: string
 }
+
+const parseZendeskBrandIds = (brandIds?: string | null) =>
+  brandIds
+    ?.split(';')
+    .map((brandId) => brandId.trim())
+    .filter(Boolean) ?? []
+
+const unsupportedZendeskInstanceMessage =
+  'Zendesk instance er ekki gilt. Athugaðu skráningu þína í Contentful.'
 
 export const SubmissionUrls = () => {
   const { formatMessage } = useIntl()
@@ -43,6 +52,8 @@ export const SubmissionUrls = () => {
   const { form, isReadOnly } = control
   const [updateField] = useMutation(UPDATE_FIELD)
   const [showInput, setShowInput] = useState(false)
+  const [showDisableUseValidateModal, setShowDisableUseValidateModal] =
+    useState(false)
   const [getZendeskInstance] = useLazyQuery(GET_ORGANIZATION_ZENDESK_INSTANCE, {
     fetchPolicy: 'no-cache',
   })
@@ -50,7 +61,25 @@ export const SubmissionUrls = () => {
     UPDATE_ORGANIZATION_ZENDESK_INSTANCE,
   )
 
+  const zendeskBrandId =
+    form.organizationZendeskInstance?.zendeskBrandId?.trim()
+  const zendeskInstance =
+    form.organizationZendeskInstance?.zendeskInstance?.trim()
+  const [zendeskBrandIdOptions, setZendeskBrandIdOptions] = useState(() =>
+    parseZendeskBrandIds(zendeskBrandId),
+  )
+  const [isUnsupportedZendeskInstance, setIsUnsupportedZendeskInstance] =
+    useState(false)
+
   const sanitizeId = (url: string) => url.replace(/[^a-zA-Z0-9-_]/g, '-')
+
+  const setUseValidate = (value: boolean) => {
+    controlDispatch({
+      type: 'CHANGE_USE_VALIDATE',
+      payload: { value },
+    })
+    formUpdate({ ...form, useValidate: value })
+  }
 
   const persistZendeskApplicantRequirements = async () => {
     const applicantFields = (control.form.fields ?? []).filter(
@@ -109,34 +138,77 @@ export const SubmissionUrls = () => {
       return
     }
 
-    if (
-      parsed.serviceSystemInstance !==
-        form.organizationZendeskInstance?.zendeskInstance ||
-      parsed.serviceSystemBrandID !==
-        form.organizationZendeskInstance?.zendeskBrandId
-    ) {
-      controlDispatch({
-        type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
-        payload: {
-          zendeskInstance: parsed.serviceSystemInstance,
-          zendeskBrandId: parsed.serviceSystemBrandID,
-        },
-      })
+    const brandIdOptions = parseZendeskBrandIds(parsed.serviceSystemBrandID)
+    const nextZendeskBrandId =
+      brandIdOptions.length === 1
+        ? brandIdOptions[0]
+        : brandIdOptions.includes(
+            form.organizationZendeskInstance?.zendeskBrandId ?? '',
+          )
+        ? form.organizationZendeskInstance?.zendeskBrandId ?? ''
+        : ''
+
+    setZendeskBrandIdOptions(brandIdOptions)
+
+    try {
       await updateOrganizationZendeskInstance({
         variables: {
           input: {
             zendeskInstance: parsed.serviceSystemInstance,
-            zendeskBrandId: parsed.serviceSystemBrandID,
+            zendeskBrandId: nextZendeskBrandId,
             organizationId: form.organizationId,
+            formId: form.id,
           },
         },
       })
+    } catch {
+      setIsUnsupportedZendeskInstance(true)
+      return
     }
+
+    setIsUnsupportedZendeskInstance(false)
+
+    if (
+      parsed.serviceSystemInstance ===
+        form.organizationZendeskInstance?.zendeskInstance &&
+      nextZendeskBrandId === form.organizationZendeskInstance?.zendeskBrandId
+    ) {
+      return
+    }
+
+    controlDispatch({
+      type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+      payload: {
+        zendeskInstance: parsed.serviceSystemInstance,
+        zendeskBrandId: nextZendeskBrandId,
+      },
+    })
   }
 
   useEffect(() => {
     updateZendeskInstance()
   }, [])
+
+  useEffect(() => {
+    const brandIdOptions = parseZendeskBrandIds(zendeskBrandId)
+    setZendeskBrandIdOptions((currentBrandIdOptions) =>
+      brandIdOptions.length > 1 ||
+      currentBrandIdOptions.length === 0 ||
+      (brandIdOptions.length === 1 &&
+        !currentBrandIdOptions.includes(brandIdOptions[0]))
+        ? brandIdOptions
+        : currentBrandIdOptions,
+    )
+  }, [zendeskBrandId])
+
+  const selectedZendeskBrandId =
+    zendeskBrandIdOptions.length === 1
+      ? zendeskBrandIdOptions[0]
+      : zendeskBrandId?.includes(';')
+      ? ''
+      : zendeskBrandId
+  const displayedZendeskBrandIds =
+    zendeskBrandIdOptions.length > 0 ? zendeskBrandIdOptions : ['']
 
   return (
     <>
@@ -260,9 +332,73 @@ export const SubmissionUrls = () => {
               </Row>
             ),
         )}
+        {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
+          <Row>
+            <Column span="10/10">
+              <Checkbox
+                label={formatMessage(m.useValidate)}
+                checked={!!form.useValidate}
+                disabled={isReadOnly}
+                onChange={(e) => {
+                  if (!e.target.checked) {
+                    setShowDisableUseValidateModal(true)
+                    return
+                  }
+
+                  setUseValidate(true)
+                }}
+              />
+              <ModalBase
+                baseId="disable-use-validate-confirm"
+                isVisible={showDisableUseValidateModal}
+                onVisibilityChange={setShowDisableUseValidateModal}
+                modalLabel={formatMessage(m.disableUseValidateTitle)}
+                removeOnClose
+              >
+                {({ closeModal }: { closeModal: () => void }) => (
+                  <Box
+                    background="white"
+                    borderRadius="large"
+                    padding={[3, 6]}
+                    style={{
+                      maxWidth: 480,
+                      margin: '80px auto',
+                      boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
+                    }}
+                  >
+                    <Text variant="h3" marginBottom={2}>
+                      {formatMessage(m.disableUseValidateTitle)}
+                    </Text>
+                    <Text marginBottom={4}>
+                      {formatMessage(m.disableUseValidateMessage)}
+                    </Text>
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="spaceBetween"
+                    >
+                      <Button variant="ghost" onClick={closeModal}>
+                        {formatMessage(m.cancel)}
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setUseValidate(false)
+                          closeModal()
+                        }}
+                      >
+                        {formatMessage(m.confirm)}
+                      </Button>
+                    </Box>
+                  </Box>
+                )}
+              </ModalBase>
+            </Column>
+          </Row>
+        )}
+        <Box marginTop={3} />
 
         <Row>
-          <Column span="5/10">
+          <Column span="10/10">
             <RadioButton
               label="Zendesk"
               large
@@ -285,7 +421,7 @@ export const SubmissionUrls = () => {
               }}
             />
           </Column>
-          {form.submissionServiceUrl === 'zendesk' && (
+          {/* {form.submissionServiceUrl === 'zendesk' && (
             <Column span="5/10">
               <Blockquote>
                 <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
@@ -305,45 +441,114 @@ export const SubmissionUrls = () => {
                 </Text>
               </Blockquote>
             </Column>
-          )}
+          )} */}
         </Row>
-
         {form.submissionServiceUrl === 'zendesk' && (
-          <Row>
-            <Column span="9/10">
-              <Checkbox
-                label={formatMessage(m.zendeskPrivate)}
-                checked={!!form.zendeskInternal}
-                disabled={isReadOnly}
-                onChange={(e) => {
-                  controlDispatch({
-                    type: 'CHANGE_ZENDESK_INTERNAL',
-                    payload: { value: e.target.checked },
-                  })
-                  formUpdate({ ...form, zendeskInternal: e.target.checked })
-                }}
-              />
-            </Column>
-          </Row>
-        )}
+          <>
+            <Row>
+              <Column span="8/10">
+                <Text variant="medium">
+                  Brand Id og Instance eru sótt sjálfkrafa í Contentful frá
+                  stofnuninni sem á formið. Ef það vantar brand Id eða instance
+                  þá þarf að setja það upp í Contentful. <br />
+                  Ef stofnunin á fleiri en eitt Brand Id þá er hægt að velja á
+                  milli þeirra hér.
+                </Text>
+              </Column>
+            </Row>
+            {displayedZendeskBrandIds.map((brandId, index) => {
+              const zendeskBrandInputId = `zendesk-brand-id-${
+                sanitizeId(brandId) || `missing-${index}`
+              }-${index}`
 
-        {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
-          <Row>
-            <Column span="10/10">
-              <Checkbox
-                label={formatMessage(m.useValidate)}
-                checked={!!form.useValidate}
-                disabled={isReadOnly}
-                onChange={(e) => {
-                  controlDispatch({
-                    type: 'CHANGE_USE_VALIDATE',
-                    payload: { value: e.target.checked },
-                  })
-                  formUpdate({ ...form, useValidate: e.target.checked })
-                }}
-              />
-            </Column>
-          </Row>
+              return (
+                <Row key={zendeskBrandInputId}>
+                  <Column span="6/10">
+                    <RadioButton
+                      label={
+                        <strong>
+                          Brand Id:{' '}
+                          {brandId || (
+                            <Text
+                              as="span"
+                              color="red600"
+                              variant="small"
+                              fontWeight="semiBold"
+                            >
+                              Zendesk brand Id vantar
+                            </Text>
+                          )}
+                        </strong>
+                      }
+                      large
+                      name="zendeskBrandId"
+                      id={zendeskBrandInputId}
+                      checked={selectedZendeskBrandId === brandId}
+                      disabled={
+                        isReadOnly || !brandId || isUnsupportedZendeskInstance
+                      }
+                      onChange={() => {
+                        controlDispatch({
+                          type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+                          payload: {
+                            zendeskInstance: zendeskInstance ?? '',
+                            zendeskBrandId: brandId,
+                          },
+                        })
+                        formUpdate({
+                          ...form,
+                          organizationZendeskInstance: {
+                            zendeskInstance: zendeskInstance ?? '',
+                            zendeskBrandId: brandId,
+                          },
+                        })
+                      }}
+                      subLabel={
+                        isUnsupportedZendeskInstance ? (
+                          <Text
+                            as="span"
+                            color="red600"
+                            variant="small"
+                            fontWeight="semiBold"
+                          >
+                            {unsupportedZendeskInstanceMessage}
+                          </Text>
+                        ) : zendeskInstance ? (
+                          `${zendeskInstance}.zendesk.com`
+                        ) : (
+                          <Text
+                            as="span"
+                            color="red600"
+                            variant="small"
+                            fontWeight="semiBold"
+                          >
+                            Zendesk instance vantar
+                          </Text>
+                        )
+                      }
+                    />
+                  </Column>
+                </Row>
+              )
+            })}
+
+            <Row>
+              <Column span="9/10">
+                <Checkbox
+                  label={formatMessage(m.zendeskPrivate)}
+                  checked={!!form.zendeskInternal}
+                  disabled={isReadOnly}
+                  onChange={(e) => {
+                    controlDispatch({
+                      type: 'CHANGE_ZENDESK_INTERNAL',
+                      payload: { value: e.target.checked },
+                    })
+                    formUpdate({ ...form, zendeskInternal: e.target.checked })
+                  }}
+                />
+              </Column>
+            </Row>
+          </>
         )}
       </Stack>
     </>

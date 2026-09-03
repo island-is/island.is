@@ -4,6 +4,7 @@ import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
 import { Gender } from '../utils/types'
 import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from '../utils/constants'
+import { isRemedyDateInWindow } from '../utils/dates'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),
@@ -33,6 +34,9 @@ const contactPerson = z.object({
   name: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  jobTitle: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
   email: z.string().refine((v) => EMAIL_REGEX.test(v), {
     params: messages.errors.invalidEmail,
   }),
@@ -40,80 +44,6 @@ const contactPerson = z.object({
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
-
-const employeeCount = z.object({
-  women: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
-  men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
-  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
-})
-
-const jobFactor = z.object({
-  type: z.string(),
-  title: z.string(),
-  description: z.string(),
-  weight: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
-})
-
-const personalFactor = z.object({
-  title: z
-    .string()
-    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  description: z.string().optional(),
-  weight: z.string().refine((v) => v !== '' && Number(v) >= 0, {
-    params: messages.errors.invalidNonNegativeNumber,
-  }),
-})
-
-const criteria = z
-  .object({
-    jobFactors: z.array(jobFactor).min(1),
-    personalFactors: z.array(personalFactor).optional(),
-  })
-  .superRefine((val, ctx) => {
-    const jobTotal = (val.jobFactors ?? []).reduce(
-      (sum, f) => sum + (Number(f.weight) || 0),
-      0,
-    )
-    const personalTotal = (val.personalFactors ?? []).reduce(
-      (sum, f) => sum + (Number(f.weight) || 0),
-      0,
-    )
-    // Allow a small tolerance so valid decimal weights (e.g. 33.33 + 33.33 +
-    // 33.34) aren't rejected by floating-point rounding.
-    if (Math.abs(jobTotal + personalTotal - 100) > 0.001) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['jobFactors'],
-        params: messages.report.criteria.weightSumError,
-      })
-    }
-    // Personal-factor titles are the key linking a criterion to the step
-    // assignments stored on each employee, and deleting a criterion cascades
-    // by that title — two criteria sharing one title would make the delete
-    // strip both. Job-factor titles come from a fixed set and can't collide.
-    const seen = new Set<string>()
-    ;(val.personalFactors ?? []).forEach((factor, i) => {
-      const title = factor.title?.trim()
-      if (!title) return
-      if (seen.has(title)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['personalFactors', i, 'title'],
-          params: messages.errors.duplicateCriterionTitle,
-        })
-      } else {
-        seen.add(title)
-      }
-    })
-  })
 
 const period = z
   .object({
@@ -141,155 +71,86 @@ const period = z
     }
   })
 
+// A TableRepeater row carries the table's own bookkeeping: a row the applicant
+// just added is `{ isUnsaved: true }` with no fields on it yet, and a deleted
+// one is only flagged `isRemoved` — the real splice happens in the table's
+// beforeSubmit callback, which runs after this schema. Both shapes have to
+// parse, so the row is all-optional here and the actual rules live in the
+// refinement below, which can skip the rows that aren't really there.
+const subsidiaryRow = z.object({
+  nationalIdWithName: z
+    .object({
+      name: z.string().optional(),
+      nationalId: z.string().optional(),
+    })
+    .optional(),
+  isRemoved: z.boolean().optional(),
+})
+
 const subsidiaries = z
   .object({
     includesSubsidiaries: z
       .enum(['yes', 'no'])
       .refine((v) => !!v, { params: messages.errors.required }),
-    list: z
-      .array(
-        z.object({
-          nationalIdWithName: z.object({
-            name: z.string().refine((v) => v && v.length > 0, {
-              params: messages.errors.required,
-            }),
-            nationalId: z
-              .string()
-              .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-                params: messages.errors.invalidCompany,
-              }),
-          }),
-        }),
-      )
-      .superRefine((items, ctx) => {
-        const seen = new Set<string>()
-        items.forEach((item, i) => {
-          const id = item.nationalIdWithName?.nationalId
-          if (id && seen.has(id)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [i, 'nationalIdWithName', 'nationalId'],
-              params: messages.errors.duplicateSubsidiary,
-            })
-          } else if (id) {
-            seen.add(id)
-          }
-        })
-      })
-      .optional(),
+    list: z.array(subsidiaryRow).optional(),
   })
   .superRefine((val, ctx) => {
-    // If the applicant says they have subsidiaries, the list can't be empty.
-    if (
-      val.includesSubsidiaries === 'yes' &&
-      (!val.list || val.list.length === 0)
-    ) {
+    // The list is only part of the answer when the applicant said yes — the
+    // service discards it otherwise. Validating it anyway would block the
+    // screen on rows the table no longer renders.
+    if (val.includesSubsidiaries !== 'yes') return
+
+    const rows = val.list ?? []
+    if (rows.every((row) => row.isRemoved)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['list'],
         params: messages.errors.required,
       })
+      return
     }
-  })
 
-const subCriterionStep = z.object({
-  description: z.string(),
-})
-
-const subCriterion = z.object({
-  title: z.string(),
-  description: z.string().optional(),
-  weight: z.string(),
-  stepCount: z.string(),
-  steps: z.array(subCriterionStep),
-})
-
-// Sub-criterion titles are the key linking a sub-criterion to the step
-// assignments on employees/roles, matched as a (criterionTitle, subTitle)
-// pair — so they only have to be unique within their own criterion's group,
-// not globally. Deleting a sub-criterion cascades by that pair, and a
-// duplicate title would make the delete strip both.
-const uniqueSubCriterionTitles = (
-  groups: { title: string }[][],
-  ctx: z.RefinementCtx,
-  factorsKey: 'jobFactors' | 'personalFactors',
-) =>
-  groups.forEach((group, groupIndex) => {
     const seen = new Set<string>()
-    group.forEach((sub, i) => {
-      const title = sub.title?.trim()
-      if (!title) return
-      if (seen.has(title)) {
+    // Indices are those of the unfiltered array so the error paths line up
+    // with the rows react-hook-form is still rendering.
+    rows.forEach((row, i) => {
+      if (row.isRemoved) return
+      const { name, nationalId } = row.nationalIdWithName ?? {}
+
+      if (!name) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: [factorsKey, groupIndex, i, 'title'],
-          params: messages.errors.duplicateSubCriterionTitle,
+          path: ['list', i, 'nationalIdWithName', 'name'],
+          params: messages.errors.required,
+        })
+      }
+
+      if (
+        !nationalId ||
+        !(kennitala.isValid(nationalId) && kennitala.isCompany(nationalId))
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['list', i, 'nationalIdWithName', 'nationalId'],
+          params: messages.errors.invalidCompany,
+        })
+      } else if (seen.has(nationalId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['list', i, 'nationalIdWithName', 'nationalId'],
+          params: messages.errors.duplicateSubsidiary,
         })
       } else {
-        seen.add(title)
+        seen.add(nationalId)
       }
     })
   })
 
-const subCriteria = z
-  .object({
-    jobFactors: z.array(z.array(subCriterion)).optional(),
-    personalFactors: z.array(z.array(subCriterion)).optional(),
-  })
-  .superRefine((val, ctx) => {
-    uniqueSubCriterionTitles(val.jobFactors ?? [], ctx, 'jobFactors')
-    uniqueSubCriterionTitles(val.personalFactors ?? [], ctx, 'personalFactors')
-  })
-  .optional()
-
-const employeeStepAssignment = z.object({
-  subTitle: z.string(),
-  stepOrder: z.number(),
-  criterionTitle: z.string(),
-})
-
-const employee = z.object({
-  ordinal: z.number(),
-  identifier: z.string().min(1),
-  roleTitle: z.string(),
-  gender: z.string(),
-  // Nullish, not just optional: the API returns `null` for an empty Svið/Deild
-  // cell and the imported report is seeded straight into answers.
-  field: z.string().nullish(),
-  department: z.string().nullish(),
-  startDate: z.string(),
-  workRatio: z.number(),
-  baseSalary: z.number(),
-  additionalFixedOvertime: z.number().nullish(),
-  additionalFixedCarAllowance: z.number().nullish(),
-  bonusOccasionalCarAllowance: z.number().nullish(),
-  bonusOccasionalOvertime: z.number().nullish(),
-  bonusPayments: z.number().nullish(),
-  bonusOther: z.number().nullish(),
-  personalStepAssignments: z.array(employeeStepAssignment).default([]),
-})
-
-const employees = z.array(employee).optional()
-
-const stepAssignment = z.object({
-  criterionTitle: z.string(),
-  subTitle: z.string(),
-  stepOrder: z.number(),
-})
-
-const role = z.object({
-  title: z.string(),
-  stepAssignments: z.array(stepAssignment),
-})
-
-const roles = z.array(role).optional()
-
-// No `name`: the form doesn't let the applicant label a group, and the API
-// assigns a default server-side when it's omitted. Add it back alongside a
-// real input, not before.
 const outlierGroup = z.object({
+  name: z.string().optional(),
   reason: z.string().optional(),
   action: z.string().optional(),
+  remedyDate: z.string().optional(),
   signatureName: z.string().optional(),
   signatureRole: z.string().optional(),
   employeeOrdinals: z.array(z.number()),
@@ -299,6 +160,15 @@ const salaryAnalysis = z
   .object({
     postponed: z.array(z.string()).optional(),
     outlierGroups: z.array(outlierGroup).optional(),
+    hasMinimumSetOutliers: z.boolean().optional(),
+    // Mirrored from the analysis result so the overview screen can read it —
+    // see the comment on BenchmarkVerdict.
+    benchmarkVerdict: z
+      .enum(['within', 'over', 'notComputable', 'unknown'])
+      .optional(),
+    adjustedGapPercent: z.number().optional(),
+    adjustedGapDirection: z.enum(['FEMALE', 'MALE', 'NONE']).optional(),
+    outlierPlanReviewed: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
     // Explanations are only required when there's something to explain (a
@@ -322,13 +192,25 @@ const salaryAnalysis = z
           params: messages.errors.required,
         })
       }
-      if (!group.signatureName) {
+      if (!group.remedyDate) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['outlierGroups', i, 'signatureName'],
+          path: ['outlierGroups', i, 'remedyDate'],
           params: messages.errors.required,
         })
+        // The window is re-checked here, not just where the calendar is drawn:
+        // POSTPONED keeps a draft for 90 days, so a date that was valid when it
+        // was picked can be in the past by the time this runs.
+      } else if (!isRemedyDateInWindow(group.remedyDate, new Date())) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'remedyDate'],
+          params: messages.errors.remedyDateOutOfRange,
+        })
       }
+      // No check for signatureName: the responsible party's name is optional.
+      // isOutlierGroupComplete omits it too — that rule gates the Continue
+      // button, so the two have to name the same fields.
       if (!group.signatureRole) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -340,6 +222,8 @@ const salaryAnalysis = z
   })
   .optional()
 
+// criteria, subCriteria, employees, and roles live on the DMR draft report
+// (see utils/useDraftQuery.ts / useDraftSync.ts), never in applicationAnswers.
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((value) => value === true, {
     params: messages.prerequisites.errors.approveExternalData,
@@ -347,14 +231,13 @@ export const dataSchema = z.object({
   generalInformation: generalInformation.optional(),
   chiefExecutive: chiefExecutive.optional(),
   contactPerson: contactPerson.optional(),
-  employeeCount: employeeCount.optional(),
   period: period.optional(),
   subsidiaries: subsidiaries.optional(),
-  criteria: criteria.optional(),
-  subCriteria: subCriteria,
-  employees: employees,
-  roles: roles,
   salaryAnalysis: salaryAnalysis,
+  // Navigation-only signal (not mirrored DMR data): section visibility needs
+  // a synchronous update, but externalData writes don't reach the visibility
+  // reducer without a full refetch that would reset in-flight navigation.
+  hasPersonalCriteria: z.boolean().optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

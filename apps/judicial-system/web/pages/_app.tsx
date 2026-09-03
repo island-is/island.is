@@ -1,12 +1,11 @@
-import App, { AppContext, AppProps } from 'next/app'
+import type { AppContext, AppProps } from 'next/app'
+import App from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
-import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
+import type { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { Box, ToastContainer } from '@island.is/island-ui/core'
-import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
-
-import client from '../graphql/client'
+import client from '@island.is/judicial-system-web/graphql/client'
 import {
   FeatureProvider,
   FormProvider,
@@ -15,7 +14,8 @@ import {
   ServiceInterruptionBanner,
   UserProvider,
   ViewportProvider,
-} from '../src/components'
+} from '@island.is/judicial-system-web/src/components'
+import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
 
 const getTranslationStrings = (apolloClient: typeof client) => {
   if (!apolloClient) {
@@ -121,6 +121,18 @@ class JudicialSystemApplication extends App<Props> {
                       @font-face {
                         font-family: 'IBM Plex Sans';
                         font-style: italic;
+                        font-weight: 300;
+                        font-display: swap;
+                        src: local('IBM Plex Sans Light Italic'),
+                          local('IBMPlexSans-LightItalic'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-300italic.woff2')
+                            format('woff2'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-300italic.woff')
+                            format('woff');
+                      }
+                      @font-face {
+                        font-family: 'IBM Plex Sans';
+                        font-style: italic;
                         font-weight: 400;
                         font-display: swap;
                         src: local('IBM Plex Sans Italic'),
@@ -152,6 +164,30 @@ class JudicialSystemApplication extends App<Props> {
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-600.woff2')
                             format('woff2'),
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-600.woff')
+                            format('woff');
+                      }
+                      @font-face {
+                        font-family: 'IBM Plex Sans';
+                        font-style: normal;
+                        font-weight: 700;
+                        font-display: swap;
+                        src: local('IBM Plex Sans Bold'),
+                          local('IBMPlexSans-Bold'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700.woff2')
+                            format('woff2'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700.woff')
+                            format('woff');
+                      }
+                      @font-face {
+                        font-family: 'IBM Plex Sans';
+                        font-style: italic;
+                        font-weight: 700;
+                        font-display: swap;
+                        src: local('IBM Plex Sans Bold Italic'),
+                          local('IBMPlexSans-BoldItalic'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700italic.woff2')
+                            format('woff2'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700italic.woff')
                             format('woff');
                       }
                     `}</style>

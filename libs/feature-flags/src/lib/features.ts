@@ -10,6 +10,7 @@ export enum Features {
   europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
   passportApplication = 'isPassportApplicationEnabled',
   passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
+  drivingLicenseAdvanced = 'isDrivingLicenseAdvancedEnabled',
   financialStatementInao = 'financialStatementInao',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
@@ -59,6 +60,7 @@ export enum Features {
   servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
   servicePortalHealthMedicineDelegationPageEnabled = 'isServicePortalHealthMedicineDelegationPageEnabled',
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
+  servicePortalHealthMovementPrescriptionsPageEnabled = 'isServicePortalHealthMovementPrescriptionsPageEnabled',
   isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
   isServicePortalMyPagesTRBankInformationPageEnabled = 'isServicePortalMyPagesTRBankInformationPageEnabled',
   isServicePortalTRPaymentTypesOverviewPageEnabled = 'isServicePortalTRPaymentTypesOverviewPageEnabled',
@@ -86,6 +88,7 @@ export enum Features {
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
   isServicePortalHealthMessagesPageEnabled = 'isServicePortalHealthMessagesPageEnabled',
   isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
+  isServicePortalHealthTreatmentsPageEnabled = 'isServicePortalHealthTreatmentsPageEnabled',
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',

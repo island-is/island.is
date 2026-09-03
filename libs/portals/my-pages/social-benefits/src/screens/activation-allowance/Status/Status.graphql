@@ -19,6 +19,5 @@ query getApplicantAvailableActions {
     canReportWork
     canReportTravel
     canUnregister
-    canConfirmJobSearch
   }
 }

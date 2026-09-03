@@ -30,7 +30,19 @@ export const contactPersonSubSection = buildSubSection({
           width: 'full',
           required: true,
           defaultValue: (application: Application) =>
+            getValueViaPath(
+              application.externalData,
+              'identity.data.actor.name',
+            ) ??
             getValueViaPath(application.externalData, 'identity.data.name'),
+        }),
+        buildTextField({
+          id: 'contactPerson.jobTitle',
+          title: messages.aboutTheCompany.contactPerson.jobTitle,
+          placeholder:
+            messages.aboutTheCompany.contactPerson.jobTitlePlaceholder,
+          width: 'full',
+          required: true,
         }),
         buildTextField({
           id: 'contactPerson.email',

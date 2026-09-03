@@ -1,4 +1,4 @@
-import { SetStateAction } from 'react'
+import type { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import {
@@ -51,13 +51,13 @@ import {
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import {
+import type {
   AppealCase,
   Case,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { replaceTabs } from './formatters'
-import { UpdateCase } from './hooks'
+import { normalizeBlankString, replaceTabs } from './formatters'
+import type { UpdateCase } from './hooks'
 import * as validations from './validate'
 
 export const applyUpdateToCase = (
@@ -154,6 +154,10 @@ export const validateAndSendToServer = (
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
+  // Whitespace-only input is persisted as '' - a required field then fails
+  // validation and is not sent, an optional field is cleared on the server.
+  value = normalizeBlankString(value)
+
   const isValid = validateAndSetErrorMessage(
     validations,
     value,

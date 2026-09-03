@@ -1,34 +1,28 @@
-import {
-  ChangeEvent,
-  FC,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react'
+import type { ChangeEvent, FC } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { SingleValue } from 'react-select'
+import type { SingleValue } from 'react-select'
 import { InputMask } from '@react-input/mask'
 
 import { Input, Select } from '@island.is/island-ui/core'
 import { PHONE_NUMBER } from '@island.is/judicial-system/consts'
 import { formatPhoneNumber } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { LawyerRegistryContext } from '@island.is/judicial-system-web/src/components/LawyerRegistryProvider/LawyerRegistryProvider'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import {
   emailLabelStrings,
   nameLabelStrings,
   phoneNumberLabelStrings,
   placeholderStrings,
 } from './InputAdvocate.strings'
-import { grid } from '../../utils/styles/recipes.css'
 
 interface Props {
   advocateType:

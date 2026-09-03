@@ -1,10 +1,10 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 
-import {
+import type {
   Case,
   CourtSessionResponse,
-  CourtSessionRulingType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CourtSessionRulingType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
@@ -60,7 +60,6 @@ describe('CourtSessionRuling', () => {
         <FormContextWrapper theCase={workingCase}>
           <CourtSessionRuling
             courtSession={courtSession(overrides)}
-            showAppealDecisions={false}
             patchSession={patchSession}
           />
         </FormContextWrapper>

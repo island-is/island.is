@@ -1,6 +1,5 @@
+import type { FC, ForwardedRef } from 'react'
 import {
-  FC,
-  ForwardedRef,
   forwardRef,
   useCallback,
   useContext,
@@ -33,42 +32,44 @@ import {
   applyDativeCaseToCourtName,
   formatDate,
   formatDOB,
+  formatRulingOrderPronouncedOrallyName,
   getRoleTitleFromCaseFileCategory,
   getWordByGender,
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { appealCorrectionLock, Feature } from '@island.is/judicial-system/types'
+import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   CheckboxList,
   DateTime,
-  FeatureContext,
   FileNotFoundModal,
   FormContext,
   Modal,
   MultipleValueList,
+  RichTextEditor,
   SectionHeading,
-  TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
-import EditableCaseFile, {
-  Supplement,
-} from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type { Supplement } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type {
+  CourtDocumentResponse,
+  CourtSessionResponse,
+  CourtSessionString,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
-  CourtDocumentResponse,
   CourtDocumentType,
   CourtSessionClosedLegalBasis,
-  CourtSessionResponse,
   CourtSessionRulingType,
-  CourtSessionString,
   CourtSessionStringType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { SelectRepresentative } from '@island.is/judicial-system-web/src/routes/Shared/AddFiles/SelectCaseFileRepresentative'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  TUploadFile,
   useCourtDocuments,
   useCourtSessions,
   useDebouncedField,
@@ -80,10 +81,10 @@ import {
   applyMergedCaseEntries,
   reconcileAppealDecisionsForRulingFileChange,
   rulingOrderAppealCase,
+  rulingOrderChoices,
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
 import CourtSessionRuling from './CourtSessionRuling'
 import * as styles from './CourtRecord.css'
@@ -172,11 +173,8 @@ const CourtSessionLabel = forwardRef(
 const CourtSessionAccordionItem: FC<Props> = (props) => {
   const { index, courtSession, isExpanded, onToggle } = props
   const ref = useRef<HTMLDivElement>(null)
-  const { workingCase, setWorkingCase, isCaseUpToDate } =
+  const { workingCase, setWorkingCase, isCaseUpToDate, refreshCase } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
-  // The in-court appeal decision UI is behind a flag until it's ready for prod.
-  const showAppealDecisions = features.includes(Feature.APPEAL_RULING_ORDER)
   // Moving the ruling type off ORDER removes the ruling, which discards its
   // decisions and deletes the appeal it produced - not allowed once the appeal
   // has left the court record's reach (a party filed it itself, or Landsréttur
@@ -185,19 +183,28 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   // every appeal state: it means the same ruling is now a different document, and
   // everything moves with it.
   // The reason is kept, not just the boolean, so the section can say which of the
-  // two locks applies - the appeal decision cards next to it are behind a feature
-  // flag and cannot be relied on to explain these controls.
-  const rulingRemovalLock = appealCorrectionLock(
-    rulingOrderAppealCase(workingCase, courtSession.rulingFileId),
+  // two locks applies - the appeal decision cards next to it report the appeal's
+  // state, not why these controls are locked.
+  const rulingAppealCase = rulingOrderAppealCase(
+    workingCase,
+    courtSession.rulingFileId,
   )
+  const rulingRemovalLock = appealCorrectionLock(rulingAppealCase)
+  // A session whose ruling has been appealed cannot be deleted at all - not
+  // just corrected - because deleting it would strand the appeal.
+  const rulingHasBeenAppealed = Boolean(rulingAppealCase)
   const rulingRemovalDisabled =
     courtSession.isConfirmed || Boolean(rulingRemovalLock)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
   const { courtDocument } = useCourtDocuments()
-  const { updateCourtSession, updateCourtSessionString, deleteCourtSession } =
-    useCourtSessions()
+  const {
+    updateCourtSession,
+    updateCourtSessionString,
+    pronounceRulingOrally,
+    deleteCourtSession,
+  } = useCourtSessions()
   const [readyForInitialization, setReadyForInitialization] = useState(false)
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
@@ -207,6 +214,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   )
 
   const [modalVisible, setModalVisible] = useState<'DELETE'>()
+  // 'pronouncing' covers the request, 'refreshing' the wait for the case state
+  // that follows it. Both have to keep the control disabled: refreshCase() only
+  // asks for new case state, and until it lands the radio is still unchecked, so
+  // releasing the guard when the request resolves would reopen the window it
+  // exists to close.
+  const [pronounceOrallyState, setPronounceOrallyState] = useState<
+    'idle' | 'pronouncing' | 'refreshing'
+  >('idle')
+  const isPronouncingOrally = pronounceOrallyState !== 'idle'
 
   const {
     judges,
@@ -270,6 +286,49 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     },
     [setWorkingCase, updateCourtSession, workingCase.id],
   )
+
+  // Pronouncing the session's ruling orally creates the ruling itself, not just
+  // a field on the session, so the court record and the case's files both have
+  // to come back from the server rather than be patched locally.
+  const pronounceRulingOrallyInSession = useCallback(async () => {
+    // The radio stays unchecked until the refreshed case arrives, so without a
+    // guard every further activation sends another request - and each one
+    // creates a ruling of its own.
+    if (pronounceOrallyState !== 'idle') {
+      return
+    }
+
+    setPronounceOrallyState('pronouncing')
+
+    const updatedCourtSession = await pronounceRulingOrally({
+      caseId: workingCase.id,
+      courtSessionId: courtSession.id,
+    })
+
+    if (!updatedCourtSession) {
+      // Nothing to wait for - let them try again.
+      setPronounceOrallyState('idle')
+
+      return
+    }
+
+    setPronounceOrallyState('refreshing')
+    refreshCase()
+  }, [
+    courtSession.id,
+    pronounceOrallyState,
+    pronounceRulingOrally,
+    refreshCase,
+    workingCase.id,
+  ])
+
+  // The refreshed case has landed, so the radio now shows the ruling that was
+  // pronounced and the control can be released.
+  useEffect(() => {
+    if (pronounceOrallyState === 'refreshing' && isCaseUpToDate) {
+      setPronounceOrallyState('idle')
+    }
+  }, [pronounceOrallyState, isCaseUpToDate])
 
   const patchCourtSessionStrings = useCallback(
     (
@@ -765,17 +824,20 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
   const isLastCourtSession = index + 1 === workingCase.courtSessions?.length
 
-  const availableRulingOrders = useMemo(() => {
-    const takenIds = new Set(
-      workingCase.courtSessions
-        ?.filter((s) => s.id !== courtSession.id && s.rulingFileId)
-        .map((s) => s.rulingFileId as string) ?? [],
-    )
-    const files = (workingCase.caseFiles ?? []).filter(
-      (f) => f.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
-    )
-    return { takenIds, files }
-  }, [courtSession.id, workingCase.caseFiles, workingCase.courtSessions])
+  const availableRulingOrders = useMemo(
+    () => rulingOrderChoices(workingCase, courtSession),
+    [workingCase, courtSession],
+  )
+  const pronouncedOrally = availableRulingOrders.pronouncedOrally
+
+  // The same fallback the backend uses when it stores the name, so the court is
+  // not shown one name before pronouncing and given another after. Deliberately
+  // not getCourtSessionFallbackStartDate, whose court/arraignment dates the
+  // backend does not consider.
+  const pronouncedOrallyPreviewName = formatRulingOrderPronouncedOrallyName(
+    workingCase.courtCaseNumber,
+    courtSession.startDate ?? new Date(),
+  )
 
   const accordionTitle = useMemo(() => {
     const dateLabel = formatDate(
@@ -823,15 +885,34 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
           paddingY={3}
         >
           {isLastCourtSession && (
-            <Button
-              variant="text"
-              colorScheme="destructive"
-              size="small"
-              icon="trash"
-              onClick={() => setModalVisible('DELETE')}
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="flexEnd"
+              rowGap={1}
             >
-              Eyða
-            </Button>
+              {/* The appeal is not the court record's to discard: deleting the
+              session would leave it pointing at a ruling no court record says
+              was pronounced, hiding it from the parties who appealed it.
+              courtSession.service.validateCourtSessionDeletionAllowed rejects
+              the same deletion server-side. */}
+              {rulingHasBeenAppealed && (
+                <AlertMessage
+                  type="info"
+                  message="Úrskurður sem kveðinn var upp í þinghaldinu hefur verið kærður og því er ekki hægt að eyða þinghaldinu."
+                />
+              )}
+              <Button
+                variant="text"
+                colorScheme="destructive"
+                size="small"
+                icon="trash"
+                onClick={() => setModalVisible('DELETE')}
+                disabled={rulingHasBeenAppealed}
+              >
+                Eyða
+              </Button>
+            </Box>
           )}
           <LayoutGroup>
             <Box
@@ -1486,7 +1567,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               )}
               <Box>
                 <SectionHeading title="Bókanir" />
-                <TinyMCE
+                <RichTextEditor
                   data-testid="entries"
                   label="Afstaða ákærða, málflutningur og aðrar bókanir"
                   placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
@@ -1503,15 +1584,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     )
                   }
                   onBlur={(html) => {
-                    // Decode entities (e.g. &nbsp;) and strip tags so an
-                    // otherwise-empty paragraph doesn't pass the required check.
-                    const decodedText =
-                      new DOMParser()
-                        .parseFromString(html, 'text/html')
-                        .body.textContent?.trim() ?? ''
+                    // RichTextEditor normalizes blank documents to '' on output.
                     validateAndSetErrorMessage(
                       ['empty'],
-                      decodedText,
+                      html,
                       setEntriesErrorMessage,
                     )
                     patchSession(
@@ -1638,12 +1714,13 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           Veldu úrskurð undir rekstri máls
                         </Text>
                       </Box>
-                      {availableRulingOrders.files.length === 0 ? (
-                        <AlertMessage
-                          type="info"
-                          message="Enginn úrskurður fannst"
-                        />
-                      ) : (
+                      <Box className={styles.grid}>
+                        {availableRulingOrders.files.length === 0 && (
+                          <AlertMessage
+                            type="info"
+                            message="Enginn skriflegur úrskurður fannst"
+                          />
+                        )}
                         <Box className={styles.grid}>
                           {availableRulingOrders.files.map((file) => {
                             const takenByOther =
@@ -1675,7 +1752,29 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                             )
                           })}
                         </Box>
-                      )}
+                        <RadioButton
+                          name={`result_ruling_file-${courtSession.id}`}
+                          id={`result_ruling_pronounced_orally-${courtSession.id}`}
+                          label={
+                            pronouncedOrally?.userGeneratedFilename ??
+                            pronouncedOrally?.name ??
+                            pronouncedOrallyPreviewName
+                          }
+                          subLabel="Úrskurður kveðinn upp munnlega"
+                          backgroundColor="white"
+                          checked={Boolean(pronouncedOrally)}
+                          onChange={() =>
+                            pronouncedOrally
+                              ? undefined
+                              : pronounceRulingOrallyInSession()
+                          }
+                          disabled={
+                            Boolean(courtSession.isConfirmed) ||
+                            isPronouncingOrally
+                          }
+                          large
+                        />
+                      </Box>
                     </Box>
                   )}
                 </BlueBox>
@@ -1686,7 +1785,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 courtSession.rulingType === CourtSessionRulingType.ORDER) && (
                 <CourtSessionRuling
                   courtSession={courtSession}
-                  showAppealDecisions={showAppealDecisions}
                   patchSession={patchSession}
                 />
               )}
@@ -1793,11 +1891,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         }
                         size="small"
                         disabled={
-                          !isCourtSessionValid(
-                            courtSession,
-                            workingCase,
-                            showAppealDecisions,
-                          )
+                          !isCourtSessionValid(courtSession, workingCase)
                         }
                       >
                         Staðfesta þingbók

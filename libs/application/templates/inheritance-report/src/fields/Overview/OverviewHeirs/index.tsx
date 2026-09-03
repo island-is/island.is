@@ -4,7 +4,7 @@ import { FC, Fragment } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { InheritanceReport } from '../../../lib/dataSchema'
 import { m } from '../../../lib/messages'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { format as formatNationalId } from 'kennitala'
 import {
   ESTATE_INHERITANCE,

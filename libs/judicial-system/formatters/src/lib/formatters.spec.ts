@@ -17,6 +17,7 @@ import {
   formatGender,
   formatNationalId,
   formatPhoneNumber,
+  formatRulingOrderPronouncedOrallyName,
   indictmentSubtypes,
   normalizeAndFormatNationalId,
   readableIndictmentSubtypes,
@@ -466,5 +467,27 @@ describe('applyDativeCaseToCourtName', () => {
 
     // Assert
     expect(result).toBe(courtName)
+  })
+})
+
+// Shared so the court record previews the name the backend will store, rather
+// than one name before pronouncing and another after.
+describe('formatRulingOrderPronouncedOrallyName', () => {
+  test('should name the ruling after the case and the date it was pronounced', () => {
+    expect(
+      formatRulingOrderPronouncedOrallyName(
+        'S-123/2026',
+        new Date('2026-11-12T10:00:00Z'),
+      ),
+    ).toBe('S-123/2026 Úrskurður 12.11.2026')
+  })
+
+  test('should tolerate a case with no court case number', () => {
+    expect(
+      formatRulingOrderPronouncedOrallyName(
+        undefined,
+        new Date('2026-11-12T10:00:00Z'),
+      ),
+    ).toBe('Úrskurður 12.11.2026')
   })
 })

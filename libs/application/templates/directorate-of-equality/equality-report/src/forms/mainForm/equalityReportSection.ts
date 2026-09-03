@@ -1,7 +1,6 @@
 import {
   buildCustomField,
   buildDescriptionField,
-  buildDividerField,
   buildLinkField,
   buildMultiField,
   buildSection,
@@ -10,7 +9,6 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
-import { hasReviewerComment } from '../commentThreadSection'
 
 export const equalityReportSection = buildSection({
   id: 'equalityReport',
@@ -31,6 +29,7 @@ export const equalityReportSection = buildSection({
               title: messages.equalityReport.information.detailLinkLabel,
               link: messages.equalityReport.information.detailLink,
               variant: 'text',
+              iconProps: { icon: 'open', type: 'outline' },
             }),
             buildTitleField({
               title: messages.equalityReport.information.listTitle,
@@ -88,21 +87,18 @@ export const equalityReportSection = buildSection({
           children: [
             buildLinkField({
               id: 'goalsAndActions.link',
-              title: messages.equalityReport.information.detailLinkLabel,
-              link: messages.equalityReport.information.detailLink,
+              title: messages.equalityReport.information.instructionsLabel,
+              link: messages.equalityReport.information.instructionsLink,
               variant: 'text',
+              iconProps: { icon: 'open', type: 'outline' },
             }),
-            buildCustomField({
-              id: 'goalsAndActions.customField',
-              component: 'Editor',
-            }),
-            buildDividerField({ condition: hasReviewerComment }),
-            buildCustomField({
-              id: 'commentThread',
-              title: '',
-              component: 'CommentThread',
-              condition: hasReviewerComment,
-            }),
+            buildCustomField(
+              {
+                id: 'goalsAndActions.filename',
+                component: 'Editor',
+              },
+              { mode: 'draft' },
+            ),
           ],
         }),
       ],
