@@ -930,17 +930,6 @@ export class DrivingLicenseApi {
     }
   }
 
-  async getHasQualityScannedPhoto(params: { auth: Auth }): Promise<boolean> {
-    const res = await withAuthContext(params.auth, () =>
-      this.imageApiV6.apiImagecontrollerV6HasqualityscannedphotoGet({
-        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
-        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-      }),
-    )
-
-    return res > 0
-  }
-
   async getAllPhotosFromThjodskra(params: {
     auth: Auth
   }): Promise<DtoImagesFromThjodskraDto> {

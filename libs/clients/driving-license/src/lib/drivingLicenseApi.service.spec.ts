@@ -11,6 +11,7 @@ import { ApplicationApiV6, CodeTableV6, ImageApiV6 } from '../v6'
 
 import {
   lastNewCategoryRequest,
+  lastV6BeRequest,
   lastV6TemporaryRequest,
   MOCK_TOKEN,
   requestHandlers,
@@ -298,6 +299,80 @@ describe('DrivingLicenseDuplicateService', () => {
       ).resolves.toBeDefined()
 
       expect(lastV6TemporaryRequest.headers?.jwttoken).toBeNull()
+    })
+  })
+
+  describe('postApplyForBELicense v6 wire shape', () => {
+    // BE is live in production with no redesign flag, so this migration changes
+    // its request on release day for every applicant. RLS reshaped the model
+    // between v5 and v6: `userId` and `healthDeclarationModel` are gone and
+    // `healthDeclaration` is required. Pin the serialized body — not just that a
+    // mock was called — so a regression in the mapping cannot pass silently.
+    const auth = { authorization: 'Bearer be-user-token' } as Auth
+    const healthDeclarationModel = {
+      hasReducedPeripheralVision: false,
+      hasEpilepsy: false,
+      hasHeartDisease: true,
+      hasMentalIllness: false,
+      usesMedicalDrugs: false,
+      isAlcoholic: false,
+      hasDiabetes: false,
+      isDisabled: false,
+      hasOtherDiseases: false,
+    }
+
+    beforeEach(() => {
+      lastV6BeRequest.headers = undefined
+      lastV6BeRequest.body = undefined
+    })
+
+    it('sends exactly the v6 model — healthDeclaration in, userId and healthDeclarationModel out', async () => {
+      const result = await service.postApplyForBELicense({
+        nationalIdApplicant: '0101302479',
+        auth,
+        jurisdictionId: 37,
+        instructorSSN: '0101302719',
+        phoneNumber: '+3545551234',
+        email: 'be@example.is',
+        contentList: [
+          {
+            fileName: 'cert.pdf',
+            fileExtension: 'pdf',
+            contentType: 'application/pdf',
+            content: 'AAAA',
+          },
+        ],
+        photoBiometricsId: 'photo-1',
+        signatureBiometricsId: 'sig-1',
+        sendPlasticToPerson: true,
+        healthDeclarationModel,
+      })
+      expect(result).toBe(true)
+
+      // Identity travels in the header RLS reads, bare token, as for every v6 call.
+      expect(lastV6BeRequest.headers?.jwttoken).toBe('be-user-token')
+
+      const body = lastV6BeRequest.body ?? {}
+      expect(Object.keys(body).sort()).toEqual(
+        [
+          'contentList',
+          'districtId',
+          'healthDeclaration',
+          'instructorSSN',
+          'photoBiometricsId',
+          'primaryPhoneNumber',
+          'sendPlasticToPerson',
+          'signatureBiometricsId',
+          'studentEmail',
+        ].sort(),
+      )
+      // The three fields v6 marks required.
+      expect(body.districtId).toBe(37)
+      expect(body.instructorSSN).toBe('0101302719')
+      expect(body.healthDeclaration).toEqual(healthDeclarationModel)
+      // The two v5 fields RLS removed must not leak through under their old names.
+      expect(body).not.toHaveProperty('userId')
+      expect(body).not.toHaveProperty('healthDeclarationModel')
     })
   })
 
