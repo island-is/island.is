@@ -165,7 +165,7 @@ export const serviceSetup = (services: {
           (ctx) =>
             `https://${
               ctx.featureDeploymentName
-                ? `${ctx.featureDeploymentName}.api.dev01.devland.is`
+                ? `${ctx.featureDeploymentName}-api.dev01.devland.is`
                 : 'api.dev01.devland.is'
             }`,
         ),
