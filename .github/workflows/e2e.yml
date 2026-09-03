@@ -2,11 +2,6 @@ name: 'Run E2E tests'
 on:
   workflow_call:
     inputs:
-      runner_label:
-        description: 'Runner scale-set label to run on'
-        required: false
-        type: string
-        default: arc-shared
       e2e_build_id:
         description: 'Build ID'
         required: false
@@ -49,7 +44,7 @@ env:
 
 jobs:
   e2e:
-    runs-on: ${{ inputs.runner_label }}
+    runs-on: arc-shared
     env:
       CYPRESS_PROJECT_ID: 4q7jz8
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
