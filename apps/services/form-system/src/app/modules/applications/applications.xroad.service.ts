@@ -93,6 +93,16 @@ export class ApplicationsXRoadService {
       )
     }
 
+    this.logger.info('form system application fetched via xroad', {
+      applicationId: id,
+      formId: form.id,
+      formSlug: form.slug,
+      isTest: application.isTest,
+      organizationNationalId: form.organizationNationalId,
+      xRoadClient,
+      datadogEvent: 'form_system_application_fetched_xroad',
+    })
+
     return applicationJsonDto
   }
 

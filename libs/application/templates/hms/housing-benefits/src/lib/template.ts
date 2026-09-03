@@ -287,6 +287,7 @@ const template: ApplicationTemplate<
                   '../forms/assigneeApprovalState/assigneeWaitingForm'
                 ).then((module) => Promise.resolve(module.AssigneeWaitingForm)),
               read: 'all',
+              delete: true,
             },
           ],
         },

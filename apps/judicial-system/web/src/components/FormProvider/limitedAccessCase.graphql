@@ -49,6 +49,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
     }
     caseFiles {
@@ -69,6 +70,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defendantId
       civilClaimantId
       rulingFileId
+      isPronouncedOrally
       hasBeenAppealed
       canBeAppealed
       appealDeadline
@@ -510,6 +512,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
       policeCaseNumbers
       indictmentSubtypes

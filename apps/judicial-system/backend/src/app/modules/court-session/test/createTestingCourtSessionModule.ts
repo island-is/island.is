@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended'
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -13,7 +12,7 @@ import {
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   CourtSessionRepositoryService,
-  CourtSessionString,
+  CourtSessionStringRepositoryService,
 } from '../../repository'
 import { CourtSessionController } from '../courtSession.controller'
 import { CourtSessionService } from '../courtSession.service'
@@ -41,11 +40,11 @@ export const createTestingCourtSessionModule = async () => {
         },
       },
       {
-        provide: getModelToken(CourtSessionString),
+        provide: CourtSessionStringRepositoryService,
         useValue: {
+          findByKey: jest.fn(),
+          updateByKey: jest.fn(),
           create: jest.fn(),
-          findOne: jest.fn(),
-          update: jest.fn(),
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
@@ -93,6 +92,9 @@ export const createTestingCourtSessionModule = async () => {
   // Event convergence reads existing APPEALED events; default to none so tests
   // that don't set it up don't blow up on the returned undefined.
   ;(appealEventLogRepositoryService.findAll as jest.Mock).mockResolvedValue([])
+  // Same for the appeal cases the ruling-order cleanup checks before deleting a
+  // ruling that was only ever pronounced orally.
+  ;(appealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue([])
 
   courtSessionModule.close()
 

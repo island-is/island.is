@@ -17,6 +17,7 @@ export enum CustomPageUniqueIdentifier {
   SecondarySchoolStudies = 'SecondarySchoolStudies',
   SupremeCourtDeterminations = 'SupremeCourtDeterminations',
   SupremeCourtAppeals = 'SupremeCourtAppeals',
+  AskTheBudgetBill = 'AskTheBudgetBill',
 }
 
 export interface StatisticSourceValue {
