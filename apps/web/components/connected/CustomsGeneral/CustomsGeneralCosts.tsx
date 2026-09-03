@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client'
 import { GET_CUSTOMS_GENERAL_COSTS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import { mapValidityFields, ValidityFieldsInput } from './customsGeneralUtils'
 import { m } from './translation.strings'
 
 const CustomsGeneralCosts = () => {
@@ -22,10 +23,17 @@ const CustomsGeneralCosts = () => {
   })
 
   const items = (data?.customsGeneralCosts ?? []).map(
-    (item: { code?: string; name?: string; description?: string }) => ({
+    (
+      item: {
+        code?: string
+        name?: string
+        description?: string
+      } & ValidityFieldsInput,
+    ) => ({
       code: item.code ?? '',
       name: item.name ?? '',
       description: item.description ?? '',
+      ...mapValidityFields(item),
     }),
   )
 

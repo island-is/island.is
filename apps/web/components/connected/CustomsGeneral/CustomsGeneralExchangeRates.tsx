@@ -11,9 +11,10 @@ import { GET_CUSTOMS_GENERAL_EXCHANGE_RATES } from '@island.is/web/screens/queri
 
 import { CurrencyFlag } from './CurrencyFlag'
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import { mapValidityFields, ValidityFields } from './customsGeneralUtils'
 import { m } from './translation.strings'
 
-interface ExchangeRateRow {
+interface ExchangeRateRow extends ValidityFields {
   flag: string
   code: string
   name: string
@@ -50,6 +51,7 @@ const CustomsGeneralExchangeRates = () => {
     code: item.code ?? '',
     name: item.name ?? '',
     rate: item.rate ?? '',
+    ...mapValidityFields(item),
   }))
 
   return (

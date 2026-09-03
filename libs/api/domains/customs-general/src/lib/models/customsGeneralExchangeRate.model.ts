@@ -1,7 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
+import { CustomsGeneralValidity } from './customsGeneralValidity.model'
+
 @ObjectType()
-export class CustomsGeneralExchangeRate {
+export class CustomsGeneralExchangeRate extends CustomsGeneralValidity {
   @Field(() => String, { nullable: true })
   code?: string
 

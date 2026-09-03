@@ -2,34 +2,27 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_CUSTOMS_GENERAL_EXEMPTIONS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import {
+  formatValidityDate,
+  mapValidityFields,
+  NotYetInEffectTag,
+  ValidityFields,
+} from './customsGeneralUtils'
 import { m } from './translation.strings'
 import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralExemptions.css'
 
-interface ExemptionItem {
+interface ExemptionItem extends ValidityFields {
   code: string
   name: string
   description: string
   legalArticle: string
-  validFrom: string
-  validTo: string
   system: string
-}
-
-const formatIsoDate = (iso?: string | null, fallback?: string): string => {
-  if (!iso) return fallback ?? ''
-  const d = new Date(iso)
-  if (isNaN(d.getTime()) || d.getFullYear() > 9000) return fallback ?? ''
-  return new Intl.DateTimeFormat('is-IS', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(d)
 }
 
 const LABEL_WIDTH = 160
@@ -57,8 +50,8 @@ const ExemptionDetailView = ({
   }).format(date)
 
   const indefinite = formatMessage(m.exemptionIndefinite)
-  const validFrom = formatIsoDate(item.validFrom, indefinite)
-  const validTo = formatIsoDate(item.validTo, indefinite)
+  const validFrom = formatValidityDate(item.validFrom, indefinite, activeLocale)
+  const validTo = formatValidityDate(item.validTo, indefinite, activeLocale)
   const transportDirection =
     system === 'I'
       ? activeLocale === 'is'
@@ -128,9 +121,14 @@ const ExemptionDetailView = ({
               {formatMessage(m.exemptionDetailValidityPeriod)}
             </Text>
           </Box>
-          <Text>
-            {validFrom} - {validTo}
-          </Text>
+          <Inline space={1} alignY="center">
+            <Text>
+              {validFrom} - {validTo}
+            </Text>
+            {item.notYetInEffect && (
+              <NotYetInEffectTag validFrom={item.validFrom} />
+            )}
+          </Inline>
         </Box>
 
         <Box display="flex" flexDirection="row" alignItems="flexStart">
@@ -201,8 +199,7 @@ const CustomsGeneralExemptions = () => {
       name: item.name ?? '',
       description: item.description ?? '',
       legalArticle: item.legalArticle ?? '',
-      validFrom: item.validFrom ?? '',
-      validTo: item.validTo ?? '',
+      ...mapValidityFields(item),
       system: item.system ?? '',
     }),
   )

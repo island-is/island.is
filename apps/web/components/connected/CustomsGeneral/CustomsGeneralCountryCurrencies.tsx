@@ -2,12 +2,22 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { AlertMessage, Box, LoadingDots } from '@island.is/island-ui/core'
 import { GET_CUSTOMS_GENERAL_COUNTRY_CURRENCIES } from '@island.is/web/screens/queries/CustomsGeneral'
 
-import { SortableTable } from '../../SortableTable/SortableTable'
-import { toApiDate } from './CustomsGeneralDateTable'
+import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import {
+  mapValidityFields,
+  ValidityFields,
+  ValidityFieldsInput,
+} from './customsGeneralUtils'
 import { m } from './translation.strings'
+
+type Item = ValidityFields & {
+  countryCode: string
+  countryName: string
+  currencyCode: string
+  currencyName: string
+}
 
 const CustomsGeneralCountryCurrencies = () => {
   const { formatMessage } = useIntl()
@@ -39,39 +49,33 @@ const CustomsGeneralCountryCurrencies = () => {
     },
   )
 
-  const items = (data?.customsGeneralCountryCurrencies ?? []).map(
-    (item: {
-      countryCode?: string
-      countryName?: string
-      currencyCode?: string
-      currencyName?: string
-    }) => ({
+  const items: Item[] = (data?.customsGeneralCountryCurrencies ?? []).map(
+    (
+      item: {
+        countryCode?: string
+        countryName?: string
+        currencyCode?: string
+        currencyName?: string
+      } & ValidityFieldsInput,
+    ) => ({
       countryCode: item.countryCode ?? '',
       countryName: item.countryName ?? '',
       currencyCode: item.currencyCode ?? '',
       currencyName: item.currencyName ?? '',
+      ...mapValidityFields(item),
     }),
   )
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center">
-        <LoadingDots />
-      </Box>
-    )
-  }
-
-  if (error) {
-    return (
-      <AlertMessage
-        type="error"
-        title={formatMessage(m.errorTitle)}
-        message={formatMessage(m.errorMessage)}
-      />
-    )
-  }
-
-  return <SortableTable columns={columns} data={items} />
+  return (
+    <CustomsGeneralDateTable
+      columns={columns}
+      data={items}
+      loading={loading}
+      error={error}
+      dateLabel={formatMessage(m.dateLabel)}
+      errorTitle={formatMessage(m.errorTitle)}
+    />
+  )
 }
 
 export default CustomsGeneralCountryCurrencies

@@ -43,6 +43,18 @@ export const m = defineMessages({
     defaultMessage: 'Gildir til',
     description: 'Table column header: valid to date',
   },
+  takesEffectOn: {
+    id: 'web.customsGeneral:takesEffectOn',
+    defaultMessage: 'Tekur gildi {date}',
+    description:
+      'Label on entries that have been published ahead of time and only take effect after the reference date',
+  },
+  notYetInEffect: {
+    id: 'web.customsGeneral:notYetInEffect',
+    defaultMessage: 'Ekki tekið gildi',
+    description:
+      'Label on entries that are not yet in effect and whose start date is unknown',
+  },
 
   // StorageLocations columns
   storageLocationNationalId: {

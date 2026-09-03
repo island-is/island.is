@@ -10,6 +10,7 @@ import { CustomsGeneralExemption } from './models/customsGeneralExemption.model'
 import { CustomsGeneralProhibition } from './models/customsGeneralProhibition.model'
 import { CustomsGeneralCharge } from './models/customsGeneralCharge.model'
 import { CustomsGeneralPermit } from './models/customsGeneralPermit.model'
+import { getCombinedValidity, getValidity } from './utils/validity'
 
 @Injectable()
 export class CustomsGeneralService {
@@ -30,6 +31,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       rate: item.Gengi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -45,6 +47,7 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       description: item.Lysing,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -61,8 +64,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       description: item.Astaeda,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
       exemptionProvider: item.UndanthVeitir,
     }))
   }
@@ -80,8 +82,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
       taxtiUpphaed: item.TaxtiUpphaed ?? undefined,
       taxtiProsenta: item.TaxtiProsenta ?? undefined,
     }))
@@ -100,8 +101,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
       leyfiVeitir: item.LeyfiVeitir,
     }))
   }
@@ -118,8 +118,7 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       name: item.Tollur,
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -138,6 +137,7 @@ export class CustomsGeneralService {
       description: item.Lysing,
       legalArticle: item.LagaGrein,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -155,6 +155,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -171,6 +172,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -188,6 +190,7 @@ export class CustomsGeneralService {
       companyName: item.Nafn,
       location: item.Stadsetning,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -202,6 +205,7 @@ export class CustomsGeneralService {
       name: item.Heiti,
       description: item.Lysing,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -218,6 +222,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -234,6 +239,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -250,6 +256,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       description: item.StuttLysing,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -266,6 +273,7 @@ export class CustomsGeneralService {
       code: item.TegundVidskiptaSkyrslaKodi,
       name: item.tegundVidskiptaSkyrslaHeiti,
       system: item.KerfiID,
+      ...getValidity(date, item.dtFra, item.dtTil),
     }))
   }
 
@@ -281,6 +289,11 @@ export class CustomsGeneralService {
       countryName: item.LandHeiti,
       currencyCode: item.MyntKodi,
       currencyName: item.MyntHeiti,
+      ...getCombinedValidity(
+        date,
+        { from: item.LandDagsFra, to: item.LandDagsTil },
+        { from: item.MyntDagsFra, to: item.MyntDagsTil },
+      ),
     }))
   }
 
@@ -297,6 +310,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -313,6 +327,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -324,6 +339,7 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       name: item.Heiti,
       description: item.Lysing,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -340,6 +356,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -356,6 +373,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -372,6 +390,7 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       system: item.Kerfi,
+      ...getValidity(date, item.DagsFra, item.DagsTil),
     }))
   }
 
@@ -391,6 +410,8 @@ export class CustomsGeneralService {
       periodTo: item.TimabilTil,
       jsonUrl: item.UrlAJsonSkra,
       textUrl: item.UrlATextaSkra,
+      notYetInEffect: getValidity(date, item.TimabilFra, item.TimabilTil)
+        .notYetInEffect,
     }))
   }
 
