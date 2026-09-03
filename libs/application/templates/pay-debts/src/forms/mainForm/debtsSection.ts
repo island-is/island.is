@@ -42,6 +42,7 @@ export const debtsSection = buildSection({
           condition: debtsWereFetched,
           dataTestId: 'debts-table',
           selectable: true,
+          pageSize: 50,
           header: [
             {
               label: messages.table.chargeTypeNameHeader,

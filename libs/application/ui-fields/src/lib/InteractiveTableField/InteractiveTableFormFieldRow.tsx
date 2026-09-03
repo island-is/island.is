@@ -27,6 +27,41 @@ export type InteractiveTableColumn = {
   expandable?: boolean
 }
 
+const truncationSubscribers = new Set<() => void>()
+let truncationFrame: number | null = null
+
+const measureAllTruncations = () => {
+  truncationFrame = null
+  truncationSubscribers.forEach((subscriber) => subscriber())
+}
+
+const scheduleTruncationMeasure = () => {
+  if (truncationFrame === null) {
+    truncationFrame = requestAnimationFrame(measureAllTruncations)
+  }
+}
+
+const subscribeToResize = (measure: () => void) => {
+  truncationSubscribers.add(measure)
+
+  if (truncationSubscribers.size === 1) {
+    window.addEventListener('resize', scheduleTruncationMeasure)
+  }
+
+  return () => {
+    truncationSubscribers.delete(measure)
+
+    if (truncationSubscribers.size === 0) {
+      window.removeEventListener('resize', scheduleTruncationMeasure)
+
+      if (truncationFrame !== null) {
+        cancelAnimationFrame(truncationFrame)
+        truncationFrame = null
+      }
+    }
+  }
+}
+
 const TruncatedCell: FC<{ value: string }> = ({ value }) => {
   const ref = useRef<HTMLSpanElement>(null)
   const [isTruncated, setIsTruncated] = useState(false)
@@ -43,8 +78,7 @@ const TruncatedCell: FC<{ value: string }> = ({ value }) => {
 
   useEffect(() => {
     measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
+    return subscribeToResize(measure)
   }, [measure, value])
 
   const anchor = (

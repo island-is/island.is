@@ -4,10 +4,16 @@ import {
   InteractiveTableHeaderCell,
   StaticText,
 } from '@island.is/application/types'
-import { FC, ReactNode, useEffect, useMemo } from 'react'
+import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { Box, Checkbox, Table as T, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Checkbox,
+  Pagination,
+  Table as T,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatText,
@@ -44,10 +50,11 @@ export const InteractiveTableFormField: FC<Props> = ({
     title = '',
     titleVariant,
     selectable,
+    pageSize,
   } = field
   const { formatMessage, lang: locale } = useLocale()
   const user = useUserInfo()
-  const { control, setValue } = useFormContext()
+  const { control, setValue, getValues } = useFormContext()
   const fieldId = resolveFieldId({ id: field.id }, application, user)
 
   const header =
@@ -67,6 +74,23 @@ export const InteractiveTableFormField: FC<Props> = ({
       typeof field.rows === 'function' ? field.rows(application) : field.rows,
     [field.rows, application],
   )
+  const [page, setPage] = useState(1)
+  const isPaginated = !!pageSize && rows.length > pageSize
+  const totalPages = pageSize
+    ? Math.max(1, Math.ceil(rows.length / pageSize))
+    : 1
+  const firstRowOnPage = pageSize ? (page - 1) * pageSize : 0
+  const rowsOnPage = useMemo(
+    () =>
+      pageSize ? rows.slice(firstRowOnPage, firstRowOnPage + pageSize) : rows,
+    [rows, pageSize, firstRowOnPage],
+  )
+
+  useEffect(() => {
+    if (page <= totalPages) return
+    setPage(totalPages)
+  }, [page, totalPages])
+
   const footerRow = useMemo(
     () =>
       typeof field.footerRow === 'function'
@@ -117,10 +141,13 @@ export const InteractiveTableFormField: FC<Props> = ({
     () => (watchedInputValues ?? []) as (string | null | undefined)[],
     [watchedInputValues],
   )
-  const allSelected =
-    !!selectable &&
-    rows.length > 0 &&
-    rows.every((_, rowIndex) => !!selectedValues[rowIndex])
+  const allSelected = useMemo(
+    () =>
+      !!selectable &&
+      rows.length > 0 &&
+      rows.every((_, rowIndex) => !!selectedValues[rowIndex]),
+    [selectable, rows, selectedValues],
+  )
 
   const { isSubmitDisabled } = field
   const submitDisabled =
@@ -139,25 +166,26 @@ export const InteractiveTableFormField: FC<Props> = ({
 
   useEffect(() => {
     if (!selectable) return
+    const currentSelected = (getValues(fieldId) ?? []) as (
+      | boolean
+      | null
+      | undefined
+    )[]
+    const currentInputs = (
+      inputFieldId ? getValues(inputFieldId) ?? [] : []
+    ) as (string | null | undefined)[]
+
     rows.forEach((_, rowIndex) => {
-      const selected = selectedValues[rowIndex]
+      const selected = currentSelected[rowIndex]
       if (selected === undefined || selected === null) {
         setValue(`${fieldId}[${rowIndex}]`, false)
       }
-      const inputValue = inputValues[rowIndex]
+      const inputValue = currentInputs[rowIndex]
       if (inputFieldId && (inputValue === undefined || inputValue === null)) {
         setValue(`${inputFieldId}[${rowIndex}]`, '')
       }
     })
-  }, [
-    selectable,
-    rows,
-    fieldId,
-    inputFieldId,
-    selectedValues,
-    inputValues,
-    setValue,
-  ])
+  }, [selectable, rows, fieldId, inputFieldId, getValues, setValue])
 
   const toggleAll = () => {
     const nowSelected = !allSelected
@@ -244,24 +272,28 @@ export const InteractiveTableFormField: FC<Props> = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            {rows.map((row, rowIndex) => (
-              <InteractiveTableFormFieldRow
-                key={`row-${rowIndex}`}
-                row={row}
-                rowIndex={rowIndex}
-                application={application}
-                selectable={!!selectable}
-                fieldId={fieldId}
-                hasInputColumn={hasInputColumn}
-                inputFieldId={inputFieldId}
-                inputMaxAmount={inputMaxAmounts[rowIndex]}
-                inputPlaceholder={inputPlaceholder}
-                columns={columns}
-                expandedHeader={expandedHeader}
-                expandedRows={expandedRows?.[rowIndex]}
-                colSpan={colSpan}
-              />
-            ))}
+            {rowsOnPage.map((row, indexOnPage) => {
+              const rowIndex = firstRowOnPage + indexOnPage
+
+              return (
+                <InteractiveTableFormFieldRow
+                  key={`row-${rowIndex}`}
+                  row={row}
+                  rowIndex={rowIndex}
+                  application={application}
+                  selectable={!!selectable}
+                  fieldId={fieldId}
+                  hasInputColumn={hasInputColumn}
+                  inputFieldId={inputFieldId}
+                  inputMaxAmount={inputMaxAmounts[rowIndex]}
+                  inputPlaceholder={inputPlaceholder}
+                  columns={columns}
+                  expandedHeader={expandedHeader}
+                  expandedRows={expandedRows?.[rowIndex]}
+                  colSpan={colSpan}
+                />
+              )
+            })}
             {footerRow && (
               <T.Row dataTestId={styles.footerRowTestId}>
                 {leadingColumn(fillerCell('footer-checkbox-column'))}
@@ -284,6 +316,25 @@ export const InteractiveTableFormField: FC<Props> = ({
           </T.Body>
         </T.Table>
       </Box>
+      {isPaginated && (
+        <Box marginTop={3}>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            renderLink={(nextPage, className, children) => (
+              <Box
+                component="button"
+                type="button"
+                cursor="pointer"
+                className={className}
+                onClick={() => setPage(nextPage)}
+              >
+                {children}
+              </Box>
+            )}
+          />
+        </Box>
+      )}
     </Box>
   )
 }
