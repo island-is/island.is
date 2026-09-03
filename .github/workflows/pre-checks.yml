@@ -2,6 +2,12 @@ name: Pre checks
 
 on:
   workflow_call:
+    inputs:
+      runner_label:
+        description: 'Runner scale-set label to run on'
+        required: false
+        type: string
+        default: arc-shared
     outputs:
       NODE_IMAGE_VERSION:
         value: ${{ jobs.should-run.outputs.NODE_IMAGE_VERSION }}
@@ -46,7 +52,7 @@ env:
 jobs:
   should-run:
     name: Check if job should run
-    runs-on: arc-shared
+    runs-on: ${{ inputs.runner_label }}
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
