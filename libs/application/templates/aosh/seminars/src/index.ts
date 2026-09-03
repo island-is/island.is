@@ -7,4 +7,10 @@ export * from './lib/messages'
 export type { SeminarAnswersSchema as SeminarAnswers } from './shared/types'
 
 export default template
-export { IndividualOrCompany, RegisterNumber } from './shared/types'
+export * from './lib/messages/externalData'
+export * from './lib/messages/application'
+export {
+  IndividualOrCompany,
+  RegisterNumber,
+  PaymentOptions,
+} from './shared/types'
