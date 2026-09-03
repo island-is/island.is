@@ -12,6 +12,7 @@ import type {
   Case,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { AppealCaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
 import type { CreateAppealCaseMutation } from './createAppealCase.generated'
@@ -106,6 +107,34 @@ const useAppealCase = () => {
     ],
   )
 
+  // A defender files an áfrýjun - the appeal of an indictment verdict - for one
+  // specific defendant. Always limited access: only defence users can.
+  const createVerdictAppeal = useMemo(
+    () =>
+      async (
+        caseId: string,
+        defendantId: string,
+      ): Promise<AppealCase | undefined> => {
+        try {
+          const { data } = await limitedAccessCreateAppealCaseMutation({
+            variables: {
+              input: {
+                caseId,
+                defendantId,
+                appealType: AppealCaseType.VERDICT,
+              },
+            },
+          })
+
+          return data?.limitedAccessCreateAppealCase ?? undefined
+        } catch (e) {
+          toast.error(formatMessage(errors.transitionCase))
+          return undefined
+        }
+      },
+    [limitedAccessCreateAppealCaseMutation, formatMessage],
+  )
+
   const transitionAppealCase = useMemo(
     () =>
       async (
@@ -113,6 +142,9 @@ const useAppealCase = () => {
         appealCaseId: string,
         transition: AppealCaseTransition,
         setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        // Withdrawing an áfrýjun is per defendant; every other transition
+        // ignores this.
+        defendantId?: string,
       ): Promise<boolean> => {
         const mutation = limitedAccess
           ? limitedAccessTransitionAppealCaseMutation
@@ -125,7 +157,7 @@ const useAppealCase = () => {
         try {
           const { data } = await mutation({
             variables: {
-              input: { caseId, appealCaseId, transition },
+              input: { caseId, appealCaseId, transition, defendantId },
             },
           })
 
@@ -221,6 +253,7 @@ const useAppealCase = () => {
 
   return {
     createAppealCase,
+    createVerdictAppeal,
     isCreatingAppealCase:
       isCreatingAppealCase || isLimitedAccessCreatingAppealCase,
     transitionAppealCase,
