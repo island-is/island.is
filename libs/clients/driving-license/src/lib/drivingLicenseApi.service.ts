@@ -709,7 +709,7 @@ export class DrivingLicenseApi {
     contentList?: v6.ContractsRLSApplicationSystemRLSApplicationContentModel[]
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
-  }): Promise<boolean> {
+  }): Promise<{ success: boolean; applicationGuid: string | null }> {
     const response = await withAuthContext(params.auth, () =>
       this.applicationV6.apiApplicationsV6ApplyforRenewal65Post({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
@@ -727,7 +727,11 @@ export class DrivingLicenseApi {
       }),
     )
 
-    return response.result ?? false
+    // Same as BE: surface the review guid so testers can deny; null-safe.
+    return {
+      success: response.result ?? false,
+      applicationGuid: response.applicationGuid ?? null,
+    }
   }
 
   // Legacy 65+ submit endpoint, used when `is65RenewalRedesignEnabled` is OFF.
@@ -767,7 +771,7 @@ export class DrivingLicenseApi {
     signatureBiometricsId?: string | null
     sendPlasticToPerson?: boolean
     healthDeclarationModel: v6.ModelsHealthDeclarationModel
-  }): Promise<boolean> {
+  }): Promise<{ success: boolean; applicationGuid: string | null }> {
     const response = await withAuthContext(params.auth, () =>
       this.applicationV6.apiApplicationsV6ApplyforBePost({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
@@ -786,7 +790,15 @@ export class DrivingLicenseApi {
       }),
     )
 
-    return response.result ?? false
+    // v6 returns the RLS application guid for applications that enter manual
+    // review (BE always does). Surface it so a tester can deny the created
+    // application. `?? null` keeps this safe if RLS omits it — a null guid means
+    // "nothing to reconcile", never a failure, and success still comes from
+    // `result` exactly as before.
+    return {
+      success: response.result ?? false,
+      applicationGuid: response.applicationGuid ?? null,
+    }
   }
 
   async postCanApplyForPracticePermit(params: {
