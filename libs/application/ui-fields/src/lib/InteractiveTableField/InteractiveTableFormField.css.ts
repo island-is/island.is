@@ -1,12 +1,14 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+const TABLE_MIN_WIDTH = 700
+
 export const tableWrapper = style({})
 
 globalStyle(`${tableWrapper} table`, {
   tableLayout: 'fixed',
   width: '100%',
-  minWidth: 700,
+  minWidth: TABLE_MIN_WIDTH,
 })
 
 globalStyle(`${tableWrapper} th`, {
@@ -65,7 +67,8 @@ export const expandedTable = style({})
 
 globalStyle(`${tableWrapper} ${expandedTable} table`, {
   tableLayout: 'auto',
-  minWidth: 0,
+  width: '100%',
+  minWidth: TABLE_MIN_WIDTH,
 })
 
 const expandedCell = {
