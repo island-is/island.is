@@ -92,12 +92,12 @@ const TreatmentOverview = () => {
             }}
             showLinkButton
           />
-          <Stack space={2}>
+          <Stack space={6}>
             <TreatmentMessages
               conversations={treatment.recentConversations ?? []}
             />
 
-            <GridRow rowGap={2} marginTop={1}>
+            <GridRow rowGap={2}>
               {linkCards.map((card) => (
                 <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
                   <TreatmentLinkCard

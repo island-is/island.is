@@ -190,7 +190,7 @@ const injectHealthTreatmentNavItems = (
     }
     const health = cloneNavItem(child)
     const treatmentsParent: PortalNavigationItem = {
-      name: m.healthTreatments,
+      name: m.healthTreatment,
       path: HEALTH_TREATMENT_BASE_ROUTE,
       children: treatments.map((treatment) => ({
         name: treatment.name.trim() || m.healthTreatment,
