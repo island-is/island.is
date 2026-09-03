@@ -52,7 +52,7 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: '',
+        staging: 'INDICTMENT_APPEAL',
         prod: 'INDICTMENT_APPEAL',
       },
       REDIS_NODES: {
