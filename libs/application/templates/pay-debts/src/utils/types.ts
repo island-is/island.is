@@ -5,7 +5,7 @@ export type CustomerDebt = {
   finalDueDate: string
   debts: number
   chargeItemSubject: string
-  timePeriod: string
+  timePeriod: string | string[]
 }
 
 export type SelectedDebt = CustomerDebt & {
