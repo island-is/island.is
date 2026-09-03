@@ -30,6 +30,15 @@ export const lastV6TemporaryRequest: {
   body?: Record<string, unknown>
 } = {}
 
+// Same capture for the v6 BE submit. BE is the one write this migration moves
+// that is live in production with no feature flag, and its v6 model was
+// reshaped (`userId` and `healthDeclarationModel` dropped, `healthDeclaration`
+// added and required). This lets a test pin the exact keys that reach RLS.
+export const lastV6BeRequest: {
+  headers?: Record<string, string | null>
+  body?: Record<string, unknown>
+} = {}
+
 export const VALID_AUTH = 'Bearer OKIDOKE'
 export const INVALID_AUTH = 'Bearer NOPEDEDOPE'
 
@@ -74,6 +83,15 @@ export const requestHandlers = [
       return res(ctx.status(200), ctx.json(1))
     },
   ),
+
+  rest.post(/api\/applications\/v6\/applyfor\/be$/, async (req, res, ctx) => {
+    lastV6BeRequest.headers = {
+      jwttoken: req.headers.get('jwttoken'),
+      authorization: req.headers.get('authorization'),
+    }
+    lastV6BeRequest.body = await req.json()
+    return res(ctx.status(200), ctx.json({ category: 'BE', result: true }))
+  }),
 
   // v6 identity travels in the `jwttoken` header (see apiConfiguration.ts); this
   // handler does not need to inspect it, so it just returns success. Per-person
