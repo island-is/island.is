@@ -27,7 +27,7 @@ if (typeof window !== 'undefined') {
       service: 'judicial-system-web',
       clientToken: ddLogsClientToken,
       env: environment || 'local',
-      version: appVersion || 'local',
+      version: appVersion || 'unknown',
     })
   }
 }
