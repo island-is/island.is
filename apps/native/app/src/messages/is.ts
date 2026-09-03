@@ -350,6 +350,9 @@ export const is = {
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
+  'vehicleDetail.lastOdometer': 'Síðasta kílómetrastaða',
+  'vehicleDetail.moreInfo': 'Fleiri upplýsingar',
+  'vehicleDetail.viewMore': 'Sjá nánar',
   'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
   'vehicleDetail.moreOptions': 'Fleiri valmöguleikar',
 

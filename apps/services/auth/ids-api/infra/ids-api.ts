@@ -145,6 +145,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       default: 6,
       min: 6,
       max: 15,
+      scaleToProdInDev: true, // TEMPORARY: load-test window
     })
     .grantNamespaces('nginx-ingress-external', 'user-notification', 'datadog')
 }

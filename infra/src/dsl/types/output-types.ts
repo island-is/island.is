@@ -3,6 +3,8 @@ import {
   ServiceDefinition,
   ServiceDefinitionForEnv,
   PodDisruptionBudget,
+  RolloutStrategy,
+  GracefulShutdown,
 } from './input-types'
 import { ReferenceResolver, EnvironmentConfig } from './charts'
 
@@ -125,6 +127,17 @@ export interface HelmService {
   pvcs?: OutputPersistentVolumeClaim[]
 
   podDisruptionBudget?: PodDisruptionBudget
+
+  strategy?: RolloutStrategy
+  minReadySeconds?: number
+  terminationGracePeriodSeconds?: number
+  lifecycle?: {
+    preStop?: {
+      exec: {
+        command: string[]
+      }
+    }
+  }
 
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
