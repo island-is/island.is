@@ -1,3 +1,4 @@
+import { NetworkStatus } from '@apollo/client'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useIntl } from 'react-intl'
 import {
@@ -13,12 +14,15 @@ import {
 import { ContextMenu } from 'react-native-platform-components'
 
 import { StackScreen } from '@/components/stack-screen'
-import { useGetVehicleQuery } from '@/graphql/types/schema'
+import {
+  useGetVehicleMileageQuery,
+  useGetVehicleQuery,
+} from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
-import { Button, Divider, Input, InputRow, Problem } from '@/ui'
+import { Button, Input, InputRow, LinkText, Problem, Typography } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTheme } from 'styled-components'
 
 export default function VehicleDetailScreen() {
@@ -90,14 +94,62 @@ export default function VehicleDetailScreen() {
   const allowMileageRegistration =
     mainInfo?.requiresMileageRegistration ||
     mainInfo?.availableMileageRegistration
+  const mileageUnit = mainInfo?.hasMilesOdometer ? 'mi' : 'km'
+
+  // The vehicle detail endpoint returns the latest mileage number but not its
+  // read date, so fetch the mileage registrations to get the most recent date.
+  const mileageRes = useGetVehicleMileageQuery({
+    variables: { input: { permno: id } },
+    skip: !allowMileageRegistration,
+  })
+
+  const latestMileageRecord = useMemo(() => {
+    const records = mileageRes.data?.vehicleMileageDetails?.data ?? []
+    return [...records]
+      .filter((record) => !!record?.readDate)
+      .sort(
+        (a, b) =>
+          new Date(b.readDate as string).getTime() -
+          new Date(a.readDate as string).getTime(),
+      )[0]
+  }, [mileageRes.data])
+
+  const lastMileageDate = latestMileageRecord?.readDate
+    ? intl.formatDate(new Date(latestMileageRecord.readDate))
+    : null
+  const lastMileageNumber =
+    latestMileageRecord?.mileage ?? data?.vehiclesDetail?.lastMileage?.mileage
+  const lastMileageValue = lastMileageNumber
+    ? `${intl.formatNumber(parseInt(lastMileageNumber, 10))} ${mileageUnit}`
+    : '-'
+
+  const navigateToMileage = () => {
+    router.navigate({
+      pathname: '/more/vehicles/[id]/mileage',
+      params: {
+        id,
+        vehicleType: title ?? '',
+        vehicleYear: basicInfo?.year ?? '',
+        vehicleColor: registrationInfo?.color ?? '',
+      },
+    })
+  }
 
   return (
     <>
       <ScrollView
         refreshControl={
           <RefreshControl
-            refreshing={res.loading && !data}
-            onRefresh={() => res.refetch()}
+            refreshing={
+              res.networkStatus === NetworkStatus.refetch ||
+              mileageRes.networkStatus === NetworkStatus.refetch
+            }
+            onRefresh={() => {
+              res.refetch()
+              if (allowMileageRegistration) {
+                mileageRes.refetch()
+              }
+            }}
           />
         }
         style={{ flex: 1 }}
@@ -171,17 +223,7 @@ export default function VehicleDetailScreen() {
                 iconPosition="end"
                 icon={require('@/assets/icons/edit.png')}
                 isUtilityButton
-                onPress={() => {
-                  router.navigate({
-                    pathname: '/more/vehicles/[id]/mileage',
-                    params: {
-                      id,
-                      vehicleType: title ?? '',
-                      vehicleYear: basicInfo?.year ?? '',
-                      vehicleColor: registrationInfo?.color ?? '',
-                    },
-                  })
-                }}
+                onPress={navigateToMileage}
               />
             )}
             <Button
@@ -205,13 +247,6 @@ export default function VehicleDetailScreen() {
             />
             <Input
               loading={inputLoading}
-              label={intl.formatMessage({ id: 'vehicleDetail.permno' })}
-              value={basicInfo?.permno}
-            />
-          </InputRow>
-          <InputRow>
-            <Input
-              loading={inputLoading}
               label={intl.formatMessage({ id: 'vehicleDetail.firstReg' })}
               value={
                 registrationInfo?.firstRegistrationDate
@@ -221,11 +256,6 @@ export default function VehicleDetailScreen() {
                   : '-'
               }
             />
-            <Input
-              loading={inputLoading}
-              label={intl.formatMessage({ id: 'vehicleDetail.color' })}
-              value={registrationInfo?.color}
-            />
           </InputRow>
           <InputRow>
             <Input
@@ -233,51 +263,12 @@ export default function VehicleDetailScreen() {
               label={intl.formatMessage({
                 id: 'vehicleDetail.nextInspectionDate',
               })}
-              noBorder
               value={
                 inspectionInfo?.nextInspectionDate
                   ? intl.formatDate(new Date(inspectionInfo.nextInspectionDate))
                   : '-'
               }
             />
-            {inspectionInfo?.odometer && (
-              <Input
-                noBorder
-                loading={inputLoading}
-                label={intl.formatMessage({ id: 'vehicleDetail.odometer' })}
-                value={
-                  data?.vehiclesDetail?.lastMileage?.mileage
-                    ? `${intl.formatNumber(
-                        parseInt(data.vehiclesDetail.lastMileage.mileage, 10),
-                      )} km`
-                    : '-'
-                }
-              />
-            )}
-          </InputRow>
-
-          <Divider spacing={2} />
-
-          <InputRow>
-            <Input
-              loading={inputLoading}
-              label={intl.formatMessage({
-                id: 'vehicleDetail.vehicleWeight',
-              })}
-              value={`${technicalInfo?.vehicleWeight ?? ''} kg`}
-            />
-            {technicalInfo?.totalWeight ? (
-              <Input
-                loading={inputLoading}
-                label={intl.formatMessage({
-                  id: 'vehicleDetail.totalWeight',
-                })}
-                value={`${technicalInfo.totalWeight ?? '-'} kg`}
-              />
-            ) : null}
-          </InputRow>
-
-          <InputRow>
             <Input
               loading={inputLoading}
               label={intl.formatMessage({ id: 'vehicleDetail.insured' })}
@@ -285,6 +276,59 @@ export default function VehicleDetailScreen() {
                 { id: 'vehicleDetail.insuredValue' },
                 { isInsured: inspectionInfo?.insuranceStatus },
               )}
+            />
+          </InputRow>
+          {allowMileageRegistration && (
+            <InputRow>
+              <Input
+                loading={inputLoading}
+                label={`${intl.formatMessage({
+                  id: 'vehicleDetail.lastOdometer',
+                })}${lastMileageDate ? ` (${lastMileageDate})` : ''}`}
+                value={lastMileageValue}
+                rightElement={
+                  <Pressable
+                    onPress={navigateToMileage}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 6,
+                    }}
+                  >
+                    <LinkText variant="small">
+                      {intl.formatMessage({ id: 'vehicleDetail.viewMore' })}
+                    </LinkText>
+                    <Typography
+                      variant="body"
+                      size={13}
+                      weight="600"
+                      color={theme.color.blue400}
+                    >
+                      →
+                    </Typography>
+                  </Pressable>
+                }
+              />
+            </InputRow>
+          )}
+
+          <Typography
+            variant="eyebrow"
+            color={theme.color.purple400}
+            style={{
+              marginHorizontal: theme.spacing[2],
+              marginTop: theme.spacing[3],
+              marginBottom: theme.spacing[1],
+            }}
+          >
+            {intl.formatMessage({ id: 'vehicleDetail.moreInfo' })}
+          </Typography>
+
+          <InputRow>
+            <Input
+              loading={inputLoading}
+              label={intl.formatMessage({ id: 'vehicleDetail.color' })}
+              value={registrationInfo?.color}
             />
             <Input
               loading={inputLoading}
@@ -300,7 +344,9 @@ export default function VehicleDetailScreen() {
             />
           </InputRow>
 
-          {mainInfo ? (
+          {mainInfo &&
+          (mainInfo.trailerWithBrakesWeight ||
+            mainInfo.trailerWithoutBrakesWeight) ? (
             <InputRow>
               {mainInfo.trailerWithBrakesWeight ? (
                 <Input
@@ -324,7 +370,41 @@ export default function VehicleDetailScreen() {
           ) : null}
 
           <InputRow>
-            {technicalInfo?.capacityWeight ? (
+            {mainInfo?.co2 != null ? (
+              <Input
+                loading={inputLoading}
+                label={intl.formatMessage({ id: 'vehicleDetail.nedc' })}
+                value={`${mainInfo.co2 ?? 0} g/km`}
+              />
+            ) : null}
+            <Input
+              loading={inputLoading}
+              label={intl.formatMessage({ id: 'vehicleDetail.permno' })}
+              value={basicInfo?.permno}
+            />
+          </InputRow>
+
+          <InputRow>
+            <Input
+              loading={inputLoading}
+              label={intl.formatMessage({
+                id: 'vehicleDetail.vehicleWeight',
+              })}
+              value={`${technicalInfo?.vehicleWeight ?? ''} kg`}
+            />
+            {technicalInfo?.totalWeight ? (
+              <Input
+                loading={inputLoading}
+                label={intl.formatMessage({
+                  id: 'vehicleDetail.totalWeight',
+                })}
+                value={`${technicalInfo.totalWeight ?? '-'} kg`}
+              />
+            ) : null}
+          </InputRow>
+
+          {technicalInfo?.capacityWeight ? (
+            <InputRow>
               <Input
                 loading={inputLoading}
                 label={intl.formatMessage({
@@ -332,15 +412,8 @@ export default function VehicleDetailScreen() {
                 })}
                 value={`${technicalInfo.capacityWeight ?? '-'} kg`}
               />
-            ) : null}
-            {mainInfo?.co2 ? (
-              <Input
-                loading={inputLoading}
-                label={intl.formatMessage({ id: 'vehicleDetail.nedc' })}
-                value={`${mainInfo.co2 ?? 0} g/km`}
-              />
-            ) : null}
-          </InputRow>
+            </InputRow>
+          ) : null}
         </View>
       </ScrollView>
     </>
