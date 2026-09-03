@@ -102,51 +102,48 @@ const UserContractsOverview = () => {
       {!error && !loading && data?.hmsRentalAgreements && (
         <Box id="contracts-area" marginTop={1}>
           <Stack space={2}>
-            {data.hmsRentalAgreements.data
-              .map((contract) => {
-                const { id, status, contractProperty } = contract
-                const address = generateRentalAgreementAddress(
-                  contractProperty ?? undefined,
-                )
+            {data.hmsRentalAgreements.data.map((contract) => {
+              const { id, status, contractProperty } = contract
+              const address = generateRentalAgreementAddress(
+                contractProperty ?? undefined,
+              )
 
-                const { message, ...restOfTag } = mapStatusTypeToTag(
-                  status,
-                ) ?? {
-                  message: undefined,
-                }
+              const { message, ...restOfTag } = mapStatusTypeToTag(status) ?? {
+                message: undefined,
+              }
 
-                const propertyTypeMessage = mapPropertyTypeToMessage(
-                  contractProperty?.type,
-                )
-                const subText = propertyTypeMessage
-                  ? formatMessage(propertyTypeMessage)
-                  : undefined
+              const propertyTypeMessage = mapPropertyTypeToMessage(
+                contractProperty?.type,
+              )
+              const subText = propertyTypeMessage
+                ? formatMessage(propertyTypeMessage)
+                : undefined
 
-                return (
-                  <ActionCard
-                    key={id}
-                    heading={address}
-                    headingVariant="h4"
-                    cta={{
-                      label: formatMessage(cm.seeInfo),
-                      onClick: () =>
-                        navigate(
-                          InformationPaths.MyContractsDetail.replace(':id', id),
-                        ),
-                      variant: 'text',
-                    }}
-                    subText={subText}
-                    tag={
-                      message && restOfTag
-                        ? {
-                            label: formatMessage(message),
-                            ...restOfTag,
-                          }
-                        : undefined
-                    }
-                  />
-                )
-              })}
+              return (
+                <ActionCard
+                  key={id}
+                  heading={address}
+                  headingVariant="h4"
+                  cta={{
+                    label: formatMessage(cm.seeInfo),
+                    onClick: () =>
+                      navigate(
+                        InformationPaths.MyContractsDetail.replace(':id', id),
+                      ),
+                    variant: 'text',
+                  }}
+                  subText={subText}
+                  tag={
+                    message && restOfTag
+                      ? {
+                          label: formatMessage(message),
+                          ...restOfTag,
+                        }
+                      : undefined
+                  }
+                />
+              )
+            })}
           </Stack>
           {(data.hmsRentalAgreements.totalCount ?? 0) > DEFAULT_PAGE_SIZE && (
             <Box marginTop={3}>
