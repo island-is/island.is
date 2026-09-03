@@ -34,6 +34,7 @@ export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecor
 export { default as DateTime } from './DateTime/DateTime'
 export { default as Decision } from './Decision/Decision'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
+export { default as ErrorBoundary } from './ErrorBoundary/ErrorBoundary'
 export {
   default as FeatureProvider,
   FeatureContext,

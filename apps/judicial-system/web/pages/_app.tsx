@@ -8,6 +8,7 @@ import { Box, ToastContainer } from '@island.is/island-ui/core'
 import { getPublicRuntimeEnv } from '@island.is/judicial-system-web/environments/runtimeEnvironment'
 import client from '@island.is/judicial-system-web/graphql/client'
 import {
+  ErrorBoundary,
   FeatureProvider,
   FormProvider,
   Header as HeaderContainer,
@@ -105,7 +106,9 @@ class JudicialSystemApplication extends App<Props> {
                     <FormProvider>
                       <HeaderContainer />
                       <Box component="main">
-                        <Component {...pageProps} />
+                        <ErrorBoundary>
+                          <Component {...pageProps} />
+                        </ErrorBoundary>
                       </Box>
                       <ToastContainer />
                     </FormProvider>
