@@ -8537,7 +8537,7 @@
           },
           "departmentName": {
             "type": "string",
-            "description": "Name of the HCP department within the organization, when the resolved mapping row is group-specific."
+            "description": "Name of the HCP department within the organization, as the sender named it on the message, falling back to the resolved group-specific mapping row."
           },
           "hasAttachment": {
             "type": "boolean"
@@ -8774,7 +8774,7 @@
           },
           "departmentName": {
             "type": "string",
-            "description": "Name of the HCP department within the organization, when the resolved mapping row is group-specific."
+            "description": "Name of the HCP department within the organization, as the sender named it on the message, falling back to the resolved group-specific mapping row."
           },
           "hasAttachment": {
             "type": "boolean"
@@ -8797,6 +8797,18 @@
                 "$ref": "#/components/schemas/ConversationReplyBlockedReason"
               }
             ]
+          },
+          "messagingWindowOpen": {
+            "type": "string",
+            "description": "When the recipient starts accepting messages, as `HH:mm:ss` in UTC."
+          },
+          "messagingWindowClose": {
+            "type": "string",
+            "description": "When the recipient stops accepting messages, as `HH:mm:ss` in UTC."
+          },
+          "patientReplyWindowDays": {
+            "type": "number",
+            "description": "How long the thread accepts replies, in 24-hour periods from the newest `STAFF` message in `messages`."
           },
           "unread": {
             "type": "boolean",

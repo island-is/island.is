@@ -2396,6 +2396,15 @@ export const messages = defineMessages({
     defaultMessage: 'Þú ert ekki með skráða meðferð í gangi.',
     id: 'sp.health:no-treatments',
   },
+  treatmentIntroWithDepartment: {
+    defaultMessage:
+      'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt hjá {department}.',
+    id: 'sp.health:treatment-intro-with-department',
+  },
+  lastSent: {
+    defaultMessage: 'Síðast: {date}',
+    id: 'sp.health:last-sent',
+  },
   treatmentIntro: {
     defaultMessage:
       'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt.',
@@ -2404,6 +2413,35 @@ export const messages = defineMessages({
   landlaeknirTreatmentTooltip: {
     defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar meðferðir.',
     id: 'sp.health:landlaeknir-treatment-tooltip',
+  },
+  treatmentTeam: {
+    defaultMessage: 'Meðferðarteymi',
+    id: 'sp.health:treatment-team',
+  },
+  treatmentMessagesFromTeam: {
+    defaultMessage: 'Skilaboð frá meðferðarteymi',
+    id: 'sp.health:treatment-messages-from-team',
+  },
+  seeAllMessages: {
+    defaultMessage: 'Sjá öll skilaboð',
+    id: 'sp.health:see-all-messages',
+  },
+  educationalContent: {
+    defaultMessage: 'Fræðsluefni',
+    id: 'sp.health:educational-content',
+  },
+  educationalContentIntro: {
+    defaultMessage:
+      'Hér finnur þú fræðsluefni sem getur hjálpað þér að skilja betur meðferðina þína og það sem henni tengist.',
+    id: 'sp.health:educational-content-intro',
+  },
+  openDocument: {
+    defaultMessage: 'Opna skjal',
+    id: 'sp.health:open-document',
+  },
+  sent: {
+    defaultMessage: 'Sent',
+    id: 'sp.health:sent',
   },
   sentFrom: {
     defaultMessage: 'Sent af',
