@@ -1,4 +1,4 @@
-import { Stack, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ExampleQuestions.css'
 
@@ -27,20 +27,22 @@ export const ExampleQuestions = ({
       {title}
     </Text>
 
-    <Stack component="ul" space={1}>
-      {questions.map((question, index) => (
-        <button
-          // The list is free text from the CMS, so two questions can read the
-          // same without the list being broken
-          key={`${index}-${question}`}
-          type="button"
-          className={styles.question}
-          disabled={disabled}
-          onClick={() => onSelect(question)}
-        >
-          {question}
-        </button>
-      ))}
-    </Stack>
+    <Box className={styles.questions}>
+      <Stack space={1}>
+        {questions.map((question, index) => (
+          <Tag
+            // The questions are free text from the CMS, so two of them can read
+            // the same without the list being broken
+            key={`${index}-${question}`}
+            variant="blue"
+            textLeft
+            disabled={disabled}
+            onClick={() => onSelect(question)}
+          >
+            {question}
+          </Tag>
+        ))}
+      </Stack>
+    </Box>
   </Stack>
 )

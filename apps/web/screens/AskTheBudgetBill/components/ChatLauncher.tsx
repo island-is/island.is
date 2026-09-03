@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
+import { MarkdownText } from '@island.is/web/components'
 
 import { exampleQuestionMessages, m } from '../translations.strings'
-import { DisclaimerText } from './DisclaimerText'
 import { ExampleQuestions } from './ExampleQuestions'
 import { QuestionInput } from './QuestionInput'
 import { toExampleQuestions } from './questions'
@@ -120,7 +120,12 @@ export const ChatLauncher = ({
           )}
         </Stack>
 
-        <DisclaimerText>{formatMessage(m.disclaimer)}</DisclaimerText>
+        {/* The disclaimer is edited in Contentful, so any links it carries are
+            written into it as markdown, `[texti](slóð)`, next to the words they
+            belong to */}
+        <MarkdownText variant="small" color="dark400">
+          {formatMessage(m.disclaimer)}
+        </MarkdownText>
 
         {exampleQuestions.length > 0 && (
           // Set apart from the disclaimer, which belongs to the question box
