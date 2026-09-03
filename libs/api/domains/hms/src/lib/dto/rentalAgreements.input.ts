@@ -1,8 +1,8 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsBoolean, IsInt, IsOptional, Max, Min } from 'class-validator'
 
-@InputType('HmsGetRentalAgreementsInput')
-export class GetRentalAgreementsInput {
+@InputType('HmsRentalAgreementsInput')
+export class RentalAgreementsInput {
   @Field(() => Boolean, { nullable: true })
   @IsOptional()
   @IsBoolean()

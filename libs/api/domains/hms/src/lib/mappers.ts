@@ -92,10 +92,11 @@ export const mapToRentalAgreement = (
   dto: RentalAgreementDto,
 ): RentalAgreement => {
   const parties = dto.contractParty?.map(mapContractParty)
+  const status = AGREEMENT_STATUS_MAP[dto.status]
 
   return {
     id: dto.id,
-    status: AGREEMENT_STATUS_MAP[dto.status],
+    status,
     contractType: TEMPORAL_TYPE_MAP[dto.contractType],
     dateFrom: dto.dateFrom,
     dateTo: dto.dateTo,
@@ -104,11 +105,10 @@ export const mapToRentalAgreement = (
     receivedDate: dto.receivedDate,
     landlords: parties?.filter((p) => LANDLORD_TYPES.includes(p.type)),
     tenants: parties?.filter((p) => TENANT_TYPES.includes(p.type)),
-    contractProperty: dto.contractProperty
+    contractProperty: dto.contractProperty?.[0]
       ? mapContractProperty(dto.contractProperty[0])
       : undefined,
     canTerminate:
-      dto.infoAvailable === true &&
-      AGREEMENT_STATUS_MAP[dto.status] === AgreementStatusType.VALID,
+      dto.infoAvailable === true && status === AgreementStatusType.VALID,
   }
 }

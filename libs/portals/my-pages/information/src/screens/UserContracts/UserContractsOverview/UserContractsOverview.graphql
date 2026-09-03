@@ -1,4 +1,4 @@
-query UserContractsOverview($input: HmsGetRentalAgreementsInput!) {
+query UserContractsOverview($input: HmsRentalAgreementsInput!) {
   hmsRentalAgreements(input: $input) {
     data {
       id
@@ -13,5 +13,6 @@ query UserContractsOverview($input: HmsGetRentalAgreementsInput!) {
       }
     }
     totalCount
+    pageSize
   }
 }

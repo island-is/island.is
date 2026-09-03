@@ -19,9 +19,12 @@ import {
 } from '@island.is/nest/feature-flags'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
-import { GetRentalAgreementsInput } from '../dto/getRentalAgreements.input'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
+import { RentalAgreementsInput } from '../dto/rentalAgreements.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver()
 @Audit({ namespace: '@island.is/api/hms' })
 @FeatureFlag(Features.isServicePortalMyContractsPageEnabled)
@@ -40,7 +43,7 @@ export class RentalAgreementsResolver {
   @Audit()
   async getRentalAgreements(
     @CurrentUser() user: User,
-    @Args('input') input: GetRentalAgreementsInput,
+    @Args('input') input: RentalAgreementsInput,
   ): Promise<PaginatedRentalAgreementCollection> {
     const { hideInactiveAgreements, page, pageSize } = input
     const {
@@ -65,6 +68,7 @@ export class RentalAgreementsResolver {
     return {
       data,
       totalCount,
+      pageSize: resolvedPageSize,
       pageInfo: {
         hasNextPage:
           resolvedPage !== undefined && resolvedPageSize !== undefined

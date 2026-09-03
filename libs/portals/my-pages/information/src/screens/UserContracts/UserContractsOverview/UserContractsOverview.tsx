@@ -150,7 +150,8 @@ const UserContractsOverview = () => {
               <Pagination
                 page={page}
                 totalPages={Math.ceil(
-                  data.hmsRentalAgreements.totalCount / DEFAULT_PAGE_SIZE,
+                  data.hmsRentalAgreements.totalCount /
+                    (data.hmsRentalAgreements.pageSize ?? DEFAULT_PAGE_SIZE),
                 )}
                 renderLink={(page, className, children) => (
                   <button className={className} onClick={() => setPage(page)}>

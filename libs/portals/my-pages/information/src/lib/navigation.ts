@@ -138,6 +138,7 @@ export const informationNavigation: PortalNavigationItem = {
           name: m.contract,
           navHide: true,
           searchHide: true,
+          breadcrumbHide: true,
           path: InformationPaths.MyContractsDetail,
         },
       ],

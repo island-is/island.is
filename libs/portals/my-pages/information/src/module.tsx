@@ -80,7 +80,6 @@ export const informationModule: PortalModule = {
         path: InformationPaths.MyContractsDetail,
         enabled: scopes.includes(ApiScope.meDetails),
         key: Features.isServicePortalMyContractsPageEnabled,
-        breadcrumbHide: true,
         element: <UserContract />,
       },
       {
