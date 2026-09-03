@@ -184,7 +184,33 @@ describe('DrivingLicenseDuplicateService', () => {
         photoBiometricsId: null,
         signatureBiometricsId: null,
       })
-      expect(result).toBe(true)
+      expect(result.success).toBe(true)
+      // The v6 apply-for endpoint returns the review guid; capture it so a
+      // tester can deny the created application.
+      expect(result.applicationGuid).toBe('renewal65-guid-0001')
+    })
+
+    it('resolves with a null guid — never throws — when RLS omits applicationGuid', async () => {
+      // Fool-proof path: an older RLS build, or a category that does not enter
+      // manual review, may return no guid. Success must still be decided by
+      // `result`, and the guid must degrade to null rather than crash.
+      jest
+        .spyOn(applicationV6, 'apiApplicationsV6ApplyforRenewal65Post')
+        .mockResolvedValue({ category: 'B', result: true })
+
+      const result = await service.postApplyForRenewal65({
+        auth: mockAuth(MOCK_TOKEN.STUDENT),
+        districtId: 37,
+        phoneNumber: '5551234',
+        email: 'test@example.is',
+        sendPlasticToPerson: false,
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.applicationGuid).toBeNull()
+      jest.restoreAllMocks()
     })
   })
 
@@ -347,7 +373,10 @@ describe('DrivingLicenseDuplicateService', () => {
         sendPlasticToPerson: true,
         healthDeclarationModel,
       })
-      expect(result).toBe(true)
+      expect(result.success).toBe(true)
+      // The BE v6 response carries the review guid; capture it (a tester denies
+      // the created application with it).
+      expect(result.applicationGuid).toBe('be-guid-0001')
 
       // Identity travels in the header RLS reads, bare token, as for every v6 call.
       expect(lastV6BeRequest.headers?.jwttoken).toBe('be-user-token')
