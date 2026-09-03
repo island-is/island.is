@@ -37,9 +37,9 @@ describe('TaxCalculatorsService', () => {
     )
 
     it('maps withholdingTaxOnWages to the withholding tax calculator', () => {
-      const keys = fieldsFor(
-        TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
-      ).map((field) => field.key)
+      const keys = fieldsFor(TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES).map(
+        (field) => field.key,
+      )
 
       expect(keys).toContain('salary')
       expect(keys).toContain('paymentFrequency')
@@ -54,7 +54,10 @@ describe('TaxCalculatorsService', () => {
 
         expect(field).toBeDefined()
         expect(field?.required).toBe(false)
-        expect(field?.dependsOn).toEqual({ field: 'splitCustody', equals: true })
+        expect(field?.dependsOn).toEqual({
+          field: 'splitCustody',
+          equals: true,
+        })
       },
     )
 

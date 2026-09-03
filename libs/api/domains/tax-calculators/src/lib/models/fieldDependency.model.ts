@@ -4,7 +4,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 export class FieldDependency {
   @Field({
     description:
-      'The `key` of the sibling field this one is conditional on. Not this field\'s own key.',
+      "The `key` of the sibling field this one is conditional on. Not this field's own key.",
   })
   field!: string
 

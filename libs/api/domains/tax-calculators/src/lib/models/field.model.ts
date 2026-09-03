@@ -7,7 +7,7 @@ import { FieldDependency } from './fieldDependency.model'
 export class CalculatorField {
   @Field({
     description:
-      'Stable identifier for the input, as RSK names it. This is what a section field\'s `key` in the Contentful `configJson` must match.',
+      "Stable identifier for the input, as RSK names it. This is what a section field's `key` in the Contentful `configJson` must match.",
   })
   key!: string
 
