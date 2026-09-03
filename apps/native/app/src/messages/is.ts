@@ -350,6 +350,9 @@ export const is = {
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
+  'vehicleDetail.lastOdometer': 'Síðasta kílómetrastaða',
+  'vehicleDetail.moreInfo': 'Fleiri upplýsingar',
+  'vehicleDetail.viewMore': 'Sjá nánar',
   'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
   'vehicleDetail.moreOptions': 'Fleiri valmöguleikar',
 
@@ -801,14 +804,14 @@ export const is = {
   'health.questionnaires.action.answer': 'Svara lista',
   'health.questionnaires.action.continue-draft': 'Halda áfram',
   'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.action.answer-again': 'Svara aftur',
   'health.questionnaires.action.show-expired': 'Sýna útrunna',
   'health.questionnaires.action.hide-expired': 'Fela útrunna',
-  'health.questionnaires.detail.description':
-    'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
   'health.questionnaires.detail.status': 'Staða',
   'health.questionnaires.detail.institution': 'Stofnun',
   'health.questionnaires.detail.sentBy': 'Sent af',
-  'health.questionnaires.detail.sentDate': 'Sent dags',
+  'health.questionnaires.detail.sentDate': 'Dagsetning',
+  'health.questionnaires.detail.expirationDate': 'Gildir til',
   'health.questionnaires.detail.notFound': 'Spurningalisti fannst ekki',
 
   // health - vaccinations
@@ -858,6 +861,17 @@ export const is = {
     'Tímabókun fannst ekki. Hún kann að hafa verið felld niður.',
   'health.appointments.minutesFormat': '{minutes} mínútur',
   'health.appointments.moreInfo': 'Nánari upplýsingar',
+  'health.appointments.preparation': 'Undirbúningur',
+  'health.appointments.locationDepartment': 'Deild',
+  'health.appointments.locationWing': 'Álma',
+  'health.appointments.locationFloor': 'Hæð',
+  'health.appointments.locationRoom': 'Herbergi',
+  'health.appointments.assigneeTypeRole': 'Hlutverk',
+  'health.appointments.assigneeTypeRoom': 'Herbergi',
+  'health.appointments.assigneeTypeEquipment': 'Tæki',
+  'health.appointments.assigneeTypeService': 'Þjónusta',
+  'health.appointments.assigneeTypeTeam': 'Teymi',
+  'health.appointments.assigneeTypeOther': 'Annað',
 
   // health - messages
   'health.messages.screenTitle': 'Skilaboð',
@@ -1052,6 +1066,11 @@ export const is = {
   'health.prescriptions.renewalPossible': 'Hægt að endurnýja',
   'health.prescriptions.renewalValid': 'Gild lyfjaávísun',
   'health.prescriptions.renewalNotAvailable': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalStatusApproved': 'Endurnýjun samþykkt',
+  'health.prescriptions.renewalStatusPending': 'Endurnýjun í vinnslu',
+  'health.prescriptions.renewalStatusRejected': 'Endurnýjun hafnað',
+  'health.prescriptions.renewalStatusDismissed': 'Endurnýjun vísað frá',
+  'health.prescriptions.renewalStatusUnknown': 'Staða endurnýjunar óþekkt',
   'health.prescriptions.renewalBlockedIsRegiment':
     'Ekki er hægt að endurnýja lyfjakúr',
   'health.prescriptions.renewalBlockedNoMedCard': 'Ekkert lyfjakort skráð',
