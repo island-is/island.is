@@ -20,7 +20,7 @@ export const m = {
     featuredImage: {
       id: 'web.openinvoices:overview.featuredImage',
       defaultMessage:
-        'https://images.ctfassets.net/8k0h54kbe6bj/4tLK38mf8CR1ktUQjhFQl1/2de64c6115fc70d8168fa597715c17a3/LE_-_Company_-_M3.svg',
+        'https://images.ctfassets.net/8k0h54kbe6bj/3GD65AzjZTv6TEguWRWyKQ/7d7ca644d742d5ded3f5a7cac84169c2/skjaldarmerki-bla-linuteikning.svg',
     },
     featuredImageAlt: {
       id: 'web.openinvoices:overview.featuredImageAlt',
