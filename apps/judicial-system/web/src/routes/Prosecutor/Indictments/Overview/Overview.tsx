@@ -8,6 +8,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  Checkbox,
   RadioButton,
   Text,
   toast,
@@ -40,6 +41,7 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  ProsecutorSelection,
   SectionHeading,
   ServiceAnnouncements,
   UserContext,
@@ -54,6 +56,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
+import ReturnIndictmentModal from './ReturnIndictmentModal/ReturnIndictmentModal'
 import { overview as strings } from './Overview.strings'
 import * as styles from './Overview.css'
 
@@ -65,6 +68,10 @@ const Overview: FC = () => {
     | 'noModal'
     | 'caseSubmitModal'
     | 'caseSentForConfirmationModal'
+    | 'caseSentForReviewModal'
+    | 'caseReviewedModal'
+    | 'reviewDeniedModal'
+    | 'recallReviewModal'
     | 'caseDeniedModal'
     | 'askForCancellationModal'
     | 'duplicateIndictmentModal'
@@ -72,10 +79,14 @@ const Overview: FC = () => {
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
     useState<'confirm' | 'deny'>()
+  const [wantsReview, setWantsReview] = useState(false)
+  const [selectedApproverId, setSelectedApproverId] = useState<string>()
+  const [selectedApproverName, setSelectedApproverName] = useState<string>()
+  const [reviewDecision, setReviewDecision] = useState<'accept' | 'deny'>()
 
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { updateCase, transitionCase, isTransitioningCase } = useCase()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
@@ -83,6 +94,8 @@ const Overview: FC = () => {
     workingCase.state === CaseState.DRAFT || modal !== 'noModal'
   const isIndictmentWaitingForConfirmation =
     workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
+  const isIndictmentWaitingForReview =
+    workingCase.state === CaseState.WAITING_FOR_REVIEW
   const isIndictmentSubmitted = workingCase.state === CaseState.SUBMITTED
   const isIndictmentWaitingForCancellation =
     workingCase.state === CaseState.WAITING_FOR_CANCELLATION
@@ -95,6 +108,15 @@ const Overview: FC = () => {
   const userCanCancelIndictment =
     (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
+  const userIsReviewer =
+    isIndictmentWaitingForReview &&
+    user?.id === workingCase.indictmentApprover?.id &&
+    modal === 'noModal'
+  const userCanRecallReview =
+    isIndictmentWaitingForReview &&
+    user?.id === workingCase.prosecutor?.id &&
+    user?.id !== workingCase.indictmentApprover?.id &&
+    modal === 'noModal'
   const canDuplicateIndictment =
     isProsecutionUser(user) && isIndictmentWaitingForCancellation
   const userCanAddDocuments =
@@ -119,7 +141,44 @@ const Overview: FC = () => {
     return true
   }
 
+  const handleSendForReview = async () => {
+    if (!selectedApproverId) {
+      return
+    }
+
+    const updatedCase = await updateCase(workingCase.id, {
+      indictmentApproverId: selectedApproverId,
+    })
+
+    if (!updatedCase) {
+      return
+    }
+
+    const transitioned = await handleTransition(CaseTransition.ASK_FOR_REVIEW)
+
+    if (transitioned) {
+      setModal('caseSentForReviewModal')
+    }
+  }
+
+  const handleAcceptReview = async () => {
+    const transitioned = await handleTransition(CaseTransition.ACCEPT_REVIEW)
+
+    if (transitioned) {
+      router.push(getStandardUserDashboardRoute(user))
+    }
+  }
+
   const handleNextButtonClick = async () => {
+    if (userIsReviewer) {
+      if (reviewDecision === 'accept') {
+        setModal('caseReviewedModal')
+      } else if (reviewDecision === 'deny') {
+        setModal('reviewDeniedModal')
+      }
+      return
+    }
+
     let transitionType
     let modalType: typeof modal = 'noModal'
 
@@ -132,6 +191,10 @@ const Overview: FC = () => {
         transitionType = CaseTransition.ASK_FOR_CONFIRMATION
       }
     } else if (isIndictmentNew || isIndictmentSubmitted) {
+      if (wantsReview && isIndictmentNew) {
+        await handleSendForReview()
+        return
+      }
       transitionType = CaseTransition.ASK_FOR_CONFIRMATION
       modalType = 'caseSentForConfirmationModal'
     } else if (workingCase.state === CaseState.WAITING_FOR_CONFIRMATION) {
@@ -173,6 +236,16 @@ const Overview: FC = () => {
     router.push(getStandardUserDashboardRoute(user))
   }
 
+  const handleRecallReview = async () => {
+    const transitionSuccess = await handleTransition(CaseTransition.DENY_REVIEW)
+
+    if (!transitionSuccess) {
+      return
+    }
+
+    router.push(getStandardUserDashboardRoute(user))
+  }
+
   const footerActions: FormFooterAction[] = [
     ...(isIndictmentWaitingForCancellation
       ? []
@@ -188,12 +261,27 @@ const Overview: FC = () => {
     ...(isIndictmentReceived ||
     (isIndictmentWaitingForCancellation && !canDuplicateIndictment)
       ? []
+      : userCanRecallReview
+      ? [
+          {
+            text: 'Afturkalla yfirlestur',
+            onClick: () => setModal('recallReviewModal'),
+            loading: isTransitioningCase,
+            testId: 'recallReviewButton',
+          },
+        ]
+      : isIndictmentWaitingForReview && !userIsReviewer
+      ? []
       : [
           {
             text: canDuplicateIndictment
               ? 'Afrita mál í drög'
+              : userIsReviewer
+              ? formatMessage(core.continue)
               : userCanSendIndictmentToCourt
               ? formatMessage(core.continue)
+              : wantsReview && isIndictmentNew
+              ? 'Senda í yfirlestur'
               : formatMessage(strings.nextButtonText, {
                   isNewIndictment: isIndictmentNew,
                 }),
@@ -203,8 +291,11 @@ const Overview: FC = () => {
             onClick: canDuplicateIndictment
               ? () => setModal('duplicateIndictmentModal')
               : handleNextButtonClick,
-            disabled:
-              userCanSendIndictmentToCourt && !indictmentConfirmationDecision,
+            disabled: userIsReviewer
+              ? !reviewDecision
+              : wantsReview && isIndictmentNew
+              ? !selectedApproverId
+              : userCanSendIndictmentToCourt && !indictmentConfirmationDecision,
             loading: isTransitioningCase,
             testId: 'continueButton',
           },
@@ -230,6 +321,15 @@ const Overview: FC = () => {
             />
           </Box>
         )}
+        {workingCase.indictmentReviewReturnedExplanation && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title="Athugasemdir úr yfirlestri"
+              message={workingCase.indictmentReviewReturnedExplanation}
+              type="info"
+            />
+          </Box>
+        )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
@@ -243,6 +343,20 @@ const Overview: FC = () => {
             />
           </Box>
         )}
+        {isIndictmentWaitingForReview &&
+          user?.id !== workingCase.indictmentApprover?.id && (
+            <Box marginBottom={2}>
+              <AlertMessage
+                title="Ákæra bíður yfirlesturs"
+                message={
+                  workingCase.indictmentApprover?.name
+                    ? `Ákæran bíður yfirlesturs hjá ${workingCase.indictmentApprover.name}.`
+                    : 'Ákæran bíður yfirlesturs.'
+                }
+                type="info"
+              />
+            </Box>
+          )}
         {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
           <Box marginBottom={2}>
             <AlertMessage
@@ -281,9 +395,13 @@ const Overview: FC = () => {
           <Box component="section">
             <InfoCardActiveIndictment
               displayVerdictViewDate
-              onProsecutorClick={() => {
-                setModal('editProsecutor')
-              }}
+              onProsecutorClick={
+                userIsReviewer
+                  ? undefined
+                  : () => {
+                      setModal('editProsecutor')
+                    }
+              }
             />
           </Box>
           <AllIndictmentCaseFiles
@@ -302,6 +420,76 @@ const Overview: FC = () => {
               >
                 {formatMessage(strings.addDocumentsButtonText)}
               </Button>
+            </Box>
+          )}
+          {isIndictmentNew &&
+            !userCanSendIndictmentToCourt &&
+            !userIsReviewer &&
+            !isIndictmentWaitingForReview && (
+              <Box component="section">
+                <SectionHeading title="Yfirlestur" />
+                <BlueBox>
+                  <Box marginBottom={wantsReview ? 3 : 0}>
+                    <Checkbox
+                      name="wantsReview"
+                      label="Senda ákæru í yfirlestur"
+                      checked={wantsReview}
+                      onChange={(event) => {
+                        const checked = event.target.checked
+                        setWantsReview(checked)
+                        if (!checked) {
+                          setSelectedApproverId(undefined)
+                          setSelectedApproverName(undefined)
+                        }
+                      }}
+                      large
+                      filled
+                      backgroundColor="white"
+                    />
+                  </Box>
+                  {wantsReview && (
+                    <Box>
+                      <ProsecutorSelection
+                        label="Veldu aðila sem les yfir"
+                        placeholder="Veldu yfirlesara"
+                        isRequired={true}
+                        shouldInitializeSelector={true}
+                        excludeUserId={user?.id}
+                        onChange={(prosecutorId, prosecutorName) => {
+                          setSelectedApproverId(prosecutorId)
+                          setSelectedApproverName(prosecutorName)
+                        }}
+                      />
+                    </Box>
+                  )}
+                </BlueBox>
+              </Box>
+            )}
+          {userIsReviewer && (
+            <Box component="section">
+              <SectionHeading title="Niðurstaða yfirlesturs" required />
+              <BlueBox>
+                <div className={styles.gridRowEqual}>
+                  <RadioButton
+                    large
+                    name="reviewDecision"
+                    id="denyReview"
+                    backgroundColor="white"
+                    label="Senda ákæru til baka"
+                    checked={reviewDecision === 'deny'}
+                    onChange={() => setReviewDecision('deny')}
+                  />
+                  <RadioButton
+                    large
+                    name="reviewDecision"
+                    id="acceptReview"
+                    backgroundColor="white"
+                    label="Samþykkja ákæru"
+                    checked={reviewDecision === 'accept'}
+                    onChange={() => setReviewDecision('accept')}
+                  />
+                </div>
+              </BlueBox>
             </Box>
           )}
           {userCanSendIndictmentToCourt && (
@@ -336,15 +524,19 @@ const Overview: FC = () => {
               </BlueBox>
             </Box>
           )}
-          <Box component="section">
-            <InputPenalties />
-          </Box>
+          {!userIsReviewer && (
+            <Box component="section">
+              <InputPenalties />
+            </Box>
+          )}
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={
-            isIndictmentReceived || isIndictmentWaitingForCancellation
+            isIndictmentReceived ||
+            isIndictmentWaitingForCancellation ||
+            isIndictmentWaitingForReview
               ? getStandardUserDashboardRoute(user)
               : `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`
           }
@@ -386,6 +578,63 @@ const Overview: FC = () => {
                 onClick: () => {
                   router.push(getStandardUserDashboardRoute(user))
                 },
+              },
+            ]}
+          />
+        ) : modal === 'caseSentForReviewModal' ? (
+          <Modal
+            title="Ákæra hefur verið send í yfirlestur"
+            text={`${
+              selectedApproverName ?? workingCase.indictmentApprover?.name ?? ''
+            } fær tilkynningu um að lesa yfir ákæruna.`}
+            onClose={() => router.push(getStandardUserDashboardRoute(user))}
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => router.push(getStandardUserDashboardRoute(user)),
+              },
+            ]}
+          />
+        ) : modal === 'caseReviewedModal' ? (
+          <Modal
+            title="Samþykkja ákæru"
+            text="Ákæran verður send til staðfestingar hjá lögreglustjóra."
+            onClose={() => setModal('noModal')}
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setModal('noModal'),
+                variant: 'ghost',
+              },
+              {
+                text: 'Senda til staðfestingar',
+                onClick: handleAcceptReview,
+                isLoading: isTransitioningCase,
+              },
+            ]}
+          />
+        ) : modal === 'reviewDeniedModal' ? (
+          <ReturnIndictmentModal
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            onClose={() => setModal('noModal')}
+            onComplete={() => router.push(getStandardUserDashboardRoute(user))}
+          />
+        ) : modal === 'recallReviewModal' ? (
+          <Modal
+            title="Afturkalla yfirlestur"
+            text="Ákæran verður afturkölluð úr yfirlestri og færist aftur í drög."
+            onClose={() => setModal('noModal')}
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setModal('noModal'),
+                variant: 'ghost',
+              },
+              {
+                text: 'Afturkalla',
+                onClick: handleRecallReview,
+                isLoading: isTransitioningCase,
               },
             ]}
           />

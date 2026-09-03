@@ -326,6 +326,8 @@ const generateIndictmentCaseStateTag = (
     case CaseState.DRAFT:
     case CaseState.WAITING_FOR_CONFIRMATION:
       return generateCell({ color: 'red', text: 'Drög' }, 'A')
+    case CaseState.WAITING_FOR_REVIEW:
+      return generateCell({ color: 'blueberry', text: 'Í yfirlestri' }, 'AB')
     case CaseState.SUBMITTED:
       return generateCell(
         {

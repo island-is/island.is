@@ -126,6 +126,7 @@ type CaseStringKeys = keyof Pick<
   | 'civilDemands'
   | 'penalties'
   | 'reopenReason'
+  | 'indictmentReviewReturnedExplanation'
 >
 
 const caseStringTypes: Record<CaseStringKeys, StringType> = {
@@ -134,6 +135,8 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
   civilDemands: StringType.CIVIL_DEMANDS,
   penalties: StringType.PENALTIES,
   reopenReason: StringType.REOPEN_REASON,
+  indictmentReviewReturnedExplanation:
+    StringType.INDICTMENT_REVIEW_RETURNED_EXPLANATION,
 }
 
 // Files parties upload for an appeal - removed when the appeal case they belong
@@ -1009,6 +1012,46 @@ export class CaseService {
     })
   }
 
+  private addMessagesForReviewRequestedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_SENT_FOR_REVIEW,
+      },
+    })
+  }
+
+  private addMessagesForReviewDeniedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_REVIEW_DENIED },
+    })
+  }
+
+  private addMessagesForReviewAcceptedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_REVIEW_ACCEPTED,
+      },
+    })
+  }
+
   private addMessagesForReopenedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -1084,6 +1127,31 @@ export class CaseService {
         } else {
           this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
+      } else if (
+        updatedCase.state === CaseState.WAITING_FOR_REVIEW &&
+        theCase.state === CaseState.DRAFT &&
+        isIndictment
+      ) {
+        this.addMessagesForReviewRequestedIndictmentCaseToQueue(
+          updatedCase,
+          user,
+        )
+      } else if (
+        updatedCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
+        theCase.state === CaseState.WAITING_FOR_REVIEW &&
+        isIndictment
+      ) {
+        this.addMessagesForReviewAcceptedIndictmentCaseToQueue(
+          updatedCase,
+          user,
+        )
+      } else if (
+        updatedCase.state === CaseState.DRAFT &&
+        theCase.state === CaseState.WAITING_FOR_REVIEW &&
+        isIndictment &&
+        user.id === theCase.indictmentApproverId
+      ) {
+        this.addMessagesForReviewDeniedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.SUBMITTED && isIndictment) {
         this.addMessagesForSubmittedIndictmentCaseToQueue(updatedCase, user)
       } else if (
