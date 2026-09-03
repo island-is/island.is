@@ -18,6 +18,7 @@ import { useMemo } from 'react'
 import { useUserContractQuery } from './UserContract.generated'
 import { HmsRentalAgreementStatusType } from '@island.is/api/schema'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
+import { mapPropertyTypeToMessage } from '../../../utils/mapPropertyTypeToMessage'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
 const UserContract = () => {
@@ -51,10 +52,14 @@ const UserContract = () => {
     }
   }, [data?.hmsRentalAgreement?.status])
 
+  const propertyTypeMessage = mapPropertyTypeToMessage(
+    data?.hmsRentalAgreement?.contractProperty?.type,
+  )
+
   return (
     <IntroWrapper
       title={address ?? cm.contractsOverviewTitle}
-      intro={cm.contractDetailSubtitle}
+      intro={propertyTypeMessage ?? cm.contractDetailSubtitle}
       serviceProvider={{
         slug: HMS_SLUG,
         tooltip: formatMessage(m.rentalAgreementsTooltip),

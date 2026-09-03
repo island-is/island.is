@@ -28,7 +28,12 @@ export class HmsRentalAgreementService {
     hideInactiveAgreements = false,
     page?: number,
     pageSize?: number,
-  ): Promise<{ data: RentalAgreementDto[]; totalCount: number }> {
+  ): Promise<{
+    data: RentalAgreementDto[]
+    totalCount: number
+    page?: number
+    pageSize?: number
+  }> {
     const res = await this.apiWithAuth(user).contractGetRaw({
       page,
       pageSize,
@@ -41,11 +46,16 @@ export class HmsRentalAgreementService {
       ? Number(totalCountHeader)
       : contracts.length
 
+    const parsedPage = Number(res.raw.headers.get('x-page'))
+    const parsedPageSize = Number(res.raw.headers.get('x-page-size'))
+
     const data = contracts.map(mapRentalAgreementDto).filter(isDefined)
 
     return {
       data,
       totalCount: Number.isNaN(totalCount) ? data.length : totalCount,
+      page: Number.isNaN(parsedPage) ? undefined : parsedPage,
+      pageSize: Number.isNaN(parsedPageSize) ? undefined : parsedPageSize,
     }
   }
 
@@ -76,26 +86,6 @@ export class HmsRentalAgreementService {
     if (!res) {
       this.logger.warn('No rental agreement document found', {
         contractId,
-      })
-      return undefined
-    }
-
-    return mapContractDocumentItemDto(res) ?? undefined
-  }
-
-  async getRentalAgreementDocumentPdf(
-    user: User,
-    contractId: number,
-    documentId: number,
-  ): Promise<ContractDocumentItemDto | undefined> {
-    const res = await this.apiWithAuth(user)
-      .contractContractIdDocumentDocumentIdGet({ contractId, documentId })
-      .catch(handle404)
-
-    if (!res) {
-      this.logger.warn('No rental agreement document found', {
-        contractId,
-        documentId,
       })
       return undefined
     }

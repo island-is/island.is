@@ -7,7 +7,6 @@ import {
 } from '@nestjs/graphql'
 import { ContractParty } from './contractParty.model'
 import { ContractProperty } from './contractProperty.model'
-import { ContractDocument } from './contractDocument.model'
 
 export enum AgreementStatusType {
   VALID = 'valid',
@@ -83,9 +82,6 @@ export class RentalAgreement {
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   terminationDate?: Date
-
-  @Field(() => [ContractDocument], { nullable: true })
-  documents?: ContractDocument[]
 
   @Field({ nullable: true })
   latestDocumentDownloadUrl?: string

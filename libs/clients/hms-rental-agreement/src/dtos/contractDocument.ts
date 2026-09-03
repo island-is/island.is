@@ -2,7 +2,7 @@ import { type ContractDocumentItem } from '../../gen/fetch'
 
 export interface ContractDocumentItemDto {
   id: number
-  mime: string
+  mime?: string
   name: string
   document: string
 }
@@ -10,10 +10,10 @@ export interface ContractDocumentItemDto {
 export const mapContractDocumentItemDto = (
   data: ContractDocumentItem,
 ): ContractDocumentItemDto | null => {
-  if (!data.document) return null
+  if (!data.document || !data.contractDocumentId) return null
   return {
-    id: data.contractDocumentId ?? 0,
-    mime: data.documentMime ?? 'application/pdf',
+    id: data.contractDocumentId,
+    mime: data.documentMime ?? undefined,
     name: data.documentFilename ?? 'document.pdf',
     document: data.document,
   }

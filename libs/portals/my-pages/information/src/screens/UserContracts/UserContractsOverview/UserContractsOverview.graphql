@@ -1,9 +1,8 @@
-query UserContractsOverview($input: HmsGetRentalAgreementsInput) {
+query UserContractsOverview($input: HmsGetRentalAgreementsInput!) {
   hmsRentalAgreements(input: $input) {
     data {
       id
       status
-      contractType
       contractProperty {
         id
         propertyId
@@ -12,9 +11,6 @@ query UserContractsOverview($input: HmsGetRentalAgreementsInput) {
         municipality
         postalCode
       }
-    }
-    pageInfo {
-      hasNextPage
     }
     totalCount
   }

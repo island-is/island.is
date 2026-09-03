@@ -1,10 +1,6 @@
 import { type Contract } from '../../gen/fetch'
 import { type AgreementStatusType, type TemporalType } from '../types'
 import { isDefined } from '@island.is/shared/utils'
-import {
-  type ContractDocumentMetadataDto,
-  mapContractDocumentMetadataDto,
-} from './contractDocumentMetadata.dto'
 import { type ContractPartyDto, mapContractPartyDto } from './contractParty.dto'
 import {
   type ContractPropertyDto,
@@ -22,7 +18,6 @@ export interface RentalAgreementDto {
   contractType: TemporalType
   contractParty?: ContractPartyDto[]
   contractProperty?: ContractPropertyDto[]
-  documents?: ContractDocumentMetadataDto[]
   infoAvailable?: boolean
 }
 
@@ -51,10 +46,6 @@ export const mapRentalAgreementDto = (
     contractProperty:
       contract.contractProperty
         ?.map(mapContractPropertyDto)
-        .filter(isDefined) ?? undefined,
-    documents:
-      contract.contractDocument
-        ?.map(mapContractDocumentMetadataDto)
         .filter(isDefined) ?? undefined,
     infoAvailable: contract.infoAvailable ?? undefined,
   }

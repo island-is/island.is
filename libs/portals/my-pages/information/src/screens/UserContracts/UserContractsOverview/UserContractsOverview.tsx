@@ -17,11 +17,11 @@ import { Problem } from '@island.is/react-spa/shared'
 import { contractsMessages as cm } from '../../../lib/messages'
 import { useUserContractsOverviewQuery } from './UserContractsOverview.generated'
 import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
+import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
+import { mapPropertyTypeToMessage } from '../../../utils/mapPropertyTypeToMessage'
 import { InformationPaths } from '../../../lib/paths'
-import { isDefined } from '@island.is/shared/utils'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { HmsRentalAgreementPropertyType } from '@island.is/api/schema'
 
 const DEFAULT_PAGE_SIZE = 10
 const DEFAULT_PAGE_NUMBER = 1
@@ -105,13 +105,9 @@ const UserContractsOverview = () => {
             {data.hmsRentalAgreements.data
               .map((contract) => {
                 const { id, status, contractProperty } = contract
-                const address =
-                  contractProperty &&
-                  contractProperty.streetAndHouseNumber &&
-                  contractProperty.municipality &&
-                  contractProperty.postalCode
-                    ? `${contractProperty.streetAndHouseNumber}, ${contractProperty.postalCode} ${contractProperty.municipality}`
-                    : undefined
+                const address = generateRentalAgreementAddress(
+                  contractProperty ?? undefined,
+                )
 
                 const { message, ...restOfTag } = mapStatusTypeToTag(
                   status,
@@ -119,17 +115,12 @@ const UserContractsOverview = () => {
                   message: undefined,
                 }
 
-                const subText =
-                  contractProperty?.type ===
-                  HmsRentalAgreementPropertyType.RESIDENTIAL
-                    ? formatMessage(cm.typeResidential)
-                    : contractProperty?.type ===
-                      HmsRentalAgreementPropertyType.INDIVIDUAL_ROOM
-                    ? formatMessage(cm.typeIndividualRoom)
-                    : contractProperty?.type ===
-                      HmsRentalAgreementPropertyType.NONRESIDENTIAL
-                    ? formatMessage(cm.typeNonResidential)
-                    : undefined
+                const propertyTypeMessage = mapPropertyTypeToMessage(
+                  contractProperty?.type,
+                )
+                const subText = propertyTypeMessage
+                  ? formatMessage(propertyTypeMessage)
+                  : undefined
 
                 return (
                   <ActionCard
@@ -155,8 +146,7 @@ const UserContractsOverview = () => {
                     }
                   />
                 )
-              })
-              .filter(isDefined)}
+              })}
           </Stack>
           {(data.hmsRentalAgreements.totalCount ?? 0) > DEFAULT_PAGE_SIZE && (
             <Box marginTop={3}>

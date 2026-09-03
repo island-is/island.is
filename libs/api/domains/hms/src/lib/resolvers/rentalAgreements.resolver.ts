@@ -12,7 +12,6 @@ import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreeme
 import { RentalAgreement } from '../models/rentalAgreements/rentalAgreement.model'
 import { AGREEMENT_STATUS_ORDER } from '../constants'
 import { mapToRentalAgreement } from '../mappers'
-import { handle404 } from '@island.is/clients/middlewares'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -41,10 +40,15 @@ export class RentalAgreementsResolver {
   @Audit()
   async getRentalAgreements(
     @CurrentUser() user: User,
-    @Args('input', { nullable: true }) input?: GetRentalAgreementsInput,
+    @Args('input') input: GetRentalAgreementsInput,
   ): Promise<PaginatedRentalAgreementCollection> {
-    const { hideInactiveAgreements, page, pageSize } = input ?? {}
-    const { data: dtos, totalCount } = await this.service.getRentalAgreements(
+    const { hideInactiveAgreements, page, pageSize } = input
+    const {
+      data: dtos,
+      totalCount,
+      page: resolvedPage,
+      pageSize: resolvedPageSize,
+    } = await this.service.getRentalAgreements(
       user,
       hideInactiveAgreements,
       page,
@@ -63,8 +67,8 @@ export class RentalAgreementsResolver {
       totalCount,
       pageInfo: {
         hasNextPage:
-          page !== undefined && pageSize !== undefined
-            ? page * pageSize < totalCount
+          resolvedPage !== undefined && resolvedPageSize !== undefined
+            ? resolvedPage * resolvedPageSize < totalCount
             : false,
       },
     }
@@ -79,9 +83,7 @@ export class RentalAgreementsResolver {
     @CurrentUser() user: User,
     @Args('contractId', { type: () => ID }) contractId: string,
   ): Promise<RentalAgreement | undefined> {
-    const dto = await this.service
-      .getRentalAgreement(user, contractId)
-      .catch(handle404)
+    const dto = await this.service.getRentalAgreement(user, contractId)
 
     if (!dto) return undefined
 
@@ -91,10 +93,6 @@ export class RentalAgreementsResolver {
     return {
       ...mapped,
       latestDocumentDownloadUrl: dto.infoAvailable ? baseUrl : undefined,
-      documents: mapped.documents?.map((doc) => ({
-        ...doc,
-        downloadUrl: `${baseUrl}/${doc.id}`,
-      })),
     }
   }
 }
