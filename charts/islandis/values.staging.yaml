@@ -55,6 +55,7 @@ air-discount-scheme-backend:
       hostnames:
         - 'loftbru.staging01.devland.is'
         - 'loftbru-cf.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -1377,6 +1378,7 @@ download-service:
     primary-gw:
       hostnames:
         - 'api.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -1963,6 +1965,7 @@ payments:
     primary-gw:
       hostnames:
         - 'beta.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2234,6 +2237,7 @@ search-indexer-service:
     primary-gw:
       hostnames:
         - 'search-indexer-service.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2584,6 +2588,7 @@ services-bff-portals-admin:
     primary-gw:
       hostnames:
         - 'beta.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2672,6 +2677,7 @@ services-bff-portals-my-pages:
     primary-gw:
       hostnames:
         - 'beta.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
