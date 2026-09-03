@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Input, Select, toast } from '@island.is/island-ui/core'
+import { Box, Input, Select } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   getStandardUserDashboardRoute,
@@ -36,6 +36,7 @@ import {
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isRegistrationStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 const Registration: FC = () => {

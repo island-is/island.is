@@ -18,7 +18,6 @@ import {
   Box,
   FileUploadStatus,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import type {
   CrimeSceneMap,
@@ -41,6 +40,7 @@ import {
   useFileList,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useUpdateFilesMutation } from './updateFiles.generated'
 import { useUpdatePoliceDigitalCaseFilesMutation } from './updatePoliceDigitalCaseFiles.generated'

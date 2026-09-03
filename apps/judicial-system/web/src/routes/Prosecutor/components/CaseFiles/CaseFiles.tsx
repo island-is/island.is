@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { validate as validateUuid } from 'uuid'
 
-import { FileUploadStatus, Input, toast } from '@island.is/island-ui/core'
+import { FileUploadStatus, Input } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
@@ -43,6 +43,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
