@@ -7,7 +7,6 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import React from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useGetHealthTreatmentsOverviewQuery } from './TreatmentOverview.generated'
@@ -16,7 +15,7 @@ type UseParams = {
   id: string
 }
 
-const TreatmentOverview: React.FC = () => {
+const TreatmentOverview = () => {
   useNamespaces('sp.health')
 
   const { formatMessage } = useLocale()

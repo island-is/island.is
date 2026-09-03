@@ -7,13 +7,12 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import React from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetHealthTreatmentsOverviewQuery } from './TreatmentOverview.generated'
 
-const Treatments: React.FC = () => {
+const Treatments = () => {
   useNamespaces('sp.health')
 
   const { formatMessage } = useLocale()
