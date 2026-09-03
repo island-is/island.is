@@ -73,6 +73,7 @@ export {
   AppealCaseState,
   AppealCaseRulingDecision,
   AppealCaseTransition,
+  AppealCaseType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
   getStatementDeadline,

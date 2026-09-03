@@ -19,6 +19,7 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCaseType,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -793,6 +794,21 @@ export class Case extends Model {
   indictmentDeniedExplanation?: string
 
   /**********
+   * The surrogate key of the prosecutor assigned to proofread an indictment
+   **********/
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  indictmentApproverId?: string
+
+  /**********
+   * The prosecutor assigned to proofread an indictment before confirmation
+   **********/
+  @BelongsTo(() => User, 'indictmentApproverId')
+  @ApiPropertyOptional({ type: User })
+  indictmentApprover?: User
+
+  /**********
    * The case's notifications
    **********/
   @HasMany(() => Notification, 'caseId')
@@ -962,12 +978,18 @@ export class Case extends Model {
   /**********
    * The case's case-level appeal record (the appeal of the case as a whole).
    * Scoped to rows with no ruling_file_id so ruling-order appeals don't
-   * collide with the HasOne cardinality.
+   * collide with the HasOne cardinality, and to kæra so an áfrýjun - which is
+   * also case-level, and so also has no ruling_file_id - does not collide with
+   * it either. Sequelize applies an association scope to every include of this
+   * alias, which is what keeps áfrýjun out of the case tables, the case views
+   * and the appeal banner without each of them having to filter for it. When
+   * Landsréttur starts handling áfrýjun, it reads its own association rather
+   * than widening this one.
    **********/
   @HasOne(() => AppealCase, {
     foreignKey: 'caseId',
     as: 'appealCase',
-    scope: { rulingFileId: null },
+    scope: { rulingFileId: null, appealType: AppealCaseType.RULING },
   })
   @ApiPropertyOptional({ type: () => AppealCase })
   appealCase?: AppealCase
