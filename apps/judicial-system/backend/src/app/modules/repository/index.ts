@@ -99,6 +99,7 @@ export {
 
 export {
   caseInclude,
+  CreateAppealCase,
   UpdateAppealCase,
   UpdateCase,
   UpdateDefendant,
