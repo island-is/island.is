@@ -914,11 +914,8 @@ export const en: TranslatedMessages = {
   'health.messages.compose.to': 'To: {name}',
   'health.messages.compose.messageLabel': 'Message',
   'health.messages.compose.messagePlaceholder': 'Write your message here',
-  'health.messages.compose.termsAccept': 'I accept the',
-  'health.messages.compose.termsLink': 'terms',
-  'health.messages.compose.termsTitle': 'Terms for messages',
-  'health.messages.compose.termsBody':
-    '- Messages are answered during opening hours, usually within three business days\n- Messages and replies are automatically saved to your medical record\n- The type of message determines who answers your inquiry\n- A healthcare professional will have access to your medical record to answer your inquiry',
+  'health.messages.compose.termsAccept':
+    'I agree that the message will be saved to my medical record and that the appropriate healthcare professional with access to it will answer the inquiry.',
   'health.messages.compose.availabilityWindow':
     '{name} accepts messages every day from {openTime} to {closeTime}.',
   'health.messages.compose.availabilityInfo':

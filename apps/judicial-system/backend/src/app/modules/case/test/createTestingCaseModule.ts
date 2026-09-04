@@ -33,7 +33,7 @@ import {
   CaseArchiveRepositoryService,
   CaseRepositoryService,
   CaseString,
-  DateLog,
+  DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
@@ -75,6 +75,7 @@ jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock('../../repository/services/dateLogRepository.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
 jest.mock('../../repository/services/policeDigitalCaseFileRepository.service')
@@ -111,6 +112,7 @@ export const createTestingCaseModule = async () => {
       AppealEventLogRepositoryService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
+      DateLogRepositoryService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
       PoliceDigitalCaseFileRepositoryService,
@@ -135,13 +137,6 @@ export const createTestingCaseModule = async () => {
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
-      {
-        provide: getModelToken(DateLog),
-        useValue: {
-          create: jest.fn(),
-          findOne: jest.fn(),
-        },
-      },
       {
         provide: getModelToken(CaseString),
         useValue: {
@@ -236,7 +231,9 @@ export const createTestingCaseModule = async () => {
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
 
-  const dateLogModel = caseModule.get<typeof DateLog>(getModelToken(DateLog))
+  const dateLogRepositoryService = caseModule.get<DateLogRepositoryService>(
+    DateLogRepositoryService,
+  )
 
   const caseStringModel = caseModule.get<typeof CaseString>(
     getModelToken(CaseString),
@@ -296,7 +293,7 @@ export const createTestingCaseModule = async () => {
     policeDigitalCaseFileRepositoryService,
     logger,
     sequelize,
-    dateLogModel,
+    dateLogRepositoryService,
     caseStringModel,
     caseConfig,
     caseService,
