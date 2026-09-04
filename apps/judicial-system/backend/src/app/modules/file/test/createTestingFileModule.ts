@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended'
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { IntlService } from '@island.is/cms-translations'
@@ -22,7 +21,7 @@ import {
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
-import { CaseFile } from '../../repository'
+import { CaseFileRepositoryService } from '../../repository'
 import { fileModuleConfig } from '../file.config'
 import { FileController } from '../file.controller'
 import { FileService } from '../file.service'
@@ -73,13 +72,16 @@ export const createTestingFileModule = async () => {
         },
       },
       {
-        provide: getModelToken(CaseFile),
+        provide: CaseFileRepositoryService,
         useValue: {
+          findLiveByIdAndCase: jest.fn(),
+          findByCaseAndPoliceFileId: jest.fn(),
+          getNextOrderWithinChapterForUpdate: jest.fn().mockResolvedValue(null),
           create: jest.fn(),
-          findAll: jest.fn(),
-          findOne: jest.fn(),
-          update: jest.fn(),
-          max: jest.fn().mockResolvedValue(null),
+          updateById: jest.fn(),
+          updateByIdAndCase: jest.fn(),
+          updateByIdAndCaseWithoutDocument: jest.fn(),
+          resetStoredInCourtFilesForCase: jest.fn(),
         },
       },
       FileService,
@@ -99,8 +101,8 @@ export const createTestingFileModule = async () => {
 
   const courtService = fileModule.get<CourtService>(CourtService)
 
-  const fileModel = await fileModule.resolve<typeof CaseFile>(
-    getModelToken(CaseFile),
+  const caseFileRepositoryService = fileModule.get<CaseFileRepositoryService>(
+    CaseFileRepositoryService,
   )
 
   const fileConfig = fileModule.get<ConfigType<typeof fileModuleConfig>>(
@@ -134,7 +136,7 @@ export const createTestingFileModule = async () => {
     messageService,
     awsS3Service,
     courtService,
-    fileModel,
+    caseFileRepositoryService,
     fileConfig,
     fileService,
     fileController,
