@@ -1,3 +1,4 @@
+import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   DetailedDropDownDto,
@@ -17,9 +18,6 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
     private readonly externalDropdownApi: ExternalDropdownApi,
     private readonly externalNotificationApi: ExternalNotificationApi,
   ) {}
-
-  private externalDropdownApiWithAuth = (user: User) =>
-    this.externalDropdownApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   private externalNotificationApiWithAuth = (user: User) =>
     this.externalNotificationApi.withMiddleware(
