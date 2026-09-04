@@ -189,6 +189,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     }
     indictmentDecision
     indictmentDeniedExplanation
+    indictmentReviewReturnedExplanation
     mergeCase {
       id
     }

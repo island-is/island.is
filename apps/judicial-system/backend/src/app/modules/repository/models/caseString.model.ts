@@ -44,6 +44,14 @@ export class CaseString extends Model {
     )?.value
   }
 
+  static indictmentReviewReturnedExplanation(caseStrings?: CaseString[]) {
+    return caseStrings?.find(
+      (caseString) =>
+        caseString.stringType ===
+        StringType.INDICTMENT_REVIEW_RETURNED_EXPLANATION,
+    )?.value
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
