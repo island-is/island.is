@@ -6,7 +6,7 @@ on:
         description: 'Runner scale-set label to run on'
         required: false
         type: string
-        default: arc-shared
+        default: arc-mergequeue
       e2e_build_id:
         description: 'Build ID'
         required: false
