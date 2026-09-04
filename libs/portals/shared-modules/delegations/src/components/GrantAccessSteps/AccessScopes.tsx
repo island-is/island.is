@@ -1,5 +1,6 @@
 import { VIRTUAL_MUNICIPALITY_TAG_ID } from '../../constants/domain'
 import { useQuery } from '@apollo/client'
+import type { MessageDescriptor } from 'react-intl'
 import {
   AuthScopeCategoriesDocument,
   AuthScopeCategoriesQuery,
@@ -8,11 +9,12 @@ import {
 } from '../../screens/ServiceCategories/ServiceCategories.generated'
 import { useLocale } from '@island.is/localization'
 import { ScopesCategoriesList } from '../ScopesCategoriesList'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as styles from './GrantAccessSteps.css'
 
 import { AuthApiScope, AuthDelegationDirection } from '@island.is/api/schema'
 import {
+  AlertMessage,
   Box,
   Filter,
   FilterMultiChoice,
@@ -28,7 +30,12 @@ import add from 'date-fns/add'
 import { useAuthDomainsQuery } from '../../hooks/useDomains/useDomains.generated'
 import { RecipientsTag } from '../RecipientsTag'
 
-export const AccessScopes = () => {
+export const AccessScopes = ({
+  // The request flow asks which permissions to request, not grant.
+  title = m.choosePermissionsTitle,
+}: {
+  title?: MessageDescriptor
+} = {}) => {
   const { lang } = useLocale()
   const { formatMessage } = useLocale()
   const [searchQuery, setSearchQuery] = useState('')
@@ -53,8 +60,66 @@ export const AccessScopes = () => {
       variables: { lang, direction: AuthDelegationDirection.outgoing },
     },
   )
-  const { selectedScopes, setSelectedScopes } = useDelegationForm()
+  const { selectedScopes, setSelectedScopes, requestedScopeNames } =
+    useDelegationForm()
   const defaultDate = add(new Date(), { years: 1 })
+
+  // Flat list of every scope the current user is allowed to grant. Used to
+  // pre-select scopes coming from an approved delegation request.
+  const allGrantableScopes = useMemo(() => {
+    const byName = new Map<string, AuthApiScope>()
+    for (const category of categoriesData?.authScopeCategories ?? []) {
+      for (const scope of category.scopes) {
+        byName.set(scope.name, scope as AuthApiScope)
+      }
+    }
+    for (const tag of tagsData?.authScopeTags ?? []) {
+      for (const scope of tag.scopes) {
+        byName.set(scope.name, scope as AuthApiScope)
+      }
+    }
+    return byName
+  }, [categoriesData, tagsData])
+
+  // Pre-select requested scopes once the grantable scope list has loaded.
+  // Runs once per set of requested scope names.
+  const preselectDoneRef = useRef(false)
+  useEffect(() => {
+    if (
+      !requestedScopeNames ||
+      requestedScopeNames.length === 0 ||
+      preselectDoneRef.current ||
+      allGrantableScopes.size === 0
+    ) {
+      return
+    }
+
+    const scopesToAdd = requestedScopeNames
+      .map((name) => allGrantableScopes.get(name))
+      .filter((scope): scope is AuthApiScope => Boolean(scope))
+      .map((scope) => ({ ...scope, validTo: defaultDate }))
+
+    if (scopesToAdd.length > 0) {
+      setSelectedScopes((prev) => {
+        const existingNames = new Set(prev.map((s) => s.name))
+        return [
+          ...prev,
+          ...scopesToAdd.filter((s) => !existingNames.has(s.name)),
+        ]
+      })
+    }
+    preselectDoneRef.current = true
+    // defaultDate intentionally excluded so the effect isn't re-triggered each render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestedScopeNames, allGrantableScopes, setSelectedScopes])
+
+  // Requested scope names that the current user cannot grant.
+  const notGrantableScopeNames = useMemo(() => {
+    if (!requestedScopeNames || allGrantableScopes.size === 0) {
+      return []
+    }
+    return requestedScopeNames.filter((name) => !allGrantableScopes.has(name))
+  }, [requestedScopeNames, allGrantableScopes])
 
   const { data: domainsData } = useAuthDomainsQuery({
     variables: {
@@ -171,9 +236,19 @@ export const AccessScopes = () => {
   return (
     <Box display="flex" flexDirection="column" alignItems="flexStart">
       <Text variant="h3" marginBottom={2}>
-        {formatMessage(m.choosePermissionsTitle)}
+        {formatMessage(title)}
       </Text>
       <RecipientsTag />
+      {notGrantableScopeNames.length > 0 && (
+        <Box width="full" marginBottom={2}>
+          <AlertMessage
+            type="info"
+            message={formatMessage(m.requestScopesNotGrantable, {
+              scopes: notGrantableScopeNames.join(', '),
+            })}
+          />
+        </Box>
+      )}
       <Box
         display="flex"
         columnGap={[0, 2]}

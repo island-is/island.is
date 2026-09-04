@@ -8,6 +8,7 @@ import { useDelegationForm } from '../../context'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationPaths } from '../../lib/paths'
 import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
+import { useFulfillAuthDelegationRequestMutation } from '../delegationRequests/DelegationRequests.generated'
 import { useNavigate } from 'react-router-dom'
 import * as styles from './Modals.css'
 import { useWindowSize } from 'react-use'
@@ -34,10 +35,12 @@ export const ConfirmAccessModal = ({
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { identities, selectedScopes } = useDelegationForm()
+  const { identities, selectedScopes, pendingRequestId, setPendingRequestId } =
+    useDelegationForm()
 
   const [createAuthDelegations, { loading: mutationLoading }] =
     useCreateAuthDelegationsMutation()
+  const [fulfillDelegationRequest] = useFulfillAuthDelegationRequestMutation()
 
   const handleConfirm = () => {
     if (onConfirm) {
@@ -66,7 +69,29 @@ export const ConfirmAccessModal = ({
           },
         },
       })
-        .then(() => {
+        .then(async (result) => {
+          // If this grant originated from an approved delegation request,
+          // link the newly created delegation back to that request.
+          const createdDelegationId =
+            result.data?.createAuthDelegations?.[0]?.id
+          if (pendingRequestId && createdDelegationId) {
+            try {
+              await fulfillDelegationRequest({
+                variables: {
+                  input: {
+                    requestId: pendingRequestId,
+                    delegationId: createdDelegationId,
+                  },
+                },
+              })
+            } catch {
+              // The delegation was created successfully; failing to link the
+              // request should not block the user. Surface a soft error.
+              toast.error(formatMessage(m.confirmError))
+            } finally {
+              setPendingRequestId(undefined)
+            }
+          }
           navigate(DelegationPaths.DelegationsNew)
         })
         .catch(() => {
