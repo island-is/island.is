@@ -1,4 +1,6 @@
-import { FormSystemField } from '@island.is/api/schema'
+import { useQuery } from '@apollo/client'
+import { FormSystemField, PaymentCatalogItem } from '@island.is/api/schema'
+import { GET_PAYMENT_CATALOG } from '@island.is/form-system/graphql'
 import {
   FieldTypesEnum,
   getValue,
@@ -21,6 +23,16 @@ import { useApplicationContext } from '../../../../context/ApplicationProvider'
 export const Payment = () => {
   const { formatMessage } = useLocale()
   const { state } = useApplicationContext()
+  const organizationNationalId = state.application.organizationNationalId ?? ''
+  const { data } = useQuery(GET_PAYMENT_CATALOG, {
+    variables: {
+      input: {
+        performingOrganizationID: organizationNationalId,
+      },
+    },
+    skip: !organizationNationalId,
+    fetchPolicy: 'network-only',
+  })
   const isPaymentSection =
     state.sections?.[state.currentSection.index]?.sectionType ===
     SectionTypes.PAYMENT
@@ -41,6 +53,28 @@ export const Payment = () => {
   const convertToPaymentNumber = (value: number): string => {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
   }
+
+  const paymentCatalogItems = data?.paymentCatalog?.items ?? []
+
+  const getPaymentCatalogItem = (field?: FormSystemField | null) => {
+    return paymentCatalogItems.find(
+      (item: PaymentCatalogItem) =>
+        item.chargeItemCode === field?.fieldSettings?.chargeItemCode,
+    )
+  }
+
+  const getPriceAmount = (field?: FormSystemField | null) => {
+    return Number(getPaymentCatalogItem(field)?.priceAmount ?? 0)
+  }
+
+  const getChargeItemName = (field?: FormSystemField | null) => {
+    return (
+      getPaymentCatalogItem(field)?.chargeItemName ??
+      field?.fieldSettings?.chargeItemName ??
+      ''
+    )
+  }
+
   const getQuantity = (field?: FormSystemField | null) => {
     const quantityField = paymentQuantityFields?.find(
       (f) => f?.id === field?.fieldSettings?.paymentQuantityId,
@@ -51,7 +85,7 @@ export const Payment = () => {
 
   const total = paymentFields.reduce((sum, field) => {
     const quantity = getQuantity(field)
-    const price = Number(field?.fieldSettings?.priceAmount ?? 0)
+    const price = getPriceAmount(field)
 
     return sum + price * quantity
   }, 0)
@@ -68,16 +102,12 @@ export const Payment = () => {
     const quantity = getQuantity(field)
     const priceString =
       quantity > 1
-        ? `${quantity} x ${convertToPaymentNumber(
-            Number(field?.fieldSettings?.priceAmount ?? 0),
-          )} kr.`
-        : `${convertToPaymentNumber(
-            Number(field?.fieldSettings?.priceAmount ?? 0),
-          )} kr.`
+        ? `${quantity} x ${convertToPaymentNumber(getPriceAmount(field))} kr.`
+        : `${convertToPaymentNumber(getPriceAmount(field))} kr.`
 
     return (
       <Box key={index} display="flex" justifyContent="spaceBetween">
-        <Text>{field?.fieldSettings?.chargeItemName ?? ''}</Text>
+        <Text>{getChargeItemName(field)}</Text>
         <Text>{priceString}</Text>
       </Box>
     )
@@ -93,15 +123,10 @@ export const Payment = () => {
     const quantity = getQuantity(field)
     return (
       <Stack key={index} space={1}>
-        <Text variant="h5">{field?.fieldSettings?.chargeItemName ?? ''}</Text>
+        <Text variant="h5">{getChargeItemName(field)}</Text>
         <Inline justifyContent="spaceBetween">
           <Text>{formatMessage(m.price)}</Text>
-          <Text>
-            {convertToPaymentNumber(
-              Number(field?.fieldSettings?.priceAmount ?? 0),
-            )}{' '}
-            kr.
-          </Text>
+          <Text>{convertToPaymentNumber(getPriceAmount(field))} kr.</Text>
         </Inline>
         <Inline justifyContent="spaceBetween">
           <Text>{formatMessage(m.quantity)}</Text>

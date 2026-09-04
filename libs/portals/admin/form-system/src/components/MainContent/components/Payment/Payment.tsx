@@ -13,7 +13,7 @@ import {
   LoadingDots,
   Stack,
 } from '@island.is/island-ui/core'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { PaymentItem } from './components/PaymentItem'
 
@@ -31,13 +31,45 @@ export const Payment = () => {
     fields?.filter((f) => f?.screenId === paymentScreen?.id) || []
 
   const createField = useMutation(CREATE_FIELD)
-  const { data, loading } = useQuery(GET_PAYMENT_CATALOG, {
+  const { data, loading, error } = useQuery(GET_PAYMENT_CATALOG, {
     variables: {
       input: {
         performingOrganizationID: control.organizationNationalId,
       },
     },
+    skip: !control.organizationNationalId,
   })
+
+  const paymentCatalog = data?.paymentCatalog?.items || []
+
+  useEffect(() => {
+    if (error) {
+      console.error('GET_PAYMENT_CATALOG failed', {
+        organizationNationalId: control.organizationNationalId,
+        error,
+      })
+    }
+  }, [control.organizationNationalId, error])
+
+  useEffect(() => {
+    if (
+      control.organizationNationalId &&
+      !loading &&
+      !error &&
+      paymentCatalog.length === 0
+    ) {
+      console.warn('GET_PAYMENT_CATALOG returned an empty catalog', {
+        organizationNationalId: control.organizationNationalId,
+        data,
+      })
+    }
+  }, [
+    control.organizationNationalId,
+    data,
+    error,
+    loading,
+    paymentCatalog.length,
+  ])
 
   if (loading) {
     return (
@@ -54,7 +86,6 @@ export const Payment = () => {
     )
   }
 
-  const paymentCatalog = data?.paymentCatalog?.items || []
   const catalogNames = paymentCatalog.map((item: PaymentCatalogItem) => {
     return {
       label: `${item.chargeItemCode} - ${item.chargeItemName}`,

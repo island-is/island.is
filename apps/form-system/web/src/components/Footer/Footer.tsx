@@ -1,8 +1,13 @@
-import { useMutation } from '@apollo/client'
-import { FormSystemField, FormSystemSection } from '@island.is/api/schema'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import {
+  FormSystemField,
+  FormSystemSection,
+  PaymentCatalogItem,
+} from '@island.is/api/schema'
 import { NotificationCommands } from '@island.is/form-system/enums'
 import {
   CREATE_PAYMENT,
+  GET_PAYMENT_CATALOG,
   NOTIFY_EXTERNAL_SERVICE,
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
@@ -86,6 +91,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   )
   const [createPayment, { loading: paymentLoading }] =
     useMutation(CREATE_PAYMENT)
+  const [getPaymentCatalog, { loading: paymentCatalogLoading }] = useLazyQuery(
+    GET_PAYMENT_CATALOG,
+    {
+      fetchPolicy: 'network-only',
+    },
+  )
+  const isPaymentLoading = paymentLoading || paymentCatalogLoading
 
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
@@ -222,7 +234,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   }
 
   const handleIncrement = async () => {
-    if (paymentLoading) return
+    if (isPaymentLoading) return
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
 
@@ -238,6 +250,17 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
 
     if (shouldShowPay) {
+      const performingOrganizationID =
+        state.application.organizationNationalId ?? ''
+      const { data: paymentCatalogData } = await getPaymentCatalog({
+        variables: {
+          input: {
+            performingOrganizationID,
+          },
+        },
+      })
+      const paymentCatalogItems =
+        paymentCatalogData?.paymentCatalog?.items ?? []
       const chargeItems: {
         performingOrgID: string
         chargeType: string
@@ -271,9 +294,10 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             .forEach((field) => {
               if (field?.fieldSettings?.chargeItemCode) {
                 const code = field.fieldSettings.chargeItemCode
+                const paymentCatalogItem = paymentCatalogItems.find(
+                  (item: PaymentCatalogItem) => item.chargeItemCode === code,
+                )
                 let quantity: number | undefined = 1
-                const amount: number | undefined = field.fieldSettings
-                  .priceAmount as number | undefined
                 if (field.fieldSettings.paymentQuantityId) {
                   const quantityField = paymentQuantityFields.find(
                     (f) => f.id === field?.fieldSettings?.paymentQuantityId,
@@ -284,12 +308,18 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 }
                 chargeItems.push({
                   performingOrgID:
-                    state.application.organizationNationalId ?? '',
-                  chargeType: field.fieldSettings.chargeType || 'default',
+                    paymentCatalogItem?.performingOrgID ||
+                    performingOrganizationID,
+                  chargeType:
+                    paymentCatalogItem?.chargeType ||
+                    field.fieldSettings.chargeType ||
+                    'default',
                   chargeItemCode: code,
                   chargeItemName:
-                    field.fieldSettings.chargeItemName || 'Default Name',
-                  priceAmount: amount || 0,
+                    paymentCatalogItem?.chargeItemName ||
+                    field.fieldSettings.chargeItemName ||
+                    'Default Name',
+                  priceAmount: Number(paymentCatalogItem?.priceAmount ?? 0),
                   quantity,
                 })
               }
@@ -301,8 +331,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           input: {
             applicationId: state.application.id,
             createChargeRequestDto: {
-              performingOrganizationID:
-                state.application.organizationNationalId ?? '',
+              performingOrganizationID,
               chargeItems,
             },
           },
@@ -434,13 +463,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               onClick={handleIncrement}
               disabled={
                 !enableContinueButton ||
-                paymentLoading ||
+                isPaymentLoading ||
                 submitLoading ||
                 saveLoading ||
                 notifyLoading ||
                 (onSubmit && state.isValid === false)
               }
-              loading={submitLoading || notifyLoading || paymentLoading}
+              loading={submitLoading || notifyLoading || isPaymentLoading}
             >
               {shouldShowPay ? formatMessage(m.pay) : continueButtonText}
             </Button>
@@ -454,7 +483,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 disabled={
                   submitLoading ||
                   notifyLoading ||
-                  paymentLoading ||
+                  isPaymentLoading ||
                   saveLoading
                 }
               >
