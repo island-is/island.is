@@ -48,6 +48,19 @@ registerEnumType(TemporalType, {
   name: 'HmsRentalAgreementTemporalType',
 })
 
+export enum RentalAgreementSortOrder {
+  NEW_OLD = 'newOld',
+  OLD_NEW = 'oldNew',
+  AMOUNT_HIGH_LOW = 'amountHighLow',
+  AMOUNT_LOW_HIGH = 'amountLowHigh',
+  STATUS_ACTIVE_FIRST = 'statusActiveFirst',
+  STATUS_ACTIVE_LAST = 'statusActiveLast',
+}
+
+registerEnumType(RentalAgreementSortOrder, {
+  name: 'HmsRentalAgreementSortOrder',
+})
+
 @ObjectType('HmsRentalAgreement')
 export class RentalAgreement {
   @Field(() => ID)

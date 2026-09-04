@@ -14,6 +14,7 @@ import {
   HMS_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { HmsRentalAgreementSortOrder } from '@island.is/api/schema'
 import { contractsMessages as cm } from '../../../lib/messages'
 import { useUserContractsOverviewQuery } from './UserContractsOverview.generated'
 import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
@@ -25,6 +26,7 @@ import { useNavigate } from 'react-router-dom'
 
 const DEFAULT_PAGE_SIZE = 10
 const DEFAULT_PAGE_NUMBER = 1
+const CONTRACTS_SORT_ORDER = HmsRentalAgreementSortOrder.STATUS_ACTIVE_FIRST
 
 const UserContractsOverview = () => {
   useNamespaces('sp.contracts')
@@ -41,6 +43,7 @@ const UserContractsOverview = () => {
         hideInactiveAgreements: hideInactiveContracts,
         page,
         pageSize: DEFAULT_PAGE_SIZE,
+        sort: CONTRACTS_SORT_ORDER,
       },
     },
   })

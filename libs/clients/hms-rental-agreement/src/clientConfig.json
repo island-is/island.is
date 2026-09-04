@@ -19,6 +19,8 @@
     "/contract": {
       "post": {
         "tags": ["Home"],
+        "summary": "Creates a new contract based on the provided lease application data.",
+        "description": "This endpoint expects a JSON payload containing lease application details.\nIt generates a PDF for the contract, sends it to the Taktikal signing service, and saves the rental agreement in the database.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -41,16 +43,24 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Contract successfully created."
+          },
+          "400": {
+            "description": "Invalid JSON payload."
+          },
+          "500": {
+            "description": "Internal server error, such as missing environment variables or database issues."
           }
         }
       },
       "get": {
         "tags": ["Home"],
+        "summary": "Gets the rental contracts for the authenticated user.",
         "parameters": [
           {
             "name": "page",
             "in": "query",
+            "description": "1-based page number. Default 1.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -59,6 +69,7 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Items per page (max 100). Default 20.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -67,6 +78,7 @@
           {
             "name": "excludeInactive",
             "in": "query",
+            "description": "If true, only contracts with status STATUSVALID are returned.",
             "schema": {
               "type": "boolean",
               "default": false
@@ -75,8 +87,9 @@
           {
             "name": "sort",
             "in": "query",
+            "description": "Sort order (default NewOld).",
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/ContractSortOrder"
             }
           }
         ],
@@ -146,6 +159,8 @@
     "/webhook/manual": {
       "post": {
         "tags": ["Home"],
+        "summary": "Retry endpoint for manually triggering webhook processing for rental agreements.\nRequires API key in header\nIs IP whitelisted using ip list from environment variable \"MANUAL_WEBHOOK_WHITELISTED_IPS\".",
+        "description": "Security requirements:\n- API key in header (\"API-Key\")",
         "requestBody": {
           "content": {
             "application/json": {
@@ -168,7 +183,16 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Webhook processed successfully."
+          },
+          "400": {
+            "description": "Bad request (e.g., missing or invalid data)."
+          },
+          "401": {
+            "description": "Unauthorized (missing or invalid API key, JWT, or IP not whitelisted)."
+          },
+          "500": {
+            "description": "Internal server error (e.g., missing environment variables)."
           }
         }
       }
@@ -176,10 +200,12 @@
     "/contract/with-documents": {
       "get": {
         "tags": ["Home"],
+        "summary": "Gets the rental contracts (including documents) for the authenticated user.",
         "parameters": [
           {
             "name": "page",
             "in": "query",
+            "description": "1-based page number. Default 1.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -188,6 +214,7 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Items per page (max 20, lower than the plain list endpoints since each contract requires an extra document fetch). Default 20.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -196,6 +223,7 @@
           {
             "name": "excludeInactive",
             "in": "query",
+            "description": "If true, only contracts with status STATUSVALID are returned.",
             "schema": {
               "type": "boolean",
               "default": false
@@ -204,8 +232,9 @@
           {
             "name": "sort",
             "in": "query",
+            "description": "Sort order (default NewOld).",
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/ContractSortOrder"
             }
           }
         ],
@@ -245,10 +274,12 @@
     "/contract/kt/{kt}": {
       "get": {
         "tags": ["Home"],
+        "summary": "Gets the rental contracts for the given kennitala.",
         "parameters": [
           {
             "name": "kt",
             "in": "path",
+            "description": "Kennitala (national ID) to fetch contracts for.",
             "required": true,
             "schema": {
               "type": "string"
@@ -257,6 +288,7 @@
           {
             "name": "page",
             "in": "query",
+            "description": "1-based page number. Default 1.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -265,6 +297,7 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Items per page (max 100). Default 20.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -273,6 +306,7 @@
           {
             "name": "excludeInactive",
             "in": "query",
+            "description": "If true, only contracts with status STATUSVALID are returned.",
             "schema": {
               "type": "boolean",
               "default": false
@@ -281,8 +315,9 @@
           {
             "name": "sort",
             "in": "query",
+            "description": "Sort order (default NewOld).",
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/ContractSortOrder"
             }
           }
         ],
@@ -322,10 +357,12 @@
     "/contract/kt/{kt}/with-documents": {
       "get": {
         "tags": ["Home"],
+        "summary": "Gets the rental contracts (including documents) for the given kennitala.",
         "parameters": [
           {
             "name": "kt",
             "in": "path",
+            "description": "Kennitala (national ID) to fetch contracts for.",
             "required": true,
             "schema": {
               "type": "string"
@@ -334,6 +371,7 @@
           {
             "name": "page",
             "in": "query",
+            "description": "1-based page number. Default 1.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -342,6 +380,7 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Items per page (max 20, lower than the plain list endpoints since each contract requires an extra document fetch). Default 20.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -350,6 +389,7 @@
           {
             "name": "excludeInactive",
             "in": "query",
+            "description": "If true, only contracts with status STATUSVALID are returned.",
             "schema": {
               "type": "boolean",
               "default": false
@@ -358,8 +398,9 @@
           {
             "name": "sort",
             "in": "query",
+            "description": "Sort order (default NewOld).",
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/ContractSortOrder"
             }
           }
         ],
@@ -473,10 +514,12 @@
     "/contract/{contractId}/document/{documentId}": {
       "get": {
         "tags": ["Home"],
+        "summary": "Gets a contract document by its ID.",
         "parameters": [
           {
             "name": "documentId",
             "in": "path",
+            "description": "The document ID.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -486,6 +529,7 @@
           {
             "name": "contractId",
             "in": "path",
+            "description": "The contract ID (required for authorization - must be provided to verify user access).",
             "required": true,
             "schema": {
               "type": "integer",
@@ -616,10 +660,12 @@
     "/contract/{contractId}/latest-pdf": {
       "get": {
         "tags": ["Home"],
+        "summary": "Returns the PDF document with the most recent document_last_date for a contract created via island.is (organisation contains \"Kolibri\").\nReturns an Icelandic error message if the contract was not created via island.is.",
         "parameters": [
           {
             "name": "contractId",
             "in": "path",
+            "description": "The RCR contract ID.",
             "required": true,
             "schema": {
               "type": "string"
@@ -1592,6 +1638,17 @@
         },
         "additionalProperties": false
       },
+      "ContractSortOrder": {
+        "enum": [
+          "NewOld",
+          "OldNew",
+          "AmountHighLow",
+          "AmountLowHigh",
+          "StatusActiveFirst",
+          "StatusActiveLast"
+        ],
+        "type": "string"
+      },
       "ContractWithDocuments": {
         "type": "object",
         "properties": {
@@ -1751,29 +1808,34 @@
         "properties": {
           "applicationId": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "Unique identifier for the lease application."
           },
           "initiatorNationalId": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "National ID of the person initiating the lease application."
           },
           "landlords": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Person"
-            }
+            },
+            "description": "List of landlords involved in the lease."
           },
           "tenants": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Person"
-            }
+            },
+            "description": "List of tenants involved in the lease."
           },
           "signingParties": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Person"
             },
+            "description": "List of people involved in the signing of the lease.\nOnly required for sendDraft and contract endpoints.",
             "nullable": true
           },
           "property": {
@@ -1979,26 +2041,32 @@
         "properties": {
           "nationalId": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "National ID of the person."
           },
           "name": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "Full name of the person."
           },
           "email": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "Email address of the person."
           },
           "phone": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "Phone number of the person."
           },
           "address": {
             "type": "string",
+            "description": "Address of the person. Optional because some incoming payloads may omit it.",
             "nullable": true
           },
           "isRepresentative": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates if the person is a representative."
           }
         },
         "additionalProperties": false

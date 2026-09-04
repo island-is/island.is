@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { HomeApi } from '../gen/fetch'
+import { ContractSortOrder, HomeApi } from '../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
@@ -29,7 +29,7 @@ export class HmsRentalAgreementService {
     hideInactiveAgreements = false,
     page?: number,
     pageSize?: number,
-    sort: 'asc' | 'desc' = 'asc',
+    sort?: ContractSortOrder,
   ): Promise<RentalAgreementsDto> {
     const res = await this.apiWithAuth(user).contractGetRaw({
       page,

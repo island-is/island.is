@@ -1,4 +1,5 @@
 import {
+  ContractSortOrder,
   type RentalAgreementDto,
   type ContractPartyDto,
   type ContractPropertyDto,
@@ -18,6 +19,7 @@ import {
   AgreementStatusType,
   PartyType,
   RentalAgreement,
+  RentalAgreementSortOrder,
   TemporalType,
 } from './models/rentalAgreements/rentalAgreement.model'
 
@@ -58,6 +60,23 @@ const PROPERTY_TYPE_MAP: Record<RentalPropertyType, PropertyType> = {
   nonresidential: PropertyType.NONRESIDENTIAL,
   unknown: PropertyType.UNKNOWN,
 }
+
+const SORT_ORDER_TO_CLIENT_MAP: Record<
+  RentalAgreementSortOrder,
+  ContractSortOrder
+> = {
+  newOld: ContractSortOrder.NewOld,
+  oldNew: ContractSortOrder.OldNew,
+  amountHighLow: ContractSortOrder.AmountHighLow,
+  amountLowHigh: ContractSortOrder.AmountLowHigh,
+  statusActiveFirst: ContractSortOrder.StatusActiveFirst,
+  statusActiveLast: ContractSortOrder.StatusActiveLast,
+}
+
+export const mapToContractSortOrder = (
+  sort?: RentalAgreementSortOrder,
+): ContractSortOrder =>
+  sort ? SORT_ORDER_TO_CLIENT_MAP[sort] : ContractSortOrder.NewOld
 
 const mapAddress = (dto: ContractPartyDto): Address | undefined => {
   if (!dto.address) return undefined

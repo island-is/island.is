@@ -1,6 +1,6 @@
-import { Order } from '@island.is/nest/pagination'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsBoolean, IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator'
+import { RentalAgreementSortOrder } from '../models/rentalAgreements/rentalAgreement.model'
 
 @InputType('HmsRentalAgreementsInput')
 export class RentalAgreementsInput {
@@ -22,8 +22,11 @@ export class RentalAgreementsInput {
   @Max(100)
   pageSize?: number
 
-  @Field(() => Order, { nullable: true, defaultValue: Order.ASC })
-  @IsEnum(Order)
+  @Field(() => RentalAgreementSortOrder, {
+    nullable: true,
+    defaultValue: RentalAgreementSortOrder.NEW_OLD,
+  })
   @IsOptional()
-  sort?: Order
+  @IsEnum(RentalAgreementSortOrder)
+  sort?: RentalAgreementSortOrder
 }

@@ -10,8 +10,7 @@ import { Audit } from '@island.is/nest/audit'
 import { PaginatedRentalAgreementCollection } from '../models/rentalAgreements/rentalAgreementCollection.model'
 import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
 import { RentalAgreement } from '../models/rentalAgreements/rentalAgreement.model'
-import { AGREEMENT_STATUS_ORDER } from '../constants'
-import { mapToRentalAgreement } from '../mappers'
+import { mapToContractSortOrder, mapToRentalAgreement } from '../mappers'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -45,7 +44,7 @@ export class RentalAgreementsResolver {
     @CurrentUser() user: User,
     @Args('input') input: RentalAgreementsInput,
   ): Promise<PaginatedRentalAgreementCollection> {
-    const { hideInactiveAgreements, page, pageSize } = input
+    const { hideInactiveAgreements, page, pageSize, sort } = input
     const {
       data: dtos,
       totalCount,
@@ -56,14 +55,9 @@ export class RentalAgreementsResolver {
       hideInactiveAgreements,
       page,
       pageSize,
+      mapToContractSortOrder(sort),
     )
-    const data = dtos
-      .map(mapToRentalAgreement)
-      .sort(
-        (a, b) =>
-          AGREEMENT_STATUS_ORDER.indexOf(a.status) -
-          AGREEMENT_STATUS_ORDER.indexOf(b.status),
-      )
+    const data = dtos.map(mapToRentalAgreement)
 
     return {
       data,
