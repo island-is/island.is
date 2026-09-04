@@ -24,6 +24,7 @@ import {
   Checkbox,
   GeneralCardSkeleton,
   Problem,
+  ProblemTemplate,
   Select,
   TextField,
   Typography,
@@ -417,8 +418,9 @@ export default function HealthMessageComposeScreen() {
                 user to My Pages instead of a send form. Rendered outside the
                 lockable form wrapper so the link is always tappable. */}
             {isCertificateSelected && (
-              <Problem
-                type="no_data"
+              <ProblemTemplate
+                variant="info"
+                showIcon
                 title={intl.formatMessage({
                   id: 'health.messages.compose.certificateTitle',
                 })}

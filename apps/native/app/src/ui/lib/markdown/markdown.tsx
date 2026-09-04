@@ -23,10 +23,14 @@ export const Markdown = ({
   children,
   bullets,
   componentId,
+  fontSize,
+  lineHeight,
 }: {
   children: string
   bullets?: boolean
   componentId?: string
+  fontSize?: number
+  lineHeight?: number
 }) => {
   const theme = useTheme()
   const { openBrowser } = useBrowser()
@@ -38,6 +42,8 @@ export const Markdown = ({
         body: {
           fontFamily: 'IBM Plex Sans',
           color: theme.color.dark400,
+          ...(fontSize != null && { fontSize }),
+          ...(lineHeight != null && { lineHeight }),
         },
         link: {
           color: theme.color.blue400,

@@ -29,11 +29,14 @@ import {
 } from '@/graphql/types/schema'
 import { useAuthStore } from '@/stores/auth-store'
 import { uiStore } from '@/stores/ui-store'
+import { useBrowser } from '@/hooks/use-browser'
+import { useMyPagesLinks } from '@/lib/my-pages-links'
 import {
   Alert,
   Button,
   GeneralCardSkeleton,
   ListItemSkeleton,
+  ProblemTemplate,
   theme,
 } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
@@ -73,6 +76,7 @@ export default function HealthMessageDetailScreen() {
   }>()
   const intl = useIntl()
   const client = useApolloClient()
+  const myPagesLinks = useMyPagesLinks()
   const userName = useAuthStore((s) => s.userInfo?.name)
   const [refetching, setRefetching] = useState(false)
 
@@ -80,6 +84,50 @@ export default function HealthMessageDetailScreen() {
     variables: { id },
     notifyOnNetworkStatusChange: true,
   })
+  const { refetch } = res
+
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
+  // Clear the pending spinner-delay timeout on unmount so it can't fire
+  // setRefetching after the screen is gone.
+  useEffect(() => {
+    return () => {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+    }
+  }, [])
+  // Refetch the conversation, keeping the refresh spinner visible a moment after
+  // the (often instant) refetch resolves so it feels real — matches the inbox.
+  const refreshConversation = useCallback(async () => {
+    try {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+      setRefetching(true)
+      await refetch()
+      loadingTimeout.current = setTimeout(() => {
+        setRefetching(false)
+      }, 1331)
+    } catch {
+      setRefetching(false)
+    }
+  }, [refetch])
+
+  const { openBrowser } = useBrowser()
+  // openBrowser is a fresh closure each render; read it through a ref so the
+  // pay handler below stays stable.
+  const openBrowserRef = useRef(openBrowser)
+  openBrowserRef.current = openBrowser
+
+  // Open My Pages to pay in the in-app browser. openBrowser resolves when the
+  // browser is dismissed, so refetch right after — a completed payment comes
+  // back as paid: true and the certificate becomes available.
+  const handleCertificatePayPress = useCallback(async () => {
+    await openBrowserRef.current(myPagesLinks.healthMessageDetail(id))
+    // Show the same refresh spinner as pull-to-refresh while we re-fetch, so the
+    // user gets feedback that the certificate is being updated after payment.
+    await refreshConversation()
+  }, [myPagesLinks, id, refreshConversation])
 
   const conversation = res.data?.healthDirectorateHealthConversation
   const messages = useMemo(() => conversation?.messages ?? [], [conversation])
@@ -188,25 +236,6 @@ export default function HealthMessageDetailScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation?.id])
 
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
-
-  const handleRefresh = async () => {
-    try {
-      if (loadingTimeout.current) {
-        clearTimeout(loadingTimeout.current)
-      }
-      setRefetching(true)
-      await res.refetch()
-      // Keep the spinner visible a moment after the (often instant) refetch
-      // resolves so the refresh feels real — matches the inbox.
-      loadingTimeout.current = setTimeout(() => {
-        setRefetching(false)
-      }, 1331)
-    } catch (err) {
-      setRefetching(false)
-    }
-  }
-
   const [downloadingAttachmentId, setDownloadingAttachmentId] = useState<
     string | null
   >(null)
@@ -265,6 +294,13 @@ export default function HealthMessageDetailScreen() {
           conversation?.lastSenderGroupName ??
           ''
 
+      // The certificate attached to this message needs paying before it can be
+      // accessed. The app can't take the payment natively, so — matching the
+      // compose flow's certificate notice — we point the user to My Pages.
+      const isUnpaidCertificate = !!item.requiresPayment && !item.paid
+      const certificateAmountLabel =
+        item.amountIsk != null ? `${intl.formatNumber(item.amountIsk)} kr.` : ''
+
       const sentAt = new Date(item.messageSentAt)
       const dateTime = item.messageSentAt
         ? `${intl.formatDate(sentAt, {
@@ -288,8 +324,32 @@ export default function HealthMessageDetailScreen() {
           }
           title={senderName}
           bodyContent={
-            item.content ? (
-              <HealthConversationMessageContent content={item.content} />
+            item.content || isUnpaidCertificate ? (
+              <View style={{ rowGap: theme.spacing[2] }}>
+                {item.content ? (
+                  <HealthConversationMessageContent content={item.content} />
+                ) : null}
+                {isUnpaidCertificate ? (
+                  <ProblemTemplate
+                    variant="info"
+                    showIcon
+                    title={intl.formatMessage({
+                      id: 'health.messages.certificatePayment.title',
+                    })}
+                    message={intl.formatMessage(
+                      { id: 'health.messages.certificatePayment.text' },
+                      { amount: certificateAmountLabel },
+                    )}
+                    detailLink={{
+                      text: intl.formatMessage({
+                        id: 'health.messages.certificatePayment.link',
+                      }),
+                      url: myPagesLinks.healthMessageDetail(id),
+                      onPress: handleCertificatePayPress,
+                    }}
+                  />
+                ) : null}
+              </View>
             ) : undefined
           }
           date={dateTime}
@@ -312,6 +372,9 @@ export default function HealthMessageDetailScreen() {
       messages.length,
       intl,
       userName,
+      id,
+      myPagesLinks,
+      handleCertificatePayPress,
       conversation?.lastSenderGroupName,
       conversation?.organization?.name,
       conversation?.organization?.logoUrl,
@@ -384,7 +447,10 @@ export default function HealthMessageDetailScreen() {
           renderItem={renderItem}
           style={{ flex: 1 }}
           refreshControl={
-            <RefreshControl refreshing={refetching} onRefresh={handleRefresh} />
+            <RefreshControl
+              refreshing={refetching}
+              onRefresh={refreshConversation}
+            />
           }
           contentContainerStyle={{ flexGrow: 1 }}
           contentInsetAdjustmentBehavior="automatic"
