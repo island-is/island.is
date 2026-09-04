@@ -10,6 +10,7 @@ export const MainForm = buildForm({
   mode: FormModes.DRAFT,
   logo: FjarsyslaRikisinsLogo,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     debtsSection,
     paymentSection,
