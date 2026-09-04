@@ -67,6 +67,8 @@ export enum Features {
   isServicePortalTRPersonalTaxCreditPageEnabled = 'isServicePortalTRPersonalTaxCreditPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
+  // Enable estates module
+  isServicePortalEstatesEnabled = 'isServicePortalEstatesEnabled',
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
   servicePortalPoliceCasesPageEnabled = 'isServicePortalPoliceCasesPageEnabled',
   isServicePortalHealthQuestionnairesPageEnabled = 'isServicePortalHealthQuestionnairesPageEnabled',
