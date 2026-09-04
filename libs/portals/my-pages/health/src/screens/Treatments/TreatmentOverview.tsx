@@ -32,7 +32,6 @@ const TreatmentOverview = () => {
     variables: { id },
   })
 
-  // Same unfiltered appointments as the health overview page.
   const {
     data: appointmentsData,
     loading: appointmentsLoading,
