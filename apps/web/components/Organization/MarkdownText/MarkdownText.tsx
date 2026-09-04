@@ -52,7 +52,7 @@ export const MarkdownText = ({
   replaceNewLinesWithBreaks = true,
   openLinksInNewTab = false,
   newTabLabel,
-}}: MarkdownTextProps) => {
+}: MarkdownTextProps) => {
   const processedChildren = replaceNewLinesWithBreaks
     ? (children as string).replace(/\n/gi, '<br>')
     : children

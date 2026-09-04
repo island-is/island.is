@@ -145,6 +145,14 @@ export const m = {
       id: 'web.openinvoices:search.range',
       defaultMessage: 'Tímabil',
     },
+    dateFrom: {
+      id: 'web.openinvoices:search.dateFrom',
+      defaultMessage: 'Frá',
+    },
+    dateTo: {
+      id: 'web.openinvoices:search.dateTo',
+      defaultMessage: 'Til',
+    },
     types: {
       id: 'web.openinvoices:search.types',
       defaultMessage: 'Flokkun',
@@ -167,32 +175,25 @@ export const m = {
     },
     resultFound: {
       id: 'web.openinvoices:search.resultFound#markdown',
-      defaultMessage:
-        '1 greiðsla fannst fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
+      defaultMessage: '1 færsla fannst fyrir valið tímabil, samtals **{sum}**',
     },
     resultFoundNoSum: {
       id: 'web.openinvoices:search.resultFoundNoSum#markdown',
-      defaultMessage:
-        '1 greiðsla fannst fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}**',
+      defaultMessage: '1 færsla fannst fyrir valið tímabil',
     },
     resultsFound: {
       id: 'web.openinvoices:search.resultsFound#markdown',
       defaultMessage:
-        '**{records}** greiðslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
+        '**{records}** færslur fundust fyrir valið tímabil, samtals **{sum}**',
     },
     resultsFoundNoSum: {
       id: 'web.openinvoices:search.resultsFoundNoSum#markdown',
-      defaultMessage:
-        '**{records}** greiðslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}**',
+      defaultMessage: '**{records}** færslur fundust fyrir valið tímabil',
     },
     recordsFoundShort: {
       id: 'web.openinvoices:search.recordsFoundShort#markdown',
       defaultMessage:
-        '**{records}** {records, plural, one {greiðsla fannst} other {greiðslur fundust}}',
-    },
-    dateRangeLineShort: {
-      id: 'web.openinvoices:search.dateRangeLineShort#markdown',
-      defaultMessage: 'Tímabil: **{dateRangeStart}-{dateRangeEnd}**',
+        '**{records}** {records, plural, one {færsla fannst} other {færslur fundust}}',
     },
     totalLineShort: {
       id: 'web.openinvoices:search.totalLineShort#markdown',
@@ -205,6 +206,10 @@ export const m = {
     loadingMore: {
       id: 'web.openinvoices:search.loadingMore',
       defaultMessage: 'Sæki fleiri niðurstöður',
+    },
+    fetchingResults: {
+      id: 'web.openinvoices:search.fetchingResults',
+      defaultMessage: 'Sækir færslur...',
     },
   }),
 }

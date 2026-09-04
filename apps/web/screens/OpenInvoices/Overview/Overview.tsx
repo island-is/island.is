@@ -41,7 +41,7 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_ORGANIZATION_QUERY } from '../../queries'
 import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { OverviewFilter } from '../components/OverviewFilter'
-import { ORGANIZATION_SLUG } from '../constants'
+import { MAX_DATE_RANGE_DAYS, ORGANIZATION_SLUG } from '../constants'
 import {
   extractDebtors,
   extractInvoicePaymentTypes,
@@ -436,12 +436,9 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       type: 'date' as const,
       id: 'dateRange',
       label: formatMessage(m.search.range),
-      placeholder: `${format(dateRangeStart, dateFormat.is)}-${format(
-        dateRangeEnd,
-        dateFormat.is,
-      )}`,
       valueFrom: dateRangeStart,
       valueTo: dateRangeEnd,
+      maxRangeDays: MAX_DATE_RANGE_DAYS,
       isActive:
         dateRangeStart.getTime() !== initialDates.dateFrom.getTime() ||
         dateRangeEnd.getTime() !== initialDates.dateTo.getTime(),
@@ -550,7 +547,11 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           sidebarContent={
             <Stack space={3}>
               <Text variant="h4" as="h4" paddingY={1}>
-                {formatMessage(m.overview.searchTitle)}
+                {
+                  //formatMessage(m.overview.searchTitle)
+                  //TEMPORARY - REMOVE BEFORE MERGE
+                }
+                Leit og Síun
               </Text>
               <OverviewFilter
                 onSearchUpdate={onSearchFilterUpdate}

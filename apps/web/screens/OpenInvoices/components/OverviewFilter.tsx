@@ -28,10 +28,11 @@ interface DateSelectProps {
   type: 'date'
   id: string
   label: string
-  placeholder: string
   valueFrom: Date
   valueTo: Date
   isActive?: boolean
+  /** Maximum allowed span, in days, between valueFrom and valueTo. */
+  maxRangeDays?: number
 }
 
 interface CheckboxProps {
@@ -119,8 +120,7 @@ export const OverviewFilter = ({
         labelOpen={formatMessage(m.search.openFilter)}
         labelClose={formatMessage(m.search.closeFilter)}
         labelClear={formatMessage(m.search.clearFilters)}
-        //labelTitle={formatMessage(m.search.filterTitle)}
-        labelTitle="Leit og síun" //TEMPORARY - REMOVE BEFORE MERGE
+        labelTitle={formatMessage(m.search.filterTitle)}
         labelResult={formatMessage(m.search.viewResults)}
         resultCount={hits}
         onFilterClear={clear}
@@ -174,7 +174,7 @@ export const OverviewFilter = ({
                     valueFrom={category.valueFrom}
                     valueTo={category.valueTo}
                     isActive={category.isActive}
-                    placeholder={category.placeholder}
+                    maxRangeDays={category.maxRangeDays}
                     onChange={(valueFrom, valueTo) => {
                       const valueFromString = valueFrom
                         ? valueFrom.toISOString()
