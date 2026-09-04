@@ -1,0 +1,769 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import {
+  parseAsArrayOf,
+  parseAsIsoDateTime,
+  parseAsString,
+  useQueryState,
+} from 'next-usequerystate'
+import { useLazyQuery } from '@apollo/client'
+
+import {
+  Box,
+  Pagination,
+  SortingState,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
+import {
+  formatCurrency,
+  formatCurrencyWithoutSuffix,
+  isDefined,
+} from '@island.is/shared/utils'
+import { MarkdownText } from '@island.is/web/components'
+import {
+  IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
+  IcelandicGovernmentInstitutionsInvoicePaymentsGroups,
+  IcelandicGovernmentInstitutionsOpenInvoiceSortField,
+  IcelandicGovernmentInstitutionsSortDirection,
+  Organization,
+  Query,
+  QueryGetOrganizationArgs,
+  QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs,
+} from '@island.is/web/graphql/schema'
+import { linkResolver, useLinkResolver } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextRedirect } from '@island.is/web/units/errors'
+
+import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
+import SidebarLayout from '../../Layouts/SidebarLayout'
+import { GET_ORGANIZATION_QUERY } from '../../queries'
+import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
+import { OverviewFilter } from '../components/OverviewFilter'
+import { MAX_DATE_RANGE_DAYS, ORGANIZATION_SLUG } from '../constants'
+import {
+  extractDebtors,
+  extractInvoicePaymentTypes,
+  extractMinistries,
+  extractSuppliers,
+  mapDebtor,
+  mapInvoicePaymentType,
+  mapMinistry,
+  mapSupplier,
+} from '../hooks/asyncFilterSources'
+import { useAsyncFilterSource } from '../hooks/useAsyncFilterSource'
+import { m } from '../messages'
+import {
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
+} from './Overview.graphql'
+import { OverviewTable } from './OverviewTable'
+import * as styles from './Overview.css'
+
+const PAGE_SIZE = 12
+
+const SORT_FIELD_MAP: Record<
+  string,
+  IcelandicGovernmentInstitutionsOpenInvoiceSortField
+> = {
+  supplier: IcelandicGovernmentInstitutionsOpenInvoiceSortField.SupplierName,
+  customer: IcelandicGovernmentInstitutionsOpenInvoiceSortField.DebtorName,
+  totalPaymentsSum: IcelandicGovernmentInstitutionsOpenInvoiceSortField.Amount,
+}
+
+const toDebtorIds = (debtors?: string[] | null) =>
+  debtors?.map(Number).filter((id): id is number => Number.isInteger(id))
+
+interface AppliedFilters {
+  dateFrom: Date
+  dateTo: Date
+  debtors?: string[]
+  suppliers?: string[]
+  ministries?: string[]
+  paymentTypeIds?: string[]
+}
+
+interface SerializedAppliedFilters
+  extends Omit<AppliedFilters, 'dateFrom' | 'dateTo'> {
+  dateFrom: string
+  dateTo: string
+}
+
+const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
+  locale,
+  initialInvoiceGroups,
+  initialAppliedFilters,
+  customPageData,
+  organization,
+  today,
+}) => {
+  useLocalLinkTypeResolver('openinvoices')
+  useContentfulId(customPageData?.id)
+  const { formatMessage } = useIntl()
+  const { linkResolver } = useLinkResolver()
+
+  const [
+    getInvoiceGroups,
+    {
+      data: invoiceGroupsData,
+      loading: invoiceGroupsLoading,
+      error: invoiceGroupsError,
+    },
+  ] = useLazyQuery<
+    {
+      icelandicGovernmentInstitutionsInvoicePaymentsGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroups
+    },
+    QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs
+  >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS)
+
+  const baseUrl = linkResolver('openinvoices', [], locale).href
+
+  const breadcrumbItems = [
+    {
+      title: 'Ísland.is',
+      href: linkResolver('homepage', [], locale).href,
+    },
+    {
+      title: formatMessage(m.shared.title),
+      href: baseUrl,
+      isTag: true,
+    },
+  ]
+
+  const initialDates = useMemo(() => {
+    const dateTo = new Date(today)
+    return { dateTo, dateFrom: addMonths(dateTo, -1) }
+  }, [today])
+
+  const [currentPage, setCurrentPage] = useState<number>(1)
+
+  const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>(() => ({
+    ...initialAppliedFilters,
+    dateFrom: new Date(initialAppliedFilters.dateFrom),
+    dateTo: new Date(initialAppliedFilters.dateTo),
+  }))
+
+  const fetchedResult =
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
+  const displayGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroup[] =
+    fetchedResult?.data ?? initialInvoiceGroups?.data ?? []
+  const totalCount =
+    fetchedResult?.totalCount ?? initialInvoiceGroups?.totalCount ?? 0
+  const totalPayments =
+    fetchedResult?.totalPaymentsCount ??
+    initialInvoiceGroups?.totalPaymentsCount ??
+    0
+
+  const [dateRangeEnd, setDateRangeEnd] = useQueryState(
+    'dateRangeEnd',
+    parseAsIsoDateTime.withDefault(initialDates.dateTo),
+  )
+  const [dateRangeStart, setDateRangeStart] = useQueryState(
+    'dateRangeStart',
+    parseAsIsoDateTime.withDefault(initialDates.dateFrom),
+  )
+  const [invoicePaymentTypes, setInvoiceTypes] = useQueryState(
+    'invoicePaymentTypes',
+    parseAsArrayOf(parseAsString),
+  )
+  const [suppliers, setSuppliers] = useQueryState(
+    'suppliers',
+    parseAsArrayOf(parseAsString),
+  )
+  const [debtors, setDebtors] = useQueryState(
+    'debtors',
+    parseAsArrayOf(parseAsString),
+  )
+  const [ministries, setMinistries] = useQueryState(
+    'ministries',
+    parseAsArrayOf(parseAsString),
+  )
+
+  const { fetchPage: fetchMinistriesPage, selectedLabels: ministriesLabels } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+      extractMinistries,
+      mapMinistry,
+      ministries,
+    )
+
+  const { fetchPage: fetchSuppliersPage, selectedLabels: suppliersLabels } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
+      extractSuppliers,
+      mapSupplier,
+      suppliers,
+    )
+
+  const { fetchPage: fetchDebtorsPage, selectedLabels: debtorsLabels } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
+      extractDebtors,
+      mapDebtor,
+      debtors,
+    )
+
+  const {
+    fetchPage: fetchInvoicePaymentTypesPage,
+    selectedLabels: invoicePaymentTypesLabels,
+  } = useAsyncFilterSource(
+    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
+    extractInvoicePaymentTypes,
+    mapInvoicePaymentType,
+    invoicePaymentTypes,
+  )
+
+  const totalHits = totalCount
+
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'supplier', desc: false },
+  ])
+  const sortBy = sorting[0] ? SORT_FIELD_MAP[sorting[0].id] : undefined
+  const sortDirection = sorting[0]
+    ? sorting[0].desc
+      ? IcelandicGovernmentInstitutionsSortDirection.Descending
+      : IcelandicGovernmentInstitutionsSortDirection.Ascending
+    : undefined
+
+  const buildInput = useCallback(
+    (filters: AppliedFilters, page: number) => ({
+      debtors: toDebtorIds(filters.debtors),
+      suppliers: filters.suppliers,
+      ministries: filters.ministries,
+      paymentTypeIds: filters.paymentTypeIds,
+      dateFrom: filters.dateFrom,
+      dateTo: filters.dateTo,
+      sortBy,
+      sortDirection,
+      limit: PAGE_SIZE,
+      page,
+    }),
+    [sortBy, sortDirection],
+  )
+
+  const runInvoiceGroupsQuery = useCallback(
+    (page: number) => {
+      setCurrentPage(page)
+      getInvoiceGroups({
+        variables: { input: buildInput(appliedFilters, page) },
+      })
+    },
+    [appliedFilters, buildInput, getInvoiceGroups],
+  )
+
+  const applyFilters = useCallback(() => {
+    const nextFilters: AppliedFilters = {
+      dateFrom: dateRangeStart ?? initialDates.dateFrom,
+      dateTo: dateRangeEnd ?? initialDates.dateTo,
+      debtors: debtors ?? undefined,
+      suppliers: suppliers ?? undefined,
+      ministries: ministries ?? undefined,
+      paymentTypeIds: invoicePaymentTypes ?? undefined,
+    }
+
+    setAppliedFilters(nextFilters)
+    setCurrentPage(1)
+    getInvoiceGroups({ variables: { input: buildInput(nextFilters, 1) } })
+  }, [
+    buildInput,
+    getInvoiceGroups,
+    debtors,
+    suppliers,
+    ministries,
+    invoicePaymentTypes,
+    dateRangeStart,
+    dateRangeEnd,
+    initialDates,
+  ])
+
+  const isInitialMount = useRef(true)
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
+    runInvoiceGroupsQuery(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale, sortBy, sortDirection])
+
+  const handlePageChange = (page: number) => {
+    runInvoiceGroupsQuery(page)
+  }
+
+  const onResetFilter = () => {
+    setDateRangeStart(null)
+    setDateRangeEnd(null)
+    setInvoiceTypes(null)
+    setSuppliers(null)
+    setDebtors(null)
+    setMinistries(null)
+  }
+
+  const hitsMessage = useMemo(() => {
+    const totalPaymentsSum =
+      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
+        ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
+
+    if (totalPayments === 1) {
+      return totalPaymentsSum
+        ? formatMessage(m.search.resultFound, {
+            sum: formatCurrency(totalPaymentsSum),
+          })
+        : formatMessage(m.search.resultFoundNoSum)
+    }
+
+    return totalPaymentsSum
+      ? formatMessage(m.search.resultsFound, {
+          records: formatCurrencyWithoutSuffix(totalPayments),
+          sum: formatCurrency(totalPaymentsSum),
+        })
+      : formatMessage(m.search.resultsFoundNoSum, {
+          records: formatCurrencyWithoutSuffix(totalPayments),
+        })
+  }, [
+    formatMessage,
+    initialInvoiceGroups?.totalPaymentsSum,
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
+      ?.totalPaymentsSum,
+    totalPayments,
+  ])
+
+  // Mobile shows the same information as `hitsMessage` split across two
+  // short lines instead of one long sentence (matches the Grants Plaza
+  // pattern) — the full sentence doesn't fit comfortably on small screens.
+  const hitsSummary = useMemo(() => {
+    const totalPaymentsSum =
+      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
+        ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
+
+    return {
+      recordsLine: formatMessage(m.search.recordsFoundShort, {
+        records: totalPayments,
+      }),
+      totalLine: totalPaymentsSum
+        ? formatMessage(m.search.totalLineShort, {
+            sum: formatCurrency(totalPaymentsSum),
+          })
+        : undefined,
+    }
+  }, [
+    formatMessage,
+    initialInvoiceGroups?.totalPaymentsSum,
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
+      ?.totalPaymentsSum,
+    totalPayments,
+  ])
+
+  const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
+    const filteredValues = values?.length ? [...values] : null
+    switch (categoryId) {
+      case 'dateRange': {
+        const dateStart = filteredValues?.[0]
+          ? new Date(filteredValues[0])
+          : null
+        const dateEnd = filteredValues?.[1] ? new Date(filteredValues[1]) : null
+
+        setDateRangeStart(dateStart)
+        setDateRangeEnd(dateEnd)
+        break
+      }
+      case 'invoicePaymentTypes': {
+        setInvoiceTypes(filteredValues)
+        break
+      }
+      case 'suppliers': {
+        setSuppliers(filteredValues)
+        break
+      }
+      case 'debtors': {
+        setDebtors(filteredValues)
+        // Buyers (debtors) and ministries are mutually exclusive — picking
+        // one clears the other.
+        if (filteredValues) {
+          setMinistries(null)
+        }
+        break
+      }
+      case 'ministries': {
+        if (filteredValues) {
+          setDebtors(null)
+        }
+        setMinistries(filteredValues)
+        break
+      }
+    }
+  }
+
+  const filterSearchState = {
+    invoicePaymentTypes:
+      invoicePaymentTypes?.map((i) => i.toString()) ?? undefined,
+    suppliers: suppliers ?? undefined,
+    debtors: debtors ?? undefined,
+    ministries: ministries ?? undefined,
+    dateRange: [dateRangeStart.toISOString(), dateRangeEnd.toISOString()],
+  }
+
+  const filterCategories = [
+    {
+      type: 'date' as const,
+      id: 'dateRange',
+      label: formatMessage(m.search.range),
+      valueFrom: dateRangeStart,
+      valueTo: dateRangeEnd,
+      maxRangeDays: MAX_DATE_RANGE_DAYS,
+      maxSelectableDate: initialDates.dateTo,
+      isActive:
+        dateRangeStart.getTime() !== initialDates.dateFrom.getTime() ||
+        dateRangeEnd.getTime() !== initialDates.dateTo.getTime(),
+    },
+    {
+      type: 'asyncSelect' as const,
+      id: 'suppliers',
+      label: formatMessage(m.search.suppliers),
+      fetchPage: fetchSuppliersPage,
+      selectedLabels: suppliersLabels,
+    },
+    {
+      type: 'asyncSelect' as const,
+      id: 'debtors',
+      label: formatMessage(m.search.customers),
+      fetchPage: fetchDebtorsPage,
+      selectedLabels: debtorsLabels,
+    },
+    {
+      type: 'asyncSelect' as const,
+      id: 'invoicePaymentTypes',
+      label: formatMessage(m.search.types),
+      fetchPage: fetchInvoicePaymentTypesPage,
+      selectedLabels: invoicePaymentTypesLabels,
+    },
+    {
+      type: 'asyncSelect' as const,
+      id: 'ministries',
+      label: formatMessage(m.search.ministries),
+      fetchPage: fetchMinistriesPage,
+      selectedLabels: ministriesLabels,
+    },
+  ]
+
+  const invoiceTable = (
+    <>
+      <Box marginTop={3}>
+        <OverviewTable
+          invoiceGroups={displayGroups}
+          dateFrom={appliedFilters.dateFrom}
+          dateTo={appliedFilters.dateTo}
+          paymentTypeIds={appliedFilters.paymentTypeIds}
+          ministries={appliedFilters.ministries}
+          loading={invoiceGroupsLoading}
+          error={invoiceGroupsError}
+          sorting={sorting}
+          onSortingChange={setSorting}
+        />
+      </Box>
+
+      {totalHits > PAGE_SIZE && !invoiceGroupsLoading && (
+        <Box marginTop={2}>
+          <Pagination
+            variant="blue"
+            page={currentPage}
+            totalItems={totalHits}
+            itemsPerPage={PAGE_SIZE}
+            renderLink={(page, className, children) => (
+              <button
+                onClick={() => handlePageChange(page)}
+                disabled={invoiceGroupsLoading}
+              >
+                <span className={className}>{children}</span>
+              </button>
+            )}
+          />
+        </Box>
+      )}
+    </>
+  )
+
+  return (
+    <OpenInvoicesWrapper
+      title={formatMessage(m.overview.title)}
+      description={formatMessage(m.overview.description)}
+      featuredImage={{
+        src: formatMessage(m.overview.featuredImage),
+        alt: formatMessage(m.overview.featuredImageAlt),
+      }}
+      header={{
+        breadcrumbs: breadcrumbItems,
+        shortcuts: {
+          variant: 'tags',
+          items: [
+            {
+              title: formatMessage(m.overview.headerLink1Title),
+              href: formatMessage(m.overview.headerLink1Url),
+              variant: 'purple',
+            },
+            {
+              title: formatMessage(m.overview.headerLink2Title),
+              href: formatMessage(m.overview.headerLink2Url),
+              variant: 'purple',
+            },
+          ],
+        },
+      }}
+      footer={{
+        organization,
+      }}
+    >
+      <Box marginTop={6} background="blue100">
+        <SidebarLayout
+          fullWidthContent={true}
+          paddingTop={[3, 3, 8]}
+          sidebarContent={
+            <Stack space={3}>
+              <Text variant="h4" as="h4" paddingY={1}>
+                Leit og síun
+              </Text>
+              <OverviewFilter
+                onSearchUpdate={onSearchFilterUpdate}
+                onReset={onResetFilter}
+                onApply={applyFilters}
+                applyDisabled={invoiceGroupsLoading}
+                url={baseUrl}
+                hits={totalPayments}
+                locale={locale}
+                searchState={filterSearchState}
+                categories={filterCategories}
+              />
+            </Stack>
+          }
+        >
+          <Box marginLeft={[0, 0, 2]} marginRight={[0, 0, 0]}>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="flexEnd"
+              marginBottom={2}
+            >
+              <Box display={['none', 'none', 'block']}>
+                <MarkdownText>
+                  {invoiceGroupsLoading
+                    ? formatMessage(m.search.fetchingResults)
+                    : hitsMessage}
+                </MarkdownText>
+              </Box>
+              <Box display={['block', 'block', 'none']}>
+                <MarkdownText>
+                  {invoiceGroupsLoading
+                    ? formatMessage(m.search.fetchingResults)
+                    : hitsSummary.recordsLine}
+                </MarkdownText>
+                {/* Always mounted so the mobile summary keeps a constant
+                    line count — content is hidden rather than unmounted
+                    while loading or when there's no sum yet, to avoid the
+                    layout shifting up and down. */}
+                <Box
+                  className={
+                    !invoiceGroupsLoading && hitsSummary.totalLine
+                      ? undefined
+                      : styles.hiddenLine
+                  }
+                >
+                  <MarkdownText>{hitsSummary.totalLine || ' '}</MarkdownText>
+                </Box>
+              </Box>
+              <OverviewFilter
+                onSearchUpdate={onSearchFilterUpdate}
+                onReset={onResetFilter}
+                onApply={applyFilters}
+                applyDisabled={invoiceGroupsLoading}
+                url={baseUrl}
+                hits={totalPayments}
+                locale={locale}
+                searchState={filterSearchState}
+                categories={filterCategories}
+                variant="dialog"
+                mobileOnly
+              />
+            </Box>
+            {invoiceTable}
+          </Box>
+        </SidebarLayout>
+      </Box>
+    </OpenInvoicesWrapper>
+  )
+}
+
+interface OpenInvoicesOverviewProps {
+  organization?: Organization
+  locale: Locale
+  initialInvoiceGroups?: IcelandicGovernmentInstitutionsInvoicePaymentsGroups
+  initialAppliedFilters: SerializedAppliedFilters
+  today: string
+}
+
+OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
+  const today = new Date()
+  const todayIso = today.toISOString()
+
+  const {
+    data: { getOrganization },
+  } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+    query: GET_ORGANIZATION_QUERY,
+    variables: {
+      input: {
+        slug: ORGANIZATION_SLUG,
+        lang: locale,
+      },
+    },
+  })
+
+  const arrayParser = parseAsArrayOf<string>(parseAsString)
+  const filterArray = <T,>(array: Array<T> | null | undefined) => {
+    if (array && array.length > 0) {
+      return array
+    }
+
+    return undefined
+  }
+
+  const [
+    debtorsFilter,
+    suppliersFilter,
+    invoicePaymentTypesFilter,
+    ministriesFilter,
+  ]: Array<Array<string> | undefined> = [
+    'debtors',
+    'suppliers',
+    'invoicePaymentTypes',
+    'ministries',
+  ].map((resource) =>
+    filterArray<string>(arrayParser.parseServerSide(query?.[resource])),
+  )
+
+  const debtorsInput = debtorsFilter?.filter(isDefined) || undefined
+  const suppliersInput = suppliersFilter?.filter(isDefined) || undefined
+  const invoicePaymentTypesInput = invoicePaymentTypesFilter?.filter(isDefined)
+  const ministriesInput = ministriesFilter?.filter(isDefined) || undefined
+
+  /*
+    Rebuilds the current URL with `omit` dropped and `overrides` applied, so a
+    correction redirect keeps every other filter the visitor arrived with.
+  */
+  const buildUrl = (
+    omit: Array<string>,
+    overrides: Record<string, string> = {},
+  ) => {
+    const params = new URLSearchParams()
+    for (const [key, value] of Object.entries(query ?? {})) {
+      if (omit.includes(key) || key in overrides) continue
+      if (Array.isArray(value)) {
+        value.forEach((v) => params.append(key, v))
+      } else if (value !== undefined) {
+        params.append(key, value)
+      }
+    }
+    for (const [key, value] of Object.entries(overrides)) {
+      params.append(key, value)
+    }
+
+    const path = linkResolver('openinvoices', [], locale as Locale).href
+    const search = params.toString()
+    return search ? `${path}?${search}` : path
+  }
+
+  /*
+    Buyers (debtors) and ministries are mutually exclusive — if both are in the
+    URL, buyers wins and ministries is redirected away rather than silently
+    dropped from the query, so the URL stays a true reflection of the applied
+    filters.
+  */
+  if (debtorsInput && ministriesInput) {
+    throw new CustomNextRedirect(buildUrl(['ministries']))
+  }
+
+  const requestedDateTo =
+    parseAsIsoDateTime.parseServerSide(query?.['dateRangeEnd']) ?? today
+  const requestedDateFrom =
+    parseAsIsoDateTime.parseServerSide(query?.['dateRangeStart']) ??
+    addMonths(requestedDateTo, -1)
+
+  /*
+    The date pickers enforce these bounds while filtering, but the dates are
+    also readable straight off the URL. Apply the same constraints here and
+    redirect to the corrected URL so a hand-edited or stale link cannot query
+    a future or over-wide range.
+  */
+  let dateToInput = requestedDateTo > today ? today : requestedDateTo
+  const dateFromInput =
+    requestedDateFrom > dateToInput ? dateToInput : requestedDateFrom
+  const latestAllowedTo = addDays(dateFromInput, MAX_DATE_RANGE_DAYS)
+  if (dateToInput > latestAllowedTo) {
+    dateToInput = latestAllowedTo
+  }
+
+  if (
+    dateFromInput.getTime() !== requestedDateFrom.getTime() ||
+    dateToInput.getTime() !== requestedDateTo.getTime()
+  ) {
+    throw new CustomNextRedirect(
+      buildUrl([], {
+        dateRangeStart: dateFromInput.toISOString(),
+        dateRangeEnd: dateToInput.toISOString(),
+      }),
+    )
+  }
+
+  const {
+    data: { icelandicGovernmentInstitutionsInvoicePaymentsGroups },
+  } = await apolloClient.query<
+    Query,
+    QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs
+  >({
+    query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
+    variables: {
+      input: {
+        dateFrom: dateFromInput,
+        dateTo: dateToInput,
+        debtors: toDebtorIds(debtorsInput),
+        suppliers: suppliersInput,
+        ministries: ministriesInput,
+        paymentTypeIds: invoicePaymentTypesInput,
+        sortBy:
+          IcelandicGovernmentInstitutionsOpenInvoiceSortField.SupplierName,
+        sortDirection: IcelandicGovernmentInstitutionsSortDirection.Ascending,
+        limit: PAGE_SIZE,
+        page: 1,
+      },
+    },
+  })
+
+  return {
+    locale: locale as Locale,
+    initialInvoiceGroups:
+      icelandicGovernmentInstitutionsInvoicePaymentsGroups ?? undefined,
+    initialAppliedFilters: {
+      dateFrom: dateFromInput.toISOString(),
+      dateTo: dateToInput.toISOString(),
+      debtors: debtorsInput,
+      suppliers: suppliersInput,
+      ministries: ministriesInput,
+      paymentTypeIds: invoicePaymentTypesInput,
+    },
+    organization: getOrganization ?? undefined,
+    today: todayIso,
+  }
+}
+
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.OpenInvoices,
+    OpenInvoicesOverviewPage,
+  ),
+)

@@ -24,7 +24,7 @@ export const hyphenateText: HyphenateText = (
   }
   const h = new Hypher(locale === 'is' ? is : en)
   const softHyphen = '\u00AD'
-  return content.split(' ').reduce((text, word) => {
+  return content?.split(' ').reduce((text, word) => {
     const hyphenedWord = h.hyphenate(word).join(softHyphen)
     text += ' ' + hyphenedWord
     return text
