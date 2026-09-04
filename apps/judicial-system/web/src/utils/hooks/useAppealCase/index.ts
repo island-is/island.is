@@ -112,7 +112,7 @@ const useAppealCase = () => {
     ],
   )
 
-  // A defender files an áfrýjun - the appeal of an indictment verdict - for one
+  // A defender files a verdict appeal - the appeal of an indictment verdict - for one
   // specific defendant. Always limited access: only defence users can.
   const createVerdictAppeal = useMemo(
     () =>
@@ -147,7 +147,7 @@ const useAppealCase = () => {
         appealCaseId: string,
         transition: AppealCaseTransition,
         setWorkingCase?: Dispatch<SetStateAction<Case>>,
-        // Withdrawing an áfrýjun is per defendant; every other transition
+        // Withdrawing a verdict appeal is per defendant; every other transition
         // ignores this.
         defendantId?: string,
       ): Promise<boolean> => {

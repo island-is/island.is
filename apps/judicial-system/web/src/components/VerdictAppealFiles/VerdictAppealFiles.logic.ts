@@ -13,7 +13,7 @@ export interface VerdictAppealFileGroup {
 }
 
 /**
- * The áfrýjunaryfirlýsing and its accompanying files that this user may open,
+ * The appeal declaration and its accompanying files that this user may open,
  * grouped by the defendant they were filed for, in the order the defendants
  * appear on the case and the order the files were filed. A defence user only
  * sees the files of the defendants they represent, the same rule that governs

@@ -27,7 +27,7 @@ export const isConfirmedDefenderOf = (
       ),
   )
 
-// Whether this defender may file an áfrýjun for this defendant right now. The
+// Whether this defender may file a verdict appeal for this defendant right now. The
 // backend enforces every one of these again; this only decides what to offer.
 export const canDefenderAppealVerdictOf = (
   workingCase: Case,
@@ -42,7 +42,7 @@ export const canDefenderAppealVerdictOf = (
   !defendant.isVerdictAppealDeadlineExpired &&
   !defendant.verdict?.appealDate
 
-// Whether this defender may take back the áfrýjun filed for this defendant.
+// Whether this defender may take back the verdict appeal filed for this defendant.
 // verdict.appealDate is the per-defendant mirror the backend sets on appeal and
 // clears on withdrawal, and the appeal case is what the withdrawal is filed on.
 export const canDefenderWithdrawVerdictAppealOf = (

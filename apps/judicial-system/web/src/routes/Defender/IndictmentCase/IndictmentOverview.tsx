@@ -126,7 +126,7 @@ const IndictmentOverview: FC = () => {
   const router = useRouter()
   const { appealBanner, appealModals } = useAppealCaseBanner()
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
-  // The defendant whose áfrýjun the user is about to withdraw, while the
+  // The defendant whose verdict appeal the user is about to withdraw, while the
   // confirmation is open.
   const [withdrawingAppealFor, setWithdrawingAppealFor] = useState<Defendant>()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
@@ -164,7 +164,7 @@ const IndictmentOverview: FC = () => {
   )
 
   // The one appeal action the verdict timeline card offers for a defendant:
-  // file an áfrýjun, or take back the one this defender filed. Which, if either,
+  // file a verdict appeal, or take back the one this defender filed. Which, if either,
   // is decided by getVerdictAppealAction.
   const getVerdictTimelineMenuItems = (
     defendant: Defendant,

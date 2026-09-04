@@ -38,10 +38,10 @@ import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/uti
 import { canDefenderAppealVerdictOf } from '../verdictAppealActions.logic'
 
 /**
- * A defender files an áfrýjun - the appeal of an indictment verdict - to
- * Landsréttur for one of their defendants, selected by the defendantId query
- * parameter. The declaration (áfrýjunaryfirlýsing) is required; further files
- * may come with it. Filing is confirmed in a modal before anything is sent,
+ * A defender files a verdict appeal - the appeal of an indictment verdict - to
+ * the court of appeals for one of their defendants, selected by the defendantId
+ * query parameter. The appeal declaration is required; further files may come
+ * with it. Filing is confirmed in a modal before anything is sent,
  * since the declaration is the legal act itself.
  *
  * The page guards itself: while the feature flags load it shows the loading

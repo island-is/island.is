@@ -25,9 +25,8 @@ const formatSentInBy = (defenderName?: string | null): string => {
 }
 
 /**
- * The "Áfrýjunarferli" section of a completed indictment: the
- * áfrýjunaryfirlýsing each defendant's defender filed, with whatever came with
- * it. Renders nothing until there is something to show. Which files that is, and
+ * The appeal-process section of a completed indictment: the appeal
+ * declaration each defendant's defender filed, with whatever came with it. Renders nothing until there is something to show. Which files that is, and
  * for whom, is decided by getVerdictAppealFileGroups.
  *
  * The rows offer no deletion: a declaration is the appeal itself, and the way to
