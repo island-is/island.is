@@ -64,8 +64,8 @@ import {
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
 } from './Overview.graphql'
-import * as styles from './Overview.css'
 import { OverviewTable } from './OverviewTable'
+import * as styles from './Overview.css'
 
 const PAGE_SIZE = 12
 
