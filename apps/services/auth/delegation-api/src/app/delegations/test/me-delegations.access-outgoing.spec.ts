@@ -236,6 +236,30 @@ describe.each(Object.keys(accessOutgoingTestCases))(
         },
       )
 
+      it('POST /v1/me/delegations/batch creates delegations across domains in one call', async () => {
+        const toNationalId = createNationalId('person')
+        const delegations = accessible.map((domain) => ({
+          toNationalId,
+          domainName: domain.name,
+          scopes: domain.scopes.map(({ name }) => ({
+            name,
+            validTo: startOfDay(addYears(new Date(), 1)),
+          })),
+        }))
+
+        const res = await server
+          .post('/v1/me/delegations/batch')
+          .send({ delegations })
+
+        expect(res.status).toEqual(201)
+        expect(res.body).toHaveLength(accessible.length)
+        expect(
+          (res.body as Array<{ domainName: string }>)
+            .map((delegation) => delegation.domainName)
+            .sort(),
+        ).toEqual(accessible.map((domain) => domain.name).sort())
+      })
+
       it.each(accessible)(
         'POST /v1/me/delegations returns 400 when recipient is deceased',
         async (domain) => {
