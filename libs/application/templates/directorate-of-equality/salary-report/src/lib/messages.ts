@@ -665,6 +665,14 @@ export const messages = {
         id: 'doe.sr.application:report.criteria.retryButton',
         defaultMessage: 'Reyna aftur',
       },
+      instructionsLabel: {
+        id: 'doe.sr.application:report.criteria.instructionsLabel',
+        defaultMessage: 'Nánar um starfaflokkun',
+      },
+      instructionsLink: {
+        id: 'doe.sr.application:report.criteria.instructionsLink',
+        defaultMessage: 'https://island.is/s/jafnrettisstofa/starfaflokkun',
+      },
     }),
     subCriteria: defineMessages({
       sectionTitle: {
