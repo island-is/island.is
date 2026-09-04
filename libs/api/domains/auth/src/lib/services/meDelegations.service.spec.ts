@@ -94,9 +94,15 @@ describe('MeDelegationsService', () => {
 
       const created = [
         makeDelegation({ toNationalId: toNationalId1, domainName: '@test.is' }),
-        makeDelegation({ toNationalId: toNationalId1, domainName: '@other.is' }),
+        makeDelegation({
+          toNationalId: toNationalId1,
+          domainName: '@other.is',
+        }),
         makeDelegation({ toNationalId: toNationalId2, domainName: '@test.is' }),
-        makeDelegation({ toNationalId: toNationalId2, domainName: '@other.is' }),
+        makeDelegation({
+          toNationalId: toNationalId2,
+          domainName: '@other.is',
+        }),
       ]
       mockDelegationsApi.meDelegationsControllerCreateBatch.mockResolvedValue(
         created,
