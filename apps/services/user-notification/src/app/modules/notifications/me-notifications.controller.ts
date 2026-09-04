@@ -56,7 +56,6 @@ export class MeNotificationsController {
       user.nationalId,
       query,
       user.scope,
-      !user.actor, // first-party only; a delegate always carries `actor`
     )
   }
 
