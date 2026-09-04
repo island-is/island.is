@@ -42,7 +42,6 @@ export const reasonForJobSearchSubSection = buildSubSection({
         buildSelectField({
           id: 'reasonForJobSearch.mainReason',
           required: true,
-          clearOnChange: ['reasonForJobSearch.furtherReasonText'],
           title:
             employmentMessages.reasonForJobSearch.labels
               .reasonForJobSearchLabel,
