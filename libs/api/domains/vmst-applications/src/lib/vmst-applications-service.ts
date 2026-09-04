@@ -11,6 +11,7 @@ import {
 import { FetchError } from '@island.is/clients/middlewares'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
+import { VmstApplicationsU2ValidationInput } from './dto/u2Validation.input'
 import {
   VmstApplicationsUnemploymentApplicationOverview,
   VmstApplicationsActivationGrantApplicationOverview,
@@ -18,6 +19,7 @@ import {
   VmstApplicationsApplicantAttachment,
   VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsOverview,
+  VmstApplicationsU2ValidationResponse,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
 import { maskString } from '@island.is/shared/utils'
@@ -110,6 +112,22 @@ export class VMSTApplicationsService {
         payload,
       )
     return { ...response, isValid: response.isValid ?? false }
+  }
+
+  async validateU2(
+    auth: User,
+    input: VmstApplicationsU2ValidationInput,
+  ): Promise<VmstApplicationsU2ValidationResponse> {
+    const response = await this.vmstUnemploymentService.validateU2(
+      auth,
+      new Date(input.dateWhenLeaving),
+      input.destinationCountryId,
+    )
+    return {
+      isValid: response.isValid ?? false,
+      reason: response.reason,
+      reasonEN: response.reasonEN,
+    }
   }
 
   async getApplicationOverview(

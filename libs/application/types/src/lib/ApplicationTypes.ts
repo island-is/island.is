@@ -107,6 +107,7 @@ export enum ApplicationTypes {
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
+  U2_CERTIFICATE = 'U2Certificate',
 }
 
 export const ApplicationConfigurations = {
@@ -545,5 +546,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SALARY_REPORT]: {
     slug: 'jafnrettisstofa-skyrslugjof',
     translation: ['doe.sr.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    slug: 'u2-vottord',
+    translation: ['vmst.u2c.application', 'uiForms.application'],
   },
 }
