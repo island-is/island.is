@@ -717,6 +717,7 @@ export class CourtService {
     civilClaimantNationalId?: string,
     civilClaimantName?: string,
     spokespersonNationalId?: string,
+    spokespersonName?: string,
     spokespersonIsLawyer?: boolean,
   ): Promise<unknown> {
     try {
@@ -732,6 +733,7 @@ export class CourtService {
         civilClaimantNationalId,
         civilClaimantName,
         spokespersonNationalId,
+        spokespersonName,
         spokespersonIsLawyer,
       })
 
