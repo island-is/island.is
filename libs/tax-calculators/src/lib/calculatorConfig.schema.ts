@@ -1,0 +1,123 @@
+import { z } from 'zod'
+
+// Conditional visibility is a pure authoring concept: every gate points at a
+// toggle switch the editor declared in Contentful, never at a form field's
+// value. That keeps it independent of what any calculator's backend field
+// list happens to contain, and of how a value stringifies.
+const sectionGateSchema = z.object({
+  // `key` of a toggle declared on some other section in the same config.
+  toggle: z.string().min(1),
+  // While the toggle is on, the section is removed. Set this instead to keep
+  // it visible with its fields greyed out (Bílnúmer under "Slá inn þyngd og
+  // losun", in the vehicle-tax design).
+  disableOnly: z.boolean().optional(),
+})
+
+// Every piece of editor-authored display text is a bilingual pair, authored
+// directly here rather than through a linked translation namespace -- the
+// backend has no opinion on this text at all, it only ever deals in
+// normalized keys, so there's no reason for the two languages to live in
+// different places. `configJson` itself stays a single, non-localized,
+// shared-across-locales blob so section/field structure is authored once.
+const localizedTextSchema = z.object({
+  is: z.string(),
+  en: z.string().optional(),
+})
+
+const sectionFieldSchema = z.object({
+  // Row identity. `key` can't serve: it's empty on a new row and repeats when
+  // the same backend field is placed twice.
+  uid: z.string().min(1),
+  key: z.string().min(1),
+  // Editor-authored display label. The backend supplies no label of its own --
+  // taxCalculatorFields returns only the input contract (key, dataType,
+  // options, required), so an unset label means the field renders without one.
+  label: localizedTextSchema.optional(),
+  placeholder: localizedTextSchema.optional(),
+  span: z.number().int().min(1).max(12),
+})
+
+// A switch rendered above the section that declares it. The section is
+// hidden until the switch is turned on; other sections react to the same
+// switch by referencing its `key` in their own `gate`.
+const sectionToggleSchema = z.object({
+  key: z.string().min(1),
+  label: localizedTextSchema,
+})
+
+const calculatorFieldSectionSchema = z.object({
+  key: z.string().min(1),
+  title: localizedTextSchema.optional(),
+  description: localizedTextSchema.optional(),
+  toggle: sectionToggleSchema.optional(),
+  // Reacts to a toggle declared on a different section. Conditional
+  // behaviour lives at the section level, not per-field -- a field that
+  // needs its own gate gets its own single-field section instead.
+  gate: sectionGateSchema.optional(),
+  fields: z.array(sectionFieldSchema),
+})
+
+/* A gate naming a toggle that no longer exists reads as "off" on the web side,
+ * so the section renders unconditionally -- a conditional section silently
+ * becoming always-visible. Deleting the section that owned a toggle is all it
+ * takes, so the reference has to be checked here rather than trusted. */
+export const calculatorConfigSchema = z
+  .object({
+    sections: z.array(calculatorFieldSectionSchema),
+  })
+  .superRefine((config, ctx) => {
+    const toggleKeys = new Set(
+      config.sections
+        .map((section) => section.toggle?.key)
+        .filter((key): key is string => Boolean(key)),
+    )
+    const seenSectionKeys = new Set<string>()
+    const seenFieldUids = new Set<string>()
+
+    config.sections.forEach((section, sectionIndex) => {
+      if (seenSectionKeys.has(section.key)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['sections', sectionIndex, 'key'],
+          message: `Duplicate section key "${section.key}"`,
+        })
+      }
+      seenSectionKeys.add(section.key)
+
+      if (section.gate && !toggleKeys.has(section.gate.toggle)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['sections', sectionIndex, 'gate', 'toggle'],
+          message: `Gate references toggle "${section.gate.toggle}", which no section declares`,
+        })
+      }
+
+      section.fields.forEach((field, fieldIndex) => {
+        if (seenFieldUids.has(field.uid)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['sections', sectionIndex, 'fields', fieldIndex, 'uid'],
+            message: `Duplicate field uid "${field.uid}"`,
+          })
+        }
+        seenFieldUids.add(field.uid)
+      })
+    })
+  })
+
+export type CalculatorLocalizedText = z.infer<typeof localizedTextSchema>
+export type CalculatorSectionToggle = z.infer<typeof sectionToggleSchema>
+export type CalculatorSectionField = z.infer<typeof sectionFieldSchema>
+export type CalculatorFieldSection = z.infer<
+  typeof calculatorFieldSectionSchema
+>
+export type CalculatorConfig = z.infer<typeof calculatorConfigSchema>
+
+// Every toggle declared anywhere in the config, so a section's `gate` can be
+// resolved (and the widget can offer the editor a list to pick from).
+export const collectSectionToggles = (
+  config: CalculatorConfig,
+): CalculatorSectionToggle[] =>
+  config.sections
+    .map((section) => section.toggle)
+    .filter((toggle): toggle is CalculatorSectionToggle => Boolean(toggle))

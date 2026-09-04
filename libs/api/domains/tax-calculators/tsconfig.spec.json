@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../../dist/out-tsc",
+    "module": "commonjs",
+    "moduleResolution": "node10",
+    "types": ["jest", "node"],
+    /* Relaxed only for the test compile: ts-jest type-checks transitively
+     * imported sources, and shared libs pulled in via the service
+     * (@island.is/logging, auth-nest-tools, clients/middlewares) do not
+     * satisfy these three. tsconfig.lib.json keeps them for our own code. */
+    "noPropertyAccessFromIndexSignature": false,
+    "noImplicitOverride": false,
+    "noImplicitReturns": false
+  },
+  "include": [
+    "jest.config.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.d.ts"
+  ]
+}

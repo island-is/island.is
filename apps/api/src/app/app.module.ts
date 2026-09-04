@@ -83,6 +83,7 @@ import { SessionsModule } from '@island.is/api/domains/sessions'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
 import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { TaxCalculatorsModule } from '@island.is/api/domains/tax-calculators'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
 import { OpenDataModule } from '@island.is/api/domains/open-data'
@@ -249,6 +250,7 @@ import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { VerdictsClientConfig } from '@island.is/clients/verdicts'
+import { CalculatorsClientModule } from '@island.is/clients/rsk/calculators'
 import {
   VerdictsApiModuleConfig,
   VerdictsModule,
@@ -364,6 +366,7 @@ const environment = getConfig
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
     LegalGazetteClientModule,
+    CalculatorsClientModule,
     DisabilityLicenseModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
@@ -392,6 +395,7 @@ const environment = getConfig
     FinancialStatementsInaoModule,
     VehiclesModule,
     RightsPortalModule,
+    TaxCalculatorsModule,
     AssetsModule,
     ApiDomainsHmsModule,
     HmsLoansModule,
