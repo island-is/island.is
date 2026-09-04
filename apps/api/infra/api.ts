@@ -67,6 +67,7 @@ import {
   VMSTUnemployment,
   GoProVerdicts,
   RecyclingFund,
+  IcelandicGovernmentEmployees,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -595,6 +596,7 @@ export const serviceSetup = (services: {
       WorkAccidents,
       SeminarsVer,
       SecondarySchool,
+      IcelandicGovernmentEmployees,
       MmsPrimarySchool,
       LSH,
       PracticalExams,
