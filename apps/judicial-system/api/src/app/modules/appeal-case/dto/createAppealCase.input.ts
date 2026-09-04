@@ -25,7 +25,7 @@ export class CreateAppealCaseInput {
   readonly appealType?: AppealCaseType
 
   // The defendant whose verdict is being appealed. Required for - and only
-  // meaningful to - an áfrýjun, which is filed for one specific defendant.
+  // meaningful to - verdict appeals, which is filed for one specific defendant.
   @Allow()
   @IsOptional()
   @IsUUID()
