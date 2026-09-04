@@ -50,7 +50,7 @@ import {
   isDuplicateIndictmentModal,
 } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './IndictmentOverview.strings'
 
@@ -181,7 +181,7 @@ const IndictmentOverview: FC = () => {
                 </Box>
               ),
           )}
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={stack({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&
@@ -259,7 +259,7 @@ const IndictmentOverview: FC = () => {
                   }
                 />
                 {defendantsRequiringReview && (
-                  <div className={grid({ gap: 3 })}>
+                  <div className={stack({ gap: 3 })}>
                     {defendantsRequiringReview.map((defendant) => (
                       <BlueBox key={`${defendant.id}_review_decision`}>
                         <SectionHeading

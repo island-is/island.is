@@ -41,7 +41,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ConfirmationInformation } from './ConfirmationInformation'
@@ -229,7 +229,7 @@ const Completed: FC = () => {
                 </Box>
               ),
           )}
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={stack({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             <Box component="section">
@@ -283,13 +283,13 @@ const Completed: FC = () => {
                 <SectionHeading
                   title={formatMessage(strings.serviceRequirementTitle)}
                 />
-                <div className={grid({ gap: 4 })}>
+                <div className={stack({ gap: 4 })}>
                   {defendantsWithVerdict?.map((defendant) => {
                     const { verdict } = defendant
                     if (!verdict) return null
 
                     return (
-                      <Box key={defendant.id} className={grid({ gap: 3 })}>
+                      <Box key={defendant.id} className={stack({ gap: 3 })}>
                         <DefendantServiceRequirement defendant={defendant} />
                       </Box>
                     )

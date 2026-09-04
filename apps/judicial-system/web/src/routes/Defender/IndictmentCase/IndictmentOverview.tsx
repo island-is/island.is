@@ -50,7 +50,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
   isCaseDefendantDefender,
@@ -232,7 +232,7 @@ const IndictmentOverview: FC = () => {
                 ))}
             </Fragment>
           ))}
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={stack({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&

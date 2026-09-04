@@ -24,7 +24,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { useDebouncedInput } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const PoliceReport = () => {
@@ -52,7 +52,7 @@ export const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(rcReportForm.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading

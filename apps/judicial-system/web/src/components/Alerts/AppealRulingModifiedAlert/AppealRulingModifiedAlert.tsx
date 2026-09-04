@@ -5,7 +5,7 @@ import {
   FormContext,
   MarkdownWrapper,
 } from '@island.is/judicial-system-web/src/components'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 const modifiedTitle = 'Úrskurður Landsréttar leiðréttur'
 
@@ -31,7 +31,7 @@ const AppealRulingModifiedAlert = () => {
   }
 
   return (
-    <div className={grid({ gap: 2 })}>
+    <div className={stack({ gap: 2 })}>
       {caseLevelHistory && (
         <AlertMessage
           type="info"

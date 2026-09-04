@@ -11,7 +11,7 @@ export const container = style({
   borderRadius: theme.border.radius.large,
 
   padding: `${theme.spacing[2]}px`,
-  marginBottom: `${theme.spacing[10]}px`,
+  marginBottom: `${theme.spacing[4]}px`,
   transition: 'border-color 0.2s ease-in-out',
 
   selectors: {
@@ -25,8 +25,4 @@ export const container = style({
       padding: `${theme.spacing[10]}px`,
     },
   },
-})
-
-export const bottomContainer = style({
-  marginBottom: `${theme.spacing[4]}px`,
 })

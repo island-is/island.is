@@ -38,7 +38,7 @@ import {
   useSyncDefendantsFromPolice,
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -184,13 +184,13 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo
             workingCase={workingCase}
             hideDefendants
             hideCourt
           />
-          <Box component="section" className={grid({ gap: 3 })}>
+          <Box component="section" className={stack({ gap: 3 })}>
             <Box
               display="flex"
               alignItems="center"

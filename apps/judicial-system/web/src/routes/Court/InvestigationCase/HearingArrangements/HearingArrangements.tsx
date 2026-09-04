@@ -42,7 +42,7 @@ import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -172,13 +172,13 @@ const HearingArrangements = () => {
         <ArraignmentAlert />
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <SectionHeading
               title={formatMessage(m.sections.sessionArrangements.heading)}
               required
             />
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <RadioButton
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
@@ -322,7 +322,7 @@ const HearingArrangements = () => {
           {workingCase.sessionArrangements ===
             SessionArrangements.ALL_PRESENT &&
             isNonEmptyArray(workingCase.victims) && (
-              <section className={grid({ gap: 4 })}>
+              <section className={stack({ gap: 4 })}>
                 <SectionHeading
                   title={
                     workingCase.victims && workingCase.victims.length > 1
