@@ -12,6 +12,15 @@ describe('VerdictTimelineBody', () => {
   const bullet = (text: string) =>
     screen.getByText(`• ${text}`).parentElement as HTMLElement
 
+  // framer-motion writes an item's `initial` state as inline style on mount and
+  // never progresses the animation in jsdom, so an item that will animate in is
+  // one still sitting at opacity 0, and an item that popped straight into place
+  // is one that never was.
+  const expectToEnterAnimated = (element: HTMLElement) =>
+    expect(element).toHaveStyle({ opacity: 0 })
+  const expectToBeSettled = (element: HTMLElement) =>
+    expect(element).not.toHaveStyle({ opacity: 0 })
+
   it('should render every item settled on the first render', () => {
     render(
       <VerdictTimelineBody
@@ -20,8 +29,8 @@ describe('VerdictTimelineBody', () => {
       />,
     )
 
-    expect(bullet('served')).not.toHaveStyle({ opacity: 0 })
-    expect(bullet('stance')).not.toHaveStyle({ opacity: 0 })
+    expectToBeSettled(bullet('served'))
+    expectToBeSettled(bullet('stance'))
   })
 
   it('should let an item replacing another enter from hidden', () => {
@@ -39,8 +48,8 @@ describe('VerdictTimelineBody', () => {
       />,
     )
 
-    expect(bullet('served')).not.toHaveStyle({ opacity: 0 })
-    expect(bullet('appealed')).toHaveStyle({ opacity: 0 })
+    expectToBeSettled(bullet('served'))
+    expectToEnterAnimated(bullet('appealed'))
   })
 
   it('should let an appended item enter from hidden', () => {
@@ -55,7 +64,7 @@ describe('VerdictTimelineBody', () => {
       />,
     )
 
-    expect(bullet('requirement')).not.toHaveStyle({ opacity: 0 })
-    expect(bullet('served')).toHaveStyle({ opacity: 0 })
+    expectToBeSettled(bullet('requirement'))
+    expectToEnterAnimated(bullet('served'))
   })
 })
