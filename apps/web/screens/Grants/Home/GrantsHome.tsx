@@ -40,6 +40,7 @@ import {
   CategorySlug,
   mapTagToMessageId,
 } from './mapTagToMessageId'
+import { t } from 'msw/lib/glossary-2792c6da'
 
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   categories,
@@ -92,9 +93,10 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
     <Box>
       <CustomPageLayoutHeader
         title={customPageData?.ogTitle ?? formatMessage(m.home.title)}
-        description={
-          customPageData?.ogDescription ?? formatMessage(m.home.description)
-        }
+        description={{
+          text:
+            customPageData?.ogDescription ?? formatMessage(m.home.description),
+        }}
         searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
         searchUrl={searchUrl}
         shortcuts={{

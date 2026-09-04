@@ -69,6 +69,7 @@ export const FilterDateAccordion = ({
               name={`${id}-from`}
               backgroundColor="blue"
               label={formatMessage(m.search.dateFrom)}
+              placeholderText=""
               size="xs"
               locale={locale}
               selected={valueFrom}
@@ -79,6 +80,7 @@ export const FilterDateAccordion = ({
             <DatePicker
               name={`${id}-to`}
               backgroundColor="blue"
+              placeholderText=""
               label={formatMessage(m.search.dateTo)}
               size="xs"
               locale={locale}

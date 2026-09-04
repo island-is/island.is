@@ -27,6 +27,7 @@ interface Props {
 }
 
 export const OpenInvoicesWrapper = (props: Props) => {
+  const description = props.header?.description?.text ?? props.description
   return (
     <CustomPageLayoutWrapper
       pageTitle={props.title}
@@ -35,12 +36,23 @@ export const OpenInvoicesWrapper = (props: Props) => {
     >
       <CustomPageLayoutHeader
         title={props.header?.title ?? props.title}
-        description={props.header?.description ?? props.description}
+        description={
+          description
+            ? {
+                text: description,
+                size: 'sm',
+              }
+            : undefined
+        }
         shortcuts={props.header?.shortcuts}
         searchPlaceholder={props.header?.searchPlaceholder}
         searchUrl={props.header?.searchUrl}
         offset={props.header?.offset}
-        featuredImage={props.featuredImage}
+        featuredImage={
+          props.featuredImage
+            ? { ...props.featuredImage, size: 'sm' }
+            : undefined
+        }
         breadcrumbs={
           props.header?.breadcrumbs && (
             <Breadcrumbs

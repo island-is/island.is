@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import addMonths from 'date-fns/addMonths'
-import format from 'date-fns/format'
 import {
   parseAsArrayOf,
   parseAsIsoDateTime,
@@ -17,9 +16,12 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { dateFormat } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
-import { formatCurrency, isDefined } from '@island.is/shared/utils'
+import {
+  formatCurrency,
+  formatCurrencyWithoutSuffix,
+  isDefined,
+} from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
 import {
   IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
@@ -31,10 +33,11 @@ import {
   QueryGetOrganizationArgs,
   QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { linkResolver, useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextRedirect } from '@island.is/web/units/errors'
 
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
@@ -61,6 +64,7 @@ import {
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
 } from './Overview.graphql'
+import * as styles from './Overview.css'
 import { OverviewTable } from './OverviewTable'
 
 const PAGE_SIZE = 12
@@ -303,8 +307,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }
 
   const hitsMessage = useMemo(() => {
-    const dateRangeStartArg = format(appliedFilters.dateFrom, dateFormat.is)
-    const dateRangeEndArg = format(appliedFilters.dateTo, dateFormat.is)
     const totalPaymentsSum =
       invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
         ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
@@ -312,30 +314,20 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     if (totalPayments === 1) {
       return totalPaymentsSum
         ? formatMessage(m.search.resultFound, {
-            dateRangeStart: dateRangeStartArg,
-            dateRangeEnd: dateRangeEndArg,
             sum: formatCurrency(totalPaymentsSum),
           })
-        : formatMessage(m.search.resultFoundNoSum, {
-            dateRangeStart: dateRangeStartArg,
-            dateRangeEnd: dateRangeEndArg,
-          })
+        : formatMessage(m.search.resultFoundNoSum)
     }
 
     return totalPaymentsSum
       ? formatMessage(m.search.resultsFound, {
-          records: totalPayments,
-          dateRangeStart: dateRangeStartArg,
-          dateRangeEnd: dateRangeEndArg,
+          records: formatCurrencyWithoutSuffix(totalPayments),
           sum: formatCurrency(totalPaymentsSum),
         })
       : formatMessage(m.search.resultsFoundNoSum, {
-          records: totalPayments,
-          dateRangeStart: dateRangeStartArg,
-          dateRangeEnd: dateRangeEndArg,
+          records: formatCurrencyWithoutSuffix(totalPayments),
         })
   }, [
-    appliedFilters,
     formatMessage,
     initialInvoiceGroups?.totalPaymentsSum,
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
@@ -343,12 +335,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     totalPayments,
   ])
 
-  // Mobile shows the same information as `hitsMessage` split across three
+  // Mobile shows the same information as `hitsMessage` split across two
   // short lines instead of one long sentence (matches the Grants Plaza
   // pattern) — the full sentence doesn't fit comfortably on small screens.
   const hitsSummary = useMemo(() => {
-    const dateRangeStartArg = format(appliedFilters.dateFrom, dateFormat.is)
-    const dateRangeEndArg = format(appliedFilters.dateTo, dateFormat.is)
     const totalPaymentsSum =
       invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
         ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
@@ -357,10 +347,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       recordsLine: formatMessage(m.search.recordsFoundShort, {
         records: totalPayments,
       }),
-      dateRangeLine: formatMessage(m.search.dateRangeLineShort, {
-        dateRangeStart: dateRangeStartArg,
-        dateRangeEnd: dateRangeEndArg,
-      }),
       totalLine: totalPaymentsSum
         ? formatMessage(m.search.totalLineShort, {
             sum: formatCurrency(totalPaymentsSum),
@@ -368,27 +354,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         : undefined,
     }
   }, [
-    appliedFilters,
     formatMessage,
     initialInvoiceGroups?.totalPaymentsSum,
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
       ?.totalPaymentsSum,
     totalPayments,
   ])
-
-  // hitsMessage/hitsSummary are only committed to the displayed state once
-  // loading finishes — otherwise they flash back to initialInvoiceGroups
-  // values every time invoiceGroupsData clears during a refetch.
-  const [displayedHits, setDisplayedHits] = useState({
-    hitsMessage,
-    hitsSummary,
-  })
-  useEffect(() => {
-    if (!invoiceGroupsLoading) {
-      setDisplayedHits({ hitsMessage, hitsSummary })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [invoiceGroupsLoading, appliedFilters])
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
     const filteredValues = values?.length ? [...values] : null
@@ -413,9 +384,17 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       }
       case 'debtors': {
         setDebtors(filteredValues)
+        // Buyers (debtors) and ministries are mutually exclusive — picking
+        // one clears the other.
+        if (filteredValues) {
+          setMinistries(null)
+        }
         break
       }
       case 'ministries': {
+        if (filteredValues) {
+          setDebtors(null)
+        }
         setMinistries(filteredValues)
         break
       }
@@ -540,18 +519,14 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         organization,
       }}
     >
-      <Box marginTop={[6, 6, 12]} background="blue100">
+      <Box marginTop={6} background="blue100">
         <SidebarLayout
           fullWidthContent={true}
           paddingTop={[3, 3, 8]}
           sidebarContent={
             <Stack space={3}>
               <Text variant="h4" as="h4" paddingY={1}>
-                {
-                  //formatMessage(m.overview.searchTitle)
-                  //TEMPORARY - REMOVE BEFORE MERGE
-                }
-                Leit og Síun
+                Leit og síun
               </Text>
               <OverviewFilter
                 onSearchUpdate={onSearchFilterUpdate}
@@ -575,20 +550,31 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               marginBottom={2}
             >
               <Box display={['none', 'none', 'block']}>
-                <MarkdownText>{displayedHits.hitsMessage ?? ''}</MarkdownText>
+                <MarkdownText>
+                  {invoiceGroupsLoading
+                    ? formatMessage(m.search.fetchingResults)
+                    : hitsMessage}
+                </MarkdownText>
               </Box>
               <Box display={['block', 'block', 'none']}>
                 <MarkdownText>
-                  {displayedHits.hitsSummary.recordsLine}
+                  {invoiceGroupsLoading
+                    ? formatMessage(m.search.fetchingResults)
+                    : hitsSummary.recordsLine}
                 </MarkdownText>
-                <MarkdownText>
-                  {displayedHits.hitsSummary.dateRangeLine}
-                </MarkdownText>
-                {displayedHits.hitsSummary.totalLine && (
-                  <MarkdownText>
-                    {displayedHits.hitsSummary.totalLine}
-                  </MarkdownText>
-                )}
+                {/* Always mounted so the mobile summary keeps a constant
+                    line count — content is hidden rather than unmounted
+                    while loading or when there's no sum yet, to avoid the
+                    layout shifting up and down. */}
+                <Box
+                  className={
+                    !invoiceGroupsLoading && hitsSummary.totalLine
+                      ? undefined
+                      : styles.hiddenLine
+                  }
+                >
+                  <MarkdownText>{hitsSummary.totalLine || ' '}</MarkdownText>
+                </Box>
               </Box>
               <OverviewFilter
                 onSearchUpdate={onSearchFilterUpdate}
@@ -663,6 +649,26 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
   const suppliersInput = suppliersFilter?.filter(isDefined) || undefined
   const invoicePaymentTypesInput = invoicePaymentTypesFilter?.filter(isDefined)
   const ministriesInput = ministriesFilter?.filter(isDefined) || undefined
+
+  // Buyers (debtors) and ministries are mutually exclusive — if both are in
+  // the URL, buyers wins and ministries is redirected away rather than
+  // silently dropped from the query, so the URL stays a true reflection of
+  // the applied filters.
+  if (debtorsInput && ministriesInput) {
+    const params = new URLSearchParams()
+    for (const [key, value] of Object.entries(query ?? {})) {
+      if (key === 'ministries') continue
+      if (Array.isArray(value)) {
+        value.forEach((v) => params.append(key, v))
+      } else if (value !== undefined) {
+        params.append(key, value)
+      }
+    }
+
+    const path = linkResolver('openinvoices', [], locale as Locale).href
+    const search = params.toString()
+    throw new CustomNextRedirect(search ? `${path}?${search}` : path)
+  }
 
   const dateToInput =
     parseAsIsoDateTime.parseServerSide(query?.['dateRangeEnd']) ?? today

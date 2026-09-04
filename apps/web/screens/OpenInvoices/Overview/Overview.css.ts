@@ -24,3 +24,7 @@ export const loader = style({
   minHeight: 24,
   minWidth: 24,
 })
+
+export const hiddenLine = style({
+  visibility: 'hidden',
+})

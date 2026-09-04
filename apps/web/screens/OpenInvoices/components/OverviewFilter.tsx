@@ -175,6 +175,7 @@ export const OverviewFilter = ({
                     valueTo={category.valueTo}
                     isActive={category.isActive}
                     maxRangeDays={category.maxRangeDays}
+                    initiallyExpanded
                     onChange={(valueFrom, valueTo) => {
                       const valueFromString = valueFrom
                         ? valueFrom.toISOString()

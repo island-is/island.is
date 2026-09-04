@@ -175,25 +175,26 @@ export const m = {
     },
     resultFound: {
       id: 'web.openinvoices:search.resultFound#markdown',
-      defaultMessage: '1 færsla fannst fyrir valið tímabil, samtals **{sum}**',
+      defaultMessage:
+        '1 greiðsla fannst fyrir valið tímabil, samtals **{sum}**',
     },
     resultFoundNoSum: {
       id: 'web.openinvoices:search.resultFoundNoSum#markdown',
-      defaultMessage: '1 færsla fannst fyrir valið tímabil',
+      defaultMessage: '1 greiðsla fannst fyrir valið tímabil',
     },
     resultsFound: {
       id: 'web.openinvoices:search.resultsFound#markdown',
       defaultMessage:
-        '**{records}** færslur fundust fyrir valið tímabil, samtals **{sum}**',
+        '**{records}** greiðslur fundust fyrir valið tímabil, samtals **{sum}**',
     },
     resultsFoundNoSum: {
       id: 'web.openinvoices:search.resultsFoundNoSum#markdown',
-      defaultMessage: '**{records}** færslur fundust fyrir valið tímabil',
+      defaultMessage: '**{records}** greiðslur fundust fyrir valið tímabil',
     },
     recordsFoundShort: {
       id: 'web.openinvoices:search.recordsFoundShort#markdown',
       defaultMessage:
-        '**{records}** {records, plural, one {færsla fannst} other {færslur fundust}}',
+        '**{recordsFormatted}** {records, plural, one {greiðsla fannst} other {greiðslur fundust}}',
     },
     totalLineShort: {
       id: 'web.openinvoices:search.totalLineShort#markdown',
@@ -209,7 +210,7 @@ export const m = {
     },
     fetchingResults: {
       id: 'web.openinvoices:search.fetchingResults',
-      defaultMessage: 'Sækir færslur...',
+      defaultMessage: 'Sækir greiðslur...',
     },
   }),
 }

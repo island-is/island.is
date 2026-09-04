@@ -17,6 +17,7 @@ import { DebtorsDto } from './dtos/debtors.dto'
 import { mapDebtorDto } from './dtos/debtor.dto'
 import { MinistriesDto } from './dtos/ministries.dto'
 import { mapMinistryDto } from './dtos/ministry.dto'
+import { dedupeById } from './utils/dedupe.util'
 import { mapPageInfo } from './utils/pageInfo.util'
 import { InvoicePaymentsGroupRequestDto } from './dtos/invoicePaymentsGroupRequest.dto'
 import {
@@ -109,7 +110,10 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      suppliers: (data.suppliers ?? []).map(mapSupplierDto).filter(isDefined),
+      suppliers: dedupeById(
+        (data.suppliers ?? []).map(mapSupplierDto).filter(isDefined),
+        (supplier) => supplier.legalId,
+      ),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -131,7 +135,10 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      debtors: (data.debtors ?? []).map(mapDebtorDto).filter(isDefined),
+      debtors: dedupeById(
+        (data.debtors ?? []).map(mapDebtorDto).filter(isDefined),
+        (debtor) => debtor.erpLegalEntityId,
+      ),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -153,7 +160,10 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      ministries: (data.ministries ?? []).map(mapMinistryDto).filter(isDefined),
+      ministries: dedupeById(
+        (data.ministries ?? []).map(mapMinistryDto).filter(isDefined),
+        (ministry) => ministry.code,
+      ),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -175,9 +185,12 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      invoicePaymentTypes: (data.paymentTypes ?? [])
-        .map(mapInvoicePaymentTypeDto)
-        .filter(isDefined),
+      invoicePaymentTypes: dedupeById(
+        (data.paymentTypes ?? [])
+          .map(mapInvoicePaymentTypeDto)
+          .filter(isDefined),
+        (paymentType) => paymentType.code,
+      ),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
