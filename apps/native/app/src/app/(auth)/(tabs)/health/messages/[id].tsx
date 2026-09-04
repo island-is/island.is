@@ -527,5 +527,3 @@ export default function HealthMessageDetailScreen() {
     </>
   )
 }
-
-
