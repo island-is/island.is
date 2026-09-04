@@ -9,6 +9,8 @@ import {
   BulletList,
   Button,
   InputFileUpload,
+  Link,
+  LinkV2,
   LoadingDots,
   Stack,
   Text,
@@ -432,7 +434,22 @@ export const ExcelTemplateDownload: FC<
   return (
     <Box>
       {base64Template && (
-        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          marginBottom={3}
+          columnGap={2}
+        >
+          <a
+            href={formatMessage(messages.general.instructionsLink)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="utility" icon="open" iconType="outline" as="span">
+              {formatMessage(messages.general.instructionsLabel)}
+            </Button>
+          </a>
+
           <Button
             variant="utility"
             icon="download"

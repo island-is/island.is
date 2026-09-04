@@ -76,6 +76,15 @@ export const messages = {
       id: 'doe.sr.application:general.newApplicationButtonLabel',
       defaultMessage: 'Ný skýrsla',
     },
+    instructionsLabel: {
+      id: 'doe.sr.application:general.instructionsLabel',
+      defaultMessage: 'Leiðbeiningar',
+    },
+    instructionsLink: {
+      id: 'doe.sr.application:general.instructionsLink',
+      defaultMessage:
+        'https://island.is/s/jafnrettisstofa/skyrslugjof-um-kynbundinn-launamun#sliceTitle-4tUJcZlnPKXLBgEKbUdhVq',
+    },
   }),
 
   notAllowed: defineMessages({
@@ -1561,6 +1570,10 @@ export const messages = {
       defaultGroupName: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.defaultGroupName',
         defaultMessage: 'Sjálfgefinn hópur {index}',
+      },
+      addToExistingGroupPrefix: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.addToExistingGroupPrefix',
+        defaultMessage: 'Bæta við',
       },
       // New id rather than new copy on `groupMembers`: a CMS translation keyed
       // to the old id would win over whatever is written here, and this line
