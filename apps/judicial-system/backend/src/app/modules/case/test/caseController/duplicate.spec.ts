@@ -12,7 +12,8 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { Case, CaseRepositoryService } from '../../../repository'
+import { Case } from '../../../repository'
+import { CaseCloningService } from '../../caseCloning.service'
 
 interface Then {
   result: Case
@@ -26,14 +27,14 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Duplicate', () => {
-  let mockCaseRepositoryService: CaseRepositoryService
+  let mockCaseCloningService: CaseCloningService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { sequelize, caseRepositoryService, caseController } =
+    const { sequelize, caseCloningService, caseController } =
       await createTestingCaseModule()
-    mockCaseRepositoryService = caseRepositoryService
+    mockCaseCloningService = caseCloningService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -77,7 +78,7 @@ describe('CaseController - Duplicate', () => {
 
     beforeEach(async () => {
       const mockDuplicate =
-        mockCaseRepositoryService.duplicateIndictmentToDraft as jest.Mock
+        mockCaseCloningService.duplicateIndictmentToDraft as jest.Mock
       mockDuplicate.mockResolvedValueOnce(duplicatedCase)
 
       then = await givenWhenThen(caseId, user, theCase)
@@ -85,7 +86,7 @@ describe('CaseController - Duplicate', () => {
 
     it('should duplicate the case into a new draft', () => {
       expect(
-        mockCaseRepositoryService.duplicateIndictmentToDraft,
+        mockCaseCloningService.duplicateIndictmentToDraft,
       ).toHaveBeenCalledWith(caseId, {
         transaction,
         prosecutorId: userId,
@@ -114,7 +115,7 @@ describe('CaseController - Duplicate', () => {
 
     beforeEach(async () => {
       const mockDuplicate =
-        mockCaseRepositoryService.duplicateIndictmentToDraft as jest.Mock
+        mockCaseCloningService.duplicateIndictmentToDraft as jest.Mock
       mockDuplicate.mockResolvedValueOnce(duplicatedCase)
 
       then = await givenWhenThen(caseId, user, theCase)
@@ -122,7 +123,7 @@ describe('CaseController - Duplicate', () => {
 
     it('should duplicate the case into a new draft', () => {
       expect(
-        mockCaseRepositoryService.duplicateIndictmentToDraft,
+        mockCaseCloningService.duplicateIndictmentToDraft,
       ).toHaveBeenCalledWith(caseId, {
         transaction,
         prosecutorId: userId,
@@ -150,7 +151,7 @@ describe('CaseController - Duplicate', () => {
     it('should throw ForbiddenException and not duplicate', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(
-        mockCaseRepositoryService.duplicateIndictmentToDraft,
+        mockCaseCloningService.duplicateIndictmentToDraft,
       ).not.toHaveBeenCalled()
     })
   })
@@ -172,7 +173,7 @@ describe('CaseController - Duplicate', () => {
     it('should throw ForbiddenException and not duplicate', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(
-        mockCaseRepositoryService.duplicateIndictmentToDraft,
+        mockCaseCloningService.duplicateIndictmentToDraft,
       ).not.toHaveBeenCalled()
     })
   })

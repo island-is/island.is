@@ -166,4 +166,60 @@ export class CivilClaimantRepositoryService {
       throw error
     }
   }
+
+  // Copies every civil claimant of a case to another case as a new row, with
+  // its defendant references remapped through the given map from original
+  // defendant ids to their copies; references to defendants missing from the
+  // map are dropped. Returns a map from each original civil claimant id to its
+  // copy so the caller can remap the references that point at civil claimants.
+  async copyAllToCase(
+    caseId: string,
+    newCaseId: string,
+    defendantIdMap: ReadonlyMap<string, string>,
+    options: { transaction: Transaction },
+  ): Promise<Map<string, string>> {
+    try {
+      this.logger.debug(
+        `Copying all civil claimants of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const civilClaimants = await this.civilClaimantModel.findAll({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      const civilClaimantIdMap = new Map<string, string>()
+
+      for (const civilClaimant of civilClaimants) {
+        const remappedDefendantIds = civilClaimant.defendantIds
+          ?.map((defendantId) => defendantIdMap.get(defendantId))
+          .filter((defendantId): defendantId is string => Boolean(defendantId))
+
+        const newCivilClaimant = await this.civilClaimantModel.create(
+          {
+            ...civilClaimant.toJSON(),
+            id: undefined,
+            caseId: newCaseId,
+            defendantIds: remappedDefendantIds,
+          },
+          { transaction: options.transaction },
+        )
+
+        civilClaimantIdMap.set(civilClaimant.id, newCivilClaimant.id)
+      }
+
+      this.logger.debug(
+        `Copied ${civilClaimantIdMap.size} civil claimants of case ${caseId} to case ${newCaseId}`,
+      )
+
+      return civilClaimantIdMap
+    } catch (error) {
+      this.logger.error(
+        `Error copying all civil claimants of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

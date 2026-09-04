@@ -12,7 +12,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
@@ -114,6 +113,7 @@ import { MinimalCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
+import { CaseCloningService } from './caseCloning.service'
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
 
@@ -180,6 +180,7 @@ export class CaseService {
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly caseCloningService: CaseCloningService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
@@ -2862,7 +2863,7 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<Case> {
-    return this.caseRepositoryService.duplicateIndictmentToDraft(theCase.id, {
+    return this.caseCloningService.duplicateIndictmentToDraft(theCase.id, {
       transaction,
       prosecutorId: user.id,
       prosecutorsOfficeId: user.institution?.id,

@@ -5,7 +5,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CaseType } from '@island.is/judicial-system/types'
 
-import { AwsS3Service } from '../../aws-s3/awsS3.service'
 import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
@@ -87,7 +86,6 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
           provide: CaseDefendantPoliceCaseNumberRepositoryService,
           useValue: {},
         },
-        { provide: AwsS3Service, useValue: {} },
         CaseRepositoryService,
       ],
     }).compile()
