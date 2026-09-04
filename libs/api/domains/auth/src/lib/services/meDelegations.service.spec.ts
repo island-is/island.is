@@ -17,6 +17,7 @@ const mockDelegationsApi = {
   meDelegationsControllerFindAll: jest.fn(),
   meDelegationsControllerFindOneRaw: jest.fn(),
   meDelegationsControllerCreate: jest.fn(),
+  meDelegationsControllerCreateBatch: jest.fn(),
   meDelegationsControllerPatch: jest.fn(),
   meDelegationsControllerPatchRaw: jest.fn(),
   meDelegationsControllerDelete: jest.fn(),
@@ -76,7 +77,7 @@ describe('MeDelegationsService', () => {
   })
 
   describe('createOrUpdateDelegations', () => {
-    it('creates delegations for each toNationalId and domain combination', async () => {
+    it('sends the whole grant to the batch endpoint in one call', async () => {
       const toNationalId1 = '1234567890'
       const toNationalId2 = '0987654321'
       const input: CreateDelegationsInput = {
@@ -91,100 +92,53 @@ describe('MeDelegationsService', () => {
         ],
       }
 
-      const delegation1 = makeDelegation({
-        toNationalId: toNationalId1,
-        domainName: '@test.is',
-      })
-      const delegation2 = makeDelegation({
-        toNationalId: toNationalId1,
-        domainName: '@other.is',
-      })
-      const delegation3 = makeDelegation({
-        toNationalId: toNationalId2,
-        domainName: '@test.is',
-      })
-      const delegation4 = makeDelegation({
-        toNationalId: toNationalId2,
-        domainName: '@other.is',
-      })
+      const created = [
+        makeDelegation({ toNationalId: toNationalId1, domainName: '@test.is' }),
+        makeDelegation({ toNationalId: toNationalId1, domainName: '@other.is' }),
+        makeDelegation({ toNationalId: toNationalId2, domainName: '@test.is' }),
+        makeDelegation({ toNationalId: toNationalId2, domainName: '@other.is' }),
+      ]
+      mockDelegationsApi.meDelegationsControllerCreateBatch.mockResolvedValue(
+        created,
+      )
 
-      // No existing delegations, so all will be created
-      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue([])
-      mockDelegationsApi.meDelegationsControllerCreate
-        .mockResolvedValueOnce(delegation1)
-        .mockResolvedValueOnce(delegation2)
-        .mockResolvedValueOnce(delegation3)
-        .mockResolvedValueOnce(delegation4)
-
-      // Act
       const result = await service.createOrUpdateDelegations(mockUser, input)
 
-      // Assert: one create call per (toNationalId, domain) pair = 2 * 2 = 4
-      expect(
-        mockDelegationsApi.meDelegationsControllerCreate,
-      ).toHaveBeenCalledTimes(4)
-      expect(result).toHaveLength(4)
-    })
-
-    it('updates existing delegations instead of creating new ones', async () => {
-      const toNationalId = '1234567890'
-      const existingDelegation = makeDelegation({
-        id: 'existing-del',
-        toNationalId,
-        domainName: '@test.is',
-        scopes: [
-          {
-            id: 'old-scope',
-            scopeName: '@test.is/read',
-            displayName: 'Read',
-            delegationId: 'existing-del',
-            validFrom: tomorrow,
-            validTo: nextWeek,
-          },
-        ],
-      })
-      const input: CreateDelegationsInput = {
-        toNationalIds: [toNationalId],
-        scopes: [
-          {
-            name: '@test.is/write',
-            domainName: '@test.is',
-            validTo: nextMonth,
-          },
-        ],
-      }
-
-      // getDelegationByOtherUser resolves with existing delegation
-      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue([
-        existingDelegation,
-      ])
-
-      // getDelegationById (called inside updateDelegation) resolves via FindOneRaw
-      mockDelegationsApi.meDelegationsControllerFindOneRaw.mockResolvedValue({
-        raw: { status: 200 },
-        value: jest.fn().mockResolvedValue(existingDelegation),
-      })
-
-      const patchedDelegation = makeDelegation({
-        id: 'existing-del',
-        toNationalId,
-      })
-      mockDelegationsApi.meDelegationsControllerPatchRaw.mockResolvedValue({
-        raw: { status: 200 },
-        value: jest.fn().mockResolvedValue(patchedDelegation),
-      })
-
-      // Act
-      const result = await service.createOrUpdateDelegations(mockUser, input)
-
-      // Assert: patch called instead of create
       expect(
         mockDelegationsApi.meDelegationsControllerCreate,
       ).not.toHaveBeenCalled()
       expect(
-        mockDelegationsApi.meDelegationsControllerPatchRaw,
+        mockDelegationsApi.meDelegationsControllerCreateBatch,
       ).toHaveBeenCalledTimes(1)
-      expect(result).toHaveLength(1)
+      expect(
+        mockDelegationsApi.meDelegationsControllerCreateBatch,
+      ).toHaveBeenCalledWith({
+        createDelegationBatchDTO: {
+          delegations: [
+            {
+              toNationalId: toNationalId1,
+              domainName: '@test.is',
+              scopes: [{ name: '@test.is/read', validTo: nextWeek }],
+            },
+            {
+              toNationalId: toNationalId1,
+              domainName: '@other.is',
+              scopes: [{ name: '@other.is/write', validTo: nextMonth }],
+            },
+            {
+              toNationalId: toNationalId2,
+              domainName: '@test.is',
+              scopes: [{ name: '@test.is/read', validTo: nextWeek }],
+            },
+            {
+              toNationalId: toNationalId2,
+              domainName: '@other.is',
+              scopes: [{ name: '@other.is/write', validTo: nextMonth }],
+            },
+          ],
+        },
+      })
+      expect(result).toHaveLength(4)
     })
   })
 

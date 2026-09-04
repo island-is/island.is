@@ -22,6 +22,7 @@ import {
   DelegationDTO,
   PatchDelegationDTO,
 } from './dto/delegation.dto'
+import { CreateDelegationBatchDTO } from './dto/create-delegation-batch.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
@@ -208,6 +209,44 @@ export class DelegationsOutgoingService {
     user: User,
     createDelegation: CreateDelegationDTO,
   ): Promise<DelegationDTO> {
+    const { delegation } = await this.createOrUpdateForDomain(
+      user,
+      createDelegation,
+    )
+
+    return delegation
+  }
+
+  async createBatch(
+    user: User,
+    input: CreateDelegationBatchDTO,
+  ): Promise<DelegationDTO[]> {
+    const results: Array<{
+      delegation: DelegationDTO
+      hadExistingScopes: boolean
+    }> = []
+    for (const createDelegation of input.delegations) {
+      results.push(await this.createOrUpdateForDomain(user, createDelegation))
+    }
+
+    const byRecipient = new Map<string, typeof results>()
+    for (const result of results) {
+      const recipient = result.delegation.toNationalId
+      const group = byRecipient.get(recipient) ?? []
+      group.push(result)
+      byRecipient.set(recipient, group)
+    }
+    for (const group of byRecipient.values()) {
+      void this.notifyDelegationUpdate(user, group)
+    }
+
+    return results.map((result) => result.delegation)
+  }
+
+  private async createOrUpdateForDomain(
+    user: User,
+    createDelegation: CreateDelegationDTO,
+  ): Promise<{ delegation: DelegationDTO; hadExistingScopes: boolean }> {
     if (
       createDelegation.toNationalId === user.nationalId ||
       createDelegation.toNationalId === user.actor?.nationalId
@@ -250,8 +289,6 @@ export class DelegationsOutgoingService {
       },
     })
 
-    // Whether the delegation already had scopes before this grant, so the
-    // recipient gets the "new delegation" vs "updated delegation" notification.
     const hadExistingScopes = delegation
       ? (await this.delegationScopeService.findByDelegationId(delegation.id))
           .length > 0
@@ -303,69 +340,83 @@ export class DelegationsOutgoingService {
       user,
     )
 
-    void this.notifyDelegationUpdate(user, newDelegation, hadExistingScopes)
-
-    return newDelegation
+    return { delegation: newDelegation, hadExistingScopes }
   }
 
   private async notifyDelegationUpdate(
     user: User,
-    delegation: DelegationDTO,
-    hasExistingScopes: boolean,
+    updates: Array<{ delegation: DelegationDTO; hadExistingScopes: boolean }>,
   ) {
     try {
+      const relevant = updates.filter(
+        (update) =>
+          update.delegation.scopes?.length && update.delegation.domainName,
+      )
+      if (relevant.length === 0) {
+        return
+      }
+
       const allowDelegationNotification =
         await this.featureFlagService.getValue(
           Features.isDelegationNotificationEnabled,
           false,
           user,
         )
-
-      if (
-        !allowDelegationNotification ||
-        !delegation.scopes?.length ||
-        !delegation.domainName
-      ) {
+      if (!allowDelegationNotification) {
         return
       }
 
+      const recipient = relevant[0].delegation.toNationalId
       const fromDisplayName = await this.namesService.getUserName(user)
-      const domainName = delegation.domainName
 
-      const domainNameIs = await this.delegationResourceService.findOneDomain(
-        user,
-        domainName,
-        'is',
-      )
-      const domainNameEn = await this.delegationResourceService.findOneDomain(
-        user,
-        domainName,
-        'en',
+      const uniqueDomains = [
+        ...new Set(
+          relevant.map((update) => update.delegation.domainName as string),
+        ),
+      ]
+      const domainDisplayNames = await Promise.all(
+        uniqueDomains.map(async (domainName) => ({
+          is: (
+            await this.delegationResourceService.findOneDomain(
+              user,
+              domainName,
+              'is',
+            )
+          ).displayName,
+          en: (
+            await this.delegationResourceService.findOneDomain(
+              user,
+              domainName,
+              'en',
+            )
+          ).displayName,
+        })),
       )
 
       const args = [
         { key: 'name', value: fromDisplayName },
         {
           key: 'domainNameIs',
-          value: domainNameIs.displayName,
+          value: domainDisplayNames.map((domain) => domain.is).join(', '),
         },
         {
           key: 'domainNameEn',
-          value: domainNameEn.displayName,
+          value: domainDisplayNames.map((domain) => domain.en).join(', '),
         },
       ]
 
-      // Notify toNationalId of the delegation update
+      const isNewDelegation = relevant.some(
+        (update) => !update.hadExistingScopes,
+      )
+
       await this.notificationsApi.notificationsControllerCreateHnippNotification(
         {
           createHnippNotificationDto: {
             args,
-            recipient: delegation.toNationalId,
-            // If there are existing scopes we are updating the delegation
-            // else it is a new delegation
-            templateId: hasExistingScopes
-              ? UPDATED_DELEGATION_TEMPLATE_ID
-              : NEW_DELEGATION_TEMPLATE_ID,
+            recipient,
+            templateId: isNewDelegation
+              ? NEW_DELEGATION_TEMPLATE_ID
+              : UPDATED_DELEGATION_TEMPLATE_ID,
           },
         },
       )
@@ -490,11 +541,9 @@ export class DelegationsOutgoingService {
     }
 
     const delegation = await this.findById(user, delegationId)
-    void this.notifyDelegationUpdate(
-      user,
-      delegation,
-      txResult.hadExistingScopes,
-    )
+    void this.notifyDelegationUpdate(user, [
+      { delegation, hadExistingScopes: txResult.hadExistingScopes },
+    ])
     return {
       kind: 'updated',
       delegation,

@@ -14,6 +14,7 @@ import {
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
+  CreateDelegationBatchDTO,
   CreateDelegationDTO,
   DelegationDirection,
   DelegationDTO,
@@ -194,6 +195,25 @@ export class MeDelegationsController {
     @Body() createDelegation: CreateDelegationDTO,
   ): Promise<DelegationDTO> {
     return this.delegationsOutgoingService.create(user, createDelegation)
+  }
+
+  @Post('batch')
+  @Documentation({
+    description:
+      'Create or update several delegations at once. Each recipient is notified once for the whole batch instead of once per domain.',
+    response: { status: 201, type: [DelegationDTO] },
+  })
+  @Audit<DelegationDTO[]>({
+    resources: (delegations) =>
+      delegations
+        .map((delegation) => delegation.id)
+        .filter((id): id is string => Boolean(id)),
+  })
+  createBatch(
+    @CurrentUser() user: User,
+    @Body() input: CreateDelegationBatchDTO,
+  ): Promise<DelegationDTO[]> {
+    return this.delegationsOutgoingService.createBatch(user, input)
   }
 
   @Patch(':delegationId')
