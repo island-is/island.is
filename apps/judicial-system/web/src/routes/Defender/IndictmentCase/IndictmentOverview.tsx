@@ -42,6 +42,7 @@ import {
   VerdictAppealFiles,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import { hasVerdictServiceDecision } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/DefenderVerdictTimelineCard.logic'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import type {
   Defendant,
@@ -145,7 +146,9 @@ const IndictmentOverview: FC = () => {
 
   // Defence users get the same verdict service and appeal information the
   // public prosecution office has, but only on a case that ended in a verdict -
-  // there is no verdict timeline to show for a fine or a dismissal.
+  // there is no verdict timeline to show for a fine or a dismissal. Each
+  // defendant's card also waits for the public prosecution office to decide
+  // whether that verdict must be served (hasVerdictServiceDecision).
   const displayVerdictTimeline =
     caseIsClosed &&
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
@@ -276,7 +279,8 @@ const IndictmentOverview: FC = () => {
           {displayVerdictTimeline &&
             workingCase.defendants?.map(
               (defendant) =>
-                defendant.verdict && (
+                defendant.verdict &&
+                hasVerdictServiceDecision(defendant.verdict) && (
                   <Box
                     key={`${defendant.id}${defendant.verdict.id}-timeline`}
                     marginBottom={2}

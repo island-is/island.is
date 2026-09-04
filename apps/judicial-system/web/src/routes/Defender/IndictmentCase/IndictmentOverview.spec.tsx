@@ -39,6 +39,9 @@ interface CompletedCaseOptions {
   defendersConfirmed?: boolean
   ownClientAppealDate?: string
   verdictAppealCase?: Case['verdictAppealCase']
+  // The public prosecution office has not yet decided whether the first
+  // defendant's verdict must be served.
+  ownClientServiceUndecided?: boolean
 }
 
 const completedCase = (
@@ -47,6 +50,7 @@ const completedCase = (
     defendersConfirmed = false,
     ownClientAppealDate,
     verdictAppealCase,
+    ownClientServiceUndecided = false,
   }: CompletedCaseOptions = {},
 ): Case => ({
   ...mockCase(CaseType.INDICTMENT),
@@ -62,13 +66,15 @@ const completedCase = (
       name: 'Eigin sakborningur',
       defenderNationalId,
       isDefenderChoiceConfirmed: defendersConfirmed,
-      verdict: {
-        id: 'own_client_verdict_id',
-        serviceRequirement: ServiceRequirement.REQUIRED,
-        serviceDate: '2026-06-01T13:31:00.000Z',
-        appealDecision: VerdictAppealDecision.POSTPONE,
-        appealDate: ownClientAppealDate,
-      },
+      verdict: ownClientServiceUndecided
+        ? { id: 'own_client_verdict_id' }
+        : {
+            id: 'own_client_verdict_id',
+            serviceRequirement: ServiceRequirement.REQUIRED,
+            serviceDate: '2026-06-01T13:31:00.000Z',
+            appealDecision: VerdictAppealDecision.POSTPONE,
+            appealDate: ownClientAppealDate,
+          },
     },
     {
       id: 'other_client_id',
@@ -185,6 +191,25 @@ describe('Defender IndictmentOverview', () => {
     expect(menuButtonOf(timelineCards[0])).toBeInTheDocument()
     expect(
       within(timelineCards[0]).getByText('• Dómfelldi áfrýjaði 04.06.2026'),
+    ).toBeInTheDocument()
+  })
+
+  // The card would have nothing to say until the public prosecution office has
+  // decided whether the verdict must be served, so it stays away per defendant.
+  it('renders no verdict timeline card for a defendant whose verdict service is undecided', async () => {
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        ownClientServiceUndecided: true,
+      }),
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+
+    expect(timelineCards).toHaveLength(1)
+    expect(
+      within(timelineCards[0]).getByText('Annar sakborningur'),
     ).toBeInTheDocument()
   })
 
