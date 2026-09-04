@@ -6,6 +6,7 @@ import fs, { readFileSync } from 'node:fs'
 import github from '@actions/github'
 import { findNestedObjectByKey } from './utils.mjs'
 import { isMainModule } from './utils.mjs'
+import AWS from 'aws-sdk'
 
 if (isMainModule(import.meta.url)) {
   main().catch((error) => {
@@ -20,6 +21,34 @@ function getCommitMsg(context) {
     return `Change from: ${pr.html_url}`
   }
   return `Change from: https://github.com/island-is/island.is/commit/${context.sha}`
+}
+
+async function getLatestIdsImageTag() {
+  return 'test_ids_feature_deploy_j98h09u'
+  // const ecr = new AWS.ECR({ region: 'eu-west-1' })
+
+  // // get response from aws.
+  // const response = await ecr
+  //   .describeImages({
+  //     repositoryName: 'identity-server',
+  //     filter: { tagStatus: 'TAGGED' },
+  //     maxResults: 1000,
+  //   })
+  //   .promise()
+
+  // const mainImages = response.imageDetails
+  //   ?.filter((img) => {
+  //     return (
+  //       img.imageTags && img.imageTags.some((tag) => tag.startsWith('main_'))
+  //     )
+  //   })
+  //   .sort((a, b) => {
+  //     const dateA = a.imagePushedAt ? new Date(a.imagePushedAt).getTime() : 0
+  //     const dateB = b.imagePushedAt ? new Date(b.imagePushedAt).getTime() : 0
+  //     return dateB - dateA
+  //   })
+
+  // return mainImages?.[0].imageTags?.[0]
 }
 
 async function main(testContext = null) {
@@ -47,12 +76,14 @@ async function main(testContext = null) {
 
   core.setOutput(_KEY_COMMIT_MSG, getCommitMsg(context))
 
-  const _MANIFEST_PATHS = ['charts/features/deployments']
+  const _MANIFEST_PATHS = [
+    'charts/features/deployments',
+    'charts/ids-features/deployments',
+  ]
 
   const changedFiles = new Set()
 
-  const globPattern = `${_MANIFEST_PATHS.join(',')}/**/*.yaml`
-
+  const globPattern = _MANIFEST_PATHS.map((path) => `${path}/**/*.yaml`)
   const files = await glob(globPattern)
 
   for (const file of files) {
@@ -67,7 +98,13 @@ async function main(testContext = null) {
       content.image.repository &&
       typeof content.image.repository === 'string'
     ) {
-      content.image.tag = imageTag
+      // TODO: && ids feature deploy is checked
+      if (file.includes('identity-server')) {
+        content.image.tag = await getLatestIdsImageTag()
+      } else {
+        content.image.tag = imageTag
+      }
+
       fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       console.log(`Changed file ${file}`)
       changedFiles.add(file)
@@ -83,9 +120,11 @@ async function main(testContext = null) {
   }
 
   if (changedFiles.size > 0) {
-    const bootstrapChart = await glob(
-      `${_MANIFEST_PATHS}/**/values.bootstrap.yaml`,
+    const bootstrapChartPaths = _MANIFEST_PATHS.map(
+      (path) => `${path}/**/values.bootstrap.yaml`,
     )
+
+    const bootstrapChart = await glob(bootstrapChartPaths)
 
     for (const file of bootstrapChart) {
       changedFiles.add(file)
