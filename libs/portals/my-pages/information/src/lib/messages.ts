@@ -690,10 +690,6 @@ export const contractsMessages = defineMessages({
     defaultMessage:
       '{from, date, long} - {to, select, undefined {} other {to, date, long}}',
   },
-  registrationDate: {
-    id: 'sp.contracts:registration-date',
-    defaultMessage: 'Skráning',
-  },
   status: {
     id: 'sp.contracts:status',
     defaultMessage: 'Staða',
@@ -740,23 +736,15 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:hide-inactive-contracts',
     defaultMessage: 'Fela óvirka samninga',
   },
-  downloadAsPdf: {
-    id: 'sp.contracts:download-as-pdf',
-    defaultMessage: 'Sækja sem PDF',
+  terminationDate: {
+    id: 'sp.contracts:termination-date',
+    defaultMessage: 'Uppsagnardagur',
   },
   terminateRentalAgreement: {
     id: 'sp.contracts:terminate-rental-agreement',
     defaultMessage: 'Afskrá leigusamning',
   },
 
-  indefinite: {
-    id: 'sp.contracts:indefinite',
-    defaultMessage: 'Ótímabundinn',
-  },
-  temporary: {
-    id: 'sp.contracts:temporary',
-    defaultMessage: 'Tímabundinn',
-  },
   typeIndividualRoom: {
     id: 'sp.contracts:type-individual-room',
     defaultMessage: 'Leigusamningur vegna herbergis',

@@ -189,7 +189,7 @@ export interface RentalAmountSection {
   paymentDayOther: string | undefined
   paymentMethodBankAccountNumber: BankAccount | undefined
   paymentMethodNationalId: string | undefined
-  securityDepositRequired: YesOrNoEnum | undefined
+  securityDepositRequired: Array<YesOrNoEnum> | undefined
 }
 
 export interface SecurityDepositSection {
@@ -216,7 +216,7 @@ export interface OtherFeesSection {
   heatingCostMeterStatusDate: string | undefined
   heatingCostMeterNumber: string | undefined
   heatingCostMeterStatus: string | undefined
-  otherCostPayedByTenant: YesOrNoEnum | undefined
+  otherCostPayedByTenant: Array<YesOrNoEnum> | undefined
   otherCostItems: CostField[] | undefined
 }
 
@@ -308,7 +308,7 @@ export interface DraftAnswers {
   paymentDayOther?: string
   paymentMethodOptions: string
   paymentMethodBankAccountNumber: BankAccount
-  securityDepositRequired: YesOrNoEnum
+  securityDepositRequired: YesOrNoEnum[]
   securityType: string
   bankGuaranteeInfo: string
   thirdPartyGuaranteeInfo: string
@@ -340,7 +340,7 @@ export interface DraftAnswers {
   heatingCostMeterStatusDate?: string
   heatingCostMeterNumber?: string
   heatingCostMeterStatus?: string
-  otherCostPayedByTenant: YesOrNoEnum
+  otherCostPayedByTenant: YesOrNoEnum[]
   otherCostItems: CostField[]
   currentUserLocale: Locale
 }

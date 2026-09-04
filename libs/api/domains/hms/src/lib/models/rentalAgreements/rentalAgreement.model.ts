@@ -1,4 +1,10 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import {
+  Field,
+  GraphQLISODateTime,
+  ID,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql'
 import { ContractParty } from './contractParty.model'
 import { ContractProperty } from './contractProperty.model'
 
@@ -42,6 +48,19 @@ registerEnumType(TemporalType, {
   name: 'HmsRentalAgreementTemporalType',
 })
 
+export enum RentalAgreementSortOrder {
+  NEW_OLD = 'newOld',
+  OLD_NEW = 'oldNew',
+  AMOUNT_HIGH_LOW = 'amountHighLow',
+  AMOUNT_LOW_HIGH = 'amountLowHigh',
+  STATUS_ACTIVE_FIRST = 'statusActiveFirst',
+  STATUS_ACTIVE_LAST = 'statusActiveLast',
+}
+
+registerEnumType(RentalAgreementSortOrder, {
+  name: 'HmsRentalAgreementSortOrder',
+})
+
 @ObjectType('HmsRentalAgreement')
 export class RentalAgreement {
   @Field(() => ID)
@@ -53,17 +72,17 @@ export class RentalAgreement {
   @Field(() => TemporalType, { nullable: true })
   contractType?: TemporalType
 
-  @Field({ nullable: true, description: 'ISO8601' })
-  dateFrom?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  dateFrom?: Date
 
-  @Field({ nullable: true, description: 'ISO8601' })
-  dateTo?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  dateTo?: Date
 
-  @Field({ nullable: true, description: 'ISO8601' })
-  signatureDate?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  signatureDate?: Date
 
-  @Field({ nullable: true, description: 'ISO8601' })
-  receivedDate?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  receivedDate?: Date
 
   @Field(() => [ContractParty], { nullable: true })
   landlords?: ContractParty[]
@@ -74,6 +93,12 @@ export class RentalAgreement {
   @Field(() => ContractProperty, { nullable: true })
   contractProperty?: ContractProperty
 
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  terminationDate?: Date
+
   @Field({ nullable: true })
-  downloadUrl?: string
+  latestDocumentDownloadUrl?: string
+
+  @Field({ nullable: true })
+  canTerminate?: boolean
 }

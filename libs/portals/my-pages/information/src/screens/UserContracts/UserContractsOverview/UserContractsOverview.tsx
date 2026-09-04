@@ -1,6 +1,7 @@
 import {
   ActionCard,
   Box,
+  Pagination,
   Stack,
   Text,
   ToggleSwitchButton,
@@ -13,14 +14,19 @@ import {
   HMS_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { HmsRentalAgreementSortOrder } from '@island.is/api/schema'
 import { contractsMessages as cm } from '../../../lib/messages'
 import { useUserContractsOverviewQuery } from './UserContractsOverview.generated'
 import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
+import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
+import { mapPropertyTypeToMessage } from '../../../utils/mapPropertyTypeToMessage'
 import { InformationPaths } from '../../../lib/paths'
-import { isDefined } from '@island.is/shared/utils'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { HmsRentalAgreementPropertyType } from '@island.is/api/schema'
+
+const DEFAULT_PAGE_SIZE = 10
+const DEFAULT_PAGE_NUMBER = 1
+const CONTRACTS_SORT_ORDER = HmsRentalAgreementSortOrder.STATUS_ACTIVE_FIRST
 
 const UserContractsOverview = () => {
   useNamespaces('sp.contracts')
@@ -29,10 +35,16 @@ const UserContractsOverview = () => {
   const navigate = useNavigate()
 
   const [hideInactiveContracts, setHideInactiveContracts] = useState(false)
+  const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
 
   const { data, loading, error } = useUserContractsOverviewQuery({
     variables: {
-      hideInactiveContracts: hideInactiveContracts,
+      input: {
+        hideInactiveAgreements: hideInactiveContracts,
+        page,
+        pageSize: DEFAULT_PAGE_SIZE,
+        sort: CONTRACTS_SORT_ORDER,
+      },
     },
   })
 
@@ -60,6 +72,7 @@ const UserContractsOverview = () => {
             aria-controls="contracts-area"
             onChange={() => {
               setHideInactiveContracts(!hideInactiveContracts)
+              setPage(DEFAULT_PAGE_NUMBER)
             }}
             label={
               <Text variant="medium">
@@ -92,62 +105,66 @@ const UserContractsOverview = () => {
       {!error && !loading && data?.hmsRentalAgreements && (
         <Box id="contracts-area" marginTop={1}>
           <Stack space={2}>
-            {data.hmsRentalAgreements.data
-              .map((contract) => {
-                const { id, status, contractProperty } = contract
-                const address =
-                  contractProperty &&
-                  contractProperty.streetAndHouseNumber &&
-                  contractProperty.municipality &&
-                  contractProperty.postalCode
-                    ? `${contractProperty.streetAndHouseNumber}, ${contractProperty.postalCode} ${contractProperty.municipality}`
-                    : undefined
+            {data.hmsRentalAgreements.data.map((contract) => {
+              const { id, status, contractProperty } = contract
+              const address = generateRentalAgreementAddress(
+                contractProperty ?? undefined,
+              )
 
-                const { message, ...restOfTag } = mapStatusTypeToTag(
-                  status,
-                ) ?? {
-                  message: undefined,
-                }
+              const { message, ...restOfTag } = mapStatusTypeToTag(status) ?? {
+                message: undefined,
+              }
 
-                const subText =
-                  contractProperty?.type ===
-                  HmsRentalAgreementPropertyType.RESIDENTIAL
-                    ? formatMessage(cm.typeResidential)
-                    : contractProperty?.type ===
-                      HmsRentalAgreementPropertyType.INDIVIDUAL_ROOM
-                    ? formatMessage(cm.typeIndividualRoom)
-                    : contractProperty?.type ===
-                      HmsRentalAgreementPropertyType.NONRESIDENTIAL
-                    ? formatMessage(cm.typeNonResidential)
-                    : undefined
+              const propertyTypeMessage = mapPropertyTypeToMessage(
+                contractProperty?.type,
+              )
+              const subText = propertyTypeMessage
+                ? formatMessage(propertyTypeMessage)
+                : undefined
 
-                return (
-                  <ActionCard
-                    key={id}
-                    heading={address}
-                    headingVariant="h4"
-                    cta={{
-                      label: formatMessage(cm.seeInfo),
-                      onClick: () =>
-                        navigate(
-                          InformationPaths.MyContractsDetail.replace(':id', id),
-                        ),
-                      variant: 'text',
-                    }}
-                    subText={subText}
-                    tag={
-                      message && restOfTag
-                        ? {
-                            label: formatMessage(message),
-                            ...restOfTag,
-                          }
-                        : undefined
-                    }
-                  />
-                )
-              })
-              .filter(isDefined)}
+              return (
+                <ActionCard
+                  key={id}
+                  heading={address}
+                  headingVariant="h4"
+                  cta={{
+                    label: formatMessage(cm.seeInfo),
+                    onClick: () =>
+                      navigate(
+                        InformationPaths.MyContractsDetail.replace(':id', id),
+                      ),
+                    variant: 'text',
+                  }}
+                  subText={subText}
+                  tag={
+                    message && restOfTag
+                      ? {
+                          label: formatMessage(message),
+                          ...restOfTag,
+                        }
+                      : undefined
+                  }
+                />
+              )
+            })}
           </Stack>
+          {(data.hmsRentalAgreements.totalCount ?? 0) >
+            (data.hmsRentalAgreements.pageSize ?? DEFAULT_PAGE_SIZE) && (
+            <Box marginTop={3}>
+              <Pagination
+                page={page}
+                totalPages={Math.ceil(
+                  data.hmsRentalAgreements.totalCount /
+                    (data.hmsRentalAgreements.pageSize ?? DEFAULT_PAGE_SIZE),
+                )}
+                renderLink={(page, className, children) => (
+                  <button className={className} onClick={() => setPage(page)}>
+                    {children}
+                  </button>
+                )}
+              />
+            </Box>
+          )}
         </Box>
       )}
     </IntroWrapper>
