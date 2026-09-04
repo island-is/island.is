@@ -151,17 +151,19 @@ export const HealthOverview = () => {
 
   return (
     <>
-      <GridRow marginBottom={CONTENT_GAP_LG}>
+      <GridRow
+        marginBottom={isNewHealthOverviewPageEnabled ? 4 : CONTENT_GAP_LG}
+      >
         <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
           <>
             <Text variant="h3" as={'h1'}>
               {formatMessage(messages.healthOverview)}
             </Text>
-            <Text variant="default" paddingTop={1}>
+            <Text variant="default" paddingTop={2}>
               {formatMessage(messages.healthOverviewIntro)}
             </Text>
             {isNewHealthOverviewPageEnabled && (
-              <Box marginTop={3}>
+              <Box marginTop={2}>
                 <Inline space={[1, 2]}>
                   {quickLinks.map((link) => (
                     <LinkResolver key={link.href} href={link.href}>
@@ -237,8 +239,8 @@ export const HealthOverview = () => {
           error: !!healthCenterError,
         }}
         dentists={{
-          data: dentistsData?.rightsPortalUserDentistRegistration?.dentist
-            ?.name,
+          data:
+            dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name,
           loading: dentistsLoading,
           error: !!dentistsError,
         }}

@@ -1,4 +1,5 @@
 import {
+  AllowedInteraction,
   TreatmentBaseDto,
   TreatmentDetailDto,
   TreatmentDocumentDto,
@@ -15,6 +16,12 @@ export const mapTreatment = (
   name: dto.name,
   organizationName: dto.organizationName ?? undefined,
   departmentName: dto.departmentName ?? undefined,
+  // Upstream: messaging must not be offered unless the field is present
+  // and permits it.
+  supportsMessaging:
+    dto.allowedInteractions === AllowedInteraction.MESSAGING ||
+    dto.allowedInteractions === AllowedInteraction.BOTH,
+  responsibleNode: dto.responsibleNode ?? undefined,
 })
 
 export const mapTreatmentDetail = (

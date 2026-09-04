@@ -177,7 +177,7 @@ const cloneNavItem = (item: PortalNavigationItem): PortalNavigationItem => ({
 })
 
 /**
- * Adds a "Meðferðir" section under Heilsa with one child per treatment.
+ * Adds a "Meðferð" section under Heilsa with one child per treatment.
  */
 const injectHealthTreatmentNavItems = (
   nav: PortalNavigationItem,

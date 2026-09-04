@@ -1,10 +1,19 @@
-import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Inline,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
+  LinkResolver,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -52,11 +61,40 @@ const TreatmentOverview = () => {
       label: formatMessage(messages.questionnaires),
       to: HealthPaths.HealthQuestionnaires,
       lastSentAt: treatment?.lastQuestionnaireSentAt,
+      lastSentMessage: messages.lastListSent,
     },
     {
       label: formatMessage(m.healthTreatmentEducationalContent),
       to: HealthPaths.HealthTreatmentEducationalContent.replace(':id', id),
       lastSentAt: treatment?.lastDocumentSentAt,
+      lastSentMessage: messages.lastContentSent,
+    },
+  ]
+
+  // Carries the treatment's provider node so the new-message screen can
+  // preselect the recipient.
+  const newMessageHref = treatment?.responsibleNode
+    ? `${HealthPaths.HealthConversationsNew}?node=${encodeURIComponent(
+        treatment.responsibleNode,
+      )}`
+    : HealthPaths.HealthConversationsNew
+
+  const quickLinks = [
+    ...(treatment?.supportsMessaging
+      ? [
+          {
+            href: newMessageHref,
+            label: formatMessage(messages.healthConversationSend),
+          },
+        ]
+      : []),
+    {
+      href: HealthPaths.HealthQuestionnaires,
+      label: formatMessage(messages.questionnaires),
+    },
+    {
+      href: HealthPaths.HealthTreatmentEducationalContent.replace(':id', id),
+      label: formatMessage(m.healthTreatmentEducationalContent),
     },
   ]
 
@@ -74,6 +112,7 @@ const TreatmentOverview = () => {
         slug: HEALTH_DIRECTORATE_SLUG,
         tooltip: formatMessage(messages.landlaeknirTreatmentTooltip),
       }}
+      marginBottom={[0, 0, 0, 2]}
     >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
@@ -83,36 +122,61 @@ const TreatmentOverview = () => {
         <Problem type="no_data" noBorder={false} />
       ) : (
         <>
-          <Appointments
-            data={{
-              data: { data: firstTwoAppointments },
-              loading: appointmentsLoading,
-              error: !!appointmentsError,
-            }}
-            showLinkButton
-          />
-          <Stack space={6}>
-            <TreatmentMessages
-              conversations={treatment.recentConversations ?? []}
-            />
-
-            <GridRow rowGap={2}>
-              {linkCards.map((card) => (
-                <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
-                  <TreatmentLinkCard
-                    label={card.label}
-                    to={card.to}
-                    text={
-                      card.lastSentAt
-                        ? formatMessage(messages.lastSent, {
-                            date: formatDate(card.lastSentAt),
-                          })
-                        : undefined
-                    }
-                  />
-                </GridColumn>
+          <Box marginBottom={4}>
+            <Inline space={1}>
+              {quickLinks.map((link) => (
+                <LinkResolver key={link.href} href={link.href}>
+                  <Tag variant="blue">{link.label}</Tag>
+                </LinkResolver>
               ))}
-            </GridRow>
+            </Inline>
+          </Box>
+          <Stack space={6}>
+            {(treatment.recentConversations?.length ?? 0) > 0 && (
+              <TreatmentMessages
+                conversations={treatment.recentConversations ?? []}
+                newMessageHref={
+                  treatment.supportsMessaging ? newMessageHref : undefined
+                }
+              />
+            )}
+
+            <Box>
+              <Text
+                variant="eyebrow"
+                color="purple400"
+                fontWeight="semiBold"
+                marginBottom={2}
+              >
+                {formatMessage(m.myInfo)}
+              </Text>
+              <GridRow rowGap={2}>
+                {linkCards.map((card) => (
+                  <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
+                    <TreatmentLinkCard
+                      label={card.label}
+                      to={card.to}
+                      text={
+                        card.lastSentAt
+                          ? formatMessage(card.lastSentMessage, {
+                              date: formatDate(card.lastSentAt),
+                            })
+                          : undefined
+                      }
+                    />
+                  </GridColumn>
+                ))}
+              </GridRow>
+            </Box>
+
+            <Appointments
+              data={{
+                data: { data: firstTwoAppointments },
+                loading: appointmentsLoading,
+                error: !!appointmentsError,
+              }}
+              showLinkButton
+            />
           </Stack>
         </>
       )}

@@ -5,7 +5,6 @@ import {
   LinkButton,
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
-import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../../lib/messages'
 import { HealthPaths } from '../../../lib/paths'
 import * as conversationStyles from '../../HealthOverview/components/HealthConversationsBox/HealthConversationsBox.css'
@@ -19,9 +18,10 @@ interface ConversationSummary {
 
 interface Props {
   conversations: ConversationSummary[]
+  newMessageHref?: string
 }
 
-export const TreatmentMessages = ({ conversations }: Props) => {
+export const TreatmentMessages = ({ conversations, newMessageHref }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -31,16 +31,27 @@ export const TreatmentMessages = ({ conversations }: Props) => {
       borderColor="blue200"
       borderRadius="large"
       padding={3}
+      position="relative"
     >
-      <Box display="flex" alignItems="center" columnGap={2} marginBottom={2}>
+      <Box display="flex" alignItems="center" columnGap={2} marginBottom={3}>
         <Icon icon="chatbubble" type="outline" color="blue400" size="medium" />
         <Text variant="h4" as="h2" color="blue400">
           {formatMessage(messages.treatmentMessagesFromTeam)}
         </Text>
       </Box>
-
-      {conversations.length === 0 && (
-        <Problem type="no_data" size="small" noBorder />
+      {newMessageHref && (
+        <Box
+          display={['none', 'none', 'block']}
+          position="absolute"
+          style={{ top: 14, right: 24 }}
+        >
+          <LinkButton
+            to={newMessageHref}
+            text={formatMessage(messages.healthConversationsCreate)}
+            variant="primary"
+            size="small"
+          />
+        </Box>
       )}
 
       {conversations.map((conversation) => (
@@ -57,7 +68,8 @@ export const TreatmentMessages = ({ conversations }: Props) => {
             justifyContent="spaceBetween"
             alignItems="flexStart"
             columnGap={2}
-            padding={2}
+            paddingY={2}
+            paddingX={[0, 0, 2]}
             borderTopWidth="standard"
             borderColor="blue200"
           >

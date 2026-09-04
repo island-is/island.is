@@ -2401,9 +2401,13 @@ export const messages = defineMessages({
       'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt hjá {department}.',
     id: 'sp.health:treatment-intro-with-department',
   },
-  lastSent: {
-    defaultMessage: 'Síðast: {date}',
-    id: 'sp.health:last-sent',
+  lastListSent: {
+    defaultMessage: 'Síðasti listi sendur {date}',
+    id: 'sp.health:last-list-sent',
+  },
+  lastContentSent: {
+    defaultMessage: 'Síðasta efni sent {date}',
+    id: 'sp.health:last-content-sent',
   },
   treatmentIntro: {
     defaultMessage:

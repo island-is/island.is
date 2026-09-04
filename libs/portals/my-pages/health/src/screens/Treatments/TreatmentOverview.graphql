@@ -13,6 +13,8 @@ query GetHealthTreatment($id: ID!) {
     name
     organizationName
     departmentName
+    supportsMessaging
+    responsibleNode
     lastQuestionnaireSentAt
     lastDocumentSentAt
     recentConversations {
