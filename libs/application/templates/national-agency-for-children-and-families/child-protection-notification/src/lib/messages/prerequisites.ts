@@ -33,8 +33,22 @@ export const prerequisitesMessages = {
     },
     personalNationalRegistryInformationSubTitle: {
       id: 'cpn.application:prerequisites.externalData.personalNationalRegistryInformationSubTitle',
-      defaultMessage: 'Upplýsingar um nafn þitt og kennitölu.',
-      description: 'Information about your name and national ID number.',
+      defaultMessage:
+        'Upplýsingar um nafn þitt, kennitölu, lögheimili, póstnúmer og sveitarfélag.',
+      description:
+        'Information about your name, national ID number, registered address, postal code, and municipality.',
+    },
+    userProfileInformationTitle: {
+      id: 'cpn.application:prerequisites.externalData.userProfileInformationTitle',
+      defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
+      description: 'Information from My Pages at Ísland.is',
+    },
+    userProfileInformationSubTitle: {
+      id: 'cpn.application:prerequisites.externalData.userProfileInformationSubTitle',
+      defaultMessage:
+        'Upplýsingar um netfang, símanúmer tilkynnanda eru sóttar á mínar síður á Ísland.is.',
+      description:
+        'Information about the notifier’s email address and phone number will be retrieved from My Pages at Ísland.is.',
     },
     checkboxProvider: {
       id: 'cpn.application:prerequisites.externalData.checkboxProvider',
@@ -110,11 +124,60 @@ export const prerequisitesMessages = {
       description: 'Work phone tooltip',
     },
   }),
+  notifierInfo: defineMessages({
+    subSectionTitle: {
+      id: 'cpn.application:prerequisites.notifierInfo.subSectionTitle',
+      defaultMessage: 'Upplýsingar um þig',
+      description: 'Notifier information section title',
+    },
+    description: {
+      id: 'cpn.application:prerequisites.notifierInfo.description',
+      defaultMessage:
+        'Þegar þú tilkynnir til barnaverndar þá þarftu að gefa upp nafn þitt, netfang og símanúmer svo Barnavernd geti haft samband við þig ef þörf krefur. Um leið getur þú óskað eftir nafnleynd þannig að sá sem þú tilkynnir fái ekki upplýsingar um þig.',
+      description: 'Notifier information description',
+    },
+    wantsAnonymity: {
+      id: 'cpn.application:prerequisites.notifierInfo.wantsAnonymity',
+      defaultMessage: 'Óskar þú nafnleyndar?',
+      description: 'Wants anonymity',
+    },
+    relationshipToChild: {
+      id: 'cpn.application:prerequisites.notifierInfo.relationshipToChild',
+      defaultMessage:
+        'Merktu við hver tengsl þín eru við barnið sem þú hefur áhyggjur af.',
+      description: 'Relationship to the child',
+    },
+    relationship: {
+      id: 'cpn.application:prerequisites.notifierInfo.relationship',
+      defaultMessage: 'Tengsl',
+      description: 'Relationship',
+    },
+    relationshipPlaceholder: {
+      id: 'cpn.application:prerequisites.notifierInfo.relationshipPlaceholder',
+      defaultMessage: 'Veldu tengsl',
+      description: 'Relationship placeholder',
+    },
+  }),
   child: defineMessages({
     subSectionTitle: {
       id: 'cpn.application:prerequisites.child.subSectionTitle',
       defaultMessage: 'Barn',
       description: 'Child',
+    },
+    school: {
+      id: 'cpn.application:prerequisites.child.school',
+      defaultMessage: 'Í hvaða dagvistun eða skóla er barnið?',
+      description: 'Child school',
+    },
+    schoolType: {
+      id: 'cpn.application:prerequisites.child.schoolType',
+      defaultMessage: 'Dagvistun eða skóli',
+      description: 'Child school type',
+    },
+    schoolTypePlaceholder: {
+      id: 'cpn.application:prerequisites.child.schoolTypePlaceholder',
+      defaultMessage: 'Veldu dagvistun eða skóla',
+      description: 'Child school type placeholder',
     },
     startNotification: {
       id: 'cpn.application:prerequisites.child.startNotification',

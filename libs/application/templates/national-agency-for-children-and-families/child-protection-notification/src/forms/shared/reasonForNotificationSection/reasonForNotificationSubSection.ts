@@ -9,15 +9,15 @@ import {
 import {
   reasonForNotificationMessages,
   sharedMessages,
-} from '../../../../lib/messages'
-import { getSelectedReasonForNotificationCategoryCodes } from '../../../../utils/childProtectionNotificationUtils'
+} from '../../../lib/messages'
+import { getSelectedReasonForNotificationCategoryCodes } from '../../../utils/childProtectionNotificationUtils'
 import {
   isUnborn,
   shouldShowBiggestConcernField,
   shouldShowReasonForNotificationSubCategoryDetails,
-} from '../../../../utils/conditionUtils'
-import { RISK_TO_UNBORN } from '../../../../utils/constants'
-import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
+} from '../../../utils/conditionUtils'
+import { RISK_TO_UNBORN } from '../../../utils/constants'
+import { getApplicationExternalData } from '../../../utils/getApplicationExternalData'
 
 export const reasonForNotificationSubSection = buildSubSection({
   id: 'reasonForNotificationSubSection',

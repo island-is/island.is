@@ -1,4 +1,3 @@
-import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   DetailedDropDownDto,
@@ -27,68 +26,54 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
       new AuthMiddleware(user as Auth),
     )
 
-  async getCategories(user: User): Promise<ExternalCategoryResponse[]> {
-    return await this.externalDropdownApiWithAuth(user).externalCategories()
+  async getCategories(): Promise<ExternalCategoryResponse[]> {
+    return this.externalDropdownApi.externalCategories()
   }
 
-  async getProtectiveFactors(
-    user: User,
-  ): Promise<ProtectiveFactorSectionDto[]> {
-    return await this.externalDropdownApiWithAuth(
-      user,
-    ).externalProtectiveFactors()
+  async getProtectiveFactors(): Promise<ProtectiveFactorSectionDto[]> {
+    return this.externalDropdownApi.externalProtectiveFactors()
   }
 
-  async getGenders(user: User): Promise<DropDownDto[]> {
-    return await this.externalDropdownApiWithAuth(user).externalGenders()
+  async getGenders(): Promise<DropDownDto[]> {
+    return this.externalDropdownApi.externalGenders()
   }
 
-  async getChildSafetyLevels(user: User): Promise<DetailedDropDownDto[]> {
-    return await this.externalDropdownApiWithAuth(
-      user,
-    ).externalChildSafetyLevels()
+  async getChildSafetyLevels(): Promise<DetailedDropDownDto[]> {
+    return this.externalDropdownApi.externalChildSafetyLevels()
   }
 
-  async getPostalCodes(user: User): Promise<DropDownDto[]> {
-    return await this.externalDropdownApiWithAuth(user).externalPostalCodes()
+  async getPostalCodes(): Promise<DropDownDto[]> {
+    return this.externalDropdownApi.externalPostalCodes()
   }
 
-  async getPronouns(user: User): Promise<DropDownDto[]> {
-    return await this.externalDropdownApiWithAuth(user).externalPronouns()
+  async getPronouns(): Promise<DropDownDto[]> {
+    return this.externalDropdownApi.externalPronouns()
   }
 
-  async getDisabilityStatuses(user: User): Promise<DropDownDto[]> {
-    return await this.externalDropdownApiWithAuth(
-      user,
-    ).externalDisabilityStatuses()
+  async getDisabilityStatuses(): Promise<DropDownDto[]> {
+    return this.externalDropdownApi.externalDisabilityStatuses()
   }
 
-  async getChildUnknownNationalIdStates(user: User): Promise<DropDownDto[]> {
-    return await this.externalDropdownApiWithAuth(
-      user,
-    ).externalChildUnknownNationalIdStates()
+  async getChildUnknownNationalIdStates(): Promise<DropDownDto[]> {
+    return this.externalDropdownApi.externalChildUnknownNationalIdStates()
   }
 
-  async getGuardianNotAwareReasons(user: User): Promise<DropDownDto[]> {
-    return await this.externalDropdownApiWithAuth(
-      user,
-    ).externalGuardianNotAwareReasons()
+  async getGuardianNotAwareReasons(): Promise<DropDownDto[]> {
+    return this.externalDropdownApi.externalGuardianNotAwareReasons()
   }
 
-  async getSchoolTypes(user: User): Promise<DropDownDto[]> {
-    return await this.externalDropdownApiWithAuth(user).externalSchoolTypes()
+  async getSchoolTypes(): Promise<DropDownDto[]> {
+    return this.externalDropdownApi.externalSchoolTypes()
   }
 
-  async getNotifierRoles(user: User): Promise<DropDownDto[]> {
-    return await this.externalDropdownApiWithAuth(user).externalNotifierRoles()
+  async getNotifierRoles(): Promise<DropDownDto[]> {
+    return this.externalDropdownApi.externalNotifierRoles()
   }
 
-  async getNotifierRoleSubTypes(
-    user: User,
-  ): Promise<ExternalNotifierRoleSubTypeResponse[]> {
-    return await this.externalDropdownApiWithAuth(
-      user,
-    ).externalNotifierRoleSubTypes()
+  async getNotifierRoleSubTypes(): Promise<
+    ExternalNotifierRoleSubTypeResponse[]
+  > {
+    return this.externalDropdownApi.externalNotifierRoleSubTypes()
   }
 
   async createNotification(

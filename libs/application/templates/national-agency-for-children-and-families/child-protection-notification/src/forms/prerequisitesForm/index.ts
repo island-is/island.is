@@ -4,9 +4,25 @@ import { prerequisitesMessages } from '../../lib/messages'
 import { childSubSection } from './childSubSection'
 import {
   externalDataSubSection,
+  minorExternalDataSubSection,
   personalExternalDataSubSection,
 } from './externalDataSubSection'
+import { notifierInfoSubSection } from './notifierInfoSubSection'
 import { serviceProviderSubSection } from './serviceProviderSubSection'
+
+export const MinorPrerequisites = buildForm({
+  id: 'prerequisites',
+  mode: FormModes.NOT_STARTED,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
+  children: [
+    buildSection({
+      id: 'prerequisites',
+      title: prerequisitesMessages.shared.sectionTitle,
+      children: [minorExternalDataSubSection],
+    }),
+  ],
+})
 
 export const PersonalPrerequisites = buildForm({
   id: 'prerequisites',
@@ -17,7 +33,11 @@ export const PersonalPrerequisites = buildForm({
     buildSection({
       id: 'prerequisites',
       title: prerequisitesMessages.shared.sectionTitle,
-      children: [personalExternalDataSubSection],
+      children: [
+        personalExternalDataSubSection,
+        notifierInfoSubSection,
+        childSubSection,
+      ],
     }),
   ],
 })

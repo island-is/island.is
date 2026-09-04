@@ -59,6 +59,30 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'serviceProvider.contactPersonWorkPhone',
   )
 
+  const notifierName = getValueViaPath<string>(answers, 'notifierInfo.name')
+
+  const notifierNationalId = getValueViaPath<string>(
+    answers,
+    'notifierInfo.nationalId',
+  )
+
+  const notifierEmail = getValueViaPath<string>(answers, 'notifierInfo.email')
+
+  const notifierPhoneNumber = getValueViaPath<string>(
+    answers,
+    'notifierInfo.phoneNumber',
+  )
+
+  const notifierNotifierAnonymity = getValueViaPath<string>(
+    answers,
+    'notifierInfo.notifierAnonymity',
+  )
+
+  const notifierRelationshipToChild = getValueViaPath<string>(
+    answers,
+    'notifierInfo.relationshipToChild',
+  )
+
   const childKnowsNationalId = getValueViaPath<KnowsNationalId>(
     answers,
     'child.knowsNationalId',
@@ -84,11 +108,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.nationalIdInfo.phone',
   )
 
-  const childEmail = getValueViaPath<string>(
-    answers,
-    'child.nationalIdInfo.email',
-  )
-
   const childUsePronounAndPreferredName =
     getValueViaPath<string[]>(
       answers,
@@ -104,6 +123,27 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     getValueViaPath<string[]>(
       answers,
       'child.nationalIdInfo.preferredPronoun',
+    ) ?? []
+
+  const childSchoolType = getValueViaPath<string>(
+    answers,
+    'child.nationalIdInfo.schoolType',
+  )
+
+  const childSchoolName = getValueViaPath<string>(
+    answers,
+    'child.nationalIdInfo.schoolName',
+  )
+
+  const childLanguage = getValueViaPath<string>(
+    answers,
+    'child.nationalIdInfo.language',
+  )
+
+  const childNeedsInterpreter =
+    getValueViaPath<string[]>(
+      answers,
+      'child.nationalIdInfo.needsInterpreter',
     ) ?? []
 
   const childManualName = getValueViaPath<string>(
@@ -330,15 +370,24 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     serviceProviderContactPersonNationalId,
     serviceProviderContactPersonWorkEmail,
     serviceProviderContactPersonWorkPhone,
+    notifierName,
+    notifierNationalId,
+    notifierEmail,
+    notifierPhoneNumber,
+    notifierNotifierAnonymity,
+    notifierRelationshipToChild,
     childKnowsNationalId,
     childNoNationalIdReason,
     childNationalId,
     childName,
     childPhone,
-    childEmail,
     childUsePronounAndPreferredName,
     childPreferredName,
     childPreferredPronoun,
+    childSchoolType,
+    childSchoolName,
+    childLanguage,
+    childNeedsInterpreter,
     childManualName,
     childManualAge,
     childManualGender,

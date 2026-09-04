@@ -1,7 +1,11 @@
 import { NO, YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { KnowsNationalId, IS } from '../utils/constants'
+import {
+  KnowsNationalId,
+  IS,
+  SHOW_LANGUAGE_SECTION_TYPES,
+} from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhone = (value: string) => {
@@ -50,6 +54,15 @@ const serviceProviderSchema = z.object({
   contactPersonWorkPhone: phoneNumberSchema.optional().or(z.literal('')),
 })
 
+const notifierInfoSchema = z.object({
+  name: z.string().optional(),
+  nationalId: z.string().optional(),
+  email: z.string().email().optional().or(z.literal('')),
+  phoneNumber: phoneNumberSchema.optional().or(z.literal('')),
+  notifierAnonymity: z.enum([YES, NO]),
+  relationshipToChild: z.string(),
+})
+
 const childSchema = z
   .object({
     knowsNationalId: z.nativeEnum(KnowsNationalId).optional(),
@@ -59,7 +72,6 @@ const childSchema = z
         nationalId: z.string().optional(),
         name: z.string().optional(),
         phone: phoneNumberSchema.optional().or(z.literal('')),
-        email: z.string().email().optional().or(z.literal('')),
         usePronounAndPreferredName: z.array(z.string()).optional(),
         preferredName: z.string().optional(),
         preferredPronoun: z.array(z.string()).nullish(),
@@ -208,10 +220,32 @@ const memmSchema = z.object({
     .optional(),
   culture: z
     .object({
-      languageUsage: z.string().optional(),
+      languageUsage: z.string(),
       languages: z.array(z.string()).optional(),
-      preferredLanguage: z.string().optional(),
+      preferredLanguage: z.string().nullish(),
       needsInterpreter: z.array(z.string()).nullish(),
+    })
+    .superRefine((data, ctx) => {
+      const showsLanguageSection = SHOW_LANGUAGE_SECTION_TYPES.includes(
+        data.languageUsage as typeof SHOW_LANGUAGE_SECTION_TYPES[number],
+      )
+      const hasLanguages = (data.languages?.length ?? 0) > 0
+
+      if (showsLanguageSection && !hasLanguages) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['languages'],
+          params: errorMessages.required,
+        })
+      }
+
+      if (hasLanguages && !data.preferredLanguage) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['preferredLanguage'],
+          params: errorMessages.required,
+        })
+      }
     })
     .optional(),
   wellbeing: z
@@ -269,6 +303,7 @@ const memmSchema = z.object({
     })
     .optional(),
 })
+
 const reasonForNotificationSchema = z
   .record(z.unknown())
   .optional()
@@ -396,6 +431,7 @@ const protectiveFactorsSchema = z
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   serviceProvider: serviceProviderSchema,
+  notifierInfo: notifierInfoSchema,
   child: childSchema.optional(),
   parents: parentsSchema.optional(),
   memm: memmSchema.optional(),

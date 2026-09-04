@@ -10,18 +10,27 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  buildTitleField,
   YES,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
+import { getAllLanguageCodes } from '@island.is/shared/utils'
 import {
   childMessages,
+  memmMessages,
   prerequisitesMessages,
   sharedMessages,
 } from '../../lib/messages'
-import { isKnowsNationalId, isNoNationalId } from '../../utils/conditionUtils'
-import { KnowsNationalId } from '../../utils/constants'
+import {
+  isChildOver18,
+  isKnowsNationalId,
+  isNoNationalId,
+  shouldShowNonPrimarySchoolAgeChildInfo,
+} from '../../utils/conditionUtils'
+import { KnowsNationalId, Roles } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
+import { getApplicantRole } from '../../utils/roleUtils'
 
 export const childSubSection = buildSubSection({
   id: 'childSubSection',
@@ -79,18 +88,9 @@ export const childSubSection = buildSubSection({
           searchPersons: true,
           condition: isKnowsNationalId,
         }),
-        buildTextField({
-          id: 'child.nationalIdInfo.email',
-          title: sharedMessages.email,
-          variant: 'email',
-          width: 'half',
-          doesNotRequireAnswer: true,
-          condition: isKnowsNationalId,
-        }),
         buildPhoneField({
           id: 'child.nationalIdInfo.phone',
           title: sharedMessages.phone,
-          width: 'half',
           enableCountrySelector: true,
           doesNotRequireAnswer: true,
           condition: isKnowsNationalId,
@@ -139,6 +139,113 @@ export const childSubSection = buildSubSection({
               answers,
             ).childUsePronounAndPreferredName?.includes(YES),
         }),
+
+        buildTitleField({
+          title: prerequisitesMessages.child.school,
+          titleVariant: 'h4',
+          marginTop: 4,
+          marginBottom: 0,
+          condition: (answers, _, user) => {
+            const role = getApplicantRole(user?.profile?.nationalId ?? '')
+            return (
+              shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
+              role === Roles.ADULT_PERSONAL_APPLICANT
+            )
+          },
+        }),
+        buildSelectField({
+          id: 'child.nationalIdInfo.schoolType',
+          title: prerequisitesMessages.child.schoolType,
+          placeholder: prerequisitesMessages.child.schoolTypePlaceholder,
+          doesNotRequireAnswer: true,
+          options: () => {
+            // TODO: Replace with values from barnaverndargatt API when available.
+            return [
+              {
+                value: 'Valmöguleiki 1',
+                label: 'Valmöguleiki 1',
+              },
+              {
+                value: 'Valmöguleiki 2',
+                label: 'Valmöguleiki 2',
+              },
+              {
+                value: 'Valmöguleiki 3',
+                label: 'Valmöguleiki 3',
+              },
+            ]
+          },
+          condition: (answers, _, user) => {
+            const role = getApplicantRole(user?.profile?.nationalId ?? '')
+            return (
+              shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
+              role === Roles.ADULT_PERSONAL_APPLICANT
+            )
+          },
+        }),
+        buildTextField({
+          id: 'child.nationalIdInfo.schoolName',
+          title: memmMessages.education.schoolName,
+          doesNotRequireAnswer: true,
+          condition: (answers, _, user) => {
+            // TODO: Look into when this field should be displayed
+            const role = getApplicantRole(user?.profile?.nationalId ?? '')
+            return (
+              shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
+              role === Roles.ADULT_PERSONAL_APPLICANT &&
+              !!getApplicationAnswers(answers).childSchoolType
+            )
+          },
+        }),
+
+        buildDescriptionField({
+          id: 'child.nationalIdInfo.languageTitle',
+          title: childMessages.manualInfo.languageTitle,
+          titleVariant: 'h4',
+          space: 4,
+          condition: (answers, _, user) => {
+            const role = getApplicantRole(user?.profile?.nationalId ?? '')
+            return (
+              shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
+              role === Roles.ADULT_PERSONAL_APPLICANT
+            )
+          },
+        }),
+        buildSelectField({
+          id: 'child.nationalIdInfo.language',
+          title: sharedMessages.language,
+          placeholder: sharedMessages.languagePlaceholder,
+          doesNotRequireAnswer: true,
+          options: getAllLanguageCodes().map((l) => ({
+            value: l.code,
+            label: l.name,
+          })),
+          condition: (answers, _, user) => {
+            const role = getApplicantRole(user?.profile?.nationalId ?? '')
+            return (
+              shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
+              role === Roles.ADULT_PERSONAL_APPLICANT
+            )
+          },
+        }),
+        buildCheckboxField({
+          id: 'child.nationalIdInfo.needsInterpreter',
+          spacing: 0,
+          options: [
+            {
+              value: YES,
+              label: sharedMessages.needsInterpreter,
+            },
+          ],
+          condition: (answers, _, user) => {
+            const role = getApplicantRole(user?.profile?.nationalId ?? '')
+            return (
+              shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
+              role === Roles.ADULT_PERSONAL_APPLICANT
+            )
+          },
+        }),
+
         buildAlertMessageField({
           id: 'child.fetchedDataInfo',
           alertType: 'info',
@@ -146,6 +253,14 @@ export const childSubSection = buildSubSection({
           condition: (answers) =>
             isKnowsNationalId(answers) &&
             !!getApplicationAnswers(answers).childName,
+        }),
+        buildAlertMessageField({
+          id: 'child.over18Error',
+          alertType: 'error',
+          message: childMessages.nationalIdLookup.childOver18Error,
+          marginTop: 0,
+          condition: (answers) =>
+            isKnowsNationalId(answers) && isChildOver18(answers),
         }),
         buildSubmitField({
           id: 'submit',
@@ -155,6 +270,8 @@ export const childSubSection = buildSubSection({
               event: DefaultEvents.SUBMIT,
               name: prerequisitesMessages.child.startNotification,
               type: 'primary',
+              condition: (answers) =>
+                !(isKnowsNationalId(answers) && isChildOver18(answers)),
             },
           ],
         }),

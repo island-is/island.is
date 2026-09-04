@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Barnaverndargátt API",
-    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-08-13 15:08:13",
+    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-08-26 12:27:10",
     "contact": {
       "name": "Apró ehf.",
       "url": "https://www.apro.is/",
@@ -3280,57 +3280,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Notification/State": {
-      "get": {
-        "tags": ["Notification"],
-        "summary": "Get all notifications based on their states.",
-        "description": "Retrieves a list of notifications filtered by the specified notification states. **Required Roles:** ProtectionService.",
-        "operationId": "GetNotifications",
-        "parameters": [
-          {
-            "name": "notificationsEnums[]",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/NotificationStateEnum"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NotificationResponse"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NotificationResponse"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NotificationResponse"
-                  }
                 }
               }
             }

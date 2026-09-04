@@ -74,7 +74,7 @@ export const serviceProviderSubSection = buildSubSection({
           title: coreMessages.name,
           readOnly: true,
           defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData).applicantName,
+            getApplicationExternalData(application.externalData).identityName,
         }),
         buildTextField({
           id: 'serviceProvider.nationalId',
@@ -84,7 +84,7 @@ export const serviceProviderSubSection = buildSubSection({
           readOnly: true,
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
-              .applicantNationalId,
+              .identityNationalId,
         }),
         buildTextField({
           id: 'serviceProvider.address.streetAddress',
@@ -93,7 +93,7 @@ export const serviceProviderSubSection = buildSubSection({
           readOnly: true,
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
-              .applicantAddress,
+              .identityAddress,
         }),
         buildTextField({
           id: 'serviceProvider.address.postalCode',
@@ -102,7 +102,7 @@ export const serviceProviderSubSection = buildSubSection({
           readOnly: true,
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
-              .applicantPostalCode,
+              .identityPostalCode,
         }),
         buildTextField({
           id: 'serviceProvider.address.city',
@@ -110,7 +110,7 @@ export const serviceProviderSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData).applicantCity,
+            getApplicationExternalData(application.externalData).identityCity,
         }),
 
         buildDescriptionField({
@@ -127,7 +127,8 @@ export const serviceProviderSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData).actorName,
+            getApplicationExternalData(application.externalData)
+              .identityActorName,
         }),
         buildTextField({
           id: 'serviceProvider.contactPersonNationalId',
@@ -137,7 +138,7 @@ export const serviceProviderSubSection = buildSubSection({
           readOnly: true,
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
-              .actorNationalId,
+              .identityActorNationalId,
         }),
         buildTextField({
           id: 'serviceProvider.contactPersonWorkEmail',

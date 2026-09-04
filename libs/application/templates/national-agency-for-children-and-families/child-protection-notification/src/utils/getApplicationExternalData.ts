@@ -1,6 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Option } from '@island.is/clients/mms/frigg'
 import {
   DetailedDropDownDto,
   DropDownDto,
@@ -13,39 +12,59 @@ import { Category } from './types'
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const applicantName = getValueViaPath<string>(
+  const identityName = getValueViaPath<string>(
     externalData,
     'identity.data.name',
   )
 
-  const applicantNationalId = getValueViaPath<string>(
+  const identityNationalId = getValueViaPath<string>(
     externalData,
     'identity.data.nationalId',
   )
 
-  const applicantAddress = getValueViaPath<string>(
+  const identityAddress = getValueViaPath<string>(
     externalData,
     'identity.data.address.streetAddress',
   )
 
-  const applicantPostalCode = getValueViaPath<string>(
+  const identityPostalCode = getValueViaPath<string>(
     externalData,
     'identity.data.address.postalCode',
   )
 
-  const applicantCity = getValueViaPath<string>(
+  const identityCity = getValueViaPath<string>(
     externalData,
     'identity.data.address.city',
   )
 
-  const actorName = getValueViaPath<string>(
+  const identityActorName = getValueViaPath<string>(
     externalData,
     'identity.data.actor.name',
   )
 
-  const actorNationalId = getValueViaPath<string>(
+  const identityActorNationalId = getValueViaPath<string>(
     externalData,
     'identity.data.actor.nationalId',
+  )
+
+  const nationalRegistryName = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.fullName',
+  )
+
+  const nationalRegistryNationalId = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.nationalId',
+  )
+
+  const userProfileEmail = getValueViaPath<string>(
+    externalData,
+    'userProfile.data.email',
+  )
+
+  const userProfilePhoneNumber = getValueViaPath<string>(
+    externalData,
+    'userProfile.data.mobilePhoneNumber',
   )
 
   const categories =
@@ -59,9 +78,6 @@ export const getApplicationExternalData = (
 
   const genders =
     getValueViaPath<DropDownDto[]>(externalData, 'genders.data') ?? []
-
-  const languageEnvironmentOptions =
-    getValueViaPath<Option[]>(externalData, 'languageEnvironments.data') ?? []
 
   const childSafetyLevels =
     getValueViaPath<DetailedDropDownDto[]>(
@@ -109,17 +125,20 @@ export const getApplicationExternalData = (
     ) ?? []
 
   return {
-    applicantName,
-    applicantNationalId,
-    applicantAddress,
-    applicantPostalCode,
-    applicantCity,
-    actorName,
-    actorNationalId,
+    identityName,
+    identityNationalId,
+    identityAddress,
+    identityPostalCode,
+    identityCity,
+    identityActorName,
+    identityActorNationalId,
+    nationalRegistryName,
+    nationalRegistryNationalId,
+    userProfileEmail,
+    userProfilePhoneNumber,
     categories,
     protectiveFactorSections,
     genders,
-    languageEnvironmentOptions,
     childSafetyLevels,
     postalCodes,
     pronounOptions,
