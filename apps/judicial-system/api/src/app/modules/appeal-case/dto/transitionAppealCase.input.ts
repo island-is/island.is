@@ -20,8 +20,8 @@ export class TransitionAppealCaseInput {
   @Field(() => AppealCaseTransition)
   readonly transition!: AppealCaseTransition
 
-  // The defendant the transition applies to. Required when withdrawing an
-  // áfrýjun, which is withdrawn for one defendant at a time; meaningless for
+  // The defendant the transition applies to. Required when withdrawing a
+  // verdict appeal, which is withdrawn for one defendant at a time; meaningless for
   // every other transition.
   @Allow()
   @IsOptional()

@@ -6,11 +6,11 @@ import { AppealCaseType } from '@island.is/judicial-system/types'
 import * as repository from '../index'
 
 /**
- * The separation between kæra and áfrýjun rests entirely on the association
+ * The separation between ruling appeals and verdict appeals rests entirely on the association
  * scopes below: Sequelize copies an association scope into the ON clause of
  * every join of that alias, so a verdict appeal cannot reach a list, a case view
  * or the appeal banner that asks for `appealCase`, and none of them has to
- * filter for it. Lose the scope and an áfrýjun in APPEALED starts appearing in
+ * filter for it. Lose the scope and a verdict appeal in APPEALED starts appearing in
  * the district court's "Kærð mál" tab.
  */
 describe('Case appeal case associations', () => {
