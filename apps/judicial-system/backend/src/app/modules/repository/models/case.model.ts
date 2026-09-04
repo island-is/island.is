@@ -273,9 +273,8 @@ export class Case extends Model {
    * only used for custody and travel ban cases
    **********/
   @Column({
-    type: DataType.ARRAY(DataType.ENUM),
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: true,
-    values: Object.values(CaseLegalProvisions),
   })
   @ApiPropertyOptional({ enum: CaseLegalProvisions, isArray: true })
   legalProvisions?: CaseLegalProvisions[]
