@@ -29,11 +29,13 @@ import {
 } from '@/graphql/types/schema'
 import { useAuthStore } from '@/stores/auth-store'
 import { uiStore } from '@/stores/ui-store'
+import { useMyPagesLinks } from '@/lib/my-pages-links'
 import {
   Alert,
   Button,
   GeneralCardSkeleton,
   ListItemSkeleton,
+  Problem,
   theme,
 } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
@@ -73,6 +75,7 @@ export default function HealthMessageDetailScreen() {
   }>()
   const intl = useIntl()
   const client = useApolloClient()
+  const myPagesLinks = useMyPagesLinks()
   const userName = useAuthStore((s) => s.userInfo?.name)
   const [refetching, setRefetching] = useState(false)
 
@@ -265,6 +268,13 @@ export default function HealthMessageDetailScreen() {
           conversation?.lastSenderGroupName ??
           ''
 
+      // The certificate attached to this message needs paying before it can be
+      // accessed. The app can't take the payment natively, so — matching the
+      // compose flow's certificate notice — we point the user to My Pages.
+      const isUnpaidCertificate = !!item.requiresPayment && !item.paid
+      const certificateAmountLabel =
+        item.amountIsk != null ? `${intl.formatNumber(item.amountIsk)} kr.` : ''
+
       const sentAt = new Date(item.messageSentAt)
       const dateTime = item.messageSentAt
         ? `${intl.formatDate(sentAt, {
@@ -288,8 +298,30 @@ export default function HealthMessageDetailScreen() {
           }
           title={senderName}
           bodyContent={
-            item.content ? (
-              <HealthConversationMessageContent content={item.content} />
+            item.content || isUnpaidCertificate ? (
+              <View style={{ rowGap: theme.spacing[2] }}>
+                {item.content ? (
+                  <HealthConversationMessageContent content={item.content} />
+                ) : null}
+                {isUnpaidCertificate ? (
+                  <Problem
+                    type="no_data"
+                    title={intl.formatMessage({
+                      id: 'health.messages.certificatePayment.title',
+                    })}
+                    message={intl.formatMessage(
+                      { id: 'health.messages.certificatePayment.text' },
+                      { amount: certificateAmountLabel },
+                    )}
+                    detailLink={{
+                      text: intl.formatMessage({
+                        id: 'health.messages.certificatePayment.link',
+                      }),
+                      url: myPagesLinks.healthMessageDetail(id),
+                    }}
+                  />
+                ) : null}
+              </View>
             ) : undefined
           }
           date={dateTime}
@@ -312,6 +344,8 @@ export default function HealthMessageDetailScreen() {
       messages.length,
       intl,
       userName,
+      id,
+      myPagesLinks,
       conversation?.lastSenderGroupName,
       conversation?.organization?.name,
       conversation?.organization?.logoUrl,
