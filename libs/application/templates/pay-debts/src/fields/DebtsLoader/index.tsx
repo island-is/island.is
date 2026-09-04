@@ -39,13 +39,15 @@ export const DebtsLoader: FC<FieldBaseProps> = ({
   addExternalData,
   setBeforeSubmitCallback,
   setFieldLoadingState,
+  setSubmitButtonDisabled,
 }) => {
   const { formatMessage, lang: locale } = useLocale()
   const [updateApplicationExternalData] =
     useMutation<UpdateExternalDataResponse>(UPDATE_APPLICATION_EXTERNAL_DATA)
   const { getValues, setValue } = useFormContext()
 
-  const hasDebts = hasFetchedDebts(application.externalData)
+  const wasFetched = hasFetchedDebts(application.externalData)
+  const noDebtsFound = wasFetched && getDebts(application).length === 0
   const [hasError, setHasError] = useState(false)
   const [wasReplaced, setWasReplaced] = useState(false)
 
@@ -145,8 +147,17 @@ export const DebtsLoader: FC<FieldBaseProps> = ({
   }, [])
 
   useEffect(() => {
-    setFieldLoadingState?.(!hasDebts)
-  }, [hasDebts, setFieldLoadingState])
+    setFieldLoadingState?.(!wasFetched)
+  }, [wasFetched, setFieldLoadingState])
+
+  useEffect(() => {
+    if (!noDebtsFound) {
+      return
+    }
+
+    setSubmitButtonDisabled?.(true)
+    return () => setSubmitButtonDisabled?.(false)
+  }, [noDebtsFound, setSubmitButtonDisabled])
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) {
@@ -190,7 +201,7 @@ export const DebtsLoader: FC<FieldBaseProps> = ({
     )
   }
 
-  if (!hasDebts) {
+  if (!wasFetched) {
     return (
       <Box marginTop={2}>
         <SkeletonLoader
@@ -199,6 +210,18 @@ export const DebtsLoader: FC<FieldBaseProps> = ({
           space={2}
           borderRadius="large"
           display="block"
+        />
+      </Box>
+    )
+  }
+
+  if (noDebtsFound) {
+    return (
+      <Box marginTop={2}>
+        <AlertMessage
+          type="info"
+          title={formatMessage(messages.fetch.emptyTitle)}
+          message={formatMessage(messages.fetch.emptyMessage)}
         />
       </Box>
     )

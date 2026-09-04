@@ -16,12 +16,17 @@ import { formatCurrency, isRunningOnEnvironment } from '@island.is/shared/utils'
 import { debts as messages } from '../../lib/messages'
 import { formatDate } from '../../utils/formatDate'
 import { formatTimePeriod } from '../../utils/formatTimePeriod'
-import { getDebts, hasFetchedDebts } from '../../utils/getDebts'
+import {
+  getDebts,
+  getDebtsFromExternalData,
+  hasFetchedDebts,
+} from '../../utils/getDebts'
 
 const AMOUNT_UNAVAILABLE = '—'
 
-const debtsWereFetched = (_answers: unknown, externalData: ExternalData) =>
-  hasFetchedDebts(externalData)
+const hasDebtsToPay = (_answers: unknown, externalData: ExternalData) =>
+  hasFetchedDebts(externalData) &&
+  getDebtsFromExternalData(externalData).length > 0
 
 export const debtsSection = buildSection({
   id: 'debtsSection',
@@ -39,7 +44,7 @@ export const debtsSection = buildSection({
         }),
         buildInteractiveTableField({
           id: 'selectedDebts',
-          condition: debtsWereFetched,
+          condition: hasDebtsToPay,
           dataTestId: 'debts-table',
           selectable: true,
           pageSize: 50,
@@ -57,20 +62,13 @@ export const debtsSection = buildSection({
             { label: messages.table.amountHeader, width: 120 },
             messages.table.toPayLabel,
           ],
-          rows: (application) => {
-            const debts = getDebts(application)
-
-            if (debts.length === 0) {
-              return [[messages.table.emptyMessage, '', '', '']]
-            }
-
-            return debts.map<StaticText[]>((debt) => [
+          rows: (application) =>
+            getDebts(application).map<StaticText[]>((debt) => [
               debt.chargeTypeName,
               debt.chargeItemSubject,
               formatDate(debt.finalDueDate),
               formatCurrency(debt.debts),
-            ])
-          },
+            ]),
           expandedRows: {
             header: [
               messages.table.dueDateHeader,
@@ -110,7 +108,7 @@ export const debtsSection = buildSection({
         }),
         buildStickyFooterField({
           id: 'debtsSummaryFooter',
-          condition: debtsWereFetched,
+          condition: hasDebtsToPay,
           widthReferenceTestId: 'debts-table',
           watchFieldIds: ['debtsToPay', 'selectedDebts'],
           rows: (application: Application) => {
