@@ -34,7 +34,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
-import { RobotLogRepositoryService } from '../repository'
+import {
+  CaseRepositoryService,
+  RobotLogRepositoryService,
+  User as UserModel,
+} from '../repository'
 import { courtModuleConfig } from './court.config'
 
 export enum CourtDocumentFolder {
@@ -76,6 +80,7 @@ export class CourtService {
     private readonly courtClientService: CourtClientService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
+    private readonly caseRepositoryService: CaseRepositoryService,
     private readonly robotLogRepositoryService: RobotLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(courtModuleConfig.KEY)
@@ -130,15 +135,57 @@ export class CourtService {
   // The court service rejects files that exceed its size limit and no amount of
   // retrying will change that, so the court is asked to upload the file by hand.
   private async notifyCourtOfFileTooLarge(
+    caseId: string,
     courtId: string,
     courtCaseNumber: string,
     fileName: string,
   ): Promise<void> {
+    const theCase = await this.caseRepositoryService
+      .findById(caseId, {
+        include: [
+          { model: UserModel, as: 'judge' },
+          { model: UserModel, as: 'registrar' },
+        ],
+      })
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to look up case ${caseId} when notifying that a file was too large for the court service`,
+          { reason },
+        )
+
+        return null
+      })
+
+    const recipients: { name: string; address: string }[] = []
+
     const courtEmail = this.config.courtsEmails[courtId]
 
-    if (!courtEmail) {
+    if (courtEmail) {
+      recipients.push({ name: '', address: courtEmail })
+    }
+
+    if (theCase?.judge?.email) {
+      recipients.push({
+        name: theCase.judge.name,
+        address: theCase.judge.email,
+      })
+    }
+
+    if (theCase?.registrar?.email) {
+      recipients.push({
+        name: theCase.registrar.name,
+        address: theCase.registrar.email,
+      })
+    }
+
+    const uniqueRecipients = recipients.filter(
+      (recipient, index, all) =>
+        all.findIndex((r) => r.address === recipient.address) === index,
+    )
+
+    if (uniqueRecipients.length === 0) {
       this.logger.error(
-        `No email address is registered for court ${courtId}, so it cannot be notified that a file was too large for the court service`,
+        `No email recipients are available for court ${courtId}, so it cannot be notified that a file was too large for the court service`,
       )
 
       return
@@ -148,24 +195,33 @@ export class CourtService {
       fileName,
     )} í Auði vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í Auði.`
 
-    try {
-      await this.emailService.sendEmail({
-        from: { name: this.config.fromName, address: this.config.fromEmail },
-        replyTo: {
-          name: this.config.replyToName,
-          address: this.config.replyToEmail,
-        },
-        to: [{ name: '', address: courtEmail }],
-        subject: `Ekki tókst að hlaða upp skjali í Auði í máli ${courtCaseNumber}`,
-        text: body,
-        html: body,
-      })
-    } catch (reason) {
-      this.logger.error(
-        `Failed to notify court ${courtId} that a file was too large for the court service`,
-        { reason },
-      )
-    }
+    const subject = `Ekki tókst að hlaða upp skjali í Auði í máli ${courtCaseNumber}`
+
+    await Promise.all(
+      uniqueRecipients.map(async (recipient) => {
+        try {
+          await this.emailService.sendEmail({
+            from: {
+              name: this.config.fromName,
+              address: this.config.fromEmail,
+            },
+            replyTo: {
+              name: this.config.replyToName,
+              address: this.config.replyToEmail,
+            },
+            to: [recipient],
+            subject,
+            text: body,
+            html: body,
+          })
+        } catch (reason) {
+          this.logger.error(
+            `Failed to notify ${recipient.address} that a file was too large for the court service`,
+            { reason },
+          )
+        }
+      }),
+    )
   }
 
   private validateCourtRobotEmailParams(
@@ -243,6 +299,7 @@ export class CourtService {
 
       if (reason instanceof PayloadTooLargeException) {
         await this.notifyCourtOfFileTooLarge(
+          caseId,
           courtId,
           courtCaseNumber,
           sanitizedFileName,
@@ -298,7 +355,12 @@ export class CourtService {
       }
 
       if (reason instanceof PayloadTooLargeException) {
-        await this.notifyCourtOfFileTooLarge(courtId, courtCaseNumber, fileName)
+        await this.notifyCourtOfFileTooLarge(
+          caseId,
+          courtId,
+          courtCaseNumber,
+          fileName,
+        )
       } else {
         this.eventService.postErrorEvent(
           'Failed to create a court record at court',

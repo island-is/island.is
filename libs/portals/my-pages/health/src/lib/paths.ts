@@ -72,6 +72,10 @@ export enum HealthPaths {
   HealthConversationsNew = '/heilsa/skilabod/nytt',
   HealthConversationsDetail = '/heilsa/skilabod/:id',
 
+  HealthTreatments = '/heilsa/medferd',
+  HealthTreatment = '/heilsa/medferd/:id',
+  HealthTreatmentEducationalContent = '/heilsa/medferd/:id/fraedsluefni',
+
   // Deprecated paths - kept for redirects
   HealthOverviewOld = `${basicInformation}/yfirlit`,
   HealthBloodtypeOld = '/heilsa/blodflokkur',

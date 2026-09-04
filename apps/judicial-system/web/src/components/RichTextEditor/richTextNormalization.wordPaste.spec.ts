@@ -1,8 +1,12 @@
+import { Editor } from '@tiptap/core'
+
+import { buildEditorExtensions } from './richTextEditorExtensions'
 import { normalizePastedHtml } from './richTextNormalization'
 import {
   DOWNLEVEL_CONDITIONAL_LIST,
   FLAT_BULLET_LIST,
   FORMATTED_LIST_ITEM,
+  GDOCS_TABLE,
   INDENTED_PARAGRAPH,
   LETTERED_LIST,
   LIST_SPLIT_BY_PARAGRAPH,
@@ -13,6 +17,8 @@ import {
   ROMAN_LIST,
   SKIPPED_LEVEL_LIST,
   TWO_ADJACENT_LISTS,
+  WORD_TABLE,
+  WORD_TABLE_MERGED,
 } from './wordPasteFixtures'
 
 describe('normalizePastedHtml — Word fake lists', () => {
@@ -109,6 +115,9 @@ describe('normalizePastedHtml — Word artifacts', () => {
       NESTED_LIST,
       FORMATTED_LIST_ITEM,
       INDENTED_PARAGRAPH,
+      WORD_TABLE,
+      WORD_TABLE_MERGED,
+      GDOCS_TABLE,
     ]) {
       expect(normalizePastedHtml(fixture)).not.toContain('style=')
     }
@@ -123,6 +132,55 @@ describe('normalizePastedHtml — Word artifacts', () => {
   it('converts literal leading tabs in pasted paragraphs to indent classes', () => {
     expect(normalizePastedHtml('<p>\t\tInndregið</p>')).toBe(
       '<p class="indent-2">Inndregið</p>',
+    )
+  })
+})
+
+describe('normalizePastedHtml — tables', () => {
+  it('reduces a Word table to minimal markup', () => {
+    expect(normalizePastedHtml(WORD_TABLE)).toBe(
+      '<table><tbody>' +
+        '<tr><td><p>Efri vinstri</p></td><td><p>Efri hægri</p></td></tr>' +
+        '<tr><td><p>Neðri vinstri</p></td><td><p>Neðri hægri</p></td></tr>' +
+        '</tbody></table>',
+    )
+  })
+
+  it('flattens Word merged cells into a rectangular grid', () => {
+    expect(normalizePastedHtml(WORD_TABLE_MERGED)).toBe(
+      '<table><tbody>' +
+        '<tr><td><p>Sameinuð fyrirsögn</p></td><td></td></tr>' +
+        '<tr><td><p>Spannar tvær raðir</p></td><td><p>Fyrri</p></td></tr>' +
+        '<tr><td></td><td><p>Seinni</p></td></tr>' +
+        '</tbody></table>',
+    )
+  })
+
+  it('reduces a Google Docs table, keeping inline bold as strong', () => {
+    expect(normalizePastedHtml(GDOCS_TABLE)).toBe(
+      '<table><tbody><tr>' +
+        '<td><p><strong>Feitletrað</strong></p></td>' +
+        '<td><p>Venjulegt</p></td>' +
+        '</tr></tbody></table>',
+    )
+  })
+
+  it('round-trips a normalized merged table through the editor schema', () => {
+    // The full paste path: transformPastedHTML runs normalizePastedHtml,
+    // then the editor parses and re-serializes. The result must be a
+    // rectangular, attribute-free table.
+    const editor = new Editor({
+      extensions: buildEditorExtensions(''),
+      content: normalizePastedHtml(WORD_TABLE_MERGED),
+    })
+    const result = editor.getHTML()
+    editor.destroy()
+    expect(result).toBe(
+      '<table><tbody>' +
+        '<tr><td><p>Sameinuð fyrirsögn</p></td><td><p></p></td></tr>' +
+        '<tr><td><p>Spannar tvær raðir</p></td><td><p>Fyrri</p></td></tr>' +
+        '<tr><td><p></p></td><td><p>Seinni</p></td></tr>' +
+        '</tbody></table>',
     )
   })
 })

@@ -513,6 +513,7 @@ query Case($input: CaseQueryInput!) {
       withdrawnDate
     }
     indictmentDeniedExplanation
+    indictmentReviewReturnedExplanation
     arraignmentDate {
       date
       location
@@ -529,6 +530,10 @@ query Case($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentRulingDecision
     indictmentReviewer {
+      id
+      name
+    }
+    indictmentApprover {
       id
       name
     }
