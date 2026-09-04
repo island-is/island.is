@@ -272,7 +272,7 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
     >
       <CustomPageLayoutHeader
         title={formatMessage(m.home.title)}
-        description={formatMessage(m.home.description)}
+        description={{ text: formatMessage(m.home.description) }}
         featuredImage={{
           src:
             customSubpage?.ogImage?.url ?? formatMessage(m.home.featuredImage),
