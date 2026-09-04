@@ -33,7 +33,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  InfoCard,
+  InfoCardRequestCase,
   Modal,
   PageHeader,
   PageLayout,
@@ -44,7 +44,6 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseOrigin,
@@ -79,18 +78,6 @@ export const Overview = () => {
   } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const {
-    defendants,
-    policeCaseNumbers,
-    courtCaseNumber,
-    prosecutor,
-    court,
-    judge,
-    registrar,
-    prosecutorsOffice,
-    requestedCourtDate,
-    parentCaseValidToDate,
-  } = useInfoCardItems()
 
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
@@ -193,29 +180,7 @@ export const Overview = () => {
               </Box>
             )}
           <Box component="section">
-            <InfoCard
-              sections={[
-                {
-                  id: 'defendants-section',
-                  items: [defendants({ caseType: workingCase.type })],
-                },
-                {
-                  id: 'case-info-section',
-                  items: [
-                    policeCaseNumbers,
-                    ...(workingCase.courtCaseNumber ? [courtCaseNumber] : []),
-                    court,
-                    prosecutorsOffice,
-                    ...(workingCase.judge ? [judge] : []),
-                    requestedCourtDate,
-                    ...(workingCase.registrar ? [registrar] : []),
-                    prosecutor(workingCase.type),
-                    parentCaseValidToDate,
-                  ],
-                  columns: 2,
-                },
-              ]}
-            />
+            <InfoCardRequestCase displayRequestDetails />
           </Box>
           <Box component="section" data-testid="demands">
             <SectionHeading
