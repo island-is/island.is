@@ -350,6 +350,9 @@ export const is = {
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
+  'vehicleDetail.lastOdometer': 'Síðasta kílómetrastaða',
+  'vehicleDetail.moreInfo': 'Fleiri upplýsingar',
+  'vehicleDetail.viewMore': 'Sjá nánar',
   'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
   'vehicleDetail.moreOptions': 'Fleiri valmöguleikar',
 
@@ -908,11 +911,8 @@ export const is = {
   'health.messages.compose.to': 'Til: {name}',
   'health.messages.compose.messageLabel': 'Skilaboð',
   'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
-  'health.messages.compose.termsAccept': 'Ég samþykki',
-  'health.messages.compose.termsLink': 'skilmála',
-  'health.messages.compose.termsTitle': 'Skilmálar vegna skilaboða',
-  'health.messages.compose.termsBody':
-    '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
+  'health.messages.compose.termsAccept':
+    'Ég samþykki að skilaboðin vistist í sjúkraskrá og að viðeigandi heilbrigðisstarfsmaður með aðgang að henni svari erindinu.',
   'health.messages.compose.availabilityWindow':
     '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}.',
   'health.messages.compose.availabilityInfo':
@@ -1063,6 +1063,11 @@ export const is = {
   'health.prescriptions.renewalPossible': 'Hægt að endurnýja',
   'health.prescriptions.renewalValid': 'Gild lyfjaávísun',
   'health.prescriptions.renewalNotAvailable': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalStatusApproved': 'Endurnýjun samþykkt',
+  'health.prescriptions.renewalStatusPending': 'Endurnýjun í vinnslu',
+  'health.prescriptions.renewalStatusRejected': 'Endurnýjun hafnað',
+  'health.prescriptions.renewalStatusDismissed': 'Endurnýjun vísað frá',
+  'health.prescriptions.renewalStatusUnknown': 'Staða endurnýjunar óþekkt',
   'health.prescriptions.renewalBlockedIsRegiment':
     'Ekki er hægt að endurnýja lyfjakúr',
   'health.prescriptions.renewalBlockedNoMedCard': 'Ekkert lyfjakort skráð',

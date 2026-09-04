@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { UserProfile, Application } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import { removeCountryCode } from '@island.is/application/ui-components'
+import { removeCountryCode } from '@island.is/shared/utils'
 import { m } from '../../lib/messages'
 import { RelationEnum } from '../../types'
 import { PREPAID_INHERITANCE } from '../../lib/constants'

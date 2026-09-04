@@ -46,7 +46,7 @@ import {
   Case,
   CaseRepositoryService,
   CaseString,
-  DateLog,
+  DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   Verdict,
 } from '../../../repository'
@@ -99,7 +99,7 @@ describe('CaseController - Update', () => {
   let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let mockDefendantService: DefendantService
   let mockVerdictService: VerdictService
-  let mockDateLogModel: typeof DateLog
+  let mockDateLogRepositoryService: DateLogRepositoryService
   let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
 
@@ -114,7 +114,7 @@ describe('CaseController - Update', () => {
       defendantEventLogRepositoryService,
       defendantService,
       verdictService,
-      dateLogModel,
+      dateLogRepositoryService,
       caseStringModel,
       caseController,
     } = await createTestingCaseModule()
@@ -127,7 +127,7 @@ describe('CaseController - Update', () => {
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockDefendantService = defendantService
     mockVerdictService = verdictService
-    mockDateLogModel = dateLogModel
+    mockDateLogRepositoryService = dateLogRepositoryService
     mockCaseStringModel = caseStringModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -1195,9 +1195,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
-        { transaction },
+      expect(mockDateLogRepositoryService.createForCase).toHaveBeenCalledWith(
+        caseId,
+        DateType.ARRAIGNMENT_DATE,
+        arraignmentDate,
+        {
+          transaction,
+        },
       )
     })
 
@@ -1270,9 +1274,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
-        { transaction },
+      expect(mockDateLogRepositoryService.createForCase).toHaveBeenCalledWith(
+        caseId,
+        DateType.ARRAIGNMENT_DATE,
+        arraignmentDate,
+        {
+          transaction,
+        },
       )
       expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
         EventType.COURT_DATE_SCHEDULED,
@@ -1409,9 +1417,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.COURT_DATE, caseId, ...courtDate },
-        { transaction },
+      expect(mockDateLogRepositoryService.createForCase).toHaveBeenCalledWith(
+        caseId,
+        DateType.COURT_DATE,
+        courtDate,
+        {
+          transaction,
+        },
       )
       expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
         EventType.COURT_DATE_SCHEDULED,

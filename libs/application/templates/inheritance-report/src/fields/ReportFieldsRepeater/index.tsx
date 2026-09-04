@@ -14,7 +14,7 @@ import {
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { PREPAID_INHERITANCE } from '../../lib/constants'

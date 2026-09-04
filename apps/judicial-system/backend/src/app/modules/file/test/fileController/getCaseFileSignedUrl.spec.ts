@@ -7,7 +7,7 @@ import { CaseFileCategory, CaseType } from '@island.is/judicial-system/types'
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case, CaseFile } from '../../../repository'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { SignedUrl } from '../../models/signedUrl.model'
 
 interface Then {
@@ -24,15 +24,15 @@ type GivenWhenThen = (
 
 describe('FileController - Get case file signed url', () => {
   let mockAwsS3Service: AwsS3Service
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, fileModel, fileController } =
+    const { awsS3Service, caseFileRepositoryService, fileController } =
       await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -100,7 +100,7 @@ describe('FileController - Get case file signed url', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockUpdate = mockFileModel.update as jest.Mock
+      mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(false)
 
@@ -108,10 +108,9 @@ describe('FileController - Get case file signed url', () => {
     })
 
     it('should set isKeyAccessible to false and throw', () => {
-      expect(mockUpdate).toHaveBeenCalledWith(
-        { isKeyAccessible: false },
-        { where: { id: fileId } },
-      )
+      expect(mockUpdate).toHaveBeenCalledWith(fileId, {
+        isKeyAccessible: false,
+      })
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(`File ${fileId} does not exist in AWS S3`)
     })
@@ -132,7 +131,7 @@ describe('FileController - Get case file signed url', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockUpdate = mockFileModel.update as jest.Mock
+      mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
 
       then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })

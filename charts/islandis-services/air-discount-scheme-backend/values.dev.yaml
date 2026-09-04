@@ -66,6 +66,7 @@ httpRoute:
     hostnames:
       - 'loftbru.dev01.devland.is'
       - 'loftbru-cf.dev01.devland.is'
+    noAuth: true
     parentRefs:
       - name: 'gateway-external'
         namespace: 'envoy-gateway-external'
