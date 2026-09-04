@@ -139,7 +139,7 @@ export class AppealCase {
   readonly rulingFile?: CaseFile
 
   // Only carried by a verdict appeal case: the backend folds the event log of a
-  // kæra into the appealedBy* fields above and strips it from the payload.
+  // ruling appeal into the appealedBy* fields above and strips it from the payload.
   @Field(() => [AppealEventLog], { nullable: true })
   readonly appealEventLogs?: AppealEventLog[]
 }
