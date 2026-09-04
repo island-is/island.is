@@ -1,30 +1,19 @@
 import { z } from 'zod'
 
 import type { GetInterestBenefitData } from '../../../gen/fetch'
-
-export type InterestBenefitMaritalStatus =
-  | 'single'
-  | 'singleParent'
-  | 'marriedOrCohabiting'
-
-// Separate from the withholding-tax table: RSK reuses `hjuskaparstada` with a
-// different shape per endpoint, so matching values today are a coincidence.
-const RSK_VALUE_BY_INTEREST_BENEFIT_MARITAL_STATUS: Record<
-  InterestBenefitMaritalStatus,
-  number
-> = {
-  single: 1,
-  singleParent: 2,
-  marriedOrCohabiting: 3,
-}
+import {
+  INTEREST_BENEFIT_MARITAL_STATUSES,
+  RSK_VALUE_BY_INTEREST_BENEFIT_MARITAL_STATUS,
+} from './constants'
+import { currency, year } from './semantics'
 
 export const interestBenefitInputSchema = z.object({
-  maritalStatus: z.enum(['single', 'singleParent', 'marriedOrCohabiting']),
-  incomeYear: z.number(),
-  incomeBase: z.number(),
-  assetBase: z.number(),
-  loanBalance: z.number(),
-  paidInterest: z.number(),
+  maritalStatus: z.enum(INTEREST_BENEFIT_MARITAL_STATUSES),
+  incomeYear: year(),
+  incomeBase: currency(),
+  assetBase: currency(),
+  loanBalance: currency(),
+  paidInterest: currency(),
 })
 
 export type InterestBenefitInput = z.infer<typeof interestBenefitInputSchema>

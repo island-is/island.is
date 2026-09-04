@@ -1,49 +1,38 @@
 import { z } from 'zod'
 
 import type { GetWithholdingTaxData } from '../../../gen/fetch'
+import {
+  EMPLOYER_PENSION_MATCH_RATIOS,
+  PAYMENT_FREQUENCIES,
+  PENSION_FUND_RATIOS,
+  PRIVATE_PENSION_RATIOS,
+  RSK_VALUE_BY_EMPLOYER_PENSION_MATCH_RATIO,
+  RSK_VALUE_BY_PAYMENT_FREQUENCY,
+  RSK_VALUE_BY_PENSION_FUND_RATIO,
+  RSK_VALUE_BY_PRIVATE_PENSION_RATIO,
+  RSK_VALUE_BY_WITHHOLDING_MARITAL_STATUS,
+  WITHHOLDING_MARITAL_STATUSES,
+} from './constants'
+import { currency, month, percentage, year } from './semantics'
 import { toRskValue } from './toRskValue'
 
-export type PaymentFrequency = 'weekly' | 'monthly'
-
-export type WithholdingMaritalStatus =
-  | 'single'
-  | 'singleParent'
-  | 'marriedOrCohabiting'
-
-const RSK_VALUE_BY_PAYMENT_FREQUENCY: Record<PaymentFrequency, boolean> = {
-  weekly: false,
-  monthly: true,
-}
-
-const RSK_VALUE_BY_WITHHOLDING_MARITAL_STATUS: Record<
-  WithholdingMaritalStatus,
-  number
-> = {
-  single: 1,
-  singleParent: 2,
-  marriedOrCohabiting: 3,
-}
-
-/* Ratios are given as a number between 0 and 1, per the RSK spec. */
 export const withholdingTaxInputSchema = z.object({
-  paymentFrequency: z.enum(['weekly', 'monthly']).optional(),
-  maritalStatus: z
-    .enum(['single', 'singleParent', 'marriedOrCohabiting'])
-    .optional(),
-  incomeYear: z.number().optional(),
-  payMonth: z.number().optional(),
-  salary: z.number().optional(),
-  pensionFundRatio: z.number().optional(),
-  privatePensionRatio: z.number().optional(),
-  taxCardUtilization: z.number().optional(),
-  spouseTaxCardUtilization: z.number().optional(),
-  accumulatedPersonalTaxCredit: z.number().optional(),
-  vacationPay: z.number().optional(),
-  unionDues: z.number().optional(),
-  otherDeduction: z.number().optional(),
-  employerPensionMatchRatio: z.number().optional(),
-  vehicleAllowance: z.number().optional(),
-  seamenAccidentInsurancePremium: z.number().optional(),
+  paymentFrequency: z.enum(PAYMENT_FREQUENCIES).optional(),
+  maritalStatus: z.enum(WITHHOLDING_MARITAL_STATUSES).optional(),
+  incomeYear: year().optional(),
+  payMonth: month().optional(),
+  salary: currency().optional(),
+  pensionFundRatio: z.enum(PENSION_FUND_RATIOS).optional(),
+  privatePensionRatio: z.enum(PRIVATE_PENSION_RATIOS).optional(),
+  taxCardUtilization: percentage().optional(),
+  spouseTaxCardUtilization: percentage().optional(),
+  accumulatedPersonalTaxCredit: currency().optional(),
+  vacationPay: currency().optional(),
+  unionDues: currency().optional(),
+  otherDeduction: currency().optional(),
+  employerPensionMatchRatio: z.enum(EMPLOYER_PENSION_MATCH_RATIOS).optional(),
+  vehicleAllowance: currency().optional(),
+  seamenAccidentInsurancePremium: currency().optional(),
 })
 
 export type WithholdingTaxInput = z.infer<typeof withholdingTaxInputSchema>
@@ -64,15 +53,24 @@ export const toWithholdingTaxQuery = (
   tekjuar: input.incomeYear,
   launamanudur: input.payMonth,
   laun: input.salary,
-  lifeyrissjodurHlutfall: input.pensionFundRatio,
-  sereignHlutfall: input.privatePensionRatio,
+  lifeyrissjodurHlutfall: toRskValue(
+    input.pensionFundRatio,
+    RSK_VALUE_BY_PENSION_FUND_RATIO,
+  ),
+  sereignHlutfall: toRskValue(
+    input.privatePensionRatio,
+    RSK_VALUE_BY_PRIVATE_PENSION_RATIO,
+  ),
   nytingSkattkorts: input.taxCardUtilization,
   nytingSkattkortsMaka: input.spouseTaxCardUtilization,
   uppsafnadurPersonuafslattur: input.accumulatedPersonalTaxCredit,
   orlof: input.vacationPay,
   stettarfelag: input.unionDues,
   annad: input.otherDeduction,
-  motframlagLifeyrissjodur: input.employerPensionMatchRatio,
+  motframlagLifeyrissjodur: toRskValue(
+    input.employerPensionMatchRatio,
+    RSK_VALUE_BY_EMPLOYER_PENSION_MATCH_RATIO,
+  ),
   okutaekjastyrkurUtan: input.vehicleAllowance,
   idgjaldSlysatryggingSjomanna: input.seamenAccidentInsurancePremium,
 })

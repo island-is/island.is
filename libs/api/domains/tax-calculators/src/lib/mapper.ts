@@ -1,18 +1,23 @@
 import type { InputProp } from '@island.is/clients/rsk/calculators'
 
-import { TaxCalculatorFieldDataType } from './models/enums'
+import { TaxCalculatorFieldInputType } from './models/enums'
 import { CalculatorField } from './models/field.model'
 import { FieldDependency } from './models/fieldDependency.model'
 
-const DATA_TYPE_BY_INPUT_PROP_TYPE: Record<
-  InputProp['dataType'],
-  TaxCalculatorFieldDataType
+const INPUT_TYPE_BY_SEMANTIC: Record<
+  InputProp['inputType'],
+  TaxCalculatorFieldInputType
 > = {
-  number: TaxCalculatorFieldDataType.NUMBER,
-  string: TaxCalculatorFieldDataType.STRING,
-  boolean: TaxCalculatorFieldDataType.BOOLEAN,
-  date: TaxCalculatorFieldDataType.DATE,
-  enum: TaxCalculatorFieldDataType.ENUM,
+  currency: TaxCalculatorFieldInputType.CURRENCY,
+  percentage: TaxCalculatorFieldInputType.PERCENTAGE,
+  year: TaxCalculatorFieldInputType.YEAR,
+  month: TaxCalculatorFieldInputType.MONTH,
+  count: TaxCalculatorFieldInputType.COUNT,
+  number: TaxCalculatorFieldInputType.NUMBER,
+  string: TaxCalculatorFieldInputType.STRING,
+  boolean: TaxCalculatorFieldInputType.BOOLEAN,
+  date: TaxCalculatorFieldInputType.DATE,
+  enum: TaxCalculatorFieldInputType.ENUM,
 }
 
 /* Deliberately pure: `InputProp.dependsOn.value` is `unknown`, and narrowing
@@ -24,7 +29,7 @@ export const mapInputPropToField = (
   dependency?: FieldDependency,
 ): CalculatorField => ({
   key: prop.name,
-  dataType: DATA_TYPE_BY_INPUT_PROP_TYPE[prop.dataType],
+  inputType: INPUT_TYPE_BY_SEMANTIC[prop.inputType],
   required: prop.required,
   options: prop.options ?? undefined,
   dependsOn: dependency ?? undefined,

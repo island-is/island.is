@@ -11,7 +11,7 @@ import type {
   CalculatorSectionToggle,
 } from '@island.is/tax-calculators'
 
-import { AvailableField, SectionActions } from '../types'
+import { FieldContract, SectionActions } from '../types'
 import { LocalizedTextFields } from './LocalizedTextFields'
 import { SectionFieldRow } from './SectionFieldRow'
 import { SectionToggleControl } from './SectionToggleControl'
@@ -19,7 +19,7 @@ import { SectionToggleControl } from './SectionToggleControl'
 interface Props {
   section: CalculatorFieldSection
   position: number
-  availableFields: AvailableField[]
+  contract: FieldContract
   isLoading: boolean
   otherToggles: CalculatorSectionToggle[]
   actions: SectionActions
@@ -28,7 +28,7 @@ interface Props {
 export const ConfigSection = ({
   section,
   position,
-  availableFields,
+  contract,
   isLoading,
   otherToggles,
   actions,
@@ -82,7 +82,7 @@ export const ConfigSection = ({
       <SectionFieldRow
         key={field.uid}
         field={field}
-        availableFields={availableFields}
+        contract={contract}
         isLoading={isLoading}
         onChange={(patch) => actions.updateField(fieldIndex, patch)}
         onRemove={() => actions.removeField(fieldIndex)}

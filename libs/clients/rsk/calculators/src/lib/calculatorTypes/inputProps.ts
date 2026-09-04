@@ -6,6 +6,7 @@ import {
 } from '../utils/zodToInputProp'
 import { childBenefitInputSchema } from './childBenefit'
 import { interestBenefitInputSchema } from './interestBenefit'
+import type { NumericSemantic } from './semantics'
 import { vehicleBenefitInputSchema } from './vehicleBenefit'
 import { vehicleDepreciationInputSchema } from './vehicleDepreciation'
 import { vehicleTaxInputSchema } from './vehicleTax'
@@ -21,7 +22,11 @@ export type CalculatorKey =
 
 export interface InputProp {
   name: string
-  dataType: 'number' | 'string' | 'boolean' | 'date' | 'enum'
+  /* `number` is the fallback for a numeric field carrying no semantic marker.
+   * It stays a member rather than defaulting to `currency` so an unannotated
+   * field renders plainly and is greppable, instead of silently presenting
+   * itself as money. */
+  inputType: NumericSemantic | 'number' | 'string' | 'boolean' | 'date' | 'enum'
   required: boolean
   options?: string[]
   dependsOn?: { field: string; value: unknown }

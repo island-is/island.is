@@ -1,10 +1,11 @@
 import { z } from 'zod'
 
 import type { GetVehicleBenefitData } from '../../../gen/fetch'
+import { currency, year } from './semantics'
 
 export const vehicleBenefitInputSchema = z.object({
-  purchaseYear: z.number(),
-  purchasePrice: z.number(),
+  purchaseYear: year(),
+  purchasePrice: currency(),
   // RSK requires these, but each means "no" unless stated.
   isElectric: z.boolean().optional(),
   employeePaysCharging: z.boolean().optional(),

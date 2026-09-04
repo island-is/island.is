@@ -1,13 +1,14 @@
 import { z } from 'zod'
 
 import type { GetVehicleDepreciationData } from '../../../gen/fetch'
+import { currency, month, year } from './semantics'
 
 export const vehicleDepreciationInputSchema = z.object({
-  price: z.number(),
-  purchaseMonth: z.number(),
-  purchaseYear: z.number(),
-  arrivalMonth: z.number(),
-  arrivalYear: z.number(),
+  price: currency(),
+  purchaseMonth: month(),
+  purchaseYear: year(),
+  arrivalMonth: month(),
+  arrivalYear: year(),
 })
 
 export type VehicleDepreciationInput = z.infer<

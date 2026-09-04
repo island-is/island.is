@@ -1,14 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Button, Note, Paragraph, Stack } from '@contentful/f36-components'
 import { PlusIcon } from '@contentful/f36-icons'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
+import type {
+  GetTaxCalculatorFieldsForContentfulAppQuery,
+  GetTaxCalculatorFieldsForContentfulAppQueryVariables,
+} from '../../../graphql/schema'
 import { ConfigSection } from './components/ConfigSection'
 import { useCalculatorConfig } from './hooks/useCalculatorConfig'
-import { CALCULATOR_TYPE_TO_ENUM, GET_TAX_CALCULATOR_FIELDS } from './constants'
-import { AvailableField } from './types'
+import { GET_TAX_CALCULATOR_FIELDS, toApiCalculatorType } from './constants'
+import { FieldContract } from './types'
 
 // Every entry of the `calculator` content type IS a calculator, so -- unlike
 // ConnectedComponent's shared configJson field, which also serves unrelated
@@ -41,17 +45,25 @@ export const CalculatorConfigEditor = () => {
     sectionActions,
   } = useCalculatorConfig(sdk, calculatorTypeValue)
 
+  const apiCalculatorType = toApiCalculatorType(calculatorTypeValue)
+
   const { data, loading, error } = useQuery<
-    { taxCalculatorFields: AvailableField[] },
-    { calculatorType: string }
+    GetTaxCalculatorFieldsForContentfulAppQuery,
+    GetTaxCalculatorFieldsForContentfulAppQueryVariables
   >(GET_TAX_CALCULATOR_FIELDS, {
-    variables: {
-      calculatorType: CALCULATOR_TYPE_TO_ENUM[calculatorTypeValue],
-    },
-    skip: !CALCULATOR_TYPE_TO_ENUM[calculatorTypeValue],
+    variables: apiCalculatorType
+      ? { calculatorType: apiCalculatorType }
+      : undefined,
+    skip: !apiCalculatorType,
   })
 
-  const availableFields = data?.taxCalculatorFields ?? []
+  const contract: FieldContract = useMemo(
+    () =>
+      new Map(
+        (data?.taxCalculatorFields ?? []).map((field) => [field.key, field]),
+      ),
+    [data],
+  )
 
   return (
     <Stack flexDirection="column" alignItems="stretch" spacing="spacingM">
@@ -62,10 +74,21 @@ export const CalculatorConfigEditor = () => {
         </Note>
       )}
 
-      {calculatorTypeValue && !CALCULATOR_TYPE_TO_ENUM[calculatorTypeValue] && (
+      {calculatorTypeValue && !apiCalculatorType && (
         <Note variant="warning">
           Unknown calculator type &quot;{calculatorTypeValue}&quot; -- no field
           list exists for it.
+        </Note>
+      )}
+
+      {/* `taxCalculatorFields` is nullable, so a successful response can still
+       * carry no fields. Without this the editor faces a dropdown holding
+       * nothing but its own placeholder, and no way to tell that apart from a
+       * query that is still in flight. */}
+      {apiCalculatorType && !loading && !error && contract.size === 0 && (
+        <Note variant="warning">
+          This calculator type returned no fields, so there is nothing to place
+          in a section yet.
         </Note>
       )}
 
@@ -82,7 +105,7 @@ export const CalculatorConfigEditor = () => {
             key={section.key}
             section={section}
             position={sectionIndex + 1}
-            availableFields={availableFields}
+            contract={contract}
             isLoading={loading}
             otherToggles={otherToggles(sectionIndex)}
             actions={sectionActions(sectionIndex)}

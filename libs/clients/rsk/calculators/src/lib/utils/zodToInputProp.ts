@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import type { InputProp } from '../calculatorTypes/inputProps'
+import { isNumericSemantic } from '../calculatorTypes/semantics'
 
 export const propFromZodType = (
   name: string,
@@ -14,27 +15,31 @@ export const propFromZodType = (
     type = type.unwrap()
   }
 
-  let dataType: InputProp['dataType']
+  let inputType: InputProp['inputType']
   let options: string[] | undefined
   if (type instanceof z.ZodEnum) {
-    dataType = 'enum'
+    inputType = 'enum'
     options = type.options
   } else if (type instanceof z.ZodLiteral) {
-    dataType = 'enum'
+    inputType = 'enum'
     options = [String(type.value)]
   } else if (type instanceof z.ZodNumber) {
-    dataType = 'number'
+    /* The semantic the schema author attached via a builder in
+     * `calculatorTypes/semantics.ts`. A bare `z.number()` carries none, and
+     * falls back to the structural type. */
+    const semantic = type.description
+    inputType = isNumericSemantic(semantic) ? semantic : 'number'
   } else if (type instanceof z.ZodBoolean) {
-    dataType = 'boolean'
+    inputType = 'boolean'
   } else if (type instanceof z.ZodDate) {
-    dataType = 'date'
+    inputType = 'date'
   } else {
-    dataType = 'string'
+    inputType = 'string'
   }
 
   return {
     name,
-    dataType,
+    inputType,
     required,
     ...(options ? { options } : {}),
     ...(dependsOn ? { dependsOn } : {}),

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { TaxCalculatorFieldDataType } from './enums'
+import { TaxCalculatorFieldInputType } from './enums'
 import { FieldDependency } from './fieldDependency.model'
 
 @ObjectType('TaxCalculatorField')
@@ -11,10 +11,11 @@ export class CalculatorField {
   })
   key!: string
 
-  @Field(() => TaxCalculatorFieldDataType, {
-    description: 'Which kind of control the consumer should render.',
+  @Field(() => TaxCalculatorFieldInputType, {
+    description:
+      'Which kind of control the consumer should render, and how to format its value. See the enum members for what each one means.',
   })
-  dataType!: TaxCalculatorFieldDataType
+  inputType!: TaxCalculatorFieldInputType
 
   @Field({
     description:
@@ -25,7 +26,7 @@ export class CalculatorField {
   @Field(() => [String], {
     nullable: true,
     description:
-      'Permitted values, set only when `dataType` is ENUM. These are raw identifiers (e.g. `firstHalf`) and carry no display text.',
+      'Permitted values, set only when `inputType` is ENUM. These are raw identifiers (e.g. `firstHalf`) and carry no display text.',
   })
   options?: string[]
 

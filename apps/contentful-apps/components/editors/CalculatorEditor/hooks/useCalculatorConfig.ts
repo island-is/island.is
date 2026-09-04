@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 
-import {
-  calculatorConfigSchema,
-  collectSectionToggles,
-} from '@island.is/tax-calculators'
 import type {
   CalculatorConfig,
   CalculatorFieldSection,
   CalculatorSectionField,
   CalculatorSectionToggle,
+} from '@island.is/tax-calculators'
+import {
+  calculatorConfigSchema,
+  collectSectionToggles,
 } from '@island.is/tax-calculators'
 
 import { DEBOUNCE_TIME } from '../constants'
@@ -69,7 +69,11 @@ export const useCalculatorConfig = (
         return
       }
       setInvalidPaths([])
-      sdk.field.setValue(result.data)
+      /* `setValue` returns a promise; leaving it unhandled makes a failed save
+       * look successful, so surface the failure instead of dropping it. */
+      sdk.field.setValue(result.data).catch(() => {
+        sdk.notifier.error('Could not save the calculator configuration.')
+      })
     },
     DEBOUNCE_TIME,
     [config],
@@ -80,12 +84,16 @@ export const useCalculatorConfig = (
   // Give the editor a section to start from, rather than requiring an extra
   // "Add section" click on every new entry.
   useEffect(() => {
-    if (calculatorTypeValue && sections.length === 0) {
-      setConfig((prev) => ({
-        ...prev,
-        sections: [{ key: generateKey(), fields: [] }],
-      }))
-    }
+    if (!calculatorTypeValue) return
+    /* The emptiness test belongs inside the updater, not in the effect body:
+     * read from `sections` and it closes over a stale value, but adding it as
+     * a dependency would re-add a section the moment the editor deletes the
+     * last one. */
+    setConfig((prev) =>
+      (prev.sections ?? []).length === 0
+        ? { ...prev, sections: [{ key: generateKey(), fields: [] }] }
+        : prev,
+    )
   }, [calculatorTypeValue])
 
   const mapSections = (mapper: SectionMapper) => {

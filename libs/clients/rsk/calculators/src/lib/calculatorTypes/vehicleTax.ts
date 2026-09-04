@@ -1,18 +1,16 @@
 import { z } from 'zod'
 
 import type { GetVehicleTaxData } from '../../../gen/fetch'
-
-export type VehicleTaxPeriod = 'firstHalf' | 'secondHalf'
-
-const RSK_VALUE_BY_VEHICLE_TAX_PERIOD: Record<VehicleTaxPeriod, boolean> = {
-  firstHalf: false,
-  secondHalf: true,
-}
+import {
+  RSK_VALUE_BY_VEHICLE_TAX_PERIOD,
+  VEHICLE_TAX_PERIODS,
+} from './constants'
+import { year } from './semantics'
 
 export const vehicleTaxInputSchema = z.object({
-  year: z.number(),
+  year: year(),
   licensePlate: z.string(),
-  period: z.enum(['firstHalf', 'secondHalf']),
+  period: z.enum(VEHICLE_TAX_PERIODS),
   periodSplitDate: z.date().optional(),
 })
 
