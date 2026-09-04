@@ -101,10 +101,25 @@ export const ApplicationsTable = ({
     const beyondCap = maxPage !== undefined && page > maxPage
     return (
       <>
-        <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
-          <Text variant="h4">
+        <Box
+          display="flex"
+          alignItems="center"
+          columnGap={3}
+          marginTop={[3, 3, 6]}
+        >
+          <Box
+            flexGrow={1}
+            borderBottomWidth="standard"
+            borderColor="blue200"
+          />
+          <Text variant="medium" color="dark300" fontWeight="light">
             {formatMessage(beyondCap ? m.pageBeyondLimit : m.notFound)}
           </Text>
+          <Box
+            flexGrow={1}
+            borderBottomWidth="standard"
+            borderColor="blue200"
+          />
         </Box>
         {beyondCap && maxPage ? (
           <Box marginTop={[4, 4, 4, 6]}>

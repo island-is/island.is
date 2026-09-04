@@ -180,9 +180,21 @@ const Overview = ({
         {formatMessage(m.applicationSystemApplications)}
       </Text>
 
-      <Text variant="h5" as="h2" marginBottom={[3, 3, 6]}>
+      <Text variant="h5" as="h2" marginBottom={[3, 3, 4]}>
         {formatMessage(m.applicationSystemApplicationsDescription)}
       </Text>
+
+      {showPageLimitAlert && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.pageLimitReachedTitle, {
+              count: MAX_PAGE * pageSize,
+            })}
+            message={formatMessage(m.pageLimitReachedDescription)}
+          />
+        </Box>
+      )}
 
       <Filters
         onTypeIdChange={handleTypeIdChange}
@@ -198,18 +210,6 @@ const Overview = ({
         isSuperAdmin={isSuperAdmin}
         useAdvancedSearch={!!filters.typeIdValue}
       />
-
-      {showPageLimitAlert && (
-        <Box marginBottom={3}>
-          <AlertMessage
-            type="info"
-            title={formatMessage(m.pageLimitReachedTitle, {
-              count: MAX_PAGE * pageSize,
-            })}
-            message={formatMessage(m.pageLimitReachedDescription)}
-          />
-        </Box>
-      )}
 
       {isLoading ? (
         <SkeletonLoader
