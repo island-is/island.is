@@ -9,6 +9,7 @@ import {
   FormModes,
   ApplicationConfigurations,
   InstitutionNationalIds,
+  StateLifeCycle,
 } from '@island.is/application/types'
 import { buildPaymentState } from '@island.is/application/utils'
 import { Events, Roles, States } from '../utils/constants'
@@ -17,7 +18,15 @@ import { dataSchema } from './dataSchema'
 import { GetDebtsApi, MockPaymentCatalog } from '../dataProviders'
 import { application } from './messages'
 import { getSelectedDebts } from '../utils/getSelectedDebts'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
+
+const completedLifecycle: StateLifeCycle = {
+  ...pruneAfterDays(30), // TODO: Does it need to be kept for 30 days?
+  shouldBeListed: false,
+}
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -38,7 +47,7 @@ const template: ApplicationTemplate<
           name: application.stateMetaNameDraft.defaultMessage,
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -74,6 +83,7 @@ const template: ApplicationTemplate<
             code: debt.chargeTypeId,
             amount: debt.amountToPay,
           })),
+        lifecycle: EphemeralStateLifeCycle,
         submitTarget: States.COMPLETED,
       }),
       [States.COMPLETED]: {
@@ -81,7 +91,7 @@ const template: ApplicationTemplate<
           name: application.stateMetaNameCompleted.defaultMessage,
           progress: 1,
           status: FormModes.COMPLETED,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: completedLifecycle,
           roles: [
             {
               id: Roles.APPLICANT,
