@@ -145,8 +145,8 @@ export const DebtsLoader: FC<FieldBaseProps> = ({
   }, [])
 
   useEffect(() => {
-    setFieldLoadingState?.(!hasDebts || hasError)
-  }, [hasDebts, hasError, setFieldLoadingState])
+    setFieldLoadingState?.(!hasDebts)
+  }, [hasDebts, setFieldLoadingState])
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) {
