@@ -119,7 +119,7 @@ const ReceptionAndAssignment = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <Box component="section">
             <ProsecutorAndDefendantsEntries workingCase={workingCase} />
           </Box>

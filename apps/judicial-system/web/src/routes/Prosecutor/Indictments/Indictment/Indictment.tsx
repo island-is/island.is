@@ -603,7 +603,7 @@ const Indictment = () => {
           <Box component="section">
             <InputPenalties />
           </Box>
-          <Box marginBottom={10}>
+          <Box>
             <PdfButton
               caseId={workingCase.id}
               title={formatMessage(strings.pdfButtonIndictment)}

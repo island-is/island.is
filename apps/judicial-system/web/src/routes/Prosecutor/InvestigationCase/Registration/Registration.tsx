@@ -93,7 +93,7 @@ const Registration: FC = () => {
       <PageHeader title="Efni kröfu - Réttarvörslugátt" />
       <FormContentContainer>
         <PageTitle>Rannsóknarheimild</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <Box component="section">
             <PoliceCaseNumbers
               workingCase={workingCase}

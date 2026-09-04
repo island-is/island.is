@@ -316,7 +316,7 @@ const CourtRecord: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <Box component="section">
             <BlueBox className={grid({ gap: 2 })}>
               <DateTime

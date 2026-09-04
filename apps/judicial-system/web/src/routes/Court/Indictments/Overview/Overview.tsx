@@ -74,7 +74,7 @@ const OverviewBody = ({
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           {workingCase.comments && (
             <AlertMessage
               title={formatMessage(commentsInput.heading)}

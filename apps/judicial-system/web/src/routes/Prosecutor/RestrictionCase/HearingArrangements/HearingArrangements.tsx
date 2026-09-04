@@ -117,7 +117,7 @@ export const HearingArrangements = () => {
         <PageTitle>
           {formatMessage(rcRequestedHearingArrangements.heading)}
         </PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
           <ProsecutorSectionHeightenedSecurity />
           <Box component="section">

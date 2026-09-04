@@ -528,14 +528,12 @@ export const Ruling = () => {
             rows={7}
           />
         </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRuling)}
-            pdfType="ruling"
-            elementId={formatMessage(core.pdfButtonRuling)}
-          />
-        </Box>
+        <PdfButton
+          caseId={workingCase.id}
+          title={formatMessage(core.pdfButtonRuling)}
+          pdfType="ruling"
+          elementId={formatMessage(core.pdfButtonRuling)}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

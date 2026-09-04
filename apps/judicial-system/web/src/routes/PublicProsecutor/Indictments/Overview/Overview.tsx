@@ -154,7 +154,7 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <div className={grid({ gap: 2 })}>{verdictStatusAlerts}</div>
           {verdictTimelineCards}
           <AppealRulingModifiedAlert />

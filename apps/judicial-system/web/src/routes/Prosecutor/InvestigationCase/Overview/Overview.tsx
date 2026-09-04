@@ -171,7 +171,7 @@ export const Overview = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&

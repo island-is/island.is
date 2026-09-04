@@ -82,7 +82,7 @@ const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icReportForm.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <BlueBox>
             <Text whiteSpace="preLine">{workingCase.demands}</Text>

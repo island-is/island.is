@@ -52,7 +52,7 @@ export const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(rcReportForm.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading

@@ -172,7 +172,7 @@ const HearingArrangements = () => {
         <ArraignmentAlert />
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <Box component="section">
             <SectionHeading
               title={formatMessage(m.sections.sessionArrangements.heading)}

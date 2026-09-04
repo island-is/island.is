@@ -517,14 +517,12 @@ export const CourtRecord: FC = () => {
             </GridContainer>
           </BlueBox>
         </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="courtRecord"
-            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
-          />
-        </Box>
+        <PdfButton
+          caseId={workingCase.id}
+          title={formatMessage(core.pdfButtonRulingShortVersion)}
+          pdfType="courtRecord"
+          elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

@@ -179,7 +179,7 @@ export const Overview = () => {
             caseType: workingCase.type,
           })}
         </PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&

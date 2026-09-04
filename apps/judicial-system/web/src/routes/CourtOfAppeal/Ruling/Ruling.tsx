@@ -244,7 +244,7 @@ const Ruling = () => {
         </Box>
         {targetAppealCase?.appealRulingDecision ===
         AppealCaseRulingDecision.DISCONTINUED ? (
-          <Box marginBottom={10}>
+          <Box>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUpload
               name="appealCourtRecord"
@@ -371,7 +371,7 @@ const Ruling = () => {
                 errorMessage={appealConclusionErrorMessage}
               />
             </Box>
-            <Box marginBottom={10}>
+            <Box>
               <SectionHeading
                 title={formatMessage(strings.courtConclusionHeading)}
                 required

@@ -254,7 +254,7 @@ export const CaseFiles = () => {
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
           <section>

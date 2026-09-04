@@ -232,7 +232,7 @@ const IndictmentOverview: FC = () => {
                 ))}
             </Fragment>
           ))}
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={grid({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&

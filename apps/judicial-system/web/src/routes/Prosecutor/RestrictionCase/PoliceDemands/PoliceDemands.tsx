@@ -194,7 +194,7 @@ export const PoliceDemands = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(rcDemands.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading

@@ -120,7 +120,7 @@ const Advocates = () => {
             tooltipText="Ákærunni hefur ekki verið deilt með öllum verjendum"
           />
         </Box>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           {workingCase.defendants?.map((defendant) => (
             <SelectDefender defendant={defendant} key={defendant.id} />
           ))}

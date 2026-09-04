@@ -107,10 +107,10 @@ export const CaseOverview = () => {
                 />
               </Box>
             )}
-          <div className={grid({ gap: 5, marginBottom: 5 })}>
+          <Box className={grid({ gap: 5 })} marginBottom={5}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
-          </div>
+          </Box>
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&
             workingCase.court && (

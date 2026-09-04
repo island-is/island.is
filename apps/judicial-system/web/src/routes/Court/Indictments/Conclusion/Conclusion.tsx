@@ -625,7 +625,7 @@ const Conclusion: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box className={grid({ gap: 5, marginBottom: 10 })}>
+        <Box className={grid({ gap: 5 })}>
           <Box component="section">
             <SectionHeading
               title={formatMessage(strings.decisionTitle)}
@@ -1158,7 +1158,7 @@ const Conclusion: FC = () => {
             ]}
             onClose={() => setModalVisible(undefined)}
           >
-            <Box className={grid({ gap: 3, marginBottom: 3 })}>
+            <Box className={grid({ gap: 3 })} marginBottom={3}>
               {workingCase.defendants
                 ?.filter(
                   (defendant) =>
@@ -1233,7 +1233,7 @@ const Conclusion: FC = () => {
             ]}
             onClose={() => setModalVisible(undefined)}
           >
-            <Box className={grid({ marginBottom: 3 })}>
+            <Box className={grid()} marginBottom={3}>
               {workingCase.defendants
                 ?.filter(
                   (defendant) =>

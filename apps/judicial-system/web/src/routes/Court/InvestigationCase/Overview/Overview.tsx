@@ -127,7 +127,7 @@ const Overview = () => {
               />
             </Box>
           )}
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           <Box component="section">
             <InfoCard
               sections={[

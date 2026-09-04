@@ -437,7 +437,7 @@ const Subpoena: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={grid({ gap: 5 })}>
           {updates?.defendants && (
             <SubpoenaType
               subpoenaItems={updates?.defendants?.map((defendant) => ({
