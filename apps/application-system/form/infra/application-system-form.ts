@@ -1,7 +1,53 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  ref,
+  staticService,
+  StaticServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
+import { applicationContentSecurityPolicies } from '../../../../infra/src/dsl/application-content-security-policy'
 
-export const serviceSetup = (): ServiceBuilder<'application-system-form'> =>
-  service('application-system-form')
+const serviceName = 'application-system-form'
+
+export const serviceSetup = (): StaticServiceBuilder<typeof serviceName> =>
+  staticService(serviceName)
+    .csp({
+      enforce: applicationContentSecurityPolicies({
+        local: {
+          styleSrc: ['https://cdnjs.cloudflare.com'],
+          styleSrcElem: ['https://cdnjs.cloudflare.com'],
+          imgSrc: [
+            'https://s3.eu-west-1.amazonaws.com',
+            'https://*.s3.eu-west-1.amazonaws.com',
+          ],
+        },
+        dev: {
+          styleSrc: ['https://cdnjs.cloudflare.com'],
+          styleSrcElem: ['https://cdnjs.cloudflare.com'],
+          imgSrc: [
+            'https://s3.eu-west-1.amazonaws.com',
+            'https://*.s3.eu-west-1.amazonaws.com',
+            'https://adverts.official-journal.dev.dmr-dev.cloud',
+          ],
+        },
+        staging: {
+          styleSrc: ['https://cdnjs.cloudflare.com'],
+          styleSrcElem: ['https://cdnjs.cloudflare.com'],
+          imgSrc: [
+            'https://s3.eu-west-1.amazonaws.com',
+            'https://*.s3.eu-west-1.amazonaws.com',
+          ],
+        },
+        prod: {
+          styleSrc: ['https://cdnjs.cloudflare.com'],
+          styleSrcElem: ['https://cdnjs.cloudflare.com'],
+          imgSrc: [
+            'https://s3.eu-west-1.amazonaws.com',
+            'https://*.s3.eu-west-1.amazonaws.com',
+            'https://adverts.stjornartidindi.is',
+          ],
+        },
+      }),
+      hashDirectives: ['script-src', 'style-src-elem'],
+    })
     .namespace('application-system')
     .serviceAccount('application-system-form')
     .liveness('/liveness')

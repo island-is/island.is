@@ -4,7 +4,8 @@ import {
   toast as toastify,
   Slide,
   ToastOptions,
-} from 'react-toastify'
+} from 'react-toastify/unstyled'
+import 'react-toastify/dist/ReactToastify.css'
 import cn from 'classnames'
 
 import { Box } from '../Box/Box'

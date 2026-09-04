@@ -12,7 +12,7 @@ import { m } from '../../../lib/messages'
 import { Modal } from '@island.is/react/components'
 import { useState } from 'react'
 import { useSignatureCollectionAdminUpdatePaperSignaturePageNumberMutation } from './editPage.generated'
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify/unstyled'
 import { useRevalidator } from 'react-router-dom'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 

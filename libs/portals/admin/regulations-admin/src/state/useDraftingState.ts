@@ -29,7 +29,7 @@ import {
   isDraftLocked,
   isDraftPublishable,
 } from './validations'
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify/unstyled'
 import { findRegulationType } from '../utils/guessers'
 
 // ---------------------------------------------------------------------------

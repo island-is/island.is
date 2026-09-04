@@ -32,6 +32,8 @@ module.exports = {
     '^axios$': require.resolve('axios'),
     // PDF viewer external css can be excluded from tests, otherwise will cause an error.
     '^react-pdf/dist/Page/(.*)$': 'jest-transform-stub',
+    // React-Toastify's CSP-safe entrypoint requires its static stylesheet.
+    '^react-toastify/dist/ReactToastify\\.css$': 'jest-transform-stub',
   },
   /* TODO: Update to latest Jest snapshotFormat
    * By default Nx has kept the older style of Jest Snapshot formats

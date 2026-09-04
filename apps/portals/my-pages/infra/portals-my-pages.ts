@@ -1,7 +1,37 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  ref,
+  staticService,
+  StaticServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
+import { applicationContentSecurityPolicies } from '../../../../infra/src/dsl/application-content-security-policy'
 
-export const serviceSetup = (): ServiceBuilder<'service-portal'> =>
-  service('service-portal')
+export const serviceSetup = (): StaticServiceBuilder<'service-portal'> =>
+  staticService('service-portal')
+    .csp({
+      enforce: applicationContentSecurityPolicies({
+        local: {
+          frameSrc: ['blob:'],
+          imgSrc: ['https://webapi.hugverk.is'],
+          mediaSrc: ['https://webapi.hugverk.is'],
+        },
+        dev: {
+          frameSrc: ['blob:'],
+          imgSrc: ['https://webapi.hugverk.is'],
+          mediaSrc: ['https://webapi.hugverk.is'],
+        },
+        staging: {
+          frameSrc: ['blob:'],
+          imgSrc: ['https://webapi.hugverk.is'],
+          mediaSrc: ['https://webapi.hugverk.is'],
+        },
+        prod: {
+          frameSrc: ['blob:'],
+          imgSrc: ['https://webapi.hugverk.is'],
+          mediaSrc: ['https://webapi.hugverk.is'],
+        },
+      }),
+      hashDirectives: ['script-src', 'style-src-elem'],
+    })
     .namespace('service-portal')
     .serviceAccount('service-portal')
     .liveness('/liveness')

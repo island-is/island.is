@@ -21,6 +21,11 @@ RUN yarn install --immutable
 COPY infra/ ./
 COPY apps /app/apps/
 COPY libs /app/libs/
+COPY nx.json /app/workspace-metadata/nx.json
+
+RUN cd /app && \
+  find apps libs -type f -name project.json \
+    -exec cp --parents {} workspace-metadata/ \;
 
 RUN yarn ncc build src/feature-env.ts -o /app/dist/feature-env && \
   yarn ncc build src/secrets.ts -o /app/dist/secrets
@@ -29,7 +34,10 @@ FROM runner
 WORKDIR /app
 
 COPY --from=build /app/dist/ /app
+COPY --from=build /app/workspace-metadata/ /app/
 COPY infra/scripts/container-scripts/* /app/
 COPY infra/scripts/update-package-json.ts /app/
+
+RUN node feature-env --help > /dev/null
 
 ENTRYPOINT [ "node", "feature-env" ]

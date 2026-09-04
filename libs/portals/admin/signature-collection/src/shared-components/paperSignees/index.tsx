@@ -13,7 +13,7 @@ import * as nationalId from 'kennitala'
 import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify/unstyled'
 import {
   useSignatureCollectionAdminCanSignInfoQuery,
   useIdentityQuery,
