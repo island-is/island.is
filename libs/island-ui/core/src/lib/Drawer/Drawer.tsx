@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from 'react'
 import { Button } from '../Button/Button'
 import { Box } from '../Box/Box'
-import { ModalBase } from '../ModalBase/ModalBase'
+import { ModalBase, type ModalBaseProps } from '../ModalBase/ModalBase'
 import cn from 'classnames'
 import * as styles from './Drawer.css'
 
@@ -17,8 +17,9 @@ interface DrawerProps {
   /**
    * Element that opens the drawer.
    * It will be forwarded neccessery props for a11y and event handling.
+   * Optional when controlling visibility with `isVisible`.
    */
-  disclosure: React.ReactElement
+  disclosure?: React.ReactElement
   /**
    * Show immediately without clicking the disclosure button
    */
@@ -27,6 +28,21 @@ interface DrawerProps {
    * Position of the drawer
    */
   position?: 'right' | 'left'
+  /**
+   * Control visibility from outside (passed through to ModalBase).
+   */
+  isVisible?: ModalBaseProps['isVisible']
+  onVisibilityChange?: ModalBaseProps['onVisibilityChange']
+  hideOnClickOutside?: ModalBaseProps['hideOnClickOutside']
+  /**
+   * Extra classes for the modal panel (e.g. width overrides).
+   */
+  panelClassName?: string
+  /**
+   * Classes for the inner container. When set, default padding and overflow
+   * are omitted so the consumer can control scrolling and spacing.
+   */
+  contentClassName?: string
 }
 
 export const Drawer = ({
@@ -35,6 +51,11 @@ export const Drawer = ({
   disclosure,
   initialVisibility,
   position = 'right',
+  isVisible,
+  onVisibilityChange,
+  hideOnClickOutside,
+  panelClassName,
+  contentClassName,
   children,
 }: PropsWithChildren<DrawerProps>) => {
   return (
@@ -43,16 +64,22 @@ export const Drawer = ({
       baseId={baseId}
       modalLabel={ariaLabel}
       initialVisibility={initialVisibility}
-      className={cn(styles.drawer, styles.position[position])}
+      isVisible={isVisible}
+      onVisibilityChange={onVisibilityChange}
+      hideOnClickOutside={hideOnClickOutside}
+      className={cn(styles.drawer, styles.position[position], panelClassName)}
     >
       {({ closeModal }: { closeModal: () => void }) => {
         return (
           <Box
             background="white"
-            paddingY={[3, 6, 8]}
-            paddingX={[3, 6, 8]}
+            paddingY={contentClassName ? undefined : [3, 6, 8]}
+            paddingX={contentClassName ? undefined : [3, 6, 8]}
             height="full"
-            overflow="auto"
+            display={contentClassName ? 'flex' : undefined}
+            flexDirection={contentClassName ? 'column' : undefined}
+            overflow={contentClassName ? undefined : 'auto'}
+            className={contentClassName}
           >
             <Box className={styles.closeButton}>
               <Button
@@ -64,7 +91,9 @@ export const Drawer = ({
                 size="large"
               />
             </Box>
-            <Box>{children}</Box>
+            <Box className={contentClassName ? styles.contentFill : undefined}>
+              {children}
+            </Box>
           </Box>
         )
       }}

@@ -1,0 +1,161 @@
+import { coreErrorMessages } from '@island.is/application/core'
+import { FieldTypes } from '@island.is/application/types'
+import type { CustomField } from '@island.is/application/types'
+import type {
+  PreviewFormatMessage,
+  ResolvePreviewString,
+  ScreenIntrospection,
+  ValidationMessageDescriptor,
+} from '../../types/translationWorkspace'
+import {
+  HALF_WIDTH_IGNORED_TYPES,
+  TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN,
+} from '../../utils/translationWorkspaceFieldConstants'
+import { isMarkdownMessageId } from '../../utils/translationWorkspaceStaticText'
+
+export const inferTranslationWorkspaceShowFieldName = (
+  screen: ScreenIntrospection,
+): boolean => {
+  if (screen.type === FieldTypes.RADIO || screen.type === FieldTypes.CHECKBOX) {
+    return false
+  }
+  if (
+    screen.type === FieldTypes.TITLE ||
+    screen.type === FieldTypes.DIVIDER ||
+    screen.type === FieldTypes.ALERT_MESSAGE ||
+    screen.type === FieldTypes.LINK ||
+    screen.type === FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD
+  ) {
+    return false
+  }
+  if (screen.type === FieldTypes.DESCRIPTION) {
+    return Boolean(screen.title)
+  }
+  return true
+}
+
+export const buildMockCustomField = (
+  screen: ScreenIntrospection,
+): CustomField => {
+  return {
+    id: screen.id,
+    type: FieldTypes.CUSTOM,
+    component: screen.component ?? '',
+    title: screen.title ?? '',
+    children: undefined,
+    props: {},
+  }
+}
+
+export const staticTableTitleVariantToText = (
+  v: string | null | undefined,
+): 'h1' | 'h2' | 'h3' | 'h4' | 'h5' => {
+  if (v === 'h1' || v === 'h2' || v === 'h3' || v === 'h4' || v === 'h5') {
+    return v
+  }
+  return 'h4'
+}
+
+export const descriptionTitleVariantToText = (
+  v: string | null | undefined,
+): 'h1' | 'h2' | 'h3' | 'h4' | 'h5' => {
+  if (v === 'h1' || v === 'h2' || v === 'h3' || v === 'h4' || v === 'h5') {
+    return v
+  }
+  return 'h3'
+}
+
+/** First breakpoint value for translation preview (matches `ImageFormField` mobile-first idea). */
+export const previewImageFieldWidthCss = (raw: unknown): string => {
+  const first = Array.isArray(raw) ? raw[0] : raw
+  if (first === 'full') return '100%'
+  if (first === '50%') return '50%'
+  if (first === 'auto') return 'auto'
+  if (typeof first === 'string') return first
+  return '100%'
+}
+
+export const previewImageFieldJustifyContent = (
+  raw: unknown,
+): 'flexStart' | 'center' | 'flexEnd' => {
+  const first = Array.isArray(raw) ? raw[0] : raw
+  if (first === 'center') return 'center'
+  if (first === 'right') return 'flexEnd'
+  return 'flexStart'
+}
+
+export const getTableRepeaterFormFieldSpan = (
+  child: ScreenIntrospection,
+): '1/1' | '1/2' | '1/3' => {
+  if (!HALF_WIDTH_IGNORED_TYPES.has(child.type) && child.width === 'half') {
+    return '1/2'
+  }
+  if (child.width === 'third') {
+    return '1/3'
+  }
+  return '1/1'
+}
+
+export const previewStringUsesMarkdown = (
+  screenType: string,
+  messageId: string,
+): boolean =>
+  isMarkdownMessageId(messageId) ||
+  TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN.has(screenType)
+
+/** Parse autofill / preview strings (`1234-56-789012` or 12 digits) into bank field parts. */
+export const parseBankAccountPreviewValue = (
+  raw?: string,
+): { bankNumber: string; ledger: string; accountNumber: string } => {
+  const empty = { bankNumber: '', ledger: '', accountNumber: '' }
+  if (!raw) {
+    return empty
+  }
+  const digits = raw.replace(/\D/g, '')
+  if (digits.length >= 12) {
+    return {
+      bankNumber: digits.slice(0, 4),
+      ledger: digits.slice(4, 6),
+      accountNumber: digits.slice(6, 12),
+    }
+  }
+  const parts = raw.split('-')
+  if (parts.length === 3) {
+    return {
+      bankNumber: parts[0] ?? '',
+      ledger: parts[1] ?? '',
+      accountNumber: parts[2] ?? '',
+    }
+  }
+  return empty
+}
+
+export const resolveLeafFieldErrorMessage = (
+  screen: ScreenIntrospection,
+  resolvePreviewString: ResolvePreviewString,
+  formatMessage: PreviewFormatMessage,
+  showValidationErrors?: boolean,
+  validationDescriptorsByPath?: Record<string, ValidationMessageDescriptor[]>,
+  fieldErrorOverrides?: Set<string>,
+): string | undefined => {
+  const hasErrorOverride = fieldErrorOverrides?.has(screen.id) === true
+  if (hasErrorOverride) {
+    const descriptors = validationDescriptorsByPath?.[screen.id]
+    if (descriptors && descriptors.length > 0) {
+      return resolvePreviewString(
+        descriptors[0].id,
+        descriptors[0].defaultMessage,
+      )
+    }
+    return formatMessage(coreErrorMessages.defaultError)
+  }
+  if (!showValidationErrors || !validationDescriptorsByPath) {
+    return undefined
+  }
+  const descriptors = validationDescriptorsByPath[screen.id]
+  if (!descriptors || descriptors.length === 0) {
+    return undefined
+  }
+  const descriptor = descriptors[0]
+  return resolvePreviewString(descriptor.id, descriptor.defaultMessage)
+}

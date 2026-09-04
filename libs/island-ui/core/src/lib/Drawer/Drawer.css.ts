@@ -41,3 +41,13 @@ export const closeButton = style({
   right: theme.spacing['2'],
   zIndex: 2,
 })
+
+/** Used when `contentClassName` is set so children can fill the panel. */
+export const contentFill = style({
+  display: 'flex',
+  flexDirection: 'column',
+  flex: '1 1 0%',
+  minHeight: 0,
+  minWidth: 0,
+  overflow: 'hidden',
+})

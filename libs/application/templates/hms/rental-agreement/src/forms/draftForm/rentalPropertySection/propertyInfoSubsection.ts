@@ -74,11 +74,10 @@ export const propertyInfoSubsection = buildSubSection({
           marginBottom: 5,
         }),
         buildAlertMessageField({
+          condition: shouldShowRoomTypeRoomCountError,
           id: 'propertyInfo.roomTypeRoomCountError',
-          title: '',
           alertType: 'error',
           message: m.propertySearch.search.numOfRoomsForRoomTypeError,
-          condition: shouldShowRoomTypeRoomCountError,
           shouldBlockInSetBeforeSubmitCallback: true,
         }),
         buildDescriptionField({
