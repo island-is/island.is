@@ -30,6 +30,7 @@ import {
 import { OverviewFormField } from '@island.is/application/ui-fields'
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { ApplicationType } from '../../utils/constants'
+import { shouldShowIncomePlan } from '../../utils/conditionUtils'
 import { getApplicationAnswers } from '../../utils/oldAgePensionUtils'
 import {
   incomePlanItems,
@@ -199,21 +200,23 @@ export const Review: FC<ReviewScreenProps> = ({
           items: paymentItems,
         }}
       />
-      <OverviewFormField
-        application={application}
-        goToScreen={goToScreen}
-        field={{
-          id: 'overview.incomePlan',
-          title:
-            socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
-          backId: editable ? 'incomePlan' : undefined,
-          type: FieldTypes.OVERVIEW,
-          component: FieldComponents.OVERVIEW,
-          children: undefined,
-          tableData: incomePlanTable,
-          items: incomePlanItems,
-        }}
-      />
+      {shouldShowIncomePlan(application.answers) && (
+        <OverviewFormField
+          application={application}
+          goToScreen={goToScreen}
+          field={{
+            id: 'overview.incomePlan',
+            title:
+              socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+            backId: editable ? 'incomePlan' : undefined,
+            type: FieldTypes.OVERVIEW,
+            component: FieldComponents.OVERVIEW,
+            children: undefined,
+            tableData: incomePlanTable,
+            items: incomePlanItems,
+          }}
+        />
+      )}
       <ResidenceHistory {...childProps} />
       {applicationType === ApplicationType.HALF_OLD_AGE_PENSION && (
         <Employers {...childProps} />
