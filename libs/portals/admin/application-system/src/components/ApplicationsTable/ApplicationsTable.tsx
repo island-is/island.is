@@ -40,6 +40,8 @@ interface Props {
   showAdminData?: boolean
   showInstitution?: boolean
   isSuperAdmin: boolean
+  maxPage?: number
+  hasActiveFilter?: boolean
 }
 
 export const ApplicationsTable = ({
@@ -53,15 +55,19 @@ export const ApplicationsTable = ({
   showAdminData,
   showInstitution,
   isSuperAdmin,
+  maxPage,
+  hasActiveFilter = true,
 }: Props) => {
   const { formatMessage } = useLocale()
+
+  const rawTotalPages = numberOfItems
+    ? Math.ceil(numberOfItems / pageSize)
+    : Math.ceil(applications.length / pageSize)
 
   const pagedDocuments = {
     from: numberOfItems ? 0 : (page - 1) * pageSize,
     to: numberOfItems ? numberOfItems : pageSize * page,
-    totalPages: numberOfItems
-      ? Math.ceil(numberOfItems / pageSize)
-      : Math.ceil(applications.length / pageSize),
+    totalPages: maxPage ? Math.min(rawTotalPages, maxPage) : rawTotalPages,
   }
 
   const copyApplicationLink = (application: AdminApplication) => {
@@ -93,12 +99,53 @@ export const ApplicationsTable = ({
     copyApplicationLink(application)
   }
 
-  if (applications.length === 0)
+  if (applications.length === 0) {
+    const beyondCap = maxPage !== undefined && page > maxPage
+    const emptyMessage =
+      !hasActiveFilter || beyondCap ? m.pageBeyondLimit : m.notFound
     return (
-      <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
-        <Text variant="h4">{formatMessage(m.notFound)}</Text>
-      </Box>
+      <>
+        <Box
+          display="flex"
+          alignItems="center"
+          columnGap={3}
+          marginTop={[3, 3, 6]}
+        >
+          <Box
+            flexGrow={1}
+            borderBottomWidth="standard"
+            borderColor="blue200"
+          />
+          <Text variant="medium" color="dark300" fontWeight="light">
+            {formatMessage(emptyMessage)}
+          </Text>
+          <Box
+            flexGrow={1}
+            borderBottomWidth="standard"
+            borderColor="blue200"
+          />
+        </Box>
+        {hasActiveFilter && beyondCap && maxPage ? (
+          <Box marginTop={[4, 4, 4, 6]}>
+            <Pagination
+              page={page}
+              totalPages={maxPage}
+              renderLink={(page, className, children) => (
+                <button
+                  className={className}
+                  onClick={() => {
+                    setPage(page)
+                  }}
+                >
+                  {children}
+                </button>
+              )}
+            />
+          </Box>
+        ) : null}
+      </>
     )
+  }
 
   return (
     <>
