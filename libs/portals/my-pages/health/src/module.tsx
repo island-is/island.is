@@ -166,6 +166,10 @@ const TreatmentOverview = lazy(() =>
   import('./screens/Treatments/TreatmentOverview'),
 )
 
+const TreatmentEducationalContent = lazy(() =>
+  import('./screens/Treatments/TreatmentEducationalContent'),
+)
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
@@ -683,7 +687,7 @@ export const healthModule: PortalModule = {
       element: <HealthConversationDetail />,
     },
     {
-      name: m.healthTreatments,
+      name: m.healthTreatment,
       path: HealthPaths.HealthTreatments,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
@@ -695,6 +699,13 @@ export const healthModule: PortalModule = {
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <TreatmentOverview />,
+    },
+    {
+      name: m.healthTreatmentEducationalContent,
+      path: HealthPaths.HealthTreatmentEducationalContent,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <TreatmentEducationalContent />,
     },
   ],
 }

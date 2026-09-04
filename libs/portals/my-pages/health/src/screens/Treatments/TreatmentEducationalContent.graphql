@@ -1,0 +1,11 @@
+query GetHealthTreatmentDocuments($treatmentId: ID!) {
+  healthDirectorateTreatmentDocuments(treatmentId: $treatmentId) {
+    id
+    title
+    sentAt
+    links {
+      label
+      href
+    }
+  }
+}

@@ -6,3 +6,22 @@ query GetHealthTreatmentsOverview {
     departmentName
   }
 }
+
+query GetHealthTreatment($id: ID!) {
+  healthDirectorateTreatment(id: $id) {
+    id
+    name
+    organizationName
+    departmentName
+    supportsMessaging
+    responsibleNode
+    lastQuestionnaireSentAt
+    lastDocumentSentAt
+    recentConversations {
+      id
+      title
+      lastMessageSentAt
+      senderName
+    }
+  }
+}
