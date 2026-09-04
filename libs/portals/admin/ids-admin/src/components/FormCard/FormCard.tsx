@@ -182,7 +182,6 @@ export const FormCard = <Intent extends string>({
       prevFormData.current = new FormData(formRef.current)
       setDirty(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEnvironment])
 
   useEffect(() => {

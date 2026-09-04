@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'react-components',
   preset: './jest.preset.js',
