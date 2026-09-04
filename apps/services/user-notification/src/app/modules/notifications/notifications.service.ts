@@ -40,7 +40,7 @@ import {
   GetTemplates,
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
 import { Op } from 'sequelize'
 
 /**
@@ -359,6 +359,7 @@ export class NotificationsService {
     nationalId: string,
     query: ExtendedPaginationDto,
     scopes: string[],
+    isFirstParty: boolean,
   ): Promise<PaginatedNotificationDto> {
     const locale = mapToLocale(query.locale as Locale)
     const templates = await this.getTemplates(locale)
@@ -372,9 +373,17 @@ export class NotificationsService {
       orderOption: [['id', 'DESC']],
       where: {
         recipient: nationalId,
-        scope: {
-          [Op.in]: scopes || [DocumentsScope.main],
-        },
+        // A first-party caller holding @island.is/internal ("all my own data")
+        // sees every one of their own notifications. Delegates always carry an
+        // actor (isFirstParty === false) and stay constrained to the scopes
+        // their delegation granted.
+        ...(isFirstParty && scopes.includes(ApiScope.internal)
+          ? {}
+          : {
+              scope: {
+                [Op.in]: scopes || [DocumentsScope.main],
+              },
+            }),
       },
     })
 
