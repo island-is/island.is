@@ -678,6 +678,9 @@ export const getPreviousOccupationInformation = (
       unemploymentReasons?.agreementConfirmation?.includes(YES),
     bankruptcyConfirmation:
       unemploymentReasons?.bankruptsyReason?.includes(YES),
+    additionalDetails: unemploymentReasons?.additionalDetailsRequired
+      ? unemploymentReasons?.additionalDetails
+      : undefined,
   }
 }
 

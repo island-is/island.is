@@ -28,6 +28,7 @@ export const applicantInformationSubSection = buildSubSection({
           phoneRequired: true,
           phoneEnableCountrySelector: true,
           emailAndPhoneReadOnly: true,
+          makePhoneEditableIfMissing: true,
           baseInfoReadOnly: true,
         }).children,
         buildCheckboxField({

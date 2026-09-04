@@ -8,6 +8,7 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
+  buildTextField,
   coreMessages,
   getValueViaPath,
   NO,
@@ -166,7 +167,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         buildHiddenInputWithWatchedValue({
           id: 'reasonForJobSearch.reasonQuestionRequired',
           watchValue: 'reasonForJobSearch.additionalReason',
-          valueModifier: (value, application: Application | undefined) => {
+          valueModifier: (_, application: Application | undefined) => {
             if (!application) {
               return ''
             }
@@ -182,7 +183,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'reasonForJobSearch.extraExplanation',
-          description: (application, locale, formatMessage) => {
+          description: (application, _, formatMessage) => {
             let title = ''
             if (typeof formatMessage === 'function') {
               const reasonBasedOnChoice = getReasonBasedOnChoice(
@@ -322,7 +323,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'reasonForJobSearch.extraDescription',
-          description(application, locale, formatMessage) {
+          description(application, _, formatMessage) {
             const reasonBasedOnChoice = getReasonBasedOnChoice(
               application.answers,
               application.externalData,
@@ -372,7 +373,55 @@ export const reasonForJobSearchSubSection = buildSubSection({
             )
           },
         }),
+        buildHiddenInputWithWatchedValue({
+          id: 'reasonForJobSearch.additionalDetailsRequired',
+          watchValue: 'reasonForJobSearch.additionalReason',
+          valueModifier: (value, application: Application | undefined) => {
+            if (!application) {
+              return ''
+            }
+            const unemploymentReasonCategories =
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+                [],
+              ) || []
+            let required = false
+            unemploymentReasonCategories.forEach((cat) => {
+              cat.unemploymentReasons?.forEach((reason) => {
+                if (reason.id === value) {
+                  required = !!reason.requiresAdditonalDetails
+                }
+              })
+            })
 
+            return required
+          },
+        }),
+        buildTextField({
+          id: 'reasonForJobSearch.additionalDetails',
+          variant: 'textarea',
+          required: true,
+          rows: 5,
+          showMaxLength: true,
+          title:
+            employmentMessages.reasonForJobSearch.labels.resignationReasonLabel,
+          placeholder:
+            employmentMessages.reasonForJobSearch.labels
+              .resignationReasonPlaceholder,
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+            return (
+              !!reasonBasedOnChoice &&
+              !!reasonBasedOnChoice.requiresAdditonalDetails
+            )
+          },
+        }),
         buildAlertMessageField({
           id: 'reasonForJobSearch.alertMessage',
           message: employmentMessages.reasonForJobSearch.labels.informationBox,
