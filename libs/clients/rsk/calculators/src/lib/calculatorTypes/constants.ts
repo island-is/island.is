@@ -13,13 +13,11 @@ export const PAYMENT_FREQUENCIES = ['weekly', 'monthly'] as const
 
 export type PaymentFrequency = typeof PAYMENT_FREQUENCIES[number]
 
-export const RSK_VALUE_BY_PAYMENT_FREQUENCY: Record<
-  PaymentFrequency,
-  boolean
-> = {
-  weekly: false,
-  monthly: true,
-}
+export const RSK_VALUE_BY_PAYMENT_FREQUENCY: Record<PaymentFrequency, boolean> =
+  {
+    weekly: false,
+    monthly: true,
+  }
 
 export const WITHHOLDING_MARITAL_STATUSES = [
   'single',
@@ -27,7 +25,8 @@ export const WITHHOLDING_MARITAL_STATUSES = [
   'marriedOrCohabiting',
 ] as const
 
-export type WithholdingMaritalStatus = typeof WITHHOLDING_MARITAL_STATUSES[number]
+export type WithholdingMaritalStatus =
+  typeof WITHHOLDING_MARITAL_STATUSES[number]
 
 export const RSK_VALUE_BY_WITHHOLDING_MARITAL_STATUS: Record<
   WithholdingMaritalStatus,
@@ -44,13 +43,11 @@ export const PENSION_FUND_RATIOS = ['0%', '4%'] as const
 
 export type PensionFundRatio = typeof PENSION_FUND_RATIOS[number]
 
-export const RSK_VALUE_BY_PENSION_FUND_RATIO: Record<
-  PensionFundRatio,
-  number
-> = {
-  '0%': 0,
-  '4%': 0.04,
-}
+export const RSK_VALUE_BY_PENSION_FUND_RATIO: Record<PensionFundRatio, number> =
+  {
+    '0%': 0,
+    '4%': 0.04,
+  }
 
 export const PRIVATE_PENSION_RATIOS = ['0%', '1%', '2%', '3%', '4%'] as const
 
@@ -81,7 +78,8 @@ export const EMPLOYER_PENSION_MATCH_RATIOS = [
   '13.5%',
 ] as const
 
-export type EmployerPensionMatchRatio = typeof EMPLOYER_PENSION_MATCH_RATIOS[number]
+export type EmployerPensionMatchRatio =
+  typeof EMPLOYER_PENSION_MATCH_RATIOS[number]
 
 export const RSK_VALUE_BY_EMPLOYER_PENSION_MATCH_RATIO: Record<
   EmployerPensionMatchRatio,
@@ -105,7 +103,8 @@ export const INTEREST_BENEFIT_MARITAL_STATUSES = [
   'marriedOrCohabiting',
 ] as const
 
-export type InterestBenefitMaritalStatus = typeof INTEREST_BENEFIT_MARITAL_STATUSES[number]
+export type InterestBenefitMaritalStatus =
+  typeof INTEREST_BENEFIT_MARITAL_STATUSES[number]
 
 export const RSK_VALUE_BY_INTEREST_BENEFIT_MARITAL_STATUS: Record<
   InterestBenefitMaritalStatus,

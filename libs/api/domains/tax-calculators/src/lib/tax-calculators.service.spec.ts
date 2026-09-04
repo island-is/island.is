@@ -7,12 +7,12 @@ import { TaxCalculatorsService } from './tax-calculators.service'
 /* Instantiated directly rather than through Test.createTestingModule: building
  * a GraphQL schema here would fail on TaxCalculatorType, whose registerEnumType
  * call lives in libs/cms and never runs in this project's test context. */
-const logger = ({
+const logger = {
   warn: jest.fn(),
   error: jest.fn(),
   info: jest.fn(),
   debug: jest.fn(),
-} as unknown) as Logger
+} as unknown as Logger
 
 const service = new TaxCalculatorsService(logger)
 
@@ -104,13 +104,8 @@ describe('TaxCalculatorsService', () => {
    * `count()` -- which the guard cannot see, because the result is still an
    * annotated non-NUMBER type. */
   describe('numeric field semantics', () => {
-    const {
-      CURRENCY,
-      PERCENTAGE,
-      YEAR,
-      MONTH,
-      COUNT,
-    } = TaxCalculatorFieldInputType
+    const { CURRENCY, PERCENTAGE, YEAR, MONTH, COUNT } =
+      TaxCalculatorFieldInputType
 
     it.each([
       [TaxCalculatorType.CHILD_BENEFIT, 'incomeYear', YEAR],
