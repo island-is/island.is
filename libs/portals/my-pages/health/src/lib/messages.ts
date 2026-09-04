@@ -1300,10 +1300,6 @@ export const messages = defineMessages({
     id: 'sp.health:quick-link-medicine-prescription',
     defaultMessage: 'Endurnýja lyf',
   },
-  quickLinkMedicineDelegation: {
-    id: 'sp.health:quick-link-medicine-delegation',
-    defaultMessage: 'Umboðsstillingar',
-  },
   quickLinkWaitlists: {
     id: 'sp.health:quick-link-waitlists',
     defaultMessage: 'Biðlistar',
@@ -2043,18 +2039,10 @@ export const messages = defineMessages({
     defaultMessage: 'Hætt var við greiðslu',
     id: 'sp.health:health-messages-certificate-payment-cancelled',
   },
-  healthConversationsNewTermsLabel: {
-    defaultMessage: 'Ég samþykki <link>skilmála</link>',
-    id: 'sp.health:health-messages-new-terms-label',
-  },
-  healthConversationsTermsModalTitle: {
-    defaultMessage: 'Skilmálar vegna skilaboða',
-    id: 'sp.health:health-messages-terms-modal-title',
-  },
-  healthConversationsTermsModalBody: {
+  healthConversationsNewTermsInline: {
     defaultMessage:
-      '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
-    id: 'sp.health:health-messages-terms-modal-body#markdown',
+      'Ég samþykki að skilaboðin vistist í sjúkraskrá og að viðeigandi heilbrigðisstarfsmaður með aðgang að henni svari erindinu.',
+    id: 'sp.health:health-messages-new-terms-inline',
   },
   healthConversationVideoCallCanceled: {
     defaultMessage: 'Afboðað',

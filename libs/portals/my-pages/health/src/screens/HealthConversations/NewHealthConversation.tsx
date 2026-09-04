@@ -14,7 +14,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  InlineLink,
   IntroWrapper,
   m,
   useIsPhoneWidth,
@@ -23,7 +22,6 @@ import ConversationAvailabilityAlert from './components/ConversationAvailability
 import ConversationBackButton from './components/ConversationBackButton'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMobileBackHeader from './components/ConversationMobileBackHeader'
-import ConversationTermsModal from './components/ConversationTermsModal'
 import MobileActionFooter from './components/MobileActionFooter'
 import CertificateRequestForm, {
   CertificateFormState,
@@ -71,7 +69,6 @@ const NewHealthConversation = () => {
     {},
   )
   const [termsAccepted, setTermsAccepted] = useState(false)
-  const [termsModalOpen, setTermsModalOpen] = useState(false)
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
@@ -430,14 +427,7 @@ const NewHealthConversation = () => {
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
                   label={formatMessage(
-                    messages.healthConversationsNewTermsLabel,
-                    {
-                      link: (str: React.ReactNode) => (
-                        <InlineLink onClick={() => setTermsModalOpen(true)}>
-                          {str}
-                        </InlineLink>
-                      ),
-                    },
+                    messages.healthConversationsNewTermsInline,
                   )}
                   disabled={isFormLocked}
                 />
@@ -457,10 +447,6 @@ const NewHealthConversation = () => {
             </Box>
           </Box>
         )}
-        <ConversationTermsModal
-          isOpen={termsModalOpen}
-          onClose={() => setTermsModalOpen(false)}
-        />
       </IntroWrapper>
     </Box>
   )

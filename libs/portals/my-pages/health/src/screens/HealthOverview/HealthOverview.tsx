@@ -136,10 +136,6 @@ export const HealthOverview = () => {
       label: formatMessage(messages.quickLinkMedicinePrescription),
     },
     {
-      href: DelegationPaths.Delegations,
-      label: formatMessage(messages.quickLinkMedicineDelegation),
-    },
-    {
       href: HealthPaths.HealthWaitlists,
       label: formatMessage(messages.quickLinkWaitlists),
     },
@@ -239,8 +235,8 @@ export const HealthOverview = () => {
           error: !!healthCenterError,
         }}
         dentists={{
-          data:
-            dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name,
+          data: dentistsData?.rightsPortalUserDentistRegistration?.dentist
+            ?.name,
           loading: dentistsLoading,
           error: !!dentistsError,
         }}
