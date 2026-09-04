@@ -506,7 +506,11 @@ describe('Transition Case', () => {
         )
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.SUBMITTED })
+        expect(res).toMatchObject({
+          state: CaseState.SUBMITTED,
+          indictmentDeniedExplanation: null,
+          indictmentReviewReturnedExplanation: null,
+        })
       })
     })
 
