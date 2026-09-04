@@ -37,7 +37,7 @@ describe('AppealCaseExistsGuard', () => {
     rulingOrderAppealCases: [rulingOrderAppeal],
   } as Case
 
-  it('should resolve the case level kæra', () => {
+  it('should resolve the case level ruling appeal', () => {
     const request = {
       case: theCase,
       params: { appealCaseId: caseLevelAppeal.id },
@@ -47,9 +47,9 @@ describe('AppealCaseExistsGuard', () => {
     expect(request).toHaveProperty('appealCase', caseLevelAppeal)
   })
 
-  // The áfrýjun is case level too, so it is in neither of the associations the
+  // The verdict appeal is case level too, so it is in neither of the associations the
   // guard used to look at.
-  it('should resolve the áfrýjun', () => {
+  it('should resolve the verdict appeal', () => {
     const request = {
       case: theCase,
       params: { appealCaseId: verdictAppeal.id },
@@ -59,7 +59,7 @@ describe('AppealCaseExistsGuard', () => {
     expect(request).toHaveProperty('appealCase', verdictAppeal)
   })
 
-  it('should resolve a ruling order kæra', () => {
+  it('should resolve a ruling order appeal', () => {
     const request = {
       case: theCase,
       params: { appealCaseId: rulingOrderAppeal.id },

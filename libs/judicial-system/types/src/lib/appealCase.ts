@@ -7,15 +7,15 @@ export enum AppealCaseState {
   WITHDRAWN = 'WITHDRAWN',
 }
 
-// Which decision an appeal case challenges. Kæra (RULING) covers everything
-// appealed so far: a request case's úrskurður, an indictment dismissed by
-// ruling, and a ruling order made while an indictment case runs. Áfrýjun
+// Which decision an appeal case challenges. Ruling appeal (RULING) covers everything
+// appealed so far: a request case's ruling, an indictment dismissed by
+// ruling, and a ruling order made while an indictment case runs. Verdict appeal
 // (VERDICT) is the appeal of the judgment that concludes an indictment case, and
 // travels a different route - the appellant files a declaration with the public
-// prosecution office, which brings the case before Landsréttur.
+// prosecution office, which brings the case before the court of appeals.
 //
-// Every case list built so far is about kæra, so an áfrýjun must not surface in
-// any of them - an áfrýjun in APPEALED would otherwise appear in the district
+// Every case list built so far is about ruling appeals, so a verdict appeal must not surface in
+// any of them - a verdict appeal in APPEALED would otherwise appear in the district
 // court's "Kærð mál" tab. That is enforced once, by the `appealCase` association
 // scope on the Case model, rather than in each list's where options.
 export enum AppealCaseType {

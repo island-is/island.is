@@ -16,8 +16,8 @@ export class CreateAppealCaseDto {
   readonly rulingFileId?: string
 
   /**********
-   * Which decision is being appealed. Omitted means RULING - a kæra - which is
-   * every appeal that existed before áfrýjun.
+   * Which decision is being appealed. Omitted means ruling appeal which is
+   * every appeal that existed before verdict appeals.
    **********/
   @IsOptional()
   @IsEnum(AppealCaseType)
@@ -26,7 +26,7 @@ export class CreateAppealCaseDto {
 
   /**********
    * The defendant whose verdict is being appealed. Required for - and only
-   * meaningful to - an áfrýjun, which is filed for one specific defendant.
+   * meaningful to - a verdict appeal, which is filed for one specific defendant.
    **********/
   @IsOptional()
   @IsUUID()

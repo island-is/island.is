@@ -69,7 +69,7 @@ describe('isAppealFileDeletionLocked', () => {
     ).toBe(false)
   })
 
-  it('should lock a kæra file only once the court of appeals has a case number', () => {
+  it('should lock an appeal file only once the court of appeals has a case number', () => {
     expect(
       isAppealFileDeletionLocked(CaseFileCategory.DEFENDANT_APPEAL_BRIEF, {
         appealCaseNumber: null,
@@ -82,9 +82,9 @@ describe('isAppealFileDeletionLocked', () => {
     ).toBe(true)
   })
 
-  // The declaration is the áfrýjun itself, filed long before Landsréttur has a
+  // The declaration is the verdict appeal itself, filed long before Landsréttur has a
   // case number, so it locks as soon as the appeal exists.
-  it('should lock an áfrýjunaryfirlýsing as soon as the appeal exists', () => {
+  it('should lock an appeal declaration as soon as the appeal exists', () => {
     expect(
       isAppealFileDeletionLocked(
         CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,

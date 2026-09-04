@@ -23,11 +23,11 @@ import {
 } from '../repository'
 
 // The appeal case a case file belongs to: the ruling-order appeal the file
-// carries in its rulingFileId, the áfrýjun for an áfrýjunaryfirlýsing and what
-// is filed with it, or the case-level kæra for everything else.
+// carries in its rulingFileId, the verdict appeal for an appeal declaration and what
+// is filed with it, or the case-level ruling appeal for everything else.
 //
-// The declaration needs its own arm because it is case level too - the áfrýjun
-// and the kæra are told apart by appeal type, not by a ruling file.
+// The appeal declaration needs its own arm because it is case level too - the verdict appeal
+// and the ruling appeal are told apart by appeal type, not by a ruling file.
 export const findAppealCaseOfCaseFile = (
   theCase: Case,
   file: Pick<CaseFile, 'rulingFileId' | 'category'>,
@@ -48,8 +48,8 @@ export const findAppealCaseOfCaseFile = (
   return theCase.appealCase
 }
 
-// The defendants that currently stand as appellants of a verdict appeal
-// (áfrýjun): those whose most recent appeal event on it is an APPEALED rather
+// The defendants that currently stand as appellants of a verdict appeal:
+// those whose most recent appeal event on it is an APPEALED rather
 // than an APPEAL_WITHDRAWN. A defendant who withdraws may appeal again while the
 // deadline still runs, so it is the latest event that decides, not the mere
 // presence of a withdrawal.

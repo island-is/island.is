@@ -14,8 +14,8 @@ import { getGlobalIncludes } from './caseTable.utils'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
 /**
- * A verdict appeal (áfrýjun) must not reach a case list built for ruling appeals
- * (kæra). Every such list joins the `appealCase` alias, whose association scope
+ * A verdict appeal must not reach a case list built for ruling appeals.
+ * Every such list joins the `appealCase` alias, whose association scope
  * carries the appeal type, so the isolation is enforced once on the model rather
  * than in each list's where options.
  *
@@ -24,7 +24,7 @@ import { caseTableWhereOptions } from './caseTable.whereOptions'
  * into the join condition - and that is not visible in the include options the
  * where options build.
  */
-describe('case tables keep áfrýjun out of kæra lists', () => {
+describe('case tables keep verdict appeals out of ruling appeal lists', () => {
   const districtCourtJudge = {
     id: 'judge_id',
     role: UserRole.DISTRICT_COURT_JUDGE,
@@ -103,7 +103,7 @@ describe('case tables keep áfrýjun out of kæra lists', () => {
     return queries[0] ?? ''
   }
 
-  // The tab an áfrýjun in APPEALED would surface in if the type were not
+  // The tab a verdict appeal in APPEALED would surface in if the type were not
   // filtered - the reason this isolation exists at all.
   it('filters the appeal type in the district court appealed request cases', async () => {
     const sql = await sqlForTable(

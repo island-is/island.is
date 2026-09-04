@@ -3,13 +3,16 @@ import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
 import { User } from '../../user'
+import { AppealEventLog } from './appealEventLog.response'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
+registerEnumType(AppealCaseType, { name: 'AppealCaseType' })
 registerEnumType(AppealCaseRulingDecision, { name: 'AppealCaseRulingDecision' })
 
 @ObjectType()
@@ -43,6 +46,10 @@ export class AppealCase {
 
   @Field(() => AppealCaseState, { nullable: true })
   readonly appealState?: AppealCaseState
+
+  // RULING for a ruling appeal, VERDICT for a verdict appeal.
+  @Field(() => AppealCaseType, { nullable: true })
+  readonly appealType?: AppealCaseType
 
   @Field(() => String, { nullable: true })
   readonly appealCaseNumber?: string
@@ -130,4 +137,9 @@ export class AppealCase {
 
   @Field(() => CaseFile, { nullable: true })
   readonly rulingFile?: CaseFile
+
+  // Only carried by a verdict appeal case: the backend folds the event log of a
+  // ruling appeal into the appealedBy* fields above and strips it from the payload.
+  @Field(() => [AppealEventLog], { nullable: true })
+  readonly appealEventLogs?: AppealEventLog[]
 }
