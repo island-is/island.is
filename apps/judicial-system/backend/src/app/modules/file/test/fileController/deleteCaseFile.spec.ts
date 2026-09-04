@@ -5,7 +5,7 @@ import { CaseFileState, CaseType } from '@island.is/judicial-system/types'
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case, CaseFile } from '../../../repository'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { DeleteFileResponse } from '../../models/deleteFile.response'
 
 interface Then {
@@ -22,15 +22,15 @@ type GivenWhenThen = (
 
 describe('FileController - Delete case file', () => {
   let mockAwsS3Service: AwsS3Service
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, fileModel, fileController } =
+    const { awsS3Service, caseFileRepositoryService, fileController } =
       await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
     const mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
     mockDeleteObject.mockRejectedValue(new Error('Some Error'))
@@ -62,16 +62,17 @@ describe('FileController - Delete case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
+      const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+      mockUpdate.mockResolvedValueOnce(1)
 
       then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should delete the case file', () => {
-      expect(mockFileModel.update).toHaveBeenCalledWith(
+      expect(mockCaseFileRepositoryService.updateById).toHaveBeenCalledWith(
+        fileId,
         { state: CaseFileState.DELETED, isKeyAccessible: false },
-        { where: { id: fileId } },
+        { transaction: undefined },
       )
       expect(then.result).toEqual({ success: true })
     })
@@ -85,8 +86,8 @@ describe('FileController - Delete case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([0])
+      const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+      mockUpdate.mockResolvedValueOnce(0)
 
       then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
@@ -104,7 +105,7 @@ describe('FileController - Delete case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
+      const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
       mockUpdate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, theCase, fileId, caseFile)
