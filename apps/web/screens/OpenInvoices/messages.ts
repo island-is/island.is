@@ -210,7 +210,7 @@ export const m = {
     },
     fetchingResults: {
       id: 'web.openinvoices:search.fetchingResults',
-      defaultMessage: 'Sækir greiðslur...',
+      defaultMessage: 'Sæki greiðslur...',
     },
   }),
 }

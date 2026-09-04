@@ -1,6 +1,5 @@
 import { useIntl } from 'react-intl'
 import addDays from 'date-fns/addDays'
-import subDays from 'date-fns/subDays'
 
 import {
   Accordion,
@@ -24,6 +23,8 @@ interface Props {
   initiallyExpanded?: boolean
   /** Maximum allowed span, in days, between valueFrom and valueTo. */
   maxRangeDays?: number
+  /** Latest date selectable in either picker, typically today. */
+  maxSelectableDate?: Date
 }
 
 export const FilterDateAccordion = ({
@@ -36,15 +37,38 @@ export const FilterDateAccordion = ({
   onChange,
   initiallyExpanded = false,
   maxRangeDays,
+  maxSelectableDate,
 }: Props) => {
   const { formatMessage } = useIntl()
 
-  const fromMinDate =
-    maxRangeDays != null && valueTo ? subDays(valueTo, maxRangeDays) : undefined
-  const toMaxDate =
-    maxRangeDays != null && valueFrom
-      ? addDays(valueFrom, maxRangeDays)
-      : undefined
+  /* The two pickers may land on the same day — an empty span is allowed. */
+  const latestAllowedTo = (from: Date) => {
+    const rangeEnd =
+      maxRangeDays != null ? addDays(from, maxRangeDays) : undefined
+    if (!rangeEnd) return maxSelectableDate
+    if (!maxSelectableDate) return rangeEnd
+    return rangeEnd < maxSelectableDate ? rangeEnd : maxSelectableDate
+  }
+
+  const toMaxDate = valueFrom ? latestAllowedTo(valueFrom) : maxSelectableDate
+
+  /*
+    The "from" picker is bounded only by maxSelectableDate. When it moves, a
+    date past "to" is capped at "to", and "to" is pulled back to the end of the
+    allowed range if the span grew too wide.
+  */
+  const handleFromChange = (date: Date | undefined) => {
+    if (!date || !valueTo) {
+      onChange(date, valueTo)
+      return
+    }
+
+    const nextFrom = date > valueTo ? valueTo : date
+    const latestTo = latestAllowedTo(nextFrom)
+    const nextTo = latestTo && valueTo > latestTo ? latestTo : valueTo
+
+    onChange(nextFrom, nextTo)
+  }
 
   return (
     <Box paddingTop={1} paddingX={3}>
@@ -73,9 +97,8 @@ export const FilterDateAccordion = ({
               size="xs"
               locale={locale}
               selected={valueFrom}
-              minDate={fromMinDate}
-              maxDate={valueTo}
-              handleChange={(date) => onChange(date, valueTo)}
+              maxDate={maxSelectableDate}
+              handleChange={handleFromChange}
             />
             <DatePicker
               name={`${id}-to`}

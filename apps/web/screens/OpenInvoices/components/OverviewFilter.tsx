@@ -33,6 +33,8 @@ interface DateSelectProps {
   isActive?: boolean
   /** Maximum allowed span, in days, between valueFrom and valueTo. */
   maxRangeDays?: number
+  /** Latest date selectable in either picker, typically today. */
+  maxSelectableDate?: Date
 }
 
 interface CheckboxProps {
@@ -175,6 +177,7 @@ export const OverviewFilter = ({
                     valueTo={category.valueTo}
                     isActive={category.isActive}
                     maxRangeDays={category.maxRangeDays}
+                    maxSelectableDate={category.maxSelectableDate}
                     initiallyExpanded
                     onChange={(valueFrom, valueTo) => {
                       const valueFromString = valueFrom

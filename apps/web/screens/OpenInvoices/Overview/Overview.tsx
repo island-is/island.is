@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import {
   parseAsArrayOf,
@@ -418,6 +419,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       valueFrom: dateRangeStart,
       valueTo: dateRangeEnd,
       maxRangeDays: MAX_DATE_RANGE_DAYS,
+      maxSelectableDate: initialDates.dateTo,
       isActive:
         dateRangeStart.getTime() !== initialDates.dateFrom.getTime() ||
         dateRangeEnd.getTime() !== initialDates.dateTo.getTime(),
@@ -650,31 +652,73 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
   const invoicePaymentTypesInput = invoicePaymentTypesFilter?.filter(isDefined)
   const ministriesInput = ministriesFilter?.filter(isDefined) || undefined
 
-  // Buyers (debtors) and ministries are mutually exclusive — if both are in
-  // the URL, buyers wins and ministries is redirected away rather than
-  // silently dropped from the query, so the URL stays a true reflection of
-  // the applied filters.
-  if (debtorsInput && ministriesInput) {
+  /*
+    Rebuilds the current URL with `omit` dropped and `overrides` applied, so a
+    correction redirect keeps every other filter the visitor arrived with.
+  */
+  const buildUrl = (
+    omit: Array<string>,
+    overrides: Record<string, string> = {},
+  ) => {
     const params = new URLSearchParams()
     for (const [key, value] of Object.entries(query ?? {})) {
-      if (key === 'ministries') continue
+      if (omit.includes(key) || key in overrides) continue
       if (Array.isArray(value)) {
         value.forEach((v) => params.append(key, v))
       } else if (value !== undefined) {
         params.append(key, value)
       }
     }
+    for (const [key, value] of Object.entries(overrides)) {
+      params.append(key, value)
+    }
 
     const path = linkResolver('openinvoices', [], locale as Locale).href
     const search = params.toString()
-    throw new CustomNextRedirect(search ? `${path}?${search}` : path)
+    return search ? `${path}?${search}` : path
   }
 
-  const dateToInput =
+  /*
+    Buyers (debtors) and ministries are mutually exclusive — if both are in the
+    URL, buyers wins and ministries is redirected away rather than silently
+    dropped from the query, so the URL stays a true reflection of the applied
+    filters.
+  */
+  if (debtorsInput && ministriesInput) {
+    throw new CustomNextRedirect(buildUrl(['ministries']))
+  }
+
+  const requestedDateTo =
     parseAsIsoDateTime.parseServerSide(query?.['dateRangeEnd']) ?? today
-  const dateFromInput =
+  const requestedDateFrom =
     parseAsIsoDateTime.parseServerSide(query?.['dateRangeStart']) ??
-    addMonths(dateToInput, -1)
+    addMonths(requestedDateTo, -1)
+
+  /*
+    The date pickers enforce these bounds while filtering, but the dates are
+    also readable straight off the URL. Apply the same constraints here and
+    redirect to the corrected URL so a hand-edited or stale link cannot query
+    a future or over-wide range.
+  */
+  let dateToInput = requestedDateTo > today ? today : requestedDateTo
+  const dateFromInput =
+    requestedDateFrom > dateToInput ? dateToInput : requestedDateFrom
+  const latestAllowedTo = addDays(dateFromInput, MAX_DATE_RANGE_DAYS)
+  if (dateToInput > latestAllowedTo) {
+    dateToInput = latestAllowedTo
+  }
+
+  if (
+    dateFromInput.getTime() !== requestedDateFrom.getTime() ||
+    dateToInput.getTime() !== requestedDateTo.getTime()
+  ) {
+    throw new CustomNextRedirect(
+      buildUrl([], {
+        dateRangeStart: dateFromInput.toISOString(),
+        dateRangeEnd: dateToInput.toISOString(),
+      }),
+    )
+  }
 
   const {
     data: { icelandicGovernmentInstitutionsInvoicePaymentsGroups },
