@@ -91,8 +91,7 @@ const ProsecutorSelection: FC<Props> = ({
             (workingCase.id
               ? workingCase.prosecutorsOffice?.id
               : currentUser?.institution?.id) &&
-          (excludeUserIds === undefined ||
-            !excludeUserIds.includes(user.id)),
+          (excludeUserIds === undefined || !excludeUserIds.includes(user.id)),
       )
       .map(({ id, name }) => ({
         label: name ?? '',
