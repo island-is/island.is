@@ -6,6 +6,7 @@ import type { Application } from '@island.is/application/types'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import addYears from 'date-fns/addYears'
 import * as kennitala from 'kennitala'
+import { YES } from '@island.is/application/core'
 import { RatioType } from './constants'
 import {
   ApplicationType,
@@ -100,6 +101,14 @@ export const isBankAccountType = (
     paymentInfo?.bankAccountType ??
     typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
   return radio === bankAccountType
+}
+
+export const shouldShowIncomePlan = (answers: Application['answers']) => {
+  const { onePaymentPerYear } = getApplicationAnswers(answers)
+
+  // If the applicant wants a single yearly payment, TR does not need an income
+  // plan, so the income plan screens are skipped entirely.
+  return onePaymentPerYear !== YES
 }
 
 export const hasSpouse = (externalData: Application['externalData']) => {

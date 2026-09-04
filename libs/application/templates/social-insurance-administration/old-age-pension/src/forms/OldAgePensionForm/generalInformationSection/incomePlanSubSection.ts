@@ -34,9 +34,11 @@ import { Application } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/shared/utils'
 import { RatioType } from '../../../utils/constants'
 import { getApplicationExternalData } from '../../../utils/oldAgePensionUtils'
+import { shouldShowIncomePlan } from '../../../utils/conditionUtils'
 
 export const incomePlanSubSection = buildSubSection({
   id: 'incomePlanSubSection',
+  condition: (answers) => shouldShowIncomePlan(answers),
   title: socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
   children: [
     buildMultiField({
