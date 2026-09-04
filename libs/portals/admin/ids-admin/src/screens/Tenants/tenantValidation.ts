@@ -18,3 +18,8 @@ export const contactEmailSchema = z
   .email('errorEmail')
   .or(z.literal(''))
   .optional()
+
+export const optionalSafeTextSchema = z
+  .string()
+  .regex(/^[^<>%$]*$/, 'errorUnsafeChars')
+  .optional()

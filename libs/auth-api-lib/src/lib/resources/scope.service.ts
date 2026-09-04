@@ -57,9 +57,14 @@ export class ScopeService {
 
   /**
    * Looks up the user's municipality from the National Registry and finds
-   * a matching domain by comparing against Domain.displayName.
+   * a matching domain among the candidates by comparing against
+   * Domain.municipalityName, which admins fill in with the municipality
+   * name as the National Registry returns it.
    */
-  private async getUserMunicipalDomain(user: User): Promise<string | null> {
+  private async getUserMunicipalDomain(
+    user: User,
+    candidateDomainNames: string[],
+  ): Promise<string | null> {
     let sveitarfelag: string | undefined
 
     try {
@@ -78,7 +83,10 @@ export class ScopeService {
 
     const domain = await this.domainModel.findOne({
       attributes: ['name'],
-      where: { displayName: sveitarfelag },
+      where: {
+        name: { [Op.in]: candidateDomainNames },
+        municipalityName: sveitarfelag,
+      },
     })
 
     return domain?.name ?? null
@@ -381,7 +389,13 @@ export class ScopeService {
     )
 
     if (sveitarfelagTag && sveitarfelagTag.scopes.length > 0) {
-      const municipalDomainName = await this.getUserMunicipalDomain(user)
+      const candidateDomainNames = [
+        ...new Set(sveitarfelagTag.scopes.map((scope) => scope.domainName)),
+      ]
+      const municipalDomainName = await this.getUserMunicipalDomain(
+        user,
+        candidateDomainNames,
+      )
 
       if (municipalDomainName) {
         const municipalScopes = sveitarfelagTag.scopes.filter(

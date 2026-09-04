@@ -1787,6 +1787,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenant-contact-email',
     defaultMessage: 'Contact email',
   },
+  tenantMunicipalityName: {
+    id: 'ap.ids-admin:tenant-municipality-name',
+    defaultMessage: 'Municipality name',
+  },
+  tenantMunicipalityNameTooltip: {
+    id: 'ap.ids-admin:tenant-municipality-name-tooltip',
+    defaultMessage:
+      'Only for municipality domains: the municipality name exactly as the National Registry returns it, e.g. "Reykjavík". Used to match users to their municipality.',
+  },
   errorTenantName: {
     id: 'ap.ids-admin:error-tenant-name',
     defaultMessage:

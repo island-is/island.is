@@ -32,4 +32,7 @@ export class TenantEnvironment {
 
   @Field({ nullable: true })
   contactEmail?: string
+
+  @Field({ nullable: true })
+  municipalityName?: string
 }

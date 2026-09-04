@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
 
 import { CmsContentfulService } from '@island.is/cms'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
@@ -251,6 +252,43 @@ describe('ScopeService', () => {
       expect(mittTag!.scopes[0].name).toBe('@kopavogur.is/service')
     })
 
+    it('should match domains by municipalityName among the tag domains', async () => {
+      mockNationalRegistry.getAddress.mockResolvedValue({
+        sveitarfelag: 'Kópavogur',
+      })
+      mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
+
+      mockCms.getDelegationScopeTags.mockResolvedValue([
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
+      ])
+      mockDelegationResources.findScopesInternal.mockResolvedValue([
+        {
+          ...makeScope('@kopavogur.is/service', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
+        {
+          ...makeScope('@kopavogur.is/other', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
+      ])
+
+      await service.findScopeTags(mockUser, 'is')
+
+      expect(mockDomainModel.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            name: { [Op.in]: ['@kopavogur.is'] },
+            municipalityName: 'Kópavogur',
+          },
+        }),
+      )
+    })
+
     it('should keep scopes in original "Sveitarfélag" tag when creating "Mitt sveitarfélag"', async () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Kópavogur',
@@ -395,7 +433,8 @@ describe('ScopeService', () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Kópavogur',
       })
-      mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
+      // No domain in the tag matches the user's municipality
+      mockDomainModel.findOne.mockResolvedValue(null)
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         {
