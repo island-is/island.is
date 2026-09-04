@@ -61,6 +61,8 @@ interface InputProps {
   warningText?: string
   rightElement?: React.ReactNode
   allowEmptyValue?: boolean
+  /** Render nothing at all (label, value and border) when the value is empty. */
+  hideWhenEmpty?: boolean
   fullWidthWarning?: boolean
   style?: ViewStyle
 }
@@ -80,12 +82,21 @@ export function Input({
   warningText = '',
   rightElement,
   allowEmptyValue = false,
+  hideWhenEmpty = false,
   fullWidthWarning = false,
   style,
 }: InputProps) {
   const theme = useTheme()
   const tvalue =
     value !== undefined && typeof value === 'string' && value.trim()
+
+  const isEmpty =
+    value === undefined ||
+    value === null ||
+    (typeof value === 'string' && value.trim() === '')
+  if (hideWhenEmpty && !loading && !error && isEmpty) {
+    return null
+  }
 
   return (
     <Host noBorder={noBorder} darkBorder={darkBorder}>

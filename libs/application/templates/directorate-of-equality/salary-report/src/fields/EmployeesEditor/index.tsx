@@ -8,7 +8,7 @@ import {
   Table as T,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
 import {
   ApiActions,
@@ -25,11 +25,12 @@ import {
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftEmployeesQuery } from '../../utils/useDraftEmployeesQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
+import { useProgressMarker } from '../../utils/useProgressMarker'
 import {
   DraftErrorState,
   DraftLoadingState,
 } from '../../components/DraftScreenState'
-import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
+import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 import { EmployeeRow } from './EmployeeRow'
 import { EmployeeForm } from './EmployeeForm'
 import { TablePagination } from '../TablePagination'
@@ -101,6 +102,7 @@ const toEmployee = (e: ReportEmployeeDto): Employee => ({
 
 export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
+  answerQuestions,
 }) => {
   const { formatMessage } = useLocale()
   const m = messages.report.employees
@@ -130,6 +132,10 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     'draftRoles',
   )
   const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
+  // The marker says nothing more after the first employee lands, so write it
+  // once per mount rather than on every row a company adds.
+  const employeesMarkedRef = useRef(false)
 
   const [isAdding, setIsAdding] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -197,6 +203,21 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       await sync(batch)
       if (batch.roles?.length) await refetchRoles({ silent: true })
       await refetchEmployees()
+      // This screen has no setBeforeSubmitCallback — every change goes straight
+      // to the draft, row by row — so the marker is written here rather than on
+      // the way out. Only for a batch that puts an employee on the draft: a
+      // REMOVE that empties the list must not claim the step is done.
+      if (
+        !employeesMarkedRef.current &&
+        batch.employees?.some(
+          (command) => command.method !== SyncMethodEnum.REMOVE,
+        )
+      ) {
+        // Latched only on a confirmed write, so a marker lost to a failed
+        // mutation is retried by the next successful sync instead of being
+        // skipped for the rest of the mount.
+        employeesMarkedRef.current = await markProgress({ employees: true })
+      }
       return true
     } catch {
       setActionError(formatMessage(messages.errors.draftSyncFailed))
@@ -242,12 +263,20 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       <Stack space={4}>
-        {actionError && <AlertMessage type="error" message={actionError} />}
+        {actionError && (
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={actionError}
+          />
+        )}
         <T.Table>
           <T.Head>
             <T.Row>
               <T.HeadData></T.HeadData>
-              <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
+              <T.HeadData>
+                <EmployeeOrdinalHeader />
+              </T.HeadData>
               <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
               <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
               <T.HeadData></T.HeadData>
@@ -270,10 +299,6 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 <EmployeeRow
                   key={employee.id}
                   employee={employee}
-                  identifier={formatEmployeeIdentifier(
-                    application.id,
-                    employee.ordinal,
-                  )}
                   roleTitleById={roleTitleById}
                   onRemove={() => handleRemove(employee)}
                   onEdit={() => setEditingId(employee.id)}

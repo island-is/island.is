@@ -153,6 +153,7 @@ api:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
     ENVIRONMENT: 'dev'
+    FETCH_MAX_SOCKETS: '50'
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'
@@ -338,8 +339,8 @@ api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 2
-        min: 1
+        max: 50
+        min: 3
   httpRoute:
     primary-gw:
       hostnames:
@@ -353,6 +354,7 @@ api:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
+  minReadySeconds: 0
   namespace: 'islandis'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -361,9 +363,9 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 3
+    max: 50
+    min: 3
   resources:
     limits:
       cpu: '3000m'
@@ -509,6 +511,12 @@ api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/api'
     create: true
     name: 'api'
+  strategy:
+    rollingUpdate:
+      maxSurge: '25%'
+      maxUnavailable: '25%'
+    type: 'RollingUpdate'
+  terminationGracePeriodSeconds: 30
 application-system-api:
   args:
     - 'main.cjs'
@@ -2721,8 +2729,8 @@ service-portal-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 2
-        min: 1
+        max: 30
+        min: 2
   httpRoute:
     internal-gw:
       hostnames:
@@ -2766,9 +2774,9 @@ service-portal-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 2
+    max: 30
+    min: 2
   resources:
     limits:
       cpu: '800m'
@@ -2812,6 +2820,7 @@ services-bff-portals-admin:
     BFF_NAME: 'stjornbord'
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
+    BFF_PROXY_MAX_SOCKETS: '50'
     CODE_OWNER: 'core'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
@@ -2900,6 +2909,7 @@ services-bff-portals-my-pages:
     BFF_NAME: 'minarsidur'
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
+    BFF_PROXY_MAX_SOCKETS: '50'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
     IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@island.is/applications/directorate-of-equality","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
@@ -4318,8 +4328,8 @@ user-notification:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 2
-        min: 1
+        max: 10
+        min: 3
   httpRoute:
     internal-gw:
       hostnames:
@@ -4349,9 +4359,9 @@ user-notification:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 3
+    max: 10
+    min: 3
   resources:
     limits:
       cpu: '400m'
@@ -4769,8 +4779,8 @@ web:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 2
-        min: 1
+        max: 50
+        min: 3
   httpRoute:
     primary-gw:
       hostnames:
@@ -4791,9 +4801,9 @@ web:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 3
+    max: 50
+    min: 3
   resources:
     limits:
       cpu: '3000m'

@@ -16,6 +16,7 @@ type ChildKeys = Pick<
   | 'registrarId'
   | 'judgeId'
   | 'indictmentReviewerId'
+  | 'indictmentApproverId'
   | 'mergeCaseId'
 >
 
@@ -31,6 +32,7 @@ const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
     'registrarId',
     'judgeId',
     'indictmentReviewerId',
+    'indictmentApproverId',
     'mergeCaseId',
   ].includes(key)
 }
@@ -42,6 +44,7 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   registrarId: 'registrar',
   judgeId: 'judge',
   indictmentReviewerId: 'indictmentReviewer',
+  indictmentApproverId: 'indictmentApprover',
   mergeCaseId: 'mergeCase',
 }
 

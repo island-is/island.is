@@ -145,6 +145,7 @@
     "@tanstack/react-table": "8.21.3",
     "@tiptap/core": "3.30.3",
     "@tiptap/extension-list": "3.30.3",
+    "@tiptap/extension-table": "3.30.3",
     "@tiptap/extensions": "3.30.3",
     "@tiptap/pm": "3.30.3",
     "@tiptap/react": "3.30.3",

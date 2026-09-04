@@ -1,6 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 import { FC, useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
 import {
@@ -18,6 +19,7 @@ import type {
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
+import { useProgressMarker } from '../../utils/useProgressMarker'
 import {
   DraftErrorState,
   DraftLoadingState,
@@ -35,6 +37,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     criteria: ReportCriterionDto[]
   }>(application, draftActionId(ApiActions.listDraftCriteria), 'draftCriteria')
   const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
 
   const [jobFactors, setJobFactors] = useState<JobFactor[]>([])
   const [personalFactors, setPersonalFactors] = useState<PersonalFactor[]>([])
@@ -139,14 +142,20 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       } catch {
         return [false, formatMessage(messages.errors.draftSyncFailed)]
       }
-      // Answers-backed navigation signal (see `hasPersonalCriteria` in
-      // dataSchema.ts for why this can't be read off externalData directly).
-      answerQuestions?.({ hasPersonalCriteria: personalFactors.length > 0 })
+      // Answers-backed navigation signals (see `hasPersonalCriteria` and
+      // `progress` in dataSchema.ts for why these can't be read off
+      // externalData directly). Written through the mutation rather than
+      // answerQuestions alone because an answer written from here never
+      // reaches the screen's own submit — see useProgressMarker.
+      await markProgress(
+        { criteria: true },
+        { hasPersonalCriteria: personalFactors.length > 0 },
+      )
       return [true, null]
     })
   }, [
     refetch,
-    answerQuestions,
+    markProgress,
     setBeforeSubmitCallback,
     jobFactors,
     personalFactors,
@@ -170,9 +179,11 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Text variant="h4" marginBottom={2}>
         {formatMessage(messages.report.criteria.jobFactorTitle)}
       </Text>
-      <Text marginBottom={3}>
-        {formatMessage(messages.report.criteria.jobFactorIntro)}
-      </Text>
+      <Box marginBottom={3}>
+        <Markdown>
+          {formatMessage(messages.report.criteria.jobFactorIntro)}
+        </Markdown>
+      </Box>
 
       <Box>
         {jobFactors.map((factor, i) => (
@@ -205,11 +216,13 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
       {hasWeightMismatch && (
         <Box marginTop={3}>
-          <Text color="red600">
-            {formatMessage(messages.report.criteria.weightSumError, {
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={formatMessage(messages.report.criteria.weightSumError, {
               total: totalWeight,
             })}
-          </Text>
+          />
         </Box>
       )}
     </Box>

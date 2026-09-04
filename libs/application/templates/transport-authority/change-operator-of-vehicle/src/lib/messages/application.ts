@@ -11,6 +11,12 @@ export const application = defineMessages({
     defaultMessage: 'Samgöngustofa',
     description: `Institution's name`,
   },
+  pruneReason: {
+    id: 'ta.cov.application:pruneReason',
+    defaultMessage: 'Bíður staðfestingar meðeiganda og umráðamanns',
+    description:
+      "The reason for why this application hasn't moved to the next state",
+  },
   actionCardDraft: {
     id: 'ta.cov.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',

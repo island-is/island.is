@@ -20,8 +20,13 @@ import {
 } from '@island.is/application/templates/directorate-of-equality/salary-report'
 import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import type { ZodTypeAny, z } from 'zod'
-import { mapGender, toNumberOrZero } from './directorate-of-equality.utils'
+import {
+  mapGender,
+  mapSubsidiaries,
+  toNumberOrZero,
+} from './directorate-of-equality.utils'
 
 // Page size for walking listDraftEmployees to completion on salary-analysis screens.
 const DRAFT_EMPLOYEE_PAGE_SIZE = 100
@@ -33,6 +38,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
   constructor(
     private readonly companyRegistryService: CompanyRegistryClientService,
     private readonly directorateOfEqualityService: DirectorateOfEqualityClientService,
+    private readonly applicationApiService: ApplicationApiService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super('DirectorateOfEquality')
@@ -253,6 +259,21 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           errorDetails.status ?? 500,
         )
       }
+
+      // 404 is DMR's definitive "this company has no approved report" — the
+      // one case where a false flag is the truth. Anything else means DMR
+      // didn't answer, and reporting that as "no approved plan" would tell
+      // the applicant they're ineligible when the service is merely down.
+      if (errorDetails.status !== 404) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.errorDataProvider,
+            summary: coreErrorMessages.failedDataProvider,
+          },
+          errorDetails.status ?? 500,
+        )
+      }
+
       return { hasActiveEqualityReport: false }
     }
   }
@@ -282,28 +303,27 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      const activeReport =
-        await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+    // Propagates rather than falling back to null, so the screen can tell
+    // "no earlier plan" (null) from "DMR did not answer".
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to get previous equality report content',
+      async () => {
+        const activeReport =
+          await this.directorateOfEqualityService.getActiveEqualityReport(auth)
 
-      if (!activeReport || !activeReport.identifier) return null
+        // providerId is the only lookup handle DMR accepts on
+        // GET /application/reports/:providerId — `id` resolves only against the
+        // admin-only endpoint and `identifier` is a human-facing display code.
+        if (!activeReport?.providerId) return null
 
-      const report = await this.directorateOfEqualityService.getReport(
-        auth,
-        activeReport.identifier,
-      )
-      return { equalityReportContent: report.equalityReportContent ?? '' }
-    } catch (error) {
-      this.logger.error(
-        'Failed to get previous equality report content, falling back',
-        {
-          applicationId: application.id,
-          context: LOGGING_CONTEXT,
-          ...this.extractFetchErrorDetails(error),
-        },
-      )
-      return null
-    }
+        const report = await this.directorateOfEqualityService.getReport(
+          auth,
+          activeReport.providerId,
+        )
+        return { equalityReportContent: report.equalityReportContent ?? '' }
+      },
+    )
   }
 
   async getBlankExcelTemplate({
@@ -540,6 +560,39 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
+  // The id captured at PREREQUISITES goes stale if the equality report is
+  // re-approved while this draft sits open, so re-resolve it live here.
+  private async resolveEqualityReportId(
+    auth: TemplateApiModuleActionProps['auth'],
+    application: TemplateApiModuleActionProps['application'],
+  ): Promise<string | undefined> {
+    const persistedId = getValueViaPath<string>(
+      application.externalData,
+      'activeEqualityReport.data.id',
+    )
+
+    try {
+      const activeReport =
+        await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+      return activeReport?.id ?? persistedId
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error(
+        'Failed to resolve active equality report before salary submit',
+        {
+          applicationId: application.id,
+          context: LOGGING_CONTEXT,
+          ...errorDetails,
+        },
+      )
+
+      // 404 is DMR's definitive "no approved report" — the persisted id is
+      // known-stale, so don't fall back to it.
+      if (errorDetails.status === 404) return undefined
+      return persistedId
+    }
+  }
+
   // Finalises the draft; only the pre-dataEntry answers need patching onto it first.
   async submitSalaryReport({
     auth,
@@ -551,22 +604,21 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       application.id,
     )
 
-    const equalityReportId = getValueViaPath<string>(
-      application.externalData,
-      'activeEqualityReport.data.id',
+    const equalityReportId = await this.resolveEqualityReportId(
+      auth,
+      application,
     )
     if (!equalityReportId) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
+          summary: salaryReportMessages.errors.missingEqualityReport,
         },
         400,
       )
     }
 
     const providerId = application.id
-    const subsidiaryList = answers.subsidiaries?.list ?? []
     const salaryDataBasis =
       answers.period?.period === PERIOD_ONE_MONTH ? 'MONTH' : 'AVERAGE'
     const salaryDataPeriod =
@@ -586,6 +638,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: mapGender(answers.chiefExecutive?.gender),
           contactName: answers.contactPerson?.name ?? '',
+          contactTitle: answers.contactPerson?.jobTitle ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
           salaryDataBasis,
@@ -606,13 +659,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
                 isatCategory:
                   answers.generalInformation?.isatClassification ?? '',
               },
-              subsidiaries:
-                answers.subsidiaries?.includesSubsidiaries === 'yes'
-                  ? subsidiaryList.map((s) => ({
-                      name: s.nationalIdWithName.name,
-                      nationalId: s.nationalIdWithName.nationalId,
-                    }))
-                  : [],
+              subsidiaries: mapSubsidiaries(answers.subsidiaries),
               equalityReportId,
               outliersPostponed:
                 answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
@@ -656,6 +703,19 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             action: g.action ?? '',
             signatureName: g.signatureName ?? '',
             signatureRole: g.signatureRole ?? '',
+            // Passed through as the `yyyy-MM-dd` DatePickerController stored,
+            // which is the date-only form DMR validates for — same as the draft
+            // sync sends in buildOutlierSyncCommands. The cast is because
+            // clientConfig's `format: date` generates the field as `Date`, but
+            // the transformers plugin only converts responses: a `Date` here
+            // would be serialised as a full ISO instant and rejected.
+            //
+            // A blank sends `null` on a required field, so DMR answers 400.
+            // That is the intent: the review screen's submit is gated on
+            // isOutlierGroupSubmittable, which requires this too, so a blank
+            // here is a group that should never have reached submission, and
+            // saying so beats inventing a date the applicant never committed to.
+            remedyDate: (g.remedyDate || null) as unknown as Date,
             employeeOrdinals: g.employeeOrdinals,
           }))
 
@@ -685,7 +745,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       application.id,
     )
     const providerId = application.id
-    const subsidiaryList = answers.subsidiaries?.list ?? []
 
     return this.withTemplateApiError(
       application.id,
@@ -697,6 +756,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: mapGender(answers.chiefExecutive?.gender),
           contactName: answers.contactPerson?.name ?? '',
+          contactTitle: answers.contactPerson?.jobTitle ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
           averageEmployeeFemaleCount: toNumberOrZero(
@@ -721,13 +781,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
               isatCategory:
                 answers.generalInformation?.isatClassification ?? '',
             },
-            subsidiaries:
-              answers.subsidiaries?.includesSubsidiaries === 'yes'
-                ? subsidiaryList.map((s) => ({
-                    name: s.nationalIdWithName.name,
-                    nationalId: s.nationalIdWithName.nationalId,
-                  }))
-                : [],
+            subsidiaries: mapSubsidiaries(answers.subsidiaries),
           },
         )
       },
@@ -769,7 +823,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         400,
       )
     }
-    return this.withTemplateApiError(
+    const comment = await this.withTemplateApiError(
       application.id,
       'Failed to submit report comment',
       () =>
@@ -779,5 +833,37 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           { body },
         ),
     )
+
+    // Clearing the send buffer belongs here, not in the UI: once DMR has the
+    // comment there is no way for the client to fail the cleanup without
+    // reporting a false send error and leaving a re-sendable body persisted.
+    // Best effort — the comment is already posted, so a failed clear must not
+    // fail the action.
+    try {
+      const existingComment =
+        getValueViaPath<Record<string, unknown>>(
+          application.answers,
+          'comment',
+        ) ?? {}
+      const answers = {
+        ...application.answers,
+        comment: { ...existingComment, newMessage: '' },
+      }
+      await this.applicationApiService.update(application.id, { answers })
+      // The action runner hands the same application object to later actions
+      // and returns it to the caller, so keep it in sync with the row.
+      application.answers = answers
+    } catch (error) {
+      this.logger.warn(
+        'Failed to clear submitted report comment from answers',
+        {
+          applicationId: application.id,
+          context: LOGGING_CONTEXT,
+          ...this.extractFetchErrorDetails(error),
+        },
+      )
+    }
+
+    return comment
   }
 }

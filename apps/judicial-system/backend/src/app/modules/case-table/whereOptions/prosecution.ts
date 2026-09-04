@@ -86,7 +86,7 @@ export const prosecutionIndictmentsInDraftWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     ...prosecutionIndictmentsAccessWhereOptions(user),
-    state: CaseState.DRAFT,
+    state: [CaseState.DRAFT, CaseState.WAITING_FOR_REVIEW],
   },
 })
 
