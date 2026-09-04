@@ -1,0 +1,38 @@
+# Library Architecture & Boundaries (Nx)
+
+In this monorepo, code is shared via the `libs/` directory. You MUST respect the environment boundaries of these libraries.
+
+- **Type & Schema Libraries (`libs/shared/types`, `libs/application/types`, etc.)**
+
+  - **Contents:** TypeScript `interfaces`, `types`, `enums`, and `zod` schemas ONLY.
+  - **Rule:** Must contain ZERO environment-specific execution logic (no React, no Node.js APIs).
+  - **Usage:** Safe to be imported by BOTH the Next.js Frontend and the NestJS Backend.
+  - **SDF Context:** The generated GraphQL types (`graphql-codegen`) and the new Zod schemas for the Fluent API live here.
+
+- **Backend Libraries (`libs/backend/...`, `libs/application/template-api-modules`)**
+
+  - **Contents:** NestJS Modules, Database Repositories (Sequelize), External API clients, Node.js specific logic (`fs`, `crypto`).
+  - **Rule:** NEVER import a backend library into the Next.js frontend (`apps/application-system-next`). Doing so will leak server secrets to the browser or break the build.
+  - **SDF Context:** The Workflow Engine execution logic and External Data fetchers are strictly backend libraries.
+
+- **Frontend Libraries (`libs/application/ui-components`, `libs/application/ui-fields`)**
+
+  - **Contents:** React Components, Next.js Hooks, UI-specific formatting.
+  - **Rule:** NEVER import a frontend library into the NestJS backend (`apps/application-system-api`). The backend should have zero knowledge of React or JSX.
+  - **SDF Context:** Custom Form Components built as escape hatches for the SDF live here and are dynamically imported only by the Next.js frontend.
+
+- **Core/Shared Utilities (`libs/application/core`)**
+  - **Contents:** The new `FormBuilder` Fluent API classes, basic string/date formatting functions.
+  - **Rule:** Ensure these utilities do not accidentally import React or Node-specific modules so they remain safe for cross-environment usage.
+
+# Linting Expectations
+
+- Follow the project's existing linting and formatting rules when editing code.
+- Match the established style in nearby files instead of introducing ad-hoc patterns just because they compile.
+- Do NOT disable, bypass, or weaken lint rules unless the user explicitly asks for that change.
+- After substantive edits, check the files you changed for lint issues and fix any new problems you introduced before considering the task complete.
+
+# TypeScript style (AI-authored code)
+
+- **No `any`.** Prefer precise types, `unknown` with narrowing, or safe assertions to a named type (e.g. `FormText`). Do not use `any` to silence the compiler.
+- **Function style:** This repo sets ESLint `func-style` to **expression** — use `const name = (…) => { … }` or `const name = function (…) { … }` for module-scope functions. Avoid **function declarations** (`function name() {}`) at the top level; they trigger `func-style` warnings.

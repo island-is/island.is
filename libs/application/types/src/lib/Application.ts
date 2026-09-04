@@ -73,6 +73,7 @@ export interface Application<TAnswers = FormValue> {
   status: ApplicationStatus
   draftTotalSteps?: number
   draftFinishedSteps?: number
+  pageIndex?: number
 }
 
 export interface ApplicationCard {

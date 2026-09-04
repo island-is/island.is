@@ -14,6 +14,7 @@ import {
   TemplateApi,
   defineTemplateApi,
   PendingAction,
+  FormatMessage,
 } from '@island.is/application/types'
 import { buildForm } from './formBuilders'
 import { DefaultStateLifeCycle } from './constants'
@@ -362,6 +363,39 @@ describe('ApplicationTemplate', () => {
       expect(templateHelper.getApplicationProgress('inReview')).toBe(0.66)
       expect(templateHelper.getApplicationProgress('approved')).toBe(1)
       expect(templateHelper.getApplicationProgress('rejected')).toBe(0)
+    })
+  })
+
+  describe('applyAnswerValidators', () => {
+    const formatMessage = ((message) =>
+      typeof message === 'string' ? message : message.id) as FormatMessage
+
+    it('runs validators for flat dotted SDF answer keys', async () => {
+      const template = {
+        ...createTestApplicationTemplate(),
+        answerValidators: {
+          'propertyInfo.categoryClass': (newAnswer: unknown) => {
+            if (newAnswer !== 'special') return undefined
+            return {
+              path: 'propertyInfo.categoryClassGroup',
+              message: 'Group required',
+            }
+          },
+        },
+      }
+      const helper = new ApplicationTemplateHelper(
+        createMockApplication(),
+        template,
+      )
+
+      await expect(
+        helper.applyAnswerValidators(
+          { 'propertyInfo.categoryClass': 'special' },
+          formatMessage,
+        ),
+      ).resolves.toEqual({
+        'propertyInfo.categoryClassGroup': 'Group required',
+      })
     })
   })
 
