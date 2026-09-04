@@ -8,13 +8,11 @@ import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
-import { CivilClaimant } from '../models/civilClaimant.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 import { EventLog } from '../models/eventLog.model'
 import { IndictmentCount } from '../models/indictmentCount.model'
-import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
@@ -54,8 +52,6 @@ export const createTestingRepositoryModule = async () => {
       { provide: getModelToken(EventLog), useValue: mockModel() },
       { provide: getModelToken(Victim), useValue: mockModel() },
       { provide: getModelToken(IndictmentCount), useValue: mockModel() },
-      { provide: getModelToken(Offense), useValue: mockModel() },
-      { provide: getModelToken(CivilClaimant), useValue: mockModel() },
       { provide: getModelToken(CaseFile), useValue: mockModel() },
       { provide: getModelToken(AppealCase), useValue: mockModel() },
       {
@@ -101,15 +97,7 @@ export const createTestingRepositoryModule = async () => {
     getModelToken(IndictmentCount),
   )
 
-  const offenseModel = repositoryModule.get<typeof Offense>(
-    getModelToken(Offense),
-  )
-
   const victimModel = repositoryModule.get<typeof Victim>(getModelToken(Victim))
-
-  const civilClaimantModel = repositoryModule.get<typeof CivilClaimant>(
-    getModelToken(CivilClaimant),
-  )
 
   const caseFileModel = repositoryModule.get<typeof CaseFile>(
     getModelToken(CaseFile),
@@ -138,9 +126,7 @@ export const createTestingRepositoryModule = async () => {
     caseModel,
     defendantModel,
     indictmentCountModel,
-    offenseModel,
     victimModel,
-    civilClaimantModel,
     caseFileModel,
     caseStringModel,
     awsS3Service,

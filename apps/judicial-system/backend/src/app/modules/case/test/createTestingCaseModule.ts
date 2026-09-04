@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended'
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { IntlService } from '@island.is/cms-translations'
@@ -44,6 +43,7 @@ import { VerdictService } from '../../verdict'
 import { caseModuleConfig } from '../case.config'
 import { CaseController } from '../case.controller'
 import { CaseService } from '../case.service'
+import { CaseCloningService } from '../caseCloning.service'
 import { InternalCaseController } from '../internalCase.controller'
 import { InternalCaseService } from '../internalCase.service'
 import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
@@ -70,6 +70,7 @@ jest.mock('../../defendant/civilClaimant.service')
 jest.mock('../../subpoena/subpoena.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../verdict/verdict.service')
+jest.mock('../caseCloning.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
@@ -140,6 +141,7 @@ export const createTestingCaseModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       CaseService,
+      CaseCloningService,
       InternalCaseService,
       LimitedAccessCaseService,
       PdfService,
@@ -236,6 +238,9 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
+  const caseCloningService =
+    caseModule.get<CaseCloningService>(CaseCloningService)
+
   const internalCaseService =
     caseModule.get<InternalCaseService>(InternalCaseService)
 
@@ -288,6 +293,7 @@ export const createTestingCaseModule = async () => {
     dateLogRepositoryService,
     caseConfig,
     caseService,
+    caseCloningService,
     internalCaseService,
     limitedAccessCaseService,
     caseController,
