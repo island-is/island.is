@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Ref,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useDebounce } from 'react-use'
 
@@ -31,6 +38,10 @@ export interface AsyncFilterPage {
   endCursor?: string | null
 }
 
+export type AsyncSearchInputHandle = {
+  clearSearchInput: () => void
+}
+
 interface Props {
   id: string
   title: string
@@ -54,6 +65,7 @@ interface Props {
    * list has finished loading). Falls back to the raw value if missing.
    */
   selectedLabels?: Record<string, string>
+  ref: Ref<AsyncSearchInputHandle>
 }
 
 export const AsyncFilterSearchAccordion = ({
@@ -64,7 +76,14 @@ export const AsyncFilterSearchAccordion = ({
   initiallyExpanded = false,
   fetchPage,
   selectedLabels,
+  ref,
 }: Props) => {
+  useImperativeHandle(ref, () => ({
+    clearSearchInput: () => {
+      setQuery('')
+    },
+  }))
+
   const { formatMessage } = useIntl()
   const [query, setQuery] = useState('')
   const [items, setItems] = useState<AsyncFilterItem[]>([])
@@ -81,6 +100,10 @@ export const AsyncFilterSearchAccordion = ({
   // the current generation, and its response is discarded if the
   // generation has since moved on (i.e. a new search reset the list).
   const generationRef = useRef(0)
+
+  // Synchronous guard: `loadingMore` state lags a render behind, letting
+  // overlapping IntersectionObserver callbacks double-fetch the same page.
+  const loadingMoreRef = useRef(false)
 
   const loadFirstPage = (search: string) => {
     const generation = ++generationRef.current
@@ -133,10 +156,11 @@ export const AsyncFilterSearchAccordion = ({
   )
 
   const loadMore = () => {
-    if (loading || loadingMore || !hasNextPage) {
+    if (loading || loadingMoreRef.current || !hasNextPage) {
       return
     }
 
+    loadingMoreRef.current = true
     const generation = generationRef.current
     setLoadingMore(true)
     fetchPage({ search: query, after: endCursor })
@@ -156,6 +180,7 @@ export const AsyncFilterSearchAccordion = ({
         }
       })
       .finally(() => {
+        loadingMoreRef.current = false
         if (generation !== generationRef.current) {
           return
         }

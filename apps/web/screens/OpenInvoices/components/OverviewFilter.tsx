@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 
@@ -18,6 +18,7 @@ import { m } from '../messages'
 import {
   AsyncFilterPage,
   AsyncFilterSearchAccordion,
+  AsyncSearchInputHandle,
 } from './AsyncFilterSearchAccordion'
 import { FilterDateAccordion } from './FilterDateAccordion'
 
@@ -88,6 +89,17 @@ export const OverviewFilter = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
+  const clear = () => {
+    for (const category of categories) {
+      searchInputRefs.current[category.id]?.clearSearchInput()
+    }
+    onReset()
+  }
+
+  const searchInputRefs = useRef<{
+    [key: string]: AsyncSearchInputHandle | null
+  }>({})
+
   if (mobileOnly && !isMobile) {
     return null
   }
@@ -107,10 +119,11 @@ export const OverviewFilter = ({
         labelOpen={formatMessage(m.search.openFilter)}
         labelClose={formatMessage(m.search.closeFilter)}
         labelClear={formatMessage(m.search.clearFilters)}
-        labelTitle={formatMessage(m.search.filterTitle)}
+        //labelTitle={formatMessage(m.search.filterTitle)}
+        labelTitle="Leit og síun" //TEMPORARY - REMOVE BEFORE MERGE
         labelResult={formatMessage(m.search.viewResults)}
         resultCount={hits}
-        onFilterClear={onReset}
+        onFilterClear={clear}
         onFilterResult={onApply}
         variant={variant}
         align={'right'}
@@ -186,6 +199,13 @@ export const OverviewFilter = ({
                   <AsyncFilterSearchAccordion
                     id={category.id}
                     title={category.label}
+                    ref={(s) => {
+                      if (s) {
+                        searchInputRefs.current[category.id] = s
+                      } else {
+                        delete searchInputRefs.current[category.id]
+                      }
+                    }}
                     selected={searchState?.[category.id] ?? []}
                     initiallyExpanded={
                       (searchState?.[category.id] ?? []).length > 0
