@@ -418,6 +418,7 @@ export enum FieldTypes {
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
+  INTERACTIVE_TABLE = 'INTERACTIVE_TABLE',
   PAGINATED_SEARCHABLE_TABLE = 'PAGINATED_SEARCHABLE_TABLE',
   SLIDER = 'SLIDER',
   INFORMATION_CARD = 'INFORMATION_CARD',
@@ -429,6 +430,7 @@ export enum FieldTypes {
   COPY_LINK = 'COPY_LINK',
   VEHICLE_PERMNO_WITH_INFO = 'VEHICLE_PERMNO_WITH_INFO',
   SCALE = 'SCALE',
+  STICKY_FOOTER = 'STICKY_FOOTER',
 }
 
 export enum FieldComponents {
@@ -463,6 +465,7 @@ export enum FieldComponents {
   VEHICLE_RADIO = 'VehicleRadioFormField',
   VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  INTERACTIVE_TABLE = 'InteractiveTableFormField',
   PAGINATED_SEARCHABLE_TABLE = 'PaginatedSearchableTableFormField',
   SLIDER = 'SliderFormField',
   INFORMATION_CARD = 'InformationCardFormField',
@@ -474,6 +477,7 @@ export enum FieldComponents {
   COPY_LINK = 'CopyLinkFormField',
   VEHICLE_PERMNO_WITH_INFO = 'VehiclePermnoWithInfoFormField',
   SCALE = 'ScaleFormField',
+  STICKY_FOOTER = 'StickyFooterFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -733,15 +737,23 @@ export interface PaymentChargeOverviewField extends BaseField {
   readonly type: FieldTypes.PAYMENT_CHARGE_OVERVIEW
   component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
   forPaymentLabel: StaticText
+  forPaymentLabelVariant?: TitleVariants
   totalLabel: StaticText
   unitPriceLabel?: StaticText
   quantityLabel?: StaticText
   quantityUnitLabel?: StaticText
   totalPerUnitLabel?: StaticText
+  simplifiedList?: boolean
+  additionalSummaryLabel?: StaticText
+  getAdditionalSummaryAmount?: (application: Application) => number
   getSelectedChargeItems: (application: Application) => {
     chargeItemCode: string
     chargeItemQuantity?: number
     extraLabel?: StaticText
+    chargeItemName?: string
+    chargeItemAmount?: number
+    subLabel?: StaticText
+    subAmount?: number
   }[]
 }
 
@@ -1008,6 +1020,55 @@ export interface StaticTableField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
+export type InteractiveTableHeaderCell =
+  | StaticText
+  | {
+      label: StaticText
+      width?: number
+      truncate?: boolean
+      expandable?: boolean
+    }
+
+export interface InteractiveTableField extends BaseField {
+  readonly type: FieldTypes.INTERACTIVE_TABLE
+  component: FieldComponents.INTERACTIVE_TABLE
+  header:
+    | InteractiveTableHeaderCell[]
+    | ((application: Application) => InteractiveTableHeaderCell[])
+  rows: StaticText[][] | ((application: Application) => StaticText[][])
+  titleVariant?: TitleVariants
+  selectable?: boolean
+  pageSize?: number
+  inputColumn?: {
+    id: string
+    getMaxAmount?: (application: Application) => Array<number | undefined>
+    placeholder?: StaticText
+  }
+  footerRow?: StaticText[] | ((application: Application) => StaticText[])
+  expandedRows?: {
+    header: StaticText[] | ((application: Application) => StaticText[])
+    rows: StaticText[][][] | ((application: Application) => StaticText[][][])
+  }
+  isSubmitDisabled?: (params: {
+    selectedRows: boolean[]
+    inputValues: string[]
+    application: Application
+  }) => boolean
+}
+
+export interface StickyFooterField extends BaseField {
+  readonly type: FieldTypes.STICKY_FOOTER
+  component: FieldComponents.STICKY_FOOTER
+  rows:
+    | { label: StaticText; value: StaticText }[]
+    | ((application: Application) => { label: StaticText; value: StaticText }[])
+  widthReferenceTestId: string
+  watchFieldIds: string[]
+  labelOffset?: number
+  labelWidth?: number
+  valueWidth?: number
+}
+
 export type PaginatedSearchableTableRow = Record<
   string,
   string | number | boolean | null | undefined
@@ -1232,6 +1293,7 @@ export type Field =
   | VehicleRadioField
   | VehicleSelectField
   | StaticTableField
+  | InteractiveTableField
   | PaginatedSearchableTableField
   | SliderField
   | InformationCardField
@@ -1243,3 +1305,4 @@ export type Field =
   | CopyLinkField
   | VehiclePermnoWithInfoField
   | ScaleField
+  | StickyFooterField

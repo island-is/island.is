@@ -38,6 +38,7 @@ import {
   ActionCardListField,
   TableRepeaterField,
   StaticTableField,
+  InteractiveTableField,
   PaginatedSearchableTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
@@ -56,6 +57,7 @@ import {
   VehiclePermnoWithInfoField,
   ScaleField,
   MaybeWithAnswersAndExternalData,
+  StickyFooterField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -787,11 +789,15 @@ export const buildPaymentChargeOverviewField = (
   const {
     id,
     forPaymentLabel,
+    forPaymentLabelVariant,
     totalLabel,
     quantityLabel,
     quantityUnitLabel,
     unitPriceLabel,
     totalPerUnitLabel,
+    simplifiedList,
+    additionalSummaryLabel,
+    getAdditionalSummaryAmount,
     getSelectedChargeItems,
   } = data
   return {
@@ -799,11 +805,15 @@ export const buildPaymentChargeOverviewField = (
     children: undefined,
     id,
     forPaymentLabel,
+    forPaymentLabelVariant,
     totalLabel,
     quantityLabel,
     quantityUnitLabel,
     unitPriceLabel,
     totalPerUnitLabel,
+    simplifiedList,
+    additionalSummaryLabel,
+    getAdditionalSummaryAmount,
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
@@ -1121,6 +1131,114 @@ export const buildStaticTableField = (
     marginTop,
     marginBottom,
     titleVariant,
+  }
+}
+
+export const buildInteractiveTableField = (
+  data: Omit<
+    InteractiveTableField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  > & {
+    id?: string
+  },
+): InteractiveTableField => {
+  const {
+    id = '',
+    header,
+    condition,
+    dataTestId,
+    title = '',
+    description,
+    rows,
+    marginBottom,
+    marginTop = 2,
+    titleVariant = 'h4',
+    selectable = false,
+    pageSize,
+    inputColumn,
+    footerRow,
+    expandedRows,
+    isSubmitDisabled,
+  } = data
+
+  return {
+    id,
+    title,
+    width: 'full',
+    doesNotRequireAnswer: !selectable,
+    condition,
+    description,
+    dataTestId,
+    children: undefined,
+    type: FieldTypes.INTERACTIVE_TABLE,
+    component: FieldComponents.INTERACTIVE_TABLE,
+    header,
+    rows,
+    marginTop,
+    marginBottom,
+    titleVariant,
+    selectable,
+    pageSize,
+    inputColumn,
+    footerRow,
+    expandedRows,
+    isSubmitDisabled,
+  }
+}
+
+export const buildStickyFooterField = (
+  data: Omit<
+    StickyFooterField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  > & {
+    id?: string
+  },
+): StickyFooterField => {
+  const {
+    id = '',
+    rows,
+    condition,
+    marginTop,
+    marginBottom,
+    widthReferenceTestId,
+    watchFieldIds,
+    labelOffset,
+    labelWidth,
+    valueWidth,
+  } = data
+
+  return {
+    id,
+    width: 'full',
+    doesNotRequireAnswer: true,
+    condition,
+    children: undefined,
+    type: FieldTypes.STICKY_FOOTER,
+    component: FieldComponents.STICKY_FOOTER,
+    rows,
+    marginTop,
+    marginBottom,
+    widthReferenceTestId,
+    watchFieldIds,
+    labelOffset,
+    labelWidth,
+    valueWidth,
   }
 }
 

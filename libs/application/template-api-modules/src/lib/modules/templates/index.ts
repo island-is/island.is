@@ -1,3 +1,5 @@
+import { PayDebtsModule } from './pay-debts/pay-debts.module'
+import { PayDebtsService } from './pay-debts/pay-debts.service'
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
 import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
 import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'
@@ -297,6 +299,7 @@ export const modules = [
   ConfirmTravelModule,
   DrivingLicenseAdditionalModule,
   DirectorateOfEqualityModule,
+  PayDebtsModule,
 ]
 
 export const services = [
@@ -398,4 +401,5 @@ export const services = [
   ConfirmTravelService,
   DrivingLicenseAdditionalService,
   DirectorateOfEqualityService,
+  PayDebtsService,
 ]

@@ -107,6 +107,7 @@ export enum ApplicationTypes {
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
+  PAY_DEBTS = 'PayDebts',
 }
 
 export const ApplicationConfigurations = {
@@ -545,5 +546,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SALARY_REPORT]: {
     slug: 'jafnrettisstofa-skyrslugjof',
     translation: ['doe.sr.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.PAY_DEBTS]: {
+    slug: 'greidum-rikinu',
+    translation: ['pd.application', 'uiForms.application'],
   },
 }

@@ -1,0 +1,185 @@
+import {
+  FieldBaseProps,
+  FormValue,
+  StickyFooterField,
+} from '@island.is/application/types'
+import { FC, useEffect, useRef, useState } from 'react'
+import { useFormContext, useWatch } from 'react-hook-form'
+import { Box, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
+import { formatText } from '@island.is/application/core'
+import * as styles from './StickyFooterFormField.css'
+
+interface Props extends FieldBaseProps {
+  field: StickyFooterField
+}
+
+const BOTTOM_GAP = 16
+
+const FOOTER_PADDING_X = theme.spacing[2]
+
+const contentLeft = (cell: Element) => {
+  const paddingLeft = parseFloat(window.getComputedStyle(cell).paddingLeft)
+
+  return (
+    cell.getBoundingClientRect().left +
+    (Number.isNaN(paddingLeft) ? 0 : paddingLeft)
+  )
+}
+
+const measureColumns = (target: Element, targetLeft: number) => {
+  const labelColumn = target.querySelector('thead th[data-column-index="0"]')
+  const valueColumn = target.querySelector('thead th[data-column-index="1"]')
+
+  if (!labelColumn || !valueColumn) {
+    return null
+  }
+
+  return {
+    labelOffset: contentLeft(labelColumn) - targetLeft - FOOTER_PADDING_X,
+    labelWidth: contentLeft(valueColumn) - contentLeft(labelColumn),
+  }
+}
+
+export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
+  const { formatMessage } = useLocale()
+  const { control } = useFormContext()
+
+  const watchedValues = useWatch({ name: field.watchFieldIds, control })
+  const liveAnswers: Record<string, unknown> = Object.fromEntries(
+    field.watchFieldIds.map((id, index) => [id, watchedValues[index]]),
+  )
+  const liveApplication = {
+    ...application,
+    answers: {
+      ...application.answers,
+      ...liveAnswers,
+    } as FormValue,
+  }
+
+  const rows =
+    typeof field.rows === 'function' ? field.rows(liveApplication) : field.rows
+
+  const footerRef = useRef<HTMLElement>(null)
+
+  const [state, setState] = useState<{
+    isFloating: boolean
+    left: number
+    width: number
+    columns: { labelOffset: number; labelWidth: number } | null
+  } | null>(null)
+
+  useEffect(() => {
+    const target = document.querySelector(
+      `[data-testid="${field.widthReferenceTestId}"]`,
+    )
+    if (!target) {
+      return
+    }
+
+    let frame: number | null = null
+
+    const updatePosition = () => {
+      frame = null
+      const targetRect = target.getBoundingClientRect()
+      const footerHeight = footerRef.current?.offsetHeight ?? 0
+      const floatingTopY = window.innerHeight - BOTTOM_GAP - footerHeight
+
+      setState({
+        isFloating: targetRect.bottom > floatingTopY,
+        left: targetRect.left,
+        width: targetRect.width,
+        columns: measureColumns(target, targetRect.left),
+      })
+    }
+
+    const scheduleUpdate = () => {
+      if (frame === null) {
+        frame = requestAnimationFrame(updatePosition)
+      }
+    }
+
+    updatePosition()
+    const resizeObserver = new ResizeObserver(scheduleUpdate)
+    resizeObserver.observe(target)
+    window.addEventListener('scroll', scheduleUpdate, { passive: true })
+    window.addEventListener('resize', scheduleUpdate)
+
+    return () => {
+      if (frame !== null) {
+        cancelAnimationFrame(frame)
+      }
+      resizeObserver.disconnect()
+      window.removeEventListener('scroll', scheduleUpdate)
+      window.removeEventListener('resize', scheduleUpdate)
+    }
+  }, [field.widthReferenceTestId])
+
+  if (!state) {
+    return null
+  }
+
+  return (
+    <Box
+      ref={footerRef}
+      position={state.isFloating ? 'fixed' : undefined}
+      bottom={state.isFloating ? 2 : undefined}
+      marginTop={state.isFloating ? undefined : 4}
+      style={
+        state.isFloating ? { left: state.left, width: state.width } : undefined
+      }
+    >
+      <Box
+        paddingLeft={2}
+        paddingRight={2}
+        paddingTop={1}
+        paddingBottom={1}
+        borderRadius="large"
+        className={
+          state.isFloating
+            ? `${styles.footer} ${styles.floatingShadow}`
+            : styles.footer
+        }
+      >
+        {rows.map((row, index) => (
+          <Box
+            key={`sticky-footer-row-${index}`}
+            paddingTop={1}
+            paddingBottom={1}
+            className={styles.row}
+          >
+            <Box
+              style={{
+                marginLeft: state.columns?.labelOffset ?? field.labelOffset,
+                width: state.columns?.labelWidth ?? field.labelWidth,
+                flexShrink: 0,
+              }}
+            >
+              <Text
+                variant="medium"
+                fontWeight={index === 0 ? 'semiBold' : 'regular'}
+              >
+                {formatText(row.label, application, formatMessage)}
+              </Text>
+            </Box>
+            <Box
+              style={
+                field.valueWidth
+                  ? { width: field.valueWidth, flexShrink: 0 }
+                  : undefined
+              }
+            >
+              <Text
+                variant="medium"
+                fontWeight={index === 0 ? 'semiBold' : 'regular'}
+              >
+                {formatText(row.value, application, formatMessage)}
+              </Text>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  )
+}
