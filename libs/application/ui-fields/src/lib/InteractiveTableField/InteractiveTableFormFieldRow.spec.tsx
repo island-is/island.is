@@ -106,6 +106,63 @@ describe('InteractiveTableFormFieldRow', () => {
     expect(getToggle()).toHaveAttribute('aria-expanded', 'false')
   })
 
+  describe('amount column', () => {
+    const amountProps = {
+      hasInputColumn: true,
+      inputFieldId: 'debtsToPay',
+      inputMaxAmount: 565990,
+      colSpan: 6,
+    }
+
+    const renderAmountRow = async () => {
+      renderRow(amountProps)
+      await userEvent.click(screen.getByRole('checkbox'))
+      const input = screen.getByRole('textbox')
+      await userEvent.clear(input)
+      return input
+    }
+
+    it('pre-fills the full debt when the row is selected', async () => {
+      renderRow(amountProps)
+
+      expect(screen.getByRole('textbox')).toHaveValue('')
+      await userEvent.click(screen.getByRole('checkbox'))
+      expect(screen.getByRole('textbox')).toHaveValue('565.990 kr.')
+    })
+
+    it('does not accept a zero amount', async () => {
+      const input = await renderAmountRow()
+
+      await userEvent.type(input, '0')
+
+      expect(input).toHaveValue('')
+    })
+
+    it('drops the minus sign so a negative amount cannot be entered', async () => {
+      const input = await renderAmountRow()
+
+      await userEvent.type(input, '-5')
+
+      expect(input).toHaveValue('5 kr.')
+    })
+
+    it('does not accept an amount above the debt', async () => {
+      const input = await renderAmountRow()
+
+      await userEvent.type(input, '565991')
+
+      expect(input).toHaveValue('56.599 kr.')
+    })
+
+    it('accepts an amount between one and the debt', async () => {
+      const input = await renderAmountRow()
+
+      await userEvent.type(input, '1000')
+
+      expect(input).toHaveValue('1.000 kr.')
+    })
+  })
+
   it('renders a plain cell when the row has no sub-table rows', () => {
     renderRow({ expandedRows: [] })
 
