@@ -22,7 +22,7 @@
 
 # Subfolders containing application templates and template-api-modules
 /libs/application/templates/aosh/                                                                                            @island-is/origo
-/libs/application/templates/district-commissioners                                                                           @island-is/origo  
+/libs/application/templates/district-commissioners                                                                           @island-is/origo
 /libs/application/templates/examples/                                                                                        @island-is/origo
 /libs/application/templates/family-matters/                                                                                  @island-is/origo
 /libs/application/templates/hms/                                                                                             @island-is/origo
@@ -67,7 +67,7 @@
 /libs/portals/my-pages/education-career/                                                                                     @island-is/juni @island-is/hugsmidjan
 /libs/portals/my-pages/education-degree/                                                                                     @island-is/juni @island-is/hugsmidjan
 /libs/portals/my-pages/education-license/                                                                                    @island-is/juni @island-is/hugsmidjan
-/libs/portals/my-pages/education-student-assessment/                                                                         @island-is/juni @island-is/origo @island-is/hugsmidjan
+/libs/portals/my-pages/education-student-assessment/                                                                         @island-is/juni @island-is/hugsmidjan
 /libs/clients/driving-license/                                                                                               @island-is/juni
 /libs/clients/judicial-administration/                                                                                       @island-is/juni
 /libs/application/templates/announcement-of-death/                                                                           @island-is/juni
