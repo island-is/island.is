@@ -37,6 +37,16 @@ export const debts = {
       defaultMessage: 'Reyna aftur',
       description: 'Label of the button that retries fetching the debts',
     },
+    emptyTitle: {
+      id: 'pd.application:debts.fetch.emptyTitle',
+      defaultMessage: 'Engar skuldir fundust',
+      description: 'Title shown when the customer has no debts to pay',
+    },
+    emptyMessage: {
+      id: 'pd.application:debts.fetch.emptyMessage',
+      defaultMessage: 'Þú ert ekki með ógreidda reikninga hjá ríkinu.',
+      description: 'Message shown when the customer has no debts to pay',
+    },
     refreshedTitle: {
       id: 'pd.application:debts.fetch.refreshedTitle',
       defaultMessage: 'Skuldastaðan var uppfærð',
@@ -97,11 +107,6 @@ export const debts = {
       id: 'pd.application:debts.table.costHeader',
       defaultMessage: 'Kostnaður',
       description: 'Cost header of the expanded charge type sub-table',
-    },
-    emptyMessage: {
-      id: 'pd.application:debts.table.emptyMessage',
-      defaultMessage: 'Engar skuldir fundust',
-      description: 'Message shown when there are no debts',
     },
     toPayLabel: {
       id: 'pd.application:debts.table.toPayLabel',

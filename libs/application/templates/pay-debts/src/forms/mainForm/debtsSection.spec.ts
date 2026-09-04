@@ -1,4 +1,5 @@
 import {
+  Application,
   ExternalData,
   Field,
   FieldTypes,
@@ -20,13 +21,26 @@ const conditionOf = (field?: Field) => {
   return condition
 }
 
-const externalDataWithDebts = {
-  customerDebts: {
-    data: { debts: [] },
-    date: new Date(),
-    status: 'success',
+const fetched = (debts: unknown[]) =>
+  ({
+    customerDebts: {
+      data: { debts },
+      date: new Date(),
+      status: 'success',
+    },
+  } as unknown as ExternalData)
+
+const externalDataWithDebts = fetched([
+  {
+    chargeTypeId: 'AB',
+    chargeTypeName: 'Gjaldflokkur 1',
+    dueDate: '2025-08-01',
+    finalDueDate: '2025-08-31',
+    debts: 565990,
+    chargeItemSubject: '453-78857-53',
+    timePeriod: '202508',
   },
-} as unknown as ExternalData
+])
 
 describe('debtsSection', () => {
   it('declares every answer the screen writes', () => {
@@ -49,6 +63,30 @@ describe('debtsSection', () => {
       expect(condition({}, {} as ExternalData, null)).toBe(false)
       expect(condition({}, externalDataWithDebts, null)).toBe(true)
     }
+  })
+
+  it('hides the table and its footer when the fetch found no debts', () => {
+    for (const field of [
+      findByType(FieldTypes.INTERACTIVE_TABLE),
+      findByType(FieldTypes.STICKY_FOOTER),
+    ]) {
+      expect(conditionOf(field)({}, fetched([]), null)).toBe(false)
+    }
+  })
+
+  it('never renders a row for an empty list, so nothing is selectable', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const rows = table?.rows
+
+    if (typeof rows !== 'function') {
+      throw new Error('Expected the table rows to be derived from the debts')
+    }
+
+    expect(
+      rows({ externalData: fetched([]) } as unknown as Application),
+    ).toEqual([])
   })
 
   it('treats a failed fetch as nothing to show', () => {
