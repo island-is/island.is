@@ -24,8 +24,24 @@ export const activate = async (userId: string) => {
   }
 }
 
+// Whether a feature is provided in this environment. Anything other than a
+// clean boolean answer is an error, never a "yes": a failing api may answer
+// with a JSON error body, which is truthy and would otherwise enable the
+// feature it was meant to hide.
 export const getFeature = async (name: string): Promise<boolean> => {
-  return await (await fetch(`/api/feature/${name}`)).json()
+  const res = await fetch(`/api/feature/${name}`)
+
+  if (!res.ok) {
+    throw new Error(`Feature ${name} lookup failed with status ${res.status}`)
+  }
+
+  const provided: unknown = await res.json()
+
+  if (typeof provided !== 'boolean') {
+    throw new Error(`Feature ${name} lookup returned a non-boolean answer`)
+  }
+
+  return provided
 }
 
 // TEMP: Initial implementation to trigger token refresh manually in the client.
