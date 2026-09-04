@@ -50,9 +50,7 @@ export const mapDraftToContractDraftRequest = (
 ): ContractDraftRequest => {
   const {
     units,
-    otherCostPayedByTenant,
     otherCostItems,
-    securityDepositRequired,
     landlords,
     landlordRepresentatives,
     tenants,
@@ -62,9 +60,7 @@ export const mapDraftToContractDraftRequest = (
   return {
     ...rest,
     units: units.map(mapDraftUnit),
-    otherCostPayedByTenant: [otherCostPayedByTenant],
     otherCostItems: otherCostItems.map(mapCostItem),
-    securityDepositRequired: [securityDepositRequired],
     landlords: landlords.map(mapDraftParty),
     landlordRepresentatives: landlordRepresentatives.map(mapDraftParty),
     tenants: tenants.map(mapDraftParty),

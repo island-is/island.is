@@ -8,4 +8,5 @@ export {
 export {
   type RentalAgreementDto,
   mapRentalAgreementDto,
-} from './rentalAgreements.dto'
+} from './rentalAgreement.dto'
+export { type RentalAgreementsDto } from './rentalAgreements.dto'

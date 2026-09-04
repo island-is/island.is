@@ -3,15 +3,16 @@ import { HomeApi } from '../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
-import {
-  mapRentalAgreementDto,
-  RentalAgreementDto,
-} from './dtos/rentalAgreements.dto'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ContractDocumentItemDto,
   mapContractDocumentItemDto,
 } from './dtos/contractDocument'
+import {
+  mapRentalAgreementDto,
+  RentalAgreementDto,
+  RentalAgreementsDto,
+} from './dtos'
 
 @Injectable()
 export class HmsRentalAgreementService {
@@ -28,16 +29,13 @@ export class HmsRentalAgreementService {
     hideInactiveAgreements = false,
     page?: number,
     pageSize?: number,
-  ): Promise<{
-    data: RentalAgreementDto[]
-    totalCount: number
-    page?: number
-    pageSize?: number
-  }> {
+    sort: 'asc' | 'desc' = 'asc',
+  ): Promise<RentalAgreementsDto> {
     const res = await this.apiWithAuth(user).contractGetRaw({
       page,
       pageSize,
       excludeInactive: hideInactiveAgreements,
+      sort,
     })
     const contracts = await res.value()
 
