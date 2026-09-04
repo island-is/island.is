@@ -42,6 +42,8 @@ jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
     secrets: inherit
+    with:
+      runner_label: arc-mergequeue
   prepare:
     permissions:
       contents: 'read'
@@ -52,13 +54,14 @@ jobs:
       run_merge_queue: true
       force_all_to_be_affected: ${{ github.event_name == 'workflow_dispatch' }}
       main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
+      runner_label: arc-mergequeue
     needs:
       - pre-checks
   docker-build:
     needs:
       - prepare
       - pre-checks
-    runs-on: arc-shared
+    runs-on: arc-mergequeue
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
     permissions:
       actions: read
@@ -200,6 +203,7 @@ jobs:
       nx_base: ${{ needs.prepare.outputs.NX_BASE }}
       nx_head: ${{ needs.prepare.outputs.NX_HEAD }}
       affected_projects: ${{ matrix.projects }}
+      runner_label: arc-mergequeue
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -208,7 +212,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-shared
+    runs-on: arc-mergequeue
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -240,7 +244,7 @@ jobs:
       - prepare
     permissions:
       contents: 'read'
-    runs-on: arc-shared
+    runs-on: arc-mergequeue
     timeout-minutes: 35
     env:
       NODE_OPTIONS: --max-old-space-size=4096
@@ -264,7 +268,7 @@ jobs:
         run: yarn nx affected --target=typecheck
 
   success:
-    runs-on: arc-shared
+    runs-on: arc-mergequeue
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -366,7 +370,7 @@ jobs:
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: arc-shared
+    runs-on: arc-mergequeue
     env:
       CHECK: 'false'
     steps:
