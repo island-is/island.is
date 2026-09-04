@@ -111,6 +111,8 @@ describe('salary analysis outlier navigation flags', () => {
           population: 'ALL_EMPLOYEES',
           threshold: 2,
           employees: [dispersionRow(1)],
+          countBelowExpected: 1,
+          countAboveExpected: 0,
         },
       } as Partial<SalaryAnalysisResponseDto>),
     )
@@ -126,6 +128,8 @@ describe('salary analysis outlier navigation flags', () => {
             population: 'ALL_EMPLOYEES',
             threshold: 2,
             employees: [dispersionRow(1)],
+            countBelowExpected: 1,
+            countAboveExpected: 0,
           },
         } as Partial<SalaryAnalysisResponseDto>),
         { resetReviewed: true },
