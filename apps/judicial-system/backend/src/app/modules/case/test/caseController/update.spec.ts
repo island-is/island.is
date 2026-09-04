@@ -45,7 +45,7 @@ import {
   AppealCase,
   Case,
   CaseRepositoryService,
-  CaseString,
+  CaseStringRepositoryService,
   DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   Verdict,
@@ -99,8 +99,8 @@ describe('CaseController - Update', () => {
   let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let mockDefendantService: DefendantService
   let mockVerdictService: VerdictService
+  let mockCaseStringRepositoryService: CaseStringRepositoryService
   let mockDateLogRepositoryService: DateLogRepositoryService
-  let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -114,8 +114,8 @@ describe('CaseController - Update', () => {
       defendantEventLogRepositoryService,
       defendantService,
       verdictService,
+      caseStringRepositoryService,
       dateLogRepositoryService,
-      caseStringModel,
       caseController,
     } = await createTestingCaseModule()
 
@@ -127,8 +127,8 @@ describe('CaseController - Update', () => {
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockDefendantService = defendantService
     mockVerdictService = verdictService
+    mockCaseStringRepositoryService = caseStringRepositoryService
     mockDateLogRepositoryService = dateLogRepositoryService
-    mockCaseStringModel = caseStringModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {
@@ -1443,16 +1443,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
-        {
-          stringType: StringType.POSTPONED_INDEFINITELY_EXPLANATION,
-          caseId,
-          value: postponedIndefinitelyExplanation,
-        },
-        {
-          conflictFields: ['case_id', 'string_type'],
-          transaction,
-        },
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).toHaveBeenCalledWith(
+        caseId,
+        StringType.POSTPONED_INDEFINITELY_EXPLANATION,
+        postponedIndefinitelyExplanation,
+        { transaction },
       )
     })
   })
@@ -1466,17 +1463,11 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
-        {
-          stringType: StringType.CIVIL_DEMANDS,
-          caseId,
-          value: civilDemands,
-        },
-        {
-          conflictFields: ['case_id', 'string_type'],
-          transaction,
-        },
-      )
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).toHaveBeenCalledWith(caseId, StringType.CIVIL_DEMANDS, civilDemands, {
+        transaction,
+      })
     })
   })
 
@@ -1668,16 +1659,13 @@ describe('CaseController - Update', () => {
       const expectedHeader = `${capitalize(formatDate(date, 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`
-      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
-        {
-          caseId,
-          stringType: StringType.REOPEN_REASON,
-          value: `${expectedHeader}\n${originalReopenReason}`,
-        },
-        {
-          conflictFields: ['case_id', 'string_type'],
-          transaction,
-        },
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).toHaveBeenCalledWith(
+        caseId,
+        StringType.REOPEN_REASON,
+        `${expectedHeader}\n${originalReopenReason}`,
+        { transaction },
       )
     })
   })
