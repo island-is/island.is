@@ -54,6 +54,15 @@ const serviceProviderSchema = z.object({
   contactPersonWorkPhone: phoneNumberSchema.optional().or(z.literal('')),
 })
 
+const notifierInfoSchema = z.object({
+  name: z.string().optional(),
+  nationalId: z.string().optional(),
+  email: z.string().email().optional().or(z.literal('')),
+  phoneNumber: phoneNumberSchema.optional().or(z.literal('')),
+  notifierAnonymity: z.enum([YES, NO]),
+  relationshipToChild: z.string(),
+})
+
 const childSchema = z
   .object({
     knowsNationalId: z.nativeEnum(KnowsNationalId).optional(),
@@ -294,6 +303,7 @@ const memmSchema = z.object({
     })
     .optional(),
 })
+
 const reasonForNotificationSchema = z
   .record(z.unknown())
   .optional()
@@ -421,6 +431,7 @@ const protectiveFactorsSchema = z
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   serviceProvider: serviceProviderSchema,
+  notifierInfo: notifierInfoSchema,
   child: childSchema.optional(),
   parents: parentsSchema.optional(),
   memm: memmSchema.optional(),

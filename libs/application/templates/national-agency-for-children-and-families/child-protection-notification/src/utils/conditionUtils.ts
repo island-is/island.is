@@ -34,10 +34,7 @@ export const isChildOver18 = (answers: FormValue): boolean => {
 export const isKnowsNationalId = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.YES
 
-export const showMemmSection = (
-  answers: FormValue,
-  _externalData: ExternalData,
-) => {
+export const shouldShowNonPrimarySchoolAgeChildInfo = (answers: FormValue) => {
   const { childNationalId } = getApplicationAnswers(answers)
   return (
     isKnowsNationalId(answers) &&

@@ -32,6 +32,7 @@ import {
   PronounsApi,
   ProtectiveFactorsApi,
   SchoolTypesApi,
+  UserProfileApi,
 } from '../dataProviders'
 import {
   applicationCardMessages,
@@ -84,26 +85,51 @@ const template: ApplicationTemplate<
             }),
           ],
           roles: [
-            ...[Roles.MINOR_APPLICANT, Roles.ADULT_PERSONAL_APPLICANT].map(
-              (roleId) => ({
-                id: roleId,
-                formLoader: () =>
-                  import('../forms/prerequisitesForm').then((module) =>
-                    Promise.resolve(module.PersonalPrerequisites),
-                  ),
-                actions: [
-                  {
-                    event: DefaultEvents.SUBMIT,
-                    name: prerequisitesMessages.child.startNotification,
-                    type: 'primary' as const,
-                  },
-                ],
-                write: 'all' as const,
-                read: 'all' as const,
-                api: [NationalRegistryV3UserApi],
-                delete: true,
-              }),
-            ),
+            {
+              id: Roles.MINOR_APPLICANT,
+              formLoader: () =>
+                import('../forms/prerequisitesForm').then((module) =>
+                  Promise.resolve(module.MinorPrerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: prerequisitesMessages.child.startNotification,
+                  type: 'primary' as const,
+                },
+              ],
+              write: 'all' as const,
+              read: 'all' as const,
+              api: [NationalRegistryV3UserApi],
+              delete: true,
+            },
+            {
+              id: Roles.ADULT_PERSONAL_APPLICANT,
+              formLoader: () =>
+                import('../forms/prerequisitesForm').then((module) =>
+                  Promise.resolve(module.PersonalPrerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: prerequisitesMessages.child.startNotification,
+                  type: 'primary' as const,
+                },
+              ],
+              write: 'all' as const,
+              read: 'all' as const,
+              api: [
+                NationalRegistryV3UserApi,
+                UserProfileApi,
+                CategoriesApi,
+                GendersApi,
+                PronounsApi,
+                ChildSafetyLevelsApi,
+                PostalCodesApi,
+                ChildUnknownNationalIdStatesApi,
+              ],
+              delete: true,
+            },
             {
               id: Roles.ADULT_PROCURATION_APPLICANT,
               formLoader: () =>
