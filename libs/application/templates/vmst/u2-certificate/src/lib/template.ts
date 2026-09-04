@@ -30,6 +30,7 @@ import { EESCountriesApi, EligibilityApi } from '../dataProviders'
 import { applicationMessages as m } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -42,6 +43,7 @@ const template: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: ApplicationConfigurations.U2Certificate.translation,
   dataSchema,
+  featureFlag: Features.isU2ApplicationEnabled,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
