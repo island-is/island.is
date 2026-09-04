@@ -7,7 +7,7 @@ on:
         description: 'Runner scale-set label to run on'
         required: false
         type: string
-        default: arc-mergequeue
+        default: arc-shared
     outputs:
       NODE_IMAGE_VERSION:
         value: ${{ jobs.should-run.outputs.NODE_IMAGE_VERSION }}

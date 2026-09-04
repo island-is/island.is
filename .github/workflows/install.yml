@@ -6,7 +6,7 @@ on:
         description: 'Runner scale-set label to run on'
         required: false
         type: string
-        default: arc-mergequeue
+        default: arc-shared
       force_all_to_be_affected:
         description: 'Should all be affected'
         required: false
