@@ -386,7 +386,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
           doesNotRequireAnswer: true,
         }),
         buildTextField({
-          id: 'reasonForJobSearch.furtherReasonText',
+          id: 'reasonForJobSearch.additionalDetails',
           variant: 'textarea',
           required: true,
           rows: 5,
@@ -397,12 +397,14 @@ export const reasonForJobSearchSubSection = buildSubSection({
             employmentMessages.reasonForJobSearch.labels
               .resignationReasonPlaceholder,
           condition: (answers, externalData) => {
-            const chosenReasonCategory = getChosenReasonCategory(
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
               answers,
               externalData,
             )
-            // TODO change this to use something like displayAdditionalInformationField
-            return chosenReasonCategory?.english === 'Resignation by applicant'
+            return (
+              !!reasonBasedOnChoice &&
+              !!reasonBasedOnChoice.requiresAdditonalDetails //TODO CHANGE THIS
+            )
           },
         }),
         buildHiddenInputWithWatchedValue({
