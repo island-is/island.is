@@ -49,6 +49,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
     }
     caseFiles {
@@ -69,6 +70,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defendantId
       civilClaimantId
       rulingFileId
+      isPronouncedOrally
       hasBeenAppealed
       canBeAppealed
       appealDeadline
@@ -247,6 +249,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealRulingDecision
       appealConclusion
       appealRulingModifiedHistory
+      rulingFileId
     }
     rulingOrderAppealCases {
       id
@@ -339,6 +342,18 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     mergeCase {
       id
       courtCaseNumber
+      type
+      defendants {
+        id
+        defenderNationalId
+        isDefenderChoiceConfirmed
+      }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
     }
     indictmentCounts {
       id
@@ -411,33 +426,15 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       withCourtSessions
       defendants {
         id
-        noNationalId
-        nationalId
-        name
-        gender
-        address
-        citizenship
-        defenderName
         defenderNationalId
-        defenderEmail
-        defenderPhoneNumber
-        defenderChoice
-        defendantPlea
-        requestedDefenderChoice
-        requestedDefenderNationalId
-        requestedDefenderName
         isDefenderChoiceConfirmed
-        caseFilesSharedWithDefender
-        verdictAppealDeadline
-        isVerdictAppealDeadlineExpired
-        subpoenaType
         isSentToPrisonAdmin
-        isRegisteredInPrisonSystem
+        policeCaseNumbers
+        indictmentCancelledOrDismissedState {
+          type
+          time
+        }
         sentToPrisonAdminDate
-        openedByPrisonAdminDate
-        punishmentType
-        isAlternativeService
-        alternativeServiceDescription
         subpoenas {
           id
           created
@@ -450,6 +447,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           defendantId
           policeSubpoenaId
         }
+      }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
       }
       courtSessions {
         id
@@ -509,6 +512,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
       policeCaseNumbers
       indictmentSubtypes

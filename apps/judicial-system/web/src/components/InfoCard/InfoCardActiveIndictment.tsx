@@ -4,10 +4,10 @@ import {
   isCompletedCase,
   isDefenceUser,
 } from '@island.is/judicial-system/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { FormContext } from '../FormProvider/FormProvider'
-import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
@@ -74,6 +74,15 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           items: [
             indictmentCreated,
             prosecutor(workingCase.type, onProsecutorClick),
+            ...(workingCase.indictmentApprover
+              ? [
+                  {
+                    id: 'indictment-approver-item',
+                    title: 'Yfirlesari',
+                    values: [workingCase.indictmentApprover.name ?? ''],
+                  },
+                ]
+              : []),
             policeCaseNumbers,
             ...(workingCase.judge ? [judge] : []),
             ...(workingCase.registrar ? [registrar] : []),

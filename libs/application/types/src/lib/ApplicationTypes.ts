@@ -40,6 +40,7 @@ export enum ApplicationTypes {
   OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
+  DRIVING_LICENSE_ADDITIONAL = 'DrivingLicenseAdditional',
   ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
   CHANGE_CO_OWNER_OF_VEHICLE = 'ChangeCoOwnerOfVehicle',
   CHANGE_OPERATOR_OF_VEHICLE = 'ChangeOperatorOfVehicle',
@@ -272,6 +273,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
     slug: 'samrit',
     translation: ['dld.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: {
+    slug: 'aukin-okurettindi',
+    translation: 'dla.application',
   },
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: {
     slug: 'nafnleynd-i-okutaekjaskra',
@@ -514,7 +519,7 @@ export const ApplicationConfigurations = {
     translation: ['hb.application', 'uiForms.application'],
   },
   [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
-    slug: 'breyta-upplysingum-atvinnuleysisbaetur',
+    slug: 'vmst-breyta-upplysingum',
     translation: ['vmst.eui.application', 'uiForms.application'],
   },
   [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
@@ -522,7 +527,7 @@ export const ApplicationConfigurations = {
     translation: ['vmst.cjs', 'uiForms.application'],
   },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
-    slug: 'afskraning-atvinnuleysisbota',
+    slug: 'vmst-afskraning-bota',
     translation: ['vmst.dub.application', 'uiForms.application'],
   },
   [ApplicationTypes.VMST_SUBMIT_DOCUMENTS]: {
@@ -530,7 +535,7 @@ export const ApplicationConfigurations = {
     translation: ['vmst.vsd.application', 'uiForms.application'],
   },
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
-    slug: 'atvinnuleysisbaetur-stadfesting-ferda',
+    slug: 'vmst-tilkynning-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
   },
   [ApplicationTypes.EQUALITY_REPORT]: {

@@ -2,19 +2,21 @@ import faker from 'faker'
 
 import { ProsecutorSelectionUsersDocument } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
+import type {
+  Case,
+  CaseFile,
+  CaseType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealCaseTransition,
-  Case,
-  CaseFile,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
   CaseState,
-  CaseType,
   Gender,
   InstitutionType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 

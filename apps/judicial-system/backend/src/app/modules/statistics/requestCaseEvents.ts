@@ -20,6 +20,7 @@ export interface RequestCaseEvent {
   institution?: string
   caseType: CaseType
   caseTypeDescriptor: string
+  isIsolation: string
   origin: CaseOrigin
   isExtended: string
   // event specific fields
@@ -39,11 +40,23 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
   return Array.isArray(subtypes) ? subtypes[0] : subtypes
 }
 
+const getIsolationDescriptor = (c: Case) => {
+  if (
+    c.type !== CaseType.CUSTODY &&
+    c.type !== CaseType.ADMISSION_TO_FACILITY
+  ) {
+    return ''
+  }
+
+  return c.isCustodyIsolation ? 'Já' : 'Nei'
+}
+
 const commonFields = (c: Case) => {
   const isExtendedCase = !!c.parentCaseId
   return {
     caseType: c.type,
     caseTypeDescriptor: getCaseTypeTranslation(c.type),
+    isIsolation: getIsolationDescriptor(c),
     origin: c.origin,
     isExtended: isExtendedCase ? 'Já' : 'Nei',
     requestDecision: c.decision,

@@ -19,7 +19,7 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
+  AppealCaseType,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -724,6 +724,14 @@ export class Case extends Model {
   withCourtSessions!: boolean
 
   /**********
+   * Indicates whether the court chose not to summon to an arraignment, for
+   * example because the case will be merged into an already arraigned case -
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isArraignmentSummonsSkipped?: boolean
+
+  /**********
    * The case's court sessions
    **********/
   @HasMany(() => CourtSession, 'caseId')
@@ -785,6 +793,21 @@ export class Case extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentDeniedExplanation?: string
+
+  /**********
+   * The surrogate key of the prosecutor assigned to proofread an indictment
+   **********/
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  indictmentApproverId?: string
+
+  /**********
+   * The prosecutor assigned to proofread an indictment before confirmation
+   **********/
+  @BelongsTo(() => User, 'indictmentApproverId')
+  @ApiPropertyOptional({ type: User })
+  indictmentApprover?: User
 
   /**********
    * The case's notifications
@@ -956,15 +979,34 @@ export class Case extends Model {
   /**********
    * The case's case-level appeal record (the appeal of the case as a whole).
    * Scoped to rows with no ruling_file_id so ruling-order appeals don't
-   * collide with the HasOne cardinality.
+   * collide with the HasOne cardinality, and to kæra so an áfrýjun - which is
+   * also case-level, and so also has no ruling_file_id - does not collide with
+   * it either. Sequelize applies an association scope to every include of this
+   * alias, which is what keeps áfrýjun out of the case tables, the case views
+   * and the appeal banner without each of them having to filter for it. When
+   * Landsréttur starts handling áfrýjun, it reads its own association rather
+   * than widening this one.
    **********/
   @HasOne(() => AppealCase, {
     foreignKey: 'caseId',
     as: 'appealCase',
-    scope: { rulingFileId: null },
+    scope: { rulingFileId: null, appealType: AppealCaseType.RULING },
   })
   @ApiPropertyOptional({ type: () => AppealCase })
   appealCase?: AppealCase
+
+  /**********
+   * The case's áfrýjun - the appeal of the verdict concluding an indictment
+   * case. Case level like `appealCase`, and told apart from it only by the
+   * appeal type, so that everything built for kæra keeps seeing kæra alone.
+   **********/
+  @HasOne(() => AppealCase, {
+    foreignKey: 'caseId',
+    as: 'verdictAppealCase',
+    scope: { appealType: AppealCaseType.VERDICT },
+  })
+  @ApiPropertyOptional({ type: () => AppealCase })
+  verdictAppealCase?: AppealCase
 
   /**********
    * Appeals of specific ruling orders (Úrskurður undir rekstri máls) filed

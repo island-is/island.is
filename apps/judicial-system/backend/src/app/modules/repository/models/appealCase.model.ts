@@ -15,6 +15,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -76,6 +77,20 @@ export class AppealCase extends Model {
   @BelongsTo(() => CaseFile, 'rulingFileId')
   @ApiPropertyOptional({ type: () => CaseFile })
   rulingFile?: CaseFile
+
+  /**********
+   * Which decision this appeal challenges: a ruling (kæra) or the verdict
+   * concluding an indictment case (áfrýjun). Set once, when the appeal is
+   * created. The Case model's `appealCase` association scope filters on it, so
+   * an áfrýjun never reaches the lists and views built for kæra.
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(AppealCaseType),
+  })
+  @ApiProperty({ enum: AppealCaseType })
+  appealType!: AppealCaseType
 
   /**********
    * The case appeal state

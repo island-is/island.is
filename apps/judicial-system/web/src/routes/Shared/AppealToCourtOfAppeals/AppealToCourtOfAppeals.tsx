@@ -2,12 +2,12 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import type { UploadFile } from '@island.is/island-ui/core'
 import {
   Box,
   FileUploadStatus,
   InputFileUpload,
   Text,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -38,8 +38,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useAppealCase,
   useFileList,
   useS3Upload,
@@ -196,7 +196,7 @@ const AppealToCourtOfAppeals = () => {
           marginBottom={isProsecutionUser(user) ? 5 : 10}
         >
           <SectionHeading title="Gögn" marginBottom={1} />
-          <Text marginBottom={3} whiteSpace="pre">
+          <Text marginBottom={3} whiteSpace="preWrap">
             Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að
             neðan.
             {'\n'}

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { DirectorateOfEqualityClientModule } from '@island.is/clients/directorate-of-equality'
+import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { DirectorateOfEqualityService } from './directorate-of-equality.service'
 
 @Module({
@@ -9,6 +10,7 @@ import { DirectorateOfEqualityService } from './directorate-of-equality.service'
     SharedTemplateAPIModule,
     CompanyRegistryClientModule,
     DirectorateOfEqualityClientModule,
+    ApplicationApiCoreModule,
   ],
   providers: [DirectorateOfEqualityService],
   exports: [DirectorateOfEqualityService],

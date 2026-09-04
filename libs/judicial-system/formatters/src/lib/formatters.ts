@@ -33,6 +33,20 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
   }
 }
 
+// The name a ruling order is given when it is pronounced orally in a court
+// session - "S-123/2026 Úrskurður 12.11.2026". Generated once, when the ruling
+// is pronounced, and the document the district court writes up later keeps it.
+//
+// Shared so that the name the court record previews before pronouncing is the
+// name that gets stored: the court would otherwise be shown one name and given
+// another. Both sides fall back to the current date when the session has no
+// start date yet.
+export const formatRulingOrderPronouncedOrallyName = (
+  courtCaseNumber: string | undefined | null,
+  pronouncedDate: Date | string,
+): string =>
+  `${courtCaseNumber ?? ''} Úrskurður ${formatDate(pronouncedDate)}`.trim()
+
 export const formatDate = (
   date: Date | string | undefined | null,
   formatPattern = 'dd.MM.yyyy',
@@ -102,6 +116,15 @@ export const getInitials = (name?: string | null): string | undefined => {
       : names[0][0]
 
   return initials.toUpperCase()
+}
+
+export const formatFileSubmittedBy = (
+  role: string,
+  name?: string | null,
+): string => {
+  const initials = getInitials(name)
+
+  return initials ? `${role} (${initials}) lagði fram` : `${role} lagði fram`
 }
 
 export const formatPhoneNumber = (phoneNumber?: string | null) => {
@@ -637,4 +660,4 @@ export const getVerdictAppealDecision = (
 // containing angle-bracket placeholders (e.g. "<nafn ökumanns>") is not
 // mistaken for HTML.
 export const containsHtml = (str: string): boolean =>
-  /<\/?(?:p|strong|em|b|i|span|br)(?:[\s/>])/i.test(str)
+  /<\/?(?:p|strong|em|b|i|span|br|ul|ol|li)(?:[\s/>])/i.test(str)

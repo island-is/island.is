@@ -3,7 +3,10 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { IndictmentCount, Offense } from '../../repository'
+import {
+  IndictmentCountRepositoryService,
+  OffenseRepositoryService,
+} from '../../repository'
 import { DeleteResponse } from '../models/delete.response'
 
 interface Then {
@@ -17,22 +20,22 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('IndictmentCountController - Delete', () => {
-  let mockIndictmentCountModel: typeof IndictmentCount
-  let mockOffenseModel: typeof Offense
+  let mockIndictmentCountRepositoryService: IndictmentCountRepositoryService
+  let mockOffenseRepositoryService: OffenseRepositoryService
 
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
-      indictmentCountModel,
-      offenseModel,
+      indictmentCountRepositoryService,
+      offenseRepositoryService,
       indictmentCountController,
       sequelize,
     } = await createTestingIndictmentCountModule()
 
-    mockIndictmentCountModel = indictmentCountModel
-    mockOffenseModel = offenseModel
+    mockIndictmentCountRepositoryService = indictmentCountRepositoryService
+    mockOffenseRepositoryService = offenseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -62,24 +65,76 @@ describe('IndictmentCountController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockIndictmentCountModel.destroy as jest.Mock
-      mockDestroy.mockResolvedValueOnce(1)
+      const mockDeleteByIdAndCase =
+        mockIndictmentCountRepositoryService.deleteByIdAndCase as jest.Mock
+      mockDeleteByIdAndCase.mockResolvedValueOnce(1)
 
-      const mockFindAll = mockIndictmentCountModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([])
+      const mockFindAllForCaseOrdered =
+        mockIndictmentCountRepositoryService.findAllForCaseOrdered as jest.Mock
+      mockFindAllForCaseOrdered.mockResolvedValueOnce([])
 
       then = await givenWhenThen(caseId, indictmentCountId)
     })
 
     it('should delete the indictment count and related offenses', () => {
-      expect(mockOffenseModel.destroy).toHaveBeenCalledWith({
-        transaction,
-        where: { indictmentCountId },
+      expect(
+        mockOffenseRepositoryService.deleteAllForIndictmentCount,
+      ).toHaveBeenCalledWith(indictmentCountId, { transaction })
+      expect(
+        mockIndictmentCountRepositoryService.deleteByIdAndCase,
+      ).toHaveBeenCalledWith(indictmentCountId, caseId, { transaction })
+      expect(then.result).toEqual({ deleted: true })
+    })
+  })
+
+  describe('remaining indictment counts renormalized', () => {
+    const caseId = uuid()
+    const indictmentCountId = uuid()
+    const remainingIndictmentCounts = [
+      { id: uuid(), displayOrder: 2 },
+      { id: uuid(), displayOrder: 5 },
+    ]
+    let then: Then
+
+    beforeEach(async () => {
+      const mockDeleteByIdAndCase =
+        mockIndictmentCountRepositoryService.deleteByIdAndCase as jest.Mock
+      mockDeleteByIdAndCase.mockResolvedValueOnce(1)
+
+      const mockFindAllForCaseOrdered =
+        mockIndictmentCountRepositoryService.findAllForCaseOrdered as jest.Mock
+      mockFindAllForCaseOrdered.mockResolvedValueOnce(remainingIndictmentCounts)
+
+      const mockUpdateByIdAndCase =
+        mockIndictmentCountRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdateByIdAndCase.mockResolvedValue({
+        numberOfAffectedRows: 1,
+        indictmentCounts: [{}],
       })
-      expect(mockIndictmentCountModel.destroy).toHaveBeenCalledWith({
-        transaction,
-        where: { id: indictmentCountId, caseId },
-      })
+
+      then = await givenWhenThen(caseId, indictmentCountId)
+    })
+
+    it('should close the gap in the display order', () => {
+      expect(
+        mockIndictmentCountRepositoryService.findAllForCaseOrdered,
+      ).toHaveBeenCalledWith(caseId, { transaction })
+      expect(
+        mockIndictmentCountRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(
+        remainingIndictmentCounts[0].id,
+        caseId,
+        { displayOrder: 0 },
+        { transaction },
+      )
+      expect(
+        mockIndictmentCountRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(
+        remainingIndictmentCounts[1].id,
+        caseId,
+        { displayOrder: 1 },
+        { transaction },
+      )
       expect(then.result).toEqual({ deleted: true })
     })
   })
@@ -90,8 +145,9 @@ describe('IndictmentCountController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockIndictmentCountModel.destroy as jest.Mock
-      mockDestroy.mockRejectedValueOnce(new Error('Some error'))
+      const mockDeleteByIdAndCase =
+        mockIndictmentCountRepositoryService.deleteByIdAndCase as jest.Mock
+      mockDeleteByIdAndCase.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, indictmentCountId)
     })

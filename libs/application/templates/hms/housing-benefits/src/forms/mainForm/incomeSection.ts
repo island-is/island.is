@@ -17,6 +17,7 @@ import {
   otherIncomeSelected,
 } from '../../utils/incomeSectionUtils'
 import { isTaxReturnFiled } from '../../utils/utils'
+import { MAX_NUMBER_LENGTH } from '../../utils/constants'
 
 export const incomeSection = buildSection({
   id: 'incomeSection',

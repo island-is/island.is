@@ -93,6 +93,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
+    result.env.DD_TRACE_DISABLED_INSTRUMENTATIONS = 'fetch'
   }
   // add healthCheck port if set in the service
   if (serviceDef.healthPort) {
@@ -108,13 +109,46 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.podDisruptionBudget) {
     result.podDisruptionBudget = serviceDef.podDisruptionBudget
   }
+
+  // rollout strategy
+  if (serviceDef.strategy) {
+    result.strategy = serviceDef.strategy
+  }
+
+  // graceful shutdown
+  if (serviceDef.gracefulShutdown) {
+    const {
+      minReadySeconds,
+      terminationGracePeriodSeconds,
+      preStopSleepSeconds,
+    } = serviceDef.gracefulShutdown
+    if (minReadySeconds !== undefined) {
+      result.minReadySeconds = minReadySeconds
+    }
+    if (terminationGracePeriodSeconds !== undefined) {
+      result.terminationGracePeriodSeconds = terminationGracePeriodSeconds
+    }
+    if (preStopSleepSeconds !== undefined) {
+      result.lifecycle = {
+        preStop: {
+          exec: {
+            command: ['/bin/sh', '-c', `sleep ${preStopSleepSeconds}`],
+          },
+        },
+      }
+    }
+  }
+
   // resources
   result.resources = serviceDef.resources
 
   // replicas
   if (
     (env1.type == 'staging' || env1.type == 'dev') &&
-    service.name.indexOf('search-indexer') == -1
+    service.name.indexOf('search-indexer') == -1 &&
+    // TEMPORARY (load-test window): services with scaleToProdInDev opt out of
+    // the dev/staging replica clamp and use their explicit replicaCount instead.
+    !serviceDef.replicaCount?.scaleToProdInDev
   ) {
     result.replicaCount = {
       min: 1,

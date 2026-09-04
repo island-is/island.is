@@ -39,6 +39,7 @@ env:
   DD_DOTNET_TRACER_HOME: '/opt/datadog'
   DD_INTEGRATIONS: '/opt/datadog/integrations.json'
   DD_TRACE_DEBUG: 'true'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   Datadog__Metrics__Port: '5003'
   EmailsApiSettings__BaseAddress: 'https://service-portal-api.internal.dev01.devland.is'
   IdentityServer__ConsentsScope: '@island.is/auth/consents'
@@ -80,8 +81,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 2
-      min: 1
+      max: 10
+      min: 3
 httpRoute:
   primary-gw:
     hostnames:
@@ -108,9 +109,9 @@ pvcs:
     storageClass: 'efs-csi'
     useExisting: false
 replicaCount:
-  default: 1
-  max: 2
-  min: 1
+  default: 3
+  max: 10
+  min: 3
 resources:
   limits:
     cpu: '4000m'

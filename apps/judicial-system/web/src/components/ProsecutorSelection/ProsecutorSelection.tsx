@@ -1,15 +1,10 @@
-import {
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { SingleValue } from 'react-select'
+import type { SingleValue } from 'react-select'
 
-import { Option, Select } from '@island.is/island-ui/core'
+import type { Option } from '@island.is/island-ui/core'
+import { Select } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
@@ -25,23 +20,27 @@ import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.gen
 import { strings } from './ProsecutorSelection.strings'
 
 interface Props {
-  onChange?: (prosecutorId: string) => void
+  onChange?: (prosecutorId: string, prosecutorName?: string) => void
+  label?: string
   placeholder?: string
   isRequired?: boolean
   shouldInitializeSelector?: boolean
   onMenuOpen?: () => void
   onMenuClose?: () => void
   onProsecutorsLoaded?: (count: number) => void
+  excludeUserId?: string
 }
 
 const ProsecutorSelection: FC<Props> = ({
   onChange,
+  label,
   placeholder,
   isRequired = true,
   shouldInitializeSelector,
   onMenuOpen,
   onMenuClose,
   onProsecutorsLoaded,
+  excludeUserId,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isCaseUpToDate } =
@@ -91,7 +90,8 @@ const ProsecutorSelection: FC<Props> = ({
           user.institution?.id ===
             (workingCase.id
               ? workingCase.prosecutorsOffice?.id
-              : currentUser?.institution?.id),
+              : currentUser?.institution?.id) &&
+          (excludeUserId === undefined || user.id !== excludeUserId),
       )
       .map(({ id, name }) => ({
         label: name ?? '',
@@ -100,12 +100,13 @@ const ProsecutorSelection: FC<Props> = ({
   }, [
     currentUser?.institution?.id,
     data?.users,
+    excludeUserId,
     workingCase.id,
     workingCase.prosecutorsOffice?.id,
   ])
 
   const handleUpdate = useCallback(
-    (prosecutorId: string) => {
+    (prosecutorId: string, prosecutorName?: string) => {
       if (!workingCase.id || !onChange) {
         const prosecutor = data?.users?.find((p) => p.id === prosecutorId)
 
@@ -114,7 +115,7 @@ const ProsecutorSelection: FC<Props> = ({
           prosecutor,
         }))
       } else {
-        onChange(prosecutorId)
+        onChange(prosecutorId, prosecutorName)
       }
     },
     [data?.users, onChange, setWorkingCase, workingCase.id],
@@ -124,7 +125,7 @@ const ProsecutorSelection: FC<Props> = ({
     const id = value?.value
 
     if (id && typeof id === 'string') {
-      handleUpdate(id)
+      handleUpdate(id, value?.label)
     }
   }
 
@@ -146,9 +147,12 @@ const ProsecutorSelection: FC<Props> = ({
   return (
     <Select
       name="prosecutor"
-      label={formatMessage(strings.label, {
-        isIndictmentCase: isIndictmentCase(workingCase.type),
-      })}
+      label={
+        label ??
+        formatMessage(strings.label, {
+          isIndictmentCase: isIndictmentCase(workingCase.type),
+        })
+      }
       placeholder={
         placeholder ??
         formatMessage(strings.placeholder, {

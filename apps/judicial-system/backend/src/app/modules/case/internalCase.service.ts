@@ -822,6 +822,8 @@ export class InternalCaseService {
         state: completedIndictmentCaseStates,
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        // Only LOKE cases have a corresponding police case to update
+        origin: CaseOrigin.LOKE,
       },
     })
 
@@ -1117,7 +1119,7 @@ export class InternalCaseService {
       }
 
       const rulingDate =
-        deliverDto.rulingDate ?? theCase.created ?? theCase.rulingDate
+        deliverDto.rulingDate ?? theCase.rulingDate ?? theCase.created
 
       if (!rulingDate) {
         return { delivered: false }
@@ -1452,6 +1454,11 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
+    // Never call UpdateRVCase for cases that did not originate in LOKE
+    if (theCase.origin !== CaseOrigin.LOKE) {
+      return true
+    }
+
     const policeCaseId =
       await this.caseRepositoryService.findOriginalAncestorId(theCase)
 

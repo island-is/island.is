@@ -1,6 +1,6 @@
 import { setStringAsync } from 'expo-clipboard'
-import { useEffect } from 'react'
-import { Image, TouchableOpacity, View } from 'react-native'
+import { ReactNode, useEffect } from 'react'
+import { ActivityIndicator, Image, TouchableOpacity, View } from 'react-native'
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
@@ -8,6 +8,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
+import documentIcon from '@/assets/icons/reader.png'
+import attachmentIcon from '@/assets/icons/attachment.png'
 import { PressableHighlight } from '@/components/pressable-highlight/pressable-highlight'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import { Avatar, Container, Icon, Typography } from '@/ui'
@@ -69,14 +71,48 @@ const MetaSeparator = styled.View`
   background-color: ${({ theme }) => theme.color.blue200};
 `
 
+const AttachmentChip = styled(TouchableOpacity)`
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-start;
+  column-gap: ${({ theme }) => theme.spacing[1]}px;
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  padding: ${({ theme }) => theme.spacing[1]}px
+    ${({ theme }) => theme.spacing[2]}px;
+  border-width: ${({ theme }) => theme.border.width.standard}px;
+  border-color: ${({ theme }) => theme.color.blue200};
+  border-radius: ${({ theme }) => theme.border.radius.large};
+  background-color: ${({ theme }) => theme.color.white};
+`
+
+export interface DocumentListItemAttachment {
+  id: string
+  label: string
+  loading?: boolean
+  onPress: () => void
+}
+
 type DocumentListItemProps = {
   sender: string
+  /**
+   * Explicit organization logo URL. When set it takes precedence over the
+   * name-based logo lookup — used where the API provides the sender's logo
+   * directly (e.g. health conversations).
+   */
+  logoUrl?: string | null
   title: string
   body?: string
+  /**
+   * Rich body override. When provided it is rendered instead of the markdown
+   * `body` — used for structured content (e.g. health message text/link/video
+   * segments).
+   */
+  bodyContent?: ReactNode
   date?: string
   caseNumber?: string
   caseNumberLabel?: string
   caseNumberCopyLabel?: string
+  attachments?: DocumentListItemAttachment[]
   isOpen?: boolean
   closeable?: boolean
   hasTopBorder?: boolean
@@ -85,18 +121,21 @@ type DocumentListItemProps = {
 
 export const DocumentListItem = ({
   sender,
+  logoUrl,
   title,
   body,
+  bodyContent,
   date,
   caseNumber,
   caseNumberLabel,
   caseNumberCopyLabel,
+  attachments,
   closeable = false,
   isOpen = false,
   hasTopBorder = true,
 }: DocumentListItemProps) => {
   const theme = useTheme()
-  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const { getOrganizationLogoUrl, getSenderLogo } = useOrganizationsStore()
 
   const height = useSharedValue(0)
   const containerOpacity = useSharedValue(isAndroid ? 1 : 0)
@@ -139,7 +178,14 @@ export const DocumentListItem = ({
     isExpanded.value = !isExpanded.value
   }
 
-  const source = getOrganizationLogoUrl(sender, 75, true)
+  // When a `logoUrl` prop is passed (even null) the sender is an organization,
+  // so always resolve via getSenderLogo — it falls back to the coat of arms
+  // instead of an empty avatar. Callers that omit logoUrl (e.g. the inbox) keep
+  // the name-based lookup.
+  const source =
+    logoUrl !== undefined
+      ? getSenderLogo({ logoUrl }, 75)
+      : getOrganizationLogoUrl(sender, 75, true)
 
   return (
     <Animated.View style={containerAnimatedStyle}>
@@ -184,6 +230,14 @@ export const DocumentListItem = ({
                 ) : null}
               </MetaRow>
             </Content>
+            {attachments && attachments.length > 0 ? (
+              <Icon
+                source={attachmentIcon}
+                width={16}
+                height={16}
+                tintColor="dark400"
+              />
+            ) : null}
           </Host>
           <Animated.View style={bodyStyle}>
             <Body
@@ -191,7 +245,27 @@ export const DocumentListItem = ({
                 height.value = e.nativeEvent.layout.height
               }}
             >
-              {body ? <Markdown>{body}</Markdown> : null}
+              {bodyContent ?? (body ? <Markdown>{body}</Markdown> : null)}
+              {attachments?.map((attachment) => (
+                <AttachmentChip
+                  key={attachment.id}
+                  onPress={attachment.onPress}
+                  disabled={attachment.loading}
+                  accessibilityRole="button"
+                  accessibilityLabel={attachment.label}
+                >
+                  <Typography variant="eyebrow">{attachment.label}</Typography>
+                  {attachment.loading ? (
+                    <ActivityIndicator size="small" />
+                  ) : (
+                    <Image
+                      source={documentIcon}
+                      style={{ width: 16, height: 16 }}
+                      resizeMode="contain"
+                    />
+                  )}
+                </AttachmentChip>
+              ))}
             </Body>
           </Animated.View>
         </View>

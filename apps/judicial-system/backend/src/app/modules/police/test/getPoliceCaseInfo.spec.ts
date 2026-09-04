@@ -27,17 +27,23 @@ describe('PoliceController - Get police case info', () => {
   let givenWhenThen: GivenWhenThen
   let assignDefendantPoliceCaseNumbers: jest.Mock
   let findDistinctPoliceCaseNumbersByCaseIds: jest.Mock
+  let findIndictmentSubtypeByArticle: jest.Mock
 
   beforeEach(async () => {
     ;(fetch as jest.Mock).mockReset()
 
-    const { policeController, caseDefendantPoliceCaseNumberRepositoryService } =
-      await createTestingPoliceModule()
+    const {
+      policeController,
+      caseDefendantPoliceCaseNumberRepositoryService,
+      indictmentSubtypeRepositoryService,
+    } = await createTestingPoliceModule()
 
     assignDefendantPoliceCaseNumbers =
       caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers as jest.Mock
     findDistinctPoliceCaseNumbersByCaseIds =
       caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds as jest.Mock
+    findIndictmentSubtypeByArticle =
+      indictmentSubtypeRepositoryService.findByArticle as jest.Mock
 
     givenWhenThen = async (
       caseId: string,
@@ -148,6 +154,62 @@ describe('PoliceController - Get police case info', () => {
 
     it('should not assign defendant links for numbers not already on the case', () => {
       expect(assignDefendantPoliceCaseNumbers).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('when multiple indictment subtype rows share the same article', () => {
+    const theUser = {} as User
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      defendants: [
+        {
+          id: '11111111-1111-1111-1111-111111111111',
+          nationalId: '0101302399',
+          noNationalId: false,
+        },
+      ],
+    } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            upprunalegtMalsnumer: '007-2021-000001',
+            brotFra: '2021-02-23T13:17:00',
+            gotuHeiti: 'Testgata',
+            gotuNumer: '3',
+            sveitafelag: 'Testbær',
+            artalNrGreinLidur: '1940-019-165-001',
+            nanar: '  MEÐ VATNSFLÓÐI ',
+          },
+        ],
+      })
+      findIndictmentSubtypeByArticle.mockResolvedValueOnce({
+        offenseType: 'Hegningarlagabrot önnur',
+        details: 'með vatnsflóði',
+      })
+
+      then = await givenWhenThen(caseId, theUser, theCase)
+    })
+
+    it('should pass nanar to the indictment subtype lookup when article is present', () => {
+      expect(findIndictmentSubtypeByArticle).toHaveBeenCalledWith(
+        '1940-019-165-001',
+        '  MEÐ VATNSFLÓÐI ',
+      )
+      expect(then.result).toEqual([
+        {
+          policeCaseNumber: '007-2021-000001',
+          place: 'Testgata 3, Testbær',
+          date: new Date('2021-02-23T13:17:00'),
+          licencePlate: undefined,
+          subtypes: ['OTHER_CRIMINAL_OFFENSES'],
+        },
+      ])
     })
   })
 

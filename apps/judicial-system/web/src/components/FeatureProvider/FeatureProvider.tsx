@@ -1,10 +1,5 @@
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { createContext, useEffect, useState } from 'react'
 
 import { Feature } from '@island.is/judicial-system/types'
 import { getFeature } from '@island.is/judicial-system-web/src/services/api'

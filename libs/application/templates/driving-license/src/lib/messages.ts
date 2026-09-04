@@ -1098,8 +1098,13 @@ export const requirementsMessages = defineMessages({
     description: 'requirement unmet 65 plus renewal',
   },
   noExtendedDrivingLicenseDescription: {
-    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseDescription#markdown',
-    defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
+    // V2: the previous copy repeated the title verbatim, so the card never
+    // explained why the applicant was blocked. Id bumped so the new text is
+    // picked up rather than overridden by the old Contentful entry (same
+    // approach as beLicenseQualityPhotoDescriptionV2 above).
+    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseDescriptionV2#markdown',
+    defaultMessage:
+      'Þú ert með aukin ökuréttindi (t.d. C, CE, D1 eða D1E) sem voru gefin út á öðrum tíma en almennu ökuréttindin þín. Endurnýjun á slíkum réttindum fer ekki fram hér. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet 65 plus renewal',
   },
 })

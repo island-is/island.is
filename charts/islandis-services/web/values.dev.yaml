@@ -21,6 +21,7 @@ enabled: true
 env:
   API_URL: 'http://api'
   CODE_OWNER: 'stefna'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   DISABLE_API_CATALOGUE: 'false'
   DISABLE_ORGANIZATION_CHATBOT: 'false'
   DISABLE_SYSLUMENN_PAGE: 'false'
@@ -55,8 +56,8 @@ hpa:
       cpuAverageUtilization: 70
       nginxRequestsIrate: 5
     replicas:
-      max: 2
-      min: 1
+      max: 50
+      min: 3
 httpRoute:
   primary-gw:
     hostnames:
@@ -77,9 +78,9 @@ podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 1
-  max: 2
-  min: 1
+  default: 3
+  max: 50
+  min: 3
 resources:
   limits:
     cpu: '3000m'

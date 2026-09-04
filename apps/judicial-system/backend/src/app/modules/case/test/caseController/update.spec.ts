@@ -46,7 +46,7 @@ import {
   Case,
   CaseRepositoryService,
   CaseString,
-  DateLog,
+  DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   Verdict,
 } from '../../../repository'
@@ -99,7 +99,7 @@ describe('CaseController - Update', () => {
   let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let mockDefendantService: DefendantService
   let mockVerdictService: VerdictService
-  let mockDateLogModel: typeof DateLog
+  let mockDateLogRepositoryService: DateLogRepositoryService
   let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
 
@@ -114,7 +114,7 @@ describe('CaseController - Update', () => {
       defendantEventLogRepositoryService,
       defendantService,
       verdictService,
-      dateLogModel,
+      dateLogRepositoryService,
       caseStringModel,
       caseController,
     } = await createTestingCaseModule()
@@ -127,7 +127,7 @@ describe('CaseController - Update', () => {
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockDefendantService = defendantService
     mockVerdictService = verdictService
-    mockDateLogModel = dateLogModel
+    mockDateLogRepositoryService = dateLogRepositoryService
     mockCaseStringModel = caseStringModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -1195,9 +1195,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
-        { transaction },
+      expect(mockDateLogRepositoryService.createForCase).toHaveBeenCalledWith(
+        caseId,
+        DateType.ARRAIGNMENT_DATE,
+        arraignmentDate,
+        {
+          transaction,
+        },
       )
     })
 
@@ -1270,9 +1274,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
-        { transaction },
+      expect(mockDateLogRepositoryService.createForCase).toHaveBeenCalledWith(
+        caseId,
+        DateType.ARRAIGNMENT_DATE,
+        arraignmentDate,
+        {
+          transaction,
+        },
       )
       expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
         EventType.COURT_DATE_SCHEDULED,
@@ -1290,6 +1298,100 @@ describe('CaseController - Update', () => {
           caseId: theCase.id,
         },
       ])
+    })
+  })
+
+  describe('indictment arraignment date updated while summons skipped', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const caseToUpdate = {
+      arraignmentDate,
+      isArraignmentSummonsSkipped: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+      })
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should clear the skipped summons flag', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { isArraignmentSummonsSkipped: false },
+        { transaction },
+      )
+    })
+  })
+
+  describe('indictment arraignment date cleared while summons skipped', () => {
+    const caseToUpdate = {
+      arraignmentDate: null,
+      isArraignmentSummonsSkipped: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        isArraignmentSummonsSkipped: true,
+      })
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should keep the skipped summons flag', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { isArraignmentSummonsSkipped: true },
+        { transaction },
+      )
+    })
+  })
+
+  describe('indictment arraignment location updated while summons skipped', () => {
+    const caseToUpdate = {
+      arraignmentDate: { location: uuid() },
+      isArraignmentSummonsSkipped: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        isArraignmentSummonsSkipped: true,
+      })
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should keep the skipped summons flag', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { isArraignmentSummonsSkipped: true },
+        { transaction },
+      )
     })
   })
 
@@ -1315,9 +1417,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.COURT_DATE, caseId, ...courtDate },
-        { transaction },
+      expect(mockDateLogRepositoryService.createForCase).toHaveBeenCalledWith(
+        caseId,
+        DateType.COURT_DATE,
+        courtDate,
+        {
+          transaction,
+        },
       )
       expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
         EventType.COURT_DATE_SCHEDULED,
@@ -1539,6 +1645,7 @@ describe('CaseController - Update', () => {
     it('should reset defendant fields', () => {
       const resetPayload = {
         isSentToPrisonAdmin: false,
+        isClosedWithoutEnforcement: false,
         indictmentReviewDecision: null,
         publicProsecutorIsRegisteredInPoliceSystem: null,
         isDrivingLicenseSuspended: null,

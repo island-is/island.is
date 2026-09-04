@@ -1,11 +1,8 @@
-import { MessageDescriptor } from '@formatjs/intl'
-
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
@@ -25,19 +22,17 @@ import { EventService } from '../../../event'
 import {
   Case,
   CivilClaimant,
-  Notification,
+  NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 import { BaseNotificationService } from '../baseNotification.service'
-import { strings } from './civilClaimantNotification.strings'
 
 @Injectable()
 export class CivilClaimantNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -47,7 +42,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     courtService: CourtService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
       intlService,
       courtService,
@@ -61,33 +56,16 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     civilClaimant: CivilClaimant,
     theCase: Case,
     notificationType: TrackedNotificationType,
-    subject: MessageDescriptor,
-    body: MessageDescriptor,
+    subject: string,
+    body: string,
   ) {
-    const courtName = capitalize(theCase.court?.name)
-    const courtCaseNumber = theCase.courtCaseNumber
-    const spokespersonHasAccessToRVG = !!civilClaimant.spokespersonNationalId
-
-    const formattedSubject = this.formatMessage(subject, {
-      courtName,
-      courtCaseNumber,
-    })
-
-    const formattedBody = this.formatMessage(body, {
-      courtName,
-      courtCaseNumber,
-      spokespersonHasAccessToRVG,
-      spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-      linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
     const promises: Promise<Recipient>[] = []
 
     if (civilClaimant.isSpokespersonConfirmed) {
       promises.push(
         this.sendEmail({
-          subject: formattedSubject,
-          html: formattedBody,
+          subject,
+          html: body,
           recipientName: civilClaimant.spokespersonName,
           recipientEmail: civilClaimant.spokespersonEmail,
           attachments: undefined,
@@ -176,12 +154,33 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     )
 
     if (shouldSend) {
+      if (!theCase.court?.name) {
+        this.logger.error(
+          `Missing court name for case ${theCase.id} when sending spokesperson assigned notification`,
+        )
+
+        return { delivered: false }
+      }
+
+      const courtName = capitalize(theCase.court.name)
+      const spokespersonHasAccessToRVG = !!civilClaimant.spokespersonNationalId
+      const role = civilClaimant.spokespersonIsLawyer
+        ? 'lögmann einkaréttarkröfuhafa'
+        : 'réttargæslumann einkaréttarkröfuhafa'
+
+      const subject = `${courtName} - aðgangur að máli`
+
+      const accessInfo = spokespersonHasAccessToRVG
+        ? `Sjá nánar á <a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt</a>`
+        : 'Þú getur nálgast málið hjá dómstólnum'
+      const body = `${courtName} hefur skráð þig sem ${role} í máli ${theCase.courtCaseNumber}.<br /><br />${accessInfo}.`
+
       return this.sendEmails(
         civilClaimant,
         theCase,
         TrackedNotificationType.SPOKESPERSON_ASSIGNED,
-        strings.civilClaimantSpokespersonAssignedSubject,
-        strings.civilClaimantSpokespersonAssignedBody,
+        subject,
+        body,
       )
     }
 

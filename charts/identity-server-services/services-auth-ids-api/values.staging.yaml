@@ -28,6 +28,7 @@ env:
   DB_NAME: 'servicesauth'
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'servicesauth'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
@@ -82,8 +83,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 2
-      min: 1
+      max: 15
+      min: 6
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
 initContainer:
@@ -131,9 +132,9 @@ podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 1
-  max: 2
-  min: 1
+  default: 6
+  max: 15
+  min: 6
 resources:
   limits:
     cpu: '800m'

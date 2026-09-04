@@ -32,6 +32,7 @@ env:
   DB_NAME: 'user_notification'
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'user_notification'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
   EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
   EMAIL_FROM_ADDRESS: 'development@island.is'
@@ -84,8 +85,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 2
-      min: 1
+      max: 10
+      min: 3
 httpRoute:
   internal-gw:
     hostnames:
@@ -115,9 +116,9 @@ podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 1
-  max: 2
-  min: 1
+  default: 3
+  max: 10
+  min: 3
 resources:
   limits:
     cpu: '400m'

@@ -2,6 +2,7 @@ import { ApplicationService } from '@island.is/application/api/core'
 import { HistoryService } from '@island.is/application/api/history'
 import { IntlService } from '@island.is/cms-translations'
 import { Injectable } from '@nestjs/common'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import type { Unwrap, Locale } from '@island.is/shared/types'
 import {
@@ -32,6 +33,7 @@ export class ApplicationActionService {
     private templateApiActionRunner: TemplateApiActionRunner,
     private applicationService: ApplicationService,
     private historyService: HistoryService,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   async performActionOnApplication(
@@ -211,21 +213,39 @@ export class ApplicationActionService {
       updatedApplication = update.updatedApplication as BaseApplication
 
       // Wait for both promises in parallel, no fail fast
-      await Promise.allSettled([
-        this.historyService.saveStateTransition(
-          application.id,
-          newState,
-          auth,
-          event,
-        ),
-        handleScheduledNotifications(
-          // Clean up old and create new scheduled notifications
-          this.applicationService,
-          updatedApplication,
-          template,
-          newState,
-        ),
-      ])
+      const [historyResult, scheduledNotificationsResult] =
+        await Promise.allSettled([
+          this.historyService.saveStateTransition(
+            application.id,
+            newState,
+            auth,
+            event,
+          ),
+          handleScheduledNotifications(
+            // Clean up old and create new scheduled notifications
+            this.applicationService,
+            updatedApplication,
+            template,
+            newState,
+            this.intlService,
+            this.featureFlagService,
+            auth,
+          ),
+        ])
+
+      if (historyResult.status === 'rejected') {
+        this.logger.error(
+          `Failed to save state transition history for application ${application.id}`,
+          historyResult.reason,
+        )
+      }
+
+      if (scheduledNotificationsResult.status === 'rejected') {
+        this.logger.error(
+          `Failed to handle scheduled notifications for application ${application.id}`,
+          scheduledNotificationsResult.reason,
+        )
+      }
     } catch (e) {
       this.logger.error(e)
       return {

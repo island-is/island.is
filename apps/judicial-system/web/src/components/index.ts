@@ -3,6 +3,7 @@ export { default as AccordionListItem } from './AccordionListItem/AccordionListI
 export { default as BaseSelect } from './BaseSelect/BaseSelect'
 export { default as BlueBox } from './BlueBox/BlueBox'
 export { default as VerdictTimelineCard } from './Cards/VerdictTimelineCard/VerdictTimelineCard'
+export { default as DefenderVerdictTimelineCard } from './Cards/VerdictTimelineCard/DefenderVerdictTimelineCard'
 export { default as CaseDates } from './CaseDates/CaseDates'
 export { default as CaseFile } from './CaseFile/CaseFile'
 export { default as CaseFileList } from './CaseFileList/CaseFileList'
@@ -139,4 +140,4 @@ export { default as RulingModifiedAlert } from './Alerts/RulingModifiedAlert/Rul
 export { default as AppealRulingModifiedAlert } from './Alerts/AppealRulingModifiedAlert/AppealRulingModifiedAlert'
 export { default as ChangeProsecutorModal } from './Modals/ChangeProsecutorModal/ChangeProsecutorModal'
 export { default as DuplicateIndictmentModal } from './Modals/DuplicateIndictmentModal/DuplicateIndictmentModal'
-export { default as TinyMCE } from './TinyMCE/TinyMCE'
+export { default as RichTextEditor } from './RichTextEditor/RichTextEditor'

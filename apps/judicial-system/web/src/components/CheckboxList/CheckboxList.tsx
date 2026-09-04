@@ -1,10 +1,11 @@
-import { FC } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import type { MessageDescriptor } from 'react-intl'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
 import { Checkbox } from '@island.is/island-ui/core'
+import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
 
-import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './CheckboxList.css'
 
 export interface CheckboxInfo {

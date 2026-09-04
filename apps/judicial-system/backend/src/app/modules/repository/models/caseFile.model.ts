@@ -159,4 +159,17 @@ export class CaseFile extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   @ApiProperty({ type: Boolean })
   isKeyAccessible!: boolean
+
+  /**********
+   * For ruling orders (COURT_INDICTMENT_RULING_ORDER): the ruling was
+   * pronounced orally in the court session it is linked to, so the file exists
+   * from the moment it is pronounced but has no document behind it until the
+   * district court writes the ruling up and uploads it - which only happens if
+   * a party appeals it. Records how the ruling was pronounced, so it stays true
+   * once the document has been uploaded; whether a document exists is answered
+   * by the key being empty (isRulingOrderWithoutDocument).
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isPronouncedOrally?: boolean
 }

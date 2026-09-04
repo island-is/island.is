@@ -186,6 +186,12 @@ export const userNotificationServiceSetup = (services: {
         memory: '256Mi',
       },
     })
+    .replicaCount({
+      default: 3,
+      min: 3,
+      max: 10,
+      scaleToProdInDev: true, // TEMPORARY: load-test window
+    })
     .grantNamespaces(
       'nginx-ingress-internal',
       'islandis',
