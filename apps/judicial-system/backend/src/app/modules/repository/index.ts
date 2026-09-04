@@ -43,6 +43,12 @@ export {
   UpdateCaseString,
 } from './services/caseStringRepository.service'
 export {
+  CaseFileRepositoryService,
+  CreateCaseFile,
+  UpdateCaseFile,
+  UpdatedCaseFiles,
+} from './services/caseFileRepository.service'
+export {
   CivilClaimantRepositoryService,
   UpdateCivilClaimant,
   UpdatedCivilClaimants,

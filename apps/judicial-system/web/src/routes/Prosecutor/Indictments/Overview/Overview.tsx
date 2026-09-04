@@ -350,7 +350,7 @@ const Overview: FC = () => {
                 title="Ákæra bíður yfirlesturs"
                 message={
                   workingCase.indictmentApprover?.name
-                    ? `Ákæran bíður yfirlesturs hjá ${workingCase.indictmentApprover.name}.`
+                    ? `Ákæran bíður yfirlesturs. Yfirlesari: ${workingCase.indictmentApprover.name}`
                     : 'Ákæran bíður yfirlesturs.'
                 }
                 type="info"
@@ -454,7 +454,10 @@ const Overview: FC = () => {
                         placeholder="Veldu yfirlesara"
                         isRequired={true}
                         shouldInitializeSelector={true}
-                        excludeUserId={user?.id}
+                        excludeUserIds={[
+                          user?.id,
+                          workingCase.prosecutor?.id,
+                        ].filter((id): id is string => Boolean(id))}
                         onChange={(prosecutorId, prosecutorName) => {
                           setSelectedApproverId(prosecutorId)
                           setSelectedApproverName(prosecutorName)
