@@ -28,7 +28,6 @@ interface Props {
   onInstitutionChange: (institution: ApplicationFilters['institution']) => void
   onFilterClear: (categoryId?: string) => void
   filters: ApplicationFilters
-  applications: string[]
   organizations: Organization[]
   numberOfDocuments?: number
   isSuperAdmin?: boolean

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -9,7 +8,6 @@ import {
   useGetApplicationV2ApplicationsSuperAdminQuery,
   useGetApplicationV2ApplicationsInstitutionAdminQuery,
 } from '../../queries/overview.generated'
-import uniq from 'lodash/uniq'
 import { Filters } from '../../components/Filters/Filters'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -36,9 +34,16 @@ const Overview = ({
   const { formatMessage } = useLocale()
   const { page, filters, setPage, setFilters, resetFilters } =
     useOverviewUrlState()
-  const [availableApplications, setAvailableApplications] = useState<string[]>()
 
   const useAdvancedSearch = !!filters.typeIdValue
+
+  const hasActiveFilter =
+    !!filters.nationalId ||
+    !!filters.typeIdValue ||
+    !!filters.searchStr ||
+    !!filters.institution ||
+    !!filters.period.from ||
+    !!filters.period.to
 
   const commonVariables = {
     input: {
@@ -64,16 +69,7 @@ const Overview = ({
   } = useGetApplicationV2ApplicationsInstitutionAdminQuery({
     ssr: false,
     variables: commonVariables,
-    skip: isSuperAdmin, //do NOT run if user IS superAdmin
-    onCompleted: (q) => {
-      const names = q.applicationV2ApplicationsInstitutionAdmin?.rows
-        ?.filter((x) => !!x.name)
-        ?.map((x) => x.name ?? '')
-
-      if (names) {
-        setAvailableApplications(uniq(names))
-      }
-    },
+    skip: isSuperAdmin || !hasActiveFilter, //do NOT run if user IS superAdmin or no filter is active
   })
 
   const { data: superApplicationsData, loading: loadingSuperApplications } =
@@ -85,16 +81,7 @@ const Overview = ({
           institutionNationalId: filters.institution,
         },
       },
-      skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
-      onCompleted: (q) => {
-        const names = q.applicationV2ApplicationsSuperAdmin?.rows
-          ?.filter((x) => !!x.name)
-          ?.map((x) => x.name ?? '')
-
-        if (names) {
-          setAvailableApplications(uniq(names))
-        }
-      },
+      skip: !isSuperAdmin || !hasActiveFilter, //do NOT run if user is NOT superAdmin or no filter is active
     })
 
   const isLoading =
@@ -204,7 +191,6 @@ const Overview = ({
         onDateChange={handleDateChange}
         onFilterClear={clearFilters}
         filters={filters}
-        applications={availableApplications ?? []}
         organizations={availableOrganizations ?? []}
         numberOfDocuments={totalCount}
         isSuperAdmin={isSuperAdmin}
@@ -231,6 +217,7 @@ const Overview = ({
           shouldShowCardButtons={false}
           isSuperAdmin={isSuperAdmin}
           numberOfItems={totalCount}
+          hasActiveFilter={hasActiveFilter}
         />
       )}
     </Box>

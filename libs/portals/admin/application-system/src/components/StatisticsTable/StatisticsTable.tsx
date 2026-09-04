@@ -209,7 +209,11 @@ export default function StatisticsTable({
             return (
               <T.Row key={`${row.typeid}-${i}`}>
                 {isSuperAdmin && <T.Data>{institutionName}</T.Data>}
-                <T.Data>{row.name || row.typeid}</T.Data>
+                <T.Data>
+                  <Text variant="eyebrow" color="blue400">
+                    {row.name || row.typeid}
+                  </Text>
+                </T.Data>
                 <T.Data>{row.draft}</T.Data>
                 <T.Data>{row.inprogress}</T.Data>
                 <T.Data>{row.completed}</T.Data>

@@ -41,6 +41,7 @@ interface Props {
   showInstitution?: boolean
   isSuperAdmin: boolean
   maxPage?: number
+  hasActiveFilter?: boolean
 }
 
 export const ApplicationsTable = ({
@@ -55,6 +56,7 @@ export const ApplicationsTable = ({
   showInstitution,
   isSuperAdmin,
   maxPage,
+  hasActiveFilter = true,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -99,6 +101,8 @@ export const ApplicationsTable = ({
 
   if (applications.length === 0) {
     const beyondCap = maxPage !== undefined && page > maxPage
+    const emptyMessage =
+      !hasActiveFilter || beyondCap ? m.pageBeyondLimit : m.notFound
     return (
       <>
         <Box
@@ -113,7 +117,7 @@ export const ApplicationsTable = ({
             borderColor="blue200"
           />
           <Text variant="medium" color="dark300" fontWeight="light">
-            {formatMessage(beyondCap ? m.pageBeyondLimit : m.notFound)}
+            {formatMessage(emptyMessage)}
           </Text>
           <Box
             flexGrow={1}
@@ -121,7 +125,7 @@ export const ApplicationsTable = ({
             borderColor="blue200"
           />
         </Box>
-        {beyondCap && maxPage ? (
+        {hasActiveFilter && beyondCap && maxPage ? (
           <Box marginTop={[4, 4, 4, 6]}>
             <Pagination
               page={page}
