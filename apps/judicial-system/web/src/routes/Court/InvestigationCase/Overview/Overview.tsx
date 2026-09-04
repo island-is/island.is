@@ -51,7 +51,7 @@ import {
   useCourtUpload,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 const Overview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -127,7 +127,7 @@ const Overview = () => {
               />
             </Box>
           )}
-        <div className={grid({ gap: 5 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <InfoCard
               sections={[
@@ -225,7 +225,7 @@ const Overview = () => {
               />
             )}
           </Accordion>
-          <Box alignItems="flexStart" className={grid({ gap: 2 })}>
+          <Box alignItems="flexStart" className={stack({ gap: 2 })}>
             <PdfButton
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRequest)}

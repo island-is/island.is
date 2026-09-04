@@ -37,7 +37,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { icRuling as m } from './Ruling.strings'
@@ -126,7 +126,7 @@ const Ruling = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />

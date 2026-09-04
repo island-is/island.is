@@ -39,7 +39,7 @@ import {
   usePoliceDigitalCaseFile,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import {
   appendAppealCaseIdQuery,
@@ -93,7 +93,7 @@ const Overview = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <div className={grid({ gap: 5 })}>
+          <div className={stack({ gap: 5 })}>
             <CaseOverviewHeader
               alerts={
                 targetAppealCase?.requestAppealRulingNotToBePublished

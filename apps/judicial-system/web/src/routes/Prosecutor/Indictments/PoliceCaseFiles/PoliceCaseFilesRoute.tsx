@@ -36,7 +36,7 @@ import type { PoliceCaseFilesData } from '@island.is/judicial-system-web/src/rou
 import type { PoliceDigitalCaseFilesData } from '@island.is/judicial-system-web/src/routes/Prosecutor/components/PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { PoliceDigitalCaseFilesList } from '@island.is/judicial-system-web/src/routes/Prosecutor/components/PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
 import UploadFilesToPoliceCase from './UploadFilesToPoliceCase'
@@ -174,7 +174,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
     ])
 
     return (
-      <Box className={grid({ gap: 4 })}>
+      <Box className={stack({ gap: 4 })}>
         {policeCaseNumbers?.map((policeCaseNumber, index) => {
           const currentDigitalCaseFiles =
             digitalCaseFiles?.filter(
@@ -297,7 +297,7 @@ const PoliceCaseFilesRoute = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <div className={grid({ gap: 5 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <InfoBox text={formatMessage(strings.infoBox)} />
           <PoliceUploadListMemo

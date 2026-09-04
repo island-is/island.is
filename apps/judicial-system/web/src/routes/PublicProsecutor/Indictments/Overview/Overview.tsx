@@ -39,7 +39,7 @@ import {
   REVIEWER_ASSIGNED,
 } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
@@ -154,8 +154,8 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5 })}>
-          <div className={grid({ gap: 2 })}>{verdictStatusAlerts}</div>
+        <div className={stack({ gap: 5 })}>
+          <div className={stack({ gap: 2 })}>{verdictStatusAlerts}</div>
           {verdictTimelineCards}
           <AppealRulingModifiedAlert />
           <RulingModifiedAlert />

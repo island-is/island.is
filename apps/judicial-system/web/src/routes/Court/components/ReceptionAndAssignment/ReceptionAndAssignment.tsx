@@ -29,7 +29,7 @@ import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/s
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
 import CourtCaseNumber from '@island.is/judicial-system-web/src/routes/Court/components/CourtCaseNumber/CourtCaseNumber'
 import { ProsecutorSection } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/utils'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -119,7 +119,7 @@ const ReceptionAndAssignment = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <div className={grid({ gap: 5 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <ProsecutorAndDefendantsEntries workingCase={workingCase} />
           </Box>

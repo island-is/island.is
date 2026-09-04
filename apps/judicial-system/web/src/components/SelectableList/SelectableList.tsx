@@ -11,7 +11,7 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { IconAndText } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { selectableList as strings } from './SelectableList.strings'
 import * as styles from './SelectableList.css'
@@ -117,7 +117,7 @@ const SelectableList: FC<Props> = (props) => {
   const validSelectableItems = selectableItems.filter((item) => !item.invalid)
 
   return (
-    <div className={grid({ gap: 3 })}>
+    <div className={stack({ gap: 3 })}>
       <Box
         borderColor="blue200"
         borderWidth="standard"

@@ -61,7 +61,7 @@ import {
   restrictionsCheckboxes,
   travelBanRestrictionsCheckboxes,
 } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export interface DemandsAutofillProps {
@@ -194,7 +194,7 @@ export const PoliceDemands = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(rcDemands.heading)}</PageTitle>
-        <div className={grid({ gap: 5 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading
@@ -215,7 +215,7 @@ export const PoliceDemands = () => {
                 ) : undefined
               }
             />
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <DateTime
                 name="reqValidToDate"
                 datepickerLabel={formatMessage(
@@ -333,7 +333,7 @@ export const PoliceDemands = () => {
               title={formatMessage(rcDemands.sections.legalBasis.heading)}
               required
             />
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <CheckboxList
                 blueBox={false}
                 checkboxes={
@@ -460,7 +460,7 @@ export const PoliceDemands = () => {
                   },
                 )}
               />
-              <BlueBox className={grid({ gap: 2 })}>
+              <BlueBox className={stack({ gap: 2 })}>
                 <CheckboxList
                   blueBox={false}
                   checkboxes={travelBanRestrictionsCheckboxes}

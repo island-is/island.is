@@ -23,7 +23,7 @@ import type {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCivilClaimants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Advocates.strings'
 import * as styles from './Advocates.css'
@@ -71,7 +71,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
   }
 
   return (
-    <BlueBox className={grid({ gap: 2 })}>
+    <BlueBox className={stack({ gap: 2 })}>
       <Box display="flex" justifyContent="spaceBetween">
         <Text variant="h4">{civilClaimant.name}</Text>
         {civilClaimant.hasSpokesperson && (

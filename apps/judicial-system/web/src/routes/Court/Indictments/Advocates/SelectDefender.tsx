@@ -27,7 +27,7 @@ import {
   DefenderChoice,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Advocates.strings'
 
@@ -149,7 +149,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
 
   return (
     <Box component="section">
-      <BlueBox className={grid({ gap: 2 })}>
+      <BlueBox className={stack({ gap: 2 })}>
         <Box display="flex" justifyContent="spaceBetween">
           <Text variant="h4">
             {`${capitalize(

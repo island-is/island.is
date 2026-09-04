@@ -41,7 +41,7 @@ import {
   useCreateSubpoenas,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { canSkipArraignmentSummons as isArraignmentSummonsSkippable } from '@island.is/judicial-system-web/src/utils/utils'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -437,7 +437,7 @@ const Subpoena: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5 })}>
+        <div className={stack({ gap: 5 })}>
           {updates?.defendants && (
             <SubpoenaType
               subpoenaItems={updates?.defendants?.map((defendant) => ({

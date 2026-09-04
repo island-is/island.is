@@ -2,7 +2,7 @@ import { recipe } from '@vanilla-extract/recipes'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const grid = recipe({
+export const stack = recipe({
   base: {
     display: 'flex',
     flexDirection: 'column',

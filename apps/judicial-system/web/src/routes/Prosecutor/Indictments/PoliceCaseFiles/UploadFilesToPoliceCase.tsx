@@ -22,7 +22,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './PoliceCaseFilesRoute.strings'
 
@@ -149,7 +149,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   }
 
   return (
-    <section className={grid({ gap: 5 })}>
+    <section className={stack({ gap: 5 })}>
       <PoliceCaseFiles
         onUpload={onPoliceCaseFileUpload}
         policeCaseFileList={policeCaseFileList}

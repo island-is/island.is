@@ -46,7 +46,7 @@ import {
 import { useCancelCase } from '@island.is/judicial-system-web/src/routes/Shared/CaseTable/CancelCase'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
@@ -74,7 +74,7 @@ const OverviewBody = ({
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
-        <div className={grid({ gap: 5 })}>
+        <div className={stack({ gap: 5 })}>
           {workingCase.comments && (
             <AlertMessage
               title={formatMessage(commentsInput.heading)}
