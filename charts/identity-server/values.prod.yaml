@@ -294,6 +294,7 @@ services-auth-admin-api:
     primary-gw:
       hostnames:
         - 'innskra.island.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -922,6 +923,7 @@ services-auth-public-api:
     primary-gw:
       hostnames:
         - 'innskra.island.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'

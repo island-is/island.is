@@ -55,6 +55,7 @@ air-discount-scheme-backend:
       hostnames:
         - 'loftbru.dev01.devland.is'
         - 'loftbru-cf.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -1575,6 +1576,7 @@ download-service:
     primary-gw:
       hostnames:
         - 'api.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -1850,6 +1852,7 @@ github-actions-cache:
     primary-gw:
       hostnames:
         - 'cache.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2235,6 +2238,7 @@ payments:
     primary-gw:
       hostnames:
         - 'beta.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2506,6 +2510,7 @@ search-indexer-service:
     primary-gw:
       hostnames:
         - 'search-indexer-service.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2856,6 +2861,7 @@ services-bff-portals-admin:
     primary-gw:
       hostnames:
         - 'beta.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2944,6 +2950,7 @@ services-bff-portals-my-pages:
     primary-gw:
       hostnames:
         - 'beta.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'

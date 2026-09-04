@@ -103,6 +103,8 @@ export interface HelmService {
         matches: { pathPrefix?: string; pathExact?: string }[]
         rewritePrefix?: string
       }[]
+      // Opt this route out of the gateway-wide Cognito OIDC wall.
+      noAuth?: boolean
     }
   }
 
