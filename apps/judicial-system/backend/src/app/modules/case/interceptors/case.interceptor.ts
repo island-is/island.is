@@ -852,6 +852,8 @@ const transformCase = (
         ? CaseString.penalties(theCase.caseStrings)
         : null,
     reopenReason: CaseString.reopenReason(theCase.caseStrings),
+    indictmentReviewReturnedExplanation:
+      CaseString.indictmentReviewReturnedExplanation(theCase.caseStrings),
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,

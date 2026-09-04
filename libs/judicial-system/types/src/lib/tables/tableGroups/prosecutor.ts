@@ -40,7 +40,7 @@ export const prosecutorIndictmentsTableGroup: CaseTableGroup = {
       type: CaseTableType.PROSECUTION_INDICTMENTS_IN_DRAFT,
       route: 'sakamal-i-drogum',
       title: 'Ákærur í drögum',
-      description: 'Ákærur í drögum.',
+      description: 'Ákærur í drögum og til yfirlesturs.',
       includeCounter: true,
     },
     {

@@ -1,4 +1,8 @@
-import { CaseFileCategory, isRulingOrderWithoutDocument } from './file'
+import {
+  CaseFileCategory,
+  isAppealFileDeletionLocked,
+  isRulingOrderWithoutDocument,
+} from './file'
 
 describe('isRulingOrderWithoutDocument', () => {
   it('should be true for a ruling order pronounced orally that has no key', () => {
@@ -47,6 +51,58 @@ describe('isRulingOrderWithoutDocument', () => {
         category: null,
         isPronouncedOrally: null,
         key: null,
+      }),
+    ).toBe(false)
+  })
+})
+
+describe('isAppealFileDeletionLocked', () => {
+  it('should not lock anything when there is no appeal', () => {
+    expect(
+      isAppealFileDeletionLocked(CaseFileCategory.DEFENDANT_APPEAL_BRIEF, null),
+    ).toBe(false)
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+        undefined,
+      ),
+    ).toBe(false)
+  })
+
+  it('should lock a kæra file only once the court of appeals has a case number', () => {
+    expect(
+      isAppealFileDeletionLocked(CaseFileCategory.DEFENDANT_APPEAL_BRIEF, {
+        appealCaseNumber: null,
+      }),
+    ).toBe(false)
+    expect(
+      isAppealFileDeletionLocked(CaseFileCategory.DEFENDANT_APPEAL_BRIEF, {
+        appealCaseNumber: 'LRE-1/2026',
+      }),
+    ).toBe(true)
+  })
+
+  // The declaration is the áfrýjun itself, filed long before Landsréttur has a
+  // case number, so it locks as soon as the appeal exists.
+  it('should lock an áfrýjunaryfirlýsing as soon as the appeal exists', () => {
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+        { appealCaseNumber: null },
+      ),
+    ).toBe(true)
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+        { appealCaseNumber: null },
+      ),
+    ).toBe(true)
+  })
+
+  it('should not lock a file that has nothing to do with an appeal', () => {
+    expect(
+      isAppealFileDeletionLocked(CaseFileCategory.COURT_RECORD, {
+        appealCaseNumber: 'LRE-1/2026',
       }),
     ).toBe(false)
   })
