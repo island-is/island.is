@@ -332,12 +332,13 @@ describe('MeTenantsController', () => {
         const setRes = await server
           .patch(`/v2/me/tenants/${encodeURIComponent(created.name)}`)
           .send({
-            municipalityName: 'Reykjavík',
+            municipalityName: ' Reykjavík  ',
           })
 
         expect(setRes.status).toBe(200)
         expect(setRes.body).toMatchObject({
           name: created.name,
+          // Persisted trimmed so it matches the National Registry form
           municipalityName: 'Reykjavík',
         })
 

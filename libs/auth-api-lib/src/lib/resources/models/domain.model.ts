@@ -75,6 +75,11 @@ export class Domain extends Model {
 
   @Column({
     type: DataType.STRING,
+    // Matched verbatim against the National Registry municipality name,
+    // so stray whitespace must never be persisted.
+    set(this: Domain, value: string | null | undefined) {
+      this.setDataValue('municipalityName', value?.trim() || null)
+    },
   })
   @ApiPropertyOptional({
     example: 'Reykjavík',
