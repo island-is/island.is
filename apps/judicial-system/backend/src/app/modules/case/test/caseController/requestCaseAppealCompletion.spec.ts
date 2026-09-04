@@ -5,6 +5,7 @@ import { BadRequestException } from '@nestjs/common'
 
 import {
   AppealCaseState,
+  AppealCaseType,
   AppealDecisionPartyRole,
   AppealEventType,
   AppealOrigin,
@@ -135,7 +136,11 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
     it('should create the appeal case with the court end time as appeal date', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
-        { appealState: AppealCaseState.APPEALED, appealDate: courtEndTime },
+        {
+          appealType: AppealCaseType.RULING,
+          appealState: AppealCaseState.APPEALED,
+          appealDate: courtEndTime,
+        },
         { transaction },
       )
     })
