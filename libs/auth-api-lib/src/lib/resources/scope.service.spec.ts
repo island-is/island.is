@@ -42,7 +42,7 @@ describe('ScopeService', () => {
   }
   let mockDelegationResources: { findScopesInternal: jest.Mock }
   let mockNationalRegistry: { getAddress: jest.Mock }
-  let mockDomainModel: { findAll: jest.Mock }
+  let mockDomainModel: { findOne: jest.Mock }
 
   beforeEach(async () => {
     mockCms = {
@@ -56,7 +56,7 @@ describe('ScopeService', () => {
       getAddress: jest.fn().mockResolvedValue(null),
     }
     mockDomainModel = {
-      findAll: jest.fn().mockResolvedValue([]),
+      findOne: jest.fn().mockResolvedValue(null),
     }
 
     const module = await Test.createTestingModule({
@@ -222,10 +222,7 @@ describe('ScopeService', () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Kópavogur',
       })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
-        { name: '@arborg.is', municipalityName: 'Sveitarfélagið Árborg' },
-      ])
+      mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         {
@@ -255,105 +252,11 @@ describe('ScopeService', () => {
       expect(mittTag!.scopes[0].name).toBe('@kopavogur.is/service')
     })
 
-    it('should match on municipalityName independent of the domain display name', async () => {
-      // The domain is registered as "Reykjavíkurborg" but its
-      // municipalityName holds the National Registry form "Reykjavík"
-      mockNationalRegistry.getAddress.mockResolvedValue({
-        sveitarfelag: 'Reykjavík',
-      })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@reykjavik.is', municipalityName: 'Reykjavík' },
-      ])
-
-      mockCms.getDelegationScopeTags.mockResolvedValue([
-        {
-          id: 'tag-sv',
-          title: 'Sveitarfélag',
-          slug: 'sveitarfelog',
-          description: '',
-        },
-      ])
-      mockDelegationResources.findScopesInternal.mockResolvedValue([
-        {
-          ...makeScope('@reykjavik.is/service', '@reykjavik.is'),
-          tags: [{ tagId: 'tag-sv' }],
-        },
-      ])
-
-      const result = await service.findScopeTags(mockUser, 'is')
-
-      const mittTag = result.find((t) => t.id === 'virtual-mitt-sveitarfelag')
-      expect(mittTag).toBeDefined()
-      expect(mittTag!.scopes[0].name).toBe('@reykjavik.is/service')
-    })
-
-    it('should not match domains that have no municipalityName set', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({
-        sveitarfelag: 'Múlaþing',
-      })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@mulathing.is', municipalityName: null },
-      ])
-
-      mockCms.getDelegationScopeTags.mockResolvedValue([
-        {
-          id: 'tag-sv',
-          title: 'Sveitarfélag',
-          slug: 'sveitarfelog',
-          description: '',
-        },
-      ])
-      mockDelegationResources.findScopesInternal.mockResolvedValue([
-        {
-          ...makeScope('@mulathing.is/service', '@mulathing.is'),
-          tags: [{ tagId: 'tag-sv' }],
-        },
-      ])
-
-      const result = await service.findScopeTags(mockUser, 'is')
-
-      expect(
-        result.find((t) => t.id === 'virtual-mitt-sveitarfelag'),
-      ).toBeUndefined()
-    })
-
-    it('should match despite casing and whitespace differences', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({
-        sveitarfelag: '  GARÐABÆR ',
-      })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@gardabaer.is', municipalityName: 'Garðabær' },
-      ])
-
-      mockCms.getDelegationScopeTags.mockResolvedValue([
-        {
-          id: 'tag-sv',
-          title: 'Sveitarfélag',
-          slug: 'sveitarfelog',
-          description: '',
-        },
-      ])
-      mockDelegationResources.findScopesInternal.mockResolvedValue([
-        {
-          ...makeScope('@gardabaer.is/service', '@gardabaer.is'),
-          tags: [{ tagId: 'tag-sv' }],
-        },
-      ])
-
-      const result = await service.findScopeTags(mockUser, 'is')
-
-      expect(
-        result.find((t) => t.id === 'virtual-mitt-sveitarfelag'),
-      ).toBeDefined()
-    })
-
-    it('should only look up domains that own scopes in the "Sveitarfélag" tag', async () => {
+    it('should match domains by municipalityName among the tag domains', async () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Kópavogur',
       })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
-      ])
+      mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         {
@@ -376,11 +279,11 @@ describe('ScopeService', () => {
 
       await service.findScopeTags(mockUser, 'is')
 
-      expect(mockDomainModel.findAll).toHaveBeenCalledWith(
+      expect(mockDomainModel.findOne).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
             name: { [Op.in]: ['@kopavogur.is'] },
-            municipalityName: { [Op.ne]: null },
+            municipalityName: 'Kópavogur',
           },
         }),
       )
@@ -390,9 +293,7 @@ describe('ScopeService', () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Kópavogur',
       })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
-      ])
+      mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         {
@@ -421,9 +322,7 @@ describe('ScopeService', () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Kópavogur',
       })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
-      ])
+      mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         {
@@ -483,9 +382,7 @@ describe('ScopeService', () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Dalvík',
       })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
-      ])
+      mockDomainModel.findOne.mockResolvedValue(null)
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         {
@@ -513,9 +410,7 @@ describe('ScopeService', () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Kópavogur',
       })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@kopavogur.is', municipalityName: 'Kópavogur' },
-      ])
+      mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         { id: 'tag-other', title: 'Eignir', slug: 'eignir', description: '' },
@@ -538,9 +433,8 @@ describe('ScopeService', () => {
       mockNationalRegistry.getAddress.mockResolvedValue({
         sveitarfelag: 'Kópavogur',
       })
-      mockDomainModel.findAll.mockResolvedValue([
-        { name: '@arborg.is', municipalityName: 'Sveitarfélagið Árborg' },
-      ])
+      // No domain in the tag matches the user's municipality
+      mockDomainModel.findOne.mockResolvedValue(null)
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         {

@@ -21,11 +21,6 @@ import { ResourceTranslationService } from './resource-translation.service'
 import { DelegationResourcesService } from './delegation-resources.service'
 import { mapToScopeTree } from './utils/scope-tree.mapper'
 
-// Compared normalized so admin-entered values don't need to match the
-// National Registry byte-for-byte in casing or whitespace.
-const normalizeMunicipalityName = (name: string): string =>
-  name.normalize('NFC').toLowerCase().replace(/\s+/g, ' ').trim()
-
 const VIRTUAL_MUNICIPALITY_TAG_ID = 'virtual-mitt-sveitarfelag'
 const VIRTUAL_MUNICIPALITY_TAG_SLUG = 'mitt-sveitarfelag'
 // Must match the Contentful delegation scope tag slug for "Sveitarfélag"
@@ -86,20 +81,13 @@ export class ScopeService {
 
     if (!sveitarfelag) return null
 
-    const domains = await this.domainModel.findAll({
-      attributes: ['name', 'municipalityName'],
+    const domain = await this.domainModel.findOne({
+      attributes: ['name'],
       where: {
         name: { [Op.in]: candidateDomainNames },
-        municipalityName: { [Op.ne]: null },
+        municipalityName: sveitarfelag,
       },
     })
-
-    const municipalityKey = normalizeMunicipalityName(sveitarfelag)
-    const domain = domains.find(
-      (domain) =>
-        domain.municipalityName &&
-        normalizeMunicipalityName(domain.municipalityName) === municipalityKey,
-    )
 
     return domain?.name ?? null
   }
