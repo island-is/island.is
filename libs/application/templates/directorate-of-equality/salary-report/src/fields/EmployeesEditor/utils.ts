@@ -92,9 +92,6 @@ export const getSalaryComponentLabels = (
   }
 }
 
-export const formatCurrency = (value?: number | null): string =>
-  `${(value ?? 0).toLocaleString('is-IS')} kr.`
-
 // Greiddar stundir is an absolute count of hours, not a percentage — there is
 // deliberately no scaling in either direction here. The old workRatio field
 // stored a fraction and multiplied by 100 for display; carrying that over would

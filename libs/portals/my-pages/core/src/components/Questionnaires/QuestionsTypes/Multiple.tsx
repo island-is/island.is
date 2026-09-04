@@ -1,5 +1,12 @@
 import React from 'react'
-import { Checkbox, Box, Stack, Inline, Text } from '@island.is/island-ui/core'
+import {
+  Checkbox,
+  Box,
+  Stack,
+  Inline,
+  InputError,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { useIsMobile } from '@island.is/portals/core'
@@ -92,11 +99,7 @@ export const Multiple: React.FC<MultipleProps> = ({
           <Stack space={2}>{checkboxes}</Stack>
         </Box>
       )}
-      {error && (
-        <Text color="red400" variant="small" marginTop={1}>
-          {error}
-        </Text>
-      )}
+      {error && <InputError errorMessage={error} />}
     </Box>
   )
 }

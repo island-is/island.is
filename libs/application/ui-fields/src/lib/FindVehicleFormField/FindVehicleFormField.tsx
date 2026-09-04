@@ -26,7 +26,7 @@ import {
 import { useFormContext } from 'react-hook-form'
 import { FC, useEffect, useState } from 'react'
 import format from 'date-fns/format'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import {
   energyFundsLabel,
   extractDetails,

@@ -18242,6 +18242,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-table@npm:3.30.3":
+  version: 3.30.3
+  resolution: "@tiptap/extension-table@npm:3.30.3"
+  peerDependencies:
+    "@tiptap/core": 3.30.3
+    "@tiptap/pm": 3.30.3
+  checksum: 10/94636bf4634eb10b2f796a12843a9e24e48453f8a29b8329ec046bed39ed38a3b878ce1cff5bd082dff3c499024912ab861bbf2ca122eb933ddfb1033c93d22e
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-text@npm:3.30.3":
   version: 3.30.3
   resolution: "@tiptap/extension-text@npm:3.30.3"
@@ -32233,17 +32243,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:3.0.0":
-  version: 3.0.0
-  resolution: "form-data@npm:3.0.0"
-  dependencies:
-    asynckit: "npm:^0.4.0"
-    combined-stream: "npm:^1.0.8"
-    mime-types: "npm:^2.1.12"
-  checksum: 10/aea890ae3e8ce7eb55c6e61f84996066f450d1560c1d60f06f3c635037d4a3dce63715a1c2214c32d60737e93f4f570467dcbcade46dd4af63038af7f7a144d3
-  languageName: node
-  linkType: hard
-
 "form-data@npm:4.0.0":
   version: 4.0.0
   resolution: "form-data@npm:4.0.0"
@@ -32255,7 +32254,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:4.0.5, form-data@npm:^4.0.0, form-data@npm:^4.0.4, form-data@npm:^4.0.5, form-data@npm:~4.0.4":
+"form-data@npm:4.0.5":
   version: 4.0.5
   resolution: "form-data@npm:4.0.5"
   dependencies:
@@ -32265,6 +32264,19 @@ __metadata:
     hasown: "npm:^2.0.2"
     mime-types: "npm:^2.1.12"
   checksum: 10/52ecd6e927c8c4e215e68a7ad5e0f7c1031397439672fd9741654b4a94722c4182e74cc815b225dcb5be3f4180f36428f67c6dd39eaa98af0dcfdd26c00c19cd
+  languageName: node
+  linkType: hard
+
+"form-data@npm:4.0.6, form-data@npm:^4.0.0, form-data@npm:^4.0.4, form-data@npm:^4.0.5, form-data@npm:~4.0.4":
+  version: 4.0.6
+  resolution: "form-data@npm:4.0.6"
+  dependencies:
+    asynckit: "npm:^0.4.0"
+    combined-stream: "npm:^1.0.8"
+    es-set-tostringtag: "npm:^2.1.0"
+    hasown: "npm:^2.0.4"
+    mime-types: "npm:^2.1.35"
+  checksum: 10/de6614c8537c92fa5fa3ee7e827758f98f5a9c033f348b7de81855ef36e5cb867e75d9f405d9483ab8d724a4a20d4e79926a299fa8dbba38f530eb659f0884e4
   languageName: node
   linkType: hard
 
@@ -33631,6 +33643,15 @@ __metadata:
   dependencies:
     function-bind: "npm:^1.1.2"
   checksum: 10/7898a9c1788b2862cf0f9c345a6bec77ba4a0c0983c7f19d610c382343d4f98fa260686b225dfb1f88393a66679d2ec58ee310c1d6868c081eda7918f32cc70a
+  languageName: node
+  linkType: hard
+
+"hasown@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "hasown@npm:2.0.4"
+  dependencies:
+    function-bind: "npm:^1.1.2"
+  checksum: 10/13823863ae48161068b4c51606a3128451c66f14545a5169d667fe9fca168dcd38c27570c7a299e32ef844b8da3d55def7fe88602f8970d4311fb543ee88001a
   languageName: node
   linkType: hard
 
@@ -36074,6 +36095,7 @@ __metadata:
     "@testing-library/user-event": "npm:14.6.1"
     "@tiptap/core": "npm:3.30.3"
     "@tiptap/extension-list": "npm:3.30.3"
+    "@tiptap/extension-table": "npm:3.30.3"
     "@tiptap/extensions": "npm:3.30.3"
     "@tiptap/pm": "npm:3.30.3"
     "@tiptap/react": "npm:3.30.3"
@@ -36214,7 +36236,7 @@ __metadata:
     firebase-admin: "npm:11.5.0"
     folder-hash: "npm:4.0.0"
     font-awesome: "npm:4.7.0"
-    form-data: "npm:3.0.0"
+    form-data: "npm:4.0.6"
     formik: "npm:2.2.9"
     fridagar: "npm:^3.2.0"
     fuse.js: "npm:7.0.0"

@@ -47,13 +47,15 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
           }
         />
         {hasSubsidiaries &&
-          subsidiaryList.map((s, i) => (
-            <Row
-              key={i}
-              label={s.nationalIdWithName.name}
-              value={s.nationalIdWithName.nationalId}
-            />
-          ))}
+          subsidiaryList
+            .filter((s) => !s.isRemoved)
+            .map((s, i) => (
+              <Row
+                key={i}
+                label={s.nationalIdWithName?.name ?? ''}
+                value={s.nationalIdWithName?.nationalId}
+              />
+            ))}
       </ReviewGroup>
 
       <ReviewGroup

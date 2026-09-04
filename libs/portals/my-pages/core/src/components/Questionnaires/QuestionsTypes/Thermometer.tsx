@@ -1,4 +1,4 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, InputError, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
@@ -337,11 +337,7 @@ export const Thermometer: FC<ThermometerProps> = ({
         </Box>
       </Box>
 
-      {error && (
-        <Text color="red400" variant="small" marginTop={2}>
-          {error}
-        </Text>
-      )}
+      {error && <InputError errorMessage={error} />}
     </Box>
   )
 }

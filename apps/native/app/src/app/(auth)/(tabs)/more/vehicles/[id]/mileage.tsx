@@ -96,6 +96,10 @@ export default function VehicleMileageScreen() {
       ? +data[0].mileage
       : 0
 
+  const mileageUnit = info.data?.vehiclesDetail?.mainInfo?.hasMilesOdometer
+    ? 'mi'
+    : 'km'
+
   const isFormEditable = !!res.data?.vehicleMileageDetails?.editing
   const canRegisterMileage =
     !!res.data?.vehicleMileageDetails?.canRegisterMileage
@@ -234,7 +238,11 @@ export default function VehicleMileageScreen() {
 
   return (
     <>
-      <StackScreen networkStatus={[res.networkStatus, info.networkStatus]} />
+      <StackScreen
+        closeable
+        options={{ title: '' }}
+        networkStatus={[res.networkStatus, info.networkStatus]}
+      />
       <FlatList
         data={data}
         renderItem={({ item, index }) =>
@@ -251,7 +259,9 @@ export default function VehicleMileageScreen() {
               }
               accessory={
                 item.mileage
-                  ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`
+                  ? `${intl.formatNumber(
+                      parseInt(item.mileage, 10),
+                    )} ${mileageUnit}`
                   : '-'
               }
               editable={!shouldDisableMileageEdit && index === 0}
@@ -264,6 +274,12 @@ export default function VehicleMileageScreen() {
         keyExtractor={(item, index) => String(item.internalId ?? index)}
         ListHeaderComponent={
           <View key="list-header">
+            <Typography
+              variant="heading3"
+              style={{ marginTop: 8, marginBottom: 16 }}
+            >
+              {intl.formatMessage({ id: 'vehicles.registerMileage' })}
+            </Typography>
             <NavigationBarSheet
               componentId="vehicle-mileage"
               title={

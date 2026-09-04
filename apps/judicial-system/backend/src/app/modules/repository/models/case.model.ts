@@ -273,9 +273,8 @@ export class Case extends Model {
    * only used for custody and travel ban cases
    **********/
   @Column({
-    type: DataType.ARRAY(DataType.ENUM),
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: true,
-    values: Object.values(CaseLegalProvisions),
   })
   @ApiPropertyOptional({ enum: CaseLegalProvisions, isArray: true })
   legalProvisions?: CaseLegalProvisions[]
@@ -793,6 +792,21 @@ export class Case extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentDeniedExplanation?: string
+
+  /**********
+   * The surrogate key of the prosecutor assigned to proofread an indictment
+   **********/
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  indictmentApproverId?: string
+
+  /**********
+   * The prosecutor assigned to proofread an indictment before confirmation
+   **********/
+  @BelongsTo(() => User, 'indictmentApproverId')
+  @ApiPropertyOptional({ type: User })
+  indictmentApprover?: User
 
   /**********
    * The case's notifications

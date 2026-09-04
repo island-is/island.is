@@ -86,6 +86,7 @@ httpRoute:
   primary-gw:
     hostnames:
       - 'innskra.island.is'
+    noAuth: true
     parentRefs:
       - name: 'gateway-external'
         namespace: 'envoy-gateway-external'
