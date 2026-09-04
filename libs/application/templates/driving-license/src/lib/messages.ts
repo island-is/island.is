@@ -498,18 +498,6 @@ export const m = defineMessages({
     description:
       'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
   },
-  congratulationsTitleSuccess: {
-    id: 'dl.application:congratulationsTitleSuccess',
-    defaultMessage:
-      'Umsókn þín um fullnaðarskírteini tókst og verður tilbúið á afhendingarstað eftir 3 til 4 vikur. Skila þarf inn bráðabirgðaskírteini til sýslumanns við afhendingu fullnaðarskírteinis.',
-    description: 'Your application for full driving license was successful.',
-  },
-  congratulationsTempTitleSuccess: {
-    id: 'dl.application:congratulationsTempTitleSuccess',
-    defaultMessage:
-      'Umsókn þín um að hefja ökunám og fá bráðabirgðaskírteini hefur verið móttekin. Þegar þú hefur lokið ökunámi og staðist bæði verklegt og bóklegt ökupróf, verður skírteini þitt pantað og tilbúið til afhendingar hjá völdu sýslumannsembætti þremur vikum síðar.',
-    description: 'Your application for full driving license was successful.',
-  },
   congratulationsTitle: {
     id: 'dl.application:congratulationsTitle',
     defaultMessage: 'Til hamingju',
@@ -550,8 +538,13 @@ export const m = defineMessages({
   },
   nextStepsDescription: {
     id: 'dl.application:nextStepsDescription#markdown',
+    // Copy from Samgongustofa (2026-09-01): delivery takes ~7 days, not the
+    // 3 weeks the previous text claimed, and photo/signature can now come from
+    // the identity-documents registry during the application itself. NOTE: the
+    // live text is the Contentful entry for this id — it must be updated (and
+    // published) to match, or applicants keep seeing the old copy.
     defaultMessage:
-      'Næst þarf umsækjandi að mæta til sýslumanns með mynd og gefa rithandarsýnishorn. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+      '* Ef ekki var hægt að velja mynd eða undirskrift úr skilríkjaskrá í umsóknarferlinu þarf að skila inn mynd og undirskrift á næstu skrifstofu sýslumanns. Þegar öllum gögnum hefur verið skilað inn er námsheimild gefin út og hægt að hefja ökunám.\n* Þegar þú hefur lokið ökunámi og staðist bæði bóklegt og verklegt ökupróf er ökuskírteinið pantað og afhent samkvæmt þeim afhendingarmáta sem þú valdir, heimsent eða sótt á valda skrifstofu sýslumanns, að jafnaði um sjö dögum síðar.\n\n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: 'Next steps',
   },
   nextStepsDescriptionBFull: {
@@ -562,7 +555,7 @@ export const m = defineMessages({
   },
   nextStepsIntroDefault: {
     id: 'dl.application:nextStepsIntroDefault',
-    defaultMessage: 'Umsókn þín hefur verið móttekin og verður skoðuð.',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og verður nú yfirfarin.',
     description: '',
   },
   nextStepsIntroBE: {
