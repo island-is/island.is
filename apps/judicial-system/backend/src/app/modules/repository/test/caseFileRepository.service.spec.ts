@@ -378,4 +378,132 @@ describe('CaseFileRepositoryService', () => {
       ).rejects.toThrow(error)
     })
   })
+
+  describe('findAllByCaseAndCategories', () => {
+    const categories = [
+      CaseFileCategory.CASE_FILE,
+      CaseFileCategory.PROSECUTOR_CASE_FILE,
+    ]
+
+    it('loads the files of the case in exactly the given categories', async () => {
+      const caseFiles = [{ id: fileId }]
+      model.findAll.mockResolvedValueOnce(caseFiles)
+
+      const result = await service.findAllByCaseAndCategories(
+        caseId,
+        categories,
+        { transaction },
+      )
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { caseId, category: categories },
+        transaction,
+      })
+      expect(result).toBe(caseFiles)
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockRejectedValueOnce(error)
+
+      await expect(
+        service.findAllByCaseAndCategories(caseId, categories, {
+          transaction,
+        }),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('copyToCase', () => {
+    const newCaseId = 'some-new-case-id'
+    const policeFileId = 'some-police-file-id'
+    const sourceFile = {
+      id: fileId,
+      caseId,
+      policeFileId,
+      toJSON: () => ({
+        id: fileId,
+        caseId,
+        name: 'document.pdf',
+        category: CaseFileCategory.CASE_FILE,
+        key: `${caseId}/abc/document.pdf`,
+        state: CaseFileState.STORED_IN_COURT,
+        defendantId: 'old-defendant-id',
+        civilClaimantId: 'old-civil-claimant-id',
+        policeFileId,
+        hash: 'some-hash',
+        hashAlgorithm: HashAlgorithm.SHA256,
+      }),
+    } as unknown as CaseFile
+
+    it('creates the copy on the new case at the new key as an independent draft file', async () => {
+      const created = { id: 'new-file-id' }
+      model.create.mockResolvedValueOnce(created)
+
+      const result = await service.copyToCase(
+        sourceFile,
+        newCaseId,
+        {
+          key: `${newCaseId}/def/document.pdf`,
+          defendantId: 'new-defendant-id',
+          civilClaimantId: 'new-civil-claimant-id',
+        },
+        { transaction },
+      )
+
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          id: undefined,
+          caseId: newCaseId,
+          name: 'document.pdf',
+          category: CaseFileCategory.CASE_FILE,
+          key: `${newCaseId}/def/document.pdf`,
+          // Back to being stored only in RVG
+          state: CaseFileState.STORED_IN_RVG,
+          // Pointed at the copies of the defendant and civil claimant
+          defendantId: 'new-defendant-id',
+          civilClaimantId: 'new-civil-claimant-id',
+          // The police file reference is kept so the file is not offered for
+          // re-upload from the police system
+          policeFileId,
+          // The hash was computed for the original key and is no longer valid
+          hash: undefined,
+          hashAlgorithm: undefined,
+        },
+        { transaction },
+      )
+      expect(result).toBe(created)
+    })
+
+    it('leaves the defendant and civil claimant references empty when the caller has none', async () => {
+      await service.copyToCase(
+        sourceFile,
+        newCaseId,
+        { key: `${newCaseId}/def/document.pdf` },
+        { transaction },
+      )
+
+      expect(model.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          defendantId: undefined,
+          civilClaimantId: undefined,
+        }),
+        { transaction },
+      )
+    })
+
+    it('rethrows when the creation fails', async () => {
+      const error = new Error('Some error')
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyToCase(
+          sourceFile,
+          newCaseId,
+          { key: `${newCaseId}/def/document.pdf` },
+          { transaction },
+        ),
+      ).rejects.toThrow(error)
+    })
+  })
 })

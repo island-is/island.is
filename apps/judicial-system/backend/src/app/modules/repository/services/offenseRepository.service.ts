@@ -125,4 +125,55 @@ export class OffenseRepositoryService {
       throw error
     }
   }
+
+  // Copies the offenses of the given indictment counts onto their copies: the
+  // map's keys are the original count ids, its values the ids of the new counts
+  // the copied offenses are attached to.
+  async copyAllForIndictmentCounts(
+    indictmentCountIdMap: ReadonlyMap<string, string>,
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    const indictmentCountIds = [...indictmentCountIdMap.keys()]
+
+    if (indictmentCountIds.length === 0) {
+      return
+    }
+
+    try {
+      this.logger.debug(
+        `Copying the offenses of ${indictmentCountIds.length} indictment counts to their copies`,
+      )
+
+      const offenses = await this.offenseModel.findAll({
+        where: { indictmentCountId: indictmentCountIds },
+        transaction: options.transaction,
+      })
+
+      await Promise.all(
+        offenses.map((offense) =>
+          this.offenseModel.create(
+            {
+              ...offense.toJSON(),
+              id: undefined,
+              indictmentCountId: indictmentCountIdMap.get(
+                offense.indictmentCountId,
+              ),
+            },
+            { transaction: options.transaction },
+          ),
+        ),
+      )
+
+      this.logger.debug(
+        `Copied ${offenses.length} offenses of ${indictmentCountIds.length} indictment counts to their copies`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying the offenses of ${indictmentCountIds.length} indictment counts to their copies:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }
