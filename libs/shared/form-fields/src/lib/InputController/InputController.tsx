@@ -152,7 +152,8 @@ export const InputController = forwardRef(
               const { floatValue } = values
               if (floatValue === undefined) return true
               if (max !== undefined && floatValue > max) return false
-              if (min !== undefined && floatValue < min) return false
+              if (min !== undefined && floatValue < min && floatValue <= 0)
+                return false
               return true
             }}
             onChange={async (
