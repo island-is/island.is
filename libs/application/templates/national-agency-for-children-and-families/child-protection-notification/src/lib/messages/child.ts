@@ -68,6 +68,13 @@ export const childMessages = {
       defaultMessage: 'Veldu persónufornafn',
       description: 'Placeholder for preferred pronoun select field',
     },
+    childOver18Error: {
+      id: 'cpn.application:child.nationalIdLookup.childOver18Error',
+      defaultMessage:
+        'Viðkomandi er orðinn 18 ára og telst því ekki lengur barn samkvæmt barnaverndarlögum. Ef þú telur samt sem áður mikilvægt að koma upplýsingum um viðkomandi á framfæri getur þú haft beint samband við félagsþjónustu eða barnavernd í því sveitarfélagi þar sem viðkomandi býr.',
+      description:
+        'Error shown when the entered national ID belongs to someone 18 or older',
+    },
   }),
   noNationalId: defineMessages({
     reasonLabel: {

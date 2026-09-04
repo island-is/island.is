@@ -6,7 +6,7 @@ import { memmSection } from './memmSection'
 import { parentsSection } from '../../shared/parentsSection'
 import { protectiveFactorsSection } from '../../shared/protectiveFactorsSection'
 import { overviewSection } from './overviewSection'
-import { reasonForNotificationSection } from './reasonForNotificationSection'
+import { reasonForNotificationSection } from '../../shared/reasonForNotificationSection'
 import { childSafetySection } from '../../shared/childSafetySection'
 
 export const AdultProcurationDraftForm = buildForm({

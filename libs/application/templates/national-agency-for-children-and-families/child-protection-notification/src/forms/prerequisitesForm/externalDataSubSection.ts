@@ -13,7 +13,6 @@ import {
   GendersApi,
   GuardianNotAwareReasonsApi,
   IdentityApiProvider,
-  LanguageEnvironmentsApi,
   NationalRegistryV3UserApi,
   NotifierRolesApi,
   NotifierRoleSubTypesApi,
@@ -21,8 +20,44 @@ import {
   PronounsApi,
   ProtectiveFactorsApi,
   SchoolTypesApi,
+  UserProfileApi,
 } from '../../dataProviders'
 import { prerequisitesMessages } from '../../lib/messages'
+
+export const minorExternalDataSubSection = buildSubSection({
+  id: 'minorExternalDataSubSection',
+  title: prerequisitesMessages.externalData.subSectionTitle,
+  children: [
+    buildExternalDataProvider({
+      id: 'approveExternalData',
+      title: prerequisitesMessages.externalData.subSectionTitle,
+      subTitle: prerequisitesMessages.externalData.description,
+      checkboxLabel: prerequisitesMessages.externalData.checkboxProvider,
+      dataProviders: [
+        buildDataProviderItem({
+          provider: NationalRegistryV3UserApi,
+          title:
+            prerequisitesMessages.externalData.nationalRegistryInformationTitle,
+          subTitle:
+            prerequisitesMessages.externalData
+              .personalNationalRegistryInformationSubTitle,
+        }),
+      ],
+      // TODO: Remove submitField when minor application is implemented
+      submitField: buildSubmitField({
+        id: 'submit',
+        refetchApplicationAfterSubmit: true,
+        actions: [
+          {
+            event: DefaultEvents.SUBMIT,
+            name: prerequisitesMessages.child.startNotification,
+            type: 'primary',
+          },
+        ],
+      }),
+    }),
+  ],
+})
 
 export const personalExternalDataSubSection = buildSubSection({
   id: 'personalExternalDataSubSection',
@@ -42,19 +77,31 @@ export const personalExternalDataSubSection = buildSubSection({
             prerequisitesMessages.externalData
               .personalNationalRegistryInformationSubTitle,
         }),
+        buildDataProviderItem({
+          provider: UserProfileApi,
+          title: prerequisitesMessages.externalData.userProfileInformationTitle,
+          subTitle:
+            prerequisitesMessages.externalData.userProfileInformationSubTitle,
+        }),
+        buildDataProviderItem({
+          provider: CategoriesApi,
+        }),
+        buildDataProviderItem({
+          provider: GendersApi,
+        }),
+        buildDataProviderItem({
+          provider: ChildSafetyLevelsApi,
+        }),
+        buildDataProviderItem({
+          provider: PronounsApi,
+        }),
+        buildDataProviderItem({
+          provider: PostalCodesApi,
+        }),
+        buildDataProviderItem({
+          provider: ChildUnknownNationalIdStatesApi,
+        }),
       ],
-      // TODO: Remove submitField when personal application is implemented
-      submitField: buildSubmitField({
-        id: 'submit',
-        refetchApplicationAfterSubmit: true,
-        actions: [
-          {
-            event: DefaultEvents.SUBMIT,
-            name: prerequisitesMessages.child.startNotification,
-            type: 'primary',
-          },
-        ],
-      }),
     }),
   ],
 })
@@ -106,9 +153,6 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: SchoolTypesApi,
-        }),
-        buildDataProviderItem({
-          provider: LanguageEnvironmentsApi,
         }),
         buildDataProviderItem({
           provider: NotifierRolesApi,

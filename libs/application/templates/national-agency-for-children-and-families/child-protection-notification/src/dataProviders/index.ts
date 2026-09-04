@@ -4,7 +4,10 @@ import {
   IdentityApi,
 } from '@island.is/application/types'
 import { ApiModuleActions } from '../utils/constants'
-export { NationalRegistryV3UserApi } from '@island.is/application/types'
+export {
+  NationalRegistryV3UserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 
 export const IdentityApiProvider = IdentityApi.configure({
   params: {
@@ -69,12 +72,6 @@ export const GuardianNotAwareReasonsApi = defineTemplateApi({
 export const SchoolTypesApi = defineTemplateApi({
   action: ApiModuleActions.getSchoolTypes,
   externalDataId: 'schoolTypes',
-  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
-})
-
-export const LanguageEnvironmentsApi = defineTemplateApi({
-  action: ApiModuleActions.getLanguageEnvironments,
-  externalDataId: 'languageEnvironments',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
 

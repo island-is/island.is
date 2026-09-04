@@ -13,7 +13,6 @@ import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
-import { Locale } from '@island.is/shared/types'
 import { getCountryByCode, getLanguageByCode } from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
@@ -29,8 +28,10 @@ import {
   DO_NOT_KNOW,
   IS,
   KnowsNationalId,
+  LanguageEnvironmentOptions,
   NOT_APPLICABLE,
   RISK_TO_UNBORN,
+  Roles,
 } from '../utils/constants'
 import {
   getAreParentsInformedTitle,
@@ -42,18 +43,31 @@ import {
   isNoNationalId,
   isSchoolType,
   isUnborn,
+  shouldShowNonPrimarySchoolAgeChildInfo,
   showDisabilityService,
+  showPreferredLanguage,
   showWellbeingContactFields,
   showWellbeingManagerFields,
 } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
+import { getApplicantRole } from './roleUtils'
 import { Parent } from './types'
 
 const knowsNationalIdLabelMap = {
   [KnowsNationalId.YES]: sharedMessages.radioYes,
   [KnowsNationalId.NO]: sharedMessages.radioNo,
   [KnowsNationalId.UNBORN]: childMessages.nationalIdLookup.radioOptionUnborn,
+} as const
+
+// TODO: Replace with values from barnaverndargatt API when available.
+const languageUsageLabelMap = {
+  [LanguageEnvironmentOptions.ONLY_ICELANDIC]:
+    memmMessages.culture.languageUsageOnlyIcelandic,
+  [LanguageEnvironmentOptions.ICELANDIC_AND_OTHER]:
+    memmMessages.culture.languageUsageIcelandicAndOther,
+  [LanguageEnvironmentOptions.ONLY_OTHER]:
+    memmMessages.culture.languageUsageOnlyOther,
 } as const
 
 const receptionRadioLabelMap = {
@@ -69,10 +83,7 @@ const wellbeingRadioLabelMap = {
   [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
 } as const
 
-export const getOverviewItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): Array<KeyValueItem> => {
+export const getOverviewItems = (answers: FormValue): Array<KeyValueItem> => {
   return [
     {
       width: 'full',
@@ -195,7 +206,6 @@ export const getServiceProviderItems = (
 
 export const getServiceProviderContactPersonItems = (
   answers: FormValue,
-  _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const {
     serviceProviderContactPersonName,
@@ -232,9 +242,62 @@ export const getServiceProviderContactPersonItems = (
   ]
 }
 
+export const getNotifierInfoItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const {
+    notifierName,
+    notifierNationalId,
+    notifierEmail,
+    notifierPhoneNumber,
+    notifierNotifierAnonymity,
+    notifierRelationshipToChild,
+  } = getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'half',
+      keyText: coreMessages.name,
+      valueText: notifierName,
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: coreMessages.nationalId,
+      valueText: formatKennitala(notifierNationalId ?? ''),
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: sharedMessages.email,
+      valueText: notifierEmail ?? '',
+    },
+    {
+      width: 'half',
+      keyText: sharedMessages.phone,
+      valueText: formatNumber(notifierPhoneNumber ?? '', 'International'),
+    },
+
+    {
+      width: 'half',
+      keyText: prerequisitesMessages.notifierInfo.wantsAnonymity,
+      valueText:
+        notifierNotifierAnonymity === YES
+          ? sharedMessages.radioYes
+          : sharedMessages.radioNo,
+    },
+    {
+      width: 'full',
+      keyText: prerequisitesMessages.notifierInfo.relationshipToChild,
+      valueText: notifierRelationshipToChild ?? '',
+    },
+  ]
+}
+
 export const getChildWithNationalIdItems = (
   answers: FormValue,
   externalData: ExternalData,
+  userNationalId: string,
 ): Array<KeyValueItem> => {
   const { pronounOptions, childUnknownNationalIdStates } =
     getApplicationExternalData(externalData)
@@ -243,12 +306,17 @@ export const getChildWithNationalIdItems = (
     childNoNationalIdReason,
     childNationalId,
     childName,
-    childEmail,
     childPhone,
     childUsePronounAndPreferredName,
     childPreferredName,
     childPreferredPronoun,
+    childSchoolType,
+    childSchoolName,
+    childLanguage,
+    childNeedsInterpreter,
   } = getApplicationAnswers(answers)
+
+  const role = getApplicantRole(userNationalId)
 
   return [
     {
@@ -271,12 +339,6 @@ export const getChildWithNationalIdItems = (
             width: 'half' as const,
             keyText: coreMessages.name,
             valueText: childName ?? '',
-          },
-          {
-            width: 'half' as const,
-            keyText: sharedMessages.email,
-            valueText: childEmail ?? '',
-            hideIfEmpty: true,
           },
           {
             width: 'half' as const,
@@ -307,6 +369,40 @@ export const getChildWithNationalIdItems = (
                       pronoun,
                   ),
                   hideIfEmpty: true,
+                },
+              ]
+            : []),
+          ...(shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
+          role === Roles.ADULT_PERSONAL_APPLICANT
+            ? [
+                {
+                  width: 'half' as const,
+                  keyText: prerequisitesMessages.child.schoolType,
+                  valueText: childSchoolType ?? '',
+                  hideIfEmpty: true,
+                },
+                ...(childSchoolType
+                  ? [
+                      {
+                        width: 'half' as const,
+                        keyText: memmMessages.education.schoolName,
+                        valueText: childSchoolName ?? '',
+                        hideIfEmpty: true,
+                      },
+                    ]
+                  : []),
+                {
+                  width: 'half' as const,
+                  keyText: sharedMessages.language,
+                  valueText: getLanguageByCode(childLanguage ?? '')?.name,
+                  hideIfEmpty: true,
+                },
+                {
+                  width: 'half' as const,
+                  keyText: sharedMessages.needsInterpreter,
+                  valueText: childNeedsInterpreter.includes(YES)
+                    ? sharedMessages.radioYes
+                    : sharedMessages.radioNo,
                 },
               ]
             : []),
@@ -578,10 +674,7 @@ const buildParentItems = (
   ]
 }
 
-export const getParentsPreItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): Array<KeyValueItem> => {
+export const getParentsPreItems = (answers: FormValue): Array<KeyValueItem> => {
   const { parentsKnowsNationalIds } = getApplicationAnswers(answers)
 
   return [
@@ -618,7 +711,6 @@ export const getParent2Items = (
 
 export const getMemmEducationItems = (
   answers: FormValue,
-  _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const {
     memmEducationType,
@@ -660,7 +752,6 @@ export const getMemmEducationItems = (
 
 export const getMemmReceptionItems = (
   answers: FormValue,
-  _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { memmReceptionSeekingAsylum, memmReceptionRefugeeStatus } =
     getApplicationAnswers(answers)
@@ -693,9 +784,6 @@ export const getMemmReceptionItems = (
 
 export const getMemmCultureItems = (
   answers: FormValue,
-  externalData: ExternalData,
-  _userNationalId: string,
-  locale: Locale,
 ): Array<KeyValueItem> => {
   const {
     memmCultureLanguageUsage,
@@ -704,17 +792,14 @@ export const getMemmCultureItems = (
     memmCultureNeedsInterpreter,
   } = getApplicationAnswers(answers)
 
-  const { languageEnvironmentOptions } =
-    getApplicationExternalData(externalData)
-
   return [
     {
       width: 'full',
       keyText: memmMessages.culture.languageUsageLabel,
       valueText:
-        languageEnvironmentOptions
-          .find((opt) => opt.key === memmCultureLanguageUsage)
-          ?.value.find((v) => v.language === locale)?.content ??
+        languageUsageLabelMap[
+          memmCultureLanguageUsage as keyof typeof languageUsageLabelMap
+        ] ??
         memmCultureLanguageUsage ??
         '',
       hideIfEmpty: true,
@@ -727,15 +812,15 @@ export const getMemmCultureItems = (
       ),
       hideIfEmpty: true,
     },
-    {
-      width: 'full',
-      keyText: memmMessages.culture.preferredLanguageTitle,
-      valueText:
-        getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
-      hideIfEmpty: true,
-    },
-    ...(memmCulturePreferredLanguage
+    ...(showPreferredLanguage(answers)
       ? [
+          {
+            width: 'full' as const,
+            keyText: memmMessages.culture.preferredLanguageTitle,
+            valueText:
+              getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
+            hideIfEmpty: true,
+          },
           {
             width: 'full' as const,
             keyText: sharedMessages.needsInterpreter,
@@ -862,7 +947,6 @@ export const getMemmWellbeingItems = (
 
 export const getReasonDescriptionItems = (
   answers: FormValue,
-  _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { reasonDescription, additionalData } = getApplicationAnswers(answers)
 

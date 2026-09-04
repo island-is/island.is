@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 
-import { FriggClientModule } from '@island.is/clients/mms/frigg'
 import { NationalAgencyForChildrenAndFamiliesClientModule } from '@island.is/clients/national-agency-for-children-and-families'
 import { ApplicationsNotificationsModule } from '../../../../notification/notifications.module'
 import { SharedTemplateAPIModule } from '../../../shared'
@@ -12,7 +11,6 @@ import { ChildProtectionNotificationService } from './child-protection-notificat
     SharedTemplateAPIModule,
     ApplicationsNotificationsModule,
     NationalAgencyForChildrenAndFamiliesClientModule,
-    FriggClientModule,
     NationalRegistryV3Module,
   ],
   providers: [ChildProtectionNotificationService],

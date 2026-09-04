@@ -5,18 +5,24 @@ import {
   buildSubSection,
   NO,
 } from '@island.is/application/core'
-import { reasonForNotificationMessages } from '../../../../lib/messages'
+import { reasonForNotificationMessages } from '../../../lib/messages'
 import {
   getAreParentsInformedTitle,
   getHasDiscussedWithParentsTitle,
   getYesNoOptions,
-} from '../../../../utils/childProtectionNotificationUtils'
-import { getApplicationAnswers } from '../../../../utils/getApplicationAnswers'
-import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
+} from '../../../utils/childProtectionNotificationUtils'
+import { Roles } from '../../../utils/constants'
+import { getApplicationAnswers } from '../../../utils/getApplicationAnswers'
+import { getApplicationExternalData } from '../../../utils/getApplicationExternalData'
+import { getApplicantRole } from '../../../utils/roleUtils'
 
 export const reasonNotificationHistorySubSection = buildSubSection({
   id: 'reasonNotificationHistorySubSection',
   title: reasonForNotificationMessages.notificationHistory.subSectionTitle,
+  condition: (_answers, _externalData, user) => {
+    const role = getApplicantRole(user?.profile?.nationalId ?? '')
+    return role === Roles.ADULT_PROCURATION_APPLICANT
+  },
   children: [
     buildMultiField({
       id: 'reasonNotificationHistory',
