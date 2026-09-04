@@ -50,6 +50,18 @@ const submitApplicationError = {
   },
 }
 
+const paymentCatalogError = {
+  hasError: true,
+  title: {
+    is: 'Ekki tókst að sækja greiðsluupplýsingar',
+    en: 'Could not fetch payment information',
+  },
+  message: {
+    is: 'Villa kom upp við að sækja greiðsluupplýsingar. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while fetching payment information. Please try again.',
+  },
+}
+
 const stripFieldListsFromSections = (
   sections: FormSystemSection[],
 ): FormSystemSection[] =>
@@ -252,15 +264,24 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     if (shouldShowPay) {
       const performingOrganizationID =
         state.application.organizationNationalId ?? ''
-      const { data: paymentCatalogData } = await getPaymentCatalog({
-        variables: {
-          input: {
-            performingOrganizationID,
+      let paymentCatalogItems: PaymentCatalogItem[] = []
+      try {
+        const { data } = await getPaymentCatalog({
+          variables: {
+            input: {
+              performingOrganizationID,
+            },
           },
-        },
-      })
-      const paymentCatalogItems =
-        paymentCatalogData?.paymentCatalog?.items ?? []
+        })
+        paymentCatalogItems = data?.paymentCatalog?.items ?? []
+      } catch (error) {
+        console.error('Error fetching payment catalog:', error)
+        dispatch({
+          type: 'SAVE_FAILED',
+          payload: { screenError: paymentCatalogError },
+        })
+        return
+      }
       const chargeItems: {
         performingOrgID: string
         chargeType: string
@@ -283,47 +304,63 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         })
       })
 
-      state.sections?.forEach((section) => {
-        section?.screens?.forEach((screen) => {
-          screen?.fields
-            ?.filter(
-              (field) =>
-                field?.fieldType === FieldTypesEnum.PAYMENT &&
-                field?.isHidden === false,
-            )
-            .forEach((field) => {
-              if (field?.fieldSettings?.chargeItemCode) {
-                const code = field.fieldSettings.chargeItemCode
-                const paymentCatalogItem = paymentCatalogItems.find(
-                  (item: PaymentCatalogItem) => item.chargeItemCode === code,
-                )
-                let quantity: number | undefined = 1
-                if (field.fieldSettings.paymentQuantityId) {
-                  const quantityField = paymentQuantityFields.find(
-                    (f) => f.id === field?.fieldSettings?.paymentQuantityId,
-                  )
-                  if (quantityField) {
-                    quantity = getValue(quantityField, 'number')
-                  }
-                }
-                chargeItems.push({
-                  performingOrgID:
-                    paymentCatalogItem?.performingOrgID ||
-                    performingOrganizationID,
-                  chargeType:
-                    paymentCatalogItem?.chargeType ||
-                    field.fieldSettings.chargeType ||
-                    'default',
-                  chargeItemCode: code,
-                  chargeItemName:
-                    paymentCatalogItem?.chargeItemName ||
-                    field.fieldSettings.chargeItemName ||
-                    'Default Name',
-                  priceAmount: Number(paymentCatalogItem?.priceAmount ?? 0),
-                  quantity,
-                })
-              }
-            })
+      const visiblePaymentFields =
+        state.sections?.flatMap(
+          (section) =>
+            section?.screens?.flatMap(
+              (screen) =>
+                screen?.fields?.filter(
+                  (field) =>
+                    field?.fieldType === FieldTypesEnum.PAYMENT &&
+                    field?.isHidden === false,
+                ) ?? [],
+            ) ?? [],
+        ) ?? []
+
+      const hasUnresolvedPaymentField = visiblePaymentFields.some((field) => {
+        const code = field?.fieldSettings?.chargeItemCode
+
+        return (
+          !code ||
+          !paymentCatalogItems.some(
+            (item: PaymentCatalogItem) => item.chargeItemCode === code,
+          )
+        )
+      })
+
+      if (hasUnresolvedPaymentField) {
+        dispatch({
+          type: 'SAVE_FAILED',
+          payload: { screenError: paymentCatalogError },
+        })
+        return
+      }
+
+      visiblePaymentFields.forEach((field) => {
+        const code = field?.fieldSettings?.chargeItemCode
+        const paymentCatalogItem = paymentCatalogItems.find(
+          (item: PaymentCatalogItem) => item.chargeItemCode === code,
+        )
+        if (!code || !paymentCatalogItem) return
+
+        let quantity: number | undefined = 1
+        if (field?.fieldSettings?.paymentQuantityId) {
+          const quantityField = paymentQuantityFields.find(
+            (paymentQuantityField) =>
+              paymentQuantityField.id ===
+              field.fieldSettings?.paymentQuantityId,
+          )
+          if (quantityField) {
+            quantity = getValue(quantityField, 'number')
+          }
+        }
+        chargeItems.push({
+          performingOrgID: paymentCatalogItem.performingOrgID,
+          chargeType: paymentCatalogItem.chargeType,
+          chargeItemCode: code,
+          chargeItemName: paymentCatalogItem.chargeItemName,
+          priceAmount: Number(paymentCatalogItem.priceAmount),
+          quantity,
         })
       })
       const { data } = await createPayment({

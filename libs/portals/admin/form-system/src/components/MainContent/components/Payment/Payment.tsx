@@ -7,6 +7,7 @@ import {
 } from '@island.is/form-system/graphql'
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/ui'
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn as Column,
@@ -41,6 +42,16 @@ export const Payment = () => {
   })
 
   const paymentCatalog = data?.paymentCatalog?.items || []
+  const hasPaymentCatalog = paymentCatalog.length > 0
+  const paymentSetupError = !control.organizationNationalId
+    ? 'Vantar kennitolu stofnunar áður en hægt er að bæta við greiðslu.'
+    : error
+    ? 'Ekki tókst að sækja greiðsluskrá. Ekki er hægt að bæta við greiðslu fyrr en greiðsluskrá hefur verið sótt.'
+    : !loading && !hasPaymentCatalog
+    ? 'Engir greiðsluliðir fundust fyrir þessa stofnun. Ekki er hægt að bæta við greiðslu fyrr en greiðsluskrá er til staðar.'
+    : undefined
+  const canCreatePaymentField =
+    !isReadOnly && !paymentSetupError && hasPaymentCatalog
 
   useEffect(() => {
     if (error) {
@@ -94,6 +105,10 @@ export const Payment = () => {
   })
 
   const addField = async () => {
+    if (!canCreatePaymentField) {
+      return
+    }
+
     const newField = await createField[0]({
       variables: {
         input: {
@@ -140,7 +155,7 @@ export const Payment = () => {
             <Button
               variant="primary"
               icon="add"
-              disabled={isReadOnly}
+              disabled={!canCreatePaymentField}
               onClick={addField}
             >
               Bæta við greiðslu
@@ -148,6 +163,14 @@ export const Payment = () => {
           </Box>
         </Column>
       </Box>
+      {paymentSetupError && (
+        <Box paddingTop={2}>
+          <AlertMessage
+            type={error ? 'error' : 'warning'}
+            message={paymentSetupError}
+          />
+        </Box>
+      )}
       <Stack space={2}>
         {paymentFields.map((field) => (
           <PaymentItem

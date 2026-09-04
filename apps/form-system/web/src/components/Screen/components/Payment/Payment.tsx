@@ -8,6 +8,7 @@ import {
   SectionTypes,
 } from '@island.is/form-system/ui'
 import {
+  AlertMessage,
   Box,
   Divider,
   GridColumn,
@@ -20,11 +21,27 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
+const paymentCatalogError = {
+  title: {
+    is: 'Ekki tókst að sækja greiðsluupplýsingar',
+    en: 'Could not fetch payment information',
+  },
+  message: {
+    is: 'Villa kom upp við að sækja greiðsluupplýsingar. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while fetching payment information. Please try again.',
+  },
+}
+
+const paymentCatalogLoadingText = {
+  is: 'Sæki greiðsluupplýsingar',
+  en: 'Fetching payment information',
+}
+
 export const Payment = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { state } = useApplicationContext()
   const organizationNationalId = state.application.organizationNationalId ?? ''
-  const { data } = useQuery(GET_PAYMENT_CATALOG, {
+  const { data, loading } = useQuery(GET_PAYMENT_CATALOG, {
     variables: {
       input: {
         performingOrganizationID: organizationNationalId,
@@ -64,7 +81,9 @@ export const Payment = () => {
   }
 
   const getPriceAmount = (field?: FormSystemField | null) => {
-    return Number(getPaymentCatalogItem(field)?.priceAmount ?? 0)
+    const paymentCatalogItem = getPaymentCatalogItem(field)
+
+    return paymentCatalogItem ? Number(paymentCatalogItem.priceAmount) : null
   }
 
   const getChargeItemName = (field?: FormSystemField | null) => {
@@ -87,8 +106,26 @@ export const Payment = () => {
     const quantity = getQuantity(field)
     const price = getPriceAmount(field)
 
-    return sum + price * quantity
+    return sum + (price ?? 0) * quantity
   }, 0)
+
+  const renderPrice = (price: number | null) => {
+    if (price !== null) {
+      return <Text>{convertToPaymentNumber(price)} kr.</Text>
+    }
+
+    if (loading) {
+      return <Text>{paymentCatalogLoadingText[lang]}</Text>
+    }
+
+    return (
+      <AlertMessage
+        type="error"
+        title={paymentCatalogError.title[lang]}
+        message={paymentCatalogError.message[lang]}
+      />
+    )
+  }
 
   // Keep for demonstration purposes
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -100,15 +137,18 @@ export const Payment = () => {
     index: number
   }) => {
     const quantity = getQuantity(field)
+    const price = getPriceAmount(field)
     const priceString =
-      quantity > 1
-        ? `${quantity} x ${convertToPaymentNumber(getPriceAmount(field))} kr.`
-        : `${convertToPaymentNumber(getPriceAmount(field))} kr.`
+      price === null
+        ? null
+        : quantity > 1
+        ? `${quantity} x ${convertToPaymentNumber(price)} kr.`
+        : `${convertToPaymentNumber(price)} kr.`
 
     return (
       <Box key={index} display="flex" justifyContent="spaceBetween">
         <Text>{getChargeItemName(field)}</Text>
-        <Text>{priceString}</Text>
+        {priceString ? <Text>{priceString}</Text> : renderPrice(price)}
       </Box>
     )
   }
@@ -121,12 +161,13 @@ export const Payment = () => {
     index: number
   }) => {
     const quantity = getQuantity(field)
+    const price = getPriceAmount(field)
     return (
       <Stack key={index} space={1}>
         <Text variant="h5">{getChargeItemName(field)}</Text>
         <Inline justifyContent="spaceBetween">
           <Text>{formatMessage(m.price)}</Text>
-          <Text>{convertToPaymentNumber(getPriceAmount(field))} kr.</Text>
+          {renderPrice(price)}
         </Inline>
         <Inline justifyContent="spaceBetween">
           <Text>{formatMessage(m.quantity)}</Text>
