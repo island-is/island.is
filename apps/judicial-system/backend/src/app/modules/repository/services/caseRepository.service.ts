@@ -30,7 +30,6 @@ import {
   StringType,
 } from '@island.is/judicial-system/types'
 
-import { AwsS3Service } from '../../aws-s3/awsS3.service'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
@@ -119,7 +118,6 @@ export class CaseRepositoryService {
     private readonly indictmentCountModel: typeof IndictmentCount,
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
-    private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
