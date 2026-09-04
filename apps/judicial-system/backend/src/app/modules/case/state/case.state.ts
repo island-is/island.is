@@ -142,6 +142,7 @@ const indictmentCaseStateMachine: Map<
           ...update,
           state: CaseState.SUBMITTED,
           indictmentDeniedExplanation: null,
+          indictmentReviewReturnedExplanation: null,
         }
       },
     },
