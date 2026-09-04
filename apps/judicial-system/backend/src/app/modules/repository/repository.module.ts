@@ -48,12 +48,14 @@ import { DateLogRepositoryService } from './services/dateLogRepository.service'
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
 import { EventLogRepositoryService } from './services/eventLogRepository.service'
+import { IndictmentCountRepositoryService } from './services/indictmentCountRepository.service'
 import { IndictmentSubtypeRepositoryService } from './services/indictmentSubtypeRepository.service'
 import { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
 import { InstitutionRepositoryService } from './services/institutionRepository.service'
 import { LawyerRegistryRepositoryService } from './services/lawyerRegistryRepository.service'
 import { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
 import { NotificationRepositoryService } from './services/notificationRepository.service'
+import { OffenseRepositoryService } from './services/offenseRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 import { RobotLogRepositoryService } from './services/robotLogRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
@@ -114,12 +116,14 @@ import { repositoryModuleConfig } from './repository.config'
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
     EventLogRepositoryService,
+    IndictmentCountRepositoryService,
     IndictmentSubtypeRepositoryService,
     InstitutionContactRepositoryService,
     InstitutionRepositoryService,
     LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
     NotificationRepositoryService,
+    OffenseRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
     SubpoenaRepositoryService,
@@ -142,12 +146,14 @@ import { repositoryModuleConfig } from './repository.config'
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
     EventLogRepositoryService,
+    IndictmentCountRepositoryService,
     IndictmentSubtypeRepositoryService,
     InstitutionContactRepositoryService,
     InstitutionRepositoryService,
     LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
     NotificationRepositoryService,
+    OffenseRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
     SubpoenaRepositoryService,

@@ -291,6 +291,20 @@ export const getInclude = (user?: TUser): Includeable[] => [
   },
   {
     model: AppealCase,
+    as: 'verdictAppealCase',
+    required: false,
+    include: [
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
     as: 'rulingOrderAppealCases',
     required: false,
     separate: true,
@@ -453,6 +467,8 @@ export const getInclude = (user?: TUser): Includeable[] => [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
         CaseFileCategory.APPEAL_COURT_RECORD,
         CaseFileCategory.COURT_RECORD,

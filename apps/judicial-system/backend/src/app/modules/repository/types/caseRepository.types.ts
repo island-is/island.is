@@ -84,6 +84,20 @@ export const caseInclude: Includeable[] = [
   },
   {
     model: AppealCase,
+    as: 'verdictAppealCase',
+    required: false,
+    include: [
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
     as: 'rulingOrderAppealCases',
     required: false,
     separate: true,
@@ -656,6 +670,14 @@ export interface UpdateAppealCase
     | 'appealDate'
   > {
   appealState?: AppealCase['appealState']
+}
+
+// An appeal case is created with its type and never changes it, so the type is
+// required here and absent from UpdateAppealCase. That is what keeps a new
+// creation path from quietly omitting it - the column's database default exists
+// for old pods mid-rollout, not for application code to lean on.
+export type CreateAppealCase = UpdateAppealCase & {
+  appealType: AppealCase['appealType']
 }
 
 export interface UpdateDefendant {

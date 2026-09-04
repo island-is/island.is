@@ -8,6 +8,7 @@ import {
   Op,
   Transaction,
   UpdateOptions,
+  WhereOptions,
 } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
@@ -306,6 +307,28 @@ export class CaseRepositoryService {
       isArchived: false,
     }
 
+    const locked = await this.lockByIdForUpdate(id, transaction, where)
+
+    if (!locked) {
+      return null
+    }
+
+    return this.findOne({ include: caseInclude, where, transaction })
+  }
+
+  /**
+   * Takes the case row's write lock for the rest of the transaction without
+   * reading the case aggregate, for a caller that already holds the case and
+   * only needs its decision serialized against other writers on the same case.
+   * Returns whether the row was there to lock.
+   *
+   * See findLiveByIdForUpdate for why the lock is a query of its own.
+   */
+  async lockByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+    where: WhereOptions = { id },
+  ): Promise<boolean> {
     try {
       this.logger.debug(`Locking case ${id} for update`)
 
@@ -319,15 +342,15 @@ export class CaseRepositoryService {
       if (!lockedCase) {
         this.logger.debug(`Case ${id} not found`)
 
-        return null
+        return false
       }
+
+      return true
     } catch (error) {
       this.logger.error(`Error locking case ${id} for update:`, { error })
 
       throw error
     }
-
-    return this.findOne({ include: caseInclude, where, transaction })
   }
 
   async findAll(options?: FindAllOptions): Promise<Case[]> {
