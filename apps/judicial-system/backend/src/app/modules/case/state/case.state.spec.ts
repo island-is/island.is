@@ -220,6 +220,272 @@ describe('Transition Case', () => {
     },
   )
 
+  // --- ASK FOR REVIEW ---
+
+  describe.each(indictmentCases)('ask for review %s', (type) => {
+    const allowedFromStates = [CaseState.DRAFT]
+    const caseWithDefendants = (fromState: CaseState) =>
+      ({
+        id: uuid(),
+        state: fromState,
+        type,
+        defendants: [{ id: uuid(), name: 'Test Defendant' }],
+        indictmentApproverId: uuid(),
+      } as Case)
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it('should ask for review', () => {
+        // Act
+        const res = transitionCase(
+          CaseTransition.ASK_FOR_REVIEW,
+          caseWithDefendants(fromState),
+          { id: uuid() } as User,
+        )
+
+        // Assert
+        expect(res).toMatchObject({
+          state: CaseState.WAITING_FOR_REVIEW,
+          indictmentReviewReturnedExplanation: null,
+        })
+      })
+    })
+
+    it('should throw when 0 defendants', () => {
+      const act = () =>
+        transitionCase(
+          CaseTransition.ASK_FOR_REVIEW,
+          {
+            id: uuid(),
+            state: CaseState.DRAFT,
+            type,
+            defendants: [],
+            indictmentApproverId: uuid(),
+          } as unknown as Case,
+          { id: uuid() } as User,
+        )
+
+      expect(act).toThrow(ForbiddenException)
+      expect(act).toThrow(
+        'Cannot submit indictment to court without at least one defendant',
+      )
+    })
+
+    it('should throw when no indictment approver', () => {
+      const act = () =>
+        transitionCase(
+          CaseTransition.ASK_FOR_REVIEW,
+          {
+            id: uuid(),
+            state: CaseState.DRAFT,
+            type,
+            defendants: [{ id: uuid(), name: 'Test Defendant' }],
+          } as Case,
+          { id: uuid() } as User,
+        )
+
+      expect(act).toThrow(ForbiddenException)
+      expect(act).toThrow(
+        'Cannot ask for review without an indictment approver',
+      )
+    })
+
+    it('should throw when indictment approver is explicitly cleared on update', () => {
+      const act = () =>
+        transitionCase(
+          CaseTransition.ASK_FOR_REVIEW,
+          {
+            id: uuid(),
+            state: CaseState.DRAFT,
+            type,
+            defendants: [{ id: uuid(), name: 'Test Defendant' }],
+            indictmentApproverId: uuid(),
+          } as Case,
+          { id: uuid() } as User,
+          { indictmentApproverId: null },
+        )
+
+      expect(act).toThrow(ForbiddenException)
+      expect(act).toThrow(
+        'Cannot ask for review without an indictment approver',
+      )
+    })
+
+    it('should ask for review when indictment approver is set on update', () => {
+      const res = transitionCase(
+        CaseTransition.ASK_FOR_REVIEW,
+        {
+          id: uuid(),
+          state: CaseState.DRAFT,
+          type,
+          defendants: [{ id: uuid(), name: 'Test Defendant' }],
+        } as Case,
+        { id: uuid() } as User,
+        { indictmentApproverId: uuid() },
+      )
+
+      expect(res).toMatchObject({
+        state: CaseState.WAITING_FOR_REVIEW,
+        indictmentReviewReturnedExplanation: null,
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s - should not ask for review', (fromState) => {
+      // Arrange
+      const act = () =>
+        transitionCase(
+          CaseTransition.ASK_FOR_REVIEW,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+      // Act and assert
+      expect(act).toThrow(ForbiddenException)
+    })
+  })
+
+  describe.each([...restrictionCases, ...investigationCases])(
+    'ask for review %s',
+    (type) => {
+      describe.each(Object.values(CaseState))(
+        'state %s - should not ask for review',
+        (fromState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.ASK_FOR_REVIEW,
+              { id: uuid(), state: fromState, type } as Case,
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    },
+  )
+
+  // --- ACCEPT REVIEW ---
+
+  describe.each(indictmentCases)('accept review %s', (type) => {
+    const allowedFromStates = [CaseState.WAITING_FOR_REVIEW]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it('should accept review', () => {
+        // Act
+        const res = transitionCase(
+          CaseTransition.ACCEPT_REVIEW,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+        // Assert
+        expect(res).toMatchObject({
+          state: CaseState.WAITING_FOR_CONFIRMATION,
+        })
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s - should not accept review', (fromState) => {
+      // Arrange
+      const act = () =>
+        transitionCase(
+          CaseTransition.ACCEPT_REVIEW,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+      // Act and assert
+      expect(act).toThrow(ForbiddenException)
+    })
+  })
+
+  describe.each([...restrictionCases, ...investigationCases])(
+    'accept review %s',
+    (type) => {
+      describe.each(Object.values(CaseState))(
+        'state %s - should not accept review',
+        (fromState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.ACCEPT_REVIEW,
+              { id: uuid(), state: fromState, type } as Case,
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    },
+  )
+
+  // --- DENY REVIEW ---
+
+  describe.each(indictmentCases)('deny review %s', (type) => {
+    const allowedFromStates = [CaseState.WAITING_FOR_REVIEW]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it('should deny review', () => {
+        // Act
+        const res = transitionCase(
+          CaseTransition.DENY_REVIEW,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+        // Assert
+        expect(res).toMatchObject({ state: CaseState.DRAFT })
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s - should not deny review', (fromState) => {
+      // Arrange
+      const act = () =>
+        transitionCase(
+          CaseTransition.DENY_REVIEW,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+      // Act and assert
+      expect(act).toThrow(ForbiddenException)
+    })
+  })
+
+  describe.each([...restrictionCases, ...investigationCases])(
+    'deny review %s',
+    (type) => {
+      describe.each(Object.values(CaseState))(
+        'state %s - should not deny review',
+        (fromState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.DENY_REVIEW,
+              { id: uuid(), state: fromState, type } as Case,
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    },
+  )
+
   // --- SUBMIT ---
 
   describe.each(indictmentCases)('submit %s', (type) => {
@@ -695,6 +961,7 @@ describe('Transition Case', () => {
   describe.each(indictmentCases)('delete %s', (type) => {
     const allowedFromStates = [
       CaseState.DRAFT,
+      CaseState.WAITING_FOR_REVIEW,
       CaseState.WAITING_FOR_CONFIRMATION,
     ]
 

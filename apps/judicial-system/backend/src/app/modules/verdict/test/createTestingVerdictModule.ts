@@ -22,7 +22,11 @@ import { EventLogService } from '../../event-log'
 import { FileService } from '../../file'
 import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
 import { PoliceService } from '../../police'
-import { VerdictRepositoryService } from '../../repository'
+import {
+  Case,
+  CaseRepositoryService,
+  VerdictRepositoryService,
+} from '../../repository'
 import { UserService } from '../../user'
 import { InternalVerdictController } from '../internalVerdict.controller'
 import { VerdictController } from '../verdict.controller'
@@ -40,6 +44,7 @@ jest.mock('../../user/user.service')
 jest.mock('../../case/internalCase.service')
 jest.mock('../../lawyer-registry/lawyerRegistry.service')
 jest.mock('../../repository/services/verdictRepository.service')
+jest.mock('../../repository/services/caseRepository.service')
 
 export const createTestingVerdictModule = async () => {
   const verdictModule = await Test.createTestingModule({
@@ -72,6 +77,7 @@ export const createTestingVerdictModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       VerdictRepositoryService,
+      CaseRepositoryService,
       VerdictService,
       AuditTrailService,
     ],
@@ -79,6 +85,16 @@ export const createTestingVerdictModule = async () => {
 
   const verdictRepositoryService = verdictModule.get<VerdictRepositoryService>(
     VerdictRepositoryService,
+  )
+
+  const caseRepositoryService = verdictModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
+
+  const mockFindOriginalAncestorId =
+    caseRepositoryService.findOriginalAncestorId as jest.Mock
+  mockFindOriginalAncestorId.mockImplementation((theCase: Case) =>
+    Promise.resolve(theCase.splitCaseId ?? theCase.id),
   )
 
   const verdictService = verdictModule.get<VerdictService>(VerdictService)
@@ -107,6 +123,7 @@ export const createTestingVerdictModule = async () => {
     eventService,
     fileService,
     verdictRepositoryService,
+    caseRepositoryService,
     sequelize,
   }
 }
