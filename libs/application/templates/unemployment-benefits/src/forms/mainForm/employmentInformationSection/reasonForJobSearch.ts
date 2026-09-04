@@ -20,11 +20,7 @@ import {
   contentfulIdMapReasonsForJobSearch,
 } from '../../../lib/messages'
 import { GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO } from '@island.is/clients/vmst-unemployment'
-import {
-  getChosenReasonCategory,
-  getReasonBasedOnChoice,
-  getReasonsBasedOnChoice,
-} from '../../../utils'
+import { getReasonBasedOnChoice, getReasonsBasedOnChoice } from '../../../utils'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared/constants'
 import { Application } from '@island.is/application/types'
 
@@ -172,7 +168,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         buildHiddenInputWithWatchedValue({
           id: 'reasonForJobSearch.reasonQuestionRequired',
           watchValue: 'reasonForJobSearch.additionalReason',
-          valueModifier: (value, application: Application | undefined) => {
+          valueModifier: (_, application: Application | undefined) => {
             if (!application) {
               return ''
             }
@@ -188,7 +184,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'reasonForJobSearch.extraExplanation',
-          description: (application, locale, formatMessage) => {
+          description: (application, _, formatMessage) => {
             let title = ''
             if (typeof formatMessage === 'function') {
               const reasonBasedOnChoice = getReasonBasedOnChoice(
@@ -328,7 +324,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'reasonForJobSearch.extraDescription',
-          description(application, locale, formatMessage) {
+          description(application, _, formatMessage) {
             const reasonBasedOnChoice = getReasonBasedOnChoice(
               application.answers,
               application.externalData,
@@ -378,12 +374,32 @@ export const reasonForJobSearchSubSection = buildSubSection({
             )
           },
         }),
+        buildHiddenInputWithWatchedValue({
+          id: 'reasonForJobSearch.additionalDetailsRequired',
+          watchValue: 'reasonForJobSearch.additionalReason',
+          valueModifier: (value, application: Application | undefined) => {
+            if (!application) {
+              return ''
+            }
+            const unemploymentReasonCategories =
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+                [],
+              ) || []
+            let required = false
+            unemploymentReasonCategories.forEach((cat) => {
+              cat.unemploymentReasons?.forEach((reason) => {
+                if (reason.id === value) {
+                  required = !!reason.requiresAdditonalDetails
+                }
+              })
+            })
 
-        buildAlertMessageField({
-          id: 'reasonForJobSearch.alertMessage',
-          message: employmentMessages.reasonForJobSearch.labels.informationBox,
-          alertType: 'info',
-          doesNotRequireAnswer: true,
+            return required
+          },
         }),
         buildTextField({
           id: 'reasonForJobSearch.additionalDetails',
@@ -403,9 +419,15 @@ export const reasonForJobSearchSubSection = buildSubSection({
             )
             return (
               !!reasonBasedOnChoice &&
-              !!reasonBasedOnChoice.requiresAdditonalDetails //TODO CHANGE THIS
+              !!reasonBasedOnChoice.requiresAdditonalDetails
             )
           },
+        }),
+        buildAlertMessageField({
+          id: 'reasonForJobSearch.alertMessage',
+          message: employmentMessages.reasonForJobSearch.labels.informationBox,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
         }),
         buildHiddenInputWithWatchedValue({
           id: 'reasonForJobSearch.bankruptsyReasonRequired',

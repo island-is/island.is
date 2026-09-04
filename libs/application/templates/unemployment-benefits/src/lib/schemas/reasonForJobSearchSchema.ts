@@ -17,6 +17,7 @@ export const reasonForJobSearchSchema = z
     extraFileUpload: z.array(FileSchema).optional(),
     attachmentTypeId: z.string().optional(),
     additionalDetails: z.string().max(500).optional(),
+    additionalDetailsRequired: z.boolean().optional(),
   })
   .refine(
     ({ reasonQuestion, reasonQuestionRequired }) => {
@@ -55,12 +56,11 @@ export const reasonForJobSearchSchema = z
     { path: ['additionalReason'] },
   )
   .refine(
-    // TODO CHANGE THIS TO NEW VALUE ETC
-    ({ additionalReason, additionalReasonRequired }) => {
-      if (additionalReasonRequired === true) {
-        return !!additionalReason
+    ({ additionalDetails, additionalDetailsRequired }) => {
+      if (additionalDetailsRequired === true) {
+        return !!additionalDetails
       }
       return true
     },
-    { path: ['additionalReason'] },
+    { path: ['additionalDetails'] },
   )
