@@ -52,7 +52,7 @@ jobs:
     secrets: inherit
 
   prepare:
-    runs-on: arc-shared
+    runs-on: arc-mergequeue
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
