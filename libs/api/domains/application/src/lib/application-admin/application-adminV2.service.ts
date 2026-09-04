@@ -28,7 +28,7 @@ import {
 
 // Cap for the merge-pagination window. See findAllApplicationsFor{Super,Institution}Admin
 // below. Also duplicated in the admin portal client as MAX_PAGE — keep in sync.
-const MAX_MERGE_PAGES = 2
+const MAX_MERGE_PAGES = 10
 
 @Injectable()
 export class ApplicationAdminV2Service {
