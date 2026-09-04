@@ -178,12 +178,7 @@ export class CourtService {
       })
     }
 
-    const uniqueRecipients = recipients.filter(
-      (recipient, index, all) =>
-        all.findIndex((r) => r.address === recipient.address) === index,
-    )
-
-    if (uniqueRecipients.length === 0) {
+    if (recipients.length === 0) {
       this.logger.error(
         `No email recipients are available for court ${courtId}, so it cannot be notified that a file was too large for the court service`,
       )
@@ -198,7 +193,7 @@ export class CourtService {
     const subject = `Ekki tókst að hlaða upp skjali í Auði í máli ${courtCaseNumber}`
 
     await Promise.all(
-      uniqueRecipients.map(async (recipient) => {
+      recipients.map(async (recipient) => {
         try {
           await this.emailService.sendEmail({
             from: {
