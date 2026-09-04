@@ -1,0 +1,145 @@
+name: Retry mechanism self-test
+
+# Deterministic harness for the merge-queue retry mechanism. Runs anywhere via
+# workflow_dispatch, fakes an infra/genuine/clean failure of one matrix chunk,
+# exercises the real scripts/ci/mq/retry-plan.mjs, and asserts the outcome.
+# No deployments, no merge queue, no Spot interruption required.
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      fail_mode:
+        description: 'How chunk "beta" behaves on its first attempt'
+        type: choice
+        options:
+          - infra # runner-shutdown signature -> should be retried -> PASS
+          - genuine # real failure -> not retried -> gate FAIL (expected)
+          - none # nothing fails -> PASS
+        default: infra
+
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+
+jobs:
+  prepare:
+    runs-on: arc-shared
+    outputs:
+      TEST_CHUNKS: ${{ steps.gen.outputs.chunks }}
+    steps:
+      - id: gen
+        run: echo 'chunks={"projects":["alpha","beta","gamma"]}' >> "$GITHUB_OUTPUT"
+
+  tests:
+    needs: prepare
+    runs-on: arc-shared
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    steps:
+      - name: Job identity
+        run: echo "MQ_JOB_KEY=${AFFECTED_PROJECTS}"
+      - name: Simulate work
+        run: |
+          if [[ "${AFFECTED_PROJECTS}" != "beta" ]]; then
+            echo "chunk ${AFFECTED_PROJECTS} ok"; exit 0
+          fi
+          case "${{ inputs.fail_mode || 'infra' }}" in
+            infra)
+              echo "The runner has received a shutdown signal"
+              echo "The operation was canceled"
+              exit 1 ;;
+            genuine)
+              echo "assertion failed in ${AFFECTED_PROJECTS}"; exit 1 ;;
+            none)
+              echo "chunk ${AFFECTED_PROJECTS} ok"; exit 0 ;;
+          esac
+
+  retry-plan:
+    needs:
+      - prepare
+      - tests
+    if: ${{ always() && !cancelled() }}
+    runs-on: arc-shared
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      tests: ${{ steps.plan.outputs.tests }}
+      has_tests: ${{ steps.plan.outputs.has_tests }}
+      genuine: ${{ steps.plan.outputs.genuine }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Plan retries
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ORIG_TESTS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
+          ORIG_DOCKER: '[]'
+        run: node scripts/ci/mq/retry-plan.mjs
+
+  tests-retry:
+    needs:
+      - prepare
+      - retry-plan
+    if: ${{ always() && !cancelled() && needs.retry-plan.outputs.has_tests == 'true' }}
+    runs-on: arc-shared
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.retry-plan.outputs.tests) }}
+    steps:
+      - name: Job identity
+        run: echo "MQ_JOB_KEY=${AFFECTED_PROJECTS}"
+      - name: Fresh attempt (always succeeds)
+        run: echo "retry of ${AFFECTED_PROJECTS} ok"
+
+  gate:
+    needs:
+      - tests
+      - retry-plan
+      - tests-retry
+    if: ${{ !cancelled() }}
+    runs-on: arc-shared
+    steps:
+      - name: Gate
+        env:
+          PLAN: ${{ needs.retry-plan.result }}
+          GENUINE: ${{ needs.retry-plan.outputs.genuine }}
+          TESTS: ${{ needs.tests.result }}
+          TESTS_RETRY: ${{ needs.tests-retry.result }}
+        run: |
+          fail() { echo "GATE FAIL: $1"; exit 1; }
+          ok() { [[ "$1" == "success" || "$1" == "skipped" || "$2" == "success" ]]; }
+          [[ "$PLAN" == "success" ]] || fail "retry-plan=$PLAN"
+          [[ "$GENUINE" == "[]" ]] || fail "genuine failures present: $GENUINE"
+          ok "$TESTS" "$TESTS_RETRY" || fail "tests=$TESTS retry=$TESTS_RETRY"
+          echo "GATE PASS"
+
+  assert:
+    needs:
+      - gate
+    if: ${{ always() && !cancelled() }}
+    runs-on: arc-shared
+    steps:
+      - name: Assert gate matches expectation
+        env:
+          MODE: ${{ inputs.fail_mode || 'infra' }}
+          GATE: ${{ needs.gate.result }}
+        run: |
+          # genuine => gate must fail; infra/none => gate must pass.
+          if [[ "$MODE" == "genuine" ]]; then
+            [[ "$GATE" == "failure" ]] || { echo "EXPECTED gate failure, got $GATE"; exit 1; }
+          else
+            [[ "$GATE" == "success" ]] || { echo "EXPECTED gate success, got $GATE"; exit 1; }
+          fi
+          echo "SELF-TEST PASS (mode=$MODE, gate=$GATE)"
