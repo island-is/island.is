@@ -20,7 +20,9 @@ export const getSelectedDebts = (application: Application): SelectedDebt[] => {
 
     selected.push({
       ...debt,
-      amountToPay: Number.isNaN(amountToPay) ? debt.debts : amountToPay,
+      amountToPay: Number.isNaN(amountToPay)
+        ? debt.debts
+        : Math.min(Math.max(amountToPay, 1), debt.debts),
     })
 
     return selected
