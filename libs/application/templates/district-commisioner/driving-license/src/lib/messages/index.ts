@@ -406,16 +406,6 @@ export const m = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in driving license data provider',
   },
-  examplePaymentPendingField: {
-    id: 'dl.application:example.waitingForPayment',
-    defaultMessage: 'Augnablik meðan beðið er eftir greiðslu',
-    description: 'One moment while we wait for payment confirmation.',
-  },
-  examplePaymentPendingFieldError: {
-    id: 'dl.application:example.waitingForPaymentError',
-    defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-    description: 'An error came up while getting payment information',
-  },
   orderDrivingLicense: {
     id: 'dl.application:order.drivingLicense',
     defaultMessage: 'Panta ökuskírteini',
@@ -430,16 +420,6 @@ export const m = defineMessages({
     id: 'dl.application:DrivingLicenseApplicationPaymentForm',
     defaultMessage: 'greiðsla',
     description: 'payment',
-  },
-  paymentCapital: {
-    id: 'dl.application:awaitingPayment',
-    defaultMessage: 'Staðfesting á greiðslu',
-    description: 'Payment',
-  },
-  forwardingToPayment: {
-    id: 'dl.application:forwardingToPayment',
-    defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
-    description: 'Forwarding you to payment handler...',
   },
   paymentPendingConfirmation: {
     id: 'dl.application:paymentPendingConfirmation',
@@ -627,11 +607,6 @@ export const m = defineMessages({
     defaultMessage:
       'Skila þarf passamynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Quality photo',
-  },
-  paymentPendingDescription: {
-    id: 'dl.application:paymentPendingDescription',
-    defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
-    description: 'Please wait until the payment is confirmed',
   },
   paymentSuccessExtraDocuments: {
     id: 'dl.application:paymentSuccessExtraDocuments',
