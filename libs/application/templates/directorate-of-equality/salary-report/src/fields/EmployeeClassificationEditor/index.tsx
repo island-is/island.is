@@ -19,11 +19,12 @@ import type {
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftEmployeesQuery } from '../../utils/useDraftEmployeesQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
+import { useProgressMarker } from '../../utils/useProgressMarker'
 import {
   DraftErrorState,
   DraftLoadingState,
 } from '../../components/DraftScreenState'
-import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
+import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 import {
   buildDisplayAssignments,
   buildStepMetaBySubCriterionId,
@@ -81,7 +82,7 @@ type FormValues = { employees: EmployeeFormEntry[] }
 
 export const EmployeeClassificationEditor: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application, setBeforeSubmitCallback }) => {
+> = ({ application, setBeforeSubmitCallback, answerQuestions }) => {
   const { formatMessage } = useLocale()
   const m = messages.report.employees
   const {
@@ -109,6 +110,7 @@ export const EmployeeClassificationEditor: FC<
     DRAFT_EMPLOYEES_PAGE_SIZE,
   )
   const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
   const methods = useForm<FormValues>({ defaultValues: { employees: [] } })
   const [actionError, setActionError] = useState<string | undefined>()
 
@@ -174,10 +176,20 @@ export const EmployeeClassificationEditor: FC<
     setBeforeSubmitCallback(async () => {
       const ok = await syncCurrentPage()
       if (!ok) return [false, formatMessage(messages.errors.draftSyncFailed)]
+      // The step is behind them now, so a later visit should not send them back
+      // to it — see ProgressPaths.
+      await markProgress({ employeeClassification: true })
       return [true, null]
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setBeforeSubmitCallback, methods, sync, personalCriteria, formatMessage])
+  }, [
+    setBeforeSubmitCallback,
+    methods,
+    sync,
+    personalCriteria,
+    formatMessage,
+    markProgress,
+  ])
 
   if (loading) {
     return <DraftLoadingState />
@@ -198,12 +210,20 @@ export const EmployeeClassificationEditor: FC<
     <FormProvider {...methods}>
       <Box>
         <Stack space={4}>
-          {actionError && <AlertMessage type="error" message={actionError} />}
+          {actionError && (
+            <AlertMessage
+              type="error"
+              title={formatMessage(messages.errors.alertTitle)}
+              message={actionError}
+            />
+          )}
           <T.Table>
             <T.Head>
               <T.Row>
                 <T.HeadData></T.HeadData>
-                <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
+                <T.HeadData>
+                  <EmployeeOrdinalHeader />
+                </T.HeadData>
                 <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
                 <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
               </T.Row>
@@ -213,10 +233,6 @@ export const EmployeeClassificationEditor: FC<
                 <EmployeeClassificationRow
                   key={employee.id}
                   employee={employee}
-                  identifier={formatEmployeeIdentifier(
-                    application.id,
-                    employee.ordinal,
-                  )}
                   employeeIndex={index}
                   roleTitle={employee.roleTitle}
                   assignments={buildDisplayAssignments(

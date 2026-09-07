@@ -278,6 +278,7 @@ type InputSettingsActions =
       payload: {
         field: FormSystemField
         property:
+          | 'isAddressRequired'
           | 'isPhoneRequired'
           | 'isEmailRequired'
           | 'fetchEmailFromMyPages'

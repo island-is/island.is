@@ -2,7 +2,10 @@ import type { FC, MouseEvent } from 'react'
 import { useContext, useState } from 'react'
 
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
-import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  isRulingOrderWithoutDocument,
+} from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
@@ -45,6 +48,12 @@ const RulingOrderConfirmationStatus: FC<Props> = ({ file }) => {
   const isRegisteredJudge = Boolean(
     user?.id && user.id === workingCase.judge?.id,
   )
+
+  // There is nothing to confirm until the district court has written the ruling
+  // up: a ruling pronounced orally is confirmed by the judge pronouncing it.
+  if (isRulingOrderWithoutDocument(file)) {
+    return null
+  }
 
   const handleConfirm = async () => {
     try {

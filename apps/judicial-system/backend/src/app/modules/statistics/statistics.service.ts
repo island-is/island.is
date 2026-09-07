@@ -549,6 +549,7 @@ export class StatisticsService {
               header: 'Upprunalegt mál',
             },
             { key: 'isIsolation', header: 'Einangrun' },
+            { key: 'legalProvisions', header: 'Lagaákvæði' },
           ] as Column[],
           key: `krofur_from_${getDateString(
             period?.fromDate,

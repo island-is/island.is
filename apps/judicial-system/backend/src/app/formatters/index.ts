@@ -31,6 +31,7 @@ export {
   stripHtmlTags,
   filterWhitelistEmails,
   formatCustodyRestrictions,
+  legalProvisionsCompare,
 } from './formatters'
 export {
   getRequestPdfAsBuffer,

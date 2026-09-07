@@ -3,7 +3,7 @@ import { gql, useMutation } from '@apollo/client'
 import type { Application } from '@island.is/application/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
-import { ApiActions } from './constants'
+import { ApiActions, draftActionId } from './constants'
 
 // Custom resolvers, not the standard updateApplicationExternalData provider
 // mechanism — that only takes {actionId, order}, with no channel for an
@@ -43,7 +43,7 @@ export const useEnsureEqualityDraft = (application: Application) => {
             id: application.id,
             dataProviders: [
               {
-                actionId: `DirectorateOfEquality.${ApiActions.createEqualityDraft}`,
+                actionId: draftActionId(ApiActions.createEqualityDraft),
                 order: 0,
               },
             ],

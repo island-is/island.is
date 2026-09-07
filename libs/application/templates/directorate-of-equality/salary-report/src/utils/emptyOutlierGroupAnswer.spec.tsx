@@ -96,7 +96,14 @@ describe('emptyOutlierGroupAnswer', () => {
   // fallback fires on an undefined VALUE rather than on a missing key, so this
   // asserts the values — `Object.keys` alone would still pass if one of them
   // regressed to `undefined`.
-  it.each(['name', 'reason', 'action', 'signatureName', 'signatureRole'])(
+  it.each([
+    'name',
+    'reason',
+    'action',
+    'remedyDate',
+    'signatureName',
+    'signatureRole',
+  ])(
     'gives %s a defined value, so the defaults are never consulted for it',
     (field) => {
       expect(
