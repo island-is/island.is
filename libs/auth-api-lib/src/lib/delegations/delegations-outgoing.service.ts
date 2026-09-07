@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { and, Op, WhereOptions } from 'sequelize'
+import { and, Op, UniqueConstraintError, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { isUuid, uuid } from 'uuidv4'
 import startOfDay from 'date-fns/startOfDay'
@@ -265,17 +265,33 @@ export class DelegationsOutgoingService {
         ),
       ])
 
-      delegation = await this.delegationModel.create({
-        id: uuid(),
-        fromNationalId: user.nationalId,
-        toNationalId: createDelegation.toNationalId,
-        domainName: createDelegation.domainName,
-        createdByNationalId: user.actor?.nationalId ?? user.nationalId,
-        // TODO: should not persist names with the delegation
-        // should always look it up to avoid being out of sync
-        fromDisplayName,
-        toName,
-      })
+      try {
+        delegation = await this.delegationModel.create({
+          id: uuid(),
+          fromNationalId: user.nationalId,
+          toNationalId: createDelegation.toNationalId,
+          domainName: createDelegation.domainName,
+          createdByNationalId: user.actor?.nationalId ?? user.nationalId,
+          // TODO: should not persist names with the delegation
+          // should always look it up to avoid being out of sync
+          fromDisplayName,
+          toName,
+        })
+      } catch (error) {
+        if (error instanceof UniqueConstraintError) {
+          delegation = await this.delegationModel.findOne({
+            where: {
+              fromNationalId: user.nationalId,
+              toNationalId: createDelegation.toNationalId,
+              domainName: createDelegation.domainName,
+            },
+          })
+        }
+
+        if (!delegation) {
+          throw error
+        }
+      }
     }
 
     await this.delegationScopeService.createOrUpdate(
