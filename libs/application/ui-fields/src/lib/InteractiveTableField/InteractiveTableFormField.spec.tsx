@@ -77,6 +77,21 @@ const renderField = (rowCount: number, pageSize?: number) =>
     { wrapper: Wrapper },
   )
 
+const renderHeader = (header: InteractiveTableField['header']) =>
+  render(
+    <InteractiveTableFormField
+      field={
+        buildInteractiveTableField({
+          id: 'selectedDebts',
+          header,
+          rows: makeRows(1),
+        }) as InteractiveTableField
+      }
+      application={application}
+    />,
+    { wrapper: Wrapper },
+  )
+
 const rowCheckboxIds = () =>
   Array.from(
     document.querySelectorAll<HTMLInputElement>(
@@ -165,5 +180,41 @@ describe('InteractiveTableFormField pagination', () => {
 
     await goToPage(1)
     expect(document.getElementById('selectedDebts-select-0')).toBeChecked()
+  })
+})
+
+describe('InteractiveTableFormField header tooltip', () => {
+  const headerWithTooltip = [
+    'Gjaldflokkur',
+    { label: 'Gjaldgr.', tooltip: 'Gjaldgrunnur' },
+    'Eindagi',
+    'Skuldir',
+  ]
+
+  it('spells the abbreviated header out on hover', async () => {
+    renderHeader(headerWithTooltip)
+
+    await userEvent.hover(screen.getByText('Gjaldgr.'))
+
+    await waitFor(() => expect(screen.getByRole('tooltip')).toBeVisible())
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Gjaldgrunnur')
+  })
+
+  it('spells it out for the keyboard as well', async () => {
+    renderHeader(headerWithTooltip)
+
+    await userEvent.tab()
+
+    expect(screen.getByText('Gjaldgr.')).toHaveFocus()
+    await waitFor(() => expect(screen.getByRole('tooltip')).toBeVisible())
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Gjaldgrunnur')
+  })
+
+  it('leaves headers without a tooltip untouched', async () => {
+    renderHeader(headerWithTooltip)
+
+    await userEvent.hover(screen.getByText('Gjaldflokkur'))
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
   })
 })

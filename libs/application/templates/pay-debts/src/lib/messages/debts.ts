@@ -72,6 +72,11 @@ export const debts = {
       defaultMessage: 'Gjaldgr.',
       description: 'Charge item subject table header',
     },
+    chargeItemSubjectHeaderTooltip: {
+      id: 'pd.application:debts.table.chargeItemSubjectHeaderTooltip',
+      defaultMessage: 'Gjaldgrunnur',
+      description: 'Tooltip spelling out the abbreviated Gjaldgr. header',
+    },
     timePeriodHeader: {
       id: 'pd.application:debts.table.timePeriodHeader',
       defaultMessage: 'Tímabil',

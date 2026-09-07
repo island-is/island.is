@@ -55,6 +55,7 @@ export const debtsSection = buildSection({
             },
             {
               label: messages.table.chargeItemSubjectHeader,
+              tooltip: messages.table.chargeItemSubjectHeaderTooltip,
               truncate: true,
               width: 90,
             },

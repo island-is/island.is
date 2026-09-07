@@ -1032,6 +1032,7 @@ export type InteractiveTableHeaderCell =
       width?: number
       truncate?: boolean
       expandable?: boolean
+      tooltip?: StaticText
     }
 
 export interface InteractiveTableField extends BaseField {

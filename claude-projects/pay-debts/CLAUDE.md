@@ -35,7 +35,7 @@ Row index is the index into `getDebts(application)`, so everything (pagination, 
 **`debtsSection.ts`** — `DebtsLoader` + a `buildInteractiveTableField` (`id: 'selectedDebts'`, `dataTestId: 'debts-table'`) + a `buildStickyFooterField`, all under one multi-field. Table and footer are gated on `hasDebtsToPay` (fetched **and** non-empty), so an empty result leaves the loader's own message on screen.
 
 - `selectable`, `pageSize: 50`, `inputColumn` (`id: 'debtsToPay'`, capped per row by `getMaxAmount`). Selecting a row pre-fills the full debt; deselecting clears it.
-- `header` cells are objects carrying `width`/`truncate`/`expandable`. `expandedRows` gives each row a sub-table (Gjalddagi, Tímabil, Höfuðstóll, Vextir, Kostnaður) — the last three render `'—'`, FJS doesn't return them.
+- `header` cells are objects carrying `width`/`truncate`/`expandable`/`tooltip` (the abbreviated "Gjaldgr." header uses `tooltip` to spell out "Gjaldgrunnur"). `expandedRows` gives each row a sub-table (Gjalddagi, Tímabil, Höfuðstóll, Vextir, Kostnaður) — the last three render `'—'`, FJS doesn't return them.
 - `footerRow` totals **all** debts ("Heildarskuld"), not just selected. The sticky footer shows live "Til greiðslu"/"Eftirstöðvar" on every keystroke.
 - `isSubmitDisabled` blocks submit until at least one row is ticked.
 - `shouldUseMockPayment` is a hidden input, dev/local only.

@@ -78,6 +78,21 @@ describe('debtsSection', () => {
     expect(header[0]).toMatchObject({ expandable: true, truncate: true })
   })
 
+  it('spells the abbreviated Gjaldgr. header out in a tooltip', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const header = table?.header
+
+    if (typeof header === 'function' || !header) {
+      throw new Error('Expected a static header')
+    }
+
+    expect(header[1]).toMatchObject({
+      tooltip: { defaultMessage: 'Gjaldgrunnur' },
+    })
+  })
+
   it('hides the table and its footer when the fetch found no debts', () => {
     for (const field of [
       findByType(FieldTypes.INTERACTIVE_TABLE),

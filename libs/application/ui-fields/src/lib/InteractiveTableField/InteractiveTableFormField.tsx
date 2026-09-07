@@ -10,6 +10,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   Box,
   Checkbox,
+  HoverTooltip,
   Pagination,
   Table as T,
   Text,
@@ -252,6 +253,8 @@ export const InteractiveTableFormField: FC<Props> = ({
                 const isColumnConfig = isHeaderColumnConfig(headerCell)
                 const label = isColumnConfig ? headerCell.label : headerCell
                 const width = isColumnConfig ? headerCell.width : undefined
+                const tooltip = isColumnConfig ? headerCell.tooltip : undefined
+                const text = formatText(label, application, formatMessage)
 
                 return (
                   <T.HeadData
@@ -265,7 +268,15 @@ export const InteractiveTableFormField: FC<Props> = ({
                         : undefined
                     }
                   >
-                    {formatText(label, application, formatMessage)}
+                    {tooltip ? (
+                      <HoverTooltip
+                        text={formatText(tooltip, application, formatMessage)}
+                      >
+                        <span>{text}</span>
+                      </HoverTooltip>
+                    ) : (
+                      text
+                    )}
                   </T.HeadData>
                 )
               })}
