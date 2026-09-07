@@ -367,6 +367,11 @@ query GetHealthConversation($id: ID!) {
         ...HealthConversationMessageContent
       }
       senderGroupName
+      certificateId
+      requiresPayment
+      paid
+      amountIsk
+      pendingPaymentId
       attachments {
         id
         fileName
