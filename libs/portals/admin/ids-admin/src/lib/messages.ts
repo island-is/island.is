@@ -1787,14 +1787,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenant-contact-email',
     defaultMessage: 'Contact email',
   },
-  tenantMunicipalityName: {
-    id: 'ap.ids-admin:tenant-municipality-name',
-    defaultMessage: 'Municipality name',
+  tenantMunicipalityCode: {
+    id: 'ap.ids-admin:tenant-municipality-code',
+    defaultMessage: 'Municipality number',
   },
-  tenantMunicipalityNameTooltip: {
-    id: 'ap.ids-admin:tenant-municipality-name-tooltip',
+  tenantMunicipalityCodeTooltip: {
+    id: 'ap.ids-admin:tenant-municipality-code-tooltip',
     defaultMessage:
-      'Only for municipality domains: the municipality name exactly as the National Registry returns it, e.g. "Reykjavík". Used to match users to their municipality.',
+      'Only for municipality domains: the 4-digit municipality number (sveitarfélagsnúmer), e.g. "0000" for Reykjavíkurborg. Used to match users to their municipality.',
+  },
+  errorMunicipalityCode: {
+    id: 'ap.ids-admin:error-municipality-code',
+    defaultMessage: 'Municipality number must be 4 digits',
   },
   errorTenantName: {
     id: 'ap.ids-admin:error-tenant-name',

@@ -19,7 +19,8 @@ export const contactEmailSchema = z
   .or(z.literal(''))
   .optional()
 
-export const optionalSafeTextSchema = z
+export const municipalityCodeSchema = z
   .string()
-  .regex(/^[^<>%$]*$/, 'errorUnsafeChars')
+  .trim()
+  .regex(/^(\d{4})?$/, 'errorMunicipalityCode')
   .optional()

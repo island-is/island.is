@@ -122,7 +122,7 @@ export class TenantsService extends MultiEnvironmentService {
           description: domain.description,
           organisationLogoKey: domain.organisationLogoKey,
           contactEmail: domain.contactEmail,
-          municipalityName: domain.municipalityName,
+          municipalityCode: domain.municipalityCode,
         }),
         prefixErrorMessage: `Failed to fetch admin details for tenant ${id}`,
       },
@@ -141,7 +141,7 @@ export class TenantsService extends MultiEnvironmentService {
       contactEmail: primary.contactEmail,
       description: primary.description,
       organisationLogoKey: primary.organisationLogoKey,
-      municipalityName: primary.municipalityName,
+      municipalityCode: primary.municipalityCode,
     }
   }
 
@@ -162,8 +162,8 @@ export class TenantsService extends MultiEnvironmentService {
               ...(input.contactEmail
                 ? { contactEmail: input.contactEmail }
                 : {}),
-              ...(input.municipalityName
-                ? { municipalityName: input.municipalityName }
+              ...(input.municipalityCode
+                ? { municipalityCode: input.municipalityCode }
                 : {}),
             },
           }),
@@ -214,7 +214,7 @@ export class TenantsService extends MultiEnvironmentService {
         description: domain.description,
         organisationLogoKey: domain.organisationLogoKey,
         contactEmail: domain.contactEmail,
-        municipalityName: domain.municipalityName,
+        municipalityCode: domain.municipalityCode,
       }),
       prefixErrorMessage: `Failed to update tenant ${tenantId}`,
     })
@@ -257,8 +257,8 @@ export class TenantsService extends MultiEnvironmentService {
             ...(source.contactEmail
               ? { contactEmail: source.contactEmail }
               : {}),
-            ...(source.municipalityName
-              ? { municipalityName: source.municipalityName }
+            ...(source.municipalityCode
+              ? { municipalityCode: source.municipalityCode }
               : {}),
           },
         }),
@@ -278,7 +278,7 @@ export class TenantsService extends MultiEnvironmentService {
       description: created.description,
       organisationLogoKey: created.organisationLogoKey,
       contactEmail: created.contactEmail,
-      municipalityName: created.municipalityName,
+      municipalityCode: created.municipalityCode,
     }
   }
 

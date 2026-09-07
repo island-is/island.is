@@ -3,12 +3,12 @@ module.exports = {
     return queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.addColumn(
         'domain',
-        'municipality_name',
+        'municipality_code',
         {
           type: Sequelize.STRING,
           allowNull: true,
           comment:
-            'Municipality name as returned by the National Registry (e.g. "Reykjavík"), used to match users to their municipality domain',
+            'Municipality number (sveitarfélagsnúmer, e.g. "0000" for Reykjavíkurborg), used to match users to their municipality domain via the National Registry legal domicile code',
         },
         { transaction },
       )
@@ -17,7 +17,7 @@ module.exports = {
 
   down: async (queryInterface) => {
     return queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.removeColumn('domain', 'municipality_name', {
+      await queryInterface.removeColumn('domain', 'municipality_code', {
         transaction,
       })
     })

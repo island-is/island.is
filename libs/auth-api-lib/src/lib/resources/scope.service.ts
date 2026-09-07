@@ -56,22 +56,25 @@ export class ScopeService {
   ) {}
 
   /**
-   * Looks up the user's municipality from the National Registry and finds
-   * a matching domain among the candidates by comparing against
-   * Domain.municipalityName, which admins fill in with the municipality
-   * name as the National Registry returns it.
+   * Looks up the user's municipality from the National Registry legal
+   * domicile code and finds a matching domain among the candidates by
+   * comparing against Domain.municipalityCode.
+   *
+   * The first four digits of the legal domicile code are the municipality
+   * number (sveitarfélagsnúmer, e.g. "0000" for Reykjavíkurborg). Foreign
+   * domiciles use "99" plus a country code (e.g. "99US") and never match.
    */
   private async getUserMunicipalDomain(
     user: User,
     candidateDomainNames: string[],
   ): Promise<string | null> {
-    let sveitarfelag: string | undefined
+    let municipalityCode: string | undefined
 
     try {
-      const address = await this.nationalRegistryService.getAddress(
+      const housing = await this.nationalRegistryService.getHousing(
         user.nationalId,
       )
-      sveitarfelag = address?.sveitarfelag?.trim()
+      municipalityCode = housing?.logheimiliskodi?.slice(0, 4)
     } catch {
       this.logger.warn(
         'Failed to fetch municipality, falling back to normal categories',
@@ -79,13 +82,13 @@ export class ScopeService {
       return null
     }
 
-    if (!sveitarfelag) return null
+    if (!municipalityCode || !/^\d{4}$/.test(municipalityCode)) return null
 
     const domain = await this.domainModel.findOne({
       attributes: ['name'],
       where: {
         name: { [Op.in]: candidateDomainNames },
-        municipalityName: sveitarfelag,
+        municipalityCode,
       },
     })
 

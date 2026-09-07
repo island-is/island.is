@@ -24,7 +24,7 @@ export class CreateTenantInput {
   contactEmail?: string
 
   @Field(() => String, { nullable: true })
-  municipalityName?: string
+  municipalityCode?: string
 
   @Field(() => [Environment], { nullable: false })
   @ArrayMinSize(1)

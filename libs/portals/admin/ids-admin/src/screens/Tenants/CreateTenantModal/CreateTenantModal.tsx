@@ -53,7 +53,7 @@ const getInitialValues = (
     displayName: '',
     description: '',
     contactEmail: '',
-    municipalityName: '',
+    municipalityCode: '',
     environments: defaultEnv ? [defaultEnv] : [],
   }
 }
@@ -129,7 +129,7 @@ const CreateTenantModal = ({
             // placeholder until the column is dropped from the database.
             organisationLogoKey: result.data.name,
             contactEmail: result.data.contactEmail || undefined,
-            municipalityName: result.data.municipalityName || undefined,
+            municipalityCode: result.data.municipalityCode || undefined,
             environments: result.data.environments,
           },
         },
@@ -246,14 +246,14 @@ const CreateTenantModal = ({
               </GridColumn>
               <GridColumn span="12/12">
                 <Input
-                  name="municipalityName"
-                  label={formatMessage(m.tenantMunicipalityName)}
+                  name="municipalityCode"
+                  label={formatMessage(m.tenantMunicipalityCode)}
                   size="sm"
                   backgroundColor="blue"
-                  value={values.municipalityName ?? ''}
-                  onChange={onChange('municipalityName')}
-                  errorMessage={formatErrorMessage(errors.municipalityName)}
-                  tooltip={formatMessage(m.tenantMunicipalityNameTooltip)}
+                  value={values.municipalityCode ?? ''}
+                  onChange={onChange('municipalityCode')}
+                  errorMessage={formatErrorMessage(errors.municipalityCode)}
+                  tooltip={formatMessage(m.tenantMunicipalityCodeTooltip)}
                 />
               </GridColumn>
 

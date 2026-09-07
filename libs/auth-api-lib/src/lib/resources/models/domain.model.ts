@@ -75,18 +75,18 @@ export class Domain extends Model {
 
   @Column({
     type: DataType.STRING,
-    // Matched verbatim against the National Registry municipality name,
-    // so stray whitespace must never be persisted.
+    // Matched verbatim against the National Registry legal domicile code
+    // prefix, so stray whitespace must never be persisted.
     set(this: Domain, value: string | null | undefined) {
-      this.setDataValue('municipalityName', value?.trim() || null)
+      this.setDataValue('municipalityCode', value?.trim() || null)
     },
   })
   @ApiPropertyOptional({
-    example: 'Reykjavík',
+    example: '0000',
     description:
-      'Municipality name as returned by the National Registry, used to match users to their municipality domain.',
+      'Municipality number (sveitarfélagsnúmer), used to match users to their municipality domain.',
   })
-  municipalityName?: string
+  municipalityCode?: string
 
   @CreatedAt
   @ApiProperty()

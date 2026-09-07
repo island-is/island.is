@@ -4,7 +4,7 @@ import { defaultEnvironmentSchema } from '../../../utils/schemas'
 import {
   contactEmailSchema,
   nationalIdSchema,
-  optionalSafeTextSchema,
+  municipalityCodeSchema,
   safeTextSchema,
 } from '../tenantValidation'
 
@@ -19,7 +19,7 @@ export const editTenantSchema = {
       displayName: safeTextSchema,
       description: safeTextSchema,
       contactEmail: contactEmailSchema,
-      municipalityName: optionalSafeTextSchema,
+      municipalityCode: municipalityCodeSchema,
     })
     .merge(defaultEnvironmentSchema),
 }

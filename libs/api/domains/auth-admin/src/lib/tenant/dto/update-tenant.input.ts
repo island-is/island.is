@@ -26,5 +26,5 @@ export class UpdateTenantInput {
   contactEmail?: string
 
   @Field(() => String, { nullable: true })
-  municipalityName?: string
+  municipalityCode?: string
 }

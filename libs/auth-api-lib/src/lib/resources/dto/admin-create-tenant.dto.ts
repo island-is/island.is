@@ -58,13 +58,13 @@ export class AdminCreateTenantDto {
 
   @IsOptional()
   @IsString()
-  @Matches(SAFE_TEXT_REGEX, {
-    message: 'Municipality name contains invalid characters',
+  @Matches(/^\d{4}$/, {
+    message: 'Municipality code must be 4 digits',
   })
   @ApiPropertyOptional({
-    example: 'Reykjavík',
+    example: '0000',
     description:
-      'Municipality name as returned by the National Registry, used to match users to their municipality domain.',
+      'Municipality number (sveitarfélagsnúmer), used to match users to their municipality domain.',
   })
-  municipalityName?: string
+  municipalityCode?: string
 }

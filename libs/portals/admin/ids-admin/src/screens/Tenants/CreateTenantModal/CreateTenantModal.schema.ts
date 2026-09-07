@@ -5,7 +5,7 @@ import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
   contactEmailSchema,
   nationalIdSchema,
-  optionalSafeTextSchema,
+  municipalityCodeSchema,
   safeTextSchema,
 } from '../tenantValidation'
 
@@ -18,7 +18,7 @@ export const createTenantSchema = z.object({
   displayName: safeTextSchema,
   description: safeTextSchema,
   contactEmail: contactEmailSchema,
-  municipalityName: optionalSafeTextSchema,
+  municipalityCode: municipalityCodeSchema,
   environments: z
     .array(z.nativeEnum(AuthAdminEnvironment))
     .nonempty('errorEnvironment'),
