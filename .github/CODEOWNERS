@@ -164,7 +164,6 @@ codemagic.yaml                                                                  
 /libs/clients/hms-rental-agreement/                                                                                          @island-is/origo @island-is/hugsmidjan
 /libs/api/domains/hms/                                                                                                       @island-is/origo @island-is/hugsmidjan
 
-
 /apps/download-service/                                                                                                      @island-is/hugsmidjan
 /apps/portals/my-pages*/                                                                                                     @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                                    @island-is/hugsmidjan
