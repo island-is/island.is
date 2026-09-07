@@ -6,9 +6,9 @@ import React, {
   useLayoutEffect,
   ReactElement,
   useEffect,
+  useRef,
 } from 'react'
 import cn from 'classnames'
-import { useUpdateEffect } from 'react-use'
 import {
   useDialogState,
   Dialog as BaseDialog,
@@ -151,9 +151,17 @@ export const ModalBase: FC<ModalBaseProps> = ({
     }
   }, [isVisible])
 
-  useUpdateEffect(() => {
-    onVisibilityChange && onVisibilityChange(modal.visible)
-  }, [modal.visible])
+  // Report only real visibility transitions. A previous-value guard instead
+  // of useUpdateEffect: react-use's first-mount tracking misfires under
+  // React 19 StrictMode double rendering, reporting visible=false on mount,
+  // which makes consumers close themselves before the dialog ever opens.
+  const prevVisible = useRef(modal.visible)
+  useEffect(() => {
+    if (prevVisible.current !== modal.visible) {
+      prevVisible.current = modal.visible
+      onVisibilityChange && onVisibilityChange(modal.visible)
+    }
+  }, [modal.visible, onVisibilityChange])
 
   const renderModal = !removeOnClose || (removeOnClose && modal.visible)
 
