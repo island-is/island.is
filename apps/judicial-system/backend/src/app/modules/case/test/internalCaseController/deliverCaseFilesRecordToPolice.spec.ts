@@ -3,7 +3,12 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseOrigin,
+  CaseState,
+  CaseType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -43,6 +48,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     id: caseId,
     type: caseType,
     state: caseState,
+    origin: CaseOrigin.LOKE,
     policeCaseNumbers: [policeCaseNumber],
     defendants: [{ nationalId: uuid() }],
     courtId,

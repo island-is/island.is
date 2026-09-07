@@ -1,31 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { InstitutionType } from '@island.is/judicial-system/types'
 
-import { Institution } from '../repository'
+import { Institution, InstitutionRepositoryService } from '../repository'
 
 @Injectable()
 export class InstitutionService {
   constructor(
-    @InjectModel(Institution)
-    private readonly institutionModel: typeof Institution,
+    private readonly institutionRepositoryService: InstitutionRepositoryService,
   ) {}
 
   async getById(id: string): Promise<Institution> {
-    return this.institutionModel.findByPk(id).then((institution) => {
-      if (!institution) {
-        throw new NotFoundException(`Institution ${id} not found`)
-      }
+    const institution = await this.institutionRepositoryService.findById(id)
 
-      return institution
-    })
+    if (!institution) {
+      throw new NotFoundException(`Institution ${id} not found`)
+    }
+
+    return institution
   }
 
   async getAll(types?: InstitutionType[]): Promise<Institution[]> {
-    return this.institutionModel.findAll({
-      order: ['name'],
-      where: { active: true, ...(types ? { type: types } : {}) },
-    })
+    return this.institutionRepositoryService.findAllActive(types)
   }
 }

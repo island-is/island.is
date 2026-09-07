@@ -9,7 +9,6 @@ import {
 } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
-import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 import { EmailRecipient, EmailRole, RejectType } from './types'
@@ -44,7 +43,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
-    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
     private readonly paymentService: PaymentService,
@@ -106,7 +104,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         if (totalRecords > 5) {
           return mapVehicle(auth, vehicle, false, {
             vehicleOwnerChangeClient: this.vehicleOwnerChangeClient,
-            vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
             mileageReadingApi: this.mileageReadingApi,
           })
         }
@@ -115,7 +112,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         // Display radio buttons, validate all vehicles now
         return mapVehicle(auth, vehicle, true, {
           vehicleOwnerChangeClient: this.vehicleOwnerChangeClient,
-          vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
           mileageReadingApi: this.mileageReadingApi,
         })
       }),

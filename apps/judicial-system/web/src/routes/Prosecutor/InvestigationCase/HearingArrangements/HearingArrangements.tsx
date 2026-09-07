@@ -29,7 +29,12 @@ import {
   CaseTransition,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  ProsecutorSectionHeightenedSecurity,
+  RequestCourtDate,
+  SelectCourt,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   useCase,
@@ -38,12 +43,6 @@ import {
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-
-import {
-  ProsecutorSectionHeightenedSecurity,
-  RequestCourtDate,
-  SelectCourt,
-} from '../../components'
 
 const HearingArrangements = () => {
   const router = useRouter()

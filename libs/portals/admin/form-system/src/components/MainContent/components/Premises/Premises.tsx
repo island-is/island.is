@@ -1,5 +1,13 @@
 import { FormSystemLanguageType } from '@island.is/api/schema'
-import { Box, Button, Input, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Input,
+  Stack,
+  Text,
+  GridRow as Row,
+  GridColumn as Column,
+} from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 
@@ -133,30 +141,45 @@ export const Premises = () => {
 
   return (
     <>
+      <Row>
+        <Box marginLeft={1}>
+          <Text variant="h3">Gagnaöflun</Text>
+        </Box>
+      </Row>
+      <Box marginTop={2}></Box>
+      <Row>
+        <Column span="8/10">
+          <Text variant="medium">
+            Gagnaöflun er fremsti skjárinn í hverri umsókn og þar samþykkir
+            umsækjandi að gagna verði aflað rafrænt. Hér er hægt að tilgreina
+            þau gögn sem þarf að afla umfram þau hefðbundnu gögn sem aflað er í
+            hverri umsókn.
+          </Text>
+        </Column>
+      </Row>
       <Box
+        marginTop={5}
         background="blue100"
         padding={2}
         borderRadius="large"
         display="flex"
         alignItems="center"
-        justifyContent="center"
+        justifyContent="flexStart"
         columnGap={2}
       >
-        <Text variant="default" as="h2">
-          Hér er hægt að bæta við skilaboðum til umsækjenda ef þarf að afla
-          frekari gagna
-        </Text>
-
         <Box flexShrink={0} alignSelf="center">
           <Button
             variant="primary"
-            icon="add"
+            preTextIcon="add"
             onClick={add}
             disabled={isReadOnly}
           >
             Bæta við
           </Button>
         </Box>
+        <Text variant="default" as="h2">
+          Tilgreina frekara gagn sem aflað er í umsókn
+        </Text>
       </Box>
 
       {premises.map((premise, index) => (

@@ -98,6 +98,13 @@ export class Form extends Model<Form> {
   submissionServiceUrl!: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  zendeskBrandId!: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,

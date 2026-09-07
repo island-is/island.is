@@ -3,11 +3,14 @@ import { useContext, useEffect, useState } from 'react'
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { Lawyer } from '@island.is/judicial-system/types'
-
-import { Defendant, Verdict, VerdictServiceStatus } from '../../graphql/schema'
-import useVerdict from '../../utils/hooks/useVerdict'
-import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
+import type { Lawyer } from '@island.is/judicial-system/types'
+import { LawyerRegistryContext } from '@island.is/judicial-system-web/src/components/LawyerRegistryProvider/LawyerRegistryProvider'
+import type {
+  Defendant,
+  Verdict,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { VerdictServiceStatus } from '@island.is/judicial-system-web/src/graphql/schema'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 
 const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
   switch (verdict.serviceStatus) {

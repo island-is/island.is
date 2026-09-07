@@ -382,6 +382,8 @@ export class QuestionnairesService {
 
     const data = {
       id: LSHdata.gUID,
+      submissionId: LSHdata.gUID,
+      isDraft: false,
       title:
         LSHquestionnaire?.header ?? formatMessage(m.questionnaireWithoutTitle),
       description: LSHquestionnaire?.description ?? undefined,
@@ -480,7 +482,7 @@ export class QuestionnairesService {
         row
           .map((cell) =>
             'answer' in cell
-              ? String(cell.answer)
+              ? this.formatCellAnswer(cell.answer, formatMessage)
               : cell.values.map((v) => v.answer).join(', '),
           )
           .join(' | '),
@@ -498,6 +500,25 @@ export class QuestionnairesService {
       this.logger.warn('Unhandled reply type')
       return []
     }
+  }
+
+  // `unknown` is deliberate: the generated EL types declare table cell
+  // answers as anyOf without a discriminator (e.g. `Date | unknown`),
+  // so this function is the runtime narrowing boundary
+  private formatCellAnswer(
+    answer: unknown,
+    formatMessage: FormatMessage,
+  ): string {
+    if (answer === null || answer === undefined) return ''
+    if (answer === true) return formatMessage(m.yes)
+    if (answer === false) return formatMessage(m.no)
+
+    const value =
+      answer instanceof Date
+        ? answer.toISOString().split('T')[0]
+        : String(answer)
+    const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+    return dateMatch ? `${dateMatch[3]}.${dateMatch[2]}.${dateMatch[1]}` : value
   }
 
   private formatDate(date?: Date | string | null): string | undefined {

@@ -586,15 +586,31 @@ export class AuthController {
     }
 
     if (isProsecutionUser(currentUser)) {
-      return getRedirectRoute(['/beinir', '/krafa', '/kaera', '/akaera'])
+      return getRedirectRoute([
+        '/beinir',
+        '/malalistar',
+        '/krafa',
+        '/kaera',
+        '/akaera',
+      ])
     }
 
     if (isPublicProsecutionOfficeUser(currentUser)) {
-      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/rikissaksoknari'])
+      return getRedirectRoute([
+        '/beinir',
+        '/malalistar',
+        '/krafa/yfirlit',
+        '/rikissaksoknari',
+      ])
     }
 
     if (isDistrictCourtUser(currentUser)) {
-      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/domur'])
+      return getRedirectRoute([
+        '/beinir',
+        '/malalistar',
+        '/krafa/yfirlit',
+        '/domur',
+      ])
     }
 
     if (isCourtOfAppealsUser(currentUser)) {
@@ -602,11 +618,16 @@ export class AuthController {
     }
 
     if (isPrisonSystemUser(currentUser)) {
-      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/fangelsi'])
+      return getRedirectRoute([
+        '/beinir',
+        '/malalistar',
+        '/krafa/yfirlit',
+        '/fangelsi',
+      ])
     }
 
     if (isDefenceUser(currentUser)) {
-      return getRedirectRoute(['/krafa/yfirlit', '/verjandi'])
+      return getRedirectRoute(['/malalistar', '/krafa/yfirlit', '/verjandi'])
     }
 
     if (isAdminUser(currentUser)) {

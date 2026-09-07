@@ -113,6 +113,7 @@ describe('Feature-deployment support', () => {
       DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS:
         '--max-old-space-size=230 --enable-source-maps -r dd-trace/init',
+      DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
       DB_EXTENSIONS: 'foo',
@@ -137,8 +138,10 @@ describe('Feature-deployment support', () => {
       BFF_ALLOWED_EXTERNAL_API_URLS: json(['https://api.dev01.devland.is']),
       BFF_CACHE_USER_PROFILE_TTL_MS: '3595000',
       BFF_LOGIN_ATTEMPT_TTL_MS: '604800000',
+      BFF_PROXY_MAX_SOCKETS: '50',
       NODE_OPTIONS:
         '--max-old-space-size=230 --enable-source-maps -r dd-trace/init',
+      DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
       REDIS_URL_NODE_01: 'b',

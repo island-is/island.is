@@ -23,12 +23,19 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  CaseOrigin,
-  CaseType,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  DefendantInfo,
+  PoliceCaseNumbers,
+  usePoliceCaseNumbers,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useCase,
   useDebouncedInput,
@@ -38,12 +45,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-
-import {
-  DefendantInfo,
-  PoliceCaseNumbers,
-  usePoliceCaseNumbers,
-} from '../../components'
 
 const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
   origin === CaseOrigin.LOKE && Boolean(id)

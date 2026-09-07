@@ -33,7 +33,6 @@ export const IDENTITY_QUERY = `
 export const GET_VEHICLE_OPERATOR_CHANGE_CHECKS_BY_PERMNO = `
   query GetVehicleOperatorChangeChecksByPermno($permno: String!) {
     vehicleOperatorChangeChecksByPermno(permno: $permno) {
-      isDebtLess
       validationErrorMessages {
         errorNo
         defaultMessage

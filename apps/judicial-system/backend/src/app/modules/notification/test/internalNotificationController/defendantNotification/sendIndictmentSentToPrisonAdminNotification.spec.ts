@@ -10,7 +10,11 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case, Defendant, Notification } from '../../../../repository'
+import {
+  Case,
+  Defendant,
+  NotificationRepositoryService,
+} from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 
@@ -34,7 +38,7 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
   const defendantId = uuid()
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let defendantNotificationDTO: DefendantNotificationDto
 
   let givenWhenThen: GivenWhenThen
@@ -43,7 +47,7 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
     const {
       emailService,
       internalNotificationController,
-      notificationModel,
+      notificationRepositoryService,
       institutionContactRepositoryService,
     } = await createTestingNotificationModule()
 
@@ -58,7 +62,7 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
     }
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -131,8 +135,8 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
     })
 
     it('should record notification', () => {
-      expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledTimes(1)
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: defendantNotificationDTO.type,
         recipients: [

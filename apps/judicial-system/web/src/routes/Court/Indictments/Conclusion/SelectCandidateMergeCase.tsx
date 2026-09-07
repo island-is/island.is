@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
 
 import {
   AlertMessage,
@@ -6,11 +6,9 @@ import {
   LoadingDots,
   Select,
 } from '@island.is/island-ui/core'
-import {
-  Case,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 import { useCandidateMergeCasesQuery } from './candidateMergeCases.generated'
 

@@ -8,6 +8,11 @@ import {
 import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import { getLandlordOptionsForSelectedContract } from './rentalAgreementUtils'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+
+export const formatDate = (date?: string | null) =>
+  date ? format(parseISO(date), 'dd-MM-yyyy') : ''
 
 export const isHouseholdMemberUnder18 = (
   _application: Application,

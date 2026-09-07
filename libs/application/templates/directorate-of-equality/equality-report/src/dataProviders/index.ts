@@ -1,5 +1,9 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import { defineTemplateApi, IdentityApi } from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
+
+export const IdentityApiProvider = IdentityApi.configure({
+  params: { includeActorInfo: true },
+})
 
 // PREREQUISITES providers — independent of each other, order is inconsequential
 export const CompanyRegistryApi = defineTemplateApi({
@@ -32,13 +36,6 @@ export const PreviousEqualityReportContentApi = defineTemplateApi({
   order: 0,
 })
 
-export const EqualityReportTemplateHtmlApi = defineTemplateApi({
-  action: ApiActions.getEqualityReportTemplateHtml,
-  externalDataId: 'equalityReportTemplateHtml',
-  namespace: 'DirectorateOfEquality',
-  order: 0,
-})
-
 export const EqualityReportTemplateDocxApi = defineTemplateApi({
   action: ApiActions.getEqualityReportTemplateDocx,
   externalDataId: 'equalityReportTemplateDocx',
@@ -46,8 +43,37 @@ export const EqualityReportTemplateDocxApi = defineTemplateApi({
   order: 0,
 })
 
-export const SubmitEqualityReportApi = defineTemplateApi({
-  action: ApiActions.submitEqualityReport,
+// On-demand only — triggered manually from the CommentThread field, never
+// wired to a state's onEntry. Listed on a role's `api` array purely so
+// updateApplicationExternalData is permitted to invoke it for that role.
+export const GetReportCommentsApi = defineTemplateApi({
+  action: ApiActions.getReportComments,
+  externalDataId: 'getReportComments',
+  namespace: 'DirectorateOfEquality',
+  order: 0,
+  throwOnError: false,
+})
+
+export const SubmitReportCommentApi = defineTemplateApi({
+  action: ApiActions.submitReportComment,
+  externalDataId: 'submitReportComment',
+  namespace: 'DirectorateOfEquality',
+  order: 0,
+  throwOnError: false,
+})
+
+// Idempotent on providerId — reopening this step returns the same draft.
+export const CreateEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.createEqualityDraft,
+  externalDataId: 'equalityDraft',
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: false,
+  throwOnError: true,
+})
+
+export const SubmitEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.submitEqualityDraft,
+  externalDataId: 'submitEqualityDraft',
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
   throwOnError: true,

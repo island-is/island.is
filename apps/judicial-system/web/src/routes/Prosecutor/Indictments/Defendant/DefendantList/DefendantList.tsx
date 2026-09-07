@@ -8,19 +8,19 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseOrigin,
+import type {
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DefendantInfo } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import { getIndictmentIntroductionAutofill } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/Indictment'
 import {
   useCase,
   useDefendants,
   useSyncDefendantsFromPolice,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { DefendantInfo } from '../../../components'
-import { getIndictmentIntroductionAutofill } from '../../Indictment/Indictment'
 import { strings } from './DefendantList.strings'
 
 const isLokeCaseWithId = (

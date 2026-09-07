@@ -1,7 +1,5 @@
-import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useSelectCourtOfficialsUsersQuery } from './selectCourtOfficialsUsers.generated'
 

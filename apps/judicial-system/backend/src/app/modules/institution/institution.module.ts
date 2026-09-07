@@ -1,12 +1,11 @@
-import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
+import { forwardRef, Module } from '@nestjs/common'
 
-import { Institution } from '../repository'
+import { RepositoryModule } from '..'
 import { InstitutionController } from './institution.controller'
 import { InstitutionService } from './institution.service'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Institution])],
+  imports: [forwardRef(() => RepositoryModule)],
   controllers: [InstitutionController],
   providers: [InstitutionService],
   exports: [InstitutionService],

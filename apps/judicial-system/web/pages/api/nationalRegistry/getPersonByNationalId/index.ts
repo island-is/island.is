@@ -1,9 +1,8 @@
 import faker from 'faker'
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
-
-import { fakePerson } from '../constants'
+import { fakePerson } from '@island.is/judicial-system-web/pages/api/nationalRegistry/constants'
+import type { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
 
 const getPersonByNationalId = async (
   nationalId: string,

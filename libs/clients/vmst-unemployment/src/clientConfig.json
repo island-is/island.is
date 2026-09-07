@@ -1130,69 +1130,6 @@
         ]
       }
     },
-    "/api/ActivationGrant/{applicationId}": {
-      "get": {
-        "tags": ["ActivationGrant"],
-        "summary": "Get an activation grant by Id",
-        "operationId": "ActivationGrant_GetSingleActivationGrant",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "required": true,
-            "description": "Unique application identifier",
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ActivationGrantViewModel",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_ActivationGrantApplications_ViewModels_ActivationGrantViewModel"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/ActivationGrant/empty": {
-      "get": {
-        "tags": ["ActivationGrant"],
-        "summary": "Returns an empty application with all support data",
-        "operationId": "ActivationGrant_GetEmptyActivationGrant",
-        "responses": {
-          "200": {
-            "description": "ActivationGrantViewModel",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_ActivationGrantApplications_ViewModels_ActivationGrantViewModel"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/api/ActivationGrant/emptywithprofile/{applicantSSN}": {
       "get": {
         "tags": ["ActivationGrant"],
@@ -1221,51 +1158,6 @@
             }
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/ActivationGrant/latestbyapplicant/{applicantSSN}": {
-      "get": {
-        "tags": ["ActivationGrant"],
-        "summary": "Returns the latest application for the given applicant",
-        "operationId": "ActivationGrant_GetLatestApplicationByApplicant",
-        "parameters": [
-          {
-            "name": "applicantSSN",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "skipSupportData",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ActivationGrantViewModel",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_ActivationGrantApplications_ViewModels_ActivationGrantViewModel"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
         "security": [
           {
             "JWT": []
@@ -1400,42 +1292,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_Domain_Models_ActivationGrantValidation_ValidateActivationGrantResponseDTO"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/ActivationGrant/withdraw": {
-      "post": {
-        "tags": ["ActivationGrant"],
-        "summary": "Withdraws the latest activation grant for the given applicant",
-        "operationId": "ActivationGrant_WithdrawApplication",
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawLatestActivationGrantRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "BaseViewModel",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
                 }
               }
             }
@@ -1659,6 +1515,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{id}/profile/eligibility": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Athugar hvort umsækjandi sé með gilda umsókn um atvinnuleysisbætur eða virknistyrk og megi því breyta prófíl sínum.",
+        "operationId": "Applicant_GetProfileEligibility",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upplýsingar um hvort umsækjandi megi breyta prófíl sínum.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Requests_HasValidApplicationResponse"
                 }
               }
             }
@@ -1929,7 +1825,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_CreateAttachmentEligibilityResponse"
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ApplicantEligibilityResponse"
                 }
               }
             }
@@ -2104,11 +2000,59 @@
         ]
       }
     },
-    "/api/applicants/{id}/unemploymentapplications/withdraw/overview": {
+    "/api/applicants/{id}/activationgrantapplications/overview": {
       "get": {
         "tags": ["Applicant"],
-        "summary": "Sækir upplýsingar um hvort umsækjandi geti dregið atvinnuleysisumsókn til baka og hvaða umsókn það á við um.",
-        "operationId": "Applicant_GetUnemploymentApplicationsWithdrawOverview",
+        "summary": "Sækir upplýsingar virknistyrksumsóknar fyrir yfirlitssíðu á mínar síður island.is",
+        "operationId": "Applicant_GetLatestActivationGrantApplicationOverview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_ActivationGrantApplicationOverviewResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{id}/withdraw/overview": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Sækir upplýsingar um hvort umsækjandi geti dregið nýjustu virku umsókn sína til baka og hvaða umsókn það á við um.\nBótaumsókn er skoðuð fyrst, síðan virknistyrksumsókn.",
+        "operationId": "Applicant_GetWithdrawOverview",
         "parameters": [
           {
             "name": "id",
@@ -2396,6 +2340,87 @@
         ]
       }
     },
+    "/api/applicants/{applicantId}/withdraw": {
+      "post": {
+        "tags": ["Applicant"],
+        "summary": "Afskráir virkar umsóknir umsækjanda, bæði atvinnuleysisumsókn og virknistyrksumsókn ef þær eru til staðar.",
+        "operationId": "Applicant_WithdrawLatestApplication",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawLatestApplicationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "BaseViewModel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/applications/overview": {
       "post": {
         "tags": ["Application"],
@@ -2628,6 +2653,33 @@
         ]
       }
     },
+    "/api/jobSearchConfirmations/questionaire": {
+      "get": {
+        "tags": ["JobSearchConfirmation"],
+        "summary": "Sækir uppbyggingu spurningalista (skimun) sem fylgir staðfestingu atvinnuleitar.",
+        "operationId": "JobSearchConfirmation_GetQuestionaireSchema",
+        "responses": {
+          "200": {
+            "description": "Spurningar og svarmöguleikar spurningalistans.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/SupportData/delistingReasons": {
       "get": {
         "tags": ["SupportData"],
@@ -2646,6 +2698,191 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/SupportData/nationalities": {
+      "get": {
+        "tags": ["SupportData"],
+        "summary": "Get countries (only those that are visible for applicant)",
+        "operationId": "SupportData_GetAllNationalities",
+        "parameters": [
+          {
+            "name": "onlyInEUAndOrEEA",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All countries that are visible for applicant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_SupportData_NationalityDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/u2Certificates/eligibility": {
+      "get": {
+        "tags": ["U2Certificate"],
+        "summary": "Check if an applicant is eligible to create a U2 certificate",
+        "operationId": "U2Certificate_CanCreateU2Certificate",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_U2EligibilityResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/u2Certificates": {
+      "post": {
+        "tags": ["U2Certificate"],
+        "summary": "Create U2 certificate for applicant",
+        "operationId": "U2Certificate_CreateU2Certificate",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_U2Certificate_CreateU2CertificateRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/u2Certificates/validate": {
+      "post": {
+        "tags": ["U2Certificate"],
+        "summary": "Validate U2 certificate for applicant",
+        "operationId": "U2Certificate_ValidateU2Certificate",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_U2Certificate_CreateU2CertificateRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_U2Certificate_ViewModels_U2CertificateValidationResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         },
         "security": [
@@ -2737,44 +2974,6 @@
         ]
       }
     },
-    "/api/UnemploymentApplication/{applicationId}": {
-      "get": {
-        "tags": ["UnemploymentApplication"],
-        "summary": "Get an unemployment application by Id",
-        "operationId": "UnemploymentApplication_GetSingleUnemploymentApplication",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "required": true,
-            "description": "Unique application identifier",
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "UnemploymentApplicationViewModel",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/api/UnemploymentApplication/emptywithprofile/{applicantSSN}": {
       "get": {
         "tags": ["UnemploymentApplication"],
@@ -2803,89 +3002,6 @@
             }
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/UnemploymentApplication/latestbyapplicant/{applicantSSN}": {
-      "get": {
-        "tags": ["UnemploymentApplication"],
-        "summary": "Returns the latest application for the given applicant",
-        "operationId": "UnemploymentApplication_GetLatestApplicationByApplicant",
-        "parameters": [
-          {
-            "name": "applicantSSN",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "skipSupportData",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "UnemploymentApplicationViewModel",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/UnemploymentApplication/deleteAttachment": {
-      "delete": {
-        "tags": ["UnemploymentApplication"],
-        "summary": "Delete or mark attachment deleted on application",
-        "operationId": "UnemploymentApplication_DeleteAttachment",
-        "requestBody": {
-          "x-name": "command",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_Application_Applications_UnemploymentApplications_Commands_DeleteAttachment_DeleteAttachmentCommand"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
         "security": [
           {
             "JWT": []
@@ -2956,75 +3072,6 @@
                 }
               }
             }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/UnemploymentApplication/withdraw": {
-      "post": {
-        "tags": ["UnemploymentApplication"],
-        "summary": "Withdraws the latest unemployment application for the given applicant",
-        "operationId": "UnemploymentApplication_WithdrawApplication",
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawApplicationRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "BaseViewModel",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": ""
           }
         },
         "security": [
@@ -7070,24 +7117,6 @@
           }
         }
       },
-      "Galdur_External_Domain_Requests_WithdrawLatestActivationGrantRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "applicantId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "withdrawDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "reasonId": {
-            "type": "string",
-            "format": "guid"
-          }
-        }
-      },
       "Galdur_XRoad_API_Models_ResolveApplicantResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -7137,9 +7166,6 @@
             "type": "boolean"
           },
           "canUnregister": {
-            "type": "boolean"
-          },
-          "canConfirmJobSearch": {
             "type": "boolean"
           }
         }
@@ -7511,6 +7537,22 @@
           }
         }
       },
+      "Galdur_External_Domain_Requests_HasValidApplicationResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "valid": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
       "Galdur_External_Domain_Requests_UpdateApplicantRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -7600,6 +7642,9 @@
           "reasonEN": {
             "type": "string",
             "nullable": true
+          },
+          "isQuestionaireEligible": {
+            "type": "boolean"
           }
         }
       },
@@ -7627,6 +7672,55 @@
             "items": {
               "type": "string"
             }
+          },
+          "questionaire": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest"
+              }
+            ]
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "chosenLanguage": {
+            "type": "string"
+          },
+          "timeToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "needAssistanceToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "knowWhatToDoToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "haveAppliedForJobs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mostHaveConnections": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mentalCapacityForJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "physicalCapacityForJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anySickness": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -7651,7 +7745,7 @@
           }
         }
       },
-      "Galdur_XRoad_API_Models_Applicant_CreateAttachmentEligibilityResponse": {
+      "Galdur_XRoad_API_Models_Applicant_ApplicantEligibilityResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -7792,6 +7886,32 @@
           },
           "hasConfirmed": {
             "type": "boolean"
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_ActivationGrantApplicationOverviewResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "activationGrantApplicationId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "applicationStatusId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "applicationStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "overviewItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_OverviewItem"
+            }
           }
         }
       },
@@ -8087,6 +8207,20 @@
             "type": "string",
             "format": "",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_WithdrawLatestApplicationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "withdrawDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reasonId": {
+            "type": "string",
+            "format": "guid"
           }
         }
       },
@@ -8412,6 +8546,75 @@
           }
         }
       },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaQuestion"
+            }
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaQuestion": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "questionIS": {
+            "type": "string"
+          },
+          "questionEN": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "minValue": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxValue": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaAnswer"
+            }
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaAnswer": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "textIS": {
+            "type": "string"
+          },
+          "textEN": {
+            "type": "string"
+          }
+        }
+      },
       "Galdur_External_Domain_Models_SupportData_DelistingReasonDTO": {
         "allOf": [
           {
@@ -8422,6 +8625,86 @@
             "additionalProperties": false
           }
         ]
+      },
+      "Galdur_External_Domain_Models_SupportData_NationalityDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_External_Domain_Models_SupportData_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "abbr": {
+                "type": "string"
+              },
+              "isInTheEUAndOrEEA": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_XRoad_API_Models_Applicant_U2EligibilityResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isEligible": {
+            "type": "boolean"
+          },
+          "reasonTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonTitleEN": {
+            "type": "string",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_U2Certificate_CreateU2CertificateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "dateWhenLeaving": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "destinationCountryId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applications_U2Certificate_ViewModels_U2CertificateValidationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_Queries_UnemploymentApplicationViewModel": {
         "allOf": [
@@ -8486,6 +8769,9 @@
                 "type": "string",
                 "format": "guid",
                 "nullable": true
+              },
+              "canStartAtAdjusted": {
+                "type": "boolean"
               }
             }
           }
@@ -8560,6 +8846,15 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_JobCareer"
+              }
+            ]
+          },
+          "companyOwnership": {
+            "description": "Eignarhald á fyrirtækjum eða félögum",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnership"
               }
             ]
           },
@@ -9182,6 +9477,51 @@
           }
         }
       },
+      "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnership": {
+        "type": "object",
+        "description": "Eignarhald á fyrirtækjum eða félögum",
+        "additionalProperties": false,
+        "properties": {
+          "isCompanyOwner": {
+            "type": "boolean",
+            "description": "Ertu eigandi eða kemur þú að rekstri fyrirtækis eða félags?"
+          },
+          "companyOwnerships": {
+            "type": "array",
+            "description": "Fyrirtæki eða félög sem umsækjandi á eða kemur að rekstri á",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnershipDTO"
+            }
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnershipDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "companySSN": {
+            "type": "string",
+            "description": "Kennitala fyrirtækis",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Nafn fyrirtækis",
+            "nullable": true
+          },
+          "ownershipPercentage": {
+            "type": "integer",
+            "description": "Eignarhlutfall",
+            "format": "int32"
+          }
+        }
+      },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_EmployerSettlementDTO": {
         "type": "object",
         "additionalProperties": false,
@@ -9486,11 +9826,6 @@
           "unemploymentReasonQuestionResponse": {
             "type": "boolean",
             "description": "Getur þú lagt fram gögn sem sýna að þú hafir gert tilraun til að leysa málið áður...",
-            "nullable": true
-          },
-          "additionalUnemploymentReason": {
-            "type": "string",
-            "description": "Skýring ástæða atvinnuleysis",
             "nullable": true
           }
         }
@@ -10363,6 +10698,15 @@
               }
             ]
           },
+          "companyOwnership": {
+            "description": "Eignarhald á fyrirtækjum eða félögum",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnership"
+              }
+            ]
+          },
           "drivingLicense": {
             "description": "Ökuréttindi",
             "nullable": true,
@@ -10573,34 +10917,6 @@
           }
         }
       },
-      "Galdur_Application_Applications_UnemploymentApplications_Commands_DeleteAttachment_DeleteAttachmentCommand": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "attachmentId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "applicationId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "isExternal": {
-            "type": "boolean"
-          },
-          "permanentDelete": {
-            "type": "boolean"
-          },
-          "changedByMsUserSSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "changedByMsUserOnBehalfOfSSN": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO": {
         "type": "object",
         "additionalProperties": false,
@@ -10651,24 +10967,6 @@
                 "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_EmployerSettlementDTO"
               }
             ]
-          }
-        }
-      },
-      "Galdur_External_Domain_Requests_WithdrawApplicationRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "applicantId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "withdrawDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "reasonId": {
-            "type": "string",
-            "format": "guid"
           }
         }
       }

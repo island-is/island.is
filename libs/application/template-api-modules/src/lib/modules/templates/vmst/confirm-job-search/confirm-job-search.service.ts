@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../../../lib/types'
@@ -21,16 +19,26 @@ type Tablerow = {
 export class ConfirmJobSearchService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
     private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
   ) {
     super(ApplicationTypes.CONFIRM_JOB_SEARCH)
   }
 
+  async getQuestionnaire({ application }: TemplateApiModuleActionProps) {
+    const shouldFetchQuestionnaire = getValueViaPath<boolean>(
+      application.externalData,
+      'jobSearchEligibility.data.isQuestionaireEligible',
+    )
+    if (shouldFetchQuestionnaire) {
+      return await this.vmstUnemploymentClientService.getQuestionnaire()
+    }
+    return []
+  }
+
   async completeApplication({
     auth,
     application,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     try {
       const appliedCompanies = (
@@ -40,9 +48,29 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
         .filter((item) => !item.isUnsaved)
         .map((item) => item.companyName)
 
+      const questionnaireAnswers =
+        getValueViaPath<Record<string, string>>(
+          application.answers,
+          'questionnaire',
+        ) || {}
+
+      // Drop empty/nullish entries so unanswered non-required questions
+      // aren't submitted to VMST as 0 via Number('').
+      const questionaire = {
+        ...Object.fromEntries(
+          Object.entries(questionnaireAnswers)
+            .filter(
+              ([, value]) =>
+                value !== '' && value !== null && value !== undefined,
+            )
+            .map(([key, value]) => [key, Number(value)]),
+        ),
+        chosenLanguage: currentUserLocale,
+      }
+
       await this.vmstUnemploymentClientService.submitJobSearchConfirmation(
         auth,
-        { appliedCompanies },
+        { appliedCompanies, questionaire },
       )
 
       return true

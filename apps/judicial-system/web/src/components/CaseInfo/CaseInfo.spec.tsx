@@ -1,10 +1,10 @@
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseType,
-  Defendant,
   Gender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
-import { createFormatMessage } from '../../utils/testHelpers.logic'
 import { getDefendantLabel } from './CaseInfo'
 
 describe('getDefendantLabel - Indictment', () => {

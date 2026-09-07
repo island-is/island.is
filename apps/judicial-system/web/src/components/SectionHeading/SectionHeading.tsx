@@ -1,14 +1,8 @@
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 
-import {
-  Box,
-  ResponsiveProp,
-  Space,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
-
-import RequiredStar from '../RequiredStar/RequiredStar'
+import type { ResponsiveProp, Space } from '@island.is/island-ui/core'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
+import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 
 type Heading = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
 

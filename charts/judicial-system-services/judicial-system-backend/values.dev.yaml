@@ -30,6 +30,7 @@ env:
   DB_NAME: 'judicial_system'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'judicial_system'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   DOKOBIT_URL: 'https://developers.dokobit.com'
   EMAIL_REGION: 'eu-west-1'
   LOG_LEVEL: 'info'

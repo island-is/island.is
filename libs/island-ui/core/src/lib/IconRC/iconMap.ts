@@ -13,6 +13,7 @@ export type Icon =
   | 'business'
   | 'calculator'
   | 'calendar'
+  | 'calendarCancel'
   | 'call'
   | 'car'
   | 'cardWithCheckmark'
@@ -122,6 +123,7 @@ export default {
     business: 'Business',
     calculator: 'Calculator',
     calendar: 'Calendar',
+    calendarCancel: 'CalendarCancel',
     call: 'Call',
     car: 'Car',
     card: 'Card',
@@ -229,6 +231,7 @@ export default {
     business: 'BusinessOutline',
     calculator: 'CalculatorOutline',
     calendar: 'CalendarOutline',
+    calendarCancel: 'CalendarCancelOutline',
     call: 'CallOutline',
     car: 'CarOutline',
     card: 'CardOutline',

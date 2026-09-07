@@ -1,6 +1,5 @@
 import { mock } from 'jest-mock-extended'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { EmailService } from '@island.is/email-service'
@@ -9,7 +8,10 @@ import { ConfigModule } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 
-import { RobotLog } from '../../repository'
+import {
+  CaseRepositoryService,
+  RobotLogRepositoryService,
+} from '../../repository'
 import { courtModuleConfig } from '../court.config'
 import { CourtService } from '../court.service'
 
@@ -31,10 +33,17 @@ export const createTestingCourtModule = async () => {
         },
       },
       {
-        provide: getModelToken(RobotLog),
+        provide: CaseRepositoryService,
         useValue: {
-          create: jest.fn(),
-          update: jest.fn(),
+          findById: jest.fn().mockResolvedValue(null),
+        },
+      },
+      {
+        provide: RobotLogRepositoryService,
+        useValue: {
+          existsForCaseTypeAndElements: jest.fn(),
+          create: jest.fn().mockResolvedValue({ id: '', seqNumber: 0 }),
+          markDelivered: jest.fn(),
         },
       },
       CourtService,
@@ -54,7 +63,16 @@ export const createTestingCourtModule = async () => {
 
   const courtService = courtModule.get<CourtService>(CourtService)
 
+  const caseRepositoryService = courtModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
+
   courtModule.close()
 
-  return { courtClientService, emailService, courtService }
+  return {
+    courtClientService,
+    emailService,
+    courtService,
+    caseRepositoryService,
+  }
 }

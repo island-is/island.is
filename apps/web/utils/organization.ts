@@ -3,6 +3,7 @@ import { Locale } from '@island.is/shared/types'
 import { OrganizationPage, OrganizationTheme } from '../graphql/schema'
 import { linkResolver, pathIsRoute, typeResolver } from '../hooks'
 import { isLocale } from '../i18n/I18n'
+import { safelyExtractPathnameFromUrl } from './safelyExtractPathnameFromUrl'
 
 // TODO: Perhaps add this functionality to the linkResolver
 export const getOrganizationLink = (
@@ -60,4 +61,21 @@ export const extractOrganizationSlugFromPathname = (
 export const pathIsProjectPage = (pathname: string) => {
   const path = pathname.split(/[?#]/)[0]
   return Boolean(typeResolver(path)?.type?.startsWith('project'))
+}
+
+export const getHeaderNavigationPropsFromUrl = (
+  url: string | undefined,
+  locale: Locale,
+) => {
+  const pathname = safelyExtractPathnameFromUrl(url)
+  const organizationSearchFilter = extractOrganizationSlugFromPathname(
+    pathname,
+    locale,
+  )
+
+  return {
+    organizationSearchFilter,
+    showHeaderNavigation:
+      !organizationSearchFilter && !pathIsProjectPage(pathname),
+  }
 }

@@ -62,10 +62,7 @@ import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_ORGANIZATION_LOGOS_QUERY } from '../screens/queries/Organization'
 import { Screen, ScreenContext } from '../types'
-import {
-  extractOrganizationSlugFromPathname,
-  pathIsProjectPage,
-} from '../utils/organization'
+import { getHeaderNavigationPropsFromUrl } from '../utils/organization'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -255,22 +252,12 @@ const Layout: Screen<LayoutProps> = ({
 
   const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
-  const organizationSearchFilter =
-    organizationSearchFilterOverride ??
-    extractOrganizationSlugFromPathname(router.asPath, activeLocale)
-
-  // Institution sites (stofnanavefir) and project pages (/verkefni) get the
-  // simplified header: logo, search, My Pages and language toggle stay, but
-  // the burger menu and navigation links are hidden. `organizationSearchFilter`
-  // is truthy whenever we're within a specific organization's site, and the
-  // project routes all resolve to a `project*` link type. Individual screens
-  // can also force the simplified header from their `withMainLayout` config via
-  // `showHeaderNavigation: false` — an opt-out kill switch that hides the nav
-  // but can never force it onto an org/project page.
+  // Route-derived defaults come from getProps so the server markup and first
+  // hydrated render agree. Explicit search filters and `false` remain one-way
+  // overrides that can hide navigation on additional pages.
+  const organizationSearchFilter = organizationSearchFilterOverride ?? ''
   const showHeaderNavigation =
-    showHeaderNavigationOverride !== false &&
-    !organizationSearchFilter &&
-    !pathIsProjectPage(router.asPath)
+    showHeaderNavigationOverride !== false && !organizationSearchFilter
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
@@ -554,6 +541,10 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
   const respOrigin = `${origin}`
+  const headerNavigationProps = getHeaderNavigationPropsFromUrl(
+    req?.url,
+    lang as Locale,
+  )
   const [
     categories,
     alertBanner,
@@ -734,6 +725,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     namespace,
     respOrigin,
     headerNavData,
+    ...headerNavigationProps,
   }
 }
 
@@ -810,17 +802,26 @@ export const withMainLayout = <T, C extends ScreenContext>(
     const languageToggleHrefOverride =
       layoutComponentProps?.languageToggleHrefOverride
 
+    const mergedLayoutProps = {
+      ...layoutProps,
+      ...layoutConfig,
+      ...themeConfig,
+      organizationAlertBannerContent,
+      articleAlertBannerContent,
+      customAlertBannerContent,
+      languageToggleQueryParams,
+      customTopLoginButtonItem,
+      languageToggleHrefOverride,
+    }
+
+    // Route restrictions are authoritative. Page config may hide navigation
+    // elsewhere, but it cannot re-enable it on organization or project pages.
     return {
       layoutProps: {
-        ...layoutProps,
-        ...layoutConfig,
-        ...themeConfig,
-        organizationAlertBannerContent,
-        articleAlertBannerContent,
-        customAlertBannerContent,
-        languageToggleQueryParams,
-        customTopLoginButtonItem,
-        languageToggleHrefOverride,
+        ...mergedLayoutProps,
+        showHeaderNavigation:
+          layoutProps.showHeaderNavigation !== false &&
+          mergedLayoutProps.showHeaderNavigation !== false,
       },
       componentProps,
     }

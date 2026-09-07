@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -29,19 +30,19 @@ import {
   SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { RequestSignatureResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseDecision,
   CaseTransition,
-  RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
 import {
   JudgeRequestRulingSignatureModal,
   RegistrarRequestRulingSignatureModal,
   RulingModifiedModal,
-} from '../../components'
+} from '@island.is/judicial-system-web/src/routes/Court/components'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+
 import { confirmation as strings } from './Confirmation.strings'
 
 type VisibleModal =

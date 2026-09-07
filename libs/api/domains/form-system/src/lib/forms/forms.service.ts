@@ -6,6 +6,7 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import {
   FormsApi,
+  FormsControllerCopyRequest,
   FormsControllerCreateRequest,
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
@@ -17,6 +18,7 @@ import {
   UpdateFormStatusInput,
 } from '@island.is/form-system/shared'
 import {
+  CopyFormInput,
   CreateFormInput,
   GetFormInput,
   GetFormsInput,
@@ -53,10 +55,13 @@ export class FormsService {
     return response as FormResponse
   }
 
-  async copyForm(auth: User, input: GetFormInput): Promise<FormResponse> {
-    const response = await this.formsApiWithAuth(auth).formsControllerCopy(
-      input as FormsControllerFindOneRequest,
-    )
+  async copyForm(auth: User, input: CopyFormInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(auth).formsControllerCopy({
+      id: input.id,
+      copyFormDto: {
+        organizationNationalId: input.organizationNationalId,
+      },
+    } as FormsControllerCopyRequest)
     return response as FormResponse
   }
 

@@ -102,6 +102,7 @@ const prosecutionIndictmentsInDraftColumnKeys: CaseTableColumnKey[] = [
   'caseType',
   'prosecutor',
   'created',
+  'indictmentCaseState',
 ]
 
 export const prosecutionIndictmentsInDraft: CaseTable = {

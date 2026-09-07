@@ -62,11 +62,13 @@ export class PrimarySchoolClientService {
     user: User,
     studentId: string,
     assignmentResultId: string,
+    signal?: AbortSignal,
   ): Promise<Blob | File | null> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
         getV1IslandisassignmentresultsByStudentIdResultByAssignmentResultIdPdf({
           path: { studentId, assignmentResultId },
+          signal,
         }),
       ),
     )

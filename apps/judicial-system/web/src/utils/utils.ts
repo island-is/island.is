@@ -1,6 +1,6 @@
-import { KeyboardEvent } from 'react'
+import type { KeyboardEvent } from 'react'
 
-import { TagVariant } from '@island.is/island-ui/core'
+import type { TagVariant } from '@island.is/island-ui/core'
 import {
   formatDate,
   normalizeAndFormatNationalId,
@@ -11,21 +11,28 @@ import {
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
+  isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
-import {
+import type {
   AppealCase,
-  AppealCaseState,
-  AppealDecisionPartyRole,
   Case,
-  CaseAppealDecision,
-  CaseCustodyRestrictions,
-  CaseFileCategory,
+  CaseFile,
+  CourtSessionResponse,
+  CourtSessionString,
   Defendant,
-  DefendantPlea,
-  Gender,
   Notification,
   TrackedNotificationType,
   User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
+  CaseCustodyRestrictions,
+  CaseFileCategory,
+  CourtSessionStringType,
+  DefendantPlea,
+  Gender,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -278,6 +285,31 @@ export const getDefenceUserPartyIds = (
   return {}
 }
 
+/**
+ * Whether a defence user may open a linked case (e.g. merge target / merged-from).
+ * Non-defence users always return true. Defence users must be a confirmed
+ * defender or spokesperson on the linked case — matching backend access checks.
+ */
+export const canDefenceUserOpenLinkedCase = (
+  user: User | undefined,
+  linkedCase: Case | null | undefined,
+): boolean => {
+  if (!user || !isDefenceUser(user)) {
+    return true
+  }
+
+  if (!linkedCase) {
+    return false
+  }
+
+  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+    linkedCase,
+    user,
+  )
+
+  return Boolean(defendantId || civilClaimantId)
+}
+
 // The case-level appeal_decision row of a party - the one with no rulingFileId.
 const caseLevelAppealDecisionRow = (
   appealDecisions: Case['appealDecisions'],
@@ -344,6 +376,76 @@ export const withCaseLevelAppealDecision = (
   return decisions.map((decision, i) =>
     i === index ? { ...decision, ...patch } : decision,
   )
+}
+
+/**
+ * The appeal of a specific ruling order, if it has one. A case can carry several
+ * ruling-order appeals at once, keyed by the ruling file they were made against
+ * - so anything acting on one ruling must resolve its own appeal rather than the
+ * case-level `appealCase`.
+ */
+export const rulingOrderAppealCase = (
+  workingCase: Case,
+  rulingFileId: string | null | undefined,
+): AppealCase | undefined =>
+  rulingFileId
+    ? workingCase.rulingOrderAppealCases?.find(
+        (appealCase) => appealCase.rulingFileId === rulingFileId,
+      )
+    : undefined
+
+/**
+ * The ruling orders a court session can pronounce, as the court record offers
+ * them.
+ *
+ * - `files`: the written rulings that can be picked. A ruling pronounced orally
+ *   that the district court has not written up yet is not a document anyone can
+ *   pick, so it is left out; once written up it becomes an ordinary one.
+ * - `takenIds`: rulings another session already pronounces.
+ * - `pronouncedOrally`: this session's own orally pronounced ruling, if that is
+ *   what it pronounces. Derived from the session's linked ruling, so a session
+ *   is never offered a second one - re-pointing the record at a fresh empty
+ *   ruling would detach the document the court wrote up for the first, and the
+ *   appeal made against it.
+ */
+export const rulingOrderChoices = (
+  workingCase: Case,
+  courtSession: Pick<CourtSessionResponse, 'id' | 'rulingFileId'>,
+): {
+  files: CaseFile[]
+  takenIds: Set<string>
+  pronouncedOrally?: CaseFile
+} => {
+  const rulingOrders = (workingCase.caseFiles ?? []).filter(
+    (file) => file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+  )
+
+  const linkedRuling = rulingOrders.find(
+    (file) => file.id === courtSession.rulingFileId,
+  )
+
+  const pronouncedOrally = linkedRuling?.isPronouncedOrally
+    ? linkedRuling
+    : undefined
+
+  return {
+    // Once the district court writes the session's own orally pronounced ruling
+    // up it is a document like any other, so it would otherwise be offered
+    // twice: as a written ruling and as the oral one. Both would be checked, in
+    // the same radio group.
+    files: rulingOrders.filter(
+      (file) =>
+        !isRulingOrderWithoutDocument(file) && file.id !== pronouncedOrally?.id,
+    ),
+    takenIds: new Set(
+      workingCase.courtSessions
+        ?.filter(
+          (session) => session.id !== courtSession.id && session.rulingFileId,
+        )
+        .map((session) => session.rulingFileId as string) ?? [],
+    ),
+    pronouncedOrally,
+  }
 }
 
 /**
@@ -706,6 +808,53 @@ export const reconcileAppealDecisionsForRulingFileChange = (
 }
 
 /**
+ * Applies an edit to a court session's entries booking for one merged case,
+ * appending the row when that merged case has not been written about yet.
+ *
+ * Rows are matched on the merged case rather than on `id`: a row appended here
+ * has no `id` until the case is refetched, so matching on `id` would make two
+ * freshly written merged cases collide on `undefined` and an edit to one would
+ * overwrite the other.
+ */
+export const applyMergedCaseEntries = (
+  courtSessionStrings: CourtSessionString[] | null | undefined,
+  {
+    caseId,
+    courtSessionId,
+    mergedCaseId,
+    value,
+  }: {
+    caseId: string
+    courtSessionId: string
+    mergedCaseId: string
+    value?: string | null
+  },
+): CourtSessionString[] => {
+  const isTarget = (courtSessionString: CourtSessionString) =>
+    courtSessionString.mergedCaseId === mergedCaseId &&
+    courtSessionString.stringType === CourtSessionStringType.ENTRIES
+
+  if (courtSessionStrings?.some(isTarget)) {
+    return courtSessionStrings.map((courtSessionString) =>
+      isTarget(courtSessionString)
+        ? { ...courtSessionString, value }
+        : courtSessionString,
+    )
+  }
+
+  return [
+    ...(courtSessionStrings ?? []),
+    {
+      caseId,
+      courtSessionId,
+      mergedCaseId,
+      stringType: CourtSessionStringType.ENTRIES,
+      value,
+    } as CourtSessionString,
+  ]
+}
+
+/**
  * Returns true iff the file's category is visible per the appeal-state rules,
  * given the specific appeal-case row in scope. Encodes:
  * - Brief categories: visible iff the appellant's role matches.
@@ -810,6 +959,22 @@ export const isAppealFileCategoryVisible = (
       return false
   }
 }
+
+// The court of appeals' own documents (APPEAL_RULING / APPEAL_COURT_RECORD) also
+// belong to exactly one appeal-case row: case-level appeals own the files with
+// no rulingFileId, ruling-order appeals own the files tagged with their own
+// rulingFileId. isMatchingAppealCaseFile cannot be used here as it is scoped to
+// the parties' files (kærugögn) and rejects court of appeals users.
+export const isMatchingAppealCourtFile = (
+  file: {
+    category?: CaseFileCategory | null
+    rulingFileId?: string | null
+  },
+  category: CaseFileCategory,
+  rulingFileId?: string | null,
+): boolean =>
+  file.category === category &&
+  (file.rulingFileId ?? null) === (rulingFileId ?? null)
 
 export const isMatchingAppealCaseFile = (
   workingCase: Case,
@@ -995,6 +1160,43 @@ export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
   defendants && defendants.length === 1
     ? defendants[0].gender ?? Gender.MALE
     : Gender.MALE
+
+// The arraignment summons can only be skipped when nobody is receiving a
+// subpoena, since a subpoena has to state a time and place
+export const areAllDefendantsServedByAlternativeMeans = (
+  defendants?: { isAlternativeService?: boolean | null }[] | null,
+): boolean =>
+  (defendants?.length ?? 0) > 0 &&
+  Boolean(defendants?.every((defendant) => defendant.isAlternativeService))
+
+// Skip is available on the first pass (no arraignment scheduled yet), and
+// again when the court re-enters alternative service for every defendant
+// after an arraignment was already scheduled — e.g. after splitting a
+// co-defendant and switching the remaining case to "birt með öðrum hætti".
+export const canSkipArraignmentSummons = (
+  defendants?: { id: string; isAlternativeService?: boolean | null }[] | null,
+  options?: {
+    isArraignmentScheduled?: boolean
+    newAlternativeServiceDefendantIds?: string[]
+  },
+): boolean => {
+  if (!areAllDefendantsServedByAlternativeMeans(defendants)) {
+    return false
+  }
+
+  if (!options?.isArraignmentScheduled) {
+    return true
+  }
+
+  const newAlternativeServiceDefendantIds =
+    options.newAlternativeServiceDefendantIds ?? []
+
+  return Boolean(
+    defendants?.every((defendant) =>
+      newAlternativeServiceDefendantIds.includes(defendant.id),
+    ),
+  )
+}
 
 // Lets an element with role="button" be activated with the keyboard
 // (Enter or Space) the same way a native button is.

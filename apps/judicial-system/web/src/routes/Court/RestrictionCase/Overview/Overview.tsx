@@ -17,7 +17,6 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
-  laws,
   rcCourtOverview,
   restrictionsV2,
   titles,
@@ -42,19 +41,19 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseLegalProvisions,
   CaseOrigin,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DraftConclusionModal } from '@island.is/judicial-system-web/src/routes/Court/components'
 import {
   UploadState,
   useCourtUpload,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getLegalProvisionTitle } from '@island.is/judicial-system-web/src/utils/laws'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-
-import { DraftConclusionModal } from '../../components'
 
 export const JudgeOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -183,7 +182,10 @@ export const JudgeOverview = () => {
                       return (
                         <div key={index}>
                           <Text>
-                            {formatMessage(laws[legalProvision].title)}
+                            {getLegalProvisionTitle(
+                              formatMessage,
+                              legalProvision,
+                            )}
                           </Text>
                         </div>
                       )

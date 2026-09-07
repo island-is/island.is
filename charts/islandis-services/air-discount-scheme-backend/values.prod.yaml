@@ -23,6 +23,7 @@ env:
   DB_NAME: 'air_discount_scheme_backend'
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'air_discount_scheme_backend'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   ENVIRONMENT: 'prod'
   IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'

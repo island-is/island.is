@@ -11,4 +11,6 @@ export enum DynamicPaths {
 
   SocialBenefitsUnemploymentStatus = '/framfaersla/atvinnuleysisbaetur/minstada',
   SocialBenefitsUnemploymentMyData = '/framfaersla/atvinnuleysisbaetur/mingogn',
+  SocialBenefitsActivationAllowanceStatus = '/framfaersla/virknistyrkur/minstada',
+  SocialBenefitsActivationAllowanceMyData = '/framfaersla/virknistyrkur/mingogn',
 }

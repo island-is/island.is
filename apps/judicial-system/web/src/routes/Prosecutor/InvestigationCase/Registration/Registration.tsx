@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -25,15 +26,17 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  PoliceCaseNumbers,
+  usePoliceCaseNumbers,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isRegistrationStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-
-import { PoliceCaseNumbers, usePoliceCaseNumbers } from '../../components'
 
 const Registration: FC = () => {
   // This state is needed because type is initially set to OTHER on the

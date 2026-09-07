@@ -1,6 +1,8 @@
-import { FC, ReactNode, useContext, useEffect, useState } from 'react'
+import type { FC, ReactNode } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
+import type { TagVariant } from '@island.is/island-ui/core'
 import {
   AlertMessage,
   Box,
@@ -8,7 +10,6 @@ import {
   Checkbox,
   Icon,
   Tag,
-  TagVariant,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -31,15 +32,17 @@ import {
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
-import {
-  CaseActionType,
+import type {
   CaseTableCell,
   CaseTableRow,
-  ContextMenuCaseActionType,
   StringGroupValue,
   StringValue,
   TagGroupValue,
   TagValue,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseActionType,
+  ContextMenuCaseActionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   compareArrays,

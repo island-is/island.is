@@ -1,8 +1,4 @@
 const { composePlugins, withNx } = require('@nx/next')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const path = require('path')
-
-const tinymceDir = path.dirname(require.resolve('tinymce/package.json'))
 
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
@@ -16,25 +12,14 @@ const nextConfig = {
       config.devtool = 'source-map'
     }
 
-    if (!isServer) {
-      config.plugins.push(
-        new CopyWebpackPlugin({
-          patterns: [
-            'tinymce.min.js',
-            'plugins',
-            'skins',
-            'themes',
-            'icons',
-          ].map((asset) => ({
-            from: path.join(tinymceDir, asset),
-            to: path.join(__dirname, 'public/tinymce', asset),
-          })),
-        }),
-      )
-    }
-
     // Important: return the modified config
     return config
+  },
+  // The prod container's .next/cache is owned by root and the app runs as a
+  // non-root user, so Next 16's on-disk image LRU throws EACCES on mkdir.
+  // This app doesn't use next/image, so the disk cache is not needed.
+  images: {
+    maximumDiskCacheSize: 0,
   },
   // Runtime configuration lives in environments/runtimeEnvironment.ts
   env: {

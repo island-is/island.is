@@ -9,7 +9,6 @@ import {
   VehiclePlateOrderingClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehiclePlateRenewalClient } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
-import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import {
   BasicVehicleInformationDto,
   VehicleSearchApi,
@@ -47,7 +46,6 @@ export class TransportAuthorityApi {
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
     private readonly vehiclePlateRenewalClient: VehiclePlateRenewalClient,
     private readonly exemptionForTransportationClient: ExemptionForTransportationClient,
-    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
   ) {}
@@ -116,10 +114,6 @@ export class TransportAuthorityApi {
     const { vehicle, mileageReadings } =
       await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
-    // Get debt status
-    const debtStatus =
-      await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(auth, permno)
-
     // Get owner change validation
     const ownerChangeValidation =
       await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
@@ -136,7 +130,7 @@ export class TransportAuthorityApi {
         requireMileage: vehicle.requiresMileageRegistration,
         mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
       },
-      isDebtLess: debtStatus.isDebtLess,
+      isDebtLess: true,
       validationErrorMessages: ownerChangeValidation?.hasError
         ? ownerChangeValidation.errorMessages
         : null,
@@ -277,11 +271,7 @@ export class TransportAuthorityApi {
     const { vehicle, mileageReadings } =
       await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
-    // Get debt status
-    const debtStatus =
-      await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(auth, permno)
-
-    // Get owner change validation
+    // Get operator change validation
     const operatorChangeValidation =
       await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
         auth,
@@ -289,7 +279,7 @@ export class TransportAuthorityApi {
       )
 
     return {
-      isDebtLess: debtStatus.isDebtLess,
+      isDebtLess: true,
       validationErrorMessages: operatorChangeValidation?.hasError
         ? operatorChangeValidation.errorMessages
         : null,

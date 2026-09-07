@@ -1,9 +1,9 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, AccordionItem, Text } from '@island.is/island-ui/core'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useLawTag } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {

@@ -3,6 +3,8 @@ import {
   ConversationAttachmentDto,
   ConversationDetailDto,
   ConversationMessageDto,
+  CreateCertificatePaymentIntentDto,
+  CreateCertificateRequestBody,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
@@ -16,13 +18,20 @@ import type { ConfigType } from '@island.is/nest/config'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  BadGatewayException,
+  BadRequestException,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
+import { HealthDirectorateCreateCertificatePaymentIntentInput } from './dto/createCertificatePaymentIntent.input'
+import { HealthDirectorateCreateCertificateRequestInput } from './dto/createCertificateRequest.input'
 import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
 import { HealthDirectorateReplyToConversationInput } from './dto/replyToHealthConversation.input'
 import {
@@ -35,6 +44,7 @@ import {
   getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
   toAppointmentAssigneeTypeEnum,
+  toAppointmentCancelBlockedReason,
   toAppointmentLinkTypeEnum,
   toAppointmentModalityEnum,
   toAppointmentStatusEnum,
@@ -49,6 +59,11 @@ import {
   toConversationReplyBlockedReasonEnum,
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
+import {
+  mapCertificate,
+  mapCertificateRequest,
+  toCertificateTypeCode,
+} from './mappers/certificateMapper'
 import {
   mapDelegationStatus,
   mapDispensationItem,
@@ -84,6 +99,14 @@ import { PrescriptionRenewalTarget } from './models/renewalTarget.model'
 import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import { HealthDirectorateTreatment } from './models/treatment.model'
+import { HealthDirectorateTreatmentDetail } from './models/treatmentDetail.model'
+import { HealthDirectorateTreatmentDocument } from './models/treatmentDocument.model'
+import {
+  mapTreatment,
+  mapTreatmentDetail,
+  mapTreatmentDocument,
+} from './mappers/treatmentMapper'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
@@ -93,6 +116,9 @@ import { HealthDirectorateHealthConversationDetail } from './models/healthConver
 import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
+import { HealthDirectorateCertificate } from './models/certificate.model'
+import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
+import { HealthDirectorateCertificatePaymentIntent } from './models/paymentIntent.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -718,7 +744,19 @@ export class HealthDirectorateService {
           }
         })
         .filter(isDefined),
+      canCancel: item.canCancel,
+      cancelBlockedReason: toAppointmentCancelBlockedReason(
+        item.canCancel,
+        item.canCancelBefore,
+      ),
     }
+  }
+
+  public async cancelAppointment(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<boolean> {
+    return this.healthApi.cancelAppointment(auth, input.id)
   }
 
   /* Health Conversations */
@@ -764,6 +802,11 @@ export class HealthDirectorateService {
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),
       ),
+      certificateId: m.certificateId,
+      requiresPayment: m.requiresPayment,
+      paid: m.paid,
+      amountIsk: m.amountIsk,
+      pendingPaymentId: m.pendingPaymentId,
     }
   }
 
@@ -773,7 +816,6 @@ export class HealthDirectorateService {
     return {
       id: c.id,
       title: c.title,
-      status: c.status,
       startDate: c.conversationStartDate,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
@@ -786,9 +828,43 @@ export class HealthDirectorateService {
       replyBlockedReason: toConversationReplyBlockedReasonEnum(
         c.replyBlockedReason,
       ),
+      messagingWindowOpen: c.messagingWindowOpen ?? undefined,
+      messagingWindowClose: c.messagingWindowClose ?? undefined,
+      patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
+  }
+
+  /* Treatments */
+
+  async getTreatments(
+    auth: Auth,
+  ): Promise<HealthDirectorateTreatment[] | null> {
+    const items = await this.healthApi.getTreatments(auth)
+    if (!items) return null
+
+    return items.map(mapTreatment)
+  }
+
+  async getTreatment(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateTreatmentDetail | null> {
+    const treatment = await this.healthApi.getTreatment(auth, id)
+    if (!treatment) return null
+
+    return mapTreatmentDetail(treatment)
+  }
+
+  async getTreatmentDocuments(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateTreatmentDocument[] | null> {
+    const documents = await this.healthApi.getTreatmentDocuments(auth, id)
+    if (!documents) return null
+
+    return documents.map(mapTreatmentDocument)
   }
 
   async getHealthConversations(
@@ -806,7 +882,6 @@ export class HealthDirectorateService {
     return items.map((c) => ({
       id: c.id,
       title: c.title,
-      status: c.status,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
@@ -894,5 +969,71 @@ export class HealthDirectorateService {
     if (!items) return null
 
     return items.map(mapMessagingRecipient)
+  }
+
+  /* Certificates */
+
+  async createCertificateRequest(
+    auth: Auth,
+    input: HealthDirectorateCreateCertificateRequestInput,
+  ): Promise<HealthDirectorateCertificateRequest | null> {
+    if (input.endDate < input.startDate) {
+      throw new BadRequestException('endDate must be on or after startDate')
+    }
+
+    const body: CreateCertificateRequestBody = {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+      certificateType: toCertificateTypeCode(input.certificateType),
+      recipientName: input.recipientName,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      note: input.note,
+    }
+
+    const request = await this.healthApi.createCertificateRequest(auth, body)
+    if (!request) return null
+
+    return mapCertificateRequest(request)
+  }
+
+  async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateCertificate | null> {
+    const certificate = await this.healthApi.getCertificate(auth, id)
+    if (!certificate) return null
+
+    return mapCertificate(certificate)
+  }
+
+  async createCertificatePaymentIntent(
+    auth: Auth,
+    input: HealthDirectorateCreateCertificatePaymentIntentInput,
+    locale: Locale = 'is',
+  ): Promise<HealthDirectorateCertificatePaymentIntent> {
+    const body: CreateCertificatePaymentIntentDto = {
+      returnUrl: input.returnUrl,
+      cancelUrl: input.cancelUrl,
+    }
+
+    const intent = await this.healthApi.createCertificatePaymentIntent(
+      auth,
+      input.id,
+      body,
+      locale,
+    )
+    // The upstream contract marks the intent required on success — a missing
+    // body is an upstream fault, and the mutation is non-nullable on it.
+    if (!intent) {
+      throw new BadGatewayException(
+        'Payment intent missing from upstream response',
+      )
+    }
+
+    return {
+      paymentId: intent.paymentId,
+      paymentPageUrl: intent.paymentPageUrl,
+    }
   }
 }

@@ -1,38 +1,35 @@
-import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
   CaseIndictmentRulingDecision,
   CaseTransition,
   IndictmentDecision,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { applyUpdateToCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
-import { applyUpdateToCase } from '../../formHelper'
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
 import { useDuplicateIndictmentCaseMutation } from './duplicateIndictmentCase.generated'
 import { useExtendCaseMutation } from './extendCase.generated'
-import {
-  LimitedAccessUpdateCaseMutation,
-  useLimitedAccessUpdateCaseMutation,
-} from './limitedAccessUpdateCase.generated'
+import type { LimitedAccessUpdateCaseMutation } from './limitedAccessUpdateCase.generated'
+import { useLimitedAccessUpdateCaseMutation } from './limitedAccessUpdateCase.generated'
 import { useSendAppealNotificationMutation } from './sendAppealNotification.generated'
 import { useSendNotificationMutation } from './sendNotification.generated'
 import { useSplitDefendantFromCaseMutation } from './splitDefendantFromCase.generated'
-import {
-  TransitionCaseMutation,
-  useTransitionCaseMutation,
-} from './transitionCase.generated'
-import {
-  UpdateCaseMutation,
-  useUpdateCaseMutation,
-} from './updateCase.generated'
-import { formatUpdates, UpdateCase } from './useCase.logic'
+import type { TransitionCaseMutation } from './transitionCase.generated'
+import { useTransitionCaseMutation } from './transitionCase.generated'
+import type { UpdateCaseMutation } from './updateCase.generated'
+import { useUpdateCaseMutation } from './updateCase.generated'
+import type { UpdateCase } from './useCase.logic'
+import { formatUpdates } from './useCase.logic'
 
 const useCase = () => {
   const { limitedAccess } = useContext(UserContext)
@@ -92,7 +89,7 @@ const useCase = () => {
 
             const { data } = await createCaseMutation({
               variables: {
-                input: {
+                input: normalizeBlankStrings({
                   type: theCase.type,
                   indictmentSubtypes: theCase.indictmentSubtypes,
                   description: theCase.description,
@@ -105,7 +102,7 @@ const useCase = () => {
                   leadInvestigator: theCase.leadInvestigator,
                   crimeScenes: theCase.crimeScenes,
                   prosecutorId: theCase.prosecutor?.id,
-                },
+                }),
               },
             })
 
@@ -152,7 +149,7 @@ const useCase = () => {
         }
 
         const { data } = await mutation({
-          variables: { input: { id, ...updateCase } },
+          variables: { input: { id, ...normalizeBlankStrings(updateCase) } },
         })
 
         const res = data as LimitedAccessUpdateCaseMutation
@@ -175,7 +172,7 @@ const useCase = () => {
         }
 
         const { data } = await mutation({
-          variables: { input: { id, ...updateCase } },
+          variables: { input: { id, ...normalizeBlankStrings(updateCase) } },
         })
 
         const res = data as UpdateCaseMutation

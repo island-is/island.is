@@ -90,7 +90,7 @@ export const Scale: FC<ScaleProps> = ({
           aria-describedby={errorId}
           aria-labelledby={label ? `${id}-label` : undefined}
         >
-          {scaleValues.map((scaleValue, index) => (
+          {scaleValues.map((scaleValue) => (
             <Fragment key={scaleValue}>
               <input
                 id={`${id}-${scaleValue}`}
@@ -100,7 +100,6 @@ export const Scale: FC<ScaleProps> = ({
                 value={scaleValue}
                 checked={value === scaleValue}
                 disabled={disabled}
-                required={required && index === 0}
                 onChange={(event) => onChange(event.target.value)}
               />
               <label

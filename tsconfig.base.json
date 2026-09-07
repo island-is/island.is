@@ -66,6 +66,9 @@
       "@island.is/api/domains/customs-general": [
         "libs/api/domains/customs-general/src/index.ts"
       ],
+      "@island.is/api/domains/directorate-of-equality-application": [
+        "libs/api/domains/directorate-of-equality-application/src/index.ts"
+      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
@@ -629,6 +632,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration/pension-supplement": [
         "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
+      ],
+      "@island.is/application/templates/district-commissioners/driving-license-additional": [
+        "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"

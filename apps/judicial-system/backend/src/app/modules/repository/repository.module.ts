@@ -21,11 +21,17 @@ import { Defendant } from './models/defendant.model'
 import { DefendantEventLog } from './models/defendantEventLog.model'
 import { EventLog } from './models/eventLog.model'
 import { IndictmentCount } from './models/indictmentCount.model'
+import { IndictmentSubtype } from './models/indictmentSubtype.model'
+import { Institution } from './models/institution.model'
 import { InstitutionContact } from './models/institutionContact.model'
+import { LawyerRegistry } from './models/lawyerRegistry.model'
 import { MessageSuspension } from './models/messageSuspension.model'
+import { Notification } from './models/notification.model'
 import { Offense } from './models/offense.model'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
+import { RobotLog } from './models/robotLog.model'
 import { Subpoena } from './models/subpoena.model'
+import { User } from './models/user.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
 import { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
@@ -33,16 +39,31 @@ import { AppealDecisionRepositoryService } from './services/appealDecisionReposi
 import { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
+import { CaseFileRepositoryService } from './services/caseFileRepository.service'
 import { CaseRepositoryService } from './services/caseRepository.service'
+import { CaseStringRepositoryService } from './services/caseStringRepository.service'
+import { CivilClaimantRepositoryService } from './services/civilClaimantRepository.service'
 import { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 import { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
+import { CourtSessionStringRepositoryService } from './services/courtSessionStringRepository.service'
+import { DateLogRepositoryService } from './services/dateLogRepository.service'
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
+import { EventLogRepositoryService } from './services/eventLogRepository.service'
+import { IndictmentCountRepositoryService } from './services/indictmentCountRepository.service'
+import { IndictmentSubtypeRepositoryService } from './services/indictmentSubtypeRepository.service'
 import { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+import { InstitutionRepositoryService } from './services/institutionRepository.service'
+import { LawyerRegistryRepositoryService } from './services/lawyerRegistryRepository.service'
 import { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
+import { NotificationRepositoryService } from './services/notificationRepository.service'
+import { OffenseRepositoryService } from './services/offenseRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
+import { RobotLogRepositoryService } from './services/robotLogRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
+import { UserRepositoryService } from './services/userRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
+import { VictimRepositoryService } from './services/victimRepository.service'
 import { repositoryModuleConfig } from './repository.config'
 
 @Module({
@@ -65,11 +86,17 @@ import { repositoryModuleConfig } from './repository.config'
       DefendantEventLog,
       EventLog,
       IndictmentCount,
+      IndictmentSubtype,
+      Institution,
       InstitutionContact,
+      LawyerRegistry,
       MessageSuspension,
+      Notification,
       Offense,
       PoliceDigitalCaseFile,
+      RobotLog,
       Subpoena,
+      User,
       Verdict,
       Victim,
     ]),
@@ -82,16 +109,31 @@ import { repositoryModuleConfig } from './repository.config'
     AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
+    CaseFileRepositoryService,
     CaseRepositoryService,
+    CaseStringRepositoryService,
+    CivilClaimantRepositoryService,
     CourtSessionRepositoryService,
+    CourtSessionStringRepositoryService,
     CourtDocumentRepositoryService,
+    DateLogRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    EventLogRepositoryService,
+    IndictmentCountRepositoryService,
+    IndictmentSubtypeRepositoryService,
     InstitutionContactRepositoryService,
+    InstitutionRepositoryService,
+    LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
+    NotificationRepositoryService,
+    OffenseRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
+    RobotLogRepositoryService,
     SubpoenaRepositoryService,
+    UserRepositoryService,
     VerdictRepositoryService,
+    VictimRepositoryService,
   ],
   exports: [
     AppealCaseRepositoryService,
@@ -99,15 +141,31 @@ import { repositoryModuleConfig } from './repository.config'
     AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
+    CaseFileRepositoryService,
     CaseRepositoryService,
+    CaseStringRepositoryService,
+    CivilClaimantRepositoryService,
     CourtSessionRepositoryService,
+    CourtSessionStringRepositoryService,
     CourtDocumentRepositoryService,
+    DateLogRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    EventLogRepositoryService,
+    IndictmentCountRepositoryService,
+    IndictmentSubtypeRepositoryService,
+    InstitutionContactRepositoryService,
+    InstitutionRepositoryService,
+    LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
+    NotificationRepositoryService,
+    OffenseRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
+    RobotLogRepositoryService,
     SubpoenaRepositoryService,
+    UserRepositoryService,
     VerdictRepositoryService,
+    VictimRepositoryService,
   ],
 })
 export class RepositoryModule {}

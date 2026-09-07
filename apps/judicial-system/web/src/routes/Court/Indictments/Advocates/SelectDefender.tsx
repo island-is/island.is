@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, useContext, useState } from 'react'
+import type { ChangeEvent, FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -17,11 +18,13 @@ import {
   InputAdvocate,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  Defendant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseState,
-  Defendant,
   DefenderChoice,
-  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'

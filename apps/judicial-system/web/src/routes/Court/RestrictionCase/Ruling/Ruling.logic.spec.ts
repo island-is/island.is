@@ -1,8 +1,10 @@
-import {
+import type {
   Case,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseDecision,
   CaseType,
-  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 

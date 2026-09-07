@@ -1,12 +1,11 @@
 import fetch from 'isomorphic-unfetch'
 import { createHttpLink } from '@apollo/client'
 
-import { isServerSide } from '@island.is/next/utils'
-
 import {
   getPublicRuntimeEnv,
   getServerRuntimeEnv,
-} from '../environments/runtimeEnvironment'
+} from '@island.is/judicial-system-web/environments/runtimeEnvironment'
+import { isServerSide } from '@island.is/next/utils'
 
 // Polyfill fetch() on the server (used by apollo-client)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

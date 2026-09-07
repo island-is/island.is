@@ -37,7 +37,7 @@ export const mainForm = {
     description: {
       id: 'vmst.dub.application:mainForm.general.description',
       defaultMessage:
-        'Vinsamlegast taktu fram frá hvaða degi þú óskar eftir að vera ekki lengur á atvinnuleysisbótum og skráðu ástæður afskráningar þinnar. Það hjálpar okkur að bæta þjónustuna okkar.',
+        'Vinsamlegast taktu fram frá hvaða degi þú óskar eftir að vera ekki lengur á bótum og skráðu ástæður afskráningar þinnar. Það hjálpar okkur að bæta þjónustuna okkar.',
       description: 'main form description',
     },
     submitApplication: {
@@ -50,7 +50,7 @@ export const mainForm = {
     deregistrationDateTitle: {
       id: 'vmst.dub.application:mainForm.deregistrationDate.deregistrationDateTitle',
       defaultMessage:
-        'Ég óska eftir því að vera afskráð/ur af atvinnuleysisbótum og úr atvinnuleit frá og með:',
+        'Ég óska eftir því að vera afskráð/ur af bótum og úr atvinnuleit frá og með:',
       description: 'deregistration date field title',
     },
     deregistrationDateLabel: {
@@ -182,7 +182,7 @@ export const applicationMessages = defineMessages({
   },
   name: {
     id: 'vmst.dub.application:name',
-    defaultMessage: 'Afskráning af atvinnuleysisbótum',
+    defaultMessage: 'Afskráning af bótum',
     description: `Application's name`,
   },
   applicationSent: {
@@ -201,7 +201,7 @@ export const errorMessages = defineMessages({
   cannotApplyErrorSummary: {
     id: 'vmst.dub.application:errorMessages.cannotApplyErrorSummary',
     defaultMessage:
-      'Samkvæmt sóttum gögnum getur viðkomandi ekki afskráð sig af atvinnuleysisbótum, ef þú telur að mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
+      'Samkvæmt sóttum gögnum getur viðkomandi ekki afskráð sig af bótum, ef þú telur að mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
     description: `Error summary when user can not apply`,
   },
   submitError: {

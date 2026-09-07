@@ -32,10 +32,15 @@ export const EligibilitySummary: FC<
     watch('isBTempRedesignEnabled') === true ||
     getValueViaPath(application.answers, 'isBTempRedesignEnabled') === true
 
+  const isBFullRedesignEnabled =
+    watch('isBFullRedesignEnabled') === true ||
+    getValueViaPath(application.answers, 'isBFullRedesignEnabled') === true
+
   const { eligibility, loading, error } = useEligibility(
     application,
     is65RenewalRedesignEnabled,
     isBTempRedesignEnabled,
+    isBFullRedesignEnabled,
   )
 
   useEffect(() => {

@@ -1,4 +1,5 @@
-import { FC, SetStateAction, useEffect, useState } from 'react'
+import type { FC, SetStateAction } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 
@@ -7,14 +8,14 @@ import {
   BlueBox,
   DateTime,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
   DateLog,
-  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TrackedNotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  UpdateCase,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'

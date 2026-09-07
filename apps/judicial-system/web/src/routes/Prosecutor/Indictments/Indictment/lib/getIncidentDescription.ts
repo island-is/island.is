@@ -1,21 +1,19 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 import { applyCase } from 'beygla/addresses'
 
 import {
   formatDate,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  CrimeScene,
-  isTrafficViolationIndictmentCount,
-} from '@island.is/judicial-system/types'
-import {
+import type { CrimeScene } from '@island.is/judicial-system/types'
+import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/types'
+import type {
   Gender,
   IndictmentCount,
-  IndictmentCountOffense,
   IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { textToHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'

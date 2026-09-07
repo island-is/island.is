@@ -20,6 +20,7 @@ name: 'license-api'
 enabled: true
 env:
   CODE_OWNER: 'hugsmidjan'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   HUNTING_LICENSE_PASS_TEMPLATE_ID: '1da72d52-a93a-4d0f-8463-1933a2bd210b'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -34,6 +35,7 @@ env:
   XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
   XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4'
   XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
+  XROAD_DRIVING_LICENSE_V6_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v6'
   XROAD_FIREARM_LICENSE_PATH: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1'
   XROAD_NVS_PERMITS_PATH: 'IS-DEV/GOV/10085/NVS-Protected/api'
   XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'

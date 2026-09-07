@@ -132,6 +132,35 @@
         }
       }
     },
+    "/Einstaklingar/{kennitala}/kennitalaTegund": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "summary": "Get fyrir tegund einstaklinga",
+        "description": "Skilar upplýsingum um tegund kennitölu einstaklings. Annað hvort er um hefðbundina einstaklingskennitölu að ræða eða kerfiskennitölu.",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "description": "Kennitala einstaklings sem verið er að leita eftir. Má vera kerfiskennitala",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Eintak af EinstaklingurTegundDTO með upplýsingum um einstakling.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurTegundDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
     "/Einstaklingar/{kennitala}/faedingarstadur": {
       "get": {
         "tags": ["Einstaklingar"],
@@ -1132,6 +1161,16 @@
           }
         },
         "additionalProperties": true
+      },
+      "EinstaklingurTegundDTO": {
+        "required": ["kennitala"],
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string" },
+          "nafn": { "type": "string", "nullable": true },
+          "skraKodi": { "type": "string", "nullable": true },
+          "skraLysing": { "type": "string", "nullable": true }
+        }
       },
       "EinstaklingurUtlBaseDTO": {
         "type": "object",

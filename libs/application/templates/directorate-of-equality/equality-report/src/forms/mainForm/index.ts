@@ -1,4 +1,4 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { aboutTheCompanySection } from './aboutTheCompanySection'

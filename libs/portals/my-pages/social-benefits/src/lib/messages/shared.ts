@@ -39,4 +39,88 @@ export const sharedMessages = defineMessages({
     defaultMessage:
       'Villa kom upp í að sækja gögn frá Vinnumálastofnun, vinsamlegast reyndu aftur síðar.',
   },
+  statusDataLabel: {
+    id: 'sp.social-benefits-shared:statusDataLabel',
+    defaultMessage: 'Gögn',
+  },
+  statusDataContent: {
+    id: 'sp.social-benefits-shared:statusDataContent',
+    defaultMessage: 'Nánari upplýsingar má finna undir Mín gögn',
+  },
+  statusDataMissing: {
+    id: 'sp.social-benefits-shared:statusDataMissing',
+    defaultMessage: 'Vantar gögn',
+  },
+  yes: {
+    id: 'sp.social-benefits-shared:yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'sp.social-benefits-shared:no',
+    defaultMessage: 'Nei',
+  },
+  applicantPassCode: {
+    id: 'sp.social-benefits-shared:applicantPassCode',
+    defaultMessage: 'Lykilorð',
+  },
+  applicantPreferredJobs: {
+    id: 'sp.social-benefits-shared:applicantPreferredJobs',
+    defaultMessage: 'Óskastörf',
+  },
+  applicantBankAccount: {
+    id: 'sp.social-benefits-shared:applicantBankAccount',
+    defaultMessage: 'Innleggsreikningur',
+  },
+  applicantUnion: {
+    id: 'sp.social-benefits-shared:applicantUnion',
+    defaultMessage: 'Stéttarfélag',
+  },
+  applicantPensionFund: {
+    id: 'sp.social-benefits-shared:applicantPensionFund',
+    defaultMessage: 'Lífeyrissjóður',
+  },
+  applicantUsedPersonalTaxCredit: {
+    id: 'sp.social-benefits-shared:applicantUsedPersonalTaxCredit',
+    defaultMessage: 'Nýting persónuafsláttar',
+  },
+  applicantNumberOfChildren: {
+    id: 'sp.social-benefits-shared:applicantNumberOfChildren',
+    defaultMessage: 'Börn á framfæri',
+  },
+  applicantEmploymentHistory: {
+    id: 'sp.social-benefits-shared:applicantEmploymentHistory',
+    defaultMessage: 'Atvinnuferill',
+  },
+  applicantEducationHistory: {
+    id: 'sp.social-benefits-shared:applicantEducationHistory',
+    defaultMessage: 'Menntun',
+  },
+  applicantDrivingLicenses: {
+    id: 'sp.social-benefits-shared:applicantDrivingLicenses',
+    defaultMessage: 'Ökuréttindi',
+  },
+  applicantLanguageAbilities: {
+    id: 'sp.social-benefits-shared:applicantLanguageAbilities',
+    defaultMessage: 'Tungumál',
+  },
+  applicantServiceArea: {
+    id: 'sp.social-benefits-shared:applicantServiceArea',
+    defaultMessage: 'Þjónustuskrifstofa',
+  },
+  applicantCurrentAddressDifferent: {
+    id: 'sp.social-benefits-shared:applicantCurrentAddressDifferent',
+    defaultMessage: 'Dvalarstaður annar en lögheimili',
+  },
+  applicantSavedToEures: {
+    id: 'sp.social-benefits-shared:applicantSavedToEures',
+    defaultMessage: 'Skráning á EURES svæðinu',
+  },
+  applicantEditInfo: {
+    id: 'sp.social-benefits-shared:applicantEditInfo',
+    defaultMessage: 'Breyta upplýsingum',
+  },
+  applicantEditInfoUrl: {
+    id: 'sp.social-benefits-shared:applicantEditInfoUrl',
+    defaultMessage: 'https://island.is/umsoknir/vmst-breyta-upplysingum',
+  },
 })

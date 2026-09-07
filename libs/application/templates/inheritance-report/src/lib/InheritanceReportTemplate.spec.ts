@@ -59,16 +59,26 @@ describe('InheritanceReportTemplate', () => {
     const createApplication = (
       state: string,
       signatories?: Array<{ signed: boolean }>,
+      reviewEnabled?: boolean,
     ): Application => {
-      const externalData =
-        signatories === undefined
+      const externalData = {
+        ...(signatories === undefined
           ? {}
           : {
               getSignatories: {
                 data: { success: true, signatories },
                 date: new Date().toISOString(),
               },
-            }
+            }),
+        ...(reviewEnabled === undefined
+          ? {}
+          : {
+              checkReviewFlag: {
+                data: { reviewEnabled },
+                date: new Date().toISOString(),
+              },
+            }),
+      }
 
       return {
         id: '123',
@@ -87,7 +97,7 @@ describe('InheritanceReportTemplate', () => {
       } as unknown as Application
     }
 
-    it('should route SUBMIT from draft to the signing/status state when signatory lookup has not completed', () => {
+    it('should route SUBMIT from draft to done when the review flag is absent, even though signatory lookup has not completed', () => {
       const application = createApplication(States.draft)
 
       const helper = new ApplicationTemplateHelper(
@@ -97,7 +107,7 @@ describe('InheritanceReportTemplate', () => {
       const [hasChanged, newState] = helper.changeState(DefaultEvents.SUBMIT)
 
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(States.signing)
+      expect(newState).toBe(States.done)
     })
 
     it('should submit and fetch signatories before resolving the SUBMIT target', () => {
@@ -130,11 +140,12 @@ describe('InheritanceReportTemplate', () => {
       expect(newState).toBe(States.done)
     })
 
-    it('should route SUBMIT from draft to signing when some signatories are still pending', () => {
-      const application = createApplication(States.draft, [
-        { signed: true },
-        { signed: false },
-      ])
+    it('should route SUBMIT from draft to signing when some signatories are still pending and the review flag is enabled', () => {
+      const application = createApplication(
+        States.draft,
+        [{ signed: true }, { signed: false }],
+        true,
+      )
 
       const helper = new ApplicationTemplateHelper(
         application,
@@ -144,6 +155,23 @@ describe('InheritanceReportTemplate', () => {
 
       expect(hasChanged).toBe(true)
       expect(newState).toBe(States.signing)
+    })
+
+    it('should route SUBMIT from draft to done when some signatories are still pending but the review flag is explicitly disabled', () => {
+      const application = createApplication(
+        States.draft,
+        [{ signed: true }, { signed: false }],
+        false,
+      )
+
+      const helper = new ApplicationTemplateHelper(
+        application,
+        InheritanceReportTemplate,
+      )
+      const [hasChanged, newState] = helper.changeState(DefaultEvents.SUBMIT)
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.done)
     })
 
     it('should complete to done when no signatories are required', () => {

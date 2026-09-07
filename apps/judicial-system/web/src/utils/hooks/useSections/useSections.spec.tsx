@@ -5,15 +5,17 @@ import { renderHook } from '@testing-library/react'
 
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type {
+  Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  Case,
   CaseOrigin,
   CaseState,
   CaseType,
   InstitutionType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -187,6 +189,26 @@ describe('useSections getSections', () => {
       modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.WAITING_FOR_CANCELLATION,
+      policeCaseNumbers: [],
+    }
+    const { result } = renderHook(() => useSections(), {
+      wrapper: makeWrapper(c),
+    })
+
+    expect(result.current.getSections(c, u)).toStrictEqual([
+      { children: [], isActive: true, name: expect.any(String) },
+      { children: [], isActive: false, name: expect.any(String) },
+      { children: [], isActive: false, name: expect.any(String) },
+    ])
+  })
+
+  it('should return the correct sections for indictment cases in WAITING_FOR_REVIEW state', () => {
+    const c: Case = {
+      type: CaseType.INDICTMENT,
+      created: faker.date.past().toISOString(),
+      modified: faker.date.past().toISOString(),
+      id: faker.datatype.uuid(),
+      state: CaseState.WAITING_FOR_REVIEW,
       policeCaseNumbers: [],
     }
     const { result } = renderHook(() => useSections(), {

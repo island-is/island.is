@@ -23,6 +23,7 @@ import {
 import { FormsService } from './forms.service'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { CopyFormDto } from './models/dto/copyForm.dto'
 import {
   UpdateFormResponse,
   UpdateFormStatusDto,
@@ -152,13 +153,15 @@ export class FormsController {
     type: FormResponseDto,
     description: 'Copy form',
   })
+  @ApiBody({ type: CopyFormDto })
   @ApiParam({ name: 'id', type: String })
   @Put('copy/:id')
   async copy(
     @CurrentUser() user: User,
     @Param('id') id: string,
+    @Body() copyFormDto: CopyFormDto,
   ): Promise<FormResponseDto> {
-    return await this.formsService.copy(user, id)
+    return await this.formsService.copy(user, id, copyFormDto)
   }
 
   @ApiOperation({ summary: 'Update form' })

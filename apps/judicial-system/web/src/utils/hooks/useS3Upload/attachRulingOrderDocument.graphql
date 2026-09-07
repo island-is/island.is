@@ -1,0 +1,10 @@
+mutation AttachRulingOrderDocument($input: AttachRulingOrderDocumentInput!) {
+  attachRulingOrderDocument(input: $input) {
+    id
+    key
+    size
+    type
+    name
+    userGeneratedFilename
+  }
+}

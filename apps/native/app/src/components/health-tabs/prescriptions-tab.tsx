@@ -1,6 +1,7 @@
 import { StackScreen } from '@/components/stack-screen'
 import React, { useMemo } from 'react'
 import { FlatList, RefreshControl } from 'react-native'
+import { router } from 'expo-router'
 
 import { useGetDrugPrescriptionsQuery } from '@/graphql/types/schema'
 import { NetworkStatus } from '@apollo/client'
@@ -24,7 +25,24 @@ export function PrescriptionsTab({ initial }: { initial?: boolean }) {
   return (
     <FlatList
       data={data}
-      renderItem={({ item }) => <PrescriptionCard prescription={item} />}
+      renderItem={({ item }) => (
+        <PrescriptionCard
+          prescription={item}
+          onRenewPress={() =>
+            router.push({
+              pathname: '/renew-prescription',
+              params: {
+                id: item.id,
+                name: item.name ?? undefined,
+                type: item.type ?? undefined,
+                indication: item.indication ?? undefined,
+                dosageInstructions: item.dosageInstructions ?? undefined,
+                totalPrescribedAmount: item.totalPrescribedAmount ?? undefined,
+              },
+            })
+          }
+        />
+      )}
       contentContainerStyle={{ flexGrow: 1, paddingTop: 16 }}
       contentInsetAdjustmentBehavior="automatic"
       refreshControl={

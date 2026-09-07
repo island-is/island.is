@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { User } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 import {
   TeachingRightsStatus,
   StudentInformation,
@@ -14,6 +14,8 @@ import {
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
   NewBEDrivingLicenseInput,
+  NewDrivingLicenseWithHealthDeclarationInput,
+  NewTemporaryDrivingLicenseWithHealthDeclarationInput,
   DrivinglicenseDuplicateValidityStatus,
   NewRenewal65DrivingLicenseInput,
 } from './drivingLicense.type'
@@ -26,10 +28,7 @@ import {
   ModelsV5PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
   DriverLicenseWithoutImages,
 } from '@island.is/clients/driving-license'
-import {
-  BLACKLISTED_JURISDICTION,
-  DRIVING_ASSESSMENT_MAX_AGE,
-} from './util/constants'
+import { BLACKLISTED_JURISDICTION } from './util/constants'
 import sortTeachers from './util/sortTeachers'
 import { StudentAssessment } from '..'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -294,9 +293,12 @@ export class DrivingLicenseService {
         ? [
             {
               key: RequirementKey.drivingAssessmentMissing,
-              requirementMet:
-                (assessmentResult?.created?.getTime() ?? 0) >
-                Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
+              // Only completion matters — a driving assessment does not expire
+              // (Samgongustofa, 2026-08-31), and RLS applies no age rule on its
+              // side either. The 182-day window this replaced dated from the
+              // original 2021 template and wrongly blocked applicants whose
+              // assessment was older than ~6 months.
+              requirementMet: assessmentResult != null,
             },
             {
               key: RequirementKey.drivingSchoolMissing,
@@ -365,7 +367,12 @@ export class DrivingLicenseService {
       case 'PERSON_NOT_REGISTERED_IN_ICELAND':
         return RequirementKey.localResidency
       default:
-        this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
+        // Must be an object: a bare string second arg is treated as winston
+        // splat and silently dropped, which is why ~265 of these warnings a
+        // month never recorded which code was unhandled.
+        this.logger.warn(`${LOGTAG} unhandled can apply error code`, {
+          errorCode,
+        })
 
         return RequirementKey.deniedByService
     }
@@ -386,6 +393,12 @@ export class DrivingLicenseService {
         await this.drivingLicenseApi.getErrorCodeDescriptions()
       const match = descriptions.find((d) => d.code === code)
       if (!match) {
+        // RLS has no description for this code either, so the UI falls back to
+        // generic copy. Worth knowing about: it means neither we nor RLS
+        // document the code, and it is a candidate to ask RLS to catalogue.
+        this.logger.warn(`${LOGTAG} no RLS description for error code`, {
+          code,
+        })
         return null
       }
       return {
@@ -567,6 +580,8 @@ export class DrivingLicenseService {
       willBringQualityPhoto: input.needsToPresentQualityPhoto,
       sendLicenseInMail: input.sendLicenseInMail,
       sendLicenseToAddress: '',
+      photoBiometricsId: input.photoBiometricsId,
+      signatureBiometricsId: input.signatureBiometricsId,
     })
 
     return {
@@ -642,6 +657,91 @@ export class DrivingLicenseService {
     return {
       success: response,
       errorMessage: null,
+    }
+  }
+
+  /**
+   * B-full via the v6 `withhealthdeclaration` endpoint. Takes the whole `Auth`
+   * object, not `auth.authorization` — the v6 client wraps the call in
+   * `withAuthContext`, which needs the object to put the token on the `jwttoken`
+   * header. Passing the string would leave that header unset and every request
+   * would come back 400, while unit tests carried on passing.
+   *
+   * The neighbouring methods take a bare string; that is deliberate and stays.
+   * Unifying them is PR #23064's job.
+   */
+  async newDrivingLicenseWithHealthDeclaration(
+    auth: Auth,
+    input: NewDrivingLicenseWithHealthDeclarationInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const applicationGuid =
+      await this.drivingLicenseApi.postFullLicenseWithHealthDeclarationV6({
+        auth,
+        category: input.licenseCategory,
+        model: {
+          districtId: input.districtId,
+          sendPlasticToPerson: input.sendPlasticToPerson,
+          email: input.email,
+          primaryPhoneNumber: input.primaryPhoneNumber,
+          healthDeclaration: input.healthDeclaration,
+          contentList: input.contentList,
+          photoBiometricsId: input.photoBiometricsId,
+          signatureBiometricsId: input.signatureBiometricsId,
+        },
+      })
+
+    // Return the RLS application guid so the submission service can log it next
+    // to our own application id — together they are the reconciliation record.
+    return {
+      success: true,
+      errorMessage: null,
+      applicationGuid,
+    }
+  }
+
+  /**
+   * B-temp counterpart. Unlike the full-licence endpoint this one returns a DTO
+   * rather than a boolean, so the result MUST be mapped: this single call now
+   * decides success on its own, where previously the legacy submit that followed
+   * did. Leaving the DTO unread would make `submitApplication` never see
+   * `success: false`, and every RLS business rejection would reach the applicant
+   * as "submitted".
+   */
+  async newTemporaryDrivingLicenseWithHealthDeclaration(
+    auth: Auth,
+    input: NewTemporaryDrivingLicenseWithHealthDeclarationInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const applicationGuid =
+      await this.drivingLicenseApi.postTemporaryLicenseWithHealthDeclarationV6({
+        auth,
+        model: {
+          districtId: input.districtId,
+          instructorSSN: input.instructorSSN,
+          sendPlasticToPerson: input.sendPlasticToPerson,
+          email: input.email,
+          primaryPhoneNumber: input.primaryPhoneNumber,
+          healthDeclaration: input.healthDeclaration,
+          contentList: input.contentList,
+          photoBiometricsId: input.photoBiometricsId,
+          signatureBiometricsId: input.signatureBiometricsId,
+        },
+      })
+
+    // Reaching here means RLS returned 2xx — enhanced fetch throws on 4xx, which
+    // is how this endpoint signals a business rejection (e.g. 400
+    // APPLICATION_ALREADY_EXISTS). Do NOT gate on the DTO `result` field: RLS
+    // returns the new application's guid in the body on success, and dev showed a
+    // successfully-created application come back with `result` falsy, which then
+    // surfaced to the applicant as a failed submission *after they had paid*.
+    // The client's `postTemporaryLicenseWithHealthDeclarationV6` already maps the
+    // one benign 400 (a lost-response retry) to a resolved value, so a throw here
+    // is a genuine failure and must propagate to `submitApplication`. The value
+    // is the RLS application guid (or null on the lost-response path); return it
+    // so the submission service can log it next to our own application id.
+    return {
+      success: true,
+      errorMessage: null,
+      applicationGuid,
     }
   }
 

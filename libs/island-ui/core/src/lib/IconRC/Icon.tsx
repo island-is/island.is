@@ -42,7 +42,8 @@ export const Icon = ({
 }: IconProps) => {
   const path = iconMap[type][icon]
   const IconSvg = useMemo(
-    () => React.lazy(() => import('./icons/' + path)),
+    // Extension included so vite can resolve the import (webpack inferred it).
+    () => React.lazy(() => import(`./icons/${path}.tsx`)),
     [path],
   )
 

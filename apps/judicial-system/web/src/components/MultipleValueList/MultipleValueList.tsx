@@ -1,17 +1,11 @@
-import {
-  FC,
-  FocusEvent,
-  KeyboardEvent,
-  PropsWithChildren,
-  useRef,
-  useState,
-} from 'react'
+import type { FC, FocusEvent, KeyboardEvent, PropsWithChildren } from 'react'
+import { useRef, useState } from 'react'
 import { InputMask } from '@react-input/mask'
 
 import { Button, Input } from '@island.is/island-ui/core'
 import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
+import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
 
-import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './MultipleValueList.css'
 
 type MaskType = 'police-case-numbers'

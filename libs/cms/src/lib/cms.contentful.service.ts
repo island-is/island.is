@@ -1190,7 +1190,9 @@ export class CmsContentfulService {
       .filter((category) => category?.title && category?.slug)
   }
 
-  async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {
+  async getOpenDataPage({
+    lang,
+  }: GetOpenDataPageInput): Promise<OpenDataPage | null> {
     const params = {
       ['content_type']: 'openDataPage',
       include: 10,
@@ -1208,7 +1210,7 @@ export class CmsContentfulService {
 
   async getOpenDataSubpage({
     lang,
-  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage> {
+  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage | null> {
     const params = {
       ['content_type']: 'openDataSubpage',
       include: 10,

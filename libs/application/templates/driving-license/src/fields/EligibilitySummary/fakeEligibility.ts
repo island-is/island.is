@@ -13,11 +13,13 @@ export const fakeEligibility = (
   hasPhoto = true,
   is65RenewalRedesignEnabled = false,
   isBTempRedesignEnabled = false,
+  isBFullRedesignEnabled = false,
 ): ApplicationEligibility => {
   const usesPhotoGate =
     applicationFor === BE ||
     (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
-    (applicationFor === B_TEMP && isBTempRedesignEnabled)
+    (applicationFor === B_TEMP && isBTempRedesignEnabled) ||
+    (applicationFor === B_FULL && isBFullRedesignEnabled)
 
   return {
     isEligible: usesPhotoGate ? hasPhoto : true,
@@ -32,6 +34,15 @@ export const fakeEligibility = (
               key: RequirementKey.drivingSchoolMissing,
               requirementMet: true,
             },
+            // When the B-full redesign is on, a usable photo is also required.
+            ...(isBFullRedesignEnabled
+              ? [
+                  {
+                    key: RequirementKey.hasNoPhoto,
+                    requirementMet: hasPhoto,
+                  },
+                ]
+              : []),
           ]
         : usesPhotoGate
         ? [

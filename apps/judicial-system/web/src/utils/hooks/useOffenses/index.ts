@@ -2,13 +2,14 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
-import { SubstanceMap } from '@island.is/judicial-system/types'
+import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
-import {
+import type {
   IndictmentCountOffense,
   UpdateOffenseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateOffenseMutation } from './createOffense.generated'
 import { useDeleteOffenseMutation } from './deleteOffense.generated'
 import { useUpdateOffenseMutation } from './updateOffense.generated'
@@ -92,7 +93,7 @@ const useOffenses = () => {
               caseId,
               indictmentCountId,
               offenseId,
-              ...update,
+              ...normalizeBlankStrings(update),
             },
           },
         })

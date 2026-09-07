@@ -1,4 +1,5 @@
-import { FC, useState } from 'react'
+import type { FC } from 'react'
+import { useState } from 'react'
 
 import { Input } from '@island.is/island-ui/core'
 import { Substance as SubstanceEnum } from '@island.is/judicial-system/types'

@@ -1,10 +1,10 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 import { strings } from './CommentsAccordionItem.strings'
 
 interface Props {

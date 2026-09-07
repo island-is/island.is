@@ -1,4 +1,5 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 
@@ -15,24 +16,22 @@ import {
   InfoBox,
   useRejectCaseFile,
 } from '@island.is/judicial-system-web/src/components'
+import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   SortButton,
   TableContainer,
   TableDate,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
-import {
-  CaseFile,
-  CaseFileState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as tableStyles from '@island.is/judicial-system-web/src/components/Table/Table.css'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useFiledCourtDocuments,
   useSort,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
-import ContextMenu from '../../ContextMenu/ContextMenu'
-import * as tableStyles from '../Table.css'
 import * as styles from './CaseFileTable.css'
 
 interface Props {

@@ -414,7 +414,7 @@ export class ApplicationsService {
         )
       }
       zendeskInstance = organization.zendeskInstance ?? ''
-      zendeskBrandId = organization.zendeskBrandId ?? ''
+      zendeskBrandId = form.zendeskBrandId ?? ''
     }
 
     const success = await this.serviceManager.send(
@@ -429,6 +429,15 @@ export class ApplicationsService {
         application.submittedAt = applicationDto.submittedAt
         application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
         await application.save()
+        this.logger.info('form system application submitted', {
+          applicationId: application.id,
+          formId: form.id,
+          formSlug: form.slug,
+          organizationNationalId: applicationDto.organizationNationalId,
+          isTest: application.isTest,
+          submittedWithPayment: !user,
+          datadogEvent: 'form_system_application_submitted',
+        })
       } catch (error) {
         await applicationEvent.destroy()
         throw error
@@ -1076,7 +1085,7 @@ export class ApplicationsService {
           }
         }
       }
-    } else {
+    } else if (submitScreenDto.increment === false) {
       if (
         this.doesSectionHaveScreen(currentSection) &&
         !this.isFirstScreenInSection(currentSection, currentScreenId)
@@ -1319,12 +1328,11 @@ export class ApplicationsService {
         )
       }
 
-      const organizationInstance = await this.getOrganizationZendeskInfo(
-        orgNationalId,
-      )
+      const organizationInstance = await this.getOrganizationZendeskInfo(form)
 
       dataFromUrlRequestDto.zendeskInstance =
         organizationInstance.zendeskInstance
+      dataFromUrlRequestDto.zendeskBrandId = organizationInstance.zendeskBrandId
 
       response = await this.serviceManager.getListFromZendesk(
         fieldSettings,
@@ -1470,20 +1478,20 @@ export class ApplicationsService {
   }
 
   private async getOrganizationZendeskInfo(
-    organizationNationalId: string,
+    form: Form,
   ): Promise<{ zendeskInstance: string; zendeskBrandId: string }> {
     const organization = await this.organizationModel.findOne({
-      where: { nationalId: organizationNationalId },
+      where: { nationalId: form.organizationNationalId },
     })
 
     if (!organization) {
       throw new NotFoundException(
-        `Organization with nationalId '${organizationNationalId}' not found`,
+        `Organization with nationalId '${form.organizationNationalId}' not found`,
       )
     }
 
     const zendeskInstance = organization.zendeskInstance ?? ''
-    const zendeskBrandId = organization.zendeskBrandId ?? ''
+    const zendeskBrandId = form.zendeskBrandId ?? ''
     return { zendeskInstance, zendeskBrandId }
   }
 

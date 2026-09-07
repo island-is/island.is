@@ -18,7 +18,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -81,6 +80,7 @@ import {
   CaseFile,
   CaseRepositoryService,
   CaseString,
+  CaseStringRepositoryService,
   CourtSession,
   DateLog,
   Defendant,
@@ -184,8 +184,8 @@ export class InternalCaseService {
   private throttle = Promise.resolve(false)
 
   constructor(
-    @InjectModel(CaseString)
-    private readonly caseStringModel: typeof CaseString,
+    @Inject(forwardRef(() => CaseStringRepositoryService))
+    private readonly caseStringRepositoryService: CaseStringRepositoryService,
     @Inject(forwardRef(() => CaseArchiveRepositoryService))
     private readonly caseArchiveRepositoryService: CaseArchiveRepositoryService,
     @Inject(forwardRef(() => AppealDecisionRepositoryService))
@@ -721,10 +721,12 @@ export class InternalCaseService {
         collectEncryptionProperties(caseStringEncryptionProperties, caseString)
       caseStringsArchive.push(caseStringArchive)
 
-      await this.caseStringModel.update(clearedCaseStringProperties, {
-        where: { id: caseString.id, caseId: theCase.id },
-        transaction,
-      })
+      await this.caseStringRepositoryService.updateByIdAndCase(
+        caseString.id,
+        theCase.id,
+        clearedCaseStringProperties,
+        { transaction },
+      )
     }
 
     const appealDecisionsArchive = []
@@ -822,6 +824,8 @@ export class InternalCaseService {
         state: completedIndictmentCaseStates,
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        // Only LOKE cases have a corresponding police case to update
+        origin: CaseOrigin.LOKE,
       },
     })
 
@@ -1117,7 +1121,7 @@ export class InternalCaseService {
       }
 
       const rulingDate =
-        deliverDto.rulingDate ?? theCase.created ?? theCase.rulingDate
+        deliverDto.rulingDate ?? theCase.rulingDate ?? theCase.created
 
       if (!rulingDate) {
         return { delivered: false }
@@ -1452,6 +1456,11 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
+    // Never call UpdateRVCase for cases that did not originate in LOKE
+    if (theCase.origin !== CaseOrigin.LOKE) {
+      return true
+    }
+
     const policeCaseId =
       await this.caseRepositoryService.findOriginalAncestorId(theCase)
 

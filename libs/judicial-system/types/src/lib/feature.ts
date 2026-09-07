@@ -1,4 +1,6 @@
 export enum Feature {
-  NONE = 'NONE', // must be at least one
-  APPEAL_RULING_ORDER = 'APPEAL_RULING_ORDER',
+  // A defender filing a verdict appeal (appeal of an indictment verdict) to
+  // the court of appeals. Hidden on prod until the notification to the public
+  // prosecutor exists.
+  INDICTMENT_APPEAL = 'INDICTMENT_APPEAL',
 }

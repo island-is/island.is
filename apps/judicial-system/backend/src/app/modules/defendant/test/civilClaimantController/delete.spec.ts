@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { CivilClaimant } from '../../../repository'
+import { CivilClaimantRepositoryService } from '../../../repository'
 import { DeleteCivilClaimantResponse } from '../../models/deleteCivilClaimant.response'
 
 interface Then {
@@ -19,17 +19,18 @@ describe('CivilClaimantController - Delete', () => {
   const caseId = uuid()
   const civilClaimantId = uuid()
 
-  let mockCivilClaimantModel: typeof CivilClaimant
+  let mockCivilClaimantRepositoryService: CivilClaimantRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { civilClaimantController, civilClaimantModel } =
+    const { civilClaimantController, civilClaimantRepositoryService } =
       await createTestingDefendantModule()
 
-    mockCivilClaimantModel = civilClaimantModel
+    mockCivilClaimantRepositoryService = civilClaimantRepositoryService
 
-    const mockDestroy = mockCivilClaimantModel.destroy as jest.Mock
-    mockDestroy.mockRejectedValue(new Error('Test error'))
+    const mockDelete =
+      mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
+    mockDelete.mockRejectedValue(new Error('Test error'))
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -51,15 +52,16 @@ describe('CivilClaimantController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockCivilClaimantModel.destroy as jest.Mock
-      mockDestroy.mockResolvedValue(1)
+      const mockDelete =
+        mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
+      mockDelete.mockResolvedValue(1)
 
       then = await givenWhenThen(caseId, civilClaimantId)
     })
     it('should delete civil claimant', () => {
-      expect(mockCivilClaimantModel.destroy).toHaveBeenCalledWith({
-        where: { caseId, id: civilClaimantId },
-      })
+      expect(
+        mockCivilClaimantRepositoryService.deleteByIdAndCase,
+      ).toHaveBeenCalledWith(civilClaimantId, caseId)
       expect(then.result).toEqual({ deleted: true })
     })
   })

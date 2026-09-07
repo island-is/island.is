@@ -2,23 +2,16 @@ import {
   buildCustomField,
   buildMultiField,
   buildSubSection,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { messages } from '../../../lib/messages'
-import { type PersonalFactor } from '../../../utils/types'
+import { ProgressPaths } from '../../../utils/constants'
 
 export const employeeClassificationSubSection = buildSubSection({
   id: 'employeeClassification',
   title: messages.report.employeeClassification.sectionTitle,
   // Nothing to classify without personal criteria — skip the screen entirely.
-  condition: (answers) =>
-    (
-      getValueViaPath<PersonalFactor[]>(
-        answers,
-        'criteria.personalFactors',
-        [],
-      ) ?? []
-    ).length > 0,
+  // `hasPersonalCriteria` is kept in sync by CriteriaEditor/ExcelTemplateDownload (see dataSchema.ts).
+  condition: (answers) => answers.hasPersonalCriteria === true,
   children: [
     buildMultiField({
       id: 'employeeClassificationMultiField',
@@ -28,7 +21,11 @@ export const employeeClassificationSubSection = buildSubSection({
         buildCustomField({
           id: 'employees',
           component: 'EmployeeClassificationEditor',
-          doesNotRequireAnswer: true,
+          // The step's own data lives on the DMR draft, so this marker is the
+          // only thing that tells the shell the screen is done — see
+          // ProgressPaths. Replaces `doesNotRequireAnswer: true`: a screen that
+          // requires no answer is skipped without advancing the resume point.
+          childInputIds: [ProgressPaths.employeeClassification],
         }),
       ],
     }),

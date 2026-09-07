@@ -24,8 +24,10 @@ export const QuestionnaireHeader: FC<QuestionnaireHeaderProps> = ({
       borderColor="blue200"
       display="flex"
       justifyContent="spaceBetween"
-      alignItems="flexEnd"
+      alignItems={['center', 'center', 'center', 'flexEnd']}
       flexDirection="row"
+      flexWrap="wrap"
+      rowGap={2}
       columnGap={3}
       padding={[0, 0, 0, 3]}
     >
@@ -50,7 +52,7 @@ export const QuestionnaireHeader: FC<QuestionnaireHeaderProps> = ({
           </Text>
         </Box>
       </Box>
-      {buttonGroup && <Box>{buttonGroup}</Box>}
+      {buttonGroup && <Box flexShrink={0}>{buttonGroup}</Box>}
     </Box>
   )
 }

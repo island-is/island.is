@@ -6,70 +6,25 @@
   "tags": ["scope:portals-admin"],
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "compiler": "babel",
-        "outputPath": "dist/apps/portals/admin",
-        "index": "apps/portals/admin/src/index.html",
-        "baseHref": "/stjornbord/",
-        "main": "apps/portals/admin/src/main.tsx",
-        "polyfills": "apps/portals/admin/src/polyfills.ts",
-        "tsConfig": "apps/portals/admin/tsconfig.app.json",
-        "assets": [
-          "apps/portals/admin/src/favicon.ico",
-          "apps/portals/admin/src/mockServiceWorker.js",
-          "apps/portals/admin/src/assets"
-        ],
-        "styles": ["apps/portals/admin/src/styles.css"],
-        "scripts": [],
-        "webpackConfig": "apps/portals/admin/webpack.config.js"
-      },
-      "configurations": {
-        "development": {},
-        "production": {
-          "index": "apps/portals/admin/src/index.src.html",
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false
-        }
-      },
-      "dependsOn": [
-        {
-          "target": "generateDevIndexHTML"
-        }
-      ]
-    },
-    "generateDevIndexHTML": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/admin/src"
-        ]
-      },
-      "outputs": ["{workspaceRoot}/apps/portals/admin/src/index.html"]
-    },
-    "serve": {
-      "executor": "@nx/webpack:dev-server",
-      "options": {
-        "buildTarget": "portals-admin:build:development",
-        "hmr": true
+        "command": "vite build --config apps/portals/admin/vite.config.ts"
       },
       "configurations": {
-        "production": {
-          "buildTarget": "portals-admin:build:production",
-          "hmr": false
-        }
+        "production": {}
       },
-      "dependsOn": [
-        {
-          "target": "generateDevIndexHTML"
-        }
-      ]
+      "outputs": ["{workspaceRoot}/dist/apps/portals/admin"],
+      "cache": true,
+      "inputs": ["production", "^production"]
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite serve --config apps/portals/admin/vite.config.ts"
+      },
+      "configurations": {
+        "production": {}
+      }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
@@ -118,6 +73,14 @@
     },
     "docker-static": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p apps/portals/admin/tsconfig.app.json"
+      },
+      "cache": true,
+      "inputs": ["production", "^production"]
     }
   }
 }

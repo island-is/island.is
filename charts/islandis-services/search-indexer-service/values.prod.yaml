@@ -26,6 +26,7 @@ env:
   CONTENTFUL_ENVIRONMENT: 'master'
   CONTENTFUL_HOST: 'cdn.contentful.com'
   CONTENTFUL_SPACE: '8k0h54kbe6bj'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   ELASTIC_INDEX: 'island-is'
   ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
   ENVIRONMENT: 'prod'

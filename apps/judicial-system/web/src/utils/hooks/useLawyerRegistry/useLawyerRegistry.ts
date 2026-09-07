@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import differenceInHours from 'date-fns/differenceInHours'
 
-import { Lawyer } from '@island.is/judicial-system/types'
-
-import { useGetLawyers } from '../useLawyers/useLawyers'
+import type { Lawyer } from '@island.is/judicial-system/types'
+import { useGetLawyers } from '@island.is/judicial-system-web/src/utils/hooks/useLawyers/useLawyers'
 
 export const Database = {
   lawyerTable: 'lawyers',

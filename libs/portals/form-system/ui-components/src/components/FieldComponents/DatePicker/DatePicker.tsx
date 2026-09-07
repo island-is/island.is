@@ -25,6 +25,7 @@ export const DatePickerField = ({
 }: Props) => {
   const { formatMessage } = useIntl()
   const { control, trigger } = useFormContext()
+  const fieldName = `${item.id}.${valueIndex}`
 
   const handleDateChange = (dateString: string) => {
     if (dispatch) {
@@ -47,7 +48,7 @@ export const DatePickerField = ({
   return (
     <Controller
       key={`${item.id}-${valueIndex}`}
-      name={`${item.id}.${valueIndex}`}
+      name={fieldName}
       control={control}
       defaultValue={defaultValue}
       rules={{
@@ -70,13 +71,13 @@ export const DatePickerField = ({
             if (!(date instanceof Date) || isNaN(date.getTime())) {
               onControllerChange('')
               handleDateChange('')
-              trigger(item.id)
+              trigger(fieldName)
               return
             }
             const newVal = format(date, df)
             onControllerChange(newVal)
             handleDateChange(newVal)
-            trigger(item.id)
+            trigger(fieldName)
           }}
           minDate={new Date(1970, 0)}
           required={item.isRequired ?? false}
@@ -92,10 +93,9 @@ export const DatePickerField = ({
           handleClear={() => {
             onControllerChange('')
             handleDateChange('')
-            trigger(item.id)
+            trigger(fieldName)
           }}
           isClearable={!item.isRequired}
-          readOnly={true}
         />
       )}
     />

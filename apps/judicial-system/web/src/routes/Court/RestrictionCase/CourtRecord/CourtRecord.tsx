@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -39,11 +40,13 @@ import {
   PageTitle,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
+import type { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
-  CaseAppealDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { AppealSections } from '@island.is/judicial-system-web/src/routes/Court/components'
+import { populateEndOfCourtSessionBookingsIntro } from '@island.is/judicial-system-web/src/routes/Court/shared/populateEndOfCourtSessionBookingsIntro'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -60,8 +63,6 @@ import {
   isNullOrUndefined,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { AppealSections } from '../../components'
-import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 import { populateEndOfCourtSessionForRestrictions } from './helpers/endOfSessionBookings'
 
 export const CourtRecord: FC = () => {

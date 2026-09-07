@@ -8,6 +8,7 @@ import {
   Input,
   Stack,
   Text,
+  GridRow as Row,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useContext, useState } from 'react'
@@ -80,210 +81,217 @@ export const Completed = () => {
   }
 
   return (
-    <Stack space={3}>
-      <Box marginBottom={4}>
-        <Text variant="h3">{formatMessage(m.completedMessage)}</Text>
-      </Box>
-      <Input
-        name="title"
-        label={formatMessage(m.completedTitleLabel)}
-        backgroundColor="blue"
-        readOnly={isReadOnly}
-        value={title?.is || ''}
-        onFocus={(e) => setFocus(e.target.value)}
-        onChange={(e) => {
-          controlDispatch({
-            type: 'SET_COMPLETED_TITLE',
-            payload: {
-              lang: 'is',
-              newValue: e.target.value,
-            },
-          })
-        }}
-        onBlur={(e) => e.target.value !== focus && formUpdate()}
-      />
-      <Input
-        name="titleEnglish"
-        label={formatMessage(m.completedTitleLabelEnglish)}
-        backgroundColor="blue"
-        value={title?.en || ''}
-        readOnly={isReadOnly}
-        onFocus={async (e) => {
-          if ((!title?.en || title?.en === '') && title?.is) {
-            const translation = await getTranslation(title.is)
+    <>
+      <Row>
+        <Box marginLeft={1}>
+          <Text variant="h3">{formatMessage(m.completedMessage)}</Text>
+        </Box>
+      </Row>
+      <Box marginTop={5}></Box>
+      <Stack space={3}>
+        <Input
+          name="title"
+          label={formatMessage(m.completedTitleLabel)}
+          backgroundColor="blue"
+          readOnly={isReadOnly}
+          value={title?.is || ''}
+          onFocus={(e) => setFocus(e.target.value)}
+          onChange={(e) => {
+            controlDispatch({
+              type: 'SET_COMPLETED_TITLE',
+              payload: {
+                lang: 'is',
+                newValue: e.target.value,
+              },
+            })
+          }}
+          onBlur={(e) => e.target.value !== focus && formUpdate()}
+        />
+        <Input
+          name="titleEnglish"
+          label={formatMessage(m.completedTitleLabelEnglish)}
+          backgroundColor="blue"
+          value={title?.en || ''}
+          readOnly={isReadOnly}
+          onFocus={async (e) => {
+            if ((!title?.en || title?.en === '') && title?.is) {
+              const translation = await getTranslation(title.is)
+              controlDispatch({
+                type: 'SET_COMPLETED_TITLE',
+                payload: {
+                  lang: 'en',
+                  newValue: translation.translation,
+                },
+              })
+            }
+            setFocus(e.target.value)
+          }}
+          onChange={(e) => {
             controlDispatch({
               type: 'SET_COMPLETED_TITLE',
               payload: {
                 lang: 'en',
-                newValue: translation.translation,
+                newValue: e.target.value,
               },
             })
-          }
-          setFocus(e.target.value)
-        }}
-        onChange={(e) => {
-          controlDispatch({
-            type: 'SET_COMPLETED_TITLE',
-            payload: {
-              lang: 'en',
-              newValue: e.target.value,
-            },
-          })
-        }}
-        onBlur={(e) => {
-          if (focus !== e.target.value) {
-            formUpdate()
-          }
-        }}
-      />
-      <Divider />
-      <Box>
-        <AlertMessage
-          type="success"
-          title={confirmationHeader?.is}
-          message={<Text whiteSpace="breakSpaces">{confirmationText?.is}</Text>}
+          }}
+          onBlur={(e) => {
+            if (focus !== e.target.value) {
+              formUpdate()
+            }
+          }}
         />
-      </Box>
-      <Input
-        name="confirmationHeader"
-        label={formatMessage(m.confirmationHeaderLabel)}
-        backgroundColor="blue"
-        value={confirmationHeader?.is || ''}
-        readOnly={isReadOnly}
-        onFocus={(e) => setFocus(e.target.value)}
-        onChange={(e) => {
-          controlDispatch({
-            type: 'SET_COMPLETED_CONFIRMATION_HEADER',
-            payload: {
-              lang: 'is',
-              newValue: e.target.value,
-            },
-          })
-        }}
-        onBlur={(e) => e.target.value !== focus && formUpdate()}
-      />
-      <Input
-        name="confirmationHeaderEnglish"
-        label={formatMessage(m.confirmationHeaderLabelEnglish)}
-        backgroundColor="blue"
-        value={confirmationHeader?.en || ''}
-        readOnly={isReadOnly}
-        onFocus={async (e) => {
-          if (
-            (!confirmationHeader?.en || confirmationHeader?.en === '') &&
-            confirmationHeader?.is
-          ) {
-            const translation = await getTranslation(confirmationHeader.is)
+        <Divider />
+        <Box>
+          <AlertMessage
+            type="success"
+            title={confirmationHeader?.is}
+            message={
+              <Text whiteSpace="breakSpaces">{confirmationText?.is}</Text>
+            }
+          />
+        </Box>
+        <Input
+          name="confirmationHeader"
+          label={formatMessage(m.confirmationHeaderLabel)}
+          backgroundColor="blue"
+          value={confirmationHeader?.is || ''}
+          readOnly={isReadOnly}
+          onFocus={(e) => setFocus(e.target.value)}
+          onChange={(e) => {
+            controlDispatch({
+              type: 'SET_COMPLETED_CONFIRMATION_HEADER',
+              payload: {
+                lang: 'is',
+                newValue: e.target.value,
+              },
+            })
+          }}
+          onBlur={(e) => e.target.value !== focus && formUpdate()}
+        />
+        <Input
+          name="confirmationHeaderEnglish"
+          label={formatMessage(m.confirmationHeaderLabelEnglish)}
+          backgroundColor="blue"
+          value={confirmationHeader?.en || ''}
+          readOnly={isReadOnly}
+          onFocus={async (e) => {
+            if (
+              (!confirmationHeader?.en || confirmationHeader?.en === '') &&
+              confirmationHeader?.is
+            ) {
+              const translation = await getTranslation(confirmationHeader.is)
+              controlDispatch({
+                type: 'SET_COMPLETED_CONFIRMATION_HEADER',
+                payload: {
+                  lang: 'en',
+                  newValue: translation.translation,
+                },
+              })
+            }
+            setFocus(e.target.value)
+          }}
+          onChange={(e) => {
             controlDispatch({
               type: 'SET_COMPLETED_CONFIRMATION_HEADER',
               payload: {
                 lang: 'en',
-                newValue: translation.translation,
+                newValue: e.target.value,
               },
             })
-          }
-          setFocus(e.target.value)
-        }}
-        onChange={(e) => {
-          controlDispatch({
-            type: 'SET_COMPLETED_CONFIRMATION_HEADER',
-            payload: {
-              lang: 'en',
-              newValue: e.target.value,
-            },
-          })
-        }}
-        onBlur={(e) => {
-          if (focus !== e.target.value) {
-            formUpdate()
-          }
-        }}
-      />
-      <Input
-        name="confirmationText"
-        label={formatMessage(m.confirmationTextLabel)}
-        backgroundColor="blue"
-        textarea
-        value={confirmationText?.is || ''}
-        readOnly={isReadOnly}
-        onFocus={(e) => setFocus(e.target.value)}
-        onChange={(e) => {
-          controlDispatch({
-            type: 'SET_COMPLETED_TEXT',
-            payload: {
-              lang: 'is',
-              newValue: e.target.value,
-            },
-          })
-        }}
-        onBlur={(e) => e.target.value !== focus && formUpdate()}
-      />
-      <Input
-        name="confirmationTextEnglish"
-        label={formatMessage(m.confirmationTextLabelEnglish)}
-        backgroundColor="blue"
-        textarea
-        value={confirmationText?.en || ''}
-        readOnly={isReadOnly}
-        onFocus={async (e) => {
-          if (
-            (!confirmationText?.en || confirmationText?.en === '') &&
-            confirmationText?.is
-          ) {
-            const translation = await getTranslation(confirmationText.is)
+          }}
+          onBlur={(e) => {
+            if (focus !== e.target.value) {
+              formUpdate()
+            }
+          }}
+        />
+        <Input
+          name="confirmationText"
+          label={formatMessage(m.confirmationTextLabel)}
+          backgroundColor="blue"
+          textarea
+          value={confirmationText?.is || ''}
+          readOnly={isReadOnly}
+          onFocus={(e) => setFocus(e.target.value)}
+          onChange={(e) => {
+            controlDispatch({
+              type: 'SET_COMPLETED_TEXT',
+              payload: {
+                lang: 'is',
+                newValue: e.target.value,
+              },
+            })
+          }}
+          onBlur={(e) => e.target.value !== focus && formUpdate()}
+        />
+        <Input
+          name="confirmationTextEnglish"
+          label={formatMessage(m.confirmationTextLabelEnglish)}
+          backgroundColor="blue"
+          textarea
+          value={confirmationText?.en || ''}
+          readOnly={isReadOnly}
+          onFocus={async (e) => {
+            if (
+              (!confirmationText?.en || confirmationText?.en === '') &&
+              confirmationText?.is
+            ) {
+              const translation = await getTranslation(confirmationText.is)
+              controlDispatch({
+                type: 'SET_COMPLETED_TEXT',
+                payload: {
+                  lang: 'en',
+                  newValue: translation.translation,
+                },
+              })
+            }
+            setFocus(e.target.value)
+          }}
+          onChange={(e) => {
             controlDispatch({
               type: 'SET_COMPLETED_TEXT',
               payload: {
                 lang: 'en',
-                newValue: translation.translation,
+                newValue: e.target.value,
               },
             })
-          }
-          setFocus(e.target.value)
-        }}
-        onChange={(e) => {
-          controlDispatch({
-            type: 'SET_COMPLETED_TEXT',
-            payload: {
-              lang: 'en',
-              newValue: e.target.value,
-            },
-          })
-        }}
-        onBlur={(e) => {
-          if (focus !== e.target.value) {
-            formUpdate()
-          }
-        }}
-      />
-      <Divider />
-      <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="spaceBetween"
-        alignItems="center"
-      >
-        <Text variant="h4">{formatMessage(m.completedListHeader)}</Text>
-        <Button
-          variant="text"
-          preTextIcon="add"
-          onClick={add}
-          disabled={isReadOnly}
+          }}
+          onBlur={(e) => {
+            if (focus !== e.target.value) {
+              formUpdate()
+            }
+          }}
+        />
+        <Divider />
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="spaceBetween"
+          alignItems="center"
         >
-          {formatMessage(m.add)}
-        </Button>
-      </Box>
-      {nextSteps.length > 0 &&
-        nextSteps.map((info, index) => (
-          <AdditionalInfo
-            key={index}
-            info={info}
-            index={index}
-            remove={remove}
-            changeAdditionalInfo={changeAdditionalInfo}
-            saveAdditionalInfo={saveAdditionalInfo}
-          />
-        ))}
-    </Stack>
+          <Text variant="h4">{formatMessage(m.completedListHeader)}</Text>
+          <Button
+            variant="text"
+            preTextIcon="add"
+            onClick={add}
+            disabled={isReadOnly}
+          >
+            {formatMessage(m.add)}
+          </Button>
+        </Box>
+        {nextSteps.length > 0 &&
+          nextSteps.map((info, index) => (
+            <AdditionalInfo
+              key={index}
+              info={info}
+              index={index}
+              remove={remove}
+              changeAdditionalInfo={changeAdditionalInfo}
+              saveAdditionalInfo={saveAdditionalInfo}
+            />
+          ))}
+      </Stack>
+    </>
   )
 }

@@ -2,8 +2,8 @@ import { useCallback, useContext, useEffect } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import { CaseOrigin } from '@island.is/judicial-system/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
 
-import { FormContext } from '../../../components'
 import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 

@@ -1,16 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
-import { LawyerRegistry } from '../repository'
-import { EventModule } from '..'
+import { EventModule, RepositoryModule } from '..'
 import { LawyerRegistryController } from './lawyerRegistry.controller'
 import { LawyerRegistryService } from './lawyerRegistry.service'
 
 @Module({
-  imports: [
-    forwardRef(() => EventModule),
-    SequelizeModule.forFeature([LawyerRegistry]),
-  ],
+  imports: [forwardRef(() => EventModule), forwardRef(() => RepositoryModule)],
   providers: [LawyerRegistryService],
   controllers: [LawyerRegistryController],
   exports: [LawyerRegistryService],

@@ -1,10 +1,5 @@
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { createContext, useEffect, useState } from 'react'
 
 export type Rect = { width: number; height: number }
 

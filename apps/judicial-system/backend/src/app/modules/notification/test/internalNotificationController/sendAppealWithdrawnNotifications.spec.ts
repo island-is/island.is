@@ -16,7 +16,12 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { AppealCase, Case, Notification } from '../../../repository'
+import {
+  AppealCase,
+  Case,
+  Notification,
+  NotificationRepositoryService,
+} from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 
@@ -64,7 +69,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
   const receivedDate = new Date()
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -74,12 +79,12 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
       emailService,
       internalNotificationController,
       notificationConfig,
-      notificationModel,
+      notificationRepositoryService,
     } = await createTestingNotificationModule()
 
     mockConfig = notificationConfig
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
 
     givenWhenThen = async (
       userRole,
@@ -181,7 +186,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
+      const mockCreate = mockNotificationRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
 
       then = await givenWhenThen(UserRole.PROSECUTOR, receivedDate, [

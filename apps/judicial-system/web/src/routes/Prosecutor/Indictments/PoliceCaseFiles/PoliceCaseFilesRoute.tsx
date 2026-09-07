@@ -1,4 +1,5 @@
-import { FC, memo, useCallback, useContext, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { memo, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 import router from 'next/router'
@@ -8,7 +9,7 @@ import {
   PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE,
   PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import {
+import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
@@ -25,20 +26,18 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   CaseFile,
-  CaseOrigin,
   Defendant,
   PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PoliceCaseFilesData } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import type { PoliceDigitalCaseFilesData } from '@island.is/judicial-system-web/src/routes/Prosecutor/components/PoliceCaseFiles/PoliceDigitalCaseFiles'
+import { PoliceDigitalCaseFilesList } from '@island.is/judicial-system-web/src/routes/Prosecutor/components/PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { PoliceCaseFilesData } from '../../components'
-import {
-  PoliceDigitalCaseFilesData,
-  PoliceDigitalCaseFilesList,
-} from '../../components/PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
 import UploadFilesToPoliceCase from './UploadFilesToPoliceCase'
 import { strings } from './PoliceCaseFilesRoute.strings'

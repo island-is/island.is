@@ -9,7 +9,7 @@ import {
   getTextStyles,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC, useEffect, useRef } from 'react'
+import React, { FC, useEffect, useRef, useMemo } from 'react'
 import { Markdown } from '@island.is/shared/components'
 import { AlertMessageField, FieldBaseProps } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -32,11 +32,29 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage, lang: locale } = useLocale()
   const { getValues } = useFormContext()
   const user = useUserInfo()
+  const values = getValues()
 
   // Persist callback ID across renders to prevent duplicate registration
   const callbackIdRef = useRef(`AlertMessageFormField-${uuid()}`)
 
   const showAlertMessage = useRef(!field.shouldBlockInSetBeforeSubmitCallback)
+
+  const updatedApplication = useMemo(() => {
+    return {
+      ...application,
+      answers: {
+        ...application.answers,
+        ...values,
+      },
+    }
+  }, [application, values])
+
+  const finalAlertType = useMemo(() => {
+    const maybeAlertType = field.alertType ?? 'default'
+    return typeof maybeAlertType === 'function'
+      ? maybeAlertType(updatedApplication, field, locale)
+      : maybeAlertType
+  }, [updatedApplication, field, locale])
 
   useEffect(() => {
     if (field.shouldBlockInSetBeforeSubmitCallback) {
@@ -77,16 +95,10 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
         marginBottom={field.marginBottom ?? 2}
       >
         <AlertMessage
-          type={field.alertType ?? 'default'}
+          type={finalAlertType}
           title={formatTextWithLocale(
             field.title ?? '',
-            {
-              ...application,
-              answers: {
-                ...application.answers,
-                ...getValues(),
-              },
-            },
+            updatedApplication,
             locale as Locale,
             formatMessage,
           )}
@@ -98,13 +110,7 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
                     <Markdown>
                       {formatTextWithLocale(
                         field.message,
-                        {
-                          ...application,
-                          answers: {
-                            ...application.answers,
-                            ...getValues(),
-                          },
-                        },
+                        updatedApplication,
                         locale as Locale,
                         formatMessage,
                       )}

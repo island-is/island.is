@@ -1,11 +1,11 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
 import {
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseType,

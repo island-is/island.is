@@ -1,4 +1,4 @@
-import { Op, UniqueConstraintError } from 'sequelize'
+import { UniqueConstraintError } from 'sequelize'
 
 import {
   ConflictException,
@@ -6,7 +6,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -20,7 +19,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { Institution, User } from '../repository'
+import { User, UserRepositoryService } from '../repository'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { userModuleConfig } from './user.config'
@@ -30,35 +29,25 @@ export class UserService {
   constructor(
     @Inject(userModuleConfig.KEY)
     private readonly config: ConfigType<typeof userModuleConfig>,
-    @InjectModel(User) private readonly userModel: typeof User,
+    private readonly userRepositoryService: UserRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async getAll(user: TUser): Promise<User[]> {
     if (isAdminUser(user)) {
-      return this.userModel.findAll({
-        order: ['name'],
-        include: [{ model: Institution, as: 'institution' }],
-        // Local admins can only see users from a select list of institutions
-        // and they do not see local admins
-        where: {
-          role: { [Op.not]: user.role },
-          '$institution.type$': getAdminUserInstitutionScope(user),
-        },
-      })
+      // Local admins can only see users from a select list of institutions
+      // and they do not see local admins
+      return this.userRepositoryService.findAllForAdmin(
+        user.role,
+        getAdminUserInstitutionScope(user),
+      )
     }
 
-    return this.userModel.findAll({
-      order: ['name'],
-      where: { active: true },
-      include: [{ model: Institution, as: 'institution' }],
-    })
+    return this.userRepositoryService.findAllActive()
   }
 
   async getById(userId: string): Promise<User | null> {
-    return this.userModel.findByPk(userId, {
-      include: [{ model: Institution, as: 'institution' }],
-    })
+    return this.userRepositoryService.findById(userId)
   }
 
   async findById(userId: string): Promise<User> {
@@ -100,10 +89,9 @@ export class UserService {
       this.logger.error('Failed to parse admin users', { error })
     }
 
-    const users = await this.userModel.findAll({
-      where: { nationalId, active: true },
-      include: [{ model: Institution, as: 'institution' }],
-    })
+    const users = await this.userRepositoryService.findActiveByNationalId(
+      nationalId,
+    )
 
     if (!users || users.length === 0) {
       throw new NotFoundException('User does not exist')
@@ -114,7 +102,7 @@ export class UserService {
 
   async create(userToCreate: CreateUserDto): Promise<User> {
     try {
-      return await this.userModel.create({ ...userToCreate })
+      return await this.userRepositoryService.create(userToCreate)
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
         throw new ConflictException(
@@ -127,10 +115,8 @@ export class UserService {
   }
 
   async update(userId: string, update: UpdateUserDto): Promise<User> {
-    const [numberOfAffectedRows, users] = await this.userModel.update(update, {
-      where: { id: userId },
-      returning: true,
-    })
+    const { numberOfAffectedRows, users } =
+      await this.userRepositoryService.updateById(userId, update)
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -147,22 +133,14 @@ export class UserService {
   getUsersWhoCanConfirmIndictments(
     prosecutorsOfficeId: string,
   ): Promise<User[]> {
-    return this.userModel.findAll({
-      where: {
-        active: true,
-        canConfirmIndictment: true,
-        institutionId: prosecutorsOfficeId,
-      },
-    })
+    return this.userRepositoryService.findAllActiveWhoCanConfirmIndictments(
+      prosecutorsOfficeId,
+    )
   }
 
   async getProsecutorUsers(prosecutorsOfficeId: string): Promise<User[]> {
-    return this.userModel.findAll({
-      where: {
-        active: true,
-        role: UserRole.PROSECUTOR,
-        institutionId: prosecutorsOfficeId,
-      },
-    })
+    return this.userRepositoryService.findAllActiveProsecutors(
+      prosecutorsOfficeId,
+    )
   }
 }

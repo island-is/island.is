@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { EstateTypes } from '../../lib/constants'
 
 export const registrantOverviewFields = [

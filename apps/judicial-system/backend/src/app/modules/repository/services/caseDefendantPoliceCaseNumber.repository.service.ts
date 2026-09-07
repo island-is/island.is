@@ -131,6 +131,52 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     }))
   }
 
+  /**
+   * Returns the distinct ids of the given defendants that are linked to at
+   * least one of the given police case numbers on the case. Used when a civil
+   * claimant's police case numbers change and its defendant selection must be
+   * narrowed to the defendants still reachable through those numbers.
+   */
+  async findAssignedDefendantIds(
+    caseId: string,
+    policeCaseNumbers: string[],
+    defendantIds: string[],
+  ): Promise<string[]> {
+    if (policeCaseNumbers.length === 0 || defendantIds.length === 0) {
+      return []
+    }
+
+    try {
+      this.logger.debug(
+        `Finding assigned defendant ids for case ${caseId} among ${defendantIds.length} defendant(s) and ${policeCaseNumbers.length} police case number(s)`,
+      )
+
+      const rows = await this.model.findAll({
+        where: {
+          caseId,
+          policeCaseNumber: policeCaseNumbers,
+          defendantId: defendantIds,
+        },
+        attributes: ['defendantId'],
+      })
+
+      return [
+        ...new Set(
+          rows
+            .map((row) => row.defendantId)
+            .filter((defendantId): defendantId is string => !!defendantId),
+        ),
+      ]
+    } catch (error) {
+      this.logger.error(
+        `Error finding assigned defendant ids for case ${caseId}`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   async findDistinctPoliceCaseNumbersByCaseIds(
     caseIds: string[],
     options?: { transaction?: Transaction },

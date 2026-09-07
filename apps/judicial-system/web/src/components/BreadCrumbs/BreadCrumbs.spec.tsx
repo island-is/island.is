@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import BreadCrumbs from './BreadCrumbs'
 
 jest.mock(
-  '../../utils/hooks/useCaseTableMembership/caseTableMembership.generated',
+  '@island.is/judicial-system-web/src/utils/hooks/useCaseTableMembership/caseTableMembership.generated',
   () => ({
     useCaseTableMembershipQuery: () => ({
       data: undefined,

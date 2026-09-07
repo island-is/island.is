@@ -1,8 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
-import { User } from '../repository'
-import { EventLogModule, InstitutionModule } from '..'
+import { EventLogModule, InstitutionModule, RepositoryModule } from '..'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'
 
@@ -10,7 +8,7 @@ import { UserService } from './user.service'
   imports: [
     forwardRef(() => EventLogModule),
     forwardRef(() => InstitutionModule),
-    SequelizeModule.forFeature([User]),
+    forwardRef(() => RepositoryModule),
   ],
   providers: [UserService],
   controllers: [UserController],

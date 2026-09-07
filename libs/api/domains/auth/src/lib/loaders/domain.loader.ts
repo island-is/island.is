@@ -6,6 +6,7 @@ import { Domain } from '../models/domain.model'
 import { DomainService } from '../services/domain.service'
 import { DomainInput } from '../dto/domain.input'
 import { User } from '@island.is/auth-nest-tools'
+import { MAX_QUERY_PARAM_ARRAY_SIZE } from '@island.is/shared/constants'
 
 export type DomainDataLoader = DataLoader<DomainInput, Domain | null, string>
 
@@ -41,6 +42,7 @@ export class DomainLoader
   generateDataLoader(ctx: GraphQLContext): DomainDataLoader {
     return new DataLoader(this.loadDomains.bind(this, ctx.req.user), {
       cacheKeyFn: this.keyFn,
+      maxBatchSize: MAX_QUERY_PARAM_ARRAY_SIZE,
     })
   }
 }

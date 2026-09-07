@@ -1,8 +1,8 @@
-import { FC, PropsWithChildren } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
+import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
 
-import SectionHeading from '../../SectionHeading/SectionHeading'
 import * as styles from './index.css'
 
 interface Props {

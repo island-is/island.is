@@ -20,12 +20,19 @@ export const mapAnswerOptionType = (
     case 'bool':
       // Boolean questions are typically yes/no radio buttons
       return AnswerOptionType.radio
-    case 'list':
-      return 'multiselect' in item && item.multiselect
+    case 'list': {
+      // maxSelections supersedes the deprecated multiselect flag when
+      // provided; 0 means unlimited selections
+      const multiselect =
+        'maxSelections' in item && item.maxSelections != null
+          ? item.maxSelections !== 1
+          : 'multiselect' in item && item.multiselect
+      return multiselect
         ? AnswerOptionType.checkbox
         : 'displayClass' in item && item.displayClass === 'slider'
         ? AnswerOptionType.slider
         : AnswerOptionType.radio
+    }
     case 'thermometer':
       return AnswerOptionType.thermometer
     case 'date':

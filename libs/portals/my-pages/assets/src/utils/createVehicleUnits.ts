@@ -189,7 +189,9 @@ const operatorInfoArray = (
 ) => {
   return {
     header: {
-      title: formatMessage(messages.operator),
+      title: formatMessage(
+        data.mainOperator ? messages.mainOperator : messages.operator,
+      ),
     },
     rows: chunk(
       [

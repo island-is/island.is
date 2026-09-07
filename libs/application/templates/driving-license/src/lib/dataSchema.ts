@@ -85,4 +85,5 @@ export const dataSchema = z.object({
   // B-temp photo selector / eligibility gating and the submission service can
   // branch on the redesign flag. Same mechanism as is65RenewalRedesignEnabled.
   isBTempRedesignEnabled: z.boolean().optional(),
+  isBFullRedesignEnabled: z.boolean().optional(),
 })

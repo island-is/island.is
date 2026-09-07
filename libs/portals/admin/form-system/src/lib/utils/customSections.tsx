@@ -30,12 +30,12 @@ export const lifetimeSettingsStep: FormSystemSection = {
   isCompleted: false,
 }
 
-export const delegationSettingsStep: FormSystemSection = {
-  id: 'Delegation',
+export const deadlineSettingsStep: FormSystemSection = {
+  id: 'Deadline',
   displayOrder: 0,
   name: {
-    is: 'Umboð',
-    en: 'Delegation',
+    is: 'Umsóknarfrestur',
+    en: 'Application deadline',
   },
   waitingText: {
     is: '',

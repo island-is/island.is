@@ -1,12 +1,20 @@
-import type {
-  ParsedEmployeeDto,
-  ParsedRoleDto,
+import type { SyncMethodEnum } from './constants'
+
+export type {
+  DraftCriterionWithSubCriteriaDto,
+  DraftEmployeeWithStepsDto,
+  DraftOutlierGroupDto,
+  DraftRoleWithStepsDto,
+  DraftSubCriterionWithStepsDto,
+  Paging,
+  ReportCriterionDto,
+  ReportEmployeeDto,
+  ReportEmployeeRoleDto,
+  ReportSubCriterionStepDto,
 } from '@island.is/clients/directorate-of-equality'
 
-// Not exported from the client's public API — derived from its one usage site.
-type ParsedStepAssignmentDto = ParsedRoleDto['stepAssignments'][number]
-
 export type JobFactor = {
+  id: string
   type: string
   title: string
   description: string
@@ -14,16 +22,21 @@ export type JobFactor = {
 }
 
 export type PersonalFactor = {
+  id: string
   title: string
   description?: string
   weight: string
 }
 
 export type SubCriterionStep = {
+  id: string
   description: string
 }
 
 export type SubCriterion = {
+  id: string
+  // Parent criterion's client-minted UUID — the sync API's join key, not a title.
+  criterionId: string
   title: string
   description?: string
   weight: string
@@ -31,13 +44,12 @@ export type SubCriterion = {
   steps: SubCriterionStep[]
 }
 
-export type EmployeeStepAssignment = ParsedStepAssignmentDto
-export type StepAssignment = ParsedStepAssignmentDto
+// Sync API keys step assignments by the step's own UUID; criterion/sub-criterion
+// context for display is looked up elsewhere, not carried here.
+export type StepAssignment = { stepId: string }
 
-// The API broke the flat `additionalSalary` / `bonusSalary` fields into these
-// components. Summing the two `additionalFixed*` values reproduces the old
-// additional salary; summing the four bonus/occasional values reproduces the
-// old bonus salary. We keep the breakdown in the UI and answers.
+// Per-key breakdown (see README): the two additionalFixed* values sum to the
+// old flat additionalSalary; the four bonus/occasional values sum to bonusSalary.
 export type SalaryComponentKey =
   | 'additionalFixedOvertime'
   | 'additionalFixedCarAllowance'
@@ -46,28 +58,79 @@ export type SalaryComponentKey =
   | 'bonusPayments'
   | 'bonusOther'
 
-// Based on ParsedEmployeeDto from @island.is/clients/directorate-of-equality,
-// minus `education` (unused, see salary-report README), with `field`/
-// `department` relaxed to optional (genuinely optional in the form), and
-// `gender` widened to `string` (the form allows an unanswered '' draft state
-// before the API's stricter union applies). The full object is stored in
-// answers so the complete record is available at submission, even though
-// only a subset is shown on screen.
-export type Employee = Omit<
-  ParsedEmployeeDto,
-  'education' | 'field' | 'department' | 'gender'
-> & {
+// id is the client-minted UUID join key; `ordinal` is the human-facing number
+// shown on every screen and in the workbook.
+export type Employee = {
+  id: string
+  ordinal: number
+  // Role's client-minted UUID (was roleTitle).
+  roleId: string
   gender: string
-  field?: string
-  department?: string
+  field?: string | null
+  department?: string | null
+  startDate: string
+  paidHours: number
+  baseSalary: number
+  additionalFixedOvertime?: number | null
+  additionalFixedCarAllowance?: number | null
+  bonusOccasionalCarAllowance?: number | null
+  bonusOccasionalOvertime?: number | null
+  bonusPayments?: number | null
+  bonusOther?: number | null
+  outlierGroupId?: string | null
 }
 
-// Based on ParsedRoleDto. Only stepOrder is editable on the "Flokkun starfa"
-// screen; the rest is read-only context.
-export type Role = ParsedRoleDto
+// Roles are keyed by client-minted UUID; only stepIds is editable on the
+// "Flokkun starfa" screen, the rest is read-only context.
+export type Role = {
+  id: string
+  title: string
+  stepIds: string[]
+}
 
 export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   NON_BINARY = 'NON_BINARY',
+}
+
+// Moved from fields/JobClassificationEditor/utils.ts — shared by both classification editors.
+
+export type StepMeta = {
+  steps: { order: number; score: number }[]
+  totalSteps: number
+  maxScore: number
+  weight: number
+  description: string
+}
+
+// UI-facing shape: keeps stepOrder (e.g. "step 2 of 4") instead of a raw step
+// id; resolved back to a real step id at sync time.
+export type DisplayAssignment = {
+  criterionId: string
+  criterionTitle: string
+  subCriterionId: string
+  subTitle: string
+  stepOrder: number
+}
+
+export type AssignmentGroup = {
+  criterionId: string
+  criterionTitle: string
+  items: { assignment: DisplayAssignment; index: number }[]
+}
+
+export type SyncCommand = {
+  method: SyncMethodEnum
+  id?: string
+  data?: Record<string, unknown>
+}
+
+export type SyncBatch = {
+  criteria?: SyncCommand[]
+  subCriteria?: SyncCommand[]
+  steps?: SyncCommand[]
+  roles?: SyncCommand[]
+  employees?: SyncCommand[]
+  outlierGroups?: SyncCommand[]
 }

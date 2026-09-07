@@ -13,6 +13,7 @@ export const reorderItem = style({
 
 export const label = style({
   width: '100%',
+  minWidth: 0,
 })
 
 export const labelStart = style({
@@ -41,8 +42,10 @@ export const labelDate = style({
 })
 
 export const itemWrapper = style({
-  display: 'flex',
-  alignItems: 'flex-start',
+  // Stacking context so the in-label drag handle can sit above accordion chrome
+  // without fighting Motion's drag transforms on Reorder.Item.
+  isolation: 'isolate',
+  minWidth: 0,
 })
 
 export const dragHandle = style({
@@ -61,10 +64,4 @@ export const dragHandle = style({
       cursor: 'grabbing',
     },
   },
-})
-
-export const accordionWrapper = style({
-  flex: 1,
-  minWidth: 0,
-  isolation: 'isolate',
 })

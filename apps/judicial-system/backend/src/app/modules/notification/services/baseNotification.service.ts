@@ -23,7 +23,13 @@ import {
 import { notifications } from '../../../messages'
 import { CourtService } from '../../court'
 import { EventService } from '../../event'
-import { Case, DateLog, Notification, Recipient } from '../../repository'
+import {
+  Case,
+  DateLog,
+  Notification,
+  NotificationRepositoryService,
+  Recipient,
+} from '../../repository'
 import { DeliverResponse } from '../models/deliver.response'
 import { notificationModuleConfig } from '../notification.config'
 
@@ -36,7 +42,7 @@ interface Attachment {
 @Injectable()
 export abstract class BaseNotificationService {
   constructor(
-    private readonly notificationModel: typeof Notification,
+    private readonly notificationRepositoryService: NotificationRepositoryService,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
     private readonly courtService: CourtService,
@@ -176,7 +182,7 @@ export abstract class BaseNotificationService {
     type: TrackedNotificationType,
     recipients: Recipient[],
   ): Promise<DeliverResponse> {
-    await this.notificationModel.create({
+    await this.notificationRepositoryService.create({
       caseId,
       type,
       recipients,

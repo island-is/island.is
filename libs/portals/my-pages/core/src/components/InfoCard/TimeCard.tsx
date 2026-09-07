@@ -56,7 +56,11 @@ export const TimeCard = ({
     <GridRow direction="row">
       <GridColumn span={'12/12'}>
         <Box>
-          <Text variant="h4" marginBottom={1} color="blue400">
+          <Text
+            variant="h4"
+            marginBottom={1}
+            color={to ? 'blue400' : undefined}
+          >
             {title}
           </Text>
           <Box
@@ -120,7 +124,7 @@ export const TimeCard = ({
         borderRadius="large"
         padding={isMobile ? 2 : 3}
         height="full"
-        className={styles.boxContainer}
+        className={to ? styles.boxContainer : undefined}
       >
         {to ? (
           <LinkResolver href={to}>

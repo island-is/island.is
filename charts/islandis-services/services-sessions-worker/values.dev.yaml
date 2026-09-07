@@ -30,6 +30,7 @@ env:
   DB_NAME: 'services_sessions'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'services_sessions'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'

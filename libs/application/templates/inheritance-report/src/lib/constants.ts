@@ -65,6 +65,7 @@ export enum ApiActions {
   submitToSyslumenn = 'submitToSyslumenn',
   getSignatories = 'getSignatories',
   sendApplicationCopyToParties = 'sendApplicationCopyToParties',
+  checkReviewFlag = 'checkReviewFlag',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

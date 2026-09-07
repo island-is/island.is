@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react'
 
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
-  Case,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import { mockCase } from '../../../../utils/mocks'
-import { IntlProviderWrapper } from '../../../../utils/testHelpers'
 import AppealSections from './AppealSections'
 
 jest.mock(
@@ -64,10 +64,17 @@ describe('AppealSections', () => {
     })
   }
 
+  const outOfCourtMessage =
+    'Úrskurðurinn hefur verið kærður utan þinghalds og því er ekki hægt að breyta ákvörðun um kæru.'
+  const progressedMessage =
+    'Kæra úrskurðarins er komin til Landsréttar og því er ekki hægt að breyta ákvörðun um kæru.'
+
   it('is editable when the case has not been appealed', () => {
     renderComponent(baseCase)
 
     expectAllControlsDisabled(false)
+    expect(screen.queryByText(outOfCourtMessage)).not.toBeInTheDocument()
+    expect(screen.queryByText(progressedMessage)).not.toBeInTheDocument()
   })
 
   it('is editable while an in-court appeal is still at the district court', () => {
@@ -81,6 +88,8 @@ describe('AppealSections', () => {
     } as Case)
 
     expectAllControlsDisabled(false)
+    expect(screen.queryByText(outOfCourtMessage)).not.toBeInTheDocument()
+    expect(screen.queryByText(progressedMessage)).not.toBeInTheDocument()
   })
 
   // The court record did not create this appeal, so correcting it cannot take the
@@ -96,6 +105,7 @@ describe('AppealSections', () => {
     } as Case)
 
     expectAllControlsDisabled(true)
+    expect(screen.getByText(outOfCourtMessage)).toBeInTheDocument()
   })
 
   // The decisions are already part of the record the Court of Appeals received.
@@ -110,6 +120,7 @@ describe('AppealSections', () => {
     } as Case)
 
     expectAllControlsDisabled(true)
+    expect(screen.getByText(progressedMessage)).toBeInTheDocument()
   })
 
   it('is disabled once the appeal has been completed', () => {
@@ -123,5 +134,6 @@ describe('AppealSections', () => {
     } as Case)
 
     expectAllControlsDisabled(true)
+    expect(screen.getByText(progressedMessage)).toBeInTheDocument()
   })
 })

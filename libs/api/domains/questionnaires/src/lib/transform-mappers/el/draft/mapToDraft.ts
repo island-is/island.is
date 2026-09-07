@@ -73,22 +73,16 @@ export const mapDraftRepliesToAnswers = (
           const column = columns?.find((col) => col.id === cell.questionId)
           if (!column) return
 
-          // Determine the type based on the answer value type
-          let cellType = 'string'
+          // EL column type verbatim ('bool', not 'boolean') to match the
+          // encoding the frontend Table component produces
+          const cellType = column.type
           let cellValue = ''
 
           // Handle different cell reply types based on the structure
           if ('answer' in cell) {
             const cellAnswer = cell.answer
 
-            if (typeof cellAnswer === 'boolean') {
-              cellType = 'boolean'
-              cellValue = String(cellAnswer)
-            } else if (typeof cellAnswer === 'number') {
-              cellType = 'number'
-              cellValue = String(cellAnswer)
-            } else if (column.type === 'date') {
-              cellType = 'date'
+            if (column.type === 'date') {
               // Format date as YYYY-MM-DD
               if (cellAnswer instanceof Date) {
                 cellValue = cellAnswer.toISOString().split('T')[0]
@@ -99,12 +93,11 @@ export const mapDraftRepliesToAnswers = (
                 } catch {
                   cellValue = String(cellAnswer)
                 }
-              } else {
-                cellValue = cellAnswer ? String(cellAnswer) : ''
+              } else if (cellAnswer) {
+                cellValue = String(cellAnswer)
               }
-            } else {
-              // String type
-              cellValue = cellAnswer ? String(cellAnswer) : ''
+            } else if (cellAnswer !== null && cellAnswer !== undefined) {
+              cellValue = String(cellAnswer)
             }
           }
 
@@ -123,30 +116,39 @@ export const mapDraftRepliesToAnswers = (
       }))
     } else if ('answer' in reply) {
       // Single value replies (String, Number, Boolean, Date)
-      let value: string
+      if (reply.answer === null || reply.answer === undefined) {
+        // No answer given yet - keep the draft entry empty rather than
+        // stringifying null/undefined into the literal text "null"/"undefined"
+        answerValue = []
+      } else {
+        let value: string
 
-      // Handle date formatting specifically
-      if (question.type === 'date' && reply.answer instanceof Date) {
-        // Format date as YYYY-MM-DD for DatePicker
-        value = reply.answer.toISOString().split('T')[0]
-      } else if (question.type === 'date' && typeof reply.answer === 'string') {
-        // If it's already a string, ensure it's in ISO format
-        try {
-          const date = new Date(reply.answer)
-          value = date.toISOString().split('T')[0]
-        } catch {
+        // Handle date formatting specifically
+        if (question.type === 'date' && reply.answer instanceof Date) {
+          // Format date as YYYY-MM-DD for DatePicker
+          value = reply.answer.toISOString().split('T')[0]
+        } else if (
+          question.type === 'date' &&
+          typeof reply.answer === 'string'
+        ) {
+          // If it's already a string, ensure it's in ISO format
+          try {
+            const date = new Date(reply.answer)
+            value = date.toISOString().split('T')[0]
+          } catch {
+            value = String(reply.answer)
+          }
+        } else {
           value = String(reply.answer)
         }
-      } else {
-        value = String(reply.answer)
-      }
 
-      answerValue = [
-        {
-          label: getOptionLabel(value),
-          value: value,
-        },
-      ]
+        answerValue = [
+          {
+            label: getOptionLabel(value),
+            value: value,
+          },
+        ]
+      }
     } else {
       // Skip invalid or unsupported replies (e.g., Attachment)
       return

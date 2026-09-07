@@ -1,14 +1,16 @@
-import { Dispatch, SetStateAction, useCallback } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import {
+import type {
   Case,
   Offense,
   UpdateIndictmentCountInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
 import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
 import { useReorderIndictmentCountsMutation } from './reorderIndictmentCounts.generated'
@@ -71,7 +73,13 @@ const useIndictmentCounts = () => {
     ) => {
       try {
         const { data } = await updateIndictmentCountMutation({
-          variables: { input: { indictmentCountId, caseId, ...update } },
+          variables: {
+            input: {
+              indictmentCountId,
+              caseId,
+              ...normalizeBlankStrings(update),
+            },
+          },
         })
 
         if (!data) {

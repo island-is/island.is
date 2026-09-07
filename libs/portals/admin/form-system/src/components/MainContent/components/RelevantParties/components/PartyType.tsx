@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Checkbox } from '@island.is/island-ui/core'
+import { Box, Checkbox, Divider } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { ControlContext } from '../../../../../context/ControlContext'
 import { getFieldBySettings } from '../../../../../lib/utils/getField'
@@ -31,6 +31,7 @@ export const PartyType = ({
 
   return (
     <>
+      <Divider />
       <Box paddingTop={4}>
         <Checkbox
           label={label}

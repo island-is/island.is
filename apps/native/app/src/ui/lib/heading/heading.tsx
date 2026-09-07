@@ -18,13 +18,21 @@ interface HeadingProps {
   children: React.ReactNode
   button?: React.ReactNode
   small?: boolean
+  medium?: boolean
 }
 
-export function Heading({ children, button, small = false }: HeadingProps) {
+export function Heading({
+  children,
+  button,
+  small = false,
+  medium = false,
+}: HeadingProps) {
   return (
     <Host>
       <TextContainer>
-        <Typography variant={small ? 'heading5' : 'heading3'}>
+        <Typography
+          variant={small ? 'heading5' : medium ? 'heading4' : 'heading3'}
+        >
           {children}
         </Typography>
       </TextContainer>

@@ -45,14 +45,13 @@ import {
   CaseOrigin,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DraftConclusionModal } from '@island.is/judicial-system-web/src/routes/Court/components'
 import {
   UploadState,
   useCourtUpload,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
-import { DraftConclusionModal } from '../../components'
 
 const Overview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
