@@ -1,4 +1,4 @@
-export * from './lib/drivingLicenseApi.service'
+export * from './lib/services/drivingLicenseApi.service'
 export { isApplicationAlreadyExists } from './lib/utils/isApplicationAlreadyExists'
 export * from './lib/drivingLicenseApi.module'
 export * from './lib/drivingLicenseApi.types'

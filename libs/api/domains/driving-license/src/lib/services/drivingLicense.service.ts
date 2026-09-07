@@ -28,9 +28,9 @@ import {
   ModelsV5PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
   DriverLicenseWithoutImages,
 } from '@island.is/clients/driving-license'
-import { BLACKLISTED_JURISDICTION } from './util/constants'
-import sortTeachers from './util/sortTeachers'
-import { StudentAssessment } from '..'
+import { BLACKLISTED_JURISDICTION } from '../util/constants'
+import sortTeachers from '../util/sortTeachers'
+import { StudentAssessment } from '../..'
 import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -809,12 +809,12 @@ export class DrivingLicenseService {
       return null
     }
 
-    let teacherName: string | undefined
+    let teacherName: string | null = null
     if (assessment.nationalIdTeacher) {
       const teacherLicense = await this.legacyGetDrivingLicense(
         assessment.nationalIdTeacher,
       )
-      teacherName = teacherLicense?.name ?? undefined
+      teacherName = teacherLicense?.name ?? null
     }
 
     return {
