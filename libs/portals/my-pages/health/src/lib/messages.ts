@@ -2171,7 +2171,8 @@ export const messages = defineMessages({
     id: 'sp.health:past-appointments-tab',
   },
   pastAppointmentsNote: {
-    defaultMessage: 'Aðeins eru sýndir liðnir tímar frá og með 30. september 2025',
+    defaultMessage:
+      'Aðeins eru sýndir liðnir tímar frá og með 30. september 2025',
     id: 'sp.health:past-appointments-note',
   },
   noPastAppointmentsText: {
