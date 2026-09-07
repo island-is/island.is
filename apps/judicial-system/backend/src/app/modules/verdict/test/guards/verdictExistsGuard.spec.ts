@@ -49,9 +49,9 @@ describe('VerdictExistsGuard', () => {
   })
 
   it('throws when defendant is missing', async () => {
-    await expect(guard.canActivate(createContext(undefined))).rejects.toBeInstanceOf(
-      BadRequestException,
-    )
+    await expect(
+      guard.canActivate(createContext(undefined)),
+    ).rejects.toBeInstanceOf(BadRequestException)
   })
 
   it('throws when defendant has no verdicts', async () => {
