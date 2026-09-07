@@ -90,6 +90,60 @@ import { IdsClientConfig } from '@island.is/nest/config'
 import { logger } from '@island.is/logging'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
+const isEmptySignatoryResponse = (response: unknown): boolean =>
+  response === null ||
+  response === 0 ||
+  response === '' ||
+  (isRecord(response) && Object.keys(response).length === 0)
+
+const getSignatoryResponseShape = (response: unknown): string =>
+  response === null
+    ? 'null'
+    : Array.isArray(response)
+    ? 'array'
+    : typeof response
+
+const parseSignatoryResponse = async (response: Response): Promise<unknown> => {
+  const responseText = await response.text()
+
+  if (responseText.trim() === '') {
+    return null
+  }
+
+  return JSON.parse(responseText) as unknown
+}
+
+const getSignatoryItems = (response: unknown): unknown[] => {
+  if (Array.isArray(response)) {
+    return response
+  }
+
+  if (isEmptySignatoryResponse(response)) {
+    return []
+  }
+
+  throw new Error(
+    `Unexpected getSignatories response shape: ${getSignatoryResponseShape(
+      response,
+    )}`,
+  )
+}
+
+const mapSignatory = (item: unknown): InheritanceSignatory => {
+  const signatory = isRecord(item) ? item : {}
+
+  return {
+    name: typeof signatory.nafn === 'string' ? signatory.nafn : '',
+    nationalId:
+      typeof signatory.kennitala === 'string' ? signatory.kennitala : '',
+    signed: signatory.undirritad === true,
+  }
+}
+
 @Injectable()
 export class SyslumennService {
   constructor(
@@ -663,31 +717,34 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
 
     try {
-      const queryParams = new URLSearchParams()
-      if (deceasedNationalId) queryParams.set('kennitala', deceasedNationalId)
-      if (estateType) queryParams.set('typa', estateType)
-      queryParams.set('audkenni', id)
       logger.info('Syslumenn-client: calling getSignatories', {
         endpoint: '/api/v1/AdilarMalsUndirritanir',
         estateType,
       })
 
-      const response = await api.adilarMalsUndirritanirGet({
+      const rawResponse = await api.adilarMalsUndirritanirGetRaw({
         kennitala: deceasedNationalId,
         typa: estateType as unknown as EstateType,
         audkenni: id,
       })
+      const response = await parseSignatoryResponse(rawResponse.raw)
+      const signatories = getSignatoryItems(response)
+
+      if (!Array.isArray(response)) {
+        logger.warn(
+          'Syslumenn-client: getSignatories returned empty non-array response',
+          {
+            estateType,
+            responseShape: getSignatoryResponseShape(response),
+          },
+        )
+      }
 
       logger.info('Syslumenn-client: getSignatories response received', {
-        signatoryCount: response.length,
+        signatoryCount: signatories.length,
       })
 
-      // Map the response to InheritanceSignatory format
-      return response.map((item) => ({
-        name: item.nafn || '',
-        nationalId: item.kennitala || '',
-        signed: item.undirritad || false,
-      }))
+      return signatories.map(mapSignatory)
     } catch (error) {
       logger.warn('Failed to get inheritance report signatories', {
         error,

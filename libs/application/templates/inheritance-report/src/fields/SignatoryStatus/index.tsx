@@ -71,9 +71,15 @@ export const SignatoryStatus: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
         const fetchSucceeded =
           externalData?.getSignatories?.data?.success === true
-        const allSigned =
-          fetchSucceeded && fetchedSignatories.every((s) => s.signed)
-        setSubmitButtonDisabled?.(!allSigned)
+
+        if (!fetchSucceeded) {
+          setError(true)
+          setSubmitButtonDisabled?.(true)
+          return
+        }
+
+        setError(false)
+        setSubmitButtonDisabled?.(!fetchedSignatories.every((s) => s.signed))
       } catch {
         setError(true)
       } finally {
@@ -100,6 +106,18 @@ export const SignatoryStatus: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           type="error"
           title={formatMessage(m.signingTableTitle)}
           message={formatMessage(m.signingPendingDescription)}
+        />
+      </Box>
+    )
+  }
+
+  if (signatories.length === 0) {
+    return (
+      <Box marginY={3}>
+        <AlertMessage
+          type="info"
+          title={formatMessage(m.signingNoSignatoriesTitle)}
+          message={formatMessage(m.signingNoSignatoriesDescription)}
         />
       </Box>
     )
