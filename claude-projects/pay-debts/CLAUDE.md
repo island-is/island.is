@@ -1,76 +1,78 @@
 # pay-debts application
 
-Application template for paying debts owed to the Icelandic state ("Greiðum ríkinu" / `ApplicationTypes.PAY_DEBTS`, slug `greidum-rikinu`). Institution: Fjársýsla ríkisins.
+Paying debts owed to the Icelandic state ("Greiðum ríkinu" / `ApplicationTypes.PAY_DEBTS`, slug `greidum-rikinu`). Institution: Fjársýsla ríkisins.
 
 ## Where things live
 
-- `libs/application/templates/pay-debts` — frontend template (main folder for form/state-machine work)
-- `libs/application/template-api-modules/.../pay-debts` — backend `PayDebtsService` (`getCustomerDebts` action). No charge-creation/submission wiring yet. `pay-debts.service.spec.ts` is verified field-by-field against the real `finance-v3` shape (`DebtsDetailsDt`).
-- `libs/clients/finance-v3` — X-Road client to Fjársýsla ríkisins. Local dev requires the X-Road proxy on `localhost:8081` (`infra/src/dsl/xroad.ts`) running/tunneled, or `getCustomerDebts` fails with `ECONNREFUSED` — not a code bug.
-- `libs/application/ui-fields/.../InteractiveTableField`, `.../StickyFooterField` — generic (non-pay-debts-specific) field types. If you see `SelectableTableField` anywhere (old branches, docs), that's `InteractiveTableField`'s old name.
-- `libs/application/templates/pay-debts/src/fields` — template-owned custom fields, currently just `DebtsLoader`. Must be exposed via `export const getFields = () => import('./fields/')` in `src/index.ts`, or a `buildCustomField` here resolves to nothing.
+- `libs/application/templates/pay-debts` — the template. nx project is **`pay-debts`**, not `application-templates-pay-debts`.
+- `libs/application/template-api-modules/.../pay-debts` — `PayDebtsService`, one action: `getCustomerDebts`. Its spec is verified field-by-field against the real finance-v3 `DebtsDetailsDt`.
+- `libs/clients/finance-v3` — X-Road client. Local dev needs the X-Road proxy on `localhost:8081` (`infra/src/dsl/xroad.ts`); without it `getCustomerDebts` fails with `ECONNREFUSED` — not a code bug.
+- `libs/application/ui-fields/.../InteractiveTableField`, `.../StickyFooterField` — generic field types (formerly named `SelectableTableField`, if you hit that in old branches).
+- `src/fields` — template-owned custom fields, just `DebtsLoader`. Must stay exported via `getFields` in `src/index.ts` or `buildCustomField` resolves to nothing.
+
+## Answers shape
+
+Both are **per-row arrays indexed by row**, not lists of selections:
+
+- `answers.selectedDebts` — `boolean[]`, that row's checkbox.
+- `answers.debtsToPay` — `string[]`, the amount typed for that row.
+
+Row index is the index into `getDebts(application)`, so everything (pagination, `getSelectedDebts`, `getMaxAmount`) has to stay index-aligned with that list.
 
 ## State machine (`src/lib/template.ts`)
 
-`draft` → `payment` → `completed`. No `prerequisites` state.
+`draft` → `payment` → `completed`. No `prerequisites` state; `States.REVIEW` is declared but unused.
 
-`States.DRAFT` is `initial`. `GetDebtsApi` (`src/dataProviders/index.ts`, action `getCustomerDebts`, namespace `PayDebts`) and `MockPaymentCatalog` are declared on the DRAFT applicant role's `api: []` allowlist — that's what authorizes the client-side fetch (`PUT /applications/:id/externalData` rejects any `actionId` not on the current state/role's list). Debts land at `application.externalData.customerDebts.data.debts`.
-
-`payment` is `buildPaymentState` (`@island.is/application/utils`) targeting `States.COMPLETED`.
-
-**Open behavioral question**: DRAFT is both `initial` and on `DefaultStateLifeCycle` (`pruneAfterDays(30)`), so an abandoned application persists as a listed draft on Mínar síður for 30 days just from opening the form. Options on the table: accept it, put DRAFT on `EphemeralStateLifeCycle`, or set `allowMultipleApplicationsInDraft: false`. Not yet decided.
+- `draft` is `initial` and on `EphemeralStateLifeCycle`, so merely opening the form doesn't leave a 30-day draft on Mínar síður.
+- `GetDebtsApi` (action `getCustomerDebts`, namespace `PayDebts`) and `MockPaymentCatalog` are on the DRAFT applicant role's `api: []` allowlist — that is what authorizes the client-side fetch (`PUT /applications/:id/externalData` rejects any `actionId` not listed for the current state/role).
+- `payment` is `buildPaymentState`, with `chargeItems` built from `getSelectedDebts`. **It uses `debt.chargeTypeId` as the charge code, which is a category (Gjaldflokkur), not the item-level `chargeItemCode` (Gjaldliður)** — see the TODO there. Blocked on FJS exposing the right code.
+- `completed` loads `src/forms/completedForm` (conclusion section only), lifecycle `pruneAfterDays(30)` + `shouldBeListed: false`.
 
 ## Main form (`src/forms/mainForm`)
 
-`MainForm` = `[debtsSection, paymentSection]`.
+`MainForm` = `[debtsSection, paymentSection, empty completedSection]` (the last is a stepper placeholder).
 
-- **`debtsSection.ts`** ("Skuldastaða") — a `buildInteractiveTableField` (`id: 'selectedDebts'`, `dataTestId: 'debts-table'`) plus a `buildStickyFooterField` sibling:
-  - `selectable: true` — one checkbox per row. Selection is stored **per row**, not as an index array: `application.answers.selectedDebts` is a `boolean[]` where `selectedDebts[rowIndex]` is that row's own checked state.
-  - `inputColumn` — an amount-to-pay input in the last column, keyed at `application.answers.debtsToPay` (`string[]`, indexed by row). Only enabled for selected rows; disabled/blank for unselected ones. Selecting a row pre-fills its input with the full debt amount (`debt.debts`); deselecting clears it back to blank. Capped at the row's own debt amount via `getMaxAmount`.
-  - `footerRow` — a totals row ("Heildarskuld" / summed `debt.debts` across _all_ debts, not just selected), styled like a data row (no bottom border, bold total). Table is `table-layout: fixed` with a `minWidth` so it doesn't compress on narrow screens — horizontal scroll instead.
-  - The sticky footer (`id: 'debtsSummaryFooter'`) shows two live totals — "Til greiðslu" (sum of `debtsToPay`) and "Eftirstöðvar" (total debts minus that) — that update on every keystroke/checkbox toggle, not just on autosave. It floats pinned to the bottom of the viewport while there's more of the table below the screen, and docks into normal flow right below the table's last row once you scroll (or if the table is short enough) that it would otherwise go below the page's own "Halda áfram" footer — it structurally can't overlap that button since docking just means falling back into normal document flow, which is already before it. Column text ("Til greiðslu"/amount) is aligned under the table's "Gjaldflokkur"/"Gjalddagi" columns via a hand-tuned CSS approximation, not exact measurement — see the css.ts comments if it ever needs retuning.
-- **`paymentSection.ts`** — a plain read-only `buildStaticTableField` (no `selectable`/`inputColumn`, no `id` — that field type never stores an answer) showing only the _selected_ debts (via `getSelectedDebts`), with a `summary` total row at the bottom.
+**`debtsSection.ts`** — `DebtsLoader` + a `buildInteractiveTableField` (`id: 'selectedDebts'`, `dataTestId: 'debts-table'`) + a `buildStickyFooterField`, all under one multi-field. Table and footer are gated on `hasDebtsToPay` (fetched **and** non-empty), so an empty result leaves the loader's own message on screen.
 
-## Field architecture
+- `selectable`, `pageSize: 50`, `inputColumn` (`id: 'debtsToPay'`, capped per row by `getMaxAmount`). Selecting a row pre-fills the full debt; deselecting clears it.
+- `header` cells are objects carrying `width`/`truncate`/`expandable`. `expandedRows` gives each row a sub-table (Gjalddagi, Tímabil, Höfuðstóll, Vextir, Kostnaður) — the last three render `'—'`, FJS doesn't return them.
+- `footerRow` totals **all** debts ("Heildarskuld"), not just selected. The sticky footer shows live "Til greiðslu"/"Eftirstöðvar" on every keystroke.
+- `isSubmitDisabled` blocks submit until at least one row is ticked.
+- `shouldUseMockPayment` is a hidden input, dev/local only.
 
-Three field types now exist where there used to be one. **`StaticTableField`/`StaticTableFormField`** (`libs/application/ui-fields/src/lib/StaticTableFormField/`) is back to _exactly_ its shape on `main`: read-only, `id` always `''`, `doesNotRequireAnswer` always `true`. It's shared by 12+ other application templates repo-wide, untouched by this branch, and used here by `paymentSection.ts`.
+**`paymentSection.ts`** — `buildPaymentChargeOverviewField` over `getSelectedDebts`. Its `chargeItemCode` is `chargeTypeId` suffixed with the index purely to keep React keys unique; it is display-only and unrelated to the charge actually created in `template.ts`.
 
-The checkbox/input-column/footer-row functionality that got added to it mid-session was pulled back out into its own field, **`SelectableTableField`/`SelectableTableFormField`** (`libs/application/ui-fields/src/lib/SelectableTableField/`), because `selectable`/`doesNotRequireAnswer: !selectable`/settable `id` are fundamentally answer-bearing/interactive — the opposite of what "static" promises, and only `debtsSection.ts` uses it. Notable internals:
+## Field types (`libs/application/ui-fields`)
 
-- `SelectableTableFormFieldRow.tsx` — each row is its own `memo`-wrapped component with a **value-based** prop comparator (not reference equality — `field.rows(application)` returns a fresh array every call, so reference equality would defeat the memo). Each row does its own `useWatch` on `selectedDebts[rowIndex]`, so toggling one checkbox only re-renders that row, not the whole table.
-- The parent still re-renders on every toggle (it watches the aggregate `selectedDebts` path for the "select all" header checkbox), but `rows`/`footerRow`/`inputMaxAmounts` are `useMemo`'d on `[field.x, application]` — safe because `application` only changes reference on an autosave round-trip landing (`Screen.tsx`, from the `updateApplication` mutation response), not on every `setValue`/keystroke. Without this, checking N rows one at a time was `O(N²)` (each toggle re-derived data for every row); with it, it's `O(N)`.
-- **Known, real scale limit**: a user with ~11,000 debts crashes the browser tab on open. This isn't fixable by the memoization above — that helps post-mount interaction, not the one-time cost of mounting ~11,000 `Checkbox` + `NumberFormat`-wrapped `Input` rows (~100k+ DOM nodes, ~33k live react-hook-form subscriptions — each `InputController`'s `Controller` sets up 2 of its own on top of the row's 1). Client-side pagination (island-ui's existing `Pagination` component, `pageSize` prop, no new dependency — precedented by `PaginatedSearchableTableFormField` in the same package) was prototyped and works, but was reverted at the user's request ("might add it later"). Virtualization was also discussed as an alternative (would need a new dependency, `@tanstack/react-virtual`, and reworking the table markup) but pagination was preferred. **Still not fixed** — large debt counts will still crash until one of these is reinstated.
-
-- **`StaticTableField`** (`ui-fields/.../StaticTableFormField/`) — plain read-only, shared by 12+ other templates. Not used by pay-debts.
-- **`InteractiveTableField`** (`ui-fields/.../InteractiveTableField/`, `FieldTypes.INTERACTIVE_TABLE`) — checkbox/input-column/footer-row field, pay-debts only. `InteractiveTableFormFieldRow.tsx` rows are `memo`-wrapped with a value-based (not reference) comparator, each watching only its own `selectedDebts[rowIndex]`. Parent still re-renders on every toggle (aggregate watch for "select all"), but `rows`/`footerRow`/`inputMaxAmounts` are memoized on `[field.x, application]`, safe because `application`'s reference only changes on an autosave landing, not per keystroke.
-  - **Known unresolved bug**: ~11,000 debts crashes the tab on mount (mounting cost — ~100k+ DOM nodes, ~33k live react-hook-form subscriptions — not an interaction-perf issue the memoization above can fix). Pagination (island-ui's existing `Pagination`, precedented by `PaginatedSearchableTableFormField`) was prototyped and works but was reverted per request ("might add later") — the working approach exists in history, no need to re-prototype from scratch. Virtualization (`@tanstack/react-virtual`) was the alternative considered.
-- **`StickyFooterField`** (`ui-fields/.../StickyFooterField/`) — fully generic. Takes `rows: {label, value}[]`, required `widthReferenceTestId` (tracked via `getBoundingClientRect()` + `ResizeObserver` + scroll listener, since it's `position: fixed`), required `watchFieldIds: string[]`, and `labelOffset`/`labelWidth`/`valueWidth` for alignment. **Gotcha**: if `widthReferenceTestId` doesn't match a real `data-testid`, it silently returns `null` forever — check this first if the footer "disappears" (has happened once, from a merge conflict).
+- **`StaticTableFormField`** — read-only, `id` always `''`. Shared by 12+ templates; not used here anymore.
+- **`InteractiveTableField`** (`FieldTypes.INTERACTIVE_TABLE`) — checkboxes, input column, footer row, expandable sub-rows, client-side pagination. Rows are `memo`-wrapped with a **value-based** comparator (`field.rows()` returns a fresh array each call, so reference equality would defeat the memo), each watching only its own `selectedDebts[rowIndex]`. `rows`/`footerRow`/`inputMaxAmounts` are memoized on `[field.x, application]` — safe because `application`'s reference only changes on an autosave landing, not per keystroke. Pagination is what keeps large debt counts (~11k rows used to crash the tab) survivable; select-all still writes every row, not just the page.
+  - Truncated cells are CSS-only (`text-overflow: ellipsis`), full text always in the DOM. Overflowing labels get a `HoverTooltip`; on the expandable column the tooltip anchors the toggle **button**, not the inner span, so it opens on `Tab` and the cell keeps one tab stop.
+- **`StickyFooterField`** — `position: fixed`, floats while the table extends below the viewport and docks into normal flow otherwise (so it structurally can't overlap the page's own "Halda áfram"). Aligns itself by measuring `thead th[data-column-index="0"|"1"]` of `widthReferenceTestId`, with `labelOffset`/`labelWidth`/`valueWidth` as fallbacks. **Gotcha**: if `widthReferenceTestId` matches no real `data-testid` it silently renders `null` forever — check that first if the footer "disappears".
 
 ## Utils (`src/utils`)
 
-- `getDebts.ts` — reads `externalData.customerDebts.data.debts` (single source of truth). Also home of fetch-state helpers: `DEBTS_EXTERNAL_DATA_ID`, `DEBTS_MAX_AGE_MS` (1h), `hasFetchedDebts()`, `debtsAreStale()`, `getDebtsFromExternalData()` (raw `externalData`, pre-commit), `debtsSignature()`.
-- `getSelectedDebts.ts` — filters by `answers.selectedDebts` (per-row `boolean[]`), returns `SelectedDebt[]` (`CustomerDebt & { amountToPay: number }`, falling back to `debt.debts` if the typed amount doesn't parse).
-- `types.ts` — `CustomerDebt`: `{ chargeTypeId, chargeTypeName, chargeItemSubject, dueDate, finalDueDate, debts }`. finance-v3 also returns `timePeriod`/`payID`, not yet modeled on the frontend.
-- `formatDate.ts`, `constants.ts` — utility helpers.
+- `getDebts.ts` — single source of truth, reads `externalData.customerDebts.data.debts`. Also `DEBTS_EXTERNAL_DATA_ID`, `DEBTS_MAX_AGE_MS` (1h), `hasFetchedDebts`, `debtsAreStale`, `getDebtsFromExternalData` (raw `externalData`, for pre-commit conditions), `debtsSignature`.
+- `getSelectedDebts.ts` — ticked rows only, each `amountToPay` clamped to `[1, debt.debts]`, falling back to the full debt if the typed value doesn't parse.
+- `types.ts` — `CustomerDebt`: `chargeTypeId`, `chargeTypeName`, `chargeItemSubject`, `timePeriod`, `dueDate`, `finalDueDate`, `debts`. The backend also returns `payID` and `nextkey`, neither modeled on the frontend. Dates and `timePeriod` are passed through exactly as FJS sends them — no reformatting.
 
 ## Messages (`src/lib/messages`)
 
-One file per concern — `application`, `debts`, `payment`, `error`, `completedForm` — re-exported from `index.ts`. All ids namespaced `pd.application:...`. `debts.fetch` covers the loader (`errorTitle`, `errorMessage`, `retryButton`, `refreshedTitle`, `refreshedMessage`). **Gotcha**: `payment.buttons.submit`'s message id is the leftover string `pd.application:overview.buttons.submit` — don't be thrown by the mismatch if you go looking for it.
+One file per concern (`application`, `debts`, `payment`, `error`, `completedForm`), re-exported from `index.ts`, ids namespaced `pd.application:...`. **Gotcha**: `payment.buttons.submit`'s id is the leftover `pd.application:overview.buttons.submit`.
 
 ## Tests
 
-Run with `yarn nx test pay-debts` — nx project is `pay-debts`, not `application-templates-pay-debts`.
+`yarn nx test pay-debts` and `yarn nx test application-ui-fields`.
 
-- `src/lib/template.spec.ts` — DRAFT is `initial`, no prerequisites state, DRAFT role's `api` contains both provider action ids
-- `src/forms/mainForm/debtsSection.spec.ts` — declared answer ids, `debtsWereFetched` condition handoff, loader-before-table ordering. Needs `jest.mock('@island.is/application/ui-components', ...)` for `formatCurrency` (the real module pulls vanilla-extract in through island-ui/core — hence the `// eslint-disable-next-line import/first` on the import below it)
-- `src/utils/getDebts.spec.ts` — `hasFetchedDebts`, `debtsAreStale`, `debtsSignature`
+Coverage: state machine + api allowlist, `DebtsLoader` (empty result, submit gating), `debtsSection` (declared answers, fetch/empty/failure gating, column config, loader ordering), `getDebts` helpers, `getSelectedDebts` clamping, and on the field side pagination and the truncation/tooltip/keyboard behaviour.
 
-`tsconfig.spec.json` lacks `jsx`, so `npx tsc -p tsconfig.spec.json` reports pre-existing TS6142 errors on institution logos. Jest uses babel, so tests are unaffected — don't chase it.
+- Specs that render (`DebtsLoader`, the field specs) mock `@island.is/localization`. `debtsSection.spec.ts` only inspects the field tree, so it needs no mock — `formatCurrency` comes from `@island.is/shared/utils`, which doesn't drag vanilla-extract in.
+- jsdom reports `scrollWidth`/`clientWidth` as 0, so truncation tests stub them on `HTMLElement.prototype`.
+- `tsconfig.spec.json` lacks `jsx`, so `tsc -p tsconfig.spec.json` reports pre-existing TS6142 on institution logos. Jest uses babel — don't chase it.
 
-## Known gaps / next steps
+## Known gaps
 
-- **Large debt counts crash the page** — see the `InteractiveTableField` scale-limit note above. The fix (pagination or virtualization) exists in prototype form but isn't currently applied.
-- `dataSchema.ts` is still the scaffold dummy schema — no real validation yet for `selectedDebts`/`debtsToPay` (e.g. requiring at least one selected debt, or that a typed amount doesn't exceed/underflow the debt)
-- No payment/charge submission is wired up yet. We explored routing `paymentSection.ts` through the shared `buildPaymentChargeOverviewField` (the pattern used by `transfer-of-vehicle-ownership`/`order-vehicle-license-plate`) but reverted it — that field prices items from a fixed `PaymentCatalogApi` catalog keyed by `chargeItemCode`, which doesn't fit per-citizen, variable debt amounts. Whatever charge-creation mechanism gets built here will need to actually charge the _typed_ `debtsToPay` amounts, not a catalog price — the `payID` field on the raw finance-v3 response (not yet surfaced in `CustomerDebt`) may be relevant to how that's actually meant to work.
-- `overview.ts`/`lib/messages/overview.ts` are dead code — either remove them or decide whether a review/overview step belongs back in `MainForm` before submit.
-- No `states.COMPLETED`-side confirmation of what was actually paid yet.
+- `dataSchema.ts` is still the scaffold dummy — no validation of `selectedDebts`/`debtsToPay` (clamping happens in `getSelectedDebts`, not the schema).
+- Charge creation uses the wrong-granularity code (see `payment` above); `payID` may be part of the real answer.
+- FJS paginates with `nextkey`; the client only ever fetches the first page.
+- Höfuðstóll / Vextir / Kostnaður in the expanded row are placeholders.
+- Nothing on the `completed` side confirms what was actually paid.
