@@ -15,7 +15,6 @@ import {
 import { formatCurrency, isRunningOnEnvironment } from '@island.is/shared/utils'
 import { debts as messages } from '../../lib/messages'
 import { formatDate } from '../../utils/formatDate'
-import { formatTimePeriod } from '../../utils/formatTimePeriod'
 import {
   getDebts,
   getDebtsFromExternalData,
@@ -81,7 +80,7 @@ export const debtsSection = buildSection({
               getDebts(application).map<StaticText[][]>((debt) => [
                 [
                   formatDate(debt.dueDate),
-                  formatTimePeriod(debt.timePeriod),
+                  debt.timePeriod,
                   AMOUNT_UNAVAILABLE,
                   AMOUNT_UNAVAILABLE,
                   AMOUNT_UNAVAILABLE,
