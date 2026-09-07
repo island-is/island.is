@@ -10,6 +10,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ChargeFjsV2ClientService,
   Charge,
+  ChargeResponse,
 } from '@island.is/clients/charge-fjs-v2'
 import { Op } from 'sequelize'
 import { retry } from '@island.is/shared/utils/server'
@@ -916,27 +917,17 @@ export class PaymentFlowService {
     )
   }
 
+  /**
+   * Creates the charge at FJS and records it locally. The two halves are deliberately in separate
+   * `try` blocks: once FJS has accepted, the money side is settled, and a local bookkeeping
+   * failure must never be reported as "failed to create the charge" — nor be run through
+   * `mapFjsErrorToCode`, which would mislabel a Sequelize error as an FJS one.
+   */
   async createFjsCharge(paymentFlowId: string, chargePayload: Charge) {
+    let charge: ChargeResponse
+
     try {
-      const charge = await this.chargeFjsV2ClientService.createCharge(
-        chargePayload,
-      )
-
-      const newCharge = await this.fjsChargeModel.create({
-        paymentFlowId,
-        receptionId: charge.receptionID,
-        user4: charge.user4,
-        status: chargePayload.payInfo ? 'paid' : 'unpaid',
-      })
-
-      await this.updateFlowAndFulfillmentWithFjsCharge(
-        paymentFlowId,
-        charge.receptionID,
-        newCharge.id,
-        !!chargePayload.payInfo,
-      )
-
-      return newCharge
+      charge = await this.chargeFjsV2ClientService.createCharge(chargePayload)
     } catch (e) {
       if (isNetworkError(e)) {
         throw new BadRequestException(FJS_NETWORK_ERROR)
@@ -953,6 +944,10 @@ export class PaymentFlowService {
         if (reconciled) {
           return reconciled
         }
+        // Not necessarily an incident: a concurrent finalizer that has called FJS but not yet
+        // committed its `fjs_charge` row lands here, and it repairs itself the moment that commit
+        // lands (`reconcileExistingFjsCharge` retries the read for exactly this reason). Only a
+        // genuinely orphaned FJS charge — no local row ever — needs hands. Do not page on this.
         this.logger.error(
           `[${paymentFlowId}] CRITICAL: FJS reports the charge exists but it could not be found to reconcile. Manual reconciliation required.`,
           e,
@@ -965,6 +960,56 @@ export class PaymentFlowService {
       }
       throw new BadRequestException(mapFjsErrorToCode(e))
     }
+
+    try {
+      const newCharge = await this.fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: charge.receptionID,
+        user4: charge.user4,
+        status: chargePayload.payInfo ? 'paid' : 'unpaid',
+      })
+
+      await this.updateFlowAndFulfillmentWithFjsCharge(
+        paymentFlowId,
+        charge.receptionID,
+        newCharge.id,
+        !!chargePayload.payInfo,
+      )
+
+      return newCharge
+    } catch (e) {
+      if ((e as Error)?.name === 'SequelizeUniqueConstraintError') {
+        // A concurrent finalizer already holds the one active row for this flow
+        // (`fjs_charge_one_active_per_payment_flow_id`). Since both of us reached FJS, FJS accepted
+        // a charge it should have rejected on `requestID` — so the charge we just created is a
+        // duplicate whose reception id exists nowhere but this stack frame. Log it before adopting
+        // the winner's row: this is the only moment we hold it, and it has to be reversed by hand.
+        this.logger.error(
+          `[${paymentFlowId}] CRITICAL: FJS accepted a duplicate charge — this reception id was never persisted and must be reversed manually`,
+          {
+            receptionId: charge.receptionID,
+            user4: charge.user4,
+          },
+        )
+
+        const reconciled = await this.reconcileExistingFjsCharge(
+          paymentFlowId,
+          chargePayload,
+        )
+        if (reconciled) {
+          return reconciled
+        }
+      }
+
+      // The charge exists at FJS but we could not record it. Reported as a create failure so the
+      // caller's `retry` gets another go (and, failing that, the worker sweeps the flow) — but the
+      // charge itself is not re-created blindly, because FJS dedupes on `requestID`.
+      this.logger.error(
+        `[${paymentFlowId}] FJS accepted the charge but it could not be persisted locally`,
+        e,
+      )
+      throw new BadRequestException(FjsErrorCode.FailedToCreateCharge)
+    }
   }
 
   /**
@@ -975,9 +1020,26 @@ export class PaymentFlowService {
     paymentFlowId: string,
     chargePayload: Charge,
   ): Promise<FjsCharge | null> {
-    const charge = await this.fjsChargeModel.findOne({
-      where: { paymentFlowId, isDeleted: false },
-    })
+    // FJS saying the charge exists implies a local row exists too — except when the reason FJS
+    // says so is a concurrent finalizer whose own insert has not committed yet. So retry the read
+    // for a moment before giving up. Deliberately retried *here* and not around
+    // `createFjsCharge`: the answer is in our own database, and retrying a level up would re-POST
+    // to FJS to be told, again, what the row will say as soon as it lands. No logger is passed —
+    // a miss on the first read is expected under a race, and the caller logs the outcome.
+    const charge = await retry(
+      async () => {
+        const found = await this.fjsChargeModel.findOne({
+          where: { paymentFlowId, isDeleted: false },
+        })
+
+        if (!found) {
+          throw new Error('fjs_charge row not yet visible')
+        }
+
+        return found
+      },
+      { maxRetries: 3, retryDelayMs: 200 },
+    ).catch(() => null)
 
     if (!charge) {
       return null

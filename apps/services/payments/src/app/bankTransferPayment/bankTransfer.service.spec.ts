@@ -831,7 +831,10 @@ describe('BankTransferService', () => {
             where: {
               id: 'corr-1',
               isDeleted: false,
-              lastKnownStatus: activeRow.lastKnownStatus,
+              lastKnownStatus: {
+                [Op.eq]: activeRow.lastKnownStatus,
+                [Op.ne]: rawStatus,
+              },
             },
           },
         )
@@ -874,6 +877,93 @@ describe('BankTransferService', () => {
       expect(bankTransferPaymentModel.update).toHaveBeenCalledTimes(1)
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
       expect(result.status).toBe(BankTransferStatus.ERROR)
+    })
+
+    /**
+     * Stands in for Postgres so the guard can be tested through its *predicate* rather than by
+     * mocking the affected-row count. Mocking `[0]` only proves the branch is wired up — it cannot
+     * catch a predicate that matches when it should not, which is exactly the bug that shipped.
+     * Applies the where-clause against one mutable row and counts a matched row as affected even
+     * when the value written is identical, which is what the driver reports.
+     */
+    const statefulUpdate = (row: {
+      id: string
+      isDeleted: boolean
+      lastKnownStatus: string
+    }) =>
+      jest.fn(
+        async (
+          values: { lastKnownStatus?: string },
+          options: {
+            where: {
+              id: string
+              isDeleted: boolean
+              lastKnownStatus: string | { [Op.eq]?: string; [Op.ne]?: string }
+            }
+          },
+        ) => {
+          const { where } = options
+          const predicate = where.lastKnownStatus
+          const statusMatches =
+            typeof predicate === 'string'
+              ? predicate === row.lastKnownStatus
+              : (predicate[Op.eq] === undefined ||
+                  predicate[Op.eq] === row.lastKnownStatus) &&
+                (predicate[Op.ne] === undefined ||
+                  predicate[Op.ne] !== row.lastKnownStatus)
+
+          if (
+            where.id !== row.id ||
+            where.isDeleted !== row.isDeleted ||
+            !statusMatches
+          ) {
+            return [0]
+          }
+
+          if (values.lastKnownStatus !== undefined) {
+            row.lastKnownStatus = values.lastKnownStatus
+          }
+
+          return [1]
+        },
+      )
+
+    it('does not emit a second payment_failed when verify runs again on a row already at ERROR', async () => {
+      const row = { ...activeRow, lastKnownStatus: 'PENDING' }
+      // A fresh read each call, as each request would do.
+      bankTransferPaymentModel.findOne.mockImplementation(async () => ({
+        ...row,
+      }))
+      bankTransferPaymentModel.update = statefulUpdate(row)
+      mockGetPayment(BankTransferStatus.ERROR, 'ERROR', 'provider detail')
+
+      const first = await service.verify({ paymentFlowId: 'flow-1' })
+      const second = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(first.status).toBe(BankTransferStatus.ERROR)
+      // The repeat caller still gets the right answer — only the event is suppressed, because the
+      // event is what reaches the consuming organisation's webhook.
+      expect(second.status).toBe(BankTransferStatus.ERROR)
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+    })
+
+    it('emits payment_failed once when two finalizers converge on different terminal statuses', async () => {
+      const row = { ...activeRow, lastKnownStatus: 'SCA_REQUIRED' }
+      // Both callers hold a read taken before either wrote — the interleaving the guard is for.
+      bankTransferPaymentModel.findOne.mockResolvedValue({ ...row })
+      bankTransferPaymentModel.update = statefulUpdate(row)
+
+      mockGetPayment(BankTransferStatus.ERROR, 'ERROR')
+      await service.verify({ paymentFlowId: 'flow-1' })
+
+      // The straggler reports a *different* terminal status. On a bare `ne` guard this would match
+      // (the row holds ERROR, not REJECTED) and fire a second payment_failed; the `eq` half is
+      // what rejects it, since the row has moved on from the snapshot it read.
+      mockGetPayment(BankTransferStatus.REJECTED, 'REJECTED')
+      await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      expect(row.lastKnownStatus).toBe('ERROR')
     })
 
     it('updates lastKnownStatus race-guarded when the provider returns a different non-terminal status', async () => {
@@ -1252,7 +1342,10 @@ describe('BankTransferService', () => {
             where: {
               id: 'corr-1',
               isDeleted: false,
-              lastKnownStatus: 'PENDING',
+              lastKnownStatus: {
+                [Op.eq]: 'PENDING',
+                [Op.ne]: failureRawStatus,
+              },
             },
           },
         )
@@ -1795,7 +1888,10 @@ describe('BankTransferService', () => {
             where: {
               id: baseRow.id,
               isDeleted: false,
-              lastKnownStatus: baseRow.lastKnownStatus,
+              lastKnownStatus: {
+                [Op.eq]: baseRow.lastKnownStatus,
+                [Op.ne]: rawStatus,
+              },
             },
           },
         )

@@ -2,6 +2,8 @@ import { BadRequestException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { TestApp } from '@island.is/testing/nest'
@@ -580,6 +582,88 @@ describe('PaymentFlowService', () => {
           chargePayloadWithPayInfo(paymentFlowId),
         ),
       ).rejects.toBeInstanceOf(BadRequestException)
+    })
+
+    it('adopts the winner and logs the orphaned reception id when the local insert loses the unique-index race', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const paymentFulfillmentModel = app.get<typeof PaymentFulfillment>(
+        getModelToken(PaymentFulfillment),
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      const logger = app.get<Logger>(LOGGER_PROVIDER)
+
+      const paymentFlowId = uuid()
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        organisationId: '5534567890',
+      } as TestPartial)
+      await paymentFulfillmentModel.create({
+        paymentFlowId,
+        paymentMethod: 'bank_transfer',
+        confirmationRefId: uuid(),
+      } as TestPartial)
+
+      jest.spyOn(fjsChargeModel, 'findOne').mockRestore()
+
+      // The concurrent finalizer's row, already committed.
+      const winner = await fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: 'recept-winner',
+        user4: 'doc-winner',
+        status: 'paid',
+      } as TestPartial)
+
+      // FJS accepted our charge as well — its dedup on requestID did not hold — so we come back
+      // holding a second, distinct reception id.
+      jest.spyOn(chargeFjsService, 'createCharge').mockResolvedValueOnce({
+        receptionID: 'recept-duplicate',
+        user4: 'doc-duplicate',
+      } as TestPartial)
+
+      // ...and `fjs_charge_one_active_per_payment_flow_id` rejects the local row. Simulated rather
+      // than provoked: the index is created in raw SQL by a migration, so it is not present in a
+      // model-synced test database.
+      jest.spyOn(fjsChargeModel, 'create').mockRejectedValueOnce(
+        Object.assign(
+          new Error('duplicate key value violates unique constraint'),
+          { name: 'SequelizeUniqueConstraintError' },
+        ),
+      )
+
+      const errorSpy = jest.spyOn(logger, 'error')
+
+      const result = await service.createFjsCharge(
+        paymentFlowId,
+        chargePayloadWithPayInfo(paymentFlowId),
+      )
+
+      // Adopted the winner rather than throwing FailedToCreateCharge at a caller whose charge did
+      // in fact reach FJS.
+      expect(result.id).toBe(winner.id)
+      expect(result.receptionId).toBe('recept-winner')
+
+      // The duplicate's reception id is recorded, because this is the only moment we ever hold it
+      // and it is the only handle anyone has to reverse the extra charge.
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('FJS accepted a duplicate charge'),
+        expect.objectContaining({
+          receptionId: 'recept-duplicate',
+          user4: 'doc-duplicate',
+        }),
+      )
+
+      // And the fulfillment ends up linked to exactly one charge.
+      const fulfillment = await paymentFulfillmentModel.findOne({
+        where: { paymentFlowId, isDeleted: false },
+      })
+      expect(fulfillment?.fjsChargeId).toBe(winner.id)
     })
   })
 
