@@ -2119,6 +2119,11 @@ export const messages = defineMessages({
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
     id: 'sp.health:health-messages-reply-blocked-window-expired-text',
   },
+  healthConversationReplyBlockedWindowExpiredDaysText: {
+    defaultMessage:
+      'Ekki er hægt að svara skilaboðum sem eru eldri en {days, plural, one {# dagur} other {# dagar}}',
+    id: 'sp.health:health-messages-reply-blocked-window-expired-days-text',
+  },
   healthConversationReplyBlockedGenericText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
     id: 'sp.health:health-messages-reply-blocked-generic-text',

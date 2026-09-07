@@ -148,6 +148,7 @@ export const mapMessagingRecipient = (
 ): HealthDirectorateHealthConversationRecipient => ({
   nodeId: r.nodeId,
   groupId: r.groupId,
+  treatmentId: r.treatmentId,
   name: r.name,
   allowsMessaging: r.allowsMessaging,
   messagingWindowOpen: r.messagingWindowOpen,
