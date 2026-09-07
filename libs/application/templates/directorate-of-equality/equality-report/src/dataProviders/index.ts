@@ -36,6 +36,17 @@ export const PreviousEqualityReportContentApi = defineTemplateApi({
   order: 0,
 })
 
+// The bytes of a PDF-backed previous plan. Its own on-demand provider rather
+// than part of `PreviousEqualityReportContentApi`, so several megabytes of
+// base64 are fetched only when the applicant asks to see the document — not on
+// every render of the screen that mentions it.
+export const PreviousEqualityReportPdfApi = defineTemplateApi({
+  action: ApiActions.getPreviousEqualityReportPdf,
+  externalDataId: 'previousEqualityReportPdf',
+  namespace: 'DirectorateOfEquality',
+  order: 0,
+})
+
 export const EqualityReportTemplateDocxApi = defineTemplateApi({
   action: ApiActions.getEqualityReportTemplateDocx,
   externalDataId: 'equalityReportTemplateDocx',
