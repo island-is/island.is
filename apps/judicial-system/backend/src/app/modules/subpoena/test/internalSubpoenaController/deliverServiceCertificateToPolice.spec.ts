@@ -114,7 +114,9 @@ describe('InternalSubpoenaController - Deliver subpoena certificate to police', 
     beforeEach(async () => {
       const mockGetSubpoenaServiceCertificatePdf =
         mockPdfService.getSubpoenaServiceCertificatePdf as jest.Mock
-      mockGetSubpoenaServiceCertificatePdf.mockResolvedValue(Buffer.from(uuid()))
+      mockGetSubpoenaServiceCertificatePdf.mockResolvedValue(
+        Buffer.from(uuid()),
+      )
       const mockDeliverCaseToPoliceWithFiles =
         mockInternalCaseService.deliverCaseToPoliceWithFiles as jest.Mock
       mockDeliverCaseToPoliceWithFiles.mockResolvedValue(false)
