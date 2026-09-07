@@ -50,7 +50,11 @@ export const serviceSetup = (services: {
         staging: 'test',
         prod: 'master',
       },
-      HIDDEN_FEATURES: '',
+      HIDDEN_FEATURES: {
+        dev: '',
+        staging: 'INDICTMENT_APPEAL',
+        prod: 'INDICTMENT_APPEAL',
+      },
       REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',

@@ -198,7 +198,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
       )
     })
 
-    // The áfrýjun stands as long as anyone is still appealing it, so neither the
+    // The verdict appeal stands as long as anyone is still appealing it, so neither the
     // appeal case nor the notification moves.
     it('should leave the appeal case standing', () => {
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
