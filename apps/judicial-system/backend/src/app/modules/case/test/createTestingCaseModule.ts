@@ -30,12 +30,18 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseArchiveRepositoryService,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseFileRepositoryService,
   CaseRepositoryService,
   CaseStringRepositoryService,
+  CivilClaimantRepositoryService,
   DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
+  IndictmentCountRepositoryService,
+  OffenseRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
+  VictimRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { UserService } from '../../user'
@@ -70,12 +76,19 @@ jest.mock('../../defendant/civilClaimant.service')
 jest.mock('../../subpoena/subpoena.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../verdict/verdict.service')
-jest.mock('../caseCloning.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock(
+  '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
+)
+jest.mock('../../repository/services/caseFileRepository.service')
+jest.mock('../../repository/services/civilClaimantRepository.service')
+jest.mock('../../repository/services/indictmentCountRepository.service')
+jest.mock('../../repository/services/offenseRepository.service')
+jest.mock('../../repository/services/victimRepository.service')
 jest.mock('../../repository/services/caseStringRepository.service')
 jest.mock('../../repository/services/dateLogRepository.service')
 jest.mock('../../repository/services/defendantRepository.service')
@@ -114,11 +127,17 @@ export const createTestingCaseModule = async () => {
       AppealEventLogRepositoryService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
+      CaseDefendantPoliceCaseNumberRepositoryService,
+      CaseFileRepositoryService,
       CaseStringRepositoryService,
+      CivilClaimantRepositoryService,
       DateLogRepositoryService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      IndictmentCountRepositoryService,
+      OffenseRepositoryService,
       PoliceDigitalCaseFileRepositoryService,
+      VictimRepositoryService,
       {
         provide: IntlService,
         useValue: {
@@ -238,8 +257,32 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
-  const caseCloningService =
-    caseModule.get<CaseCloningService>(CaseCloningService)
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    caseModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
+    )
+
+  const caseFileRepositoryService = caseModule.get<CaseFileRepositoryService>(
+    CaseFileRepositoryService,
+  )
+
+  const civilClaimantRepositoryService =
+    caseModule.get<CivilClaimantRepositoryService>(
+      CivilClaimantRepositoryService,
+    )
+
+  const indictmentCountRepositoryService =
+    caseModule.get<IndictmentCountRepositoryService>(
+      IndictmentCountRepositoryService,
+    )
+
+  const offenseRepositoryService = caseModule.get<OffenseRepositoryService>(
+    OffenseRepositoryService,
+  )
+
+  const victimRepositoryService = caseModule.get<VictimRepositoryService>(
+    VictimRepositoryService,
+  )
 
   const internalCaseService =
     caseModule.get<InternalCaseService>(InternalCaseService)
@@ -293,7 +336,12 @@ export const createTestingCaseModule = async () => {
     dateLogRepositoryService,
     caseConfig,
     caseService,
-    caseCloningService,
+    caseDefendantPoliceCaseNumberRepositoryService,
+    caseFileRepositoryService,
+    civilClaimantRepositoryService,
+    indictmentCountRepositoryService,
+    offenseRepositoryService,
+    victimRepositoryService,
     internalCaseService,
     limitedAccessCaseService,
     caseController,
