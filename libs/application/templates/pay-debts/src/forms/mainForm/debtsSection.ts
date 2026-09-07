@@ -14,7 +14,6 @@ import {
 } from '@island.is/application/types'
 import { formatCurrency, isRunningOnEnvironment } from '@island.is/shared/utils'
 import { debts as messages } from '../../lib/messages'
-import { formatDate } from '../../utils/formatDate'
 import {
   getDebts,
   getDebtsFromExternalData,
@@ -65,7 +64,7 @@ export const debtsSection = buildSection({
             getDebts(application).map<StaticText[]>((debt) => [
               debt.chargeTypeName,
               debt.chargeItemSubject,
-              formatDate(debt.finalDueDate),
+              debt.finalDueDate,
               formatCurrency(debt.debts),
             ]),
           expandedRows: {
@@ -79,7 +78,7 @@ export const debtsSection = buildSection({
             rows: (application) =>
               getDebts(application).map<StaticText[][]>((debt) => [
                 [
-                  formatDate(debt.dueDate),
+                  debt.dueDate,
                   debt.timePeriod,
                   AMOUNT_UNAVAILABLE,
                   AMOUNT_UNAVAILABLE,
