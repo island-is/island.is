@@ -5,6 +5,8 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from '@island.is/judicial-system-web/src/components/Cards/IconCard/IconCard.css'
 
+import { getEnteringItemStaggerIndices } from './VerdictTimelineBody.logic'
+
 export type VerdictTimelineItemTone = 'default' | 'critical'
 
 export interface VerdictTimelineItem {
@@ -24,27 +26,33 @@ interface Props {
  * card, which fills it with the defendant name and adds nothing.
  *
  * Items appearing after the first render animate in one after another, so a
- * newly registered date visibly lands in the list.
+ * newly registered date visibly lands in the list - whether it is appended or
+ * takes the place of another item, as the appeal bullet does the stance bullet.
+ * Which items those are is decided by getEnteringItemStaggerIndices.
  */
 const VerdictTimelineBody: FC<PropsWithChildren<Props>> = (props) => {
   const { eyebrow, items, children } = props
 
-  const hasMountedRef = useRef<boolean>(false)
-  const previousItemCountRef = useRef<number>(0)
+  // The texts shown by the previous render, or null before the first one. The
+  // text doubles as the item's identity, as it already does for its key.
+  const previousTextsRef = useRef<ReadonlySet<string> | null>(null)
 
   useEffect(() => {
-    hasMountedRef.current = true
-    previousItemCountRef.current = items.length
-  }, [items.length])
+    previousTextsRef.current = new Set(items.map((item) => item.text))
+  })
+
+  const staggerIndices = getEnteringItemStaggerIndices(
+    previousTextsRef.current,
+    items,
+  )
 
   return (
     <Box className={styles.container}>
       <Text variant="eyebrow">{eyebrow}</Text>
       <AnimatePresence initial={false}>
         {items.map((item, index) => {
-          const addedStartIndex = previousItemCountRef.current
-          const isNewItem = hasMountedRef.current && index >= addedStartIndex
-          const staggerIndex = isNewItem ? index - addedStartIndex : 0
+          const staggerIndex = staggerIndices[index]
+          const isNewItem = staggerIndex !== undefined
 
           return (
             <motion.div

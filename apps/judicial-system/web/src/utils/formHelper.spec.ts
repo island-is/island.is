@@ -7,12 +7,14 @@ import {
   PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import { faker } from '@island.is/shared/mocking'
 
 import {
   findFirstInvalidStep,
   hasDateChanged,
   removeErrorMessageIfValid,
+  setParentCheckboxAndSendToServer,
   toggleInArray,
   validateAndSendToServer,
 } from './formHelper'
@@ -205,6 +207,95 @@ describe('findLastValidStep', () => {
     )
 
     expect(lastValidStep).toEqual(PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE)
+  })
+})
+
+describe('setParentCheckboxAndSendToServer', () => {
+  const childValues = [
+    CaseLegalProvisions._115_1_A,
+    CaseLegalProvisions._115_1_B,
+    CaseLegalProvisions._115_1_C,
+  ]
+
+  test('should add only the parent when checking it', () => {
+    // Arrange
+    const setWorkingCase = jest.fn()
+    const updateCase = jest.fn()
+    const id = faker.datatype.uuid()
+    const theCase = {
+      id,
+      legalProvisions: [CaseLegalProvisions._95_1_A],
+    } as Case
+
+    // Act
+    setParentCheckboxAndSendToServer(
+      'legalProvisions',
+      CaseLegalProvisions._115_1,
+      childValues,
+      theCase,
+      setWorkingCase,
+      updateCase,
+    )
+
+    // Assert
+    expect(updateCase).toHaveBeenCalledWith(id, {
+      legalProvisions: [
+        CaseLegalProvisions._95_1_A,
+        CaseLegalProvisions._115_1,
+      ],
+    })
+  })
+
+  test('should remove the parent and all its children when unchecking it', () => {
+    // Arrange
+    const setWorkingCase = jest.fn()
+    const updateCase = jest.fn()
+    const id = faker.datatype.uuid()
+    const theCase = {
+      id,
+      legalProvisions: [
+        CaseLegalProvisions._95_1_A,
+        CaseLegalProvisions._115_1,
+        CaseLegalProvisions._115_1_A,
+        CaseLegalProvisions._115_1_C,
+      ],
+    } as Case
+
+    // Act
+    setParentCheckboxAndSendToServer(
+      'legalProvisions',
+      CaseLegalProvisions._115_1,
+      childValues,
+      theCase,
+      setWorkingCase,
+      updateCase,
+    )
+
+    // Assert
+    expect(updateCase).toHaveBeenCalledWith(id, {
+      legalProvisions: [CaseLegalProvisions._95_1_A],
+    })
+  })
+
+  test('should not call the updateCase function when the case has no id', () => {
+    // Arrange
+    const setWorkingCase = jest.fn()
+    const updateCase = jest.fn()
+    const theCase = { id: '', legalProvisions: [] } as unknown as Case
+
+    // Act
+    setParentCheckboxAndSendToServer(
+      'legalProvisions',
+      CaseLegalProvisions._115_1,
+      childValues,
+      theCase,
+      setWorkingCase,
+      updateCase,
+    )
+
+    // Assert
+    expect(updateCase).not.toHaveBeenCalled()
+    expect(setWorkingCase).toHaveBeenCalled()
   })
 })
 
