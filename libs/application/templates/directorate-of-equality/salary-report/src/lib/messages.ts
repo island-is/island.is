@@ -144,6 +144,11 @@ export const messages = {
         id: 'doe.sr.application:prerequisites.section.title',
         defaultMessage: 'Gagnaöflun',
       },
+      description: {
+        id: 'doe.sr.application:prerequisites.section.description#markdown',
+        defaultMessage:
+          'Hér má lesa nánar um [þjónustu- og gagnakerfi Jafnréttisstofu](https://island.is/s/jafnrettisstofa/thjonustu-og-gagnakerfi).',
+      },
       checkboxLabel: {
         id: 'doe.sr.application:prerequisites.section.checkboxLabel',
         defaultMessage:
@@ -1468,6 +1473,14 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupPromptNeutral',
         defaultMessage:
           'Skráðu ástæður og fyrirhugaðar aðgerðir fyrir þennan hóp.',
+      },
+      instructionsLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.instructionsLabel',
+        defaultMessage: 'Leiðbeiningar',
+      },
+      instructionsLink: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.instructionsLink',
+        defaultMessage: 'https://island.is/s/jafnrettisstofa/urbotaaaetlun',
       },
       postponeCardTitle: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCardTitle',
