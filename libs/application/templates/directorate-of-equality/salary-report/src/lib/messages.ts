@@ -35,6 +35,12 @@ export const messages = {
       defaultMessage:
         'Fyrirtæki er nú þegar með innsenda skýrslu sem er í vinnslu hjá ritstjórn.',
     },
+    // Shown at submit, not prerequisites — approval can lapse while the draft sits open.
+    missingEqualityReport: {
+      id: 'doe.sr.application:errors.missingEqualityReport',
+      defaultMessage:
+        'Engin samþykkt jafnréttisáætlun fannst hjá Jafnréttisstofu. Ekki er hægt að senda inn launagreiningu fyrr en jafnréttisáætlun fyrirtækisins hefur verið samþykkt.',
+    },
     retryButton: {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
@@ -1635,6 +1641,22 @@ export const messages = {
     contactPerson: {
       id: 'doe.sr.application:overview.contactPerson',
       defaultMessage: 'Tengiliður',
+    },
+    subsidiaries: {
+      id: 'doe.sr.application:overview.subsidiaries',
+      defaultMessage: 'Dótturfyrirtæki',
+    },
+    hasSubsidiaries: {
+      id: 'doe.sr.application:overview.hasSubsidiaries',
+      defaultMessage: 'Inniheldur dótturfyrirtæki',
+    },
+    yesSubsidiaries: {
+      id: 'doe.sr.application:overview.yesSubsidiaries',
+      defaultMessage: 'Já',
+    },
+    noSubsidiaries: {
+      id: 'doe.sr.application:overview.noSubsidiaries',
+      defaultMessage: 'Nei',
     },
     salaryAnalysisTitle: {
       id: 'doe.sr.application:overview.salaryAnalysisTitle',

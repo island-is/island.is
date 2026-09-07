@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 
 export const getMarketValueShare = (answers: FormValue) => {
   const assets = getValueViaPath(answers, 'estate.assets')

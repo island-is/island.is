@@ -51,7 +51,14 @@ const template: ApplicationTemplate<
     ApplicationConfigurations[ApplicationTypes.EQUALITY_REPORT].translation,
   dataSchema,
   newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
   stateMachineOptions: {
@@ -302,6 +309,14 @@ const template: ApplicationTemplate<
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: messages.historyLogs.draftRetry,
               },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: messages.inReview.approvedHistoryLog,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: messages.inReview.rejectedHistoryLog,
+              },
             ],
           },
           roles: [
@@ -347,6 +362,12 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
             actions: 'markRevised',
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
           },
         },
       },
