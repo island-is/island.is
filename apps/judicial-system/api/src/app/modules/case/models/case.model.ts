@@ -443,6 +443,12 @@ export class Case {
   @Field(() => [AppealCase], { nullable: true })
   readonly rulingOrderAppealCases?: AppealCase[]
 
+  // The appeal of an indictment verdict, when one has been filed. One per case
+  // however many defendants have joined it; who appealed and when is in its
+  // event log.
+  @Field(() => AppealCase, { nullable: true })
+  readonly verdictAppealCase?: AppealCase
+
   @Field(() => [AppealDecisionResponse], { nullable: true })
   readonly appealDecisions?: AppealDecisionResponse[]
 

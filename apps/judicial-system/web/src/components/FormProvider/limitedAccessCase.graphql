@@ -251,6 +251,22 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealRulingModifiedHistory
       rulingFileId
     }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
+    }
     rulingOrderAppealCases {
       id
       appealState
