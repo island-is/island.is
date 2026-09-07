@@ -1,8 +1,9 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
-import { mockJudgeQuery } from '../../utils/mocks'
-import { UserProvider } from '../UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
+
 import Logo from './Logo'
 
 describe('Logo', () => {
@@ -19,5 +20,23 @@ describe('Logo', () => {
     // Assert
     expect(await screen.findByText('Héraðsdómur')).toBeInTheDocument()
     expect(await screen.findByText('Reykjavíkur')).toBeInTheDocument()
+  })
+
+  test('hides the decorative institution logo from assistive technology', async () => {
+    // Act
+    const { container } = render(
+      <MockedProvider mocks={[...mockJudgeQuery]} addTypename={false}>
+        <UserProvider authenticated={true}>
+          <Logo />
+        </UserProvider>
+      </MockedProvider>,
+    )
+
+    // Assert - the institution name is already conveyed as adjacent text, so the
+    // logo SVG is marked decorative to avoid a redundant announcement.
+    await screen.findByText('Héraðsdómur')
+    const svg = container.querySelector('svg')
+    expect(svg).toHaveAttribute('aria-hidden', 'true')
+    expect(svg).toHaveAttribute('focusable', 'false')
   })
 })

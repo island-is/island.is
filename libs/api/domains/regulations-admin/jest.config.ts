@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-regulations-admin',
   preset: '../../../../jest.preset.js',
   globals: {},

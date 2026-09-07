@@ -18,6 +18,7 @@ import {
 } from '@nestjs/graphql'
 import { FormsService } from './forms.service'
 import {
+  CopyFormInput,
   CreateFormInput,
   GetFormInput,
   GetFormsInput,
@@ -72,10 +73,10 @@ export class FormsResolver {
     nullable: true,
   })
   async copyForm(
-    @Args('input', { type: () => GetFormInput }) id: GetFormInput,
+    @Args('input', { type: () => CopyFormInput }) input: CopyFormInput,
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
-    return this.formsService.copyForm(user, id)
+    return this.formsService.copyForm(user, input)
   }
 
   @Query(() => FormResponse, {

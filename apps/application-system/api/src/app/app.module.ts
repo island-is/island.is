@@ -75,9 +75,11 @@ import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
+import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorate-of-equality'
 
 @Module({
   imports: [
@@ -150,9 +152,11 @@ import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
         PaymentsApiClientConfig,
         VmstUnemploymentClientConfig,
         HmsRentalAgreementClientConfig,
+        HousingBenefitsConfig,
         ExemptionForTransportationClientConfig,
         ZendeskServiceConfig,
         RecyclingFundClientConfig,
+        DirectorateOfEqualityClientConfig,
       ],
     }),
   ],

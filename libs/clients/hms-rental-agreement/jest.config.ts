@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-hms-rental-agreement',
   preset: './jest.preset.js',
   rootDir: '../../..',

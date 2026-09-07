@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
-import { Dispatch, useEffect, useState } from 'react'
+import { Dispatch, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import type { Action } from '../../lib'
@@ -35,7 +35,6 @@ export const IndividualApplicant = ({
   const { locale, formatMessage } = useIntl()
   const { lang } = useLocale()
   const { control, setValue, unregister, trigger } = useFormContext()
-  const [showError, setShowError] = useState(false)
 
   const emailFromState = getValue(applicant, 'email') ?? ''
   const phoneNumberFromState = getValue(applicant, 'phoneNumber') ?? ''
@@ -92,26 +91,29 @@ export const IndividualApplicant = ({
             nationalId={nationalId}
             name={getValue(applicant, 'name')}
           />
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-              <Input
-                label={formatMessage(m.address)}
-                name="address"
-                readOnly
-                value={getValue(applicant, 'address') || ''}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '4/12', '4/12']}>
-              <Box marginTop={[2, 2, 0, 0]}>
+
+          {applicant.fieldSettings?.isAddressRequired && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
                 <Input
-                  label={formatMessage(m.postalCode)}
-                  name="postalCode"
+                  label={formatMessage(m.address)}
+                  name={`${applicant.id}.address`}
                   readOnly
-                  value={getValue(applicant, 'postalCode') || ''}
+                  value={getValue(applicant, 'address') || ''}
                 />
-              </Box>
-            </GridColumn>
-          </GridRow>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '4/12', '4/12']}>
+                <Box marginTop={[2, 2, 0, 0]}>
+                  <Input
+                    label={formatMessage(m.postalCode)}
+                    name={`${applicant.id}.postalCode`}
+                    readOnly
+                    value={getValue(applicant, 'postalCode') || ''}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
+          )}
 
           {applicant.fieldSettings?.isEmailRequired && (
             <Controller
@@ -135,7 +137,6 @@ export const IndividualApplicant = ({
                   label={formatMessage(m.email)}
                   value={field.value}
                   onChange={(e) => {
-                    setShowError(false)
                     field.onChange(e)
                     if (dispatch) {
                       dispatch({
@@ -149,7 +150,6 @@ export const IndividualApplicant = ({
                   }}
                   onBlur={() => {
                     field.onBlur()
-                    setShowError(true)
                     trigger(field.name)
                   }}
                   errorMessage={fieldState.error?.message}

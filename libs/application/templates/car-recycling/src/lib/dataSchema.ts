@@ -13,17 +13,22 @@ const Vehicles = z
     latestMileage: z.number().optional().nullable(),
   })
   .refine(
-    ({ requiresMileageRegistration, fuelCode, mileage }) =>
-      requiresMileageRegistration ||
-      Object.values(FuelCodes).includes(fuelCode as FuelCodes)
-        ? Boolean(mileage && mileage !== '' && mileage !== '0 ')
-        : true,
+    ({ requiresMileageRegistration, fuelCode, mileage }) => {
+      if (
+        requiresMileageRegistration ||
+        Object.values(FuelCodes).includes(fuelCode as FuelCodes)
+      ) {
+        const parsed = +(mileage ?? '0').trim().replace(/[.,\s]/g, '')
+        return Number.isFinite(parsed) && parsed > 0
+      }
+      return true
+    },
     { path: ['mileage'], params: errorMessages.mileageMissing },
   )
   .refine(
     ({ mileage, latestMileage }) => {
-      // Mileage is an string and we need to convert it to a number and remove the dot
-      const computedMileage = +(mileage ?? '0').replace('.', '')
+      // Mileage is a string and we need to convert it to a number, removing thousand separators (dots, commas) and whitespace
+      const computedMileage = +(mileage ?? '0').trim().replace(/[.,\s]/g, '')
 
       // If the owner decided to enter mileage then we need to check if the mileage is greater than or equal than last mileage registration
       if (computedMileage > 0 && latestMileage) {

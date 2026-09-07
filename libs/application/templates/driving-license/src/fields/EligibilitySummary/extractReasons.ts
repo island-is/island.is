@@ -1,23 +1,32 @@
 import { MessageDescriptor } from 'react-intl'
 import { requirementsMessages } from '../../lib/messages'
 import { ApplicationEligibility, RequirementKey } from '@island.is/api/schema'
-import { ReviewSectionState, Step } from './ReviewSection'
+import { ReviewSectionState, Step } from './ReviewSection/types'
 
-export const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
+export const extractReasons = (
+  eligibility: ApplicationEligibility,
+  locale: 'is' | 'en' = 'is',
+): Step[] => {
   return eligibility.requirements.map(
-    ({ key, requirementMet, daysOfResidency }) => ({
-      ...requirementKeyToStep(key, requirementMet),
-      state: requirementMet
-        ? ReviewSectionState.complete
-        : ReviewSectionState.requiresAction,
-      daysOfResidency: daysOfResidency ?? undefined,
-    }),
+    ({ key, requirementMet, daysOfResidency, messageIs, messageEn }) => {
+      // RLS text is already translated; pick the current locale. For en with no
+      // English text, fall through to the generic message (not Icelandic).
+      const message = (locale === 'en' ? messageEn : messageIs) ?? undefined
+      return {
+        ...requirementKeyToStep(key, requirementMet, message),
+        state: requirementMet
+          ? ReviewSectionState.complete
+          : ReviewSectionState.requiresAction,
+        daysOfResidency: daysOfResidency ?? undefined,
+      }
+    },
   )
 }
 
 const getDeniedByServiceMessageDescription = (
   key: RequirementKey,
-): MessageDescriptor => {
+  message?: string,
+): MessageDescriptor | string => {
   switch (key) {
     case RequirementKey.noLicenseFound:
     case RequirementKey.noTempLicense:
@@ -28,17 +37,19 @@ const getDeniedByServiceMessageDescription = (
     case RequirementKey.noExtendedDrivingLicense:
       return requirementsMessages.noExtendedDrivingLicenseTitle
     default:
-      return requirementsMessages.rlsDefaultDeniedDescription
+      // Prefer RLS's own description for codes we don't curate ourselves; fall
+      // back to the generic "contact sýslumaður" message when RLS has none.
+      return message ?? requirementsMessages.rlsDefaultDeniedDescription
   }
 }
 
-// TODO: we need a better way of getting the translated string in here, outside
-// of react. Possibly we should just make a more flexible results screen.
-// This string ends up being used as the paramejter displayed as the error message
-// for the failed dataprovider
+// The returned description is rendered by ReviewSection. For uncurated RLS
+// codes it is an already-translated string (extractReasons has already picked
+// the current locale's text) rather than a MessageDescriptor.
 const requirementKeyToStep = (
   key: RequirementKey,
   requirementMet: boolean,
+  message?: string,
 ): Omit<Step, 'state'> => {
   switch (key) {
     case RequirementKey.drivingSchoolMissing:
@@ -63,7 +74,7 @@ const requirementKeyToStep = (
         title: requirementsMessages.rlsTitle,
         description: requirementMet
           ? requirementsMessages.rlsAcceptedDescription
-          : getDeniedByServiceMessageDescription(key),
+          : getDeniedByServiceMessageDescription(key, message),
       }
     case RequirementKey.localResidency:
       return {
@@ -86,6 +97,13 @@ const requirementKeyToStep = (
         description: requirementsMessages.noExtendedDrivingLicenseDescription,
       }
     default:
-      throw new Error('Unknown requirement reason - should not happen')
+      // An unmapped requirement key: prefer RLS's own description if present,
+      // otherwise the generic denied message. (Previously this threw.)
+      return {
+        title: requirementsMessages.rlsTitle,
+        description: requirementMet
+          ? requirementsMessages.rlsAcceptedDescription
+          : message ?? requirementsMessages.rlsDefaultDeniedDescription,
+      }
   }
 }

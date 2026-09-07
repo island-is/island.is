@@ -1,5 +1,5 @@
 /**
- * @deprecated Use `Table` from `@island.is/portals/my-pages/core` instead.
+ * @deprecated Use `PortalTable` from `@island.is/portals/my-pages/core` instead.
  * `Table` uses @tanstack/react-table v8 and accepts typed `ColumnDef<T>[]` column definitions.
  */
 import {

@@ -4,7 +4,6 @@ import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
   Button,
   FormControl,
-  Paragraph,
   Radio,
   Stack,
   Text,
@@ -69,10 +68,6 @@ const ThemePropertiesField = () => {
     value: ThemeProperties[K],
   ) => {
     setState((prevState) => ({ ...prevState, [key]: value }))
-  }
-
-  if (!sdk.user.spaceMembership.admin) {
-    return <Paragraph>(Only admins can edit this JSON field)</Paragraph>
   }
 
   return (

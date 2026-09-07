@@ -7,7 +7,7 @@ import {
 const mapFjsPaymentMethodTo: Record<FjsPaymentMethod, PaymentMethod | null> = {
   [FjsPaymentMethod.CARD]: PaymentMethod.CARD,
   [FjsPaymentMethod.CLAIM]: PaymentMethod.INVOICE,
-  [FjsPaymentMethod.TRANSFER]: null, // not supported yet
+  [FjsPaymentMethod.BANK_TRANSFER]: PaymentMethod.BANK_TRANSFER,
 }
 
 /**

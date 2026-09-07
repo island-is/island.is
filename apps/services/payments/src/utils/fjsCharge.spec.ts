@@ -1,5 +1,7 @@
 import { PayInfoPaymentMeansEnum } from '@island.is/clients/charge-fjs-v2'
+import { FjsErrorCode } from '@island.is/shared/constants'
 import {
+  fjsErrorMessageToCode,
   generateChargeFJSPayload,
   GenerateChargeFJSPayloadInput,
 } from './fjsCharge'
@@ -42,6 +44,20 @@ describe('generateChargeFJSPayload', () => {
 
     expect(withoutPayinfo.payInfo).toBeUndefined()
     expect(withPayinfo.payInfo).toEqual(payInfo)
+  })
+
+  it('should format effectiveDate as yyyy-MM-dd in effictiveDate, and omit it when not passed', () => {
+    const withoutEffectiveDate = generateChargeFJSPayload({
+      ...sampleInput,
+    })
+    const withEffectiveDate = generateChargeFJSPayload({
+      ...sampleInput,
+      // Local-time constructor so the formatted day is timezone-independent.
+      effectiveDate: new Date(2026, 5, 9, 13, 45, 30),
+    })
+
+    expect(withoutEffectiveDate.effictiveDate).toBeUndefined()
+    expect(withEffectiveDate.effictiveDate).toBe('2026-06-09')
   })
 
   it('should include extraData if passed as input and default to empty array if not passed', () => {
@@ -259,5 +275,29 @@ describe('generateChargeFJSPayload', () => {
     })
 
     expect(result.charges[0].reference).toBe('')
+  })
+})
+
+describe('fjsErrorMessageToCode', () => {
+  it('maps the "charge already created" message to AlreadyCreatedCharge', () => {
+    expect(fjsErrorMessageToCode('Búið að taka á móti álagningu')).toBe(
+      FjsErrorCode.AlreadyCreatedCharge,
+    )
+  })
+
+  it('maps the "cancellation already received" message to AlreadyDeletedCharge', () => {
+    expect(
+      fjsErrorMessageToCode('Búið að taka á móti niðurfellingu á álagningu'),
+    ).toBe(FjsErrorCode.AlreadyDeletedCharge)
+  })
+
+  it('defaults to FailedToCreateCharge for unknown messages', () => {
+    expect(fjsErrorMessageToCode('some other error')).toBe(
+      FjsErrorCode.FailedToCreateCharge,
+    )
+  })
+
+  it('returns null for unknown messages when onlyKnownCode is set', () => {
+    expect(fjsErrorMessageToCode('some other error', true)).toBeNull()
   })
 })

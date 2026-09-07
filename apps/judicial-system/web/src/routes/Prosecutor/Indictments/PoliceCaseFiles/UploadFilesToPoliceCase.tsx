@@ -1,28 +1,29 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 
 import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
-import { Item } from '@island.is/judicial-system-web/src/components'
+import type { Item } from '@island.is/judicial-system-web/src/components'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  PoliceCaseFileCheck,
+  PoliceCaseFilesData,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
-  CaseFile,
-  CaseFileCategory,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+  PoliceCaseFiles,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import {
-  mapPoliceCaseFileToPoliceCaseFileCheck,
-  PoliceCaseFileCheck,
-  PoliceCaseFiles,
-  PoliceCaseFilesData,
-} from '../../components'
 import { strings } from './PoliceCaseFilesRoute.strings'
 
 interface UploadFilesToPoliceCaseProps {
@@ -57,9 +58,14 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
 
   const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
     useState<boolean>(false)
-  const [policeCaseFileList, setPoliceCaseFileList] = useState<
-    PoliceCaseFileCheck[]
-  >([])
+
+  const policeCaseFileList = useMemo(
+    () =>
+      policeCaseFilesData.files
+        .filter((file) => !uploadFiles.some((f) => f.policeFileId === file.id))
+        .map(mapPoliceCaseFileToPoliceCaseFileCheck),
+    [policeCaseFilesData.files, uploadFiles],
+  )
 
   const errorMessage = useMemo(() => {
     if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
@@ -76,48 +82,10 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
     setAllUploaded(allFilesDoneOrError && !isUploadingPoliceCaseFiles)
   }, [allFilesDoneOrError, isUploadingPoliceCaseFiles, setAllUploaded])
 
-  useEffect(() => {
-    if (policeCaseFilesData.files?.length === 0) {
-      return
-    }
-
-    setPoliceCaseFileList(
-      policeCaseFilesData.files
-        ?.filter(
-          (file) =>
-            !caseFiles.some((caseFile) => caseFile.policeFileId === file.id),
-        )
-        .map(mapPoliceCaseFileToPoliceCaseFileCheck) ?? [],
-    )
-  }, [caseFiles, policeCaseFilesData.files, policeCaseNumber])
-
   const uploadPoliceCaseFileCallback = (file: TUploadFile, id?: string) => {
     if (id) {
-      addUploadFile({ ...file, id: id ?? file.id })
+      addUploadFile({ ...file, id })
     }
-
-    setPoliceCaseFileList((previous) =>
-      id
-        ? previous.filter((p) => p.id !== file.id)
-        : previous.map((p) =>
-            p.id === file.id ? { ...p, checked: false } : p,
-          ),
-    )
-  }
-
-  const removeFileCB = (file: TUploadFile) => {
-    const policeCaseFile = policeCaseFilesData.files.find(
-      (f) => f.id === file.policeFileId,
-    )
-
-    if (policeCaseFile) {
-      setPoliceCaseFileList((previous) => [
-        mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-        ...previous,
-      ])
-    }
-
-    removeUploadFile(file)
   }
 
   const onPoliceCaseFileUpload = async (selectedFiles: Item[]) => {
@@ -204,7 +172,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
           )
         }
         onOpenFile={(file) => onOpenFile(file)}
-        onRemove={(file) => handleRemove(file, removeFileCB)}
+        onRemove={(file) => handleRemove(file, removeUploadFile)}
         onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}
       />

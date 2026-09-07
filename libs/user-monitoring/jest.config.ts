@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'user-monitoring',
   preset: './jest.preset.js',
   rootDir: '../..',

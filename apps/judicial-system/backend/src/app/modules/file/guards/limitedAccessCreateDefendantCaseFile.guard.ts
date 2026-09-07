@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../repository'
@@ -17,6 +16,8 @@ const allowedCaseFileCategories = [
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
   CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+  CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
 ]
 
 @Injectable()
@@ -38,11 +39,7 @@ export class LimitedAccessCreateDefendantCaseFileGuard implements CanActivate {
 
     // Verify the logged-in user is the confirmed defender for this defendant
     if (
-      !defendant.isDefenderChoiceConfirmed ||
-      !defendant.defenderNationalId ||
-      !normalizeAndFormatNationalId(user.nationalId).includes(
-        defendant.defenderNationalId,
-      )
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
     ) {
       return false
     }

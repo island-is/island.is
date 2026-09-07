@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'services-contentful-entry-tagger',
   preset: './jest.preset.js',
   rootDir: '../../..',

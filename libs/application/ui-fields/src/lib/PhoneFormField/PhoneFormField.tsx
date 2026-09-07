@@ -5,6 +5,8 @@ import {
   buildFieldRequired,
   formatText,
   formatTextWithLocale,
+  resolveFieldClearOnChange,
+  resolveFieldId,
 } from '@island.is/application/core'
 import { FieldBaseProps, PhoneField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -13,6 +15,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
 
@@ -47,6 +50,8 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
   } = field
   const { control, clearErrors } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
+  const resolvedId = resolveFieldId({ id }, application, user)
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -65,7 +70,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
         <PhoneInputController
           disabled={disabled}
           readOnly={buildFieldReadOnly(application, readOnly)}
-          id={id}
+          id={resolvedId}
           dataTestId={dataTestId}
           allowedCountryCodes={allowedCountryCodes}
           placeholder={formatText(
@@ -90,14 +95,17 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
           disableDropdown={!enableCountrySelector}
           onChange={(e) => {
             if (error) {
-              clearErrors(id)
+              clearErrors(resolvedId)
             }
             onChange(e)
           }}
           defaultValue={getDefaultValue(field, application, locale)}
           backgroundColor={backgroundColor}
           required={buildFieldRequired(application, required)}
-          clearOnChange={clearOnChange}
+          clearOnChange={resolveFieldClearOnChange(
+            { clearOnChange: field.clearOnChange },
+            application,
+          )}
           clearOnChangeDefaultValue={clearOnChangeDefaultValue}
         />
       </Box>

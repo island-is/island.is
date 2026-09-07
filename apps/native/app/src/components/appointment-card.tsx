@@ -6,6 +6,8 @@ import calendarIcon from '@/assets/icons/calendar.png'
 import chevronForward from '@/assets/icons/chevron-forward.png'
 import locationIcon from '@/assets/icons/location.png'
 import timeOutlineIcon from '@/assets/icons/time-outline.png'
+import videoCameraIcon from '@/assets/icons/video-camera.png'
+import { HealthDirectorateAppointmentModality } from '@/graphql/types/schema'
 import { Typography } from '@/ui'
 import { dynamicColor } from '@/ui/utils/dynamic-color'
 import { formatAppointmentDate } from '../utils/format-appointment-date'
@@ -69,6 +71,7 @@ interface AppointmentCardProps {
   practitioners?: string[]
   date: string
   location?: string
+  modality?: HealthDirectorateAppointmentModality | null
   onPress(id: string): void
 }
 
@@ -78,6 +81,7 @@ export function AppointmentCard({
   practitioners,
   date,
   location,
+  modality,
   onPress,
 }: AppointmentCardProps) {
   const theme = useTheme()
@@ -121,13 +125,22 @@ export function AppointmentCard({
             </Row>
           )}
 
-          {location && (
+          {modality === HealthDirectorateAppointmentModality.Video ? (
             <Row>
-              <IconImage source={locationIcon as ImageSourcePropType} />
+              <IconImage source={videoCameraIcon as ImageSourcePropType} />
               <Typography variant="body3" color={theme.color.dark400}>
-                {location}
+                {intl.formatMessage({ id: 'health.appointments.videoCall' })}
               </Typography>
             </Row>
+          ) : (
+            location && (
+              <Row>
+                <IconImage source={locationIcon as ImageSourcePropType} />
+                <Typography variant="body3" color={theme.color.dark400}>
+                  {location}
+                </Typography>
+              </Row>
+            )
           )}
         </Data>
         <ChevronIcon>

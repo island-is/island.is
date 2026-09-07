@@ -9,3 +9,8 @@ export const GetAttachmentTypesApi = defineTemplateApi({
   action: 'getAttachmentTypes',
   externalDataId: 'attachmentTypes',
 })
+
+export const GetRequestedAttachments = defineTemplateApi({
+  action: 'getRequestedAttachments',
+  externalDataId: 'requestedAttachments',
+})

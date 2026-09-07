@@ -1,17 +1,18 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
+import type { Item } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
-  Item,
   SelectableList,
 } from '@island.is/judicial-system-web/src/components'
+import type { PoliceCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseOrigin,
   CaseType,
-  PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './PoliceCaseFiles.strings'
@@ -86,12 +87,15 @@ const PoliceCaseFiles: FC<Props> = ({
           : policeCaseFiles?.isLoading
       }
       successMessage={
+        !policeCaseFiles?.isLoading &&
+        policeCaseFiles &&
+        policeCaseFiles.files.length > 0 &&
         policeCaseFileList?.length === 0
           ? formatMessage(strings.allFilesUploadedMessage)
           : undefined
       }
       warningMessage={
-        policeCaseFiles?.files.length === 0
+        !policeCaseFiles?.isLoading && policeCaseFiles?.files.length === 0
           ? formatMessage(strings.noFilesFoundInLOKEMessage, {
               isIndictmentCase: isIndictmentCase(workingCase.type),
             })

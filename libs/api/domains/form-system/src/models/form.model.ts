@@ -93,6 +93,9 @@ export class Form {
   allowProceedOnValidationFail!: boolean
 
   @Field(() => Boolean)
+  isInaccessible!: boolean
+
+  @Field(() => Boolean)
   hasSummaryScreen!: boolean
 
   @Field(() => OrganizationZendeskInstance, { nullable: true })
@@ -124,6 +127,9 @@ export class Form {
 
   @Field(() => String, { nullable: true })
   lastModifiedBy?: string
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  delegations?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
@@ -148,6 +154,9 @@ export class FormResponse {
 
   @Field(() => [String], { nullable: 'itemsAndList' })
   submissionUrls?: string[]
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  organizationDelegations?: string[]
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]

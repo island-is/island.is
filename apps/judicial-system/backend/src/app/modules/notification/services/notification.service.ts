@@ -4,25 +4,17 @@ import {
   addMessagesToQueue,
   MessageType,
 } from '@island.is/judicial-system/message'
-import {
-  CaseState,
-  RequestCaseNotificationType,
-  type User,
-} from '@island.is/judicial-system/types'
+import { CaseState, type User } from '@island.is/judicial-system/types'
 
-import { EventService } from '../../event'
 import { type Case } from '../../repository'
+import { UserInitiatedAppealNotificationType } from '../dto/appealNotification.dto'
 import { UserInitiatedNotificationType } from '../dto/notification.dto'
 import { SendNotificationResponse } from '../models/sendNotification.response'
 
 @Injectable()
 export class NotificationService {
-  constructor(private readonly eventService: EventService) {}
-
   private addMessageForNotificationToQueue(
-    type:
-      | UserInitiatedNotificationType
-      | RequestCaseNotificationType.ADVOCATE_ASSIGNED,
+    type: UserInitiatedNotificationType,
     user: User,
     theCase: Case,
   ): void {
@@ -34,9 +26,35 @@ export class NotificationService {
     })
   }
 
+  // The appeal case is resolved and validated against the case by
+  // AppealCaseExistsGuard before this is called.
+  async addMessagesForAppealNotificationToQueue(
+    type: UserInitiatedAppealNotificationType,
+    theCase: Case,
+    user: User,
+    appealCaseId: string,
+  ): Promise<SendNotificationResponse> {
+    switch (type) {
+      case UserInitiatedAppealNotificationType.APPEAL_CASE_FILES_UPDATED:
+        addMessagesToQueue({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+          elementId: appealCaseId,
+          body: { type },
+        })
+        break
+      default:
+        throw new InternalServerErrorException(
+          `Invalid appeal notification type ${type}`,
+        )
+    }
+
+    return { notificationSent: true }
+  }
+
   async addMessagesForNotificationToQueue(
     type: UserInitiatedNotificationType,
-    eventOnly = false,
     theCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
@@ -52,27 +70,9 @@ export class NotificationService {
           })
         }
         break
-      case UserInitiatedNotificationType.COURT_DATE:
-        if (eventOnly) {
-          this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase, true)
-
-          // We still want to send the defender a link to the case even if
-          // the judge chooses not to send a calendar invitation
-          // Note: This is only relevant for non-indictment cases
-          this.addMessageForNotificationToQueue(
-            RequestCaseNotificationType.ADVOCATE_ASSIGNED,
-            user,
-            theCase,
-          )
-        } else {
-          this.addMessageForNotificationToQueue(type, user, theCase)
-        }
-        break
+      case UserInitiatedNotificationType.ADVOCATE_ASSIGNED:
       case UserInitiatedNotificationType.HEADS_UP:
-      case UserInitiatedNotificationType.APPEAL_JUDGES_ASSIGNED:
-      case UserInitiatedNotificationType.APPEAL_CASE_FILES_UPDATED:
       case UserInitiatedNotificationType.CASE_FILES_UPDATED:
-      case UserInitiatedNotificationType.RULING_ORDER_ADDED:
         this.addMessageForNotificationToQueue(type, user, theCase)
         break
       default:

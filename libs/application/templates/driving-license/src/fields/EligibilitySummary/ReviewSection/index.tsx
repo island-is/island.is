@@ -6,24 +6,13 @@ import { Application } from '@island.is/application/types'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
-import { MessageDescriptor } from '@formatjs/intl'
 import { requirementsMessages } from '../../../lib/messages'
 import { m } from '../../../lib/messages'
 import isNumber from 'lodash/isNumber'
+import { ReviewSectionState, type Step } from './types'
 
-export enum ReviewSectionState {
-  inProgress = 'In progress',
-  requiresAction = 'Requires action',
-  complete = 'Complete',
-}
-
-export interface Step {
-  title: MessageDescriptor
-  description: MessageDescriptor
-  residenceRequirement?: MessageDescriptor
-  state: ReviewSectionState
-  daysOfResidency?: number
-}
+// Re-export so existing `from './ReviewSection'` consumers keep resolving.
+export { ReviewSectionState, type Step } from './types'
 
 type ReviewSectionProps = {
   application: Application
@@ -97,13 +86,16 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
       </Box>
       <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
         <Text marginTop={1} variant="default">
-          {formatMessage(description)}
+          {typeof description === 'string'
+            ? description
+            : formatMessage(description)}
         </Text>
         {showLocalRequirementDays && (
-          <Text
-            marginTop={2}
-            fontWeight="medium"
-          >{`Þú hefur aðeins búið á Íslandi í ${daysOfResidency} daga.`}</Text>
+          <Text marginTop={2} fontWeight="medium">
+            {formatMessage(m.localResidencyDaysSpent, {
+              days: daysOfResidency,
+            })}
+          </Text>
         )}
       </Box>
     </Box>

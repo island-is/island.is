@@ -45,9 +45,9 @@ interface UpdateVerdict {
   servedBy?: string
   deliveredToDefenderNationalId?: string
   appealDecision?: string
-  appealDate?: Date
+  appealDate?: Date | null
   serviceInformationForDefendant?: InformationForDefendant[]
-  isDefaultJudgement?: boolean
+  isDefaultJudgement?: boolean | null
   isAcquittedByPublicProsecutionOffice?: boolean | null
   defendantHasRequestedAppeal?: boolean | null
   hash?: string

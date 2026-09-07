@@ -1,8 +1,10 @@
 import React, { useRef } from 'react'
 import {
   ActivityIndicator,
+  StyleProp,
   TextInput,
   TextInputProps,
+  TextStyle,
   View,
 } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -77,6 +79,7 @@ interface TextFieldProps extends TIProps {
   disabled?: boolean
   loading?: boolean
   errorMessage?: string
+  inputStyle?: StyleProp<TextStyle>
 }
 
 export const TextField = ({
@@ -84,6 +87,7 @@ export const TextField = ({
   onChange,
   value,
   style,
+  inputStyle,
   disabled = false,
   loading = false,
   errorMessage,
@@ -106,7 +110,14 @@ export const TextField = ({
             value={value}
             ref={inputRef}
             readOnly={readOnly}
+            placeholderTextColor={theme.color.dark300}
             {...rest}
+            // Android vertically centers multiline inputs by default; keep
+            // the text (and placeholder) at the top like iOS does.
+            style={[
+              rest.multiline ? { textAlignVertical: 'top' } : null,
+              inputStyle,
+            ]}
           />
         </View>
         {loading && (

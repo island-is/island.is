@@ -72,7 +72,7 @@ const NationalIdWithName: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             id={nationaIdField}
             label="Kennitala"
             defaultValue={
-              (application.answers[id] as Student)?.nationalId ?? ''
+              (application.answers[id as string] as Student)?.nationalId ?? ''
             }
             format="######-####"
             required
@@ -87,7 +87,9 @@ const NationalIdWithName: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
             id={nameField}
-            defaultValue={(application.answers[id] as Student)?.name ?? ''}
+            defaultValue={
+              (application.answers[id as string] as Student)?.name ?? ''
+            }
             label="Nafn"
             error={
               queryError || data?.identity === null

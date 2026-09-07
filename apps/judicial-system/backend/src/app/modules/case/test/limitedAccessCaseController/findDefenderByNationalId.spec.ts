@@ -83,7 +83,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     it('should look for defender', () => {
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         where: {
-          defenderNationalId: [defenderNationalId, formattedDefenderNationalId],
+          defenderNationalId,
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -97,6 +97,23 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     it('should throw an error', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(`Defender not found`)
+    })
+  })
+
+  describe('national id with dashes', () => {
+    beforeEach(async () => {
+      await givenWhenThen(formattedDefenderNationalId)
+    })
+
+    it('should strip the dash before querying', () => {
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
+        where: {
+          defenderNationalId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
+        order: [['created', 'DESC']],
+      })
     })
   })
 

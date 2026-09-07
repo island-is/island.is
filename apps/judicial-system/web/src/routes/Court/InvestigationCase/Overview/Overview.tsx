@@ -45,14 +45,13 @@ import {
   CaseOrigin,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DraftConclusionModal } from '@island.is/judicial-system-web/src/routes/Court/components'
 import {
   UploadState,
   useCourtUpload,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
-import { DraftConclusionModal } from '../../components'
 
 const Overview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -253,16 +252,20 @@ const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
-            )
-          }
-          nextIsDisabled={uploadState === UploadState.UPLOADING}
-          nextButtonText={formatMessage(icCourtOverview.continueButton.label)}
+          actions={[
+            {
+              text: formatMessage(icCourtOverview.continueButton.label),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                ),
+              disabled: uploadState === UploadState.UPLOADING,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

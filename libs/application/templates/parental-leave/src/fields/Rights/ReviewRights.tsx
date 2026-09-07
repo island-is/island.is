@@ -8,7 +8,7 @@ const ReviewRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
 }) => {
   return (
-    <Box marginY={3} key={field.id}>
+    <Box marginY={3} key={field.id as string}>
       <YourRightsBoxChart application={application} showDisclaimer />
     </Box>
   )

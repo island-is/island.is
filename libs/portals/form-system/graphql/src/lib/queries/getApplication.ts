@@ -8,6 +8,8 @@ export const GET_APPLICATION = gql`
         ...Application
       }
       isLoginTypeAllowed
+      hasRequiredDelegation
+      isInaccessible
     }
   }
   ${ApplicationFragment}

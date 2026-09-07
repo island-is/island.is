@@ -48,8 +48,22 @@ export class UploadStreamApi {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
-        const message = error.response?.data || error.message
-        throw new Error(`Upload failed with status ${status}: ${message}`)
+        const data = error.response?.data
+        const message =
+          data === undefined || data === null
+            ? error.message
+            : typeof data === 'string'
+            ? data
+            : JSON.stringify(data)
+
+        // The status and raw response body are reported separately so that
+        // callers can react to specific responses, such as the file being too
+        // large, without parsing the wrapped log message.
+        throw {
+          status,
+          detail: message,
+          message: `Upload failed with status ${status}: ${message}`,
+        }
       }
 
       throw new Error(

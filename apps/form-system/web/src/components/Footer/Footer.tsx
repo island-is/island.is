@@ -1,12 +1,11 @@
 import { useMutation } from '@apollo/client'
-import { FormSystemField } from '@island.is/api/schema'
+import { FormSystemField, FormSystemSection } from '@island.is/api/schema'
 import { NotificationCommands } from '@island.is/form-system/enums'
 import {
   CREATE_PAYMENT,
   NOTIFY_EXTERNAL_SERVICE,
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
-  SUBMIT_SECTION,
   UPDATE_APPLICATION_SETTINGS,
   removeTypename,
 } from '@island.is/form-system/graphql'
@@ -22,6 +21,52 @@ import { useFormContext } from 'react-hook-form'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import * as styles from './Footer.css'
 
+const emptyScreenError = {
+  hasError: false,
+  title: { is: '', en: '' },
+  message: { is: '', en: '' },
+}
+
+const saveScreenError = {
+  hasError: true,
+  title: { is: 'Ekki tókst að vista', en: 'Could not save' },
+  message: {
+    is: 'Villa kom upp við að vista umsóknina. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while saving the application. Please try again.',
+  },
+}
+
+const submitApplicationError = {
+  hasError: true,
+  title: { is: 'Ekki tókst að senda umsókn', en: 'Could not submit' },
+  message: {
+    is: 'Villa kom upp við að senda umsóknina. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while submitting the application. Please try again.',
+  },
+}
+
+const stripFieldListsFromSections = (
+  sections: FormSystemSection[],
+): FormSystemSection[] =>
+  sections.map((section) => ({
+    ...section,
+    screens: section.screens?.map((screen) =>
+      screen
+        ? {
+            ...screen,
+            fields: screen.fields?.map((field) => {
+              if (!field) return field
+
+              return {
+                ...field,
+                list: undefined,
+              }
+            }),
+          }
+        : screen,
+    ),
+  }))
+
 interface Props {
   externalDataAgreement: boolean
 }
@@ -34,8 +79,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const currentSectionType = currentSection?.data?.sectionType
 
   const submitScreen = useMutation(SAVE_SCREEN)
-  const submitSection = useMutation(SUBMIT_SECTION)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
+  const saveLoading = submitScreen[1].loading || updateDependencies[1].loading
   const [notifyExternal, { loading: notifyLoading }] = useMutation(
     NOTIFY_EXTERNAL_SERVICE,
   )
@@ -84,7 +129,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     state.currentSection.index === 0
       ? formatMessage(m.externalDataConfirmation)
       : onSubmit
-      ? formatMessage(m.submitApplication)
+      ? formatMessage(m.submitApplication2)
       : isCompletedSection
       ? formatMessage(m.openMyPages)
       : formatMessage(m.continue)
@@ -112,6 +157,70 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     (currentSectionType === SectionTypes.PARTIES &&
       hasVisibleApplicantBeforeCurrentScreen())
 
+  const increment = () => {
+    dispatch({
+      type: 'INCREMENT',
+    })
+  }
+
+  const updateCurrentDependencies = async () => {
+    if (currentSectionType !== SectionTypes.INPUT) return true
+
+    try {
+      await updateDependencies[0]({
+        variables: {
+          input: {
+            id: state.application.id,
+            updateApplicationDto: {
+              dependencies: state.application.dependencies,
+            },
+          },
+        },
+      })
+      return true
+    } catch (error) {
+      console.error('Error updating application dependencies:', error)
+      dispatch({
+        type: 'SAVE_FAILED',
+        payload: { screenError: saveScreenError },
+      })
+      return false
+    }
+  }
+
+  const saveCurrentScreen = async (increment?: boolean) => {
+    try {
+      await submitScreen[0]({
+        variables: {
+          input: {
+            submitScreenDto: {
+              applicationId: state.application.id,
+              screenId: state.currentScreen?.data?.id,
+              sectionId: state.currentSection.data.id,
+              increment,
+              sections: stripFieldListsFromSections(
+                removeTypename(state.sections),
+              ),
+            },
+          },
+        },
+      })
+
+      dispatch({
+        type: 'CLEAR_SCREEN_ERROR',
+        payload: { screenError: emptyScreenError },
+      })
+      return true
+    } catch (error) {
+      console.error('Error saving application:', error)
+      dispatch({
+        type: 'SAVE_FAILED',
+        payload: { screenError: saveScreenError },
+      })
+      return false
+    }
+  }
+
   const handleIncrement = async () => {
     if (paymentLoading) return
     const isValid = await validate()
@@ -121,6 +230,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     const isParties = currentSectionType === SectionTypes.PARTIES
 
     if (!isValid && (isParties || !allowProceed)) return
+    if ((state.errors?.length ?? 0) > 0) return
 
     if (isCompletedSection) {
       window.open('/minarsidur', '_blank', 'noopener,noreferrer')
@@ -215,6 +325,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             input: {
               applicationId: state.application.id,
               nationalId: '',
+              organizationNationalId:
+                state.application.organizationNationalId ?? '',
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.VALIDATE,
@@ -243,17 +355,20 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
 
     if (!onSubmit) {
-      dispatch({
-        type: 'INCREMENT',
-        payload: {
-          submitScreen: submitScreen,
-          submitSection: submitSection,
-          updateDependencies: updateDependencies,
-        },
-      })
+      const saved = await saveCurrentScreen(true)
+      if (saved) {
+        increment()
+        await updateCurrentDependencies()
+      }
       return
     }
     try {
+      const saved = await saveCurrentScreen()
+      if (!saved) return
+
+      const updatedDependencies = await updateCurrentDependencies()
+      if (!updatedDependencies) return
+
       const { data } = await submitApplication({
         variables: { input: { id: state.application.id } },
       })
@@ -267,40 +382,38 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         })
         return
       }
-      dispatch({
-        type: 'INCREMENT',
-        payload: {
-          submitScreen: submitScreen,
-          submitSection: submitSection,
-          updateDependencies: updateDependencies,
-        },
-      })
+
+      const completedSaved = await saveCurrentScreen(true)
+      if (!completedSaved) return
+
+      increment()
+
       dispatch({
         type: 'SUBMITTED',
         payload: {
           submitted: true,
-          screenError: {
-            hasError: false,
-            title: { is: '', en: '' },
-            message: { is: '', en: '' },
-          },
+          screenError: emptyScreenError,
         },
       })
     } catch (error) {
       console.error('Error submitting application', error)
-      throw new Error('Error submitting application')
+      dispatch({
+        type: 'SAVE_FAILED',
+        payload: { screenError: submitApplicationError },
+      })
     }
   }
 
-  const handleDecrement = () =>
+  const handleDecrement = async () => {
+    const saved = await saveCurrentScreen(false)
+    if (!saved) return
+
     dispatch({
       type: 'DECREMENT',
-      payload: {
-        submitScreen: submitScreen,
-        submitSection: submitSection,
-        updateDependencies: updateDependencies,
-      },
     })
+
+    await updateCurrentDependencies()
+  }
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
@@ -323,6 +436,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 !enableContinueButton ||
                 paymentLoading ||
                 submitLoading ||
+                saveLoading ||
                 notifyLoading ||
                 (onSubmit && state.isValid === false)
               }
@@ -337,7 +451,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
-                disabled={submitLoading || notifyLoading || paymentLoading}
+                disabled={
+                  submitLoading ||
+                  notifyLoading ||
+                  paymentLoading ||
+                  saveLoading
+                }
               >
                 {formatMessage(m.back)}
               </Button>

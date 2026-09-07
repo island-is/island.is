@@ -4,11 +4,19 @@ import { SortField } from '@island.is/content-search-toolkit'
 import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 
-import { IFeaturedArticles } from '../generated/contentfulTypes'
+import {
+  IArticle,
+  IFeaturedArticles,
+  IManual,
+} from '../generated/contentfulTypes'
 
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
-import { ArticleReference, mapArticleReference } from './articleReference'
+import {
+  ArticleReference,
+  mapArticleReference,
+  mapManualToArticleReference,
+} from './articleReference'
 import { GetArticlesInput } from '../dto/getArticles.input'
 import { Article } from './article.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -54,7 +62,11 @@ export const mapFeaturedArticles = ({
   id: sys.id,
   title: fields.title ?? '',
   image: fields.image ? mapImage(fields.image) : null,
-  articles: (fields.articles ?? []).map(mapArticleReference),
+  articles: (fields.articles ?? []).map((entry) =>
+    entry?.sys?.contentType?.sys?.id === 'manual'
+      ? mapManualToArticleReference(entry as IManual)
+      : mapArticleReference(entry as IArticle),
+  ),
   automaticallyFetchArticles: fields.automaticallyFetchArticles ?? false,
   sortBy: fields.sortBy ?? 'popularity',
   resolvedArticles: {

@@ -1,16 +1,21 @@
 import { useCallback } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import {
+import type {
   CreateCourtSessionInput,
   DeleteCourtSessionInput,
+  PronounceRulingOrallyInput,
+  UpdateCourtSessionAppealDecisionInput,
   UpdateCourtSessionInput,
   UpdateCourtSessionStringInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCourtSessionMutation } from './createCourtSession.generated'
 import { useDeleteCourtSessionMutation } from './deleteCourtSession.generated'
+import { usePronounceRulingOrallyMutation } from './pronounceRulingOrally.generated'
 import { useUpdateCourtSessionMutation } from './updateCourtSession.generated'
+import { useUpdateCourtSessionAppealDecisionMutation } from './updateCourtSessionAppealDecision.generated'
 import { useUpdateCourtSessionStringMutation } from './updateCourtSessionString.generated'
 
 const useCourtSessions = () => {
@@ -19,6 +24,9 @@ const useCourtSessions = () => {
   const [deleteCourtSessionMutation] = useDeleteCourtSessionMutation()
   const [updateCourtSessionStringMutation] =
     useUpdateCourtSessionStringMutation()
+  const [updateCourtSessionAppealDecisionMutation] =
+    useUpdateCourtSessionAppealDecisionMutation()
+  const [pronounceRulingOrallyMutation] = usePronounceRulingOrallyMutation()
 
   const createCourtSession = useCallback(
     async (createCourtSessionInput: CreateCourtSessionInput) => {
@@ -51,7 +59,7 @@ const useCourtSessions = () => {
       try {
         const { data } = await updateCourtSessionMutation({
           variables: {
-            input: updateCourtSession,
+            input: normalizeBlankStrings(updateCourtSession),
           },
         })
 
@@ -70,7 +78,7 @@ const useCourtSessions = () => {
       try {
         const { data } = await updateCourtSessionStringMutation({
           variables: {
-            input: updateCourtSessionString,
+            input: normalizeBlankStrings(updateCourtSessionString),
           },
         })
 
@@ -82,6 +90,53 @@ const useCourtSessions = () => {
       }
     },
     [updateCourtSessionStringMutation],
+  )
+
+  const updateCourtSessionAppealDecision = useCallback(
+    async (
+      updateCourtSessionAppealDecision: UpdateCourtSessionAppealDecisionInput,
+    ) => {
+      try {
+        const { data } = await updateCourtSessionAppealDecisionMutation({
+          variables: {
+            input: updateCourtSessionAppealDecision,
+          },
+        })
+
+        return data?.updateCourtSessionAppealDecision
+      } catch (error) {
+        toast.error('Upp kom villa við að uppfæra ákvörðun um kæru')
+
+        return undefined
+      }
+    },
+    [updateCourtSessionAppealDecisionMutation],
+  )
+
+  // The ruling pronounced in the session is delivered orally: the backend
+  // creates the ruling with no document behind it and links the session to it,
+  // so the session comes back already pointing at the new ruling.
+  const pronounceRulingOrally = useCallback(
+    async (pronounceRulingOrally: PronounceRulingOrallyInput) => {
+      try {
+        const { data } = await pronounceRulingOrallyMutation({
+          variables: {
+            input: pronounceRulingOrally,
+          },
+        })
+
+        if (!data?.pronounceRulingOrally) {
+          throw new Error()
+        }
+
+        return data.pronounceRulingOrally
+      } catch (error) {
+        toast.error('Upp kom villa við að kveða upp úrskurð')
+
+        return undefined
+      }
+    },
+    [pronounceRulingOrallyMutation],
   )
 
   const deleteCourtSession = useCallback(
@@ -107,6 +162,8 @@ const useCourtSessions = () => {
     createCourtSession,
     updateCourtSession,
     updateCourtSessionString,
+    updateCourtSessionAppealDecision,
+    pronounceRulingOrally,
     deleteCourtSession,
   }
 }

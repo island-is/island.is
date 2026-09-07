@@ -5,8 +5,13 @@ import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { BE } from '../lib/constants'
-import { needsHealthCertificateCondition } from '../lib/utils/formUtils'
+import {
+  isRedesignedBTempOrBFull,
+  needsHealthCertificateCondition,
+} from '../lib/utils/formUtils'
 import { useFormContext } from 'react-hook-form'
+
+import type { JSX } from 'react'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -19,11 +24,26 @@ const HealthDeclaration = ({
 }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const props = field.props as { title?: string; label: string }
+  const id = field.id as string
 
   const { setValue, getValues } = useFormContext()
 
   const clearHealthCertificateIfNotNeeded = (value: string) => {
-    if (getValueViaPath(application.answers, 'applicationFor') !== BE) {
+    // Only products whose upload is *conditional* need clearing: BE, and the
+    // redesigned B-temp/B-full flows that now follow BE's rules. 65+ is excluded
+    // because its upload is unconditional, so there is never a state where a
+    // previously-uploaded certificate is no longer wanted.
+    //
+    // Without this, an applicant who answers "yes", uploads, then switches to
+    // "no" keeps an orphaned file in answers: it is neither shown in the summary
+    // nor sent as contentList (both gate on the same predicate), but it stays on
+    // the application, reappears pre-filled if they flip back, and becomes a
+    // real transmission bug the moment contentList is ever sent unconditionally.
+    const usesConditionalUpload =
+      getValueViaPath(application.answers, 'applicationFor') === BE ||
+      isRedesignedBTempOrBFull(application.answers)
+
+    if (!usesConditionalUpload) {
       return
     }
 
@@ -34,7 +54,7 @@ const HealthDeclaration = ({
       ...formValues,
       healthDeclaration: {
         ...formValues.healthDeclaration,
-        [field.id.replace('healthDeclaration.', '')]: value,
+        [id.replace('healthDeclaration.', '')]: value,
       },
     }
 
@@ -50,8 +70,8 @@ const HealthDeclaration = ({
 
   const checkForVisionMismatch = (value: string) => {
     if (
-      field.id !== 'healthDeclaration.usesContactGlasses' &&
-      field.id !== 'healthDeclaration.hasReducedPeripheralVision'
+      id !== 'healthDeclaration.usesContactGlasses' &&
+      id !== 'healthDeclaration.hasReducedPeripheralVision'
     ) {
       return
     }
@@ -60,11 +80,11 @@ const HealthDeclaration = ({
 
     // Get the current value of the other question
     const q1Value =
-      field.id === 'healthDeclaration.usesContactGlasses'
+      id === 'healthDeclaration.usesContactGlasses'
         ? value
         : (getValues('healthDeclaration.usesContactGlasses') as string)
     const q2Value =
-      field.id === 'healthDeclaration.hasReducedPeripheralVision'
+      id === 'healthDeclaration.hasReducedPeripheralVision'
         ? value
         : (getValues('healthDeclaration.hasReducedPeripheralVision') as string)
 
@@ -96,13 +116,13 @@ const HealthDeclaration = ({
       </Box>
       <Box style={{ maxWidth: '200px' }}>
         <RadioController
-          id={field.id}
+          id={id}
           split="1/2"
           smallScreenSplit="1/2"
           largeButtons={false}
           error={error}
           defaultValue={
-            getValueViaPath<string>(application.answers, field.id) ?? undefined
+            getValueViaPath<string>(application.answers, id) ?? undefined
           }
           options={[
             {

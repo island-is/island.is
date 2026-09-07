@@ -31,7 +31,7 @@ export class ShipRegistryClientV2Module {
         authSource: 'context',
         autoAuth: idsClientConfig.isConfigured
           ? {
-              mode: 'tokenExchange',
+              mode: 'auto',
               issuer: idsClientConfig.issuer,
               clientId: idsClientConfig.clientId,
               clientSecret: idsClientConfig.clientSecret,

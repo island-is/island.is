@@ -109,10 +109,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
     if (!questionnaire.sections?.length) return []
 
     return questionnaire.sections
-      .filter((section) => {
-        // First check if the section itself is visible based on its conditions
-        return isSectionVisible(section, answers)
-      })
+      .filter((section) => isSectionVisible(section, answers))
       .map((section) => {
         if (!section.questions?.length) return { ...section, questions: [] }
 
@@ -129,7 +126,6 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
             )
           }
 
-          // Questions without visibility conditions are visible by default
           return true
         })
 
@@ -248,6 +244,15 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
       }
     } else {
       setErrors(allErrors)
+
+      // Bring the first invalid question into view - it is often
+      // scrolled out of sight when the user clicks continue
+      const firstErrorId = visibleQuestions.find((q) => allErrors[q.id])?.id
+      if (firstErrorId) {
+        document
+          .getElementById(`question-${firstErrorId}`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
     }
   }
 
@@ -316,16 +321,22 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                         <Stack space={4}>
                           {section.questions?.map(
                             (question: QuestionnaireQuestion) => (
-                              <QuestionRenderer
+                              <Box
                                 key={question.id}
-                                question={question}
-                                answer={answers[question.id]}
-                                onAnswerChange={handleAnswerChange}
-                                error={errors[question.id]}
-                                disabled={
-                                  question.answerOptions.formula ? true : false
-                                }
-                              />
+                                id={`question-${question.id}`}
+                              >
+                                <QuestionRenderer
+                                  question={question}
+                                  answer={answers[question.id]}
+                                  onAnswerChange={handleAnswerChange}
+                                  error={errors[question.id]}
+                                  disabled={
+                                    question.answerOptions.formula
+                                      ? true
+                                      : false
+                                  }
+                                />
+                              </Box>
                             ),
                           )}
                         </Stack>

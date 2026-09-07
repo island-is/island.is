@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -10,9 +11,7 @@ import {
 import { DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  BlueBox,
   CourtCaseInfo,
-  DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -21,18 +20,11 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import UploadFiles, {
-  FileWithPreviewURL,
-} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseFileCategory,
-  TrackedNotificationType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  formatDateForServer,
-  useCase,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -43,12 +35,39 @@ const AddRulingOrder: FC = () => {
   const [editCount, setEditCount] = useState(0)
   const [visibleModal, setVisibleModal] = useState<'confirmation'>()
   const router = useRouter()
-  const { user } = useContext(UserContext)
-  const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
 
   const previousRoute = `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
 
-  const [confirmationDate, setConfirmationDate] = useState<Date>(new Date())
+  // Arriving from the "Hlaða upp úrskurði" action on a ruling order that was
+  // pronounced orally: the document is written up for that ruling rather than
+  // uploaded as a new one, so it fills in the file that already exists and
+  // keeps the name the ruling was pronounced under.
+  const rulingOrderIdParam = router.query.rulingFileId
+  const rulingOrderId =
+    typeof rulingOrderIdParam === 'string' && rulingOrderIdParam.length > 0
+      ? rulingOrderIdParam
+      : undefined
+
+  // A ruling was asked for but the query cannot say which - repeated, or empty.
+  // That must not read as "no ruling asked for", which would upload a new one.
+  const rulingOrderRequestedButUnusable =
+    'rulingFileId' in router.query && !rulingOrderId
+
+  const pronouncedRulingOrder = rulingOrderId
+    ? workingCase.caseFiles?.find((file) => file.id === rulingOrderId)
+    : undefined
+
+  // Asked to write up a particular ruling that is not on the case. Uploading
+  // anyway would create a new ruling and leave the court record and any appeal
+  // pointing at the one that was asked for, so refuse instead.
+  const pronouncedRulingOrderNotFound =
+    rulingOrderRequestedButUnusable ||
+    Boolean(rulingOrderId && !isLoadingWorkingCase && !pronouncedRulingOrder)
+
+  // These pages are statically optimised, so router.query is empty on the first
+  // client render: until it has hydrated there is no telling whether a ruling
+  // was asked for, and uploading meanwhile would create a new one.
+  const uploadBlocked = !router.isReady || pronouncedRulingOrderNotFound
 
   const {
     uploadFiles,
@@ -58,18 +77,24 @@ const AddRulingOrder: FC = () => {
     removeUploadFile,
     updateUploadFile,
   } = useUploadFiles()
-  const { handleUpload } = useS3Upload(workingCase.id)
-  const { sendNotification } = useCase()
+  const { handleUpload, handleUploadRulingOrderDocument } = useS3Upload(
+    workingCase.id,
+  )
 
   const addFiles = (files: FileWithPreviewURL[]) => {
+    // A ruling that was pronounced has exactly one document, so picking a file
+    // replaces whatever was picked before rather than adding to it.
+    if (pronouncedRulingOrder) {
+      uploadFiles.forEach(removeUploadFile)
+    }
+
     addUploadFiles(
-      files,
+      pronouncedRulingOrder ? files.slice(0, 1) : files,
       {
         status: FileUploadStatus.done,
-        userGeneratedFilename: `${
-          workingCase.courtCaseNumber
-        } Úrskurður ${formatDate(confirmationDate)}`,
-        submissionDate: formatDateForServer(confirmationDate),
+        userGeneratedFilename:
+          pronouncedRulingOrder?.userGeneratedFilename ??
+          `${workingCase.courtCaseNumber} Úrskurður ${formatDate(new Date())}`,
         category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       },
       true,
@@ -77,7 +102,7 @@ const AddRulingOrder: FC = () => {
   }
 
   const handleRename = useCallback(
-    async (fileId: string, newName: string, newDisplayDate: string) => {
+    async (fileId: string, newName: string) => {
       const fileToUpdate = uploadFiles.find((file) => file.id === fileId)
 
       if (!fileToUpdate) {
@@ -87,37 +112,40 @@ const AddRulingOrder: FC = () => {
       updateUploadFile({
         ...fileToUpdate,
         userGeneratedFilename: newName,
-        displayDate: newDisplayDate,
       })
     },
     [updateUploadFile, uploadFiles],
   )
 
   const handleNextButtonClick = useCallback(async () => {
-    const uploadResult = await handleUpload(
-      uploadFiles.filter((file) => file.percent === 0),
-      updateUploadFile,
-    )
+    const filesToUpload = uploadFiles.filter((file) => file.percent === 0)
 
-    if (uploadResult !== 'NONE_SUCCEEDED') {
-      // Some files were added successfully so we send a notification
-      await sendNotification(
-        workingCase.id,
-        TrackedNotificationType.RULING_ORDER_ADDED,
-      )
+    if (uploadBlocked) {
+      return
     }
+
+    const succeeded = pronouncedRulingOrder
+      ? filesToUpload.length > 0 &&
+        (await handleUploadRulingOrderDocument(
+          filesToUpload[0],
+          pronouncedRulingOrder.id,
+          updateUploadFile,
+        ))
+      : (await handleUpload(filesToUpload, updateUploadFile)) ===
+        'ALL_SUCCEEDED'
 
     setVisibleModal(undefined)
 
-    if (uploadResult === 'ALL_SUCCEEDED') {
+    if (succeeded) {
       router.push(previousRoute)
     }
   }, [
     handleUpload,
-    sendNotification,
+    handleUploadRulingOrderDocument,
+    pronouncedRulingOrder,
+    uploadBlocked,
     updateUploadFile,
     uploadFiles,
-    workingCase.id,
     router,
     previousRoute,
   ])
@@ -129,98 +157,71 @@ const AddRulingOrder: FC = () => {
       notFound={caseNotFound}
     >
       <PageHeader title={'Úrskurðir - Réttarvörslugátt'} />
-
-      {isUserAssignedJudge ? (
-        <>
-          <FormContentContainer>
-            <PageTitle>Úrskurðir</PageTitle>
-            <CourtCaseInfo workingCase={workingCase} />
-            <SectionHeading title="Hlaða upp úrskurði" required />
-            <UploadFiles
-              files={uploadFiles}
-              onChange={addFiles}
-              onDelete={removeUploadFile}
-              onRename={handleRename}
-              setEditCount={setEditCount}
+      <FormContentContainer>
+        <PageTitle>Úrskurðir</PageTitle>
+        <CourtCaseInfo workingCase={workingCase} />
+        <SectionHeading title="Hlaða upp úrskurði" required />
+        {pronouncedRulingOrderNotFound && (
+          <Box marginBottom={2}>
+            <AlertMessage
+              type="error"
+              message="Úrskurðurinn sem á að hlaða upp fannst ekki í málinu. Farðu aftur á yfirlit málsins og reyndu aftur."
             />
-            <Box component="section" marginBottom={3}>
-              <Box marginBottom={2}>
-                <Text variant="h4">Úrskurður kveðinn upp</Text>
-              </Box>
-              <BlueBox>
-                <Box>
-                  <DateTime
-                    name="rulingOrderDate"
-                    datepickerLabel="Dagsetning úrskurðar"
-                    maxDate={new Date()}
-                    selectedDate={confirmationDate}
-                    onChange={(date: Date | undefined, valid: boolean) => {
-                      if (date && valid) {
-                        setConfirmationDate(date)
-
-                        uploadFiles.forEach((file) => {
-                          updateUploadFile({
-                            ...file,
-                            submissionDate: formatDateForServer(date),
-                          })
-                        })
-                      }
-                    }}
-                    blueBox={false}
-                    required
-                  />
-                </Box>
-              </BlueBox>
-            </Box>
-          </FormContentContainer>
-          <FormContentContainer isFooter>
-            <FormFooter
-              previousUrl={previousRoute}
-              nextButtonText="Staðfesta úrskurð"
-              nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
-              nextIsDisabled={
-                !isUserAssignedJudge ||
+          </Box>
+        )}
+        <Box marginBottom={2}>
+          <Text>
+            Athugið að dómari þarf að staðfesta úrskurðinn á yfirliti máls eftir
+            að honum hefur verið hlaðið upp.
+          </Text>
+        </Box>
+        <UploadFiles
+          files={uploadFiles}
+          onChange={addFiles}
+          onDelete={removeUploadFile}
+          onRename={handleRename}
+          setEditCount={setEditCount}
+          editableFileAttributes={['fileName']}
+        />
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={previousRoute}
+          actions={[
+            {
+              text: 'Hlaða upp',
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: () => setVisibleModal('confirmation'),
+              disabled:
                 uploadFiles.length === 0 ||
                 !allFilesDoneOrError ||
-                editCount > 0
-              }
-              onNextButtonClick={() => setVisibleModal('confirmation')}
-            />
-          </FormContentContainer>
-          {visibleModal === 'confirmation' && (
-            <Modal
-              title="Viltu staðfesta úrskurð"
-              text="Tilkynning verður send ákæranda og verjanda"
-              primaryButton={{
-                text: 'Staðfesta úrskurð',
-                onClick: async () => {
-                  await handleNextButtonClick()
-                },
-                isDisabled: !allFilesDoneOrError,
-              }}
-              secondaryButton={{
-                text: 'Hætta við',
-                onClick: () => setVisibleModal(undefined),
-              }}
-              onClose={() => setVisibleModal(undefined)}
-            />
-          )}
-        </>
-      ) : (
-        <>
-          <FormContentContainer>
-            <Box marginBottom={10}>
-              <AlertMessage
-                title="Einungis skráður dómari getur hlaðið upp úrskurði"
-                message="Einungis skráður dómari á máli getur hlaðið upp úrskurði undir rekstri máls."
-                type="info"
-              />
-            </Box>
-          </FormContentContainer>
-          <FormContentContainer isFooter>
-            <FormFooter previousUrl={previousRoute} hideNextButton />
-          </FormContentContainer>
-        </>
+                editCount > 0 ||
+                uploadBlocked,
+              testId: 'continueButton',
+            },
+          ]}
+        />
+      </FormContentContainer>
+      {visibleModal === 'confirmation' && (
+        <Modal
+          title="Viltu hlaða upp úrskurði?"
+          text="Dómari þarf að staðfesta úrskurðinn eftir að honum hefur verið hlaðið upp."
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setVisibleModal(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Já, hlaða upp',
+              onClick: async () => {
+                await handleNextButtonClick()
+              },
+              isDisabled: !allFilesDoneOrError,
+            },
+          ]}
+          onClose={() => setVisibleModal(undefined)}
+        />
       )}
     </PageLayout>
   )

@@ -31,28 +31,13 @@ export const m = defineMessages({
     defaultMessage: 'Hentar eldri kynslóðinni (A2)',
     description: 'Hentar eldri kynslóðinni (A2)',
   },
-  'A2 - hentar eldri kynslóðinni': {
-    id: 'web.landspitaliMenu:a2-hentar-eldri-kynslodinni',
-    defaultMessage: 'Hentar eldri kynslóðinni (A2)',
-    description: 'Hentar eldri kynslóðinni (A2)',
-  },
   A3: {
     id: 'web.landspitaliMenu:a3',
     defaultMessage: 'Grænmetisfæði (A3)',
     description: 'Grænmetisfæði (A3)',
   },
-  'A3 - grænmetisfæði': {
-    id: 'web.landspitaliMenu:a3-graenmetisfaedi',
-    defaultMessage: 'Grænmetisfæði (A3)',
-    description: 'Grænmetisfæði (A3)',
-  },
   A4: {
     id: 'web.landspitaliMenu:a4',
-    defaultMessage: 'Hentar börnum (A4)',
-    description: 'Hentar börnum (A4)',
-  },
-  'A4 - hentar börnum': {
-    id: 'web.landspitaliMenu:a4-hentar-bornum',
     defaultMessage: 'Hentar börnum (A4)',
     description: 'Hentar börnum (A4)',
   },
@@ -131,5 +116,15 @@ export const m = defineMessages({
     id: 'web.landspitaliMenu:kvoldmatur',
     defaultMessage: 'Kvöldverður',
     description: 'Kvöldverður',
+  },
+  'Mellanmál em': {
+    id: 'web.landspitaliMenu:mellanmal-em',
+    defaultMessage: 'Millimál',
+    description: 'Millimál',
+  },
+  Kvællsmál: {
+    id: 'web.landspitaliMenu:kvallsmal',
+    defaultMessage: 'Kvöldsnarl',
+    description: 'Kvöldsnarl',
   },
 })

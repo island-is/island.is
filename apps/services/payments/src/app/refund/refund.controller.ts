@@ -15,6 +15,7 @@ import { InferAttributes } from 'sequelize'
 
 import { PaymentMethod } from '../../types'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
+import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
@@ -26,12 +27,19 @@ import {
   createInvoiceRefundContext,
   createInvoiceRefundSaga,
 } from './invoiceRefund.saga'
+import {
+  createBankTransferRefundContext,
+  createBankTransferRefundSaga,
+  BANK_TRANSFER_REFUND_SAGA_START_STEP,
+} from './bankTransferRefund.saga'
 import { RefundPaymentInput } from './dtos/refundPayment.input'
 import {
   RefundMethod,
   RefundPaymentResponse,
 } from './dtos/refundPayment.response'
 import {
+  BankTransferRefundContext,
+  BankTransferRefundStepResults,
   CardRefundContext,
   CardRefundStepResults,
   InvoiceRefundContext,
@@ -49,6 +57,7 @@ export class RefundController {
   constructor(
     private readonly refundService: RefundService,
     private readonly paymentFlowService: PaymentFlowService,
+    private readonly bankTransferService: BankTransferService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -71,6 +80,11 @@ export class RefundController {
       return this.handleCardRefund(refundPaymentInput, paymentFulfillment)
     } else if (paymentFulfillment?.paymentMethod === 'invoice') {
       return this.handleInvoiceRefund(refundPaymentInput, paymentFulfillment)
+    } else if (paymentFulfillment?.paymentMethod === 'bank_transfer') {
+      return this.handleBankTransferRefund(
+        refundPaymentInput,
+        paymentFulfillment,
+      )
     }
 
     throw new BadRequestException(
@@ -158,6 +172,49 @@ export class RefundController {
         context,
         paymentFlowId,
         PaymentMethod.INVOICE,
+      )
+    }
+  }
+
+  private async handleBankTransferRefund(
+    input: RefundPaymentInput,
+    paymentFulfillment: InferAttributes<PaymentFulfillment>,
+  ): Promise<RefundPaymentResponse> {
+    const { paymentFlowId } = input
+
+    const context = createBankTransferRefundContext(
+      paymentFlowId,
+      input,
+      paymentFulfillment,
+    )
+    const saga = createBankTransferRefundSaga(
+      this.paymentFlowService,
+      this.bankTransferService,
+      this.logger,
+    )
+    const orchestrator = new PaymentOrchestrator<
+      BankTransferRefundContext,
+      BankTransferRefundStepResults
+    >(this.logger, this.paymentFlowService)
+
+    try {
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
+
+      return {
+        success: true,
+        refundMethod: RefundMethod.FJS_CHARGE_DELETED,
+        message: 'Bank transfer payment successfully refunded',
+      }
+    } catch (e) {
+      return this.handleRefundError(
+        e,
+        context,
+        paymentFlowId,
+        PaymentMethod.BANK_TRANSFER,
       )
     }
   }

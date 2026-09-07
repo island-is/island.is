@@ -1238,6 +1238,18 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú átt eftir að fylla út í reit á þessari síðu',
     description: 'You have to fill in a field on this page.',
   },
+  applicationIncompleteTitle: {
+    id: 'marp.application:error.application.incomplete.title',
+    defaultMessage: 'Umsóknin er ófullnægjandi',
+    description: 'The application is incomplete',
+  },
+  applicationIncompleteSummary: {
+    id: 'marp.application:error.application.incomplete.summary',
+    defaultMessage:
+      'Ekki tókst að senda umsóknina þar sem svör vantar í hana. Vinsamlegast farðu yfir umsóknina og reyndu aftur.',
+    description:
+      'The application could not be submitted because answers are missing. Please review the application and try again.',
+  },
 })
 
 export const statesMessages = defineMessages({

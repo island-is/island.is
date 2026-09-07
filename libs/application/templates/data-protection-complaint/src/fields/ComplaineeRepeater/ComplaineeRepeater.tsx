@@ -20,7 +20,7 @@ export const ComplaineeRepeater: FC<
 > = ({ application, field, errors }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
-  const { id } = field
+  const id = field.id as string
   const { fields, append, remove } = useFieldArray({
     name: id,
   })

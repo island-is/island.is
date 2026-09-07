@@ -10,11 +10,20 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AppealCase } from '../models/appealCase.model'
-import { UpdateAppealCase } from '../types/caseRepository.types'
+import {
+  CreateAppealCase,
+  UpdateAppealCase,
+} from '../types/caseRepository.types'
 
 interface FindByIdOptions {
   transaction?: Transaction
   include?: FindOptions['include']
+}
+
+interface FindAllOptions {
+  where?: FindOptions['where']
+  order?: FindOptions['order']
+  transaction?: Transaction
 }
 
 interface CreateAppealCaseOptions {
@@ -22,6 +31,10 @@ interface CreateAppealCaseOptions {
 }
 
 interface UpdateAppealCaseOptions {
+  transaction: Transaction
+}
+
+interface DeleteAppealCaseOptions {
   transaction: Transaction
 }
 
@@ -62,9 +75,39 @@ export class AppealCaseRepositoryService {
     }
   }
 
+  async findAll(options?: FindAllOptions): Promise<AppealCase[]> {
+    try {
+      this.logger.debug('Finding appeal cases')
+
+      const findOptions: FindOptions = {}
+
+      if (options?.where) {
+        findOptions.where = options.where
+      }
+
+      if (options?.order) {
+        findOptions.order = options.order
+      }
+
+      if (options?.transaction) {
+        findOptions.transaction = options.transaction
+      }
+
+      const result = await this.appealCaseModel.findAll(findOptions)
+
+      this.logger.debug(`Found ${result.length} appeal cases`)
+
+      return result
+    } catch (error) {
+      this.logger.error('Error finding appeal cases:', { error })
+
+      throw error
+    }
+  }
+
   async create(
     caseId: string,
-    data: UpdateAppealCase,
+    data: CreateAppealCase,
     options: CreateAppealCaseOptions,
   ): Promise<AppealCase> {
     try {
@@ -127,6 +170,34 @@ export class AppealCaseRepositoryService {
         `Error updating appeal case ${appealCaseId} with data:`,
         { data: Object.keys(data), error },
       )
+
+      throw error
+    }
+  }
+
+  async delete(
+    appealCaseId: string,
+    options: DeleteAppealCaseOptions,
+  ): Promise<void> {
+    try {
+      this.logger.debug(`Deleting appeal case ${appealCaseId}`)
+
+      const numberOfAffectedRows = await this.appealCaseModel.destroy({
+        where: { id: appealCaseId },
+        transaction: options.transaction,
+      })
+
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not delete appeal case ${appealCaseId}`,
+        )
+      }
+
+      this.logger.debug(`Deleted appeal case ${appealCaseId}`)
+    } catch (error) {
+      this.logger.error(`Error deleting appeal case ${appealCaseId}:`, {
+        error,
+      })
 
       throw error
     }

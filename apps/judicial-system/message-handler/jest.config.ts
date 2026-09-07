@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'judicial-system-message-handler',
   preset: './jest.preset.js',
   rootDir: '../../..',

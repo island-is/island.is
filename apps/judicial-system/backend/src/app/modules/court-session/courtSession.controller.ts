@@ -36,7 +36,13 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
-import { Case, CourtSession, CourtSessionString } from '../repository'
+import {
+  AppealDecision,
+  Case,
+  CourtSession,
+  CourtSessionString,
+} from '../repository'
+import { CourtSessionAppealDecisionDto } from './dto/courtSessionAppealDecision.dto'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
@@ -148,6 +154,72 @@ export class CourtSessionController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
+  @Patch(':courtSessionId/appealDecision')
+  @ApiOkResponse({
+    type: AppealDecision,
+    description:
+      'Creates or updates a party appeal decision recorded in a court session',
+  })
+  upsertAppealDecision(
+    @Param('caseId') caseId: string,
+    @Param('courtSessionId') courtSessionId: string,
+    @Body() appealDecision: CourtSessionAppealDecisionDto,
+    @CurrentCase() theCase: Case,
+    @CurrentCourtSession() courtSession: CourtSession,
+  ): Promise<AppealDecision> {
+    this.logger.debug(
+      `Upserting appeal decision for court session ${courtSessionId} of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.courtSessionService.upsertAppealDecision(
+        theCase,
+        courtSession,
+        appealDecision,
+        transaction,
+      ),
+    )
+  }
+
+  @UseGuards(CourtSessionExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post(':courtSessionId/pronounceRulingOrally')
+  @ApiOkResponse({
+    type: CourtSession,
+    description:
+      'Pronounces a ruling order orally in a court session, creating the ruling the district court writes up if it is appealed',
+  })
+  pronounceRulingOrally(
+    @Param('caseId') caseId: string,
+    @Param('courtSessionId') courtSessionId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentCourtSession() courtSession: CourtSession,
+  ): Promise<CourtSession> {
+    this.logger.debug(
+      `Pronouncing a ruling orally in court session ${courtSessionId} of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.courtSessionService.pronounceRulingOrally(
+        theCase,
+        courtSession,
+        user,
+        transaction,
+      ),
+    )
+  }
+
+  @UseGuards(CourtSessionExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Delete(':courtSessionId')
   @ApiOkResponse({
     type: DeleteCourtSessionResponse,
@@ -157,6 +229,7 @@ export class CourtSessionController {
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
     @CurrentCase() theCase: Case,
+    @CurrentCourtSession() courtSession: CourtSession,
   ): Promise<DeleteCourtSessionResponse> {
     this.logger.debug(
       `Deleting court session ${courtSessionId} of case ${caseId}`,
@@ -176,8 +249,8 @@ export class CourtSessionController {
 
     return this.sequelize.transaction(async (transaction) => {
       const deleted = await this.courtSessionService.delete(
-        caseId,
-        courtSessionId,
+        theCase,
+        courtSession,
         transaction,
       )
 

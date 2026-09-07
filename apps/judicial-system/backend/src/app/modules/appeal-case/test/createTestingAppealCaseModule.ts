@@ -15,8 +15,10 @@ import { LimitedAccessCaseService } from '../../case/limitedAccessCase.service'
 import { EventService } from '../../event'
 import {
   AppealCaseRepositoryService,
+  AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   CaseRepositoryService,
+  VerdictRepositoryService,
 } from '../../repository'
 import { UserService } from '../../user'
 import { appealCaseModuleConfig } from '../appealCase.config'
@@ -30,8 +32,10 @@ jest.mock('../../case/limitedAccessCase.service')
 jest.mock('../../event/event.service')
 jest.mock('../../user/user.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
+jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
+jest.mock('../../repository/services/verdictRepository.service')
 
 export const createTestingAppealCaseModule = async () => {
   const appealCaseModule = await Test.createTestingModule({
@@ -48,13 +52,16 @@ export const createTestingAppealCaseModule = async () => {
       EventService,
       UserService,
       AppealCaseRepositoryService,
+      AppealDecisionRepositoryService,
       AppealEventLogRepositoryService,
       CaseRepositoryService,
+      VerdictRepositoryService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
           debug: jest.fn(),
           info: jest.fn(),
+          warn: jest.fn(),
           error: jest.fn(),
         },
       },
@@ -68,6 +75,11 @@ export const createTestingAppealCaseModule = async () => {
       AppealCaseRepositoryService,
     )
 
+  const appealDecisionRepositoryService =
+    appealCaseModule.get<AppealDecisionRepositoryService>(
+      AppealDecisionRepositoryService,
+    )
+
   const appealEventLogRepositoryService =
     appealCaseModule.get<AppealEventLogRepositoryService>(
       AppealEventLogRepositoryService,
@@ -76,6 +88,9 @@ export const createTestingAppealCaseModule = async () => {
   const caseRepositoryService = appealCaseModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
+
+  const verdictRepositoryService =
+    appealCaseModule.get<VerdictRepositoryService>(VerdictRepositoryService)
 
   const userService = appealCaseModule.get<UserService>(UserService)
 
@@ -98,8 +113,10 @@ export const createTestingAppealCaseModule = async () => {
 
   return {
     appealCaseRepositoryService,
+    appealDecisionRepositoryService,
     appealEventLogRepositoryService,
     caseRepositoryService,
+    verdictRepositoryService,
     userService,
     eventService,
     appealCaseService,

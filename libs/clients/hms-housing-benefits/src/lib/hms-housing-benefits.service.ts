@@ -2,17 +2,53 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   ApiVversionPaymentPaymenthistoryPostRequest,
+  ApplicationApi,
+  HousingBenefitsApplicationModel,
   PaymentApi,
+  TaxApi,
 } from '../../gen/fetch'
 import { handle204 } from '@island.is/clients/middlewares'
 import { CalculationTypes, TransactionTypes } from './enums'
 
 @Injectable()
 export class HmsHousingBenefitsClientService {
-  constructor(private readonly paymentApi: PaymentApi) {}
+  constructor(
+    private readonly paymentApi: PaymentApi,
+    private readonly applicationApi: ApplicationApi,
+    private readonly taxApi: TaxApi,
+  ) {}
 
   private apiWithAuth = (user: User) =>
     this.paymentApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  async createHousingBenefitsApplication(
+    user: User,
+    model: HousingBenefitsApplicationModel,
+  ) {
+    return this.applicationApi
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .apiVversionApplicationCreateHousingBenefitsApplicationPost({
+        version: '1',
+        housingBenefitsApplicationModel: model,
+      })
+  }
+
+  async hasTaxReturnForYear(auth: Auth, nationalId: string, year: number) {
+    return this.taxApi
+      .withMiddleware(new AuthMiddleware(auth))
+      .hasTaxReturnForYear({
+        version: '1',
+        year,
+      })
+  }
+
+  async hasTaxReturnLastFiveYears(auth: Auth, nationalId: string) {
+    return this.taxApi
+      .withMiddleware(new AuthMiddleware(auth))
+      .hasTaxReturnLastFiveYears({
+        version: '1',
+      })
+  }
 
   async hmsPaymentHistory(
     user: User,

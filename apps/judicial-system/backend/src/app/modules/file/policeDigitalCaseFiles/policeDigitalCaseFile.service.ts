@@ -3,7 +3,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -22,7 +22,7 @@ import { AwsS3Service } from '../../aws-s3'
 import { PoliceSystemDigitalCaseFile } from '../../police/models/PoliceSystemDigitalCaseFile.model'
 import { PoliceService } from '../../police/police.service'
 import {
-  CaseFile,
+  CaseFileRepositoryService,
   CourtDocumentRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
 } from '../../repository'
@@ -35,9 +35,9 @@ export class PoliceDigitalCaseFileService {
   constructor(
     private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
+    private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly policeService: PoliceService,
     private readonly awsS3Service: AwsS3Service,
-    @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -51,10 +51,12 @@ export class PoliceDigitalCaseFileService {
     file: PoliceSystemDigitalCaseFile,
     transaction: Transaction,
   ): Promise<void> {
-    const existingFile = await this.caseFileModel.findOne({
-      where: { caseId, policeFileId: file.id },
-      transaction,
-    })
+    const existingFile =
+      await this.caseFileRepositoryService.findByCaseAndPoliceFileId(
+        caseId,
+        file.id,
+        { transaction },
+      )
 
     if (existingFile) {
       return
@@ -83,10 +85,10 @@ export class PoliceDigitalCaseFileService {
       const fileId = uuid()
       const key = `${caseId}/${fileId}/${file.name}.pdf`
 
-      const metadataCaseFile = await this.caseFileModel.create(
+      const metadataCaseFile = await this.caseFileRepositoryService.create(
+        caseId,
         {
           id: fileId,
-          caseId,
           name: `${file.name}.pdf`,
           type: 'application/pdf',
           category: CaseFileCategory.PROSECUTOR_CASE_FILE,

@@ -69,9 +69,10 @@ export const SignatoryStatus: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           externalData?.getSignatories?.data?.signatories || []
         setSignatories(fetchedSignatories)
 
+        const fetchSucceeded =
+          externalData?.getSignatories?.data?.success === true
         const allSigned =
-          fetchedSignatories.length > 0 &&
-          fetchedSignatories.every((s) => s.signed)
+          fetchSucceeded && fetchedSignatories.every((s) => s.signed)
         setSubmitButtonDisabled?.(!allSigned)
       } catch {
         setError(true)

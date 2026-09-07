@@ -27,6 +27,9 @@ const valueTypeAttributeToLanguageType: Record<string, LanguageType> = {
   time: { is: 'Tími', en: 'Time' },
   s3Key: { is: 'S3 lykill', en: 'S3 key' },
   paymentCode: { is: 'Greiðslukóði', en: 'Payment code' },
+  model: { is: 'Tegund', en: 'Model' },
+  color: { is: 'Litur', en: 'Color' },
+  registrationNumber: { is: 'Skráningarnúmer', en: 'Registration number' },
   delegationType: { is: 'Umboðstegund', en: 'Delegation type' },
   isLoggedInUser: { is: 'Er innskráður notandi', en: 'Is logged in user' },
 }

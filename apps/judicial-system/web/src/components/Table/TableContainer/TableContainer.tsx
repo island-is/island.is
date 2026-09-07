@@ -1,8 +1,7 @@
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 
 import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
-
-import * as styles from '../Table.css'
+import * as styles from '@island.is/judicial-system-web/src/components/Table/Table.css'
 
 interface Props {
   tableHeader: ReactNode
@@ -18,12 +17,14 @@ const TableContainer: FC<Props> = (props) => {
     return <TableSkeleton />
   } else {
     return (
-      <table className={styles.table} data-testid={testid}>
-        <thead className={styles.thead}>
-          <tr>{tableHeader}</tr>
-        </thead>
-        <tbody>{children}</tbody>
-      </table>
+      <div className={styles.tableWrapper}>
+        <table className={styles.table} data-testid={testid}>
+          <thead className={styles.thead}>
+            <tr>{tableHeader}</tr>
+          </thead>
+          <tbody>{children}</tbody>
+        </table>
+      </div>
     )
   }
 }

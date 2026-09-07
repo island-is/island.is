@@ -5,8 +5,7 @@ import {
 } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { LinkResolver } from '@island.is/portals/my-pages/core'
-import { AvatarImage } from '@island.is/portals/my-pages/documents'
+import { AvatarImage, LinkResolver } from '@island.is/portals/my-pages/core'
 import {
   COAT_OF_ARMS,
   resolveLink,

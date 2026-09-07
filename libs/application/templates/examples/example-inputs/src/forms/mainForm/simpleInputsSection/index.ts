@@ -10,6 +10,7 @@ import { sliderSubsection } from './sliderSubsection'
 import { companySearchSubsection } from './companySearchSubsection'
 import { asyncSelectSubsection } from './asyncSelectSubsection'
 import { displayFieldSubsection } from './displayFieldSubsection'
+import { scaleSubSection } from './scaleSubSection'
 
 export const simpleInputsSection = buildSection({
   id: 'simpleInputsSection',
@@ -26,5 +27,6 @@ export const simpleInputsSection = buildSection({
     dateSubsection,
     fileUploadSubsection,
     sliderSubsection,
+    scaleSubSection,
   ],
 })

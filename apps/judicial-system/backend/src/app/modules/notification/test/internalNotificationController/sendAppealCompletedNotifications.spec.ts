@@ -10,7 +10,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -19,7 +18,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 
@@ -32,6 +31,7 @@ type GivenWhenThen = (
   defenderNationalId?: string,
   appealRulingDecision?: AppealCaseRulingDecision,
   appealRulingModifiedHistory?: string,
+  hasDefender?: boolean,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal completed notifications', () => {
@@ -43,6 +43,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
   ])
   const userId = uuid()
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
   const courtId = uuid()
@@ -70,12 +71,21 @@ describe('InternalNotificationController - Send appeal completed notifications',
       defenderNationalId?: string,
       appealRulingDecision?: AppealCaseRulingDecision,
       appealRulingModifiedHistory?: string,
+      hasDefender = true,
     ) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealRulingDecision:
+          appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
+        appealRulingModifiedHistory,
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.CUSTODY,
@@ -89,20 +99,16 @@ describe('InternalNotificationController - Send appeal completed notifications',
             judge: { name: judge.name, email: judge.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
-            defenderName: defender.name,
-            defenderEmail: defender.email,
+            defenderName: hasDefender ? defender.name : undefined,
+            defenderEmail: hasDefender ? defender.email : undefined,
             courtCaseNumber,
             courtId: courtId,
-            appealCase: {
-              appealCaseNumber,
-              appealRulingDecision:
-                appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
-              appealRulingModifiedHistory,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: userId } as User,
-            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
           },
         )
         .then((result) => (then.result = result))
@@ -254,6 +260,34 @@ describe('InternalNotificationController - Send appeal completed notifications',
         }),
       )
       expect(mockSmsService.sendSms).not.toHaveBeenCalled()
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('notification sent in discontinued appeal when no defender is registered', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        '',
+        AppealCaseRulingDecision.DISCONTINUED,
+        undefined,
+        false,
+      )
+    })
+
+    it('should only send notification about discontinuance to the prosecutor', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          subject: `Niðurfelling máls ${appealCaseNumber} (${courtCaseNumber})`,
+          html: `Landsréttur hefur móttekið afturköllun á kæru í máli ${courtCaseNumber}. Landsréttarmálið ${appealCaseNumber} hefur verið fellt niður. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({ to: [{ name: '', address: '' }] }),
+      )
       expect(then.result).toEqual({ delivered: true })
     })
   })

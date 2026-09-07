@@ -33,12 +33,12 @@ const ConfirmationDate: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             defaultValue={format(defaultDate, df)}
             label={formatMessage(m.confirmationSectionSelectDatePlaceholder)}
             placeholder={formatMessage(m.confirmationSectionSelectDateLabel)}
-            id={id}
+            id={id as string}
             locale="is"
             maxDate={new Date()}
             backgroundColor="white"
             onChange={(d) => {
-              setValue(id, d)
+              setValue(id as string, d)
             }}
             error={error}
             required

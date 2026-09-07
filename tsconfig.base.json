@@ -60,6 +60,15 @@
       "@island.is/api/domains/course-charges": [
         "libs/api/domains/course-charges/src/index.ts"
       ],
+      "@island.is/api/domains/customs-calculator": [
+        "libs/api/domains/customs-calculator/src/index.ts"
+      ],
+      "@island.is/api/domains/customs-general": [
+        "libs/api/domains/customs-general/src/index.ts"
+      ],
+      "@island.is/api/domains/directorate-of-equality-application": [
+        "libs/api/domains/directorate-of-equality-application/src/index.ts"
+      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
@@ -396,6 +405,12 @@
       "@island.is/application/templates/data-protection-complaint/messages": [
         "libs/application/templates/data-protection-complaint/src/lib/messages/index.ts"
       ],
+      "@island.is/application/templates/directorate-of-equality/equality-report": [
+        "libs/application/templates/directorate-of-equality/equality-report/src/index.ts"
+      ],
+      "@island.is/application/templates/directorate-of-equality/salary-report": [
+        "libs/application/templates/directorate-of-equality/salary-report/src/index.ts"
+      ],
       "@island.is/application/templates/directorate-of-immigration/citizenship": [
         "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
       ],
@@ -462,9 +477,6 @@
       "@island.is/application/templates/general-petition": [
         "libs/application/templates/general-petition/src/index.ts"
       ],
-      "@island.is/application/templates/grindavik-housing-buyout": [
-        "libs/application/templates/grindavik-housing-buyout/src/index.ts"
-      ],
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
@@ -476,6 +488,9 @@
       ],
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
+      ],
+      "@island.is/application/templates/hms/housing-benefits": [
+        "libs/application/templates/hms/housing-benefits/src/index.ts"
       ],
       "@island.is/application/templates/hms/registration-of-new-property-numbers": [
         "libs/application/templates/hms/registration-of-new-property-numbers/src/index.ts"
@@ -618,6 +633,9 @@
       "@island.is/application/templates/social-insurance-administration/pension-supplement": [
         "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
       ],
+      "@island.is/application/templates/district-commissioners/driving-license-additional": [
+        "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],
@@ -715,6 +733,9 @@
       "@island.is/clients-rental-day-rate": [
         "libs/clients/rsk/rental-day-rate/src/index.ts"
       ],
+      "@island.is/clients-rsk-customs-calculator": [
+        "libs/clients/rsk/customs-calculator/src/index.ts"
+      ],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],
@@ -749,6 +770,7 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
+      "@island.is/clients/blikk": ["libs/clients/blikk/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -868,8 +890,8 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
-      "@island.is/clients/lyfjastofnun-pharmacies": [
-        "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
+      "@island.is/clients/lyfjastofnun-health-providers": [
+        "libs/clients/lyfjastofnun-health-providers/src/index.ts"
       ],
       "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/middlewares": [
@@ -932,6 +954,9 @@
       ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
+      ],
+      "@island.is/clients/rsk/customs/general": [
+        "libs/clients/rsk/customs/general/src/index.ts"
       ],
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
@@ -1160,6 +1185,7 @@
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
       "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
+      "@island.is/next/utils": ["libs/next/utils/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/portals/admin/air-discount-scheme": [

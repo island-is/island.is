@@ -96,12 +96,14 @@ export const AdditionalRealEstate = ({
       />
       <Box display="flex" justifyContent="flexEnd">
         <Button
-          variant="ghost"
+          variant="text"
           size="small"
-          circle
           icon="remove"
+          iconType="outline"
           onClick={() => remove(index)}
-        />
+        >
+          {formatMessage(m.deleteAsset)}
+        </Button>
       </Box>
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>

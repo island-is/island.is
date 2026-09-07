@@ -26,6 +26,10 @@ import {
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseFilesOverview,
+  CaseOverviewHeader,
+} from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
+import {
   useAppealCaseBanner,
   usePoliceDigitalCaseFile,
   useTargetAppealCaseByAppealCaseId,
@@ -33,7 +37,6 @@ import {
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
-import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
@@ -184,8 +187,13 @@ const Result = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            nextButtonText={formatMessage(strings.nextButtonText)}
-            onNextButtonClick={() => setModalVisible('reopenCase')}
+            actions={[
+              {
+                text: formatMessage(strings.nextButtonText),
+                onClick: () => setModalVisible('reopenCase'),
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
       </PageLayout>

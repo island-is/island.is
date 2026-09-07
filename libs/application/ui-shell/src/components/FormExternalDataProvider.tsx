@@ -17,6 +17,7 @@ import {
   coreMessages,
   getErrorReasonIfPresent,
   formatText,
+  resolveFieldId,
 } from '@island.is/application/core'
 import {
   Application,
@@ -29,6 +30,7 @@ import {
   RecordObject,
   SetBeforeSubmitCallback,
 } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
@@ -202,6 +204,7 @@ const FormExternalDataProvider: FC<
     externalDataProvider: ExternalDataProviderScreen
     formValue: FormValue
     errors: RecordObject
+    user?: BffUser
   }>
 > = ({
   addExternalData,
@@ -212,6 +215,7 @@ const FormExternalDataProvider: FC<
   externalDataProvider,
   formValue,
   errors,
+  user,
 }) => {
   const [shouldUseMockPayment, setShouldUseMockPayment] = useState(false)
   const [hasApproved, setHasApproved] = useState(false)
@@ -240,11 +244,10 @@ const FormExternalDataProvider: FC<
   const enableMockPayment = dataProviders.some(
     (x) => x.action === 'Payment.mockPaymentCatalog',
   )
+  const resolvedId = id ? resolveFieldId({ id }, application, user) : undefined
 
   // If id is undefined then the error won't be attached to the field with id
-  const error = getValueViaPath(errors, id ?? '', undefined) as
-    | string
-    | undefined
+  const error = getValueViaPath<string>(errors, resolvedId ?? '', undefined)
 
   const activateBeforeSubmitCallback = (
     checked: boolean,
@@ -283,6 +286,8 @@ const FormExternalDataProvider: FC<
           verifyExternalData(
             getExternalDataFromResponse(response.data),
             providers,
+            application,
+            user,
           )
         ) {
           return [true, null]
@@ -296,9 +301,9 @@ const FormExternalDataProvider: FC<
   }
 
   useEffect(() => {
-    if (!id) return
-    setValue(id, false)
-  }, [id, setValue])
+    if (!resolvedId) return
+    setValue(resolvedId as string, false)
+  }, [resolvedId, setValue])
 
   useEffect(() => {
     activateBeforeSubmitCallback(hasApproved, shouldUseMockPayment)
@@ -330,27 +335,39 @@ const FormExternalDataProvider: FC<
         )}
       </Box>
       <Box marginBottom={5}>
-        {dataProviders.map((provider) => (
-          <ProviderItem
-            application={application}
-            provider={provider}
-            key={provider.id}
-            suppressProviderError={suppressProviderErrors}
-            dataProviderResult={externalData[provider.id]}
-          />
-        ))}
-        {otherPermissions &&
-          otherPermissions.map((permission) => (
-            <PermissionItem
+        {dataProviders.map((provider) => {
+          const providerId = provider.id
+            ? resolveFieldId({ id: provider.id }, application, user)
+            : undefined
+
+          return (
+            <ProviderItem
               application={application}
-              permission={permission}
-              key={permission.id}
+              provider={provider}
+              key={providerId}
+              suppressProviderError={suppressProviderErrors}
+              dataProviderResult={externalData[providerId ?? '']}
             />
-          ))}
+          )
+        })}
+        {otherPermissions &&
+          otherPermissions.map((permission) => {
+            const permissionId = permission.id
+              ? resolveFieldId({ id: permission.id }, application, user)
+              : undefined
+
+            return (
+              <PermissionItem
+                application={application}
+                permission={permission}
+                key={permissionId}
+              />
+            )
+          })}
       </Box>
       <Controller
-        name={`${id}`}
-        defaultValue={getValueViaPath(formValue, id as string, false)}
+        name={resolvedId ?? ''}
+        defaultValue={getValueViaPath(formValue, resolvedId ?? '', false)}
         rules={{ required: true }}
         render={({ field: { onChange, value } }) => {
           return (
@@ -359,8 +376,8 @@ const FormExternalDataProvider: FC<
                 large={true}
                 onChange={(e) => {
                   const isChecked = e.target.checked
-                  clearErrors(id)
-                  setValue(id as string, isChecked)
+                  clearErrors(resolvedId)
+                  setValue(resolvedId ?? '', isChecked)
                   setHasApproved(isChecked)
                   onChange(isChecked)
                 }}
@@ -368,7 +385,7 @@ const FormExternalDataProvider: FC<
                 hasError={error !== undefined}
                 backgroundColor="blue"
                 dataTestId="agree-to-data-providers"
-                name={`${id}`}
+                name={resolvedId ?? ''}
                 label={
                   <Markdown>
                     {checkboxLabel
@@ -376,7 +393,7 @@ const FormExternalDataProvider: FC<
                       : formatMessage(coreMessages.externalDataAgreement)}
                   </Markdown>
                 }
-                value={id}
+                value={resolvedId}
               />
               {error && <InputError errorMessage={error} />}
             </>

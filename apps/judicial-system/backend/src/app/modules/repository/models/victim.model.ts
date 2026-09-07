@@ -10,7 +10,6 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { RequestSharedWhen } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
@@ -24,10 +23,7 @@ export class Victim extends Model {
     // NOTE: victims per case can have the same lawyer but we intentionally return the first victim
     return victims?.find(
       (victim) =>
-        victim.lawyerNationalId &&
-        normalizeAndFormatNationalId(lawyerNationalId).includes(
-          victim.lawyerNationalId,
-        ) &&
+        victim.lawyerNationalId === lawyerNationalId &&
         victim.lawyerAccessToRequest !== RequestSharedWhen.OBLIGATED,
     )
   }

@@ -1,12 +1,15 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import cn from 'classnames'
 
-import { IconMapIcon } from '@island.is/island-ui/core'
-import { Box, Icon, StatusColor, Text } from '@island.is/island-ui/core'
-import { Colors } from '@island.is/island-ui/theme'
+import type { IconMapIcon, StatusColor } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
+import type { Colors } from '@island.is/island-ui/theme'
 import { IconButton } from '@island.is/judicial-system-web/src/components'
+import {
+  fileSize,
+  onEnterOrSpace,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
-import { fileSize } from '../../utils/utils'
 import * as styles from './CaseFile.css'
 
 interface Props {
@@ -37,6 +40,9 @@ const CaseFile: FC<Props> = (props) => {
       borderRadius="large"
       borderWidth="standard"
       onClick={onClick ? () => onClick(id) : undefined}
+      onKeyDown={onClick ? onEnterOrSpace(() => onClick(id)) : undefined}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
       aria-label={onClick ? `Opna ${name}` : undefined}
     >
       <Box component="p" className={styles.caseFileName}>
@@ -50,6 +56,7 @@ const CaseFile: FC<Props> = (props) => {
           <IconButton
             icon={icon.icon}
             colorScheme={icon.color.includes('blue') ? 'blue' : 'red'}
+            ariaLabel={`Aðgerð fyrir ${name}`}
             onClick={() => icon.onClick?.(id)}
           />
         ) : (

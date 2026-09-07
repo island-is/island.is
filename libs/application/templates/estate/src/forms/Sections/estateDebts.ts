@@ -41,6 +41,7 @@ export const estateDebts = buildSection({
             m.debtsDescriptionUndividedEstate
           : /* EINKASKIPTI */
             m.debtsDescriptionDivisionOfEstateByHeirs,
+      nextButtonText: m.saveAndContinue,
       children: [
         buildCustomField(
           {

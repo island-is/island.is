@@ -1,4 +1,7 @@
-import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   getAppealExpirationInfo,
@@ -135,6 +138,34 @@ describe('DefendantInfo', () => {
   })
 
   describe('getDefendantTagConfig', () => {
+    test('should return closed without enforcement tag for public prosecution users, even when a verdict exists', () => {
+      const tag = getDefendantTagConfig({
+        verdict: {
+          isAcquittedByPublicProsecutionOffice: true,
+          defendantHasRequestedAppeal: true,
+          isDefaultJudgement: true,
+        },
+        isPublicProsecutionOffice: true,
+        isClosedWithoutEnforcement: true,
+      })
+
+      expect(tag).toStrictEqual({
+        key: 'closedWithoutEnforcement',
+        label: 'Lokið',
+        variant: 'rose',
+      })
+    })
+
+    test('should not return closed without enforcement tag for non-public prosecution users', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        isClosedWithoutEnforcement: true,
+      })
+
+      expect(tag).toBeNull()
+    })
+
     test('should return acquitted tag for public prosecution users', () => {
       const tag = getDefendantTagConfig({
         verdict: {
@@ -203,18 +234,68 @@ describe('DefendantInfo', () => {
       })
     })
 
-    test('should return dismissal tag when there is no verdict and dismissal case is true', () => {
+    test('should return dismissal tag when there is no verdict and ruling decision is DISMISSAL', () => {
       const tag = getDefendantTagConfig({
         verdict: null,
         isPublicProsecutionOffice: false,
-        isDismissalCase: true,
-        isCancellationCase: true,
-        isFineCase: true,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
       })
 
       expect(tag).toStrictEqual({
         label: 'Frávísun',
         variant: 'blue',
+      })
+    })
+
+    test('should return cancellation tag when there is no verdict and ruling decision is CANCELLATION', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      })
+
+      expect(tag).toStrictEqual({
+        label: 'Niðurfelling',
+        variant: 'rose',
+      })
+    })
+
+    test('should return fine tag when there is no verdict and ruling decision is FINE', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+      })
+
+      expect(tag).toStrictEqual({
+        label: 'Viðurlagaákvörðun',
+        variant: 'mint',
+      })
+    })
+
+    test('should return withdrawal tag when there is no verdict and ruling decision is WITHDRAWAL', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
+      })
+
+      expect(tag).toStrictEqual({
+        label: 'Afturkallað',
+        variant: 'rose',
+      })
+    })
+
+    test('should return merge tag when there is no verdict and ruling decision is MERGE', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
+      })
+
+      expect(tag).toStrictEqual({
+        label: 'Sameinað',
+        variant: 'rose',
       })
     })
 

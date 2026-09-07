@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
@@ -15,6 +15,7 @@ import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
+import { BankTransferPaymentModule } from '../bankTransferPayment/bankTransferPayment.module'
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
     JwksModule,
+    forwardRef(() => BankTransferPaymentModule),
   ],
   controllers: [PaymentFlowController],
   providers: [PaymentFlowService],

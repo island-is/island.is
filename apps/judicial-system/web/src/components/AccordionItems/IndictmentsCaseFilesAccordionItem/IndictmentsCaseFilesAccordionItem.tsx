@@ -1,17 +1,11 @@
-import {
-  Dispatch,
-  FC,
-  PointerEvent,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react'
+import type { Dispatch, FC, PointerEvent, SetStateAction } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import type { MotionValue } from 'motion/react'
 import {
   animate,
   AnimatePresence,
   motion,
-  MotionValue,
   Reorder,
   useDragControls,
   useMotionValue,
@@ -26,7 +20,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import {
+import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
@@ -34,21 +28,20 @@ import {
   FileNotFoundModal,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import DraggablePoliceDigitalCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/DraggablePoliceDigitalCaseFile'
+import type { TEditableCaseFile } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type {
   CaseFile as TCaseFile,
   Defendant,
   PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useFileList,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import DraggablePoliceDigitalCaseFile from '../../EditableCaseFile/DraggablePoliceDigitalCaseFile'
-import EditableCaseFile, {
-  TEditableCaseFile,
-} from '../../EditableCaseFile/EditableCaseFile'
 import { useUpdateFilesMutation } from './updateFiles.generated'
 import { useUpdatePoliceDigitalCaseFilesMutation } from './updatePoliceDigitalCaseFiles.generated'
 import { strings } from './IndictmentsCaseFilesAccordionItem.strings'

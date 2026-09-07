@@ -1,11 +1,5 @@
-import {
-  FC,
-  ForwardedRef,
-  forwardRef,
-  useCallback,
-  useContext,
-  useRef,
-} from 'react'
+import type { FC, ForwardedRef } from 'react'
+import { forwardRef, useCallback, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -23,7 +17,7 @@ import {
   PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
   PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
@@ -37,13 +31,16 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  CivilClaimant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseState,
   CaseTransition,
-  CivilClaimant,
   DefendantPlea,
-  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { SelectCourt } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import { isCivilClaimantDefendantSelectionValid } from '@island.is/judicial-system-web/src/utils/civilClaimantUtils'
 import {
   useCase,
@@ -56,7 +53,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { SelectCourt } from '../../components'
 import { CivilClaimantFields } from './CivilClaimantFields'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
@@ -502,10 +498,16 @@ const Processing: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!stepIsValid}
-          nextUrl={`${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              url: `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`,
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

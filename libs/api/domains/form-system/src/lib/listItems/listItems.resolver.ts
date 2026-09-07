@@ -1,20 +1,21 @@
-import { UseGuards } from '@nestjs/common'
-import { CodeOwner } from '@island.is/nest/core'
-import { CodeOwners } from '@island.is/shared/constants'
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import {
   CurrentUser,
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
+import { UseGuards } from '@nestjs/common'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import {
   CreateListItemInput,
   DeleteListItemInput,
+  TemplateListInput,
   UpdateListItemDisplayOrderInput,
   UpdateListItemInput,
 } from '../../dto/listItem.input'
-import { ListItemsService } from './listItems.service'
 import { ListItem } from '../../models/listItem.model'
+import { ListItemsService } from './listItems.service'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -67,5 +68,16 @@ export class ListItemsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.listItemsService.updateListItemsDisplayOrder(user, input)
+  }
+
+  @Mutation(() => [ListItem], {
+    name: 'applyFormSystemTemplateList',
+  })
+  async applyTemplateList(
+    @Args('input', { type: () => TemplateListInput })
+    input: TemplateListInput,
+    @CurrentUser() user: User,
+  ): Promise<ListItem[]> {
+    return this.listItemsService.applyTemplateList(user, input)
   }
 }

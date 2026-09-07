@@ -1,7 +1,7 @@
 import { FileStorageService } from '@island.is/file-storage'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import { Value } from '../applications/models/value.model'
@@ -43,6 +43,8 @@ export class FileService {
       const exists = await this.fileExists(sourceKey)
       this.logger.info(`Starting attempt ${attempts + 1}`)
       if (exists) {
+        let applicationId = ''
+        let key = ''
         try {
           await this.sequelize.transaction(async (transaction) => {
             const value = await this.valueModel.findByPk(valueId, {
@@ -54,8 +56,8 @@ export class FileService {
               throw new Error(`Value with PK: ${valueId} not found`)
             }
 
-            const applicationId = value.applicationId
-            const key = `${applicationId}/${sourceKey}`
+            applicationId = value.applicationId
+            key = `${applicationId}/${sourceKey}`
 
             const res =
               await this.fileStorageService.copyObjectFromUploadBucket(
@@ -79,15 +81,26 @@ export class FileService {
             }
 
             await value.save({ transaction })
+          })
 
-            this.logger.info(
-              `✅ Updated field ${fieldId} with new S3 key ${key}`,
-            )
+          this.logger.info('form system file uploaded', {
+            applicationId,
+            key,
+            fieldId,
+            valueId,
+            datadogEvent: 'form_system_file_uploaded',
           })
 
           return
         } catch (error) {
-          this.logger.error(`❌ Copy failed: ${error}`)
+          this.logger.error('form system file upload failed', {
+            applicationId,
+            key,
+            fieldId,
+            valueId,
+            datadogEvent: 'form_system_file_upload_failed',
+            error,
+          })
           throw error
         }
       }
@@ -105,8 +118,10 @@ export class FileService {
   }
 
   async getFile(key: string): Promise<string | undefined> {
+    this.logger.info(`Fetching file ${key}`)
+
     if (!key) {
-      throw new Error('Key and valueId must be provided for fetching file')
+      throw new Error('Key must be provided for fetching file')
     }
 
     const bucket = this.config.bucket
@@ -114,10 +129,16 @@ export class FileService {
       throw new Error('S3 bucket not configured')
     }
 
-    this.logger.info(`Fetching file ${key}`)
-
     try {
-      return await this.s3Service.getFileContent({ bucket, key }, 'base64')
+      const file = await this.s3Service.getFileContent(
+        { bucket, key },
+        'base64',
+      )
+      if (file === null || file === undefined) {
+        this.logger.warn(`File ${key} not found in bucket ${bucket}`)
+        throw new NotFoundException(`File with key ${key} not found`)
+      }
+      return file
     } catch (error) {
       this.logger.error('Error fetching file content from S3', error)
       throw error

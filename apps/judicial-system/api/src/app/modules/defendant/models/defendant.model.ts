@@ -144,6 +144,12 @@ export class Defendant {
   @Field(() => Boolean, { nullable: true })
   readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  readonly isClosedWithoutEnforcement?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly closedWithoutEnforcementDate?: string
+
   @Field(() => IndictmentCancelledOrDismissedState, { nullable: true })
   readonly indictmentCancelledOrDismissedState?: IndictmentCancelledOrDismissedState
 

@@ -304,6 +304,42 @@ describe('display mappers', () => {
         QuestionnairesStatusEnum.notAnswered,
       )
     })
+
+    it('exposes the gUID as lastSubmissionId and a single submission when answered', () => {
+      const answerDateTime = new Date('2024-06-01T12:00:00.000Z')
+      const answered = {
+        ...baseLshItem,
+        answerDateTime,
+      } as unknown as LshQuestionnaireType
+
+      const overview = mapLshQuestionnaireOverview(answered, formatMessage)
+      expect(overview.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.answered,
+      )
+      expect(overview.baseInformation.lastSubmissionId).toBe('lsh-guid-h1')
+      expect(overview.baseInformation.lastSubmitted).toEqual(answerDateTime)
+      expect(overview.submissions).toEqual([
+        {
+          id: 'lsh-guid-h1',
+          isDraft: false,
+          lastUpdated: answerDateTime,
+        },
+      ])
+
+      const listItem = mapLshQuestionnaireListItem(answered, formatMessage)
+      expect(listItem.lastSubmissionId).toBe('lsh-guid-h1')
+      expect(listItem.lastSubmitted).toEqual(answerDateTime)
+    })
+
+    it('does not set lastSubmissionId or submissions when unanswered', () => {
+      const overview = mapLshQuestionnaireOverview(baseLshItem, formatMessage)
+      expect(overview.baseInformation.lastSubmissionId).toBeUndefined()
+      expect(overview.submissions).toBeUndefined()
+      expect(
+        mapLshQuestionnaireListItem(baseLshItem, formatMessage)
+          .lastSubmissionId,
+      ).toBeUndefined()
+    })
   })
 
   describe('EL questionnaire mapping', () => {
@@ -361,8 +397,8 @@ describe('display mappers', () => {
       expect(section?.questions).toHaveLength(1)
 
       const question = section?.questions?.[0]
-      expect(question?.id).toBe('group-1__bool-q1')
-      expect(question?.originalId).toBe('bool-q1')
+      expect(question?.id).toBe('bool-q1')
+      expect(question?.sectionId).toBe('group-1')
       expect(question?.label).toBe('Are you OK?')
       expect(question?.answerOptions.type).toBe(AnswerOptionType.radio)
 
@@ -467,11 +503,9 @@ describe('display mappers', () => {
       const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
 
       const section = mapped.sections?.[0]
-      const dependentQuestion = section?.questions?.find(
-        (q) => q.id === 'group-1__q2',
-      )
+      const dependentQuestion = section?.questions?.find((q) => q.id === 'q2')
 
-      // q2 should depend on q1 via triggers (dependsOn uses original IDs, not namespaced)
+      // q2 should depend on q1 via triggers
       expect(dependentQuestion?.dependsOn).toEqual(['q1'])
       expect(dependentQuestion?.visibilityConditions).toBeDefined()
       expect(dependentQuestion?.visibilityConditions?.[0].questionId).toBe('q1')

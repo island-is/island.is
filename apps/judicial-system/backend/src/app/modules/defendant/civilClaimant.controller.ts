@@ -99,6 +99,7 @@ export class CivilClaimantController {
   async update(
     @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentCase() theCase: Case,
     @CurrentHttpUser() user: User,
     @CurrentCivilClaimant() civilClaimant: CivilClaimant,
     @Body() updateCivilClaimantDto: UpdateCivilClaimantDto,
@@ -107,7 +108,7 @@ export class CivilClaimantController {
       `Updating civil claimant ${civilClaimantId} of case ${caseId}`,
     )
     return this.civilClaimantService.update(
-      caseId,
+      theCase,
       civilClaimant,
       updateCivilClaimantDto,
       user,

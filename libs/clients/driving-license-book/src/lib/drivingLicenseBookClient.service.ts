@@ -1,9 +1,9 @@
 import {
-  BookOverview,
   Configuration,
+  DigitalBook,
   DrivingLicenseBookApi,
 } from '../../gen/fetch'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { createEnhancedFetch, FetchError } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { DrivingLicenseBookClientConfig } from './drivingLicenseBookClient.config'
@@ -25,6 +25,7 @@ import {
   DrivingLicenseBookStudentOverview,
   DrivingLicenseBookStudentsInput,
   LICENSE_CATEGORY_B,
+  LICENSE_CATEGORY_BE,
   Organization,
   PracticalDrivingLesson,
   PracticalDrivingLessonsInput,
@@ -45,6 +46,24 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
 const LOGTAG = '[driving-license-book-client]'
+
+// License categories that can have an active ökunám book in the
+// change-instructor flow. A student may hold several at once (e.g. B and BE),
+// so we look up the active book per category instead of guessing from the
+// student overview. Extend this list as more categories start issuing digital
+// books (e.g. advanced rights).
+const UPDATE_INSTRUCTOR_LICENSE_CATEGORIES = [
+  LICENSE_CATEGORY_B,
+  LICENSE_CATEGORY_BE,
+]
+
+// An active book we can actually act on: it must have an id (to address the
+// update) and a createdOn (the update endpoint requires a non-empty yyyy-MM-dd).
+type ActiveLicenseBook = DigitalBook & { id: string; createdOn: string }
+
+const isActiveLicenseBook = (
+  book: DigitalBook | undefined,
+): book is ActiveLicenseBook => !!book?.id && !!book?.createdOn
 
 @Injectable()
 export class DrivingLicenseBookClientApiFactory {
@@ -343,21 +362,6 @@ export class DrivingLicenseBookClientApiFactory {
     )
   }
 
-  private async getActiveBookId(nationalId: string): Promise<string | null> {
-    const api = await this.create()
-    const { data } = await api.apiStudentGetStudentActiveBookIdSsnGet({
-      ssn: nationalId,
-      licenseCategory: LICENSE_CATEGORY_B,
-    })
-    return data?.bookId || null
-  }
-
-  private async hasPracticeDriving(id: string): Promise<boolean> {
-    const api = await this.create()
-    const { data } = await api.apiStudentGetLicenseBookIdGet({ id })
-    return data?.practiceDriving || false
-  }
-
   async allowPracticeDriving({
     teacherNationalId,
     studentNationalId,
@@ -376,27 +380,72 @@ export class DrivingLicenseBookClientApiFactory {
     }
   }
 
-  async getActiveStudentBook(user: User): Promise<BookOverview | undefined> {
-    const api = await this.create()
+  private async getActiveLicenseBookByCategory(
+    api: DrivingLicenseBookApi,
+    nationalId: string,
+    licenseCategory: string,
+  ): Promise<DigitalBook | undefined> {
+    try {
+      const { data } =
+        await api.apiStudentGetStudentActiveLicenseBookBySsnSsnGet({
+          ssn: nationalId,
+          licenseCategory,
+        })
+      return data ?? undefined
+    } catch (error) {
+      // Only swallow the "no active book for this category" case – a student
+      // may legitimately have a book in one category but not another. Any other
+      // failure (401/403/5xx/timeout) must propagate, otherwise we could update
+      // some of a student's books, miss others, and still report success.
+      if (error instanceof FetchError && error.status === 404) {
+        this.logger.debug(
+          `${LOGTAG} No active ${licenseCategory} book for student`,
+        )
+        return undefined
+      }
+      throw error
+    }
+  }
 
-    const { data } = await api.apiStudentGetStudentOverviewSsnGet({
-      ssn: user.nationalId,
-      showInactiveBooks: false,
+  private async fetchActiveStudentBooks(
+    api: DrivingLicenseBookApi,
+    nationalId: string,
+  ): Promise<ActiveLicenseBook[]> {
+    const books = await Promise.all(
+      UPDATE_INSTRUCTOR_LICENSE_CATEGORIES.map((licenseCategory) =>
+        this.getActiveLicenseBookByCategory(api, nationalId, licenseCategory),
+      ),
+    )
+
+    // Keep only usable books (id + createdOn) and de-duplicate in case the
+    // backend returns the same book for more than one category.
+    const seen = new Set<string>()
+    return books.filter(isActiveLicenseBook).filter((book) => {
+      if (seen.has(book.id)) {
+        return false
+      }
+      seen.add(book.id)
+      return true
     })
+  }
 
-    const activeBook = data?.books
-      ?.filter((item) => item.status !== 9)
-      ?.reduce(
-        (a, b) =>
-          new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
-        {},
-      )
+  async getActiveStudentBook(user: User): Promise<DigitalBook | undefined> {
+    const api = await this.create()
+    const activeBooks = await this.fetchActiveStudentBooks(api, user.nationalId)
 
-    if (!activeBook?.id || !activeBook?.createdOn) {
+    if (activeBooks.length === 0) {
       return undefined
     }
 
-    return activeBook
+    // When several categories are active, surface the most recently created
+    // book (the instructor is shared across them in practice).
+    return activeBooks.reduce(
+      (mostRecent, book) =>
+        new Date(book.createdOn) > new Date(mostRecent.createdOn)
+          ? book
+          : mostRecent,
+      activeBooks[0],
+    )
   }
 
   async updateActiveStudentBookInstructor(
@@ -405,39 +454,49 @@ export class DrivingLicenseBookClientApiFactory {
   ): Promise<{ success: boolean }> {
     const api = await this.create()
 
-    const activeBook = await this.getActiveStudentBook(user)
-    if (!activeBook) {
+    const activeBooks = await this.fetchActiveStudentBooks(api, user.nationalId)
+    if (activeBooks.length === 0) {
       throw new NotFoundException(
         `Active book for national id ${user.nationalId} not found`,
       )
     }
 
-    const { data } = await api.apiStudentGetStudentOverviewSsnGet({
-      ssn: user.nationalId,
-      showInactiveBooks: false,
-    })
-
-    const hasPracticeDriving = await this.hasPracticeDriving(
-      activeBook.id || '',
+    // A student can be taking several categories (e.g. B and BE) at once –
+    // update the instructor on every active book. Use allSettled so every PUT
+    // is awaited even when one fails, and we can report exactly which book(s)
+    // failed instead of aborting on the first rejection.
+    const results = await Promise.allSettled(
+      activeBooks.map((book) =>
+        api.apiStudentUpdateLicenseBookIdPut({
+          id: book.id,
+          digitalBookUpdateRequestBody: {
+            createdOn: book.createdOn,
+            teacherSsn: newTeacherSsn,
+            schoolSsn: book.schoolSsn,
+            studentEmail: book.studentEmail,
+            studentPrimaryPhoneNumber: book.studentPrimaryPhoneNumber,
+            studentSecondaryPhoneNumber: book.studentSecondaryPhoneNumber,
+            practiceDriving: book.practiceDriving,
+          },
+        }),
+      ),
     )
 
-    try {
-      await api.apiStudentUpdateLicenseBookIdPut({
-        id: activeBook.id || '',
-        digitalBookUpdateRequestBody: {
-          createdOn: activeBook.createdOn || '',
-          teacherSsn: newTeacherSsn,
-          schoolSsn: activeBook.schoolSsn,
-          studentEmail: data?.email,
-          studentPrimaryPhoneNumber: data?.primaryPhoneNumber,
-          studentSecondaryPhoneNumber: data?.secondaryPhoneNumber,
-          practiceDriving: hasPracticeDriving,
-        },
-      })
-      return { success: true }
-    } catch (e) {
+    const failures = results.flatMap((result, index) =>
+      result.status === 'rejected'
+        ? [{ bookId: activeBooks[index].id, reason: result.reason }]
+        : [],
+    )
+
+    if (failures.length > 0) {
+      this.logger.error(
+        `${LOGTAG} Error updating driving license book instructor`,
+        failures,
+      )
       return { success: false }
     }
+
+    return { success: true }
   }
 
   async getTeacher(nationalId: string): Promise<TeacherRights> {

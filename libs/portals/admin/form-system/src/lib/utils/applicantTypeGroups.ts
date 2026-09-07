@@ -14,4 +14,8 @@ export const applicantTypeGroups = {
     ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
     ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER,
   ],
+  legalGuardian: [
+    ApplicantTypesEnum.LEGAL_GUARDIAN,
+    ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN,
+  ],
 }

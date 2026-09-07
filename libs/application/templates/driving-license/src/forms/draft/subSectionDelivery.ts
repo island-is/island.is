@@ -44,15 +44,15 @@ export const subSectionDelivery = buildSubSection({
           condition: (answers) =>
             getValueViaPath(answers, 'delivery.deliveryMethod') ===
             Pickup.DISTRICT,
-          options: ({
-            externalData: {
-              jurisdictions: { data },
-            },
-          }) => {
-            return (data as Jurisdiction[]).map(({ id, name, zip }) => ({
+          options: (application) => {
+            const data = (getValueViaPath(
+              application.externalData,
+              'jurisdictions.data',
+            ) ?? []) as Jurisdiction[]
+            return data.map(({ id, name, zip }) => ({
               value: `${id}`,
               label: name,
-              tooltip: `Póstnúmer ${zip}`,
+              tooltip: { ...m.postalCodeTooltip, values: { zip } },
             }))
           },
         }),

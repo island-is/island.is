@@ -23,6 +23,7 @@ export const testamentInfo = buildSection({
       title: m.willsAndAgreements,
       description: (application) =>
         getWillsAndAgreementsDescriptionText(application),
+      nextButtonText: m.saveAndContinue,
       children: [
         buildRadioField({
           id: 'estate.testament.agreement',

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'activation-allowance',
   preset: '../../../../jest.preset.js',
   transform: {

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-rsk-relationships',
   preset: './jest.preset.js',
   rootDir: '../../../..',

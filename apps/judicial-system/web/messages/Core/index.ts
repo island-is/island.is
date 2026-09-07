@@ -75,11 +75,6 @@ export const core = defineMessages({
     defaultMessage: 'Mál nr. {caseNumber}',
     description: 'Notað fyrir texta fyrir númer á máli',
   },
-  prosecutor: {
-    id: 'judicial.system.core:prosecutor',
-    defaultMessage: 'Sóknaraðili',
-    description: 'Notað fyrir orðið sóknaraðili í öllum flæðum.',
-  },
   prosecutorPerson: {
     id: 'judicial.system.core:prosecutor_person',
     defaultMessage: 'Sækjandi',

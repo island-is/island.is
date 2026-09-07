@@ -1,7 +1,4 @@
-import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
-
-import { LocaleProvider } from '@island.is/localization'
 
 import RenderPersonalData from './RenderPersonalInfo'
 
@@ -11,13 +8,7 @@ describe('RenderPersonalInfo', () => {
     const name = 'Joe'
 
     // Act
-    render(
-      <MockedProvider>
-        <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData({ name })}
-        </LocaleProvider>
-      </MockedProvider>,
-    )
+    render(RenderPersonalData({ name }))
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(/^Joe$/)
@@ -31,13 +22,7 @@ describe('RenderPersonalInfo', () => {
     const breakSpaces = false
 
     // Act
-    render(
-      <MockedProvider>
-        <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
-        </LocaleProvider>
-      </MockedProvider>,
-    )
+    render(RenderPersonalData({ name, email, phoneNumber, breakSpaces }))
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
@@ -53,13 +38,7 @@ describe('RenderPersonalInfo', () => {
     const breakSpaces = false
 
     // Act
-    render(
-      <MockedProvider>
-        <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
-        </LocaleProvider>
-      </MockedProvider>,
-    )
+    render(RenderPersonalData({ name, email, phoneNumber, breakSpaces }))
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
@@ -75,13 +54,7 @@ describe('RenderPersonalInfo', () => {
     const breakSpaces = false
 
     // Act
-    render(
-      <MockedProvider>
-        <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
-        </LocaleProvider>
-      </MockedProvider>,
-    )
+    render(RenderPersonalData({ name, email, phoneNumber, breakSpaces }))
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
@@ -97,13 +70,7 @@ describe('RenderPersonalInfo', () => {
     const breakSpaces = false
 
     // Act
-    render(
-      <MockedProvider>
-        <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
-        </LocaleProvider>
-      </MockedProvider>,
-    )
+    render(RenderPersonalData({ name, email, phoneNumber, breakSpaces }))
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
@@ -119,13 +86,7 @@ describe('RenderPersonalInfo', () => {
     const breakSpaces = false
 
     // Act
-    render(
-      <MockedProvider>
-        <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
-        </LocaleProvider>
-      </MockedProvider>,
-    )
+    render(RenderPersonalData({ name, email, phoneNumber, breakSpaces }))
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(/^Joe$/)
@@ -139,13 +100,7 @@ describe('RenderPersonalInfo', () => {
     const breakSpaces = false
 
     // Act
-    render(
-      <MockedProvider>
-        <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
-        </LocaleProvider>
-      </MockedProvider>,
-    )
+    render(RenderPersonalData({ name, email, phoneNumber, breakSpaces }))
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
@@ -161,17 +116,24 @@ describe('RenderPersonalInfo', () => {
     const breakSpaces = false
 
     // Act
-    render(
-      <MockedProvider>
-        <LocaleProvider locale="is" messages={{}}>
-          {RenderPersonalData({ name, email, phoneNumber, breakSpaces })}
-        </LocaleProvider>
-      </MockedProvider>,
-    )
+    render(RenderPersonalData({ name, email, phoneNumber, breakSpaces }))
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
       /^s. 111-1111$/,
     )
+  })
+
+  test('should give the edit button a descriptive accessible name', async () => {
+    // Arrange
+    const name = 'Joe'
+
+    // Act
+    render(RenderPersonalData({ name, onClick: jest.fn() }))
+
+    // Assert
+    expect(
+      await screen.findByRole('button', { name: 'Breyta Joe' }),
+    ).toBeInTheDocument()
   })
 })

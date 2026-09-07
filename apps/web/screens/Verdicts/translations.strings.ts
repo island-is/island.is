@@ -2,6 +2,22 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    downloadGuide: {
+      id: 'web.verdicts:listPage.downloadGuide',
+      defaultMessage: 'Sjá leiðbeiningar',
+      description: 'Leiðbeiningar',
+    },
+    downloadGuideUrl: {
+      id: 'web.verdicts:listPage.downloadGuideUrl',
+      defaultMessage:
+        'https://assets.ctfassets.net/8k0h54kbe6bj/22bf80wWmp3j4htA1VbUWx/5d68b57f4607c529c763aef15539a9a8/a1c00c4f-d788-4e16-a946-a4db394f9159.docx',
+      description: 'Hlekkur á leiðbeiningarskjal',
+    },
+    verdictsWebsiteEyebrow: {
+      id: 'web.verdicts:listPage.verdictsWebsiteEyebrow',
+      defaultMessage: 'Vefsvæði dómstólanna',
+      description: 'Vefsvæði dómstólanna',
+    },
     caseContactAccordionLabel: {
       id: 'web.verdicts:listPage.caseContactAccordionLabel',
       defaultMessage: 'Málsaðili',

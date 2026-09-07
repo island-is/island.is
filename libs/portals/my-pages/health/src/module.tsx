@@ -1,5 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
+import { Features } from '@island.is/react/feature-flags'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
@@ -21,6 +22,9 @@ const TherapiesOccupational = lazy(() =>
 
 const AidsAndNutrition = lazy(() =>
   import('./screens/AidsAndNutrition/AidsAndNutrition'),
+)
+const MovementPrescriptions = lazy(() =>
+  import('./screens/MovementPrescriptions/MovementPrescriptions'),
 )
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 
@@ -140,6 +144,28 @@ const AppointmentDetail = lazy(() =>
   import('./screens/Appointments/AppointmentDetail'),
 )
 
+const BookAppointment = lazy(() =>
+  import('./screens/Appointments/BookAppointment'),
+)
+
+const HealthConversations = lazy(() =>
+  import('./screens/HealthConversations/HealthConversations'),
+)
+
+const NewHealthConversation = lazy(() =>
+  import('./screens/HealthConversations/NewHealthConversation'),
+)
+
+const HealthConversationDetail = lazy(() =>
+  import('./screens/HealthConversations/HealthConversationDetail'),
+)
+
+const Treatments = lazy(() => import('./screens/Treatments/Treatments'))
+
+const TreatmentOverview = lazy(() =>
+  import('./screens/Treatments/TreatmentOverview'),
+)
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
@@ -242,6 +268,13 @@ export const healthModule: PortalModule = {
       name: hm.aidsAndNutritionTitle,
       path: HealthPaths.HealthAidsAndNutritionOld,
       element: <Navigate to={HealthPaths.HealthAidsAndNutrition} replace />,
+    },
+    {
+      name: hm.movementPrescriptionsTitle,
+      path: HealthPaths.HealthMovementPrescriptions,
+      key: 'HealthMovementPrescriptions',
+      enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
+      element: <MovementPrescriptions />,
     },
     {
       name: hm.payments,
@@ -618,6 +651,50 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <AppointmentDetail />,
+    },
+    {
+      name: hm.bookAppointmentTitle,
+      path: HealthPaths.HealthBookAppointment,
+      key: 'HealthAppointments',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <BookAppointment />,
+    },
+    {
+      name: m.messages,
+      path: HealthPaths.HealthConversations,
+      key: 'HealthMessages',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <HealthConversations />,
+    },
+    {
+      name: hm.healthConversationsNewTitle,
+      path: HealthPaths.HealthConversationsNew,
+      key: 'HealthMessages',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <NewHealthConversation />,
+    },
+    {
+      name: m.messages,
+      path: HealthPaths.HealthConversationsDetail,
+      key: 'HealthMessages',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <HealthConversationDetail />,
+    },
+    {
+      name: m.healthTreatments,
+      path: HealthPaths.HealthTreatments,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Treatments />,
+    },
+    {
+      name: m.healthTreatment,
+      path: HealthPaths.HealthTreatment,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <TreatmentOverview />,
     },
   ],
 }

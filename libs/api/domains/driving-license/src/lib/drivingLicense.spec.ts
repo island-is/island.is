@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
 import {
+  DrivingLicenseApi,
   DrivingLicenseApiConfig,
   DrivingLicenseApiModule,
 } from '@island.is/clients/driving-license'
@@ -24,13 +25,17 @@ import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/
 import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 import { ConfigModule } from '@island.is/nest/config'
 
-import { DrivingLicenseCategory } from './drivingLicense.type'
+import {
+  DrivingLicenseApplicationType,
+  DrivingLicenseCategory,
+} from './drivingLicense.type'
 
 const daysOfResidency = 365
 
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
+  let drivingLicenseApi: DrivingLicenseApi
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -48,6 +53,8 @@ describe('DrivingLicenseService', () => {
           provide: LOGGER_PROVIDER,
           useValue: {
             warn: () => undefined,
+            info: () => undefined,
+            error: () => undefined,
           },
         },
         {
@@ -60,6 +67,7 @@ describe('DrivingLicenseService', () => {
     }).compile()
 
     service = module.get(DrivingLicenseService)
+    drivingLicenseApi = module.get(DrivingLicenseApi)
   })
 
   describe('Module', () => {
@@ -307,6 +315,23 @@ describe('DrivingLicenseService', () => {
       })
     })
 
+    it('accepts a driving assessment regardless of its age — only completion matters', async () => {
+      // The mock assessment is 8 months old, past the 182-day window the
+      // original template enforced. Samgongustofa confirmed (2026-08-31) an
+      // assessment does not expire, so age must not block eligibility.
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        'B-full',
+      )
+
+      expect(response.isEligible).toBe(true)
+      expect(response.requirements).toContainEqual({
+        key: 'DrivingAssessmentMissing',
+        requirementMet: true,
+      })
+    })
+
     it('all checks should pass for applicable students for temporary license', async () => {
       const response = await service.getApplicationEligibility(
         MOCK_USER,
@@ -358,9 +383,103 @@ describe('DrivingLicenseService', () => {
           {
             key: 'DeniedByService',
             requirementMet: false,
+            errorCode: 'SOME REASON',
           },
         ],
       })
+    })
+
+    it('still returns eligibility when the RLS codetable lookup fails', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getErrorCodeDescriptions')
+        .mockRejectedValueOnce(new Error('codetable down'))
+
+      const MOCK_USER_COPY = { ...MOCK_USER }
+      MOCK_USER_COPY.authorization = MOCK_TOKEN_EXPIRED
+
+      const response = await service.getApplicationEligibility(
+        MOCK_USER_COPY,
+        MOCK_NATIONAL_ID_EXPIRED,
+        'B-full',
+      )
+
+      // The denial reason (errorCode) is still attached; only the RLS message
+      // is omitted because the lookup failed — the query does not throw.
+      expect(response.isEligible).toBe(false)
+      expect(
+        response.requirements.find((r) => r.key === 'DeniedByService'),
+      ).toStrictEqual({
+        key: 'DeniedByService',
+        requirementMet: false,
+        errorCode: 'SOME REASON',
+      })
+    })
+
+    it('attaches the RLS description for an uncurated B-temp denial code (the case the UI actually shows)', async () => {
+      // HAS_NO_SIGNATURE maps to a key that falls through to the generic
+      // branch, so the resolved RLS message is what renders (unlike curated
+      // codes such as HAS_POINTS, whose own copy overrides `message`).
+      jest
+        .spyOn(drivingLicenseApi, 'getCanApplyForCategoryTemporary')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_NO_SIGNATURE' })
+
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        'B-temp',
+      )
+
+      const canApply = response.requirements.find(
+        (r) => r.errorCode === 'HAS_NO_SIGNATURE',
+      )
+      expect(canApply?.messageIs).toBe(
+        'Einstaklingur hefur ekki undirskrift á skrá',
+      )
+      expect(canApply?.messageEn).toBe('Person has no signature on file')
+    })
+
+    it('attaches RLS text for renewal-65 too (no license-type gate)', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getCanApplyForRenewal65')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_POINTS' })
+
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        // Runtime value the GraphQL String field actually receives, even though
+        // it is outside the narrower DrivingLicenseApplicationType TS union.
+        'B-full-renewal-65' as DrivingLicenseApplicationType,
+      )
+
+      const canApply = response.requirements.find(
+        (r) => r.errorCode === 'HAS_POINTS',
+      )
+      expect(canApply?.messageIs).toBe('Þú ert með punkta á ökuskírteini')
+      expect(canApply?.messageEn).toBe('You have points on your license')
+    })
+  })
+
+  describe('describeErrorCode', () => {
+    it('returns both language descriptions for a known code', async () => {
+      const result = await service.describeErrorCode('HAS_POINTS')
+      expect(result).toEqual({
+        is: 'Þú ert með punkta á ökuskírteini',
+        en: 'You have points on your license',
+      })
+    })
+
+    it('returns null for a code not in the catalogue', async () => {
+      const result = await service.describeErrorCode('TOTALLY_UNKNOWN_CODE')
+      expect(result).toBeNull()
+    })
+
+    it('returns null (best-effort) when the codetable lookup fails', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getErrorCodeDescriptions')
+        .mockRejectedValueOnce(new Error('codetable down'))
+
+      const result = await service.describeErrorCode('HAS_POINTS')
+      expect(result).toBeNull()
     })
   })
 
@@ -455,6 +574,103 @@ describe('DrivingLicenseService', () => {
           },
         )
         .catch((e) => expect(e).toBeTruthy())
+    })
+  })
+
+  describe('withHealthDeclaration (v6)', () => {
+    const auth = { authorization: 'Bearer token' } as never
+    const allNo = {
+      isDisabled: false,
+      hasDiabetes: false,
+      hasEpilepsy: false,
+      isAlcoholic: false,
+      hasHeartDisease: false,
+      hasMentalIllness: false,
+      hasOtherDiseases: false,
+      usesMedicalDrugs: false,
+      usesContactGlasses: false,
+      hasReducedPeripheralVision: false,
+    }
+    const baseInput = {
+      districtId: 37,
+      sendPlasticToPerson: false,
+      healthDeclaration: allNo,
+    }
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    // RLS signals success with 2xx (enhanced fetch throws on 4xx), and returns
+    // the new application's guid — NOT reliably a `result: true`. A created
+    // application was observed on dev coming back with `result` falsy, so gating
+    // on it reported failure to an applicant who had already paid, and their
+    // retry then hit 400 APPLICATION_ALREADY_EXISTS. Any resolved response is a
+    // success, whatever the DTO body looks like.
+    it.each([
+      ['a guid', '3630b0bc-ec51-442e-976d-13a3c21c5e5b'],
+      ['null (guid unreadable / lost-response retry)', null],
+    ])(
+      'treats a resolved temporary submission (%s) as success',
+      async (_l, guid) => {
+        jest
+          .spyOn(
+            drivingLicenseApi,
+            'postTemporaryLicenseWithHealthDeclarationV6',
+          )
+          .mockResolvedValue(guid as never)
+
+        await expect(
+          service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
+            ...baseInput,
+            instructorSSN: MOCK_NATIONAL_ID_TEACHER,
+          }),
+        ).resolves.toStrictEqual({
+          success: true,
+          errorMessage: null,
+          applicationGuid: guid,
+        })
+      },
+    )
+
+    it('propagates a rejection so submitApplication surfaces the RLS error', async () => {
+      const problem = Object.assign(new Error('already exists'), {
+        name: 'FetchError',
+        status: 400,
+      })
+      jest
+        .spyOn(drivingLicenseApi, 'postTemporaryLicenseWithHealthDeclarationV6')
+        .mockRejectedValue(problem)
+
+      await expect(
+        service.newTemporaryDrivingLicenseWithHealthDeclaration(auth, {
+          ...baseInput,
+          instructorSSN: MOCK_NATIONAL_ID_TEACHER,
+        }),
+      ).rejects.toBe(problem)
+    })
+
+    it('forwards the category as a path param for the full licence', async () => {
+      const spy = jest
+        .spyOn(drivingLicenseApi, 'postFullLicenseWithHealthDeclarationV6')
+        .mockResolvedValue('3630b0bc-ec51-442e-976d-13a3c21c5e5b')
+
+      await expect(
+        service.newDrivingLicenseWithHealthDeclaration(auth, {
+          ...baseInput,
+          licenseCategory: DrivingLicenseCategory.B,
+        }),
+      ).resolves.toStrictEqual({
+        success: true,
+        errorMessage: null,
+        applicationGuid: '3630b0bc-ec51-442e-976d-13a3c21c5e5b',
+      })
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({ auth, category: DrivingLicenseCategory.B }),
+      )
+      // `licenseCategory` travels in the path, so it must not also be in the body.
+      expect('licenseCategory' in spy.mock.calls[0][0].model).toBe(false)
     })
   })
 })

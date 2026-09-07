@@ -21,6 +21,10 @@ export const m = defineMessages({
     id: 'api.license-service:firearm-license',
     defaultMessage: 'Skotvopnaleyfi',
   },
+  renewFirearmLicenseLink: {
+    id: 'api.license-service:renew-firearm-license-link',
+    defaultMessage: 'https://island.is/endurnyja-skotvopnaleyfi',
+  },
   huntingCard: {
     id: 'api.license-service:hunting-card',
     defaultMessage: 'Almennt veiðikort',

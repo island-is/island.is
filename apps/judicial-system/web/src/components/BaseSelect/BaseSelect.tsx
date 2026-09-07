@@ -1,26 +1,27 @@
-import { FC } from 'react'
-import Select, {
+import type { FC } from 'react'
+import type {
   ActionMeta,
   MultiValue,
   PropsValue,
   SingleValue as ReactSelectSingleValue,
 } from 'react-select'
+import Select from 'react-select'
 
-import { Option as CoreOption } from '@island.is/island-ui/core'
+import type { Option as CoreOption } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-
-import { ReactSelectOption } from '../../types'
 import {
   DropdownIndicator,
   Option,
   Placeholder,
   SingleValue,
-} from '../SelectComponents/SelectComponents'
+} from '@island.is/judicial-system-web/src/components/SelectComponents/SelectComponents'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   options: ReactSelectOption[]
   isLoading: boolean
   placeholder?: string
+  ariaLabel?: string
   value?: PropsValue<CoreOption<string | number | null>>
   onChange?: (
     newValue:
@@ -34,6 +35,7 @@ const BaseSelect: FC<Props> = (props) => {
     options,
     isLoading,
     placeholder = 'Hver lagði fram?',
+    ariaLabel,
     value,
     onChange,
   } = props
@@ -41,6 +43,7 @@ const BaseSelect: FC<Props> = (props) => {
   return (
     <Select
       classNamePrefix="court-documents-select"
+      aria-label={ariaLabel ?? placeholder}
       options={options}
       placeholder={placeholder}
       isLoading={isLoading}

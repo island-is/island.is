@@ -15,6 +15,10 @@ import { Button, Typography } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
 import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png'
 import { isIos } from '@/utils/devices'
+import {
+  clearLockScreenSuppression,
+  suppressLockScreen,
+} from '@/stores/auth-store'
 import { preferencesStore } from '@/stores/preferences-store'
 
 const Text = styled.View<{ isSmallDevice: boolean }>`
@@ -58,6 +62,16 @@ export default function UpdateAppScreen() {
     }
     const sub = BackHandler.addEventListener('hardwareBackPress', () => true)
     return () => sub.remove()
+  }, [closable])
+
+  // Suppress the lock while the unclosable wall is up — otherwise the lock's
+  // router.back could pop this screen and bypass the required update.
+  useEffect(() => {
+    if (closable) {
+      return
+    }
+    suppressLockScreen()
+    return () => clearLockScreenSuppression()
   }, [closable])
 
   return (

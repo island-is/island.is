@@ -29,17 +29,21 @@ export const mobileNav = style({
   willChange: 'top',
 })
 
-export const mobileNavHidden = style({
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      top: -100, // Hide the mobile nav when header is hidden
-      transition: 'top 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-    },
-  },
-})
-
 export const fullWidthInner = style({
   maxWidth: theme.breakpoints.xl,
+})
+
+export const fullWidthMinHeight = style({
+  // Fallback for browsers without dvh
+  minHeight: `calc(100vh - ${theme.headerHeight.large}px)`,
+  // Mobile browser chrome (address bar) resizes the visual viewport as the
+  // user scrolls, which makes a static 100vh cut off or leave a gap at the
+  // bottom of full-bleed views (Dashboard, Search, Finance, Documents).
+  '@supports': {
+    '(height: 100dvh)': {
+      minHeight: `calc(100dvh - ${theme.headerHeight.large}px)`,
+    },
+  },
 })
 
 globalStyle(`${btn} > span`, {

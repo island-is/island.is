@@ -12,6 +12,7 @@ import {
   CreateDelegationDTO,
   Delegation,
   DelegationScope,
+  DelegationsIndexService,
   Domain,
   NamesService,
   PatchDelegationDTO,
@@ -68,6 +69,16 @@ describe.each(Object.keys(accessOutgoingTestCases))(
       jest
         .spyOn(namesService, 'getUserName')
         .mockResolvedValue(faker.name.findName())
+
+      // Stub fire-and-forget indexing so stray queries don't outlive the suite
+      // and hit the shared test database while it is being recreated.
+      const delegationIndexService = app.get(DelegationsIndexService)
+      jest
+        .spyOn(delegationIndexService, 'indexDelegations')
+        .mockImplementation()
+      jest
+        .spyOn(delegationIndexService, 'indexCustomDelegations')
+        .mockImplementation()
 
       factory = new FixtureFactory(app)
       domains = await Promise.all(

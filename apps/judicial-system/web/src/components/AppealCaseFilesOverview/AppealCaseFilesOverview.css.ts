@@ -4,8 +4,6 @@ export const metadataRow = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
-  flex: 1,
-  minWidth: 0,
 })
 
 export const childContainer = style({

@@ -1,5 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
-import React from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -42,16 +42,19 @@ import {
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ConfirmationInformation } from './ConfirmationInformation'
 import { CriminalRecordUpdate } from './CriminalRecordUpdate'
 import { DefendantServiceRequirement } from './DefendantServiceRequirement'
+import ReopenCaseModal, { canReopenCase } from './ReopenCaseModal'
 import strings from './Completed.strings'
 
 type modal =
   | 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR'
   | 'DELIVER_VERDICTS'
-  | 'REOPEN'
+  | 'CORRECT'
+  | 'REOPEN_CASE'
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
@@ -69,14 +72,15 @@ const Completed: FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [modalVisible, setModalVisible] = useState<modal>()
 
+  // Defendants whose indictment was cancelled or dismissed (completed for some)
+  // do not get a verdict and therefore no service requirement
+  const defendantsWithVerdict = workingCase.defendants?.filter(
+    (defendant) => !defendant.indictmentCancelledOrDismissedState,
+  )
+
   // If the case has not been sent to the public prosecutor after completion/correction
   // then show the send to public prosecutor button
-  const isSentToPublicProsecutor = Boolean(
-    workingCase.indictmentCompletedDate &&
-      workingCase.indictmentSentToPublicProsecutorDate &&
-      workingCase.indictmentSentToPublicProsecutorDate >
-        workingCase.indictmentCompletedDate,
-  )
+  const sentToPublicProsecutor = isSentToPublicProsecutor(workingCase)
 
   const completeCaseConfirmation = useCallback(async () => {
     setIsLoading(true)
@@ -126,7 +130,7 @@ const Completed: FC = () => {
     }
 
     // The verdict needs to be delivered to some defendants
-    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
+    const requiresVerdictDeliveryToDefendants = defendantsWithVerdict?.some(
       ({ verdict }) =>
         verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
     )
@@ -148,7 +152,7 @@ const Completed: FC = () => {
     handleUpload,
     uploadFiles,
     updateUploadFile,
-    workingCase.defendants,
+    defendantsWithVerdict,
     workingCase.indictmentSentToPublicProsecutorDate,
     completeCaseConfirmation,
     completeCaseConfirmationWithVerdictDelivery,
@@ -172,7 +176,7 @@ const Completed: FC = () => {
 
   const stepIsValid = () => {
     const isValidDefendants = isRuling
-      ? workingCase.defendants?.every((defendant) =>
+      ? defendantsWithVerdict?.every((defendant) =>
           defendant.verdict?.serviceRequirement ===
           ServiceRequirement.NOT_APPLICABLE
             ? Boolean(defendant.verdict?.appealDecision)
@@ -181,7 +185,7 @@ const Completed: FC = () => {
       : true
     const isValidRuling =
       includeRulingText &&
-      workingCase.defendants?.some(
+      defendantsWithVerdict?.some(
         (defendant) =>
           defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
       )
@@ -211,7 +215,7 @@ const Completed: FC = () => {
         <FormContentContainer>
           <PageTitle>{formatMessage(strings.heading)}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.defendants?.map(
+          {defendantsWithVerdict?.map(
             (defendant) =>
               defendant.verdict && (
                 <Box
@@ -280,7 +284,7 @@ const Completed: FC = () => {
                   title={formatMessage(strings.serviceRequirementTitle)}
                 />
                 <div className={grid({ gap: 4 })}>
-                  {workingCase.defendants?.map((defendant) => {
+                  {defendantsWithVerdict?.map((defendant) => {
                     const { verdict } = defendant
                     if (!verdict) return null
 
@@ -298,57 +302,89 @@ const Completed: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            hideActionButton={
-              workingCase.indictmentRulingDecision ===
+            actions={[
+              ...(canReopenCase(workingCase, user)
+                ? [
+                    {
+                      text: 'Enduropna mál',
+                      onClick: () => setModalVisible('REOPEN_CASE'),
+                      variant: 'ghost' as const,
+                      colorScheme: 'destructive' as const,
+                    },
+                  ]
+                : []),
+              ...(workingCase.indictmentRulingDecision ===
               CaseIndictmentRulingDecision.WITHDRAWAL
-            }
-            actionButtonText="Leiðrétta mál"
-            actionButtonColorScheme="default"
-            actionButtonVariant="primary"
-            onActionButtonClick={() => setModalVisible('REOPEN')}
-            hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
-            nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
-            nextIsDisabled={!stepIsValid()}
-            onNextButtonClick={() => {
-              setModalVisible('CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR')
-            }}
+                ? []
+                : [
+                    {
+                      text: 'Leiðrétta mál',
+                      onClick: () => setModalVisible('CORRECT'),
+                    },
+                  ]),
+              ...(!isRulingOrFine || sentToPublicProsecutor
+                ? []
+                : [
+                    {
+                      text: formatMessage(strings.sendToPublicProsecutor),
+                      onClick: () =>
+                        setModalVisible(
+                          'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR',
+                        ),
+                      disabled: !stepIsValid(),
+                      testId: 'continueButton',
+                    },
+                  ]),
+            ]}
           />
         </FormContentContainer>
         {modalVisible === 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR' && (
           <Modal
             title="Viltu senda mál til ákæruvalds?"
             text={<ConfirmationInformation uploadFiles={uploadFiles} />}
-            primaryButton={{
-              text: 'Staðfesta',
-              icon: 'checkmark',
-              isLoading: isLoading,
-              onClick: handleCaseConfirmation,
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => setModalVisible(undefined),
-            }}
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setModalVisible(undefined),
+                variant: 'ghost',
+              },
+              {
+                text: 'Staðfesta',
+                icon: 'checkmark',
+                isLoading: isLoading,
+                onClick: handleCaseConfirmation,
+              },
+            ]}
           />
         )}
         {modalVisible === 'DELIVER_VERDICTS' && (
           <Modal
             title="Viltu senda dóm í birtingu?"
             text="Hægt er að senda nýtt eintak af dómi í birtingu ef þörf krefur."
-            primaryButton={{
-              text: 'Já, senda',
-              icon: 'checkmark',
-              isLoading: isLoading,
-              onClick: completeCaseConfirmationWithVerdictDelivery,
-            }}
-            secondaryButton={{
-              text: 'Nei',
-              isLoading: isLoading,
-              onClick: completeCaseConfirmation,
-            }}
+            buttons={[
+              {
+                text: 'Nei',
+                isLoading: isLoading,
+                onClick: completeCaseConfirmation,
+                variant: 'ghost',
+              },
+              {
+                text: 'Já, senda',
+                icon: 'checkmark',
+                isLoading: isLoading,
+                onClick: completeCaseConfirmationWithVerdictDelivery,
+              },
+            ]}
           />
         )}
-        {modalVisible === 'REOPEN' && (
+        {modalVisible === 'CORRECT' && (
           <ReopenModal onClose={() => setModalVisible(undefined)} />
+        )}
+        {modalVisible === 'REOPEN_CASE' && (
+          <ReopenCaseModal
+            workingCase={workingCase}
+            onClose={() => setModalVisible(undefined)}
+          />
         )}
         {appealModals}
       </PageLayout>

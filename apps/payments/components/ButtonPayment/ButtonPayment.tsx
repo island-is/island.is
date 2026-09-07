@@ -6,25 +6,21 @@ import * as styles from './ButtonPayment.css'
 interface ButtonPaymentProps {
   children: React.ReactNode
   onClick: () => void
-  type: 'card' | 'invoice'
+  type: 'card' | 'invoice' | 'bank_transfer'
   isSelected: boolean
 }
 
 const getIconType = (
   paymentType: ButtonPaymentProps['type'],
 ): IconProps['icon'] => {
-  let iconType: IconProps['icon'] = 'wallet'
-
   switch (paymentType) {
     case 'card':
-      iconType = 'card'
-      break
+      return 'card'
     case 'invoice':
-      iconType = 'bank'
-      break
+      return 'bank'
+    case 'bank_transfer':
+      return 'swapHorizontal'
   }
-
-  return iconType
 }
 
 export const ButtonPayment = (props: ButtonPaymentProps) => {

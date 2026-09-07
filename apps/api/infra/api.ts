@@ -358,6 +358,8 @@ export const serviceSetup = (services: {
         prod: 'hh_env_prod',
       },
       MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication',
+      // Outbound socket cap for enhancedFetch clients; raise to reduce queueing.
+      FETCH_MAX_SOCKETS: { dev: '50', staging: '50', prod: '50' },
     })
     .secrets({
       HH_ZENDESK_SUBDOMAIN:
@@ -513,8 +515,23 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
       FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER:
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
+      SKATTUR_TOLLUR_REIKNIVEL_BASE_URL:
+        '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_BASE_URL',
+      SKATTUR_TOLLUR_REIKNIVEL_USERNAME:
+        '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_USERNAME',
+      SKATTUR_TOLLUR_REIKNIVEL_PASSWORD:
+        '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_PASSWORD',
+      SKATTUR_TOLLUR_REIKNIVEL_API_KEY:
+        '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_API_KEY',
       MATILDA_API_KEY: '/k8s/api/LANDSPITALI_MATILDA_API_KEY',
       MATILDA_DISTRIBUTOR_ID: '/k8s/api/LANDSPITALI_MATILDA_DISTRIBUTOR_ID',
+      SKATTUR_TOLLUR_ALMENNT_BASE_URL:
+        '/k8s/api/SKATTUR_TOLLUR_ALMENNT_BASE_URL',
+      SKATTUR_TOLLUR_ALMENNT_USERNAME:
+        '/k8s/api/SKATTUR_TOLLUR_ALMENNT_USERNAME',
+      SKATTUR_TOLLUR_ALMENNT_PASSWORD:
+        '/k8s/api/SKATTUR_TOLLUR_ALMENNT_PASSWORD',
+      SKATTUR_TOLLUR_ALMENNT_API_KEY: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -611,6 +628,38 @@ export const serviceSetup = (services: {
       max: 50,
       min: 3,
       cpuAverageUtilization: 70,
+    })
+    .strategy({
+      // prod: zero-downtime. dev/staging: downtime is fine, roll faster.
+      dev: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: '25%' },
+      },
+      staging: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: '25%' },
+      },
+      prod: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: 0 },
+      },
+    })
+    .gracefulShutdown({
+      // Full drain in prod (long XRoad/GraphQL calls); relaxed elsewhere.
+      // minReadySeconds kept at 0 for now — knob to tune if needed.
+      dev: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 30,
+      },
+      staging: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 30,
+      },
+      prod: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 60,
+        preStopSleepSeconds: 10,
+      },
     })
     .grantNamespaces(
       'nginx-ingress-external',

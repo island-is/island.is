@@ -1,8 +1,9 @@
 import { IsDate, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
+import { MessageDescriptor } from '@formatjs/intl'
 import { FormatMessage } from '@island.is/application/types'
-import { StaticText } from '@island.is/shared/types'
+import { StaticText, StaticTextObject } from '@island.is/shared/types'
 
 export class HistoryResponseDto {
   @ApiProperty()
@@ -28,8 +29,12 @@ export class HistoryResponseDto {
   ) {
     this.date = timeStamp
     if (message) {
-      const values = typeof message === 'object' ? message.values : undefined
-      this.log = formatMessage(message, values)
+      if (typeof message === 'object' && message !== null && message.values) {
+        const { values, ...descriptor } = message as StaticTextObject
+        this.log = formatMessage(descriptor as MessageDescriptor, values)
+      } else {
+        this.log = formatMessage(message as MessageDescriptor | string)
+      }
       if (subjectAndActorText) {
         this.subLog = subjectAndActorText
       } else {

@@ -8,16 +8,40 @@ import {
   buildTextField,
   buildCustomField,
 } from '@island.is/application/core'
-import { CustomField } from '@island.is/application/types'
+import {
+  Application,
+  CustomField,
+  FormValue,
+} from '@island.is/application/types'
 
 import {
   convertFormToScreens,
-  findCurrentScreen,
-  getNavigableSectionsInForm,
-  screenHasBeenAnswered,
+  findCurrentScreen as findCurrentScreenImpl,
+  getNavigableSectionsInForm as getNavigableSectionsInFormImpl,
+  screenHasBeenAnswered as screenHasBeenAnsweredImpl,
   screenRequiresAnswer,
 } from './reducerUtils'
 import { FormScreen, MultiFieldScreen, RepeaterScreen } from '../types'
+
+const findCurrentScreen = (screens: FormScreen[], answers: FormValue = {}) =>
+  findCurrentScreenImpl(screens, { answers } as Application)
+
+const screenHasBeenAnswered = (
+  screen: FormScreen,
+  answers: FormValue = {},
+  checkIfPartlyAnswered = false,
+) =>
+  screenHasBeenAnsweredImpl(
+    screen,
+    { answers } as Application,
+    checkIfPartlyAnswered,
+  )
+
+const getNavigableSectionsInForm = (
+  form: Parameters<typeof getNavigableSectionsInFormImpl>[0],
+  answers: FormValue,
+  externalData: Parameters<typeof getNavigableSectionsInFormImpl>[2],
+) => getNavigableSectionsInFormImpl(form, answers, externalData, null)
 
 describe('reducerUtils', () => {
   describe('find current screen', () => {
@@ -73,7 +97,7 @@ describe('reducerUtils', () => {
 
     const convertScreens = (
       screens: FormScreen[],
-      answers = {},
+      answers: FormValue = {},
       externalData = {},
     ) =>
       convertFormToScreens(
@@ -84,6 +108,7 @@ describe('reducerUtils', () => {
         }),
         answers,
         externalData,
+        null,
       )
 
     const screens: FormScreen[] = [
@@ -779,7 +804,7 @@ describe('reducerUtils', () => {
           children: [invisibleSection, visibleSection],
         })
 
-        const screens = convertFormToScreens(form, {}, {})
+        const screens = convertFormToScreens(form, {}, {}, null)
 
         expect(screens.length).toBe(5)
         expect(screens[0].isNavigable).toBe(false)
@@ -815,7 +840,7 @@ describe('reducerUtils', () => {
           children: [multifield],
         })
 
-        const screens = convertFormToScreens(form, {}, {})
+        const screens = convertFormToScreens(form, {}, {}, null)
 
         expect(screens.length).toBe(1)
         expect(screens[0].id).toBe('multi')
@@ -842,7 +867,7 @@ describe('reducerUtils', () => {
           title: 'asdf',
           children: [repeater],
         })
-        const screens = convertFormToScreens(form, {}, {})
+        const screens = convertFormToScreens(form, {}, {}, null)
 
         expect(screens.length).toBe(1)
 
@@ -904,7 +929,7 @@ describe('reducerUtils', () => {
           ],
         })
 
-        const screens = convertFormToScreens(form, {}, {})
+        const screens = convertFormToScreens(form, {}, {}, null)
 
         expect(screens.length).toBe(6)
         expect(screens[0].sectionIndex).toBe(-1)

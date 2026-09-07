@@ -1,4 +1,5 @@
 export { AppealCase } from './models/appealCase.model'
+export { AppealDecision } from './models/appealDecision.model'
 export { AppealEventLog } from './models/appealEventLog.model'
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
@@ -28,26 +29,98 @@ export { User } from './models/user.model'
 export { Verdict } from './models/verdict.model'
 export { Victim } from './models/victim.model'
 
-export { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 export { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
+export {
+  AppealDecisionRepositoryService,
+  AppealDecisionPartyKey,
+} from './services/appealDecisionRepository.service'
+export { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 export {
+  CaseStringRepositoryService,
+  UpdateCaseString,
+} from './services/caseStringRepository.service'
+export {
+  CaseFileRepositoryService,
+  CreateCaseFile,
+  UpdateCaseFile,
+  UpdatedCaseFiles,
+} from './services/caseFileRepository.service'
+export {
+  CivilClaimantRepositoryService,
+  UpdateCivilClaimant,
+  UpdatedCivilClaimants,
+} from './services/civilClaimantRepository.service'
+export {
   CourtSessionRepositoryService,
   UpdateCourtSession,
 } from './services/courtSessionRepository.service'
+export {
+  CourtSessionStringRepositoryService,
+  CourtSessionStringKey,
+  CreateCourtSessionString,
+  UpdateCourtSessionString,
+} from './services/courtSessionStringRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
+export {
+  DateLogRepositoryService,
+  CreateDateLog,
+  UpdateDateLog,
+} from './services/dateLogRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
+export {
+  EventLogRepositoryService,
+  CreateEventLog,
+  LoginCount,
+} from './services/eventLogRepository.service'
+export {
+  IndictmentCountRepositoryService,
+  CreateIndictmentCount,
+  UpdateIndictmentCount,
+  UpdatedIndictmentCounts,
+} from './services/indictmentCountRepository.service'
+export { IndictmentSubtypeRepositoryService } from './services/indictmentSubtypeRepository.service'
 export { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+export { InstitutionRepositoryService } from './services/institutionRepository.service'
+export {
+  LawyerRegistryRepositoryService,
+  LawyerRegistryData,
+} from './services/lawyerRegistryRepository.service'
 export { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
+export {
+  NotificationRepositoryService,
+  CreateNotification,
+} from './services/notificationRepository.service'
+export {
+  OffenseRepositoryService,
+  UpdateOffense,
+  UpdatedOffenses,
+} from './services/offenseRepository.service'
 export { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
+export {
+  RobotLogRepositoryService,
+  CreateRobotLog,
+} from './services/robotLogRepository.service'
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
+export {
+  UserRepositoryService,
+  CreateUser,
+  UpdateUser,
+} from './services/userRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
+export {
+  VictimRepositoryService,
+  CreateVictim,
+  UpdateVictim,
+  UpdatedVictims,
+} from './services/victimRepository.service'
 
 export {
   caseInclude,
+  CreateAppealCase,
   UpdateAppealCase,
   UpdateCase,
   UpdateDefendant,

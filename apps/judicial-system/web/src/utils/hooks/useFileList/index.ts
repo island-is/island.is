@@ -2,23 +2,20 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { validate as validateUuid } from 'uuid'
 
-import { toast, UploadFile } from '@island.is/island-ui/core'
+import type { UploadFile } from '@island.is/island-ui/core'
+import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
+import useIsMobile from '@island.is/judicial-system-web/src/utils/hooks/useIsMobile/useIsMobile'
 
-import useIsMobile from '../useIsMobile/useIsMobile'
-import {
-  GetSignedUrlQuery,
-  useGetSignedUrlLazyQuery,
-} from './getSigendUrl.generated'
-import {
-  LimitedAccessGetSignedUrlQuery,
-  useLimitedAccessGetSignedUrlLazyQuery,
-} from './limitedAccessGetSigendUrl.generated'
+import type { GetSignedUrlQuery } from './getSignedUrl.generated'
+import { useGetSignedUrlLazyQuery } from './getSignedUrl.generated'
+import type { LimitedAccessGetSignedUrlQuery } from './limitedAccessGetSignedUrl.generated'
+import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSignedUrl.generated'
 
 interface Parameters {
   caseId: string

@@ -1,9 +1,11 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import { AlertMessage } from '@island.is/island-ui/core'
 import {
   getCaseTableGroups,
+  isDefenceUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
@@ -15,9 +17,9 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
+import { CreateCaseButton } from '@island.is/judicial-system-web/src/routes/Shared/CreateCaseButton/CreateCaseButton'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { CreateCaseButton } from '../CreateCaseButton/CreateCaseButton'
 import * as styles from './CaseTableGroups.css'
 
 const CaseTableGroups: FC = () => {
@@ -40,7 +42,17 @@ const CaseTableGroups: FC = () => {
         </div>
       ) : (
         <div className={grid({ gap: 6 })}>
-          <Logo />
+          {isDefenceUser(user) ? (
+            <SectionHeading
+              heading="h1"
+              variant="h1"
+              marginBottom={0}
+              title="Málin þín"
+              description="Hér er yfirlit yfir mál sem þú átt aðild að og afgreidd eru í gegnum Réttarvörslugátt."
+            />
+          ) : (
+            <Logo />
+          )}
           {groups.map((group, idx) => (
             <CasesDashboardLayout title={group.title} key={idx}>
               {group.tables.map((t, idx) => (

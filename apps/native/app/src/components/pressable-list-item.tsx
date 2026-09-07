@@ -28,17 +28,14 @@ export const PressableListItem = memo(
     setSelectedItems,
     setSelectedState,
   }: PressableListItemProps) => {
-    const { getOrganizationLogoUrl } = useOrganizationsStore()
+    const { getSenderLogo } = useOrganizationsStore()
     const isSelected = useMemo(
       () => selectable && selectedItems.includes(item.id),
       [selectable, selectedItems, item.id],
     )
     const icon = useMemo(
-      () =>
-        item.sender.name
-          ? getOrganizationLogoUrl(item.sender.name, 75)
-          : undefined,
-      [item.sender.name, getOrganizationLogoUrl],
+      () => getSenderLogo(item.sender, 75),
+      [item.sender, getSenderLogo],
     )
 
     const toggleSelectItem = useCallback(() => {
@@ -73,9 +70,22 @@ export const PressableListItem = memo(
     ])
 
     const onPressIcon = useCallback(() => {
+      // Re-tapping the icon of the only selected item exits select mode, so the
+      // user doesn't have to reach for the top-right Cancel button.
+      if (isSelected && selectedItems.length === 1) {
+        setSelectedItems([])
+        setSelectedState(false)
+        return
+      }
       setSelectedState(true)
       toggleSelectItem()
-    }, [toggleSelectItem, setSelectedState])
+    }, [
+      isSelected,
+      selectedItems.length,
+      toggleSelectItem,
+      setSelectedItems,
+      setSelectedState,
+    ])
 
     return (
       <PressableHighlight

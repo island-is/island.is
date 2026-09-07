@@ -99,6 +99,15 @@ export class ValueInput {
 
   @Field(() => String, { nullable: true })
   paymentCode?: string
+
+  @Field(() => String, { nullable: true })
+  registrationNumber?: string
+
+  @Field(() => String, { nullable: true })
+  model?: string
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  color?: LanguageTypeInput
 }
 
 @InputType('FormSystemValueDtoInput')

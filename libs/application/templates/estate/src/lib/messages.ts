@@ -276,6 +276,11 @@ export const m = defineMessages({
     defaultMessage: 'Fjarlægja',
     description: '',
   },
+  deleteAsset: {
+    id: 'es.application:deleteAsset',
+    defaultMessage: 'Eyða',
+    description: 'Label for delete button on user-added asset rows',
+  },
 
   // Applicant
   announcer: {
@@ -1065,6 +1070,11 @@ export const m = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Button label to continue',
   },
+  saveAndContinue: {
+    id: 'es.application:saveAndContinue',
+    defaultMessage: 'Vista og halda áfram',
+    description: 'Save-and-continue navigation button label',
+  },
   paymentTitle: {
     id: 'es.application:paymentTitle',
     defaultMessage: 'Greiðsla',
@@ -1185,6 +1195,11 @@ export const m = defineMessages({
     id: 'es.application:error.errorPropertyNumber',
     defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
     description: 'Property number is invalid',
+  },
+  errorMarketValue: {
+    id: 'es.application:error.errorMarketValue',
+    defaultMessage: 'Markaðsverð þarf að vera hærra en 0 kr.',
+    description: 'Asset market value must be greater than 0',
   },
 
   // Inheritance step

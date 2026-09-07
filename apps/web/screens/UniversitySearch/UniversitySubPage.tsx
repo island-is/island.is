@@ -153,6 +153,7 @@ const UniversitySubPage: Screen<UniversitySubPageProps> = ({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       organizationPage={organizationPage}
+      organizationSubpageId={subpage?.id}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       pageFeaturedImage={organizationPage?.featuredImage}

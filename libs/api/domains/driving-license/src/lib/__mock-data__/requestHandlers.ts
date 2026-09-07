@@ -165,6 +165,28 @@ export const requestHandlers = [
     )
   }),
 
+  // Error-code catalogue. Deliberately omits 'SOME REASON' so an unknown code
+  // resolves to no description (matching the eligibility denial test).
+  rest.get(/api\/codetables\/error-codes/, (_req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          code: 'HAS_POINTS',
+          descriptionIs: 'Þú ert með punkta á ökuskírteini',
+          descriptionEn: 'You have points on your license',
+        },
+        {
+          // An uncurated code: maps to a key that surfaces the RLS message in
+          // the UI (unlike HAS_POINTS, which our own copy overrides).
+          code: 'HAS_NO_SIGNATURE',
+          descriptionIs: 'Einstaklingur hefur ekki undirskrift á skrá',
+          descriptionEn: 'Person has no signature on file',
+        },
+      ]),
+    )
+  }),
+
   rest.get(
     /api\/drivinglicense\/v5\/canapplyfor\/temporary/,
     (req, res, ctx) => {

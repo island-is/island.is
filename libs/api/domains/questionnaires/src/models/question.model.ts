@@ -91,9 +91,6 @@ export class AnswerOption {
   @Field({ nullable: true })
   value?: string
 
-  @Field({ nullable: true })
-  originalId?: string
-
   @Field(() => AnswerOptionType)
   type!: AnswerOptionType
 
@@ -140,7 +137,7 @@ export class Question {
   id!: string
 
   @Field({ nullable: true })
-  originalId?: string
+  sectionId?: string
 
   @Field()
   label!: string

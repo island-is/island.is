@@ -24,8 +24,9 @@ export const PaymentItem = ({
   catalogNames,
   paymentFields,
 }: Props) => {
-  const { controlDispatch, updateActiveItem, formUpdate } =
+  const { controlDispatch, updateActiveItem, formUpdate, control } =
     useContext(ControlContext)
+  const { isReadOnly } = control
   const deleteField = useMutation(DELETE_FIELD)[0]
   const { fieldSettings } = field
 
@@ -62,6 +63,7 @@ export const PaymentItem = ({
             placeholder="Veldu greiðsluvöru"
             isSearchable
             backgroundColor="blue"
+            isDisabled={isReadOnly}
             onChange={(e) => {
               const paymentSettings = paymentCatalog.find(
                 (item: PaymentCatalogItem) => item.chargeItemCode === e?.value,
@@ -92,6 +94,7 @@ export const PaymentItem = ({
               name={`remove-${field.id}`}
               variant="ghost"
               colorScheme="destructive"
+              disabled={isReadOnly}
               onClick={handleRemove}
               size="small"
               icon="trash"

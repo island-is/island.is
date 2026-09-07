@@ -5,7 +5,6 @@ import { EmailService } from '@island.is/email-service'
 import {
   AppealCaseNotificationType,
   InstitutionType,
-  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -15,7 +14,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -27,6 +26,7 @@ type GivenWhenThen = (
   user: User,
   defenderNationalId?: string,
   appealsCourtNumber?: string,
+  hasDefender?: boolean,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal statement notifications', () => {
@@ -43,6 +43,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
     createTestUsers(roles)
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
   const appealCaseNumber = uuid()
@@ -61,30 +62,35 @@ describe('InternalNotificationController - Send appeal statement notifications',
       user: User,
       defenderNationalId?: string,
       appealCaseNumber?: string,
+      hasDefender = true,
     ) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealReceivedByCourtDate: receivedDate,
+        appealCaseNumber,
+        appealAssistant: { name: assistant.name, email: assistant.email },
+        appealJudge1: { name: judge1.name, email: judge1.email },
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             prosecutor: { name: prosecutor.name, email: prosecutor.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
-            defenderName: defender.name,
-            defenderEmail: defender.email,
+            defenderName: hasDefender ? defender.name : undefined,
+            defenderEmail: hasDefender ? defender.email : undefined,
             courtCaseNumber,
-            appealCase: {
-              appealReceivedByCourtDate: receivedDate,
-              appealCaseNumber,
-              appealAssistant: { name: assistant.name, email: assistant.email },
-              appealJudge1: { name: judge1.name, email: judge1.email },
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user,
-            type: AppealCaseNotificationType.APPEAL_STATEMENT as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_STATEMENT,
           },
         )
         .then((result) => (then.result = result))
@@ -231,6 +237,61 @@ describe('InternalNotificationController - Send appeal statement notifications',
           html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.`,
         }),
       )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('notification sent by prosecutor when no defender is registered', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        {
+          role: UserRole.PROSECUTOR,
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+        } as User,
+        undefined,
+        appealCaseNumber,
+        false,
+      )
+    })
+
+    it('should only send notification to the appeals court', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: assistant.name, address: assistant.email }],
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: judge1.name, address: judge1.email }],
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({ to: [{ name: '', address: '' }] }),
+      )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('notification sent by prosecutor before appeal case number when no defender is registered', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        {
+          role: UserRole.PROSECUTOR,
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+        } as User,
+        undefined,
+        undefined,
+        false,
+      )
+    })
+
+    it('should not send any notification', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
       expect(then.result).toEqual({ delivered: true })
     })
   })

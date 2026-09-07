@@ -1,5 +1,7 @@
-import { FC, useCallback, useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useCallback, useContext } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
@@ -32,12 +34,17 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
   CaseAppealDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealDecisionPartyRole,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import AppealSections from '@island.is/judicial-system-web/src/routes/Court/components/AppealSections/AppealSections'
+import { populateEndOfCourtSessionBookingsIntro } from '@island.is/judicial-system-web/src/routes/Court/shared/populateEndOfCourtSessionBookingsIntro'
 import {
   formatDateForServer,
   useCase,
@@ -45,14 +52,12 @@ import {
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   isCourtRecordStepValidIC,
   isNullOrUndefined,
-  Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-
-import AppealSections from '../../components/AppealSections/AppealSections'
-import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -238,20 +243,44 @@ const CourtRecord: FC = () => {
     prosecutorAppealAnnouncement?: string
   }) => {
     const endOfSessionBookings: string[] = []
+    let appealDecisions = workingCase.appealDecisions
+    if (
+      !isNullOrUndefined(accusedAppealDecision) ||
+      !isNullOrUndefined(accusedAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.DEFENDANT,
+        {
+          ...(!isNullOrUndefined(accusedAppealDecision)
+            ? { decision: accusedAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(accusedAppealAnnouncement)
+            ? { announcement: accusedAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
+    if (
+      !isNullOrUndefined(prosecutorAppealDecision) ||
+      !isNullOrUndefined(prosecutorAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.PROSECUTOR,
+        {
+          ...(!isNullOrUndefined(prosecutorAppealDecision)
+            ? { decision: prosecutorAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
+            ? { announcement: prosecutorAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
     const updatedCase = {
       ...workingCase,
-      ...(!isNullOrUndefined(accusedAppealDecision)
-        ? { accusedAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(accusedAppealAnnouncement)
-        ? { accusedAppealAnnouncement }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealDecision)
-        ? { prosecutorAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
-        ? { prosecutorAppealAnnouncement }
-        : {}),
+      appealDecisions,
     }
     populateEndOfCourtSessionBookingsIntro(updatedCase, endOfSessionBookings)
 
@@ -479,16 +508,24 @@ const CourtRecord: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
-            )
+          actions={
+            hasMissingInfoInRulingStep
+              ? []
+              : [
+                  {
+                    text: formatMessage(core.continue),
+                    icon: 'arrowForward',
+                    onClick: () =>
+                      handleNavigationTo(
+                        DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+                      ),
+                    disabled: !stepIsValid,
+                    loading: isLoadingWorkingCase,
+                    testId: 'continueButton',
+                  },
+                ]
           }
-          nextIsDisabled={!stepIsValid}
-          hideNextButton={hasMissingInfoInRulingStep}
           infoBoxText={
             hasMissingInfoInRulingStep
               ? formatMessage(m.sections.nextButtonInfo.text, {

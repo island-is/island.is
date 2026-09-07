@@ -7,14 +7,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, Tooltip, useIsMobile } from '@island.is/portals/my-pages/core'
+import {
+  AvatarImage,
+  m,
+  Tooltip,
+  useIsMobile,
+} from '@island.is/portals/my-pages/core'
 import { InformationPaths } from '@island.is/portals/my-pages/information'
 import copyToClipboard from 'copy-to-clipboard'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { messages } from '../../utils/messages'
-import AvatarImage from '../DocumentLine/AvatarImage'
 import ReplyHeaderMobile from './Mobile/MobileHeader'
 import * as styles from './Reply.css'
 
@@ -90,7 +94,9 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
             </Text>
           </Box>
         ) : (
-          avatar && <AvatarImage large img={avatar} background="blue100" />
+          avatar && (
+            <AvatarImage large img={avatar} background="blue100" as="div" />
+          )
         )}
 
         <Box

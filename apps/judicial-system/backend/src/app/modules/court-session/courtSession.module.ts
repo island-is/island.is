@@ -1,8 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
-import { CourtSessionString } from '../repository'
-import { CaseModule, RepositoryModule } from '..'
+import { CaseModule, EventLogModule, FileModule, RepositoryModule } from '..'
 import { CourtDocumentController } from './courtDocument.controller'
 import { CourtDocumentService } from './courtDocument.service'
 import { CourtSessionController } from './courtSession.controller'
@@ -12,7 +10,8 @@ import { CourtSessionService } from './courtSession.service'
   imports: [
     forwardRef(() => CaseModule),
     forwardRef(() => RepositoryModule),
-    SequelizeModule.forFeature([CourtSessionString]),
+    forwardRef(() => FileModule),
+    forwardRef(() => EventLogModule),
   ],
   controllers: [CourtSessionController, CourtDocumentController],
   providers: [CourtSessionService, CourtDocumentService],

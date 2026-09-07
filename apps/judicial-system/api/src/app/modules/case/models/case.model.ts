@@ -24,6 +24,7 @@ import {
 
 import { AppealCase } from '../../appeal-case'
 import {
+  AppealDecisionResponse,
   CourtDocumentResponse,
   CourtSessionResponse,
 } from '../../court-session'
@@ -244,24 +245,6 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly endOfSessionBookings?: string
 
-  @Field(() => CaseAppealDecision, { nullable: true })
-  readonly accusedAppealDecision?: CaseAppealDecision
-
-  @Field(() => String, { nullable: true })
-  readonly accusedAppealAnnouncement?: string
-
-  @Field(() => CaseAppealDecision, { nullable: true })
-  readonly prosecutorAppealDecision?: CaseAppealDecision
-
-  @Field(() => String, { nullable: true })
-  readonly prosecutorAppealAnnouncement?: string
-
-  @Field(() => String, { nullable: true })
-  readonly accusedPostponedAppealDate?: string
-
-  @Field(() => String, { nullable: true })
-  readonly prosecutorPostponedAppealDate?: string
-
   @Field(() => Boolean, { nullable: true })
   readonly isAppealDeadlineExpired?: boolean
 
@@ -364,6 +347,12 @@ export class Case {
   @Field(() => User, { nullable: true })
   readonly indictmentReviewer?: User
 
+  @Field(() => User, { nullable: true })
+  readonly indictmentApprover?: User
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentReviewReturnedExplanation?: string
+
   @Field(() => String, {
     nullable: true,
     description: 'appeal deadline for public prosecutor',
@@ -402,6 +391,9 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly isCompletedWithoutRuling?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isArraignmentSummonsSkipped?: boolean
 
   @Field(() => String, { nullable: true })
   readonly caseSentToCourtDate?: string
@@ -450,4 +442,10 @@ export class Case {
 
   @Field(() => [AppealCase], { nullable: true })
   readonly rulingOrderAppealCases?: AppealCase[]
+
+  @Field(() => [AppealDecisionResponse], { nullable: true })
+  readonly appealDecisions?: AppealDecisionResponse[]
+
+  @Field(() => ID, { nullable: true })
+  readonly originalAncestorId?: string
 }

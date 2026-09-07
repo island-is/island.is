@@ -10,17 +10,15 @@ import {
   Skeleton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import UserForm from '@island.is/judicial-system-web/src/routes/Admin/UserForm/UserForm'
+import * as styles from '@island.is/judicial-system-web/src/routes/Admin/Users/Users.css'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import UserForm from '../UserForm/UserForm'
 import { useUpdateUserMutation } from './updateUser.generated'
 import { useUserQuery } from './user.generated'
 import { strings } from './ChangeUser.strings'
-import * as styles from '../Users/Users.css'
 
 export const ChangeUser = () => {
   const router = useRouter()

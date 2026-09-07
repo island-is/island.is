@@ -1,14 +1,39 @@
+// Global toast: a zustand-backed store + a presentational <Toast /> rendered by
+// <ToastHost />. Fire from anywhere with `toast.success/error/warning/info(...)`.
+//
+// Mount one <ToastHost /> at the app root (app/_layout.tsx). Native modal screens
+// (presentation: 'formSheet' / 'modal') sit above the root's React tree, so they
+// need their OWN <ToastHost /> inside the modal — otherwise toasts fire but
+// render behind the modal where they're invisible. See settings.tsx and the
+// reply screen for examples.
 import React, { useEffect } from 'react'
 import styled, { useTheme } from 'styled-components/native'
-import { Image, View } from 'react-native'
+import { Image, Platform, View } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { usePathname } from 'expo-router'
+import { create, useStore } from 'zustand'
 
 import warningIcon from '@/ui/assets/icons/warning.png'
 import errorIcon from '@/ui/assets/icons/error.png'
 import infoIcon from '@/ui/assets/icons/info.png'
 import successIcon from '@/ui/assets/icons/check.png'
 import { screenWidth } from '@/utils/dimensions'
+import { useKeyboardHeight } from '@/hooks/use-keyboard-height'
 import { Typography } from '@/ui'
+
+// Standard system tab-bar heights: iOS UITabBar = 49pt, Android
+// BottomNavigationView = 56dp. Safe-area is added separately via insets.bottom.
+const TAB_BAR_CONTENT_HEIGHT = Platform.select({
+  ios: 49,
+  android: 56,
+  default: 0,
+})
+
+// Keep in sync with the <NativeTabs.Trigger name=... /> entries in
+// app/(auth)/(tabs)/_layout.tsx. Home (`index` route) resolves to '/' and is
+// handled separately below.
+const TAB_ROUTE_PREFIXES = ['/inbox', '/wallet', '/health', '/more']
 
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info'
 
@@ -42,10 +67,14 @@ export const toastSchemes = {
 const Host = styled(Animated.View)<{
   backgroundColor: string
   borderColor: string
+  bottomOffset: number
 }>`
-  height: 52px;
+  min-height: 52px;
   position: absolute;
-  bottom: ${({ theme }) => theme.spacing[2]}px;
+  z-index: 9999;
+  elevation: 6;
+  bottom: ${({ theme, bottomOffset }) =>
+    (bottomOffset > 0 ? theme.spacing[2] : theme.spacing[3]) + bottomOffset}px;
   right: ${({ theme }) => theme.spacing[2]}px;
   border: 1px solid ${({ borderColor }) => borderColor};
   background-color: ${({ backgroundColor }) => backgroundColor};
@@ -57,6 +86,7 @@ const Host = styled(Animated.View)<{
 `
 
 const Content = styled.View`
+  flex: 1;
   flex-direction: row;
   align-items: center;
   gap: ${({ theme }) => theme.spacing[1]}px;
@@ -69,6 +99,7 @@ export const Toast = ({
   variant,
   title,
   message,
+  bottomOffset = 0,
 }: {
   visible: boolean
   duration?: number
@@ -76,6 +107,7 @@ export const Toast = ({
   variant: ToastVariant
   title?: string
   message?: string
+  bottomOffset?: number
 }) => {
   const theme = useTheme()
   const toastVariant = toastSchemes[variant]
@@ -101,22 +133,135 @@ export const Toast = ({
       exiting={FadeOutDown}
       borderColor={theme.color[toastVariant.borderColor]}
       backgroundColor={theme.color[toastVariant.backgroundColor]}
+      bottomOffset={bottomOffset}
     >
       <Content>
         <Image
           source={toastVariant.icon}
           style={{
-            width: 16,
-            height: 16,
+            width: 24,
+            height: 24,
             tintColor: theme.color[toastVariant.iconColor],
           }}
           resizeMode="contain"
         />
-        <View>
+        <View style={{ flex: 1 }}>
           {title && <Typography variant={'eyebrow'}>{title}</Typography>}
           {message && <Typography variant={'body3'}>{message}</Typography>}
         </View>
       </Content>
     </Host>
+  )
+}
+
+type ActiveToast = {
+  id: number
+  variant: ToastVariant
+  title?: string
+  message?: string
+  duration?: number
+}
+
+type ShowPayload = {
+  variant: ToastVariant
+  title?: string
+  message?: string
+  duration?: number
+}
+
+type ShowOptions = {
+  message?: string
+  duration?: number
+}
+
+type ToastStore = {
+  current: ActiveToast | null
+}
+
+export const toastStore = create<ToastStore>(() => ({
+  current: null,
+}))
+
+export const useToastStore = <U,>(selector: (state: ToastStore) => U) =>
+  useStore(toastStore, selector)
+
+let nextId = 1
+
+const show = (payload: ShowPayload): number => {
+  const id = nextId++
+  toastStore.setState({ current: { id, ...payload } })
+  return id
+}
+
+const hide = (id?: number) => {
+  const current = toastStore.getState().current
+  if (!current) {
+    return
+  }
+  if (id !== undefined && current.id !== id) {
+    return
+  }
+  toastStore.setState({ current: null })
+}
+
+const variantShortcut =
+  (variant: ToastVariant) =>
+  (title: string, options?: ShowOptions): number =>
+    show({ variant, title, ...options })
+
+export const toast = {
+  show,
+  hide,
+  success: variantShortcut('success'),
+  error: variantShortcut('error'),
+  warning: variantShortcut('warning'),
+  info: variantShortcut('info'),
+}
+
+export const ToastHost = ({
+  // Extra space below the toast, e.g. to clear a bottom action button.
+  bottomOffset: extraBottomOffset = 0,
+  // Set on modals over the tabs (tab-route path but no visible tab bar).
+  ignoreTabBar = false,
+}: {
+  bottomOffset?: number
+  ignoreTabBar?: boolean
+} = {}) => {
+  const current = useToastStore((state) => state.current)
+  const insets = useSafeAreaInsets()
+  const pathname = usePathname()
+  const keyboardHeight = useKeyboardHeight()
+
+  if (!current) {
+    return null
+  }
+
+  const isOnTabRoute =
+    pathname === '/' ||
+    TAB_ROUTE_PREFIXES.some(
+      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+    )
+  // On tab routes, the tab bar OR a bottom toolbar that replaces it (e.g.
+  // bulk-select actions) sits at the bottom — both have roughly the same
+  // height, so we always offset by the tab-bar height when on a tab route.
+  const tabBarOffset =
+    isOnTabRoute && !ignoreTabBar ? TAB_BAR_CONTENT_HEIGHT + insets.bottom : 0
+  // Keyboard reports height from screen bottom (includes safe area on iOS).
+  // When the keyboard is up it covers the tab bar, so we use whichever offset
+  // pushes the toast higher.
+  const bottomOffset =
+    Math.max(tabBarOffset, keyboardHeight) + extraBottomOffset
+
+  return (
+    <Toast
+      key={current.id}
+      visible
+      variant={current.variant}
+      title={current.title}
+      message={current.message}
+      duration={current.duration}
+      bottomOffset={bottomOffset}
+      onHide={() => hide(current.id)}
+    />
   )
 }

@@ -46,6 +46,10 @@ interface OrganizationsStore {
     size?: number,
     canReturnEmpty?: boolean,
   ): ImageSourcePropType | undefined
+  getSenderLogo(
+    sender: { logoUrl?: string | null } | null | undefined,
+    size?: number,
+  ): ImageSourcePropType
   getOrganizationNameBySlug(slug: string): string
   actions: {
     updateOriganizations(): Promise<void>
@@ -60,6 +64,9 @@ function processItems(items: Omit<Organization, 'query'>[]) {
 }
 
 const logoCache = new Map()
+
+const COAT_OF_ARMS_URL =
+  'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
 
 export const organizationsStore = create<OrganizationsStore>()(
   persist(
@@ -107,12 +114,18 @@ export const organizationsStore = create<OrganizationsStore>()(
           return undefined
         }
 
-        const url =
-          c ??
-          'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
+        const url = c ?? COAT_OF_ARMS_URL
         const uri = `${url}?w=${size}&h=${size}&fit=pad&fm=png`
 
         return { uri }
+      },
+      getSenderLogo(
+        sender: { logoUrl?: string | null } | null | undefined,
+        size = 100,
+      ) {
+        const raw = sender?.logoUrl ?? COAT_OF_ARMS_URL
+        const url = raw.startsWith('https://') ? raw : `https:${raw}`
+        return { uri: `${url}?w=${size}&h=${size}&fit=pad&fm=png` }
       },
       getOrganizationNameBySlug(slug: string) {
         const org = get().organizations.find((o) => o.slug === slug)

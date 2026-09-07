@@ -22,7 +22,7 @@ export const MOCK_USER = {
   userAgent: '',
 } as User
 
-const url = (path: string) => {
+export const url = (path: string) => {
   return new URL(path, XROAD_BASE_PATH).toString()
 }
 
@@ -64,6 +64,37 @@ export const requestHandlers = [
                 teacherSsn: MOCK_NATIONAL_ID_TEACHER_OLD,
               },
             ],
+          },
+        }),
+      )
+    },
+  ),
+  rest.get(
+    url(
+      `r1/${XROAD_DRIVING_LICENSE_BOOK_PATH}/api/Student/GetStudentActiveLicenseBookBySsn/:ssn`,
+    ),
+    (req, res, ctx) => {
+      const isFound = req.params.ssn === MOCK_NATIONAL_ID_STUDENT
+      const licenseCategory = req.url.searchParams.get('licenseCategory')
+
+      // The mock student only has an active B book (no active BE book).
+      if (!isFound || licenseCategory !== 'B') {
+        return res(ctx.status(200), ctx.json({ data: null }))
+      }
+
+      return res(
+        ctx.status(200),
+        ctx.json({
+          data: {
+            id: MOCK_LICENSE_BOOK_ID,
+            licenseCategory: 'B',
+            createdOn: new Date(),
+            schoolSsn: MOCK_NATIONAL_ID_SCHOOL,
+            teacherSsn: MOCK_NATIONAL_ID_TEACHER_OLD,
+            studentEmail: null,
+            studentPrimaryPhoneNumber: null,
+            studentSecondaryPhoneNumber: null,
+            practiceDriving: true,
           },
         }),
       )

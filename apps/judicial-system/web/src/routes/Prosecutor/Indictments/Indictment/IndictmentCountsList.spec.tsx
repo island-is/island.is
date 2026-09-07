@@ -1,10 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import {
+import type {
   Case,
-  CaseType,
   IndictmentCount,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
   IndictmentSubtype,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useIndictmentCounts } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -75,6 +77,7 @@ describe('IndictmentCountsList', () => {
   beforeEach(() => {
     user = userEvent.setup()
     jest.clearAllMocks()
+    localStorage.clear()
 
     mockUseIndictmentCounts.mockReturnValue({
       reorderIndictmentCounts,
@@ -98,7 +101,7 @@ describe('IndictmentCountsList', () => {
       </IntlProviderWrapper>,
     )
 
-  it('renders section title Ákæruliðir', () => {
+  it('renders section title Ákæruliðir', async () => {
     const workingCase = createWorkingCase([
       {
         id: 'count-1',
@@ -111,7 +114,7 @@ describe('IndictmentCountsList', () => {
 
     renderComponent(workingCase)
 
-    expect(screen.getByText('Ákæruliðir')).toBeInTheDocument()
+    expect(await screen.findByText('Ákæruliðir')).toBeInTheDocument()
   })
 
   it('calls reorder with chronological displayOrder when sort button is clicked', async () => {
@@ -135,7 +138,7 @@ describe('IndictmentCountsList', () => {
     renderComponent(workingCase)
 
     await user.click(
-      screen.getByRole('button', { name: 'Raða ákæruliðum í tímaröð' }),
+      await screen.findByRole('button', { name: 'Raða ákæruliðum í tímaröð' }),
     )
 
     await waitFor(() => {
@@ -164,7 +167,7 @@ describe('IndictmentCountsList', () => {
       workingCase,
     )
 
-    const dragHandle = screen.getByTestId('indictmentCountDragHandle')
+    const dragHandle = await screen.findByTestId('indictmentCountDragHandle')
     const warningIconPlaceholder = Array.from(
       document.querySelectorAll('[class*="Icon_placeholder"]'),
     ).find((element) => !dragHandle.contains(element))
@@ -195,26 +198,15 @@ describe('IndictmentCountsList', () => {
 
     renderComponent(workingCase)
 
-    const countOneAccordion = screen.getByRole('button', {
+    const countOneAccordion = await screen.findByRole('button', {
       name: /1\. 007-2021-001/,
     })
     const countTwoAccordion = screen.getByRole('button', {
       name: /2\. 007-2021-002/,
     })
 
-    expect(countOneAccordion).toHaveAttribute('aria-expanded', 'false')
-    expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'false')
-
-    await user.click(screen.getByRole('button', { name: 'Opna alla' }))
-
-    await waitFor(() => {
-      expect(countOneAccordion).toHaveAttribute('aria-expanded', 'true')
-      expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'true')
-    })
-
-    expect(
-      screen.getByRole('button', { name: 'Loka öllum' }),
-    ).toBeInTheDocument()
+    expect(countOneAccordion).toHaveAttribute('aria-expanded', 'true')
+    expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'true')
 
     await user.click(screen.getByRole('button', { name: 'Loka öllum' }))
 
@@ -226,5 +218,58 @@ describe('IndictmentCountsList', () => {
     expect(
       screen.getByRole('button', { name: 'Opna alla' }),
     ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Opna alla' }))
+
+    await waitFor(() => {
+      expect(countOneAccordion).toHaveAttribute('aria-expanded', 'true')
+      expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'true')
+    })
+
+    expect(
+      screen.getByRole('button', { name: 'Loka öllum' }),
+    ).toBeInTheDocument()
+  })
+
+  it('persists accordion state to local storage and restores it on remount', async () => {
+    const workingCase = createWorkingCase([
+      {
+        id: 'count-1',
+        displayOrder: 0,
+        policeCaseNumber: POLICE_CASE_NUMBER_EARLIER,
+        incidentDescription: 'Incident 1',
+        legalArguments: 'Legal arguments',
+      } as IndictmentCount,
+      {
+        id: 'count-2',
+        displayOrder: 1,
+        policeCaseNumber: POLICE_CASE_NUMBER_LATER,
+        incidentDescription: 'Incident 2',
+        legalArguments: 'Legal arguments',
+      } as IndictmentCount,
+    ])
+
+    const { unmount } = renderComponent(workingCase)
+
+    await user.click(await screen.findByRole('button', { name: 'Loka öllum' }))
+
+    await waitFor(() => {
+      expect(
+        JSON.parse(localStorage.getItem('INDICTMENT_COUNTS_EXPANDED') ?? '{}'),
+      ).toEqual({
+        'test-case-id': { 'count-1': false, 'count-2': false },
+      })
+    })
+
+    unmount()
+
+    renderComponent(workingCase)
+
+    expect(
+      await screen.findByRole('button', { name: /1\. 007-2021-001/ }),
+    ).toHaveAttribute('aria-expanded', 'false')
+    expect(
+      screen.getByRole('button', { name: /2\. 007-2021-002/ }),
+    ).toHaveAttribute('aria-expanded', 'false')
   })
 })

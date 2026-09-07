@@ -8,7 +8,7 @@ import {
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridRow, Button, Input } from '@island.is/island-ui/core'
 import { getErrorViaPath } from '@island.is/application/core'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../DoubleColumnRow'
@@ -30,7 +30,8 @@ type RepeaterProps = {
 export const DebtsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & RepeaterProps>
 > = ({ application, field, errors }) => {
-  const { id, props } = field
+  const id = field.id as string
+  const { props } = field
 
   const { fields, append, remove, replace, update } = useFieldArray<any>({
     name: id,

@@ -94,11 +94,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const [languageEnvironmentId, languageEnvironment] =
     languageEnvironmentIdAndKey?.split('::') ?? []
 
-  const selectedLanguages =
-    getValueViaPath<Array<{ code: string }>>(
+  type SelectedLanguage = { code: string }
+  const selectedLanguages: SelectedLanguage[] = (
+    getValueViaPath<Array<{ code?: string }>>(
       answers,
       'languages.selectedLanguages',
     ) ?? []
+  ).filter(
+    (lang): lang is SelectedLanguage =>
+      typeof lang.code === 'string' && lang.code.length > 0,
+  )
 
   const signLanguage = getValueViaPath<YesOrNo>(
     answers,
@@ -777,17 +782,18 @@ export const getApplicationType = (
     return undefined
   }
 
-  // if the child is a first grader and enrollment is open, set the application type
-  // to enrollment in primary school. Otherwise, set the application type to new primary school
-  if (yearOfBirth === firstGradeYear) {
-    return isEnrollmentOpen
+  // if the child has no existing school record in Frigg, this is a first-time
+  // enrollment if they're first-grade age and the enrollment window is open,
+  // otherwise a new primary school application
+  if (!childInformation?.primaryOrgId) {
+    return yearOfBirth === firstGradeYear && isEnrollmentOpen
       ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
       : ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
-  // if the child is not a first grader and not currently enrolled in a primary
-  // school (no data in Frigg), set the application type to new primary school
-  if (yearOfBirth !== firstGradeYear && !childInformation?.primaryOrgId) {
+  // if the child is already registered in a primary school (e.g. moved up a grade
+  // early), this is a transfer rather than a first-time enrollment
+  if (yearOfBirth === firstGradeYear) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 

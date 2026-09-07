@@ -12,10 +12,16 @@ import {
   getTextStyles,
   LoadingDots,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
+import { useLocale } from '@island.is/localization'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
-import { getRedirectStatus, isComingFromRedirect } from './util'
+import {
+  getRedirectStatus,
+  isComingFromRedirect,
+  getSubmitErrorReasonToToast,
+} from './util'
 import { useSearchParams } from 'react-router-dom'
 import cn from 'classnames'
 
@@ -25,15 +31,22 @@ export interface PaymentPendingProps {
   application: Application
   targetEvent: DefaultEvents
   refetch: FieldBaseProps['refetch']
+  // Opt-in (default off): surface a failed submit's structured errorReason as a
+  // toast. Threaded from buildPaymentState({ showSubmitErrorReason }).
+  showSubmitErrorReason?: boolean
 }
 
 export const PaymentPending: FC<
   React.PropsWithChildren<PaymentPendingProps>
-> = ({ application, refetch, targetEvent }) => {
+> = ({ application, refetch, targetEvent, showSubmitErrorReason }) => {
   const msg = useMsg(application)
+  const { formatMessage } = useLocale()
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
+  // Only toast once per distinct submit error (the component can re-render with
+  // the same Apollo error).
+  const toastedSubmitError = useRef<unknown>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const isInvoice = getRedirectStatus() === 'invoice'
 
@@ -87,6 +100,27 @@ export const PaymentPending: FC<
     shouldRedirect,
     setSearchParams,
   ])
+
+  // A post-payment submission failure keeps the generic error screen below. When
+  // the consumer opts in (showSubmitErrorReason) and the TemplateApiError carries
+  // a specific, user-facing reason, also surface that reason as a toast so the
+  // applicant knows *why* the submission failed. Default off, so it never adds an
+  // extra toast for templates that haven't opted in.
+  useEffect(() => {
+    if (toastedSubmitError.current === submitError) {
+      return
+    }
+    const reason = getSubmitErrorReasonToToast(
+      submitError,
+      showSubmitErrorReason ?? false,
+    )
+    if (reason) {
+      toast.error(
+        `${formatMessage(reason.title)}: ${formatMessage(reason.summary)}`,
+      )
+      toastedSubmitError.current = submitError
+    }
+  }, [submitError, formatMessage, showSubmitErrorReason])
 
   if (pollingError) {
     return <Text>{msg(coreErrorMessages.paymentStatusError)}</Text>

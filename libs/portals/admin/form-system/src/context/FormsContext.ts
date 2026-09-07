@@ -21,6 +21,8 @@ export interface IFormsContext {
   setSelectedListTypes: Dispatch<SetStateAction<string[]>>
   selectedFieldTypes: string[]
   setSelectedFieldTypes: Dispatch<SetStateAction<string[]>>
+  selectedDelegations: string[]
+  setSelectedDelegations: Dispatch<SetStateAction<string[]>>
   certificationTypes: FormSystemPermissionType[]
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
@@ -62,6 +64,10 @@ export const FormsContext = createContext<IFormsContext>({
   selectedFieldTypes: [],
   setSelectedFieldTypes: function (_value: SetStateAction<string[]>): void {
     throw new Error('setSelectedFieldTypes function not implemented')
+  },
+  selectedDelegations: [],
+  setSelectedDelegations: function (_value: SetStateAction<string[]>): void {
+    throw new Error('setSelectedDelegations function not implemented')
   },
   handleOrganizationChange: async (_selected: { value: string }) => {
     throw new Error('handleOrganizationChange function not implemented')

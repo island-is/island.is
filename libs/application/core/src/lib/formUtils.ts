@@ -19,6 +19,8 @@ import {
   FormTextArray,
   FormTextWithLocale,
   FormValue,
+  MaybeWithApplication,
+  MaybeWithApplicationAndUser,
   RecordObject,
   Section,
   StaticText,
@@ -339,11 +341,49 @@ export const formatAndParseAsHTML = (
   return HtmlParser(formatText(text, application, formatMessage))
 }
 
+export const resolveFieldId = (
+  field: Pick<Field, 'id'>,
+  application: Application,
+  user?: BffUser,
+): string => {
+  const id = field.id as MaybeWithApplicationAndUser<string>
+  return typeof id === 'function' ? id(application, user as BffUser) : id
+}
+
+export const resolveFieldClearOnChange = (
+  field: Pick<Field, 'clearOnChange'>,
+  application: Application,
+  user?: BffUser,
+): string[] | undefined => {
+  const co = field.clearOnChange as MaybeWithApplication<string[]> | undefined
+  if (co === undefined) {
+    return undefined
+  }
+  return typeof co === 'function' ? co(application) : co
+}
+
+/** Resolves `id` on any form item (field, multifield, etc.) when it may be application-driven. */
+export const resolveFormItemId = (
+  item: { readonly id?: MaybeWithApplicationAndUser<string> },
+  application: Application,
+  user?: BffUser,
+): string => {
+  const id = item.id
+  if (id === undefined) {
+    return ''
+  }
+  return typeof id === 'function' ? id(application, user as BffUser) : id
+}
+
 // periods[3].startDate -> 3
 // notPartOfRepeater -> -1
 // periods[5ab33f1].id -> -1
 export const extractRepeaterIndexFromField = (field: Field): number => {
   if (!field?.isPartOfRepeater) {
+    return -1
+  }
+
+  if (typeof field.id !== 'string') {
     return -1
   }
 

@@ -14,6 +14,7 @@ export const representative = buildSection({
       id: 'representative',
       title: m.representativeTitle,
       description: m.representativeDescription,
+      nextButtonText: m.saveAndContinue,
       children: [
         buildCustomField(
           {

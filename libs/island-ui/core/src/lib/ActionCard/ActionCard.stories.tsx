@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { ActionCard } from './ActionCard'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-webpack5'
 import { withFigma } from '../../utils/withFigma'
 import type { ActionCardProps } from './types'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'

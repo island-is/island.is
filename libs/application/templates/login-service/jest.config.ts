@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-login-service',
   preset: './jest.preset.js',
   rootDir: '../../../..',

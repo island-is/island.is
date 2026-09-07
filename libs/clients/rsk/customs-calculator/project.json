@@ -1,0 +1,28 @@
+{
+  "name": "clients-rsk-customs-calculator",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/rsk/customs-calculator/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/rsk/customs-calculator"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/rsk/customs-calculator/jest.config.ts"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-ts -f libs/clients/rsk/customs-calculator/src/lib/openapi-ts.config.ts"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

@@ -68,12 +68,12 @@ export const renderChartComponent = ({
 }
 
 type CustomLabelProps = {
-  cx: number
-  cy: number
-  midAngle: number
-  outerRadius: number
-  innerRadius: number
-  percent: number
+  cx?: number
+  cy?: number
+  midAngle?: number
+  outerRadius?: number
+  innerRadius?: number
+  percent?: number
   payload?: {
     name?: string
     value?: string | number
@@ -84,13 +84,13 @@ type CustomLabelProps = {
 
 const RADIAN = Math.PI / 180
 const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  outerRadius,
-  innerRadius,
+  cx = 0,
+  cy = 0,
+  midAngle = 0,
+  outerRadius = 0,
+  innerRadius = 0,
   payload,
-  percent,
+  percent = 0,
   activeLocale,
   customStyleConfig,
 }: CustomLabelProps) => {
@@ -132,7 +132,13 @@ export const renderPieChartComponents = (
   activeLocale: Locale,
   customStyleConfig: CustomStyleConfig,
 ) => {
-  const pieData = data?.[0]?.statisticsForHeader ?? []
+  // Tooltips resolve the segment name from the data entries (nameKey),
+  // not from Cell props — without this they fall back to the entry index.
+  const pieData = (data?.[0]?.statisticsForHeader ?? []).map((entry) => ({
+    ...entry,
+    name:
+      components.find((c) => c.sourceDataKey === entry.key)?.label ?? entry.key,
+  }))
   const total = pieData.reduce(
     (total, { value }) => total + (value ? value : 0),
     0,
@@ -169,7 +175,6 @@ export const renderPieChartComponents = (
         renderCustomizedLabel({
           ...props,
           activeLocale,
-          total,
           customStyleConfig,
         })
       }

@@ -29,6 +29,7 @@ env:
   DB_NAME: 'services_sessions'
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'services_sessions'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'

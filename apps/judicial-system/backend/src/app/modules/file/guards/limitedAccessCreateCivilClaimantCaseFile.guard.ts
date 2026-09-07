@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 
 import { CivilClaimant } from '../../repository'
@@ -40,12 +39,9 @@ export class LimitedAccessCreateCivilClaimantCaseFileGuard
 
     // Verify the logged-in user is the confirmed spokesperson for this civil claimant
     if (
-      !civilClaimant.hasSpokesperson ||
-      !civilClaimant.isSpokespersonConfirmed ||
-      !civilClaimant.spokespersonNationalId ||
-      !normalizeAndFormatNationalId(user.nationalId).includes(
-        civilClaimant.spokespersonNationalId,
-      )
+      !CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
+        civilClaimant,
+      ])
     ) {
       return false
     }

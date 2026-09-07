@@ -1,4 +1,5 @@
 import faker from 'faker'
+import { generatePerson } from 'kennitala'
 
 import {
   AuthDelegationType,
@@ -167,6 +168,61 @@ export const deceasedUser: MockUserProfileDto = {
   smsNotifications: true,
 }
 
+// Children with controlled ages for the health-notification / legal-guardian flow.
+export const childUnder16: MockUserProfileDto = {
+  name: 'childUnder16',
+  nationalId: generatePerson(new Date(2015, 0, 1)) as string,
+  mobilePhoneNumber: '1234567',
+  email: 'childunder16@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: false,
+}
+
+export const childOver16: MockUserProfileDto = {
+  name: 'childOver16',
+  nationalId: generatePerson(new Date(2005, 0, 1)) as string,
+  mobilePhoneNumber: '1234567',
+  email: 'childover16@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: false,
+}
+
+// Legal guardians who have NOT opted in to SMS (smsNotifications: false) but have a
+// phone number — they must still receive the forced SMS for a child under 16.
+export const legalGuardianOne: MockUserProfileDto = {
+  name: 'legalGuardianOne',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1111111',
+  email: 'guardianone@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: false,
+}
+
+export const legalGuardianTwo: MockUserProfileDto = {
+  name: 'legalGuardianTwo',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '2222222',
+  email: 'guardiantwo@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: false,
+}
+
 export const mockTemplateId = 'HNIPP.DEMO.ID'
 
 export const getMockHnippTemplate = ({
@@ -203,11 +259,53 @@ export const userProfiles = [
   companyUser,
   inactiveCompanyUser,
   deceasedUser,
+  childUnder16,
+  childOver16,
+  legalGuardianOne,
+  legalGuardianTwo,
 ]
 
 // Delegations keyed by nationalId and scope
 // Format: `${nationalId}:${scope}` -> DelegationRecordDTO[]
 const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
+  // A child under 16 with two legal guardians (both must get the forced SMS).
+  [`${childUnder16.nationalId}:@island.is/health`]: [
+    {
+      fromNationalId: childUnder16.nationalId,
+      toNationalId: legalGuardianOne.nationalId,
+      subjectId: null,
+      type: AuthDelegationType.LegalGuardianMinor,
+      customDelegationScopes: null,
+    },
+    {
+      fromNationalId: childUnder16.nationalId,
+      toNationalId: legalGuardianTwo.nationalId,
+      subjectId: null,
+      type: AuthDelegationType.LegalGuardianMinor,
+      customDelegationScopes: null,
+    },
+  ],
+  // A child 16 or older — the index emits a plain LegalGuardian (not Minor), so
+  // no forced SMS.
+  [`${childOver16.nationalId}:@island.is/health`]: [
+    {
+      fromNationalId: childOver16.nationalId,
+      toNationalId: legalGuardianOne.nationalId,
+      subjectId: null,
+      type: AuthDelegationType.LegalGuardian,
+      customDelegationScopes: null,
+    },
+  ],
+  // A child under 16 but with a non-guardian delegation — no forced SMS.
+  [`${childUnder16.nationalId}:@island.is/documents`]: [
+    {
+      fromNationalId: childUnder16.nationalId,
+      toNationalId: legalGuardianOne.nationalId,
+      subjectId: null,
+      type: AuthDelegationType.Custom,
+      customDelegationScopes: null,
+    },
+  ],
   [`${userWithDelegations.nationalId}:@island.is/documents`]: [
     {
       fromNationalId: userWithDelegations.nationalId,

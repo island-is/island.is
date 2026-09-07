@@ -22,7 +22,7 @@ export const PrerequisitesForm: Form = buildForm({
   title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: false,
+  renderLastScreenButton: true,
   renderLastScreenBackButton: false,
   children: [
     buildSection({

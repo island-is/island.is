@@ -14,7 +14,7 @@ import {
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { PREPAID_INHERITANCE } from '../../lib/constants'
@@ -56,7 +56,8 @@ export const ReportFieldsRepeater: FC<
 > = ({ application, field, errors }) => {
   const { answers } = application
 
-  const { id, props } = field
+  const id = field.id as string
+  const { props } = field
 
   const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 

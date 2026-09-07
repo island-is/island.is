@@ -102,6 +102,7 @@ const prosecutionIndictmentsInDraftColumnKeys: CaseTableColumnKey[] = [
   'caseType',
   'prosecutor',
   'created',
+  'indictmentCaseState',
 ]
 
 export const prosecutionIndictmentsInDraft: CaseTable = {
@@ -143,7 +144,8 @@ const prosecutionIndictmentsAppealedColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'caseType',
   'rulingDate',
-  'indictmentRulingDecision',
+  'indictmentRulingDecisionWithoutAppealState',
+  'appealCaseState',
 ]
 
 export const prosecutionIndictmentsAppealed: CaseTable = {

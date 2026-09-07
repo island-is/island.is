@@ -1,6 +1,5 @@
 import { style, styleVariants, keyframes } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
-import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const divider = style({
   width: '100%',
@@ -184,10 +183,18 @@ export const scrolledMenu = style({
 
 export const scrolledMenuVisible = style({
   borderRadius: 'unset',
+  // Match the GridContainer side padding so the menu goes edge to edge:
+  // 16px below the sm breakpoint, 24px from sm up to md (where the menu is replaced by the sidebar)
   marginLeft: -theme.spacing[2],
   marginRight: -theme.spacing[2],
   transition:
     'margin-left 100ms cubic-bezier(0.25, 0.46, 0.45, 0.94), margin-right 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), border-radius 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      marginLeft: -theme.spacing[3],
+      marginRight: -theme.spacing[3],
+    },
+  },
 })
 
 export const mobileNav = style({

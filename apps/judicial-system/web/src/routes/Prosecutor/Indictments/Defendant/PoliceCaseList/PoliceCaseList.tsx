@@ -1,11 +1,11 @@
-import { useContext, useMemo, useRef } from 'react'
+import { useContext, useEffect, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import equal from 'fast-deep-equal'
 import { AnimatePresence, motion } from 'motion/react'
 import { v4 as uuid } from 'uuid'
 
 import { Box, Button } from '@island.is/island-ui/core'
-import {
+import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
@@ -13,19 +13,20 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseOrigin,
+import type {
   IndictmentSubtype,
   PoliceCaseInfo as TPoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getIncidentDescription } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/lib/getIncidentDescription'
 import {
   useCase,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { getIncidentDescription } from '../../Indictment/lib/getIncidentDescription'
-import { PoliceCase, PoliceCaseUpdate } from './PoliceCase/PoliceCase'
+import type { PoliceCaseUpdate } from './PoliceCase/PoliceCase'
+import { PoliceCase } from './PoliceCase/PoliceCase'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { strings } from './PoliceCaseList.strings'
 
@@ -52,6 +53,18 @@ interface Checkpoint {
   update?: IndexedPoliceCaseUpdate
 }
 
+const getMainLokePoliceCaseNumber = (
+  origin: CaseOrigin | null | undefined,
+  policeCaseNumbers: string[] | null | undefined,
+): string | undefined => {
+  if (origin !== CaseOrigin.LOKE) {
+    return undefined
+  }
+
+  // Index 0 is the LOKE main identifier (first registered on the case).
+  return policeCaseNumbers?.[0]
+}
+
 export const PoliceCaseList = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, refreshCase } = useContext(FormContext)
@@ -60,10 +73,26 @@ export const PoliceCaseList = () => {
 
   const policeCaseIds = useRef<{ [key: string]: string }>({})
   const checkpoint = useRef<Checkpoint>({})
+  const focusNewPoliceCase = useRef(false)
+
+  // The police case added by the user is focused when it appears, and only
+  // then - the effects of the police cases run before this one
+  useEffect(() => {
+    focusNewPoliceCase.current = false
+  })
 
   const gender = useMemo(
     () => getDefaultDefendantGender(workingCase.defendants),
     [workingCase.defendants],
+  )
+
+  const mainLokePoliceCaseNumber = useMemo(
+    () =>
+      getMainLokePoliceCaseNumber(
+        workingCase.origin,
+        workingCase.policeCaseNumbers,
+      ),
+    [workingCase.origin, workingCase.policeCaseNumbers],
   )
 
   const policeCases: TPoliceCase[] = useMemo(() => {
@@ -84,6 +113,35 @@ export const PoliceCaseList = () => {
           }))
         : [{ number: '' }]
 
+    const byDate = (a: TPoliceCase, b: TPoliceCase) => {
+      const at = a.date?.getTime()
+      const bt = b.date?.getTime()
+
+      if (at === undefined) return bt === undefined ? 0 : 1
+      if (bt === undefined) return -1
+
+      return at - bt
+    }
+
+    if (policeCases.length > 1 && policeCases[0].number !== '') {
+      if (workingCase.origin === CaseOrigin.LOKE && mainLokePoliceCaseNumber) {
+        const mainCase = policeCases.find(
+          (policeCase) => policeCase.number === mainLokePoliceCaseNumber,
+        )
+        const rest = policeCases
+          .filter(
+            (policeCase) => policeCase.number !== mainLokePoliceCaseNumber,
+          )
+          .sort(byDate)
+
+        if (mainCase) {
+          policeCases.splice(0, policeCases.length, mainCase, ...rest)
+        }
+      } else {
+        policeCases.sort(byDate)
+      }
+    }
+
     const current = policeCaseIds.current
     policeCaseIds.current = policeCases.reduce((acc, c) => {
       acc[c.number] = current[c.number] ?? uuid()
@@ -92,7 +150,7 @@ export const PoliceCaseList = () => {
     }, {} as { [key: string]: string })
 
     return policeCases
-  }, [workingCase])
+  }, [workingCase, mainLokePoliceCaseNumber])
 
   const getWorkingCaseUpdates = (
     policeCases: TPoliceCase[],
@@ -143,12 +201,15 @@ export const PoliceCaseList = () => {
       crimeScenes[number] = crimeScene
     })
 
-    const [first, ...rest] = unsortedPoliceCaseNumbers
-
     const policeCaseNumbers =
-      workingCase.origin === CaseOrigin.LOKE
-        ? // If the case is a LÖKE case, we never change the first police case number
-          [first, ...rest.sort(compare)]
+      workingCase.origin === CaseOrigin.LOKE && mainLokePoliceCaseNumber
+        ? // The main LÖKE number must stay at index 0 in the stored array
+          [
+            mainLokePoliceCaseNumber,
+            ...unsortedPoliceCaseNumbers
+              .filter((number) => number !== mainLokePoliceCaseNumber)
+              .sort(compare),
+          ]
         : unsortedPoliceCaseNumbers.sort(compare)
 
     return { policeCaseNumbers, indictmentSubtypes, crimeScenes }
@@ -183,10 +244,15 @@ export const PoliceCaseList = () => {
       // Assumptions:
       // 1. At most one update per indictment count
       // 2. For each update, only one of the updates is set
+      const policeCaseNumber =
+        policeCases[index]?.number ?? oldPoliceCaseNumbers[index]
+
+      if (policeCaseNumber === undefined) {
+        continue
+      }
+
       updatedIndictmentCounts = updatedIndictmentCounts.map(
         (indictmentCount) => {
-          const policeCaseNumber = oldPoliceCaseNumbers[index]
-
           if (indictmentCount.policeCaseNumber !== policeCaseNumber) {
             return indictmentCount
           }
@@ -248,18 +314,36 @@ export const PoliceCaseList = () => {
     }))
   }
 
+  // A police case which has not been given a number yet only lives in the
+  // client. The server drops empty police case numbers when it stores them,
+  // but still counts them as new police cases and adds an indictment count
+  // for each of them, so an empty number must never be sent to the server.
+  const hasUnnumberedPoliceCase = (update: WorkingCaseUpdate) =>
+    update.policeCaseNumbers.some((policeCaseNumber) => policeCaseNumber === '')
+
+  const setPoliceCasesInClient = (update: WorkingCaseUpdate) => {
+    setWorkingCase((prevWorkingCase) => ({ ...prevWorkingCase, ...update }))
+  }
+
   const handleCreatePoliceCases = (newPoliceCases: TPoliceCase[]) => {
-    const { policeCaseNumbers, indictmentSubtypes, crimeScenes } =
-      getWorkingCaseUpdates([...policeCases, ...newPoliceCases])
+    const update = getWorkingCaseUpdates([...policeCases, ...newPoliceCases])
+
+    if (hasUnnumberedPoliceCase(update)) {
+      setPoliceCasesInClient(update)
+
+      return
+    }
 
     setAndSendCaseToServer(
-      [{ policeCaseNumbers, indictmentSubtypes, crimeScenes, force: true }],
+      [{ ...update, force: true }],
       workingCase,
       setWorkingCase,
     )
   }
 
   const handleCreatePoliceCase = () => {
+    focusNewPoliceCase.current = true
+
     handleCreatePoliceCases([{ number: '' }])
   }
 
@@ -348,32 +432,40 @@ export const PoliceCaseList = () => {
       return
     }
 
+    const update = { policeCaseNumbers, indictmentSubtypes, crimeScenes }
+
+    if (hasUnnumberedPoliceCase(update)) {
+      // Keep the changes in the client until every police case has a number
+      setPoliceCasesInClient(update)
+
+      return
+    }
+
     await setAndSendCaseToServer(
-      [{ policeCaseNumbers, indictmentSubtypes, crimeScenes, force: true }],
+      [{ ...update, force: true }],
       workingCase,
       setWorkingCase,
     )
 
-    handleUpdateIndictmentCounts(
-      old,
-      { policeCaseNumbers, indictmentSubtypes, crimeScenes },
-      unsavedUpdates,
-    )
+    handleUpdateIndictmentCounts(old, update, unsavedUpdates)
 
     refreshCase()
   }
 
   const handleDeletePoliceCase = async (index: number) => {
-    const { policeCaseNumbers, indictmentSubtypes, crimeScenes } =
-      getWorkingCaseUpdates(
-        policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
-      )
-
-    setAndSendCaseToServer(
-      [{ policeCaseNumbers, indictmentSubtypes, crimeScenes, force: true }],
-      workingCase,
-      setWorkingCase,
+    const update = getWorkingCaseUpdates(
+      policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
     )
+
+    if (hasUnnumberedPoliceCase(update)) {
+      setPoliceCasesInClient(update)
+    } else {
+      setAndSendCaseToServer(
+        [{ ...update, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
+    }
 
     // We need to remove all indictment counts which are associated
     // with the deleted police case from the working case.
@@ -479,12 +571,20 @@ export const PoliceCaseList = () => {
               {workingCase.policeCaseNumbers && (
                 <PoliceCase
                   index={index}
+                  policeCaseNumber={policeCase.number}
+                  mainLokePoliceCaseNumber={mainLokePoliceCaseNumber}
+                  autoFocus={
+                    focusNewPoliceCase.current && policeCase.number === ''
+                  }
                   setPoliceCase={(update: PoliceCaseUpdate) =>
                     handleSetPoliceCase({ index, update })
                   }
                   deletePoliceCase={
                     workingCase.policeCaseNumbers.length > 1 &&
-                    !(workingCase.origin === CaseOrigin.LOKE && index === 0)
+                    !(
+                      workingCase.origin === CaseOrigin.LOKE &&
+                      policeCase.number === mainLokePoliceCaseNumber
+                    )
                       ? () => handleDeletePoliceCase(index)
                       : undefined
                   }

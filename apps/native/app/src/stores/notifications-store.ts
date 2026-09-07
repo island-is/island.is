@@ -52,7 +52,15 @@ export const notificationsStore = create<NotificationsStore>()(
           return
         }
         const client = await getApolloClientAsync()
-        const token = await getToken(app.messaging())
+
+        let token: string
+        try {
+          token = await getToken(app.messaging())
+        } catch (err) {
+          console.warn('Failed to get push token (will retry later)', err)
+          return
+        }
+
         const { pushToken: oldToken, deletePushToken } = get()
 
         if (oldToken !== token) {

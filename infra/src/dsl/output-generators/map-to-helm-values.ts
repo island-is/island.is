@@ -93,6 +93,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
+    result.env.DD_TRACE_DISABLED_INSTRUMENTATIONS = 'fetch'
   }
   // add healthCheck port if set in the service
   if (serviceDef.healthPort) {
@@ -108,17 +109,49 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.podDisruptionBudget) {
     result.podDisruptionBudget = serviceDef.podDisruptionBudget
   }
+
+  // rollout strategy
+  if (serviceDef.strategy) {
+    result.strategy = serviceDef.strategy
+  }
+
+  // graceful shutdown
+  if (serviceDef.gracefulShutdown) {
+    const {
+      minReadySeconds,
+      terminationGracePeriodSeconds,
+      preStopSleepSeconds,
+    } = serviceDef.gracefulShutdown
+    if (minReadySeconds !== undefined) {
+      result.minReadySeconds = minReadySeconds
+    }
+    if (terminationGracePeriodSeconds !== undefined) {
+      result.terminationGracePeriodSeconds = terminationGracePeriodSeconds
+    }
+    if (preStopSleepSeconds !== undefined) {
+      result.lifecycle = {
+        preStop: {
+          exec: {
+            command: ['/bin/sh', '-c', `sleep ${preStopSleepSeconds}`],
+          },
+        },
+      }
+    }
+  }
+
   // resources
   result.resources = serviceDef.resources
 
   // replicas
   if (
     (env1.type == 'staging' || env1.type == 'dev') &&
-    service.name.indexOf('search-indexer') == -1
+    service.name.indexOf('search-indexer') == -1 &&
+    // bypassReplicaClamp services keep their explicit replicaCount in dev/staging.
+    !serviceDef.replicaCount?.bypassReplicaClamp
   ) {
     result.replicaCount = {
       min: 1,
-      max: 3,
+      max: 2,
       default: 1,
     }
   } else {
@@ -261,20 +294,8 @@ const serializeService: SerializeMethod<HelmService> = async (
     }
   }
 
-  // ingress
+  // httpRoute (Envoy Gateway)
   if (Object.keys(serviceDef.ingress).length > 0) {
-    result.ingress = Object.entries(serviceDef.ingress).reduce(
-      (acc, [ingressName, ingressConf]) => {
-        const ingress = serializeIngress(serviceDef, ingressConf, env1)
-        return {
-          ...acc,
-          [`${ingressName}-alb`]: ingress,
-        }
-      },
-      {},
-    )
-
-    // httpRoute (Envoy Gateway - parallel to ingress during migration)
     result.httpRoute = Object.entries(serviceDef.ingress).reduce(
       (acc, [ingressName, ingressConf]) => {
         const route = serializeHTTPRoute(ingressConf, env1)
@@ -385,39 +406,6 @@ function serializePostgres(
   secrets['DB_PASS'] =
     postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
   return { env, secrets, errors }
-}
-
-function serializeIngress(
-  _serviceDef: ServiceDefinitionForEnv,
-  ingressConf: IngressForEnv,
-  env: EnvironmentConfig,
-): NonNullable<HelmService['ingress']>[string] {
-  const hosts = (
-    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
-  ).map((host) =>
-    ingressConf.public ?? true
-      ? hostFullName(host, env)
-      : internalHostFullName(host, env),
-  )
-
-  const className =
-    ingressConf.public ?? true ? 'nginx-external-alb' : 'nginx-internal-alb'
-  const pathTypeOverride = ingressConf.pathTypeOverride
-    ? { pathTypeOverride: ingressConf.pathTypeOverride }
-    : null
-  return {
-    annotations: {
-      'kubernetes.io/ingress.class': className,
-      'nginx.ingress.kubernetes.io/service-upstream':
-        ingressConf.serviceUpstream ?? true ? 'true' : 'false',
-      ...ingressConf.extraAnnotations,
-    },
-    hosts: hosts.map((host) => ({
-      host: host,
-      ...pathTypeOverride,
-      paths: ingressConf.paths,
-    })),
-  }
 }
 
 function serializeVolumes(
@@ -548,6 +536,13 @@ function serializeHTTPRoute(
     ingressConf.extraAnnotations?.['nginx.ingress.kubernetes.io/rewrite-target']
   const rewritePrefix = rewriteTarget === '/$2' ? '/' : undefined
 
+  // Carry the legacy global-auth opt-out onto the route so a no-auth
+  // SecurityPolicy is rendered (Cognito wall bypass).
+  const noAuth =
+    ingressConf.extraAnnotations?.[
+      'nginx.ingress.kubernetes.io/enable-global-auth'
+    ] === 'false'
+
   return {
     parentRefs: [
       {
@@ -572,6 +567,7 @@ function serializeHTTPRoute(
         ...(rewritePrefix ? { rewritePrefix } : {}),
       },
     ],
+    ...(noAuth ? { noAuth } : {}),
   }
 }
 
@@ -646,7 +642,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     })
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
-      max: Math.min(2, s.replicaCount?.max ?? 1),
+      max: Math.min(1, s.replicaCount?.max ?? 1),
       default: Math.min(1, s.replicaCount?.default ?? 1),
     }
     s.namespace = getFeatureDeploymentNamespace(env)

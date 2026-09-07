@@ -518,6 +518,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:operator',
     defaultMessage: 'Umráðamaður',
   },
+  mainOperator: {
+    id: 'sp.vehicles:main-operator',
+    defaultMessage: 'Aðalumráðamaður',
+  },
   name: {
     id: 'sp.vehicles:name',
     defaultMessage: 'Nafn',
@@ -1755,9 +1759,10 @@ export const shipsMessages = defineMessages({
     defaultMessage:
       'Hér finnur þú upplýsingar um þín skip úr skipaskrá Samgöngustofu',
   },
-  notFound: {
-    id: 'sp.ships:not-found',
-    defaultMessage: 'Skip fannst ekki',
+  shipDetailIntroWarning: {
+    id: 'sp.ships:ship-detail-intro-warning',
+    defaultMessage:
+      'Ef endurskoðun er skráð á skipið vegna athugasemda sem settar voru á skipið þá fellur haffærisskírteini úr gildi þegar frestur til endurskoðunar er liðinn hafi ekki verið bætt úr þessum atriðum og endurskoðun framkvæmd.',
   },
   registrationNumber: {
     id: 'sp.ships:registration-number',

@@ -45,6 +45,7 @@ query AuthAdminScope($input: ScopeInput!) {
     modified
     environments {
       ...AuthAdminScopeEnvironmentFragment
+      userNationalIds
     }
     defaultEnvironment {
       environment

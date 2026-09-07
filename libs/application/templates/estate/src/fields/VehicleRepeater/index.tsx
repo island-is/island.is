@@ -18,7 +18,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   errors,
 }) => {
   const error = (errors as ErrorValue)?.estate?.vehicles
-  const { id } = field
+  const id = field.id as string
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,

@@ -214,7 +214,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       expect(then.error).toBeUndefined()
     })
 
-    it('should also queue police messages for LOKE origin cases', async () => {
+    it('should queue the same messages for LOKE origin cases', async () => {
       const lokeCase = {
         ...theCase,
         origin: CaseOrigin.LOKE,
@@ -228,15 +228,9 @@ describe('SubpoenaController - Create subpoenas', () => {
 
       const then = await givenWhenThen(caseId, lokeCase, createSubpoenasDto)
 
-      // Verify messages are queued for police, court, and national commissioners office
-      expect(mockQueuedMessages).toHaveLength(6) // 2 defendants × 3 message types (police + court + national commissioners)
+      expect(mockQueuedMessages).toHaveLength(4) // 2 defendants × 2 message types (court + national commissioners)
       expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({
-            type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-            caseId: lokeCase.id,
-            elementId: [defendantId1, subpoenaId1],
-          }),
           expect.objectContaining({
             type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
             caseId: lokeCase.id,

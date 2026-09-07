@@ -4,6 +4,7 @@ import request from 'supertest'
 import {
   CreateDelegationDTO,
   Delegation,
+  DelegationsIndexService,
   DelegationValidity,
   PatchDelegationDTO,
 } from '@island.is/auth-api-lib'
@@ -39,6 +40,14 @@ describe('MeDelegationsController filters', () => {
     })
     server = request(app.getHttpServer())
     factory = new FixtureFactory(app)
+
+    // Stub fire-and-forget indexing so stray queries don't outlive the suite
+    // and hit the shared test database while it is being recreated.
+    const delegationIndexService = app.get(DelegationsIndexService)
+    jest.spyOn(delegationIndexService, 'indexDelegations').mockImplementation()
+    jest
+      .spyOn(delegationIndexService, 'indexCustomDelegations')
+      .mockImplementation()
 
     await Promise.all(
       Object.values(testDomains).map((domain) => factory.createDomain(domain)),
@@ -459,6 +468,14 @@ describe('MeDelegationController company filters', () => {
     })
     server = request(app.getHttpServer())
     factory = new FixtureFactory(app)
+
+    // Stub fire-and-forget indexing so stray queries don't outlive the suite
+    // and hit the shared test database while it is being recreated.
+    const delegationIndexService = app.get(DelegationsIndexService)
+    jest.spyOn(delegationIndexService, 'indexDelegations').mockImplementation()
+    jest
+      .spyOn(delegationIndexService, 'indexCustomDelegations')
+      .mockImplementation()
 
     await Promise.all(
       Object.values(testDomains).map((domain) => factory.createDomain(domain)),

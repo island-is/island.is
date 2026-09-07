@@ -93,10 +93,24 @@ export class ApplicationsXRoadService {
       )
     }
 
+    this.logger.info('form system application fetched via xroad', {
+      applicationId: id,
+      formId: form.id,
+      formSlug: form.slug,
+      isTest: application.isTest,
+      organizationNationalId: form.organizationNationalId,
+      xRoadClient,
+      datadogEvent: 'form_system_application_fetched_xroad',
+    })
+
     return applicationJsonDto
   }
 
   async getFile(id: string, xRoadClient: string): Promise<FileResponseDto> {
+    this.logger.info(
+      `Fetching file with id ${id} for X-Road client ${xRoadClient}`,
+    )
+
     const applicationId = id.split('/')[0]
     const application = await this.applicationModel.findByPk(applicationId)
 

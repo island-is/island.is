@@ -3,6 +3,8 @@ import {
   ServiceDefinition,
   ServiceDefinitionForEnv,
   PodDisruptionBudget,
+  RolloutStrategy,
+  GracefulShutdown,
 } from './input-types'
 import { ReferenceResolver, EnvironmentConfig } from './charts'
 
@@ -39,7 +41,6 @@ export type OutputPersistentVolumeClaim = {
 }
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
-export type IngressClass = 'nginx-internal-alb' | 'nginx-external-alb'
 export type GatewayName = 'gateway-external' | 'gateway-internal'
 
 export interface HelmService {
@@ -94,17 +95,6 @@ export interface HelmService {
     allowPrivilegeEscalation?: boolean
   }
 
-  ingress?: {
-    [name: string]: {
-      ingressClassName?: IngressClass
-      annotations: {
-        [anntName: string]: string
-      }
-      pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
-      hosts: { host: string; paths: string[] }[]
-    }
-  }
-
   httpRoute?: {
     [name: string]: {
       parentRefs: { name: GatewayName; namespace: string }[]
@@ -113,6 +103,8 @@ export interface HelmService {
         matches: { pathPrefix?: string; pathExact?: string }[]
         rewritePrefix?: string
       }[]
+      // Opt this route out of the gateway-wide Cognito OIDC wall.
+      noAuth?: boolean
     }
   }
 
@@ -137,6 +129,17 @@ export interface HelmService {
   pvcs?: OutputPersistentVolumeClaim[]
 
   podDisruptionBudget?: PodDisruptionBudget
+
+  strategy?: RolloutStrategy
+  minReadySeconds?: number
+  terminationGracePeriodSeconds?: number
+  lifecycle?: {
+    preStop?: {
+      exec: {
+        command: string[]
+      }
+    }
+  }
 
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean

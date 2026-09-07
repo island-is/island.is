@@ -4,7 +4,11 @@ import { useMutation, useQuery } from '@apollo/client'
 import { FileRejection } from 'react-dropzone'
 
 import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  SetFieldLoadingState,
+  SetSubmitButtonDisabled,
+} from '@island.is/application/types'
 import {
   InputFileUploadDeprecated,
   UploadFileDeprecated,
@@ -84,6 +88,8 @@ interface FileUploadControllerProps {
   readonly totalMaxSize?: number
   readonly maxFileCount?: number
   readonly forImageUpload?: boolean
+  readonly setFieldLoadingState?: SetFieldLoadingState
+  readonly setSubmitButtonDisabled?: SetSubmitButtonDisabled
 }
 
 export const FileUploadController = ({
@@ -101,6 +107,8 @@ export const FileUploadController = ({
   maxFileCount = Number.MAX_SAFE_INTEGER, // Default to no limit
   forImageUpload,
   onRemove,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
 }: FileUploadControllerProps) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
@@ -127,6 +135,8 @@ export const FileUploadController = ({
     initialUploadFiles?.length ?? 0,
   )
 
+  const uploadingCount = state.filter((f) => f.status === 'uploading').length
+
   useEffect(() => {
     const onlyUploadedFiles = state.filter(
       (f: UploadFileDeprecated) => f.key && f.status === 'done',
@@ -137,6 +147,12 @@ export const FileUploadController = ({
 
     setValue(id, uploadAnswer)
   }, [state, id, setValue])
+
+  useEffect(() => {
+    const isUploading = uploadingCount > 0
+    setFieldLoadingState?.(isUploading)
+    setSubmitButtonDisabled?.(isUploading)
+  }, [uploadingCount, setFieldLoadingState, setSubmitButtonDisabled])
 
   const isFreeOfMalware = async (fileKey: string): Promise<boolean> => {
     const { data } = await fileUploadMalwareStatus({ filename: fileKey })

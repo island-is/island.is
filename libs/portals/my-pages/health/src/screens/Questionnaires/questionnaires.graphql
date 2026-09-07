@@ -9,6 +9,7 @@ fragment QuestionnaireBaseInfo on QuestionnairesBaseItem {
   lastSubmissionId
   organization
   department
+  senderGroupName
 }
 
 fragment QuestionnaireSubmission on QuestionnaireSubmissionDetail {
@@ -58,7 +59,7 @@ fragment AnswerOptions on QuestionnaireAnswerOption {
 fragment QuestionDetail on QuestionnaireQuestion {
   __typename
   id
-  originalId
+  sectionId
   label
   sublabel
   htmlLabel
@@ -96,6 +97,7 @@ query GetQuestionnaires($locale: String!) {
       lastSubmitted
       organization
       department
+      senderGroupName
     }
   }
 }

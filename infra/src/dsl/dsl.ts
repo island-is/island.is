@@ -21,6 +21,8 @@ import type {
   ServiceDefinition,
   XroadConfig,
   PodDisruptionBudget,
+  RolloutStrategyInput,
+  GracefulShutdownInput,
   IngressMapping,
   BffInfo,
 } from './types/input-types'
@@ -255,6 +257,26 @@ export class ServiceBuilder<ServiceType extends string> {
    */
   podDisruption(pdb: PodDisruptionBudget) {
     this.serviceDef.podDisruptionBudget = pdb
+    return this
+  }
+
+  /**
+   * Deployment rollout strategy (`Deployment.spec.strategy`). Use
+   * `maxUnavailable: 0` for zero-downtime rollouts. Accepts a flat config or a
+   * per-env map, e.g. `{ dev: {...}, prod: {...} }`.
+   */
+  strategy(strategy: RolloutStrategyInput) {
+    this.serviceDef.strategy = strategy
+    return this
+  }
+
+  /**
+   * Graceful shutdown settings; complements `strategy({ maxUnavailable: 0 })`
+   * so in-flight requests finish during a rollout. Flat or per-env. See
+   * {@link GracefulShutdown}.
+   */
+  gracefulShutdown(cfg: GracefulShutdownInput) {
+    this.serviceDef.gracefulShutdown = cfg
     return this
   }
 

@@ -50,11 +50,7 @@ export const serviceSetup = (services: {
         staging: 'test',
         prod: 'master',
       },
-      HIDDEN_FEATURES: {
-        dev: '',
-        staging: 'APPEAL_RULING_ORDER,TINY_MCE',
-        prod: 'APPEAL_RULING_ORDER,TINY_MCE',
-      },
+      HIDDEN_FEATURES: '',
       REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -73,6 +69,7 @@ export const serviceSetup = (services: {
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
       AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET',
       LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
+      AUTH_TOKEN_SECRET_BASE64: '/k8s/judicial-system/AUTH_TOKEN_SECRET_BASE64',
     })
     .liveness('/liveness')
     .readiness('/liveness')

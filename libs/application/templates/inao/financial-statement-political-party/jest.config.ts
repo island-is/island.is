@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-inao-financial-statement-political-party',
   preset: '../../../../../jest.preset.js',
   transform: {

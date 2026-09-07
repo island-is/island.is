@@ -26,7 +26,12 @@ import {
 } from '../createTestingNotificationModule'
 
 import { randomDate } from '../../../../test'
-import { Case, Institution, Notification, Recipient } from '../../../repository'
+import {
+  Case,
+  Institution,
+  NotificationRepositoryService,
+  Recipient,
+} from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
@@ -275,7 +280,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
   let mockEmailService: EmailService
   let mockNotificationConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -284,12 +289,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
     const {
       emailService,
       notificationConfig,
-      notificationModel,
+      notificationRepositoryService,
       internalNotificationController,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
     mockNotificationConfig = notificationConfig
 
     givenWhenThen = async (caseId, theCase, notification) => {
@@ -344,7 +349,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
         }),
       )
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: RequestCaseNotificationType.READY_FOR_COURT,
         recipients: [
@@ -400,7 +405,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp, gripdeild og þjófnaður. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
         }),
       )
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: RequestCaseNotificationType.READY_FOR_COURT,
         recipients: [

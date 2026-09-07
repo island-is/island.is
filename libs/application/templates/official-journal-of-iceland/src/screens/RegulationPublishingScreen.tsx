@@ -106,7 +106,7 @@ export const RegulationPublishingScreen = (props: OJOIFieldBaseProps) => {
   const saveDraftRef = useRef(saveDraft)
   saveDraftRef.current = saveDraft
 
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const saveDraftNow = () => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)

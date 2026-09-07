@@ -1,49 +1,52 @@
 import faker from 'faker'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { toast } from '@island.is/island-ui/core'
-
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   CaseType,
-  Defendant,
-} from '../../../graphql/schema'
-import { mockCase } from '../../../utils/mocks'
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
   FormContextWrapper,
   IntlProviderWrapper,
-} from '../../../utils/testHelpers'
+} from '@island.is/judicial-system-web/src/utils/testHelpers'
+
 import VerdictTimelineCard from './VerdictTimelineCard'
 
-jest.mock('../../DateTime/DateTime', () => ({
-  __esModule: true,
-  default: ({
-    name,
-    onChange,
-  }: {
-    name: string
-    onChange: (date: Date, valid: boolean) => void
-  }) => (
-    <div>
-      <button
-        data-testid={`set-valid-${name}`}
-        onClick={() => onChange(new Date('2026-01-01T00:00:00.000Z'), true)}
-        type="button"
-      >
-        set valid date
-      </button>
-      <button
-        data-testid={`set-invalid-${name}`}
-        onClick={() => onChange(new Date('2026-01-01T00:00:00.000Z'), false)}
-        type="button"
-      >
-        set invalid date
-      </button>
-    </div>
-  ),
-}))
+jest.mock(
+  '@island.is/judicial-system-web/src/components/DateTime/DateTime',
+  () => ({
+    __esModule: true,
+    default: ({
+      name,
+      onChange,
+    }: {
+      name: string
+      onChange: (date: Date, valid: boolean) => void
+    }) => (
+      <div>
+        <button
+          data-testid={`set-valid-${name}`}
+          onClick={() => onChange(new Date('2026-01-01T00:00:00.000Z'), true)}
+          type="button"
+        >
+          set valid date
+        </button>
+        <button
+          data-testid={`set-invalid-${name}`}
+          onClick={() => onChange(new Date('2026-01-01T00:00:00.000Z'), false)}
+          type="button"
+        >
+          set invalid date
+        </button>
+      </div>
+    ),
+  }),
+)
 
 const mockVerdictAppealDecisionChoice = jest.fn(
   ({ disabled }: { disabled: boolean }) => (
@@ -52,13 +55,25 @@ const mockVerdictAppealDecisionChoice = jest.fn(
 )
 
 jest.mock(
-  '../../VerdictAppealDecisionChoice/VerdictAppealDecisionChoice',
+  '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice',
   () => ({
     __esModule: true,
     default: (props: { disabled: boolean }) =>
       mockVerdictAppealDecisionChoice(props),
   }),
 )
+
+const mockUpdateDefendant = jest.fn()
+const mockSetAndSendDefendantToServer = jest.fn()
+
+jest.mock('../../../utils/hooks/useDefendants', () => ({
+  __esModule: true,
+  default: () => ({
+    updateDefendant: mockUpdateDefendant,
+    setAndSendDefendantToServer: mockSetAndSendDefendantToServer,
+    isUpdatingDefendant: false,
+  }),
+}))
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -103,6 +118,8 @@ describe('VerdictTimelineCard', () => {
               defendant={defendant}
               canDefendantAppealVerdict={canDefendantAppealVerdict}
             />
+            {/* Modals portal into this container, normally supplied by PageLayout */}
+            <div id="modal" />
           </FormContextWrapper>
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,
@@ -151,7 +168,7 @@ describe('VerdictTimelineCard', () => {
     ).toBeInTheDocument()
   })
 
-  it('hides date pickers when defendant is sent to prison admin', () => {
+  it('hides date pickers when defendant is sent to prison admin', async () => {
     const defendant = {
       ...mockDefendant,
       isSentToPrisonAdmin: true,
@@ -162,6 +179,7 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendant)
 
+    expect(await screen.findByText(name)).toBeInTheDocument()
     expect(
       screen.queryByTestId('set-valid-defendantAppealDate'),
     ).not.toBeInTheDocument()
@@ -170,7 +188,192 @@ describe('VerdictTimelineCard', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('renders verdict appeal decision choice only when verdict exists and appeal is allowed', () => {
+  it('hides date pickers when defendant case is closed without enforcement', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isClosedWithoutEnforcement: true,
+      verdict: {
+        serviceRequirement: 'REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    expect(await screen.findByText(name)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('set-valid-defendantAppealDate'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('set-valid-defendantServiceDate'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('opens a confirmation modal from the close without enforcement menu item', async () => {
+    renderComponent(mockDefendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+    await userEvent.click(await screen.findByText('Ljúka máli án fullnustu'))
+
+    expect(
+      await screen.findByText(
+        (content) =>
+          content.includes('verður lokið án fullnustu gagnvart ákærða') &&
+          content.includes('ekki er hægt að afturkalla'),
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('closes the modal after a successful close without enforcement update', async () => {
+    mockUpdateDefendant.mockResolvedValueOnce(true)
+
+    renderComponent(mockDefendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+    await userEvent.click(await screen.findByText('Ljúka máli án fullnustu'))
+    await userEvent.click(screen.getByRole('button', { name: 'Ljúka máli' }))
+
+    expect(mockUpdateDefendant).toHaveBeenCalledWith({
+      caseId: 'test_id',
+      defendantId: mockDefendant.id,
+      isClosedWithoutEnforcement: true,
+    })
+    await waitFor(() =>
+      expect(
+        screen.queryByText((content) =>
+          content.includes('verður lokið án fullnustu gagnvart ákærða'),
+        ),
+      ).not.toBeInTheDocument(),
+    )
+  })
+
+  it('keeps the modal open when the close without enforcement update fails', async () => {
+    mockUpdateDefendant.mockResolvedValueOnce(false)
+
+    renderComponent(mockDefendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+    await userEvent.click(await screen.findByText('Ljúka máli án fullnustu'))
+    await userEvent.click(screen.getByRole('button', { name: 'Ljúka máli' }))
+
+    expect(mockUpdateDefendant).toHaveBeenCalledTimes(1)
+    expect(
+      await screen.findByText((content) =>
+        content.includes('verður lokið án fullnustu gagnvart ákærða'),
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('hides the close without enforcement menu item when defendant is sent to prison admin', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isSentToPrisonAdmin: true,
+    } as Defendant
+
+    renderComponent(defendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+
+    expect(
+      screen.queryByText('Ljúka máli án fullnustu'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the close without enforcement menu item when defendant is already closed', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isClosedWithoutEnforcement: true,
+    } as Defendant
+
+    renderComponent(defendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+
+    expect(
+      screen.queryByText('Ljúka máli án fullnustu'),
+    ).not.toBeInTheDocument()
+  })
+
+  // The public prosecution office has to be able to register an appeal that it
+  // only hears about after the deadline has run out - see the confirmation
+  // below for the case where the appeal itself was late.
+  it('shows the appeal date picker after the appeal deadline has expired', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isVerdictAppealDeadlineExpired: true,
+      verdictAppealDeadline: '2026-02-01T23:59:59.999Z',
+      verdict: {
+        serviceRequirement: 'REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    expect(
+      await screen.findByTestId('set-valid-defendantAppealDate'),
+    ).toBeInTheDocument()
+  })
+
+  it('registers an appeal date on the last day of the deadline without confirming', async () => {
+    // The picker emits 2026-01-01, the last day of this deadline
+    const defendant = {
+      ...mockDefendant,
+      isVerdictAppealDeadlineExpired: true,
+      verdictAppealDeadline: '2026-01-01T23:59:59.999Z',
+      verdict: {
+        serviceRequirement: 'REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    await userEvent.click(
+      await screen.findByTestId('set-valid-defendantAppealDate'),
+    )
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Skrá áfrýjun ákærða' }),
+    )
+
+    expect(
+      screen.queryByText('Áfrýjun eftir að fresti lauk'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('confirms before registering an appeal date that falls after the deadline', async () => {
+    // The picker emits 2026-01-01, the day after this deadline ran out
+    const defendant = {
+      ...mockDefendant,
+      isVerdictAppealDeadlineExpired: true,
+      verdictAppealDeadline: '2025-12-31T23:59:59.999Z',
+      verdict: {
+        serviceRequirement: 'REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    await userEvent.click(
+      await screen.findByTestId('set-valid-defendantAppealDate'),
+    )
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Skrá áfrýjun ákærða' }),
+    )
+
+    expect(
+      await screen.findByText('Áfrýjun eftir að fresti lauk'),
+    ).toBeInTheDocument()
+  })
+
+  it('renders verdict appeal decision choice only when verdict exists and appeal is allowed', async () => {
     const defendantWithoutVerdict = {
       ...mockDefendant,
       verdict: undefined,
@@ -178,6 +381,7 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendantWithoutVerdict, undefined, true)
 
+    expect(await screen.findByText(name)).toBeInTheDocument()
     expect(
       screen.queryByTestId('verdict-appeal-choice'),
     ).not.toBeInTheDocument()
@@ -191,10 +395,12 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendantWithVerdict, undefined, true)
 
-    expect(screen.getByTestId('verdict-appeal-choice')).toBeInTheDocument()
+    expect(
+      await screen.findByTestId('verdict-appeal-choice'),
+    ).toBeInTheDocument()
   })
 
-  it('passes disabled true to verdict appeal decision choice when sent to prison admin', () => {
+  it('passes disabled true to verdict appeal decision choice when sent to prison admin', async () => {
     const defendant = {
       ...mockDefendant,
       isSentToPrisonAdmin: true,
@@ -205,9 +411,25 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendant)
 
-    expect(screen.getByTestId('verdict-appeal-choice')).toHaveTextContent(
-      'disabled:true',
-    )
+    expect(
+      await screen.findByTestId('verdict-appeal-choice'),
+    ).toHaveTextContent('disabled:true')
+  })
+
+  it('passes disabled true to verdict appeal decision choice when closed without enforcement', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isClosedWithoutEnforcement: true,
+      verdict: {
+        serviceRequirement: 'NOT_REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    expect(
+      await screen.findByTestId('verdict-appeal-choice'),
+    ).toHaveTextContent('disabled:true')
   })
 
   it('shows error when invalid service date is selected', async () => {
@@ -221,7 +443,7 @@ describe('VerdictTimelineCard', () => {
     renderComponent(defendant)
 
     await userEvent.click(
-      screen.getByTestId('set-invalid-defendantServiceDate'),
+      await screen.findByTestId('set-invalid-defendantServiceDate'),
     )
 
     expect(toastErrorSpy).toHaveBeenCalledTimes(1)
@@ -237,7 +459,9 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendant)
 
-    const submitButton = screen.getByTestId('button-defendant-service-date')
+    const submitButton = await screen.findByTestId(
+      'button-defendant-service-date',
+    )
     expect(submitButton).toBeDisabled()
 
     await userEvent.click(screen.getByTestId('set-valid-defendantServiceDate'))

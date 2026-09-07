@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName:
     'application-templates-transport-authority-anonymity-in-vehicle-registry',
   preset: './jest.preset.js',

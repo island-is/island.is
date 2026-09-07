@@ -28,7 +28,7 @@ export const initializeReducer = (
   const currentScreen =
     form.mode === FormModes.IN_PROGRESS
       ? 0
-      : findCurrentScreen(screens, answers)
+      : findCurrentScreen(screens, application, state.user)
 
   return {
     ...state,

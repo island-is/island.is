@@ -54,6 +54,7 @@ export * from './lib/ModalBase/ModalBase'
 export * from './lib/Filter/Filter'
 export * from './lib/Filter/FilterMultiChoice/FilterMultiChoice'
 export * from './lib/Filter/FilterInput/FilterInput'
+export * from './lib/Filter/usePreventBodyScroll'
 export * from './lib/PdfViewer/PdfViewer'
 export * from './lib/PageLoader'
 export * from './lib/VisuallyHidden/VisuallyHidden'
@@ -62,6 +63,7 @@ export * from './lib/ProblemTemplate/ProblemTemplate'
 export * from './lib/ProblemTemplate/ProblemTemplate.css'
 export * from './lib/InfoCardGrid'
 export * from './lib/FlowStepper'
+export * from './lib/Scale/Scale'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
@@ -85,6 +87,14 @@ export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 export * from './lib/Hyphen/Hyphen'
 export { Table } from './lib/Table'
+export { InteractiveTable, createColumnHelper } from './lib/InteractiveTable'
+export type {
+  InteractiveTableProps,
+  ColumnDef,
+  Row,
+  SortingState,
+  OnChangeFn,
+} from './lib/InteractiveTable'
 
 // Form
 export * from './lib/Checkbox/Checkbox'

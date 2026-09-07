@@ -39,15 +39,16 @@ describe('Defendant National Id Exists Guard', () => {
   describe('defendant exists', () => {
     const caseId = uuid()
     const defendantId = uuid()
-    const defendantNationalId = uuid()
+    // The stored national id is dash-free, the raw param arrives with a dash -
+    // the guard should normalize the param before matching.
     const defendant = {
       id: defendantId,
-      nationalId: defendantNationalId,
+      nationalId: '1234567890',
       caseId,
     }
     const theCase = { id: caseId, defendants: [defendant] }
     const request = {
-      params: { caseId, defendantNationalId },
+      params: { caseId, defendantNationalId: '123456-7890' },
       case: theCase,
       defendant: undefined,
     }

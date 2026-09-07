@@ -6,10 +6,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Ceremony, Individual, PersonalInfo } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import format from 'date-fns/format'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { CeremonyPlaces, States } from '../../lib/constants'
 import is from 'date-fns/locale/is'
 import { YES } from '@island.is/application/core'
@@ -141,6 +138,8 @@ export const ApplicationOverview: FC<
                   <Text>{ceremony.place.office}</Text>
                 ) : ceremony.place.ceremonyPlace === CeremonyPlaces.society ? (
                   <Text>{ceremony.place.society}</Text>
+                ) : ceremony.place.ceremonyPlace === CeremonyPlaces.church ? (
+                  <Text>{formatMessage(m.ceremonyAtNationalChurch)}</Text>
                 ) : (
                   <Text>{formatMessage(m.ceremonyPlaceNone)}</Text>
                 )}

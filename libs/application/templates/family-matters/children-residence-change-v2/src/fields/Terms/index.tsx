@@ -6,7 +6,8 @@ import { terms } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 
 const CRCTerms = ({ field, error }: CRCFieldBaseProps) => {
-  const { id, disabled } = field
+  const id = field.id as string
+  const { disabled } = field
   const { formatMessage } = useIntl()
   return (
     <Terms

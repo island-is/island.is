@@ -1,9 +1,18 @@
 import { Module } from '@nestjs/common'
-import { HmsHousingBenefitsApiProvider } from './hms-housing-benefits.provider'
+import {
+  HmsHousingBenefitsApiProvider,
+  HmsHousingBenefitsApplicationApiProvider,
+  HmsHousingBenefitsTaxApiProvider,
+} from './hms-housing-benefits.provider'
 import { HmsHousingBenefitsClientService } from './hms-housing-benefits.service'
 
 @Module({
-  providers: [HmsHousingBenefitsApiProvider, HmsHousingBenefitsClientService],
+  providers: [
+    HmsHousingBenefitsApiProvider,
+    HmsHousingBenefitsApplicationApiProvider,
+    HmsHousingBenefitsTaxApiProvider,
+    HmsHousingBenefitsClientService,
+  ],
   exports: [HmsHousingBenefitsClientService],
 })
 export class HmsHousingBenefitsClientModule {}

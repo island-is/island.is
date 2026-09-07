@@ -2,7 +2,7 @@ import { MessageDescriptor } from '@formatjs/intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import React, { useState } from 'react'
+import React, { useState, type JSX } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Slider } from '@island.is/application/ui-components'
 interface Props {

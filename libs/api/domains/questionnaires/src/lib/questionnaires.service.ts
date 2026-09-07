@@ -16,7 +16,7 @@ import {
   LshClientService,
   Questionnaire as LshQuestionnaireType,
 } from '@island.is/clients/lsh'
-import { IntlService } from '@island.is/cms-translations'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AnsweredQuestionnaires } from '../models/answeredQuestion.model'
@@ -26,6 +26,7 @@ import {
   QuestionnairesOrganizationEnum,
   QuestionnairesStatusEnum,
 } from '../models/questionnaires.model'
+import { QuestionnaireReply } from './dto/questionnaire-reply.types'
 import { QuestionnairesResponse } from './dto/response.dto'
 import { mapToElAnswer } from './transform-mappers/el/answer/mapToELAnswer'
 import {
@@ -302,8 +303,11 @@ export class QuestionnairesService {
         return null
       }
 
-      const repliesMap = new Map(
-        ELdata.replies?.map((reply) => [reply.questionId, reply]) ?? [],
+      const repliesMap = new Map<string, QuestionnaireReply>(
+        ELdata.replies?.map((reply): [string, QuestionnaireReply] => [
+          reply.questionId,
+          reply,
+        ]) ?? [],
       )
 
       const submission = {
@@ -322,26 +326,9 @@ export class QuestionnairesService {
                 group.items?.map((item) => {
                   const reply = repliesMap.get(item.id)
 
-                  // Extract values based on reply type
-                  let values: string[] = []
-                  if (reply) {
-                    if ('values' in reply) {
-                      // ListReplyDto
-                      values = reply.values.map((v) => v.answer)
-                    } else if ('answer' in reply) {
-                      if (reply.answer === true || reply.answer === false) {
-                        // BooleanReplyDto
-                        values = [
-                          reply.answer
-                            ? formatMessage(m.yes)
-                            : formatMessage(m.no),
-                        ]
-                      } else {
-                        // StringReplyDto, NumberReplyDto, DateReplyDto
-                        values = [String(reply.answer)]
-                      }
-                    }
-                  }
+                  const values = reply
+                    ? this.extractReplyValues(reply, formatMessage)
+                    : []
 
                   return {
                     id: item.id,
@@ -395,6 +382,8 @@ export class QuestionnairesService {
 
     const data = {
       id: LSHdata.gUID,
+      submissionId: LSHdata.gUID,
+      isDraft: false,
       title:
         LSHquestionnaire?.header ?? formatMessage(m.questionnaireWithoutTitle),
       description: LSHquestionnaire?.description ?? undefined,
@@ -482,6 +471,54 @@ export class QuestionnairesService {
     return input.includeQuestions
       ? mapElQuestionnaireForm(elData, formatMessage)
       : mapElQuestionnaireOverview(elData, formatMessage)
+  }
+
+  private extractReplyValues(
+    reply: QuestionnaireReply,
+    formatMessage: FormatMessage,
+  ): string[] {
+    if ('rows' in reply) {
+      return reply.rows.map((row) =>
+        row
+          .map((cell) =>
+            'answer' in cell
+              ? this.formatCellAnswer(cell.answer, formatMessage)
+              : cell.values.map((v) => v.answer).join(', '),
+          )
+          .join(' | '),
+      )
+    } else if ('values' in reply) {
+      return reply.values.map((v) => v.answer)
+    } else if ('answer' in reply) {
+      if (reply.answer === true || reply.answer === false) {
+        return [reply.answer ? formatMessage(m.yes) : formatMessage(m.no)]
+      } else if (reply.answer != null) {
+        return [String(reply.answer)]
+      }
+      return []
+    } else {
+      this.logger.warn('Unhandled reply type')
+      return []
+    }
+  }
+
+  // `unknown` is deliberate: the generated EL types declare table cell
+  // answers as anyOf without a discriminator (e.g. `Date | unknown`),
+  // so this function is the runtime narrowing boundary
+  private formatCellAnswer(
+    answer: unknown,
+    formatMessage: FormatMessage,
+  ): string {
+    if (answer === null || answer === undefined) return ''
+    if (answer === true) return formatMessage(m.yes)
+    if (answer === false) return formatMessage(m.no)
+
+    const value =
+      answer instanceof Date
+        ? answer.toISOString().split('T')[0]
+        : String(answer)
+    const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+    return dateMatch ? `${dateMatch[3]}.${dateMatch[2]}.${dateMatch[1]}` : value
   }
 
   private formatDate(date?: Date | string | null): string | undefined {

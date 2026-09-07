@@ -131,7 +131,6 @@ const template: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined => {
     const { applicant, assignees } = application
-
     if (nationalId === applicant) {
       return Roles.APPLICANT
     }

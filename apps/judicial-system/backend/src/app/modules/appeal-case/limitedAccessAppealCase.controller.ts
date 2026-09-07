@@ -23,6 +23,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseType,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -30,7 +31,6 @@ import {
 
 import { defenderRule } from '../../guards'
 import { CurrentCase } from '../case/guards/case.decorator'
-import { CaseCompletedGuard } from '../case/guards/caseCompleted.guard'
 import { CaseTypeGuard } from '../case/guards/caseType.guard'
 import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from '../case/guards/limitedAccessCaseExists.guard'
@@ -85,6 +85,9 @@ export class LimitedAccessAppealCaseController {
         user,
         dto.rulingFileId,
         transaction,
+        dto.appealType === AppealCaseType.VERDICT
+          ? { defendantId: dto.defendantId }
+          : undefined,
       ),
     )
 
@@ -138,7 +141,6 @@ export class LimitedAccessAppealCaseController {
       ...indictmentCases,
     ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(defenderTransitionRule)
   @Patch('case/:caseId/limitedAccess/appealCase/:appealCaseId/state')
@@ -165,6 +167,7 @@ export class LimitedAccessAppealCaseController {
         dto.transition,
         user,
         transaction,
+        dto.defendantId,
       ),
     )
 

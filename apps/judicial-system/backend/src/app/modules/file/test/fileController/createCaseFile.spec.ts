@@ -17,7 +17,7 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { randomDate } from '../../../../test'
-import { Case, CaseFile } from '../../../repository'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
 
 interface Then {
@@ -35,16 +35,20 @@ describe('FileController - Create case file', () => {
   const user = { id: uuid() } as User
 
   let mockQueuedMessages: Message[]
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, sequelize, fileModel, fileController } =
-      await createTestingFileModule()
+    const {
+      queuedMessages,
+      sequelize,
+      caseFileRepositoryService,
+      fileController,
+    } = await createTestingFileModule()
 
     mockQueuedMessages = queuedMessages
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -99,21 +103,21 @@ describe('FileController - Create case file', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockCreate = mockFileModel.create as jest.Mock
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
         mockCreate.mockResolvedValueOnce(caseFile)
 
         then = await givenWhenThen(caseId, createCaseFile, theCase)
       })
 
       it('should create a case file', () => {
-        expect(mockFileModel.create).toHaveBeenCalledWith(
+        expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
+          caseId,
           {
             type: 'text/plain',
             state: CaseFileState.STORED_IN_RVG,
             key: `${caseId}/${uuId}/test.txt`,
             size: 99,
             category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-            caseId,
             name: 'test.txt',
             userGeneratedFilename: 'test.txt',
           },
@@ -154,20 +158,20 @@ describe('FileController - Create case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockFileModel.create as jest.Mock
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(caseFile)
 
       then = await givenWhenThen(caseId, createCaseFile, theCase)
     })
 
     it('should create a case file', () => {
-      expect(mockFileModel.create).toHaveBeenCalledWith(
+      expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
+        caseId,
         {
           type: 'text/plain',
           state: CaseFileState.STORED_IN_RVG,
           key: `${caseId}/${uuId}/test.txt`,
           size: 99,
-          caseId,
           name: 'test.txt',
           userGeneratedFilename: 'test.txt',
         },
@@ -176,6 +180,54 @@ describe('FileController - Create case file', () => {
       expect(then.result).toBe(caseFile)
     })
   })
+
+  describe.each([...restrictionCases, ...investigationCases])(
+    'uncategorized case file created for ordered %s case',
+    (type) => {
+      const caseId = uuid()
+      const theCase = { id: caseId, type } as Case
+      const uuId = uuid()
+      const createCaseFile: CreateFileDto = {
+        type: 'text/plain',
+        key: `${caseId}/${uuId}/test.txt`,
+        size: 99,
+      }
+      const fileId = uuid()
+      const timeStamp = randomDate()
+      const caseFile = {
+        type: 'text/plain',
+        key: `${caseId}/${uuId}/test.txt`,
+        size: 99,
+        id: fileId,
+        created: timeStamp,
+        modified: timeStamp,
+      }
+      let then: Then
+
+      beforeEach(async () => {
+        const mockGetNextOrderWithinChapterForUpdate =
+          mockCaseFileRepositoryService.getNextOrderWithinChapterForUpdate as jest.Mock
+        mockGetNextOrderWithinChapterForUpdate.mockResolvedValueOnce(3)
+
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+        mockCreate.mockResolvedValueOnce(caseFile)
+
+        then = await givenWhenThen(caseId, createCaseFile, theCase)
+      })
+
+      it('should append orderWithinChapter after existing ordered files', () => {
+        expect(
+          mockCaseFileRepositoryService.getNextOrderWithinChapterForUpdate,
+        ).toHaveBeenCalledWith(caseId, { transaction })
+        expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
+          caseId,
+          expect.objectContaining({ orderWithinChapter: 3 }),
+          { transaction },
+        )
+        expect(then.result).toBe(caseFile)
+      })
+    },
+  )
 
   describe.each(indictmentCases)(
     'additional case file created for %s case',
@@ -207,7 +259,7 @@ describe('FileController - Create case file', () => {
       }
 
       beforeEach(async () => {
-        const mockCreate = mockFileModel.create as jest.Mock
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
         mockCreate.mockResolvedValueOnce(caseFile)
 
         await givenWhenThen(caseId, createCaseFile, theCase)
@@ -267,7 +319,7 @@ describe('FileController - Create case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockFileModel.create as jest.Mock
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, createCaseFile, theCase)

@@ -1,23 +1,28 @@
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { FieldTypesEnum, ListTypesEnum } from '@island.is/form-system/shared'
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { ListItem } from './models/listItem.model'
-import { ListItemDto } from './models/dto/listItem.dto'
-import { CreateListItemDto } from './models/dto/createListItem.dto'
-import { UpdateListItemDto } from './models/dto/updateListItem.dto'
-import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
-import { User } from '@island.is/auth-nest-tools'
-import { AdminPortalScope } from '@island.is/auth/scopes'
-import { Section } from '../sections/models/section.model'
-import { Form } from '../forms/models/form.model'
+import { Sequelize } from 'sequelize-typescript'
+import { TemplateListItems } from '../../dataTypes/listTypes/templateListItems'
 import { Field } from '../fields/models/field.model'
+import { Form } from '../forms/models/form.model'
 import { Screen } from '../screens/models/screen.model'
+import { Section } from '../sections/models/section.model'
+import { CreateListItemDto } from './models/dto/createListItem.dto'
+import { ListItemDto } from './models/dto/listItem.dto'
+import { TemplateListDto } from './models/dto/templateList.dto'
+import { UpdateListItemDto } from './models/dto/updateListItem.dto'
+import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
+import { ListItem } from './models/listItem.model'
 
 @Injectable()
 export class ListItemsService {
@@ -32,6 +37,7 @@ export class ListItemsService {
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async create(
@@ -146,5 +152,83 @@ export class ListItemsService {
         `User does not have permission to manage list items of field with id '${fieldId}'`,
       )
     }
+  }
+
+  async applyTemplateList(
+    user: User,
+    templateListDto: TemplateListDto,
+  ): Promise<ListItemDto[]> {
+    const { fieldId, templateListType } = templateListDto
+    const templateItems = TemplateListItems[templateListType]
+
+    if (!templateItems?.length) {
+      throw new BadRequestException(
+        `Template list '${templateListType}' is not supported`,
+      )
+    }
+
+    await this.checkPermissions(user, fieldId)
+
+    return this.sequelize.transaction(async (transaction) => {
+      const field = await this.fieldModel.findByPk(fieldId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      if (!field) {
+        throw new NotFoundException(`Field with id '${fieldId}' not found`)
+      }
+
+      if (
+        field.fieldType !== FieldTypesEnum.DROPDOWN_LIST &&
+        field.fieldType !== FieldTypesEnum.RADIO_BUTTONS
+      ) {
+        throw new BadRequestException(
+          `Field with id '${fieldId}' does not support template lists`,
+        )
+      }
+
+      await this.listItemModel.destroy({
+        where: { fieldId },
+        transaction,
+      })
+
+      field.fieldSettings = {
+        ...(field.fieldSettings ?? {}),
+        listType: ListTypesEnum.CUSTOM,
+      }
+      await field.save({ transaction })
+
+      const createdItems = await this.listItemModel.bulkCreate(
+        templateItems.map((item, displayOrder) => ({
+          fieldId,
+          displayOrder,
+          label: item.label,
+          description: item.description,
+          value: item.value,
+          isSelected: item.isSelected,
+        })) as ListItem[],
+        { transaction, returning: true },
+      )
+
+      const keys = [
+        'id',
+        'label',
+        'description',
+        'value',
+        'displayOrder',
+        'isSelected',
+      ]
+
+      return createdItems
+        .sort((a, b) => a.displayOrder - b.displayOrder)
+        .map(
+          (item) =>
+            defaults(
+              pick(item, keys),
+              zipObject(keys, Array(keys.length).fill(null)),
+            ) as ListItemDto,
+        )
+    })
   }
 }

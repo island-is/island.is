@@ -1,86 +1,57 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
-import { useDebounce } from 'react-use'
+import { useContext } from 'react'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  validateAndSetErrorMessage,
-} from '../../formHelper'
-import { Validation } from '../../validate'
-import { UpdateCase, useCase } from '..'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import useDebouncedField from '@island.is/judicial-system-web/src/utils/hooks/useDebouncedField'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
-const useDebouncedInput = <T extends keyof UpdateCase>(
+type SharedField = keyof UpdateCase & keyof Case
+
+/**
+ * Case fields this hook can drive: present on both `UpdateCase` and `Case`, and
+ * string valued. `UpdateCase` also holds non-string fields and id fields such
+ * as `courtId` that are not columns on `workingCase`, and reading those through
+ * here would need a cast that hides the mismatch.
+ */
+type StringCaseField = {
+  [K in SharedField]-?: NonNullable<UpdateCase[K]> extends string ? K : never
+}[SharedField]
+
+// Debounced text input for a case level field. Thin wrapper around
+// useDebouncedField that supplies the case specific pieces: the working case as
+// the source of truth, an optimistic write through setWorkingCase and a
+// persist through updateCase.
+const useDebouncedInput = <T extends StringCaseField>(
   fieldName: T,
   validations: Validation[] = [],
   delay = 500,
 ) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const initialValue = workingCase[
-    fieldName as keyof typeof workingCase
-  ] as string
-  const [value, setValue] = useState(initialValue ?? '')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [hasUserEdited, setHasUserEdited] = useState(false)
   const { updateCase } = useCase()
 
-  useEffect(() => {
-    if (!hasUserEdited && initialValue !== value) {
-      setValue(initialValue ?? '')
-    }
-  }, [initialValue, hasUserEdited, value])
-
-  useDebounce(
-    () => {
-      if (hasUserEdited) {
-        if (value === '') {
-          return
-        }
-
-        validateAndSendToServer(
-          fieldName,
-          value,
-          validations,
-          workingCase,
-          updateCase,
-          setErrorMessage,
-        )
-      }
-    },
+  return useDebouncedField({
+    value: workingCase[fieldName],
+    validations,
     delay,
-    [value],
-  )
-
-  const handleChange = useCallback(
-    (newValue: UpdateCase[T]) => {
-      setValue(newValue)
-      setHasUserEdited(true)
-      removeTabsValidateAndSet(
+    onChange: (value) =>
+      removeTabsValidateAndSet(fieldName, value, validations, setWorkingCase),
+    // validateAndSendToServer skips cases without an id, so a field edited
+    // before the case exists is not persisted here.
+    onSave: (value) =>
+      validateAndSendToServer(
         fieldName,
-        newValue,
+        value,
         validations,
-        setWorkingCase,
-        errorMessage,
-        setErrorMessage,
-      )
-    },
-    [fieldName, validations, setWorkingCase, errorMessage],
-  )
-
-  const handleBlur = useCallback(
-    (value: UpdateCase[T]) =>
-      validateAndSetErrorMessage(validations, value, setErrorMessage),
-    [validations],
-  )
-
-  return {
-    value,
-    errorMessage,
-    hasError: errorMessage !== '',
-    onChange: handleChange,
-    onBlur: handleBlur,
-  }
+        workingCase,
+        updateCase,
+      ),
+  })
 }
 
 export default useDebouncedInput

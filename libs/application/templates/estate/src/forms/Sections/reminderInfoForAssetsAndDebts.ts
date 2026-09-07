@@ -15,6 +15,7 @@ export const reminderInfoForAssetsAndDebts = buildSection({
       id: 'reminder',
       title: m.reminderInfoTitle,
       description: m.reminderInfoDescription,
+      nextButtonText: m.saveAndContinue,
       children: [
         buildDescriptionField({
           id: 'reminderInfo.description',

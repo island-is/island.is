@@ -2,16 +2,19 @@ import { useCallback, useContext, useEffect } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import { CaseOrigin } from '@island.is/judicial-system/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
 
-import { FormContext } from '../../../components'
 import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 
 const usePoliceDigitalCaseFile = () => {
   const { workingCase, isLoadingWorkingCase, refreshCase } =
     useContext(FormContext)
-  const { id: caseId, origin: caseOrigin, parentCase, splitCase } = workingCase
-  const effectiveCaseId = parentCase?.id ?? splitCase?.id ?? caseId
+  const { id: caseId, origin: caseOrigin, originalAncestorId } = workingCase
+  // originalAncestorId is resolved server-side (split case id for indictments,
+  // the extension's original ancestor for request cases). Fall back to caseId
+  // only to satisfy the nullable GraphQL type — the backend always sets it.
+  const effectiveCaseId = originalAncestorId ?? caseId
 
   const handleCompleted = useCallback(
     (completedData: {

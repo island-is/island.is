@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data } from '@island.is/clients/middlewares'
+import { data, dataOr404Null, FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -15,8 +15,23 @@ import {
   UpdateOrganDonorDto,
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
+  meAppointmentControllerCancelAppointmentV1,
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentByIdV1,
+  meCertificateControllerCreateCertificateRequestV1,
+  meCertificateControllerCreatePaymentIntentV1,
+  meCertificateControllerGetCertificateV1,
+  meConversationControllerArchiveConversationV1,
+  meConversationControllerCreateConversationV1,
+  meConversationControllerGetConversationByIdV1,
+  meConversationControllerGetConversationsV1,
+  meConversationControllerGetMessageAttachmentV1,
+  meConversationControllerMarkConversationAsReadV1,
+  meConversationControllerReplyToConversationV1,
+  meConversationControllerStarConversationV1,
+  meConversationControllerUnarchiveConversationV1,
+  meConversationControllerUnstarConversationV1,
+  meMessagingRecipientControllerGetMessagingRecipientsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
@@ -32,6 +47,7 @@ import {
   mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
+  meTreatmentControllerGetTreatmentsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
   questionnaireControllerGetAllQuestionnairesV1,
   questionnaireControllerGetQuestionnaireDetailV1,
@@ -42,11 +58,23 @@ import {
 import {
   AppointmentBaseDto,
   AppointmentDetailDto,
+  CertificateDto,
+  CertificateRequestDto,
   ConsentCountryDto,
+  ConversationBaseDto,
+  ConversationDetailDto,
+  ConversationStatusFilter,
+  CreateCertificatePaymentIntentDto,
+  CreateCertificateRequestDto,
+  CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
+  CreateReplyRequestDto,
   EuPatientConsentResponseDto,
   Locale,
+  MessagingRecipientDto,
+  PaymentIntentDto,
+  PaymentRequiredProblemResponse,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
@@ -55,8 +83,15 @@ import {
   RenewalTargetDto,
   SubmitQuestionnaireDto,
   SubmitQuestionnaireResponseDto,
+  TreatmentBaseDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
+
+import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
+
+export type AttachmentDownloadResult =
+  | { status: 200; data: ArrayBuffer; contentType: string }
+  | { status: 402; resourceType: string; resourceId?: string }
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -525,7 +560,9 @@ export class HealthDirectorateHealthService {
     from?: Date,
     statuses?: UserVisibleAppointmentStatuses[],
   ): Promise<AppointmentBaseDto[] | null> {
-    const defaultFrom = new Date()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const defaultFrom = today
 
     const appointments = await withAuthContext(auth, () =>
       data(
@@ -546,7 +583,7 @@ export class HealthDirectorateHealthService {
     id: string,
   ): Promise<AppointmentDetailDto | null> {
     const appointment = await withAuthContext(auth, () =>
-      data(
+      dataOr404Null(
         meAppointmentControllerGetPatientAppointmentByIdV1({
           path: { id },
         }),
@@ -554,5 +591,229 @@ export class HealthDirectorateHealthService {
     )
 
     return appointment ?? null
+  }
+
+  public async cancelAppointment(auth: Auth, id: string): Promise<boolean> {
+    await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerCancelAppointmentV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return true
+  }
+
+  /* Conversations (Health Messages) */
+
+  public async getConversations(
+    auth: Auth,
+    status?: ConversationStatusFilter,
+    starred?: boolean,
+  ): Promise<ConversationBaseDto[] | null> {
+    const conversations = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerGetConversationsV1({
+          query: { status, starred },
+        }),
+      ),
+    )
+
+    return conversations ?? null
+  }
+
+  public async getConversation(
+    auth: Auth,
+    id: string,
+  ): Promise<ConversationDetailDto | null> {
+    const conversation = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerGetConversationByIdV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return conversation ?? null
+  }
+
+  public async createConversation(
+    auth: Auth,
+    input: CreateConversationRequestDto,
+  ): Promise<ConversationDetailDto | null> {
+    const conversation = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerCreateConversationV1({
+          body: input,
+        }),
+      ),
+    )
+
+    return conversation ?? null
+  }
+
+  public async replyToConversation(
+    auth: Auth,
+    id: string,
+    input: CreateReplyRequestDto,
+  ): Promise<ConversationDetailDto | null> {
+    const conversation = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerReplyToConversationV1({
+          path: { id },
+          body: input,
+        }),
+      ),
+    )
+
+    return conversation ?? null
+  }
+
+  public async markConversationAsRead(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerMarkConversationAsReadV1({ path: { id } })),
+    )
+  }
+
+  public async archiveConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerArchiveConversationV1({ path: { id } })),
+    )
+  }
+
+  public async unarchiveConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerUnarchiveConversationV1({ path: { id } })),
+    )
+  }
+
+  public async starConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerStarConversationV1({ path: { id } })),
+    )
+  }
+
+  public async unstarConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerUnstarConversationV1({ path: { id } })),
+    )
+  }
+
+  public async getMessageAttachment(
+    auth: Auth,
+    conversationId: string,
+    messageId: string,
+    attachmentId: number,
+  ): Promise<AttachmentDownloadResult | null> {
+    try {
+      const result = await withAuthContext(auth, () =>
+        meConversationControllerGetMessageAttachmentV1({
+          path: { id: conversationId, messageId, attachmentId },
+          parseAs: 'arrayBuffer',
+        }),
+      )
+      if (!result.data) return null
+      return {
+        status: 200,
+        data: result.data as ArrayBuffer,
+        contentType:
+          result.response.headers.get('content-type') ??
+          'application/octet-stream',
+      }
+    } catch (error) {
+      if (error instanceof FetchError && error.status === 404) {
+        return null
+      }
+
+      if (error instanceof FetchError && error.status === 402) {
+        const body = (error.problem ??
+          error.body ??
+          {}) as PaymentRequiredProblemResponse
+        return {
+          status: 402,
+          resourceType: body.resourceType ?? 'CERTIFICATE',
+          resourceId: body.resourceId,
+        }
+      }
+      throw error
+    }
+  }
+
+  public async getMessagingRecipients(
+    auth: Auth,
+    locale?: Locale,
+  ): Promise<MessagingRecipientDto[] | null> {
+    const recipients = await withAuthContext(auth, () =>
+      data(
+        meMessagingRecipientControllerGetMessagingRecipientsV1({
+          query: { locale },
+        }),
+      ),
+    )
+
+    return recipients ?? null
+  }
+
+  /* Certificates */
+
+  public async createCertificateRequest(
+    auth: Auth,
+    input: CreateCertificateRequestBody,
+  ): Promise<CertificateRequestDto | null> {
+    const request = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreateCertificateRequestV1({
+          // See CreateCertificateRequestBody for why this cast is safe.
+          body: input as unknown as CreateCertificateRequestDto,
+        }),
+      ),
+    )
+
+    return request ?? null
+  }
+
+  public async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<CertificateDto | null> {
+    const certificate = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meCertificateControllerGetCertificateV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return certificate ?? null
+  }
+
+  public async createCertificatePaymentIntent(
+    auth: Auth,
+    id: string,
+    input: CreateCertificatePaymentIntentDto,
+    locale?: Locale,
+  ): Promise<PaymentIntentDto | null> {
+    const intent = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreatePaymentIntentV1({
+          path: { id },
+          body: input,
+          query: { locale },
+        }),
+      ),
+    )
+
+    return intent ?? null
+  }
+
+  /* Treatments */
+
+  public async getTreatments(auth: Auth): Promise<TreatmentBaseDto[] | null> {
+    const treatments = await withAuthContext(auth, () =>
+      data(meTreatmentControllerGetTreatmentsV1()),
+    )
+
+    return treatments ?? null
   }
 }

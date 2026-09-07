@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'judicial-administration',
   preset: '../../../jest.preset.js',
   globals: {},

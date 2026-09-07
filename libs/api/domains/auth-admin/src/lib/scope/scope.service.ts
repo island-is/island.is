@@ -23,7 +23,9 @@ import { PublishScopeInput } from './dto/publish-scope.input'
 import { PatchScopeResponse } from './models/patch-scope-response.model'
 import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
 
-const SCOPES_BY_TENANTS_FETCH_LIMIT = 100
+// How many tenants to fetch scopes for concurrently. We fetch every tenant,
+// batching only to keep the upstream fan-out bounded.
+const SCOPES_BY_TENANTS_BATCH_SIZE = 25
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -187,6 +189,7 @@ export class ScopeService extends MultiEnvironmentService {
           environment: environments[index],
           categoryIds: scope.categoryIds ?? [],
           tagIds: scope.tagIds ?? [],
+          userNationalIds: [],
         }),
         prefixErrorMessage: `Failed to update scope ${scopeName}`,
       },
@@ -246,6 +249,7 @@ export class ScopeService extends MultiEnvironmentService {
       environment: targetEnvironment,
       categoryIds: newScope.categoryIds ?? [],
       tagIds: newScope.tagIds ?? [],
+      userNationalIds: [],
     }
   }
 
@@ -281,6 +285,7 @@ export class ScopeService extends MultiEnvironmentService {
                 environment: targetEnvironments[index],
                 categoryIds: scope.categoryIds ?? [],
                 tagIds: scope.tagIds ?? [],
+                userNationalIds: [],
               } as ScopeEnvironment),
           ),
         prefixErrorMessage: `Failed to get scopes by tenantId ${tenantId}`,
@@ -317,19 +322,20 @@ export class ScopeService extends MultiEnvironmentService {
   ): Promise<ScopesByTenantsPayload> {
     const uniqueIds = Array.from(new Set(tenantIds))
 
-    const limitedIds = uniqueIds.slice(0, SCOPES_BY_TENANTS_FETCH_LIMIT)
-    if (limitedIds.length < uniqueIds.length) {
-      this.logger.warn(
-        `getScopesByTenants truncated request from ${uniqueIds.length} to ${SCOPES_BY_TENANTS_FETCH_LIMIT} tenants`,
+    const settled: PromiseSettledResult<{
+      tenantId: string
+      payload: ScopesPayload
+    }>[] = []
+    for (let i = 0; i < uniqueIds.length; i += SCOPES_BY_TENANTS_BATCH_SIZE) {
+      const batch = uniqueIds.slice(i, i + SCOPES_BY_TENANTS_BATCH_SIZE)
+      const batchResults = await Promise.allSettled(
+        batch.map(async (tenantId) => ({
+          tenantId,
+          payload: await this.getScopes(user, tenantId, environment),
+        })),
       )
+      settled.push(...batchResults)
     }
-
-    const settled = await Promise.allSettled(
-      limitedIds.map(async (tenantId) => ({
-        tenantId,
-        payload: await this.getScopes(user, tenantId, environment),
-      })),
-    )
 
     const data = settled.flatMap((result, index) => {
       if (result.status === 'fulfilled') {
@@ -337,7 +343,7 @@ export class ScopeService extends MultiEnvironmentService {
           { tenantId: result.value.tenantId, data: result.value.payload.data },
         ]
       }
-      this.logger.error(`Failed to get scopes for tenant ${limitedIds[index]}`)
+      this.logger.error(`Failed to get scopes for tenant ${uniqueIds[index]}`)
       return []
     })
 
@@ -348,12 +354,39 @@ export class ScopeService extends MultiEnvironmentService {
    * Gets a specific scope by scope name for all available environments
    */
   async getScope(user: User, input: ScopeInput): Promise<Scope | null> {
-    const scopeSettledPromises = await Promise.allSettled(
-      environments.map((environment) =>
-        this.makeRequest(user, environment, (api) =>
-          api.meScopesControllerFindByTenantIdAndScopeNameRaw(input),
+    const [scopeSettledPromises, scopeUsersSettledPromises] = await Promise.all(
+      [
+        Promise.allSettled(
+          environments.map((environment) =>
+            this.makeRequest(user, environment, (api) =>
+              api.meScopesControllerFindByTenantIdAndScopeNameRaw(input),
+            ),
+          ),
         ),
-      ),
+        Promise.allSettled(
+          environments.map((environment) =>
+            this.makeRequest(user, environment, (api) =>
+              api.meScopeUsersControllerFindUsersByScopeRaw({
+                tenantId: input.tenantId,
+                scopeName: input.scopeName,
+              }),
+            ),
+          ),
+        ),
+      ],
+    )
+
+    const userNationalIdsByEnvIndex = scopeUsersSettledPromises.map(
+      (resp, index) => {
+        if (resp.status === 'fulfilled') {
+          return (resp.value ?? []).map((u) => u.nationalId)
+        }
+        this.logger.error(
+          `Failed to get scope users for ${input.scopeName} in environment ${environments[index]}`,
+          resp.reason,
+        )
+        return []
+      },
     )
 
     const environmentsScopes = this.handleSettledPromises(
@@ -364,6 +397,7 @@ export class ScopeService extends MultiEnvironmentService {
           environment: environments[index],
           categoryIds: scope.categoryIds ?? [],
           tagIds: scope.tagIds ?? [],
+          userNationalIds: userNationalIdsByEnvIndex[index],
         }),
         prefixErrorMessage: `Failed to get scope ${input.scopeName}`,
       },
@@ -498,6 +532,7 @@ export class ScopeService extends MultiEnvironmentService {
       {
         mapper: (_value, index) => targetEnvironments[index],
         prefixErrorMessage: `Failed to update scope users for ${input.scopeName}`,
+        voidResponse: true,
       },
     )
 

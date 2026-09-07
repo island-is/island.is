@@ -1,13 +1,13 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import Markdown from 'markdown-to-jsx'
 
+import type { TextProps } from '@island.is/island-ui/core'
 import {
   Box,
   Bullet,
   BulletList,
   LinkV2,
   Text,
-  TextProps,
 } from '@island.is/island-ui/core'
 
 import * as styles from './MarkdownWrapper.css'
@@ -47,13 +47,16 @@ interface Props {
   textProps?: TextProps
 }
 
-const headingOverride = {
+// Keep the visual size consistent (h4) but preserve the semantic heading level
+// so the markdown's heading hierarchy is exposed to assistive technology.
+const headingOverride = (as: 'h1' | 'h2' | 'h3' | 'h4') => ({
   component: Text,
   props: {
+    as,
     variant: 'h4',
     marginBottom: 1,
   },
-}
+})
 
 const DescriptionText = ({ markdown, textProps }: Props) => {
   // markdown-to-jsx is able to handle this in most cases but when using 'formatMessage'
@@ -73,10 +76,10 @@ const DescriptionText = ({ markdown, textProps }: Props) => {
             component: TextComponent,
             props: textProps,
           },
-          h1: headingOverride,
-          h2: headingOverride,
-          h3: headingOverride,
-          h4: headingOverride,
+          h1: headingOverride('h1'),
+          h2: headingOverride('h2'),
+          h3: headingOverride('h3'),
+          h4: headingOverride('h4'),
           a: { component: LinkComponent },
           ul: {
             component: BulletListBox,

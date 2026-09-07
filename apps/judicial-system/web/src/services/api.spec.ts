@@ -17,12 +17,8 @@ describe('Judicial system web api endpoints', () => {
         value: 'judicial-system.csrf=mock_token',
       })
 
-      Object.defineProperty(window, 'location', {
-        value: {
-          pathname: '/test',
-          assign: jest.fn(),
-        },
-      })
+      // location.assign is not stubbable under jsdom; this test only asserts
+      // cookie deletion.
 
       // Act
       api.logout()

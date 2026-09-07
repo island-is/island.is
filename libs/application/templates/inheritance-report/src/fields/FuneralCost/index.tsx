@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
 import {
   FC,
@@ -43,7 +43,8 @@ type FieldProps = {
 export const FuneralCost: FC<
   PropsWithChildren<FieldBaseProps<Answers> & FieldProps>
 > = ({ field, errors, application }) => {
-  const { id, props } = field
+  const id = field.id as string
+  const { props } = field
 
   const otherField = `${id}.other`
   const otherDetailsField = `${id}.otherDetails`

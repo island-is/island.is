@@ -377,6 +377,7 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       organizationPage={organizationPage}
+      organizationSubpageId={subpage?.id}
       fullWidthContent={true}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict

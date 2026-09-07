@@ -217,7 +217,7 @@ export class VerdictController {
       currentVerdict.serviceStatus &&
       currentVerdict.serviceStatus !== verdict.serviceStatus
     ) {
-      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, {
         Staða: getVerdictServiceStatusText(currentVerdict.serviceStatus),
       })
     }

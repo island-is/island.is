@@ -49,6 +49,9 @@ export class QuestionnairesBaseItem {
 
   @Field(() => String, { nullable: true })
   department?: string
+
+  @Field(() => String, { nullable: true })
+  senderGroupName?: string
 }
 
 @ObjectType('QuestionnairesList')

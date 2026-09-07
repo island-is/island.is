@@ -6,12 +6,13 @@ import { Accordion } from '@island.is/island-ui/core'
 import {
   COURT_OF_APPEAL_CASE_ROUTE,
   COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+  getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
   CaseFilesAccordionItem,
@@ -30,6 +31,10 @@ import {
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseFilesOverview,
+  CaseOverviewHeader,
+} from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
+import {
   useAppealCaseBanner,
   usePoliceDigitalCaseFile,
   useTargetAppealCaseByAppealCaseId,
@@ -41,7 +46,6 @@ import {
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
 
 const Overview = () => {
@@ -181,14 +185,19 @@ const Overview = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            onNextButtonClick={() =>
-              handleNavigationTo(
-                shouldUseAppealWithdrawnRoutes(targetAppealCase)
-                  ? COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
-                  : COURT_OF_APPEAL_CASE_ROUTE,
-              )
-            }
-            nextButtonIcon="arrowForward"
+            actions={[
+              {
+                text: formatMessage(core.continue),
+                icon: 'arrowForward',
+                onClick: () =>
+                  handleNavigationTo(
+                    shouldUseAppealWithdrawnRoutes(targetAppealCase)
+                      ? COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
+                      : COURT_OF_APPEAL_CASE_ROUTE,
+                  ),
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
       </PageLayout>

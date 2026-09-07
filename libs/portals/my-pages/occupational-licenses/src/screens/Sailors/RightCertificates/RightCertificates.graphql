@@ -1,0 +1,15 @@
+query ShipRegistrySailorRightCertificates {
+  shipRegistrySailor {
+    certificates {
+      rightCertificates {
+        id
+        type
+        rightsCategories
+        validToDate
+        status
+        certificateNumber
+        issueDate
+      }
+    }
+  }
+}

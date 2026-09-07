@@ -54,7 +54,7 @@ export const ListFromUrl = () => {
       <Row>
         <Column span="10/10">
           <Input
-            label="X-Road slóð fyrir GET"
+            label="X-Road slóð fyrir POST"
             name="dataSourceUrl"
             placeholder="/r1/IS/..."
             type="text"

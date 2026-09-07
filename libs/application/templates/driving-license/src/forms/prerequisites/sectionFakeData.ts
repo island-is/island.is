@@ -68,6 +68,17 @@ export const sectionFakeData = buildSubSection({
             },
           ],
         }),
+        buildTextField({
+          id: 'fakeData.submitErrorCode',
+          title: 'Líkja eftir villu við innsendingu? (RLS villukóði)',
+          placeholder:
+            't.d. HAS_POINTS eða INSTRUCTOR_DOES_NOT_HAVE_BE_CATEGORY',
+          // Dev-only: only applies on the fake (non-RLS) submit path. Leave tómt
+          // til að senda inn eðlilega. Á innsendingu hendir þetta villu með
+          // þessum kóða svo hægt sé að sjá villuskjáinn á greiðsluþrepi.
+          condition: allowFakeCondition(YES),
+          width: 'half',
+        }),
         buildRadioField({
           id: 'fakeData.currentLicense',
           title: 'Núverandi ökuréttindi umsækjanda',
@@ -126,7 +137,7 @@ export const sectionFakeData = buildSubSection({
         }),
         buildRadioField({
           id: 'fakeData.hasThjodskraPhoto',
-          title: 'BE / B-temp / 65+ endurnýjun: Mynd úr Þjóðskrá?',
+          title: 'BE / B-full / B-temp / 65+ endurnýjun: Mynd úr Þjóðskrá?',
           width: 'half',
           condition: allowFakeCondition(YES),
           defaultValue: 'real',
@@ -148,7 +159,7 @@ export const sectionFakeData = buildSubSection({
         buildRadioField({
           id: 'fakeData.hasRLSPhoto',
           title:
-            'BE / B-temp / 65+ endurnýjun: Gæðamynd úr ökuskírteinaskrá (RLS)?',
+            'BE / B-full / B-temp / 65+ endurnýjun: Gæðamynd úr ökuskírteinaskrá (RLS)?',
           width: 'half',
           condition: allowFakeCondition(YES),
           defaultValue: 'real',

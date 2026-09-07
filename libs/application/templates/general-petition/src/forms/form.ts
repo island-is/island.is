@@ -17,14 +17,14 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { Application } from '@island.is/application/types'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { getExcludedDates } from '../lib/generalPetitionUtils'
 import addMonths from 'date-fns/addMonths'
@@ -52,7 +52,7 @@ export const form: Form = buildForm({
           checkboxLabel: m.externalDataSectionCheckbox,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: '',
               subTitle: '',
             }),

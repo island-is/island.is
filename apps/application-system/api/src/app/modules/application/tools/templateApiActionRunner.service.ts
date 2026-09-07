@@ -59,7 +59,8 @@ export class TemplateApiActionRunner {
 
     await this.persistExternalData(
       actions,
-      application.id,
+      application,
+      auth,
       oldExternalData,
       newExternalData,
     )
@@ -138,7 +139,11 @@ export class TemplateApiActionRunner {
     currentUserLocale: Locale,
     formatMessage: FormatMessage,
   ) {
-    const { actionId, action, externalDataId, params } = api
+    const { actionId, action, params } = api
+    const resolvedExternalDataId = api.resolveExternalDataId(
+      application,
+      auth.nationalId,
+    )
 
     const actionResult = await this.templateAPIService.performAction({
       templateId: application.typeId,
@@ -160,7 +165,7 @@ export class TemplateApiActionRunner {
       application,
       newExternalData,
       formatMessage,
-      externalDataId,
+      resolvedExternalDataId,
     )
   }
 
@@ -233,18 +238,20 @@ export class TemplateApiActionRunner {
 
   async persistExternalData(
     api: TemplateApi[],
-    applicationId: string,
+    application: ApplicationWithAttachments,
+    auth: User,
     oldExternalData: ExternalData,
     newExternalData: { data: ExternalData },
   ): Promise<void> {
-    api.map((api) => {
-      if (api.shouldPersistToExternalData === false) {
-        delete newExternalData.data[api.externalDataId || api.action]
+    api.map((a) => {
+      if (a.shouldPersistToExternalData === false) {
+        const resolvedId = a.resolveExternalDataId(application, auth.nationalId)
+        delete newExternalData.data[resolvedId]
       }
     })
 
     await this.applicationService.updateExternalData(
-      applicationId,
+      application.id,
       oldExternalData,
       newExternalData.data,
     )

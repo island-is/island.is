@@ -186,4 +186,10 @@ export class ApplicationResponse {
 
   @Field(() => Boolean, { nullable: true })
   isLoginTypeAllowed?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  hasRequiredDelegation?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isInaccessible?: boolean
 }

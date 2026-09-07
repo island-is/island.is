@@ -1,4 +1,3 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   AppealCaseState,
   CaseDecision,
@@ -48,6 +47,7 @@ const canProsecutionUserAccessCase = (
     ![
       CaseState.NEW,
       CaseState.DRAFT,
+      CaseState.WAITING_FOR_REVIEW,
       CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
       CaseState.WAITING_FOR_CANCELLATION,
@@ -377,14 +377,9 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
     return false
   }
 
-  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
-    user.nationalId,
-  )
-
   // Check case defender assignment
   return (
-    theCase.defenderNationalId &&
-    normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
+    theCase.defenderNationalId && theCase.defenderNationalId === user.nationalId
   )
 }
 
@@ -442,9 +437,11 @@ const canDefenceUserAccessIndictmentCase = (
     return false
   }
 
-  // Check received case access
+  // Check received case access - defence users get access once an arraignment
+  // has been scheduled, or once the court has decided not to summon to one
   const canDefenderAccessReceivedCase = Boolean(
-    DateLog.arraignmentDate(theCase.dateLogs),
+    DateLog.arraignmentDate(theCase.dateLogs) ||
+      theCase.isArraignmentSummonsSkipped,
   )
 
   if (theCase.state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {

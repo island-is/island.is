@@ -101,6 +101,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/driving-license-duplicate'
     ),
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: () =>
+    import(
+      '@island.is/application/templates/district-commissioners/driving-license-additional'
+    ),
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: () =>
     import(
       '@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry'
@@ -215,8 +219,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/university'),
   [ApplicationTypes.DEREGISTER_MACHINE]: () =>
     import('@island.is/application/templates/aosh/deregister-machine'),
-  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: () =>
-    import('@island.is/application/templates/grindavik-housing-buyout'),
   [ApplicationTypes.STREET_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/street-registration'),
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>
@@ -279,6 +281,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/transport-authority/mile-car'),
   [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: () =>
     import('@island.is/application/templates/hh/courses'),
+  [ApplicationTypes.HOUSING_BENEFITS]: () =>
+    import('@island.is/application/templates/hms/housing-benefits'),
   [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: () =>
     import(
       '@island.is/application/templates/vmst/edit-unemployment-information'
@@ -295,6 +299,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/vmst/confirm-travel'),
   [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: () =>
     import('@island.is/application/templates/vmst/confirm-job-or-income'),
+  [ApplicationTypes.EQUALITY_REPORT]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-equality/equality-report'
+    ),
+  [ApplicationTypes.SALARY_REPORT]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-equality/salary-report'
+    ),
 }
 
 export default templates

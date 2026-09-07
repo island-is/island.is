@@ -20,7 +20,7 @@ export const PhoneWithElectronicId: FC<
   React.PropsWithChildren<FieldBaseProps & PhoneWithElectronicIdProps>
 > = ({ application: { answers }, field, errors }) => {
   const { formatMessage } = useLocale()
-  const { id } = field
+  const id = field.id as string
   const { nationalIdPath } = field.props
   const { watch, setValue } = useFormContext()
   const nationalId: string = watch(nationalIdPath)

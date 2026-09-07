@@ -32,6 +32,7 @@ export class UserShipsResolver {
 
   @Query(() => UserShipsCollection, {
     name: 'shipRegistryUserShips',
+    nullable: true,
   })
   async userShips(@CurrentUser() user: User): Promise<UserShipsCollection> {
     return this.userShipsService.getUserShips(user)
@@ -45,10 +46,6 @@ export class UserShipsResolver {
     @Args('input') input: UserShipInput,
     @CurrentUser() user: User,
   ): Promise<UserShip | null> {
-    return this.userShipsService.getUserShip(
-      user,
-      input.registrationNumber,
-      input.locale,
-    )
+    return this.userShipsService.getUserShip(user, input)
   }
 }

@@ -23,17 +23,19 @@ import {
   PageHeader,
   PageLayout,
   PdfButton,
+  RulingModifiedAlert,
   SignedDocument,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import InfoCard from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import InfoCard from '../../../components/InfoCard/InfoCard'
-import useInfoCardItems from '../../../components/InfoCard/useInfoCardItems'
 import { strings } from './CaseOverview.strings'
 
 export const CaseOverview = () => {
@@ -105,9 +107,10 @@ export const CaseOverview = () => {
                 />
               </Box>
             )}
-          <Box marginBottom={5}>
+          <div className={grid({ gap: 5, marginBottom: 5 })}>
             <AppealRulingModifiedAlert />
-          </Box>
+            <RulingModifiedAlert />
+          </div>
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&
             workingCase.court && (

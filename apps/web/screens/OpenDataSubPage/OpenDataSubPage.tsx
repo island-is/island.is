@@ -22,12 +22,13 @@ import {
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 import { GET_OPEN_DATA_SUBPAGE_QUERY } from '../queries'
 
 interface OpenDataSubpageProps {
-  page: GetOpenDataSubpageQuery['getOpenDataSubpage']
+  page: NonNullable<GetOpenDataSubpageQuery['getOpenDataSubpage']>
 }
 
 const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
@@ -206,6 +207,10 @@ OpenDataSubPage.getProps = async ({ apolloClient, locale }) => {
       },
     }),
   ])
+
+  if (!page) {
+    throw new CustomNextError(404, 'Open data subpage not found')
+  }
 
   return {
     page,

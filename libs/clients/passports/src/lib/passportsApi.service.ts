@@ -26,7 +26,7 @@ import getStream from 'get-stream'
 import { PassThrough } from 'stream'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import isBefore from 'date-fns/isBefore'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { ExpiryStatus } from './passportsApi.types'
@@ -47,12 +47,14 @@ export class PassportsService {
     private deliveryAddressApi: DeliveryAddressApi,
   ) {}
 
-  handleError(error: any, detail?: string): ApolloError | null {
+  handleError(error: any, detail?: string): GraphQLError | null {
     this.logger.error(detail || 'Domain passport error', {
       error: JSON.stringify(error),
       category: LOG_CATEGORY,
     })
-    throw new ApolloError('Failed to resolve request', error.status)
+    throw new GraphQLError('Failed to resolve request', {
+      extensions: { code: error.status },
+    })
   }
 
   private getPassportsWithAuth(auth: Auth) {

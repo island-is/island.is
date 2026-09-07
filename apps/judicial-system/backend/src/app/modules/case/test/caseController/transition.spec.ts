@@ -1,17 +1,22 @@
 import each from 'jest-each'
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseFileCategory,
   CaseFileState,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseTransition,
+  CaseType,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
+  DefendantEventType,
   IndictmentCaseNotificationType,
   indictmentCases,
   InstitutionType,
@@ -27,8 +32,15 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
-import { randomDate } from '../../../../test'
+import {
+  getOrCreateTransaction,
+  getTransactionContext,
+  TransactionContext,
+} from '../../../../middleware'
+import { randomDate, runInRequestContext } from '../../../../test'
+import { EventService } from '../../../event'
 import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
+import { VerdictService } from '../../../verdict'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 
 jest.mock('../../../../factories')
@@ -56,21 +68,33 @@ describe('CaseController - Transition', () => {
 
   let mockQueuedMessages: Message[]
   let transaction: Transaction
+  let mockSequelize: Sequelize
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockVerdictService: VerdictService
+  let mockEventService: EventService
+  let transactionContext: TransactionContext | undefined
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, sequelize, caseRepositoryService, caseController } =
-      await createTestingCaseModule()
+    const {
+      queuedMessages,
+      sequelize,
+      caseRepositoryService,
+      verdictService,
+      eventService,
+      caseController,
+    } = await createTestingCaseModule()
 
     mockQueuedMessages = queuedMessages
+    mockSequelize = sequelize
     mockCaseRepositoryService = caseRepositoryService
+    mockVerdictService = verdictService
+    mockEventService = eventService
+    transactionContext = undefined
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValue(date)
@@ -85,15 +109,26 @@ describe('CaseController - Transition', () => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.transition(
-          caseId,
-          {
-            ...defaultUser,
-            canConfirmIndictment: isIndictmentCase(theCase.type),
-          },
-          theCase,
-          transition,
-        )
+        // The route is guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open - and holding a lock on this case row -
+        // by the time the handler runs. Guards do not execute in controller
+        // unit tests, so the request context and that transaction are set up
+        // here instead.
+        await runInRequestContext(async () => {
+          transactionContext = getTransactionContext()
+
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await caseController.transition(
+            caseId,
+            {
+              ...defaultUser,
+              canConfirmIndictment: isIndictmentCase(theCase.type),
+            },
+            theCase,
+            transition,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -230,6 +265,37 @@ describe('CaseController - Transition', () => {
                   },
                   caseId,
                 },
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_REQUEST,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_COURT_RECORD,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                ...(newState === CaseState.ACCEPTED &&
+                [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
+                  type,
+                )
+                  ? [
+                      {
+                        type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+                        user: {
+                          ...defaultUser,
+                          canConfirmIndictment: isIndictmentCase(theCase.type),
+                        },
+                        caseId,
+                      },
+                    ]
+                  : []),
               ])
             } else if (newState === CaseState.DELETED) {
               expect(mockQueuedMessages).toEqual([
@@ -307,12 +373,14 @@ describe('CaseController - Transition', () => {
             key: uuid(),
             isKeyAccessible: true,
             state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COURT_RECORD,
           },
           {
             id: caseFileId2,
             key: uuid(),
             isKeyAccessible: true,
             state: CaseFileState.STORED_IN_COURT,
+            category: CaseFileCategory.RULING,
           },
         ]
         const courtEndTime = randomDate()
@@ -370,6 +438,15 @@ describe('CaseController - Transition', () => {
           if (completedIndictmentCaseStates.includes(newState)) {
             expect(mockQueuedMessages).toEqual([
               {
+                type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
+                },
+                caseId,
+                elementId: caseFileId1,
+              },
+              {
                 type: MessageType.NOTIFICATION,
                 user: {
                   ...defaultUser,
@@ -385,6 +462,16 @@ describe('CaseController - Transition', () => {
                   canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
                 caseId,
+              },
+              {
+                // Only court records are delivered to police, not rulings
+                type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
+                },
+                caseId,
+                elementId: caseFileId1,
               },
             ])
           } else if (
@@ -517,6 +604,61 @@ describe('CaseController - Transition', () => {
     },
   )
 
+  describe('completing an indictment case with a ruling', () => {
+    const caseId = uuid()
+    const dismissedDefendantId = uuid()
+    const activeDefendantId = uuid()
+    const defendants = [
+      {
+        id: dismissedDefendantId,
+        eventLogs: [
+          {
+            eventType: DefendantEventType.INDICTMENT_DISMISSED,
+            created: randomDate(),
+          },
+        ],
+      },
+      { id: activeDefendantId, eventLogs: [] },
+    ]
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      type: indictmentCases[0],
+      policeCaseNumbers: [uuid()],
+      courtCaseNumber: uuid(),
+      state: CaseState.RECEIVED,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      courtEndTime: randomDate(),
+      // completeTransitionRule requires the completing user to be the judge of
+      // an indictment case that ends in a ruling - guards do not run in
+      // controller unit tests, so without this the fixture describes a
+      // transition production would reject.
+      judgeId: userId,
+      defendants,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        state: CaseState.COMPLETED,
+      })
+
+      await givenWhenThen(caseId, theCase, {
+        transition: CaseTransition.COMPLETE,
+      })
+    })
+
+    it('should only create verdicts for defendants whose indictment was not cancelled or dismissed', () => {
+      expect(mockVerdictService.createVerdict).toHaveBeenCalledTimes(1)
+      expect(mockVerdictService.createVerdict).toHaveBeenCalledWith(
+        caseId,
+        { defendantId: activeDefendantId },
+        transaction,
+      )
+    })
+  })
+
   describe('indictment case with 0 defendants', () => {
     each(indictmentCases).describe('%s case', (type) => {
       it('should reject ASK_FOR_CONFIRMATION and not call update', async () => {
@@ -529,7 +671,7 @@ describe('CaseController - Transition', () => {
           policeCaseNumbers: [policeCaseNumber],
           state: CaseState.DRAFT,
           defendants: [],
-        } as Case
+        } as unknown as Case
 
         const then = await givenWhenThen(caseId, theCaseWithNoDefendants, {
           transition: CaseTransition.ASK_FOR_CONFIRMATION,
@@ -541,6 +683,57 @@ describe('CaseController - Transition', () => {
         )
         expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
       })
+    })
+  })
+
+  describe('the request transaction and the transition event', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      type: restrictionCases[0],
+      policeCaseNumbers: [uuid()],
+      state: CaseState.NEW,
+    } as Case
+    const updatedCase = { ...theCase, state: CaseState.DRAFT } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      then = await givenWhenThen(caseId, theCase, {
+        transition: CaseTransition.OPEN,
+      })
+    })
+
+    it('should write in the transaction the guard opened, without opening another', () => {
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second call
+      // would be the handler opening a transaction of its own, which would
+      // block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { state: CaseState.DRAFT, parentCaseId: undefined },
+        { transaction },
+      )
+      expect(then.result).toBe(updatedCase)
+    })
+
+    it('should register the transition event rather than posting it inline', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+
+    it('should post the transition event once the transaction has committed', async () => {
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        CaseTransition.OPEN,
+        updatedCase,
+      )
     })
   })
 })

@@ -37,13 +37,13 @@ export const carsChangesCountSection = buildSection({
               return [[tableRows.length.toString()]]
             }
 
-            const data =
-              getValueViaPath<number>(
-                application.answers,
-                'carDayRateUsageCount',
-              ) ?? 0
+            // Cleared on selection change, so it is not always a number
+            const count = getValueViaPath<number>(
+              application.answers,
+              'carDayRateUsageCount',
+            )
 
-            return [[data.toString()]]
+            return [[typeof count === 'number' ? count.toString() : '0']]
           },
         }),
         buildAlertMessageField({

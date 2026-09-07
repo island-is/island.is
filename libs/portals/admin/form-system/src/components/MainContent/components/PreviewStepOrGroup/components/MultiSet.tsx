@@ -26,7 +26,7 @@ export const MultiSet = ({ screen }: Props) => {
       {multiInput.map((inputArray, index) => (
         <div key={index}>
           {inputArray.map((i) => (
-            <Preview key={i.id} data={i} />
+            <Preview key={i.id} data={i} screenOrSection={true} />
           ))}
         </div>
       ))}

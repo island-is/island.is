@@ -17,13 +17,13 @@ import {
   PageTitle,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { ProsecutorSection } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { ProsecutorSection } from '../../components'
 import { DefendantList } from './DefendantList/DefendantList'
 import { PoliceCaseList } from './PoliceCaseList/PoliceCaseList'
 import { strings } from './Defendant.strings'
@@ -110,22 +110,28 @@ const Defendant = () => {
           <ProsecutorSection />
         </Box>
         <PoliceCaseList />
-        <DefendantList />
+        <Box component="section" marginBottom={10}>
+          <DefendantList />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isCreatingCase}
-          nextButtonText={formatMessage(
-            workingCase.id === '' ? core.createCase : core.continue,
-          )}
+          actions={[
+            {
+              text: formatMessage(
+                workingCase.id === '' ? core.createCase : core.continue,
+              ),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isCreatingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

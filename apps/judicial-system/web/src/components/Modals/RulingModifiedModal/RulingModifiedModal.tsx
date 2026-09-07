@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -21,6 +22,11 @@ interface Props {
   description: string
   defaultExplanation: string
   fieldToModify: 'rulingModifiedHistory' | 'appealRulingModifiedHistory'
+  // The appeal case to update when fieldToModify is
+  // 'appealRulingModifiedHistory'. Defaults to the case-level appeal so
+  // existing request-case behavior is preserved. Ruling-order appeals pass the
+  // resolved target appeal id here.
+  appealCaseId?: string
 }
 
 const RulingModifiedModal: FC<Props> = ({
@@ -30,6 +36,7 @@ const RulingModifiedModal: FC<Props> = ({
   description,
   defaultExplanation,
   fieldToModify,
+  appealCaseId,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
@@ -41,10 +48,12 @@ const RulingModifiedModal: FC<Props> = ({
 
   const handleContinue = async () => {
     if (fieldToModify === 'appealRulingModifiedHistory') {
-      if (workingCase.appealCase?.id) {
+      const targetAppealCaseId = appealCaseId ?? workingCase.appealCase?.id
+
+      if (targetAppealCaseId) {
         const result = await updateAppealCase(
           workingCase.id,
-          workingCase.appealCase.id,
+          targetAppealCaseId,
           { [fieldToModify]: explanation },
         )
 
@@ -87,16 +96,19 @@ const RulingModifiedModal: FC<Props> = ({
     <Modal
       title={formatMessage(strings.title)}
       text={description}
-      primaryButton={{
-        text: formatMessage(strings.continue),
-        onClick: handleContinue,
-        isLoading: continueDisabled,
-        isDisabled: errorMessage !== '',
-      }}
-      secondaryButton={{
-        text: formatMessage(strings.cancel),
-        onClick: onCancel,
-      }}
+      buttons={[
+        {
+          text: formatMessage(strings.cancel),
+          onClick: onCancel,
+          variant: 'ghost',
+        },
+        {
+          text: formatMessage(strings.continue),
+          onClick: handleContinue,
+          isLoading: continueDisabled,
+          isDisabled: errorMessage !== '',
+        },
+      ]}
     >
       <Box marginBottom={5}>
         <Input

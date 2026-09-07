@@ -6,6 +6,8 @@ import {
   formatText,
   formatTextWithLocale,
   getValueViaPath,
+  resolveFieldId,
+  resolveFieldClearOnChange,
 } from '@island.is/application/core'
 import {
   FieldBaseProps,
@@ -21,6 +23,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
 import { useWatch } from 'react-hook-form'
@@ -56,11 +59,13 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     tempDisabled,
   } = field
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
   const allValues = useWatch({ defaultValue: application.answers }) as FormValue
   const updatedApplication = useMemo(
     () => ({ ...application, answers: allValues }),
     [application, allValues],
   )
+  const resolvedId = resolveFieldId({ id }, application, user)
 
   const isDisabled = useMemo(() => {
     if (tempDisabled) {
@@ -152,11 +157,11 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
         <DatePickerController
           disabled={isDisabled}
           defaultValue={
-            (getValueViaPath(application.answers, id) as string) ??
+            getValueViaPath<string>(application.answers, resolvedId) ??
             getDefaultValue(field as BaseField, application, locale)
           }
-          id={id}
-          name={id}
+          id={resolvedId}
+          name={resolvedId}
           locale={locale}
           required={buildFieldRequired(application, required)}
           excludeDates={finalExcludeDates}
@@ -179,7 +184,10 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           }
           error={error}
           onChange={onChange}
-          clearOnChange={clearOnChange}
+          clearOnChange={resolveFieldClearOnChange(
+            { clearOnChange },
+            application,
+          )}
           clearOnChangeDefaultValue={clearOnChangeDefaultValue}
         />
       </Box>

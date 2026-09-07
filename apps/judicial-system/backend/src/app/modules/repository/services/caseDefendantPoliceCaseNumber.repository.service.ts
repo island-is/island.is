@@ -110,6 +110,73 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
       .filter((n, i) => i === 0 || n !== unassigned[i - 1])
   }
 
+  /**
+   * Returns the defendant-assigned (case_id, defendant_id, police_case_number)
+   * links for a case, used when duplicating a case so the same per-defendant
+   * police case number assignments can be recreated against the new defendants.
+   */
+  async findAssignedLinksByCaseId(
+    caseId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<{ defendantId: string; policeCaseNumber: string }[]> {
+    const rows = await this.model.findAll({
+      where: { caseId, defendantId: { [Op.not]: null } },
+      attributes: ['defendantId', 'policeCaseNumber'],
+      transaction: options?.transaction,
+    })
+
+    return rows.map((row) => ({
+      defendantId: row.defendantId as string,
+      policeCaseNumber: row.policeCaseNumber,
+    }))
+  }
+
+  /**
+   * Returns the distinct ids of the given defendants that are linked to at
+   * least one of the given police case numbers on the case. Used when a civil
+   * claimant's police case numbers change and its defendant selection must be
+   * narrowed to the defendants still reachable through those numbers.
+   */
+  async findAssignedDefendantIds(
+    caseId: string,
+    policeCaseNumbers: string[],
+    defendantIds: string[],
+  ): Promise<string[]> {
+    if (policeCaseNumbers.length === 0 || defendantIds.length === 0) {
+      return []
+    }
+
+    try {
+      this.logger.debug(
+        `Finding assigned defendant ids for case ${caseId} among ${defendantIds.length} defendant(s) and ${policeCaseNumbers.length} police case number(s)`,
+      )
+
+      const rows = await this.model.findAll({
+        where: {
+          caseId,
+          policeCaseNumber: policeCaseNumbers,
+          defendantId: defendantIds,
+        },
+        attributes: ['defendantId'],
+      })
+
+      return [
+        ...new Set(
+          rows
+            .map((row) => row.defendantId)
+            .filter((defendantId): defendantId is string => !!defendantId),
+        ),
+      ]
+    } catch (error) {
+      this.logger.error(
+        `Error finding assigned defendant ids for case ${caseId}`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   async findDistinctPoliceCaseNumbersByCaseIds(
     caseIds: string[],
     options?: { transaction?: Transaction },
@@ -125,24 +192,28 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
 
     const rows = await this.model.findAll({
       where: { caseId: caseIds },
-      attributes: ['caseId', 'policeCaseNumber'],
+      attributes: ['caseId', 'policeCaseNumber', 'created'],
+      order: [
+        ['created', 'ASC'],
+        ['policeCaseNumber', 'ASC'],
+      ],
       transaction: options?.transaction,
     })
 
-    const byCase = new Map<string, Set<string>>()
+    const seenByCase = new Map<string, Set<string>>()
     for (const id of caseIds) {
-      byCase.set(id, new Set())
+      seenByCase.set(id, new Set())
     }
 
     for (const row of rows) {
-      byCase.get(row.caseId)?.add(row.policeCaseNumber)
-    }
+      const seen = seenByCase.get(row.caseId)
 
-    for (const [caseId, set] of byCase) {
-      result.set(
-        caseId,
-        [...set].sort((a, b) => a.localeCompare(b)),
-      )
+      if (!seen || seen.has(row.policeCaseNumber)) {
+        continue
+      }
+
+      seen.add(row.policeCaseNumber)
+      result.get(row.caseId)?.push(row.policeCaseNumber)
     }
 
     return result

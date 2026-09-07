@@ -79,8 +79,14 @@ export class FieldSettingsInput {
   @Field(() => String, { nullable: true })
   applicantType?: string
 
+  @Field(() => String, { nullable: true })
+  assetType?: string
+
   @Field(() => Boolean, { nullable: true })
   hasDescription?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isAddressRequired?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isPhoneRequired?: boolean

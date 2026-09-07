@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'libs/portals/form-system/graphql',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

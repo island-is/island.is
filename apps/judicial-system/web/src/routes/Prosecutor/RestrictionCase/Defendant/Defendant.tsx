@@ -23,12 +23,19 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  CaseOrigin,
-  CaseType,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  DefendantInfo,
+  PoliceCaseNumbers,
+  usePoliceCaseNumbers,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useCase,
   useDebouncedInput,
@@ -38,12 +45,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-
-import {
-  DefendantInfo,
-  PoliceCaseNumbers,
-  usePoliceCaseNumbers,
-} from '../../components'
 
 const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
   origin === CaseOrigin.LOKE && Boolean(id)
@@ -226,18 +227,22 @@ export const Defendant = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              nextButtonIcon="arrowForward"
               previousUrl={getStandardUserDashboardRoute(user)}
-              nextIsLoading={isCreatingCase}
-              nextIsDisabled={!stepIsValid}
-              onNextButtonClick={() =>
-                handleNavigationTo(
-                  PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
-                )
-              }
-              nextButtonText={formatMessage(
-                workingCase.id === '' ? core.createCase : core.continue,
-              )}
+              actions={[
+                {
+                  text: formatMessage(
+                    workingCase.id === '' ? core.createCase : core.continue,
+                  ),
+                  icon: 'arrowForward',
+                  onClick: () =>
+                    handleNavigationTo(
+                      PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                    ),
+                  disabled: !stepIsValid,
+                  loading: isCreatingCase,
+                  testId: 'continueButton',
+                },
+              ]}
             />
           </FormContentContainer>
         </>

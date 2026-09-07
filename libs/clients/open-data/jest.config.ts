@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'clients-open-data',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

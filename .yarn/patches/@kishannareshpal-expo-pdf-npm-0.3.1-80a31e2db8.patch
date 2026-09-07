@@ -1,0 +1,40 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index d2f29edc5532bfffe4f5cdd10f5a8785daaa0e10..e668017605af2c2d2ea599ad47063646c1170d02 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -51,5 +51,9 @@ dependencies {
+ 
+   // Explicitly define the version of PdfiumAndroidKt so this can be updated independently of
+   // AndroidPdfViewer as updates are provided.
+-  implementation 'io.legere:pdfiumandroid:1.0.32'
++  // Bumped from 1.0.32 -> 1.0.35 to pick up the PdfPage.getPageLinks() fix
++  // from PdfiumAndroidKt PR #35 (released in v1.0.34). Without this, link
++  // annotations are inert on Android because getPageLinks always returns
++  // an empty list.
++  implementation 'io.legere:pdfiumandroid:1.0.35'
+ }
+diff --git a/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt b/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt
+index c0ff8613559cdec72138493e5dcd91fa84b97d94..cfb1f49d53517a6c1371d52af82df7ed08d9f4f6 100644
+--- a/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt
++++ b/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt
+@@ -7,6 +7,7 @@ import android.net.Uri
+ import expo.modules.kotlin.AppContext
+ import expo.modules.kotlin.views.ExpoView
+ import com.github.barteksc.pdfviewer.PDFView
++import com.github.barteksc.pdfviewer.link.DefaultLinkHandler
+ import expo.modules.kotlin.viewevent.EventDispatcher
+ import java.io.FileNotFoundException
+ import androidx.core.net.toUri
+@@ -147,6 +148,12 @@ class KJExpoPdfView(context: Context, appContext: AppContext) : ExpoView(context
+     }
+ 
+     pdfBuilder
++      // Render AcroForm field widgets. Without this, filled-in form fields
++      // are blank on Android because the underlying Pdfium FFLDraw pass is
++      // gated on annotation rendering being enabled.
++      .enableAnnotationRendering(true)
++      // Make link annotations clickable on Android (URI + GoTo).
++      .linkHandler(DefaultLinkHandler(this.pdfView))
+       .pageFitPolicy(this.fitMode.toFitPolicy())
+       .enableDoubletap(this.isDoubleTapZoomEnabled)
+       .swipeHorizontal(this.isHorizontalModeEnabled)

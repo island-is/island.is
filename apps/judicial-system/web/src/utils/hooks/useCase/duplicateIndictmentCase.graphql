@@ -1,0 +1,6 @@
+mutation DuplicateIndictmentCase($input: DuplicateIndictmentCaseInput!) {
+  duplicateIndictmentCase(input: $input) {
+    id
+    type
+  }
+}

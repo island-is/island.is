@@ -111,12 +111,19 @@ const parseArguments = (argv: Arguments) => {
 
 const buildIngressComment = (data: HelmService[]): string =>
   data
-    .filter((obj) => obj.ingress)
-    .map(({ ingress }) => Object.values(ingress!))
+    .filter((obj) => obj.httpRoute)
+    .map(({ httpRoute }) => Object.values(httpRoute!))
     .flat()
-    .map(({ hosts }) => hosts)
-    .flat()
-    .map(({ host, paths }) => paths.map((path) => `https://${host}${path}`))
+    .map((route) =>
+      route.hostnames.flatMap((hostname) =>
+        route.rules.flatMap((rule) =>
+          rule.matches.map(
+            (match) =>
+              `https://${hostname}${match.pathPrefix ?? match.pathExact ?? ''}`,
+          ),
+        ),
+      ),
+    )
     .flat()
     .sort()
     .join('\n')

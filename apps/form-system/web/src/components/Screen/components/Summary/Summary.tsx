@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client'
-import { FormSystemField } from '@island.is/api/schema'
 import { UPDATE_APPLICATION_SETTINGS } from '@island.is/form-system/graphql'
 import {
   ApplicationState,
@@ -114,7 +113,7 @@ export const Summary = ({ state }: Props) => {
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">
-        {formatMessage(m.reviewApplication)}
+        {formatMessage(m.reviewApplication2)}
       </Text>
 
       {sections?.map((section, sectionIndex) =>

@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,21 +24,20 @@ export class MessageSuspensionResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @UseGuards(JwtGraphQlAuthUserGuard)
   @Query(() => [MessageSuspension], { nullable: true })
   messageSuspensions(
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<MessageSuspension[]> {
     this.logger.debug('Getting all message suspensions')
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_MESSAGE_SUSPENSIONS,
-      backendService.getMessageSuspensions(),
+      this.backendService.getMessageSuspensions(),
       (suspensions: MessageSuspension[]) =>
         suspensions.map((suspension) => suspension.category),
     )
@@ -50,8 +49,6 @@ export class MessageSuspensionResolver {
     @Args('input', { type: () => UpdateMessageSuspensionInput })
     input: UpdateMessageSuspensionInput,
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<MessageSuspension> {
     const { category, ...updateMessageSuspension } = input
 
@@ -60,7 +57,10 @@ export class MessageSuspensionResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_MESSAGE_SUSPENSION,
-      backendService.updateMessageSuspension(category, updateMessageSuspension),
+      this.backendService.updateMessageSuspension(
+        category,
+        updateMessageSuspension,
+      ),
       category,
     )
   }

@@ -156,9 +156,16 @@ type ChangeActions =
     }
   | { type: 'CHANGE_DRAFT_DAYS_TO_LIVE'; payload: { value: number } }
   | { type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE'; payload: { value: number } }
-  | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
+  | {
+      type: 'CHANGE_INVALIDATION_DATE'
+      payload: { value: Date | null }
+    }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
+      type: 'CHANGE_IS_INACCESSIBLE'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
@@ -271,6 +278,7 @@ type InputSettingsActions =
       payload: {
         field: FormSystemField
         property:
+          | 'isAddressRequired'
           | 'isPhoneRequired'
           | 'isEmailRequired'
           | 'fetchEmailFromMyPages'
@@ -299,14 +307,24 @@ type InputSettingsActions =
     }
   | {
       type: 'CHANGE_LIST_ITEM'
-      payload: {
-        property: 'label' | 'description'
-        lang: 'is' | 'en'
-        value: string
-        id: UniqueIdentifier
-      }
+      payload:
+        | {
+            property: 'label' | 'description'
+            lang: 'is' | 'en'
+            value: string
+            id: UniqueIdentifier
+          }
+        | {
+            property: 'value'
+            value: string
+            id: UniqueIdentifier
+          }
     }
   | { type: 'ADD_LIST_ITEM'; payload: { newListItem: FormSystemListItem } }
+  | {
+      type: 'SET_LIST_ITEMS'
+      payload: { listItems: FormSystemListItem[] }
+    }
   | {
       type: 'SET_LIST_TYPE'
       payload: {
@@ -437,11 +455,27 @@ export const controlReducer = (
       }
     }
     case 'REMOVE_SECTION': {
-      const newSections = state.form.sections?.filter(
+      const oldSections = state.form.sections ?? []
+      const removedIndex = oldSections.findIndex(
+        (section) => section?.id === action.payload.id,
+      )
+      const newSections = oldSections.filter(
         (section) => section?.id !== action.payload.id,
       )
+      const isInput = (section: typeof oldSections[number]) =>
+        section?.sectionType === SectionTypes.INPUT
+      const previousInput = oldSections
+        .slice(0, removedIndex)
+        .filter(isInput)
+        .at(-1)
+      const nextInput = oldSections.slice(removedIndex + 1).find(isInput)
+      const newActiveSection = previousInput ?? nextInput ?? undefined
       return {
         ...state,
+        activeItem: {
+          type: 'Section',
+          data: newActiveSection ?? undefined,
+        },
         form: {
           ...form,
           sections: newSections,
@@ -880,6 +914,17 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
+    case 'CHANGE_IS_INACCESSIBLE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          isInaccessible: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
     case 'CHANGE_HAS_SUMMARY_SCREEN': {
       const updatedState = {
         ...state,
@@ -905,6 +950,8 @@ export const controlReducer = (
     case 'CHANGE_SUBMISSION_URL': {
       const nextUrl = action.payload.value
       const useValidate = action.payload.useValidate
+      const nextUseValidate =
+        useValidate !== undefined ? useValidate : form.useValidate
 
       // Only force these flags when switching to Zendesk
       const nextFields =
@@ -932,6 +979,12 @@ export const controlReducer = (
               }
             })
           : fields
+      const nextScreens =
+        form.useValidate === true && nextUseValidate === false
+          ? screens?.map((screen) =>
+              screen ? { ...screen, shouldValidate: false } : screen,
+            )
+          : screens
 
       const updatedState = {
         ...state,
@@ -939,8 +992,8 @@ export const controlReducer = (
           ...form,
           submissionServiceUrl: nextUrl,
           fields: nextFields,
-          useValidate:
-            useValidate !== undefined ? useValidate : form.useValidate,
+          screens: nextScreens,
+          useValidate: nextUseValidate,
         },
       }
       return updatedState
@@ -970,10 +1023,18 @@ export const controlReducer = (
       return updatedState
     }
     case 'CHANGE_USE_VALIDATE': {
+      const nextScreens =
+        form.useValidate === true && action.payload.value === false
+          ? screens?.map((screen) =>
+              screen ? { ...screen, shouldValidate: false } : screen,
+            )
+          : screens
+
       const updatedState = {
         ...state,
         form: {
           ...form,
+          screens: nextScreens,
           useValidate: action.payload.value,
         },
       }
@@ -1481,18 +1542,40 @@ export const controlReducer = (
         },
       }
     }
+    case 'SET_LIST_ITEMS': {
+      const field = activeItem.data as FormSystemField
+      const newField = {
+        ...field,
+        list: action.payload.listItems,
+      }
+
+      return {
+        ...state,
+        activeItem: {
+          type: 'Field',
+          data: newField,
+        },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
     case 'CHANGE_LIST_ITEM': {
       const field = activeItem.data as FormSystemField
       const list = field.list as FormSystemListItem[]
-      const { property, lang, value, id } = action.payload
+      const { value, id } = action.payload
       const listItem = list?.find((l) => l?.id === id) as FormSystemListItem
 
       const newListItem = {
         ...listItem,
-        [property]: {
-          ...listItem[property],
-          [lang]: value,
-        },
+        [action.payload.property]:
+          action.payload.property === 'value'
+            ? value
+            : {
+                ...listItem[action.payload.property],
+                [action.payload.lang]: value,
+              },
       }
 
       const newField = {

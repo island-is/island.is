@@ -16,18 +16,6 @@ There are certain precondition to be eligible for a discount. They are:
 - [Staging](https://loftbru.staging01.devland.is)
 - [Production](https://loftbru.island.is)
 
-## API
-
-The API is used by airlines to verify the discount code validity and get basic
-booking info about the user.
-
-The airlines that have access to this api are `Icelandair`, `Ernir`, `Myflug` and
-`Norlandair`. Historically some flights were booked for `Norlandair` through
-`Icelandair`, those flights are marked with the `Icelandair` airline but have a
-cooperation field with `Norlandair`.
-
-[Swagger API](https://loftbru.dev01.devland.is/api/swagger)
-
 ```bash
 yarn start air-discount-scheme-api
 ```
@@ -43,17 +31,6 @@ the system. This is mainly for Vegagerðin.
 yarn start air-discount-scheme-backend
 ```
 
-## Web
-
-The user frontend has information about the initiative, legal terms and a way
-for users to get their discount codes.
-
-[Dev](https://loftbru.dev01.devland.is)
-
-```bash
-yarn start air-discount-scheme-web
-```
-
 ## Integrations
 
 - [Þjóðskrá](https://skra.is): To be able to verify the persons legal domicile,
@@ -67,9 +44,7 @@ To get started developing this project, go ahead and:
 1. Fetch the environment secrets:
 
 ```bash
-yarn get-secrets air-discount-scheme-api
 yarn get-secrets air-discount-scheme-backend
-yarn get-secrets air-discount-scheme-web
 ```
 
 2. Start the resources with docker compose and migrate/seed the database:
@@ -84,19 +59,7 @@ yarn nx run air-discount-scheme-backend:migrate
 yarn nx run air-discount-scheme-backend:seed
 ```
 
-3. Start the front end:
-
-```bash
-yarn start air-discount-scheme-web
-```
-
-4. Start the graphql api:
-
-```bash
-yarn start air-discount-scheme-api
-```
-
-5. Start the backend api:
+3. Start the backend api:
 
 ```bash
 yarn start air-discount-scheme-backend

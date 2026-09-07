@@ -11,7 +11,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -29,10 +28,12 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
+import { EventService } from '../event'
 import { FileService } from '../file'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
+  CaseRepositoryService,
   Defendant,
   Verdict,
   VerdictRepositoryService,
@@ -48,6 +49,7 @@ type UpdateVerdict = {
   isAcquittedByPublicProsecutionOffice?: boolean | null
   defendantHasRequestedAppeal?: boolean | null
   serviceRequirement?: ServiceRequirement | null
+  isDefaultJudgement?: boolean | null
 } & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
@@ -57,7 +59,6 @@ type UpdateVerdict = {
   | 'appealDecision'
   | 'appealDate'
   | 'serviceInformationForDefendant'
-  | 'isDefaultJudgement'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -71,6 +72,7 @@ export type VerdictServiceCertificateDelivery = {
 export class VerdictService {
   constructor(
     private readonly verdictRepositoryService: VerdictRepositoryService,
+    private readonly caseRepositoryService: CaseRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
@@ -80,6 +82,7 @@ export class VerdictService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -298,6 +301,7 @@ export class VerdictService {
         isAcquittedByPublicProsecutionOffice: null,
         defendantHasRequestedAppeal: null,
         serviceRequirement: null,
+        isDefaultJudgement: null,
       },
       transaction,
     )
@@ -320,10 +324,9 @@ export class VerdictService {
     theCase: Case,
     defendant: Defendant,
     verdict: Verdict,
+    originalAncestorCaseId: string,
   ): { code: string; value: string }[] {
-    const receiverSsn =
-      defendant.nationalId &&
-      normalizeAndFormatNationalId(defendant.nationalId)[0]
+    const receiverSsn = defendant.nationalId ?? ''
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
     const ruling =
       theCase.courtSessions?.find(
@@ -334,7 +337,8 @@ export class VerdictService {
       )?.ruling ?? theCase.ruling
 
     return [
-      { code: 'RVG_CASE_ID', value: theCase.id },
+      // LÖKE only knows the original case; split cases must use the ancestor id
+      { code: 'RVG_CASE_ID', value: originalAncestorCaseId },
       { code: 'RVG_DOCUMENT_ID', value: verdict.id },
       ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
       ...(theCase.courtCaseNumber
@@ -430,76 +434,107 @@ export class VerdictService {
       return { delivered: true }
     }
 
-    // get verdict file
-    const verdictFile = theCase.caseFiles?.find(
-      (caseFile) => caseFile.category === CaseFileCategory.RULING,
-    )
-
-    if (!verdictFile) {
-      throw new NotFoundException(
-        `Ruling file not found for case ${theCase.id}`,
+    try {
+      // get verdict file
+      const verdictFile = theCase.caseFiles?.find(
+        (caseFile) => caseFile.category === CaseFileCategory.RULING,
       )
-    }
 
-    const verdictPdf = await this.fileService.getCaseFileFromS3(
-      theCase,
-      verdictFile,
-    )
+      if (!verdictFile) {
+        throw new NotFoundException(
+          `Ruling file not found for case ${theCase.id}`,
+        )
+      }
 
-    const documentName = `Dómur í máli ${theCase.courtCaseNumber}`
-
-    const orderByDate = new Date(verdictFile.created)
-    // add two months because we don't want the order by date to be in the past when delivered to the police
-    orderByDate.setMonth(orderByDate.getMonth() + 2)
-
-    // deliver the verdict by creating the document at the police
-    const createdDocument = await this.policeService.createDocument({
-      caseId: theCase.id,
-      defendantId: defendant.id,
-      user,
-      documentName,
-      documentFiles: [
-        {
-          name: verdictFile.name,
-          documentBase64: Base64.btoa(verdictPdf.toString('binary')),
-        },
-      ],
-      documentDates: [
-        { code: 'ORDER_BY_DATE', value: orderByDate },
-        ...(theCase.rulingDate
-          ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
-          : []),
-      ],
-      fileTypeCode: PoliceFileTypeCode.VERDICT,
-      caseSupplements: this.mapToPoliceSupplementCodes(
+      const verdictPdf = await this.fileService.getCaseFileFromS3(
         theCase,
-        defendant,
-        verdict,
-      ),
-    })
+        verdictFile,
+      )
 
-    // update existing verdict with the external document id returned from the police
-    await this.updateVerdict(
-      verdict,
-      {
-        ...createdDocument,
-        hash: verdictFile.hash,
-        hashAlgorithm: verdictFile.hashAlgorithm,
-      },
-      transaction,
-    )
+      const documentName = `Dómur í máli ${theCase.courtCaseNumber}`
 
-    await this.defendantService.createDefendantEvent(
-      {
+      const orderByDate = new Date(verdictFile.created)
+      // add two months because we don't want the order by date to be in the past when delivered to the police
+      orderByDate.setMonth(orderByDate.getMonth() + 2)
+
+      const originalAncestorCaseId =
+        await this.caseRepositoryService.findOriginalAncestorId(theCase)
+
+      // deliver the verdict by creating the document at the police
+      const createdDocument = await this.policeService.createDocument({
         caseId: theCase.id,
         defendantId: defendant.id,
-        eventType:
-          DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
-      },
-      transaction,
-    )
+        user,
+        documentName,
+        documentFiles: [
+          {
+            name: verdictFile.name,
+            documentBase64: Base64.btoa(verdictPdf.toString('binary')),
+          },
+        ],
+        documentDates: [
+          { code: 'ORDER_BY_DATE', value: orderByDate },
+          ...(theCase.rulingDate
+            ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
+            : []),
+        ],
+        fileTypeCode: PoliceFileTypeCode.VERDICT,
+        caseSupplements: this.mapToPoliceSupplementCodes(
+          theCase,
+          defendant,
+          verdict,
+          originalAncestorCaseId,
+        ),
+      })
 
-    return { delivered: true }
+      // update existing verdict with the external document id returned from the police
+      await this.updateVerdict(
+        verdict,
+        {
+          ...createdDocument,
+          hash: verdictFile.hash,
+          hashAlgorithm: verdictFile.hashAlgorithm,
+        },
+        transaction,
+      )
+
+      await this.defendantService.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType:
+            DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
+        },
+        transaction,
+      )
+
+      this.eventService.postEvent('VERDICT_DELIVERED_TO_POLICE', theCase, {
+        Varnaraðili: defendant.id,
+        'RLS auðkenni': createdDocument.externalPoliceDocumentId,
+      })
+
+      return { delivered: true }
+    } catch (error) {
+      this.logger.error(
+        'Error delivering verdict to the national commissioners office',
+        error,
+      )
+
+      // Report every failed attempt to the Slack error channel (the delivery is
+      // retried by the message-handler, so this fires once per retry) - this is
+      // the single place that catches all causes: missing file, S3, the police
+      // call, and the database update.
+      void this.eventService.postErrorEvent(
+        'Villa við að senda dóm til RLS',
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+        },
+        error instanceof Error ? error : new Error(String(error)),
+      )
+
+      throw error
+    }
   }
 
   async deliverVerdictServiceCertificatesToPolice(

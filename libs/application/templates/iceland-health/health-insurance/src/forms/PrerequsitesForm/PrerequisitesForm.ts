@@ -28,6 +28,7 @@ export const PrerequisitesForm: Form = buildForm({
   title: m.prerequisitesFormTitle,
   logo: IcelandHealthLogo,
   mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'PrerequisitesInfoSection',
@@ -75,7 +76,6 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'healthInsurance',
               provider: HealthInsuranceApi,
               title: '',
               subTitle: '',

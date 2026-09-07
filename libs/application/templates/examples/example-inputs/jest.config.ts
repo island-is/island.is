@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'example-inputs',
   preset: '../../../../../jest.preset.js',
   transform: {

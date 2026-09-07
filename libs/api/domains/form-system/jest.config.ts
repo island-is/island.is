@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api/domains/form-system',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

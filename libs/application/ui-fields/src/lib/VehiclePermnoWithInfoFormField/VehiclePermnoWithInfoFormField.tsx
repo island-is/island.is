@@ -19,11 +19,13 @@ import {
   formatText,
   formatTextWithLocale,
   getErrorViaPath,
+  resolveFieldId,
 } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { FC, useState } from 'react'
 import { VehicleValidation } from './types'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Locale } from '@island.is/shared/types'
 import { gql, useApolloClient, useLazyQuery } from '@apollo/client'
 import { GET_EXEMPTION_VALIDATION_BY_PERMNO } from './graphql/queries'
@@ -45,10 +47,12 @@ export const VehiclePermnoWithInfoFormField: FC<
   React.PropsWithChildren<Props>
 > = ({ application, field, errors }) => {
   const INPUT_MAX_LENGTH = 5
-  const permnoField = `${field.id}.permno`
-  const makeAndColorField = `${field.id}.makeAndColor`
-  const numberOfAxlesField = `${field.id}.numberOfAxles`
-  const hasErrorField = `${field.id}.hasError`
+  const user = useUserInfo()
+  const resolvedId = resolveFieldId({ id: field.id }, application, user)
+  const permnoField = `${resolvedId}.permno`
+  const makeAndColorField = `${resolvedId}.makeAndColor`
+  const numberOfAxlesField = `${resolvedId}.numberOfAxles`
+  const hasErrorField = `${resolvedId}.hasError`
   const isTrailer = field.isTrailer
 
   const { setValue, getValues } = useFormContext()

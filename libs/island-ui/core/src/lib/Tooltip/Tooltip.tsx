@@ -57,7 +57,7 @@ interface TooltipProps {
   text: React.ReactNode
   iconSize?: Size
   color?: Colors
-  children?: ReactElement
+  children?: ReactElement<any>
   fullWidth?: boolean
   renderInPortal?: boolean
   as?: ElementType

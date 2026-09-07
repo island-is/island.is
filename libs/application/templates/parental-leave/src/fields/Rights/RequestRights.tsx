@@ -15,9 +15,10 @@ const RequestRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
+  const id = field.id as string
   const currentAnswer = getValueViaPath(
     application.answers,
-    field.id,
+    id,
     undefined,
   ) as ValidAnswers
 
@@ -37,10 +38,10 @@ const RequestRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ]
 
   return (
-    <Box marginTop={3} marginBottom={1} key={field.id}>
+    <Box marginTop={3} marginBottom={1} key={id}>
       <Box paddingY={3}>
         <RadioController
-          id={field.id}
+          id={id}
           error={error}
           defaultValue={
             statefulAnswer !== undefined ? [statefulAnswer] : undefined

@@ -1,5 +1,3 @@
-import addDays from 'date-fns/addDays'
-
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -195,6 +193,7 @@ export interface CrimeSceneMap {
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
+  WAITING_FOR_REVIEW = 'WAITING_FOR_REVIEW',
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
@@ -209,6 +208,7 @@ export enum CaseState {
 
 export enum IndictmentCaseState {
   DRAFT = CaseState.DRAFT,
+  WAITING_FOR_REVIEW = CaseState.WAITING_FOR_REVIEW,
   WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
   SUBMITTED = CaseState.SUBMITTED,
   RECEIVED = CaseState.RECEIVED,
@@ -229,68 +229,52 @@ export enum RequestCaseState {
   DELETED = CaseState.DELETED,
 }
 
-export enum AppealCaseState {
-  APPEALED = 'APPEALED',
-  RECEIVED = 'RECEIVED',
-  COMPLETED = 'COMPLETED',
-  WITHDRAWN = 'WITHDRAWN',
-}
-
 export enum CaseTransition {
   ACCEPT = 'ACCEPT',
-  APPEAL = 'APPEAL',
+  ACCEPT_REVIEW = 'ACCEPT_REVIEW',
   ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
+  ASK_FOR_REVIEW = 'ASK_FOR_REVIEW',
   COMPLETE = 'COMPLETE',
-  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   CORRECT = 'CORRECT',
   DELETE = 'DELETE',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
+  DENY_REVIEW = 'DENY_REVIEW',
   DISMISS = 'DISMISS',
   MOVE = 'MOVE',
   OPEN = 'OPEN',
   RECEIVE = 'RECEIVE',
-  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   REJECT = 'REJECT',
   REOPEN = 'REOPEN',
-  REOPEN_APPEAL = 'REOPEN_APPEAL',
   SUBMIT = 'SUBMIT',
-  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
 
 export enum IndictmentCaseTransition {
-  APPEAL = CaseTransition.APPEAL,
+  ACCEPT_REVIEW = CaseTransition.ACCEPT_REVIEW,
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
   ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
+  ASK_FOR_REVIEW = CaseTransition.ASK_FOR_REVIEW,
   COMPLETE = CaseTransition.COMPLETE,
-  COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
   CORRECT = CaseTransition.CORRECT,
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
+  DENY_REVIEW = CaseTransition.DENY_REVIEW,
   MOVE = CaseTransition.MOVE,
   RECEIVE = CaseTransition.RECEIVE,
-  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   REOPEN = CaseTransition.REOPEN,
-  REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
   SUBMIT = CaseTransition.SUBMIT,
-  WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
 export enum RequestCaseTransition {
   ACCEPT = CaseTransition.ACCEPT,
-  APPEAL = CaseTransition.APPEAL,
-  COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
   DELETE = CaseTransition.DELETE,
   DISMISS = CaseTransition.DISMISS,
   MOVE = CaseTransition.MOVE,
   OPEN = CaseTransition.OPEN,
   RECEIVE = CaseTransition.RECEIVE,
-  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   REJECT = CaseTransition.REJECT,
   REOPEN = CaseTransition.REOPEN,
-  REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
   SUBMIT = CaseTransition.SUBMIT,
-  WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -303,6 +287,15 @@ export enum CaseLegalProvisions {
   _97_1 = '_97_1', // 1. mgr. 97. gr. sml.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
+  _115_1 = '_115_1', // 115. gr. útl.
+  _115_1_A = '_115_1_A', // a-lið 1. mgr. 115. gr. útl.
+  _115_1_B = '_115_1_B', // b-lið 1. mgr. 115. gr. útl.
+  _115_1_C = '_115_1_C', // c-lið 1. mgr. 115. gr. útl.
+  _115_1_D = '_115_1_D', // d-lið 1. mgr. 115. gr. útl.
+  _115_1_E = '_115_1_E', // e-lið 1. mgr. 115. gr. útl.
+  _115_1_F = '_115_1_F', // f-lið 1. mgr. 115. gr. útl.
+  _115_1_G = '_115_1_G', // g-lið 1. mgr. 115. gr. útl.
+  _115_1_H = '_115_1_H', // h-lið 1. mgr. 115. gr. útl.
 }
 /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -314,13 +307,6 @@ export enum CaseCustodyRestrictions {
   MEDIA = 'MEDIA',
   ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
   WORKBAN = 'WORKBAN',
-}
-
-export enum CaseAppealDecision {
-  APPEAL = 'APPEAL',
-  ACCEPT = 'ACCEPT',
-  POSTPONE = 'POSTPONE',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
 export enum CaseDecision {
@@ -339,17 +325,6 @@ export enum IndictmentDecision {
   SCHEDULING = 'SCHEDULING',
   SPLITTING = 'SPLITTING',
   COMPLETING_FOR_SOME = 'COMPLETING_FOR_SOME',
-}
-
-export enum AppealCaseRulingDecision {
-  ACCEPTING = 'ACCEPTING',
-  REPEAL = 'REPEAL',
-  CHANGED = 'CHANGED',
-  CHANGED_SIGNIFICANTLY = 'CHANGED_SIGNIFICANTLY',
-  DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
-  DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
-  REMAND = 'REMAND',
-  DISCONTINUED = 'DISCONTINUED',
 }
 
 export enum CaseIndictmentRulingDecision {
@@ -505,10 +480,6 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
   )
 }
 
-export const getStatementDeadline = (appealReceived: Date): Date => {
-  return addDays(appealReceived, 1)
-}
-
 export const isIndictmentCaseState = (
   state: string,
 ): state is IndictmentCaseState => {
@@ -537,11 +508,4 @@ export const isRequestCaseTransition = (
   return Object.values(RequestCaseTransition).includes(
     transition as RequestCaseTransition,
   )
-}
-
-export enum AppealCaseTransition {
-  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
-  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
-  REOPEN_APPEAL = 'REOPEN_APPEAL',
-  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }

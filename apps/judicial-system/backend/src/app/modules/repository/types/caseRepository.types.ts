@@ -20,6 +20,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
+import { AppealDecision } from '../models/appealDecision.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
@@ -41,6 +42,7 @@ import { Subpoena } from '../models/subpoena.model'
 import { User } from '../models/user.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
+import { UpdateDateLog } from '../services/dateLogRepository.service'
 
 export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -71,6 +73,20 @@ export const caseInclude: Includeable[] = [
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
       },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'verdictAppealCase',
+    required: false,
+    include: [
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -116,6 +132,12 @@ export const caseInclude: Includeable[] = [
     ],
   },
   {
+    model: AppealDecision,
+    as: 'appealDecisions',
+    required: false,
+    separate: true,
+  },
+  {
     model: User,
     as: 'creatingProsecutor',
     include: [{ model: Institution, as: 'institution' }],
@@ -146,6 +168,11 @@ export const caseInclude: Includeable[] = [
     include: [{ model: Institution, as: 'institution' }],
   },
   {
+    model: User,
+    as: 'indictmentApprover',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
     model: Case,
     as: 'parentCase',
     include: [
@@ -153,6 +180,10 @@ export const caseInclude: Includeable[] = [
         model: CaseFile,
         as: 'caseFiles',
         required: false,
+        order: [
+          ['orderWithinChapter', 'ASC NULLS LAST'],
+          ['created', 'ASC'],
+        ],
         where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
         separate: true,
       },
@@ -284,7 +315,10 @@ export const caseInclude: Includeable[] = [
     model: CaseFile,
     as: 'caseFiles',
     required: false,
-    order: [['created', 'DESC']],
+    order: [
+      ['orderWithinChapter', 'ASC NULLS LAST'],
+      ['created', 'ASC'],
+    ],
     where: { state: { [Op.not]: CaseFileState.DELETED } },
     separate: true,
   },
@@ -323,6 +357,27 @@ export const caseInclude: Includeable[] = [
     as: 'mergeCase',
     include: [
       {
+        model: Defendant,
+        as: 'defendants',
+        attributes: ['id', 'defenderNationalId', 'isDefenderChoiceConfirmed'],
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
         model: CourtSession,
         as: 'courtSessions',
         required: false,
@@ -357,6 +412,19 @@ export const caseInclude: Includeable[] = [
             separate: true,
           },
         ],
+        separate: true,
+      },
+      {
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
+        required: false,
+        order: [['created', 'ASC']],
         separate: true,
       },
       {
@@ -480,11 +548,6 @@ export const caseInclude: Includeable[] = [
   },
 ]
 
-interface UpdateDateLog {
-  date?: Date
-  location?: string
-}
-
 export interface UpdateCaseDefendantEventLogDecision {
   defendantId: string
   rulingDate?: Date
@@ -524,7 +587,6 @@ export interface UpdateCase
     | 'sessionArrangements'
     | 'courtLocation'
     | 'courtStartDate'
-    | 'courtEndTime'
     | 'isClosedCourtHidden'
     | 'courtAttendees'
     | 'prosecutorDemands'
@@ -540,10 +602,6 @@ export interface UpdateCase
     | 'isolationToDate'
     | 'conclusion'
     | 'endOfSessionBookings'
-    | 'accusedAppealDecision'
-    | 'accusedAppealAnnouncement'
-    | 'prosecutorAppealDecision'
-    | 'prosecutorAppealAnnouncement'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
@@ -558,6 +616,7 @@ export interface UpdateCase
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
+    | 'isArraignmentSummonsSkipped'
     | 'hasCivilClaims'
     | 'isArchived'
   > {
@@ -565,6 +624,7 @@ export interface UpdateCase
   state?: Case['state']
   policeCaseNumbers?: Case['policeCaseNumbers']
   defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
+  courtEndTime?: Case['courtEndTime'] | null
   rulingDate?: Case['rulingDate'] | null
   courtCaseNumber?: Case['courtCaseNumber'] | null
   judgeId?: Case['judgeId'] | null
@@ -573,13 +633,12 @@ export interface UpdateCase
   courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
   parentCaseId?: Case['parentCaseId'] | null
   indictmentReviewerId?: Case['indictmentReviewerId'] | null
+  indictmentApproverId?: Case['indictmentApproverId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
   withCourtSessions?: Case['withCourtSessions']
   courtRecordHash?: Case['courtRecordHash'] | null
-  accusedPostponedAppealDate?: Case['accusedPostponedAppealDate'] | null
-  prosecutorPostponedAppealDate?: Case['prosecutorPostponedAppealDate'] | null
   arraignmentDate?: UpdateDateLog
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
@@ -587,6 +646,7 @@ export interface UpdateCase
   penalties?: string
   defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
   reopenReason?: string
+  indictmentReviewReturnedExplanation?: string | null
 }
 
 export interface UpdateAppealCase
@@ -606,10 +666,18 @@ export interface UpdateAppealCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
-    | 'appealedByNationalId'
     | 'rulingFileId'
+    | 'appealDate'
   > {
   appealState?: AppealCase['appealState']
+}
+
+// An appeal case is created with its type and never changes it, so the type is
+// required here and absent from UpdateAppealCase. That is what keeps a new
+// creation path from quietly omitting it - the column's database default exists
+// for old pods mid-rollout, not for application code to lean on.
+export type CreateAppealCase = UpdateAppealCase & {
+  appealType: AppealCase['appealType']
 }
 
 export interface UpdateDefendant {
@@ -638,4 +706,6 @@ export interface UpdateDefendant {
   alternativeServiceDescription?: string
   indictmentReviewDecision?: IndictmentCaseReviewDecision | null
   publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
+  isDrivingLicenseSuspended?: boolean | null
+  isClosedWithoutEnforcement?: boolean
 }

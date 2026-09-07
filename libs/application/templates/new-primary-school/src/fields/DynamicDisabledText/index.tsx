@@ -39,7 +39,7 @@ const DynamicDisabledText: FC<
   )
 
   useEffect(() => {
-    setValue(id, defaultValue)
+    setValue(id as string, defaultValue)
   }, [id, defaultValue, setValue])
 
   return (

@@ -1,15 +1,15 @@
-import { createContext, FC, PropsWithChildren, useContext } from 'react'
+import type { FC, PropsWithChildren } from 'react'
+import { createContext, useContext } from 'react'
 
+import type { Lawyer } from '@island.is/judicial-system/types'
 import {
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
-  Lawyer,
 } from '@island.is/judicial-system/types'
-
-import { useLawyerRegistry } from '../../utils/hooks/useLawyerRegistry/useLawyerRegistry'
-import { UserContext } from '../UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { useLawyerRegistry } from '@island.is/judicial-system-web/src/utils/hooks/useLawyerRegistry/useLawyerRegistry'
 
 interface LawyerRegistryContext {
   lawyers?: Lawyer[]

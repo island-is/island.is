@@ -54,6 +54,7 @@ import {
   OverviewField,
   CopyLinkField,
   VehiclePermnoWithInfoField,
+  ScaleField,
   MaybeWithAnswersAndExternalData,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -204,6 +205,7 @@ export const buildRadioField = (
     required,
     widthWithIllustration,
     hasIllustration,
+    titleVariant,
   } = data
 
   return {
@@ -216,6 +218,7 @@ export const buildRadioField = (
     required,
     widthWithIllustration,
     hasIllustration,
+    titleVariant,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -407,6 +410,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   } = data
 
   return {
@@ -424,6 +429,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   }
 }
 
@@ -442,11 +449,13 @@ export const buildFileUploadField = (
     totalMaxSize,
     maxFileCount,
     forImageUpload,
+    titleVariant,
   } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     introduction: introduction,
+    titleVariant,
     uploadHeader:
       uploadHeader || coreDefaultFieldMessages.defaultFileUploadHeader,
     uploadDescription:
@@ -679,12 +688,14 @@ export const buildRedirectToServicePortalField = (data: {
 export const buildPaymentPendingField = (data: {
   id: string
   title: FormText
+  showSubmitErrorReason?: boolean
 }): PaymentPendingField => {
-  const { id, title } = data
+  const { id, title, showSubmitErrorReason } = data
   return {
     children: undefined,
     id,
     title,
+    showSubmitErrorReason,
     type: FieldTypes.PAYMENT_PENDING,
     component: FieldComponents.PAYMENT_PENDING,
   }
@@ -1246,6 +1257,7 @@ export const buildAccordionField = (
     marginTop,
     marginBottom,
     condition,
+    singleExpand = true,
   } = data
   return {
     children: undefined,
@@ -1256,6 +1268,7 @@ export const buildAccordionField = (
     marginBottom,
     accordionItems,
     condition,
+    singleExpand,
     type: FieldTypes.ACCORDION,
     component: FieldComponents.ACCORDION,
   }
@@ -1372,5 +1385,25 @@ export const buildVehiclePermnoWithInfoField = (
     fallbackErrorMessage,
     validationFailedErrorMessage,
     isTrailer,
+  }
+}
+
+export const buildScaleField = (
+  data: Omit<ScaleField, 'type' | 'component' | 'children'>,
+): ScaleField => {
+  const { min, max, step, minLabel, maxLabel, showLabels, required } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.SCALE,
+    component: FieldComponents.SCALE,
+    min,
+    max,
+    step,
+    minLabel,
+    maxLabel,
+    showLabels,
+    required,
   }
 }

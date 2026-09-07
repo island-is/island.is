@@ -1,10 +1,22 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import { GraphQLJSON } from 'graphql-type-json'
-import { GetPaymentFlowDTOPaymentStatusEnum } from '@island.is/clients/payments'
+import {
+  GetPaymentFlowDTOBankTransferPendingStatusEnum,
+  GetPaymentFlowDTOLastBankTransferFailureEnum,
+  GetPaymentFlowDTOPaymentStatusEnum,
+} from '@island.is/clients/payments'
 import { PaymentFlowEvent } from './paymentFlowEvent.dto'
 
 registerEnumType(GetPaymentFlowDTOPaymentStatusEnum, {
   name: 'PaymentsGetFlowPaymentStatus',
+})
+
+registerEnumType(GetPaymentFlowDTOLastBankTransferFailureEnum, {
+  name: 'PaymentsBankTransferFailureReason',
+})
+
+registerEnumType(GetPaymentFlowDTOBankTransferPendingStatusEnum, {
+  name: 'PaymentsBankTransferPendingStatus',
 })
 
 @ObjectType('PaymentsGetPaymentFlowResponse')
@@ -60,6 +72,34 @@ export class GetPaymentFlowResponse {
 
   @Field(() => Date)
   updatedAt!: Date
+
+  @Field(() => GetPaymentFlowDTOLastBankTransferFailureEnum, {
+    nullable: true,
+    description:
+      'Populated only when paymentStatus is bank_transfer_failed. Reason the most recent bank-transfer attempt failed, so the FE can render a specific error message.',
+  })
+  lastBankTransferFailure?: GetPaymentFlowDTOLastBankTransferFailureEnum
+
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'Populated only when paymentStatus is bank_transfer_pending. The provider SCA URL the user can return to in order to resume their in-flight attempt. Empty/null indicates back-channel SCA (no URL).',
+  })
+  bankTransferScaRedirectUrl?: string
+
+  @Field(() => Date, {
+    nullable: true,
+    description:
+      'Populated only when paymentStatus is bank_transfer_pending. Timestamp at which the in-flight attempt expires (matches the TTL we shared with Blikk on create). The FE polling loop derives its hard timeout from this.',
+  })
+  bankTransferExpiresAt?: Date
+
+  @Field(() => GetPaymentFlowDTOBankTransferPendingStatusEnum, {
+    nullable: true,
+    description:
+      'Populated only when paymentStatus is bank_transfer_pending. sca_required: the payer must complete SCA — render bankTransferScaRedirectUrl as a QR code (desktop) or deep link (mobile). processing: waiting for bank confirmation.',
+  })
+  bankTransferPendingStatus?: GetPaymentFlowDTOBankTransferPendingStatusEnum
 }
 
 @ObjectType('PaymentsGetPaymentFlowAdminResponse')

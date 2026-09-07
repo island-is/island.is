@@ -625,6 +625,59 @@
         }
       }
     },
+    "/api/codetables/error-codes": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get human-readable descriptions for all error codes",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Dto.ErrorCodeDescriptionDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Dto.ErrorCodeDescriptionDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Dto.ErrorCodeDescriptionDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/codetables/districts": {
       "get": {
         "tags": ["Codetables"],
@@ -4029,6 +4082,28 @@
         },
         "additionalProperties": false,
         "description": "Dto for Tegund sviptinga"
+      },
+      "Dto.ErrorCodeDescriptionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Error code",
+            "nullable": true
+          },
+          "descriptionIs": {
+            "type": "string",
+            "description": "Human-readable description of an error code in Icelandic",
+            "nullable": true
+          },
+          "descriptionEn": {
+            "type": "string",
+            "description": "Human-readable description of an error code in English",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Human-readable description of an error code in Icelandic and English"
       },
       "Dto.TegundAthugasemdaDto": {
         "required": ["athugasemd", "giltFyrir", "heiti", "nr"],

@@ -37,6 +37,7 @@ import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
 import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
+import { DelegationRecordType } from './types/delegationRecord'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -448,7 +449,7 @@ export class DelegationsIncomingService {
   async verifyDelegationAtProvider(
     user: User,
     fromNationalId: string,
-    delegationTypes: AuthDelegationType[],
+    delegationTypes: DelegationRecordType[],
   ): Promise<boolean> {
     const providers = await this.delegationProviderService.findProviders(
       delegationTypes,

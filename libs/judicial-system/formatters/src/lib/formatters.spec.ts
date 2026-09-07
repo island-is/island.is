@@ -9,6 +9,7 @@ import {
 import {
   applyDativeCaseToCourtName,
   capitalize,
+  containsHtml,
   displayFirstPlusRemaining,
   formatAppeal,
   formatDate,
@@ -16,6 +17,7 @@ import {
   formatGender,
   formatNationalId,
   formatPhoneNumber,
+  formatRulingOrderPronouncedOrallyName,
   indictmentSubtypes,
   normalizeAndFormatNationalId,
   readableIndictmentSubtypes,
@@ -414,6 +416,36 @@ describe('sanitize', () => {
   })
 })
 
+describe('containsHtml', () => {
+  test('should detect html content', () => {
+    expect(containsHtml('<p>fyrir umferðarlagabrot</p>')).toBe(true)
+    expect(containsHtml('bla <strong>bla</strong> bla')).toBe(true)
+    expect(containsHtml('bla<br />bla')).toBe(true)
+  })
+
+  test('should detect a list that contains no other markup', () => {
+    // A list authored in the editor carries no <p>, so without ul/ol/li the
+    // markup was rendered as literal text instead of as rich text.
+    expect(containsHtml('<ul><li>eitt</li><li>tvö</li></ul>')).toBe(true)
+    expect(containsHtml('<ol><li>eitt</li></ol>')).toBe(true)
+  })
+
+  test('should not detect plain text as html', () => {
+    expect(containsHtml('fyrir umferðarlagabrot með því að hafa ekið')).toBe(
+      false,
+    )
+    expect(containsHtml('mældur hraði < 90 km/klst')).toBe(false)
+    expect(containsHtml('')).toBe(false)
+  })
+
+  test('should not detect angle-bracket placeholders as html', () => {
+    expect(containsHtml('ökumaðurinn <nafn ökumanns> ók')).toBe(false)
+    expect(containsHtml('með kennitöluna <kennitala>')).toBe(false)
+    // Placeholders that merely start with a list tag's letters.
+    expect(containsHtml('<liður 1> og <ólöglegur akstur>')).toBe(false)
+  })
+})
+
 describe('applyDativeCaseToCourtName', () => {
   test('should return dative case if court name contains "dómur"', () => {
     // Arrange
@@ -435,5 +467,27 @@ describe('applyDativeCaseToCourtName', () => {
 
     // Assert
     expect(result).toBe(courtName)
+  })
+})
+
+// Shared so the court record previews the name the backend will store, rather
+// than one name before pronouncing and another after.
+describe('formatRulingOrderPronouncedOrallyName', () => {
+  test('should name the ruling after the case and the date it was pronounced', () => {
+    expect(
+      formatRulingOrderPronouncedOrallyName(
+        'S-123/2026',
+        new Date('2026-11-12T10:00:00Z'),
+      ),
+    ).toBe('S-123/2026 Úrskurður 12.11.2026')
+  })
+
+  test('should tolerate a case with no court case number', () => {
+    expect(
+      formatRulingOrderPronouncedOrallyName(
+        undefined,
+        new Date('2026-11-12T10:00:00Z'),
+      ),
+    ).toBe('Úrskurður 12.11.2026')
   })
 })

@@ -1,16 +1,17 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Tag, TagVariant } from '@island.is/island-ui/core'
+import type { TagVariant } from '@island.is/island-ui/core'
+import { Tag } from '@island.is/island-ui/core'
 import { getAppealResultTextByValue } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { UserContext } from '../../UserProvider/UserProvider'
 
 interface Props {
   appealState?: AppealCaseState | null

@@ -11,6 +11,7 @@ import {
 } from '@island.is/application/core'
 import {
   DefaultEvents,
+  ExternalData,
   FormValue,
   StaticText,
 } from '@island.is/application/types'
@@ -29,14 +30,46 @@ import {
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
+  isRedesignedBTempOrBFull,
   needsHealthCertificateCondition,
 } from '../../lib/utils'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { Pickup } from '../../lib/types'
 
 const isRedesigned65 = (answers: FormValue) =>
   answers.applicationFor === B_FULL_RENEWAL_65 &&
   getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
+
+/**
+ * The legacy "bring the certificate to the district office" checkbox. Only for
+ * products that have no digital upload: not BE, not redesigned 65+, and not the
+ * redesigned B-temp/B-full flows, which now upload instead. Telling an applicant
+ * who just uploaded a PDF to also bring the paper copy is the bug this guards.
+ */
+const showsBringAlongCertificate = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
+  answers.applicationFor !== BE &&
+  !isRedesigned65(answers) &&
+  !isRedesignedBTempOrBFull(answers) &&
+  needsHealthCertificateCondition(YES)(answers, externalData)
+
+/**
+ * The uploaded-certificate row. Redesigned 65+ always uploads; BE and the
+ * redesigned B-temp/B-full flows upload only once a health condition triggers it.
+ *
+ * Both gates are extracted because each was previously duplicated inline across
+ * a divider and its content fields — and a divider that renders without its row
+ * is exactly the artefact that produces.
+ */
+const showsUploadedHealthCertificate = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
+  isRedesigned65(answers) ||
+  ((answers.applicationFor === BE || isRedesignedBTempOrBFull(answers)) &&
+    needsHealthCertificateCondition(YES)(answers, externalData))
 
 export const subSectionSummary = buildSubSection({
   id: 'overview',
@@ -107,48 +140,57 @@ export const subSectionSummary = buildSubSection({
             (nationalRegistry.data as NationalRegistryUser).address?.city,
         }),
         buildDividerField({
-          condition: isApplicationForCondition(B_TEMP),
+          condition: isApplicationForCondition([B_TEMP, BE]),
         }),
         buildKeyValueField({
           label: m.overviewTeacher,
           width: 'half',
-          condition: isApplicationForCondition(B_TEMP),
-          value: ({
-            externalData: {
-              drivingAssessment,
-              teachers: { data },
-            },
-            answers,
-          }) => {
-            if (answers.applicationFor === B_TEMP) {
-              const teacher = (data as TeacherV4[])?.find(
-                ({ nationalId }) =>
-                  getValueViaPath(answers, 'drivingInstructor') === nationalId,
+          condition: isApplicationForCondition([B_TEMP, BE]),
+          value: ({ externalData, answers }) => {
+            if (
+              answers.applicationFor === B_TEMP ||
+              answers.applicationFor === BE
+            ) {
+              const selectedNationalId = getValueViaPath<string>(
+                answers,
+                'drivingInstructor',
               )
-              return teacher?.name ?? ''
+              const teachers =
+                getValueViaPath<TeacherV4[]>(
+                  externalData,
+                  'teachers.data',
+                  [],
+                ) ?? []
+              const teacher = teachers.find(
+                ({ nationalId }) => nationalId === selectedNationalId,
+              )
+              // Fall back to the kennitala if the chosen instructor isn't in
+              // the (snapshot) list — e.g. an instructor registered after this
+              // application was created, now selectable via the live dropdown.
+              return (
+                teacher?.name ??
+                (selectedNationalId ? formatNationalId(selectedNationalId) : '')
+              )
             }
-            return (drivingAssessment.data as StudentAssessment).teacherName
+            return (
+              getValueViaPath<StudentAssessment>(
+                externalData,
+                'drivingAssessment.data',
+              )?.teacherName ?? ''
+            )
           },
         }),
-        // Health cert section — old "bring along" checkbox flow.
-        // Renders for non-BE applicants whose health declaration triggered
-        // a cert requirement. Redesigned 65+ uploads instead, so suppress
-        // this block for that case to avoid double-rendering.
+        // Health cert section — old "bring along" checkbox flow, for the
+        // products with no digital upload. See showsBringAlongCertificate.
         buildDividerField({
-          condition: (answers, externalData) =>
-            answers.applicationFor !== BE &&
-            !isRedesigned65(answers) &&
-            needsHealthCertificateCondition(YES)(answers, externalData),
+          condition: showsBringAlongCertificate,
         }),
         buildDescriptionField({
           id: 'bringalong',
           title: m.overviewBringAlongTitle,
           titleVariant: 'h4',
           description: '',
-          condition: (answers, externalData) =>
-            answers.applicationFor !== BE &&
-            !isRedesigned65(answers) &&
-            needsHealthCertificateCondition(YES)(answers, externalData),
+          condition: showsBringAlongCertificate,
         }),
         buildCheckboxField({
           id: 'certificate',
@@ -161,27 +203,16 @@ export const subSectionSummary = buildSubSection({
               label: m.overviewBringCertificateData,
             },
           ],
-          condition: (answers, externalData) =>
-            answers.applicationFor !== BE &&
-            !isRedesigned65(answers) &&
-            needsHealthCertificateCondition(YES)(answers, externalData),
+          condition: showsBringAlongCertificate,
         }),
-        // Health cert section — uploaded-file display.
-        // BE: gated on health-declaration triggering the upload.
-        // Redesigned 65+: always shown (cert is mandatory regardless of
-        // health questions, which 65+ doesn't have).
+        // Health cert section — uploaded-file display. See
+        // showsUploadedHealthCertificate for which products reach it.
         buildDividerField({
-          condition: (answers, externalData) =>
-            isRedesigned65(answers) ||
-            (answers.applicationFor === BE &&
-              needsHealthCertificateCondition(YES)(answers, externalData)),
+          condition: showsUploadedHealthCertificate,
         }),
         buildKeyValueField({
           label: m.overviewHealthCertificateUploaded,
-          condition: (answers, externalData) =>
-            isRedesigned65(answers) ||
-            (answers.applicationFor === BE &&
-              needsHealthCertificateCondition(YES)(answers, externalData)),
+          condition: showsUploadedHealthCertificate,
           value: ({ answers }) => {
             const files = getValueViaPath<Array<{ name: string }>>(
               answers,

@@ -14,7 +14,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,7 +24,6 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -40,6 +39,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { nationalIdTransformer } from '../../transformers'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
 import { IndictmentCountService } from '../indictment-count/indictmentCount.service'
@@ -50,6 +50,7 @@ import {
   DateLog,
   Defendant,
   IndictmentSubtype,
+  IndictmentSubtypeRepositoryService,
 } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
@@ -61,18 +62,18 @@ import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.resp
 import { policeModuleConfig } from './police.config'
 
 export enum PoliceDocumentType {
-  RVKR = 'RVKR', // Krafa
-  RVTB = 'RVTB', // Þingbók
-  RVUR = 'RVUR', // Úrskurður
-  RVVI = 'RVVI', // Vistunarseðill
-  RVUL = 'RVUL', // Úrskurður Landsréttar
-  RVDO = 'RVDO', // Dómur
-  RVAS = 'RVAS', // Ákæra
-  RVMG = 'RVMG', // Málsgögn
-  RVMV = 'RVMV', // Viðbótargögn verjanda
-  RVVS = 'RVVS', // Viðbótargögn sækjanda
-  RVFK = 'RVFK', // Fyrirkall
-  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms
+  RVKR = 'RVKR', // Krafa í R-málum
+  RVTB = 'RVTB', // Þingbók í R- og S-málum
+  RVUR = 'RVUR', // Úrskurður í R-málum
+  RVVI = 'RVVI', // Vistunarseðill í R-málum
+  RVUL = 'RVUL', // Úrskurður Landsréttar í R- og S-málum
+  RVDO = 'RVDO', // Dómur og úrskurður í S-málum
+  RVAS = 'RVAS', // Ákæra í S-málum
+  RVMG = 'RVMG', // Málsgögn/gagnapakki í S-málum - þetta er svolítil ruslakista
+  RVMV = 'RVMV', // Viðbótargögn verjanda í S-málum
+  RVVS = 'RVVS', // Viðbótargögn sækjandan í S-málum
+  RVFK = 'RVFK', // Fyrirkall í S-málum
+  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
 }
 
 export interface PoliceDocument {
@@ -266,8 +267,8 @@ export class PoliceService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(IndictmentSubtype)
-    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
+    @Inject(forwardRef(() => IndictmentSubtypeRepositoryService))
+    private readonly indictmentSubtypeRepositoryService: IndictmentSubtypeRepositoryService,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
@@ -335,6 +336,20 @@ export class PoliceService {
     }
   }
 
+  /** Winston error log only (no Slack). */
+  private logPoliceFailure(
+    logMessage: string,
+    info: { [key: string]: string | boolean | Date | undefined },
+    reason: unknown,
+  ): void {
+    this.logger.error(logMessage, {
+      ...info,
+      error: reason instanceof Error ? reason : undefined,
+      errorSummary:
+        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+    })
+  }
+
   /** Winston error log plus Slack error webhook (same payload shape as before). */
   private logPoliceFailureAndNotify(
     slackTitle: string,
@@ -342,14 +357,12 @@ export class PoliceService {
     info: { [key: string]: string | boolean | Date | undefined },
     reason: unknown,
   ): void {
-    const errorForSlack = this.reasonToError(reason)
-    this.logger.error(logMessage, {
-      ...info,
-      error: reason instanceof Error ? reason : undefined,
-      errorSummary:
-        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
-    })
-    void this.eventService.postErrorEvent(slackTitle, info, errorForSlack)
+    this.logPoliceFailure(logMessage, info, reason)
+    void this.eventService.postErrorEvent(
+      slackTitle,
+      info,
+      this.reasonToError(reason),
+    )
   }
 
   private async throttleUploadPoliceCaseFile(
@@ -492,17 +505,6 @@ export class PoliceService {
 
       if (!res.ok) {
         const detail = await res.text()
-        this.logger.error(
-          `Police digital case files request returned error for case ${caseId}`,
-          {
-            caseId,
-            source,
-            status: res.status,
-            detail: detail.slice(0, 2000),
-          },
-        )
-        // The police system does not provide a structured error response.
-        // When a police case does not exist, a stack trace is often returned.
         throw new NotFoundException({
           message: `Police digital case files for case ${caseId} do not exist`,
           detail,
@@ -514,18 +516,6 @@ export class PoliceService {
 
       return this.digitalCaseFilesStructure.parse(response)
     } catch (reason) {
-      if (reason instanceof NotFoundException) {
-        throw reason
-      }
-
-      if (reason instanceof ServiceUnavailableException) {
-        throw new NotFoundException({
-          ...reason,
-          message: `Police digital case files for case ${caseId} are unavailable`,
-          detail: reason.message,
-        })
-      }
-
       this.logPoliceFailureAndNotify(
         'Failed to get police digital case files',
         `Failed to get police digital case files for case ${caseId}`,
@@ -539,6 +529,18 @@ export class PoliceService {
         },
         reason,
       )
+
+      if (reason instanceof NotFoundException) {
+        throw reason
+      }
+
+      if (reason instanceof ServiceUnavailableException) {
+        throw new NotFoundException({
+          ...reason,
+          message: `Police digital case files for case ${caseId} are unavailable`,
+          detail: reason.message,
+        })
+      }
 
       throw new BadGatewayException({
         ...(reason instanceof Error ? reason : {}),
@@ -598,14 +600,34 @@ export class PoliceService {
         detail: reason,
       })
     } catch (reason) {
-      if (reason instanceof NotFoundException) {
-        throw reason
-      }
-
-      if (
+      const is425 =
         reason instanceof HttpException &&
         reason.getStatus() === httpStatusTooEarly
-      ) {
+
+      this.logPoliceFailureAndNotify(
+        'Failed to get token URL for digital case file',
+        is425
+          ? `Police digital case file ${policeDigitalFileId} is not published yet`
+          : `Failed to get token URL for digital case file ${policeDigitalFileId}`,
+        {
+          rvgCaseId,
+          rafraennGagnId: policeDigitalFileId,
+          actor: user.name,
+          institution: user.institution?.name,
+          startTime,
+          endTime: nowFactory(),
+          source,
+          ...(is425
+            ? {
+                status: String(httpStatusTooEarly),
+                errorType: 'PoliceDigitalFileNotPublished',
+              }
+            : {}),
+        },
+        reason,
+      )
+
+      if (reason instanceof NotFoundException || is425) {
         throw reason
       }
 
@@ -616,21 +638,6 @@ export class PoliceService {
           detail: reason.message,
         })
       }
-
-      this.logPoliceFailureAndNotify(
-        'Failed to get token URL for digital case file',
-        `Failed to get token URL for digital case file ${policeDigitalFileId}`,
-        {
-          rvgCaseId,
-          rafraennGagnId: policeDigitalFileId,
-          actor: user.name,
-          institution: user.institution?.name,
-          startTime,
-          endTime: nowFactory(),
-          source,
-        },
-        reason,
-      )
 
       throw new BadGatewayException({
         ...reason,
@@ -787,7 +794,10 @@ export class PoliceService {
       this.getRVMalseiningarResponseSchema.parse(responseJson)
     const caseUnits = await Promise.all(
       parsedCaseUnits.map(async (unit) => {
-        const subtype = await this.getSubtypeByArticle(unit.artalNrGreinLidur)
+        const subtype = await this.getSubtypeByArticle(
+          unit.artalNrGreinLidur,
+          unit.nanar,
+        )
         const key = Object.keys(IndictmentCaseSubtypes).find(
           (k) =>
             IndictmentCaseSubtypes[k as keyof typeof IndictmentCaseSubtypes] ===
@@ -1291,8 +1301,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create external police document file',
+      // Winston only - VerdictService.deliverVerdictToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
         {
           caseId,
@@ -1340,7 +1352,8 @@ export class PoliceService {
           return {
             serviceStatus: serviceStatus,
             deliveredToDefenderNationalId:
-              response.defenderNationalId ?? undefined,
+              nationalIdTransformer({ value: response.defenderNationalId }) ??
+              undefined,
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
             serviceDate: legalPaperServiceDate ?? servedAt,
@@ -1414,8 +1427,7 @@ export class PoliceService {
     const { nationalId: defendantNationalId } = defendant
     const { name: actor } = user
 
-    const normalizedNationalId =
-      normalizeAndFormatNationalId(defendantNationalId)[0]
+    const normalizedNationalId = defendantNationalId ?? ''
 
     const documentName = `Fyrirkall í máli ${courtCaseNumber}`
     const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
@@ -1457,8 +1469,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create subpoena',
+      // Winston only - SubpoenaService.deliverSubpoenaToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `Failed create subpoena for case ${theCase.id}`,
         {
           caseId: theCase.id,
@@ -1516,9 +1530,11 @@ export class PoliceService {
 
   getSubtypeByArticle(
     article?: string | null,
+    details?: string | null,
   ): Promise<IndictmentSubtype | null> {
-    return this.indictmentSubtypeModel.findOne({
-      where: { article },
-    })
+    return this.indictmentSubtypeRepositoryService.findByArticle(
+      article,
+      details,
+    )
   }
 }

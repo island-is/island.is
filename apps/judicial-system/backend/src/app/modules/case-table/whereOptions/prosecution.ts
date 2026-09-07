@@ -86,7 +86,7 @@ export const prosecutionIndictmentsInDraftWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     ...prosecutionIndictmentsAccessWhereOptions(user),
-    state: CaseState.DRAFT,
+    state: [CaseState.DRAFT, CaseState.WAITING_FOR_REVIEW],
   },
 })
 
@@ -128,22 +128,18 @@ export const prosecutionIndictmentsAppealedWhereOptions = (
     },
   },
   where: {
-    [Op.and]: [
-      prosecutionIndictmentsAccessWhereOptions(user),
+    ...prosecutionIndictmentsAccessWhereOptions(user),
+    [Op.or]: [
       {
-        [Op.or]: [
-          {
-            '$appealCase.appeal_state$': [
-              AppealCaseState.APPEALED,
-              AppealCaseState.RECEIVED,
-            ],
-          },
-          {
-            '$rulingOrderAppealCases.appeal_state$': [
-              AppealCaseState.APPEALED,
-              AppealCaseState.RECEIVED,
-            ],
-          },
+        '$appealCase.appeal_state$': [
+          AppealCaseState.APPEALED,
+          AppealCaseState.RECEIVED,
+        ],
+      },
+      {
+        '$rulingOrderAppealCases.appeal_state$': [
+          AppealCaseState.APPEALED,
+          AppealCaseState.RECEIVED,
         ],
       },
     ],

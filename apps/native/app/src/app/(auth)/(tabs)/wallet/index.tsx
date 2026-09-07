@@ -61,7 +61,7 @@ export default function WalletScreen() {
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
   const [refetching, setRefetching] = useState(false)
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const userName = useAuthStore((s) => s.userInfo?.name)

@@ -8,7 +8,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   EmployeeApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
@@ -66,7 +66,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [EmployeeApi, NationalRegistryUserApi],
+              api: [EmployeeApi, NationalRegistryV3UserApi],
             },
           ],
         },

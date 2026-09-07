@@ -98,14 +98,26 @@ export class AppealCase {
   @Field(() => String, { nullable: true })
   readonly appealIsolationToDate?: string
 
-  @Field(() => String, { nullable: true })
-  readonly appealedByNationalId?: string
+  @Field(() => ID, { nullable: true })
+  readonly appealedByDefendantId?: string
+
+  @Field(() => ID, { nullable: true })
+  readonly appealedByCivilClaimantId?: string
 
   @Field(() => UserRole, { nullable: true })
   readonly appealedByRole?: UserRole
 
   @Field(() => String, { nullable: true })
   readonly appealedDate?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly appealedInCourt?: boolean
+
+  // A party filed the appeal itself rather than it being recorded in court.
+  // Unlike appealedInCourt this is meaningful for case-level appeals, since it
+  // comes from the appeal event's origin rather than a ruling's decision rows.
+  @Field(() => Boolean, { nullable: true })
+  readonly appealedOutOfCourt?: boolean
 
   @Field(() => String, { nullable: true })
   readonly statementDeadline?: string

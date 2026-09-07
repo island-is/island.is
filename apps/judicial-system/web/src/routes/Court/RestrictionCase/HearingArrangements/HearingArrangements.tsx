@@ -58,6 +58,7 @@ export const HearingArrangements = () => {
   const {
     setAndSendCaseToServer,
     sendNotification,
+    isUpdatingCase,
     isSendingNotification,
     sendNotificationError,
   } = useCase()
@@ -120,12 +121,11 @@ export const HearingArrangements = () => {
   const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
 
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
-    await sendCourtDateToServer()
-
     if (
       isCorrectingRuling ||
       (courtDateNotification.hasSent && !courtDateHasChanged)
     ) {
+      await sendCourtDateToServer()
       router.push(`${destination}/${workingCase.id}`)
     } else {
       setNavigateTo(DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE)
@@ -136,6 +136,11 @@ export const HearingArrangements = () => {
     workingCase,
     courtDate,
   )
+
+  const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
+  const isModalDeferring = modalButtonLoading === ModalButtonLoading.SECONDARY
+  const isModalLoading = isModalConfirming && isUpdatingCase
+  const isModalDeferringLoading = isModalDeferring && isSendingNotification
 
   return (
     <PageLayout
@@ -177,71 +182,77 @@ export const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE)
-          }
-          nextButtonText={formatMessage(m.continueButton.label)}
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: 'Halda áfram',
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(
-            workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-              ? m.modal.custodyCases.heading
-              : m.modal.travelBanCases.heading,
-          )}
-          text={formatMessage(
-            workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-              ? m.modal.custodyCases.text
-              : m.modal.travelBanCases.text,
+          title="Viltu staðfesta fyrirtökutíma?"
+          loading={isModalConfirming}
+          text={
+            courtDateHasChanged
+              ? 'Fyrirtökutíma hefur verið breytt. Tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.'
+              : 'Málið fer á dagskrá og tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.'
+          }
+          buttons={[
             {
-              courtDateHasChanged,
-            },
-          )}
-          primaryButton={{
-            text: formatMessage(m.modal.shared.primaryButtonText),
-            onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.PRIMARY)
+              text: 'Nei, staðfesta seinna',
+              isDisabled: isModalConfirming,
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.SECONDARY)
 
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-              )
+                // The arraignment date is not confirmed, so we only let a
+                // registered advocate know that they are on the case. This is
+                // their only notification, so we do not navigate away until it
+                // has been sent.
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  TrackedNotificationType.ADVOCATE_ASSIGNED,
+                )
 
-              if (notificationSent) {
+                if (!notificationSent) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
+
                 router.push(`${navigateTo}/${workingCase.id}`)
-              }
+              },
+              isLoading: isModalDeferringLoading,
+              variant: 'ghost',
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.PRIMARY,
-          }}
-          secondaryButton={{
-            text: formatMessage(m.modal.shared.secondaryButtonText, {
-              courtDateHasChanged,
-            }),
-            onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.SECONDARY)
+            {
+              text: 'Já, staðfesta',
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
-              await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-                true,
-              )
+                // Saving the arraignment date triggers the court date notifications
+                const courtDateSaved = await sendCourtDateToServer()
 
-              router.push(`${navigateTo}/${workingCase.id}`)
+                if (!courtDateSaved) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
+
+                router.push(`${navigateTo}/${workingCase.id}`)
+              },
+              isLoading: isModalLoading,
+              isDisabled: isModalDeferring,
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.SECONDARY,
-          }}
+          ]}
           errorMessage={
-            sendNotificationError
+            isModalDeferring && sendNotificationError
               ? formatMessage(errors.sendNotification)
               : undefined
           }

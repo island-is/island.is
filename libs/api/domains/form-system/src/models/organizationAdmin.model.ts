@@ -31,6 +31,9 @@ export class OrganizationAdmin {
   @Field(() => [String], { nullable: 'itemsAndList' })
   selectedFieldTypes?: string[]
 
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  organizationDelegations?: string[]
+
   @Field(() => [PermissionType], { nullable: 'itemsAndList' })
   certificationTypes?: PermissionType[]
 

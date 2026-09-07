@@ -1,7 +1,10 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './DefendantInfo.strings'
 
@@ -12,6 +15,7 @@ type VerdictTagKey =
   | 'appealRequested'
   | 'defaultJudgement'
   | 'verdict'
+  | 'closedWithoutEnforcement'
 
 type DefendantVerdictTagInput = {
   isAcquittedByPublicProsecutionOffice?: boolean | null
@@ -67,16 +71,22 @@ export const getVerdictViewDateText = (
 export const getDefendantTagConfig = ({
   verdict,
   isPublicProsecutionOffice,
-  isDismissalCase,
-  isCancellationCase,
-  isFineCase,
+  indictmentRulingDecision,
+  isClosedWithoutEnforcement,
 }: {
   verdict?: DefendantVerdictTagInput | null
   isPublicProsecutionOffice: boolean
-  isDismissalCase?: boolean
-  isCancellationCase?: boolean
-  isFineCase?: boolean
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
+  isClosedWithoutEnforcement?: boolean | null
 }): DefendantTagConfig | null => {
+  if (isClosedWithoutEnforcement && isPublicProsecutionOffice) {
+    return {
+      key: 'closedWithoutEnforcement',
+      label: 'Lokið',
+      variant: 'rose',
+    }
+  }
+
   if (verdict) {
     if (
       verdict.isAcquittedByPublicProsecutionOffice &&
@@ -112,26 +122,33 @@ export const getDefendantTagConfig = ({
     }
   }
 
-  if (isDismissalCase) {
-    return {
-      label: 'Frávísun',
-      variant: 'blue',
-    }
+  switch (indictmentRulingDecision) {
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return {
+        label: 'Frávísun',
+        variant: 'blue',
+      }
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return {
+        label: 'Niðurfelling',
+        variant: 'rose',
+      }
+    case CaseIndictmentRulingDecision.FINE:
+      return {
+        label: 'Viðurlagaákvörðun',
+        variant: 'mint',
+      }
+    case CaseIndictmentRulingDecision.WITHDRAWAL:
+      return {
+        label: 'Afturkallað',
+        variant: 'rose',
+      }
+    case CaseIndictmentRulingDecision.MERGE:
+      return {
+        label: 'Sameinað',
+        variant: 'rose',
+      }
+    default:
+      return null
   }
-
-  if (isCancellationCase) {
-    return {
-      label: 'Niðurfelling',
-      variant: 'rose',
-    }
-  }
-
-  if (isFineCase) {
-    return {
-      label: 'Viðurlagaákvörðun',
-      variant: 'mint',
-    }
-  }
-
-  return null
 }

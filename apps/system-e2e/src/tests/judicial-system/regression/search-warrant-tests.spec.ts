@@ -118,7 +118,7 @@ test.describe.serial('Search warrant tests', () => {
     // Submit to court
     await expect(page).toHaveURL(`/krafa/rannsoknarheimild/stadfesta/${caseId}`)
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
-    await page.getByRole('button', { name: 'Loka glugga' }).click()
+    await page.getByTestId('modalSecondaryButton').click()
     await expect(page).toHaveURL('/malalistar')
   })
 

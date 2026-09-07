@@ -1,11 +1,6 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  View,
-} from 'react-native'
+import { RefreshControl, ScrollView, View } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -18,20 +13,24 @@ import {
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { useBrowser } from '@/hooks/use-browser'
-import { Button, NavigationBarSheet, Problem, Typography } from '@/ui'
+import {
+  Button,
+  Input,
+  InputRow,
+  NavigationBarSheet,
+  Problem,
+  Typography,
+} from '@/ui'
 import { questionnaireUrls } from '@/utils/url-builder'
 import {
   getQuestionnaireOrganizationLabelId,
   getQuestionnaireStatusLabelId,
 } from '../../../../../utils/questionnaire-utils'
 
-const Host = styled.View`
-  flex: 1;
-`
-
 const Content = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[4]}px;
+  padding-top: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
   gap: ${({ theme }) => theme.spacing[2]}px;
 `
 
@@ -39,30 +38,17 @@ const ButtonRow = styled.View`
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing[1]}px;
   flex-wrap: wrap;
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
-`
-
-const InfoRow = styled.View`
-  gap: ${({ theme }) => theme.spacing.smallGutter}px;
-  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
-  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${({ theme }) => theme.color.blue200};
-`
-
-const Label = styled(Typography)`
-  color: ${({ theme }) => theme.color.dark300};
-`
-
-const RowHeader = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
 `
 
 export default function QuestionnaireDetailScreen() {
-  const { id, organization: orgParam } = useLocalSearchParams<{
+  const {
+    id,
+    organization: orgParam,
+    title: titleParam,
+  } = useLocalSearchParams<{
     id: string
     organization?: string
+    title?: string
   }>()
   const organization = orgParam as
     | QuestionnaireQuestionnairesOrganizationEnum
@@ -71,14 +57,15 @@ export default function QuestionnaireDetailScreen() {
   const intl = useIntl()
   const locale = useLocale()
   const { openBrowser } = useBrowser()
-  const shouldSkipQuery = !id
+  const shouldSkipQuery = !id || !organization
   const { data, loading, error, refetch, networkStatus } =
     useGetQuestionnaireQuery({
       variables: {
         locale,
         input: {
           id: id ?? '',
-          organization: organization ?? undefined,
+          organization:
+            organization as QuestionnaireQuestionnairesOrganizationEnum,
         },
       },
       skip: shouldSkipQuery,
@@ -87,7 +74,24 @@ export default function QuestionnaireDetailScreen() {
   const questionnaire = data?.questionnairesDetail ?? null
   const base = questionnaire?.baseInformation ?? null
 
-  const title = useMemo(() => base?.title ?? '', [base?.title])
+  const title = useMemo(
+    () => base?.title || titleParam || '',
+    [base?.title, titleParam],
+  )
+
+  const [refetching, setRefetching] = useState(false)
+
+  const onRefresh = useCallback(async () => {
+    if (shouldSkipQuery) {
+      return
+    }
+    setRefetching(true)
+    try {
+      await refetch()
+    } finally {
+      setRefetching(false)
+    }
+  }, [refetch, shouldSkipQuery])
 
   const close = useCallback(() => {
     router.back()
@@ -119,7 +123,7 @@ export default function QuestionnaireDetailScreen() {
 
   let errorContent: React.ReactNode = null
 
-  if (!id) {
+  if (!id || !organization) {
     errorContent = (
       <View>
         <Typography variant="heading3">
@@ -130,129 +134,175 @@ export default function QuestionnaireDetailScreen() {
         </Typography>
       </View>
     )
-  } else if (loading && !base) {
-    errorContent = (
-      <View style={{ paddingVertical: theme.spacing[2] }}>
-        <ActivityIndicator />
-      </View>
-    )
   } else if (!loading && error && !base) {
     errorContent = <Problem error={error} withContainer />
   } else if (!loading && !error && !base) {
     errorContent = <Problem type="no_data" withContainer />
   }
 
-  // if (errorContent) {
-  //   return (
-  //     <Host>
-  //       <Stack.Screen options={{ title: '', headerShown: false }} />
-  //       <NavigationBarSheet
-  //         componentId="questionnaire-detail"
-  //         onClosePress={close}
-  //         style={{ marginHorizontal: 16 }}
-  //       />
-  //       <Content>{errorContent}</Content>
-  //     </Host>
-  //   )
-  // }
-
   const isAnswered =
     base?.status === QuestionnaireQuestionnairesStatusEnum.Answered
   const isDraft = base?.status === QuestionnaireQuestionnairesStatusEnum.Draft
   const isNotAnswered =
     base?.status === QuestionnaireQuestionnairesStatusEnum.NotAnswered
+  const hasSubmissions = (questionnaire?.submissions?.length ?? 0) > 0
+  const canSubmit = questionnaire?.canSubmit ?? false
+  const canSubmitAgain = canSubmit && hasSubmissions
+  const isInitialLoading = loading && !base
 
   return (
     <>
-      <StackScreen networkStatus={networkStatus} options={{ title }} />
+      <StackScreen
+        closeable
+        networkStatus={networkStatus}
+        options={{ title: '' }}
+      />
       <ScrollView
         style={{ flex: 1 }}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refetch} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
       >
         {errorContent ? (
           errorContent
         ) : (
-          <Content>
-            <Typography variant="body">
-              <FormattedMessage id="health.questionnaires.detail.description" />
-            </Typography>
-            <View>
-              <ButtonRow>
-                {(isNotAnswered || isDraft) && (
-                  <Button
-                    title={intl.formatMessage({
-                      id: isDraft
-                        ? 'health.questionnaires.action.continue-draft'
-                        : 'health.questionnaires.action.answer',
-                    })}
-                    onPress={onAnswer}
-                    isFilledUtilityButton
-                    icon={externalLinkIcon}
-                    ellipsis
-                  />
-                )}
-                {(isAnswered || isDraft) && (
-                  <Button
-                    title={intl.formatMessage({
-                      id: 'health.questionnaires.action.view-answer',
-                    })}
-                    onPress={onView}
-                    isUtilityButton
-                    isOutlined
-                    icon={externalLinkIcon}
-                    ellipsis
-                  />
-                )}
-              </ButtonRow>
-            </View>
-
-            <View>
-              <InfoRow>
-                <RowHeader>
-                  <Label variant="eyebrow">
-                    <FormattedMessage id="health.questionnaires.detail.status" />
-                  </Label>
-                </RowHeader>
-                <Typography variant="heading4">
-                  <FormattedMessage
-                    id={getQuestionnaireStatusLabelId(base?.status)}
-                  />
-                </Typography>
-              </InfoRow>
-
-              {base?.organization ? (
-                <InfoRow>
-                  <RowHeader>
-                    <Label variant="eyebrow">
-                      <FormattedMessage id="health.questionnaires.detail.institution" />
-                    </Label>
-                  </RowHeader>
-                  <Typography variant="heading4">
-                    <FormattedMessage
-                      id={getQuestionnaireOrganizationLabelId(
-                        base?.organization,
-                      )}
+          <>
+            <Content>
+              <Typography variant="heading2">{title}</Typography>
+              {base?.description ? (
+                <Typography variant="body">{base.description}</Typography>
+              ) : null}
+              <View
+                style={
+                  base?.description
+                    ? { marginTop: theme.spacing[1] }
+                    : undefined
+                }
+              >
+                <ButtonRow>
+                  {(isNotAnswered || isDraft) && (
+                    <Button
+                      title={intl.formatMessage({
+                        id: isDraft
+                          ? 'health.questionnaires.action.continue-draft'
+                          : 'health.questionnaires.action.answer',
+                      })}
+                      onPress={onAnswer}
+                      isFilledUtilityButton
+                      icon={externalLinkIcon}
+                      ellipsis
+                      // Match the outlined button's 1px border box so both
+                      // buttons render at the same height.
+                      style={{ borderWidth: 1, borderColor: 'transparent' }}
                     />
-                  </Typography>
-                </InfoRow>
-              ) : null}
+                  )}
+                  {!isDraft && canSubmitAgain && (
+                    <Button
+                      title={intl.formatMessage({
+                        id: 'health.questionnaires.action.answer-again',
+                      })}
+                      onPress={onAnswer}
+                      isFilledUtilityButton
+                      icon={externalLinkIcon}
+                      ellipsis
+                      // Match the outlined button's 1px border box so both
+                      // buttons render at the same height.
+                      style={{ borderWidth: 1, borderColor: 'transparent' }}
+                    />
+                  )}
+                  {(isAnswered || isDraft) && hasSubmissions && (
+                    <Button
+                      title={intl.formatMessage({
+                        id: 'health.questionnaires.action.view-answer',
+                      })}
+                      onPress={onView}
+                      isUtilityButton
+                      isOutlined
+                      icon={externalLinkIcon}
+                      ellipsis
+                    />
+                  )}
+                </ButtonRow>
+              </View>
+            </Content>
 
-              {base?.sentDate ? (
-                <InfoRow>
-                  <RowHeader>
-                    <Label variant="eyebrow">
-                      <FormattedMessage id="health.questionnaires.detail.sentDate" />
-                    </Label>
-                  </RowHeader>
-                  <Typography variant="heading4">
-                    {intl.formatDate(new Date(base?.sentDate ?? ''))}
-                  </Typography>
-                </InfoRow>
-              ) : null}
-            </View>
-          </Content>
+            <InputRow>
+              <Input
+                size="normal"
+                loading={isInitialLoading}
+                label={intl.formatMessage({
+                  id: 'health.questionnaires.detail.status',
+                })}
+                value={
+                  base?.status
+                    ? intl.formatMessage({
+                        id: getQuestionnaireStatusLabelId(base.status),
+                      })
+                    : ''
+                }
+                hideWhenEmpty
+              />
+            </InputRow>
+            <InputRow>
+              <Input
+                size="normal"
+                loading={isInitialLoading}
+                label={intl.formatMessage({
+                  id: 'health.questionnaires.detail.institution',
+                })}
+                value={
+                  base?.senderGroupName ||
+                  (base?.organization
+                    ? intl.formatMessage({
+                        id: getQuestionnaireOrganizationLabelId(
+                          base.organization,
+                        ),
+                      })
+                    : '')
+                }
+                hideWhenEmpty
+              />
+            </InputRow>
+            <InputRow>
+              <Input
+                size="normal"
+                loading={isInitialLoading}
+                label={intl.formatMessage({
+                  id: 'health.questionnaires.detail.sentDate',
+                })}
+                value={
+                  base?.sentDate ? intl.formatDate(new Date(base.sentDate)) : ''
+                }
+                hideWhenEmpty
+              />
+            </InputRow>
+            <InputRow>
+              <Input
+                size="normal"
+                loading={isInitialLoading}
+                label={intl.formatMessage({
+                  id: 'health.questionnaires.detail.sentBy',
+                })}
+                value={questionnaire?.sender ?? ''}
+                hideWhenEmpty
+              />
+            </InputRow>
+            <InputRow>
+              <Input
+                size="normal"
+                loading={isInitialLoading}
+                label={intl.formatMessage({
+                  id: 'health.questionnaires.detail.expirationDate',
+                })}
+                value={
+                  questionnaire?.expirationDate
+                    ? intl.formatDate(new Date(questionnaire.expirationDate))
+                    : ''
+                }
+                hideWhenEmpty
+              />
+            </InputRow>
+          </>
         )}
       </ScrollView>
     </>

@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { signingModuleConfig } from '@island.is/dokobit-signing'
@@ -18,7 +19,12 @@ import {
   messageModuleConfig,
 } from '@island.is/judicial-system/message'
 
-import { CaseContextMiddleware, RequestContextMiddleware } from './middleware'
+import { TransactionCommitInterceptor } from './interceptors'
+import {
+  CaseContextMiddleware,
+  RequestContextMiddleware,
+  TransactionContextMiddleware,
+} from './middleware'
 import {
   AppealCaseModule,
   appealCaseModuleConfig,
@@ -105,10 +111,13 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       ],
     }),
   ],
+  providers: [
+    { provide: APP_INTERCEPTOR, useClass: TransactionCommitInterceptor },
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestContextMiddleware).forRoutes('*')
+    consumer.apply(RequestContextMiddleware).forRoutes('{*splat}')
     consumer
       .apply(CaseContextMiddleware)
       .forRoutes(
@@ -116,6 +125,7 @@ export class AppModule {
         '/api/internal/case/:caseId',
         '/api/internal/case/indictment/:caseId',
       )
-    consumer.apply(MessageMiddleware).forRoutes('*')
+    consumer.apply(MessageMiddleware).forRoutes('{*splat}')
+    consumer.apply(TransactionContextMiddleware).forRoutes('{*splat}')
   }
 }

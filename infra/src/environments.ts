@@ -10,7 +10,7 @@ const dev01: EnvironmentConfig = {
   domain: 'dev01.devland.is',
   type: 'dev',
   featuresOn: [],
-  defaultMaxReplicas: 3,
+  defaultMaxReplicas: 1,
   defaultMinReplicas: 1,
   releaseName: '',
   awsAccountId: '013313053092',

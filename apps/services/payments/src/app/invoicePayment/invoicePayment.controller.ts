@@ -231,24 +231,4 @@ export class InvoicePaymentController {
       // No additional storage needed, can be queried later for retry
     }
   }
-
-  private async refundPaymentAndLogError(
-    paymentFlowId: string,
-    errorMessage: string,
-  ): Promise<void> {
-    // Refund the payment by deleting the FJS charge
-    await this.paymentFlowService.deleteFjsCharge(paymentFlowId)
-
-    await this.paymentFlowService.logPaymentFlowUpdate({
-      paymentFlowId,
-      type: 'error',
-      occurredAt: new Date(),
-      paymentMethod: PaymentMethod.INVOICE,
-      reason: 'other',
-      message: `Failed to create invoice payment confirmation`,
-      metadata: {
-        error: errorMessage,
-      },
-    })
-  }
 }

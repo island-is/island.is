@@ -3,14 +3,16 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildSection,
-  buildSelectField,
+  buildAsyncSelectField,
   buildSubmitField,
   buildTextField,
   getValueViaPath,
+  coreErrorMessages,
 } from '@island.is/application/core'
 import { information } from '../../lib/messages'
 import kennitala from 'kennitala'
 import { DefaultEvents } from '@island.is/application/types'
+import { GET_DRIVING_LICENSE_TEACHERS } from '../../graphql/teachersQuery'
 
 export const informationSection = buildSection({
   id: 'informationSection',
@@ -50,25 +52,31 @@ export const informationSection = buildSection({
           titleVariant: 'h5',
           space: 3,
         }),
-        buildSelectField({
+        buildAsyncSelectField({
           id: 'newInstructor.nationalId',
           title: information.labels.newInstructor.selectSubLabel,
-          disabled: false,
+          loadingError: coreErrorMessages.failedDataProvider,
+          isSearchable: true,
           required: true,
-          options: (application) => {
-            const teachers = getValueViaPath(
-              application.externalData,
-              'teachers.data',
-              [],
-            ) as TeacherV4[]
-
+          // Fetch the instructor list live so a newly-registered instructor
+          // shows up (and de-licensed ones drop off) without the user having
+          // to start a new application. The list used to be read from the
+          // snapshot frozen into external data when the application was created.
+          loadOptions: async ({ application, apolloClient }) => {
             const currentInstructorNationalId = getValueViaPath(
               application.externalData,
               'currentInstructor.data.nationalId',
               undefined,
             ) as string | undefined | null
 
-            return teachers
+            const { data } = await apolloClient.query<{
+              drivingLicenseTeachersV4: TeacherV4[]
+            }>({
+              query: GET_DRIVING_LICENSE_TEACHERS,
+              fetchPolicy: 'network-only',
+            })
+
+            return (data?.drivingLicenseTeachersV4 ?? [])
               .filter(
                 ({ nationalId }) => nationalId !== currentInstructorNationalId,
               )

@@ -1,5 +1,4 @@
 import { CaseType } from '@island.is/judicial-system/types'
-import { CaseTableType } from '@island.is/judicial-system/types'
 
 export const EXPIRES_IN_SECONDS = 4 * 60 * 60
 export const EXPIRES_IN_MILLISECONDS = EXPIRES_IN_SECONDS * 1000
@@ -12,7 +11,7 @@ export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 export const CODE_VERIFIER_COOKIE_NAME = 'judicial-system.code_verifier'
 export const IDS_ID_TOKEN_NAME = 'judicial-system.ids.id_token'
 export const IDS_ACCESS_TOKEN_NAME = 'judicial-system.ids.access_token'
-export const IDS_REFRESH_TOKEN_NAME = 'judicial-system.ids.refresh_token'
+export const IDS_SESSION_COOKIE_NAME = 'judicial-system.ids.session'
 
 export const InvestigationCaseTypes = [
   {
@@ -102,7 +101,6 @@ export const InvestigationCaseTypes = [
 export const TIME_FORMAT = 'HH:mm'
 
 //#region Defence user routes
-export const DEFENDER_CASES_ROUTE = '/verjandi/krofur'
 
 export const DEFENDER_REQUEST_CASE_ROUTE = '/verjandi/krafa'
 
@@ -248,7 +246,7 @@ export const ADMIN_MESSAGE_SUSPENSION_ROUTE = '/notendur/bidrod'
 
 //#region Case list routes
 export const CASE_TABLE_GROUPS_ROUTE = '/malalistar'
-export const PROSECUTION_INDICTMENTS_TO_REVIEW = `/malalistar/${CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW}`
+export const PROSECUTION_INDICTMENTS_TO_REVIEW = `${CASE_TABLE_GROUPS_ROUTE}/sakamal-til-yfirlestrar`
 //#endregion Case list routes
 
 //#region Shared routes
@@ -307,10 +305,22 @@ export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
 
 // Masks
-export const POLICE_CASE_NUMBER = '___-____-_______'
+export const POLICE_CASE_NUMBER = '___-____-______'
 export const SSN = '______-____'
 export const PHONE_NUMBER = '___-____'
 export const EDITABLE_DATE = '__.__.____'
 export const DATE_PICKER_TIME = '  :  '
 export const SUBSTANCE_ALCOHOL = '_,__'
 export const SPEED = '___'
+
+// Police case numbers
+/**
+ * A police case number is three digits (the police district prefix), four
+ * digits (the year), and finally up to six digits identifying the case within
+ * the year, e.g. 007-2024-042535. The last part is not zero padded in older
+ * numbers, so anything from one to six digits is accepted.
+ */
+export const POLICE_CASE_NUMBER_REGEX = /^[0-9]{3}-[0-9]{4}-[0-9]{1,6}$/
+
+export const isValidPoliceCaseNumber = (policeCaseNumber?: string | null) =>
+  Boolean(policeCaseNumber && POLICE_CASE_NUMBER_REGEX.test(policeCaseNumber))

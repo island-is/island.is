@@ -13,6 +13,8 @@ import {
   formatTextWithLocale,
   getErrorReasonIfPresent,
   mergeAnswers,
+  resolveFieldId,
+  resolveFormItemId,
 } from '@island.is/application/core'
 import {
   Application,
@@ -112,6 +114,8 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   canGoBack,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
+  const user = useUserInfo()
+  const resolvedScreenId = resolveFormItemId(screen, application, user)
   const { lang: locale, formatMessage } = useLocale()
   const hookFormData = useForm<FormValue, ResolverContext>({
     mode: 'onBlur',
@@ -120,7 +124,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     shouldUnregister: false,
     resolver: (formValue, context) =>
       resolver({ formValue, context, formatMessage }),
-    context: { dataSchema, formNode: screen, application },
+    context: { dataSchema, formNode: screen, application, user },
   })
   const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(
     null,
@@ -185,8 +189,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     formState: { errors: formErrors },
     reset,
   } = hookFormData
-
-  const user = useUserInfo()
 
   const submitField = useMemo(() => {
     const foundSubmitField = findSubmitField(screen)
@@ -277,7 +279,15 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
       if (submitField.placement === 'screen') {
-        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
+        const submitAnswerKey = resolveFieldId(
+          submitField,
+          {
+            ...application,
+            answers: finalAnswers,
+          },
+          user,
+        )
+        event = (finalAnswers[submitAnswerKey] as string) ?? 'SUBMIT'
       } else {
         if (submitField.actions.length === 1) {
           const actionEvent = submitField.actions[0].event
@@ -298,8 +308,8 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       if (!canContinue) {
         setIsSubmitting(false)
 
-        if (typeof possibleError === 'string' && screen && screen.id) {
-          setBeforeSubmitError({ [screen.id]: possibleError })
+        if (typeof possibleError === 'string' && resolvedScreenId) {
+          setBeforeSubmitError({ [resolvedScreenId]: possibleError })
         }
         return
       }
@@ -331,9 +341,12 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         }
       }
     } else {
+      const mergedForExtract = mergeAnswers(formValue, data)
       const extractedAnswers = extractAnswersToSubmitFromScreen(
-        mergeAnswers(formValue, data),
+        mergedForExtract,
         screen,
+        { ...application, answers: mergedForExtract },
+        user,
       )
 
       response = await updateApplication({
@@ -384,7 +397,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   }, [activeScreenIndex, isMobile])
 
   const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
-    if (!screen.id) {
+    if (!resolvedScreenId) {
       return {}
     }
 
@@ -392,7 +405,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       variables: {
         input: {
           id: applicationId,
-          answers: { [screen.id]: newRepeaterItems },
+          answers: { [resolvedScreenId]: newRepeaterItems },
         },
         locale,
       },
@@ -405,7 +418,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           {},
           {
             ...formValue,
-            [screen.id]: newRepeaterItems as FormValue[],
+            [resolvedScreenId]: newRepeaterItems as FormValue[],
           },
         ),
       )
@@ -430,7 +443,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         display="flex"
         flexDirection="column"
         justifyContent="spaceBetween"
-        key={screen.id}
+        key={resolvedScreenId || screen.type}
         height="full"
         onSubmit={handleSubmit(onSubmit)}
       >
@@ -442,7 +455,9 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
             variant="h2"
             as="h2"
             marginBottom={1}
-            {...(shouldCreateTopLevelRegion ? { id: screen.id } : {})}
+            {...(shouldCreateTopLevelRegion && resolvedScreenId
+              ? { id: resolvedScreenId }
+              : {})}
           >
             {formatTextWithLocale(
               screen.title ?? '',
@@ -473,6 +488,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 goToScreen={goToScreen}
                 refetch={refetch}
                 setSubmitButtonDisabled={setSubmitButtonDisabled}
+                user={user}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -484,9 +500,13 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 externalDataProvider={screen}
                 formValue={formValue}
                 errors={dataSchemaOrApiErrors}
+                user={user}
               />
             ) : (
-              <Box component="section" aria-labelledby={screen.id}>
+              <Box
+                component="section"
+                aria-labelledby={resolvedScreenId || undefined}
+              >
                 <FormField
                   autoFocus
                   setBeforeSubmitCallback={setBeforeSubmitCallback}
@@ -498,6 +518,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                   refetch={refetch}
                   setSubmitButtonDisabled={setSubmitButtonDisabled}
                   answerQuestions={answerQuestions}
+                  user={user}
                 />
               </Box>
             )}
