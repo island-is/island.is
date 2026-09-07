@@ -10525,7 +10525,7 @@ __metadata:
     react-native-quick-actions: "npm:0.3.13"
     react-native-reanimated: "npm:~4.2.2"
     react-native-safe-area-context: "npm:~5.6.2"
-    react-native-screens: "npm:~4.24.0"
+    react-native-screens: "patch:react-native-screens@npm%3A4.24.0#~/.yarn/patches/react-native-screens-npm-4.24.0-c572d01561.patch"
     react-native-svg: "npm:15.15.3"
     react-native-vision-camera: "npm:4.7.3"
     react-native-web: "npm:~0.21.0"
@@ -47148,7 +47148,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-screens@npm:~4.24.0":
+"react-native-screens@npm:4.24.0":
   version: 4.24.0
   resolution: "react-native-screens@npm:4.24.0"
   dependencies:
@@ -47158,6 +47158,19 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/1ac705f7c0c37f62f0c29c5bf477b4a2360c37dec6b689e7fa9a768cc8a08d828ac7260d168a60638d207e0be21ae22bb3f170d55f0ae97837c2053ba8e38aff
+  languageName: node
+  linkType: hard
+
+"react-native-screens@patch:react-native-screens@npm%3A4.24.0#~/.yarn/patches/react-native-screens-npm-4.24.0-c572d01561.patch":
+  version: 4.24.0
+  resolution: "react-native-screens@patch:react-native-screens@npm%3A4.24.0#~/.yarn/patches/react-native-screens-npm-4.24.0-c572d01561.patch::version=4.24.0&hash=0777a6"
+  dependencies:
+    react-freeze: "npm:^1.0.0"
+    warn-once: "npm:^0.1.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/6f274799a4a813686c3292dfacb1a5c02e620ba11593ad974355c52f26cd3505e9a3ac736cdf56605e59fcd724ae9d80318ed6897a10c1b0d73de3955d1c32f4
   languageName: node
   linkType: hard
 
