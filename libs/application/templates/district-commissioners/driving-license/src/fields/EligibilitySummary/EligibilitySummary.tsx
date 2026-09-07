@@ -21,7 +21,7 @@ export const EligibilitySummary: FC<
   const { lang, formatMessage } = useLocale()
 
   // The redesign flags are written by hidden inputs on this same screen
-  // (sectionRequirements.ts), so `application.answers` is still stale on
+  // (subSectionRequirements.ts), so `application.answers` is still stale on
   // first render. Read live form state first, fall back to answers for
   // returning visits after the value has been persisted.
   const is65RenewalRedesignEnabled =

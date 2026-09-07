@@ -2,14 +2,11 @@ import {
   buildCustomField,
   buildHiddenInput,
   buildMultiField,
-  buildSubmitField,
   buildSubSection,
-  getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
-export const sectionRequirements = (
+export const subSectionRequirements = (
   allow65RenewalRedesign = false,
   allowBTempRedesign = false,
   allowBFullRedesign = false,
@@ -40,20 +37,12 @@ export const sectionRequirements = (
             component: 'EligibilitySummary',
             id: 'eligsummary',
           }),
-          buildSubmitField({
-            id: 'submit',
-            placement: 'footer',
-            title: m.orderDrivingLicense,
-            refetchApplicationAfterSubmit: true,
-            condition: (answers) =>
-              getValueViaPath(answers, 'requirementsMet') === true,
-            actions: [
-              {
-                event: DefaultEvents.SUBMIT,
-                name: m.continue,
-                type: 'primary',
-              },
-            ],
+          // Gates the "keep going" (continue) button: EligibilitySummary sets
+          // `requirementsMet`, and registering it on this screen makes the
+          // resolver enforce dataSchema's `requirementsMet.refine((v) => v)`,
+          // so the applicant can only continue once eligibility passes.
+          buildHiddenInput({
+            id: 'requirementsMet',
           }),
         ],
       }),

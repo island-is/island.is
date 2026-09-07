@@ -4,25 +4,13 @@ import { DistrictCommissionersLogo } from '@island.is/application/assets/institu
 import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
-import { sectionApplicationFor } from './sectionApplicationFor'
-import { sectionRequirements } from './sectionRequirements'
 
 interface DrivingLicenseFormConfig {
   allowFakeData?: boolean
-  allowPickLicense?: boolean
-  allow65Renewal?: boolean
-  allow65RenewalRedesign?: boolean
-  allowBTempRedesign?: boolean
-  allowBFullRedesign?: boolean
 }
 
 export const getForm = ({
   allowFakeData = false,
-  allowPickLicense = false,
-  allow65Renewal = false,
-  allow65RenewalRedesign = false,
-  allowBTempRedesign = false,
-  allowBFullRedesign = false,
 }: DrivingLicenseFormConfig): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
@@ -37,30 +25,7 @@ export const getForm = ({
         children: [
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
-          ...(allowPickLicense
-            ? [sectionApplicationFor(allow65Renewal)]
-            : []),
-          sectionRequirements(
-            allow65RenewalRedesign,
-            allowBTempRedesign,
-            allowBFullRedesign,
-          ),
         ],
-      }),
-      buildSection({
-        id: 'info',
-        title: m.informationTitle,
-        children: [],
-      }),
-      buildSection({
-        id: 'payment',
-        title: m.overviewPaymentCharge,
-        children: [],
-      }),
-      buildSection({
-        id: 'confirm',
-        title: m.applicationDone,
-        children: [],
       }),
     ],
   })

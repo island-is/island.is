@@ -13,7 +13,7 @@ import {
   DrivingLicenseFakeData,
 } from '../../utils/constants'
 
-export const sectionApplicationFor = (allow65Renewal = false) =>
+export const subSectionApplicationFor = (allow65Renewal = false) =>
   buildSubSection({
     id: 'applicationFor',
     title: m.applicationDrivingLicenseTitle,

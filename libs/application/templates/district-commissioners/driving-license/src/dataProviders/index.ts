@@ -1,4 +1,5 @@
 import {
+  ApplicationTypes,
   defineTemplateApi,
   InstitutionNationalIds,
   MockablePaymentCatalogApi,
@@ -30,5 +31,6 @@ export const MockableSyslumadurPaymentCatalogApi =
   })
 
 export const GlassesCheckApi = defineTemplateApi({
+  namespace: ApplicationTypes.DRIVING_LICENSE,
   action: 'glassesCheck',
 })

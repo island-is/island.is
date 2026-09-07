@@ -31,7 +31,7 @@ import {
   isApplicationForCondition,
   needsHealthCertificateCondition,
 } from '../../utils'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { Pickup } from '../../types'
 
 const isRedesigned65 = (answers: FormValue) =>
