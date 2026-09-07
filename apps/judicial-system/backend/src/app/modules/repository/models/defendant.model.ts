@@ -268,6 +268,10 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Boolean })
   publicProsecutorIsRegisteredInPoliceSystem?: boolean
 
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isClosedWithoutEnforcement?: boolean
+
   // Not persisted — computed on fetch and attached by the case controller
   connectedCases?: Case[]
 }

@@ -23,7 +23,6 @@ import { ControlContext, IControlContext } from '../../context/ControlContext'
 import {
   lifetimeSettingsStep,
   urlSettingsStep,
-  delegationSettingsStep,
   deadlineSettingsStep,
 } from '../../lib/utils/customSections'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
@@ -263,16 +262,6 @@ export const Navbar = () => {
           },
         },
       })
-    } else if (id === delegationSettingsStep.id) {
-      controlDispatch({
-        type: 'SET_ACTIVE_ITEM',
-        payload: {
-          activeItem: {
-            type: 'Section',
-            data: delegationSettingsStep,
-          },
-        },
-      })
     } else if (id === deadlineSettingsStep.id) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -443,15 +432,6 @@ export const Navbar = () => {
           type="Section"
           data={lifetimeSettingsStep}
           active={activeItem.data?.id === lifetimeSettingsStep.id}
-          focusComponent={focusComponent}
-        />
-      </div>
-
-      <div>
-        <NavComponent
-          type="Section"
-          data={delegationSettingsStep}
-          active={activeItem.data?.id === delegationSettingsStep.id}
           focusComponent={focusComponent}
         />
       </div>

@@ -5,42 +5,108 @@ import {
   ActionCard,
   AlertMessage,
   Box,
+  Bullet,
+  BulletList,
   Button,
+  InputFileUpload,
   LoadingDots,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
 import { FC, useEffect, useRef, useState } from 'react'
+import { FileRejection } from 'react-dropzone'
 import {
   ApiActions,
   createDefaultJobFactors,
   draftActionId,
+  ScreenIds,
   SyncMethodEnum,
 } from '../../utils/constants'
 import type { ReportCriterionDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
+import { useProgressMarker } from '../../utils/useProgressMarker'
 import { messages } from '../../lib/messages'
+import { getProviderErrorMessages } from '../../utils/providerError'
 
-// The next screen in the flow — both upload and manual entry advance here.
-const NEXT_SCREEN_ID = 'criteriaMultiField'
+// The criteria the import just wrote, or undefined if that read leg failed —
+// which is not the same as an empty list, and is why the two cases are kept
+// apart (see step 5 in handleFileSelected).
+const readImportedCriteria = (
+  externalData: Record<string, unknown> | undefined,
+) => {
+  const read = externalData?.draftCriteria as
+    | {
+        status?: 'success' | 'failure'
+        data?: { criteria?: ReportCriterionDto[] }
+      }
+    | undefined
+  return read?.status === 'success' ? read.data?.criteria ?? [] : undefined
+}
+
+// Manual entry (and the footer's default submit, prior to any successful
+// import) both advance here — a successful Excel import instead jumps
+// straight to ANALYSIS_SCREEN_ID, see importSucceededRef below.
+const MANUAL_ENTRY_NEXT_SCREEN_ID = ScreenIds.criteria
+const ANALYSIS_SCREEN_ID = ScreenIds.analysisOverview
 
 export const ExcelTemplateDownload: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application, goToScreen, setBeforeSubmitCallback, answerQuestions }) => {
+> = ({
+  application,
+  goToScreen,
+  setBeforeSubmitCallback,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
+  answerQuestions,
+}) => {
   const { formatMessage, lang: locale } = useLocale()
+  const m = messages.report.dataEntry
   const [isImporting, setIsImporting] = useState(false)
+  // The API rejects a bad workbook either with one specific reason ("Sniðmátið
+  // er af eldri útgáfu … Sæktu nýjasta sniðmátið") or with one entry per
+  // invalid row, so the generic importError alone would leave the likeliest
+  // failure unexplained.
+  const [importErrorMessages, setImportErrorMessages] = useState<
+    string[] | undefined
+  >()
   const [importStatus, setImportStatus] = useState<'success' | 'error' | null>(
     null,
   )
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  // The file currently sitting in the dropzone. Cleared on failure so the
+  // "choose files" affordance reappears immediately for a retry — InputFileUpload
+  // hides it while files.length !== 0 (multiple: false).
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  // Client-side rejection (wrong file type, dropped via drag-and-drop) — a
+  // distinct surface from importErrorMessages (server round-trip failures).
+  // Each path resets the other's state so a stale message from one can't sit
+  // alongside a fresh one from the other.
+  const [uploadRejectionMessage, setUploadRejectionMessage] = useState<
+    string | undefined
+  >()
+  // Set once an Excel import succeeds; read by the setBeforeSubmitCallback
+  // below so the footer's default "Halda áfram" button also shortcuts to the
+  // analysis screen instead of advancing to criteriaMultiField.
+  const importSucceededRef = useRef(false)
+
+  // Every failure path goes through this so none can leave a stale reason from
+  // an earlier workbook import on screen — a manual-entry failure must not show
+  // "Sniðmátið er af eldri útgáfu".
+  const failImport = (messages?: string[]) => {
+    setImportErrorMessages(messages)
+    setImportStatus('error')
+    setSelectedFile(null)
+  }
 
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
-  // Ensures the draft exists (idempotent); shares the 'draftCriteria' key
-  // with CriteriaEditor so that screen reuses this fetch.
+  // ensureDraft prepends the create-draft provider, so the draft exists before
+  // anything reads it (idempotent). Same 'draftCriteria' key as CriteriaEditor,
+  // which keeps the persisted snapshot in one place — that screen still reads
+  // the draft itself on mount rather than reusing this fetch.
   const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
   }>(
@@ -52,6 +118,7 @@ export const ExcelTemplateDownload: FC<
     },
   )
   const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
 
   const base64Template = getValueViaPath<string>(
     application.externalData,
@@ -78,15 +145,11 @@ export const ExcelTemplateDownload: FC<
   // Cap the presigned upload so a stalled request can't leave isImporting stuck.
   const UPLOAD_TIMEOUT_MS = 60_000
 
-  const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    // Reset so the same file can be re-selected if needed
-    e.target.value = ''
-
+  const handleFileSelected = async (file: File) => {
     setIsImporting(true)
     setImportStatus(null)
+    setImportErrorMessages(undefined)
+    setUploadRejectionMessage(undefined)
     try {
       // 1. Ask the server (authenticated against DMR) for a presigned upload
       //    URL. The resulting { url, key } lands in externalData.importPresign.
@@ -111,7 +174,7 @@ export const ExcelTemplateDownload: FC<
         | undefined
 
       if (!presign?.url) {
-        setImportStatus('error')
+        failImport()
         return
       }
 
@@ -136,12 +199,20 @@ export const ExcelTemplateDownload: FC<
       }
 
       if (!uploadResponse.ok) {
-        setImportStatus('error')
+        failImport()
         return
       }
 
       // 3. Trigger the import — REPLACE semantics: DMR bulk-seeds the draft's
-      //    scoring content from the workbook.
+      //    scoring content from the workbook — and read the criteria back in
+      //    the same call, at order 1 so it sees what the import just wrote.
+      //
+      //    The read is needed because the import's own response cannot answer
+      //    the PERSONAL question: it returns a DraftDetailDto, which carries
+      //    `counts` and `importedFromExcel` but no criteria array (the
+      //    `{ criteria: [...] }` shape belongs to ParsedReportDto, from an
+      //    endpoint this template never calls) — so reading it off there
+      //    silently yielded `false` for every workbook.
       const result = await updateApplicationExternalData({
         variables: {
           input: {
@@ -151,41 +222,133 @@ export const ExcelTemplateDownload: FC<
                 actionId: draftActionId(ApiActions.importSalaryDraftWorkbook),
                 order: 0,
               },
+              {
+                actionId: draftActionId(ApiActions.listDraftCriteria),
+                order: 1,
+              },
             ],
           },
           locale,
         },
       })
 
-      const importData = result.data?.updateApplicationExternalData.externalData
-        ?.importSalaryDraftWorkbook as
+      const resultExternalData =
+        result.data?.updateApplicationExternalData.externalData
+
+      const importData = resultExternalData?.importSalaryDraftWorkbook as
         | {
             status?: 'success' | 'failure'
-            data?: { criteria?: { type?: string }[] }
+            reason?: string | string[] | { title?: string; summary?: string }
           }
         | undefined
 
       if (importData?.status !== 'success') {
-        setImportStatus('error')
+        failImport(getProviderErrorMessages(importData?.reason))
         return
       }
 
+      let importedCriteria = readImportedCriteria(resultExternalData)
+
       // 4. Re-fetch so downstream screens read from DMR, not this response —
-      //    except the PERSONAL-criteria signal below, which must stay
-      //    answers-backed (see `hasPersonalCriteria` in dataSchema.ts).
+      //    except the answers-backed navigation signals below (see
+      //    `hasPersonalCriteria` and `progress` in dataSchema.ts). It also
+      //    refreshes `content`, which is what keeps the footer's default
+      //    submit from seeding default job factors on top of the import.
       await refetch({ silent: true })
-      answerQuestions?.({
-        hasPersonalCriteria:
-          importData.data?.criteria?.some((c) => c.type === 'PERSONAL') ??
-          false,
-      })
+
+      // 5. `hasPersonalCriteria` is what makes the employee-classification
+      //    screen exist at all (see employeeClassificationSubSection.ts), so an
+      //    unread criteria list must not be persisted as `false` — that would
+      //    silently drop a required step for a workbook that does define
+      //    PERSONAL factors. The read leg can fail on its own while the import
+      //    leg succeeded, so retry it once before giving up on it.
+      if (!importedCriteria) {
+        const retry = await updateApplicationExternalData({
+          variables: {
+            input: {
+              id: application.id,
+              dataProviders: [
+                {
+                  actionId: draftActionId(ApiActions.listDraftCriteria),
+                  order: 0,
+                },
+              ],
+            },
+            locale,
+          },
+        })
+        importedCriteria = readImportedCriteria(
+          retry.data?.updateApplicationExternalData.externalData,
+        )
+      }
+
+      if (!importedCriteria) {
+        // Still unknown. The workbook's own content is already on the draft and
+        // the import is REPLACE, so re-importing is safe — better than jumping
+        // the applicant to the analysis on a navigation state we can't trust.
+        failImport()
+        return
+      }
+
+      // The workbook populates every report step in one go (REPLACE semantics
+      // on the whole scoring graph: criteria, sub-criteria, steps, roles,
+      // employees and both sets of step assignments), and the applicant is
+      // about to be jumped past all of them to the analysis. Without these
+      // markers a returning applicant is sent back here to re-upload a workbook
+      // whose data is already on the draft — the whole point of this exercise.
+      await markProgress(
+        {
+          dataEntry: true,
+          criteria: true,
+          subCriteria: true,
+          employees: true,
+          jobClassification: true,
+          employeeClassification: true,
+        },
+        {
+          hasPersonalCriteria: importedCriteria.some(
+            (c) => c.type === 'PERSONAL',
+          ),
+        },
+      )
+      importSucceededRef.current = true
       setImportStatus('success')
-      goToScreen?.(NEXT_SCREEN_ID)
     } catch {
-      setImportStatus('error')
+      failImport()
     } finally {
       setIsImporting(false)
     }
+  }
+
+  // Reading the workbook is a multi-leg server round-trip (presign, upload,
+  // import, read back), and the footer's own "Halda áfram" would meanwhile
+  // seed default job factors and advance past an import that is still running
+  // — see setBeforeSubmitCallback below. Same pair FileUploadController uses:
+  // the loading state puts the button in its spinner, disabled throughout.
+  useEffect(() => {
+    setFieldLoadingState?.(isImporting)
+    setSubmitButtonDisabled?.(isImporting)
+  }, [isImporting, setFieldLoadingState, setSubmitButtonDisabled])
+
+  const handleFilesChanged = (newFiles: File[]) => {
+    const file = newFiles[0]
+    if (!file) return
+    setSelectedFile(file)
+    setUploadRejectionMessage(undefined)
+    void handleFileSelected(file)
+  }
+
+  const handleUploadRejection = (rejections: FileRejection[]) => {
+    // Clear the other error surface — a stale server-round-trip failure must
+    // not linger under a fresh client-side rejection message, or vice versa.
+    setImportStatus(null)
+    setImportErrorMessages(undefined)
+    setSelectedFile(null)
+    setUploadRejectionMessage(
+      rejections[0]?.errors[0]?.code === 'file-invalid-type'
+        ? formatMessage(m.invalidFileType)
+        : formatMessage(m.importError),
+    )
   }
 
   // Shared by manual entry and the footer button: seed the draft's default
@@ -230,22 +393,34 @@ export const ExcelTemplateDownload: FC<
     // Bail on hasError rather than risk seeding duplicate job factors on top
     // of criteria that may already exist server-side.
     if (hasError) {
-      setImportStatus('error')
+      failImport()
       return
     }
     try {
       await seedDefaultJobFactorsIfEmpty()
     } catch {
-      setImportStatus('error')
+      failImport()
       return
     }
-    goToScreen?.(NEXT_SCREEN_ID)
+    // Choosing manual entry settles this screen, so a later visit resumes on
+    // the criteria screen rather than offering the workbook again.
+    await markProgress({ dataEntry: true })
+    goToScreen?.(MANUAL_ENTRY_NEXT_SCREEN_ID)
   }
 
-  // Footer "Halda áfram" mirrors manual entry.
+  // Footer "Halda áfram" mirrors manual entry — except once an Excel import
+  // has succeeded, in which case it shortcuts to the analysis screen instead,
+  // matching the in-panel continue button (see handleContinueToAnalysis).
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
+      if (importSucceededRef.current) {
+        goToScreen?.(ANALYSIS_SCREEN_ID)
+        // BeforeSubmitCallback's type requires a string alongside `false` —
+        // Screen.tsx only surfaces it as a visible error when truthy, so an
+        // empty string cancels the default submit without showing anything.
+        return [false, '']
+      }
       if (hasError) {
         return [false, formatMessage(messages.errors.draftLoadFailed)]
       }
@@ -254,12 +429,14 @@ export const ExcelTemplateDownload: FC<
       } catch {
         return [false, formatMessage(messages.errors.draftSyncFailed)]
       }
+      // Same as manual entry — this screen is settled either way. Written with
+      // the mutation rather than left to the screen's own submit, which only
+      // persists answers under this field's own id (see useProgressMarker).
+      await markProgress({ dataEntry: true })
       return [true, null]
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setBeforeSubmitCallback, content, hasError])
-
-  const m = messages.report.dataEntry
+  }, [setBeforeSubmitCallback, content, hasError, markProgress])
 
   if (loading) {
     return (
@@ -271,14 +448,6 @@ export const ExcelTemplateDownload: FC<
 
   return (
     <Box>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".xlsx"
-        style={{ display: 'none' }}
-        onChange={handleFileSelected}
-      />
-
       {base64Template && (
         <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
           <Button
@@ -298,35 +467,62 @@ export const ExcelTemplateDownload: FC<
         </Box>
       ) : (
         <Stack space={2}>
-          <ActionCard
-            backgroundColor="white"
-            heading={formatMessage(m.uploadCardTitle)}
-            text={formatMessage(m.uploadCardIntro)}
-            cta={{
-              label: formatMessage(m.uploadButtonLabel),
-              variant: 'primary',
-              icon: 'attach',
-              onClick: () => fileInputRef.current?.click(),
-            }}
+          {importStatus === 'error' && (
+            <AlertMessage
+              type="error"
+              title={formatMessage(m.importErrorTitle)}
+              message={
+                importErrorMessages && importErrorMessages.length > 1 ? (
+                  <BulletList>
+                    {importErrorMessages.map((message, index) => (
+                      <Bullet key={index}>{message}</Bullet>
+                    ))}
+                  </BulletList>
+                ) : (
+                  importErrorMessages?.[0] ?? formatMessage(m.importError)
+                )
+              }
+            />
+          )}
+          <InputFileUpload
+            name="excelWorkbookUpload"
+            files={selectedFile ? [selectedFile] : []}
+            title={formatMessage(m.uploadCardTitle)}
+            description={formatMessage(m.uploadCardIntro)}
+            buttonLabel={formatMessage(m.uploadButtonLabel)}
+            accept=".xlsx"
+            multiple={false}
+            onChange={handleFilesChanged}
+            onRemove={() => setSelectedFile(null)}
+            onUploadRejection={handleUploadRejection}
+            errorMessage={uploadRejectionMessage}
           />
-          <ActionCard
-            backgroundColor="white"
-            heading={formatMessage(m.manualEntryCardTitle)}
-            text={formatMessage(m.manualEntryCardIntro)}
-            cta={{
-              label: formatMessage(m.manualEntryButtonLabel),
-              variant: 'primary',
-              icon: 'arrowForward',
-              onClick: () => void handleManualEntry(),
-            }}
-          />
+          {importStatus === 'success' && (
+            <AlertMessage
+              type="success"
+              message={formatMessage(m.importSuccess)}
+            />
+          )}
+          {importStatus !== 'success' && (
+            <ActionCard
+              backgroundColor="white"
+              heading={formatMessage(m.manualEntryCardTitle)}
+              headingVariant="h4"
+              text={formatMessage(m.manualEntryCardIntro)}
+              cta={{
+                label: formatMessage(m.manualEntryButtonLabel),
+                variant: 'ghost',
+                icon: 'arrowForward',
+                onClick: () => void handleManualEntry(),
+              }}
+            />
+          )}
+          <Text variant="small" color="dark400">
+            {formatMessage(
+              messages.report.dataEntry.excelTemplateDownloadDescription,
+            )}
+          </Text>
         </Stack>
-      )}
-
-      {importStatus === 'error' && (
-        <Box marginTop={3}>
-          <AlertMessage type="error" message={formatMessage(m.importError)} />
-        </Box>
       )}
     </Box>
   )

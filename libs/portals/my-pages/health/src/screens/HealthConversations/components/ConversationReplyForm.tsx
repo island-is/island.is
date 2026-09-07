@@ -45,7 +45,11 @@ export const ConversationReplyForm = forwardRef<HTMLDivElement, Props>(
               paddingTop={3}
               marginBottom={3}
             >
-              <ConversationAvatar variant="user" name={senderName ?? ''} />
+              <ConversationAvatar
+                variant="user"
+                name={senderName ?? ''}
+                large
+              />
               <Box
                 display="flex"
                 flexDirection="column"

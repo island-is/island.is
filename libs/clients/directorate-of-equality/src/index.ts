@@ -39,6 +39,8 @@ export type {
   ReportEmployeeRoleDto,
   ReportSubCriterionDto,
   ReportSubCriterionStepDto,
+  RegressionLineDto,
+  ScatterDataPointDto,
   ScoreBucketDto,
   SalaryAnalysisOutlierDto,
   SalaryAnalysisRequestDto,
@@ -52,6 +54,11 @@ export type {
   SubmitSalaryReportDto,
   SyncDraftDto,
   UpdateDraftDto,
+  WageGapCountsDto,
+  WageGapDecompositionDto,
+  WageGapEmployeeDto,
+  WageGapPooledFitDto,
+  WageGapTwofoldDto,
 } from '../gen/fetch'
 export {
   CompanySizeEnum,

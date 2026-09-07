@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/router'

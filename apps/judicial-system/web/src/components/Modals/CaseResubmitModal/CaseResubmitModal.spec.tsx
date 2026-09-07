@@ -1,7 +1,5 @@
-import {
-  Case,
-  RequestSharedWithDefender,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
 import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
 import { getCaseResubmittedText } from './CaseResubmitModal'

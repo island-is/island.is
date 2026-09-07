@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
@@ -9,13 +9,19 @@ import {
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
-import { Case, User } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileList,
+  InfoBox,
+} from '@island.is/judicial-system-web/src/components'
+import type {
+  Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { CaseFileList, InfoBox } from '../..'
 import { UploadStateMessage } from './UploadStateMessage'
 
 interface Props {

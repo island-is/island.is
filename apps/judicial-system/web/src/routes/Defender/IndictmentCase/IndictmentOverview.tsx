@@ -1,10 +1,13 @@
-import { FC, Fragment, useCallback, useContext } from 'react'
+import type { FC } from 'react'
+import { Fragment, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
-import { DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE,
+  getStandardUserDashboardRoute,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -18,6 +21,7 @@ import {
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
+  DefenderVerdictTimelineCard,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -33,14 +37,16 @@ import {
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
+import type {
+  Defendant,
+  Subpoena,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
-  Defendant,
   IndictmentDecision,
   ServiceStatus,
-  Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -120,6 +126,13 @@ const IndictmentOverview: FC = () => {
     (isCaseDefendantDefender(user, workingCase) ||
       isCaseCivilClaimantSpokesperson(user, workingCase))
 
+  // Defence users get the same verdict service and appeal information the
+  // public prosecution office has, but only on a case that ended in a verdict -
+  // there is no verdict timeline to show for a fine or a dismissal.
+  const displayVerdictTimeline =
+    caseIsClosed &&
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
   const shouldDisplayAppealBanner =
     workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.DISMISSAL &&
@@ -182,6 +195,19 @@ const IndictmentOverview: FC = () => {
                 </Box>
               ),
           )}
+          {displayVerdictTimeline &&
+            workingCase.defendants?.map(
+              (defendant) =>
+                defendant.verdict && (
+                  <Box
+                    key={`${defendant.id}${defendant.verdict.id}-timeline`}
+                    marginBottom={2}
+                    dataTestId="defenderVerdictTimelineCard"
+                  >
+                    <DefenderVerdictTimelineCard defendant={defendant} />
+                  </Box>
+                ),
+            )}
           {workingCase.defendants?.map((defendant) => (
             <Fragment key={defendant.id}>
               {defendant.alternativeServiceDescription && (

@@ -95,7 +95,11 @@ describe('LimitedAccessCaseController - Get by id', () => {
 
   describe('case exists and has not been opened by defender before', () => {
     const theCase = { id: caseId } as Case
-    const user = { ...defaultUser, role: UserRole.DEFENDER } as User
+    const user = {
+      ...defaultUser,
+      role: UserRole.DEFENDER,
+      nationalId: '1234567890',
+    } as User
     let then: Then
 
     beforeEach(async () => {

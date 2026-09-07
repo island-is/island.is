@@ -1,4 +1,5 @@
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -14,9 +15,9 @@ import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'

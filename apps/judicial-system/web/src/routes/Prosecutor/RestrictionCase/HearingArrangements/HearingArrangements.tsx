@@ -29,7 +29,12 @@ import {
   CaseTransition,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  ProsecutorSectionHeightenedSecurity,
+  RequestCourtDate,
+  SelectCourt,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   useCase,
@@ -39,11 +44,6 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import {
-  ProsecutorSectionHeightenedSecurity,
-  RequestCourtDate,
-  SelectCourt,
-} from '../../components'
 import ArrestDate from './ArrestDate'
 
 export const HearingArrangements = () => {

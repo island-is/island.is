@@ -203,3 +203,11 @@ export enum CertificateTypeEnum {
 registerEnumType(CertificateTypeEnum, {
   name: 'HealthDirectorateCertificateType',
 })
+
+export enum AppointmentCancelBlockedReasonEnum {
+  DeadlinePassed = 'deadlinePassed',
+  NotAllowed = 'notAllowed',
+}
+registerEnumType(AppointmentCancelBlockedReasonEnum, {
+  name: 'HealthDirectorateAppointmentCancelBlockedReason',
+})

@@ -304,6 +304,42 @@ describe('display mappers', () => {
         QuestionnairesStatusEnum.notAnswered,
       )
     })
+
+    it('exposes the gUID as lastSubmissionId and a single submission when answered', () => {
+      const answerDateTime = new Date('2024-06-01T12:00:00.000Z')
+      const answered = {
+        ...baseLshItem,
+        answerDateTime,
+      } as unknown as LshQuestionnaireType
+
+      const overview = mapLshQuestionnaireOverview(answered, formatMessage)
+      expect(overview.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.answered,
+      )
+      expect(overview.baseInformation.lastSubmissionId).toBe('lsh-guid-h1')
+      expect(overview.baseInformation.lastSubmitted).toEqual(answerDateTime)
+      expect(overview.submissions).toEqual([
+        {
+          id: 'lsh-guid-h1',
+          isDraft: false,
+          lastUpdated: answerDateTime,
+        },
+      ])
+
+      const listItem = mapLshQuestionnaireListItem(answered, formatMessage)
+      expect(listItem.lastSubmissionId).toBe('lsh-guid-h1')
+      expect(listItem.lastSubmitted).toEqual(answerDateTime)
+    })
+
+    it('does not set lastSubmissionId or submissions when unanswered', () => {
+      const overview = mapLshQuestionnaireOverview(baseLshItem, formatMessage)
+      expect(overview.baseInformation.lastSubmissionId).toBeUndefined()
+      expect(overview.submissions).toBeUndefined()
+      expect(
+        mapLshQuestionnaireListItem(baseLshItem, formatMessage)
+          .lastSubmissionId,
+      ).toBeUndefined()
+    })
   })
 
   describe('EL questionnaire mapping', () => {

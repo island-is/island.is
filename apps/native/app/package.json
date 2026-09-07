@@ -38,6 +38,7 @@
     "expo-device": "~55.0.10",
     "expo-file-system": "~55.0.11",
     "expo-font": "~55.0.4",
+    "expo-glass-effect": "~55.0.8",
     "expo-haptics": "~55.0.9",
     "expo-linking": "~55.0.8",
     "expo-local-authentication": "~55.0.9",

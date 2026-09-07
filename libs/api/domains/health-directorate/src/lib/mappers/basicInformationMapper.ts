@@ -10,6 +10,7 @@ import {
 } from '../constants'
 import {
   AppointmentAssigneeTypeEnum,
+  AppointmentCancelBlockedReasonEnum,
   AppointmentLinkTypeEnum,
   AppointmentModalityEnum,
   AppointmentStatusEnum,
@@ -45,10 +46,22 @@ export const mapVaccinationStatus = (
 
 export const toAppointmentStatusEnum = (
   status: string,
-): AppointmentStatusEnum | undefined =>
-  Object.values(AppointmentStatusEnum).includes(status as AppointmentStatusEnum)
-    ? (status as AppointmentStatusEnum)
-    : undefined
+): AppointmentStatusEnum | undefined => {
+  switch (status) {
+    case UserVisibleAppointmentStatuses.BOOKED:
+      return AppointmentStatusEnum.BOOKED
+    case UserVisibleAppointmentStatuses.CANCELLED:
+      return AppointmentStatusEnum.CANCELLED
+    case UserVisibleAppointmentStatuses.FULFILLED:
+      return AppointmentStatusEnum.FULFILLED
+    case UserVisibleAppointmentStatuses.ARRIVED:
+      return AppointmentStatusEnum.ARRIVED
+    case UserVisibleAppointmentStatuses.CHECKED_IN:
+      return AppointmentStatusEnum.CHECKED_IN
+    default:
+      return undefined
+  }
+}
 
 export const toAppointmentModalityEnum = (
   modality?: string,
@@ -99,6 +112,21 @@ export const toAppointmentLinkTypeEnum = (
     default:
       return undefined
   }
+}
+
+export const toAppointmentCancelBlockedReason = (
+  canCancel: boolean,
+  canCancelBefore?: Date,
+): AppointmentCancelBlockedReasonEnum | undefined => {
+  if (canCancel) {
+    return undefined
+  }
+
+  if (canCancelBefore && canCancelBefore.getTime() < Date.now()) {
+    return AppointmentCancelBlockedReasonEnum.DeadlinePassed
+  }
+
+  return AppointmentCancelBlockedReasonEnum.NotAllowed
 }
 
 /*

@@ -1,6 +1,6 @@
 import { literal, Op, Transaction } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -336,6 +336,21 @@ export class DefendantService {
       )
     }
 
+    if (
+      update.isClosedWithoutEnforcement &&
+      !defendant.isClosedWithoutEnforcement
+    ) {
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
+          user,
+        },
+        transaction,
+      )
+    }
+
     this.addMessagesForIndictmentCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,
@@ -383,6 +398,28 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
+    // Closing without enforcement is only valid for indictment defendants and
+    // is irreversible through this endpoint - reopening a case resets the flag
+    // in the case reopen workflow.
+    if (update.isClosedWithoutEnforcement !== undefined) {
+      if (
+        !isIndictmentCase(theCase.type) ||
+        update.isClosedWithoutEnforcement !== true
+      ) {
+        throw new BadRequestException(
+          'Closed without enforcement can only be set for indictment case defendants',
+        )
+      }
+
+      // Enforcement is mutually exclusive with closing without enforcement -
+      // a defendant sent to prison admin must be withdrawn first.
+      if (defendant.isSentToPrisonAdmin || update.isSentToPrisonAdmin) {
+        throw new BadRequestException(
+          'Closed without enforcement cannot be set for a defendant sent to prison admin',
+        )
+      }
+    }
+
     if (
       update.defenderNationalId === null &&
       !(

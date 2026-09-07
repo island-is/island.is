@@ -9,14 +9,13 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import Statement from '@island.is/judicial-system-web/src/routes/Shared/AppealToCourtOfAppeals/Statement'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
-
-import Statement from '../AppealToCourtOfAppeals/Statement'
 
 jest.mock('next/router', () => ({
   useRouter() {

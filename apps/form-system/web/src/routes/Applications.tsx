@@ -14,11 +14,12 @@ import {
   Page,
   Text,
 } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ErrorShell } from '../components/ErrorShell/ErrorShell'
+import { useHeaderInfo } from '../context/HeaderInfoProvider'
 
 interface Params {
   slug?: string
@@ -28,6 +29,8 @@ export const Applications = () => {
   useNamespaces('form.system')
   const { slug } = useParams() as Params
   const navigate = useNavigate()
+  const { lang } = useLocale()
+  const { setInfo } = useHeaderInfo()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
   const [loginAllowed, setLoginAllowed] = useState(true)
   const [hasRequiredDelegation, setHasRequiredDelegation] = useState(true)
@@ -35,6 +38,8 @@ export const Applications = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [isValidSlug, setIsValidSlug] = useState(true)
   const [createDisabled, setCreateDisabled] = useState(false)
+  const [headerApplication, setHeaderApplication] =
+    useState<FormSystemApplication | null>()
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
   const currentSlug = useRef(slug)
   currentSlug.current = slug
@@ -142,15 +147,19 @@ export const Applications = () => {
     const run = async () => {
       setIsLoading(true)
       setCreateDisabled(false)
+      setHeaderApplication(null)
       const responseDto = await fetchApplications(requestSlug, isCurrentRequest)
       if (!isCurrentRequest()) return
 
       if (!responseDto) {
+        setHeaderApplication(null)
         setIsLoading(false)
         return
       }
 
       const apps: FormSystemApplication[] = responseDto.applications || []
+      setHeaderApplication(apps[0])
+
       if (apps.length > 0) {
         setApplications(
           apps.filter(
@@ -176,6 +185,34 @@ export const Applications = () => {
       cancelled = true
     }
   }, [slug, createApplication, fetchApplications])
+
+  useEffect(() => {
+    const resetInfo = {
+      applicationName: undefined,
+      organizationName: undefined,
+      isTest: false,
+    }
+    const nextInfo =
+      headerApplication === null
+        ? resetInfo
+        : {
+            applicationName: headerApplication?.formName?.[lang] ?? '',
+            organizationName: headerApplication?.organizationName?.[lang] ?? '',
+            isTest: headerApplication?.isTest ?? false,
+          }
+
+    setInfo(nextInfo)
+
+    return () => {
+      setInfo((currentInfo) =>
+        currentInfo.applicationName === nextInfo.applicationName &&
+        currentInfo.organizationName === nextInfo.organizationName &&
+        currentInfo.isTest === nextInfo.isTest
+          ? resetInfo
+          : currentInfo,
+      )
+    }
+  }, [headerApplication, lang, setInfo])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
 

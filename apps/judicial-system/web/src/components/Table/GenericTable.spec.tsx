@@ -3,8 +3,6 @@ import userEvent from '@testing-library/user-event'
 
 import GenericTable from './GenericTable'
 
-import '@testing-library/react'
-
 describe('GenericTable', () => {
   let user: ReturnType<typeof userEvent.setup>
 

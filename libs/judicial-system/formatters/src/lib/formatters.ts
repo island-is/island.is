@@ -33,6 +33,20 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
   }
 }
 
+// The name a ruling order is given when it is pronounced orally in a court
+// session - "S-123/2026 Úrskurður 12.11.2026". Generated once, when the ruling
+// is pronounced, and the document the district court writes up later keeps it.
+//
+// Shared so that the name the court record previews before pronouncing is the
+// name that gets stored: the court would otherwise be shown one name and given
+// another. Both sides fall back to the current date when the session has no
+// start date yet.
+export const formatRulingOrderPronouncedOrallyName = (
+  courtCaseNumber: string | undefined | null,
+  pronouncedDate: Date | string,
+): string =>
+  `${courtCaseNumber ?? ''} Úrskurður ${formatDate(pronouncedDate)}`.trim()
+
 export const formatDate = (
   date: Date | string | undefined | null,
   formatPattern = 'dd.MM.yyyy',
@@ -136,6 +150,15 @@ export const laws = {
   _97_1: '1. mgr. 97. gr. sml.',
   _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
+  _115_1: '115. gr. útl.',
+  _115_1_A: 'a-lið 115. gr. útl.',
+  _115_1_B: 'b-lið 115. gr. útl.',
+  _115_1_C: 'c-lið 115. gr. útl.',
+  _115_1_D: 'd-lið 115. gr. útl.',
+  _115_1_E: 'e-lið 115. gr. útl.',
+  _115_1_F: 'f-lið 115. gr. útl.',
+  _115_1_G: 'g-lið 115. gr. útl.',
+  _115_1_H: 'h-lið 115. gr. útl.',
 }
 
 export const getHumanReadableCaseIndictmentRulingDecision = (

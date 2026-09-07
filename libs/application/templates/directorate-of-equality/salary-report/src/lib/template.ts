@@ -7,7 +7,6 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  IdentityApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -21,6 +20,7 @@ import {
   GetDraftCriteriaTreeApi,
   GetDraftHeaderApi,
   GetReportCommentsApi,
+  IdentityApiProvider,
   ImportPresignApi,
   ImportSalaryDraftWorkbookApi,
   ListDraftCriteriaApi,
@@ -66,9 +66,17 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.SALARY_REPORT].translation,
   dataSchema,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
+  newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
   stateMachineOptions: {
     actions: {
       assignToInstitution: assign((context) => {
@@ -103,7 +111,7 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                IdentityApi,
+                IdentityApiProvider,
                 CompanyRegistryApi,
                 DoeCompanyApi,
                 SubCriterionCatalogApi,
@@ -118,7 +126,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // This is the role every unauthorized caller falls through to, so
+              // it gets nothing: the dead-end form reads no answers and no
+              // externalData, only `application.applicant`.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },
@@ -146,7 +159,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // Same dead-end form as the PREREQUISITES fall-through above, and
+              // it reads nothing either — this applicant is authorized, just
+              // ineligible.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },
@@ -159,6 +177,10 @@ const template: ApplicationTemplate<
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
+            tag: {
+              label: messages.general.tagDraft,
+              variant: 'blue',
+            },
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
@@ -187,18 +209,23 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              // Ordered in groups: same order runs concurrently via
+              // Promise.all, so every provider reading/seeding the draft
+              // must be strictly after CreateSalaryDraftApi — otherwise a
+              // GetDraft*/ListDraft* read races the draft-create POST and
+              // 404s before the row is committed.
               api: [
-                ImportPresignApi,
-                CreateSalaryDraftApi,
-                ImportSalaryDraftWorkbookApi,
-                GetDraftHeaderApi,
-                GetDraftCriteriaTreeApi,
-                ListDraftRolesWithStepsApi,
-                ListDraftCriteriaApi,
-                ListDraftRolesApi,
-                ListDraftEmployeesApi,
-                ListDraftOutlierGroupsApi,
-                SalaryAnalysisApi,
+                ImportPresignApi.configure({ order: 0 }),
+                CreateSalaryDraftApi.configure({ order: 0 }),
+                ImportSalaryDraftWorkbookApi.configure({ order: 1 }),
+                GetDraftHeaderApi.configure({ order: 2 }),
+                GetDraftCriteriaTreeApi.configure({ order: 2 }),
+                ListDraftRolesWithStepsApi.configure({ order: 2 }),
+                ListDraftCriteriaApi.configure({ order: 2 }),
+                ListDraftRolesApi.configure({ order: 2 }),
+                ListDraftEmployeesApi.configure({ order: 2 }),
+                ListDraftOutlierGroupsApi.configure({ order: 2 }),
+                SalaryAnalysisApi.configure({ order: 2 }),
               ],
               delete: true,
             },
@@ -214,13 +241,68 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: [
             {
-              target: States.POSTPONED,
+              target: States.POSTPONE_RECEIVED,
               cond: hasPostponedOutlierPlan,
             },
             {
               target: States.IN_REVIEW,
             },
           ],
+        },
+      },
+      // Deliberately indistinguishable from POSTPONED on the outside: same tag,
+      // same pending action, same lifecycle. Which of the two the application
+      // sits in is bookkeeping about whether the applicant has closed the
+      // receipt, and Mínar síður should read the same either way.
+      [States.POSTPONE_RECEIVED]: {
+        meta: {
+          name: 'Sending móttekin',
+          progress: 0.9,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: pruneAfterDays(90),
+          actionCard: {
+            tag: {
+              label: messages.postponed.tagLabel,
+              variant: 'blueberry',
+            },
+            pendingAction: {
+              title: messages.postponed.pendingActionTitle,
+              content: messages.postponed.pendingActionContent,
+              button: messages.postponed.pendingActionButton,
+              displayStatus: 'info',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/postponeReceivedForm').then((module) =>
+                  Promise.resolve(module.postponeReceivedForm),
+                ),
+              read: 'all',
+              // Nothing on this screen writes an answer — the closer dispatches
+              // an event. An empty array rather than an absent `write` all the
+              // same, so the shell's answers submission is never rejected
+              // outright (see the identical note on States.IN_REVIEW).
+              write: { answers: [] },
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+        on: {
+          // Dispatched by PostponeReceiptCloser as the applicant leaves, not by
+          // a button. No history log: the applicant did nothing worth logging,
+          // the submission itself was already logged on the way out of DRAFT.
+          [DefaultEvents.SUBMIT]: {
+            target: States.POSTPONED,
+          },
         },
       },
       [States.POSTPONED]: {
@@ -236,6 +318,13 @@ const template: ApplicationTemplate<
           onExit: EditOutliersApi,
           // So the comment thread's non-empty check has fresh externalData —
           // see the identical comment on States.DRAFT.
+          //
+          // This state in particular depends on the provider's
+          // `throwOnError: false`: it is entered by PostponeReceiptCloser's
+          // beacon with nobody watching, and an onEntry runs before the new
+          // state is persisted and blocks it by default — so a hiccup from
+          // DMR's comments endpoint would silently leave the applicant on the
+          // receipt. CommentThread refetches on mount anyway.
           onEntry: GetReportCommentsApi,
           actionCard: {
             tag: {
@@ -294,6 +383,98 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
           },
+          // DMR can dispatch EDIT independent of the application's own
+          // frontend state — frontend states only pick which form renders,
+          // they don't mirror DMR's backend workflow status 1:1.
+          [DefaultEvents.EDIT]: {
+            target: States.DRAFT_RETRY,
+          },
+        },
+      },
+      [States.DRAFT_RETRY]: {
+        meta: {
+          name: 'Lagfæring',
+          progress: 0.9,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: pruneAfterDays(90),
+          // Fires on leaving DRAFT_RETRY (the resubmit), PUTting the outlier
+          // explanations same as POSTPONED's onExit — see the identical
+          // comment there.
+          onExit: EditOutliersApi,
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
+          actionCard: {
+            tag: {
+              label: messages.draftRetry.tagLabel,
+              variant: 'purple',
+            },
+            pendingAction: {
+              title: messages.draftRetry.pendingActionTitle,
+              content: messages.draftRetry.pendingActionContent,
+              button: messages.draftRetry.pendingActionButton,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.historyLogs.draftRetry,
+              },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: messages.inReview.approvedHistoryLog,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: messages.inReview.rejectedHistoryLog,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/draftRetryForm').then((module) =>
+                  Promise.resolve(module.draftRetryForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              read: 'all',
+              write: {
+                answers: ['salaryAnalysis', 'comment'],
+                externalData: [
+                  'salaryAnalysisResult',
+                  'getReportComments',
+                  'submitReportComment',
+                ],
+              },
+              api: [
+                SalaryAnalysisApi,
+                GetReportCommentsApi,
+                SubmitReportCommentApi,
+              ],
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
+          },
         },
       },
       [States.IN_REVIEW]: {
@@ -307,7 +488,7 @@ const template: ApplicationTemplate<
           },
           actionCard: {
             tag: {
-              label: coreMessages.tagsInProgress,
+              label: messages.inReview.tagLabel,
               variant: 'blueberry',
             },
             historyLogs: [
@@ -333,12 +514,14 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
-              write: {
-                answers: ['comment'],
-                externalData: ['getReportComments', 'submitReportComment'],
-              },
-              api: [GetReportCommentsApi, SubmitReportCommentApi],
-              delete: true,
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,
@@ -356,12 +539,13 @@ const template: ApplicationTemplate<
           [DefaultEvents.REJECT]: {
             target: States.DENIED,
           },
-          // Targets POSTPONED (not DRAFT) so a case-worker-requested revision
-          // reuses the same restricted comments/outlier-plan-editing flow —
-          // there's no path back to the original company/employee/criteria
-          // data-entry screens from here, by design.
+          // Targets DRAFT_RETRY (not DRAFT) so a case-worker-requested
+          // revision reuses the same restricted comments/outlier-plan-editing
+          // flow — there's no path back to the original
+          // company/employee/criteria data-entry screens from here, by
+          // design.
           [DefaultEvents.EDIT]: {
-            target: States.POSTPONED,
+            target: States.DRAFT_RETRY,
           },
         },
       },
@@ -377,9 +561,6 @@ const template: ApplicationTemplate<
               variant: 'mint',
             },
           },
-          // So the comment thread's non-empty check has fresh externalData —
-          // see the identical comment on States.DRAFT.
-          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -388,9 +569,14 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
-              write: { externalData: ['getReportComments'] },
-              api: [GetReportCommentsApi],
-              delete: true,
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,
@@ -414,9 +600,6 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
-          // So the comment thread's non-empty check has fresh externalData —
-          // see the identical comment on States.DRAFT.
-          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -425,9 +608,9 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
-              write: { externalData: ['getReportComments'] },
-              api: [GetReportCommentsApi],
-              delete: true,
+              // See the identical comment on States.APPROVED.
+              write: { answers: [] },
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,

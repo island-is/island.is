@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   Box,
@@ -14,15 +15,17 @@ import {
   InputNationalId,
   RequiredStar,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
+import type {
   Case,
-  RequestSharedWhen,
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useVictim } from '@island.is/judicial-system-web/src/utils/hooks'
-import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
+import { RequestSharedWhen } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useNationalRegistry,
+  useVictim,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import RadioGroup from '../RadioGroup/RadioGroup'
 import { LegalRightsProtectorInputFields } from './LegalRightsProtectorInputFields'
 
 interface Props {

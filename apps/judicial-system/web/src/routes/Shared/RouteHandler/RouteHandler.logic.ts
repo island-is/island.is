@@ -15,11 +15,13 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
-import {
+import type {
   Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseState,
   CaseType,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 type UserType =

@@ -16,10 +16,8 @@ import {
   LabelValue,
   PageHeader,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseStatistics,
-  ServiceStatus,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseStatistics } from '@island.is/judicial-system-web/src/graphql/schema'
+import { ServiceStatus } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CountAndDays from './components/CountAndDays'

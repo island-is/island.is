@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Button, DatePicker, Select } from '@island.is/island-ui/core'

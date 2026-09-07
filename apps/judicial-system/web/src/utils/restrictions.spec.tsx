@@ -1,5 +1,6 @@
-import { FC } from 'react'
-import { IntlFormatters, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import type { IntlFormatters } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
 import { getDefaultNormalizer, render, screen } from '@testing-library/react'
 
@@ -9,8 +10,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
 
-import { formatCustodyRestrictions } from './restrictions'
-import { formatRequestedCustodyRestrictions } from './restrictions'
+import {
+  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
+} from './restrictions'
 import { createFormatMessage } from './testHelpers.logic'
 
 interface Props {

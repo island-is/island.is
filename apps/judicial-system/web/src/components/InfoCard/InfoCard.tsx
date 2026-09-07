@@ -1,10 +1,10 @@
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import BlueBox from '../BlueBox/BlueBox'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
 interface Section {

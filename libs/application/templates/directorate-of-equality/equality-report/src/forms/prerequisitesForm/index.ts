@@ -9,7 +9,6 @@ import {
 import {
   DefaultEvents,
   FormModes,
-  IdentityApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
@@ -17,6 +16,7 @@ import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
   DoeCompanyApi,
+  IdentityApiProvider,
 } from '../../dataProviders'
 import { messages } from '../../lib/messages'
 
@@ -34,7 +34,6 @@ export const Prerequisites = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: messages.prerequisites.section.title,
-          description: messages.prerequisites.section.intro,
           checkboxLabel: messages.prerequisites.section.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
@@ -68,7 +67,7 @@ export const Prerequisites = buildForm({
               subTitle: messages.prerequisites.userProfile.intro,
             }),
             buildDataProviderItem({
-              provider: IdentityApi,
+              provider: IdentityApiProvider,
               title: messages.prerequisites.nationalRegistry.title,
               subTitle: messages.prerequisites.nationalRegistry.intro,
             }),

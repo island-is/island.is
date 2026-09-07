@@ -18,7 +18,6 @@ import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import {
   core,
   errors,
-  laws,
   rcOverview as m,
   restrictionsV2,
   titles,
@@ -45,8 +44,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseLegalProvisions,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -56,6 +55,7 @@ import {
   useCase,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getLegalProvisionTitle } from '@island.is/judicial-system-web/src/utils/laws'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
@@ -244,7 +244,10 @@ export const Overview = () => {
                       return (
                         <div key={index}>
                           <Text>
-                            {formatMessage(laws[legalProvision].title)}
+                            {getLegalProvisionTitle(
+                              formatMessage,
+                              legalProvision,
+                            )}
                           </Text>
                         </div>
                       )

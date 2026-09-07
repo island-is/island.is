@@ -1,9 +1,7 @@
 import { useState } from 'react'
 
-import {
-  ContextMenuItem,
-  Modal,
-} from '@island.is/judicial-system-web/src/components'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
+import { Modal } from '@island.is/judicial-system-web/src/components'
 import { CaseTransition } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 

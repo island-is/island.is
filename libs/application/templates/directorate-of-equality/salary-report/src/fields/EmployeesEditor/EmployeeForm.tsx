@@ -15,12 +15,18 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { messages } from '../../lib/messages'
-import { GENDER_OPTIONS, SALARY_COMPONENT_GROUPS } from '../../utils/constants'
+import {
+  GENDER_OPTIONS,
+  PAID_HOURS_MAX,
+  PAID_HOURS_MIN,
+  SALARY_COMPONENT_GROUPS,
+} from '../../utils/constants'
 import type { Employee } from '../../utils/types'
 import {
   EMPTY_EMPLOYEE_FORM_VALUES,
   type EmployeeFormValues,
   getSalaryComponentLabels,
+  paidHoursFromFormValue,
   toFormValues,
 } from './utils'
 
@@ -135,16 +141,28 @@ export const EmployeeForm: FC<Props> = ({
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <InputController
-              id="workRatio"
-              name="workRatio"
-              label={formatMessage(m.workRatioInputLabel)}
+              id="paidHours"
+              name="paidHours"
+              label={formatMessage(m.paidHoursInputLabel)}
+              placeholder={formatMessage(m.paidHoursPlaceholder)}
               type="number"
-              suffix="%"
               backgroundColor="white"
               size="sm"
               required
-              rules={{ required: requiredMsg }}
-              error={errors.workRatio?.message}
+              rules={{
+                required: requiredMsg,
+                // Mirrors the API rule (4–750). The lower bound exists to catch
+                // a starfshlutfall carried into this field: 0,8 or 1 would
+                // otherwise pass and inflate tímakaup ~173x silently.
+                validate: (value: string) => {
+                  const hours = paidHoursFromFormValue(value)
+                  return (
+                    (hours >= PAID_HOURS_MIN && hours <= PAID_HOURS_MAX) ||
+                    formatMessage(m.paidHoursRangeError)
+                  )
+                },
+              }}
+              error={errors.paidHours?.message}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>

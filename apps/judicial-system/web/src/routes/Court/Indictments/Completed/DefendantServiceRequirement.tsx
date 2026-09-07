@@ -9,11 +9,11 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Defendant,
   InformationForDefendant as InformationForDefendantEnum,
+  ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'

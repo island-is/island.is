@@ -1,14 +1,13 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CourtSessionResponse,
-  CourtSessionRulingType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CourtSessionRulingType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDebouncedField } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CourtSessionAppealDecisions from './CourtSessionAppealDecisions'
@@ -21,7 +20,6 @@ type PatchCourtSession = (
 
 interface Props {
   courtSession: CourtSessionResponse
-  showAppealDecisions: boolean
   patchSession: PatchCourtSession
 }
 
@@ -40,7 +38,7 @@ interface Props {
  * want: those only relabel the field, they do not clear it.
  */
 const CourtSessionRuling: FC<Props> = (props) => {
-  const { courtSession, showAppealDecisions, patchSession } = props
+  const { courtSession, patchSession } = props
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
   const isJudgement =
@@ -85,14 +83,13 @@ const CourtSessionRuling: FC<Props> = (props) => {
           required
         />
       </Box>
-      {showAppealDecisions &&
-        courtSession.rulingType === CourtSessionRulingType.ORDER && (
-          <CourtSessionAppealDecisions
-            courtSession={courtSession}
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
-        )}
+      {courtSession.rulingType === CourtSessionRulingType.ORDER && (
+        <CourtSessionAppealDecisions
+          courtSession={courtSession}
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+        />
+      )}
       <Box>
         <SectionHeading title="Bókanir í lok þinghalds" />
         <Input

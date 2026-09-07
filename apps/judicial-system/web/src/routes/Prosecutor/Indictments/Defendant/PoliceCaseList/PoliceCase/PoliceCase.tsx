@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
@@ -18,10 +19,8 @@ import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  CrimeScene,
-  deprecatedIndictmentSubtypes,
-} from '@island.is/judicial-system/types'
+import type { CrimeScene } from '@island.is/judicial-system/types'
+import { deprecatedIndictmentSubtypes } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
@@ -148,10 +147,12 @@ export const PoliceCase: FC<Props> = ({
             otherPoliceCaseNumber === policeCaseNumberInput,
         )
       ) {
-        setPoliceCaseNumberErrorMessage('')
-        validateAndSetErrorMessage(
+        // Errors are surfaced on blur - here we only clear a message that no
+        // longer applies, so nothing flashes while the user is still typing
+        removeErrorMessageIfValid(
           ['empty', 'police-casenumber-format'],
           policeCaseNumberInput,
+          policeCaseNumberErrorMessage,
           setPoliceCaseNumberErrorMessage,
         )
 
@@ -165,6 +166,7 @@ export const PoliceCase: FC<Props> = ({
     index,
     originalPoliceCaseNumber,
     policeCaseNumber,
+    policeCaseNumberErrorMessage,
     policeCaseNumberInput,
     policeCaseNumbers,
     updatePoliceCase,
@@ -347,7 +349,18 @@ export const PoliceCase: FC<Props> = ({
             },
           })
         }
-        onBlur={() => updatePoliceCase()}
+        onBlur={() => {
+          const { place } = policeCaseNumberCrimeScene
+
+          // A whitespace-only place is persisted as '' - pass the normalized
+          // update explicitly so the working case (and with it the displayed
+          // value) matches what the server stores.
+          updatePoliceCase(
+            place && place.trim() === ''
+              ? { crimeScene: { ...policeCaseNumberCrimeScene, place: '' } }
+              : undefined,
+          )
+        }}
       />
       <DateTime
         name={crimeSceneDateId}

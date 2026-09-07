@@ -1957,8 +1957,13 @@ export const messages = defineMessages({
   },
   healthConversationsNewIntroWithWindow: {
     defaultMessage:
-      'Heilsugæslan tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
+      '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
     id: 'sp.health:health-messages-new-intro-with-window',
+  },
+  healthConversationsNewIntroWithRecipient: {
+    defaultMessage:
+      '{name} svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+    id: 'sp.health:health-messages-new-intro-with-recipient',
   },
   healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
@@ -1967,6 +1972,14 @@ export const messages = defineMessages({
   healthConversationsNewSelectServicePlaceholder: {
     defaultMessage: 'Veldu þjónustu úr fellilistanum',
     id: 'sp.health:health-messages-new-select-service-placeholder',
+  },
+  healthConversationsNewSelectRecipient: {
+    defaultMessage: 'Veldu viðtakanda',
+    id: 'sp.health:health-messages-new-select-recipient',
+  },
+  healthConversationsNewSelectRecipientPlaceholder: {
+    defaultMessage: 'Veldu viðtakanda úr fellilistanum',
+    id: 'sp.health:health-messages-new-select-recipient-placeholder',
   },
   healthConversationsNewBodyPlaceholder: {
     defaultMessage: 'Sláðu inn skilaboð',
@@ -2009,6 +2022,26 @@ export const messages = defineMessages({
   healthConversationsCertificateNotePlaceholder: {
     defaultMessage: 'Skrifaðu stutta lýsingu á veikindunum',
     id: 'sp.health:health-messages-certificate-note-placeholder',
+  },
+  healthConversationCertificateContinueToPayment: {
+    defaultMessage: 'Áfram í greiðslu',
+    id: 'sp.health:health-messages-certificate-continue-payment',
+  },
+  healthConversationCertificatePaymentInProgress: {
+    defaultMessage: 'Greiðsla er í vinnslu',
+    id: 'sp.health:health-messages-certificate-payment-in-progress',
+  },
+  healthConversationCertificatePaymentSuccess: {
+    defaultMessage: 'Greiðsla tókst',
+    id: 'sp.health:health-messages-certificate-payment-success',
+  },
+  healthConversationCertificatePaymentError: {
+    defaultMessage: 'Ekki tókst að hefja greiðslu, vinsamlegast reyndu aftur',
+    id: 'sp.health:health-messages-certificate-payment-error',
+  },
+  healthConversationCertificatePaymentCancelled: {
+    defaultMessage: 'Hætt var við greiðslu',
+    id: 'sp.health:health-messages-certificate-payment-cancelled',
   },
   healthConversationsNewTermsLabel: {
     defaultMessage: 'Ég samþykki <link>skilmála</link>',
@@ -2127,6 +2160,81 @@ export const messages = defineMessages({
     defaultMessage:
       'Hér finnur þú upplýsingar um bókaða tímann þinn. Þú getur bætt honum við dagatalið þitt, breytt bókuninni eða afbókað tíma ef þörf krefur.',
     id: 'sp.health:appointments-detail-intro',
+  },
+  cancelAppointment: {
+    defaultMessage: 'Afbóka tíma',
+    id: 'sp.health:cancel-appointment',
+  },
+  cancelAppointmentModalTitle: {
+    defaultMessage: 'Ertu viss um að þú viljir afbóka tímann?',
+    id: 'sp.health:cancel-appointment-modal-title',
+  },
+  cancelAppointmentModalText: {
+    defaultMessage:
+      'Þú ert að fara að afbóka eftirfarandi tíma sem þú átt pantaðan:',
+    id: 'sp.health:cancel-appointment-modal-text',
+  },
+  cancelAppointmentSuccess: {
+    defaultMessage: 'Tími hefur verið afbókaður',
+    id: 'sp.health:cancel-appointment-success',
+  },
+  cancelAppointmentError: {
+    defaultMessage: 'Ekki tókst að framkvæma aðgerð, reyndu aftur',
+    id: 'sp.health:cancel-appointment-error',
+  },
+  cancelAppointmentNotAllowedTitle: {
+    defaultMessage: 'Ekki hægt að afbóka tíma samdægurs',
+    id: 'sp.health:cancel-appointment-not-allowed-title',
+  },
+  cancelAppointmentNotAllowedText: {
+    defaultMessage:
+      'Ekki er hægt að afbóka tíma samdægurs. Hringdu í stofnunina ef þú þarft að afbóka eða breyta tímanum.',
+    id: 'sp.health:cancel-appointment-not-allowed-text',
+  },
+  cancelAppointmentNotAllowedGenericTitle: {
+    defaultMessage: 'Ekki hægt að afbóka hér',
+    id: 'sp.health:cancel-appointment-not-allowed-generic-title',
+  },
+  cancelAppointmentNotAllowedGenericText: {
+    defaultMessage: 'Hafðu samband við stofnunina til að afbóka tímann.',
+    id: 'sp.health:cancel-appointment-not-allowed-generic-text',
+  },
+  appointmentCancelledStatus: {
+    defaultMessage: 'Afbókað',
+    id: 'sp.health:appointment-cancelled-status',
+  },
+  bookAppointmentButtonText: {
+    defaultMessage: 'Bóka tíma',
+    id: 'sp.health:book-appointment-button-text',
+  },
+  bookAppointmentTitle: {
+    defaultMessage: 'Bóka tíma',
+    id: 'sp.health:book-appointment-title',
+  },
+  bookAppointmentIntro: {
+    defaultMessage: 'Hér mun vera hægt að bóka tíma',
+    id: 'sp.health:book-appointment-intro',
+  },
+  bookAppointmentStillOnHeilsuveruTitle: {
+    defaultMessage: 'Tímabókanir eru enn á Heilsuveru',
+    id: 'sp.health:book-appointment-still-on-heilsuveru-title',
+  },
+  bookAppointmentStillOnHeilsuveruText: {
+    defaultMessage:
+      'Við erum að vinna að því að færa þessa þjónustu yfir á Mínar síður á Ísland.is. Þangað til getur þú farið á Heilsuveru til að bóka tíma.',
+    id: 'sp.health:book-appointment-still-on-heilsuveru-text',
+  },
+  viewBookAppointmentOnHeilsuveru: {
+    defaultMessage: 'Bóka tíma á Heilsuveru',
+    id: 'sp.health:view-book-appointment-on-heilsuveru',
+  },
+  bookAppointmentHeilsuveruLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/timabokun/boka-tima',
+    id: 'sp.health:book-appointment-heilsuveru-link',
+  },
+  landlaeknirAppointmentsTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar tímabókanir.',
+    id: 'sp.health:landlaeknir-appointments-tooltip',
   },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
@@ -2274,6 +2382,28 @@ export const messages = defineMessages({
   treatment: {
     defaultMessage: 'Meðferð',
     id: 'sp.health:treatment',
+  },
+  treatmentsIntro: {
+    defaultMessage:
+      'Hér finnur þú yfirlit yfir þær meðferðir sem þú ert skráð í.',
+    id: 'sp.health:treatments-intro',
+  },
+  noTreatmentsTitle: {
+    defaultMessage: 'Engin meðferð skráð',
+    id: 'sp.health:no-treatments-title',
+  },
+  noTreatments: {
+    defaultMessage: 'Þú ert ekki með skráða meðferð í gangi.',
+    id: 'sp.health:no-treatments',
+  },
+  treatmentIntro: {
+    defaultMessage:
+      'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt.',
+    id: 'sp.health:treatment-intro',
+  },
+  landlaeknirTreatmentTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar meðferðir.',
+    id: 'sp.health:landlaeknir-treatment-tooltip',
   },
   sentFrom: {
     defaultMessage: 'Sent af',
@@ -2885,6 +3015,10 @@ export const messages = defineMessages({
     id: 'sp.health:health-notifications-title',
     defaultMessage: 'Tilkynningar í Heilsu',
   },
+  healthConversationsBoxTitle: {
+    id: 'sp.health:health-conversations-box-title',
+    defaultMessage: 'Skilaboð í Heilsu',
+  },
   contactChat: {
     id: 'sp.health:contact-chat',
     defaultMessage: 'Netspjall Heilsuveru',
@@ -2897,21 +3031,18 @@ export const messages = defineMessages({
     id: 'sp.health:heilsuvera-chat-link',
     defaultMessage: 'https://direct.lc.chat/15092154',
   },
-  contactPhone: {
-    id: 'sp.health:contact-phone',
-    defaultMessage: 'Símaráðgjöf 1700 / 513 1700',
+  contactNow: {
+    id: 'sp.health:contact-now',
+    defaultMessage: 'Fyrir aðstoð samdægurs',
   },
-  contactPhoneNumber: {
-    id: 'sp.health:contact-phone-number',
-    defaultMessage: '+3545131700',
+  contactNowDesc: {
+    id: 'sp.health:contact-now-desc',
+    defaultMessage:
+      'Símaráðgjöf vegna bráðra veikinda eða slysa er opin allan sólarhringinn í síma 1700.',
   },
-  contactPhoneDesc: {
-    id: 'sp.health:contact-phone-desc',
-    defaultMessage: 'Fyrir aðstoð samdægurs.',
-  },
-  contactPhoneEmergencyDesc: {
-    id: 'sp.health:contact-phone-emergency-desc',
-    defaultMessage: 'Ath. í neyð skal hringja í 112.',
+  contactNowEmergencyDesc: {
+    id: 'sp.health:contact-now-emergency-desc',
+    defaultMessage: 'Í neyð skal hringja í 112.',
   },
   contactSendMessage: {
     id: 'sp.health:contact-send-message',

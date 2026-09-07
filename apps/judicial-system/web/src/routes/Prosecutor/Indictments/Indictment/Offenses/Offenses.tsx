@@ -1,29 +1,30 @@
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
 import { SUBSTANCE_ALCOHOL } from '@island.is/judicial-system/consts'
-import { SubstanceMap } from '@island.is/judicial-system/types'
+import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
   IndictmentCount,
-  IndictmentCountOffense,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import { Substances } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/Substances/Substances'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
+import type {
   UpdateIndictmentCount,
   UpdateIndictmentCountState,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 
-import { Substances } from '../Substances/Substances'
 import { SpeedingOffenseFields } from './SpeedingOffenseFields'
 import { strings } from './Offenses.strings'
 

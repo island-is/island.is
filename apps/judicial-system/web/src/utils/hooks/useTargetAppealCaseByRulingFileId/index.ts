@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   AppealCase,
   Case,
 } from '@island.is/judicial-system-web/src/graphql/schema'

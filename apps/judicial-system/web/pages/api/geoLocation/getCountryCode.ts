@@ -1,5 +1,5 @@
 import ip3country from 'ip3country'
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 const getCountryCode = (ip?: string): { countryCode: string } => {
   if (!ip) {

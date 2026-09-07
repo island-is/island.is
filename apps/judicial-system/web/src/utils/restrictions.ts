@@ -1,4 +1,4 @@
-import { IntlFormatters, IntlShape } from 'react-intl'
+import type { IntlFormatters, IntlShape } from 'react-intl'
 
 import {
   enumerate,
@@ -6,10 +6,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { restrictionsV2 as m } from '@island.is/judicial-system-web/messages'
 import type { CheckboxInfo } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseCustodyRestrictions,
-  CaseType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const makeCheckboxInfo = (
   restriction: CaseCustodyRestrictions,

@@ -34,6 +34,7 @@ import {
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
+  RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import {
   capitalize,
@@ -45,6 +46,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
+  CaseTransition,
   CaseType,
   hasGeneratedCourtRecordPdf,
   indictmentCases,
@@ -70,6 +72,7 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { getOrCreateTransaction, registerAfterCommit } from '../../middleware'
 import {
   CivilClaimantService,
   CurrentDefendant,
@@ -86,6 +89,7 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
+import { CaseExistsForUpdateGuard } from './guards/caseExistsForUpdate.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTransitionGuard } from './guards/caseTransition.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
@@ -149,6 +153,74 @@ export class CaseController {
     }
   }
 
+  private async validateIndictmentApprover(
+    approverId: string,
+    theCase: Case,
+    user: User,
+  ) {
+    const approver = await this.userService.findById(approverId)
+
+    if (!approver.active) {
+      throw new ForbiddenException(
+        `User ${approverId} is not an active prosecutor`,
+      )
+    }
+
+    if (approver.role !== UserRole.PROSECUTOR) {
+      throw new ForbiddenException(
+        `User ${approverId} does not have an acceptable role ${UserRole.PROSECUTOR}`,
+      )
+    }
+
+    if (approver.institutionId !== theCase.prosecutorsOfficeId) {
+      throw new ForbiddenException(
+        `User ${approverId} belongs to the wrong institution`,
+      )
+    }
+
+    if (approver.id === user.id) {
+      throw new ForbiddenException(
+        'Cannot assign yourself as indictment approver',
+      )
+    }
+
+    if (theCase.prosecutorId && approver.id === theCase.prosecutorId) {
+      throw new ForbiddenException(
+        'Cannot assign the case prosecutor as indictment approver',
+      )
+    }
+  }
+
+  private assertIndictmentWaitingForReviewUpdateAllowed(
+    theCase: Case,
+    update: UpdateCase,
+    user: User,
+  ) {
+    if (
+      !isIndictmentCase(theCase.type) ||
+      theCase.state !== CaseState.WAITING_FOR_REVIEW
+    ) {
+      return
+    }
+
+    const updatedFields = Object.keys(update).filter(
+      (key) => update[key as keyof UpdateCase] !== undefined,
+    )
+    const allowedFields =
+      user.id === theCase.indictmentApproverId
+        ? ['indictmentReviewReturnedExplanation']
+        : []
+    const disallowedFields = updatedFields.filter(
+      (field) => !allowedFields.includes(field),
+    )
+
+    if (disallowedFields.length > 0) {
+      throw new ForbiddenException(
+        'Cannot update an indictment case while it is waiting for review',
+      )
+    }
+  }
+
   @UseGuards(RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
@@ -194,6 +266,8 @@ export class CaseController {
     try {
       const update: UpdateCase = updateDto
 
+      this.assertIndictmentWaitingForReviewUpdateAllowed(theCase, update, user)
+
       // Make sure valid users are assigned to the case's roles
       if (update.prosecutorId) {
         await this.validateAssignedUser(
@@ -219,6 +293,14 @@ export class CaseController {
             UserRole.DISTRICT_COURT_ASSISTANT,
           ],
           theCase.courtId,
+        )
+      }
+
+      if (update.indictmentApproverId) {
+        await this.validateIndictmentApprover(
+          update.indictmentApproverId,
+          theCase,
+          user,
         )
       }
 
@@ -331,7 +413,27 @@ export class CaseController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
+  // CaseExistsForUpdateGuard has to come before RolesGuard, even though it is
+  // the guard that takes the write lock: prosecutorTransitionRule reads
+  // request.case and denies outright when it is missing, so RolesGuard cannot
+  // decide this route before the case has been read. Reordering those two
+  // rejects every prosecutor transition with a 403 - and no controller test
+  // catches it, because guards do not run in them.
+  //
+  // RouteRolesGuard is what keeps that from exposing the lock to everyone. It
+  // reads the same roles rules below, but decides on the user's role alone, so
+  // it needs no case and runs first: a caller in a role this route has no rule
+  // for is rejected before the locking read. What remains is a caller in a
+  // listed role transitioning a case they cannot write - CaseWriteGuard needs
+  // the case, so they still reach the read. That is a much smaller population
+  // than "any authenticated user".
+  @UseGuards(
+    RouteRolesGuard,
+    CaseExistsForUpdateGuard,
+    RolesGuard,
+    CaseWriteGuard,
+    CaseTransitionGuard,
+  )
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -353,20 +455,44 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
+    if (
+      transition.transition === CaseTransition.ASK_FOR_REVIEW &&
+      theCase.indictmentApproverId
+    ) {
+      await this.validateIndictmentApprover(
+        theCase.indictmentApproverId,
+        theCase,
+        user,
+      )
+    }
+
+    // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the
+    // transition is decided against a row no one else can change.
     const update = transitionCase(transition.transition, theCase, user)
 
-    const updatedCase = await this.sequelize.transaction((transaction) =>
-      this.caseService.update(
-        theCase,
-        update,
-        user,
-        transaction,
-        update.state !== CaseState.DELETED,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const updatedCase = await this.caseService.update(
+      theCase,
+      update,
+      user,
+      transaction,
+      update.state !== CaseState.DELETED,
     )
 
-    // No need to wait
-    this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
+    // The event asserts that the transition happened, so it waits for the
+    // commit - which TransactionCommitInterceptor does after this handler has
+    // returned. Still fire and forget: a failed announcement is logged, not
+    // returned to the caller.
+    registerAfterCommit(() =>
+      this.eventService.postEvent(
+        transition.transition,
+        updatedCase ?? theCase,
+      ),
+    )
 
     return updatedCase ?? theCase
   }

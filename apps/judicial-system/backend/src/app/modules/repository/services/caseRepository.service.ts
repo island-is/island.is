@@ -5,8 +5,10 @@ import {
   FindAndCountOptions,
   FindAttributeOptions,
   FindOptions,
+  Op,
   Transaction,
   UpdateOptions,
+  WhereOptions,
 } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
@@ -45,7 +47,7 @@ import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
-import { UpdateCase } from '../types/caseRepository.types'
+import { caseInclude, UpdateCase } from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
 interface FindByIdOptions {
@@ -277,6 +279,75 @@ export class CaseRepositoryService {
         where: Object.keys(options?.where ?? {}),
         error,
       })
+
+      throw error
+    }
+  }
+
+  /**
+   * Reads a live case - neither deleted nor archived - with its row locked for
+   * the rest of the transaction, so the caller can decide a mutation against a
+   * case no one else can change in the meantime.
+   *
+   * The lock is taken by a query of its own rather than by locking the
+   * aggregate read: Postgres cannot lock the nullable side of an outer join,
+   * and `caseInclude` is a tree of them. Scoping the lock to the case row
+   * (`FOR UPDATE OF "Case"`) does not help either, because Sequelize passes
+   * `lock` down to the `separate: true` includes, where that table is not in
+   * the FROM clause. The aggregate read that follows runs in the same
+   * transaction and therefore sees the row it just locked.
+   */
+  async findLiveByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+  ): Promise<Case | null> {
+    const where = {
+      id,
+      state: { [Op.not]: CaseState.DELETED },
+      isArchived: false,
+    }
+
+    const locked = await this.lockByIdForUpdate(id, transaction, where)
+
+    if (!locked) {
+      return null
+    }
+
+    return this.findOne({ include: caseInclude, where, transaction })
+  }
+
+  /**
+   * Takes the case row's write lock for the rest of the transaction without
+   * reading the case aggregate, for a caller that already holds the case and
+   * only needs its decision serialized against other writers on the same case.
+   * Returns whether the row was there to lock.
+   *
+   * See findLiveByIdForUpdate for why the lock is a query of its own.
+   */
+  async lockByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+    where: WhereOptions = { id },
+  ): Promise<boolean> {
+    try {
+      this.logger.debug(`Locking case ${id} for update`)
+
+      const lockedCase = await this.caseModel.findOne({
+        attributes: ['id'],
+        where,
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+
+      if (!lockedCase) {
+        this.logger.debug(`Case ${id} not found`)
+
+        return false
+      }
+
+      return true
+    } catch (error) {
+      this.logger.error(`Error locking case ${id} for update:`, { error })
 
       throw error
     }

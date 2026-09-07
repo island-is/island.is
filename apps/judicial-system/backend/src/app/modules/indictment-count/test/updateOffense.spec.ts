@@ -4,7 +4,7 @@ import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { Offense } from '../../repository'
+import { Offense, OffenseRepositoryService } from '../../repository'
 import { UpdateOffenseDto } from '../dto/updateOffense.dto'
 
 interface Then {
@@ -28,14 +28,14 @@ describe('IndictmentCountController - Update offense', () => {
     substances: { ALCOHOL: '0,10' },
   }
 
-  let mockOffenseModel: typeof Offense
+  let mockOffenseRepositoryService: OffenseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { offenseModel, indictmentCountController } =
+    const { offenseRepositoryService, indictmentCountController } =
       await createTestingIndictmentCountModule()
 
-    mockOffenseModel = offenseModel
+    mockOffenseRepositoryService = offenseRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -68,8 +68,12 @@ describe('IndictmentCountController - Update offense', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockOffenseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedOffense]])
+      const mockUpdateByIdAndIndictmentCount =
+        mockOffenseRepositoryService.updateByIdAndIndictmentCount as jest.Mock
+      mockUpdateByIdAndIndictmentCount.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        offenses: [updatedOffense],
+      })
 
       then = await givenWhenThen(
         caseId,
@@ -80,10 +84,9 @@ describe('IndictmentCountController - Update offense', () => {
     })
 
     it('should update the offense', () => {
-      expect(mockOffenseModel.update).toHaveBeenCalledWith(offenseToUpdate, {
-        where: { id: offenseId, indictmentCountId },
-        returning: true,
-      })
+      expect(
+        mockOffenseRepositoryService.updateByIdAndIndictmentCount,
+      ).toHaveBeenCalledWith(offenseId, indictmentCountId, offenseToUpdate)
       expect(then.result).toBe(updatedOffense)
     })
   })
@@ -92,8 +95,11 @@ describe('IndictmentCountController - Update offense', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockOffenseModel.update as jest.Mock
-      mockUpdate.mockRejectedValueOnce(new Error('Some error'))
+      const mockUpdateByIdAndIndictmentCount =
+        mockOffenseRepositoryService.updateByIdAndIndictmentCount as jest.Mock
+      mockUpdateByIdAndIndictmentCount.mockRejectedValueOnce(
+        new Error('Some error'),
+      )
 
       then = await givenWhenThen(
         caseId,

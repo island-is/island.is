@@ -10,11 +10,20 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AppealCase } from '../models/appealCase.model'
-import { UpdateAppealCase } from '../types/caseRepository.types'
+import {
+  CreateAppealCase,
+  UpdateAppealCase,
+} from '../types/caseRepository.types'
 
 interface FindByIdOptions {
   transaction?: Transaction
   include?: FindOptions['include']
+}
+
+interface FindAllOptions {
+  where?: FindOptions['where']
+  order?: FindOptions['order']
+  transaction?: Transaction
 }
 
 interface CreateAppealCaseOptions {
@@ -66,9 +75,39 @@ export class AppealCaseRepositoryService {
     }
   }
 
+  async findAll(options?: FindAllOptions): Promise<AppealCase[]> {
+    try {
+      this.logger.debug('Finding appeal cases')
+
+      const findOptions: FindOptions = {}
+
+      if (options?.where) {
+        findOptions.where = options.where
+      }
+
+      if (options?.order) {
+        findOptions.order = options.order
+      }
+
+      if (options?.transaction) {
+        findOptions.transaction = options.transaction
+      }
+
+      const result = await this.appealCaseModel.findAll(findOptions)
+
+      this.logger.debug(`Found ${result.length} appeal cases`)
+
+      return result
+    } catch (error) {
+      this.logger.error('Error finding appeal cases:', { error })
+
+      throw error
+    }
+  }
+
   async create(
     caseId: string,
-    data: UpdateAppealCase,
+    data: CreateAppealCase,
     options: CreateAppealCaseOptions,
   ): Promise<AppealCase> {
     try {

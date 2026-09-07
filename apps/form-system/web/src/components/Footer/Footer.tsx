@@ -6,7 +6,6 @@ import {
   NOTIFY_EXTERNAL_SERVICE,
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
-  SUBMIT_SECTION,
   UPDATE_APPLICATION_SETTINGS,
   removeTypename,
 } from '@island.is/form-system/graphql'
@@ -80,7 +79,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const currentSectionType = currentSection?.data?.sectionType
 
   const submitScreen = useMutation(SAVE_SCREEN)
-  const submitSection = useMutation(SUBMIT_SECTION)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
   const saveLoading = submitScreen[1].loading || updateDependencies[1].loading
   const [notifyExternal, { loading: notifyLoading }] = useMutation(
@@ -131,7 +129,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     state.currentSection.index === 0
       ? formatMessage(m.externalDataConfirmation)
       : onSubmit
-      ? formatMessage(m.submitApplication)
+      ? formatMessage(m.submitApplication2)
       : isCompletedSection
       ? formatMessage(m.openMyPages)
       : formatMessage(m.continue)
@@ -162,15 +160,35 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const increment = () => {
     dispatch({
       type: 'INCREMENT',
-      payload: {
-        submitScreen: submitScreen,
-        submitSection: submitSection,
-        updateDependencies: updateDependencies,
-      },
     })
   }
 
-  const saveCurrentScreen = async (increment = true) => {
+  const updateCurrentDependencies = async () => {
+    if (currentSectionType !== SectionTypes.INPUT) return true
+
+    try {
+      await updateDependencies[0]({
+        variables: {
+          input: {
+            id: state.application.id,
+            updateApplicationDto: {
+              dependencies: state.application.dependencies,
+            },
+          },
+        },
+      })
+      return true
+    } catch (error) {
+      console.error('Error updating application dependencies:', error)
+      dispatch({
+        type: 'SAVE_FAILED',
+        payload: { screenError: saveScreenError },
+      })
+      return false
+    }
+  }
+
+  const saveCurrentScreen = async (increment?: boolean) => {
     try {
       await submitScreen[0]({
         variables: {
@@ -187,19 +205,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           },
         },
       })
-
-      if (currentSectionType === SectionTypes.INPUT) {
-        await updateDependencies[0]({
-          variables: {
-            input: {
-              id: state.application.id,
-              updateApplicationDto: {
-                dependencies: state.application.dependencies,
-              },
-            },
-          },
-        })
-      }
 
       dispatch({
         type: 'CLEAR_SCREEN_ERROR',
@@ -225,6 +230,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     const isParties = currentSectionType === SectionTypes.PARTIES
 
     if (!isValid && (isParties || !allowProceed)) return
+    if ((state.errors?.length ?? 0) > 0) return
 
     if (isCompletedSection) {
       window.open('/minarsidur', '_blank', 'noopener,noreferrer')
@@ -349,13 +355,19 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
 
     if (!onSubmit) {
-      const saved = await saveCurrentScreen()
-      if (saved) increment()
+      const saved = await saveCurrentScreen(true)
+      if (saved) {
+        increment()
+        await updateCurrentDependencies()
+      }
       return
     }
     try {
       const saved = await saveCurrentScreen()
       if (!saved) return
+
+      const updatedDependencies = await updateCurrentDependencies()
+      if (!updatedDependencies) return
 
       const { data } = await submitApplication({
         variables: { input: { id: state.application.id } },
@@ -370,7 +382,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         })
         return
       }
+
+      const completedSaved = await saveCurrentScreen(true)
+      if (!completedSaved) return
+
       increment()
+
       dispatch({
         type: 'SUBMITTED',
         payload: {
@@ -393,12 +410,9 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
     dispatch({
       type: 'DECREMENT',
-      payload: {
-        submitScreen: submitScreen,
-        submitSection: submitSection,
-        updateDependencies: updateDependencies,
-      },
     })
+
+    await updateCurrentDependencies()
   }
 
   return (

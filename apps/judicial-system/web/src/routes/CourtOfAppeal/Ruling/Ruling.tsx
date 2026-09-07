@@ -1,4 +1,5 @@
-import { ChangeEvent, useCallback, useContext, useState } from 'react'
+import type { ChangeEvent } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -15,8 +16,7 @@ import {
   COURT_OF_APPEAL_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
-import { appealRuling } from '@island.is/judicial-system-web/messages'
+import { appealRuling, core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -28,13 +28,14 @@ import {
   RestrictionLength,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type { UpdateAppealCaseInput } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseState,
-  UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseNumbers } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   formatDateForServer,
@@ -55,7 +56,6 @@ import {
   validate,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { CaseNumbers } from '../components'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
 const Ruling = () => {

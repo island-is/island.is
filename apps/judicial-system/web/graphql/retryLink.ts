@@ -1,4 +1,4 @@
-import { ServerError } from '@apollo/client'
+import type { ServerError } from '@apollo/client'
 import { RetryLink } from '@apollo/client/link/retry'
 
 export default new RetryLink({

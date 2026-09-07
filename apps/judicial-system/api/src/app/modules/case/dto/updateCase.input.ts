@@ -408,6 +408,16 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => ID, { nullable: true })
+  readonly indictmentApproverId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly indictmentReviewReturnedExplanation?: string
+
+  @Allow()
+  @IsOptional()
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
 
@@ -440,6 +450,11 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly isCompletedWithoutRuling?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isArraignmentSummonsSkipped?: boolean
 
   @Allow()
   @IsOptional()

@@ -1,3 +1,26 @@
+fragment HealthConversationMessageContent on HealthDirectorateHealthConversationMessageContent {
+  __typename
+  ... on HealthDirectorateHealthConversationTextContent {
+    text
+  }
+  ... on HealthDirectorateHealthConversationSegmentedContent {
+    segments {
+      type
+      text
+      label
+      href
+    }
+  }
+  ... on HealthDirectorateHealthConversationVideoContent {
+    url
+    description
+    appointmentDate
+    appointmentHostName
+    isCanceled
+    isEdited
+  }
+}
+
 fragment Dispensation on HealthDirectorateMedicineHistoryDispensation {
   id
   name

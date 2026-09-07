@@ -1,21 +1,15 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
-
-import { TUploadFile } from '../../utils/hooks'
+import type { EditableFields } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import EditableCaseFile, {
-  EditableFields,
   editableFields,
-} from '../EditableCaseFile/EditableCaseFile'
+} from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
+
 import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'
 

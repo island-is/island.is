@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 
-import { CourtSessionString } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CourtSessionString } from '@island.is/judicial-system-web/src/graphql/schema'
 import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'

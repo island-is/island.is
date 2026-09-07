@@ -6,13 +6,15 @@ import {
   PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import { faker } from '@island.is/shared/mocking'
 
 import {
   findFirstInvalidStep,
   hasDateChanged,
   removeErrorMessageIfValid,
+  setParentCheckboxAndSendToServer,
   toggleInArray,
   validateAndSendToServer,
 } from './formHelper'
@@ -208,6 +210,95 @@ describe('findLastValidStep', () => {
   })
 })
 
+describe('setParentCheckboxAndSendToServer', () => {
+  const childValues = [
+    CaseLegalProvisions._115_1_A,
+    CaseLegalProvisions._115_1_B,
+    CaseLegalProvisions._115_1_C,
+  ]
+
+  test('should add only the parent when checking it', () => {
+    // Arrange
+    const setWorkingCase = jest.fn()
+    const updateCase = jest.fn()
+    const id = faker.datatype.uuid()
+    const theCase = {
+      id,
+      legalProvisions: [CaseLegalProvisions._95_1_A],
+    } as Case
+
+    // Act
+    setParentCheckboxAndSendToServer(
+      'legalProvisions',
+      CaseLegalProvisions._115_1,
+      childValues,
+      theCase,
+      setWorkingCase,
+      updateCase,
+    )
+
+    // Assert
+    expect(updateCase).toHaveBeenCalledWith(id, {
+      legalProvisions: [
+        CaseLegalProvisions._95_1_A,
+        CaseLegalProvisions._115_1,
+      ],
+    })
+  })
+
+  test('should remove the parent and all its children when unchecking it', () => {
+    // Arrange
+    const setWorkingCase = jest.fn()
+    const updateCase = jest.fn()
+    const id = faker.datatype.uuid()
+    const theCase = {
+      id,
+      legalProvisions: [
+        CaseLegalProvisions._95_1_A,
+        CaseLegalProvisions._115_1,
+        CaseLegalProvisions._115_1_A,
+        CaseLegalProvisions._115_1_C,
+      ],
+    } as Case
+
+    // Act
+    setParentCheckboxAndSendToServer(
+      'legalProvisions',
+      CaseLegalProvisions._115_1,
+      childValues,
+      theCase,
+      setWorkingCase,
+      updateCase,
+    )
+
+    // Assert
+    expect(updateCase).toHaveBeenCalledWith(id, {
+      legalProvisions: [CaseLegalProvisions._95_1_A],
+    })
+  })
+
+  test('should not call the updateCase function when the case has no id', () => {
+    // Arrange
+    const setWorkingCase = jest.fn()
+    const updateCase = jest.fn()
+    const theCase = { id: '', legalProvisions: [] } as unknown as Case
+
+    // Act
+    setParentCheckboxAndSendToServer(
+      'legalProvisions',
+      CaseLegalProvisions._115_1,
+      childValues,
+      theCase,
+      setWorkingCase,
+      updateCase,
+    )
+
+    // Assert
+    expect(updateCase).not.toHaveBeenCalled()
+    expect(setWorkingCase).toHaveBeenCalled()
+  })
+})
+
 describe('validateAndSendToServer', () => {
   test('should call the updateCase function with the correct parameters', () => {
     // Arrange
@@ -252,5 +343,39 @@ describe('validateAndSendToServer', () => {
 
     // Assert
     expect(spy).not.toHaveBeenCalled()
+  })
+
+  test('should not call the updateCase function with a whitespace-only value for a required field', () => {
+    // Arrange
+    const spy = jest.fn()
+    const setErrorMessage = jest.fn()
+    const theCase = { id: faker.datatype.uuid() } as Case
+
+    // Act
+    validateAndSendToServer(
+      'comments',
+      '   ',
+      ['empty'],
+      theCase,
+      spy,
+      setErrorMessage,
+    )
+
+    // Assert
+    expect(spy).not.toHaveBeenCalled()
+    expect(setErrorMessage).toHaveBeenCalledWith('Reitur má ekki vera tómur')
+  })
+
+  test('should persist a whitespace-only value as an empty string for an optional field', () => {
+    // Arrange
+    const spy = jest.fn()
+    const id = faker.datatype.uuid()
+    const theCase = { id } as Case
+
+    // Act
+    validateAndSendToServer('comments', '   ', [], theCase, spy)
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(id, { comments: '' })
   })
 })

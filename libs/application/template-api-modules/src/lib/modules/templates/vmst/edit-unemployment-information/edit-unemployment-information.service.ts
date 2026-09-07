@@ -6,11 +6,13 @@ import {
   GaldurXRoadAPIModelsApplicantInfoResponse,
   GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
   GaldurExternalDomainRequestsUpdateApplicantRequest,
+  GaldurExternalDomainRequestsHasValidApplicationResponse,
 } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { generateAnswers } from './edit-unemployment-information.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { errorMsgs } from '@island.is/application/templates/vmst/edit-unemployment-information'
+import { coreErrorMessages } from '@island.is/application/core'
 
 interface ApplicationInformationWithSupportData {
   currentApplication: GaldurXRoadAPIModelsApplicantInfoResponse
@@ -78,5 +80,32 @@ export class EditUnemploymentInformationService extends BaseTemplateApiService {
         galdurExternalDomainRequestsUpdateApplicantRequest: reqObject,
       },
     )
+  }
+
+  async getEditProfileEligibility({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<GaldurExternalDomainRequestsHasValidApplicationResponse> {
+    const response =
+      await this.vmstUnemploymentClientService.getEditProfileEligibility(auth)
+    if (!response.success) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.failedDataProvider,
+        },
+        500,
+      )
+    }
+    if (!response.valid) {
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.cannotApplyErrorTitle,
+          summary: errorMsgs.cannotApplyErrorSummary,
+        },
+        400,
+      )
+    }
+
+    return response
   }
 }

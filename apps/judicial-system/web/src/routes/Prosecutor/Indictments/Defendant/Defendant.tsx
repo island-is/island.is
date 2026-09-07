@@ -17,13 +17,13 @@ import {
   PageTitle,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { ProsecutorSection } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { ProsecutorSection } from '../../components'
 import { DefendantList } from './DefendantList/DefendantList'
 import { PoliceCaseList } from './PoliceCaseList/PoliceCaseList'
 import { strings } from './Defendant.strings'

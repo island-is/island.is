@@ -485,6 +485,7 @@ export class ApplicationController {
         actionDto,
         template,
         updatedApplication.state,
+        this.intlService,
         this.featureFlagService,
         user,
       )

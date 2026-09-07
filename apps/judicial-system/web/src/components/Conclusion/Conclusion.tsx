@@ -1,8 +1,7 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-
-import BlueBox from '../BlueBox/BlueBox'
+import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
 
 interface Props {
   title: string

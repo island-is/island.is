@@ -7,20 +7,20 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  IdentityApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
+  CreateEqualityDraftApi,
   DoeCompanyApi,
   EqualityReportTemplateDocxApi,
-  EqualityReportTemplateHtmlApi,
   GetReportCommentsApi,
+  IdentityApiProvider,
   PreviousEqualityReportContentApi,
   SubmitReportCommentApi,
-  SubmitEqualityReportApi,
+  SubmitEqualityDraftApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { mapUserToRole } from '../utils/mapUserToRole'
@@ -50,7 +50,15 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.EQUALITY_REPORT].translation,
   dataSchema,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  newApplicationButtonLabel: messages.general.newApplicationButtonLabel,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
   stateMachineOptions: {
@@ -60,6 +68,19 @@ const template: ApplicationTemplate<
         set(application, 'assignees', [
           InstitutionNationalIds.DOMSMALA_RADUNEYTID,
         ])
+        return context
+      }),
+      // Both transitions into IN_REVIEW write the flag, so whatever a client
+      // may have put in answers while editing is overwritten by the route
+      // actually taken.
+      markRevised: assign((context) => {
+        const { application } = context
+        set(application, 'answers.hasBeenRevised', true)
+        return context
+      }),
+      markNotRevised: assign((context) => {
+        const { application } = context
+        set(application, 'answers.hasBeenRevised', false)
         return context
       }),
     },
@@ -75,7 +96,7 @@ const template: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDraft,
+              label: messages.general.tagDraft,
               variant: 'blue',
             },
           },
@@ -97,7 +118,7 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                IdentityApi,
+                IdentityApiProvider,
                 CompanyRegistryApi,
                 ActiveEqualityReportApi,
                 DoeCompanyApi,
@@ -110,7 +131,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              read: 'all',
+              // This is the role every unauthorized caller falls through to, so
+              // it gets nothing: the dead-end form reads no answers and no
+              // externalData, only `application.applicant`.
+              read: { answers: [], externalData: [] },
+              write: { answers: [] },
+              delete: false,
             },
           ],
         },
@@ -129,7 +155,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDraft,
+              label: messages.general.tagDraft,
               variant: 'blue',
             },
             historyLogs: [
@@ -139,15 +165,10 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          // So the comment thread's non-empty check has fresh externalData on
-          // first render — role.api alone never auto-fetches outside
-          // PREREQUISITES, it only permits the on-demand call CommentThread
-          // makes from within the mounted field.
-          onEntry: GetReportCommentsApi,
           // onExit (not onEntry on IN_REVIEW) so a failed submission blocks
           // the transition instead of silently landing the applicant on a
           // fake "in review" screen with a stale backend record.
-          onExit: SubmitEqualityReportApi,
+          onExit: SubmitEqualityDraftApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -165,10 +186,9 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                EqualityReportTemplateHtmlApi,
+                CreateEqualityDraftApi,
                 EqualityReportTemplateDocxApi,
                 PreviousEqualityReportContentApi,
-                GetReportCommentsApi,
               ],
               delete: true,
             },
@@ -184,6 +204,7 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
+            actions: 'markNotRevised',
           },
         },
       },
@@ -198,7 +219,7 @@ const template: ApplicationTemplate<
           },
           actionCard: {
             tag: {
-              label: coreMessages.tagsInProgress,
+              label: messages.inReview.tagLabel,
               variant: 'blueberry',
             },
             historyLogs: [
@@ -224,12 +245,14 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
-              write: {
-                answers: ['comment'],
-                externalData: ['getReportComments', 'submitReportComment'],
-              },
-              api: [GetReportCommentsApi, SubmitReportCommentApi],
-              delete: true,
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,
@@ -247,8 +270,104 @@ const template: ApplicationTemplate<
           [DefaultEvents.REJECT]: {
             target: States.DENIED,
           },
+          // Targets DRAFT_RETRY (not DRAFT) so a case-worker-requested
+          // revision lands on a screen built for that purpose — comments
+          // first, then the actual goalsAndActions content to fix — rather
+          // than dropping the applicant back onto the full mainForm.
           [DefaultEvents.EDIT]: {
-            target: States.DRAFT,
+            target: States.DRAFT_RETRY,
+          },
+        },
+      },
+      [States.DRAFT_RETRY]: {
+        meta: {
+          name: 'Lagfæring',
+          progress: 0.7,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
+          // No onExit for content — Editor.tsx pushes the revised content
+          // straight to DMR's already-submitted (IN_REVIEW) report via the
+          // directorateOfEqualityEditEqualityContent GraphQL mutation the
+          // moment a file is uploaded, so there's nothing left to commit at
+          // transition time.
+          actionCard: {
+            tag: {
+              label: messages.draftRetry.tagLabel,
+              variant: 'purple',
+            },
+            pendingAction: {
+              title: messages.draftRetry.pendingActionTitle,
+              content: messages.draftRetry.pendingActionContent,
+              button: messages.draftRetry.pendingActionButton,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.historyLogs.draftRetry,
+              },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: messages.inReview.approvedHistoryLog,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: messages.inReview.rejectedHistoryLog,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/draftRetryForm').then((module) =>
+                  Promise.resolve(module.draftRetryForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: {
+                answers: ['comment', 'goalsAndActions'],
+                externalData: [
+                  'getReportComments',
+                  'submitReportComment',
+                  'equalityReportTemplateDocx',
+                ],
+              },
+              api: [
+                GetReportCommentsApi,
+                SubmitReportCommentApi,
+                EqualityReportTemplateDocxApi,
+              ],
+              delete: false,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
+            actions: 'markRevised',
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
           },
         },
       },
@@ -260,13 +379,10 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDone,
+              label: coreMessages.tagsApproved,
               variant: 'mint',
             },
           },
-          // So the comment thread's non-empty check has fresh externalData —
-          // see the identical comment on States.DRAFT.
-          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -275,9 +391,14 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
-              write: { externalData: ['getReportComments'] },
-              api: [GetReportCommentsApi],
-              delete: true,
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,
@@ -301,9 +422,6 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
-          // So the comment thread's non-empty check has fresh externalData —
-          // see the identical comment on States.DRAFT.
-          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -312,9 +430,9 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
-              write: { externalData: ['getReportComments'] },
-              api: [GetReportCommentsApi],
-              delete: true,
+              // See the identical comment on States.APPROVED.
+              write: { answers: [] },
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,

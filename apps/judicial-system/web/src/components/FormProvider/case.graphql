@@ -2,7 +2,6 @@ query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
     created
-    modified
     type
     splitCases {
       id
@@ -41,6 +40,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
     }
     splitCase {
@@ -75,6 +75,8 @@ query Case($input: CaseQueryInput!) {
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
+      isClosedWithoutEnforcement
+      closedWithoutEnforcementDate
       publicProsecutorIsRegisteredInPoliceSystem
       openedByPrisonAdminDate
       punishmentType
@@ -279,6 +281,7 @@ query Case($input: CaseQueryInput!) {
       defendantId
       civilClaimantId
       rulingFileId
+      isPronouncedOrally
       hasBeenAppealed
       canBeAppealed
       appealDeadline
@@ -319,6 +322,7 @@ query Case($input: CaseQueryInput!) {
       speedLimit
     }
     withCourtSessions
+    isArraignmentSummonsSkipped
     courtSessions {
       id
       created
@@ -509,6 +513,7 @@ query Case($input: CaseQueryInput!) {
       withdrawnDate
     }
     indictmentDeniedExplanation
+    indictmentReviewReturnedExplanation
     arraignmentDate {
       date
       location
@@ -528,6 +533,10 @@ query Case($input: CaseQueryInput!) {
       id
       name
     }
+    indictmentApprover {
+      id
+      name
+    }
     indictmentAppealDeadline
     indictmentVerdictAppealDeadlineExpired
     indictmentVerdictViewedByAll
@@ -536,6 +545,18 @@ query Case($input: CaseQueryInput!) {
     mergeCase {
       id
       courtCaseNumber
+      type
+      defendants {
+        id
+        defenderNationalId
+        isDefenderChoiceConfirmed
+      }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
     }
     mergedCases {
       id
@@ -650,6 +671,12 @@ query Case($input: CaseQueryInput!) {
           externalPoliceDocumentId
         }
       }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
       caseFiles {
         id
         created
@@ -667,6 +694,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
       policeCaseNumbers
       indictmentSubtypes

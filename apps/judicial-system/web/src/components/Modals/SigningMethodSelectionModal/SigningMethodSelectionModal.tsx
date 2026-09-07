@@ -1,15 +1,16 @@
-import { FC, useState } from 'react'
+import type { FC } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
-import {
+import { Modal } from '@island.is/judicial-system-web/src/components'
+import type {
   Case,
   RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useRequestCourtRecordSignatureMutation } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/requestCourtRecordSignature.generated'
 
-import { Modal } from '../..'
 import { useRequestRulingSignatureMutation } from './requestRulingSignature.generated'
 
 export type SignatureType = 'ruling' | 'courtRecord'

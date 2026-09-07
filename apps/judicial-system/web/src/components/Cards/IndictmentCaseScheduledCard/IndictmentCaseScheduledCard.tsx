@@ -1,16 +1,16 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import { courtSessionTypeNames } from '@island.is/judicial-system/types'
-import {
+import CaseScheduledCard from '@island.is/judicial-system-web/src/components/Cards/CaseScheduledCard/CaseScheduledCard'
+import IconCard from '@island.is/judicial-system-web/src/components/Cards/IconCard/IconCard'
+import type {
   CourtSessionType,
-  IndictmentDecision,
   Institution,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import CaseScheduledCard from '../CaseScheduledCard/CaseScheduledCard'
-import IconCard from '../IconCard/IconCard'
 import { strings } from './IndictmentCaseScheduledCard.strings'
 
 interface Props {

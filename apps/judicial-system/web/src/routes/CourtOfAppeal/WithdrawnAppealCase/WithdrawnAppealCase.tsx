@@ -18,6 +18,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseNumberInput } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
 import {
   useFileList,
   useS3Upload,
@@ -29,7 +30,6 @@ import {
   isMatchingAppealCourtFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { CaseNumberInput } from '../components'
 import { strings } from './WithdrawnAppealCase.strings'
 
 const WithdrawnAppealCase = () => {

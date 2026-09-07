@@ -2,9 +2,8 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { userRoleToString } from '../userRoleToString'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { userRoleToString } from '@island.is/judicial-system-web/src/routes/Admin/userRoleToString'
 
 export const USERS_CSV_FILENAME = 'notendur.csv'
 

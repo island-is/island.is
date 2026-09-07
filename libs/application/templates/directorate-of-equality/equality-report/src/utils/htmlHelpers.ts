@@ -18,6 +18,14 @@ const HTML_NAMED_ENTITIES: Record<string, string> = {
   apos: "'",
 }
 
+// String.fromCodePoint throws RangeError outside the Unicode range, and lone
+// surrogates would decode to broken output rather than a character.
+const isValidCodePoint = (codePoint: number) =>
+  Number.isInteger(codePoint) &&
+  codePoint >= 0 &&
+  codePoint <= 0x10ffff &&
+  !(codePoint >= 0xd800 && codePoint <= 0xdfff)
+
 export const decodeHtmlEntities = (value: string) =>
   value.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
     if (entity[0] === '#') {
@@ -25,17 +33,13 @@ export const decodeHtmlEntities = (value: string) =>
         entity[1].toLowerCase() === 'x'
           ? parseInt(entity.slice(2), 16)
           : parseInt(entity.slice(1), 10)
-      return Number.isNaN(codePoint) ? match : String.fromCodePoint(codePoint)
+      return isValidCodePoint(codePoint)
+        ? String.fromCodePoint(codePoint)
+        : match
     }
     return HTML_NAMED_ENTITIES[entity.toLowerCase()] ?? match
   })
 
-export const decodeEditorHtml = (base64: string) => {
-  try {
-    return atob(base64)
-      .replace(/<[^>]*>/g, '')
-      .trim()
-  } catch {
-    return ''
-  }
-}
+// The plain-text body of an HTML fragment: tags dropped, entities decoded.
+export const htmlToPlainText = (value: string) =>
+  decodeHtmlEntities(value.replace(/<[^>]*>/g, '')).trim()

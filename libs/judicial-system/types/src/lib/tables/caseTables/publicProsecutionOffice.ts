@@ -109,3 +109,17 @@ export const publicProsecutionOfficeIndictmentsRequestedAppeal: CaseTable = {
     publicProsecutionOfficeIndictmentsRequestedAppealColumnKeys,
   ),
 }
+
+const publicProsecutionOfficeIndictmentsClosedWithoutEnforcementColumnKeys: CaseTableColumnKey[] =
+  ['caseNumber', 'defendants', 'rulingType', 'closedWithoutEnforcementDate']
+
+export const publicProsecutionOfficeIndictmentsClosedWithoutEnforcement: CaseTable =
+  {
+    title: 'Lokið án fullnustu',
+    hasMyCasesFilter: false,
+    columnKeys:
+      publicProsecutionOfficeIndictmentsClosedWithoutEnforcementColumnKeys,
+    columns: pickColumns(
+      publicProsecutionOfficeIndictmentsClosedWithoutEnforcementColumnKeys,
+    ),
+  }

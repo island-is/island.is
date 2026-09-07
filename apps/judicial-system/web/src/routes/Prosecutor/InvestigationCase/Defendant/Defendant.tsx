@@ -26,12 +26,13 @@ import {
   SectionHeading,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  CaseOrigin,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DefendantInfo } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useDefendants,
   useSyncDefendantsFromPolice,
@@ -40,8 +41,6 @@ import {
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-
-import { DefendantInfo } from '../../components'
 
 const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
   origin === CaseOrigin.LOKE && Boolean(id)

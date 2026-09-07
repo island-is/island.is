@@ -1,4 +1,5 @@
-import { FC, useContext, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useRef, useState } from 'react'
 
 import { Button, Input } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -12,7 +13,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './CourtCaseNumber.css'
 

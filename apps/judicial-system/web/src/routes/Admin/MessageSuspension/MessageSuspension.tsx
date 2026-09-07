@@ -6,8 +6,8 @@ import {
   Checkbox,
   Input,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { toast } from '@island.is/island-ui/core'
 import { ADMIN_USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
   formatDate,
