@@ -1,3 +1,4 @@
+import { ApolloError } from '@apollo/client'
 import { HealthDirectorateAppointment } from '@island.is/api/schema'
 import { Box, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -58,7 +59,7 @@ const AppointmentsOverview = () => {
 
   const renderAppointmentList = (
     appointments: HealthDirectorateAppointment[],
-    query: Pick<typeof upcoming, 'loading' | 'error'>,
+    query: { loading: boolean; error?: ApolloError },
     emptyText: string,
   ) => {
     if (query.loading) {
