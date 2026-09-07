@@ -23,6 +23,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseType,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -84,6 +85,9 @@ export class LimitedAccessAppealCaseController {
         user,
         dto.rulingFileId,
         transaction,
+        dto.appealType === AppealCaseType.VERDICT
+          ? { defendantId: dto.defendantId }
+          : undefined,
       ),
     )
 
@@ -163,6 +167,7 @@ export class LimitedAccessAppealCaseController {
         dto.transition,
         user,
         transaction,
+        dto.defendantId,
       ),
     )
 

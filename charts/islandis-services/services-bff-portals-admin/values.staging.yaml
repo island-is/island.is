@@ -67,6 +67,7 @@ httpRoute:
   primary-gw:
     hostnames:
       - 'beta.staging01.devland.is'
+    noAuth: true
     parentRefs:
       - name: 'gateway-external'
         namespace: 'envoy-gateway-external'

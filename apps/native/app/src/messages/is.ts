@@ -350,6 +350,9 @@ export const is = {
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
+  'vehicleDetail.lastOdometer': 'Síðasta kílómetrastaða',
+  'vehicleDetail.moreInfo': 'Fleiri upplýsingar',
+  'vehicleDetail.viewMore': 'Sjá nánar',
   'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
   'vehicleDetail.moreOptions': 'Fleiri valmöguleikar',
 
@@ -908,11 +911,8 @@ export const is = {
   'health.messages.compose.to': 'Til: {name}',
   'health.messages.compose.messageLabel': 'Skilaboð',
   'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
-  'health.messages.compose.termsAccept': 'Ég samþykki',
-  'health.messages.compose.termsLink': 'skilmála',
-  'health.messages.compose.termsTitle': 'Skilmálar vegna skilaboða',
-  'health.messages.compose.termsBody':
-    '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
+  'health.messages.compose.termsAccept':
+    'Ég samþykki að skilaboðin vistist í sjúkraskrá og að viðeigandi heilbrigðisstarfsmaður með aðgang að henni svari erindinu.',
   'health.messages.compose.availabilityWindow':
     '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}.',
   'health.messages.compose.availabilityInfo':
@@ -937,6 +937,12 @@ export const is = {
   'health.messages.compose.certificateText':
     'Eins og er er ekki hægt að sækja um vottorð í gegnum Ísland.is appið. Vinsamlegast sækið um vottorð í gegnum Mínar síður Ísland.is.',
   'health.messages.compose.certificateLink': 'Sækja um vottorð',
+  'health.messages.certificatePayment.title': 'Vottorð tilbúið til greiðslu',
+  'health.messages.certificatePayment.text':
+    'Vottorðið kostar {amount} og er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',
+  'health.messages.certificatePayment.textNoAmount':
+    'Vottorðið er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',
+  'health.messages.certificatePayment.link': 'Greiða á Mínum síðum',
   'health.messages.attachmentError':
     'Ekki tókst að sækja skjalið. Vinsamlegast reyndu aftur síðar.',
   'health.messages.sentTitle': 'Skilaboð móttekin',

@@ -74,6 +74,15 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           items: [
             indictmentCreated,
             prosecutor(workingCase.type, onProsecutorClick),
+            ...(workingCase.indictmentApprover
+              ? [
+                  {
+                    id: 'indictment-approver-item',
+                    title: 'Yfirlesari',
+                    values: [workingCase.indictmentApprover.name ?? ''],
+                  },
+                ]
+              : []),
             policeCaseNumbers,
             ...(workingCase.judge ? [judge] : []),
             ...(workingCase.registrar ? [registrar] : []),
