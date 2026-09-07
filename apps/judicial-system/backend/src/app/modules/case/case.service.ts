@@ -1087,6 +1087,13 @@ export class CaseService {
             caseId: theCase.id,
             elementId: [defendant.id, subpoena.id],
           })
+          // After arraignment so defender choice on the certificate is correct
+          addMessagesToQueue({
+            type: MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id, subpoena.id],
+          })
         }
       }
     }
