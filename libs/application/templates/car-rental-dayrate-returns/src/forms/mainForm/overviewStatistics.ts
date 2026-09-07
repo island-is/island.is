@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DayRateRecord } from '../../utils/types'
+import { getEligibleDayRateRecords } from '../../utils/dayRateRecordUtils'
 
 export const overviewStatistics = buildSection({
   id: 'overviewStatisticsSection',
@@ -25,13 +26,24 @@ export const overviewStatistics = buildSection({
               ) ?? []
 
             const safeRates = Array.isArray(rates) ? rates : []
-            const carsOnDayRateLastMonth = safeRates.length
+            const eligibleRates = getEligibleDayRateRecords(safeRates)
+            const carsThatRequireAnswers = eligibleRates.length
+            const carsAlreadyReported =
+              safeRates.length - carsThatRequireAnswers
 
             return [
               [
                 m.overview.carsThatRequireAnswers,
-                carsOnDayRateLastMonth.toString(),
+                carsThatRequireAnswers.toString(),
               ],
+              ...(carsAlreadyReported > 0
+                ? [
+                    [
+                      m.overview.carsAlreadyReported,
+                      carsAlreadyReported.toString(),
+                    ],
+                  ]
+                : []),
             ]
           },
         }),

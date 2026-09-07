@@ -18,6 +18,7 @@ import {
   useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
+import CertificateAction from './components/CertificateAction'
 import ConversationAvatar from './components/ConversationAvatar'
 import ConversationBackButton from './components/ConversationBackButton'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
@@ -28,7 +29,7 @@ import ReplyBlockedAlert from './components/ReplyBlockedAlert'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './HealthConversations.css'
@@ -53,9 +54,27 @@ const HealthConversationDetail = () => {
   const userInfo = useUserInfo()
   const navigate = useNavigate()
   const { isPhoneWidth } = useIsPhoneWidth()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const certificatePaymentReturnId = searchParams.get('certificatePayment')
+  const certificatePaymentCancelled = searchParams.get(
+    'certificatePaymentCancelled',
+  )
+
+  useEffect(() => {
+    if (!certificatePaymentCancelled) return
+    toast.warning(
+      formatMessage(messages.healthConversationCertificatePaymentCancelled),
+      { toastId: 'certificatePaymentCancelled' },
+    )
+    searchParams.delete('certificatePaymentCancelled')
+    setSearchParams(searchParams, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [certificatePaymentCancelled])
 
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
+
+  const isMobileReplyView = replyOpen && isPhoneWidth
   const replyRef = useRef<HTMLDivElement>(null)
   const replyInputRef = useRef<HTMLTextAreaElement | null>(null)
   const replyTriggerRef = useRef<HTMLElement | null>(null)
@@ -74,9 +93,24 @@ const HealthConversationDetail = () => {
     }
   }, [replyOpen])
 
-  const { data, loading, error } = useGetHealthConversationDetailQuery({
-    variables: { id },
-  })
+  const { data, loading, error, refetch } = useGetHealthConversationDetailQuery(
+    {
+      fetchPolicy: 'cache-and-network',
+      variables: { id },
+    },
+  )
+
+  const handleCertificatePaid = () => {
+    toast.success(
+      formatMessage(messages.healthConversationCertificatePaymentSuccess),
+      { toastId: 'certificatePaymentSuccess' },
+    )
+    refetch()
+    if (certificatePaymentReturnId) {
+      searchParams.delete('certificatePayment')
+      setSearchParams(searchParams, { replace: true })
+    }
+  }
 
   const [markAsRead] = useMarkHealthConversationAsReadMutation({
     refetchQueries: ['GetHealthConversations'],
@@ -106,15 +140,17 @@ const HealthConversationDetail = () => {
 
   const item = data?.healthDirectorateHealthConversation
 
-  // Mark as read once when the thread first loads and hasn't been read yet
+  // Mark as read when the thread is unread — isRead is a dependency because
+  // cache-and-network can render a read cached thread before the network
+  // result reveals it has become unread
   useEffect(() => {
     if (item?.isRead === false) {
       markAsRead({ variables: { input: { id } } })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item?.id])
+  }, [item?.id, item?.isRead])
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <GridContainer>
         <GridRow marginTop={[1, 0, 0]}>
@@ -188,7 +224,7 @@ const HealthConversationDetail = () => {
     /* On mobile, replying takes over the screen, so back should return to the
     the thread first. On desktop the reply form is just appended below
     the (still visible) thread, so back always leaves the conversation.  */
-    if (isPhoneWidth && replyOpen) {
+    if (isMobileReplyView) {
       setReplyOpen(false)
     } else {
       navigate(HealthPaths.HealthConversations)
@@ -211,16 +247,19 @@ const HealthConversationDetail = () => {
               justifyContent="spaceBetween"
               alignItems="center"
               marginBottom={1}
+              className={styles.detailHeader}
             >
               <Box className={styles.backButton}>
                 <ConversationBackButton onClick={handleBack} />
               </Box>
-              {!replyOpen && (
+              {!isMobileReplyView && (
                 <MessageActions
                   bookmarked={item.isStarred}
                   archived={item.isArchived}
                   onReply={
-                    item.patientCanReply !== false ? openReply : undefined
+                    !replyOpen && item.patientCanReply !== false
+                      ? openReply
+                      : undefined
                   }
                   onFav={() => {
                     if (item.isStarred) {
@@ -244,7 +283,7 @@ const HealthConversationDetail = () => {
               {item.title}
             </Text>
 
-            {replyOpen && isPhoneWidth ? (
+            {isMobileReplyView ? (
               /* Mobile takes over the screen while replying: the thread is
               hidden and only the recipient + reply form are shown. */
               <ConversationReplyForm
@@ -326,30 +365,46 @@ const HealthConversationDetail = () => {
                       {/* Body */}
                       <ConversationMessageBody message={msg} />
 
-                      {/* Attachments */}
-                      {msg.attachments.length > 0 && (
-                        <Box
-                          display="flex"
-                          flexWrap="wrap"
-                          columnGap={2}
-                          rowGap={1}
-                          marginBottom={3}
-                        >
-                          {msg.attachments.map((file) => (
-                            <Button
-                              key={file.id}
-                              variant="utility"
-                              icon="document"
-                              iconType="outline"
-                              onClick={() =>
-                                formSubmit(file.downloadServiceURL)
-                              }
-                            >
-                              {file.fileName}
-                            </Button>
-                          ))}
-                        </Box>
+                      {/* Certificate */}
+                      {(msg.certificateId || msg.requiresPayment) && (
+                        <CertificateAction
+                          certificateId={msg.certificateId}
+                          requiresPayment={msg.requiresPayment}
+                          paid={msg.paid}
+                          pendingPaymentId={msg.pendingPaymentId}
+                          isReturningFromPayment={
+                            !!msg.certificateId &&
+                            msg.certificateId === certificatePaymentReturnId
+                          }
+                          onPaid={handleCertificatePaid}
+                        />
                       )}
+
+                      {/* Attachments */}
+                      {msg.attachments.length > 0 &&
+                        !(msg.requiresPayment && !msg.paid) && (
+                          <Box
+                            display="flex"
+                            flexWrap="wrap"
+                            columnGap={2}
+                            rowGap={1}
+                            marginBottom={3}
+                          >
+                            {msg.attachments.map((file) => (
+                              <Button
+                                key={file.id}
+                                variant="utility"
+                                icon="document"
+                                iconType="outline"
+                                onClick={() =>
+                                  formSubmit(file.downloadServiceURL)
+                                }
+                              >
+                                {file.fileName}
+                              </Button>
+                            ))}
+                          </Box>
+                        )}
                     </Box>
                   )
                 })}

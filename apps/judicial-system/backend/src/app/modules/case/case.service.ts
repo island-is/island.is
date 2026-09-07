@@ -36,6 +36,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  AppealCaseType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
   AppealEventType,
@@ -94,10 +95,11 @@ import {
   Case,
   caseInclude,
   CaseRepositoryService,
-  CaseString,
+  CaseStringRepositoryService,
   CourtDocumentRepositoryService,
   CourtSessionRepositoryService,
   DateLog,
+  DateLogRepositoryService,
   Defendant,
   DefendantEventLog,
   DefendantEventLogRepositoryService,
@@ -105,7 +107,6 @@ import {
   Institution,
   UpdateCase,
 } from '../repository'
-import { SubpoenaService } from '../subpoena'
 import { VerdictService } from '../verdict'
 import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -127,6 +128,7 @@ type CaseStringKeys = keyof Pick<
   | 'civilDemands'
   | 'penalties'
   | 'reopenReason'
+  | 'indictmentReviewReturnedExplanation'
 >
 
 const caseStringTypes: Record<CaseStringKeys, StringType> = {
@@ -135,6 +137,8 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
   civilDemands: StringType.CIVIL_DEMANDS,
   penalties: StringType.PENALTIES,
   reopenReason: StringType.REOPEN_REASON,
+  indictmentReviewReturnedExplanation:
+    StringType.INDICTMENT_REVIEW_RETURNED_EXPLANATION,
 }
 
 // Files parties upload for an appeal - removed when the appeal case they belong
@@ -156,15 +160,13 @@ const APPEAL_PARTY_FILE_CATEGORIES = [
 @Injectable()
 export class CaseService {
   constructor(
-    @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
-    @InjectModel(CaseString)
-    private readonly caseStringModel: typeof CaseString,
+    private readonly caseStringRepositoryService: CaseStringRepositoryService,
+    private readonly dateLogRepositoryService: DateLogRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly indictmentCountService: IndictmentCountService,
-    private readonly subpoenaService: SubpoenaService,
     @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
@@ -970,10 +972,10 @@ export class CaseService {
     this.addMessagesForRevokeNotificationToQueue(user, theCase)
   }
 
-  private async addMessagesForRevokedIndictmentCaseToQueue(
+  private addMessagesForRevokedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
-  ): Promise<void> {
+  ): void {
     this.addMessagesForRevokeNotificationToQueue(user, theCase)
 
     if (theCase.courtCaseNumber) {
@@ -985,23 +987,17 @@ export class CaseService {
       })
     }
 
-    // TODO: Use subpoenas already included in theCase.defendants
-    // - no need to call the subpoena service
-    // - we should also include split case subpoenas, which were created before the split
-    // -    or, the alternatively those subpoenas should be revoked on split
-    const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
-      theCase.id,
-    )
-
-    if (subpoenasToRevoke?.length > 0) {
-      addMessagesToQueue(
-        ...subpoenasToRevoke.map((subpoena) => ({
+    // TODO: Also include split case subpoenas created before the split,
+    // or revoke those subpoenas when the case is split.
+    for (const defendant of theCase.defendants ?? []) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        addMessagesToQueue({
           type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
           user,
           caseId: theCase.id,
-          elementId: [subpoena.defendantId, subpoena.id],
-        })),
-      )
+          elementId: [defendant.id, subpoena.id],
+        })
+      }
     }
   }
 
@@ -1014,6 +1010,46 @@ export class CaseService {
       user,
       caseId: theCase.id,
       body: { type: IndictmentCaseNotificationType.INDICTMENT_DENIED },
+    })
+  }
+
+  private addMessagesForReviewRequestedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_SENT_FOR_REVIEW,
+      },
+    })
+  }
+
+  private addMessagesForReviewDeniedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_REVIEW_DENIED },
+    })
+  }
+
+  private addMessagesForReviewAcceptedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_REVIEW_ACCEPTED,
+      },
     })
   }
 
@@ -1092,6 +1128,31 @@ export class CaseService {
         } else {
           this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
+      } else if (
+        updatedCase.state === CaseState.WAITING_FOR_REVIEW &&
+        theCase.state === CaseState.DRAFT &&
+        isIndictment
+      ) {
+        this.addMessagesForReviewRequestedIndictmentCaseToQueue(
+          updatedCase,
+          user,
+        )
+      } else if (
+        updatedCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
+        theCase.state === CaseState.WAITING_FOR_REVIEW &&
+        isIndictment
+      ) {
+        this.addMessagesForReviewAcceptedIndictmentCaseToQueue(
+          updatedCase,
+          user,
+        )
+      } else if (
+        updatedCase.state === CaseState.DRAFT &&
+        theCase.state === CaseState.WAITING_FOR_REVIEW &&
+        isIndictment &&
+        user.id === theCase.indictmentApproverId
+      ) {
+        this.addMessagesForReviewDeniedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.SUBMITTED && isIndictment) {
         this.addMessagesForSubmittedIndictmentCaseToQueue(updatedCase, user)
       } else if (
@@ -1269,6 +1330,27 @@ export class CaseService {
     return theCase
   }
 
+  /**
+   * Reads a live case with its row locked for the rest of the transaction. Used
+   * by `CaseExistsForUpdateGuard` so that a mutating route decides its
+   * mutation against a case row no one else can change until it commits.
+   */
+  async findByIdForUpdate(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<Case> {
+    const theCase = await this.caseRepositoryService.findLiveByIdForUpdate(
+      caseId,
+      transaction,
+    )
+
+    if (!theCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    return theCase
+  }
+
   async findMinimalById(id: string): Promise<MinimalCase> {
     const minimalCase = await this.caseRepositoryService.findOne({
       where: {
@@ -1403,32 +1485,39 @@ export class CaseService {
       if (updateDateLog !== undefined) {
         const dateType = dateLogTypes[dateKey]
 
-        const dateLog = await this.dateLogModel.findOne({
-          where: { caseId: theCase.id, dateType },
-          transaction,
-        })
+        const dateLog = await this.dateLogRepositoryService.findByCaseAndType(
+          theCase.id,
+          dateType,
+          { transaction },
+        )
 
         if (dateLog) {
           if (updateDateLog === null) {
-            await this.dateLogModel.destroy({
-              where: { caseId: theCase.id, dateType },
-              transaction,
-            })
+            await this.dateLogRepositoryService.deleteByCaseAndType(
+              theCase.id,
+              dateType,
+              { transaction },
+            )
           } else {
-            await this.dateLogModel.update(updateDateLog, {
-              where: { caseId: theCase.id, dateType },
-              transaction,
-            })
+            await this.dateLogRepositoryService.updateByCaseAndType(
+              theCase.id,
+              dateType,
+              updateDateLog,
+              { transaction },
+            )
           }
         } else if (updateDateLog !== null) {
-          await this.dateLogModel.create(
-            {
-              caseId: theCase.id,
-              dateType,
-              ...updateDateLog,
-            },
+          await this.dateLogRepositoryService.createForCase(
+            theCase.id,
+            dateType,
+            updateDateLog,
             { transaction },
           )
+        }
+
+        // A real arraignment date always wins over a skipped summons
+        if (dateKey === 'arraignmentDate' && updateDateLog?.date) {
+          update.isArraignmentSummonsSkipped = false
         }
 
         delete update[dateKey]
@@ -1450,21 +1539,17 @@ export class CaseService {
         const stringType = caseStringTypes[caseStringKey]
 
         if (updateCaseString === null) {
-          await this.caseStringModel.destroy({
-            where: { caseId: theCase.id, stringType },
-            transaction,
-          })
+          await this.caseStringRepositoryService.deleteByCaseAndType(
+            theCase.id,
+            stringType,
+            { transaction },
+          )
         } else {
-          await this.caseStringModel.upsert(
-            {
-              caseId: theCase.id,
-              stringType,
-              value: updateCaseString,
-            },
-            {
-              conflictFields: ['case_id', 'string_type'],
-              transaction,
-            },
+          await this.caseStringRepositoryService.upsertByCaseAndType(
+            theCase.id,
+            stringType,
+            updateCaseString,
+            { transaction },
           )
         }
 
@@ -2196,6 +2281,7 @@ export class CaseService {
         const appealCase = await this.appealCaseRepositoryService.create(
           theCase.id,
           {
+            appealType: AppealCaseType.RULING,
             appealState: AppealCaseState.APPEALED,
             // An in-court appeal happened when the case completed
             appealDate: caseUpdate.rulingDate ?? theCase.rulingDate,

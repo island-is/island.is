@@ -53,6 +53,11 @@ export const tableViewSelectionSection = buildSection({
               min: 0,
             },
           ],
+          disabledKey: 'disabled',
+          disabledReason: (row) => ({
+            ...m.tableView.disabledAlreadyReported,
+            values: { days: row.alreadyReportedDays },
+          }),
           searchLabel: m.tableView.searchLabel,
           searchPlaceholder: m.tableView.searchPlaceholder,
           emptyState: m.tableView.emptyState,

@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useContext, useState } from 'react'
+import { useContext, useMemo } from 'react'
 
 import type { IconMapIcon } from '@island.is/island-ui/core'
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
@@ -97,14 +97,16 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
   onOpenFile,
   hideTrailingSeparator = false,
 }) => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { handleRemove } = useS3Upload(workingCase.id)
 
-  const [files, setFiles] = useState<CaseFile[]>(() =>
-    (workingCase.caseFiles ?? []).filter((file) =>
-      isAppealFileCategoryVisible(workingCase, appealCase, file, user),
-    ),
+  const files = useMemo(
+    () =>
+      (workingCase.caseFiles ?? []).filter((file) =>
+        isAppealFileCategoryVisible(workingCase, appealCase, file, user),
+      ),
+    [workingCase, appealCase, user],
   )
 
   const deleteCategories = isProsecutionUser(user)
@@ -186,9 +188,12 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
                               title: 'Eyða',
                               onClick: () =>
                                 handleRemove(file as TUploadFile, () => {
-                                  setFiles((prev) =>
-                                    prev.filter((f) => f.id !== file.id),
-                                  )
+                                  setWorkingCase((prev) => ({
+                                    ...prev,
+                                    caseFiles: prev.caseFiles?.filter(
+                                      (f) => f.id !== file.id,
+                                    ),
+                                  }))
                                 }),
                               icon: 'trash' as IconMapIcon,
                             },

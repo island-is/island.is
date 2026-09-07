@@ -5,6 +5,16 @@ import { QuestionnaireInput } from '../../../dto/questionnaire.input'
 import { m } from '../../../utils/messages'
 import { Reply } from '../types'
 
+// EL column types that can appear in the "columnId:type:value" encoding
+const TABLE_CELL_TYPES = [
+  'string',
+  'number',
+  'date',
+  'datetime',
+  'bool',
+  'list',
+]
+
 /**
  * Maps a QuestionnaireInput to the Health Directorate submission format
  */
@@ -57,9 +67,13 @@ export const mapToElAnswer = (
         entry.type === AnswerOptionType.date ||
         entry.type === AnswerOptionType.datetime
       ) {
+        // A cleared date picker submits '' - omit the reply, an empty
+        // string fails EL's date validation
+        if (!answerValues[0]) return []
+
         return {
           questionId,
-          answer: answerValues[0] || '', // Should be ISO date string
+          answer: answerValues[0],
         }
       }
 
@@ -99,15 +113,17 @@ export const mapToElAnswer = (
             let columnType: string | undefined
             let value = ''
 
-            if (parts.length >= 3) {
+            // Legacy "columnId:value" cells may contain ':' in the value,
+            // so only treat the middle segment as a type when it is one
+            if (parts.length >= 3 && TABLE_CELL_TYPES.includes(parts[1])) {
               // New format: "columnId:type:value"
               columnId = parts[0]
               columnType = parts[1]
               value = parts.slice(2).join(':') // In case value contains ':'
-            } else if (parts.length === 2) {
+            } else if (parts.length >= 2) {
               // Old format: "columnId:value". Keep it for backward compatibility on dev lists
               columnId = parts[0]
-              value = parts[1]
+              value = parts.slice(1).join(':')
             }
 
             if (!columnData[columnId]) {
@@ -135,12 +151,14 @@ export const mapToElAnswer = (
             const value = cell?.value || ''
             const columnType = cell?.type
 
-            // Use column type if available, otherwise infer from value
-            // Check in order: boolean, date, number, string (date before number to avoid year-only confusion)
+            if (!value && columnType !== 'string') return
+
+            // Only infer types for legacy untyped values; check date before
+            // number since parseFloat("2026-08-05") parses as 2026
+            const inferType = !columnType
             if (
-              columnType === 'boolean' ||
-              value === 'true' ||
-              value === 'false'
+              columnType === 'bool' ||
+              (inferType && (value === 'true' || value === 'false'))
             ) {
               row.push({
                 questionId: columnId,
@@ -148,7 +166,8 @@ export const mapToElAnswer = (
               })
             } else if (
               columnType === 'date' ||
-              /^\d{4}-\d{2}-\d{2}/.test(value)
+              columnType === 'datetime' ||
+              (inferType && /^\d{4}-\d{2}-\d{2}/.test(value))
             ) {
               row.push({
                 questionId: columnId,
@@ -156,12 +175,20 @@ export const mapToElAnswer = (
               })
             } else if (
               columnType === 'number' ||
-              (!isNaN(parseFloat(value)) && value.trim() !== '')
+              (inferType &&
+                value.trim() !== '' &&
+                Number.isFinite(Number(value.trim())))
             ) {
-              row.push({
-                questionId: columnId,
-                answer: parseFloat(value),
-              })
+              // Number() rejects partial parses like "12abc" that
+              // parseFloat would accept
+              const numericValue = Number(value.trim())
+
+              if (value.trim() !== '' && Number.isFinite(numericValue)) {
+                row.push({
+                  questionId: columnId,
+                  answer: numericValue,
+                })
+              }
             } else {
               row.push({
                 questionId: columnId,
@@ -170,8 +197,12 @@ export const mapToElAnswer = (
             }
           })
 
-          rows.push(row)
+          if (row.length) {
+            rows.push(row)
+          }
         }
+
+        if (!rows.length) return []
 
         return {
           questionId,

@@ -54,6 +54,11 @@ export const tableViewSelectionSection = buildSection({
               placeholderKey: 'currentMilage',
             },
           ],
+          disabledKey: 'disabled',
+          disabledReason: (row) => ({
+            ...m.tableView.disabledTooRecentOnDayRate,
+            values: { date: row.changeableFrom },
+          }),
           searchLabel: m.tableView.searchLabel,
           searchPlaceholder: m.tableView.searchPlaceholder,
           emptyState: m.tableView.emptyState,

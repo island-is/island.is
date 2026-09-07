@@ -13,6 +13,7 @@ import { ApplicationService } from '@island.is/application/api/core'
 import { ScheduledNotificationConfig } from '@island.is/application/types'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { User } from '@island.is/auth-nest-tools'
+import { IntlService } from '@island.is/cms-translations'
 
 describe('Testing utility functions for applications', () => {
   describe('getPaymentStatusForAdmin', () => {
@@ -347,10 +348,29 @@ describe('Testing utility functions for applications', () => {
         createScheduledNotifications: jest.fn(),
       } as unknown as ApplicationService)
 
+    // Suffixes the formatted message with the requested locale so tests can
+    // assert that `is` and `en` were actually resolved separately.
+    const createMockIntlService = () =>
+      ({
+        useIntl: jest.fn((_namespaces: string[], locale: string) =>
+          Promise.resolve({
+            formatMessage: (descriptor: unknown) =>
+              typeof descriptor === 'string'
+                ? descriptor
+                : `${
+                    (descriptor as { defaultMessage: string }).defaultMessage
+                  }-${locale}`,
+          }),
+        ),
+      } as unknown as IntlService)
+
     const createTemplateWithScheduledNotifications = (
-      scheduledNotifications: ScheduledNotificationConfig,
+      scheduledNotifications:
+        | ScheduledNotificationConfig
+        | ScheduledNotificationConfig[],
+      name?: ReturnType<typeof createApplicationTemplate>['name'],
     ) => {
-      const template = createApplicationTemplate()
+      const template = createApplicationTemplate(name ? { name } : undefined)
       const draftState = template.stateMachineConfig.states?.draft
       if (draftState?.meta) {
         draftState.meta = { ...draftState.meta, scheduledNotifications }
@@ -360,6 +380,7 @@ describe('Testing utility functions for applications', () => {
 
     it('Should append the applicationLink arg when includeApplicationLink is set', async () => {
       const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
       const application = createApplication()
       const template = createTemplateWithScheduledNotifications({
         template: 'HNIPP.TEST',
@@ -373,6 +394,7 @@ describe('Testing utility functions for applications', () => {
         application,
         template,
         'draft',
+        intlService,
       )
 
       expect(
@@ -398,6 +420,7 @@ describe('Testing utility functions for applications', () => {
 
     it('Should leave args untouched when includeApplicationLink is not set', async () => {
       const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
       const application = createApplication()
       const template = createTemplateWithScheduledNotifications({
         template: 'HNIPP.TEST',
@@ -410,6 +433,7 @@ describe('Testing utility functions for applications', () => {
         application,
         template,
         'draft',
+        intlService,
       )
 
       expect(
@@ -425,6 +449,7 @@ describe('Testing utility functions for applications', () => {
 
     it('Should schedule a flag-gated config when the feature flag is enabled', async () => {
       const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
       const application = createApplication()
       const featureFlagService = {
         getValue: jest.fn().mockResolvedValue(true),
@@ -440,6 +465,7 @@ describe('Testing utility functions for applications', () => {
         application,
         template,
         'draft',
+        intlService,
         featureFlagService,
       )
 
@@ -461,6 +487,7 @@ describe('Testing utility functions for applications', () => {
 
     it('Should pass the current user through to the feature flag check, so percentage/targeted flags evaluate per-applicant rather than anonymously', async () => {
       const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
       const application = createApplication()
       const featureFlagService = {
         getValue: jest.fn().mockResolvedValue(true),
@@ -477,6 +504,7 @@ describe('Testing utility functions for applications', () => {
         application,
         template,
         'draft',
+        intlService,
         featureFlagService,
         user,
       )
@@ -490,6 +518,7 @@ describe('Testing utility functions for applications', () => {
 
     it('Should skip a flag-gated config when the feature flag is disabled', async () => {
       const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
       const application = createApplication()
       const featureFlagService = {
         getValue: jest.fn().mockResolvedValue(false),
@@ -505,6 +534,7 @@ describe('Testing utility functions for applications', () => {
         application,
         template,
         'draft',
+        intlService,
         featureFlagService,
       )
 
@@ -515,6 +545,7 @@ describe('Testing utility functions for applications', () => {
 
     it('Should skip a flag-gated config when no featureFlagService is provided', async () => {
       const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
       const application = createApplication()
       const template = createTemplateWithScheduledNotifications({
         template: 'HNIPP.TEST',
@@ -527,11 +558,170 @@ describe('Testing utility functions for applications', () => {
         application,
         template,
         'draft',
+        intlService,
       )
 
       expect(
         applicationService.createScheduledNotifications,
       ).not.toHaveBeenCalled()
+    })
+
+    it('Should append applicationNameIs/En args resolved from the template name when includeApplicationName is set', async () => {
+      const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
+      const application = createApplication()
+      const template = createTemplateWithScheduledNotifications(
+        {
+          template: 'HNIPP.TEST',
+          date: new Date('2026-08-08T23:59:00.000Z'),
+          includeApplicationName: true,
+        },
+        { id: 'test.name', defaultMessage: 'Test Name' },
+      )
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+        intlService,
+      )
+
+      expect(intlService.useIntl).toHaveBeenCalledWith(expect.anything(), 'is')
+      expect(intlService.useIntl).toHaveBeenCalledWith(expect.anything(), 'en')
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.TEST',
+          schedule_time: new Date('2026-08-08T23:59:00.000Z'),
+          args: [
+            { key: 'applicationNameIs', value: 'Test Name-is' },
+            { key: 'applicationNameEn', value: 'Test Name-en' },
+          ],
+        },
+      ])
+    })
+
+    it('Should expand a message-type arg into {key}Is/{key}En translated args', async () => {
+      const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
+      const application = createApplication()
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        args: [
+          {
+            key: 'reason',
+            message: { id: 'test.reason', defaultMessage: 'Some reason' },
+          },
+        ],
+      })
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+        intlService,
+      )
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.TEST',
+          schedule_time: new Date('2026-08-08T23:59:00.000Z'),
+          args: [
+            { key: 'reasonIs', value: 'Some reason-is' },
+            { key: 'reasonEn', value: 'Some reason-en' },
+          ],
+        },
+      ])
+    })
+
+    it('Should schedule a config without translation-dependent args when the CMS translation fetch fails, rather than rejecting', async () => {
+      const applicationService = createMockApplicationService()
+      const intlService = {
+        useIntl: jest.fn().mockRejectedValue(new Error('Contentful is down')),
+      } as unknown as IntlService
+      const application = createApplication()
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        includeApplicationName: true,
+        args: [
+          { key: 'expiryDate', value: '2026-08-10' },
+          {
+            key: 'reason',
+            message: { id: 'test.reason', defaultMessage: 'Some reason' },
+          },
+        ],
+      })
+
+      await expect(
+        handleScheduledNotifications(
+          applicationService,
+          application,
+          template,
+          'draft',
+          intlService,
+        ),
+      ).resolves.not.toThrow()
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.TEST',
+          schedule_time: new Date('2026-08-08T23:59:00.000Z'),
+          // applicationNameIs/En and reasonIs/En are omitted, expiryDate survives
+          args: [{ key: 'expiryDate', value: '2026-08-10' }],
+        },
+      ])
+    })
+
+    it('Should skip only the config whose feature flag check throws, still scheduling the others', async () => {
+      const applicationService = createMockApplicationService()
+      const intlService = createMockIntlService()
+      const application = createApplication()
+      const featureFlagService = {
+        getValue: jest
+          .fn()
+          .mockRejectedValueOnce(new Error('Flag service unavailable'))
+          .mockResolvedValueOnce(true),
+      } as unknown as FeatureFlagService
+      const template = createTemplateWithScheduledNotifications([
+        {
+          template: 'HNIPP.FAILING_FLAG',
+          date: new Date('2026-08-08T23:59:00.000Z'),
+          featureFlag: Features.applicationSystemHistory,
+        },
+        {
+          template: 'HNIPP.WORKING_FLAG',
+          date: new Date('2026-08-09T23:59:00.000Z'),
+          featureFlag: Features.applicationSystemHistory,
+        },
+      ])
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+        intlService,
+        featureFlagService,
+      )
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.WORKING_FLAG',
+          schedule_time: new Date('2026-08-09T23:59:00.000Z'),
+          args: [],
+        },
+      ])
     })
   })
 })

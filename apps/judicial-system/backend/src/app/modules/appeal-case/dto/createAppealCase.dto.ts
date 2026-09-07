@@ -1,6 +1,8 @@
-import { IsOptional, IsUUID } from 'class-validator'
+import { IsEnum, IsOptional, IsUUID } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
+
+import { AppealCaseType } from '@island.is/judicial-system/types'
 
 export class CreateAppealCaseDto {
   /**********
@@ -12,4 +14,22 @@ export class CreateAppealCaseDto {
   @IsUUID()
   @ApiPropertyOptional({ type: String })
   readonly rulingFileId?: string
+
+  /**********
+   * Which decision is being appealed. Omitted means RULING - a kæra - which is
+   * every appeal that existed before áfrýjun.
+   **********/
+  @IsOptional()
+  @IsEnum(AppealCaseType)
+  @ApiPropertyOptional({ enum: AppealCaseType })
+  readonly appealType?: AppealCaseType
+
+  /**********
+   * The defendant whose verdict is being appealed. Required for - and only
+   * meaningful to - an áfrýjun, which is filed for one specific defendant.
+   **********/
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly defendantId?: string
 }

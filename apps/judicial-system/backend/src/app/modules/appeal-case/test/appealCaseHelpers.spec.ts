@@ -9,6 +9,7 @@ import {
 import { AppealCase, AppealEventLog, Case } from '../../repository'
 import {
   appellantRepresentativeNationalIds,
+  standingVerdictAppellantIds,
   userIsAppellant,
 } from '../appealCase.helpers'
 
@@ -228,5 +229,57 @@ describe('appellantRepresentativeNationalIds', () => {
     expect(
       [...appellantRepresentativeNationalIds(theCase, appealCase)].sort(),
     ).toEqual(['defender-1', 'defender-2'])
+  })
+})
+
+describe('standingVerdictAppellantIds', () => {
+  const event = (
+    defendantId: string,
+    eventType: AppealEventType,
+    created: string,
+  ) =>
+    ({ defendantId, eventType, created: new Date(created) } as AppealEventLog)
+
+  it('is empty when nothing has been appealed', () => {
+    expect(standingVerdictAppellantIds(appealCaseWith([]))).toEqual([])
+  })
+
+  it('lists every defendant that appealed', () => {
+    const appealCase = appealCaseWith([
+      event('a', AppealEventType.APPEALED, '2026-06-04T10:00:00Z'),
+      event('b', AppealEventType.APPEALED, '2026-06-05T10:00:00Z'),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase).sort()).toEqual(['a', 'b'])
+  })
+
+  it('drops a defendant that withdrew', () => {
+    const appealCase = appealCaseWith([
+      event('a', AppealEventType.APPEALED, '2026-06-04T10:00:00Z'),
+      event('b', AppealEventType.APPEALED, '2026-06-05T10:00:00Z'),
+      event('a', AppealEventType.APPEAL_WITHDRAWN, '2026-06-06T10:00:00Z'),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase)).toEqual(['b'])
+  })
+
+  // A defendant may appeal again while the deadline still runs, so it is the
+  // latest event that decides rather than the presence of a withdrawal.
+  it('keeps a defendant that appealed again after withdrawing', () => {
+    const appealCase = appealCaseWith([
+      event('a', AppealEventType.APPEALED, '2026-06-04T10:00:00Z'),
+      event('a', AppealEventType.APPEAL_WITHDRAWN, '2026-06-05T10:00:00Z'),
+      event('a', AppealEventType.APPEALED, '2026-06-06T10:00:00Z'),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase)).toEqual(['a'])
+  })
+
+  it('ignores events that are not about appealing or withdrawing', () => {
+    const appealCase = appealCaseWith([
+      event('a', AppealEventType.APPEAL_STATEMENT_SENT, '2026-06-04T10:00:00Z'),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase)).toEqual([])
   })
 })

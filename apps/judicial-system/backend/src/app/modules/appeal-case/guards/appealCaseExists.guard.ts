@@ -21,10 +21,13 @@ export class AppealCaseExistsGuard implements CanActivate {
       throw new BadRequestException('Missing appeal case id')
     }
 
-    const appealCase =
-      theCase.appealCase?.id === appealCaseId
-        ? theCase.appealCase
-        : theCase.rulingOrderAppealCases?.find((a) => a.id === appealCaseId)
+    // The case's three appeal associations: the case-level kæra, the áfrýjun -
+    // also case level, told apart by appeal type - and the ruling-order kærur.
+    const appealCase = [
+      theCase.appealCase,
+      theCase.verdictAppealCase,
+      ...(theCase.rulingOrderAppealCases ?? []),
+    ].find((a) => a?.id === appealCaseId)
 
     if (!appealCase) {
       throw new NotFoundException(

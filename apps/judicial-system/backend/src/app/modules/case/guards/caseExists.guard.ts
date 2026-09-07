@@ -1,32 +1,19 @@
-import {
-  BadRequestException,
-  CanActivate,
-  ExecutionContext,
-  forwardRef,
-  Inject,
-  Injectable,
-} from '@nestjs/common'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 
+import { Case } from '../../repository'
 import { CaseService } from '../case.service'
+import { BaseCaseExistsGuard } from './baseCaseExists.guard'
 
 @Injectable()
-export class CaseExistsGuard implements CanActivate {
+export class CaseExistsGuard extends BaseCaseExistsGuard {
   constructor(
     @Inject(forwardRef(() => CaseService))
     private readonly caseService: CaseService,
-  ) {}
+  ) {
+    super()
+  }
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest()
-
-    const caseId = request.params.caseId
-
-    if (!caseId) {
-      throw new BadRequestException('Missing case id')
-    }
-
-    request.case = await this.caseService.findById(caseId)
-
-    return true
+  protected loadCase(caseId: string): Promise<Case> {
+    return this.caseService.findById(caseId)
   }
 }

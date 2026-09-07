@@ -705,6 +705,20 @@ export const draftMessages = {
       defaultMessage: 'Heimilismenn',
       description: 'Household members',
     },
+    householdMembersTitle: {
+      id: 'hb.application:draft.overviewSection.householdMembersTitle',
+      defaultMessage:
+        '{count, plural, one {Heimilismaður} other {Heimilismenn}}',
+      description:
+        'Overview card title for household members. {count} is the number of people listed.',
+    },
+    accessAgreementTitle: {
+      id: 'hb.application:draft.overviewSection.accessAgreementTitle',
+      defaultMessage:
+        '{count, plural, one {Umgengnissamningur} other {Umgengnissamningar}}',
+      description:
+        'Overview card title for access agreements. {count} is the number of agreements listed.',
+    },
     paymentRecipient: {
       id: 'hb.application:draft.overviewSection.paymentRecipient',
       defaultMessage: 'Aðili greiðslu',

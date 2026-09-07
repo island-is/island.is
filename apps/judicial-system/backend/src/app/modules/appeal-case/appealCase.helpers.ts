@@ -9,6 +9,7 @@ import {
   prosecutionRoles,
   type User,
   UserRole,
+  verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -22,16 +23,65 @@ import {
 } from '../repository'
 
 // The appeal case a case file belongs to: the ruling-order appeal the file
-// carries in its rulingFileId, or the case-level appeal for files with none.
+// carries in its rulingFileId, the áfrýjun for an áfrýjunaryfirlýsing and what
+// is filed with it, or the case-level kæra for everything else.
+//
+// The declaration needs its own arm because it is case level too - the áfrýjun
+// and the kæra are told apart by appeal type, not by a ruling file.
 export const findAppealCaseOfCaseFile = (
   theCase: Case,
-  file: Pick<CaseFile, 'rulingFileId'>,
-): AppealCase | undefined =>
-  file.rulingFileId
-    ? theCase.rulingOrderAppealCases?.find(
-        (appealCase) => appealCase.rulingFileId === file.rulingFileId,
-      )
-    : theCase.appealCase
+  file: Pick<CaseFile, 'rulingFileId' | 'category'>,
+): AppealCase | undefined => {
+  if (file.rulingFileId) {
+    return theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === file.rulingFileId,
+    )
+  }
+
+  if (
+    file.category &&
+    verdictAppealDeclarationFileCategories.includes(file.category)
+  ) {
+    return theCase.verdictAppealCase
+  }
+
+  return theCase.appealCase
+}
+
+// The defendants that currently stand as appellants of a verdict appeal
+// (áfrýjun): those whose most recent appeal event on it is an APPEALED rather
+// than an APPEAL_WITHDRAWN. A defendant who withdraws may appeal again while the
+// deadline still runs, so it is the latest event that decides, not the mere
+// presence of a withdrawal.
+//
+// The event log is the appellant source for out-of-court appeals - a verdict
+// appeal has no appeal_decision rows, since a party that appeals out of court is
+// precisely one that did not appeal in court.
+export const standingVerdictAppellantIds = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+): string[] => {
+  const latestByDefendant = new Map<string, AppealEventLog>()
+
+  for (const eventLog of appealCase.appealEventLogs ?? []) {
+    if (
+      !eventLog.defendantId ||
+      (eventLog.eventType !== AppealEventType.APPEALED &&
+        eventLog.eventType !== AppealEventType.APPEAL_WITHDRAWN)
+    ) {
+      continue
+    }
+
+    const latest = latestByDefendant.get(eventLog.defendantId)
+
+    if (!latest || eventLog.created > latest.created) {
+      latestByDefendant.set(eventLog.defendantId, eventLog)
+    }
+  }
+
+  return Array.from(latestByDefendant)
+    .filter(([, eventLog]) => eventLog.eventType === AppealEventType.APPEALED)
+    .map(([defendantId]) => defendantId)
+}
 
 // Resolves the appeal decision (Ákvörðun um kæru) recorded in court for the
 // party the user acts for - the prosecution, or the specific defendant / civil

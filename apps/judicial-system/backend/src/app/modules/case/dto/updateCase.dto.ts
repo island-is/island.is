@@ -411,6 +411,16 @@ export class UpdateCaseDto {
   readonly indictmentDeniedExplanation?: string
 
   @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly indictmentApproverId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly indictmentReviewReturnedExplanation?: string
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly postponedIndefinitelyExplanation?: string
@@ -459,6 +469,11 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isCompletedWithoutRuling?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isArraignmentSummonsSkipped?: boolean
 
   @IsOptional()
   @IsString()
