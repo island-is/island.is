@@ -1852,6 +1852,7 @@ export class InternalCaseService {
               model: Verdict,
               as: 'verdicts',
               required: false,
+              where: { isActive: true },
               order: [['created', 'DESC']],
               separate: true,
             },

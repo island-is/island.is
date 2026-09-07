@@ -1,7 +1,7 @@
-import { Verdict } from '../../repository'
+import { Verdict } from '../repository'
 
 export const getActiveVerdict = <
-  T extends Pick<Verdict, 'created'> & { isActive?: boolean },
+  T extends Pick<Partial<Verdict>, 'created' | 'isActive'>,
 >(
   verdicts: T[] | undefined,
 ): T | undefined => {
@@ -9,12 +9,15 @@ export const getActiveVerdict = <
     return undefined
   }
 
-  const activeVerdict = verdicts.find((verdict) => verdict.isActive)
+  const activeVerdict = verdicts.find((verdict) => verdict.isActive === true)
   if (activeVerdict) {
     return activeVerdict
   }
 
-  return [...verdicts].sort(
-    (a, b) => b.created.getTime() - a.created.getTime(),
-  )[0]
+  // Active-only includes usually leave a single row without isActive in attributes.
+  if (verdicts.length === 1) {
+    return verdicts[0]
+  }
+
+  return undefined
 }

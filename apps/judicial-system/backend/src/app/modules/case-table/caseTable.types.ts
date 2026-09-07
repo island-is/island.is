@@ -55,6 +55,7 @@ type ModelDef<M extends ModelCtor<unknown>> = {
   model: M
   separate: boolean
   order?: [[keyof DefinedObject<InstanceType<M>>, SortDir]]
+  where?: WhereOptions
 }
 
 export const modelMap: {
@@ -100,7 +101,12 @@ export const subModelMap: {
   eventLogs: { model: DefendantEventLog, separate: true },
   rulingFile: { model: CaseFile, separate: false },
   subpoenas: { model: Subpoena, separate: false, order: [['created', 'DESC']] },
-  verdicts: { model: Verdict, separate: false, order: [['created', 'DESC']] },
+  verdicts: {
+    model: Verdict,
+    separate: false,
+    order: [['created', 'DESC']],
+    where: { isActive: true },
+  },
 }
 
 export type CaseWhereOptions = {

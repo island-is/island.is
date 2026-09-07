@@ -16,17 +16,17 @@ describe('getActiveVerdict', () => {
     expect(getActiveVerdict([older, newerActive])).toEqual(newerActive)
   })
 
-  it('falls back to the newest by created when none are marked active', () => {
+  it('returns undefined when multiple verdicts are present but none are active', () => {
     expect(
       getActiveVerdict([
         older,
         { ...newerActive, isActive: false, id: 'newest-inactive' },
       ]),
-    ).toEqual(
-      expect.objectContaining({
-        id: 'newest-inactive',
-      }),
-    )
+    ).toBeUndefined()
+  })
+
+  it('returns the sole verdict when isActive is not present on attributes', () => {
+    expect(getActiveVerdict([{ id: 'only' }])).toEqual({ id: 'only' })
   })
 
   it('returns undefined for an empty list', () => {

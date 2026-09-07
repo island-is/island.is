@@ -42,6 +42,7 @@ import {
 import { hasOutOfCourtAppeal } from '../../appeal-case'
 import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
+import { getActiveVerdict } from '../../verdict/getActiveVerdict'
 import {
   AppealCase,
   AppealEventLog,
@@ -443,9 +444,8 @@ export const getIndictmentInfo = ({
 
   const defendantVerdictInfo = defendants?.map((defendant) => ({
     canAppealVerdict: isRuling || isFine,
-    // Only the latest verdict is relevant
     serviceDate: getDefendantServiceDate({
-      verdict: defendant.verdicts?.[0],
+      verdict: getActiveVerdict(defendant.verdicts),
       fallbackDate: rulingDate,
     }),
   }))
@@ -508,9 +508,7 @@ export const transformDefendants = ({
   rulingDate?: Date
 }) => {
   return defendants?.map((defendant) => {
-    // Only the latest verdict is relevant
-    const { verdicts } = defendant
-    const verdict = verdicts?.[0]
+    const verdict = getActiveVerdict(defendant.verdicts)
     const isServiceRequired =
       verdict?.serviceRequirement === ServiceRequirement.REQUIRED
     const isFine =

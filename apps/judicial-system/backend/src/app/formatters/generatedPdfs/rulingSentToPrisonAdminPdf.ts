@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case, DefendantEventLog } from '../../modules/repository'
+import { getActiveVerdict } from '../../modules/verdict/getActiveVerdict'
 import {
   addEmptyLines,
   addLargeHeading,
@@ -119,9 +120,7 @@ export const createRulingSentToPrisonAdminPdf = (
   addEmptyLines(doc, 5)
 
   theCase.defendants?.forEach((defendant, index) => {
-    // Only the latest verdict is relevant
-    const { verdicts } = defendant
-    const verdict = verdicts?.[0]
+    const verdict = getActiveVerdict(defendant.verdicts)
     const isServiceRequired =
       verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 

@@ -363,6 +363,7 @@ export const getInclude = (user?: TUser): Includeable[] => [
         model: Verdict,
         as: 'verdicts',
         required: false,
+        where: { isActive: true },
         order: [['created', 'DESC']],
         separate: true,
       },

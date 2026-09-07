@@ -461,6 +461,7 @@ export class StatisticsService {
               model: Verdict,
               as: 'verdicts',
               required: false,
+              where: { isActive: true },
               order: [['created', 'DESC']],
               separate: true,
             },

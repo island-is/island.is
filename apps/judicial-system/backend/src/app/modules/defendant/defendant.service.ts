@@ -272,14 +272,24 @@ export class DefendantService {
     transaction: Transaction,
   ): Promise<void> {
     if (event.user) {
-      await this.defendantEventLogRepositoryService.createWithUser(
-        event.eventType,
-        event.caseId,
-        event.defendantId,
-        event.user,
-        transaction,
-        { verdictId: event.verdictId },
-      )
+      if (event.verdictId) {
+        await this.defendantEventLogRepositoryService.createWithUser(
+          event.eventType,
+          event.caseId,
+          event.defendantId,
+          event.user,
+          transaction,
+          { verdictId: event.verdictId },
+        )
+      } else {
+        await this.defendantEventLogRepositoryService.createWithUser(
+          event.eventType,
+          event.caseId,
+          event.defendantId,
+          event.user,
+          transaction,
+        )
+      }
 
       return
     }
