@@ -14,7 +14,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  InlineLink,
   IntroWrapper,
   m,
   useIsPhoneWidth,
@@ -23,7 +22,6 @@ import ConversationAvailabilityAlert from './components/ConversationAvailability
 import ConversationBackButton from './components/ConversationBackButton'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMobileBackHeader from './components/ConversationMobileBackHeader'
-import ConversationTermsModal from './components/ConversationTermsModal'
 import MobileActionFooter from './components/MobileActionFooter'
 import CertificateRequestForm, {
   CertificateFormState,
@@ -31,7 +29,7 @@ import CertificateRequestForm, {
 } from './components/CertificateRequestForm'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
@@ -71,12 +69,12 @@ const NewHealthConversation = () => {
     string | null
   >(null)
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
+  const [searchParams] = useSearchParams()
   const [messageText, setMessageText] = useState('')
   const [certificateForm, setCertificateForm] = useState<CertificateFormState>(
     {},
   )
   const [termsAccepted, setTermsAccepted] = useState(false)
-  const [termsModalOpen, setTermsModalOpen] = useState(false)
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
@@ -106,8 +104,16 @@ const NewHealthConversation = () => {
       value: getRecipientKey(r),
     })) ?? []
 
+  const preselectedNode = searchParams.get('node')
+  const nodeMatches = preselectedNode
+    ? recipients?.filter((r) => r.nodeId === preselectedNode)
+    : undefined
+  const nodeMatchKey =
+    nodeMatches?.length === 1 ? getRecipientKey(nodeMatches[0]) : null
+
   const effectiveRecipientKey =
     selectedRecipientKey ??
+    nodeMatchKey ??
     (recipients?.length === 1 ? getRecipientKey(recipients[0]) : null)
 
   const recipient = recipients?.find(
@@ -429,17 +435,7 @@ const NewHealthConversation = () => {
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
                   label={formatMessage(
-                    messages.healthConversationsNewTermsLabel,
-                    {
-                      link: (str: React.ReactNode) => (
-                        <InlineLink
-                          key="terms-link"
-                          onClick={() => setTermsModalOpen(true)}
-                        >
-                          {str}
-                        </InlineLink>
-                      ),
-                    },
+                    messages.healthConversationsNewTermsInline,
                   )}
                   disabled={isFormLocked}
                 />
@@ -459,10 +455,6 @@ const NewHealthConversation = () => {
             </Box>
           </Box>
         )}
-        <ConversationTermsModal
-          isOpen={termsModalOpen}
-          onClose={() => setTermsModalOpen(false)}
-        />
       </IntroWrapper>
     </Box>
   )

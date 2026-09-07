@@ -100,7 +100,13 @@ import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { HealthDirectorateTreatment } from './models/treatment.model'
-import { mapTreatment } from './mappers/treatmentMapper'
+import { HealthDirectorateTreatmentDetail } from './models/treatmentDetail.model'
+import { HealthDirectorateTreatmentDocument } from './models/treatmentDocument.model'
+import {
+  mapTreatment,
+  mapTreatmentDetail,
+  mapTreatmentDocument,
+} from './mappers/treatmentMapper'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
@@ -822,6 +828,9 @@ export class HealthDirectorateService {
       replyBlockedReason: toConversationReplyBlockedReasonEnum(
         c.replyBlockedReason,
       ),
+      messagingWindowOpen: c.messagingWindowOpen ?? undefined,
+      messagingWindowClose: c.messagingWindowClose ?? undefined,
+      patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
@@ -836,6 +845,26 @@ export class HealthDirectorateService {
     if (!items) return null
 
     return items.map(mapTreatment)
+  }
+
+  async getTreatment(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateTreatmentDetail | null> {
+    const treatment = await this.healthApi.getTreatment(auth, id)
+    if (!treatment) return null
+
+    return mapTreatmentDetail(treatment)
+  }
+
+  async getTreatmentDocuments(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateTreatmentDocument[] | null> {
+    const documents = await this.healthApi.getTreatmentDocuments(auth, id)
+    if (!documents) return null
+
+    return documents.map(mapTreatmentDocument)
   }
 
   async getHealthConversations(
