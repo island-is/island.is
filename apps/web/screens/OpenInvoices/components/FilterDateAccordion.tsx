@@ -53,9 +53,10 @@ export const FilterDateAccordion = ({
   const toMaxDate = valueFrom ? latestAllowedTo(valueFrom) : maxSelectableDate
 
   /*
-    The "from" picker is bounded only by maxSelectableDate. When it moves, a
-    date past "to" is capped at "to", and "to" is pulled back to the end of the
-    allowed range if the span grew too wide.
+    The "from" picker is bounded only by maxSelectableDate — the picked date is
+    always kept. It is "to" that follows: forward to meet "from" when it would
+    otherwise end up behind it, and back to the end of the allowed range when
+    the span grew too wide.
   */
   const handleFromChange = (date: Date | undefined) => {
     if (!date || !valueTo) {
@@ -63,11 +64,16 @@ export const FilterDateAccordion = ({
       return
     }
 
-    const nextFrom = date > valueTo ? valueTo : date
-    const latestTo = latestAllowedTo(nextFrom)
-    const nextTo = latestTo && valueTo > latestTo ? latestTo : valueTo
+    const latestTo = latestAllowedTo(date)
+    let nextTo = valueTo
 
-    onChange(nextFrom, nextTo)
+    if (nextTo < date) {
+      nextTo = date
+    } else if (latestTo && nextTo > latestTo) {
+      nextTo = latestTo
+    }
+
+    onChange(date, nextTo)
   }
 
   return (

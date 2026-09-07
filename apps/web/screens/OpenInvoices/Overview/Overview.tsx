@@ -700,11 +700,17 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     redirect to the corrected URL so a hand-edited or stale link cannot query
     a future or over-wide range.
   */
-  let dateToInput = requestedDateTo > today ? today : requestedDateTo
   const dateFromInput =
-    requestedDateFrom > dateToInput ? dateToInput : requestedDateFrom
-  const latestAllowedTo = addDays(dateFromInput, MAX_DATE_RANGE_DAYS)
-  if (dateToInput > latestAllowedTo) {
+    requestedDateFrom > today ? today : requestedDateFrom
+  const latestAllowedTo = [
+    addDays(dateFromInput, MAX_DATE_RANGE_DAYS),
+    today,
+  ].reduce((earliest, date) => (date < earliest ? date : earliest))
+
+  let dateToInput = requestedDateTo
+  if (dateToInput < dateFromInput) {
+    dateToInput = dateFromInput
+  } else if (dateToInput > latestAllowedTo) {
     dateToInput = latestAllowedTo
   }
 
