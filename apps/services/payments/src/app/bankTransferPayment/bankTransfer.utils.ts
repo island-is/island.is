@@ -91,26 +91,51 @@ export const isRowExpired = (
   row: Pick<BankTransferPayment, 'expiresAt'>,
 ): boolean => row.expiresAt.getTime() < Date.now()
 
-/** Structured log prefix used throughout the bank-transfer flow. */
-export const createLogPrefix = (
+/**
+ * The identifiers every bank-transfer log line carries, as structured logger metadata rather than
+ * interpolated into the message. Winston serialises these to top-level JSON fields in production
+ * (`format.json()`), so Datadog reads them as attributes and the lifecycle can be joined on
+ * `correlationId` (our per-attempt key) or `rrn` (the provider's payment id) with no Grok parsing.
+ *
+ * All three are required: a bank-transfer log line that cannot name its attempt is not joinable,
+ * and a partially-filled context silently looks joinable while not being so. The call sites that
+ * genuinely cannot supply all three log what they have under the same field names, leaving the
+ * rest absent rather than placeheld — see `toResult` here and the refund saga.
+ */
+export type BankTransferLogContext = {
+  paymentFlowId: string
+  correlationId: string
+  rrn: string
+}
+
+/**
+ * Single source of the bank-transfer log identifiers — no call site assembles them by hand.
+ * `rrn` is the provider's payment id; `correlationId` is our own per-attempt key.
+ */
+export const bankTransferLogContext = (
   paymentFlowId: string,
   correlationId: string,
-  providerPaymentId: string,
-): string =>
-  `[${paymentFlowId}][correlationId: ${correlationId}][rrn: ${providerPaymentId}]`
+  rrn: string,
+): BankTransferLogContext => ({ paymentFlowId, correlationId, rrn })
 
-/** Row-driven convenience wrapper around `createLogPrefix`. */
-export const rowLogPrefix = (
-  row: Pick<
-    BankTransferPayment,
-    'paymentFlowId' | 'sourceReferenceId' | 'providerPaymentId'
-  >,
+/**
+ * Row-driven convenience wrapper around `bankTransferLogContext`. Takes the correlationId from
+ * `id` rather than `sourceReferenceId`: `create` sets both to the same uuid, and `id` is what every
+ * other call site in the module already passes as the correlationId.
+ */
+export const rowLogContext = (
+  row: Pick<BankTransferPayment, 'paymentFlowId' | 'id' | 'providerPaymentId'>,
+): BankTransferLogContext =>
+  bankTransferLogContext(row.paymentFlowId, row.id, row.providerPaymentId)
+
+/**
+ * String rendering of {@link BankTransferLogContext}, for the one sink that accepts no structured
+ * metadata: the shared `retry` helper, whose Logger interface is `(message: string) => void`.
+ */
+export const formatBankTransferLogContext = (
+  ctx: BankTransferLogContext,
 ): string =>
-  createLogPrefix(
-    row.paymentFlowId,
-    row.sourceReferenceId,
-    row.providerPaymentId,
-  )
+  `[${ctx.paymentFlowId}][correlationId: ${ctx.correlationId}][rrn: ${ctx.rrn}]`
 
 /** True for any status that won't change again (SUCCESS and the three failure values). */
 export const isTerminalBankTransferStatus = (

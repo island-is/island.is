@@ -219,14 +219,13 @@ describe('BankTransferService', () => {
       ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
 
       // The generic code goes to the payer; the Blikk reason must land in the logs with flow context.
-      expect(logger.error).toHaveBeenCalledWith(
-        '[flow-1][correlationId: btp-err] Blikk create payment failed',
-        {
-          status: 403,
-          error:
-            'Blikk request failed (403): sales channel does not allow direct debtor payments',
-        },
-      )
+      expect(logger.error).toHaveBeenCalledWith('Blikk create payment failed', {
+        paymentFlowId: 'flow-1',
+        correlationId: 'btp-err',
+        status: 403,
+        error:
+          'Blikk request failed (403): sales channel does not allow direct debtor payments',
+      })
     })
   })
 
@@ -580,11 +579,17 @@ describe('BankTransferService', () => {
 
       await service.create(createInput)
 
+      // The identifiers moved out of the message into structured metadata; the provider's reason
+      // still has to reach the log, which is what this test is for.
       expect(logger.warn).toHaveBeenCalledWith(
-        expect.stringMatching(
-          /^\[flow-1\]\[correlationId: .+\]\[rrn: prov-1\]Bank transfer created already error$/,
-        ),
-        { rawStatus: 'ERROR', providerMessage: 'debtor account not eligible' },
+        'Bank transfer created already error',
+        {
+          paymentFlowId: 'flow-1',
+          correlationId: expect.any(String),
+          rrn: 'prov-1',
+          rawStatus: 'ERROR',
+          providerMessage: 'debtor account not eligible',
+        },
       )
     })
 
@@ -758,15 +763,18 @@ describe('BankTransferService', () => {
         'flow-1',
       )
       expect(fulfillmentSpy).toHaveBeenCalledWith(
-        'flow-1',
-        'btp-1',
         expect.objectContaining({
-          payInfo: expect.objectContaining({
-            payableAmount: 14000,
-            paymentMeans: 'Milli',
-            RRN: 'prov-1',
-            // Per-attempt correlationId is threaded into the FJS payInfo.
-            correlationId: 'btp-1',
+          paymentFlowId: 'flow-1',
+          confirmationRefId: 'btp-1',
+          providerPaymentId: 'prov-1',
+          chargePayload: expect.objectContaining({
+            payInfo: expect.objectContaining({
+              payableAmount: 14000,
+              paymentMeans: 'Milli',
+              RRN: 'prov-1',
+              // Per-attempt correlationId is threaded into the FJS payInfo.
+              correlationId: 'btp-1',
+            }),
           }),
         }),
       )
@@ -960,14 +968,19 @@ describe('BankTransferService', () => {
             rawStatus,
             providerMessage: 'provider detail',
           },
+          // One line per state transition: the identifiers and the provider's reason ride on
+          // logPaymentFlowUpdate's own log line, so the flow no longer logs a second one of its
+          // own. The reason has to reach the application log because it is what separates a
+          // routine payer decline from a provider-side fault failing every payment (an expired
+          // Blikk certificate, say).
+          logContext: {
+            paymentFlowId: 'flow-1',
+            correlationId: 'corr-1',
+            rrn: 'prov-1',
+            rawStatus,
+            providerMessage: 'provider detail',
+          },
         })
-        // The provider's reason must reach the application log too — logPaymentFlowUpdate only
-        // logs its message text, so otherwise a provider-side fault failing every payment (an
-        // expired Blikk certificate, say) shows up with no reason attached.
-        expect(logger.warn).toHaveBeenCalledWith(
-          expect.stringContaining(`Bank transfer ${status}`),
-          { rawStatus, providerMessage: 'provider detail' },
-        )
         expect(result.status).toBe(status)
         // The expiry-aware failure reason passes through (fresh row → 1:1 with the status).
         expect(result.failureReason).toBe(failureReason)
@@ -1652,6 +1665,11 @@ describe('BankTransferService', () => {
           reason: 'payment_cancelled',
           message: 'Bank transfer cancelled by user',
           metadata: { providerPaymentId: 'prov-1', correlationId: 'corr-1' },
+          logContext: {
+            paymentFlowId: 'flow-1',
+            correlationId: 'corr-1',
+            rrn: 'prov-1',
+          },
         },
         { useRetry: true, throwOnError: false },
       )
@@ -2164,11 +2182,12 @@ describe('BankTransferService', () => {
         id: 'existing',
         fjsChargeId: 'fjs-1',
       })
-      await service.createBankTransferFulfillment(
-        'flow-1',
-        'corr-1',
-        dummyCharge,
-      )
+      await service.createBankTransferFulfillment({
+        paymentFlowId: 'flow-1',
+        confirmationRefId: 'corr-1',
+        providerPaymentId: 'prov-1',
+        chargePayload: dummyCharge,
+      })
 
       expect(paymentFulfillmentModel.create).not.toHaveBeenCalled()
       expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
@@ -2179,11 +2198,12 @@ describe('BankTransferService', () => {
         id: 'existing',
         fjsChargeId: null,
       })
-      await service.createBankTransferFulfillment(
-        'flow-1',
-        'corr-1',
-        dummyCharge,
-      )
+      await service.createBankTransferFulfillment({
+        paymentFlowId: 'flow-1',
+        confirmationRefId: 'corr-1',
+        providerPaymentId: 'prov-1',
+        chargePayload: dummyCharge,
+      })
 
       // Fulfillment already exists, so it is not re-created, but the charge is (re)attempted.
       expect(paymentFulfillmentModel.create).not.toHaveBeenCalled()
@@ -2194,11 +2214,12 @@ describe('BankTransferService', () => {
     })
 
     it('creates the fulfillment and FJS charge on the first call', async () => {
-      await service.createBankTransferFulfillment(
-        'flow-1',
-        'corr-1',
-        dummyCharge,
-      )
+      await service.createBankTransferFulfillment({
+        paymentFlowId: 'flow-1',
+        confirmationRefId: 'corr-1',
+        providerPaymentId: 'prov-1',
+        chargePayload: dummyCharge,
+      })
 
       expect(paymentFulfillmentModel.create).toHaveBeenCalledWith({
         paymentFlowId: 'flow-1',
@@ -2220,7 +2241,12 @@ describe('BankTransferService', () => {
       )
 
       await expect(
-        service.createBankTransferFulfillment('flow-1', 'corr-1', dummyCharge),
+        service.createBankTransferFulfillment({
+          paymentFlowId: 'flow-1',
+          confirmationRefId: 'corr-1',
+          providerPaymentId: 'prov-1',
+          chargePayload: dummyCharge,
+        }),
       ).resolves.toBeUndefined()
       // The other writer created the fulfillment; we still (idempotently) ensure the FJS charge.
       expect(paymentFlowService.createFjsCharge).toHaveBeenCalledWith(
@@ -2235,7 +2261,12 @@ describe('BankTransferService', () => {
       )
 
       await expect(
-        service.createBankTransferFulfillment('flow-1', 'corr-1', dummyCharge),
+        service.createBankTransferFulfillment({
+          paymentFlowId: 'flow-1',
+          confirmationRefId: 'corr-1',
+          providerPaymentId: 'prov-1',
+          chargePayload: dummyCharge,
+        }),
       ).rejects.toThrow('connection reset')
     })
 
@@ -2245,7 +2276,12 @@ describe('BankTransferService', () => {
       )
 
       await expect(
-        service.createBankTransferFulfillment('flow-1', 'corr-1', dummyCharge),
+        service.createBankTransferFulfillment({
+          paymentFlowId: 'flow-1',
+          confirmationRefId: 'corr-1',
+          providerPaymentId: 'prov-1',
+          chargePayload: dummyCharge,
+        }),
       ).resolves.toBeUndefined()
 
       expect(paymentFlowService.createFjsCharge).toHaveBeenCalledTimes(3)

@@ -80,6 +80,19 @@ interface PaymentFlowUpdateConfig {
   throwOnError?: boolean
 }
 
+/**
+ * Structured fields merged onto a log line's record. `message` and `level` are excluded because
+ * winston merges metadata onto the record itself: a `message` key is concatenated onto the real
+ * message text, and a `level` key is silently dropped — both quietly corrupting the line.
+ */
+type LogContextFields = Record<
+  string,
+  string | number | boolean | undefined
+> & {
+  message?: never
+  level?: never
+}
+
 @Injectable()
 export class PaymentFlowService {
   constructor(
@@ -500,11 +513,25 @@ export class PaymentFlowService {
       reason: PaymentFlowEvent['reason']
       message: string
       metadata?: object
+      /**
+       * Identifiers attached to this call's application log line as structured logger metadata
+       * (top-level JSON fields in production, so Datadog reads them as attributes). Distinct from
+       * `metadata`, which is persisted on the event and sent upstream in the webhook body.
+       *
+       * The bank-transfer flow passes its canonical log context here so that the one line this
+       * method emits per state transition is joinable on `correlationId` / `rrn`, without the flow
+       * having to log a second line of its own alongside it. The message text is unchanged, so
+       * parsers matching the existing `[id] type: message` string keep working.
+       */
+      logContext?: LogContextFields
     },
     config: PaymentFlowUpdateConfig = { useRetry: false, throwOnError: false },
   ) {
     this.logger.info(
       `[${update.paymentFlowId}] ${update.type}: ${update.message}`,
+      // Spread rather than passed through: winston merges the metadata object onto the log record,
+      // and an empty one contributes no fields — so callers that pass no context are unaffected.
+      { ...update.logContext },
     )
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
