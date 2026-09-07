@@ -2057,6 +2057,81 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
+  //#region INDICTMENT_SENT_FOR_REVIEW notifications
+  private async sendIndictmentSentForReviewNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const caseNumber = theCase.policeCaseNumbers[0]
+    const linkStart = `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`
+    const linkEnd = '</a>'
+    const subject = 'Ákæra til yfirlesturs'
+    const html = `Þú hefur fengið ákæru til yfirlesturs vegna máls ${caseNumber}.<br /><br />${linkStart}Sjá nánar á yfirliti málsins í Réttarvörslugátt.${linkEnd}`
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: theCase.indictmentApprover?.name,
+      recipientEmail: theCase.indictmentApprover?.email,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.INDICTMENT_SENT_FOR_REVIEW,
+      [recipient],
+    )
+  }
+  //#endregion
+
+  //#region INDICTMENT_REVIEW_DENIED notifications
+  private async sendIndictmentReviewDeniedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const caseNumber = theCase.policeCaseNumbers[0]
+    const linkStart = `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`
+    const linkEnd = '</a>'
+    const subject = 'Athugasemdir úr yfirlestri ákæru'
+    const html = `Ákæra vegna máls ${caseNumber} hefur verið send til baka úr yfirlestri með athugasemdum.<br /><br />${linkStart}Sjá nánar á yfirliti málsins í Réttarvörslugátt.${linkEnd}`
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: theCase.prosecutor?.name,
+      recipientEmail: theCase.prosecutor?.email,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.INDICTMENT_REVIEW_DENIED,
+      [recipient],
+    )
+  }
+  //#endregion
+
+  //#region INDICTMENT_REVIEW_ACCEPTED notifications
+  private async sendIndictmentReviewAcceptedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const caseNumber = theCase.policeCaseNumbers[0]
+    const linkStart = `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`
+    const linkEnd = '</a>'
+    const subject = 'Ákæra send til staðfestingar'
+    const html = `Ákæra vegna máls ${caseNumber} hefur verið lesin yfir og send til staðfestingar.<br /><br />${linkStart}Sjá nánar á yfirliti málsins í Réttarvörslugátt.${linkEnd}`
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: theCase.prosecutor?.name,
+      recipientEmail: theCase.prosecutor?.email,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.INDICTMENT_REVIEW_ACCEPTED,
+      [recipient],
+    )
+  }
+  //#endregion
+
   //#region INDICTMENT_REOPENED notifications
   private async sendIndictmentReopenedNotifications(
     theCase: Case,
@@ -2494,6 +2569,12 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_DENIED:
         return this.sendIndictmentDeniedNotifications(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_SENT_FOR_REVIEW:
+        return this.sendIndictmentSentForReviewNotifications(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_REVIEW_DENIED:
+        return this.sendIndictmentReviewDeniedNotifications(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_REVIEW_ACCEPTED:
+        return this.sendIndictmentReviewAcceptedNotifications(theCase)
       case RequestCaseNotificationType.CASE_FILES_UPDATED:
         return this.sendCaseFilesUpdatedNotifications(theCase, requireUser())
       case IndictmentCaseNotificationType.RULING_ORDER_ADDED:

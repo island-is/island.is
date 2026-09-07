@@ -9,10 +9,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { DefaultEvents } from '@island.is/application/types'
 import { SignatureCollectionArea } from '@island.is/api/schema'
 

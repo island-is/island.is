@@ -24,6 +24,7 @@ import {
   Checkbox,
   GeneralCardSkeleton,
   Problem,
+  ProblemTemplate,
   Select,
   TextField,
   Typography,
@@ -400,29 +401,15 @@ export default function HealthMessageComposeScreen() {
                   </View>
 
                   {!isReply && (
-                    <Checkbox
-                      checked={termsAccepted}
-                      onPress={() => setTermsAccepted(!termsAccepted)}
-                      label={
-                        <>
-                          {intl.formatMessage({
-                            id: 'health.messages.compose.termsAccept',
-                          })}{' '}
-                          <Typography
-                            weight="600"
-                            color={theme.color.blue400}
-                            style={{ textDecorationLine: 'underline' }}
-                            onPress={() =>
-                              router.push('/health/messages/terms')
-                            }
-                          >
-                            {intl.formatMessage({
-                              id: 'health.messages.compose.termsLink',
-                            })}
-                          </Typography>
-                        </>
-                      }
-                    />
+                    <View style={{ marginTop: -theme.spacing[2] }}>
+                      <Checkbox
+                        checked={termsAccepted}
+                        onPress={() => setTermsAccepted(!termsAccepted)}
+                        label={intl.formatMessage({
+                          id: 'health.messages.compose.termsAccept',
+                        })}
+                      />
+                    </View>
                   )}
                 </>
               )}
@@ -431,8 +418,9 @@ export default function HealthMessageComposeScreen() {
                 user to My Pages instead of a send form. Rendered outside the
                 lockable form wrapper so the link is always tappable. */}
             {isCertificateSelected && (
-              <Problem
-                type="no_data"
+              <ProblemTemplate
+                variant="info"
+                showIcon
                 title={intl.formatMessage({
                   id: 'health.messages.compose.certificateTitle',
                 })}

@@ -1,6 +1,7 @@
 import { useCallback, useContext } from 'react'
 import type { IntlShape } from 'react-intl'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
@@ -35,10 +36,12 @@ import type {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseCustodyRestrictions,
+  CaseLegalProvisions,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   setCheckboxAndSendToServer,
+  setParentCheckboxAndSendToServer,
   toggleInArray,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -50,6 +53,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   legalProvisions,
+  legalProvisions115Sub,
+  legalProvisions115SubIds,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
@@ -339,15 +344,58 @@ export const PoliceDemands = () => {
                 }
                 selected={workingCase.legalProvisions}
                 onChange={(id) =>
-                  setCheckboxAndSendToServer(
-                    'legalProvisions',
-                    id,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  id === CaseLegalProvisions._115_1
+                    ? setParentCheckboxAndSendToServer(
+                        'legalProvisions',
+                        id,
+                        legalProvisions115SubIds,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    : setCheckboxAndSendToServer(
+                        'legalProvisions',
+                        id,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
                 }
               />
+              <AnimatePresence>
+                {(workingCase.type === CaseType.CUSTODY ||
+                  workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
+                  workingCase.legalProvisions?.includes(
+                    CaseLegalProvisions._115_1,
+                  ) && (
+                    <motion.div
+                      key="legalProvisions115"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <Text variant="eyebrow" color="blue400" marginBottom={2}>
+                        Liðir 115. gr. útlendingalaga
+                      </Text>
+                      <CheckboxList
+                        blueBox={false}
+                        dataTestId="checkbox-115"
+                        stagger
+                        checkboxes={legalProvisions115Sub}
+                        selected={workingCase.legalProvisions}
+                        onChange={(id) =>
+                          setCheckboxAndSendToServer(
+                            'legalProvisions',
+                            id,
+                            workingCase,
+                            setWorkingCase,
+                            updateCase,
+                          )
+                        }
+                      />
+                    </motion.div>
+                  )}
+              </AnimatePresence>
               <Input
                 data-testid="legalBasis"
                 name="legalBasis"

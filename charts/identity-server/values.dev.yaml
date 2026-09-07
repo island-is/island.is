@@ -166,6 +166,7 @@ identity-server:
     primary-gw:
       hostnames:
         - 'identity-server.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -294,6 +295,7 @@ services-auth-admin-api:
     primary-gw:
       hostnames:
         - 'identity-server.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -922,6 +924,7 @@ services-auth-public-api:
     primary-gw:
       hostnames:
         - 'identity-server.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
