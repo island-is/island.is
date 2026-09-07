@@ -1,8 +1,3 @@
-// Seeds municipality numbers (sveitarfélagsnúmer) for existing municipality
-// domains, keyed on the domain primary key. The domain list was taken from
-// the production auth database and the codes from the official municipality
-// register. Domains that don't exist in an environment are skipped, and
-// admin-entered values are never overwritten.
 const MUNICIPALITY_CODES = {
   '@akranes.is': '3000', // Akraneskaupstaður
   '@akureyri.is': '6000', // Akureyrarbær
