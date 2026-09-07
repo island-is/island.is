@@ -2,8 +2,6 @@ import type { FC } from 'react'
 import { useContext } from 'react'
 
 import {
-  isCompletedCase,
-  isDefenceUser,
   isPrisonAdminUser,
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
@@ -26,6 +24,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
 
   const {
     defendants,
+    excludedDefendants,
     cancelledAndDismissedDefendants,
     policeCaseNumbers,
     courtCaseNumber,
@@ -51,13 +50,6 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     displayVerdictViewDate,
     displaySentToPrisonAdminDate,
   } = props
-
-  const excludedDefendants =
-    isDefenceUser(user) && isCompletedCase(workingCase.state)
-      ? []
-      : workingCase.defendants?.filter(
-          (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
-        )
 
   return (
     <InfoCard
@@ -137,10 +129,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           ? [
               {
                 id: 'cancelled-and-dismissed-defendants-section',
-                items:
-                  excludedDefendants.map((defendant) =>
-                    cancelledAndDismissedDefendants(defendant),
-                  ) || [],
+                items: excludedDefendants.map((defendant) =>
+                  cancelledAndDismissedDefendants(defendant),
+                ),
                 columns: 2,
               },
             ]

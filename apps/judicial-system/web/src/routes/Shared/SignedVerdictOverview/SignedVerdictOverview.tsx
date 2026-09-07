@@ -13,7 +13,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   isDistrictCourtUser,
-  isInvestigationCase,
   isPrisonAdminUser,
   isPrisonSystemUser,
   isProsecutionUser,
@@ -39,7 +38,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  InfoCard,
+  InfoCardRequestCase,
   MarkdownWrapper,
   Modal,
   PageHeader,
@@ -52,7 +51,6 @@ import {
   SignatureConfirmationModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import type {
   Case,
   Institution,
@@ -175,21 +173,6 @@ export const SignedVerdictOverview: FC = () => {
     caseNotFound,
     refreshCase,
   } = useContext(FormContext)
-  const {
-    defendants,
-    policeCaseNumbers,
-    courtCaseNumber,
-    prosecutor,
-    prosecutorsOffice,
-    court,
-    judge,
-    caseType,
-    registrar,
-    appealCaseNumber,
-    appealAssistant,
-    appealJudges,
-    victims,
-  } = useInfoCardItems()
 
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
   const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
@@ -432,55 +415,12 @@ export const SignedVerdictOverview: FC = () => {
             )}
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
-            <InfoCard
-              sections={[
-                {
-                  id: 'defendants-section',
-                  items: [defendants({ caseType: workingCase.type })],
-                },
-                {
-                  id: 'victims-section',
-                  items: [victims],
-                },
-                {
-                  id: 'case-info-section',
-                  items: [
-                    policeCaseNumbers,
-                    courtCaseNumber,
-                    prosecutorsOffice,
-                    court,
-                    prosecutor(
-                      workingCase.type,
-                      isProsecutionUser(user)
-                        ? () => setModalVisible('ChangeProsecutor')
-                        : undefined,
-                    ),
-                    judge,
-                    ...(isInvestigationCase(workingCase.type)
-                      ? [caseType]
-                      : []),
-                    ...(workingCase.registrar ? [registrar] : []),
-                  ],
-                  columns: 2,
-                },
-                ...(workingCase.appealCase?.appealCaseNumber
-                  ? [
-                      {
-                        id: 'court-of-appeal-section',
-                        items: [
-                          appealCaseNumber,
-                          ...(appealAssistant ? [appealAssistant] : []),
-                          ...(workingCase.appealCase?.appealJudge1 &&
-                          workingCase.appealCase?.appealJudge2 &&
-                          workingCase.appealCase?.appealJudge3
-                            ? [appealJudges]
-                            : []),
-                        ],
-                        columns: 2,
-                      },
-                    ]
-                  : []),
-              ]}
+            <InfoCardRequestCase
+              onProsecutorClick={
+                isProsecutionUser(user)
+                  ? () => setModalVisible('ChangeProsecutor')
+                  : undefined
+              }
             />
             {!isPrisonSystemUser(user) && (
               <Accordion data-testid="accordionItems">

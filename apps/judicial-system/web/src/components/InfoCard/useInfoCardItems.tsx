@@ -58,6 +58,17 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
 
+  // Defence users see every defendant on a completed case. Everyone else sees
+  // defendants whose indictment was cancelled or dismissed in their own section.
+  const showsAllDefendants =
+    isDefenceUser(user) && isCompletedCase(workingCase.state)
+
+  const excludedDefendants = showsAllDefendants
+    ? []
+    : workingCase.defendants?.filter(
+        (defendant) => !!defendant.indictmentCancelledOrDismissedState,
+      ) ?? []
+
   const defendants = ({
     caseType,
     displayAppealExpirationInfo,
@@ -71,10 +82,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     displaySentToPrisonAdminDate?: boolean
     displayOpenCaseReference?: boolean
   }): Item => {
-    const defendants = workingCase.defendants?.filter((defendant) =>
-      isDefenceUser(user) && isCompletedCase(workingCase.state)
-        ? true
-        : !defendant.indictmentCancelledOrDismissedState,
+    const defendants = workingCase.defendants?.filter(
+      (defendant) =>
+        showsAllDefendants || !defendant.indictmentCancelledOrDismissedState,
     )
     const isMultipleDefendants = defendants && defendants.length > 1
 
@@ -527,6 +537,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   return {
     defendants,
+    excludedDefendants,
     cancelledAndDismissedDefendants,
     indictmentCreated,
     prosecutor,
