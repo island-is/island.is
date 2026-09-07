@@ -1,4 +1,4 @@
-import { Inject, UseGuards } from '@nestjs/common'
+import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
@@ -12,9 +12,14 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { type User } from '@island.is/judicial-system/types'
+import {
+  AppealCaseType,
+  Feature,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { FeatureService } from '../feature/feature.service'
 import { AppealCase } from './dto/appealCase.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
 import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
@@ -28,6 +33,7 @@ export class LimitedAccessAppealCaseResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly backendService: BackendService,
+    private readonly featureService: FeatureService,
   ) {}
 
   @Mutation(() => AppealCase, { nullable: true })
@@ -37,6 +43,15 @@ export class LimitedAccessAppealCaseResolver {
     @CurrentGraphQlUser() user: User,
   ): Promise<AppealCase> {
     const { caseId, ...body } = input
+
+    // The flag hides the verdict appeal action in the web; closing the write path here
+    // too means a hidden feature cannot be reached by calling the API directly.
+    if (
+      body.appealType === AppealCaseType.VERDICT &&
+      this.featureService.isHidden(Feature.INDICTMENT_APPEAL)
+    ) {
+      throw new ForbiddenException('Indictment appeals are not available')
+    }
 
     this.logger.debug(`Creating limited access appeal case for case ${caseId}`)
 

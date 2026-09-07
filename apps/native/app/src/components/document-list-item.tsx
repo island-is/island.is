@@ -245,7 +245,12 @@ export const DocumentListItem = ({
                 height.value = e.nativeEvent.layout.height
               }}
             >
-              {bodyContent ?? (body ? <Markdown>{body}</Markdown> : null)}
+              {bodyContent ??
+                (body ? (
+                  <Markdown fontSize={16} lineHeight={24}>
+                    {body}
+                  </Markdown>
+                ) : null)}
               {attachments?.map((attachment) => (
                 <AttachmentChip
                   key={attachment.id}
