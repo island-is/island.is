@@ -7,6 +7,7 @@ import {
   Box,
   DatePicker,
   Inline,
+  Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 
@@ -119,6 +120,13 @@ export const FilterDateAccordion = ({
               handleChange={(date) => onChange(valueFrom, date)}
             />
           </Inline>
+          {maxRangeDays != null && (
+            <Box paddingTop={1}>
+              <Text variant="small">
+                {formatMessage(m.search.maxDateSpan, { days: maxRangeDays })}
+              </Text>
+            </Box>
+          )}
         </AccordionItem>
       </Accordion>
     </Box>

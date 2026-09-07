@@ -153,6 +153,10 @@ export const m = {
       id: 'web.openinvoices:search.dateTo',
       defaultMessage: 'Til',
     },
+    maxDateSpan: {
+      id: 'web.openinvoices:search.maxDateSpan',
+      defaultMessage: 'Hámark 60 dagar',
+    },
     types: {
       id: 'web.openinvoices:search.types',
       defaultMessage: 'Flokkun',
