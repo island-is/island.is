@@ -1,4 +1,4 @@
-import { subDays } from 'date-fns'
+import subDays from 'date-fns/subDays'
 import { v4 as uuid } from 'uuid'
 
 import { DefendantEventType } from '@island.is/judicial-system/types'

@@ -42,7 +42,6 @@ import {
 import { hasOutOfCourtAppeal } from '../../appeal-case'
 import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
-import { getActiveVerdict } from '../../verdict/getActiveVerdict'
 import {
   AppealCase,
   AppealEventLog,
@@ -56,6 +55,7 @@ import {
   DefendantEventLog,
   EventLog,
 } from '../../repository'
+import { getActiveVerdict } from '../../verdict/getActiveVerdict'
 
 // ---------------------------------------------------------------------------
 // Appeal-info computation
