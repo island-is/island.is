@@ -396,10 +396,26 @@ describe('CaseFileRepositoryService', () => {
       )
 
       expect(model.findAll).toHaveBeenCalledWith({
-        where: { caseId, category: categories },
+        where: {
+          caseId,
+          category: categories,
+          state: { [Op.not]: CaseFileState.DELETED },
+        },
         transaction,
       })
       expect(result).toBe(caseFiles)
+    })
+
+    // Deleted files are soft-deleted and stay in the table. Copying one would
+    // create a live file on the new case, so the query must not return them -
+    // and must not depend on the delete path also clearing the key.
+    it('excludes deleted files', async () => {
+      await service.findAllByCaseAndCategories(caseId, categories, {
+        transaction,
+      })
+
+      const [{ where }] = model.findAll.mock.calls[0]
+      expect(where.state).toEqual({ [Op.not]: CaseFileState.DELETED })
     })
 
     it('rethrows when the lookup fails', async () => {

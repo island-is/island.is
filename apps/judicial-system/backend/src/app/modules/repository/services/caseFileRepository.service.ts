@@ -349,6 +349,8 @@ export class CaseFileRepositoryService {
 
   // The files of a case in the given categories. Which categories is the
   // caller's decision - the copy of a case takes only the prosecution's.
+  // Deleted files are soft-deleted and stay in the table, so they are excluded
+  // here: a copy of them would be a live file again.
   async findAllByCaseAndCategories(
     caseId: string,
     categories: CaseFileCategory[],
@@ -360,7 +362,11 @@ export class CaseFileRepositoryService {
       )
 
       const caseFiles = await this.caseFileModel.findAll({
-        where: { caseId, category: categories },
+        where: {
+          caseId,
+          category: categories,
+          state: { [Op.not]: CaseFileState.DELETED },
+        },
         transaction: options.transaction,
       })
 
