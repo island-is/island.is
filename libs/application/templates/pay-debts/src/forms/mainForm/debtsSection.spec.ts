@@ -36,6 +36,9 @@ const externalDataWithDebts = fetched([
     chargeTypeName: 'Gjaldflokkur 1',
     dueDate: '2025-08-01',
     finalDueDate: '2025-08-31',
+    principal: 500000,
+    interest: 55990,
+    cost: 10000,
     debts: 565990,
     chargeItemSubject: '453-78857-53',
     timePeriod: '202508',
@@ -91,6 +94,26 @@ describe('debtsSection', () => {
     expect(header[1]).toMatchObject({
       tooltip: { defaultMessage: 'Gjaldgrunnur' },
     })
+  })
+
+  it('breaks each debt down into höfuðstóll, vextir and kostnaður', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const rows = table?.expandedRows?.rows
+
+    if (typeof rows !== 'function') {
+      throw new Error('Expected dynamic expanded rows')
+    }
+
+    const application = {
+      externalData: externalDataWithDebts,
+      answers: {},
+    } as unknown as Application
+
+    expect(rows(application)).toEqual([
+      [['2025-08-01', '202508', '500.000 kr.', '55.990 kr.', '10.000 kr.']],
+    ])
   })
 
   it('hides the table and its footer when the fetch found no debts', () => {

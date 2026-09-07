@@ -35,7 +35,7 @@ Row index is the index into `getDebts(application)`, so everything (pagination, 
 **`debtsSection.ts`** — `DebtsLoader` + a `buildInteractiveTableField` (`id: 'selectedDebts'`, `dataTestId: 'debts-table'`) + a `buildStickyFooterField`, all under one multi-field. Table and footer are gated on `hasDebtsToPay` (fetched **and** non-empty), so an empty result leaves the loader's own message on screen.
 
 - `selectable`, `pageSize: 50`, `inputColumn` (`id: 'debtsToPay'`, capped per row by `getMaxAmount`). Selecting a row pre-fills the full debt; deselecting clears it.
-- `header` cells are objects carrying `width`/`truncate`/`expandable`/`tooltip` (the abbreviated "Gjaldgr." header uses `tooltip` to spell out "Gjaldgrunnur"). `expandedRows` gives each row a sub-table (Gjalddagi, Tímabil, Höfuðstóll, Vextir, Kostnaður) — the last three render `'—'`, FJS doesn't return them.
+- `header` cells are objects carrying `width`/`truncate`/`expandable`/`tooltip` (the abbreviated "Gjaldgr." header uses `tooltip` to spell out "Gjaldgrunnur"). `expandedRows` gives each row a sub-table (Gjalddagi, Tímabil, Höfuðstóll, Vextir, Kostnaður), all from the real `principal`/`interest`/`cost` fields.
 - `footerRow` totals **all** debts ("Heildarskuld"), not just selected. The sticky footer shows live "Til greiðslu"/"Eftirstöðvar" on every keystroke.
 - `isSubmitDisabled` blocks submit until at least one row is ticked.
 - `shouldUseMockPayment` is a hidden input, dev/local only.
@@ -53,7 +53,7 @@ Row index is the index into `getDebts(application)`, so everything (pagination, 
 
 - `getDebts.ts` — single source of truth, reads `externalData.customerDebts.data.debts`. Also `DEBTS_EXTERNAL_DATA_ID`, `DEBTS_MAX_AGE_MS` (1h), `hasFetchedDebts`, `debtsAreStale`, `getDebtsFromExternalData` (raw `externalData`, for pre-commit conditions), `debtsSignature`.
 - `getSelectedDebts.ts` — ticked rows only, each `amountToPay` clamped to `[1, debt.debts]`, falling back to the full debt if the typed value doesn't parse.
-- `types.ts` — `CustomerDebt`: `chargeTypeId`, `chargeTypeName`, `chargeItemSubject`, `timePeriod`, `dueDate`, `finalDueDate`, `debts`. The backend also returns `payID` and `nextkey`, neither modeled on the frontend. Dates and `timePeriod` are passed through exactly as FJS sends them — no reformatting.
+- `types.ts` — `CustomerDebt`: `chargeTypeId`, `chargeTypeName`, `chargeItemSubject`, `timePeriod`, `dueDate`, `finalDueDate`, `principal`, `interest`, `cost`, `debts`. The backend also returns `payID` and `nextkey`, neither modeled on the frontend. Amounts arrive as `bigint` (int64) from the client and are `Number()`-ed in `PayDebtsService`. Dates and `timePeriod` are passed through exactly as FJS sends them — no reformatting.
 
 ## Messages (`src/lib/messages`)
 
@@ -72,7 +72,6 @@ Coverage: state machine + api allowlist, `DebtsLoader` (empty result, submit gat
 ## Known gaps
 
 - `dataSchema.ts` is still the scaffold dummy — no validation of `selectedDebts`/`debtsToPay` (clamping happens in `getSelectedDebts`, not the schema).
-- Charge creation uses the wrong-granularity code (see `payment` above); `payID` may be part of the real answer.
+- Charge creation uses the wrong-granularity code (see `payment` above). The v3_2 spec answers this: `/payDebt` and `/validatePayment` take `payDebts: [{ payid, payAmount }]` — the per-debt `payID`, not a charge code. Both operations are generated (`payDebtPost3`, `validatePaymentPost4`) but nothing calls them yet, and `payID` still isn't carried to the frontend.
 - FJS paginates with `nextkey`; the client only ever fetches the first page.
-- Höfuðstóll / Vextir / Kostnaður in the expanded row are placeholders.
 - Nothing on the `completed` side confirms what was actually paid.

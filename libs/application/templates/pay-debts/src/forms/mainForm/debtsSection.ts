@@ -20,8 +20,6 @@ import {
   hasFetchedDebts,
 } from '../../utils/getDebts'
 
-const AMOUNT_UNAVAILABLE = '—'
-
 const hasDebtsToPay = (_answers: unknown, externalData: ExternalData) =>
   hasFetchedDebts(externalData) &&
   getDebtsFromExternalData(externalData).length > 0
@@ -83,9 +81,9 @@ export const debtsSection = buildSection({
                 [
                   debt.dueDate,
                   debt.timePeriod,
-                  AMOUNT_UNAVAILABLE,
-                  AMOUNT_UNAVAILABLE,
-                  AMOUNT_UNAVAILABLE,
+                  formatCurrency(debt.principal),
+                  formatCurrency(debt.interest),
+                  formatCurrency(debt.cost),
                 ],
               ]),
           },
