@@ -153,28 +153,56 @@ describe('InteractiveTableFormFieldRow', () => {
       Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth')
     })
 
-    // The tooltip stays mounted while closed and carries the same text, so the
-    // anchor has to be picked out by element rather than by text alone.
-    const anchor = () =>
+    // The tooltip anchor is the toggle itself; the truncated text lives in a
+    // plain span inside it so the button keeps its single tab stop.
+    const truncatedText = () =>
       screen
         .getAllByText(longName)
-        .find((element) => element.tagName === 'SPAN') as HTMLElement
+        .find(
+          (element) =>
+            element.tagName === 'SPAN' &&
+            element.getAttribute('role') !== 'button',
+        ) as HTMLElement
 
     it('shows the full name in a tooltip when it does not fit', async () => {
       overflow(400, 200)
       renderTruncated()
 
-      await userEvent.hover(anchor())
+      await userEvent.hover(
+        screen.getByRole('button', { name: new RegExp(longName) }),
+      )
 
       await waitFor(() => expect(screen.getByRole('tooltip')).toBeVisible())
       expect(screen.getByRole('tooltip')).toHaveTextContent(longName)
+    })
+
+    it('shows the full name when the toggle is reached with the keyboard', async () => {
+      overflow(400, 200)
+      renderTruncated()
+
+      const toggle = screen.getByRole('button', { name: new RegExp(longName) })
+      await userEvent.tab()
+      await userEvent.tab()
+
+      expect(toggle).toHaveFocus()
+      await waitFor(() => expect(screen.getByRole('tooltip')).toBeVisible())
+      expect(screen.getByRole('tooltip')).toHaveTextContent(longName)
+    })
+
+    it('keeps the truncated text out of the tab order', () => {
+      overflow(400, 200)
+      renderTruncated()
+
+      expect(truncatedText()).not.toHaveAttribute('tabindex')
     })
 
     it('adds no tooltip when the name already fits', async () => {
       overflow(200, 200)
       renderTruncated()
 
-      await userEvent.hover(anchor())
+      await userEvent.hover(
+        screen.getByRole('button', { name: new RegExp(longName) }),
+      )
 
       expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
     })

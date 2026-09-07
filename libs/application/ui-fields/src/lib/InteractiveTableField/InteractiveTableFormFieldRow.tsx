@@ -62,7 +62,7 @@ const subscribeToResize = (measure: () => void) => {
   }
 }
 
-const TruncatedCell: FC<{ value: string }> = ({ value }) => {
+const useTruncation = (value: string) => {
   const ref = useRef<HTMLSpanElement>(null)
   const [isTruncated, setIsTruncated] = useState(false)
 
@@ -81,6 +81,12 @@ const TruncatedCell: FC<{ value: string }> = ({ value }) => {
     return subscribeToResize(measure)
   }, [measure, value])
 
+  return { ref, isTruncated }
+}
+
+const TruncatedCell: FC<{ value: string }> = ({ value }) => {
+  const { ref, isTruncated } = useTruncation(value)
+
   const anchor = (
     <span ref={ref} className={styles.truncatedText}>
       {value}
@@ -92,6 +98,45 @@ const TruncatedCell: FC<{ value: string }> = ({ value }) => {
   }
 
   return <HoverTooltip text={value}>{anchor}</HoverTooltip>
+}
+
+const ExpandableCell: FC<{
+  value: string
+  truncate: boolean
+  expanded: boolean
+  expandedRowId: string
+  onToggle: () => void
+}> = ({ value, truncate, expanded, expandedRowId, onToggle }) => {
+  const { ref, isTruncated } = useTruncation(value)
+
+  const button = (
+    <Button
+      variant="text"
+      size="small"
+      icon={expanded ? 'chevronUp' : 'chevronDown'}
+      aria-expanded={expanded}
+      aria-controls={expandedRowId}
+      onClick={onToggle}
+    >
+      {truncate ? (
+        <span ref={ref} className={styles.truncatedText}>
+          {value}
+        </span>
+      ) : (
+        value
+      )}
+    </Button>
+  )
+
+  return (
+    <div className={styles.expandableCell}>
+      {isTruncated ? (
+        <HoverTooltip text={value}>{button}</HoverTooltip>
+      ) : (
+        button
+      )}
+    </div>
+  )
 }
 
 interface Props {
@@ -218,18 +263,13 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
             >
               {isFirstCell && isOpen && <div className={styles.line} />}
               {expandable && isExpandable ? (
-                <div className={styles.expandableCell}>
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon={expanded ? 'chevronUp' : 'chevronDown'}
-                    aria-expanded={expanded}
-                    aria-controls={expandedRowId}
-                    onClick={toggleExpanded}
-                  >
-                    {truncate ? <TruncatedCell value={value} /> : value}
-                  </Button>
-                </div>
+                <ExpandableCell
+                  value={value}
+                  truncate={truncate}
+                  expanded={expanded}
+                  expandedRowId={expandedRowId}
+                  onToggle={toggleExpanded}
+                />
               ) : truncate ? (
                 <TruncatedCell value={value} />
               ) : (
