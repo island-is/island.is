@@ -6,7 +6,7 @@
   "dependencies": {
     "@aws-sdk/client-ses": "^3.145.0",
     "@formatjs/intl": "^1.8.1",
-    "@playwright/test": "1.48.2",
+    "@playwright/test": "1.62.1",
     "axios": "^0.21.4",
     "dd-trace": "5.14.1",
     "imap-simple": "^5.1.0",
