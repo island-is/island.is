@@ -61,6 +61,7 @@ const AppointmentsOverview = () => {
     appointments: HealthDirectorateAppointment[],
     query: { loading: boolean; error?: ApolloError },
     emptyText: string,
+    muted?: boolean,
   ) => {
     if (query.loading) {
       return <CardLoader />
@@ -93,6 +94,8 @@ const AppointmentsOverview = () => {
           error: query.error ? true : false,
         }}
         showLinkButton={false}
+        showHeader={false}
+        muted={muted}
       />
     )
   }
@@ -160,13 +163,14 @@ const AppointmentsOverview = () => {
             label: formatMessage(messages.pastAppointmentsTab),
             content: (
               <Box paddingTop={3}>
-                <Text variant="medium" marginBottom={3}>
+                <Text marginBottom={3}>
                   {formatMessage(messages.pastAppointmentsNote)}
                 </Text>
                 {renderAppointmentList(
                   pastAppointments,
                   past,
                   formatMessage(messages.noPastAppointmentsText),
+                  true,
                 )}
               </Box>
             ),

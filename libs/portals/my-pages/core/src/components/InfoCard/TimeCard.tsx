@@ -6,6 +6,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import cn from 'classnames'
 import { useWindowSize } from 'react-use'
 import { LinkButton } from '../LinkButton/LinkButton'
 import { LinkResolver } from '../LinkResolver/LinkResolver'
@@ -24,6 +25,8 @@ interface AppointmentCardProps {
   }
   size?: 'small' | 'large'
   to?: string
+  /** Grays out the card, e.g. for appointments that have already passed */
+  muted?: boolean
 }
 
 // Example of a timecard
@@ -44,6 +47,7 @@ export const TimeCard = ({
   description,
   data,
   to,
+  muted = false,
 }: AppointmentCardProps) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -59,7 +63,11 @@ export const TimeCard = ({
           alignItems="center"
           marginBottom={2}
         >
-          <Text variant="h4" color={to ? 'blue400' : undefined}>
+          <Text
+            variant="h4"
+            color={to && !muted ? 'blue400' : undefined}
+            className={muted ? styles.mutedTitle : undefined}
+          >
             {title}
           </Text>
           {to && <Icon icon="arrowForward" type="outline" color="blue400" />}
@@ -71,32 +79,43 @@ export const TimeCard = ({
           flexDirection={isMobile ? 'column' : 'row'}
           marginBottom={1}
         >
-          <Box display="flex" alignItems="center" columnGap={1}>
-            <Icon icon="calendar" color="blue400" size="small" type="outline" />
-            <Text variant="medium">
+          <Box display="flex" alignItems="flexStart" columnGap={1}>
+            <Box flexShrink={0} paddingTop="smallGutter">
+              <Icon
+                icon="calendar"
+                color="blue400"
+                size="small"
+                type="outline"
+              />
+            </Box>
+            <Text>
               {data.weekday ? data.weekday + ', ' : ''}
               {data.date}
             </Text>
           </Box>
-          <Box display="flex" alignItems="center" columnGap={1}>
-            <Icon icon="time" color="blue400" size="small" type="outline" />
-            <Text variant="medium">{data.time}</Text>
+          <Box display="flex" alignItems="flexStart" columnGap={1}>
+            <Box flexShrink={0} paddingTop="smallGutter">
+              <Icon icon="time" color="blue400" size="small" type="outline" />
+            </Box>
+            <Text>{data.time}</Text>
           </Box>
         </Box>
         {description && (
           <Box
             display="flex"
-            alignItems="center"
+            alignItems="flexStart"
             columnGap={1}
             marginBottom={1}
           >
-            <Icon icon="person" color="blue400" size="small" type="outline" />
-            <Text variant="medium">{description}</Text>
+            <Box flexShrink={0} paddingTop="smallGutter">
+              <Icon icon="person" color="blue400" size="small" type="outline" />
+            </Box>
+            <Text>{description}</Text>
           </Box>
         )}
         {data.location?.label && (
-          <Box display="flex" alignItems="center" columnGap={1}>
-            <Box flexShrink={0}>
+          <Box display="flex" alignItems="flexStart" columnGap={1}>
+            <Box flexShrink={0} paddingTop="smallGutter">
               <Icon
                 icon="location"
                 color="blue400"
@@ -120,7 +139,7 @@ export const TimeCard = ({
                 />
               </Box>
             ) : (
-              <Text variant="medium">{data.location.label}</Text>
+              <Text>{data.location.label}</Text>
             )}
           </Box>
         )}
@@ -135,7 +154,7 @@ export const TimeCard = ({
         borderRadius="large"
         padding={isMobile ? 2 : 3}
         height="full"
-        className={to ? styles.boxContainer : undefined}
+        className={cn(to && styles.boxContainer, muted && styles.mutedCard)}
       >
         {to ? (
           <LinkResolver href={to}>
