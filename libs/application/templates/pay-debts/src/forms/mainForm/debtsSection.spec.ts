@@ -65,6 +65,19 @@ describe('debtsSection', () => {
     }
   })
 
+  it('truncates the Gjaldflokkur column rather than letting it wrap', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const header = table?.header
+
+    if (typeof header === 'function' || !header) {
+      throw new Error('Expected a static header')
+    }
+
+    expect(header[0]).toMatchObject({ expandable: true, truncate: true })
+  })
+
   it('hides the table and its footer when the fetch found no debts', () => {
     for (const field of [
       findByType(FieldTypes.INTERACTIVE_TABLE),

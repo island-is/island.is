@@ -218,16 +218,18 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
             >
               {isFirstCell && isOpen && <div className={styles.line} />}
               {expandable && isExpandable ? (
-                <Button
-                  variant="text"
-                  size="small"
-                  icon={expanded ? 'chevronUp' : 'chevronDown'}
-                  aria-expanded={expanded}
-                  aria-controls={expandedRowId}
-                  onClick={toggleExpanded}
-                >
-                  {value}
-                </Button>
+                <div className={styles.expandableCell}>
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon={expanded ? 'chevronUp' : 'chevronDown'}
+                    aria-expanded={expanded}
+                    aria-controls={expandedRowId}
+                    onClick={toggleExpanded}
+                  >
+                    {truncate ? <TruncatedCell value={value} /> : value}
+                  </Button>
+                </div>
               ) : truncate ? (
                 <TruncatedCell value={value} />
               ) : (

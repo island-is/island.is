@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FC, PropsWithChildren } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -8,6 +8,7 @@ import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/types'
+import * as styles from './InteractiveTableFormField.css'
 import { InteractiveTableFormFieldRow } from './InteractiveTableFormFieldRow'
 
 jest.mock('@island.is/localization', () => ({
@@ -104,6 +105,90 @@ describe('InteractiveTableFormFieldRow', () => {
     await userEvent.click(getToggle())
 
     expect(getToggle()).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it.each([true, false])(
+    'pins the chevron to the right edge whether the title truncates (%s) or not',
+    (truncate) => {
+      renderRow({
+        columns: [
+          { truncate, expandable: true },
+          { truncate: false },
+          { truncate: false },
+          { truncate: false },
+        ],
+      })
+
+      expect(getToggle().closest(`.${styles.expandableCell}`)).not.toBeNull()
+    },
+  )
+
+  describe('truncated expandable cell', () => {
+    const longName = 'Gjaldflokkur með mjög löngu heiti sem kemst ekki fyrir'
+
+    const overflow = (scrollWidth: number, clientWidth: number) => {
+      Object.defineProperty(HTMLElement.prototype, 'scrollWidth', {
+        configurable: true,
+        get: () => scrollWidth,
+      })
+      Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+        configurable: true,
+        get: () => clientWidth,
+      })
+    }
+
+    const renderTruncated = () =>
+      renderRow({
+        row: [longName, '453-78857-53', '2025/08', '565.990 kr.'],
+        columns: [
+          { truncate: true, expandable: true },
+          { truncate: false },
+          { truncate: false },
+          { truncate: false },
+        ],
+      })
+
+    afterEach(() => {
+      Reflect.deleteProperty(HTMLElement.prototype, 'scrollWidth')
+      Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth')
+    })
+
+    // The tooltip stays mounted while closed and carries the same text, so the
+    // anchor has to be picked out by element rather than by text alone.
+    const anchor = () =>
+      screen
+        .getAllByText(longName)
+        .find((element) => element.tagName === 'SPAN') as HTMLElement
+
+    it('shows the full name in a tooltip when it does not fit', async () => {
+      overflow(400, 200)
+      renderTruncated()
+
+      await userEvent.hover(anchor())
+
+      await waitFor(() => expect(screen.getByRole('tooltip')).toBeVisible())
+      expect(screen.getByRole('tooltip')).toHaveTextContent(longName)
+    })
+
+    it('adds no tooltip when the name already fits', async () => {
+      overflow(200, 200)
+      renderTruncated()
+
+      await userEvent.hover(anchor())
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+    })
+
+    it('still toggles the sub-table when the name is truncated', async () => {
+      overflow(400, 200)
+      renderTruncated()
+
+      const toggle = screen.getByRole('button', { name: new RegExp(longName) })
+      await userEvent.click(toggle)
+
+      expect(toggle).toHaveAttribute('aria-expanded', 'true')
+      expect(screen.getByText('Höfuðstóll')).toBeInTheDocument()
+    })
   })
 
   describe('amount column', () => {

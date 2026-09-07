@@ -46,9 +46,23 @@ globalStyle(`${tableWrapper} div:has(> div > input:not([type="checkbox"]))`, {
 
 export const truncatedText = style({
   display: 'block',
+  minWidth: 0,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+})
+
+export const expandableCell = style({})
+
+globalStyle(`${expandableCell} > *`, {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '100%',
+})
+
+globalStyle(`${expandableCell} svg`, {
+  flexShrink: 0,
 })
 
 export const checkboxColumnStyle = { width: 56 }

@@ -69,7 +69,7 @@ export const debts = {
     },
     chargeItemSubjectHeader: {
       id: 'pd.application:debts.table.chargeItemSubjectHeader',
-      defaultMessage: 'Gjaldgrunnur',
+      defaultMessage: 'Gjaldgr.',
       description: 'Charge item subject table header',
     },
     timePeriodHeader: {

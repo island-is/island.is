@@ -50,13 +50,15 @@ export const debtsSection = buildSection({
             {
               label: messages.table.chargeTypeNameHeader,
               expandable: true,
+              truncate: true,
+              width: 200,
             },
             {
               label: messages.table.chargeItemSubjectHeader,
               truncate: true,
-              width: 150,
+              width: 90,
             },
-            { label: messages.table.finalDueDateHeader, width: 110 },
+            { label: messages.table.finalDueDateHeader, width: 120 },
             { label: messages.table.amountHeader, width: 120 },
             messages.table.toPayLabel,
           ],
