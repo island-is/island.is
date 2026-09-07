@@ -251,6 +251,11 @@ export const getInclude = (user?: TUser): Includeable[] => [
     include: [{ model: Institution, as: 'institution' }],
   },
   {
+    model: User,
+    as: 'indictmentApprover',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
     model: AppealCase,
     as: 'appealCase',
     required: false,

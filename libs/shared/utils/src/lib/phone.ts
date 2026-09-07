@@ -1,12 +1,3 @@
-export const formatBankInfo = (bankInfo: string) => {
-  const formattedBankInfo = bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
-  if (formattedBankInfo && formattedBankInfo.length === 14) {
-    return formattedBankInfo
-  }
-
-  return bankInfo
-}
-
 export const formatPhoneNumber = (phoneNumber: string) => {
   if (/^\d{3}-\d{4}$/.test(phoneNumber)) {
     return phoneNumber
@@ -18,11 +9,15 @@ export const formatPhoneNumber = (phoneNumber: string) => {
   return phoneNumber
 }
 
+export const removeCountryCode = (phone: string) => {
+  return phone.replace(/(^00354|^\+354|\D)/g, '')
+}
+
 export const formatPhoneNumberWithIcelandicCountryCode = (
   phoneNumber: string,
 ) => {
-  const countryCodePattern = /^\+354(\d{7})$/ // Matches "+354" followed by exactly 7 digits
-  const localNumberPattern = /^\d{7}$/ // Matches exactly 7 digits
+  const countryCodePattern = /^\+354(\d{7})$/
+  const localNumberPattern = /^\d{7}$/
 
   if (countryCodePattern.test(phoneNumber)) {
     const localNumber = phoneNumber.replace(countryCodePattern, '$1')
@@ -35,13 +30,3 @@ export const formatPhoneNumberWithIcelandicCountryCode = (
 
   return phoneNumber
 }
-
-export const removeCountryCode = (phone: string) => {
-  return phone.replace(/(^00354|^\+354|\D)/g, '')
-}
-
-export const formatCurrency = (answer: string) =>
-  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-
-export const formatCurrencyWithoutSuffix = (answer: string) =>
-  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.')

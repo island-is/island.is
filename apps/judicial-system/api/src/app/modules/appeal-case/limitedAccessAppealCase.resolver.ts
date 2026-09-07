@@ -44,7 +44,7 @@ export class LimitedAccessAppealCaseResolver {
   ): Promise<AppealCase> {
     const { caseId, ...body } = input
 
-    // The flag hides the áfrýjun action in the web; closing the write path here
+    // The flag hides the verdict appeal action in the web; closing the write path here
     // too means a hidden feature cannot be reached by calling the API directly.
     if (
       body.appealType === AppealCaseType.VERDICT &&

@@ -39,6 +39,21 @@ export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 export {
+  CaseStringRepositoryService,
+  UpdateCaseString,
+} from './services/caseStringRepository.service'
+export {
+  CaseFileRepositoryService,
+  CreateCaseFile,
+  UpdateCaseFile,
+  UpdatedCaseFiles,
+} from './services/caseFileRepository.service'
+export {
+  CivilClaimantRepositoryService,
+  UpdateCivilClaimant,
+  UpdatedCivilClaimants,
+} from './services/civilClaimantRepository.service'
+export {
   CourtSessionRepositoryService,
   UpdateCourtSession,
 } from './services/courtSessionRepository.service'
@@ -49,6 +64,11 @@ export {
   UpdateCourtSessionString,
 } from './services/courtSessionStringRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
+export {
+  DateLogRepositoryService,
+  CreateDateLog,
+  UpdateDateLog,
+} from './services/dateLogRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 export {
@@ -56,6 +76,12 @@ export {
   CreateEventLog,
   LoginCount,
 } from './services/eventLogRepository.service'
+export {
+  IndictmentCountRepositoryService,
+  CreateIndictmentCount,
+  UpdateIndictmentCount,
+  UpdatedIndictmentCounts,
+} from './services/indictmentCountRepository.service'
 export { IndictmentSubtypeRepositoryService } from './services/indictmentSubtypeRepository.service'
 export { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
 export { InstitutionRepositoryService } from './services/institutionRepository.service'
@@ -68,6 +94,11 @@ export {
   NotificationRepositoryService,
   CreateNotification,
 } from './services/notificationRepository.service'
+export {
+  OffenseRepositoryService,
+  UpdateOffense,
+  UpdatedOffenses,
+} from './services/offenseRepository.service'
 export { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 export {
   RobotLogRepositoryService,

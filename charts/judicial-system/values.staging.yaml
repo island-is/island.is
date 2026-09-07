@@ -475,6 +475,7 @@ judicial-system-web:
   env:
     API_URL: 'https://judicial-system.staging01.devland.is'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    ENVIRONMENT: 'staging'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -530,6 +531,7 @@ judicial-system-web:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
     LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
     NATIONAL_REGISTRY_API_KEY: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
     SUPPORT_EMAIL: '/k8s/judicial-system/SUPPORT_EMAIL'

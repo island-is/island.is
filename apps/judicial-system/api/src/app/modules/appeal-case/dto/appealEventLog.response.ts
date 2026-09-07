@@ -9,7 +9,7 @@ import {
 registerEnumType(AppealOrigin, { name: 'AppealOrigin' })
 
 // One entry of an appeal case's event log. Exposed so the web can tell who
-// appealed a verdict, and when, per defendant - an áfrýjun can have several
+// appealed a verdict, and when, per defendant - a verdict appeal can have several
 // appellants, which the single appealedBy* fields on AppealCase cannot carry.
 @ObjectType()
 export class AppealEventLog {

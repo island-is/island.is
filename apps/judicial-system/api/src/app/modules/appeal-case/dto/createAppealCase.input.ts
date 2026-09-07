@@ -16,8 +16,8 @@ export class CreateAppealCaseInput {
   @Field(() => String, { nullable: true })
   readonly rulingFileId?: string
 
-  // Which decision is being appealed. Omitted means RULING - a kæra - which is
-  // every appeal that existed before áfrýjun.
+  // Which decision is being appealed. Omitted means ruling appeal which is
+  // every appeal that existed before verdict appeals.
   @Allow()
   @IsOptional()
   @IsEnum(AppealCaseType)
@@ -25,7 +25,7 @@ export class CreateAppealCaseInput {
   readonly appealType?: AppealCaseType
 
   // The defendant whose verdict is being appealed. Required for - and only
-  // meaningful to - an áfrýjun, which is filed for one specific defendant.
+  // meaningful to - verdict appeals, which is filed for one specific defendant.
   @Allow()
   @IsOptional()
   @IsUUID()
