@@ -298,8 +298,15 @@ export default function HealthMessageDetailScreen() {
       // accessed. The app can't take the payment natively, so — matching the
       // compose flow's certificate notice — we point the user to My Pages.
       const isUnpaidCertificate = !!item.requiresPayment && !item.paid
-      const certificateAmountLabel =
-        item.amountIsk != null ? `${intl.formatNumber(item.amountIsk)} kr.` : ''
+      const certificatePaymentMessage =
+        item.amountIsk != null
+          ? intl.formatMessage(
+              { id: 'health.messages.certificatePayment.text' },
+              { amount: `${intl.formatNumber(item.amountIsk)} kr.` },
+            )
+          : intl.formatMessage({
+              id: 'health.messages.certificatePayment.textNoAmount',
+            })
 
       const sentAt = new Date(item.messageSentAt)
       const dateTime = item.messageSentAt
@@ -336,10 +343,7 @@ export default function HealthMessageDetailScreen() {
                     title={intl.formatMessage({
                       id: 'health.messages.certificatePayment.title',
                     })}
-                    message={intl.formatMessage(
-                      { id: 'health.messages.certificatePayment.text' },
-                      { amount: certificateAmountLabel },
-                    )}
+                    message={certificatePaymentMessage}
                     detailLink={{
                       text: intl.formatMessage({
                         id: 'health.messages.certificatePayment.link',

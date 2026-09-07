@@ -940,6 +940,8 @@ export const is = {
   'health.messages.certificatePayment.title': 'Vottorð tilbúið til greiðslu',
   'health.messages.certificatePayment.text':
     'Vottorðið kostar {amount} og er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',
+  'health.messages.certificatePayment.textNoAmount':
+    'Vottorðið er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',
   'health.messages.certificatePayment.link': 'Greiða á Mínum síðum',
   'health.messages.attachmentError':
     'Ekki tókst að sækja skjalið. Vinsamlegast reyndu aftur síðar.',

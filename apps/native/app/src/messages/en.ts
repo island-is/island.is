@@ -942,6 +942,8 @@ export const en: TranslatedMessages = {
   'health.messages.certificatePayment.title': 'Certificate ready for payment',
   'health.messages.certificatePayment.text':
     'This certificate costs {amount} and is unpaid. Pay for it on Ísland.is My Pages.',
+  'health.messages.certificatePayment.textNoAmount':
+    'This certificate is unpaid. Pay for it on Ísland.is My Pages.',
   'health.messages.certificatePayment.link': 'Pay on My Pages',
   'health.messages.attachmentError':
     'Failed to download the document. Please try again later.',
