@@ -16,7 +16,7 @@ entered by wrapping a form field reference in square brackets:
 ```
 
 A form field can be referenced by its Contentful entry id or its `name` (case insensitive).
-The field `title` can not be used, since it's the user facing label and is expected to change.
+The field `title` cannot be used, since it's the user-facing label and is expected to change.
 Tokens that don't match any field on the form are left untouched, so a typo shows up in the
 subject instead of silently disappearing.
 
