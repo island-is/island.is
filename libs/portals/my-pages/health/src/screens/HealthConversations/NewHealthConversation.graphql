@@ -1,6 +1,7 @@
 fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecipient {
   nodeId
   groupId
+  treatmentId
   name
   allowsMessaging
   messagingWindowOpen
