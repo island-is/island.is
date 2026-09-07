@@ -694,23 +694,15 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     parseAsIsoDateTime.parseServerSide(query?.['dateRangeStart']) ??
     addMonths(requestedDateTo, -1)
 
-  /*
-    The date pickers enforce these bounds while filtering, but the dates are
-    also readable straight off the URL. Apply the same constraints here and
-    redirect to the corrected URL so a hand-edited or stale link cannot query
-    a future or over-wide range.
-  */
   const dateFromInput = requestedDateFrom > today ? today : requestedDateFrom
-  const latestAllowedTo = [
-    addDays(dateFromInput, MAX_DATE_RANGE_DAYS),
-    today,
-  ].reduce((earliest, date) => (date < earliest ? date : earliest))
+  const maxFutureDate = addDays(today, MAX_DATE_RANGE_DAYS)
+  const toDateClamp = maxFutureDate < today ? maxFutureDate : today
 
   let dateToInput = requestedDateTo
   if (dateToInput < dateFromInput) {
     dateToInput = dateFromInput
-  } else if (dateToInput > latestAllowedTo) {
-    dateToInput = latestAllowedTo
+  } else if (dateToInput > toDateClamp) {
+    dateToInput = toDateClamp
   }
 
   if (
