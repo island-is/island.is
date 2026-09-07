@@ -21,8 +21,8 @@ export class AppealCaseExistsGuard implements CanActivate {
       throw new BadRequestException('Missing appeal case id')
     }
 
-    // The case's three appeal associations: the case-level kæra, the áfrýjun -
-    // also case level, told apart by appeal type - and the ruling-order kærur.
+    // The case's three appeal associations: the case-level ruling appeal, the verdict appeal -
+    // also case level, told apart by appeal type - and the ruling-order appeals.
     const appealCase = [
       theCase.appealCase,
       theCase.verdictAppealCase,

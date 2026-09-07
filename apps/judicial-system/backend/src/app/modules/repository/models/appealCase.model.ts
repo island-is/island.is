@@ -79,10 +79,10 @@ export class AppealCase extends Model {
   rulingFile?: CaseFile
 
   /**********
-   * Which decision this appeal challenges: a ruling (kæra) or the verdict
-   * concluding an indictment case (áfrýjun). Set once, when the appeal is
-   * created. The Case model's `appealCase` association scope filters on it, so
-   * an áfrýjun never reaches the lists and views built for kæra.
+   * Which decision this appeal challenges: a ruling appeal or a verdict appeal.
+   * Set once, when the appeal is created. The Case model's `appealCase` association
+   * scope filters on it, so a verdict appeal never reaches the lists and views built
+   * for ruling appeals.
    **********/
   @Column({
     type: DataType.ENUM,

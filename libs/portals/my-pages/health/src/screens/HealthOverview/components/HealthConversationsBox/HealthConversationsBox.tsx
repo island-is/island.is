@@ -173,7 +173,8 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                     >
                       <Box overflow="hidden">
                         <Text variant="medium" truncate>
-                          {item.organization?.name}
+                          {item.organization?.name?.trim() ||
+                            item.lastSenderGroupName}
                         </Text>
                       </Box>
                       {item.lastMessageSentAt && (

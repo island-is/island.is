@@ -1,10 +1,4 @@
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Icon,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 import { useWindowSize } from 'react-use'
