@@ -1499,9 +1499,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     )
                   }
                   onBlur={(html) => {
-                    // Visually blank markup arrives normalized to '' (see
-                    // normalizeRichTextHtml), so the html can be validated
-                    // directly.
+                    // RichTextEditor normalizes blank documents to '' on output.
                     validateAndSetErrorMessage(
                       ['empty'],
                       html,

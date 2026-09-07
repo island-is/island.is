@@ -14,14 +14,13 @@ import { Features } from '@island.is/feature-flags'
 import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
+  CreateEqualityDraftApi,
   DoeCompanyApi,
-  EditEqualityContentApi,
   EqualityReportTemplateDocxApi,
-  EqualityReportTemplateHtmlApi,
   GetReportCommentsApi,
   PreviousEqualityReportContentApi,
   SubmitReportCommentApi,
-  SubmitEqualityReportApi,
+  SubmitEqualityDraftApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { mapUserToRole } from '../utils/mapUserToRole'
@@ -143,7 +142,7 @@ const template: ApplicationTemplate<
           // onExit (not onEntry on IN_REVIEW) so a failed submission blocks
           // the transition instead of silently landing the applicant on a
           // fake "in review" screen with a stale backend record.
-          onExit: SubmitEqualityReportApi,
+          onExit: SubmitEqualityDraftApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -161,7 +160,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                EqualityReportTemplateHtmlApi,
+                CreateEqualityDraftApi,
                 EqualityReportTemplateDocxApi,
                 PreviousEqualityReportContentApi,
               ],
@@ -262,11 +261,11 @@ const template: ApplicationTemplate<
           // So the comment thread's non-empty check has fresh externalData —
           // see the identical comment on States.DRAFT.
           onEntry: GetReportCommentsApi,
-          // PUTs just the report's narrative content in place — NOT
-          // SubmitEqualityReportApi, which is a one-shot create call
-          // (POST .../reports/equality) that a revision can't safely
-          // re-invoke. Mirrors salary-report's EditOutliersApi/onExit here.
-          onExit: EditEqualityContentApi,
+          // No onExit for content — Editor.tsx pushes the revised content
+          // straight to DMR's already-submitted (IN_REVIEW) report via the
+          // directorateOfEqualityEditEqualityContent GraphQL mutation the
+          // moment a file is uploaded, so there's nothing left to commit at
+          // transition time.
           actionCard: {
             tag: {
               label: messages.draftRetry.tagLabel,
@@ -302,9 +301,17 @@ const template: ApplicationTemplate<
               read: 'all',
               write: {
                 answers: ['comment', 'goalsAndActions'],
-                externalData: ['getReportComments', 'submitReportComment'],
+                externalData: [
+                  'getReportComments',
+                  'submitReportComment',
+                  'equalityReportTemplateDocx',
+                ],
               },
-              api: [GetReportCommentsApi, SubmitReportCommentApi],
+              api: [
+                GetReportCommentsApi,
+                SubmitReportCommentApi,
+                EqualityReportTemplateDocxApi,
+              ],
               delete: false,
             },
             {

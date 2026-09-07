@@ -40,11 +40,10 @@ export enum ApiActions {
   getCompanyData = 'getCompanyData',
   getDoeCompany = 'getDoeCompany',
   getActiveEqualityReport = 'getActiveEqualityReport',
-  getEqualityReportTemplateHtml = 'getEqualityReportTemplateHtml',
   getEqualityReportTemplateDocx = 'getEqualityReportTemplateDocx',
   getPreviousEqualityReportContent = 'getPreviousEqualityReportContent',
-  submitEqualityReport = 'submitEqualityReport',
-  editEqualityContent = 'editEqualityContent',
+  createEqualityDraft = 'createEqualityDraft',
+  submitEqualityDraft = 'submitEqualityDraft',
   getReportComments = 'getReportComments',
   submitReportComment = 'submitReportComment',
 }

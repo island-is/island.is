@@ -42,6 +42,15 @@ export class CaseTransitionGuard implements CanActivate {
     // persisted on the case. If another user changed them in the meantime, the
     // values sent by the client will no longer match and we reject the
     // completion to avoid leaving the case in an inconsistent state.
+    //
+    // On the transition route this check is now authoritative, because
+    // CaseExistsForUpdateGuard read the case under FOR UPDATE - the values it
+    // compares against cannot change between here and the write. That does not
+    // make the check redundant: the lock solves database-versus-database
+    // staleness, while this solves human-versus-database staleness. The
+    // decisions arrive from a screen rendered before someone else changed them,
+    // and no lock can tell you that current truth differs from what the user
+    // was looking at.
     if (transition === CaseTransition.COMPLETE) {
       const decisionMismatch =
         (indictmentDecision !== undefined &&

@@ -1,6 +1,10 @@
 import { useMutation } from '@apollo/client'
 import { FormSystemField, FormSystemFormApplicant } from '@island.is/api/schema'
-import { UPDATE_FIELD } from '@island.is/form-system/graphql'
+import {
+  CREATE_FORM_DELEGATION,
+  DELETE_FORM_DELEGATION,
+  UPDATE_FIELD,
+} from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -8,9 +12,10 @@ import {
   GridColumn,
   GridRow,
   Input,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../../context/ControlContext'
 
@@ -21,15 +26,27 @@ interface Props {
 
 export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
   const { formatMessage } = useIntl()
-  const { setFocus, focus, getTranslation, controlDispatch, control } =
-    useContext(ControlContext)
+  const {
+    setFocus,
+    focus,
+    getTranslation,
+    controlDispatch,
+    control,
+    organizationDelegations,
+  } = useContext(ControlContext)
   const { isReadOnly } = control
   const hasZendeskSettings = control.form.submissionServiceUrl === 'zendesk'
 
   const [updateField] = useMutation(UPDATE_FIELD)
+  const [createFormDelegationMutation] = useMutation(CREATE_FORM_DELEGATION)
+  const [deleteFormDelegationMutation] = useMutation(DELETE_FORM_DELEGATION)
 
   const [currentApplicant, setCurrentApplicant] =
     useState<FormSystemField>(relevantApplicant)
+  const selectedDelegations = control.form.delegations ?? []
+  const formRef = useRef(control.form)
+  const selectedDelegationsRef = useRef(selectedDelegations)
+  const saveQueueRef = useRef(Promise.resolve())
 
   useEffect(() => {
     const updated = (control.form.fields ?? []).find(
@@ -40,6 +57,65 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
     }
   }, [control.form.fields, relevantApplicant.id])
 
+  useEffect(() => {
+    formRef.current = control.form
+    selectedDelegationsRef.current = selectedDelegations
+  }, [control.form, selectedDelegations])
+
+  const handleDelegationChange = async (
+    delegation: string,
+    checked: boolean,
+  ) => {
+    const formId = control.form.id
+
+    if (!formId) {
+      return
+    }
+
+    const saveDelegationChange = async () => {
+      const mutation = checked
+        ? createFormDelegationMutation
+        : deleteFormDelegationMutation
+
+      await mutation({
+        variables: {
+          input: {
+            updateFormDelegationDto: {
+              formId,
+              delegation,
+            },
+          },
+        },
+      })
+
+      const delegations = checked
+        ? [...new Set([...selectedDelegationsRef.current, delegation])]
+        : selectedDelegationsRef.current.filter(
+            (selectedDelegation) => selectedDelegation !== delegation,
+          )
+
+      const form = {
+        ...formRef.current,
+        delegations,
+      }
+
+      formRef.current = form
+      selectedDelegationsRef.current = delegations
+
+      controlDispatch({
+        type: 'SET_FORM',
+        payload: {
+          form,
+        },
+      })
+    }
+
+    const queuedSave = saveQueueRef.current.then(saveDelegationChange)
+    saveQueueRef.current = queuedSave.catch(() => undefined)
+
+    await queuedSave
+  }
+
   return (
     <Box paddingLeft={4} paddingTop={2}>
       {(currentApplicant.fieldSettings?.applicantType ===
@@ -47,18 +123,40 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
         currentApplicant.fieldSettings?.applicantType ===
           'INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY') && (
         <GridRow marginBottom={1}>
-          <GridColumn span="6/10">
+          <GridColumn span="5/10">
             <Text variant="medium">
-              Sé þessi möguleiki valinn þá þarf að velja viðeigandi umboð
-              (scope) í umboðsflipanum vinstra megin sem innskráður
-              einstaklingur þarf að hafa til að mega sækja um þessa umsókn.{' '}
-              <br />
-              ATH. Umboð til einstaklinga eru veitt í gegnum umboðskerfið á
-              mínum síðum.
+              Veldu þau umboð sem umboðsaðilar þurfa að hafa til að sækja um
+              þessa umsókn. <br /> ATH. Umboð til einstaklinga eru veitt í
+              gegnum umboðskerfið á mínum síðum.
+              <br /> Ef umboðið sem þú vilt nota í þessari umsókn er ekki í
+              listanum hér til hliðar getur þú haft samband við island.is til að
+              fá því bætt við.
             </Text>
           </GridColumn>
+          <GridColumn span="5/10">
+            <Stack space={1}>
+              {organizationDelegations.map((delegation) => (
+                <Checkbox
+                  key={delegation}
+                  name={delegation}
+                  label={delegation}
+                  value={delegation}
+                  checked={selectedDelegations.includes(delegation)}
+                  disabled={isReadOnly}
+                  onChange={(event) =>
+                    void handleDelegationChange(
+                      delegation,
+                      event.target.checked,
+                    )
+                  }
+                />
+              ))}
+            </Stack>
+          </GridColumn>
+          <Box marginBottom={4} />
         </GridRow>
       )}
+
       <GridRow>
         <GridColumn span="5/10">
           <Input

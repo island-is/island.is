@@ -2,12 +2,14 @@ import {
   Box,
   Button,
   fileToObjectDeprecated,
+  FileUploadStatus,
   InputFileUpload,
 } from '@island.is/island-ui/core'
 import { Dispatch, useEffect, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { FieldBaseProps } from '@island.is/application/types'
 import { CarUsageError, DayRateRecord } from '../../utils/types'
+import { getEligibleDayRateRecords } from '../../utils/dayRateRecordUtils'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import {
@@ -29,6 +31,11 @@ import {
   ADD_ATTACHMENT,
 } from '@island.is/application/graphql'
 import { uploadFileToS3 } from '@island.is/application/ui-components'
+
+type FileMeta = { name: string; key: string }
+
+// Enough to act on without turning the inline error into a wall of plates
+const MAX_LISTED_ERROR_ROWS = 10
 
 interface Props {
   field: {
@@ -53,11 +60,18 @@ export const UploadCarDayRateUsage = ({
   const { locale, lang, formatMessage } = useLocale()
 
   const { setValue, setError, clearErrors, watch } = useFormContext()
-  const uploadedMeta = watch('carDayRateUsageFile')
+  const uploadedMeta: FileMeta[] | undefined = watch('carDayRateUsageFile')
+
+  // Drive the dropzone off the answers, not local state, so the file shown
+  // always matches what validation and submit will use after a remount
+  const uploadedFiles = (uploadedMeta ?? []).map(({ name, key }) => ({
+    name,
+    key,
+    status: FileUploadStatus.done,
+  }))
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  const [uploadedFile, setUploadedFile] = useState<File | null>()
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
   )
@@ -119,9 +133,19 @@ export const UploadCarDayRateUsage = ({
       'getPreviousPeriodDayRateReturns.data',
     ) ?? []
 
+  // Keyed on every record, including already reported ones, so the parser can
+  // tell "not one of your vehicles" apart from "nothing left to report"
   const dayRateRecordsByPermno = new Map<string, DayRateRecord>(
     dayRateRecords.map((d) => [d.permno, d]),
   )
+
+  const eligibleRecordCount = getEligibleDayRateRecords(dayRateRecords).length
+
+  // A blank plate cell is itself a "car not found" error, so fall back to the
+  // row number rather than rendering a bare dash
+  const describeErrorRow = (error: CarUsageError) =>
+    error.carNr?.trim() ||
+    formatMessage(m.multiUpload.rowLabel, { row: error.row })
 
   const parseAndValidateCarDayRateUsage = async (
     file: File,
@@ -134,24 +158,32 @@ export const UploadCarDayRateUsage = ({
     )
 
     if (!parsed.ok) {
+      if (parsed.reason === 'unreadable') {
+        setUploadErrorMessage(formatMessage(m.multiUpload.unreadableFile))
+        return null
+      }
+
       if (parsed.reason === 'no-data') {
         setUploadErrorMessage(formatMessage(m.multiUpload.noCarsToChangeFound))
         return null
       }
 
-      // We have errors, show single error or generic message
+      // We have errors, name the offending rows either way
       const errorMessages = parsed.errors as CarUsageError[]
       if (errorMessages.length === 1) {
         setUploadErrorMessage(
-          `${errorMessages[0].carNr} - ${formatMessage(
+          `${describeErrorRow(errorMessages[0])} - ${formatMessage(
             errorMessages[0].message,
           )}`,
         )
       } else {
+        const listed = errorMessages.slice(0, MAX_LISTED_ERROR_ROWS)
         setUploadErrorMessage(
           `${errorMessages.length} ${formatMessage(
             m.multiUpload.errorMessageToUser,
-          )}`,
+          )} (${listed.map(describeErrorRow).join(', ')}${
+            errorMessages.length > listed.length ? '…' : ''
+          })`,
         )
       }
 
@@ -159,9 +191,11 @@ export const UploadCarDayRateUsage = ({
       const errorExcel = await createErrorExcel(
         await file.arrayBuffer(),
         type,
+        // Keyed by row: two rows can share a plate, or have none at all, and
+        // only the row the error came from should be marked
         new Map(
           (parsed.errors as CarUsageError[]).map((error) => [
-            error.carNr,
+            error.row,
             formatMessage(error.message),
           ]),
         ),
@@ -170,7 +204,9 @@ export const UploadCarDayRateUsage = ({
       return null
     }
 
-    if (parsed.records.length !== dayRateRecordsByPermno.size) {
+    // Already reported vehicles are left out of the generated template and
+    // skipped by the parser, so only the eligible ones have to be accounted for
+    if (parsed.records.length !== eligibleRecordCount) {
       setUploadErrorMessage(formatMessage(m.multiUpload.allCarsMustBePresent))
       return null
     }
@@ -186,16 +222,13 @@ export const UploadCarDayRateUsage = ({
     }
   }
 
-  const handleOnInputFileUploadRemove = () => {
-    setUploadedFile(null)
+  const handleOnInputFileUploadRemove = async () => {
     setUploadErrorMessage(null)
     setErrorFile(null)
-    setValue('carDayRateUsageCount', undefined)
-    setValue('carDayRateUsageFile', undefined)
+    await persistUploadAnswers(0, undefined)
   }
 
   const handleOnInputFileUploadChange = async (files: File[]) => {
-    setUploadedFile(null)
     setUploadErrorMessage(null)
 
     const file = fileToObjectDeprecated(files[0])
@@ -217,14 +250,11 @@ export const UploadCarDayRateUsage = ({
       if (dataToPost !== null) {
         const uploadedMeta = await uploadAndStoreFile(file.originalFileObj)
         await persistUploadAnswers(dataToPost, uploadedMeta)
-        setUploadedFile(file.originalFileObj)
       }
     }
   }
 
-  const uploadAndStoreFile = async (
-    file: File,
-  ): Promise<{ name: string; key: string }> => {
+  const uploadAndStoreFile = async (file: File): Promise<FileMeta> => {
     const upload = fileToObjectDeprecated(file)
 
     const { data } = await createUploadUrl({
@@ -253,12 +283,16 @@ export const UploadCarDayRateUsage = ({
   }
 
   const persistUploadAnswers = async (
+    // Always a number, never undefined: the answers are deep merged on the
+    // server and an undefined value is dropped from the mutation payload, so
+    // clearing the count has to send a value rather than leave the key out
     carDayRateUsageCount: number,
-    uploadedMeta: { name: string; key: string },
+    uploadedMeta: FileMeta | undefined,
   ) => {
     // Store only metadata in answers (small payload)
+    const carDayRateUsageFile = uploadedMeta ? [uploadedMeta] : []
     setValue('carDayRateUsageCount', carDayRateUsageCount)
-    setValue('carDayRateUsageFile', [uploadedMeta])
+    setValue('carDayRateUsageFile', carDayRateUsageFile)
     await updateApplication({
       variables: {
         input: {
@@ -266,7 +300,7 @@ export const UploadCarDayRateUsage = ({
           answers: {
             ...application.answers,
             carDayRateUsageCount,
-            carDayRateUsageFile: [uploadedMeta],
+            carDayRateUsageFile,
           },
         },
         locale,
@@ -303,7 +337,7 @@ export const UploadCarDayRateUsage = ({
         </Button>
       </Box>
       <InputFileUpload
-        files={uploadedFile ? [uploadedFile] : []}
+        files={uploadedFiles}
         title={
           !uploadErrorMessage
             ? formatMessage(m.multiUpload.uploadTitle)

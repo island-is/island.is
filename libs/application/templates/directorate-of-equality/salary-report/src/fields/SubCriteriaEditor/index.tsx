@@ -161,6 +161,14 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           subCriteria: subCriteriaCommands,
           steps: stepCommands,
         })
+        // The draft now holds exactly what was flushed, so the diff baseline
+        // moves with it — otherwise a second flush from the same mount would
+        // re-send the same REMOVEs against rows DMR has already deleted, and
+        // 404 the batch.
+        originalSubCriterionIds.current = new Set(allGroups.map((sc) => sc.id))
+        originalStepIds.current = new Set(
+          allGroups.flatMap((sc) => sc.steps.map((step) => step.id)),
+        )
         // Silent: about to navigate away, so don't flash a loading state.
         await refetch({ silent: true })
       } catch {

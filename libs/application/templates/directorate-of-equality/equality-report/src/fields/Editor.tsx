@@ -1,48 +1,100 @@
-import { HTMLEditor } from '../components/html-editor/HTMLEditor'
-import { HTMLText } from '@dmr.is/regulations-tools/types'
 import { useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
-import { Button, DropdownMenu, toast } from '@island.is/island-ui/core'
+import { CustomField, FieldBaseProps } from '@island.is/application/types'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  FileUploadStatus,
+  InputFileUpload,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import { messages } from '../lib/messages'
 import { useIntl } from 'react-intl'
 import { useRef, useState } from 'react'
 import mammoth from 'mammoth'
+import { FileRejection } from 'react-dropzone'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { ApiActions } from '../utils/constants'
 import { escapeHtml } from '../utils/htmlHelpers'
+import {
+  useEnsureEqualityDraft,
+  useEqualityContentPush,
+} from '../utils/useEqualityDraft'
 
-export const Editor = ({ application, errors }: FieldBaseProps) => {
+interface Props extends FieldBaseProps {
+  field: CustomField
+}
+
+export const Editor = ({ application, errors, field }: Props) => {
   const { formatMessage } = useIntl()
   const { locale } = useLocale()
-  const { setValue, clearErrors } = useFormContext()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [loadingTemplate, setLoadingTemplate] = useState(false)
+  const { setValue } = useFormContext()
+  const m = messages.equalityReport.information
+
+  const mode =
+    field?.props && typeof field.props['mode'] === 'string'
+      ? (field.props['mode'] as 'draft' | 'retry')
+      : 'draft'
+
+  const ensureDraft = useEnsureEqualityDraft(application)
+  const { pushDraftContent, pushRetryContent } = useEqualityContentPush()
+
+  const initialFilename = getValueViaPath<string>(
+    application.answers,
+    'goalsAndActions.filename',
+  )
+
+  // No content lives in application.answers anymore, so the only signal a
+  // resumed screen has is `filename` — a synthetic entry (status: done) is
+  // enough for InputFileUpload to render the already-uploaded state.
+  const [selectedFile, setSelectedFile] = useState<UploadFile | null>(() =>
+    initialFilename
+      ? { name: initialFilename, status: FileUploadStatus.done }
+      : null,
+  )
+  const [uploadSuccess, setUploadSuccess] = useState(!!initialFilename)
+  // Conversion/read failures and the download-template failure — distinct
+  // from `rejectionMessage` below, which feeds InputFileUpload's own
+  // `errorMessage` slot instead of a standalone alert.
+  const [actionError, setActionError] = useState<string | undefined>()
+  const [rejectionMessage, setRejectionMessage] = useState<string | undefined>()
   const [loadingDocx, setLoadingDocx] = useState(false)
-  const [editorKey, setEditorKey] = useState(0)
-  const [editorHtml, setEditorHtml] = useState<HTMLText | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  // The filename last known to actually match DMR's stored content — restored
+  // on a failed replacement so a bad re-upload attempt can't strand the user
+  // on an invalid, unrecoverable field.
+  const lastGoodFilenameRef = useRef(initialFilename ?? '')
 
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
 
-  const handleChange = (val: HTMLText) => {
-    const base64 = Buffer.from(val).toString('base64')
-    setValue('goalsAndActions.customField', base64)
-  }
+  const handleFile = async (file: File) => {
+    setActionError(undefined)
+    setRejectionMessage(undefined)
+    setUploadSuccess(false)
+    setIsUploading(true)
+    // Clear the (possibly still-valid, previously pushed) filename for the
+    // duration of this attempt so the required-field check fails and
+    // Continue is blocked — otherwise a replacement upload could still be
+    // in flight to DMR while the stale-but-valid old filename lets the user
+    // navigate straight to Submit.
+    setValue('goalsAndActions.filename', '', { shouldValidate: true })
+    setSelectedFile({ name: file.name, status: FileUploadStatus.uploading })
 
-  const handleBlur = (val: HTMLText) => {
-    const base64 = Buffer.from(val).toString('base64')
-    setValue('goalsAndActions.customField', base64, { shouldValidate: true })
-  }
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    e.target.value = ''
+    const restoreLastGood = () => {
+      setValue('goalsAndActions.filename', lastGoodFilenameRef.current, {
+        shouldValidate: true,
+      })
+      setSelectedFile(
+        lastGoodFilenameRef.current
+          ? { name: lastGoodFilenameRef.current, status: FileUploadStatus.done }
+          : null,
+      )
+    }
 
     try {
       let html = ''
@@ -58,70 +110,74 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
           .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br />')}</p>`)
           .join('')
       } else {
-        toast.error(
-          formatMessage(
-            messages.equalityReport.information.editorUnsupportedFile,
-          ),
-        )
+        restoreLastGood()
+        setRejectionMessage(formatMessage(m.editorUnsupportedFile))
+        return
+      }
+
+      // A .docx/.txt that converts to blank/whitespace-only content is
+      // treated the same as an unsupported file — there's nothing to send.
+      const plainTextLength = html.replace(/<[^>]*>/g, '').trim().length
+      if (plainTextLength === 0) {
+        restoreLastGood()
+        setRejectionMessage(formatMessage(m.editorUnsupportedFile))
         return
       }
 
       const base64 = Buffer.from(html).toString('base64')
-      setValue('goalsAndActions.customField', base64)
-      clearErrors('goalsAndActions.customField')
-      setEditorHtml(html as HTMLText)
-      setEditorKey((k) => k + 1)
+
+      if (mode === 'draft') {
+        await ensureDraft()
+        await pushDraftContent(application.id, base64)
+      } else {
+        await pushRetryContent(application.id, base64)
+      }
+
+      lastGoodFilenameRef.current = file.name
+      setValue('goalsAndActions.filename', file.name, { shouldValidate: true })
+      setSelectedFile({ name: file.name, status: FileUploadStatus.done })
+      setUploadSuccess(true)
     } catch {
-      toast.error(
-        formatMessage(messages.equalityReport.information.editorUploadError),
-      )
+      restoreLastGood()
+      setActionError(formatMessage(m.editorUploadError))
+    } finally {
+      setIsUploading(false)
     }
   }
 
-  const handleFetchTemplateHtml = async () => {
-    setLoadingTemplate(true)
-    try {
-      const res = await updateApplicationExternalData({
-        variables: {
-          input: {
-            id: application.id,
-            dataProviders: [
-              {
-                actionId: `DirectorateOfEquality.${ApiActions.getEqualityReportTemplateHtml}`,
-                order: 0,
-              },
-            ],
-          },
-          locale,
-        },
-      })
+  const handleFilesChanged = (files: File[]) => {
+    const file = files[0]
+    if (!file) return
+    void handleFile(file)
+  }
 
-      const html =
-        res.data?.updateApplicationExternalData?.externalData
-          ?.equalityReportTemplateHtml?.data
+  const handleUploadRejection = (rejections: FileRejection[]) => {
+    setActionError(undefined)
+    setUploadSuccess(false)
+    setSelectedFile(
+      lastGoodFilenameRef.current
+        ? { name: lastGoodFilenameRef.current, status: FileUploadStatus.done }
+        : null,
+    )
+    setRejectionMessage(
+      rejections[0]?.errors[0]?.code === 'file-invalid-type'
+        ? formatMessage(m.editorUnsupportedFile)
+        : formatMessage(m.editorUploadError),
+    )
+  }
 
-      if (typeof html === 'string') {
-        const base64 = Buffer.from(html).toString('base64')
-        setValue('goalsAndActions.customField', base64)
-        clearErrors('goalsAndActions.customField')
-        setEditorHtml(html as HTMLText)
-        setEditorKey((k) => k + 1)
-      } else {
-        toast.error(
-          formatMessage(messages.equalityReport.information.editorUploadError),
-        )
-      }
-    } catch {
-      toast.error(
-        formatMessage(messages.equalityReport.information.editorUploadError),
-      )
-    } finally {
-      setLoadingTemplate(false)
-    }
+  const handleRemove = () => {
+    lastGoodFilenameRef.current = ''
+    setValue('goalsAndActions.filename', '', { shouldValidate: true })
+    setSelectedFile(null)
+    setUploadSuccess(false)
+    setActionError(undefined)
+    setRejectionMessage(undefined)
   }
 
   const handleDownloadTemplateDocx = async () => {
     setLoadingDocx(true)
+    setActionError(undefined)
     try {
       const res = await updateApplicationExternalData({
         variables: {
@@ -160,89 +216,63 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
         document.body.removeChild(a)
         setTimeout(() => URL.revokeObjectURL(url), 100)
       } else {
-        toast.error(
-          formatMessage(messages.equalityReport.information.editorUploadError),
-        )
+        setActionError(formatMessage(m.editorUploadError))
       }
     } catch {
-      toast.error(
-        formatMessage(messages.equalityReport.information.editorUploadError),
-      )
+      setActionError(formatMessage(m.editorUploadError))
     } finally {
       setLoadingDocx(false)
     }
   }
 
-  const base64 =
-    getValueViaPath<string>(
-      application.answers,
-      'goalsAndActions.customField',
-    ) ?? ''
-
-  const defaultHtml =
-    editorHtml ?? (Buffer.from(base64, 'base64').toString('utf-8') as HTMLText)
+  const fieldError =
+    errors && getErrorViaPath(errors, 'goalsAndActions.filename')
 
   return (
-    <>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".txt,.docx"
-        style={{ display: 'none' }}
-        onChange={handleFileUpload}
+    <Box>
+      <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+        <Button
+          variant="utility"
+          size="small"
+          icon="download"
+          iconType="outline"
+          loading={loadingDocx}
+          disabled={loadingDocx}
+          onClick={() => void handleDownloadTemplateDocx()}
+        >
+          {formatMessage(m.editorFetchTemplateDoc)}
+        </Button>
+      </Box>
+
+      {actionError && (
+        <Box marginBottom={3}>
+          <AlertMessage type="error" message={actionError} />
+        </Box>
+      )}
+
+      <InputFileUpload
+        name="equalityReportUpload"
+        files={selectedFile ? [selectedFile] : []}
+        disabled={isUploading}
+        description={formatMessage(m.editorSupportedFileTypes)}
+        buttonLabel={formatMessage(m.editorUploadFile)}
+        accept={['.txt', '.docx']}
+        multiple={false}
+        onChange={handleFilesChanged}
+        onRemove={handleRemove}
+        onUploadRejection={handleUploadRejection}
+        errorMessage={rejectionMessage ?? fieldError}
       />
-      <HTMLEditor
-        key={editorKey}
-        title={formatMessage(messages.equalityReport.information.editorTitle)}
-        error={errors && getErrorViaPath(errors, 'goalsAndActions.customField')}
-        value={defaultHtml}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        fileUploader={() => Promise.resolve({} as unknown)}
-        buttonGroup={[
-          <Button
-            variant="utility"
-            size="small"
-            icon="download"
-            iconType="outline"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {formatMessage(
-              messages.equalityReport.information.editorUploadFile,
-            )}
-          </Button>,
-          <DropdownMenu
-            icon="attach"
-            iconType="outline"
-            title={formatMessage(
-              messages.equalityReport.information.editorFetchTemplate,
-            )}
-            disabled={loadingTemplate || loadingDocx}
-            loading={loadingTemplate || loadingDocx}
-            items={[
-              {
-                title: formatMessage(
-                  messages.equalityReport.information.editorFetchTemplateDoc,
-                ),
-                onClick: (e) => {
-                  e.preventDefault()
-                  handleDownloadTemplateDocx()
-                },
-              },
-              {
-                title: formatMessage(
-                  messages.equalityReport.information.editorFetchTemplateFill,
-                ),
-                onClick: (e) => {
-                  e.preventDefault()
-                  handleFetchTemplateHtml()
-                },
-              },
-            ]}
-          />,
-        ]}
-      />
-    </>
+
+      {uploadSuccess && (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="success"
+            message={formatMessage(m.editorUploadSuccess)}
+          />
+        </Box>
+      )}
+    </Box>
   )
 }
 

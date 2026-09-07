@@ -1047,7 +1047,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       )
     }
 
-    if (isProsecutionUser(user)) {
+    if (isProsecutionUser(user) && theCase.defenderEmail) {
       const url =
         theCase.defenderNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
@@ -1641,14 +1641,19 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         recipientName: theCase.prosecutor?.name,
         recipientEmail: theCase.prosecutor?.email,
       }),
-      this.sendEmail({
-        subject,
-        html,
-        recipientName: theCase.defenderName,
-        recipientEmail: theCase.defenderEmail,
-        skipTail: !theCase.defenderNationalId,
-      }),
     )
+
+    if (theCase.defenderEmail) {
+      promises.push(
+        this.sendEmail({
+          subject,
+          html,
+          recipientName: theCase.defenderName,
+          recipientEmail: theCase.defenderEmail,
+          skipTail: !theCase.defenderNationalId,
+        }),
+      )
+    }
 
     return Promise.all(promises)
   }

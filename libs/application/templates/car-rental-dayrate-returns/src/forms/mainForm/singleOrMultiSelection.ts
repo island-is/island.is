@@ -35,7 +35,11 @@ export const singleOrMultiSelection = buildSection({
               value: UploadSelection.SINGLE,
             },
           ],
-          clearOnChange: ['vehicleDayRateUsageRows'],
+          clearOnChange: [
+            'vehicleDayRateUsageRows',
+            'carDayRateUsageFile',
+            'carDayRateUsageCount',
+          ],
           clearOnChangeDefaultValue: [],
         }),
       ],

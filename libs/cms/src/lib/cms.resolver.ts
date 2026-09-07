@@ -179,6 +179,7 @@ import { WebChat } from './models/webChat.model'
 import { GetWebChatInput } from './dto/getWebChat.input'
 import { ServicePortalPage } from './models/servicePortalPage.model'
 import { FooterItem } from './models/footerItem.model'
+import { SupportSubCategory } from './models/supportSubCategory.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -1265,5 +1266,14 @@ export class OrganizationResolver {
   async footerConfig(@Parent() organization: Organization) {
     const footer = await this.getFooter(organization)
     return footer?.footerConfig ?? {}
+  }
+}
+
+@Resolver(() => SupportQNA)
+export class SupportQNAResolver {
+  @ResolveField(() => SupportSubCategory, { nullable: true })
+  async subCategory(@Parent() supportQNA: SupportQNA) {
+    if (!supportQNA.subCategory?.title) return null
+    return supportQNA.subCategory
   }
 }

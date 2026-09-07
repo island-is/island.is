@@ -1043,7 +1043,53 @@ export const is = {
   'health.prescriptions.type': 'Tegund',
   'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Ávísað magn',
-  'health.prescriptions.dosageInstructions': 'Notkunarleiðbeiningar',
+  'health.prescriptions.dosageInstructions': 'Notkun',
+  'health.prescriptions.attachment': 'Fylgiskjal {arg}',
+  'health.prescriptions.openAttachment': 'Opna fylgiskjal {arg}',
+  'health.prescriptions.attachmentError': 'Villa kom upp við að sækja skjal',
+  'health.prescriptions.renewal': 'Endurnýjun',
+  'health.prescriptions.renew': 'Endurnýja',
+  'health.prescriptions.renewalPossible': 'Hægt að endurnýja',
+  'health.prescriptions.renewalValid': 'Gild lyfjaávísun',
+  'health.prescriptions.renewalNotAvailable': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedIsRegiment':
+    'Ekki er hægt að endurnýja lyfjakúr',
+  'health.prescriptions.renewalBlockedNoMedCard': 'Ekkert lyfjakort skráð',
+  'health.prescriptions.renewalBlockedNoHealthClinic':
+    'Engin heilsugæslustöð skráð',
+  'health.prescriptions.renewalBlockedNotFullyDispensed': 'Ekki öll lyf sótt',
+  'health.prescriptions.renewalBlockedPendingRequest':
+    'Beiðni um endurnýjun í vinnslu',
+  'health.prescriptions.renewalBlockedRejectedRequest':
+    'Beiðni um endurnýjun hafnað',
+  'health.prescriptions.renewalBlockedDismissedRequest':
+    'Beiðni um endurnýjun vísað frá',
+  'health.prescriptions.renewalBlockedAlreadyRequested':
+    'Endurnýjun þegar í vinnslu',
+  'health.prescriptions.renewalBlockedMoreRecentExists':
+    'Endurnýjun ekki í boði vegna þess að nýrri lyfseðill er til staðar',
+  'health.prescriptions.renewalBlockedSpecialistOnly': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedNoRenewalTargets':
+    'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedInvalidRenewalTarget':
+    'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedRecipientExcludesAtc':
+    'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalBlockedOther': 'Óþekkt ástæða',
+  'health.prescriptions.renewalModal.title': 'Beiðni um endurnýjun á lyfi',
+  'health.prescriptions.renewalModal.description':
+    'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112.',
+  'health.prescriptions.renewalModal.selectRecipient': 'Sendist til',
+  'health.prescriptions.renewalModal.medicineInformation': 'Upplýsingar um lyf',
+  'health.prescriptions.renewalModal.medicineName': 'Heiti lyfs',
+  'health.prescriptions.renewalModal.usedFor': 'Notað við',
+  'health.prescriptions.renewalModal.cancel': 'Hætta við',
+  'health.prescriptions.renewalModal.noTargets':
+    'Ekki tókst að finna stofnun til að senda endurnýjunarbeiðni til. Vinsamlegast hafið samband við heilsugæslu.',
+  'health.prescriptions.renewalModal.success':
+    'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
+  'health.prescriptions.renewalModal.error':
+    'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
   'health.prescriptions.issueDate': 'Útgáfudagur',
   'health.prescriptions.expiresAt': 'Gildir til',
   'health.prescriptions.doctor': 'Læknir',

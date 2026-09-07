@@ -11,6 +11,7 @@ import { DefendantExistsGuard } from '../../../defendant'
 import { CaseController } from '../../case.controller'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
+import { CaseExistsForUpdateGuard } from '../../guards/caseExistsForUpdate.guard'
 import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTransitionGuard } from '../../guards/caseTransition.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
@@ -34,8 +35,11 @@ describe('CaseController - Update guards', () => {
 })
 
 describe('CaseController - Transition guards', () => {
+  // The case-exists guard must stay ahead of RolesGuard: the transition roles
+  // rules read request.case, and prosecutorTransitionRule denies when it is
+  // absent. See the rules spec, which pins that dependency.
   verifyGuards(CaseController, 'transition', [
-    CaseExistsGuard,
+    CaseExistsForUpdateGuard,
     RolesGuard,
     CaseWriteGuard,
     CaseTransitionGuard,

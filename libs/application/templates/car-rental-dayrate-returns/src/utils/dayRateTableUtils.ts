@@ -11,5 +11,7 @@ export const getDayRateTableRows = (
     prevPeriodTotalDays: record.prevPeriodTotalDays,
     dayRateEntryId: record.dayRateEntryId,
     prevPeriodUsage: undefined,
+    disabled: record.alreadyReportedDays !== undefined,
+    alreadyReportedDays: record.alreadyReportedDays,
   }))
 }
