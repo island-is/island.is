@@ -1300,10 +1300,6 @@ export const messages = defineMessages({
     id: 'sp.health:quick-link-medicine-prescription',
     defaultMessage: 'Endurnýja lyf',
   },
-  quickLinkMedicineDelegation: {
-    id: 'sp.health:quick-link-medicine-delegation',
-    defaultMessage: 'Umboðsstillingar',
-  },
   quickLinkWaitlists: {
     id: 'sp.health:quick-link-waitlists',
     defaultMessage: 'Biðlistar',
@@ -2043,18 +2039,10 @@ export const messages = defineMessages({
     defaultMessage: 'Hætt var við greiðslu',
     id: 'sp.health:health-messages-certificate-payment-cancelled',
   },
-  healthConversationsNewTermsLabel: {
-    defaultMessage: 'Ég samþykki <link>skilmála</link>',
-    id: 'sp.health:health-messages-new-terms-label',
-  },
-  healthConversationsTermsModalTitle: {
-    defaultMessage: 'Skilmálar vegna skilaboða',
-    id: 'sp.health:health-messages-terms-modal-title',
-  },
-  healthConversationsTermsModalBody: {
+  healthConversationsNewTermsInline: {
     defaultMessage:
-      '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
-    id: 'sp.health:health-messages-terms-modal-body#markdown',
+      'Ég samþykki að skilaboðin vistist í sjúkraskrá og að viðeigandi heilbrigðisstarfsmaður með aðgang að henni svari erindinu.',
+    id: 'sp.health:health-messages-new-terms-inline',
   },
   healthConversationVideoCallCanceled: {
     defaultMessage: 'Afboðað',
@@ -2396,6 +2384,19 @@ export const messages = defineMessages({
     defaultMessage: 'Þú ert ekki með skráða meðferð í gangi.',
     id: 'sp.health:no-treatments',
   },
+  treatmentIntroWithDepartment: {
+    defaultMessage:
+      'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt hjá {department}.',
+    id: 'sp.health:treatment-intro-with-department',
+  },
+  lastListSent: {
+    defaultMessage: 'Síðasti listi sendur {date}',
+    id: 'sp.health:last-list-sent',
+  },
+  lastContentSent: {
+    defaultMessage: 'Síðasta efni sent {date}',
+    id: 'sp.health:last-content-sent',
+  },
   treatmentIntro: {
     defaultMessage:
       'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt.',
@@ -2404,6 +2405,31 @@ export const messages = defineMessages({
   landlaeknirTreatmentTooltip: {
     defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar meðferðir.',
     id: 'sp.health:landlaeknir-treatment-tooltip',
+  },
+  treatmentTeam: {
+    defaultMessage: 'Meðferðarteymi',
+    id: 'sp.health:treatment-team',
+  },
+  treatmentMessagesFromTeam: {
+    defaultMessage: 'Skilaboð frá meðferðarteymi',
+    id: 'sp.health:treatment-messages-from-team',
+  },
+  seeAllMessages: {
+    defaultMessage: 'Sjá öll skilaboð',
+    id: 'sp.health:see-all-messages',
+  },
+  educationalContentIntro: {
+    defaultMessage:
+      'Hér finnur þú fræðsluefni sem getur hjálpað þér að skilja betur meðferðina þína og það sem henni tengist.',
+    id: 'sp.health:educational-content-intro',
+  },
+  openDocument: {
+    defaultMessage: 'Opna skjal',
+    id: 'sp.health:open-document',
+  },
+  sent: {
+    defaultMessage: 'Sent: {date}',
+    id: 'sp.health:sent',
   },
   sentFrom: {
     defaultMessage: 'Sent af',
