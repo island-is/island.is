@@ -201,9 +201,12 @@ describe('BankTransferService', () => {
       expect(result.onboardingRequired).toBe(true)
     })
 
-    it('maps a BlikkClientError to FailedToCreateBankTransfer', async () => {
+    it('maps a BlikkClientError to FailedToCreateBankTransfer and logs Blikk’s reason', async () => {
       blikkClient.createPayment.mockRejectedValue(
-        new BlikkClientError('bad request', 400),
+        new BlikkClientError(
+          'Blikk request failed (403): sales channel does not allow direct debtor payments',
+          403,
+        ),
       )
 
       await expect(
@@ -214,6 +217,16 @@ describe('BankTransferService', () => {
           correlationId: 'btp-err',
         }),
       ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
+
+      // The generic code goes to the payer; the Blikk reason must land in the logs with flow context.
+      expect(logger.error).toHaveBeenCalledWith(
+        '[flow-1][correlationId: btp-err] Blikk create payment failed',
+        {
+          status: 403,
+          error:
+            'Blikk request failed (403): sales channel does not allow direct debtor payments',
+        },
+      )
     })
   })
 
@@ -236,13 +249,41 @@ describe('BankTransferService', () => {
       expect(result.scaRedirectUrl).toBeUndefined()
     })
 
-    it('maps a BlikkClientError to FailedToFetchBankTransfer', async () => {
+    it('maps a BlikkClientError to FailedToFetchBankTransfer and warns on a 4xx', async () => {
       blikkClient.getPayment.mockRejectedValue(
-        new BlikkClientError('not found', 404),
+        new BlikkClientError(
+          'Blikk request failed (404): payment not found',
+          404,
+        ),
       )
 
       await expect(service.getPayment('missing')).rejects.toThrow(
         BankTransferErrorCode.FailedToFetchBankTransfer,
+      )
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        '[rrn: missing] Blikk get payment failed',
+        {
+          providerPaymentId: 'missing',
+          status: 404,
+          error: 'Blikk request failed (404): payment not found',
+        },
+      )
+      expect(logger.error).not.toHaveBeenCalled()
+    })
+
+    it('logs at error level when the Blikk fetch fails without a 4xx (5xx / transport)', async () => {
+      blikkClient.getPayment.mockRejectedValue(
+        new BlikkClientError('ECONNRESET'),
+      )
+
+      await expect(service.getPayment('prov-1')).rejects.toThrow(
+        BankTransferErrorCode.FailedToFetchBankTransfer,
+      )
+
+      expect(logger.error).toHaveBeenCalledWith(
+        '[rrn: prov-1] Blikk get payment failed',
+        expect.objectContaining({ status: undefined, error: 'ECONNRESET' }),
       )
     })
 
@@ -525,6 +566,28 @@ describe('BankTransferService', () => {
 
     // The one case that still needs the URL from `create`: the FE redirects to it immediately,
     // before any polling exists. Breaking this silently strands first-time payers.
+    // Blikk can answer 200 with a payment that is already terminal; its `message` is the only
+    // reason we get and must not wait for a poll to be logged.
+    it('warns with the provider message when Blikk returns an already-failed payment', async () => {
+      jest.spyOn(service, 'createBankTransferPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'ERROR',
+        status: BankTransferStatus.ERROR,
+        scaRedirectUrl: undefined,
+        message: 'debtor account not eligible',
+        onboardingRequired: false,
+      })
+
+      await service.create(createInput)
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringMatching(
+          /^\[flow-1\]\[correlationId: .+\]\[rrn: prov-1\]Bank transfer created already error$/,
+        ),
+        { rawStatus: 'ERROR', providerMessage: 'debtor account not eligible' },
+      )
+    })
+
     it('still returns the onboarding URL when onboarding is required', async () => {
       jest.spyOn(service, 'createBankTransferPayment').mockResolvedValue({
         providerPaymentId: 'prov-1',

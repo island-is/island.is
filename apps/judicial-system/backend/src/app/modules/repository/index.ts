@@ -39,6 +39,10 @@ export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 export {
+  CaseStringRepositoryService,
+  UpdateCaseString,
+} from './services/caseStringRepository.service'
+export {
   CaseFileRepositoryService,
   CreateCaseFile,
   UpdateCaseFile,
