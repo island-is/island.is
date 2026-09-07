@@ -43,6 +43,7 @@ import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
+import { getActiveVerdict } from './getActiveVerdict'
 
 type UpdateVerdict = {
   serviceDate?: Date | null
@@ -124,13 +125,13 @@ export class VerdictService {
     transaction: Transaction,
   ): Promise<Verdict> {
     const currentVerdict = await this.verdictRepositoryService.findOne({
-      where: { defendantId: verdict.defendantId },
+      where: { defendantId: verdict.defendantId, isActive: true },
       transaction,
     })
 
     if (!currentVerdict) {
       return this.verdictRepositoryService.create(
-        { caseId, ...verdict },
+        { caseId, ...verdict, isActive: true },
         { transaction },
       )
     }
@@ -158,8 +159,8 @@ export class VerdictService {
           )
         }
 
-        // Only the latest verdict is relevant
-        const currentVerdict = currentDefendant?.verdicts?.[0]
+        // Only the latest active verdict is relevant
+        const currentVerdict = getActiveVerdict(currentDefendant?.verdicts)
 
         if (currentVerdict) {
           const { defendantId, ...update } = verdict
@@ -561,9 +562,8 @@ export class VerdictService {
         continue
       }
 
-      // Only the latest verdict is relevant
-      const { verdicts } = defendant
-      const verdict = verdicts?.[0]
+      // Only the latest active verdict is relevant
+      const verdict = getActiveVerdict(defendant.verdicts)
 
       if (!verdict) {
         this.logger.warn(
@@ -603,6 +603,7 @@ export class VerdictService {
                   defendantId: defendant.id,
                   eventType:
                     DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+                  verdictId: verdict.id,
                 },
                 transaction,
               )
@@ -650,17 +651,25 @@ export class VerdictService {
 
     const queued = await Promise.all(
       defendants
-        .filter(
-          (defendant) =>
-            defendant.verdicts?.[0]?.serviceRequirement ===
-            ServiceRequirement.REQUIRED,
-        )
+        .filter((defendant) => {
+          const verdict = getActiveVerdict(defendant.verdicts)
+
+          return verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+        })
         .map(async (defendant) => {
-          // Only the latest verdict is relevant
-          const verdict = defendant.verdicts?.[0]
+          // Only the latest active verdict is relevant
+          const verdict = getActiveVerdict(defendant.verdicts)
 
           if (verdict?.externalPoliceDocumentId) {
             // Replace the verdict if an older one has already been sent to police
+            await this.verdictRepositoryService.update(
+              theCase.id,
+              defendant.id,
+              verdict.id,
+              { isActive: false },
+              { transaction },
+            )
+
             await this.verdictRepositoryService.create(
               {
                 defendantId: defendant.id,
@@ -669,6 +678,7 @@ export class VerdictService {
                 serviceInformationForDefendant:
                   verdict.serviceInformationForDefendant,
                 isDefaultJudgement: verdict.isDefaultJudgement,
+                isActive: true,
               },
               { transaction },
             )

@@ -49,7 +49,7 @@ export class Verdict extends Model {
   externalPoliceDocumentId?: string
 
   @ForeignKey(() => Defendant)
-  @Column({ type: DataType.UUID, allowNull: false, unique: true })
+  @Column({ type: DataType.UUID, allowNull: false })
   defendantId!: string
 
   @BelongsTo(() => Defendant, 'defendantId')
@@ -64,6 +64,12 @@ export class Verdict extends Model {
   @BelongsTo(() => Case, 'caseId')
   @ApiPropertyOptional({ type: () => Case })
   case?: Case
+
+  // False when a later verdict replaced this one (e.g. corrected ruling
+  // re-sent for service). At most one active verdict per defendant.
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  @ApiProperty({ type: Boolean })
+  isActive!: boolean
 
   @Column({
     type: DataType.ENUM,

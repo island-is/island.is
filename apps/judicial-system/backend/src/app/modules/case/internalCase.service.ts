@@ -8,7 +8,6 @@ import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import { Base64 } from 'js-base64'
 import { Op, Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -34,7 +33,6 @@ import {
   CourtSessionRulingType,
   courtSubtypes,
   DateType,
-  DefendantEventType,
   EventType,
   getIndictmentAppealDeadline,
   isIndictmentCase,
@@ -96,6 +94,7 @@ import {
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
+import { getActiveVerdict } from '../verdict/getActiveVerdict'
 import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusion.dto'
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
@@ -104,6 +103,7 @@ import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
+import { wasVerdictServiceCertificateDeliveredToPolice } from './verdictServiceCertificateDelivery'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -799,6 +799,7 @@ export class InternalCaseService {
               as: 'verdicts',
               required: true,
               where: {
+                isActive: true,
                 serviceRequirement: ServiceRequirement.REQUIRED,
                 serviceStatus: {
                   [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
@@ -809,15 +810,6 @@ export class InternalCaseService {
               },
             },
           ],
-          where: {
-            id: {
-              [Op.notIn]: Sequelize.literal(`
-                (SELECT defendant_id
-                  FROM defendant_event_log
-                  WHERE event_type = '${DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE}')
-              `),
-            },
-          },
         },
       ],
       where: {
@@ -833,20 +825,29 @@ export class InternalCaseService {
       pipe(
         theCase.defendants ?? [],
         filterMap((defendant) => {
-          // Only the latest verdict is relevant
-          const latestVerdict = defendant.verdicts?.sort(
-            (a, b) => b.created.getTime() - a.created.getTime(),
-          )[0]
+          const activeVerdict = getActiveVerdict(defendant.verdicts)
 
-          if (latestVerdict?.serviceDate) {
-            const { isDeadlineExpired } = getIndictmentAppealDeadline({
-              baseDate: latestVerdict?.serviceDate,
-              isFine: false,
-            })
+          if (!activeVerdict?.serviceDate) {
+            return option.none
+          }
 
-            if (isDeadlineExpired) {
-              return option.some({ theCase, defendant })
-            }
+          const alreadyDeliveredForActiveVerdict =
+            wasVerdictServiceCertificateDeliveredToPolice(
+              defendant.eventLogs,
+              activeVerdict,
+            )
+
+          if (alreadyDeliveredForActiveVerdict) {
+            return option.none
+          }
+
+          const { isDeadlineExpired } = getIndictmentAppealDeadline({
+            baseDate: activeVerdict.serviceDate,
+            isFine: false,
+          })
+
+          if (isDeadlineExpired) {
+            return option.some({ theCase, defendant })
           }
 
           return option.none

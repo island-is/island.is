@@ -53,6 +53,7 @@ interface UpdateVerdict {
   hash?: string
   hashAlgorithm?: HashAlgorithm
   serviceDate?: Date | null
+  isActive?: boolean
 }
 
 @Injectable()
