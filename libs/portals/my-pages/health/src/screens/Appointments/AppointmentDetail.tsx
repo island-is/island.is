@@ -51,10 +51,8 @@ const AppointmentDetail = () => {
     skip: !id,
   })
 
-  const [
-    cancelAppointment,
-    { loading: cancelLoading },
-  ] = useCancelAppointmentMutation()
+  const [cancelAppointment, { loading: cancelLoading }] =
+    useCancelAppointmentMutation()
 
   const appointment = data?.healthDirectorateAppointment
   const isCancelled =
