@@ -53,7 +53,8 @@ Row index is the index into `getDebts(application)`, so everything (pagination, 
 
 - `getDebts.ts` — single source of truth, reads `externalData.customerDebts.data.debts`. Also `DEBTS_EXTERNAL_DATA_ID`, `DEBTS_MAX_AGE_MS` (1h), `hasFetchedDebts`, `debtsAreStale`, `getDebtsFromExternalData` (raw `externalData`, for pre-commit conditions), `debtsSignature`.
 - `getSelectedDebts.ts` — ticked rows only, each `amountToPay` clamped to `[1, debt.debts]`, falling back to the full debt if the typed value doesn't parse.
-- `types.ts` — `CustomerDebt`: `chargeTypeId`, `chargeTypeName`, `chargeItemSubject`, `timePeriod`, `dueDate`, `finalDueDate`, `principal`, `interest`, `cost`, `debts`. The backend also returns `payID` and `nextkey`, neither modeled on the frontend. Amounts arrive as `bigint` (int64) from the client and are `Number()`-ed in `PayDebtsService`. Dates and `timePeriod` are passed through exactly as FJS sends them — no reformatting.
+- `types.ts` — `CustomerDebt`: `chargeTypeId`, `chargeTypeName`, `chargeItemSubject`, `timePeriod`, `dueDate`, `finalDueDate`, `principal`, `interest`, `cost`, `debts`. The backend also returns `payID` and `nextkey`, neither modeled on the frontend. Amounts arrive as `bigint` (int64) from the client and are `Number()`-ed in `PayDebtsService`. `timePeriod` is passed through exactly as FJS sends it.
+- `formatDate.ts` — `YYYY-MM-DD` → `dd.MM.yyyy`, or `null` when there is no real date. **Gotcha**: FJS sends .NET's `DateTime.MinValue` for a debt with no gjalddagi/eindagi, as either `00010101` or `0001-01-01` — the second parses fine, so the year has to be checked as well as parseability. `debtsSection.ts` turns the `null` into the "Á ekki við" message.
 
 ## Messages (`src/lib/messages`)
 

@@ -19,6 +19,10 @@ import {
   getDebtsFromExternalData,
   hasFetchedDebts,
 } from '../../utils/getDebts'
+import { formatDate } from '../../utils/formatDate'
+
+const dueDateOrNothing = (date: string): StaticText =>
+  formatDate(date) ?? messages.table.noDateLabel
 
 const hasDebtsToPay = (_answers: unknown, externalData: ExternalData) =>
   hasFetchedDebts(externalData) &&
@@ -65,7 +69,7 @@ export const debtsSection = buildSection({
             getDebts(application).map<StaticText[]>((debt) => [
               debt.chargeTypeName,
               debt.chargeItemSubject,
-              debt.finalDueDate,
+              dueDateOrNothing(debt.finalDueDate),
               formatCurrency(debt.debts),
             ]),
           expandedRows: {
@@ -79,7 +83,7 @@ export const debtsSection = buildSection({
             rows: (application) =>
               getDebts(application).map<StaticText[][]>((debt) => [
                 [
-                  debt.dueDate,
+                  dueDateOrNothing(debt.dueDate),
                   debt.timePeriod,
                   formatCurrency(debt.principal),
                   formatCurrency(debt.interest),

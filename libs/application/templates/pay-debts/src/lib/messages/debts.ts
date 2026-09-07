@@ -113,6 +113,11 @@ export const debts = {
       defaultMessage: 'Kostnaður',
       description: 'Cost header of the expanded charge type sub-table',
     },
+    noDateLabel: {
+      id: 'pd.application:debts.table.noDateLabel',
+      defaultMessage: 'Á ekki við',
+      description: 'Shown when a debt has no due date or final due date',
+    },
     toPayLabel: {
       id: 'pd.application:debts.table.toPayLabel',
       defaultMessage: 'Til greiðslu',

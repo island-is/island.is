@@ -6,6 +6,7 @@ import {
   InteractiveTableField,
   MultiField,
 } from '@island.is/application/types'
+import { debts as messages } from '../../lib/messages'
 import { debtsSection } from './debtsSection'
 
 const multiField = debtsSection.children[0] as MultiField
@@ -30,20 +31,20 @@ const fetched = (debts: unknown[]) =>
     },
   } as unknown as ExternalData)
 
-const externalDataWithDebts = fetched([
-  {
-    chargeTypeId: 'AB',
-    chargeTypeName: 'Gjaldflokkur 1',
-    dueDate: '2025-08-01',
-    finalDueDate: '2025-08-31',
-    principal: 500000,
-    interest: 55990,
-    cost: 10000,
-    debts: 565990,
-    chargeItemSubject: '453-78857-53',
-    timePeriod: '202508',
-  },
-])
+const debt = {
+  chargeTypeId: 'AB',
+  chargeTypeName: 'Gjaldflokkur 1',
+  dueDate: '2025-08-01',
+  finalDueDate: '2025-08-31',
+  principal: 500000,
+  interest: 55990,
+  cost: 10000,
+  debts: 565990,
+  chargeItemSubject: '453-78857-53',
+  timePeriod: '202508',
+}
+
+const externalDataWithDebts = fetched([debt])
 
 describe('debtsSection', () => {
   it('declares every answer the screen writes', () => {
@@ -112,8 +113,34 @@ describe('debtsSection', () => {
     } as unknown as Application
 
     expect(rows(application)).toEqual([
-      [['2025-08-01', '202508', '500.000 kr.', '55.990 kr.', '10.000 kr.']],
+      [['01.08.2025', '202508', '500.000 kr.', '55.990 kr.', '10.000 kr.']],
     ])
+  })
+
+  it('says a debt has no gjalddagi or eindagi rather than showing the placeholder date', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const rows = table?.rows
+    const expandedRows = table?.expandedRows?.rows
+
+    if (typeof rows !== 'function' || typeof expandedRows !== 'function') {
+      throw new Error('Expected the table rows to be derived from the debts')
+    }
+
+    const application = {
+      externalData: fetched([
+        {
+          ...debt,
+          dueDate: '00010101',
+          finalDueDate: '0001-01-01',
+        },
+      ]),
+      answers: {},
+    } as unknown as Application
+
+    expect(rows(application)[0][2]).toBe(messages.table.noDateLabel)
+    expect(expandedRows(application)[0][0][0]).toBe(messages.table.noDateLabel)
   })
 
   it('hides the table and its footer when the fetch found no debts', () => {
