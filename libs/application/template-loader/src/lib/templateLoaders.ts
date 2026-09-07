@@ -29,7 +29,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/driving-license'),
   [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: () =>
     import(
-      '@island.is/application/templates/district-commisioner/driving-license'
+      '@island.is/application/templates/district-commissioners/driving-license'
     ),
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: () =>
     import(
