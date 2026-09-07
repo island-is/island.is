@@ -273,7 +273,9 @@ describe('BankTransferService', () => {
     })
 
     it('logs at error level when the Blikk fetch fails without a 4xx (5xx / transport)', async () => {
-      blikkClient.getPayment.mockRejectedValue(new BlikkClientError('ECONNRESET'))
+      blikkClient.getPayment.mockRejectedValue(
+        new BlikkClientError('ECONNRESET'),
+      )
 
       await expect(service.getPayment('prov-1')).rejects.toThrow(
         BankTransferErrorCode.FailedToFetchBankTransfer,

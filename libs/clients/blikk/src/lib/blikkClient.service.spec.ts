@@ -139,7 +139,9 @@ describe('BlikkClientService', () => {
     })
 
     it('keeps the generic message when the error body is not Problem Details', async () => {
-      fetchMock.mockRejectedValue(fetchErrorWithStatus(404, '404 page not found'))
+      fetchMock.mockRejectedValue(
+        fetchErrorWithStatus(404, '404 page not found'),
+      )
 
       await expect(service.createPayment(body)).rejects.toMatchObject({
         name: 'BlikkClientError',

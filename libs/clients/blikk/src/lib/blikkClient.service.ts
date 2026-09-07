@@ -126,7 +126,9 @@ export class BlikkClientService {
 
       const detail = blikkProblemDetail(e.problem ?? e.body)
       throw new BlikkClientError(
-        detail ? `Blikk request failed (${e.status}): ${detail}` : fallbackMessage,
+        detail
+          ? `Blikk request failed (${e.status}): ${detail}`
+          : fallbackMessage,
         e.status,
       )
     }
