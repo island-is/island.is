@@ -7,7 +7,7 @@ import { CaseType } from '@island.is/judicial-system/types'
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case, CaseFile } from '../../../repository'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { SignedUrl } from '../../models/signedUrl.model'
 
 interface Then {
@@ -24,15 +24,18 @@ type GivenWhenThen = (
 
 describe('LimitedAccessFileController - Get case file signed url', () => {
   let mockAwsS3Service: AwsS3Service
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, fileModel, limitedAccessFileController } =
-      await createTestingFileModule()
+    const {
+      awsS3Service,
+      caseFileRepositoryService,
+      limitedAccessFileController,
+    } = await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -158,9 +161,9 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     })
 
     it('should set isKeyAccessible to false', () => {
-      expect(mockFileModel.update).toHaveBeenCalledWith(
+      expect(mockCaseFileRepositoryService.updateById).toHaveBeenCalledWith(
+        fileId,
         { isKeyAccessible: false },
-        { where: { id: fileId } },
       )
     })
 

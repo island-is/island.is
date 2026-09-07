@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { Offense } from '../../repository'
+import { OffenseRepositoryService } from '../../repository'
 import { DeleteResponse } from '../models/delete.response'
 
 interface Then {
@@ -17,14 +17,14 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('IndictmentCountController - Delete offense', () => {
-  let mockOffenseModel: typeof Offense
+  let mockOffenseRepositoryService: OffenseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { offenseModel, indictmentCountController } =
+    const { offenseRepositoryService, indictmentCountController } =
       await createTestingIndictmentCountModule()
 
-    mockOffenseModel = offenseModel
+    mockOffenseRepositoryService = offenseRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -54,16 +54,17 @@ describe('IndictmentCountController - Delete offense', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockOffenseModel.destroy as jest.Mock
-      mockDestroy.mockResolvedValueOnce(1)
+      const mockDeleteByIdAndIndictmentCount =
+        mockOffenseRepositoryService.deleteByIdAndIndictmentCount as jest.Mock
+      mockDeleteByIdAndIndictmentCount.mockResolvedValueOnce(1)
 
       then = await givenWhenThen(caseId, indictmentCountId, offenseId)
     })
 
     it('should delete the offense', () => {
-      expect(mockOffenseModel.destroy).toHaveBeenCalledWith({
-        where: { id: offenseId, indictmentCountId },
-      })
+      expect(
+        mockOffenseRepositoryService.deleteByIdAndIndictmentCount,
+      ).toHaveBeenCalledWith(offenseId, indictmentCountId)
       expect(then.result).toEqual({ deleted: true })
     })
   })
@@ -75,8 +76,11 @@ describe('IndictmentCountController - Delete offense', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockOffenseModel.destroy as jest.Mock
-      mockDestroy.mockRejectedValueOnce(new Error('Some error'))
+      const mockDeleteByIdAndIndictmentCount =
+        mockOffenseRepositoryService.deleteByIdAndIndictmentCount as jest.Mock
+      mockDeleteByIdAndIndictmentCount.mockRejectedValueOnce(
+        new Error('Some error'),
+      )
 
       then = await givenWhenThen(caseId, indictmentCountId, offenseId)
     })
