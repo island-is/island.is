@@ -2383,6 +2383,28 @@ export const messages = defineMessages({
     defaultMessage: 'Meðferð',
     id: 'sp.health:treatment',
   },
+  treatmentsIntro: {
+    defaultMessage:
+      'Hér finnur þú yfirlit yfir þær meðferðir sem þú ert skráð í.',
+    id: 'sp.health:treatments-intro',
+  },
+  noTreatmentsTitle: {
+    defaultMessage: 'Engin meðferð skráð',
+    id: 'sp.health:no-treatments-title',
+  },
+  noTreatments: {
+    defaultMessage: 'Þú ert ekki með skráða meðferð í gangi.',
+    id: 'sp.health:no-treatments',
+  },
+  treatmentIntro: {
+    defaultMessage:
+      'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt.',
+    id: 'sp.health:treatment-intro',
+  },
+  landlaeknirTreatmentTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar meðferðir.',
+    id: 'sp.health:landlaeknir-treatment-tooltip',
+  },
   sentFrom: {
     defaultMessage: 'Sent af',
     id: 'sp.health:sent-from',

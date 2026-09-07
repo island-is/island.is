@@ -347,6 +347,12 @@ export class Case {
   @Field(() => User, { nullable: true })
   readonly indictmentReviewer?: User
 
+  @Field(() => User, { nullable: true })
+  readonly indictmentApprover?: User
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentReviewReturnedExplanation?: string
+
   @Field(() => String, {
     nullable: true,
     description: 'appeal deadline for public prosecutor',
