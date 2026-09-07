@@ -11,7 +11,12 @@ import {
   SafeAreaView,
   View,
 } from 'react-native'
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  usePathname,
+} from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
 import { ButtonDrawer } from '@/components/button-drawer'
@@ -75,6 +80,12 @@ export default function HealthMessageDetailScreen() {
   const client = useApolloClient()
   const userName = useAuthStore((s) => s.userInfo?.name)
   const [refetching, setRefetching] = useState(false)
+  // Also re-exported in the notifications modal, so compose has to be pushed
+  // onto whichever stack we are in.
+  const pathname = usePathname()
+  const composeHref = pathname.startsWith('/notifications/')
+    ? '/notifications/message/new'
+    : '/health/messages/new'
 
   const res = useGetHealthConversationQuery({
     variables: { id },
@@ -432,7 +443,7 @@ export default function HealthMessageDetailScreen() {
                   icon={require('@/assets/icons/reply.png')}
                   onPress={() =>
                     router.push({
-                      pathname: '/health/messages/new',
+                      pathname: composeHref,
                       params: {
                         conversationId: id,
                         recipientName:
