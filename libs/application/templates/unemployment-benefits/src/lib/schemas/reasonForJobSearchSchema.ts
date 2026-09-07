@@ -58,7 +58,7 @@ export const reasonForJobSearchSchema = z
   .refine(
     ({ additionalDetails, additionalDetailsRequired }) => {
       if (additionalDetailsRequired === true) {
-        return !!additionalDetails
+        return !!additionalDetails?.trim()
       }
       return true
     },
