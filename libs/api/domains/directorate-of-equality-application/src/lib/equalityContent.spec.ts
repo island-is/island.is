@@ -21,9 +21,7 @@ describe('buildEqualityContentBody', () => {
   describe('HTML content', () => {
     it('strips markup that sanitize-html does not allow', () => {
       const body = buildEqualityContentBody({
-        equalityReportContent: base64(
-          '<p>Áætlun</p><script>alert(1)</script>',
-        ),
+        equalityReportContent: base64('<p>Áætlun</p><script>alert(1)</script>'),
       })
 
       const html = decode(body.equalityReportContent)
