@@ -206,6 +206,32 @@ export const setCheckboxAndSendToServer = (
   }
 }
 
+export const setParentCheckboxAndSendToServer = (
+  field: keyof UpdateCase,
+  value: string,
+  childValues: string[],
+  theCase: Case,
+  setWorkingCase: (value: SetStateAction<Case>) => void,
+  updateCase: (id: string, updateCase: UpdateCase) => void,
+) => {
+  const currentValue = theCase[field as keyof Case]
+
+  const currentChecks = currentValue ? [...(currentValue as string[])] : []
+
+  // Unchecking the parent also clears all its children
+  const checks = currentChecks.includes(value)
+    ? currentChecks.filter((v) => v !== value && !childValues.includes(v))
+    : [...currentChecks, value]
+
+  setWorkingCase((prevWorkingCase) =>
+    applyUpdateToCase(prevWorkingCase, { [field]: checks }),
+  )
+
+  if (theCase.id !== '') {
+    updateCase(theCase.id, { [field]: checks })
+  }
+}
+
 export const hasDateChanged = (
   currentDate: string | null | undefined,
   newDate: Date | undefined,
