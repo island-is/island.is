@@ -33,7 +33,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { getCaseFileHash } from '../../formatters'
-import { InternalCaseService, PdfService } from '../case'
+import { InternalCaseService } from '../case/internalCase.service'
+import { PdfService } from '../case/pdf.service'
 import {
   CourtDocumentFolder,
   CourtService,
