@@ -208,6 +208,16 @@ export class MeDelegationsController {
       delegations
         .map((delegation) => delegation.id)
         .filter((id): id is string => Boolean(id)),
+    meta: (delegations) => ({
+      delegations: delegations.map((delegation) => ({
+        id: delegation.id,
+        domainName: delegation.domainName,
+        scopes: delegation.scopes?.map((s) => ({
+          scopeName: s.scopeName,
+          validTo: s.validTo,
+        })),
+      })),
+    }),
   })
   createBatch(
     @CurrentUser() user: User,

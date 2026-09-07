@@ -260,6 +260,33 @@ describe.each(Object.keys(accessOutgoingTestCases))(
         ).toEqual(accessible.map((domain) => domain.name).sort())
       })
 
+      it('POST /v1/me/delegations/batch rolls back earlier delegations when a later item fails', async () => {
+        const toNationalId = createNationalId('person')
+        const [domain] = accessible
+        const scopes = domain.scopes.map(({ name }) => ({
+          name,
+          validTo: startOfDay(addYears(new Date(), 1)),
+        }))
+
+        const res = await server.post('/v1/me/delegations/batch').send({
+          delegations: [
+            { toNationalId, domainName: domain.name, scopes },
+            {
+              toNationalId: testCase.user.nationalId,
+              domainName: domain.name,
+              scopes,
+            },
+          ],
+        })
+
+        expect(res.status).toEqual(400)
+        expect(
+          await Delegation.count({
+            where: { fromNationalId: testCase.user.nationalId, toNationalId },
+          }),
+        ).toEqual(0)
+      })
+
       it.each(accessible)(
         'POST /v1/me/delegations returns 400 when recipient is deceased',
         async (domain) => {
