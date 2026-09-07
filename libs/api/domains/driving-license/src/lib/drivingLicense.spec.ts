@@ -315,6 +315,23 @@ describe('DrivingLicenseService', () => {
       })
     })
 
+    it('accepts a driving assessment regardless of its age — only completion matters', async () => {
+      // The mock assessment is 8 months old, past the 182-day window the
+      // original template enforced. Samgongustofa confirmed (2026-08-31) an
+      // assessment does not expire, so age must not block eligibility.
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        'B-full',
+      )
+
+      expect(response.isEligible).toBe(true)
+      expect(response.requirements).toContainEqual({
+        key: 'DrivingAssessmentMissing',
+        requirementMet: true,
+      })
+    })
+
     it('all checks should pass for applicable students for temporary license', async () => {
       const response = await service.getApplicationEligibility(
         MOCK_USER,

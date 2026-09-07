@@ -2,7 +2,7 @@ import { createContext, useContext, type ReactNode } from 'react'
 import {
   Box,
   Checkbox,
-  Tooltip,
+  Hidden,
   createColumnHelper,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -10,6 +10,7 @@ import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS } from '../../utils/constants'
 import { formatDeviationLabel } from '../../utils/salaryAnalysisLabels'
+import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 import { formatWageAmount } from '../EmployeesEditor/utils'
 
 const SELECT_COLUMN_WIDTH = 32
@@ -48,9 +49,10 @@ const compactCell = (children: ReactNode, align?: 'right'): ReactNode => (
  */
 type OutlierTableContextValue = {
   selected: Set<number>
-  allSelectedOnPage: boolean
+  allSelected: boolean
+  someSelected: boolean
   toggleSelect: (ordinal: number) => void
-  toggleSelectPage: () => void
+  toggleSelectAll: () => void
 }
 
 const OutlierTableContext = createContext<OutlierTableContextValue | undefined>(
@@ -124,26 +126,38 @@ const HourlyWageHeader = headerFor(m.hourlyWageColumn, 'right')
 const ExpectedHourlyWageHeader = headerFor(m.expectedHourlyWageColumn, 'right')
 const DeviationHeader = headerFor(m.deviationColumn, 'right')
 
-// The span is for the same reason as in headerFor. Checkbox's own root is a
-// Box, so this header still nests a div inside the mobile `<p>` — pre-existing
-// in island-ui and not something a caller can fix from here.
+/**
+ * Selects and clears every row in the table, not just the page on screen — see
+ * toggleSelectAll in OutlierEditor.
+ *
+ * Hidden below `md`, the breakpoint at which the desktop table itself appears.
+ * InteractiveTable's mobile card view renders each column's *header* component
+ * once per row, so left visible this would put a select-everything checkbox
+ * beside every row's own checkbox, and a caller can't unmount it from there.
+ * OutlierEditor carries a button below the table for that viewport instead.
+ * `inline` keeps this a span: the mobile card wraps header content in a `<p>`,
+ * which a div may not sit inside.
+ */
 const SelectAllHeader = () => {
   const { formatMessage } = useLocale()
-  const { allSelectedOnPage, toggleSelectPage } = useOutlierTable()
+  const { allSelected, someSelected, toggleSelectAll } = useOutlierTable()
   return (
-    <Box
-      component="span"
-      display="flex"
-      justifyContent="center"
-      style={{ maxWidth: SELECT_COLUMN_WIDTH }}
-    >
-      <Checkbox
-        label=""
-        ariaLabel={formatMessage(m.selectAllLabel)}
-        checked={allSelectedOnPage}
-        onChange={toggleSelectPage}
-      />
-    </Box>
+    <Hidden below="md" inline>
+      <Box
+        component="span"
+        display="flex"
+        justifyContent="center"
+        style={{ maxWidth: SELECT_COLUMN_WIDTH }}
+      >
+        <Checkbox
+          label=""
+          ariaLabel={formatMessage(m.selectAllLabel)}
+          checked={allSelected}
+          indeterminate={someSelected}
+          onChange={toggleSelectAll}
+        />
+      </Box>
+    </Hidden>
   )
 }
 
@@ -164,23 +178,6 @@ const SelectCell = ({ row }: CellProps) => {
         })}
         checked={selected.has(ordinal)}
         onChange={() => toggleSelect(ordinal)}
-      />
-    </Box>
-  )
-}
-
-// The ordinal alone, not the ABC-000 identifier: it is the number the applicant
-// already knows from the employee screens and the workbook, and this tooltip is
-// what says so. Sorting is off for this column (see NOT_SORTABLE), which is what
-// keeps the tooltip out of a button.
-const OrdinalHeader = () => {
-  const { formatMessage } = useLocale()
-  return (
-    <Box component="span" display="flex" alignItems="center" columnGap={1}>
-      {formatMessage(m.ordinalColumn)}
-      <Tooltip
-        placement="right"
-        text={formatMessage(m.employeeColumnTooltip)}
       />
     </Box>
   )
@@ -264,7 +261,9 @@ export const OUTLIER_COLUMNS = [
   }),
   columnHelper.accessor('employeeOrdinal', {
     id: 'employee',
-    header: OrdinalHeader,
+    // Sorting is off for this column (see NOT_SORTABLE), which is what keeps
+    // the shared header's tooltip out of a button.
+    header: EmployeeOrdinalHeader,
     meta: COMPACT_CELL,
     cell: OrdinalCell,
     ...NOT_SORTABLE,

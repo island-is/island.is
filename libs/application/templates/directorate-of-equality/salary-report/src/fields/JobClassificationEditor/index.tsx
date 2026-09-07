@@ -18,6 +18,7 @@ import type {
 import { useDraftQueries } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
+import { useProgressMarker } from '../../utils/useProgressMarker'
 import {
   DraftErrorState,
   DraftLoadingState,
@@ -34,7 +35,7 @@ type FormValues = { roles: RoleFormEntry[] }
 
 export const JobClassificationEditor: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application, setBeforeSubmitCallback }) => {
+> = ({ application, setBeforeSubmitCallback, answerQuestions }) => {
   const { formatMessage } = useLocale()
   // Both reads in one mutation — see the batching note on useDraftQueries.
   const { contents, loading, hasError, refetch } = useDraftQueries<{
@@ -47,6 +48,7 @@ export const JobClassificationEditor: FC<
   const criteriaContent = contents.draftCriteriaTree
   const rolesContent = contents.draftRolesWithSteps
   const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
   const methods = useForm<FormValues>({ defaultValues: { roles: [] } })
 
   const roles = rolesContent?.roles ?? []
@@ -85,10 +87,14 @@ export const JobClassificationEditor: FC<
       } catch {
         return [false, formatMessage(messages.errors.draftSyncFailed)]
       }
+      // The step is behind them now, so a later visit should not send them back
+      // to it — see ProgressPaths.
+      await markProgress({ jobClassification: true })
       return [true, null]
     })
   }, [
     setBeforeSubmitCallback,
+    markProgress,
     methods,
     sync,
     refetch,
@@ -130,7 +136,6 @@ export const JobClassificationEditor: FC<
               roleIndex={index}
               assignments={buildDisplayAssignments(jobCriteria, role.stepIds)}
               stepMetaBySubCriterionId={stepMetaBySubCriterionId}
-              startExpanded={index === 0}
             />
           ))}
         </Stack>

@@ -35,7 +35,6 @@ type Props = {
   data?: SalaryByGenderAndScoreDto | null
   decomposition?: WageGapDecompositionDto | null
   payDispersion?: PayDispersionDto | null
-  identifierForOrdinal: (ordinal: number) => string
 }
 
 type ChartPoint = {
@@ -125,11 +124,9 @@ const ChartTooltip = ({
   active,
   payload,
   markedLabel,
-  identifierForOrdinal,
   formatMessage,
 }: Partial<TooltipContentProps<number, string>> & {
   markedLabel: string | null
-  identifierForOrdinal: (ordinal: number) => string
   formatMessage: ReturnType<typeof useLocale>['formatMessage']
 }) => {
   const datum = active ? payload?.[0]?.payload : undefined
@@ -185,9 +182,7 @@ const ChartTooltip = ({
     >
       <Text variant="small" fontWeight="semiBold">
         {employee
-          ? `${formatMessage(tooltipMessages.employee)} ${identifierForOrdinal(
-              employee.ordinal,
-            )}`
+          ? `${formatMessage(tooltipMessages.employee)} ${employee.ordinal}`
           : formatMessage(messages.salaryAnalysis.chart.title)}
       </Text>
       {rows.map(([label, value]) => (
@@ -370,7 +365,6 @@ export const SalaryDistributionChart: FC<Props> = ({
   data,
   decomposition,
   payDispersion,
-  identifierForOrdinal,
 }) => {
   const { formatMessage } = useLocale()
   const m = messages.salaryAnalysis.chart
@@ -499,7 +493,6 @@ export const SalaryDistributionChart: FC<Props> = ({
             content={
               <ChartTooltip
                 markedLabel={hasMarked ? markedLabel : null}
-                identifierForOrdinal={identifierForOrdinal}
                 formatMessage={formatMessage}
               />
             }

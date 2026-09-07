@@ -139,6 +139,12 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
       },
       {
         width: 'half',
+        keyText: messages.aboutTheCompany.contactPerson.jobTitle,
+        valueText:
+          getValueViaPath<string>(answers, 'contactPerson.jobTitle') ?? '',
+      },
+      {
+        width: 'half',
         keyText: messages.aboutTheCompany.contactPerson.email,
         valueText:
           getValueViaPath<string>(answers, 'contactPerson.email') ?? '',
@@ -150,6 +156,44 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
           getValueViaPath<string>(answers, 'contactPerson.phone') ?? '',
       },
     ],
+  }),
+  buildOverviewField({
+    id: 'overview.subsidiaries',
+    title: messages.overview.subsidiaries,
+    titleVariant: 'h3',
+    ...(withBackLinks ? { backId: 'subsidiariesMultiField' } : {}),
+    items: (answers) => {
+      const hasSubsidiaries =
+        getValueViaPath<string>(
+          answers,
+          'subsidiaries.includesSubsidiaries',
+        ) === 'yes'
+      const subsidiaryList = hasSubsidiaries
+        ? getValueViaPath<
+            Array<{
+              nationalIdWithName?: { name?: string; nationalId?: string }
+              isRemoved?: boolean
+            }>
+          >(answers, 'subsidiaries.list') ?? []
+        : []
+
+      return [
+        {
+          width: 'full' as const,
+          keyText: messages.overview.hasSubsidiaries,
+          valueText: hasSubsidiaries
+            ? messages.overview.yesSubsidiaries
+            : messages.overview.noSubsidiaries,
+        },
+        ...subsidiaryList
+          .filter((s) => !s.isRemoved)
+          .map((s) => ({
+            width: 'half' as const,
+            keyText: s.nationalIdWithName?.name ?? '',
+            valueText: s.nationalIdWithName?.nationalId ?? '',
+          })),
+      ]
+    },
   }),
   buildOverviewField({
     id: 'overview.period',

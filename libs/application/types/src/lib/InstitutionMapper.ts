@@ -216,6 +216,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
   },
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: {
+    nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
+    slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
+    contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
+  },
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
@@ -532,13 +537,13 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
   [ApplicationTypes.EQUALITY_REPORT]: {
-    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-    slug: InstitutionTypes.DOMSMALARADUNEYTID,
-    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
   },
   [ApplicationTypes.SALARY_REPORT]: {
-    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-    slug: InstitutionTypes.DOMSMALARADUNEYTID,
-    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
   },
 }

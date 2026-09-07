@@ -21,6 +21,7 @@ import {
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
+  DefenderVerdictTimelineCard,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -125,6 +126,13 @@ const IndictmentOverview: FC = () => {
     (isCaseDefendantDefender(user, workingCase) ||
       isCaseCivilClaimantSpokesperson(user, workingCase))
 
+  // Defence users get the same verdict service and appeal information the
+  // public prosecution office has, but only on a case that ended in a verdict -
+  // there is no verdict timeline to show for a fine or a dismissal.
+  const displayVerdictTimeline =
+    caseIsClosed &&
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
   const shouldDisplayAppealBanner =
     workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.DISMISSAL &&
@@ -187,6 +195,19 @@ const IndictmentOverview: FC = () => {
                 </Box>
               ),
           )}
+          {displayVerdictTimeline &&
+            workingCase.defendants?.map(
+              (defendant) =>
+                defendant.verdict && (
+                  <Box
+                    key={`${defendant.id}${defendant.verdict.id}-timeline`}
+                    marginBottom={2}
+                    dataTestId="defenderVerdictTimelineCard"
+                  >
+                    <DefenderVerdictTimelineCard defendant={defendant} />
+                  </Box>
+                ),
+            )}
           {workingCase.defendants?.map((defendant) => (
             <Fragment key={defendant.id}>
               {defendant.alternativeServiceDescription && (

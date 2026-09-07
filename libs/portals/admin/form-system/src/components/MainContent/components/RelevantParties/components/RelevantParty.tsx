@@ -318,6 +318,39 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
               />
             </GridColumn>
           )}
+        {currentApplicant?.fieldSettings?.isAddressRequired !== undefined &&
+          currentApplicant.fieldSettings?.isAddressRequired !== null && (
+            <GridColumn span="4/12">
+              <Checkbox
+                label="Krefjast heimilisfangs"
+                checked={currentApplicant.fieldSettings?.isAddressRequired}
+                disabled={isReadOnly}
+                onChange={(e) => {
+                  controlDispatch({
+                    type: 'SET_APPLICANT_FIELD_SETTINGS',
+                    payload: {
+                      field: currentApplicant,
+                      property: 'isAddressRequired',
+                      value: e.target.checked,
+                    },
+                  })
+                  updateField({
+                    variables: {
+                      input: {
+                        id: currentApplicant.id,
+                        updateFieldDto: {
+                          fieldSettings: {
+                            ...currentApplicant.fieldSettings,
+                            isAddressRequired: e.target.checked,
+                          },
+                        },
+                      },
+                    },
+                  })
+                }}
+              />
+            </GridColumn>
+          )}
       </GridRow>
       {currentApplicant?.fieldSettings?.fetchEmailFromMyPages !== undefined &&
         currentApplicant?.fieldSettings?.fetchEmailFromMyPages !== null && (

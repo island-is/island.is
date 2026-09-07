@@ -42,7 +42,7 @@ import {
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { areAllDefendantsServedByAlternativeMeans } from '@island.is/judicial-system-web/src/utils/utils'
+import { canSkipArraignmentSummons as isArraignmentSummonsSkippable } from '@island.is/judicial-system-web/src/utils/utils'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
@@ -83,15 +83,18 @@ const Subpoena: FC = () => {
   const hasArraignmentBeenSettled =
     isArraignmentScheduled || hasSkippedArraignmentSummons
 
-  // Skipping is only on the table while nobody is receiving a subpoena and no
-  // arraignment has been scheduled yet
-  const canSkipArraignmentSummons =
-    !isArraignmentScheduled &&
-    areAllDefendantsServedByAlternativeMeans(
-      // Fall back to the server's defendants for the first render, before the
-      // effect below seeds `updates`, so the step does not flash as invalid
-      updates?.defendants ?? workingCase.defendants,
-    )
+  // Skipping is only on the table while nobody is receiving a subpoena.
+  // After an arraignment has already been scheduled, it also unlocks when
+  // the court re-enters alternative service for every defendant.
+  const canSkipArraignmentSummons = isArraignmentSummonsSkippable(
+    // Fall back to the server's defendants for the first render, before the
+    // effect below seeds `updates`, so the step does not flash as invalid
+    updates?.defendants ?? workingCase.defendants,
+    {
+      isArraignmentScheduled,
+      newAlternativeServiceDefendantIds: newAlternativeServices,
+    },
+  )
   const isSkippingArraignmentSummons =
     canSkipArraignmentSummons && skipArraignmentSummons
 

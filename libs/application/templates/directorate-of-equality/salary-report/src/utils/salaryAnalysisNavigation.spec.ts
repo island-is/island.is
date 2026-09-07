@@ -1,3 +1,4 @@
+import format from 'date-fns/format'
 import { mergeAnswers } from '@island.is/application/core'
 import type { ExternalData, FormValue } from '@island.is/application/types'
 import type {
@@ -110,6 +111,8 @@ describe('salary analysis outlier navigation flags', () => {
           population: 'ALL_EMPLOYEES',
           threshold: 2,
           employees: [dispersionRow(1)],
+          countBelowExpected: 1,
+          countAboveExpected: 0,
         },
       } as Partial<SalaryAnalysisResponseDto>),
     )
@@ -125,6 +128,8 @@ describe('salary analysis outlier navigation flags', () => {
             population: 'ALL_EMPLOYEES',
             threshold: 2,
             employees: [dispersionRow(1)],
+            countBelowExpected: 1,
+            countAboveExpected: 0,
           },
         } as Partial<SalaryAnalysisResponseDto>),
         { resetReviewed: true },
@@ -282,12 +287,41 @@ describe('isPostponeRequested', () => {
 })
 
 describe('reviewOutlierPlanIsSubmittable', () => {
+  // Relative to today, not a literal: this predicate reads the clock through
+  // isOutlierGroupSubmittable, so a pinned date would start failing the day it
+  // fell out of the remedy-date window.
+  const oneYearOut = () => {
+    const now = new Date()
+    return format(
+      new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()),
+      'yyyy-MM-dd',
+    )
+  }
+
   const completeGroup = (ordinals: number[]) => ({
     name: 'Hópur',
     reason: 'Ástæða',
     action: 'Aðgerð',
+    remedyDate: oneYearOut(),
     signatureRole: 'Titill',
     employeeOrdinals: ordinals,
+  })
+
+  // The gap the window check closes: a date the applicant picked while it was
+  // still in range, left to go stale in POSTPONED's 90-day window.
+  it('refuses a plan whose remedy date has since passed', () => {
+    expect(
+      reviewOutlierPlanIsSubmittable(
+        {
+          salaryAnalysis: {
+            outlierGroups: [
+              { ...completeGroup([1]), remedyDate: '2020-01-01' },
+            ],
+          },
+        },
+        externalData(result(1)),
+      ),
+    ).toBe(false)
   })
 
   // The regression this predicate exists for: the postponing submit persists

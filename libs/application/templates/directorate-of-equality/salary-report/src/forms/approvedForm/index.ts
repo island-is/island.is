@@ -10,6 +10,7 @@ export const approvedForm = buildForm({
   mode: FormModes.APPROVED,
   children: [
     buildFormConclusionSection({
+      multiFieldTitle: messages.approved.formTitle,
       sectionTitle: messages.approved.sectionTitle,
       tabTitle: messages.approved.sectionTitle,
       alertTitle: messages.approved.title,

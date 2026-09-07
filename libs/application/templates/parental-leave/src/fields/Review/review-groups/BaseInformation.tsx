@@ -1,8 +1,5 @@
-import {
-  DataValue,
-  ReviewGroup,
-  formatPhoneNumber,
-} from '@island.is/application/ui-components'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'

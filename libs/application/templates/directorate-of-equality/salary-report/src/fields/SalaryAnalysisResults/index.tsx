@@ -22,7 +22,6 @@ import {
 import { formatHourlyWage } from '../EmployeesEditor/utils'
 import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
 import { getProviderErrorMessage } from '../../utils/providerError'
-import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import type { ReportEmployeeDto } from '../../utils/types'
 import {
   getProviderSuccessData,
@@ -273,12 +272,6 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     if (!result) return
     applyNavigationAnswers(result, false)
   }, [applyNavigationAnswers, result])
-
-  const identifierForOrdinal = useMemo(
-    () => (ordinal: number) =>
-      formatEmployeeIdentifier(application.id, ordinal),
-    [application.id],
-  )
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
@@ -605,7 +598,6 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         data={result?.regularHourlyWageByScoreAll}
         decomposition={decomposition}
         payDispersion={result?.payDispersion}
-        identifierForOrdinal={identifierForOrdinal}
       />
 
       <PayComponentsTable data={payComponents} />

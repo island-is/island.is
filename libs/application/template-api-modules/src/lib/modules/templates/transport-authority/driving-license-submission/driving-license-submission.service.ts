@@ -213,26 +213,29 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   }
 
   /**
-   * Turn a failed RLS submission into the error the applicant sees. RLS puts its
-   * error code in `problem.title`; if that code exists in the RLS error-code
-   * table we surface the table's own human-readable text in the user's language
-   * instead of leaking the raw code. Anything we can't resolve (no code, code
-   * not in the table, or a best-effort lookup failure) keeps the previous
-   * behaviour: raw `problem.title` / generic message, with `problem.detail` as
-   * the summary. `describeErrorCode` is best-effort and never throws.
+   * Turn a failed RLS submission into the error the applicant sees. RLS's
+   * machine error code, when we can find one, is looked up in the RLS
+   * error-code table and the table's own human-readable text is surfaced in
+   * the user's language instead of the raw code. Anything we can't resolve (no
+   * code, code not in the table, or a best-effort lookup failure) keeps the
+   * previous behaviour: generic message with `problem.detail` as the summary.
+   * `describeErrorCode` is best-effort and never throws.
    */
   private async toSubmissionError(
     err: FetchError,
     locale: Locale,
   ): Promise<TemplateApiError> {
-    // RLS's error code is in `problem.title` for problem+json responses (the full
-    // endpoint), but the temporary endpoint returns a plain-JSON body carrying it
-    // as `body.errorCode` instead — fall back to that so both go through
-    // describeErrorCode and the applicant gets the localised text, not the
-    // generic "submission failed".
+    // Both v6 endpoints carry the machine code in an `errorCode` field — the
+    // full endpoint as a problem+json extension member, the temporary endpoint
+    // in its plain-JSON body. `problem.title` must come LAST: v5 puts the code
+    // there, but on the v6 full endpoint `title` holds the operation name
+    // ("Sækja um fullnaðarskírteini"), so preferring it looks up a string that
+    // can never be in the table and the applicant loses the localised text
+    // (observed on IS-DEV 2026-08-31).
     const code =
-      err.problem?.title ??
-      (err.body as { errorCode?: string } | undefined)?.errorCode
+      (err.problem as { errorCode?: string } | undefined)?.errorCode ??
+      (err.body as { errorCode?: string } | undefined)?.errorCode ??
+      err.problem?.title
     if (code) {
       try {
         const described = await this.drivingLicenseService.describeErrorCode(
@@ -432,40 +435,38 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
   // A v6 create returns 400 APPLICATION_ALREADY_EXISTS when RLS already holds an
   // application for this person+category. Treat that as success ONLY when THIS
-  // application already has a `submitApplication` entry — i.e. a lost-response
-  // retry re-running submit on the same application (the framework records that
-  // entry even when the first attempt failed, so it is present on the retry).
+  // application provably created it — the guid a previous successful run stored
+  // on `submitApplication.data` — and return that guid again.
   //
-  // A fresh application with no such entry means a *different* application created
-  // the RLS one; the v6 endpoint is a create, not an upsert, so this submission's
-  // (possibly changed) payload was discarded. Rethrow so the applicant sees RLS's
-  // own error via `toSubmissionError` — the truthful outcome, matching BE — rather
-  // than a false "Umsókn móttekin" that hides the lost edits and the payment.
-  private async createToleratingLostResponse(
+  // Mere existence of a `submitApplication` entry is NOT proof: the framework
+  // persists one (with `data: {}`) even when the attempt FAILED, so gating on
+  // the entry lets "Try again" after a duplicate rejection flip into a false
+  // "Umsókn móttekin" while RLS discarded this submission's payload. Without a
+  // stored guid, rethrow so the applicant sees RLS's own error via
+  // `toSubmissionError`, matching BE — a genuine lost-response retry then also
+  // shows an error, but that is recoverable (the RLS application exists),
+  // whereas a false success hiding discarded edits and a payment is not.
+  private async createToleratingRerunAfterSuccess(
     application: ApplicationWithAttachments,
     create: () => Promise<NewDrivingLicenseResult>,
   ): Promise<NewDrivingLicenseResult> {
     try {
       return await create()
     } catch (e) {
-      if (
-        isApplicationAlreadyExists(e) &&
-        getValueViaPath(application.externalData, 'submitApplication') !==
-          undefined
-      ) {
+      const priorGuid = getValueViaPath<string>(
+        application.externalData,
+        'submitApplication.data.applicationGuid',
+      )
+      if (isApplicationAlreadyExists(e) && priorGuid) {
         this.log(
           'info',
-          'RLS application already exists on submit retry; treating as success',
-          { applicationId: application.id },
+          'RLS application already created by this application; treating re-run as success',
+          { applicationId: application.id, applicationGuid: priorGuid },
         )
         return {
           success: true,
           errorMessage: null,
-          applicationGuid:
-            getValueViaPath<string>(
-              application.externalData,
-              'submitApplication.data.applicationGuid',
-            ) ?? null,
+          applicationGuid: priorGuid,
         }
       }
       throw e
@@ -665,7 +666,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           application,
         )
 
-        const fullResult = await this.createToleratingLostResponse(
+        const fullResult = await this.createToleratingRerunAfterSuccess(
           application,
           async () =>
             this.drivingLicenseService.newDrivingLicenseWithHealthDeclaration(
@@ -731,7 +732,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           application,
         )
 
-        const tempResult = await this.createToleratingLostResponse(
+        const tempResult = await this.createToleratingRerunAfterSuccess(
           application,
           async () =>
             this.drivingLicenseService.newTemporaryDrivingLicenseWithHealthDeclaration(

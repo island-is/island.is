@@ -8,7 +8,7 @@ import {
 
 import { createTestingFileModule } from '../../test/createTestingFileModule'
 
-import { CaseFile } from '../../../repository'
+import { CaseFileRepositoryService } from '../../../repository'
 import { SplitCaseFileExistsGuard } from '../splitCaseFileExists.guard'
 
 interface Then {
@@ -20,13 +20,14 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('Split Case File Exists Guard', () => {
   const mockRequest = jest.fn()
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { fileModel, fileService } = await createTestingFileModule()
+    const { caseFileRepositoryService, fileService } =
+      await createTestingFileModule()
 
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
     givenWhenThen = async (): Promise<Then> => {
       const guard = new SplitCaseFileExistsGuard(fileService)
@@ -55,7 +56,8 @@ describe('Split Case File Exists Guard', () => {
         params: { fileId },
         case: { id: caseId, caseFiles: [caseFile] },
       }))
-      const mockFindOne = mockFileModel.findOne as jest.Mock
+      const mockFindOne =
+        mockCaseFileRepositoryService.findLiveByIdAndCase as jest.Mock
       mockFindOne.mockResolvedValueOnce(caseFile)
 
       then = await givenWhenThen()
@@ -81,7 +83,8 @@ describe('Split Case File Exists Guard', () => {
           splitCases: [{ id: uuid(), caseFiles: [caseFile] }],
         },
       }))
-      const mockFindOne = mockFileModel.findOne as jest.Mock
+      const mockFindOne =
+        mockCaseFileRepositoryService.findLiveByIdAndCase as jest.Mock
       mockFindOne.mockResolvedValueOnce(caseFile)
 
       then = await givenWhenThen()

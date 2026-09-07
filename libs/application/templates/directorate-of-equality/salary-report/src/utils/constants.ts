@@ -68,6 +68,32 @@ export const ScreenIds = {
   improvementPlan: 'salaryAnalysisImprovementPlanMultiField',
 } as const
 
+// Per-step completion markers under `answers.progress`, declared as each report
+// screen's `childInputIds` so the form shell can see that the step is done.
+//
+// This is what lets a returning applicant resume: findCurrentScreen walks the
+// screens while they are answered, and only ever reads `answers` — the report
+// data itself lives on the DMR draft, so without a marker every screen from
+// `dataEntry` onwards looks unanswered forever and the landing screen is capped
+// at `dataEntry`. Deliberately stops at `employeeClassification`: leaving the
+// two salary-analysis screens unmarked is what makes the analysis overview the
+// screen a fully populated report lands on (see the `lastAnswerIndex + 1` cap in
+// the shell's findCurrentScreen).
+//
+// A marker means "this step's data reached the DMR draft", and is written again
+// every time the applicant passes through, so it is a cache of what the draft
+// holds rather than an independent source of truth.
+export const ProgressPaths = {
+  dataEntry: 'progress.dataEntry',
+  criteria: 'progress.criteria',
+  subCriteria: 'progress.subCriteria',
+  employees: 'progress.employees',
+  jobClassification: 'progress.jobClassification',
+  employeeClassification: 'progress.employeeClassification',
+} as const
+
+export type ProgressStep = keyof typeof ProgressPaths
+
 const DOE_NAMESPACE = 'DirectorateOfEquality'
 
 // Builds the `actionId` string the updateApplicationExternalData mutation expects,
@@ -87,6 +113,10 @@ export const DRAFT_EMPLOYEES_PAGE_SIZE = 25
 // otherwise pass validation and inflate reglulegt tímakaup ~173x.
 export const PAID_HOURS_MIN = 4
 export const PAID_HOURS_MAX = 750
+
+// How far out "Dagsetning úrbóta" may be set, mirrored from the API: past this
+// the date belongs to a reporting period the report can't speak for.
+export const REMEDY_DATE_MAX_YEARS_AHEAD = 3
 
 // Duplicated from the client lib rather than imported — importing it as a value
 // pulls in that package's NestJS module (backend-only deps), breaking the frontend bundle.
