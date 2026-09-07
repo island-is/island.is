@@ -104,16 +104,23 @@ const NewHealthConversation = () => {
       value: getRecipientKey(r),
     })) ?? []
 
+  const preselectedTreatment = searchParams.get('treatment')
+  const treatmentMatch = preselectedTreatment
+    ? recipients?.find((r) => r.treatmentId === preselectedTreatment)
+    : undefined
   const preselectedNode = searchParams.get('node')
   const nodeMatches = preselectedNode
     ? recipients?.filter((r) => r.nodeId === preselectedNode)
     : undefined
-  const nodeMatchKey =
-    nodeMatches?.length === 1 ? getRecipientKey(nodeMatches[0]) : null
+  const preselectMatchKey = treatmentMatch
+    ? getRecipientKey(treatmentMatch)
+    : nodeMatches?.length === 1
+    ? getRecipientKey(nodeMatches[0])
+    : null
 
   const effectiveRecipientKey =
     selectedRecipientKey ??
-    nodeMatchKey ??
+    preselectMatchKey ??
     (recipients?.length === 1 ? getRecipientKey(recipients[0]) : null)
 
   const recipient = recipients?.find(
@@ -429,7 +436,11 @@ const NewHealthConversation = () => {
                 </Box>
               )}
 
-              <Box marginTop={4} marginBottom={4}>
+              <Box
+                marginTop={4}
+                marginBottom={4}
+                className={styles.termsCheckbox}
+              >
                 <Checkbox
                   id="terms-accept"
                   checked={termsAccepted}

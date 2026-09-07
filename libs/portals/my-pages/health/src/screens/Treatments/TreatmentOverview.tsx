@@ -38,8 +38,11 @@ const TreatmentOverview = () => {
   const { id } = useParams() as UseParams
 
   const { data, loading, error } = useGetHealthTreatmentQuery({
+    fetchPolicy: 'cache-and-network',
     variables: { id },
   })
+
+  const initialLoading = loading && !data
 
   const {
     data: appointmentsData,
@@ -71,12 +74,12 @@ const TreatmentOverview = () => {
     },
   ]
 
-  // Carries the treatment's provider node so the new-message screen can
-  // preselect the recipient.
+  // Carries the treatment id (matches the recipient's treatmentId) and the
+  // provider node so the new-message screen can preselect the recipient.
   const newMessageHref = treatment?.responsibleNode
     ? `${HealthPaths.HealthConversationsNew}?node=${encodeURIComponent(
         treatment.responsibleNode,
-      )}`
+      )}&treatment=${encodeURIComponent(treatment.id)}`
     : HealthPaths.HealthConversationsNew
 
   const quickLinks = [
@@ -116,7 +119,7 @@ const TreatmentOverview = () => {
     >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
-      ) : loading ? (
+      ) : initialLoading ? (
         <CardLoader />
       ) : !treatment ? (
         <Problem type="no_data" noBorder={false} />
