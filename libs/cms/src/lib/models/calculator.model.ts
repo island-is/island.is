@@ -52,17 +52,23 @@ export const mapCalculator = ({
   sys,
   fields,
 }: ICalculator): SystemMetadata<Calculator> => {
-  const config = calculatorConfigSchema.safeParse(fields?.configJson)
-
   /* Degrade, don't throw. `configJson` is declared nullable and the web client
    * already handles a missing config; throwing would instead be swallowed by
    * `safelyMapSliceUnion`, dropping the slice from the response entirely so
    * nothing downstream can tell "no calculator" from "a broken one". Editors
-   * are gated at authoring time by the Contentful widget's setInvalid. */
-  if (!config.success) {
+   * are gated at authoring time by the Contentful widget's setInvalid.
+   *
+   * Caught rather than `safeParse`d: search-indexer compiles this library with
+   * `strict: false`, where narrowing on zod's boolean discriminant does not
+   * apply and `.error` is unreachable. */
+  let configJson: CalculatorConfig | undefined
+
+  try {
+    configJson = calculatorConfigSchema.parse(fields?.configJson)
+  } catch (error) {
     logger.warn('Invalid calculator config', {
       id: sys.id,
-      error: config.error.message,
+      error: error instanceof Error ? error.message : String(error),
     })
   }
 
@@ -72,6 +78,6 @@ export const mapCalculator = ({
     calculatorType: fields?.type
       ? CALCULATOR_TYPE_BY_CONTENTFUL_VALUE[fields.type]
       : undefined,
-    configJson: config.success ? config.data : undefined,
+    configJson,
   }
 }
