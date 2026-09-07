@@ -53,6 +53,7 @@ import { ApiDomainsHmsModule } from '@island.is/api/domains/hms'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitsModule } from '@island.is/api/domains/housing-benefits'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
+import { IcelandicGovernmentEmployeesModule } from '@island.is/api/domains/icelandic-government-employees'
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { IcelandicMedicinesAgencyModule } from '@island.is/api/domains/icelandic-medicines-agency'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
@@ -144,6 +145,10 @@ import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clie
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { FinancialManagementAuthorityClientConfig } from '@island.is/clients/financial-management-authority'
+import {
+  FinancialManagementAuthorityEmployeesClientModule,
+  FinancialManagementAuthorityEmployeesClientConfig,
+} from '@island.is/clients/financial-management-authority-employees'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { InnaClientConfig } from '@island.is/clients/inna'
@@ -198,7 +203,6 @@ import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { LicenseConfig } from '@island.is/services/license'
-
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
@@ -367,7 +371,9 @@ const environment = getConfig
     DisabilityLicenseModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
+    IcelandicGovernmentEmployeesModule,
     IcelandicGovernmentInstitutionVacanciesModule,
+    FinancialManagementAuthorityEmployeesClientModule,
     IcelandicMedicinesAgencyModule,
     AircraftRegistryModule,
     ShipRegistryModule,
@@ -519,6 +525,7 @@ const environment = getConfig
         PowerBiConfig,
         AuthIdsApiClientConfig,
         FinancialManagementAuthorityClientConfig,
+        FinancialManagementAuthorityEmployeesClientConfig,
         IcelandicGovernmentInstitutionVacanciesClientConfig,
         RskRelationshipsClientConfig,
         RskRentalDayRateClientConfig,

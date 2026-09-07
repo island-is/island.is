@@ -1,0 +1,38 @@
+{
+  "name": "clients-financial-management-authority-employees",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/financial-management-authority-employees/src",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/financial-management-authority-employees"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/financial-management-authority-employees/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl --fail --show-error --location https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net/swagger/organization__v1/swagger.json > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/financial-management-authority-employees"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-ts -f libs/clients/financial-management-authority-employees/src/lib/openapi-ts.config.ts"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}
