@@ -828,6 +828,9 @@ export class HealthDirectorateService {
       replyBlockedReason: toConversationReplyBlockedReasonEnum(
         c.replyBlockedReason,
       ),
+      messagingWindowOpen: c.messagingWindowOpen ?? undefined,
+      messagingWindowClose: c.messagingWindowClose ?? undefined,
+      patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
