@@ -28,6 +28,11 @@ export const completedForm = buildForm({
       multiFieldTitle: messages.alertTitle,
       alertTitle: messages.alertMessage,
       alertMessage: undefined,
+      expandableIntro: messages.nextStepsIntro,
+      expandableDescription: messages.nextStepsDescription,
+      bottomButtonMessage: messages.financeButtonMessage,
+      bottomButtonLabel: messages.financeButtonLabel,
+      bottomButtonLink: '/minarsidur/fjarmal/stada',
     }),
   ],
 })
