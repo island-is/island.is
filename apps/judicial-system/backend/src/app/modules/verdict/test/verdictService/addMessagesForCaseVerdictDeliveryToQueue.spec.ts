@@ -10,7 +10,12 @@ import {
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
-import { Case, Defendant, Verdict, VerdictRepositoryService } from '../../../repository'
+import {
+  Case,
+  Defendant,
+  Verdict,
+  VerdictRepositoryService,
+} from '../../../repository'
 import { VerdictService } from '../../verdict.service'
 
 describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
@@ -65,11 +70,12 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
       ],
     } as Case
 
-    const result = await verdictService.addMessagesForCaseVerdictDeliveryToQueue(
-      theCase,
-      user,
-      transaction,
-    )
+    const result =
+      await verdictService.addMessagesForCaseVerdictDeliveryToQueue(
+        theCase,
+        user,
+        transaction,
+      )
 
     expect(mockVerdictRepositoryService.update).toHaveBeenCalledWith(
       caseId,
