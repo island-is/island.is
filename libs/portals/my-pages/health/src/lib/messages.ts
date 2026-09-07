@@ -1300,10 +1300,6 @@ export const messages = defineMessages({
     id: 'sp.health:quick-link-medicine-prescription',
     defaultMessage: 'Endurnýja lyf',
   },
-  quickLinkMedicineDelegation: {
-    id: 'sp.health:quick-link-medicine-delegation',
-    defaultMessage: 'Umboðsstillingar',
-  },
   quickLinkWaitlists: {
     id: 'sp.health:quick-link-waitlists',
     defaultMessage: 'Biðlistar',

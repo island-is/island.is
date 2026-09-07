@@ -15,7 +15,6 @@ import {
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
 import { z } from 'zod'
-import { DelegationPaths } from '@island.is/portals/shared-modules/delegations'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { HealthPaths } from '../../lib/paths'
@@ -52,7 +51,17 @@ const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 const QUICK_LINKS_NAMESPACE = 'Mínar síður Heilsa flýtileiðir'
 
 const quickLinksConfigSchema = z.object({
-  quickLinks: z.array(z.object({ text: z.string(), url: z.string() })),
+  quickLinks: z.array(
+    z.object({
+      text: z.string().trim().min(1),
+      // Only allow the url shapes LinkResolver handles. Blocks e.g. javascript: from the CMS.
+      url: z
+        .string()
+        .trim()
+        .min(1)
+        .refine((url) => url.startsWith('/') || /^https?:\/\//i.test(url)),
+    }),
+  ),
 })
 
 const parseQuickLinksConfig = (fields?: string | null) => {
