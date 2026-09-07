@@ -113,5 +113,22 @@ export const debts = {
       defaultMessage: 'Til greiðslu',
       description: 'Label for total amount to pay',
     },
+    totalDebtsLabel: {
+      id: 'pd.application:debts.table.totalDebtsLabel',
+      defaultMessage: 'Heildarskuld',
+      description: 'Label for the total debts footer row',
+    },
+    totalToPayLabel: {
+      id: 'pd.application:debts.table.totalToPayLabel',
+      defaultMessage: 'Samtals til greiðslu',
+      description:
+        'Label for total amount selected to pay, shown in the sticky footer',
+    },
+    totalLeftLabel: {
+      id: 'pd.application:debts.table.totalLeftLabel',
+      defaultMessage: 'Eftirstöðvar skuldar',
+      description:
+        'Label for remaining debt amount after payment, shown in the sticky footer',
+    },
   }),
 }
