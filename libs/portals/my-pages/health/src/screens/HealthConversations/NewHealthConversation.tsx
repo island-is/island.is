@@ -432,7 +432,10 @@ const NewHealthConversation = () => {
                     messages.healthConversationsNewTermsLabel,
                     {
                       link: (str: React.ReactNode) => (
-                        <InlineLink onClick={() => setTermsModalOpen(true)}>
+                        <InlineLink
+                          key="terms-link"
+                          onClick={() => setTermsModalOpen(true)}
+                        >
                           {str}
                         </InlineLink>
                       ),
