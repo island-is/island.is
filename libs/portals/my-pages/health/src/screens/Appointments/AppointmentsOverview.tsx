@@ -1,72 +1,100 @@
-import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
-import { Box, DatePicker, Filter, Input } from '@island.is/island-ui/core'
+import { HealthDirectorateAppointment } from '@island.is/api/schema'
+import { Box, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   LinkButton,
-  m,
 } from '@island.is/portals/my-pages/core'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
+import {
+  DEFAULT_APPOINTMENTS_STATUS,
+  PAST_APPOINTMENTS_STATUS,
+} from '../../utils/constants'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsQuery } from './Appointments.generated'
-import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
-import * as styles from './AppointmentsOverview.css'
-
-interface Filter {
-  statuses: HealthDirectorateAppointmentStatus[]
-  dates?: {
-    from?: Date
-  }
-}
 
 const AppointmentsOverview = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   useHealthPlausibleSwap()
 
-  const [filter, setFilter] = useState<Filter>({
-    statuses: [],
-    dates: {},
-  })
-  const [searchTerm, setSearchTerm] = useState<string>('')
-  const { data, loading, error } = useGetAppointmentsQuery({
+  const [pastTabVisited, setPastTabVisited] = useState(false)
+
+  const { value: showSendMessageButton } = useFeatureFlag(
+    Features.isServicePortalHealthMessagesPageEnabled,
+    false,
+  )
+
+  const upcoming = useGetAppointmentsQuery({
     fetchPolicy: 'network-only',
     variables: {
-      from: filter.dates?.from,
-      status:
-        filter.statuses.length > 0
-          ? filter.statuses
-          : DEFAULT_APPOINTMENTS_STATUS,
+      status: DEFAULT_APPOINTMENTS_STATUS,
     },
   })
 
-  const appointments = data?.healthDirectorateAppointments
-  const hasAppointments = (appointments?.data?.length ?? 0) > 0
+  const past = useGetAppointmentsQuery({
+    fetchPolicy: 'network-only',
+    variables: {
+      // The client defaults "from" to today when omitted, which would return
+      // no past appointments — any date before the data migration works here
+      from: new Date('2026-01-01'),
+      status: PAST_APPOINTMENTS_STATUS,
+    },
+    skip: !pastTabVisited,
+  })
 
-  const filteredData = (() => {
-    if (!appointments?.data || !searchTerm) return appointments?.data ?? []
+  const upcomingAppointments =
+    upcoming.data?.healthDirectorateAppointments?.data ?? []
+  const pastAppointments = [
+    ...(past.data?.healthDirectorateAppointments?.data ?? []),
+  ].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
 
-    const search = searchTerm.trim().toLowerCase()
-
-    return appointments.data.filter((a) =>
-      [
-        a.title,
-        formatDate(a.date ?? ''),
-        a.location?.address,
-        a.location?.name,
-        ...(a.practitioners ?? []),
-      ]
-        .filter(Boolean)
-        .some((value) => value?.toLowerCase().includes(search)),
+  const renderAppointmentList = (
+    appointments: HealthDirectorateAppointment[],
+    query: Pick<typeof upcoming, 'loading' | 'error'>,
+    emptyText: string,
+  ) => {
+    if (query.loading) {
+      return <CardLoader />
+    }
+    if (query.error) {
+      return (
+        <Problem
+          type="internal_service_error"
+          noBorder={false}
+          error={query.error}
+        />
+      )
+    }
+    if (appointments.length === 0) {
+      return (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(messages.noAppointmentsTitle)}
+          message={emptyText}
+          imgSrc="./assets/images/nodata.svg"
+        />
+      )
+    }
+    return (
+      <Appointments
+        data={{
+          data: { data: appointments },
+          loading: query.loading,
+          error: query.error ? true : false,
+        }}
+        showLinkButton={false}
+      />
     )
-  })()
+  }
 
   return (
     <IntroWrapper
@@ -78,161 +106,72 @@ const AppointmentsOverview = () => {
       }}
     >
       <Box
-        display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
+        display="flex"
+        flexWrap="wrap"
+        columnGap={2}
+        rowGap={2}
         marginBottom={4}
       >
-        <LinkButton
-          to={HealthPaths.HealthBookAppointment}
-          text={formatMessage(messages.bookAppointmentButtonText)}
-          variant="primary"
-          size="small"
-          icon="time"
-        />
-      </Box>
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        flexWrap={['wrap', 'wrap', 'nowrap']}
-        columnGap={4}
-        rowGap={2}
-        marginBottom={3}
-      >
-        {!loading &&
-          !error &&
-          (hasAppointments ||
-            filter.statuses.length > 0 ||
-            filter.dates?.from) && (
-            <Box>
-              <Filter
-                labelClearAll={formatMessage(m.clearAllFilters)}
-                labelClear={formatMessage(m.clearFilter)}
-                labelOpen={formatMessage(m.openFilter)}
-                reverse
-                variant="popover"
-                align="left"
-                filterInput={
-                  <Input
-                    name="nameSearch"
-                    placeholder={formatMessage(
-                      messages.appointmentSearchPlaceholder,
-                    )}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    icon={{ type: 'outline', name: 'search' }}
-                    size="xs"
-                    backgroundColor="blue"
-                  />
-                }
-                onFilterClear={() => {
-                  setFilter({ statuses: [], dates: undefined })
-                  setSearchTerm('')
-                }}
-              >
-                {/* Hide until we decide to display more than booked (upcoming) appointments */}
-                {/* <Box
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="spaceBetween"
-                  paddingX={3}
-                  marginTop={3}
-                  marginBottom={1}
-                >
-                  <Text variant={'h5'} as="span" color={'blue400'}>
-                    {formatMessage(messages.status)}
-                  </Text>
-                  {DEFAULT_APPOINTMENTS_STATUS.sort((a, b) =>
-                    mapLabel(a).localeCompare(mapLabel(b)),
-                  ).map((status) => (
-                    <Box key={status} paddingTop={2}>
-                      <Checkbox
-                        name={status}
-                        label={mapLabel(status)}
-                        checked={filter.statuses.includes(status)}
-                        onChange={(event) => {
-                          const isChecked = event.target.checked
-                          setFilter((prev) => {
-                            let updatedStatuses = [...prev.statuses]
-                            if (isChecked) {
-                              updatedStatuses.push(status)
-                            } else {
-                              updatedStatuses = updatedStatuses.filter(
-                                (s) => s !== status,
-                              )
-                            }
-                            return { ...prev, statuses: updatedStatuses }
-                          })
-                        }}
-                      />
-                    </Box>
-                  ))}
-                </Box> */}
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="spaceBetween"
-                  paddingX={3}
-                  marginY={3}
-                >
-                  <Box display="flex" flexDirection="column">
-                    <Box className={styles.datePickerWrapper}>
-                      <DatePicker
-                        label={formatMessage(m.datepickerFromLabel)}
-                        placeholderText={formatMessage(m.datepickLabel)}
-                        locale="is"
-                        size="xs"
-                        backgroundColor="blue"
-                        selected={filter.dates?.from}
-                        handleChange={(from) => {
-                          setFilter((prev) => ({
-                            ...prev,
-                            dates: { from: from as Date },
-                          }))
-                        }}
-                        appearInline
-                      />
-                    </Box>
-                  </Box>
-                </Box>
-              </Filter>
-            </Box>
-          )}
-        <Box
-          display={['none', 'none', 'none', 'block']}
-          style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
-        >
+        {showSendMessageButton && (
           <LinkButton
-            to={HealthPaths.HealthBookAppointment}
-            text={formatMessage(messages.bookAppointmentButtonText)}
-            variant="primary"
+            to={HealthPaths.HealthConversationsNew}
+            text={formatMessage(messages.appointmentsSendMessageButton)}
+            variant="utility"
             size="small"
-            icon="time"
+            icon="arrowForward"
           />
-        </Box>
+        )}
+        <LinkButton
+          to={formatMessage(messages.heilsuveraMyPagesLink)}
+          text={formatMessage(messages.heilsuveraMyPagesButton)}
+          variant="utility"
+          size="small"
+          icon="open"
+        />
       </Box>
-      {!loading && error && (
-        <Problem type="internal_service_error" noBorder={false} error={error} />
-      )}
-      {!loading && !error && !hasAppointments && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(messages.noAppointmentsTitle)}
-          message={formatMessage(messages.noAppointmentsText)}
-          imgSrc="./assets/images/nodata.svg"
-        />
-      )}
-      {!error && loading && <CardLoader />}
-      {!error && !loading && hasAppointments && (
-        <Appointments
-          data={{
-            data: { data: filteredData },
-            loading,
-            error: error ? true : false,
-          }}
-          showLinkButton={false}
-        />
-      )}
+      <Tabs
+        label=""
+        selected="upcoming"
+        size="xs"
+        contentBackground="transparent"
+        onlyRenderSelectedTab
+        onChange={(id) => {
+          if (id === 'past') {
+            setPastTabVisited(true)
+          }
+        }}
+        tabs={[
+          {
+            id: 'upcoming',
+            label: formatMessage(messages.upcomingAppointmentsTab),
+            content: (
+              <Box paddingTop={3}>
+                {renderAppointmentList(
+                  upcomingAppointments,
+                  upcoming,
+                  formatMessage(messages.noAppointmentsText),
+                )}
+              </Box>
+            ),
+          },
+          {
+            id: 'past',
+            label: formatMessage(messages.pastAppointmentsTab),
+            content: (
+              <Box paddingTop={3}>
+                <Text variant="medium" marginBottom={3}>
+                  {formatMessage(messages.pastAppointmentsNote)}
+                </Text>
+                {renderAppointmentList(
+                  pastAppointments,
+                  past,
+                  formatMessage(messages.noPastAppointmentsText),
+                )}
+              </Box>
+            ),
+          },
+        ]}
+      />
     </IntroWrapper>
   )
 }

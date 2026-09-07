@@ -3,7 +3,6 @@ import {
   GridColumn,
   GridRow,
   Icon,
-  Inline,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -36,7 +35,6 @@ interface AppointmentCardProps {
 //     time: '11:40',
 //     location: {
 //       label: 'Heilsugæslan við Ásbrú',
-//       href: HealthPaths.HealthCenter,
 //     },
 //   },
 // },
@@ -55,44 +53,58 @@ export const TimeCard = ({
   const content = (
     <GridRow direction="row">
       <GridColumn span={'12/12'}>
-        <Box>
-          <Text
-            variant="h4"
-            marginBottom={1}
-            color={to ? 'blue400' : undefined}
-          >
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          marginBottom={2}
+        >
+          <Text variant="h4" color={to ? 'blue400' : undefined}>
             {title}
           </Text>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            width="full"
-            flexDirection={isMobile ? 'column' : 'row'}
-          >
-            <Text variant="medium" marginBottom={'smallGutter'}>
+          {to && <Icon icon="arrowForward" type="outline" color="blue400" />}
+        </Box>
+        <Box
+          display="flex"
+          columnGap={3}
+          rowGap={1}
+          flexDirection={isMobile ? 'column' : 'row'}
+          marginBottom={1}
+        >
+          <Box display="flex" alignItems="center" columnGap={1}>
+            <Icon icon="calendar" color="blue400" size="small" type="outline" />
+            <Text variant="medium">
               {data.weekday ? data.weekday + ', ' : ''}
               {data.date}
             </Text>
-            <Box
-              display="flex"
-              justifyContent={isMobile ? 'flexStart' : 'flexEnd'}
-              alignItems="center"
-              columnGap={1}
-              marginBottom={'smallGutter'}
-            >
-              <Icon icon="time" color="blue400" size="small" type="outline" />
-              <Text variant="medium">{data.time}</Text>
-            </Box>
           </Box>
-          {description && (
-            <Inline space={1}>
-              <Text variant="medium" marginBottom="smallGutter">
-                {description}
-              </Text>
-            </Inline>
-          )}
-          <Inline>
-            {data.location?.href ? (
+          <Box display="flex" alignItems="center" columnGap={1}>
+            <Icon icon="time" color="blue400" size="small" type="outline" />
+            <Text variant="medium">{data.time}</Text>
+          </Box>
+        </Box>
+        {description && (
+          <Box
+            display="flex"
+            alignItems="center"
+            columnGap={1}
+            marginBottom={1}
+          >
+            <Icon icon="person" color="blue400" size="small" type="outline" />
+            <Text variant="medium">{description}</Text>
+          </Box>
+        )}
+        {data.location?.label && (
+          <Box display="flex" alignItems="center" columnGap={1}>
+            <Box flexShrink={0}>
+              <Icon
+                icon="location"
+                color="blue400"
+                size="small"
+                type="outline"
+              />
+            </Box>
+            {data.location.href ? (
               <Box
                 onClick={(e) => {
                   // Stop propagation to prevent parent card link from triggering
@@ -105,14 +117,13 @@ export const TimeCard = ({
                   to={data.location.href}
                   text={data.location.label}
                   size="small"
-                  icon="link"
                 />
               </Box>
             ) : (
               <Text variant="medium">{data.location.label}</Text>
             )}
-          </Inline>
-        </Box>
+          </Box>
+        )}
       </GridColumn>
     </GridRow>
   )

@@ -2150,16 +2150,54 @@ export const messages = defineMessages({
   },
   appointmentsOverviewTitle: {
     id: 'sp.health:appointments-overview-title',
-    defaultMessage: 'Yfirlit tímabókana',
+    defaultMessage: 'Tímabókanir',
   },
   appointmentsIntro: {
-    defaultMessage: 'Hér getur þú séð tímabókanir framundan.',
+    defaultMessage:
+      'Hér sérðu tímabókanir þínar í heilbrigðisþjónustu. Suma tíma getur þú afbókað rafrænt en aðra hjá þjónustuveitanda. Ný lausn fyrir tímabókanir er í þróun á Mínum síðum. Á meðan getur þú bókað afmarkaða þjónustu í Heilsuveru eða óskað eftir tíma í skilaboðum.',
     id: 'sp.health:appointments-intro',
   },
   appointmentsDetailIntro: {
     defaultMessage:
-      'Hér finnur þú upplýsingar um bókaða tímann þinn. Þú getur bætt honum við dagatalið þitt, breytt bókuninni eða afbókað tíma ef þörf krefur.',
+      'Hér sérðu upplýsingar um tímabókunina þína. Þú getur bætt tímanum í dagatalið þitt og, ef hægt er, afbókað hann hér. Hafðu samband við þjónustuveitanda ef þú vilt færa tímann.',
     id: 'sp.health:appointments-detail-intro',
+  },
+  appointmentsSendMessageButton: {
+    defaultMessage: 'Senda skilaboð',
+    id: 'sp.health:appointments-send-message-button',
+  },
+  heilsuveraMyPagesButton: {
+    defaultMessage: 'Mínar síður á Heilsuveru',
+    id: 'sp.health:heilsuvera-my-pages-button',
+  },
+  heilsuveraMyPagesLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/',
+    id: 'sp.health:heilsuvera-my-pages-link',
+  },
+  upcomingAppointmentsTab: {
+    defaultMessage: 'Tímar framundan',
+    id: 'sp.health:upcoming-appointments-tab',
+  },
+  pastAppointmentsTab: {
+    defaultMessage: 'Liðnir tímar',
+    id: 'sp.health:past-appointments-tab',
+  },
+  pastAppointmentsNote: {
+    defaultMessage: 'Aðeins eru sýndir liðnir tímar frá og með 30. september 2025',
+    id: 'sp.health:past-appointments-note',
+  },
+  noPastAppointmentsText: {
+    defaultMessage: 'Engir liðnir tímar fundust',
+    id: 'sp.health:no-past-appointments-text',
+  },
+  cancelDeadlineText: {
+    defaultMessage: 'Hægt að afbóka rafrænt til {date} kl. {time}',
+    id: 'sp.health:cancel-deadline-text',
+  },
+  cancelNotPossibleOnline: {
+    defaultMessage:
+      'Ekki hægt að afbóka rafrænt. Hringdu í þjónustuveitanda til að afbóka eða færa tímann.',
+    id: 'sp.health:cancel-not-possible-online',
   },
   cancelAppointment: {
     defaultMessage: 'Afbóka tíma',
@@ -2182,30 +2220,9 @@ export const messages = defineMessages({
     defaultMessage: 'Ekki tókst að framkvæma aðgerð, reyndu aftur',
     id: 'sp.health:cancel-appointment-error',
   },
-  cancelAppointmentNotAllowedTitle: {
-    defaultMessage: 'Ekki hægt að afbóka tíma samdægurs',
-    id: 'sp.health:cancel-appointment-not-allowed-title',
-  },
-  cancelAppointmentNotAllowedText: {
-    defaultMessage:
-      'Ekki er hægt að afbóka tíma samdægurs. Hringdu í stofnunina ef þú þarft að afbóka eða breyta tímanum.',
-    id: 'sp.health:cancel-appointment-not-allowed-text',
-  },
-  cancelAppointmentNotAllowedGenericTitle: {
-    defaultMessage: 'Ekki hægt að afbóka hér',
-    id: 'sp.health:cancel-appointment-not-allowed-generic-title',
-  },
-  cancelAppointmentNotAllowedGenericText: {
-    defaultMessage: 'Hafðu samband við stofnunina til að afbóka tímann.',
-    id: 'sp.health:cancel-appointment-not-allowed-generic-text',
-  },
   appointmentCancelledStatus: {
     defaultMessage: 'Afbókað',
     id: 'sp.health:appointment-cancelled-status',
-  },
-  bookAppointmentButtonText: {
-    defaultMessage: 'Bóka tíma',
-    id: 'sp.health:book-appointment-button-text',
   },
   bookAppointmentTitle: {
     defaultMessage: 'Bóka tíma',
@@ -2842,10 +2859,6 @@ export const messages = defineMessages({
   instructions: {
     id: 'sp.health:instructions',
     defaultMessage: 'Leiðbeiningar',
-  },
-  appointmentSearchPlaceholder: {
-    id: 'sp.health:appointment-search-placeholder',
-    defaultMessage: 'Leita að tíma eða stað',
   },
   prescriptionBlockedIsRegiment: {
     defaultMessage: 'Ekki er hægt að endurnýja lyfjakúr',

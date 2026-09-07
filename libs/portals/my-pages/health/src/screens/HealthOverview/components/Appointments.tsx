@@ -11,7 +11,6 @@ import React from 'react'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
-import { generateGoogleMapsLink } from '../../../utils/googleMaps'
 import { mapWeekday } from '../../../utils/mappers'
 import { DataState } from '../../../utils/types'
 import { HealthDirectorateAppointments } from '@island.is/api/schema'
@@ -56,11 +55,6 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
           weekday: mapWeekday(appointment.date ?? '', formatMessage),
           location: {
             label: appointment.location?.name ?? '',
-            href:
-              generateGoogleMapsLink(
-                appointment.location?.latitude,
-                appointment.location?.longitude,
-              ) ?? undefined,
           },
         },
       })) ?? []

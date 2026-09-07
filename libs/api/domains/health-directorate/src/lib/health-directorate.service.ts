@@ -743,6 +743,7 @@ export class HealthDirectorateService {
         item.canCancel,
         item.canCancelBefore,
       ),
+      canCancelBefore: item.canCancelBefore,
     }
   }
 
