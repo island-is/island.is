@@ -910,6 +910,7 @@ export class HealthDirectorateService {
     const body: CreateConversationRequestDto = {
       nodeId: input.nodeId,
       groupId: input.groupId,
+      treatmentId: input.treatmentId ?? undefined,
       patientInitiatedTypeCode: input.patientInitiatedTypeCode,
       title: input.title ?? '',
       messageTextContent: input.messageTextContent,
@@ -984,6 +985,7 @@ export class HealthDirectorateService {
     const body: CreateCertificateRequestBody = {
       nodeId: input.nodeId,
       groupId: input.groupId,
+      treatmentId: input.treatmentId ?? undefined,
       certificateType: toCertificateTypeCode(input.certificateType),
       recipientName: input.recipientName,
       startDate: input.startDate,

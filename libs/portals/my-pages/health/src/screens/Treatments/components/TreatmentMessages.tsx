@@ -21,8 +21,12 @@ interface Props {
   newMessageHref?: string
 }
 
+// The design shows at most 3 recent messages; the server's cap is unspecified.
+const MAX_CONVERSATIONS = 3
+
 export const TreatmentMessages = ({ conversations, newMessageHref }: Props) => {
   const { formatMessage } = useLocale()
+  const visibleConversations = conversations.slice(0, MAX_CONVERSATIONS)
 
   return (
     <Box
@@ -54,7 +58,7 @@ export const TreatmentMessages = ({ conversations, newMessageHref }: Props) => {
         </Box>
       )}
 
-      {conversations.map((conversation) => (
+      {visibleConversations.map((conversation) => (
         <LinkResolver
           key={conversation.id}
           href={HealthPaths.HealthConversationsDetail.replace(
