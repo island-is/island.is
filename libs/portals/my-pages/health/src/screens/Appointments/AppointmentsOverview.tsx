@@ -131,7 +131,7 @@ const AppointmentsOverview = () => {
         />
       </Box>
       <Tabs
-        label=""
+        label={formatMessage(messages.appointmentsOverviewTitle)}
         selected="upcoming"
         size="xs"
         contentBackground="transparent"
