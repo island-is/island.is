@@ -29,6 +29,10 @@ describe('getActiveVerdict', () => {
     expect(getActiveVerdict([{ id: 'only' }])).toEqual({ id: 'only' })
   })
 
+  it('returns undefined for a sole explicitly inactive verdict', () => {
+    expect(getActiveVerdict([older])).toBeUndefined()
+  })
+
   it('returns undefined for an empty list', () => {
     expect(getActiveVerdict([])).toBeUndefined()
     expect(getActiveVerdict(undefined)).toBeUndefined()

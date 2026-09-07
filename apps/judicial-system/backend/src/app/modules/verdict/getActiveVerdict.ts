@@ -15,7 +15,7 @@ export const getActiveVerdict = <
   }
 
   // Active-only includes usually leave a single row without isActive in attributes.
-  if (verdicts.length === 1) {
+  if (verdicts.length === 1 && verdicts[0].isActive === undefined) {
     return verdicts[0]
   }
 

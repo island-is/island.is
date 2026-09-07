@@ -20,6 +20,8 @@ module.exports = {
       )
 
       // Prefer the verdict that existed when the certificate was delivered.
+      // Leave verdict_id null when no predecessor exists — do not attribute
+      // the event to a later replacement verdict.
       await queryInterface.sequelize.query(
         `
         UPDATE defendant_event_log AS del
@@ -28,23 +30,6 @@ module.exports = {
           FROM verdict AS v
           WHERE v.defendant_id = del.defendant_id
             AND v.created <= del.created
-          ORDER BY v.created DESC
-          LIMIT 1
-        )
-        WHERE del.event_type = 'VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE'
-          AND del.verdict_id IS NULL
-        `,
-        { transaction },
-      )
-
-      // Fallback when no verdict predates the event (clock skew / missing rows).
-      await queryInterface.sequelize.query(
-        `
-        UPDATE defendant_event_log AS del
-        SET verdict_id = (
-          SELECT v.id
-          FROM verdict AS v
-          WHERE v.defendant_id = del.defendant_id
           ORDER BY v.created DESC
           LIMIT 1
         )
