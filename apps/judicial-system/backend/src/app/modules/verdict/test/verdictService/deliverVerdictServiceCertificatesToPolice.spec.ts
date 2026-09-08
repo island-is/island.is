@@ -13,7 +13,8 @@ import { VerdictService } from '../../verdict.service'
 describe('VerdictService - deliverVerdictServiceCertificatesToPolice', () => {
   const caseId = uuid()
   const defendantId = uuid()
-  const verdictId = uuid()
+  const olderVerdictId = uuid()
+  const newerVerdictId = uuid()
   const transaction = {} as Transaction
 
   let verdictService: VerdictService
@@ -37,15 +38,20 @@ describe('VerdictService - deliverVerdictServiceCertificatesToPolice', () => {
     mockDefendantService = defendantService
   })
 
-  it('persists verdictId when logging certificate delivery', async () => {
-    const verdict = {
-      id: verdictId,
+  it('uses the newest verdict for the pdf and the delivery event', async () => {
+    const olderVerdict = {
+      id: olderVerdictId,
       created: new Date('2026-01-01'),
+    } as Verdict
+    const newerVerdict = {
+      id: newerVerdictId,
+      created: new Date('2026-06-01'),
     } as Verdict
 
     const defendant = {
       id: defendantId,
-      verdicts: [verdict],
+      // Older first: must not use verdicts[0]
+      verdicts: [olderVerdict, newerVerdict],
     } as Defendant
 
     const theCase = {
@@ -76,13 +82,14 @@ describe('VerdictService - deliverVerdictServiceCertificatesToPolice', () => {
 
     await verdictService.deliverVerdictServiceCertificatesToPolice(transaction)
 
+    expect(mockGetPdf).toHaveBeenCalledWith(theCase, defendant, newerVerdict)
     expect(mockCreateEvent).toHaveBeenCalledWith(
       {
         caseId,
         defendantId,
         eventType:
           DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
-        verdictId,
+        verdictId: newerVerdictId,
       },
       transaction,
     )

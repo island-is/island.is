@@ -1,7 +1,11 @@
 import subDays from 'date-fns/subDays'
 import { v4 as uuid } from 'uuid'
 
-import { DefendantEventType } from '@island.is/judicial-system/types'
+import {
+  DefendantEventType,
+  ServiceRequirement,
+  VerdictServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
 
@@ -28,32 +32,37 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
 
   const buildCase = ({
     defendantId,
-    latestVerdictId,
+    verdicts,
     eventLogs,
   }: {
     defendantId: string
-    latestVerdictId: string
+    verdicts: Verdict[]
     eventLogs: DefendantEventLog[]
   }): Case => {
-    const serviceDate = subDays(new Date(), 30)
-
     return {
       id: uuid(),
       defendants: [
         {
           id: defendantId,
-          verdicts: [
-            {
-              id: latestVerdictId,
-              created: subDays(new Date(), 10),
-              serviceDate,
-            } as Verdict,
-          ],
+          verdicts,
           eventLogs,
         } as Defendant,
       ],
     } as Case
   }
+
+  const eligibleVerdict = (
+    id: string,
+    created: Date,
+    serviceDate: Date,
+  ): Verdict =>
+    ({
+      id,
+      created,
+      serviceDate,
+      serviceRequirement: ServiceRequirement.REQUIRED,
+      serviceStatus: VerdictServiceStatus.ELECTRONICALLY,
+    } as Verdict)
 
   it('includes a defendant when a certificate was delivered only for an older verdict', async () => {
     const defendantId = uuid()
@@ -64,7 +73,13 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
     mockFindAll.mockResolvedValue([
       buildCase({
         defendantId,
-        latestVerdictId,
+        verdicts: [
+          eligibleVerdict(
+            latestVerdictId,
+            subDays(new Date(), 10),
+            subDays(new Date(), 30),
+          ),
+        ],
         eventLogs: [
           {
             eventType:
@@ -94,7 +109,13 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
     mockFindAll.mockResolvedValue([
       buildCase({
         defendantId,
-        latestVerdictId,
+        verdicts: [
+          eligibleVerdict(
+            latestVerdictId,
+            subDays(new Date(), 10),
+            subDays(new Date(), 30),
+          ),
+        ],
         eventLogs: [
           {
             eventType:
@@ -103,6 +124,39 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
             created: subDays(new Date(), 5),
           } as DefendantEventLog,
         ],
+      }),
+    ])
+
+    const result =
+      await internalCaseService.getIndictmentCaseDefendantsWithExpiredAppealDeadline()
+
+    expect(result).toEqual([])
+  })
+
+  it('excludes a defendant when only an older verdict is past the appeal deadline', async () => {
+    const defendantId = uuid()
+    const olderVerdictId = uuid()
+    const newerVerdictId = uuid()
+
+    const mockFindAll = mockCaseRepositoryService.findAll as jest.Mock
+    mockFindAll.mockResolvedValue([
+      buildCase({
+        defendantId,
+        // Unordered on purpose: selection must use newest by created,
+        // not the first matching expired row.
+        verdicts: [
+          eligibleVerdict(
+            olderVerdictId,
+            subDays(new Date(), 40),
+            subDays(new Date(), 35),
+          ),
+          eligibleVerdict(
+            newerVerdictId,
+            subDays(new Date(), 5),
+            subDays(new Date(), 3),
+          ),
+        ],
+        eventLogs: [],
       }),
     ])
 

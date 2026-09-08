@@ -775,7 +775,6 @@ export class InternalCaseService {
   async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
     { theCase: Case; defendant: Defendant }[]
   > {
-    const minDate = addDays(Date.now(), -VERDICT_APPEAL_WINDOW_DAYS)
     const cases = await this.caseRepositoryService.findAll({
       include: [
         {
@@ -800,15 +799,6 @@ export class InternalCaseService {
               required: true,
               separate: true,
               order: [['created', 'DESC']],
-              where: {
-                serviceRequirement: ServiceRequirement.REQUIRED,
-                serviceStatus: {
-                  [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
-                },
-                serviceDate: {
-                  [Op.lte]: minDate,
-                },
-              },
             },
           ],
         },
@@ -826,10 +816,14 @@ export class InternalCaseService {
       pipe(
         theCase.defendants ?? [],
         filterMap((defendant) => {
-          // Only the latest verdict is relevant
+          // Resolve the current verdict first; eligibility applies only to it.
           const latestVerdict = getLatestVerdict(defendant.verdicts)
 
-          if (!latestVerdict?.serviceDate) {
+          if (
+            !latestVerdict?.serviceDate ||
+            latestVerdict.serviceRequirement !== ServiceRequirement.REQUIRED ||
+            latestVerdict.serviceStatus === VerdictServiceStatus.NOT_APPLICABLE
+          ) {
             return option.none
           }
 
