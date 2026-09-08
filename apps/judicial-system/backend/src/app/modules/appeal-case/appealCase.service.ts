@@ -918,10 +918,12 @@ export class AppealCaseService {
       return
     }
 
+    // A new appeal defender is a new person for the court of appeals to
+    // confirm, whatever it had decided about the previous one.
     await this.defendantRepositoryService.update(
       theCase.id,
       defendantId,
-      appealDefender,
+      { ...appealDefender, isAppealDefenderConfirmed: false },
       { transaction },
     )
   }
