@@ -1,11 +1,10 @@
 import { Transaction } from 'sequelize'
 
+import { InternalServerErrorException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
-import { InternalServerErrorException } from '@nestjs/common'
 
 import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
 
