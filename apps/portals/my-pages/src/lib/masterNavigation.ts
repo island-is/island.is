@@ -33,6 +33,7 @@ import {
 import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
 import { socialBenefitsNavigation } from '@island.is/portals/my-pages/social-benefits'
 import { lawAndOrderNavigation } from '@island.is/portals/my-pages/law-and-order'
+import { estatesNavigation } from '@island.is/portals/my-pages/estates'
 import { companySignatureCollectionNavigation } from '@island.is/portals/my-pages/signature-collection'
 
 export const rootNavigationItem: PortalNavigationItem = {
@@ -80,5 +81,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     airDiscountNavigation,
     educationNavigation,
     lawAndOrderNavigation,
+    estatesNavigation,
   ],
 }

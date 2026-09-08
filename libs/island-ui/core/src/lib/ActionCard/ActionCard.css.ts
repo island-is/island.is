@@ -22,6 +22,15 @@ export const avatar = style({
   }),
 })
 
+export const contentBoxTagAndCta = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+  }),
+})
+
 export const button = style({
   ...themeUtils.responsiveStyle({
     sm: {
