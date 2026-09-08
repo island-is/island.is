@@ -121,9 +121,10 @@ export const messages = {
         id: 'doe.er.application:prerequisites.section.title',
         defaultMessage: 'Gagnaöflun',
       },
-      intro: {
-        id: 'doe.er.application:prerequisites.section.intro',
-        defaultMessage: equalityReportIntro,
+      description: {
+        id: 'doe.er.application:prerequisites.section.description#markdown',
+        defaultMessage:
+          'Hér má lesa nánar um [þjónustu- og gagnakerfi Jafnréttisstofu](https://island.is/s/jafnrettisstofa/thjonustu-og-gagnakerfi).',
       },
       checkboxLabel: {
         id: 'doe.er.application:prerequisites.section.checkboxLabel',

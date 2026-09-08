@@ -14,7 +14,7 @@ interface LinkAction {
   to: ComponentPropsWithoutRef<typeof Link>['to']
 }
 
-interface TagProps extends ComponentPropsWithoutRef<typeof Tag> {}
+type TagProps = ComponentPropsWithoutRef<typeof Tag>
 
 interface IdsAdminCardProps {
   title: ReactNode

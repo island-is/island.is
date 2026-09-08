@@ -76,6 +76,15 @@ export const messages = {
       id: 'doe.sr.application:general.newApplicationButtonLabel',
       defaultMessage: 'Ný skýrsla',
     },
+    instructionsLabel: {
+      id: 'doe.sr.application:general.instructionsLabel',
+      defaultMessage: 'Leiðbeiningar',
+    },
+    instructionsLink: {
+      id: 'doe.sr.application:general.instructionsLink',
+      defaultMessage:
+        'https://island.is/s/jafnrettisstofa/skyrslugjof-um-kynbundinn-launamun#sliceTitle-4tUJcZlnPKXLBgEKbUdhVq',
+    },
   }),
 
   notAllowed: defineMessages({
@@ -134,6 +143,11 @@ export const messages = {
       title: {
         id: 'doe.sr.application:prerequisites.section.title',
         defaultMessage: 'Gagnaöflun',
+      },
+      description: {
+        id: 'doe.sr.application:prerequisites.section.description#markdown',
+        defaultMessage:
+          'Hér má lesa nánar um [þjónustu- og gagnakerfi Jafnréttisstofu](https://island.is/s/jafnrettisstofa/thjonustu-og-gagnakerfi).',
       },
       checkboxLabel: {
         id: 'doe.sr.application:prerequisites.section.checkboxLabel',
@@ -655,6 +669,14 @@ export const messages = {
       retryButton: {
         id: 'doe.sr.application:report.criteria.retryButton',
         defaultMessage: 'Reyna aftur',
+      },
+      instructionsLabel: {
+        id: 'doe.sr.application:report.criteria.instructionsLabel',
+        defaultMessage: 'Nánar um starfaflokkun',
+      },
+      instructionsLink: {
+        id: 'doe.sr.application:report.criteria.instructionsLink',
+        defaultMessage: 'https://island.is/s/jafnrettisstofa/starfaflokkun',
       },
     }),
     subCriteria: defineMessages({
@@ -1469,6 +1491,14 @@ export const messages = {
         defaultMessage:
           'Skráðu ástæður og fyrirhugaðar aðgerðir fyrir þennan hóp.',
       },
+      instructionsLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.instructionsLabel',
+        defaultMessage: 'Leiðbeiningar',
+      },
+      instructionsLink: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.instructionsLink',
+        defaultMessage: 'https://island.is/s/jafnrettisstofa/urbotaaaetlun',
+      },
       postponeCardTitle: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCardTitle',
         defaultMessage: 'Fresta skilum á úrbótaáætlun',
@@ -1578,6 +1608,10 @@ export const messages = {
       defaultGroupName: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.defaultGroupName',
         defaultMessage: 'Sjálfgefinn hópur {index}',
+      },
+      addToExistingGroupPrefix: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.addToExistingGroupPrefix',
+        defaultMessage: 'Bæta við',
       },
       // New id rather than new copy on `groupMembers`: a CMS translation keyed
       // to the old id would win over whatever is written here, and this line
