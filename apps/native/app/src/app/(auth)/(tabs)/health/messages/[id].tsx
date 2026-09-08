@@ -133,6 +133,22 @@ export default function HealthMessageDetailScreen() {
   const messages = useMemo(() => conversation?.messages ?? [], [conversation])
   const isSkeleton = res.loading && !res.data
 
+  // An expired reply window is the one reason we can quantify, so name the
+  // number of days when the server sends it. It is nullable, so fall back to
+  // the generic wording rather than rendering a blank count.
+  const replyWindowDays = conversation?.patientReplyWindowDays
+  const replyBlockedMessage =
+    conversation?.replyBlockedReason ===
+      HealthDirectorateHealthConversationReplyBlockedReason.ReplyWindowExpired &&
+    replyWindowDays != null
+      ? intl.formatMessage(
+          { id: 'health.messages.replyBlocked.windowExpiredDays' },
+          { days: replyWindowDays },
+        )
+      : intl.formatMessage({
+          id: replyBlockedMessageId(conversation?.replyBlockedReason),
+        })
+
   const [markAsRead] = useMarkHealthConversationAsReadMutation({
     // Fire-and-forget: the server state self-corrects on the next load.
     onError: () => undefined,
@@ -518,9 +534,7 @@ export default function HealthMessageDetailScreen() {
                 <Alert
                   type="info"
                   size="small"
-                  message={intl.formatMessage({
-                    id: replyBlockedMessageId(conversation?.replyBlockedReason),
-                  })}
+                  message={replyBlockedMessage}
                   hasBorder
                 />
               )}
