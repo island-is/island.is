@@ -700,6 +700,11 @@ export interface UpdateDefendant {
   requestedDefenderName?: string
   isDefenderChoiceConfirmed?: boolean
   caseFilesSharedWithDefender?: boolean
+  appealDefenderName?: string
+  appealDefenderNationalId?: string
+  appealDefenderEmail?: string
+  appealDefenderPhoneNumber?: string
+  isAppealDefenderConfirmed?: boolean
   isSentToPrisonAdmin?: boolean
   punishmentType?: PunishmentType
   isAlternativeService?: boolean
