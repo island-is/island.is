@@ -1065,6 +1065,17 @@ export class AppealCaseService {
       )
     }
 
+    // Withdrawal is the only transition a verdict appeal supports so far. The
+    // ones that carry a ruling appeal to and through the court of appeals were
+    // written for that, and the court of appeals work has to take them on for
+    // verdict appeals deliberately - until then they are refused rather than
+    // applied to a case they were never checked against.
+    if (appealCase.appealType === AppealCaseType.VERDICT) {
+      throw new ForbiddenException(
+        `Verdict appeals cannot be transitioned with ${transition} yet`,
+      )
+    }
+
     // Withdrawing an in-court ruling-order appeal is per party: only the
     // withdrawing party's decision is marked, and the appeal case is not
     // withdrawn until every appealing party has withdrawn.
