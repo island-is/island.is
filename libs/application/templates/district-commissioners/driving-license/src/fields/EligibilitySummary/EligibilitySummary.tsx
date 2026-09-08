@@ -6,7 +6,7 @@ import {
   Text,
   VisuallyHidden,
 } from '@island.is/island-ui/core'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import ReviewSection from './ReviewSection'
 import { useFormContext } from 'react-hook-form'
@@ -17,31 +17,10 @@ import { m } from '../../lib/messages'
 export const EligibilitySummary: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
-  const { setValue, watch } = useFormContext()
+  const { setValue } = useFormContext()
   const { lang, formatMessage } = useLocale()
 
-  // The redesign flags are written by hidden inputs on this same screen
-  // (subSectionRequirements.ts), so `application.answers` is still stale on
-  // first render. Read live form state first, fall back to answers for
-  // returning visits after the value has been persisted.
-  const is65RenewalRedesignEnabled =
-    watch('is65RenewalRedesignEnabled') === true ||
-    getValueViaPath(application.answers, 'is65RenewalRedesignEnabled') === true
-
-  const isBTempRedesignEnabled =
-    watch('isBTempRedesignEnabled') === true ||
-    getValueViaPath(application.answers, 'isBTempRedesignEnabled') === true
-
-  const isBFullRedesignEnabled =
-    watch('isBFullRedesignEnabled') === true ||
-    getValueViaPath(application.answers, 'isBFullRedesignEnabled') === true
-
-  const { eligibility, loading, error } = useEligibility(
-    application,
-    is65RenewalRedesignEnabled,
-    isBTempRedesignEnabled,
-    isBFullRedesignEnabled,
-  )
+  const { eligibility, loading, error } = useEligibility(application)
 
   useEffect(() => {
     setValue('requirementsMet', eligibility?.isEligible || false)

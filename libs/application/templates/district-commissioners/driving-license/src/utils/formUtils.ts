@@ -64,16 +64,6 @@ export const hasContactGlassesMismatch = (
   )
 }
 
-// B-temp / B-full are on the redesigned (in-app certificate upload) flow only
-// when their redesign flag is on. Otherwise they use the legacy flow (no upload;
-// the applicant brings the certificate to sýslumaður, acknowledged via a
-// checkbox in the summary).
-export const isRedesignedBTempOrBFull = (answers: FormValue) =>
-  (getValueViaPath(answers, 'applicationFor') === B_TEMP &&
-    getValueViaPath(answers, 'isBTempRedesignEnabled') === true) ||
-  (getValueViaPath(answers, 'applicationFor') === B_FULL &&
-    getValueViaPath(answers, 'isBFullRedesignEnabled') === true)
-
 export const isVisible =
   (...fns: ConditionFn[]) =>
   (answers: FormValue) => {

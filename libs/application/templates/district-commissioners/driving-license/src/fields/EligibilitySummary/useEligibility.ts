@@ -41,9 +41,6 @@ export interface UseEligibilityResult {
 
 export const useEligibility = (
   application: Application,
-  is65RenewalRedesignEnabled: boolean,
-  isBTempRedesignEnabled: boolean,
-  isBFullRedesignEnabled: boolean,
 ): UseEligibilityResult => {
   const fakeData = getValueViaPath<DrivingLicenseFakeData>(
     application.answers,
@@ -91,47 +88,32 @@ export const useEligibility = (
     return relevantCategories.some((x) => x.issued !== drivingLicenseIssued)
   }
 
-  const usesNewPhotoSelector =
-    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
-    (applicationFor === B_TEMP && isBTempRedesignEnabled) ||
-    (applicationFor === B_FULL && isBFullRedesignEnabled)
-
   if (usingFakeData) {
-    let hasPhoto: boolean
-    if (usesNewPhotoSelector) {
-      // 'real' falls through to RLS/Þjóðskrá and populates externalData with
-      // real data. 'yes' / 'no' / 'metadata-only' all inject their fake shape
-      // into externalData via the data provider. So in every case the right
-      // answer comes from reading externalData through the same predicates
-      // the real path uses.
-      const qualityPhotoConfirmed = hasUsableRlsQualityPhoto(
-        application.externalData,
-      )
+    // A usable photo can come from the RLS quality photo or a Þjóðskrá facial
+    // photo. 'real' falls through to RLS/Þjóðskrá and populates externalData with
+    // real data; 'yes' / 'no' / 'metadata-only' inject their fake shape into
+    // externalData via the data provider. So in every case the right answer comes
+    // from reading externalData through the same predicates the real path uses.
+    const qualityPhotoConfirmed = hasUsableRlsQualityPhoto(
+      application.externalData,
+    )
 
-      const thjodskraPhotos =
-        getValueViaPath<{
-          images?: Array<{ contentSpecification?: string }>
-        }>(application.externalData, 'allPhotosFromThjodskra.data')?.images ??
-        []
-      const hasThjodskraFacial = thjodskraPhotos.some(
-        (p) => p.contentSpecification === 'FACIAL',
-      )
+    const thjodskraPhotos =
+      getValueViaPath<{
+        images?: Array<{ contentSpecification?: string }>
+      }>(application.externalData, 'allPhotosFromThjodskra.data')?.images ?? []
+    const hasThjodskraFacial = thjodskraPhotos.some(
+      (p) => p.contentSpecification === 'FACIAL',
+    )
 
-      hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
-    } else {
-      // Legacy photo flow now also reads the RLS quality photo from external
-      // data (the `hasRLSPhoto` fake toggle drives it), same as the real path.
-      hasPhoto = hasUsableRlsQualityPhoto(application.externalData)
-    }
+    const hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
+
     return {
       loading: false,
       eligibility: fakeEligibility(
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
         hasPhoto,
-        is65RenewalRedesignEnabled,
-        isBTempRedesignEnabled,
-        isBFullRedesignEnabled,
       ),
     }
   }
@@ -175,10 +157,8 @@ export const useEligibility = (
         remarksCannotRenew65.includes(remark.code),
       ) ?? false
 
-    // When the redesign is on, also require a usable photo.
-    const hasUsablePhoto = is65RenewalRedesignEnabled
-      ? computeUsablePhoto()
-      : true
+    // A usable photo is required.
+    const hasUsablePhoto = computeUsablePhoto()
 
     const requirements = [
       ...eligibility,
@@ -190,14 +170,10 @@ export const useEligibility = (
             },
           ]
         : []),
-      ...(is65RenewalRedesignEnabled
-        ? [
-            {
-              key: RequirementKey.hasNoPhoto,
-              requirementMet: hasUsablePhoto,
-            },
-          ]
-        : []),
+      {
+        key: RequirementKey.hasNoPhoto,
+        requirementMet: hasUsablePhoto,
+      },
     ]
 
     return {
@@ -214,7 +190,7 @@ export const useEligibility = (
     }
   }
 
-  if (application.answers.applicationFor === B_TEMP && isBTempRedesignEnabled) {
+  if (application.answers.applicationFor === B_TEMP) {
     const hasUsablePhoto = computeUsablePhoto()
 
     return {
@@ -235,7 +211,7 @@ export const useEligibility = (
     }
   }
 
-  if (application.answers.applicationFor === B_FULL && isBFullRedesignEnabled) {
+  if (application.answers.applicationFor === B_FULL) {
     const hasUsablePhoto = computeUsablePhoto()
 
     return {

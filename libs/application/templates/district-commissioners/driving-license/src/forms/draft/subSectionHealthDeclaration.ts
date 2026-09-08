@@ -8,7 +8,6 @@ import {
   buildRadioField,
   YES,
   NO,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
@@ -16,7 +15,6 @@ import { hasNoDrivingLicenseInOtherCountry } from '../../utils'
 import {
   getHealthRemarkDescriptions,
   hasContactGlassesMismatch,
-  isRedesignedBTempOrBFull,
   needsHealthCertificateCondition,
   shouldShowHealthRemarks,
 } from '../../utils/formUtils'
@@ -50,7 +48,7 @@ const healthQuestion = (id: string, label: typeof m['healthDeclaration1']) =>
  * `hasContactGlassesMismatch`, so the questions themselves are plain radio
  * fields with no side effects.
  *
- * Note: the two 65+ blocks below deliberately do NOT use this. 65+ has no
+ * Note: the 65+ block below deliberately does NOT use this. 65+ has no
  * questionnaire at all (per product decision it always submits a fresh health
  * certificate), so there is nothing to share.
  */
@@ -87,8 +85,8 @@ const healthDeclarationQuestions = () => [
  * only once a health condition is triggered (a "yes" answer, a health remark, or
  * a glasses code on the current license) — see `needsHealthCertificateCondition`.
  *
- * The 65+ redesigned block deliberately does not use this — its upload is
- * unconditional, so the shared gate would be wrong.
+ * The 65+ block deliberately does not use this — its upload is unconditional,
+ * so the shared gate would be wrong.
  */
 const healthCertificateFields = () => [
   buildDescriptionField({
@@ -123,9 +121,7 @@ const remarksAlert = () =>
   })
 
 // Persists the `hasHealthRemarks` answer that `needsHealthCertificateCondition`
-// and the submission service read. Only declared on the redesigned block — the
-// legacy block deliberately omits it to keep the legacy RLS `remarks` payload
-// unchanged (matching the original template).
+// and the submission service read.
 const hasHealthRemarksInput = () =>
   buildHiddenInput({
     id: 'hasHealthRemarks',
@@ -140,36 +136,16 @@ export const subSectionHealthDeclaration = buildSubSection({
   title: m.healthDeclarationSectionTitle,
   condition: hasNoDrivingLicenseInOtherCountry,
   children: [
-    // Legacy B-temp / B-full (redesign flag off) — questions only, no in-app
-    // upload. The certificate is brought to sýslumaður in person, acknowledged
-    // via the "bring it along" checkbox in the summary.
+    // B-temp / B-full — the ten health questions plus the conditional in-app
+    // certificate upload. The summary shows the uploaded file when required.
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
-      condition: (answers) =>
-        answers.applicationFor !== B_FULL_RENEWAL_65 &&
-        !isRedesignedBTempOrBFull(answers),
+      condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
       space: 2,
       children: [
         buildDescriptionField({
           id: 'healthDeclarationDescription',
-          description: m.healthDeclarationSubTitle,
-          marginBottom: 2,
-        }),
-        remarksAlert(),
-        ...healthDeclarationQuestions(),
-      ],
-    }),
-    // Redesigned B-temp / B-full (redesign flag on) — questions plus the
-    // conditional in-app certificate upload. The summary shows the uploaded file.
-    buildMultiField({
-      id: 'overviewRedesigned',
-      title: m.healthDeclarationMultiFieldTitle,
-      condition: isRedesignedBTempOrBFull,
-      space: 2,
-      children: [
-        buildDescriptionField({
-          id: 'healthDeclarationDescriptionRedesigned',
           description: m.healthDeclarationSubTitle,
           marginBottom: 2,
         }),
@@ -179,34 +155,17 @@ export const subSectionHealthDeclaration = buildSubSection({
         ...healthCertificateFields(),
       ],
     }),
-    // 65+ multifield (legacy) — flag OFF
+    // 65+ — description plus a mandatory certificate upload. No health questions
+    // (per product decision: 65+ always submits a fresh health certificate, with
+    // no per-condition questionnaire).
     buildMultiField({
       id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,
-      description: m.healthDeclarationMultiField65Description,
-      condition: (answers) =>
-        answers.applicationFor === B_FULL_RENEWAL_65 &&
-        getValueViaPath(answers, 'is65RenewalRedesignEnabled') !== true,
-      children: [
-        buildDescriptionField({
-          id: 'healthDeclarationDescription65',
-          description: m.healthDeclarationMultiField65Description,
-        }),
-      ],
-    }),
-    // 65+ multifield (redesigned) — flag ON. Description + mandatory cert
-    // upload. No health questions (per product decision: 65+ always submits
-    // a fresh health certificate, no per-condition questionnaire).
-    buildMultiField({
-      id: 'healthDeclarationAge65Redesigned',
-      title: m.healthDeclarationMultiFieldTitle,
-      condition: (answers) =>
-        answers.applicationFor === B_FULL_RENEWAL_65 &&
-        getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true,
+      condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
       space: 2,
       children: [
         buildDescriptionField({
-          id: 'healthDeclarationDescription65Redesigned',
+          id: 'healthDeclarationDescription65',
           description: m.healthDeclarationMultiField65DescriptionRedesigned,
           marginBottom: 2,
         }),

@@ -171,18 +171,6 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                     ],
                   allow65Renewal:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
-                  allow65RenewalRedesign:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL_REDESIGN
-                    ],
-                  allowBTempRedesign:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN
-                    ],
-                  allowBFullRedesign:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_B_FULL_REDESIGN
-                    ],
                 })
               },
               actions: [

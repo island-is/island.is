@@ -30,13 +30,6 @@ export interface PhotoSelectorSubSectionOptions {
   id: string
   // The product this photo step belongs to.
   applicationFor: DrivingLicenseApplicationFor
-  // Redesign feature-flag answer key that must be `true` for this step to show.
-  // Omit for products where the new selector is unconditional. 65+, B-temp and
-  // B-full gate on their redesign flags, which are off in prod.
-  redesignFlagKey?:
-    | 'is65RenewalRedesignEnabled'
-    | 'isBTempRedesignEnabled'
-    | 'isBFullRedesignEnabled'
   // Whether to show the "no usable photo" warning banner.
   withNoPhotoAlert: boolean
 }
@@ -53,31 +46,20 @@ const getFacialPhotos = (externalData: Application['externalData']) =>
   ).filter((p) => p.contentSpecification === 'FACIAL')
 
 /**
- * Shared builder for the redesign photo-selection step. 65+, B-temp and
- * B-full all render byte-identical pickers (Þjóðskrá facial photo + RLS quality
- * photo), differing only in id, product, redesign-flag gate and whether the
- * warning banner shows. Collapsing them here means the photo-resolution logic
- * lives in one place.
- *
- * Note: this does not touch the legacy `subSectionQualityPhoto` step (the
- * `willBringQualityPhoto` flow), which remains the live path for B-full and for
- * 65+ when its redesign flag is off — it must keep working until every flag is on.
+ * Shared builder for the photo-selection step. 65+, B-temp and B-full all render
+ * byte-identical pickers (Þjóðskrá facial photo + RLS quality photo), differing
+ * only in id, product and whether the warning banner shows. Collapsing them here
+ * means the photo-resolution logic lives in one place.
  */
 export const buildPhotoSelectorSubSection = ({
   id,
   applicationFor,
-  redesignFlagKey,
   withNoPhotoAlert,
 }: PhotoSelectorSubSectionOptions) => {
   const conditions: ConditionFn[] = [
     (answers) => answers.applicationFor === applicationFor,
+    hasNoDrivingLicenseInOtherCountry,
   ]
-  if (redesignFlagKey) {
-    conditions.push(
-      (answers) => getValueViaPath(answers, redesignFlagKey) === true,
-    )
-  }
-  conditions.push(hasNoDrivingLicenseInOtherCountry)
 
   return buildSubSection({
     id,

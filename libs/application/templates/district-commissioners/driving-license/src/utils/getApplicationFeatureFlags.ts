@@ -4,9 +4,6 @@ export enum DrivingLicenseFeatureFlags {
   ALLOW_FAKE = 'applicationTemplateDrivingLicenseAllowFakeData',
   ALLOW_LICENSE_SELECTION = 'applicationTemplateDrivingLicenseAllowLicenseSelection',
   ALLOW_65_RENEWAL = 'is65RenewalApplicationEnabled',
-  ALLOW_65_RENEWAL_REDESIGN = 'is65RenewalRedesignEnabled',
-  ALLOW_B_TEMP_REDESIGN = 'isBTempRedesignEnabled',
-  ALLOW_B_FULL_REDESIGN = 'isBFullRedesignEnabled',
 }
 
 export const getApplicationFeatureFlags = async (
@@ -16,9 +13,6 @@ export const getApplicationFeatureFlags = async (
     DrivingLicenseFeatureFlags.ALLOW_FAKE,
     DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION,
     DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL,
-    DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL_REDESIGN,
-    DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN,
-    DrivingLicenseFeatureFlags.ALLOW_B_FULL_REDESIGN,
   ]
 
   return (

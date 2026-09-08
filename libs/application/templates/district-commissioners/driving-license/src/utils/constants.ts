@@ -91,7 +91,6 @@ export type FakePhotoMode = 'yes' | 'no' | 'real' | 'metadata-only'
 
 export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
-  qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
   remarks?: YesOrNo
   howManyDaysHaveYouLivedInIceland: string | number

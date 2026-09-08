@@ -40,12 +40,7 @@ export const dataSchema = z.object({
       params: m.healthCertificateRequired,
     })
     .optional(),
-  willBringQualityPhoto: z.union([
-    z.array(z.enum([YES, NO])).nonempty(),
-    z.enum([YES, NO]),
-  ]),
   requirementsMet: z.boolean().refine((v) => v),
-  certificate: z.array(z.enum([YES, NO])).nonempty(),
   applicationFor: z.enum([B_FULL, B_TEMP, B_FULL_RENEWAL_65]),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
@@ -70,19 +65,16 @@ export const dataSchema = z.object({
       { path: ['drivingLicenseDeprivedOrRestrictedInOtherCountry'] },
     ),
   hasHealthRemarks: z.enum([YES, NO]),
-  // Captured into answers via a hidden input during prerequisites so
-  // subsection conditions in the draft form can branch on the redesign flag.
-  // Required-ness of `healthCertificate` for the redesigned 65+ flow is
-  // enforced at the field level (`.refine((files) => files.length > 0)` on
-  // `healthCertificate` above) — when the user reaches the upload screen the
-  // field is rendered as an empty array, the field-level refine fires, and
-  // the user can't advance without uploading. A cross-field `superRefine` was
-  // tried first but fired prematurely at the prerequisites→draft transition,
-  // before the user had reached the upload screen, blocking advance.
+  // Submission-contract constants written as `true` by hidden inputs in the
+  // draft form (subSectionRequirements.ts). The shared driving-license
+  // submission service branches on these frozen answers to pick the RLS
+  // endpoint; this app only runs the current flow, so they are always true.
+  // Required-ness of `healthCertificate` for the 65+ flow is enforced at the
+  // field level (`.refine((files) => files.length > 0)` on `healthCertificate`
+  // above) — when the user reaches the upload screen the field renders as an
+  // empty array, the field-level refine fires, and the user can't advance
+  // without uploading.
   is65RenewalRedesignEnabled: z.boolean().optional(),
-  // Captured into answers via a hidden input during prerequisites so the
-  // B-temp photo selector / eligibility gating and the submission service can
-  // branch on the redesign flag. Same mechanism as is65RenewalRedesignEnabled.
   isBTempRedesignEnabled: z.boolean().optional(),
   isBFullRedesignEnabled: z.boolean().optional(),
 })

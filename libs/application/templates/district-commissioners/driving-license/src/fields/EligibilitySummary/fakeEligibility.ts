@@ -1,26 +1,14 @@
 import { ApplicationEligibility, RequirementKey } from '@island.is/api/schema'
-import {
-  B_FULL,
-  B_FULL_RENEWAL_65,
-  B_TEMP,
-  DrivingLicenseApplicationFor,
-} from '../../utils/constants'
+import { B_FULL, DrivingLicenseApplicationFor } from '../../utils/constants'
 
 export const fakeEligibility = (
   applicationFor: DrivingLicenseApplicationFor,
   daysOfResidency = 365,
   hasPhoto = true,
-  is65RenewalRedesignEnabled = false,
-  isBTempRedesignEnabled = false,
-  isBFullRedesignEnabled = false,
 ): ApplicationEligibility => {
-  const usesPhotoGate =
-    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
-    (applicationFor === B_TEMP && isBTempRedesignEnabled) ||
-    (applicationFor === B_FULL && isBFullRedesignEnabled)
-
+  // Every product requires a usable photo, so eligibility tracks it directly.
   return {
-    isEligible: usesPhotoGate ? hasPhoto : true,
+    isEligible: hasPhoto,
     requirements: [
       ...(applicationFor === B_FULL
         ? [
@@ -32,23 +20,6 @@ export const fakeEligibility = (
               key: RequirementKey.drivingSchoolMissing,
               requirementMet: true,
             },
-            // When the B-full redesign is on, a usable photo is also required.
-            ...(isBFullRedesignEnabled
-              ? [
-                  {
-                    key: RequirementKey.hasNoPhoto,
-                    requirementMet: hasPhoto,
-                  },
-                ]
-              : []),
-          ]
-        : usesPhotoGate
-        ? [
-            {
-              key: RequirementKey.localResidency,
-              daysOfResidency,
-              requirementMet: daysOfResidency >= 185,
-            },
             {
               key: RequirementKey.hasNoPhoto,
               requirementMet: hasPhoto,
@@ -59,6 +30,10 @@ export const fakeEligibility = (
               key: RequirementKey.localResidency,
               daysOfResidency,
               requirementMet: daysOfResidency >= 185,
+            },
+            {
+              key: RequirementKey.hasNoPhoto,
+              requirementMet: hasPhoto,
             },
           ]),
       {

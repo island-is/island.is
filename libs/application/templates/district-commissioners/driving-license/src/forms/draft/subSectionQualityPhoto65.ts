@@ -1,11 +1,9 @@
 import { buildPhotoSelectorSubSection } from './buildPhotoSelectorSubSection'
 import { B_FULL_RENEWAL_65 } from '../../utils/constants'
 
-// 65+ renewal shows the redesign photo selector only when its redesign flag is
-// on. With the flag off, the legacy `subSectionQualityPhoto` step handles 65+.
+// 65+ renewal photo selection step.
 export const subSectionQualityPhoto65 = buildPhotoSelectorSubSection({
   id: 'photoStep65',
   applicationFor: B_FULL_RENEWAL_65,
-  redesignFlagKey: 'is65RenewalRedesignEnabled',
   withNoPhotoAlert: true,
 })

@@ -1,4 +1,4 @@
-import { buildForm, getValueViaPath, YES } from '@island.is/application/core'
+import { buildForm, YES } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
@@ -16,23 +16,18 @@ export const done: Form = buildForm({
         answers.applicationFor === B_TEMP
           ? m.applicationDoneAlertMessage
           : answers.applicationFor === B_FULL_RENEWAL_65
-          ? getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
-            ? m.applicationDoneAlertMessage65RenewalRedesigned
-            : m.applicationDoneAlertMessage65Renewal
+          ? m.applicationDoneAlertMessage65RenewalRedesigned
           : m.applicationDoneAlertMessageBFull,
       expandableHeader: m.nextStepsTitle,
       expandableIntro: ({ answers }) =>
-        answers.applicationFor === B_FULL_RENEWAL_65 &&
-        getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
+        answers.applicationFor === B_FULL_RENEWAL_65
           ? m.nextStepsIntro65RenewalRedesigned
           : m.nextStepsIntroDefault,
       expandableDescription: ({ answers, externalData }) =>
         answers.applicationFor === B_TEMP
           ? m.nextStepsDescription
           : answers.applicationFor === B_FULL_RENEWAL_65
-          ? getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
-            ? m.nextStepsDescription65RenewalRedesigned
-            : m.nextStepsDescription65Renewal
+          ? m.nextStepsDescription65RenewalRedesigned
           : needsHealthCertificateCondition(YES)(answers, externalData)
           ? m.nextStepsDescriptionBFull
           : m.nextStepsInfoLink,

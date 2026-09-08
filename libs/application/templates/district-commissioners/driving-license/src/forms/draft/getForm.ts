@@ -7,7 +7,6 @@ import { subSectionRequirements } from './subSectionRequirements'
 import { subSectionApplicantInfo } from './subSectionApplicantInfo'
 import { subSectionOtherCountry } from './subSectionOtherCountry'
 import { subSectionOtherCountryDirections } from './subSectionOtherCountryDirections'
-import { subSectionQualityPhoto } from './subSectionQualityPhoto'
 import { subSectionQualityPhoto65 } from './subSectionQualityPhoto65'
 import { subSectionQualityPhotoTemp } from './subSectionQualityPhotoTemp'
 import { subSectionQualityPhotoBFull } from './subSectionQualityPhotoBFull'
@@ -18,17 +17,11 @@ import { subSectionSummary } from './subSectionSummary'
 interface DrivingLicenseFormConfig {
   allowPickLicense?: boolean
   allow65Renewal?: boolean
-  allow65RenewalRedesign?: boolean
-  allowBTempRedesign?: boolean
-  allowBFullRedesign?: boolean
 }
 
 export const getForm = ({
   allowPickLicense = false,
   allow65Renewal = false,
-  allow65RenewalRedesign = false,
-  allowBTempRedesign = false,
-  allowBFullRedesign = false,
 }: DrivingLicenseFormConfig): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationDraftForm',
@@ -44,11 +37,7 @@ export const getForm = ({
           ...(allowPickLicense
             ? [subSectionApplicationFor(allow65Renewal)]
             : []),
-          subSectionRequirements(
-            allow65RenewalRedesign,
-            allowBTempRedesign,
-            allowBFullRedesign,
-          ),
+          subSectionRequirements(),
         ],
       }),
       buildSection({
@@ -58,7 +47,6 @@ export const getForm = ({
           subSectionApplicantInfo,
           subSectionOtherCountry,
           subSectionOtherCountryDirections,
-          subSectionQualityPhoto,
           subSectionQualityPhoto65,
           subSectionQualityPhotoTemp,
           subSectionQualityPhotoBFull,
