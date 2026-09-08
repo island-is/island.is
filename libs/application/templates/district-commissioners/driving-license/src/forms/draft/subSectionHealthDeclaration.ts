@@ -16,6 +16,7 @@ import { hasNoDrivingLicenseInOtherCountry } from '../../utils'
 import {
   getHealthRemarkDescriptions,
   hasContactGlassesMismatch,
+  isRedesignedBTempOrBFull,
   needsHealthCertificateCondition,
   shouldShowHealthRemarks,
 } from '../../utils/formUtils'
@@ -107,17 +108,47 @@ const healthCertificateFields = () => [
   }),
 ]
 
+// Warning shown when the current license carries a health-related remark. Its
+// own fresh instance per block so two multifields never share a field object.
+const remarksAlert = () =>
+  buildAlertMessageField({
+    id: 'remarks',
+    alertType: 'warning',
+    title: m.healthRemarksTitle,
+    message: (application, _locale, formatMessage) =>
+      `${
+        formatMessage?.(m.healthRemarksDescription) ?? ''
+      } ${getHealthRemarkDescriptions(application.externalData)}`.trim(),
+    condition: shouldShowHealthRemarks,
+  })
+
+// Persists the `hasHealthRemarks` answer that `needsHealthCertificateCondition`
+// and the submission service read. Only declared on the redesigned block — the
+// legacy block deliberately omits it to keep the legacy RLS `remarks` payload
+// unchanged (matching the original template).
+const hasHealthRemarksInput = () =>
+  buildHiddenInput({
+    id: 'hasHealthRemarks',
+    defaultValue: (application: Application) =>
+      shouldShowHealthRemarks(application.answers, application.externalData)
+        ? YES
+        : NO,
+  })
+
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
   title: m.healthDeclarationSectionTitle,
   condition: hasNoDrivingLicenseInOtherCountry,
   children: [
-    // Health declaration for B-temp and B-full — the questions plus the
-    // conditional certificate upload
+    // Legacy B-temp / B-full (redesign flag off) — questions only, no in-app
+    // upload. The certificate is brought to sýslumaður in person, acknowledged
+    // via the "bring it along" checkbox in the summary.
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
-      condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
+      condition: (answers) =>
+        answers.applicationFor !== B_FULL_RENEWAL_65 &&
+        !isRedesignedBTempOrBFull(answers),
       space: 2,
       children: [
         buildDescriptionField({
@@ -125,28 +156,25 @@ export const subSectionHealthDeclaration = buildSubSection({
           description: m.healthDeclarationSubTitle,
           marginBottom: 2,
         }),
-        buildAlertMessageField({
-          id: 'remarks',
-          alertType: 'warning',
-          title: m.healthRemarksTitle,
-          message: (application, _locale, formatMessage) =>
-            `${
-              formatMessage?.(m.healthRemarksDescription) ?? ''
-            } ${getHealthRemarkDescriptions(application.externalData)}`.trim(),
-          condition: shouldShowHealthRemarks,
+        remarksAlert(),
+        ...healthDeclarationQuestions(),
+      ],
+    }),
+    // Redesigned B-temp / B-full (redesign flag on) — questions plus the
+    // conditional in-app certificate upload. The summary shows the uploaded file.
+    buildMultiField({
+      id: 'overviewRedesigned',
+      title: m.healthDeclarationMultiFieldTitle,
+      condition: isRedesignedBTempOrBFull,
+      space: 2,
+      children: [
+        buildDescriptionField({
+          id: 'healthDeclarationDescriptionRedesigned',
+          description: m.healthDeclarationSubTitle,
+          marginBottom: 2,
         }),
-        // Persists the `hasHealthRemarks` answer that
-        // `needsHealthCertificateCondition` and the submission service read.
-        buildHiddenInput({
-          id: 'hasHealthRemarks',
-          defaultValue: (application: Application) =>
-            shouldShowHealthRemarks(
-              application.answers,
-              application.externalData,
-            )
-              ? YES
-              : NO,
-        }),
+        remarksAlert(),
+        hasHealthRemarksInput(),
         ...healthDeclarationQuestions(),
         ...healthCertificateFields(),
       ],

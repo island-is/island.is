@@ -1,9 +1,9 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildKeyValueField,
   buildSubmitField,
   buildCheckboxField,
+  buildDescriptionField,
   buildDividerField,
   buildSubSection,
   getValueViaPath,
@@ -11,6 +11,7 @@ import {
 } from '@island.is/application/core'
 import {
   DefaultEvents,
+  ExternalData,
   FormValue,
   StaticText,
 } from '@island.is/application/types'
@@ -22,13 +23,13 @@ import {
   B_FULL,
   B_FULL_RENEWAL_65,
   B_TEMP,
-  BE,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
 } from '../../utils/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
+  isRedesignedBTempOrBFull,
   needsHealthCertificateCondition,
 } from '../../utils'
 import { formatPhoneNumber } from '@island.is/shared/utils'
@@ -37,6 +38,27 @@ import { Pickup } from '../../types'
 const isRedesigned65 = (answers: FormValue) =>
   answers.applicationFor === B_FULL_RENEWAL_65 &&
   getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
+
+// Legacy "bring the certificate to sýslumaður" checkbox — only for flows with
+// no in-app upload (legacy B-temp / B-full and legacy 65+), and only once a
+// certificate is actually required.
+const showsBringAlongCertificate = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
+  !isRedesigned65(answers) &&
+  !isRedesignedBTempOrBFull(answers) &&
+  needsHealthCertificateCondition(YES)(answers, externalData)
+
+// Uploaded-certificate row — for flows that upload in-app: redesigned 65+
+// (mandatory) and redesigned B-temp / B-full when a certificate is required.
+const showsUploadedCertificate = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
+  isRedesigned65(answers) ||
+  (isRedesignedBTempOrBFull(answers) &&
+    needsHealthCertificateCondition(YES)(answers, externalData))
 
 export const subSectionSummary = buildSubSection({
   id: 'overview',
@@ -54,8 +76,6 @@ export const subSectionSummary = buildSubSection({
           value: ({ answers: { applicationFor } }) =>
             applicationFor === B_TEMP
               ? m.applicationForTempLicenseTitle
-              : applicationFor === BE
-              ? m.applicationForBELicenseTitle
               : applicationFor === B_FULL_RENEWAL_65
               ? m.applicationForRenewalLicenseTitle
               : m.applicationForFullLicenseTitle,
@@ -107,17 +127,14 @@ export const subSectionSummary = buildSubSection({
             (nationalRegistry.data as NationalRegistryUser).address?.city,
         }),
         buildDividerField({
-          condition: isApplicationForCondition([B_TEMP, BE]),
+          condition: isApplicationForCondition([B_TEMP]),
         }),
         buildKeyValueField({
           label: m.overviewTeacher,
           width: 'half',
-          condition: isApplicationForCondition([B_TEMP, BE]),
+          condition: isApplicationForCondition([B_TEMP]),
           value: ({ externalData, answers }) => {
-            if (
-              answers.applicationFor === B_TEMP ||
-              answers.applicationFor === BE
-            ) {
+            if (answers.applicationFor === B_TEMP) {
               const selectedNationalId = getValueViaPath<string>(
                 answers,
                 'drivingInstructor',
@@ -147,25 +164,17 @@ export const subSectionSummary = buildSubSection({
             )
           },
         }),
-        // Health cert section — old "bring along" checkbox flow.
-        // Renders for non-BE applicants whose health declaration triggered
-        // a cert requirement. Redesigned 65+ uploads instead, so suppress
-        // this block for that case to avoid double-rendering.
+        // Health cert section — legacy "bring it along" checkbox. Only for flows
+        // with no in-app upload (legacy B-temp / B-full and legacy 65+).
         buildDividerField({
-          condition: (answers, externalData) =>
-            answers.applicationFor !== BE &&
-            !isRedesigned65(answers) &&
-            needsHealthCertificateCondition(YES)(answers, externalData),
+          condition: showsBringAlongCertificate,
         }),
         buildDescriptionField({
           id: 'bringalong',
           title: m.overviewBringAlongTitle,
           titleVariant: 'h4',
           description: '',
-          condition: (answers, externalData) =>
-            answers.applicationFor !== BE &&
-            !isRedesigned65(answers) &&
-            needsHealthCertificateCondition(YES)(answers, externalData),
+          condition: showsBringAlongCertificate,
         }),
         buildCheckboxField({
           id: 'certificate',
@@ -178,27 +187,16 @@ export const subSectionSummary = buildSubSection({
               label: m.overviewBringCertificateData,
             },
           ],
-          condition: (answers, externalData) =>
-            answers.applicationFor !== BE &&
-            !isRedesigned65(answers) &&
-            needsHealthCertificateCondition(YES)(answers, externalData),
+          condition: showsBringAlongCertificate,
         }),
-        // Health cert section — uploaded-file display.
-        // BE: gated on health-declaration triggering the upload.
-        // Redesigned 65+: always shown (cert is mandatory regardless of
-        // health questions, which 65+ doesn't have).
+        // Health cert section — uploaded-file display. For flows that upload
+        // in-app: redesigned 65+ (mandatory) and redesigned B-temp / B-full.
         buildDividerField({
-          condition: (answers, externalData) =>
-            isRedesigned65(answers) ||
-            (answers.applicationFor === BE &&
-              needsHealthCertificateCondition(YES)(answers, externalData)),
+          condition: showsUploadedCertificate,
         }),
         buildKeyValueField({
           label: m.overviewHealthCertificateUploaded,
-          condition: (answers, externalData) =>
-            isRedesigned65(answers) ||
-            (answers.applicationFor === BE &&
-              needsHealthCertificateCondition(YES)(answers, externalData)),
+          condition: showsUploadedCertificate,
           value: ({ answers }) => {
             const files = getValueViaPath<Array<{ name: string }>>(
               answers,

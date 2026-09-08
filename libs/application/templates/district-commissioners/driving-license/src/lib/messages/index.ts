@@ -518,11 +518,6 @@ export const m = defineMessages({
       'Umsókn þín um endurnýjun ökuskírteinis hefur verið móttekin.',
     description: 'Application received - 65+ renewal (redesigned flow)',
   },
-  applicationDoneAlertMessageBE: {
-    id: 'dl.application:applicationDoneAlertMessageBE',
-    defaultMessage: 'Umsókn þín um BE réttindi hefur verið móttekin.',
-    description: 'Application received',
-  },
   nextStepsTitle: {
     id: 'dl.application:nextStepsTitle',
     defaultMessage: 'Næstu skref',
@@ -545,23 +540,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn þín hefur verið móttekin og verður skoðuð.',
     description: '',
   },
-  nextStepsIntroBE: {
-    id: 'dl.application:nextStepsIntroBE',
-    defaultMessage:
-      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Þegar umsókn hefur verið samþykkt verður hún send áfram í ökunámsbók. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
-    description: '',
-  },
   nextStepsIntro65RenewalRedesigned: {
     id: 'dl.application:nextStepsIntro65RenewalRedesigned',
     defaultMessage:
       'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
     description: 'Next steps intro - 65+ renewal (redesigned flow)',
-  },
-  nextStepsDescriptionBE: {
-    id: 'dl.application:nextStepsDescriptionBE#markdown',
-    defaultMessage:
-      'Þegar verklegu prófi er lokið verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
-    description: '',
   },
   // Legacy 65+ flow: user submits the application here, then must take a
   // health certificate to a district office before the license can be ordered.
@@ -709,13 +692,6 @@ export const m = defineMessages({
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
-  instructorDoesNotHaveBECategory: {
-    id: 'dl.application:instructorDoesNotHaveBECategory',
-    defaultMessage:
-      'Ökukennari er ekki með BE réttindi á ökuskírteini sínu. Vinsamlegast veldu annan ökukennara.',
-    description:
-      'Error message when selected driving instructor does not have BE category on their license',
-  },
   informationTitle: {
     id: 'dl.application:informationTitle',
     defaultMessage: 'Upplýsingar',
@@ -820,17 +796,6 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn um fullnaðarréttindi í B flokki (fólksbifreið)',
     description: 'Option description for selecting to renew driving license',
   },
-  applicationForBELicenseTitle: {
-    id: 'dl.application:applicationForBELicenseTitle',
-    defaultMessage: 'Eftirvagn BE',
-    description: 'Option title for selecting to apply for trailer license',
-  },
-  applicationForBELicenseDescription: {
-    id: 'dl.application:applicationForBELicenseDescription',
-    defaultMessage:
-      'Almenn ökuréttindi gefa réttindi til að mega draga kerrur sem eru allt að 750 kg, til að mega draga þyngri kerrur, hjólhýsi, hestakerrur ofl þarf réttindi sem kallast BE réttindi.',
-    description: 'Option title for selecting to apply for trailer license',
-  },
   declinedOtherCountryHelpText: {
     id: 'dl.application:declinedOtherCountryHelpText',
     defaultMessage:
@@ -891,14 +856,6 @@ export const m = defineMessages({
     defaultMessage:
       'Vinsamlegast gefðu upp símanúmerið þitt eða þá staðfestu að símanúmerið þitt sé rétt',
     description: 'Your phone number',
-  },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beLicenseHealthDeclarationRequiresHealthCertificate: {
-    id: 'dl.application:requirementunmet.beLicenseHealthDeclarationRequiresHealthCertificate',
-    defaultMessage:
-      'Athugaðu að þar sem þú þarft að skila inn læknisvottorði getur þú ekki haldið áfram með umsóknina. Þú þarft þú að mæta í þitt sýslumanns embætti með læknisvottorð og leggja inn umsókn á staðnum',
-    description:
-      'Health declaration answers indicate that health certificate is required and BE application does not support health certificate requirement',
   },
   photoSelectionTitle: {
     id: 'dl.application:photoSelection.title',
@@ -1038,23 +995,8 @@ export const requirementsMessages = defineMessages({
       'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
   },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beLicenseRequiresHealthCertificateDescription: {
-    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateDescription',
-    defaultMessage:
-      'Ef tákntölur sem varða heilsufar/sjón eru skráðar á fyrri ökuskírteini eða umsækjandi er nú þegar með aukin ökuréttindi, þarf umsækjandi að mæta í sitt sýslumanns embætti með vottorð og leggja inn umsókn á staðnum',
-    description:
-      'BE application does not support health certificate requirement',
-  },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beLicenseRequiresHealthCertificateTitle: {
-    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateTitle',
-    defaultMessage: 'Læknisvottorð',
-    description:
-      'BE application does not support health certificate requirement',
-  },
-  // Used by both BE and redesigned 65+ flows when no usable photo (Þjóðskrá
-  // facial photo or RLS quality photo) is available.
+  // Used by the redesigned 65+ / photo-selection flows when no usable photo
+  // (Þjóðskrá facial photo or RLS quality photo) is available.
   beLicenseQualityPhotoTitle: {
     id: 'dl.application:requirementunmet.beLicenseQualityPhotoTitle',
     defaultMessage: 'Gæðavottuð mynd',
@@ -1065,7 +1007,7 @@ export const requirementsMessages = defineMessages({
     id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescriptionV2',
     defaultMessage:
       'Ef hvorki er hægt að nota mynd sem uppfyllir skilyrði úr skilríkjaskrá né ökutækjaskrá, verður þú að koma með passamynd á ljósmyndapappír (4,5 cm x 3,5 cm) til næsta sýslumannsembættis og skila inn umsókn á staðnum. Ef fyrra ökuskírteini var gefið út fyrir júlí 2013 þarf að uppfæra myndina.',
-    description: 'BE quality photo requirement description',
+    description: 'Quality photo requirement description',
   },
   noExtendedDrivingLicenseTitle: {
     id: 'dl.application:requirementunmet.noExtendedDrivingLicenseTitle',

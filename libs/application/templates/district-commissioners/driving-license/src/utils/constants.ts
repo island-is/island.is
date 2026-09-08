@@ -9,7 +9,6 @@ export enum ApiActions {
 export const B_FULL = 'B-full'
 export const B_TEMP = 'B-temp'
 export const B_FULL_RENEWAL_65 = 'B-full-renewal-65'
-export const BE = 'BE'
 export const DELIVERY_FEE = 'deliveryFee'
 
 export enum Pickup {
@@ -21,12 +20,11 @@ export const CHARGE_ITEM_CODES: Record<string, string> = {
   [B_TEMP]: 'AY114',
   [B_FULL]: 'AY110',
   [B_FULL_RENEWAL_65]: 'AY113',
-  [BE]: 'AY148',
   [DELIVERY_FEE]: 'AY145',
 }
 
 export const otherLicenseCategories = ['C', 'C1', 'CE', 'D', 'D1', 'DE']
-// Remark codes that trigger the BE health-certificate upload. Mirrors EU
+// Remark codes that trigger the health-certificate upload. Mirrors EU
 // Directive 2006/126/EC Annex I §5 (vision / hearing / prosthesis), per
 // Samgöngustofa regulation. Administrative codes (e.g. `71` samrit) must
 // not be in this list.
@@ -61,7 +59,6 @@ export type DrivingLicenseApplicationFor =
   | typeof B_FULL
   | typeof B_TEMP
   | typeof B_FULL_RENEWAL_65
-  | typeof BE
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }
@@ -82,7 +79,7 @@ export enum States {
   PREREQUISITES = 'prerequisites',
 }
 
-type FakeCurrentLicense = 'none' | 'temp' | 'full' | 'BE'
+type FakeCurrentLicense = 'none' | 'temp' | 'full'
 
 // Fake-photo modes for hasThjodskraPhoto / hasRLSPhoto:
 //   'yes'           — inject a fake photo

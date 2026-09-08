@@ -25,19 +25,19 @@ export interface ThjodskraImage {
 }
 
 export interface PhotoSelectorSubSectionOptions {
-  // Unique sub-section id (e.g. 'photoStepBE'). Kept per-product so form-node
+  // Unique sub-section id (e.g. 'photoStep65'). Kept per-product so form-node
   // ids stay stable and in-flight drafts are unaffected.
   id: string
   // The product this photo step belongs to.
   applicationFor: DrivingLicenseApplicationFor
   // Redesign feature-flag answer key that must be `true` for this step to show.
-  // Omit for products where the new selector is unconditional (BE). 65+ and
-  // B-temp gate on their redesign flags, which are off in prod.
+  // Omit for products where the new selector is unconditional. 65+, B-temp and
+  // B-full gate on their redesign flags, which are off in prod.
   redesignFlagKey?:
     | 'is65RenewalRedesignEnabled'
     | 'isBTempRedesignEnabled'
     | 'isBFullRedesignEnabled'
-  // Whether to show the "no usable photo" warning banner. BE omits it.
+  // Whether to show the "no usable photo" warning banner.
   withNoPhotoAlert: boolean
 }
 
@@ -53,7 +53,7 @@ const getFacialPhotos = (externalData: Application['externalData']) =>
   ).filter((p) => p.contentSpecification === 'FACIAL')
 
 /**
- * Shared builder for the redesign photo-selection step. BE, 65+, B-temp and
+ * Shared builder for the redesign photo-selection step. 65+, B-temp and
  * B-full all render byte-identical pickers (Þjóðskrá facial photo + RLS quality
  * photo), differing only in id, product, redesign-flag gate and whether the
  * warning banner shows. Collapsing them here means the photo-resolution logic

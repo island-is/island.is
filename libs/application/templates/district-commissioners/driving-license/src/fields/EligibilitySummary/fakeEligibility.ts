@@ -3,7 +3,6 @@ import {
   B_FULL,
   B_FULL_RENEWAL_65,
   B_TEMP,
-  BE,
   DrivingLicenseApplicationFor,
 } from '../../utils/constants'
 
@@ -16,7 +15,6 @@ export const fakeEligibility = (
   isBFullRedesignEnabled = false,
 ): ApplicationEligibility => {
   const usesPhotoGate =
-    applicationFor === BE ||
     (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
     (applicationFor === B_TEMP && isBTempRedesignEnabled) ||
     (applicationFor === B_FULL && isBFullRedesignEnabled)

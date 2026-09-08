@@ -10,7 +10,6 @@ import {
   B_FULL,
   B_FULL_RENEWAL_65,
   B_TEMP,
-  BE,
   codesExtendedLicenseCategories,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
@@ -93,7 +92,6 @@ export const useEligibility = (
   }
 
   const usesNewPhotoSelector =
-    applicationFor === BE ||
     (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
     (applicationFor === B_TEMP && isBTempRedesignEnabled) ||
     (applicationFor === B_FULL && isBFullRedesignEnabled)
@@ -159,27 +157,6 @@ export const useEligibility = (
     return thjodskraPhotos.some((p) => p.contentSpecification === 'FACIAL')
   }
 
-  if (application.answers.applicationFor === BE) {
-    const hasUsablePhoto = computeUsablePhoto()
-
-    return {
-      loading: loading,
-      eligibility: {
-        isEligible: loading
-          ? undefined
-          : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            hasUsablePhoto,
-        requirements: [
-          ...eligibility,
-          {
-            key: RequirementKey.hasNoPhoto,
-            requirementMet: hasUsablePhoto,
-          },
-        ],
-      },
-    }
-  }
-
   if (application.answers.applicationFor === B_FULL_RENEWAL_65) {
     const licenseB = currentLicense?.categories?.find(
       (license) => license.nr === 'B',
@@ -196,7 +173,7 @@ export const useEligibility = (
         remarksCannotRenew65.includes(remark.code),
       ) ?? false
 
-    // When the redesign is on, also require a usable photo (same as BE).
+    // When the redesign is on, also require a usable photo.
     const hasUsablePhoto = is65RenewalRedesignEnabled
       ? computeUsablePhoto()
       : true

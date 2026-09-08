@@ -64,6 +64,16 @@ export const hasContactGlassesMismatch = (
   )
 }
 
+// B-temp / B-full are on the redesigned (in-app certificate upload) flow only
+// when their redesign flag is on. Otherwise they use the legacy flow (no upload;
+// the applicant brings the certificate to sýslumaður, acknowledged via a
+// checkbox in the summary).
+export const isRedesignedBTempOrBFull = (answers: FormValue) =>
+  (getValueViaPath(answers, 'applicationFor') === B_TEMP &&
+    getValueViaPath(answers, 'isBTempRedesignEnabled') === true) ||
+  (getValueViaPath(answers, 'applicationFor') === B_FULL &&
+    getValueViaPath(answers, 'isBFullRedesignEnabled') === true)
+
 export const isVisible =
   (...fns: ConditionFn[]) =>
   (answers: FormValue) => {
@@ -111,11 +121,10 @@ export const hasCompletedPrerequisitesStep =
     return requirementsMet === value
   }
 
-// Returns only the remarks whose code is on the BE health-certificate
-// allowlist (vision / hearing / prosthesis). Used both to decide whether the
-// `HealthRemarks` alert renders and to filter what is shown inside it, so
-// administrative remarks (e.g. `71` samrit) never appear in a "health"
-// warning.
+// Returns only the remarks whose code is on the health-certificate allowlist
+// (vision / hearing / prosthesis). Used both to decide whether the health-remarks
+// alert renders and to filter what is shown inside it, so administrative remarks
+// (e.g. `71` samrit) never appear in a "health" warning.
 export const getHealthCertificateRemarks = (
   remarks: Remark[] | undefined,
 ): Remark[] =>
@@ -169,7 +178,7 @@ export const hasUsableRlsQualityPhoto = (externalData: ExternalData): boolean =>
 
 export const getCodes = (application: Application): BasicChargeItem[] => {
   const applicationFor = getValueViaPath<
-    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
+    'B-full' | 'B-temp' | 'B-full-renewal-65'
   >(application.answers, 'applicationFor', 'B-full')
 
   const deliveryMethod = getValueViaPath<Pickup>(

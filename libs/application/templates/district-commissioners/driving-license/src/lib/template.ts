@@ -4,7 +4,6 @@ import {
   coreHistoryMessages,
 } from '@island.is/application/core'
 import {
-  Application,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -29,7 +28,6 @@ import {
   States,
   Roles,
   ApiActions,
-  BE,
   B_TEMP,
   B_FULL,
   B_FULL_RENEWAL_65,
@@ -63,9 +61,7 @@ const DrivingLicenseTemplate: ApplicationTemplate<
   // TEMP local bypass — do NOT commit. Re-enable once the ConfigCat flag exists.
   // featureFlag: Features.isDistrictCommissionerDrivingLicenseEnabled,
   name: (application) =>
-    application.answers.applicationFor === BE
-      ? m.applicationForBELicenseTitle.defaultMessage
-      : application.answers.applicationFor === B_TEMP
+    application.answers.applicationFor === B_TEMP
       ? m.applicationForDrivingLicense.defaultMessage +
         ' - ' +
         m.applicationForTempLicenseTitle.defaultMessage
@@ -153,19 +149,10 @@ const DrivingLicenseTemplate: ApplicationTemplate<
           name: m.applicationForDrivingLicense.defaultMessage,
           status: 'draft',
           progress: 0.4,
-          // BE drafts are short-lived (24h); all other license types keep the
-          // default 30 day lifecycle.
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: (application: Application) =>
-              new Date(
-                Date.now() +
-                  (application.answers.applicationFor === BE ? 1 : 30) *
-                    24 *
-                    3600 *
-                    1000,
-              ),
+            whenToPrune: 30 * 24 * 3600 * 1000,
           },
           roles: [
             {

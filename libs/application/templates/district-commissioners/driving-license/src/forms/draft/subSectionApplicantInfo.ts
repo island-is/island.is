@@ -16,7 +16,7 @@ import {
   TeacherV4,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
-import { B_TEMP, BE, B_FULL_RENEWAL_65, B_FULL } from '../../utils/constants'
+import { B_TEMP, B_FULL_RENEWAL_65, B_FULL } from '../../utils/constants'
 import { GET_DRIVING_LICENSE_TEACHERS } from '../../graphql/teachersQuery'
 
 export const subSectionApplicantInfo = buildSubSection({
@@ -34,11 +34,6 @@ export const subSectionApplicantInfo = buildSubSection({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForTempLicenseTitle,
           condition: (answers) => answers.applicationFor === B_TEMP,
-        }),
-        buildKeyValueField({
-          label: m.drivingLicenseTypeRequested,
-          value: m.applicationForBELicenseTitle,
-          condition: (answers) => answers.applicationFor === BE,
         }),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
