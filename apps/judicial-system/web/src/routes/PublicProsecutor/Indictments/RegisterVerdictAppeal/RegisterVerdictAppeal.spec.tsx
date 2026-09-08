@@ -125,7 +125,9 @@ describe('RegisterVerdictAppeal', () => {
       await screen.findByRole('heading', { name: 'Áfrýjun til Landsréttar' }),
     ).toBeInTheDocument()
     expect(screen.getByText('Mál nr. S-123/2026')).toBeInTheDocument()
-    expect(screen.getByText(/Dómsuppkvaðning 16\. maí 2026/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Dómsuppkvaðning 16\. maí 2026/),
+    ).toBeInTheDocument()
     expect(screen.getByText('Áfrýjunaryfirlýsing')).toBeInTheDocument()
     expect(screen.getByText('Gögn')).toBeInTheDocument()
     expect(screen.getByText('Dagsetning áfrýjunar')).toBeInTheDocument()
