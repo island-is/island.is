@@ -20,11 +20,6 @@ type ConfiguredEnvironments =
 export type EditTenantLoaderResult = NonNullable<
   TenantDetailsQuery['authAdminTenantDetails']
 > & {
-  /**
-   * All environments the admin API is configured for, not just the ones the
-   * tenant exists in, so the environment picker can offer publishing to a
-   * missing environment.
-   */
   configuredEnvironments: ConfiguredEnvironments
 }
 

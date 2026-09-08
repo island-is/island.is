@@ -17,11 +17,6 @@ interface EnvironmentHeaderProps {
   title: string
   selectedEnvironment: AuthAdminEnvironment
   availableEnvironments: AuthAdminEnvironment[]
-  /**
-   * Environments to offer in the picker. Anything not in
-   * `availableEnvironments` is offered as a publish target. Defaults to the
-   * environments of the tenant the resource belongs to.
-   */
   optionEnvironments?: AuthAdminEnvironment[]
   onChange(value: AuthAdminEnvironment): void
   preHeader?: ReactNode
