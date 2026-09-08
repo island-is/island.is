@@ -10,6 +10,7 @@ import {
 import {
   AppealCaseNotificationType,
   AppealCaseState,
+  AppealCaseType,
   AppealEventType,
   AppealOrigin,
   CaseFileCategory,
@@ -117,7 +118,11 @@ describe('LimitedAccessAppealCaseController - Create', () => {
     it('should create an appealed appeal case', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
-        { appealState: AppealCaseState.APPEALED, appealDate: now },
+        {
+          appealType: AppealCaseType.RULING,
+          appealState: AppealCaseState.APPEALED,
+          appealDate: now,
+        },
         { transaction },
       )
       expect(then.result).toBe(createdAppealCase)
@@ -194,6 +199,7 @@ describe('LimitedAccessAppealCaseController - Create', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
+          appealType: AppealCaseType.RULING,
           appealState: AppealCaseState.APPEALED,
           rulingFileId,
           appealDate: now,
