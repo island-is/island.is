@@ -237,11 +237,13 @@ describe('AppealCaseController - Register verdict appeal', () => {
       )
     })
 
-    it('should record the defender who filed the appeal on the defendant', () => {
+    // A new appeal defender is unconfirmed until the court of appeals says
+    // otherwise, whatever it had decided about a previous one.
+    it('should record the defender who filed the appeal on the defendant, unconfirmed', () => {
       expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
         caseId,
         defendantId,
-        appealDefender,
+        { ...appealDefender, isAppealDefenderConfirmed: false },
         { transaction },
       )
     })
@@ -306,15 +308,19 @@ describe('AppealCaseController - Register verdict appeal', () => {
   })
 
   describe('the office registers without naming the defender', () => {
+    let then: Then
+
     beforeEach(async () => {
-      await givenWhenThen(buildCase(), {
+      then = await givenWhenThen(buildCase(), {
         appealType: AppealCaseType.VERDICT,
         defendantId,
         appealDate,
       })
     })
 
-    it('should leave the defendant untouched', () => {
+    it('should register and leave the defendant untouched', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.create).toHaveBeenCalled()
       expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
     })
   })

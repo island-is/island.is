@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { ForbiddenException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import {
   AppealCaseState,
@@ -243,7 +243,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
         transition: AppealCaseTransition.WITHDRAW_APPEAL,
       })
 
-      expect(then.error).toBeDefined()
+      expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     })
   })
