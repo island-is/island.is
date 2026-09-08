@@ -365,6 +365,23 @@ export const serviceSetup = (services: {
         staging: 'hh_env_staging',
         prod: 'hh_env_prod',
       },
+      PERSONAL_TAX_RETURN_URL: {
+        dev: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+        staging: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+        prod: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+      },
+      RVK_VEITA_BASE_URL: {
+        dev: 'https://app-sdg-api-test-swe-01-eudeebgxashkhvhx.swedencentral-01.azurewebsites.net/veita-api/islandis/application',
+        staging:
+          'https://app-sdg-api-test-swe-01-eudeebgxashkhvhx.swedencentral-01.azurewebsites.net/veita-api/islandis/application',
+        prod: 'https://app-sdg-api-test-swe-01-eudeebgxashkhvhx.swedencentral-01.azurewebsites.net/veita-api/islandis/application',
+      },
+      RVK_VEITA_AUTH_TOKEN_ENDPOINT: {
+        dev: 'https://login.microsoftonline.com/6aed0be3-a6ff-4c6c-83b5-bb72bdd10088/oauth2/v2.0/token',
+        staging:
+          'https://login.microsoftonline.com/6aed0be3-a6ff-4c6c-83b5-bb72bdd10088/oauth2/v2.0/token',
+        prod: 'https://login.microsoftonline.com/6aed0be3-a6ff-4c6c-83b5-bb72bdd10088/oauth2/v2.0/token',
+      },
       REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -489,6 +506,13 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
+      PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID:
+        '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID',
+      PERSONAL_TAX_RETURN_AGENT_ID:
+        '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_ID',
+      RVK_VEITA_CLIENT_ID: '/k8s/application-system/api/RVK_VEITA_CLIENT_ID',
+      RVK_VEITA_CLIENT_SECRET:
+        '/k8s/application-system/api/RVK_VEITA_CLIENT_SECRET',
     })
     .db()
     .migrations()

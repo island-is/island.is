@@ -78,6 +78,12 @@ const employmentSchema = z
     path: ['custom'],
   })
 
+const File = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
     params: error.validation.dataGathering,
@@ -96,6 +102,7 @@ export const dataSchema = z.object({
   relationshipStatus: relationshipStatusSchema,
   childrenSchoolInfo: childrenSchoolInfoSchema,
   childrenComment: z.string().optional(),
+  rvkChildrenFiles: z.array(File).optional(),
   homeCircumstances: homeCircumstancesSchema,
   student: studentSchema,
   employment: employmentSchema,
