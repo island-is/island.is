@@ -587,14 +587,41 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
   return `feature-${env.feature}`
 }
 
+const getFeatureIdsHost = (env: EnvironmentConfig) =>
+  `${env.feature}.identity-server.${env.domain}`;
+
+const getFeatureIdsUrl = (env: EnvironmentConfig, path = '') =>
+  `https://${getFeatureIdsHost(env)}${path}`;
+
+const rewriteDevEnv = (
+  value: unknown,
+  rewrite: (value: string) => string,
+): unknown => {
+  if (
+    typeof value === 'object' &&
+    value !== null &&
+    'dev' in value &&
+    typeof value.dev === 'string'
+  ) {
+    return {
+      ...value,
+      dev: rewrite(value.dev),
+    }
+  }
+
+  return value;
+}
+
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
+
+    const featureIdsHost = getFeatureIdsHost(env);
     const idsServices = [
-      'identity-server-admin',
-      'identity-server-admin',
       'identity-server',
+      'auth-admin-web',
+      'services-auth-admin-api',
       'services-auth-public-api',
-    ]
+    ];
 
     Object.values(s.ingress).forEach((ingress) => {
       if (!Array.isArray(ingress.host.dev)) {
@@ -602,16 +629,44 @@ export const HelmOutput: OutputFormat<HelmService> = {
       }
       //TODO if ids feature is configured in feature deployments
       if (idsServices.includes(s.image ?? '')) {
-        ingress.host.dev = ingress.host.dev.map((host) => {
-          if (host.includes('.')) {
-            const parts = host.split('.')
-            return `${env.feature}${parts.slice(1).join('.')}.identity-server.${
-              env.domain
-            }`
-          } else {
-            return `${env.feature}.identity-server.${env.domain}`
-          }
-        })
+
+        s.env.IDENTITY_SERVER_ISSUER_URL = rewriteDevEnv(
+          s.env.IDENTITY_SERVER_ISSUER_URL,
+          () => getFeatureIdsUrl(env),
+        )
+
+        s.env.PUBLIC_URL = rewriteDevEnv(
+          s.env.PUBLIC_URL,
+          (value) => {
+            const url = new URL(value)
+            return getFeatureIdsUrl(env, url.pathname)
+          },
+        )
+
+        s.env.BASE_URL = rewriteDevEnv(
+          s.env.BASE_URL,
+          (value) => {
+            const url = new URL(value)
+            return getFeatureIdsUrl(env, url.pathname)
+          },
+        )
+
+        s.env.NEXTAUTH_URL = rewriteDevEnv(
+          s.env.NEXTAUTH_URL,
+          (value) => {
+            const url = new URL(value)
+            return getFeatureIdsUrl(env, url.pathname)
+          },
+        )
+
+        s.env.IDENTITYSERVER_DOMAIN = rewriteDevEnv(
+          s.env.IDENTITYSERVER_DOMAIN,
+          () => featureIdsHost,
+        )
+
+        ingress.host.dev = ingress.host.dev.map(
+          () => `${env.feature}.identity-server.${env.domain}`,
+        )
       } else {
         ingress.host.dev = ingress.host.dev.map(
           (host) => `${env.feature}-${host}`,
@@ -632,16 +687,6 @@ export const HelmOutput: OutputFormat<HelmService> = {
         env.feature!,
         s.initContainers.postgres,
       )
-    }
-    // set ids to feature deployment
-    if (s.env.IDENTITY_SERVER_ISSUER_URL) {
-      const currentValue = s.env.IDENTITY_SERVER_ISSUER_URL
-      if (typeof currentValue === 'object' && 'dev' in currentValue) {
-        s.env.IDENTITY_SERVER_ISSUER_URL = {
-          ...currentValue,
-          dev: `https://${env.feature}.identity-server.${env.domain}`,
-        }
-      }
     }
   },
   serializeService(
