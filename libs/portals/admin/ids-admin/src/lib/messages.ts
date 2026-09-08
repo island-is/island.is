@@ -1794,7 +1794,7 @@ export const m = defineMessages({
   tenantMunicipalityCodeTooltip: {
     id: 'ap.ids-admin:tenant-municipality-code-tooltip',
     defaultMessage:
-      'Only for municipality domains: the 4-digit municipality number (sveitarfélagsnúmer), e.g. "0000" for Reykjavíkurborg. Used to match users to their municipality.',
+      'Only for municipality domains: the 4-digit municipality number (sveitarfélagsnúmer). Used to match users to their municipality.',
   },
   errorMunicipalityCode: {
     id: 'ap.ids-admin:error-municipality-code',
