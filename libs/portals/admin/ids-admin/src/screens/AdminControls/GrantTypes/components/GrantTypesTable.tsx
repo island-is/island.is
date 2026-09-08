@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
@@ -14,6 +14,8 @@ import { useLocale } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 
 import { m } from '../../../../lib/messages'
+import { authAdminEnvironments } from '../../../../utils/environments'
+import { TableActionMenu } from '../../components/TableActionMenu'
 import type { GrantTypeRow } from '../GrantTypes.types'
 import { GrantTypeConfirmModal } from './GrantTypeConfirmModal'
 
@@ -46,15 +48,15 @@ export const GrantTypesTable = ({
 }: GrantTypesTableProps) => {
   const { formatMessage } = useLocale()
 
-  const [deleteTarget, setDeleteTarget] = useState<GrantTypeRow | null>(null)
+  const [archiveTarget, setArchiveTarget] = useState<GrantTypeRow | null>(null)
   const [restoreTarget, setRestoreTarget] = useState<GrantTypeRow | null>(null)
 
-  const handleDeleteConfirm = (
+  const handleArchiveConfirm = (
     name: string,
     environments: AuthAdminEnvironment[],
   ) => {
     onDelete(name, environments)
-    setDeleteTarget(null)
+    setArchiveTarget(null)
   }
 
   const handleRestoreConfirm = (
@@ -110,61 +112,70 @@ export const GrantTypesTable = ({
         </T.Head>
         <T.Body>
           {rows.map((grantType) => {
-            const isArchived = !!grantType.archived
+            const archivedEnvs = grantType.archivedEnvironments ?? []
+            const availableEnvs = grantType.availableEnvironments ?? []
+            const activeEnvs = availableEnvs.filter(
+              (e) => !archivedEnvs.includes(e),
+            )
+            const isFullyArchived =
+              archivedEnvs.length > 0 &&
+              archivedEnvs.length === availableEnvs.length
+
             return (
               <T.Row key={grantType.name}>
                 <T.Data>
-                  <Box style={isArchived ? { opacity: 0.6 } : undefined}>
+                  <Box style={isFullyArchived ? { opacity: 0.6 } : undefined}>
                     {grantType.name}
                   </Box>
                 </T.Data>
                 <T.Data>
-                  <Box style={isArchived ? { opacity: 0.6 } : undefined}>
+                  <Box style={isFullyArchived ? { opacity: 0.6 } : undefined}>
                     {grantType.description}
                   </Box>
                 </T.Data>
                 <T.Data>
                   <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
-                    {isArchived ? (
-                      <Tag variant="red" outlined disabled>
-                        {formatMessage(m.grantTypesArchived)}
-                      </Tag>
-                    ) : (
-                      grantType.availableEnvironments?.map((env) => (
-                        <Tag key={env} variant="blue" outlined disabled>
-                          {env}
-                        </Tag>
-                      ))
-                    )}
+                    {authAdminEnvironments
+                      .filter((env) => availableEnvs.includes(env))
+                      .map((env) => {
+                        const isArchived = archivedEnvs.includes(env)
+                        return (
+                          <Tag
+                            key={env}
+                            variant={isArchived ? 'disabled' : 'blue'}
+                            outlined
+                            disabled
+                          >
+                            {env}
+                          </Tag>
+                        )
+                      })}
                   </Box>
                 </T.Data>
                 <T.Data>
-                  {isArchived ? (
-                    <Box display="flex" justifyContent="flexStart">
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        icon="reload"
-                        onClick={() => setRestoreTarget(grantType)}
-                      />
-                    </Box>
-                  ) : (
-                    <Box display="flex" columnGap={2} justifyContent="flexEnd">
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        icon="pencil"
-                        onClick={() => onEdit(grantType)}
-                      />
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        icon="trash"
-                        colorScheme="destructive"
-                        onClick={() => setDeleteTarget(grantType)}
-                      />
-                    </Box>
-                  )}
+                  <TableActionMenu
+                    actions={[
+                      {
+                        show: !isFullyArchived,
+                        title: m.edit,
+                        icon: 'pencil',
+                        onClick: () => onEdit(grantType),
+                      },
+                      {
+                        show: archivedEnvs.length > 0,
+                        title: m.restore,
+                        icon: 'reload',
+                        onClick: () => setRestoreTarget(grantType),
+                      },
+                      {
+                        show: activeEnvs.length > 0,
+                        title: m.archive,
+                        icon: 'trash',
+                        color: 'red600',
+                        onClick: () => setArchiveTarget(grantType),
+                      },
+                    ]}
+                  />
                 </T.Data>
               </T.Row>
             )
@@ -186,13 +197,13 @@ export const GrantTypesTable = ({
         </Box>
       )}
 
-      {deleteTarget && (
+      {archiveTarget && (
         <GrantTypeConfirmModal
           variant="delete"
-          target={deleteTarget}
+          target={archiveTarget}
           configuredEnvironments={configuredEnvironments}
-          onConfirm={handleDeleteConfirm}
-          onClose={() => setDeleteTarget(null)}
+          onConfirm={handleArchiveConfirm}
+          onClose={() => setArchiveTarget(null)}
         />
       )}
 

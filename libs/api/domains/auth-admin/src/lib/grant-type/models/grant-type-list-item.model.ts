@@ -10,9 +10,9 @@ export class GrantTypeListItem {
   @Field(() => [Environment], { nullable: true })
   availableEnvironments?: Environment[]
 
+  @Field(() => [Environment], { nullable: true })
+  archivedEnvironments?: Environment[]
+
   @Field(() => String)
   description!: string
-
-  @Field(() => Date, { nullable: true })
-  archived?: Date
 }

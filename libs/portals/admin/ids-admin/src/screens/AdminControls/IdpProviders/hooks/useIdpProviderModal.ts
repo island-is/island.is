@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useFetcher } from 'react-router-dom'
+import { useFetcher, useRevalidator } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/client'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
@@ -30,6 +30,13 @@ import {
 } from '../IdpProviders.types'
 import { validateIdpProviderForm, hasErrors } from '../IdpProviders.utils'
 
+interface EnvironmentIdpProviderData {
+  environment: AuthAdminEnvironment
+  description: string
+  helptext: string
+  level: number
+}
+
 interface UseIdpProviderModalParams {
   configuredEnvironments: AuthAdminEnvironment[]
 }
@@ -39,6 +46,7 @@ export const useIdpProviderModal = ({
 }: UseIdpProviderModalParams) => {
   const { formatMessage } = useLocale()
   const fetcher = useFetcher<IdpProvidersActionResult>()
+  const revalidator = useRevalidator()
 
   const [modalVisible, setModalVisible] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -48,6 +56,9 @@ export const useIdpProviderModal = ({
   >([])
   const [userAvailableEnvironments, setUserAvailableEnvironments] = useState<
     AuthAdminEnvironment[]
+  >([])
+  const [environmentsData, setEnvironmentsData] = useState<
+    EnvironmentIdpProviderData[]
   >([])
   const [loadingIdpProvider, setLoadingIdpProvider] = useState(false)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
@@ -75,6 +86,7 @@ export const useIdpProviderModal = ({
     setFormData(emptyForm)
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
+    setEnvironmentsData([])
     setFormErrors({})
     setSaveOnAllEnvs(false)
   }, [])
@@ -128,6 +140,7 @@ export const useIdpProviderModal = ({
     setFormData(emptyForm)
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
+    setEnvironmentsData([])
     setFormErrors({})
     setModalVisible(true)
   }
@@ -141,6 +154,7 @@ export const useIdpProviderModal = ({
       level: idpProvider.level,
     })
     setUserAvailableEnvironments([])
+    setEnvironmentsData([])
     setFormErrors({})
     setLoadingIdpProvider(true)
     setModalVisible(true)
@@ -154,6 +168,15 @@ export const useIdpProviderModal = ({
       if (availableEnvironments) {
         setUserAvailableEnvironments(availableEnvironments)
 
+        const envData: EnvironmentIdpProviderData[] =
+          idpData?.environments?.map((e) => ({
+            environment: e.environment,
+            description: e.description,
+            helptext: e.helptext,
+            level: e.level,
+          })) ?? []
+        setEnvironmentsData(envData)
+
         const bestEnv = pickBestEnvironment(
           selectedEnvResult.environment,
           availableEnvironments,
@@ -163,10 +186,7 @@ export const useIdpProviderModal = ({
           updateEnvironment(bestEnv)
         }
 
-        // Load form data from the selected environment
-        const targetEnvData = idpData.environments?.find(
-          (e) => e.environment === bestEnv,
-        )
+        const targetEnvData = envData.find((e) => e.environment === bestEnv)
         if (targetEnvData) {
           setFormData((prev) => ({
             ...prev,
@@ -250,7 +270,17 @@ export const useIdpProviderModal = ({
       })
 
       setUserAvailableEnvironments((prev) => [...prev, targetEnvironment])
+      setEnvironmentsData((prev) => [
+        ...prev,
+        {
+          environment: targetEnvironment,
+          description: formData.description,
+          helptext: formData.helptext,
+          level: formData.level === '' ? 0 : formData.level,
+        },
+      ])
       updateEnvironment(targetEnvironment)
+      revalidator.revalidate()
       toast.success(
         formatMessage(m.idpProvidersPublishSuccess, {
           environment: targetEnvironment,
@@ -273,6 +303,16 @@ export const useIdpProviderModal = ({
   const handleEnvironmentSwitch = (env: AuthAdminEnvironment) => {
     if (userAvailableEnvironments.includes(env)) {
       updateEnvironment(env)
+
+      const envData = environmentsData.find((e) => e.environment === env)
+      if (envData) {
+        setFormData((prev) => ({
+          ...prev,
+          description: envData.description,
+          helptext: envData.helptext,
+          level: envData.level,
+        }))
+      }
     } else {
       handlePublish(env)
     }

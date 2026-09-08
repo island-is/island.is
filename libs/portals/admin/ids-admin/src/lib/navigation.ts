@@ -96,6 +96,12 @@ export const idsAdminControlsNav: PortalNavigationItem = {
           description: m.idsAdmin,
           activeIfExact: true,
         },
+        {
+          name: m.userIdentities,
+          path: IDSAdminPaths.IDSAdminControlsUsers,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
       ],
     },
   ],

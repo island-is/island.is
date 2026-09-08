@@ -186,7 +186,6 @@ const CreateTenantModal = ({
                   value={values.name}
                   onChange={onChange('name')}
                   errorMessage={formatErrorMessage(errors.name)}
-                  tooltip={formatMessage(m.tenantNameTooltip)}
                 />
                 <Text variant="small" marginTop={1}>
                   {formatMessage(m.tenantNameHelper)}
@@ -201,7 +200,6 @@ const CreateTenantModal = ({
                   value={values.nationalId}
                   onChange={onChange('nationalId')}
                   errorMessage={formatErrorMessage(errors.nationalId)}
-                  tooltip={formatMessage(m.tenantNationalIdTooltip)}
                 />
               </GridColumn>
               <GridColumn span="12/12">
@@ -213,7 +211,6 @@ const CreateTenantModal = ({
                   value={values.displayName}
                   onChange={onChange('displayName')}
                   errorMessage={formatErrorMessage(errors.displayName)}
-                  tooltip={formatMessage(m.tenantDisplayNameTooltip)}
                 />
               </GridColumn>
               <GridColumn span="12/12">
@@ -225,7 +222,6 @@ const CreateTenantModal = ({
                   value={values.description}
                   onChange={onChange('description')}
                   errorMessage={formatErrorMessage(errors.description)}
-                  tooltip={formatMessage(m.tenantDescriptionTooltip)}
                   textarea
                   rows={2}
                 />
@@ -239,7 +235,6 @@ const CreateTenantModal = ({
                   value={values.contactEmail ?? ''}
                   onChange={onChange('contactEmail')}
                   errorMessage={formatErrorMessage(errors.contactEmail)}
-                  tooltip={formatMessage(m.tenantContactEmailTooltip)}
                 />
               </GridColumn>
 

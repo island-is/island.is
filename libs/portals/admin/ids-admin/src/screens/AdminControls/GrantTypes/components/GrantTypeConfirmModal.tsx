@@ -15,6 +15,13 @@ import { m } from '../../../../lib/messages'
 import { authAdminEnvironments } from '../../../../utils/environments'
 import type { GrantTypeRow } from '../GrantTypes.types'
 
+const activeEnvsFor = (target: GrantTypeRow): AuthAdminEnvironment[] => {
+  const archived = target.archivedEnvironments ?? []
+  return (target.availableEnvironments ?? []).filter(
+    (e) => !archived.includes(e),
+  )
+}
+
 const variantConfig = {
   delete: {
     title: m.grantTypesDeleteConfirmTitle,
@@ -23,6 +30,11 @@ const variantConfig = {
     environmentError: m.grantTypesDeleteEnvironmentRequired,
     confirmLabel: m.archive,
     confirmColorScheme: 'destructive' as const,
+    eligibleEnvsFor: activeEnvsFor,
+    ineligibleEnvsFor: (target: GrantTypeRow) =>
+      target.archivedEnvironments ?? [],
+    disabledTagMessage: m.grantTypesAlreadyArchivedTag,
+    disabledTagVariant: 'red' as const,
   },
   restore: {
     title: m.grantTypesRestoreConfirmTitle,
@@ -31,6 +43,11 @@ const variantConfig = {
     environmentError: m.grantTypesRestoreEnvironmentRequired,
     confirmLabel: m.restore,
     confirmColorScheme: 'default' as const,
+    eligibleEnvsFor: (target: GrantTypeRow) =>
+      target.archivedEnvironments ?? [],
+    ineligibleEnvsFor: activeEnvsFor,
+    disabledTagMessage: m.grantTypesAlreadyActiveTag,
+    disabledTagVariant: 'blue' as const,
   },
 }
 
@@ -52,9 +69,15 @@ export const GrantTypeConfirmModal = ({
   const { formatMessage } = useLocale()
   const config = variantConfig[variant]
 
+  const eligibleEnvironments = config.eligibleEnvsFor(target)
+  const ineligibleEnvironments = config.ineligibleEnvsFor(target)
+
+  // Only seed envs that are both eligible (in the target's state) AND
+  // configured for this client. Otherwise a disabled-but-checked env could
+  // be submitted, asking the backend to act on an env we can't reach.
   const [selectedEnvironments, setSelectedEnvironments] = useState<
     AuthAdminEnvironment[]
-  >(target.availableEnvironments ?? [])
+  >(eligibleEnvironments.filter((e) => configuredEnvironments.includes(e)))
   const [error, setError] = useState<string | undefined>(undefined)
 
   const handleEnvironmentChange = (env: AuthAdminEnvironment) => {
@@ -100,19 +123,33 @@ export const GrantTypeConfirmModal = ({
             rowGap={2}
           >
             {authAdminEnvironments.map((env) => {
-              const isGrantTypeEnv =
-                target.availableEnvironments?.includes(env) ?? false
+              const isEligible = eligibleEnvironments.includes(env)
+              const isInOtherState = ineligibleEnvironments.includes(env)
               return (
                 <Box width="full" key={env}>
                   <Checkbox
-                    label={env}
+                    label={
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        columnGap={1}
+                        component="span"
+                      >
+                        <span>{env}</span>
+                        {isInOtherState && (
+                          <span>
+                            ({formatMessage(config.disabledTagMessage)})
+                          </span>
+                        )}
+                      </Box>
+                    }
                     name={`${variant}Environments`}
                     id={`${variant}Environments.${env}`}
                     value={env}
                     checked={selectedEnvironments.includes(env)}
                     onChange={() => handleEnvironmentChange(env)}
                     disabled={
-                      !isGrantTypeEnv || !configuredEnvironments.includes(env)
+                      !isEligible || !configuredEnvironments.includes(env)
                     }
                     large
                   />

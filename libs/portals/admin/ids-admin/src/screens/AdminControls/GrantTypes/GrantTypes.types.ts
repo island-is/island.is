@@ -3,8 +3,8 @@ import { AuthAdminEnvironment } from '@island.is/api/schema'
 export interface GrantTypeRow {
   name: string
   availableEnvironments?: AuthAdminEnvironment[] | null
+  archivedEnvironments?: AuthAdminEnvironment[] | null
   description: string
-  archived?: string | null
 }
 
 export interface GrantTypeFormData {
