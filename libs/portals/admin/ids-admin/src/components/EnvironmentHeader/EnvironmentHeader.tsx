@@ -17,6 +17,12 @@ interface EnvironmentHeaderProps {
   title: string
   selectedEnvironment: AuthAdminEnvironment
   availableEnvironments: AuthAdminEnvironment[]
+  /**
+   * Environments to offer in the picker. Anything not in
+   * `availableEnvironments` is offered as a publish target. Defaults to the
+   * environments of the tenant the resource belongs to.
+   */
+  optionEnvironments?: AuthAdminEnvironment[]
   onChange(value: AuthAdminEnvironment): void
   preHeader?: ReactNode
   postHeader?: ReactNode
@@ -34,6 +40,7 @@ export const EnvironmentHeader = ({
   title,
   selectedEnvironment,
   availableEnvironments,
+  optionEnvironments,
   onChange,
   preHeader,
   postHeader,
@@ -41,7 +48,7 @@ export const EnvironmentHeader = ({
   const { formatMessage } = useLocale()
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
 
-  const options = tenant.availableEnvironments
+  const options = (optionEnvironments ?? tenant.availableEnvironments)
     .map((env) => {
       const isAvailable = availableEnvironments.includes(env)
 
