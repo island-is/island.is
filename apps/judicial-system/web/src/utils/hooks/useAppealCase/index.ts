@@ -12,6 +12,7 @@ import type {
   Case,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { AppealCaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
 import type { CreateAppealCaseMutation } from './createAppealCase.generated'
@@ -20,6 +21,7 @@ import { useCreateAppealEventLogMutation } from './createAppealEventLog.generate
 import type { LimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
 import { useLimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
 import { useLimitedAccessCreateAppealEventLogMutation } from './limitedAccessCreateAppealEventLog.generated'
+import { useLimitedAccessCreateVerdictAppealMutation } from './limitedAccessCreateVerdictAppeal.generated'
 import type { LimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
 import { useLimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
 import type { TransitionAppealCaseMutation } from './transitionAppealCase.generated'
@@ -38,6 +40,10 @@ const useAppealCase = () => {
     limitedAccessCreateAppealCaseMutation,
     { loading: isLimitedAccessCreatingAppealCase },
   ] = useLimitedAccessCreateAppealCaseMutation()
+  const [
+    limitedAccessCreateVerdictAppealMutation,
+    { loading: isCreatingVerdictAppeal },
+  ] = useLimitedAccessCreateVerdictAppealMutation()
   const [transitionAppealCaseMutation, { loading: isTransitioningAppealCase }] =
     useTransitionAppealCaseMutation()
   const [
@@ -106,6 +112,34 @@ const useAppealCase = () => {
     ],
   )
 
+  // A defender files a verdict appeal - the appeal of an indictment verdict - for one
+  // specific defendant. Always limited access: only defence users can.
+  const createVerdictAppeal = useMemo(
+    () =>
+      async (
+        caseId: string,
+        defendantId: string,
+      ): Promise<AppealCase | undefined> => {
+        try {
+          const { data } = await limitedAccessCreateVerdictAppealMutation({
+            variables: {
+              input: {
+                caseId,
+                defendantId,
+                appealType: AppealCaseType.VERDICT,
+              },
+            },
+          })
+
+          return data?.limitedAccessCreateAppealCase ?? undefined
+        } catch (e) {
+          toast.error(formatMessage(errors.transitionCase))
+          return undefined
+        }
+      },
+    [limitedAccessCreateVerdictAppealMutation, formatMessage],
+  )
+
   const transitionAppealCase = useMemo(
     () =>
       async (
@@ -113,6 +147,9 @@ const useAppealCase = () => {
         appealCaseId: string,
         transition: AppealCaseTransition,
         setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        // Withdrawing a verdict appeal is per defendant; every other transition
+        // ignores this.
+        defendantId?: string,
       ): Promise<boolean> => {
         const mutation = limitedAccess
           ? limitedAccessTransitionAppealCaseMutation
@@ -125,7 +162,7 @@ const useAppealCase = () => {
         try {
           const { data } = await mutation({
             variables: {
-              input: { caseId, appealCaseId, transition },
+              input: { caseId, appealCaseId, transition, defendantId },
             },
           })
 
@@ -221,8 +258,11 @@ const useAppealCase = () => {
 
   return {
     createAppealCase,
+    createVerdictAppeal,
     isCreatingAppealCase:
-      isCreatingAppealCase || isLimitedAccessCreatingAppealCase,
+      isCreatingAppealCase ||
+      isLimitedAccessCreatingAppealCase ||
+      isCreatingVerdictAppeal,
     transitionAppealCase,
     isTransitioningAppealCase:
       isTransitioningAppealCase || isLimitedAccessTransitioningAppealCase,
