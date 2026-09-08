@@ -152,6 +152,32 @@ describe('conditions', () => {
     })
   })
   describe('static', () => {
+    it('handles zero and negative values in numeric comparator conditions', () => {
+      const field = (comparator: Comparators, value: number) =>
+        buildTextField({
+          id: 'asdf',
+          title: 'asdf',
+          condition: {
+            questionId: 'amount',
+            value,
+            comparator,
+          },
+        })
+
+      expect(
+        shouldShowFormItem(field(Comparators.GTE, 0), { amount: 0 }, {}, null),
+      ).toBeTruthy()
+      expect(
+        shouldShowFormItem(field(Comparators.LTE, 0), { amount: 0 }, {}, null),
+      ).toBeTruthy()
+      expect(
+        shouldShowFormItem(field(Comparators.LT, 0), { amount: -1 }, {}, null),
+      ).toBeTruthy()
+      expect(
+        shouldShowFormItem(field(Comparators.GT, 0), {}, {}, null),
+      ).toBeFalsy()
+    })
+
     it('should show a section which has a fulfilled static condition', () => {
       const field = buildTextField({
         id: 'asdf',

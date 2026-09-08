@@ -26,6 +26,7 @@ import {
 import { useLocale, useLocalizedQuery } from '@island.is/localization'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
+import { useSdfRolloutRedirect } from '../hooks/useSdfRolloutRedirect'
 import {
   findProblemInApolloError,
   ProblemType,
@@ -106,6 +107,14 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     },
   )
 
+  // Redirect a percentage of users starting this application to its SDF
+  // version (when enabled and they have no in-progress legacy application).
+  const { redirecting } = useSdfRolloutRedirect(
+    slug,
+    data?.ApplicationSystemCard,
+    loading,
+  )
+
   const mappedOrganizations = (data?.ApplicationSystemCard ?? []).map(
     (card: ApplicationCard) => {
       const org = orgData?.getOrganizations?.items.find(
@@ -157,13 +166,14 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       type &&
       data &&
       isEmpty(data.ApplicationSystemCard) &&
-      delegationsChecked
+      delegationsChecked &&
+      !redirecting
     ) {
       createApplication()
     }
-  }, [type, data, delegationsChecked])
+  }, [type, data, delegationsChecked, redirecting])
 
-  if (loading || loadingOrg) {
+  if (redirecting || loading || loadingOrg) {
     return <ApplicationLoading />
   }
 

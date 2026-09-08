@@ -182,6 +182,15 @@ export class Application extends Model {
   })
   @ApiProperty()
   draftTotalSteps!: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+    field: 'page_index',
+  })
+  @ApiProperty()
+  pageIndex!: number
 }
 
 export class ApplicationPaginatedResponse {

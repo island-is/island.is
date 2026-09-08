@@ -29,7 +29,10 @@
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "api:build"
+        "buildTarget": "api:build",
+        "buildTargetOptions": {
+          "skipTypeCheck": true
+        }
       }
     },
     "lint": {

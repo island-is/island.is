@@ -34,6 +34,10 @@ export const dataSchema = z.object({
   confirmReadPrivacyPolicy: readPrivacyPolicy,
   confirmReadFireCompensationInfo: readFireCompensationInfo,
   approveExternalData: z.boolean().refine((v) => v),
+  // Dev/local only: opt into mock payments (see confirmReadSection). Read by the
+  // shared `Payment.createCharge` action, which fabricates a fulfilled charge so
+  // the payment flow can be exercised without a reachable charge-FJS service.
+  shouldUseMockPayment: z.array(z.literal(YES)).optional(),
   // Main form
   applicant: applicantSchema,
   realEstate: realEstateSchema,

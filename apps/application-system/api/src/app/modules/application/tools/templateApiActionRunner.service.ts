@@ -67,6 +67,33 @@ export class TemplateApiActionRunner {
     return application
   }
 
+  /**
+   * Runs template API actions against the provided application object without
+   * persisting the resulting externalData to the application database row.
+   */
+  async runEphemeral(
+    application: ApplicationWithAttachments,
+    actions: TemplateApi[],
+    auth: User,
+    currentUserLocale: Locale,
+    formatMessage: FormatMessage,
+  ): Promise<ApplicationWithAttachments> {
+    const newExternalData = { data: {} }
+
+    const groupedActions = this.groupByOrder(this.sortActions(actions))
+
+    await this.runActions(
+      groupedActions,
+      application,
+      newExternalData,
+      auth,
+      currentUserLocale,
+      formatMessage,
+    )
+
+    return application
+  }
+
   sortActions(actions: TemplateApi[]) {
     const sortedActions = actions.sort((a, b) => {
       if (a.order === undefined) {

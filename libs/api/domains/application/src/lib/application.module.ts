@@ -3,10 +3,17 @@ import { ApplicationResolver } from './application.resolver'
 import { ApplicationV2Resolver } from './applicationV2.resolver'
 import { ApplicationService } from './application.service'
 import { ApplicationV2Service } from './applicationV2.service'
-import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
+import {
+  ApplicationsApi,
+  PaymentsApi,
+  SdfApi,
+  Configuration,
+} from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ApplicationAdminV2Resolver } from './application-admin/application-adminV2.resolver'
 import { ApplicationAdminV2Service } from './application-admin/application-adminV2.service'
+import { SdfResolver } from './sdf.resolver'
+import { SdfService } from './sdf.service'
 import {
   ApplicationsApi as FormSystemApplicationsApi,
   AdminApi as FormSystemAdminApi,
@@ -27,9 +34,11 @@ export class ApplicationModule {
         ApplicationResolver,
         ApplicationV2Resolver,
         ApplicationAdminV2Resolver,
+        SdfResolver,
         ApplicationService,
         ApplicationV2Service,
         ApplicationAdminV2Service,
+        SdfService,
         {
           provide: ApplicationsApi,
           useValue: new ApplicationsApi(
@@ -48,6 +57,18 @@ export class ApplicationModule {
             new Configuration({
               fetchApi: createEnhancedFetch({
                 name: 'ApplicationModule.paymentsApi',
+              }),
+              basePath: config.baseApiUrl,
+            }),
+          ),
+        },
+        {
+          provide: SdfApi,
+          useValue: new SdfApi(
+            new Configuration({
+              fetchApi: createEnhancedFetch({
+                name: 'ApplicationModule.sdfApi',
+                timeout: 60000,
               }),
               basePath: config.baseApiUrl,
             }),
