@@ -18,7 +18,7 @@ import {
   NewTemporaryDrivingLicenseWithHealthDeclarationInput,
   DrivinglicenseDuplicateValidityStatus,
   NewRenewal65DrivingLicenseInput,
-} from './drivingLicense.type'
+} from '../drivingLicense.type'
 import {
   Disqualification,
   DriversLicense,
@@ -28,9 +28,9 @@ import {
   ModelsV5PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
   DriverLicenseWithoutImages,
 } from '@island.is/clients/driving-license'
-import { BLACKLISTED_JURISDICTION } from './util/constants'
-import sortTeachers from './util/sortTeachers'
-import { StudentAssessment } from '..'
+import { BLACKLISTED_JURISDICTION } from '../util/constants'
+import sortTeachers from '../util/sortTeachers'
+import { StudentAssessment } from '../..'
 import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -39,10 +39,10 @@ import {
   hasLocalResidence,
   hasResidenceHistory,
   mapResidence,
-} from './util/hasResidenceHistory'
+} from '../util/hasResidenceHistory'
 import { info } from 'kennitala'
 import { computeCountryResidence } from '@island.is/residence-history'
-import { Jurisdiction } from './graphql/models'
+import { Jurisdiction } from '../models'
 import addMonths from 'date-fns/addMonths'
 
 const LOGTAG = '[api-domains-driving-license]'
@@ -599,7 +599,6 @@ export class DrivingLicenseService {
       districtId: input.jurisdiction,
       phoneNumber: input.primaryPhoneNumber,
       email: input.studentEmail,
-      pickupPlasticAtDistrict: input.pickupPlasticAtDistrict,
       sendPlasticToPerson: input.sendPlasticToPerson,
       contentList: input.contentList,
       photoBiometricsId: input.photoBiometricsId,
@@ -615,11 +614,16 @@ export class DrivingLicenseService {
   // Legacy 65+ submit, used when `is65RenewalRedesignEnabled` flag is OFF.
   // Removed alongside `postRenewLicenseOver65` in the wrapper once the flag
   // has been ON in prod long enough to retire the legacy submit path.
+  // Note: unlike the redesigned `applyForRenewal65` (V5 `postApplyForRenewal65`,
+  // which dropped `pickupPlasticAtDistrict` in favor of the single
+  // `sendPlasticToPerson` flag), the legacy `postRenewLicenseOver65` endpoint's
+  // schema still supports the old two-flag model, so `pickupPlasticAtDistrict`
+  // is defined locally here rather than picked from `NewRenewal65DrivingLicenseInput`.
   async renewDrivingLicense65AndOver(
     auth: User['authorization'],
-    input: { jurisdiction: number } & Pick<
+    input: { jurisdiction: number; pickupPlasticAtDistrict?: boolean } & Pick<
       NewRenewal65DrivingLicenseInput,
-      'pickupPlasticAtDistrict' | 'sendPlasticToPerson'
+      'sendPlasticToPerson'
     >,
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postRenewLicenseOver65({
@@ -805,14 +809,12 @@ export class DrivingLicenseService {
       return null
     }
 
-    let teacherName: string | null
+    let teacherName: string | null = null
     if (assessment.nationalIdTeacher) {
       const teacherLicense = await this.legacyGetDrivingLicense(
         assessment.nationalIdTeacher,
       )
-      teacherName = teacherLicense?.name || null
-    } else {
-      teacherName = null
+      teacherName = teacherLicense?.name ?? null
     }
 
     return {
