@@ -278,7 +278,7 @@ export class DefendantService {
         event.defendantId,
         event.user,
         transaction,
-        event.verdictId ? { verdictId: event.verdictId } : undefined,
+        ...(event.verdictId ? [{ verdictId: event.verdictId }] : []),
       )
 
       return
