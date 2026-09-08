@@ -654,11 +654,11 @@ export class AppealCaseService {
     return appealCase
   }
 
-  // A defence user files an áfrýjunaryfirlýsing for one of its defendants: the
+  // A defence user files an appeal declaration for one of its defendants: the
   // legal act of appealing the verdict, not bookkeeping about one, so every
   // condition is checked hard here.
   //
-  // Unlike the kæra flow, this acts for one specific defendant rather than every
+  // Unlike the ruling appeal flow, this acts for one specific defendant rather than every
   // party the lawyer represents - the action lives on that defendant's card, and
   // two defendants of the same defender can appeal on different days or not at
   // all. So resolveDefenceParties is deliberately not used.
@@ -826,8 +826,8 @@ export class AppealCaseService {
       { transaction },
     )
 
-    // No notification: the one that tells ríkissaksóknari about an áfrýjun is
-    // its own story, and the kæra notifications do not apply here.
+    // No notification: the one that tells the public prosecution office about a verdict appeal is
+    // its own story, and the ruling appeal notifications do not apply here.
 
     return appealCase
   }
@@ -955,7 +955,7 @@ export class AppealCaseService {
     transaction: Transaction,
     defendantId?: string,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
-    // Withdrawing an áfrýjun is per defendant, the same way filing one is.
+    // Withdrawing a verdict appeal is per defendant, the same way filing one is.
     if (
       transition === AppealCaseTransition.WITHDRAW_APPEAL &&
       appealCase.appealType === AppealCaseType.VERDICT
@@ -1093,7 +1093,7 @@ export class AppealCaseService {
     return { caseUpdate: {}, appealCaseUpdate: {}, appealCase }
   }
 
-  // A defence user withdraws the áfrýjun it filed for one of its defendants.
+  // A defence user withdraws the verdict appeal it filed for one of its defendants.
   // Only that defendant stops appealing: the appeal case stands until every
   // appellant has withdrawn, at which point it is withdrawn itself and the
   // notification goes out - the same shape as withdrawInCourtRulingOrderAppeal,
