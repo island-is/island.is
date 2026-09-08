@@ -51,6 +51,17 @@ type ConversationMessage = NonNullable<
 
 type FlatListItem = ConversationMessage | { __typename: 'Skeleton'; id: string }
 
+// Hermes ships no Intl.PluralRules and the app has no polyfill for it, so ICU
+// `plural` syntax silently falls back to the raw pattern. Pick the form by
+// hand instead: Icelandic takes the singular for numbers ending in 1 except
+// 11 (1, 21, 31 ...), English only for exactly 1.
+const isSingularDayCount = (days: number, locale: string): boolean => {
+  if (locale.startsWith('is')) {
+    return days % 10 === 1 && days % 100 !== 11
+  }
+  return days === 1
+}
+
 // Maps a reply-blocked reason to its explanatory message.
 const replyBlockedMessageId = (
   reason?: HealthDirectorateHealthConversationReplyBlockedReason | null,
@@ -142,7 +153,11 @@ export default function HealthMessageDetailScreen() {
       HealthDirectorateHealthConversationReplyBlockedReason.ReplyWindowExpired &&
     replyWindowDays != null
       ? intl.formatMessage(
-          { id: 'health.messages.replyBlocked.windowExpiredDays' },
+          {
+            id: isSingularDayCount(replyWindowDays, intl.locale)
+              ? 'health.messages.replyBlocked.windowExpiredDay'
+              : 'health.messages.replyBlocked.windowExpiredDays',
+          },
           { days: replyWindowDays },
         )
       : intl.formatMessage({
