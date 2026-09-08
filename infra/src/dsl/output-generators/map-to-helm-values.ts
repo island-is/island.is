@@ -6,6 +6,7 @@ import {
   Resources,
   ServiceDefinition,
   ServiceDefinitionForEnv,
+  EnvironmentVariableValue,
 } from '../types/input-types'
 import {
   ContainerRunHelm,
@@ -588,85 +589,121 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
 }
 
 const getFeatureIdsHost = (env: EnvironmentConfig) =>
-  `${env.feature}.identity-server.${env.domain}`;
+  `${env.feature}.identity-server.${env.domain}`
 
 const getFeatureIdsUrl = (env: EnvironmentConfig, path = '') =>
-  `https://${getFeatureIdsHost(env)}${path}`;
+  `https://${getFeatureIdsHost(env)}${path}`
+
+const getFeaturePortalUrl = (env: EnvironmentConfig, path = '') =>
+  `https://${env.feature}-beta.${env.domain}${path}`
 
 const rewriteDevEnv = (
-  value: unknown,
+  value: EnvironmentVariableValue,
   rewrite: (value: string) => string,
-): unknown => {
+): EnvironmentVariableValue => {
   if (
     typeof value === 'object' &&
     value !== null &&
-    'dev' in value &&
-    typeof value.dev === 'string'
+    'dev' in value
   ) {
-    return {
-      ...value,
-      dev: rewrite(value.dev),
+    if (typeof value.dev === 'string') {
+      return rewrite(value.dev)
+    }
+
+    if (typeof value.dev === 'function') {
+      return value.dev
     }
   }
 
-  return value;
+  return value
 }
 
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
 
-    const featureIdsHost = getFeatureIdsHost(env);
+    const featureIdsHost = getFeatureIdsHost(env)
     const idsServices = [
       'identity-server',
       'auth-admin-web',
       'services-auth-admin-api',
       'services-auth-public-api',
-    ];
+      'services-auth-ids-api',
+      'services-auth-delegation-api',
+      'services-auth-personal-representative',
+      'services-auth-personal-representative-public',
+    ]
+    const publicIdsServices = [
+      'identity-server',
+      'auth-admin-web',
+      'services-auth-admin-api',
+      'services-auth-public-api',
+    ]
+    const serviceName = s.image ?? s.name
+
+    if (s.env.IDENTITY_SERVER_ISSUER_URL) {
+      s.env.IDENTITY_SERVER_ISSUER_URL = rewriteDevEnv(
+        s.env.IDENTITY_SERVER_ISSUER_URL,
+        () => getFeatureIdsUrl(env),
+      )
+    }
+
+    if (idsServices.includes(serviceName)) {
+      const rewriteIdsUrl = (value: string) => {
+        const url = new URL(value)
+        return getFeatureIdsUrl(
+          env,
+          `${url.pathname}${url.search}${url.hash}`,
+        )
+      }
+
+      if (s.env.PUBLIC_URL !== undefined) {
+        s.env.PUBLIC_URL = rewriteDevEnv(s.env.PUBLIC_URL, rewriteIdsUrl)
+      }
+      if (s.env.BASE_URL !== undefined) {
+        s.env.BASE_URL = rewriteDevEnv(s.env.BASE_URL, rewriteIdsUrl)
+      }
+      if (s.env.NEXTAUTH_URL !== undefined) {
+        s.env.NEXTAUTH_URL = rewriteDevEnv(s.env.NEXTAUTH_URL, rewriteIdsUrl)
+      }
+
+      if (s.env.IDENTITYSERVER_DOMAIN !== undefined) {
+        s.env.IDENTITYSERVER_DOMAIN = rewriteDevEnv(
+          s.env.IDENTITYSERVER_DOMAIN,
+          () => featureIdsHost,
+        )
+      }
+    }
+
+    if (
+      serviceName === 'identity-server' &&
+      s.env.Application__AllowedRedirectUris !== undefined
+    ) {
+      s.env.Application__AllowedRedirectUris = rewriteDevEnv(
+        s.env.Application__AllowedRedirectUris,
+        (value) =>
+          value
+            .split(',')
+            .map((uri) => {
+              const url = new URL(uri)
+              if (url.hostname !== `beta.${env.domain}`) {
+                return uri
+              }
+              return getFeaturePortalUrl(
+                env,
+                `${url.pathname}${url.search}${url.hash}`,
+              )
+            })
+            .join(','),
+      )
+    }
 
     Object.values(s.ingress).forEach((ingress) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
-      //TODO if ids feature is configured in feature deployments
-      if (idsServices.includes(s.image ?? '')) {
 
-        s.env.IDENTITY_SERVER_ISSUER_URL = rewriteDevEnv(
-          s.env.IDENTITY_SERVER_ISSUER_URL,
-          () => getFeatureIdsUrl(env),
-        )
-
-        s.env.PUBLIC_URL = rewriteDevEnv(
-          s.env.PUBLIC_URL,
-          (value) => {
-            const url = new URL(value)
-            return getFeatureIdsUrl(env, url.pathname)
-          },
-        )
-
-        s.env.BASE_URL = rewriteDevEnv(
-          s.env.BASE_URL,
-          (value) => {
-            const url = new URL(value)
-            return getFeatureIdsUrl(env, url.pathname)
-          },
-        )
-
-        s.env.NEXTAUTH_URL = rewriteDevEnv(
-          s.env.NEXTAUTH_URL,
-          (value) => {
-            const url = new URL(value)
-            return getFeatureIdsUrl(env, url.pathname)
-          },
-        )
-
-        s.env.IDENTITYSERVER_DOMAIN = rewriteDevEnv(
-          s.env.IDENTITYSERVER_DOMAIN,
-          () => featureIdsHost,
-        )
-
-        ingress.host.dev = ingress.host.dev.map(
-          () => `${env.feature}.identity-server.${env.domain}`,
-        )
+      if (publicIdsServices.includes(serviceName)) {
+        ingress.host.dev = ingress.host.dev.map(() => featureIdsHost)
       } else {
         ingress.host.dev = ingress.host.dev.map(
           (host) => `${env.feature}-${host}`,
