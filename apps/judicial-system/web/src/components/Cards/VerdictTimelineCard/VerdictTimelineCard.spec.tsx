@@ -598,6 +598,7 @@ describe('VerdictTimelineCard', () => {
         CaseIndictmentRulingDecision.RULING,
         true,
         {
+          features: [Feature.INDICTMENT_APPEAL],
           caseOverrides: {
             verdictAppealCase: { id: 'verdict_appeal_case_id' },
           },
@@ -621,6 +622,27 @@ describe('VerdictTimelineCard', () => {
           mockDefendant.id,
         ),
       )
+    })
+
+    // Withdrawing on an appeal case is closed while verdict appeals are hidden,
+    // so the action is not offered rather than offered to fail.
+    it('offers no withdrawal for an appeal case while the feature is hidden', async () => {
+      renderComponent(
+        appealedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          caseOverrides: {
+            verdictAppealCase: { id: 'verdict_appeal_case_id' },
+          },
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+      )
+
+      expect(screen.queryByText('Afturkalla áfrýjun')).not.toBeInTheDocument()
     })
 
     // An appeal date stamped before appeal cases existed has nothing to

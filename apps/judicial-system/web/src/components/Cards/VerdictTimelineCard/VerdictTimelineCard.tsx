@@ -390,7 +390,12 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               )
             },
           },
-          ...(verdict?.appealDate
+          // An appeal that exists as an appeal case can only be withdrawn on
+          // it, and that path is closed while verdict appeals are hidden, so
+          // the action is not offered then rather than offered to fail.
+          ...(verdict?.appealDate &&
+          (isVerdictAppealRegistrationEnabled ||
+            !workingCase.verdictAppealCase?.id)
             ? [
                 {
                   title: 'Afturkalla áfrýjun',
