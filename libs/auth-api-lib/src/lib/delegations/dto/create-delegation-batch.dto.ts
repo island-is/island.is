@@ -7,7 +7,7 @@ import { CreateDelegationDTO } from './delegation.dto'
 export class CreateDelegationBatchDTO {
   @ApiProperty({
     description:
-      'Delegations to create or update, one entry per (recipient, domain). Each recipient is notified once for the whole batch.',
+      'Delegations to create or update, one entry per (recipient, domain).',
     type: [CreateDelegationDTO],
   })
   @Type(() => CreateDelegationDTO)

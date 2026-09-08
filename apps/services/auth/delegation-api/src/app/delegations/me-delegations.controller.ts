@@ -200,7 +200,7 @@ export class MeDelegationsController {
   @Post('batch')
   @Documentation({
     description:
-      'Create or update several delegations at once. Each recipient is notified once for the whole batch instead of once per domain.',
+      'Create or update several delegations at once.',
     response: { status: 201, type: [DelegationDTO] },
   })
   @Audit<DelegationDTO[]>({

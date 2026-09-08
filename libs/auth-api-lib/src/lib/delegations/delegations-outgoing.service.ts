@@ -236,11 +236,6 @@ export class DelegationsOutgoingService {
     return results.map((result) => result.delegation)
   }
 
-  /**
-   * Validates every item first, then writes all delegations and scopes in a
-   * single transaction so a failure on a later item rolls back the earlier
-   * ones. Indexing happens after commit.
-   */
   private async createOrUpdateMany(
     user: User,
     inputs: CreateDelegationDTO[],
