@@ -13,6 +13,7 @@ import {
   CanReportWorkApi,
   PensionFundsApi,
   IncomeTypesApi,
+  IncomeApi,
 } from '../../dataProviders'
 
 export const Prerequisites = buildForm({
@@ -40,6 +41,9 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: IncomeTypesApi,
+            }),
+            buildDataProviderItem({
+              provider: IncomeApi,
             }),
           ],
           submitField: buildSubmitField({

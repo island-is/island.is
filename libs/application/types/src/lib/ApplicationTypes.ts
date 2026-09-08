@@ -540,7 +540,7 @@ export const ApplicationConfigurations = {
     translation: ['vmst.ct.application', 'uiForms.application'],
   },
   [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: {
-    slug: 'atvinnuleysisbaetur-stadfesting-starf-eda-tekna',
+    slug: 'vmst-stadfesting-starf-eda-tekna',
     translation: ['vmst.cjoi.application', 'uiForms.application'],
   },
   [ApplicationTypes.EQUALITY_REPORT]: {

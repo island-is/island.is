@@ -42,8 +42,8 @@ The schema uses separate arrays for each income type. Only the array matching th
 | Field             | Type                                   | Validation                                    |
 | ----------------- | -------------------------------------- | --------------------------------------------- |
 | `company`         | `{ nationalId: string, name: string }` | Required (nationalId required, name optional) |
-| `monthFrom`       | `string`                               | Required                                      |
-| `monthTo`         | `string`                               | Required                                      |
+| `dateFrom`        | `string`                               | Required                                      |
+| `dateTo`          | `string`                               | Required                                      |
 | `estimatedIncome` | `string`                               | Required                                      |
 
 ### `registerPartTime[]`

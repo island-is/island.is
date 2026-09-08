@@ -15,6 +15,11 @@ export const IncomeTypesApi = defineTemplateApi({
   externalDataId: 'incomeTypes',
 })
 
+export const IncomeApi = defineTemplateApi({
+  action: 'getIncome',
+  externalDataId: 'income',
+})
+
 export const SubmitApi = defineTemplateApi({
   action: 'submitApplication',
 })

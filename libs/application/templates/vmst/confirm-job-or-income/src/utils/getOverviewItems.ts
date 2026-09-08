@@ -1,5 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import {
   ExternalData,
   FormValue,
@@ -92,13 +92,13 @@ export const getCasualWorkOverviewItems = (
     },
     {
       width: 'half',
-      keyText: m.application.monthFrom,
-      valueText: formatDateStr(entry.monthFrom),
+      keyText: m.application.dateFrom,
+      valueText: formatDateStr(entry.dateFrom),
     },
     {
       width: 'half',
-      keyText: m.application.monthTo,
-      valueText: formatDateStr(entry.monthTo),
+      keyText: m.application.dateTo,
+      valueText: formatDateStr(entry.dateTo),
     },
     {
       width: 'half',

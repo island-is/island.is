@@ -106,6 +106,47 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
     return { trTypes, pensionTypes, capitalIncomeTypes }
   }
 
+  async getIncome({ auth }: TemplateApiModuleActionProps) {
+    let applicantId: string
+
+    try {
+      const result = await this.vmstUnemploymentClientService.resolveApplicant(
+        auth,
+      )
+      applicantId = result.applicantId
+    } catch (e) {
+      this.logger.error(
+        '[VMST-Confirm-Job-Or-Income] - Error resolving applicant when fetching income',
+        e,
+      )
+      throw new TemplateApiError(
+        {
+          title: errorMessages.cannotApplyErrorTitle,
+          summary: errorMessages.cannotApplyErrorSummary,
+        },
+        400,
+      )
+    }
+
+    try {
+      return await this.vmstUnemploymentClientService.getIncome({
+        applicantId,
+      })
+    } catch (e) {
+      this.logger.error(
+        '[VMST-Confirm-Job-Or-Income] - Error fetching income',
+        e,
+      )
+      throw new TemplateApiError(
+        {
+          title: errorMessages.cannotApplyErrorTitle,
+          summary: errorMessages.cannotApplyErrorSummary,
+        },
+        400,
+      )
+    }
+  }
+
   async submitApplication({
     application,
     auth,
@@ -163,70 +204,64 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
     }
 
     try {
-      switch (typeOfIncome) {
-        case IncomeType.CASUAL_WORK: {
-          for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createIrregularJob(
-              buildIrregularJobRequest(entry, applicantId),
-            )
-          }
-          break
-        }
-
-        case IncomeType.PART_TIME: {
-          for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createPartTimeJob(
-              buildPartTimeJobRequest(entry, applicantId),
-            )
-          }
-          break
-        }
-
-        case IncomeType.CONTRACT_WORK: {
-          for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createContractorJob(
-              buildContractorJobRequest(entry, applicantId),
-            )
-          }
-          break
-        }
-
-        case IncomeType.CAPITAL_INCOME: {
-          for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createCapitalIncomePayment(
-              buildCapitalIncomePaymentRequest(entry, applicantId),
-            )
-          }
-          break
-        }
-
-        case IncomeType.SOCIAL_INSURANCE: {
-          for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createTRPayment(
-              buildTRPaymentRequest(entry, applicantId),
-            )
-          }
-          break
-        }
-
-        case IncomeType.PENSION: {
-          for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createPensionPayment(
-              buildPensionPaymentRequest(entry, applicantId),
-            )
-          }
-          break
-        }
-
-        default:
-          throw new TemplateApiError(
-            {
-              title: errorMessages.cannotApplyErrorTitle,
-              summary: errorMessages.cannotApplyErrorSummary,
-            },
-            400,
-          )
-      }
+      // switch (typeOfIncome) {
+      //   case IncomeType.CASUAL_WORK: {
+      //     for (const entry of entries) {
+      //       await this.vmstUnemploymentClientService.createIrregularJob(
+      //         buildIrregularJobRequest(entry, applicantId),
+      //       )
+      //     }
+      //     break
+      //   }
+      //   case IncomeType.PART_TIME: {
+      //     for (const entry of entries) {
+      //       await this.vmstUnemploymentClientService.createPartTimeJob(
+      //         buildPartTimeJobRequest(entry, applicantId),
+      //       )
+      //     }
+      //     break
+      //   }
+      //   case IncomeType.CONTRACT_WORK: {
+      //     for (const entry of entries) {
+      //       await this.vmstUnemploymentClientService.createContractorJob(
+      //         buildContractorJobRequest(entry, applicantId),
+      //       )
+      //     }
+      //     break
+      //   }
+      //   case IncomeType.CAPITAL_INCOME: {
+      //     for (const entry of entries) {
+      //       await this.vmstUnemploymentClientService.createCapitalIncomePayment(
+      //         buildCapitalIncomePaymentRequest(entry, applicantId),
+      //       )
+      //     }
+      //     break
+      //   }
+      //   case IncomeType.SOCIAL_INSURANCE: {
+      //     for (const entry of entries) {
+      //       await this.vmstUnemploymentClientService.createTRPayment(
+      //         buildTRPaymentRequest(entry, applicantId),
+      //       )
+      //     }
+      //     break
+      //   }
+      //   case IncomeType.PENSION: {
+      //     for (const entry of entries) {
+      //       await this.vmstUnemploymentClientService.createPensionPayment(
+      //         buildPensionPaymentRequest(entry, applicantId),
+      //       )
+      //     }
+      //     break
+      //   }
+      //   default:
+      //     throw new TemplateApiError(
+      //       {
+      //         title: errorMessages.cannotApplyErrorTitle,
+      //         summary: errorMessages.cannotApplyErrorSummary,
+      //       },
+      //       400,
+      //     )
+      // }
     } catch (e) {
       this.logger.error(
         '[VMST-Confirm-Job-Or-Income] - Error submitting job or income information',

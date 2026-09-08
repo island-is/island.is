@@ -3,13 +3,13 @@ import { getValueViaPath } from '@island.is/application/core'
 import { application as applicationMessages } from '../lib/messages'
 
 export const getHistoryLogMessage = (application: Application) => {
-  const monthFrom = getValueViaPath<string>(
+  const casualDateFrom = getValueViaPath<string>(
     application.answers,
-    'registerCasualWork[0].monthFrom',
+    'registerCasualWork[0].dateFrom',
   )
-  const monthTo = getValueViaPath<string>(
+  const casualDateTo = getValueViaPath<string>(
     application.answers,
-    'registerCasualWork[0].monthTo',
+    'registerCasualWork[0].dateTo',
   )
   const contractJobStart = getValueViaPath<string>(
     application.answers,
@@ -20,8 +20,8 @@ export const getHistoryLogMessage = (application: Application) => {
     'registerContractWork[0].workEnds',
   )
 
-  const dateFrom = monthFrom || contractJobStart
-  const dateTo = monthTo || workEnds
+  const dateFrom = casualDateFrom || contractJobStart
+  const dateTo = casualDateTo || workEnds
 
   if (!dateFrom || !dateTo) {
     return applicationMessages.historyLogSubmitted

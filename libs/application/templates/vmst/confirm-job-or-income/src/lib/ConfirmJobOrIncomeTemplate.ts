@@ -21,6 +21,7 @@ import {
   CanReportWorkApi,
   PensionFundsApi,
   IncomeTypesApi,
+  IncomeApi,
   SubmitApi,
 } from '../dataProviders'
 import { application as applicationMessages } from './messages'
@@ -58,7 +59,12 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [CanReportWorkApi, PensionFundsApi, IncomeTypesApi],
+              api: [
+                CanReportWorkApi,
+                PensionFundsApi,
+                IncomeTypesApi,
+                IncomeApi,
+              ],
               delete: true,
             },
           ],

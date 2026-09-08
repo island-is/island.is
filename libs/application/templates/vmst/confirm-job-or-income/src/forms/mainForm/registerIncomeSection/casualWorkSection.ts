@@ -29,13 +29,13 @@ export const casualWorkSection = buildSubSection({
               searchPersons: false,
               required: true,
             },
-            monthFrom: {
+            dateFrom: {
               component: 'date',
-              label: m.application.monthFrom,
+              label: m.application.dateFrom,
               width: 'half',
               required: true,
               clearOnChange: (index: number) => [
-                `registerCasualWork[${index}].monthTo`,
+                `registerCasualWork[${index}].dateTo`,
               ],
               minDate: () => {
                 const tomorrow = new Date()
@@ -43,13 +43,13 @@ export const casualWorkSection = buildSubSection({
                 return tomorrow
               },
             },
-            monthTo: {
+            dateTo: {
               component: 'date',
-              label: m.application.monthTo,
+              label: m.application.dateTo,
               width: 'half',
               required: true,
               minDate: (_application, activeField) => {
-                const fromDate = activeField?.monthFrom
+                const fromDate = activeField?.dateFrom
                 if (fromDate) {
                   return new Date(fromDate)
                 }
@@ -72,15 +72,15 @@ export const casualWorkSection = buildSubSection({
             header: [
               m.application.tableHeaderNationalId,
               m.application.tableHeaderCompany,
-              m.application.tableHeaderMonthFrom,
-              m.application.tableHeaderMonthTo,
+              m.application.tableHeaderDateFrom,
+              m.application.tableHeaderDateTo,
               m.application.tableHeaderEstimatedIncome,
             ],
             rows: [
               'nationalId',
-              'company',
-              'monthFrom',
-              'monthTo',
+              'company.name',
+              'dateFrom',
+              'dateTo',
               'estimatedIncome',
             ],
             format: {
@@ -89,7 +89,7 @@ export const casualWorkSection = buildSubSection({
                 const clean = value.replace('-', '')
                 return `${clean.slice(0, 6)}-${clean.slice(6)}`
               },
-              monthFrom: (value) => {
+              dateFrom: (value) => {
                 if (!value) return ''
                 const date = new Date(value)
                 if (isNaN(date.getTime())) return value
@@ -99,7 +99,7 @@ export const casualWorkSection = buildSubSection({
                   day: 'numeric',
                 })
               },
-              monthTo: (value) => {
+              dateTo: (value) => {
                 if (!value) return ''
                 const date = new Date(value)
                 if (isNaN(date.getTime())) return value
@@ -117,14 +117,14 @@ export const casualWorkSection = buildSubSection({
             },
           },
         }),
-        buildAlertMessageField({
-          id: 'contractWorkAlert',
-          title: 'Tímabil mega ekki skarast',
-          message:
-            'Tvö tímabil hjá Byko skarast. Þú getur eytt út línu eða breytt tímabilum til að geta haldið áfram með skráninguna.',
-          alertType: 'warning',
-          marginTop: 6,
-        }),
+        // buildAlertMessageField({
+        //   id: 'contractWorkAlert',
+        //   title: 'Tímabil mega ekki skarast',
+        //   message:
+        //     'Tvö tímabil hjá Byko skarast. Þú getur eytt út línu eða breytt tímabilum til að geta haldið áfram með skráninguna.',
+        //   alertType: 'warning',
+        //   marginTop: 6,
+        // }),
       ],
     }),
   ],

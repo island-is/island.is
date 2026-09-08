@@ -206,20 +206,25 @@ export const application = defineMessages({
     defaultMessage: 'Nafn fyrirtækis',
     description: 'Company name label',
   },
-  monthFrom: {
-    id: 'vmst.cjoi.application:monthFrom',
-    defaultMessage: 'Mánuður frá',
-    description: 'Month from label',
+  dateFrom: {
+    id: 'vmst.cjoi.application:dateFrom',
+    defaultMessage: 'Dagsetning frá',
+    description: 'Date from label',
   },
-  monthTo: {
-    id: 'vmst.cjoi.application:monthTo',
-    defaultMessage: 'Mánuður til',
-    description: 'Month to label',
+  dateTo: {
+    id: 'vmst.cjoi.application:dateTo',
+    defaultMessage: 'Dagsetning til',
+    description: 'Date to label',
   },
   jobStart: {
     id: 'vmst.cjoi.application:jobStart',
     defaultMessage: 'Upphaf starfs',
     description: 'Job start date label',
+  },
+  jobEnd: {
+    id: 'vmst.cjoi.application:jobEnd',
+    defaultMessage: 'Lok starfs',
+    description: 'Job end date label',
   },
   workEnds: {
     id: 'vmst.cjoi.application:workEnds',
@@ -268,15 +273,15 @@ export const application = defineMessages({
     defaultMessage: 'Fyrirtæki',
     description: 'Table header for company',
   },
-  tableHeaderMonthFrom: {
-    id: 'vmst.cjoi.application:tableHeaderMonthFrom',
-    defaultMessage: 'Mánuður frá',
-    description: 'Table header for month from',
+  tableHeaderDateFrom: {
+    id: 'vmst.cjoi.application:tableHeaderDateFrom',
+    defaultMessage: 'Dagsetning frá',
+    description: 'Table header for date from',
   },
-  tableHeaderMonthTo: {
-    id: 'vmst.cjoi.application:tableHeaderMonthTo',
-    defaultMessage: 'Mánuður til',
-    description: 'Table header for month to',
+  tableHeaderDateTo: {
+    id: 'vmst.cjoi.application:tableHeaderDateTo',
+    defaultMessage: 'Dagsetning til',
+    description: 'Table header for date to',
   },
   tableHeaderEstimatedIncome: {
     id: 'vmst.cjoi.application:tableHeaderEstimatedIncome',

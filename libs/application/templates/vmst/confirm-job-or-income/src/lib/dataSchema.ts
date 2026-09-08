@@ -5,8 +5,8 @@ const casualWorkEntrySchema = z.object({
     nationalId: z.string().min(1),
     name: z.string().optional(),
   }),
-  monthFrom: z.string().min(1),
-  monthTo: z.string().min(1),
+  dateFrom: z.string().min(1),
+  dateTo: z.string().min(1),
   estimatedIncome: z.string().min(1),
 })
 
@@ -16,6 +16,7 @@ const partTimeEntrySchema = z.object({
     name: z.string().optional(),
   }),
   jobStart: z.string().min(1),
+  jobEnd: z.string().optional(),
   workPercentage: z.string().min(1),
   estimatedIncome: z.string().min(1),
 })
