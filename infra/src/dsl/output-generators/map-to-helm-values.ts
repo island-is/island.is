@@ -641,12 +641,11 @@ export const HelmOutput: OutputFormat<HelmService> = {
         (value) => {
           const url = new URL(value)
 
-          return `https://${env.feature}-beta.${env.domain}${url.pathname
-            }${url.search}${url.hash}`
+          return `https://${env.feature}-beta.${env.domain}${url.pathname}${url.search}${url.hash}`
         },
       )
     }
-    
+
     if (s.env.IDENTITY_SERVER_ISSUER_URL) {
       s.env.IDENTITY_SERVER_ISSUER_URL = rewriteDevEnv(
         s.env.IDENTITY_SERVER_ISSUER_URL,
