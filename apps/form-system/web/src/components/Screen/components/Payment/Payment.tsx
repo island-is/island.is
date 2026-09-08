@@ -15,6 +15,7 @@ import {
   GridContainer,
   GridRow,
   Inline,
+  LoadingDots,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -30,11 +31,6 @@ const paymentCatalogError = {
     is: 'Villa kom upp við að sækja greiðsluupplýsingar. Vinsamlegast reyndu aftur.',
     en: 'An error occurred while fetching payment information. Please try again.',
   },
-}
-
-const paymentCatalogLoadingText = {
-  is: 'Sæki greiðsluupplýsingar',
-  en: 'Fetching payment information',
 }
 
 export const Payment = () => {
@@ -115,7 +111,7 @@ export const Payment = () => {
     }
 
     if (loading) {
-      return <Text>{paymentCatalogLoadingText[lang]}</Text>
+      return <LoadingDots />
     }
 
     return (
@@ -206,9 +202,13 @@ export const Payment = () => {
                 <Text variant="h5" fontWeight="semiBold">
                   {formatMessage(m.total)}
                 </Text>
-                <Text variant="h5" fontWeight="semiBold" color="blue400">
-                  {convertToPaymentNumber(total)} kr.
-                </Text>
+                {loading ? (
+                  <LoadingDots />
+                ) : (
+                  <Text variant="h5" fontWeight="semiBold" color="blue400">
+                    {convertToPaymentNumber(total)} kr.
+                  </Text>
+                )}
               </Box>
             </Stack>
           </GridColumn>
