@@ -151,7 +151,6 @@ export interface FeatureKubeJob {
   kind: 'Job'
   metadata: {
     name: string
-    namespace?: string
     labels?: { [name: string]: string }
     annotations?: { [name: string]: string }
   }
