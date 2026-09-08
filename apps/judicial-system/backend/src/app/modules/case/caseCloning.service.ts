@@ -288,11 +288,11 @@ export class CaseCloningService {
         transaction,
       )
 
-      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
-        [result],
-        { transaction },
-      )
-
+      // The police case numbers are not resolved again here: create already
+      // resolved them onto this instance, and nothing since can have changed
+      // the set. Seeding covers every number the source case carries, and the
+      // assignment above only re-attaches a subset of those to the copied
+      // defendants.
       this.logger.debug(
         `Duplicated indictment case ${caseId} into a new draft case ${newCaseId}`,
       )

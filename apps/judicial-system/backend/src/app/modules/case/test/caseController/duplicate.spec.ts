@@ -412,10 +412,13 @@ describe('CaseController - Duplicate', () => {
       )
     })
 
-    it('should resolve the police case numbers of the returned case', () => {
+    // Creating the case resolves them onto the returned instance, and the
+    // distinct set cannot change afterwards: seeding covers every number the
+    // source carries, and the assignment only re-attaches a subset of those.
+    it('should not resolve the police case numbers a second time', () => {
       expect(
         mockPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases,
-      ).toHaveBeenCalledWith([newCase], { transaction })
+      ).not.toHaveBeenCalled()
     })
   })
 
@@ -594,9 +597,7 @@ describe('CaseController - Duplicate', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
       expect(mockVictimRepositoryService.copyAllToCase).not.toHaveBeenCalled()
-      expect(
-        mockPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases,
-      ).not.toHaveBeenCalled()
+      expect(mockCaseFileRepositoryService.copyToCase).not.toHaveBeenCalled()
     })
   })
 })
