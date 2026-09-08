@@ -550,5 +550,9 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
     slug: InstitutionTypes.FJARSYSLA_RIKISINS,
     contentfulId: InstitutionContentfulIds.FJARSYSLA_RIKISINS,
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
 }

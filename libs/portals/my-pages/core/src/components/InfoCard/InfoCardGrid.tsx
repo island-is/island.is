@@ -64,6 +64,7 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
                     detail={card.detail}
                     variant={variant}
                     appointment={card.appointment}
+                    muted={card.muted}
                     loading={card.loading}
                     tooltip={card.tooltip}
                   />

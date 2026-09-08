@@ -108,6 +108,7 @@ export enum ApplicationTypes {
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
   PAY_DEBTS = 'PayDebts',
+  U2_CERTIFICATE = 'U2Certificate',
 }
 
 export const ApplicationConfigurations = {
@@ -550,5 +551,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PAY_DEBTS]: {
     slug: 'greidum-rikinu',
     translation: ['pd.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    slug: 'u2-vottord',
+    translation: ['vmst.u2c.application', 'uiForms.application'],
   },
 }

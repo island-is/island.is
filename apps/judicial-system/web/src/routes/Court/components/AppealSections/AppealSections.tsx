@@ -22,7 +22,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   caseLevelAppealDecision,
   withCaseLevelAppealDecision,
@@ -177,7 +177,7 @@ const AppealSections: FC<Props> = ({
           />
         </Box>
       )}
-      <div className={grid({ gap: 3 })}>
+      <div className={stack({ gap: 3 })}>
         {workingCase.defendants && workingCase.defendants.length > 0 && (
           <BlueBox>
             <SectionHeading
