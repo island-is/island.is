@@ -33,6 +33,10 @@ export const sortButton = style({
   width: '100%',
 })
 
+export const sortButtonRight = style({
+  textAlign: 'right',
+})
+
 export const container = style({
   '::before': {
     content: '',

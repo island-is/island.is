@@ -79,6 +79,15 @@ const SORT_FIELD_MAP: Record<
   totalPaymentsSum: IcelandicGovernmentInstitutionsOpenInvoiceSortField.Amount,
 }
 
+/** Shared by the client sorting state and the SSR fetch in `getProps` — the two must not drift. */
+const DEFAULT_SORTING: SortingState = [{ id: 'totalPaymentsSum', desc: true }]
+
+const DEFAULT_SORT_BY = SORT_FIELD_MAP[DEFAULT_SORTING[0].id]
+
+const DEFAULT_SORT_DIRECTION = DEFAULT_SORTING[0].desc
+  ? IcelandicGovernmentInstitutionsSortDirection.Descending
+  : IcelandicGovernmentInstitutionsSortDirection.Ascending
+
 const toDebtorIds = (debtors?: string[] | null) =>
   debtors?.map(Number).filter((id): id is number => Number.isInteger(id))
 
@@ -223,9 +232,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
   const totalHits = totalCount
 
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: 'supplier', desc: false },
-  ])
+  const [sorting, setSorting] = useState<SortingState>(DEFAULT_SORTING)
   const sortBy = sorting[0] ? SORT_FIELD_MAP[sorting[0].id] : undefined
   const sortDirection = sorting[0]
     ? sorting[0].desc
@@ -732,9 +739,8 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
         suppliers: suppliersInput,
         ministries: ministriesInput,
         paymentTypeIds: invoicePaymentTypesInput,
-        sortBy:
-          IcelandicGovernmentInstitutionsOpenInvoiceSortField.SupplierName,
-        sortDirection: IcelandicGovernmentInstitutionsSortDirection.Ascending,
+        sortBy: DEFAULT_SORT_BY,
+        sortDirection: DEFAULT_SORT_DIRECTION,
         limit: PAGE_SIZE,
         page: 1,
       },

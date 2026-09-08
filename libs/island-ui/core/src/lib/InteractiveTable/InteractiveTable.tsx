@@ -214,8 +214,16 @@ export const InteractiveTable = <TData extends object>({
                       type="button"
                       display="flex"
                       alignItems="center"
+                      justifyContent={
+                        header.column.columnDef.meta?.align === 'right'
+                          ? 'flexEnd'
+                          : undefined
+                      }
                       color="blue"
-                      className={styles.sortButton}
+                      className={cn(styles.sortButton, {
+                        [styles.sortButtonRight]:
+                          header.column.columnDef.meta?.align === 'right',
+                      })}
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {flexRender(
@@ -243,7 +251,16 @@ export const InteractiveTable = <TData extends object>({
                       </Box>
                     </FocusableBox>
                   ) : (
-                    <Box display="flex" flexDirection="row" alignItems="center">
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      alignItems="center"
+                      justifyContent={
+                        header.column.columnDef.meta?.align === 'right'
+                          ? 'flexEnd'
+                          : undefined
+                      }
+                    >
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext(),

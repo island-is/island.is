@@ -63,6 +63,7 @@ export const OverviewTable = ({
         header: formatMessage(m.overview.customer),
       }),
       columnHelper.accessor('totalPaymentsSum', {
+        id: 'totalPaymentsSum',
         header: formatMessage(m.overview.amount),
         cell: (info) => formatCurrency(info.getValue()),
         meta: { align: 'right' },
