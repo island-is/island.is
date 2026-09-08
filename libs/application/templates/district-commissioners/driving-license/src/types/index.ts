@@ -1,11 +1,5 @@
 import { FormValue } from '@island.is/application/types'
 
-export type HasQualityPhotoData = {
-  data: {
-    hasQualityPhoto: boolean
-  }
-}
-
 export enum Pickup {
   'POST' = 'post',
   'DISTRICT' = 'district',

@@ -100,22 +100,6 @@ export const sectionFakeData = buildSubSection({
           ],
         }),
         buildRadioField({
-          id: 'fakeData.qualityPhoto',
-          title: 'B-full / B-temp / 65+ gamla flæðið: Gervimynd eða enga mynd?',
-          width: 'half',
-          condition: allowFakeCondition(YES),
-          options: [
-            {
-              value: YES,
-              label: 'Mynd',
-            },
-            {
-              value: NO,
-              label: 'Engin mynd',
-            },
-          ],
-        }),
-        buildRadioField({
           id: 'fakeData.remarks',
           title: 'Heilbrigðis tákntala',
           width: 'half',

@@ -119,7 +119,9 @@ export const useEligibility = (
 
       hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
     } else {
-      hasPhoto = fakeData?.qualityPhoto === YES
+      // Legacy photo flow now also reads the RLS quality photo from external
+      // data (the `hasRLSPhoto` fake toggle drives it), same as the real path.
+      hasPhoto = hasUsableRlsQualityPhoto(application.externalData)
     }
     return {
       loading: false,

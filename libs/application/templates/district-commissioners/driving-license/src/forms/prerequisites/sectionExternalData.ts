@@ -13,7 +13,6 @@ import {
   CurrentLicenseApi,
   DrivingAssessmentApi,
   JurisdictionApi,
-  QualityPhotoApi,
   QualityPhotoAndSignatureApi,
   AllPhotosFromThjodskraApi,
 } from '@island.is/application/types'
@@ -61,9 +60,6 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: GlassesCheckApi,
-        }),
-        buildDataProviderItem({
-          provider: QualityPhotoApi,
         }),
         buildDataProviderItem({
           provider: DrivingAssessmentApi,

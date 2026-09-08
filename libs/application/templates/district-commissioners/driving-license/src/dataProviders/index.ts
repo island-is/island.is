@@ -12,7 +12,6 @@ export {
   CurrentLicenseApi,
   DrivingAssessmentApi,
   JurisdictionApi,
-  QualityPhotoApi,
 } from '@island.is/application/types'
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
