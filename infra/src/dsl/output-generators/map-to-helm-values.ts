@@ -635,6 +635,18 @@ export const HelmOutput: OutputFormat<HelmService> = {
     ]
     const serviceName = s.image ?? s.name
 
+    if (serviceName === 'service-portal-api') {
+      s.env.SERVICE_PORTAL_BASE_URL = rewriteDevEnv(
+        s.env.SERVICE_PORTAL_BASE_URL,
+        (value) => {
+          const url = new URL(value)
+
+          return `https://${env.feature}-beta.${env.domain}${url.pathname
+            }${url.search}${url.hash}`
+        },
+      )
+    }
+    
     if (s.env.IDENTITY_SERVER_ISSUER_URL) {
       s.env.IDENTITY_SERVER_ISSUER_URL = rewriteDevEnv(
         s.env.IDENTITY_SERVER_ISSUER_URL,
