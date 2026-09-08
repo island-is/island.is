@@ -1177,7 +1177,7 @@ export class CaseController {
     }
 
     const duplicatedCase = await this.sequelize.transaction((transaction) =>
-      this.caseCloningService.duplicateIndictmentToDraft(theCase.id, {
+      this.caseCloningService.duplicateIndictmentToDraft(theCase, {
         transaction,
         // The current prosecutor owns the new draft case
         prosecutorId: user.id,

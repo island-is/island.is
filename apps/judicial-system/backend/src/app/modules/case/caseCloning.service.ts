@@ -2,11 +2,7 @@ import pick from 'lodash/pick'
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -185,26 +181,23 @@ export class CaseCloningService {
     }
   }
 
+  // The case to duplicate is the one the route already resolved and decided
+  // from, rather than an id read again here. Re-reading it would buy no
+  // consistency with the copies below - they run at READ COMMITTED, so each
+  // statement takes its own snapshot either way - and it would let the
+  // eligibility decision and the copied data come from two different reads.
   async duplicateIndictmentToDraft(
-    caseId: string,
+    caseToDuplicate: Case,
     options: DuplicateCaseOptions,
   ): Promise<Case> {
+    const caseId = caseToDuplicate.id
+
     try {
       this.logger.debug(
         `Duplicating indictment case ${caseId} into a new draft case`,
       )
 
       const { transaction, prosecutorId, prosecutorsOfficeId } = options
-
-      const caseToDuplicate = await this.caseRepositoryService.findById(
-        caseId,
-        { transaction },
-      )
-
-      if (!caseToDuplicate) {
-        // This is a programmer error, so we throw an exception
-        throw new InternalServerErrorException(`Case ${caseId} not found`)
-      }
 
       // Maintain the connection to the police system by seeding all police
       // case numbers of the original as unassigned rows on the new case

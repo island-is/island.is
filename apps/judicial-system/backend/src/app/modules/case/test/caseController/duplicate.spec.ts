@@ -1,10 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import {
-  ForbiddenException,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { ForbiddenException } from '@nestjs/common'
 
 import {
   CaseFileCategory,
@@ -127,12 +124,8 @@ describe('CaseController - Duplicate', () => {
     oldCivilClaimantId = uuid()
     newCivilClaimantId = uuid()
 
-    // A case with nothing hanging off it, so each test only sets up the part it
-    // is about
-    mockCaseRepositoryService.findById.mockResolvedValue({
-      id: caseId,
-      type: CaseType.INDICTMENT,
-    } as Case)
+    // Nothing hangs off the case by default, so each test only sets up the
+    // part it is about
     mockCaseRepositoryService.create.mockResolvedValue(newCase)
     mockPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
       new Map(),
@@ -269,27 +262,14 @@ describe('CaseController - Duplicate', () => {
     })
   })
 
-  describe('case to duplicate not found', () => {
-    let then: Then
-
-    beforeEach(async () => {
-      mockCaseRepositoryService.findById.mockResolvedValue(null)
-
-      then = await givenWhenThen(caseId, user, revokedIndictment)
-    })
-
-    it('should throw InternalServerErrorException and not create a draft', () => {
-      expect(then.error).toBeInstanceOf(InternalServerErrorException)
-      expect(mockCaseRepositoryService.create).not.toHaveBeenCalled()
-    })
-  })
-
   describe('prosecutor entered case data copied', () => {
     const courtId = uuid()
     let createdWith: Partial<Case>
 
     beforeEach(async () => {
-      mockCaseRepositoryService.findById.mockResolvedValue({
+      // The route's case is what gets copied, so it is passed in rather than
+      // read again inside the duplication
+      const sourceCase = {
         id: caseId,
         origin: CaseOrigin.LOKE,
         type: CaseType.INDICTMENT,
@@ -310,9 +290,9 @@ describe('CaseController - Duplicate', () => {
         defenderName: 'Defender',
         leadInvestigator: 'Investigator',
         caseFilesComments: 'Some case files comment',
-      } as Case)
+      } as Case
 
-      await givenWhenThen(caseId, user, revokedIndictment)
+      await givenWhenThen(caseId, user, sourceCase)
       ;[createdWith] = mockCaseRepositoryService.create.mock.calls[0]
     })
 
