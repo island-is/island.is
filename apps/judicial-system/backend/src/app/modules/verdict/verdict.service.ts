@@ -590,7 +590,7 @@ export class VerdictService {
                 } as TUser,
                 [
                   {
-                    type: PoliceDocumentType.RVBD,
+                    type: PoliceDocumentType.BRTNG_RVBD,
                     courtDocument: Base64.btoa(pdf.toString('binary')),
                   },
                 ],

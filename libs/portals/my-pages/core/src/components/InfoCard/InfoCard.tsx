@@ -73,6 +73,8 @@ export interface InfoCardProps {
   tags?: Array<ActionCardProps['tag']>
   img?: string
   variant?: 'default' | 'detail' | 'appointment' | 'link'
+  /** Grays out the card, e.g. for appointments that have already passed */
+  muted?: boolean
   loading?: boolean
   error?: boolean
 }
@@ -87,6 +89,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   img,
   appointment,
   variant = 'default',
+  muted = false,
   loading = false,
   tooltip,
 }) => {
@@ -115,6 +118,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
         data={appointment}
         description={description}
         to={to}
+        muted={muted}
       />
     ) : (
       <Box
