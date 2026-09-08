@@ -601,11 +601,7 @@ const rewriteDevEnv = (
   value: EnvironmentVariableValue,
   rewrite: (value: string) => string,
 ): EnvironmentVariableValue => {
-  if (
-    typeof value === 'object' &&
-    value !== null &&
-    'dev' in value
-  ) {
+  if (typeof value === 'object' && value !== null && 'dev' in value) {
     if (typeof value.dev === 'string') {
       return rewrite(value.dev)
     }
@@ -620,7 +616,6 @@ const rewriteDevEnv = (
 
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
-
     const featureIdsHost = getFeatureIdsHost(env)
     const idsServices = [
       'identity-server',
@@ -650,10 +645,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     if (idsServices.includes(serviceName)) {
       const rewriteIdsUrl = (value: string) => {
         const url = new URL(value)
-        return getFeatureIdsUrl(
-          env,
-          `${url.pathname}${url.search}${url.hash}`,
-        )
+        return getFeatureIdsUrl(env, `${url.pathname}${url.search}${url.hash}`)
       }
 
       if (s.env.PUBLIC_URL !== undefined) {
