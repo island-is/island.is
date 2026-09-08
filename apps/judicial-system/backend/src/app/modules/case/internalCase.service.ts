@@ -798,6 +798,7 @@ export class InternalCaseService {
               model: Verdict,
               as: 'verdicts',
               required: true,
+              separate: true,
               order: [['created', 'DESC']],
               where: {
                 serviceRequirement: ServiceRequirement.REQUIRED,
