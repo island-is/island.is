@@ -356,7 +356,7 @@ export const ECOICalculatorResults = ({
                             tick={<CategoryAxisTick />}
                           />
                           <Tooltip
-                            formatter={(value: number) => formatScore(value)}
+                            formatter={(value) => formatScore(Number(value))}
                           />
                           <Bar
                             dataKey="average"
@@ -399,7 +399,7 @@ export const ECOICalculatorResults = ({
                             stroke={theme.color.blue200}
                           />
                           <Tooltip
-                            formatter={(value: number) => formatScore(value)}
+                            formatter={(value) => formatScore(Number(value))}
                           />
                           <Radar
                             dataKey="average"

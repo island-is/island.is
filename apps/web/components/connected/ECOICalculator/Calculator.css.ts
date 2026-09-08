@@ -23,7 +23,7 @@ export const stayOnSinglePageWhenPrinting = style({
 })
 
 export const totalAverageBanner = style({
-  height: 60,
+  minHeight: 60,
 })
 
 export const tabPanelSpacer = style({
