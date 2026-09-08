@@ -34,6 +34,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import { getCaseFileHash } from '../../formatters'
+import { InternalCaseService } from '../case/internalCase.service'
 import { PdfService } from '../case/pdf.service'
 import {
   CourtDocumentFolder,
@@ -43,7 +44,7 @@ import {
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceService } from '../police'
+import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -104,6 +105,8 @@ export class SubpoenaService {
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => InternalCaseService))
+    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -651,6 +654,42 @@ export class SubpoenaService {
         // Do not retry an upload the court service will never accept
         return { delivered: isFileTooLargeForCourt(reason) }
       })
+  }
+
+  async deliverServiceCertificateToPolice(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      const pdf = await this.pdfService.getSubpoenaServiceCertificatePdf(
+        theCase,
+        defendant,
+        subpoena,
+      )
+
+      const delivered =
+        await this.internalCaseService.deliverCaseToPoliceWithFiles(
+          theCase,
+          user,
+          [
+            {
+              type: PoliceDocumentType.RVBD,
+              courtDocument: Base64.btoa(pdf.toString('binary')),
+            },
+          ],
+        )
+
+      return { delivered }
+    } catch (reason) {
+      this.logger.warn(
+        `Failed to upload service certificate pdf to police for subpoena ${subpoena.id} of defendant ${defendant.id} and case ${theCase.id}`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
   }
 
   async deliverSubpoenaRevocationToNationalCommissionersOffice(

@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -30,8 +30,10 @@ import {
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import type { VerdictTimelineItem } from './VerdictTimelineBody'
+import VerdictTimelineBody from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
 
 interface Props {
@@ -62,9 +64,6 @@ const VerdictTimelineCard: FC<Props> = (props) => {
   const { setAndSendDefendantToServer, updateDefendant, isUpdatingDefendant } =
     useDefendants()
   const { setAndSendVerdictToServer } = useVerdict()
-
-  const hasMountedRef = useRef<boolean>(false)
-  const previousTextCountRef = useRef<number>(0)
 
   const [modalVisible, setModalVisible] = useState<VisibleModal>()
   const [pendingServiceDate, setPendingServiceDate] = useState<Date>()
@@ -139,23 +138,23 @@ const VerdictTimelineCard: FC<Props> = (props) => {
   )
 
   const textItems = useMemo(() => {
-    const texts: string[] = []
+    const items: VerdictTimelineItem[] = []
 
     const pushIf = (condition: boolean, message: string | null) => {
       if (condition && message) {
-        texts.push(message)
+        items.push({ text: message })
       }
     }
 
     pushIf(!!serviceRequirementText, serviceRequirementText)
 
     if (isFine) {
-      texts.push(
-        formatMessage(strings.fineAppealDeadline, {
+      items.push({
+        text: formatMessage(strings.fineAppealDeadline, {
           appealDeadlineIsInThePast: defendant.isVerdictAppealDeadlineExpired,
           appealDeadline: formatDate(defendant.verdictAppealDeadline),
         }),
-      )
+      })
     } else if (verdict?.serviceDate) {
       pushIf(
         !!isServiceRequired,
@@ -164,14 +163,14 @@ const VerdictTimelineCard: FC<Props> = (props) => {
         }),
       )
 
-      texts.push(
-        formatMessage(appealExpirationInfo.message, {
+      items.push({
+        text: formatMessage(appealExpirationInfo.message, {
           appealExpirationDate: appealExpirationInfo.date,
           deadlineType: verdict?.isDefaultJudgement
             ? 'Endurupptökufrestur'
             : 'Áfrýjunarfrestur',
         }),
-      )
+      })
 
       pushIf(
         !!verdict?.appealDate,
@@ -198,7 +197,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       )}`,
     )
 
-    return texts
+    return items
   }, [
     appealExpirationInfo.date,
     appealExpirationInfo.message,
@@ -288,11 +287,6 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       setWorkingCase,
     )
   }
-
-  useEffect(() => {
-    hasMountedRef.current = true
-    previousTextCountRef.current = textItems.length
-  }, [textItems.length])
 
   useEffect(() => {
     if (isServiceDatePickerClosing && verdict?.serviceDate) {
@@ -462,45 +456,10 @@ const VerdictTimelineCard: FC<Props> = (props) => {
             : []),
         ]}
       >
-        <Box className={styles.container}>
-          <Text variant="eyebrow">
-            {isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
-          </Text>
-          <AnimatePresence initial={false}>
-            {textItems.map((text, index) => {
-              const addedStartIndex = previousTextCountRef.current
-              const isNewItem =
-                hasMountedRef.current && index >= addedStartIndex
-              const staggerIndex = isNewItem ? index - addedStartIndex : 0
-
-              return (
-                <motion.div
-                  key={`${defendant.id}-${text}`}
-                  initial={
-                    isNewItem
-                      ? {
-                          opacity: 0,
-                          y: 20,
-                          height: 0,
-                        }
-                      : false
-                  }
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    height: 'auto',
-                  }}
-                  exit={{ opacity: 0, y: 20, height: 0 }}
-                  transition={{
-                    delay: isNewItem ? staggerIndex * 0.2 : 0,
-                    duration: 0.3,
-                  }}
-                >
-                  <Text>{`• ${text}`}</Text>
-                </motion.div>
-              )
-            })}
-          </AnimatePresence>
+        <VerdictTimelineBody
+          eyebrow={isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
+          items={textItems}
+        >
           {showDatePickers && (
             <AnimatePresence
               onExitComplete={() => {
@@ -608,7 +567,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               initial={false}
               animate="visible"
               transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
-              className={grid({ gap: 2, marginTop: 1 })}
+              className={stack({ gap: 2, marginTop: 1 })}
             >
               <Text variant="eyebrow">Afstaða dómfellda til dóms</Text>
               <VerdictAppealDecisionChoice
@@ -621,7 +580,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               />
             </motion.div>
           )}
-        </Box>
+        </VerdictTimelineBody>
       </ContextMenuCard>
       {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
         <Modal

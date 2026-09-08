@@ -232,7 +232,7 @@ const Statement = () => {
               marginBottom={isProsecutionUser(user) ? 5 : 10}
             >
               <SectionHeading title="Gögn" marginBottom={1} />
-              <Text marginBottom={3} whiteSpace="pre">
+              <Text marginBottom={3} whiteSpace="preWrap">
                 Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim
                 upp hér að neðan.
                 {'\n'}
@@ -259,7 +259,7 @@ const Statement = () => {
               />
             </Box>
             {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
-              <Box component="section" marginBottom={10}>
+              <Box component="section">
                 <RequestAppealRulingNotToBePublishedCheckbox />
               </Box>
             )}

@@ -13,7 +13,7 @@ import { m } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
 import { isLessThanIncomeLimit } from '../../../utils/conditions'
 import { format as formatNationalId } from 'kennitala'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 
 export const overviewUnderLimitSection = buildSection({
   condition: isLessThanIncomeLimit,
