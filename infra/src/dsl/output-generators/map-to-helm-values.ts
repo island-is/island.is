@@ -146,9 +146,8 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (
     (env1.type == 'staging' || env1.type == 'dev') &&
     service.name.indexOf('search-indexer') == -1 &&
-    // TEMPORARY (load-test window): services with scaleToProdInDev opt out of
-    // the dev/staging replica clamp and use their explicit replicaCount instead.
-    !serviceDef.replicaCount?.scaleToProdInDev
+    // bypassReplicaClamp services keep their explicit replicaCount in dev/staging.
+    !serviceDef.replicaCount?.bypassReplicaClamp
   ) {
     result.replicaCount = {
       min: 1,
@@ -537,6 +536,13 @@ function serializeHTTPRoute(
     ingressConf.extraAnnotations?.['nginx.ingress.kubernetes.io/rewrite-target']
   const rewritePrefix = rewriteTarget === '/$2' ? '/' : undefined
 
+  // Carry the legacy global-auth opt-out onto the route so a no-auth
+  // SecurityPolicy is rendered (Cognito wall bypass).
+  const noAuth =
+    ingressConf.extraAnnotations?.[
+      'nginx.ingress.kubernetes.io/enable-global-auth'
+    ] === 'false'
+
   return {
     parentRefs: [
       {
@@ -561,6 +567,7 @@ function serializeHTTPRoute(
         ...(rewritePrefix ? { rewritePrefix } : {}),
       },
     ],
+    ...(noAuth ? { noAuth } : {}),
   }
 }
 

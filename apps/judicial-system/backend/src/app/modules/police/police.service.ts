@@ -73,7 +73,8 @@ export enum PoliceDocumentType {
   RVMV = 'RVMV', // Viðbótargögn verjanda í S-málum
   RVVS = 'RVVS', // Viðbótargögn sækjandan í S-málum
   RVFK = 'RVFK', // Fyrirkall í S-málum
-  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
+  RVBD = 'RVBD', // Birtingarvottorð fyrirkalls í S-málum
+  BRTNG_RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
 }
 
 export interface PoliceDocument {

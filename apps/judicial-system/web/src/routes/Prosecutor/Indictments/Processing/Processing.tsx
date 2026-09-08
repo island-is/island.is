@@ -455,7 +455,7 @@ const Processing: FC = () => {
           </BlueBox>
         </Box>
         {workingCase.hasCivilClaims && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section">
             <Accordion dividerOnTop={false}>
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
                 <CivilClaimantAccordionItem

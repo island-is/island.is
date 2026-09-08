@@ -32,7 +32,7 @@ import {
   Case,
   CaseArchiveRepositoryService,
   CaseRepositoryService,
-  CaseString,
+  CaseStringRepositoryService,
   DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
@@ -75,6 +75,7 @@ jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock('../../repository/services/caseStringRepository.service')
 jest.mock('../../repository/services/dateLogRepository.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
@@ -112,6 +113,7 @@ export const createTestingCaseModule = async () => {
       AppealEventLogRepositoryService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
+      CaseStringRepositoryService,
       DateLogRepositoryService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
@@ -137,16 +139,6 @@ export const createTestingCaseModule = async () => {
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
-      {
-        provide: getModelToken(CaseString),
-        useValue: {
-          create: jest.fn(),
-          destroy: jest.fn(),
-          findOne: jest.fn(),
-          update: jest.fn(),
-          upsert: jest.fn(),
-        },
-      },
       CaseService,
       InternalCaseService,
       LimitedAccessCaseService,
@@ -235,9 +227,8 @@ export const createTestingCaseModule = async () => {
     DateLogRepositoryService,
   )
 
-  const caseStringModel = caseModule.get<typeof CaseString>(
-    getModelToken(CaseString),
-  )
+  const caseStringRepositoryService =
+    caseModule.get<CaseStringRepositoryService>(CaseStringRepositoryService)
 
   const caseConfig = caseModule.get<ConfigType<typeof caseModuleConfig>>(
     caseModuleConfig.KEY,
@@ -293,8 +284,8 @@ export const createTestingCaseModule = async () => {
     policeDigitalCaseFileRepositoryService,
     logger,
     sequelize,
+    caseStringRepositoryService,
     dateLogRepositoryService,
-    caseStringModel,
     caseConfig,
     caseService,
     internalCaseService,
