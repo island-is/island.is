@@ -1,6 +1,5 @@
 import {
   buildMultiField,
-  buildCustomField,
   buildSubSection,
   buildAlertMessageField,
   buildDescriptionField,
@@ -11,12 +10,14 @@ import {
   NO,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../utils'
 import {
+  getHealthRemarkDescriptions,
   hasContactGlassesMismatch,
-  hasHealthRemarks,
   needsHealthCertificateCondition,
+  shouldShowHealthRemarks,
 } from '../../utils/formUtils'
 import { B_FULL_RENEWAL_65 } from '../../utils/constants'
 
@@ -30,10 +31,7 @@ const yesNoOptions = [
 // h5) rather than `description`: the questions are numbered ("1. …", "2. …") and
 // `description` runs through Markdown, which parses a leading "N." as an
 // ordered-list item and restyles/renumbers it.
-const healthQuestion = (
-  id: string,
-  label: (typeof m)['healthDeclaration1'],
-) =>
+const healthQuestion = (id: string, label: typeof m['healthDeclaration1']) =>
   buildRadioField({
     id,
     title: label,
@@ -127,13 +125,27 @@ export const subSectionHealthDeclaration = buildSubSection({
           description: m.healthDeclarationSubTitle,
           marginBottom: 2,
         }),
-        buildCustomField({
+        buildAlertMessageField({
           id: 'remarks',
-          component: 'HealthRemarks',
-          condition: (_answers, externalData) => hasHealthRemarks(externalData),
+          alertType: 'warning',
+          title: m.healthRemarksTitle,
+          message: (application, _locale, formatMessage) =>
+            `${
+              formatMessage?.(m.healthRemarksDescription) ?? ''
+            } ${getHealthRemarkDescriptions(application.externalData)}`.trim(),
+          condition: shouldShowHealthRemarks,
         }),
+        // Persists the `hasHealthRemarks` answer that
+        // `needsHealthCertificateCondition` and the submission service read.
         buildHiddenInput({
           id: 'hasHealthRemarks',
+          defaultValue: (application: Application) =>
+            shouldShowHealthRemarks(
+              application.answers,
+              application.externalData,
+            )
+              ? YES
+              : NO,
         }),
         ...healthDeclarationQuestions(),
         ...healthCertificateFields(),

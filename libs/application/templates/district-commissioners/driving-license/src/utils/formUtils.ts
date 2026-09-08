@@ -15,6 +15,7 @@ import {
   codesRequiringHealthCertificate,
   DELIVERY_FEE,
   DrivingLicenseApplicationFor,
+  DrivingLicenseFakeData,
   Pickup,
 } from './constants'
 
@@ -127,6 +128,34 @@ export const hasHealthRemarks = (externalData: ExternalData) =>
     getValueViaPath<DrivingLicense>(externalData, 'currentLicense.data')
       ?.remarks,
   ).length > 0
+
+// Fake data can explicitly turn remarks off (useFakeData = yes, remarks = no),
+// in which case the license's real remarks are ignored.
+const fakeHealthRemarksDisabled = (answers: FormValue) => {
+  const fakeData = getValueViaPath<DrivingLicenseFakeData>(answers, 'fakeData')
+  return fakeData?.useFakeData === YES && fakeData?.remarks === NO
+}
+
+// Whether the health-remarks alert should show: the current license carries a
+// health-related remark and fake data hasn't turned remarks off. Also drives
+// the `hasHealthRemarks` answer (via the hidden input) that
+// `needsHealthCertificateCondition` and the submission service read. Replaces
+// the render + `setValue` the old `HealthRemarks` custom field did.
+export const shouldShowHealthRemarks = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => !fakeHealthRemarksDisabled(answers) && hasHealthRemarks(externalData)
+
+// The comma-separated remark descriptions appended to the alert body.
+export const getHealthRemarkDescriptions = (
+  externalData: ExternalData,
+): string =>
+  getHealthCertificateRemarks(
+    getValueViaPath<DrivingLicense>(externalData, 'currentLicense.data')
+      ?.remarks,
+  )
+    .map((r) => r.description)
+    .join(', ')
 
 // RLS exposes the photo binary (`pohto`) inconsistently — some legacy records
 // return metadata + signature but a null photo blob. Submission resolves the
