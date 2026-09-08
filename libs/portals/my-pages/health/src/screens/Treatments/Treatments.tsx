@@ -33,7 +33,7 @@ const Treatments = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(m.healthTreatments)}
+      title={formatMessage(m.healthTreatment)}
       intro={messages.treatmentsIntro}
       serviceProvider={{
         slug: HEALTH_DIRECTORATE_SLUG,

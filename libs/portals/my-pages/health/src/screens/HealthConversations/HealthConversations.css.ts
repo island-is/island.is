@@ -1,5 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const messageCard = style(
   themeUtils.responsiveStyle({
@@ -43,4 +43,15 @@ export const conversationRow = style({
       backgroundColor: theme.color.blue100,
     },
   },
+})
+
+export const termsCheckbox = style({})
+
+globalStyle(`${termsCheckbox} label`, {
+  alignItems: 'flex-start',
+})
+
+globalStyle(`${termsCheckbox} label > div`, {
+  alignSelf: 'flex-start',
+  marginTop: 2,
 })
