@@ -94,7 +94,7 @@ import {
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
-import { getActiveVerdict } from '../verdict/getActiveVerdict'
+import { getLatestVerdict } from '../verdict/getLatestVerdict'
 import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusion.dto'
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
@@ -798,8 +798,8 @@ export class InternalCaseService {
               model: Verdict,
               as: 'verdicts',
               required: true,
+              order: [['created', 'DESC']],
               where: {
-                isActive: true,
                 serviceRequirement: ServiceRequirement.REQUIRED,
                 serviceStatus: {
                   [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
@@ -825,24 +825,25 @@ export class InternalCaseService {
       pipe(
         theCase.defendants ?? [],
         filterMap((defendant) => {
-          const activeVerdict = getActiveVerdict(defendant.verdicts)
+          // Only the latest verdict is relevant
+          const latestVerdict = getLatestVerdict(defendant.verdicts)
 
-          if (!activeVerdict?.serviceDate) {
+          if (!latestVerdict?.serviceDate) {
             return option.none
           }
 
-          const alreadyDeliveredForActiveVerdict =
+          const alreadyDeliveredForLatestVerdict =
             wasVerdictServiceCertificateDeliveredToPolice(
               defendant.eventLogs,
-              activeVerdict,
+              latestVerdict,
             )
 
-          if (alreadyDeliveredForActiveVerdict) {
+          if (alreadyDeliveredForLatestVerdict) {
             return option.none
           }
 
           const { isDeadlineExpired } = getIndictmentAppealDeadline({
-            baseDate: activeVerdict.serviceDate,
+            baseDate: latestVerdict.serviceDate,
             isFine: false,
           })
 
@@ -1852,7 +1853,6 @@ export class InternalCaseService {
               model: Verdict,
               as: 'verdicts',
               required: false,
-              where: { isActive: true },
               order: [['created', 'DESC']],
               separate: true,
             },

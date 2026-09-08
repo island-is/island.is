@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { getActiveVerdict } from '../getActiveVerdict'
+import { getLatestVerdict } from '../getLatestVerdict'
 
 @Injectable()
 export class VerdictExistsGuard implements CanActivate {
@@ -19,12 +19,13 @@ export class VerdictExistsGuard implements CanActivate {
       throw new BadRequestException('Missing defendant')
     }
 
-    const verdict = getActiveVerdict(defendant.verdicts)
+    const verdict = getLatestVerdict(defendant.verdicts)
 
     if (!verdict) {
       throw new NotFoundException(`Defendant is missing verdict`)
     }
 
+    // Only the latest verdict is relevant
     request.verdict = verdict
     return true
   }

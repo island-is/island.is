@@ -9,54 +9,46 @@ import { VerdictExistsGuard } from '../../guards/verdictExists.guard'
 describe('VerdictExistsGuard', () => {
   const guard = new VerdictExistsGuard()
 
-  const createContext = (defendant: unknown) =>
+  const createContext = (request: { defendant?: unknown }) =>
     ({
       switchToHttp: () => ({
-        getRequest: () => ({ defendant }),
+        getRequest: () => request,
       }),
-    } as ExecutionContext)
+    }) as ExecutionContext
 
-  it('sets request.verdict to the active verdict', async () => {
+  it('sets request.verdict to the newest verdict by created', async () => {
     const request = {
       defendant: {
         verdicts: [
           {
-            id: 'old',
-            isActive: false,
+            id: 'older',
             created: new Date('2026-01-01'),
           },
           {
-            id: 'active',
-            isActive: true,
+            id: 'newer',
             created: new Date('2026-06-01'),
           },
         ],
       },
     }
 
-    const context = {
-      switchToHttp: () => ({
-        getRequest: () => request,
-      }),
-    } as ExecutionContext
-
-    await expect(guard.canActivate(context)).resolves.toBe(true)
+    await expect(guard.canActivate(createContext(request))).resolves.toBe(true)
     expect(request).toEqual(
       expect.objectContaining({
-        verdict: expect.objectContaining({ id: 'active' }),
+        verdict: expect.objectContaining({ id: 'newer' }),
       }),
     )
   })
 
   it('throws when defendant is missing', async () => {
     await expect(
-      guard.canActivate(createContext(undefined)),
+      guard.canActivate(createContext({})),
     ).rejects.toBeInstanceOf(BadRequestException)
   })
 
   it('throws when defendant has no verdicts', async () => {
     await expect(
-      guard.canActivate(createContext({ verdicts: [] })),
+      guard.canActivate(createContext({ defendant: { verdicts: [] } })),
     ).rejects.toBeInstanceOf(NotFoundException)
   })
 })

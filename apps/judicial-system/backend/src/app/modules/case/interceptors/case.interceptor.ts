@@ -55,7 +55,6 @@ import {
   DefendantEventLog,
   EventLog,
 } from '../../repository'
-import { getActiveVerdict } from '../../verdict/getActiveVerdict'
 
 // ---------------------------------------------------------------------------
 // Appeal-info computation
@@ -444,8 +443,9 @@ export const getIndictmentInfo = ({
 
   const defendantVerdictInfo = defendants?.map((defendant) => ({
     canAppealVerdict: isRuling || isFine,
+    // Only the latest verdict is relevant
     serviceDate: getDefendantServiceDate({
-      verdict: getActiveVerdict(defendant.verdicts),
+      verdict: defendant.verdicts?.[0],
       fallbackDate: rulingDate,
     }),
   }))
@@ -508,7 +508,9 @@ export const transformDefendants = ({
   rulingDate?: Date
 }) => {
   return defendants?.map((defendant) => {
-    const verdict = getActiveVerdict(defendant.verdicts)
+    // Only the latest verdict is relevant
+    const { verdicts } = defendant
+    const verdict = verdicts?.[0]
     const isServiceRequired =
       verdict?.serviceRequirement === ServiceRequirement.REQUIRED
     const isFine =

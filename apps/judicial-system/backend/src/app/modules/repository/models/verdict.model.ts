@@ -65,12 +65,6 @@ export class Verdict extends Model {
   @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
-  // False when a later verdict replaced this one (e.g. corrected ruling
-  // re-sent for service). At most one active verdict per defendant.
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
-  @ApiProperty({ type: Boolean })
-  isActive!: boolean
-
   @Column({
     type: DataType.ENUM,
     allowNull: true,

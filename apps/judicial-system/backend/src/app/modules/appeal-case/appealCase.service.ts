@@ -51,7 +51,7 @@ import {
   UpdateAppealCase,
   VerdictRepositoryService,
 } from '../repository'
-import { getActiveVerdict } from '../verdict/getActiveVerdict'
+import { getLatestVerdict } from '../verdict/getLatestVerdict'
 import { validateVerdictAppealUpdate } from '../verdict/verdict.helpers'
 import { UpdateAppealCaseDto } from './dto/updateAppealCase.dto'
 import {
@@ -705,7 +705,8 @@ export class AppealCaseService {
       )
     }
 
-    const verdict = getActiveVerdict(defendant.verdicts)
+    // Prefer the newest verdict when a corrected ruling created a replacement.
+    const verdict = getLatestVerdict(defendant.verdicts)
 
     // Covers the útivistardómur (reopened rather than appealed) and the service
     // state: the defendant must have been made aware of the verdict.
@@ -1162,7 +1163,7 @@ export class AppealCaseService {
 
     // Clear the mirror on the verdict, so the public prosecution office's screen
     // stops showing this defendant as having appealed.
-    const verdict = getActiveVerdict(defendant.verdicts)
+    const verdict = getLatestVerdict(defendant.verdicts)
 
     if (verdict) {
       await this.verdictRepositoryService.update(

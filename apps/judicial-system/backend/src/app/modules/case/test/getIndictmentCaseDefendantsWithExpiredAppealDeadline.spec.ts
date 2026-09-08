@@ -28,11 +28,11 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
 
   const buildCase = ({
     defendantId,
-    activeVerdictId,
+    latestVerdictId,
     eventLogs,
   }: {
     defendantId: string
-    activeVerdictId: string
+    latestVerdictId: string
     eventLogs: DefendantEventLog[]
   }): Case => {
     const serviceDate = subDays(new Date(), 30)
@@ -44,8 +44,7 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
           id: defendantId,
           verdicts: [
             {
-              id: activeVerdictId,
-              isActive: true,
+              id: latestVerdictId,
               created: subDays(new Date(), 10),
               serviceDate,
             } as Verdict,
@@ -58,14 +57,14 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
 
   it('includes a defendant when a certificate was delivered only for an older verdict', async () => {
     const defendantId = uuid()
-    const activeVerdictId = uuid()
+    const latestVerdictId = uuid()
     const olderVerdictId = uuid()
 
     const mockFindAll = mockCaseRepositoryService.findAll as jest.Mock
     mockFindAll.mockResolvedValue([
       buildCase({
         defendantId,
-        activeVerdictId,
+        latestVerdictId,
         eventLogs: [
           {
             eventType:
@@ -87,20 +86,20 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
     ])
   })
 
-  it('excludes a defendant when a certificate was already delivered for the active verdict', async () => {
+  it('excludes a defendant when a certificate was already delivered for the latest verdict', async () => {
     const defendantId = uuid()
-    const activeVerdictId = uuid()
+    const latestVerdictId = uuid()
 
     const mockFindAll = mockCaseRepositoryService.findAll as jest.Mock
     mockFindAll.mockResolvedValue([
       buildCase({
         defendantId,
-        activeVerdictId,
+        latestVerdictId,
         eventLogs: [
           {
             eventType:
               DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
-            verdictId: activeVerdictId,
+            verdictId: latestVerdictId,
             created: subDays(new Date(), 5),
           } as DefendantEventLog,
         ],

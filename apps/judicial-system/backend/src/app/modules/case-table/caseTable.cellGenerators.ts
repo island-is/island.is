@@ -42,7 +42,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case, DateLog, DefendantEventLog, EventLog } from '../repository'
-import { getActiveVerdict } from '../verdict/getActiveVerdict'
 import {
   CaseTableCellValue,
   StringGroupValue,
@@ -96,7 +95,10 @@ const generateDefaultJudgementTag = (c: Case): TagValue | undefined => {
   if (
     c.defendants &&
     c.defendants.length > 0 &&
-    c.defendants?.every((d) => getActiveVerdict(d.verdicts)?.isDefaultJudgement)
+    c.defendants?.every(
+      // Only the latest verdict is relevant
+      (d) => d.verdicts?.[0]?.isDefaultJudgement,
+    )
   ) {
     return { color: 'purple', text: 'Útivistardómur' }
   }
@@ -866,8 +868,7 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
       case CaseIndictmentRulingDecision.RULING: {
         if (
           isPublicProsecutionOfficeUser(user) &&
-          getActiveVerdict(c.defendants?.[0]?.verdicts)
-            ?.isAcquittedByPublicProsecutionOffice
+          c.defendants?.[0]?.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice
         ) {
           return generateCell(
             { color: 'mint', text: 'Sýknudómur' },
@@ -1007,7 +1008,8 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
     const verdictInfo: VerdictInfo[] | undefined = c.defendants?.map((d) => ({
       canAppealVerdict: true,
       serviceDate: getDefendantServiceDate({
-        verdict: getActiveVerdict(d.verdicts),
+        // Only the latest verdict is relevant
+        verdict: d.verdicts?.[0],
         fallbackDate: c.rulingDate,
       }),
     }))
@@ -1185,7 +1187,8 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagGroupValue> = {
     }
 
     const defendantAppealed = c.defendants?.some(
-      (d) => getActiveVerdict(d.verdicts)?.appealDate,
+      // Only the latest verdict is relevant
+      (d) => d.verdicts?.[0]?.appealDate,
     )
 
     const secondTag = defendantAppealed

@@ -20,7 +20,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case, DefendantEventLog, EventLog, Institution } from '../repository'
-import { getActiveVerdict } from '../verdict/getActiveVerdict'
 import {
   IndictmentCaseEventType,
   RequestCaseEventType,
@@ -414,7 +413,8 @@ const verdictServedToDefendant = (
   return pipe(
     c.defendants ?? [],
     filterMap((defendant) => {
-      const verdict = getActiveVerdict(defendant.verdicts)
+      // Only the latest verdict is relevant
+      const verdict = defendant.verdicts?.[0]
       if (!verdict || !verdict.serviceDate || !verdict.serviceStatus) {
         return option.none
       }

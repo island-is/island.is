@@ -66,9 +66,6 @@ export class Verdict {
   isDefaultJudgement?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  isActive?: boolean
-
-  @Field(() => Boolean, { nullable: true })
   isAcquittedByPublicProsecutionOffice?: boolean
 
   @Field(() => Boolean, { nullable: true })

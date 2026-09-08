@@ -190,16 +190,13 @@ const getIncludeAndOrder = (
               ])
             }
 
-            const where = sv!.where ?? subModelDef.where
-
             return {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               attributes: mergeAttributes(['id'], sv!.attributes ?? []),
-              // Keep optional when filtering (e.g. active verdicts only); Sequelize
-              // otherwise treats `where` as required and drops unmatched parents.
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              required: sv!.required ?? (where ? false : undefined),
-              where,
+              required: sv!.required,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              where: sv!.where,
               model: subModelDef.model,
               as: sk,
               separate: subModelDef.separate,

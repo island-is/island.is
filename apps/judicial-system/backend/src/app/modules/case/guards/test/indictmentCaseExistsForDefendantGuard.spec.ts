@@ -97,7 +97,6 @@ describe('Indictment Case Exists For Defendant Guard', () => {
                 model: Verdict,
                 as: 'verdicts',
                 required: false,
-                where: { isActive: true },
                 order: [['created', 'DESC']],
                 separate: true,
               },
