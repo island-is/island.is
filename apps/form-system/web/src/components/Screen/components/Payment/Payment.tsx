@@ -190,7 +190,7 @@ export const Payment = () => {
               <Stack space={1}>
                 <Box marginBottom={2}>
                   <Text variant="h4" fontWeight="semiBold">
-                    Til greiðslu
+                    {formatMessage(m.toPay)}
                   </Text>
                 </Box>
 
