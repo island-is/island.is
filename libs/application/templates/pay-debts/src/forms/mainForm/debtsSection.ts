@@ -35,7 +35,7 @@ export const debtsSection = buildSection({
     buildMultiField({
       id: 'debtsSection',
       title: messages.general.sectionTitle,
-      description: messages.description.description,
+      description: messages.general.description,
       children: [
         buildCustomField({
           id: 'debtsLoader',

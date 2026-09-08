@@ -1,5 +1,4 @@
 export * from './application'
 export * from './debts'
 export * from './payment'
-export * from './error'
 export * from './completedForm'

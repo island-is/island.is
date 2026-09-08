@@ -11,18 +11,6 @@ export const application = defineMessages({
     defaultMessage: 'Fjársýsla ríkisins',
     description: `Institution's name`,
   },
-  actionCardDraft: {
-    id: 'pd.application:actionCardDraft',
-    defaultMessage: 'Í vinnslu',
-    description:
-      'Description of application state/status when the application is in draft',
-  },
-  actionCardCompleted: {
-    id: 'pd.application:actionCardCompleted',
-    defaultMessage: 'Afgreidd',
-    description:
-      'Description of application state/status when the application is completed',
-  },
   stateMetaNameDraft: {
     id: 'pd.application:stateMetaNameDraft',
     defaultMessage: 'Umsókn',

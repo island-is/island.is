@@ -35,7 +35,7 @@ export const payment = {
   }),
   buttons: defineMessages({
     submit: {
-      id: 'pd.application:overview.buttons.submit',
+      id: 'pd.application:payment.buttons.submit',
       defaultMessage: 'Greiða skuld',
       description: 'Submit application button',
     },

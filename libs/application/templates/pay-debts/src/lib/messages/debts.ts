@@ -7,18 +7,11 @@ export const debts = {
       defaultMessage: 'Ógreiddir reikningar',
       description: 'Title of first section',
     },
-  }),
-  description: defineMessages({
-    title: {
-      id: 'pd.application:debts.description.title',
-      defaultMessage: 'Ógreiddir reikningar',
-      description: 'Title of description field',
-    },
     description: {
-      id: 'pd.application:debts.description.description',
+      id: 'pd.application:debts.general.description',
       defaultMessage:
         'Yfirlit þeirra skulda sem hægt er að greiða til ríkisins. Nánara yfirlit og sundurliðun skulda er undir [Fjármál á Mínum síðum](/minarsidur/fjarmal).',
-      description: 'Description of description field',
+      description: 'Description shown under the first section title',
     },
   }),
   fetch: defineMessages({

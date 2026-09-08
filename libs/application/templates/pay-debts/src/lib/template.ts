@@ -55,9 +55,6 @@ const template: ApplicationTemplate<
                 import('../forms/mainForm').then((module) =>
                   Promise.resolve(module.MainForm),
                 ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
               write: 'all',
               read: 'all',
               api: [GetDebtsApi, MockPaymentCatalog],
