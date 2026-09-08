@@ -45,6 +45,9 @@ export const PreviousEqualityReportPdfApi = defineTemplateApi({
   externalDataId: 'previousEqualityReportPdf',
   namespace: 'DirectorateOfEquality',
   order: 0,
+  // The runner returns the bytes on the mutation response either way, so the
+  // download works without parking megabytes of base64 in the application row.
+  shouldPersistToExternalData: false,
 })
 
 export const EqualityReportTemplateDocxApi = defineTemplateApi({
