@@ -14,7 +14,7 @@ describe('VerdictExistsGuard', () => {
       switchToHttp: () => ({
         getRequest: () => request,
       }),
-    }) as ExecutionContext
+    } as ExecutionContext)
 
   it('sets request.verdict to the newest verdict by created', async () => {
     const request = {
@@ -41,9 +41,9 @@ describe('VerdictExistsGuard', () => {
   })
 
   it('throws when defendant is missing', async () => {
-    await expect(
-      guard.canActivate(createContext({})),
-    ).rejects.toBeInstanceOf(BadRequestException)
+    await expect(guard.canActivate(createContext({}))).rejects.toBeInstanceOf(
+      BadRequestException,
+    )
   })
 
   it('throws when defendant has no verdicts', async () => {
