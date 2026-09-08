@@ -53,14 +53,14 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   const contract = useMemo(
     () =>
       new Map(
-        (data?.taxCalculatorFields ?? []).map((field) => [field.key, field]),
+        (data?.taxCalculator.fields ?? []).map((field) => [field.key, field]),
       ),
     [data],
   )
 
   if (loading) return <SkeletonLoader height={64} repeat={4} space={2} />
 
-  if (error || !data?.taxCalculatorFields) {
+  if (error || !data?.taxCalculator) {
     return (
       <AlertMessage
         type="error"

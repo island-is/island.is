@@ -12,14 +12,16 @@ export const GET_TAX_CALCULATOR_FIELDS = gql`
   query GetTaxCalculatorFieldsForContentfulApp(
     $calculatorType: TaxCalculatorType!
   ) {
-    taxCalculatorFields(calculatorType: $calculatorType) {
-      key
-      inputType
-      required
-      options
-      dependsOn {
-        field
-        equals
+    taxCalculator(calculatorType: $calculatorType) {
+      fields {
+        key
+        inputType
+        required
+        options
+        dependsOn {
+          field
+          equals
+        }
       }
     }
   }

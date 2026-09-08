@@ -60,7 +60,7 @@ export const CalculatorConfigEditor = () => {
   const contract: FieldContract = useMemo(
     () =>
       new Map(
-        (data?.taxCalculatorFields ?? []).map((field) => [field.key, field]),
+        (data?.taxCalculator.fields ?? []).map((field) => [field.key, field]),
       ),
     [data],
   )
@@ -81,10 +81,10 @@ export const CalculatorConfigEditor = () => {
         </Note>
       )}
 
-      {/* `taxCalculatorFields` is nullable, so a successful response can still
-       * carry no fields. Without this the editor faces a dropdown holding
-       * nothing but its own placeholder, and no way to tell that apart from a
-       * query that is still in flight. */}
+      {/* A successful response can still carry an empty `fields` list. Without
+       * this the editor faces a dropdown holding nothing but its own
+       * placeholder, and no way to tell that apart from a query that is still
+       * in flight. */}
       {apiCalculatorType && !loading && !error && contract.size === 0 && (
         <Note variant="warning">
           This calculator type returned no fields, so there is nothing to place

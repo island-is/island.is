@@ -9,9 +9,8 @@ import type { GetTaxCalculatorFieldsForContentfulAppQuery } from '../../../graph
 /* Read off the generated query type rather than the schema's `TaxCalculatorField`
  * directly, so this follows the query's own selection set -- adding a field to
  * the query widens this automatically, and removing one narrows it. */
-export type ContractField = NonNullable<
-  GetTaxCalculatorFieldsForContentfulAppQuery['taxCalculatorFields']
->[number]
+export type ContractField =
+  GetTaxCalculatorFieldsForContentfulAppQuery['taxCalculator']['fields'][number]
 
 /* The calculator's input contract, keyed by field key. A map rather than the
  * array the query returns, because every row needs to look up the one field
