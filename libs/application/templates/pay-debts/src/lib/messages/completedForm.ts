@@ -24,7 +24,7 @@ export const completedForm = defineMessages({
   nextStepsDescription: {
     id: 'pd.application:completedForm.nextStepsDescription#markdown',
     defaultMessage:
-      '* Í framhaldinu verður greiðslukvittun send í pósthólfið þitt.\n* Greiðslukvittun er einnig að finna undir Fjármál.',
+      '* Í framhaldinu verður greiðslukvittun send í pósthólfið þitt.\\n\\n* Greiðslukvittun er einnig að finna undir Fjármál.',
     description: 'Description of the "what happens next" section',
   },
   financeButtonMessage: {
