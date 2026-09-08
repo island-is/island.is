@@ -1,26 +1,21 @@
 export { CalculatorsClientModule } from './lib/calculators.module'
 export { CalculatorsClientConfig } from './lib/calculators.config'
 export { CalculatorsClientService } from './lib/calculators.service'
-export type { CalculatorKey, InputProp } from './lib/calculatorTypes'
-export { getCalculatorInputProps } from './lib/calculatorTypes'
 export type {
-  ChildBenefitInput,
-  ChildBenefitKey,
-  InterestBenefitInput,
-  InterestBenefitKey,
-  InterestBenefitMaritalStatus,
-  PaymentFrequency,
-  VehicleBenefitInput,
-  VehicleBenefitKey,
-  VehicleDepreciationInput,
-  VehicleDepreciationKey,
-  VehicleTaxInput,
-  VehicleTaxKey,
-  VehicleTaxPeriod,
-  WithholdingMaritalStatus,
-  WithholdingTaxInput,
-  WithholdingTaxKey,
-} from './lib/calculatorTypes'
+  CalculatorContract,
+  CalculatorField,
+  CalculatorFieldDependency,
+  CalculatorFieldOption,
+  CalculatorFieldSemantic,
+  CalculatorFieldType,
+} from './lib/contracts/field'
+export type { CalculatorKey } from './lib/contracts/registry'
+export type { ChildBenefitInput } from './lib/domains/childBenefit'
+export type { InterestBenefitInput } from './lib/domains/interestBenefit'
+export type { VehicleBenefitInput } from './lib/domains/vehicleBenefit'
+export type { VehicleDepreciationInput } from './lib/domains/vehicleDepreciation'
+export type { VehicleTaxInput } from './lib/domains/vehicleTax'
+export type { WithholdingTaxInput } from './lib/domains/withholdingTax'
 export type {
   GetChildBenefitResponse,
   GetVehicleTaxResponse,

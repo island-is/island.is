@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+
 import {
   getChildBenefit,
   getInterestBenefit,
@@ -7,26 +8,39 @@ import {
   getVehicleTax,
   getWithholdingTax,
 } from '../../gen/fetch'
-
-import {
-  toChildBenefitQuery,
-  toInterestBenefitQuery,
-  toVehicleBenefitQuery,
-  toVehicleDepreciationQuery,
-  toVehicleTaxQuery,
-  toWithholdingTaxQuery,
-} from './calculatorTypes'
-import type {
-  ChildBenefitInput,
-  InterestBenefitInput,
-  VehicleBenefitInput,
-  VehicleDepreciationInput,
-  VehicleTaxInput,
-  WithholdingTaxInput,
-} from './calculatorTypes'
+import type { CalculatorContract } from './contracts/field'
+import type { CalculatorKey } from './contracts/registry'
+import { calculatorRegistry } from './contracts/registry'
+import { toChildBenefitQuery } from './domains/childBenefit'
+import type { ChildBenefitInput } from './domains/childBenefit'
+import { toInterestBenefitQuery } from './domains/interestBenefit'
+import type { InterestBenefitInput } from './domains/interestBenefit'
+import { toVehicleBenefitQuery } from './domains/vehicleBenefit'
+import type { VehicleBenefitInput } from './domains/vehicleBenefit'
+import { toVehicleDepreciationQuery } from './domains/vehicleDepreciation'
+import type { VehicleDepreciationInput } from './domains/vehicleDepreciation'
+import { toVehicleTaxQuery } from './domains/vehicleTax'
+import type { VehicleTaxInput } from './domains/vehicleTax'
+import { toWithholdingTaxQuery } from './domains/withholdingTax'
+import type { WithholdingTaxInput } from './domains/withholdingTax'
 
 @Injectable()
 export class CalculatorsClientService {
+  getCalculator(key: CalculatorKey): CalculatorContract<CalculatorKey> {
+    const calculator = calculatorRegistry[key]
+
+    if (!calculator) {
+      throw new Error(`Unknown calculator key: ${key}`)
+    }
+
+    return {
+      key: calculator.key,
+      fields: [...calculator.fields].sort((a, b) =>
+        a.name < b.name ? -1 : a.name > b.name ? 1 : 0,
+      ),
+    }
+  }
+
   async getChildBenefit(input: ChildBenefitInput) {
     const { data } = await getChildBenefit({
       query: toChildBenefitQuery(input),
