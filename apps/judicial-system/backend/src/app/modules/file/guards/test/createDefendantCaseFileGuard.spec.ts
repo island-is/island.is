@@ -1,6 +1,11 @@
 import { ExecutionContext, ForbiddenException } from '@nestjs/common'
 
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { CreateDefendantCaseFileGuard } from '../createDefendantCaseFile.guard'
 
@@ -9,20 +14,32 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (category?: CaseFileCategory) => Then
+type GivenWhenThen = (user: User, category?: CaseFileCategory) => Then
 
 describe('Create Defendant Case File Guard', () => {
+  const prosecutor = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+  } as User
+  const publicProsecutorStaff = {
+    role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+    institution: { type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE },
+  } as User
+
   let givenWhenThen: GivenWhenThen
 
   beforeEach(() => {
-    givenWhenThen = (category): Then => {
+    givenWhenThen = (user, category): Then => {
       const guard = new CreateDefendantCaseFileGuard()
       const then = {} as Then
 
       try {
         then.result = guard.canActivate({
           switchToHttp: () => ({
-            getRequest: () => ({ body: { category } }),
+            getRequest: () => ({
+              user: { currentUser: user },
+              body: { category },
+            }),
           }),
         } as unknown as ExecutionContext)
       } catch (error) {
@@ -33,17 +50,43 @@ describe('Create Defendant Case File Guard', () => {
     }
   })
 
+  const expectForbidden = (then: Then, category?: CaseFileCategory) => {
+    expect(then.error).toBeInstanceOf(ForbiddenException)
+    expect(then.error.message).toBe(
+      `Forbidden for case file category ${category}`,
+    )
+  }
+
   describe.each([
     CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
     CaseFileCategory.CRIMINAL_RECORD,
-    CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
-    CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
-  ])('a prosecution user can create %s', (category) => {
-    it('should activate', () => {
-      const then = givenWhenThen(category)
+  ])('%s', (category) => {
+    it.each([
+      ['a prosecutor', prosecutor],
+      ['the public prosecution office', publicProsecutorStaff],
+    ])('can be created by %s', (_, user) => {
+      const then = givenWhenThen(user, category)
 
       expect(then.error).toBeUndefined()
       expect(then.result).toBe(true)
+    })
+  })
+
+  // The office files the declaration a defender sent it outside the system; a
+  // prosecutor has no part in a defendant's appeal.
+  describe.each([
+    CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+    CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+  ])('%s', (category) => {
+    it('can be created by the public prosecution office', () => {
+      const then = givenWhenThen(publicProsecutorStaff, category)
+
+      expect(then.error).toBeUndefined()
+      expect(then.result).toBe(true)
+    })
+
+    it('cannot be created by a prosecutor', () => {
+      expectForbidden(givenWhenThen(prosecutor, category), category)
     })
   })
 
@@ -53,14 +96,12 @@ describe('Create Defendant Case File Guard', () => {
     CaseFileCategory.COURT_RECORD,
     CaseFileCategory.RULING,
     undefined,
-  ])('a prosecution user cannot create %s', (category) => {
-    it('should throw ForbiddenException', () => {
-      const then = givenWhenThen(category)
-
-      expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe(
-        `Forbidden for case file category ${category}`,
-      )
+  ])('%s', (category) => {
+    it.each([
+      ['a prosecutor', prosecutor],
+      ['the public prosecution office', publicProsecutorStaff],
+    ])('cannot be created by %s', (_, user) => {
+      expectForbidden(givenWhenThen(user, category), category)
     })
   })
 })
