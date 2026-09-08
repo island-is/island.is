@@ -124,9 +124,11 @@ const ChartTooltip = ({
   active,
   payload,
   markedLabel,
+  markedIsDeviation,
   formatMessage,
 }: Partial<TooltipContentProps<number, string>> & {
   markedLabel: string | null
+  markedIsDeviation: boolean
   formatMessage: ReturnType<typeof useLocale>['formatMessage']
 }) => {
   const datum = active ? payload?.[0]?.payload : undefined
@@ -195,7 +197,14 @@ const ChartTooltip = ({
       ))}
       {datum.marked && markedLabel && (
         <Box marginTop={1}>
-          <Text variant="small" fontWeight="semiBold">
+          {/* Red only for frávik — the same slot carries "Ábending" when the
+              óskýrt gap is within the benchmark, which is advisory, not a
+              breach. */}
+          <Text
+            variant="small"
+            fontWeight="semiBold"
+            color={markedIsDeviation ? 'red600' : undefined}
+          >
             {markedLabel}
           </Text>
         </Box>
@@ -401,12 +410,12 @@ export const SalaryDistributionChart: FC<Props> = ({
 
   const malePoints = points.filter((point) => point.gender === 'MALE')
   const femalePoints = points.filter((point) => point.gender !== 'MALE')
-  const markedLabel =
-    decomposition?.oskyrtWithinBenchmark === false
-      ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.minimumSet)
-      : decomposition?.oskyrtWithinBenchmark === true
-      ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.abending)
-      : null
+  const markedIsDeviation = decomposition?.oskyrtWithinBenchmark === false
+  const markedLabel = markedIsDeviation
+    ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.minimumSet)
+    : decomposition?.oskyrtWithinBenchmark === true
+    ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.abending)
+    : null
   const hasMarked = points.some((point) => point.marked)
 
   const scoreBucketMax =
@@ -493,6 +502,7 @@ export const SalaryDistributionChart: FC<Props> = ({
             content={
               <ChartTooltip
                 markedLabel={hasMarked ? markedLabel : null}
+                markedIsDeviation={markedIsDeviation}
                 formatMessage={formatMessage}
               />
             }

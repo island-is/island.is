@@ -171,6 +171,7 @@ export const EmployeeForm: FC<Props> = ({
               name="baseSalary"
               label={formatMessage(m.baseSalaryLabel)}
               type="number"
+              thousandSeparator
               backgroundColor="white"
               size="sm"
               required
@@ -192,6 +193,7 @@ export const EmployeeForm: FC<Props> = ({
                     name={key}
                     label={componentLabels[key]}
                     type="number"
+                    thousandSeparator
                     backgroundColor="white"
                     size="sm"
                   />
