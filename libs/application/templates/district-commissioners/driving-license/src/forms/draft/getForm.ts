@@ -41,7 +41,9 @@ export const getForm = ({
         id: 'externalData',
         title: m.externalDataSection,
         children: [
-          ...(allowPickLicense ? [subSectionApplicationFor(allow65Renewal)] : []),
+          ...(allowPickLicense
+            ? [subSectionApplicationFor(allow65Renewal)]
+            : []),
           subSectionRequirements(
             allow65RenewalRedesign,
             allowBTempRedesign,
@@ -64,21 +66,6 @@ export const getForm = ({
           subSectionHealthDeclaration,
           subSectionSummary,
         ],
-      }),
-      buildSection({
-        id: 'payment',
-        title: m.overviewPaymentCharge,
-        children: [],
-      }),
-      buildSection({
-        id: 'confirm',
-        title: m.overviewSectionTitle,
-        children: [],
-      }),
-      buildSection({
-        id: 'done',
-        title: m.applicationDone,
-        children: [],
       }),
     ],
   })

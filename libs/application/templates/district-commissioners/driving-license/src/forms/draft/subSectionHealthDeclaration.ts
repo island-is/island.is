@@ -6,144 +6,106 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildHiddenInput,
+  buildRadioField,
   YES,
+  NO,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../utils'
 import {
+  hasContactGlassesMismatch,
   hasHealthRemarks,
   needsHealthCertificateCondition,
 } from '../../utils/formUtils'
-import { BE, B_FULL_RENEWAL_65 } from '../../utils/constants'
+import { B_FULL_RENEWAL_65 } from '../../utils/constants'
+
+const yesNoOptions = [
+  { value: YES, label: m.yes },
+  { value: NO, label: m.no },
+]
+
+// A plain yes/no radio for one health question. All ten questions are identical
+// apart from their id and label. The text goes in `title` (rendered as a plain
+// h5) rather than `description`: the questions are numbered ("1. …", "2. …") and
+// `description` runs through Markdown, which parses a leading "N." as an
+// ordered-list item and restyles/renumbers it.
+const healthQuestion = (
+  id: string,
+  label: (typeof m)['healthDeclaration1'],
+) =>
+  buildRadioField({
+    id,
+    title: label,
+    titleVariant: 'h5',
+    width: 'half',
+    largeButtons: false,
+    space: 2,
+    options: yesNoOptions,
+  })
 
 /**
- * The ten health questions plus the glasses-mismatch alert. Shared verbatim by
- * the B-full/B-temp block and the BE block — they were previously defined twice,
- * so changing a question meant editing both copies or silently letting one
- * product drift.
+ * The ten health questions plus the glasses-mismatch alert.
  *
- * The field ids are deliberately identical across both blocks: only one is ever
- * visible at a time (their conditions are mutually exclusive on
- * `applicationFor`), so the answers land at the same path regardless of product
- * and in-flight drafts are unaffected.
- *
- * A function rather than a shared array so each caller gets its own field
- * objects — two multifields must never hold references to the same instances.
+ * The glasses-mismatch alert derives its visibility from the vision answers via
+ * `hasContactGlassesMismatch`, so the questions themselves are plain radio
+ * fields with no side effects.
  *
  * Note: the two 65+ blocks below deliberately do NOT use this. 65+ has no
  * questionnaire at all (per product decision it always submits a fresh health
  * certificate), so there is nothing to share.
  */
 const healthDeclarationQuestions = () => [
-  buildCustomField(
-    {
-      id: 'healthDeclaration.usesContactGlasses',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      title: m.healthDeclarationMultiFieldSubTitle,
-      label: m.healthDeclaration1,
-    },
+  buildDescriptionField({
+    id: 'healthDeclarationSubTitle',
+    title: m.healthDeclarationMultiFieldSubTitle,
+    titleVariant: 'h5',
+    marginBottom: 2,
+  }),
+  healthQuestion('healthDeclaration.usesContactGlasses', m.healthDeclaration1),
+  healthQuestion(
+    'healthDeclaration.hasReducedPeripheralVision',
+    m.healthDeclaration2,
   ),
-  buildCustomField(
-    {
-      id: 'healthDeclaration.hasReducedPeripheralVision',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      label: m.healthDeclaration2,
-    },
-  ),
-  buildCustomField(
-    {
-      id: 'healthDeclaration.hasEpilepsy',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      label: m.healthDeclaration3,
-    },
-  ),
-  buildCustomField(
-    {
-      id: 'healthDeclaration.hasHeartDisease',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      label: m.healthDeclaration4,
-    },
-  ),
-  buildCustomField(
-    {
-      id: 'healthDeclaration.hasMentalIllness',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      label: m.healthDeclaration5,
-    },
-  ),
-  buildCustomField(
-    {
-      id: 'healthDeclaration.usesMedicalDrugs',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      label: m.healthDeclaration6,
-    },
-  ),
-  buildCustomField(
-    {
-      id: 'healthDeclaration.isAlcoholic',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      label: m.healthDeclaration7,
-    },
-  ),
-  buildCustomField(
-    {
-      id: 'healthDeclaration.hasDiabetes',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      label: m.healthDeclaration8,
-    },
-  ),
-  buildCustomField(
-    {
-      id: 'healthDeclaration.isDisabled',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      label: m.healthDeclaration9,
-    },
-  ),
-  buildCustomField(
-    {
-      id: 'healthDeclaration.hasOtherDiseases',
-      title: '',
-      component: 'HealthDeclaration',
-    },
-    {
-      label: m.healthDeclaration10,
-    },
-  ),
+  healthQuestion('healthDeclaration.hasEpilepsy', m.healthDeclaration3),
+  healthQuestion('healthDeclaration.hasHeartDisease', m.healthDeclaration4),
+  healthQuestion('healthDeclaration.hasMentalIllness', m.healthDeclaration5),
+  healthQuestion('healthDeclaration.usesMedicalDrugs', m.healthDeclaration6),
+  healthQuestion('healthDeclaration.isAlcoholic', m.healthDeclaration7),
+  healthQuestion('healthDeclaration.hasDiabetes', m.healthDeclaration8),
+  healthQuestion('healthDeclaration.isDisabled', m.healthDeclaration9),
+  healthQuestion('healthDeclaration.hasOtherDiseases', m.healthDeclaration10),
   buildAlertMessageField({
     id: 'healthDeclaration.contactGlassesMismatch',
     message: m.alertHealthDeclarationGlassesMismatch,
     alertType: 'warning',
-    condition: (answers) =>
-      getValueViaPath(answers, 'healthDeclaration.contactGlassesMismatch') ===
-      true,
+    condition: hasContactGlassesMismatch,
+  }),
+]
+
+/**
+ * The certificate description plus the conditional upload. The upload appears
+ * only once a health condition is triggered (a "yes" answer, a health remark, or
+ * a glasses code on the current license) — see `needsHealthCertificateCondition`.
+ *
+ * The 65+ redesigned block deliberately does not use this — its upload is
+ * unconditional, so the shared gate would be wrong.
+ */
+const healthCertificateFields = () => [
+  buildDescriptionField({
+    id: 'healthCertificateDescription',
+    description: m.healthCertificateDescription,
+    condition: needsHealthCertificateCondition(YES),
+  }),
+  buildFileUploadField({
+    id: 'healthCertificate',
+    title: m.healthCertificateTitle,
+    uploadHeader: m.healthCertificateUploadHeader,
+    uploadDescription: m.healthCertificateUploadDescription,
+    uploadButtonLabel: m.healthCertificateUploadButtonLabel,
+    maxSize: 4000000,
+    uploadAccept: '.pdf, .jpg, .jpeg, .png',
+    condition: needsHealthCertificateCondition(YES),
   }),
 ]
 
@@ -152,14 +114,12 @@ export const subSectionHealthDeclaration = buildSubSection({
   title: m.healthDeclarationSectionTitle,
   condition: hasNoDrivingLicenseInOtherCountry,
   children: [
-    // Health declaration for B-temp and B-full — same questions as BE
-    // but without the health certificate file upload that BE requires
+    // Health declaration for B-temp and B-full — the questions plus the
+    // conditional certificate upload
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
-      condition: (answers) =>
-        answers.applicationFor !== B_FULL_RENEWAL_65 &&
-        answers.applicationFor !== BE,
+      condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
       space: 2,
       children: [
         buildDescriptionField({
@@ -170,49 +130,13 @@ export const subSectionHealthDeclaration = buildSubSection({
         buildCustomField({
           id: 'remarks',
           component: 'HealthRemarks',
-          condition: (answers, externalData) =>
-            hasHealthRemarks(externalData) && answers.applicationFor !== BE,
-        }),
-        ...healthDeclarationQuestions(),
-      ],
-    }),
-    // Same health declaration questions for BE, plus health certificate
-    // file upload when any health condition is triggered
-    buildMultiField({
-      id: 'overviewBE',
-      title: m.healthDeclarationMultiFieldTitle,
-      condition: (answers) => answers.applicationFor === BE,
-      space: 2,
-      children: [
-        buildDescriptionField({
-          id: 'healthDeclarationDescriptionBE',
-          description: m.healthDeclarationSubTitle,
-          marginBottom: 2,
-        }),
-        buildCustomField({
-          id: 'remarksBE',
-          component: 'HealthRemarks',
           condition: (_answers, externalData) => hasHealthRemarks(externalData),
         }),
         buildHiddenInput({
           id: 'hasHealthRemarks',
         }),
         ...healthDeclarationQuestions(),
-        buildDescriptionField({
-          id: 'healthCertificateDescriptionBE',
-          description: m.healthCertificateDescription,
-          condition: needsHealthCertificateCondition(YES),
-        }),
-        buildFileUploadField({
-          id: 'healthCertificate',
-          title: m.healthCertificateTitle,
-          uploadHeader: m.healthCertificateUploadHeader,
-          uploadDescription: m.healthCertificateUploadDescription,
-          uploadButtonLabel: m.healthCertificateUploadButtonLabel,
-          maxSize: 4000000,
-          uploadAccept: '.pdf, .jpg, .jpeg, .png',
-          condition: needsHealthCertificateCondition(YES),
-        }),
+        ...healthCertificateFields(),
       ],
     }),
     // 65+ multifield (legacy) — flag OFF

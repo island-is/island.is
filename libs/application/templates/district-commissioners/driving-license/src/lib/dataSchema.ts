@@ -33,7 +33,6 @@ export const dataSchema = z.object({
     isDisabled: z.enum([YES, NO]),
     hasOtherDiseases: z.enum([YES, NO]),
   }),
-  contactGlassesMismatch: z.boolean(),
   selectLicensePhoto: z.string().optional(),
   healthCertificate: z
     .array(z.object({ name: z.string(), key: z.string() }))

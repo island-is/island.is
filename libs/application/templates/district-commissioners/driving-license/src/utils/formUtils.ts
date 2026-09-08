@@ -33,6 +33,36 @@ export const needsHealthCertificateCondition =
     )
   }
 
+// Whether the applicant's vision answers contradict what their current license
+// records. `glassesCheck.data === true` means the license carries a glasses
+// code: answering "no" to using glasses — or "yes" when the license has no such
+// code — is a change of vision since the last application and requires a
+// certificate from the family doctor. Previously computed as a side effect in
+// the `HealthDeclaration` custom field and stored in `contactGlassesMismatch`;
+// now derived directly so the questions can be plain radio fields, and read
+// straight from the glasses-mismatch alert's condition.
+export const hasContactGlassesMismatch = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const licenseRequiresGlasses =
+    getValueViaPath<boolean>(externalData, 'glassesCheck.data') === true
+
+  const isMismatch = (value: string | undefined) =>
+    !!value &&
+    ((licenseRequiresGlasses && value === NO) ||
+      (!licenseRequiresGlasses && value === YES))
+
+  return (
+    isMismatch(
+      getValueViaPath(answers, 'healthDeclaration.usesContactGlasses'),
+    ) ||
+    isMismatch(
+      getValueViaPath(answers, 'healthDeclaration.hasReducedPeripheralVision'),
+    )
+  )
+}
+
 export const isVisible =
   (...fns: ConditionFn[]) =>
   (answers: FormValue) => {

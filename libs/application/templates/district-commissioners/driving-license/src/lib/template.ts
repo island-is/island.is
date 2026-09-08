@@ -23,7 +23,7 @@ import {
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   Events,
   States,
@@ -60,7 +60,8 @@ const DrivingLicenseTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE,
-  featureFlag: Features.isDistrictCommissionerDrivingLicenseEnabled,
+  // TEMP local bypass — do NOT commit. Re-enable once the ConfigCat flag exists.
+  // featureFlag: Features.isDistrictCommissionerDrivingLicenseEnabled,
   name: (application) =>
     application.answers.applicationFor === BE
       ? m.applicationForBELicenseTitle.defaultMessage
@@ -105,24 +106,6 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                 return getForm({
                   allowFakeData:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
-                  allowPickLicense:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
-                    ],
-                  allow65Renewal:
-                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
-                  allow65RenewalRedesign:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL_REDESIGN
-                    ],
-                  allowBTempRedesign:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN
-                    ],
-                  allowBFullRedesign:
-                    featureFlags[
-                      DrivingLicenseFeatureFlags.ALLOW_B_FULL_REDESIGN
-                    ],
                 })
               },
               write: 'all',
@@ -187,8 +170,36 @@ const DrivingLicenseTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: async () =>
-                (await import('../forms/draft/getForm')).draft,
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+
+                const getForm = await import('../forms/draft/getForm').then(
+                  (val) => val.getForm,
+                )
+
+                return getForm({
+                  allowPickLicense:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
+                    ],
+                  allow65Renewal:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
+                  allow65RenewalRedesign:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL_REDESIGN
+                    ],
+                  allowBTempRedesign:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN
+                    ],
+                  allowBFullRedesign:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_B_FULL_REDESIGN
+                    ],
+                })
+              },
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -230,6 +241,7 @@ const DrivingLicenseTemplate: ApplicationTemplate<
           status: 'completed',
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
+            namespace: ApplicationTypes.DRIVING_LICENSE,
             action: ApiActions.submitApplication,
           }),
           roles: [

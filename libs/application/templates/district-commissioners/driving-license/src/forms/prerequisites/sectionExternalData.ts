@@ -1,10 +1,12 @@
 import {
   buildExternalDataProvider,
   buildDataProviderItem,
+  buildSubmitField,
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
+  DefaultEvents,
   NationalRegistryV3UserApi,
   TeachersApi,
   UserProfileApi,
@@ -29,6 +31,18 @@ export const sectionExternalData = buildSubSection({
       id: 'approveExternalData',
       subTitle: m.externalDataSubTitle,
       checkboxLabel: m.externalDataAgreement,
+      submitField: buildSubmitField({
+        id: 'submit',
+        placement: 'footer',
+        refetchApplicationAfterSubmit: true,
+        actions: [
+          {
+            event: DefaultEvents.SUBMIT,
+            name: m.continue,
+            type: 'primary',
+          },
+        ],
+      }),
       dataProviders: [
         buildDataProviderItem({
           provider: NationalRegistryV3UserApi,
