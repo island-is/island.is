@@ -77,6 +77,10 @@ describe('JudicialSystemApplication', () => {
     const { rerender } = render(renderApp(FailingPage, '/failing'))
 
     expect(screen.getByText('Eitthvað fór úrskeiðis')).toBeInTheDocument()
+    expect(consoleError).toHaveBeenCalledWith(
+      expect.stringContaining('Unhandled render error: page render failed'),
+      expect.stringContaining('FailingPage'),
+    )
 
     // Client-side navigation: same app instance, new route and page component
     rerender(renderApp(HealthyPage, '/healthy'))
