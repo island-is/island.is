@@ -313,4 +313,35 @@ export class DefendantRepositoryService {
       throw error
     }
   }
+
+  // Moves one defendant to another case, when they are split off into a case
+  // of their own. The row is addressed within its own case, so a defendant of
+  // some other case cannot be moved by mistake.
+  async moveToCase(
+    defendantId: string,
+    caseId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Moving defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      await this.defendantModel.update(
+        { caseId: newCaseId },
+        {
+          where: { id: defendantId, caseId },
+          transaction: options.transaction,
+        },
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error moving defendant ${defendantId} from case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

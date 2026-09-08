@@ -20,12 +20,14 @@ describe('DefendantRepositoryService', () => {
   let model: {
     findAll: jest.Mock
     create: jest.Mock
+    update: jest.Mock
   }
 
   beforeEach(async () => {
     model = {
       findAll: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
+      update: jest.fn().mockResolvedValue([1]),
     }
 
     const moduleRef = await Test.createTestingModule({
@@ -112,6 +114,27 @@ describe('DefendantRepositoryService', () => {
         service.copyProsecutorEnteredToCase(caseId, newCaseId, {
           transaction,
         }),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('moveToCase', () => {
+    it('moves the defendant, addressed within its own case, to the new case', async () => {
+      await service.moveToCase(defendantId, caseId, newCaseId, { transaction })
+
+      expect(model.update).toHaveBeenCalledWith(
+        { caseId: newCaseId },
+        { where: { id: defendantId, caseId }, transaction },
+      )
+      expect(model.create).not.toHaveBeenCalled()
+    })
+
+    it('rethrows when the move fails', async () => {
+      const error = new Error('Some error')
+      model.update.mockRejectedValueOnce(error)
+
+      await expect(
+        service.moveToCase(defendantId, caseId, newCaseId, { transaction }),
       ).rejects.toThrow(error)
     })
   })
