@@ -48,18 +48,13 @@ export const EnvironmentHeader = ({
   const { formatMessage } = useLocale()
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
 
+  const getEnvironmentLabel = (environment: AuthAdminEnvironment) =>
+    availableEnvironments.includes(environment)
+      ? environment
+      : formatMessage(m.publishEnvironment, { environment })
+
   const options = (optionEnvironments ?? tenant.availableEnvironments)
-    .map((env) => {
-      const isAvailable = availableEnvironments.includes(env)
-
-      const label = isAvailable
-        ? env
-        : formatMessage(m.publishEnvironment, {
-            environment: env,
-          })
-
-      return formatOption(label, env)
-    })
+    .map((env) => formatOption(getEnvironmentLabel(env), env))
     .filter(isDefined)
 
   return (
@@ -89,7 +84,10 @@ export const EnvironmentHeader = ({
               onChange(opt.value)
             }
           }}
-          value={formatOption(selectedEnvironment, selectedEnvironment)}
+          value={formatOption(
+            getEnvironmentLabel(selectedEnvironment),
+            selectedEnvironment,
+          )}
           options={options}
         />
       </div>
