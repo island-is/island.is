@@ -110,7 +110,7 @@ const Defendant = () => {
           <ProsecutorSection />
         </Box>
         <PoliceCaseList />
-        <Box component="section" marginBottom={10}>
+        <Box component="section">
           <DefendantList />
         </Box>
       </FormContentContainer>

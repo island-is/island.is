@@ -1,3 +1,4 @@
+import { laws } from '@island.is/judicial-system/formatters'
 import {
   AppealCaseRulingDecision,
   AppealEventType,
@@ -9,6 +10,7 @@ import {
   prosecutionRoles,
 } from '@island.is/judicial-system/types'
 
+import { legalProvisionsCompare } from '../../formatters'
 import { Case, EventLog } from '../repository'
 import { RequestCaseEventType } from './models/event.model'
 
@@ -21,6 +23,7 @@ export interface RequestCaseEvent {
   caseType: CaseType
   caseTypeDescriptor: string
   isIsolation: string
+  legalProvisions: string
   origin: CaseOrigin
   isExtended: string
   // event specific fields
@@ -51,12 +54,20 @@ const getIsolationDescriptor = (c: Case) => {
   return c.isCustodyIsolation ? 'Já' : 'Nei'
 }
 
+const getLegalProvisionsDescriptor = (c: Case) =>
+  (c.legalProvisions ?? [])
+    .slice()
+    .sort(legalProvisionsCompare)
+    .map((provision) => laws[provision])
+    .join(', ')
+
 const commonFields = (c: Case) => {
   const isExtendedCase = !!c.parentCaseId
   return {
     caseType: c.type,
     caseTypeDescriptor: getCaseTypeTranslation(c.type),
     isIsolation: getIsolationDescriptor(c),
+    legalProvisions: getLegalProvisionsDescriptor(c),
     origin: c.origin,
     isExtended: isExtendedCase ? 'Já' : 'Nei',
     requestDecision: c.decision,

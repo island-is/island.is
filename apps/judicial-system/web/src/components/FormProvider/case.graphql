@@ -2,7 +2,6 @@ query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
     created
-    modified
     type
     splitCases {
       id
@@ -453,6 +452,22 @@ query Case($input: CaseQueryInput!) {
       isAppealCustodyIsolation
       appealIsolationToDate
       rulingFileId
+    }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
     }
     rulingOrderAppealCases {
       id

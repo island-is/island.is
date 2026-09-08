@@ -95,7 +95,7 @@ import {
   Case,
   caseInclude,
   CaseRepositoryService,
-  CaseString,
+  CaseStringRepositoryService,
   CourtDocumentRepositoryService,
   CourtSessionRepositoryService,
   DateLog,
@@ -160,8 +160,7 @@ const APPEAL_PARTY_FILE_CATEGORIES = [
 @Injectable()
 export class CaseService {
   constructor(
-    @InjectModel(CaseString)
-    private readonly caseStringModel: typeof CaseString,
+    private readonly caseStringRepositoryService: CaseStringRepositoryService,
     private readonly dateLogRepositoryService: DateLogRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
@@ -1088,6 +1087,16 @@ export class CaseService {
             caseId: theCase.id,
             elementId: [defendant.id, subpoena.id],
           })
+          // After arraignment so defender choice on the certificate is correct.
+          // Only LOKE cases have a police case to update.
+          if (theCase.origin === CaseOrigin.LOKE) {
+            addMessagesToQueue({
+              type: MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE,
+              user,
+              caseId: theCase.id,
+              elementId: [defendant.id, subpoena.id],
+            })
+          }
         }
       }
     }
@@ -1540,21 +1549,17 @@ export class CaseService {
         const stringType = caseStringTypes[caseStringKey]
 
         if (updateCaseString === null) {
-          await this.caseStringModel.destroy({
-            where: { caseId: theCase.id, stringType },
-            transaction,
-          })
+          await this.caseStringRepositoryService.deleteByCaseAndType(
+            theCase.id,
+            stringType,
+            { transaction },
+          )
         } else {
-          await this.caseStringModel.upsert(
-            {
-              caseId: theCase.id,
-              stringType,
-              value: updateCaseString,
-            },
-            {
-              conflictFields: ['case_id', 'string_type'],
-              transaction,
-            },
+          await this.caseStringRepositoryService.upsertByCaseAndType(
+            theCase.id,
+            stringType,
+            updateCaseString,
+            { transaction },
           )
         }
 

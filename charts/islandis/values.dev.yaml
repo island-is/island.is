@@ -55,6 +55,7 @@ air-discount-scheme-backend:
       hostnames:
         - 'loftbru.dev01.devland.is'
         - 'loftbru-cf.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -342,8 +343,8 @@ api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 50
-        min: 3
+        max: 2
+        min: 1
   httpRoute:
     primary-gw:
       hostnames:
@@ -366,9 +367,9 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
-    max: 50
-    min: 3
+    default: 1
+    max: 2
+    min: 1
   resources:
     limits:
       cpu: '3000m'
@@ -1580,6 +1581,7 @@ download-service:
     primary-gw:
       hostnames:
         - 'api.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -1855,6 +1857,7 @@ github-actions-cache:
     primary-gw:
       hostnames:
         - 'cache.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2240,6 +2243,7 @@ payments:
     primary-gw:
       hostnames:
         - 'beta.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2511,6 +2515,7 @@ search-indexer-service:
     primary-gw:
       hostnames:
         - 'search-indexer-service.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2734,8 +2739,8 @@ service-portal-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 30
-        min: 2
+        max: 2
+        min: 1
   httpRoute:
     internal-gw:
       hostnames:
@@ -2779,9 +2784,9 @@ service-portal-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 30
-    min: 2
+    default: 1
+    max: 2
+    min: 1
   resources:
     limits:
       cpu: '800m'
@@ -2861,6 +2866,7 @@ services-bff-portals-admin:
     primary-gw:
       hostnames:
         - 'beta.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2949,6 +2955,7 @@ services-bff-portals-my-pages:
     primary-gw:
       hostnames:
         - 'beta.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -4333,8 +4340,8 @@ user-notification:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 3
+        max: 2
+        min: 1
   httpRoute:
     internal-gw:
       hostnames:
@@ -4364,9 +4371,9 @@ user-notification:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
-    max: 10
-    min: 3
+    default: 1
+    max: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -4784,8 +4791,8 @@ web:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 50
-        min: 3
+        max: 2
+        min: 1
   httpRoute:
     primary-gw:
       hostnames:
@@ -4806,9 +4813,9 @@ web:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
-    max: 50
-    min: 3
+    default: 1
+    max: 2
+    min: 1
   resources:
     limits:
       cpu: '3000m'
