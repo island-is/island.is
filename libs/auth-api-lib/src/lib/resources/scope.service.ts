@@ -55,15 +55,8 @@ export class ScopeService {
     private nationalRegistryService: NationalRegistryV3ClientService,
   ) {}
 
-  /**
-   * Looks up the user's municipality from the National Registry legal
-   * domicile code and finds a matching domain among the candidates by
-   * comparing against Domain.municipalityCode.
-   *
-   * The first four digits of the legal domicile code are the municipality
-   * number (sveitarfélagsnúmer, e.g. "0000" for Reykjavíkurborg). Foreign
-   * domiciles use "99" plus a country code (e.g. "99US") and never match.
-   */
+  // First four digits of logheimiliskodi are the municipality number
+  // (sveitarfélagsnúmer); foreign domiciles ("99" + country code) never match.
   private async getUserMunicipalDomain(
     user: User,
     candidateDomainNames: string[],
