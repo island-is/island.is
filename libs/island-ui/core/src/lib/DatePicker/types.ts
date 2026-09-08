@@ -75,6 +75,11 @@ export interface DatePickerProps {
   }
   detachedCalendar?: boolean
   fixedHeight?: boolean
+  /**
+   * Keep the calendar below the input even when there is not enough room for
+   * it there. By default it flips above the input in that case.
+   */
+  preventFlip?: boolean
 }
 
 export interface DatePickerCustomHeaderProps {
