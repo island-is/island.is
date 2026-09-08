@@ -5,6 +5,8 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { InternalServerErrorException } from '@nestjs/common'
+
 import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../models/defendant.model'
@@ -127,6 +129,17 @@ describe('DefendantRepositoryService', () => {
         { where: { id: defendantId, caseId }, transaction },
       )
       expect(model.create).not.toHaveBeenCalled()
+    })
+
+    // The guards bound the defendant to the case before the transaction
+    // opened, so a concurrent change can leave nothing to move - the split must
+    // then fail instead of committing a case without its defendant
+    it('throws when the defendant is no longer in the case', async () => {
+      model.update.mockResolvedValueOnce([0])
+
+      await expect(
+        service.moveToCase(defendantId, caseId, newCaseId, { transaction }),
+      ).rejects.toThrow(InternalServerErrorException)
     })
 
     it('rethrows when the move fails', async () => {
