@@ -18,5 +18,13 @@ export const LISTAR_URL = 'https://www.lyfjastofnun.is/utgefid-efni/listar/'
 // items.
 export const LISTAR_URL_EN = 'https://www.ima.is/published_material/lists/'
 
+export const EYDUBLOD_URL = 'https://www.lyfjastofnun.is/utgefid-efni/eydublod/'
+
+// As with the guidelines and lists pages, the English mirror lives on the
+// separate ima.is domain and covers fewer items (38 vs 50). It also republishes
+// most documents under its own file names, so `matchKeyFor` only cross-matches
+// the handful that happen to share a file name or external link — the rest of
+// the English titles are transcribed by hand (see title-translations.ts).
+export const EYDUBLOD_URL_EN = 'https://www.ima.is/published_material/forms/'
+
 export const WP_BASE_URL = 'https://www.lyfjastofnun.is/wp-json/wp/v2'
-export const IMPORT_MONTHS_BACK = 12

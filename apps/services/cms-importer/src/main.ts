@@ -63,6 +63,17 @@ switch (job) {
       })
     break
   }
+  case 'lyfjastofnun-forms-import': {
+    import('./app/organizations/lyfjastofnun/jobs/forms/forms.worker')
+      .then((app) => app.lyfjastofnunFormsImportWorker())
+      .catch((error) => {
+        console.error(
+          'Failed to import or execute the lyfjastofnun forms import worker:',
+          error,
+        )
+      })
+    break
+  }
   case 'lyfjastofnun-instructions-import': {
     import(
       './app/organizations/lyfjastofnun/jobs/instructions/instructions.worker'

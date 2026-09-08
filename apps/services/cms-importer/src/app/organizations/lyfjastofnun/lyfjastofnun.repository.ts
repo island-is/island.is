@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { logger } from '@island.is/logging'
 import {
+  EYDUBLOD_URL,
+  EYDUBLOD_URL_EN,
   LEIDBEININGAR_URL,
   LEIDBEININGAR_URL_EN,
   LISTAR_URL,
   LISTAR_URL_EN,
   WP_BASE_URL,
-  IMPORT_MONTHS_BACK,
 } from './lyfjastofnun.constants'
 import { LyfjastofnunScrapedItem, WpPost } from './lyfjastofnun.types'
 
@@ -25,9 +26,9 @@ const matchKeyFor = (item: LyfjastofnunScrapedItem): string | null => {
   return null
 }
 
-// One repository for the whole lyfjastofnun.is site — three fetch methods,
-// two different mechanisms (HTML scrape for guidelines/lists, WordPress REST
-// API for news), all reading from the same host.
+// One repository for the whole lyfjastofnun.is site — four fetch methods,
+// two different mechanisms (HTML scrape for guidelines/lists/forms, WordPress
+// REST API for news), all reading from the same host.
 @Injectable()
 export class LyfjastofnunRepository {
   private readonly instructionsFetch = createEnhancedFetch({
@@ -35,6 +36,9 @@ export class LyfjastofnunRepository {
   })
   private readonly listsFetch = createEnhancedFetch({
     name: 'LyfjastofnunListsClient',
+  })
+  private readonly formsFetch = createEnhancedFetch({
+    name: 'LyfjastofnunFormsClient',
   })
   private readonly wordpressFetch = createEnhancedFetch({
     name: 'LyfjastofnunWordpressClient',
@@ -58,12 +62,25 @@ export class LyfjastofnunRepository {
     )
   }
 
-  async getPosts(): Promise<WpPost[]> {
+  async getForms(): Promise<LyfjastofnunScrapedItem[]> {
+    return this.scrapeRelatedFilesPage(
+      this.formsFetch,
+      EYDUBLOD_URL,
+      EYDUBLOD_URL_EN,
+      'Lyfjastofnun forms page',
+    )
+  }
+
+  // `monthsBack` is supplied by the caller rather than read from a constant:
+  // the window is a per-run choice (routine incremental runs vs a historical
+  // backfill), so the job owns the policy and the repository just applies it.
+  async getPosts(monthsBack: number): Promise<WpPost[]> {
     const after = new Date()
-    after.setMonth(after.getMonth() - IMPORT_MONTHS_BACK)
+    after.setMonth(after.getMonth() - monthsBack)
 
     const MAX_PAGES = 10
     const posts: WpPost[] = []
+    let complete = false
 
     for (let page = 1; page <= MAX_PAGES; page++) {
       const url = `${WP_BASE_URL}/frettir?per_page=100&page=${page}&after=${after.toISOString()}&_embed=1`
@@ -85,11 +102,31 @@ export class LyfjastofnunRepository {
         break
       }
 
-      if (!Array.isArray(batch) || batch.length === 0) break
+      if (!Array.isArray(batch) || batch.length === 0) {
+        complete = true
+        break
+      }
 
       posts.push(...batch)
 
-      if (batch.length < 100) break
+      if (batch.length < 100) {
+        complete = true
+        break
+      }
+    }
+
+    /*
+      Now that the window is caller-supplied, the page cap is reachable: a wide
+      `--months` can have more than MAX_PAGES × 100 posts behind it. Say so
+      rather than returning a silently truncated set that looks complete — the
+      same reason the error paths above deserve the warning too, since a `break`
+      there also yields partial results.
+    */
+    if (!complete) {
+      logger.warn(
+        'WordPress post fetch stopped before the window was exhausted; results may be incomplete',
+        { monthsBack, fetched: posts.length, maxPages: MAX_PAGES },
+      )
     }
 
     logger.info('Fetched WordPress posts', { total: posts.length })
@@ -223,6 +260,14 @@ export class LyfjastofnunRepository {
     const title = titleMatch ? stripWhitespace(titleMatch[1]) : ''
     if (!title) return null
 
+    // The category span carries a class attribute, so the bare-<span> title
+    // regex above cannot match it regardless of ordering within the header.
+    const categoryMatch =
+      /<span class="relatedfiles__item__category">([^<]*)<\/span>/.exec(header)
+    const categoryTitle = categoryMatch
+      ? stripWhitespace(categoryMatch[1])
+      : undefined
+
     const linkMatch =
       /<a href="([^"]+)" class="relatedfiles__item__(download|open)">/.exec(
         icon,
@@ -234,6 +279,7 @@ export class LyfjastofnunRepository {
     return {
       title,
       groupTitle: groupTitleFor(itemMatch.index),
+      categoryTitle,
       fileUrl: linkType === 'download' ? url : undefined,
       externalUrl: linkType === 'open' ? url : undefined,
     }

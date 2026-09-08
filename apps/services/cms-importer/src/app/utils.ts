@@ -24,6 +24,7 @@ export const processJob = () =>
         'fsre-buildings-import',
         'web-sitemap',
         'cms-cleanup',
+        'lyfjastofnun-forms-import',
         'lyfjastofnun-instructions-import',
         'lyfjastofnun-lists-import',
         'lyfjastofnun-news-import',
@@ -54,12 +55,43 @@ export const runWorker = async (
   }
 }
 
+/*
+  Reads a positive-integer flag, returning undefined when the flag is absent so
+  callers fall back to their own default.
+
+  Rejects rather than passes through: NaN (which would silently poison whatever
+  it flows into — `setMonth(NaN)` yields an Invalid Date and an unusable API
+  query), zero (`--limit 0` is not nullish, so it survives `?? DEFAULT` and the
+  job reports success having imported nothing), and negatives (`--months -6`
+  puts the window in the future and matches no posts).
+
+  A flag that is present but unusable is warned about, not swallowed: silently
+  falling back means `--months 36x` runs a 12-month window while the operator
+  believes they launched a three-year backfill.
+*/
+const parseNumericFlag = (flag: string): number | undefined => {
+  const index = process.argv.indexOf(flag)
+  if (index === -1) return undefined
+
+  const raw = process.argv[index + 1]
+  const value = Number(raw)
+
+  if (!Number.isInteger(value) || value <= 0) {
+    logger.warn(
+      `Ignoring ${flag}: expected a positive integer, falling back to the default`,
+      { value: raw },
+    )
+    return undefined
+  }
+
+  return value
+}
+
 export const parseCliFlags = () => {
   const publish = process.argv.includes('--publish')
-  const limitArgIndex = process.argv.indexOf('--limit')
-  const limit =
-    limitArgIndex !== -1 ? Number(process.argv[limitArgIndex + 1]) : undefined
+  const limit = parseNumericFlag('--limit')
+  const months = parseNumericFlag('--months')
   const slugArgIndex = process.argv.indexOf('--slug')
   const slug = slugArgIndex !== -1 ? process.argv[slugArgIndex + 1] : undefined
-  return { publish, limit, slug }
+  return { publish, limit, months, slug }
 }

@@ -75,6 +75,16 @@
         "args": ["--job", "cms-cleanup"]
       }
     },
+    "lyfjastofnun-forms-import": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer"
+        },
+        "args": ["--job", "lyfjastofnun-forms-import"]
+      }
+    },
     "lyfjastofnun-instructions-import": {
       "executor": "@nx/js:node",
       "options": {

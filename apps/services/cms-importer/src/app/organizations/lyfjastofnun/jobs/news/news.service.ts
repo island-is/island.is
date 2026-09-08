@@ -14,9 +14,13 @@ import {
   LYFJASTOFNUN_OWNER_TAG,
 } from '../../lyfjastofnun.constants'
 import { LOCALE } from '../../../../constants'
-import { cleanImageTitle, guessImageContentType } from './utils'
+import { cleanImageTitle, guessImageContentType, pickSeedImage } from './utils'
 import { buildNewsEntry } from './news.mapper'
-import { IMPORT_LIMIT, NEWS_CONTENT_TYPE } from './constants'
+import {
+  IMPORT_LIMIT,
+  IMPORT_MONTHS_BACK,
+  NEWS_CONTENT_TYPE,
+} from './constants'
 
 interface Link {
   assetId: string
@@ -25,6 +29,9 @@ interface Link {
 
 @Injectable()
 export class LyfjastofnunNewsImportService {
+  // fileName -> assetId, for images uploaded during the current run only.
+  private readonly uploadedAssetIdsByFileName = new Map<string, string>()
+
   constructor(
     private readonly cmsRepository: CmsRepository,
     private readonly lyfjastofnunRepository: LyfjastofnunRepository,
@@ -33,16 +40,40 @@ export class LyfjastofnunNewsImportService {
   async run({
     publish,
     slug,
-  }: { publish?: boolean; slug?: string } = {}): Promise<void> {
+    months,
+    limit,
+  }: {
+    publish?: boolean
+    slug?: string
+    months?: number
+    limit?: number
+  } = {}): Promise<void> {
+    const monthsBack = months ?? IMPORT_MONTHS_BACK
+    const postLimit = limit ?? IMPORT_LIMIT
+    logger.info('Lyfjastofnun news import parameters', {
+      monthsBack,
+      postLimit,
+      slug,
+      publish,
+    })
+
     await syncCreateOnly<WpPost, Link>({
       cmsRepository: this.cmsRepository,
       contentType: NEWS_CONTENT_TYPE,
       logLabel: 'Lyfjastofnun news import',
       publish,
+      /*
+        `limit` is handed to syncCreateOnly rather than applied here, so it
+        slices *after* existing entries are filtered out — matching the
+        instructions/lists/forms jobs. Applying it here would spend the whole
+        budget on the newest posts every run, so anything skipped earlier (or
+        older than the newest N) could never be picked up incrementally.
+        An explicit `--slug` targets one post, so it ignores the limit.
+      */
+      limit: slug ? undefined : postLimit,
       getItems: async () => {
-        const posts = await this.lyfjastofnunRepository.getPosts()
-        const filtered = slug ? posts.filter((p) => p.slug === slug) : posts
-        return filtered.slice(0, slug ? filtered.length : IMPORT_LIMIT)
+        const posts = await this.lyfjastofnunRepository.getPosts(monthsBack)
+        return slug ? posts.filter((p) => p.slug === slug) : posts
       },
       getExistingKeys: () =>
         getExistingSlugsByLinkedEntry(
@@ -59,13 +90,7 @@ export class LyfjastofnunNewsImportService {
           return undefined
         }
 
-        const assetId = await this.uploadImage(post, publish)
-        if (!assetId) {
-          logger.warn('Skipping post, could not upload image', {
-            slug: post.slug,
-          })
-          return undefined
-        }
+        const assetId = await this.resolveImage(post, publish)
 
         const summary = await this.lyfjastofnunRepository.scrapePostSummary(
           post.link,
@@ -79,13 +104,30 @@ export class LyfjastofnunNewsImportService {
     })
   }
 
-  private async uploadImage(
-    post: WpPost,
-    publish: boolean,
-  ): Promise<string | null> {
+  /*
+    Falls back to a seed image when the post has no image of its own, or when
+    its inline image cannot be uploaded. Most lyfjastofnun.is posts carry no
+    inline image, and `news` requires one, so without this the majority of a
+    backfill would be skipped.
+  */
+  private async resolveImage(post: WpPost, publish: boolean): Promise<string> {
     const inlineUrl = extractFirstImageUrl(post.content?.rendered ?? '')
-    if (!inlineUrl) return null
-    return this.uploadRemoteImage(inlineUrl, post.slug, publish)
+
+    if (inlineUrl) {
+      const assetId = await this.uploadRemoteImage(
+        inlineUrl,
+        post.slug,
+        publish,
+      )
+      if (assetId) return assetId
+      logger.warn('Inline image failed, falling back to a seed image', {
+        slug: post.slug,
+      })
+    }
+
+    const seedAssetId = pickSeedImage(post.slug)
+    logger.info('Using seed image', { slug: post.slug, assetId: seedAssetId })
+    return seedAssetId
   }
 
   private async uploadRemoteImage(
@@ -96,12 +138,30 @@ export class LyfjastofnunNewsImportService {
     const fileName = imageUrl.split('/').pop()?.split('?')[0] ?? `${slug}.jpg`
     const title = cleanImageTitle(fileName)
 
+    /*
+      Checked before `findAssetByFileName` because that query cannot see an
+      asset this same run just created: `createAsset` kicks off
+      `processForAllLocales` asynchronously, and `fields.file.fileName` is only
+      queryable once processing completes. Without this cache, several posts
+      sharing one image each upload their own copy — which is how the space
+      ended up with four identical copies of one file after the first run.
+    */
+    const cached = this.uploadedAssetIdsByFileName.get(fileName)
+    if (cached) {
+      logger.info('Inline image already uploaded in this run, reusing', {
+        slug,
+        assetId: cached,
+      })
+      return cached
+    }
+
     const existing = await this.cmsRepository.findAssetByFileName(fileName)
     if (existing) {
       logger.info('Inline image already exists in Contentful, reusing', {
         slug,
         assetId: existing.sys.id,
       })
+      this.uploadedAssetIdsByFileName.set(fileName, existing.sys.id)
       return existing.sys.id
     }
 
@@ -130,6 +190,7 @@ export class LyfjastofnunNewsImportService {
     }
 
     logger.info('Inline image uploaded', { slug, assetId: asset.sys.id })
+    this.uploadedAssetIdsByFileName.set(fileName, asset.sys.id)
     return asset.sys.id
   }
 }

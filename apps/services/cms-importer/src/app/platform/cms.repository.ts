@@ -29,42 +29,70 @@ import { ContentfulFetchResponse } from './managementClient/managementClient.typ
 export class CmsRepository {
   constructor(private readonly managementClient: ManagementClientService) {}
 
-  getContentByType = async (contentType: string): Promise<Array<Entry>> => {
-    const entryResponse = await this.managementClient.getEntries({
-      content_type: contentType,
-    })
+  /*
+    Fetches every page of a query rather than relying on the management
+    client's default `limit: 1000`, which silently truncates any query with
+    more matches than that (`linkUrl` is already well past it). Truncation is
+    dangerous here because callers use these results for dedupe, where a
+    missing entry reads as "does not exist yet" and causes a duplicate to be
+    created.
 
-    if (entryResponse.ok) {
-      return entryResponse.data.items
-    } else {
-      logger.warn(`cms service failed to fetch content`, {
-        error: entryResponse.error,
-        contentType,
+    Ordering is by `sys.id` — the CMA gives no stable sequence across paged
+    requests without an explicit order, and unlike `sys.createdAt` an id is
+    unique, so entries cannot repeat or drop across a page boundary.
+
+    Throws on a failed page instead of returning what it has so far: an empty
+    or partial array is indistinguishable from "no entries exist", which is
+    precisely the duplicate-creation failure this paging exists to prevent.
+    `runWorker` catches it and fails the job, which is the correct outcome —
+    better a job that stops than one that silently rewrites content.
+  */
+  private fetchAllEntries = async (
+    query: Record<string, unknown>,
+    logContext: Record<string, unknown>,
+  ): Promise<Array<Entry>> => {
+    const pageSize = 1000
+    const entries: Array<Entry> = []
+
+    for (let skip = 0; ; skip += pageSize) {
+      const entryResponse = await this.managementClient.getEntries({
+        ...query,
+        order: 'sys.id',
+        limit: pageSize,
+        skip,
       })
-      return []
+
+      if (!entryResponse.ok) {
+        logger.error('cms service failed to fetch content', {
+          error: entryResponse.error,
+          ...logContext,
+          skip,
+        })
+        throw new Error(
+          `cms service failed to fetch content: ${JSON.stringify(logContext)}`,
+        )
+      }
+
+      const { items, total } = entryResponse.data
+      entries.push(...items)
+
+      if (entries.length >= total || items.length === 0) {
+        return entries
+      }
     }
   }
+
+  getContentByType = async (contentType: string): Promise<Array<Entry>> =>
+    this.fetchAllEntries({ content_type: contentType }, { contentType })
 
   getContentByTypeAndLinkedEntry = async (
     contentType: string,
     linkedEntryId: string,
-  ): Promise<Array<Entry>> => {
-    const entryResponse = await this.managementClient.getEntries({
-      content_type: contentType,
-      links_to_entry: linkedEntryId,
-    })
-
-    if (entryResponse.ok) {
-      return entryResponse.data.items
-    } else {
-      logger.warn(`cms service failed to fetch content`, {
-        error: entryResponse.error,
-        contentType,
-        linkedEntryId,
-      })
-      return []
-    }
-  }
+  ): Promise<Array<Entry>> =>
+    this.fetchAllEntries(
+      { content_type: contentType, links_to_entry: linkedEntryId },
+      { contentType, linkedEntryId },
+    )
 
   private getContentType = async (
     contentType: ContentTypeOptions,
@@ -86,23 +114,16 @@ export class CmsRepository {
   getGenericListItemEntries = async (
     genericListId: string,
   ): Promise<Entry[]> => {
-    const existingEntries = await this.managementClient.getEntries({
-      content_type: GENERIC_LIST_ITEM_CONTENT_TYPE,
-      select: 'fields,sys,metadata',
-      links_to_entry: genericListId,
-    })
+    const entries = await this.fetchAllEntries(
+      {
+        content_type: GENERIC_LIST_ITEM_CONTENT_TYPE,
+        select: 'fields,sys,metadata',
+        links_to_entry: genericListId,
+      },
+      { genericListId },
+    )
 
-    if (!existingEntries?.ok) {
-      logger.warn(
-        `cms service failed to fetch items from ${genericListId} entries`,
-        {
-          error: existingEntries.error,
-        },
-      )
-      return []
-    }
-
-    return existingEntries.data.items.filter(isDefined)
+    return entries.filter(isDefined)
   }
 
   findAssetByFileName = async (fileName: string): Promise<Asset | null> => {

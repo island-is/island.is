@@ -12,7 +12,8 @@ import {
 // ── create-only-with-resolution ─────────────────────────────────────────────
 // Used by jobs that dedupe against existing entries by a stable key, resolve
 // an asset/link/image before mapping (the resolved id is a mapper input), and
-// only ever create — never update. (lyfjastofnun-instructions, -lists, -news)
+// only ever create — never update. (lyfjastofnun-instructions, -lists,
+// -forms, -news)
 
 export interface SyncCreateOnlyConfig<Item, Link> {
   cmsRepository: CmsRepository
@@ -94,7 +95,7 @@ export const syncCreateOnly = async <Item, Link>({
 }
 
 // ── Shared resolution helpers for the genericListItem "file or external
-// link" shape (lyfjastofnun-instructions, -lists) ───────────────────────────
+// link" shape (lyfjastofnun-instructions, -lists, -forms) ──────────────────
 
 export const guessFileContentType = (
   url: string,
