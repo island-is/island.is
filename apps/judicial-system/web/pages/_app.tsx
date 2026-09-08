@@ -81,7 +81,7 @@ class JudicialSystemApplication extends App<Props> {
   }
 
   render() {
-    const { Component, pageProps, translations } = this.props
+    const { Component, pageProps, translations, router } = this.props
 
     return (
       <>
@@ -106,7 +106,10 @@ class JudicialSystemApplication extends App<Props> {
                     <FormProvider>
                       <HeaderContainer />
                       <Box component="main">
-                        <ErrorBoundary>
+                        {/* Keyed by route so a render error on one page
+                            does not keep the fallback up after the user
+                            navigates client-side to a healthy page */}
+                        <ErrorBoundary key={router.asPath}>
                           <Component {...pageProps} />
                         </ErrorBoundary>
                       </Box>
