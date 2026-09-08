@@ -113,6 +113,7 @@ import { MinimalCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
+import { CaseCloningService } from './caseCloning.service'
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
 
@@ -183,6 +184,7 @@ export class CaseService {
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly caseCloningService: CaseCloningService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -2871,8 +2873,8 @@ export class CaseService {
     defendant: Defendant,
     transaction: Transaction,
   ): Promise<Case> {
-    const splitCase = await this.caseRepositoryService.split(
-      theCase.id,
+    const splitCase = await this.caseCloningService.split(
+      theCase,
       defendant.id,
       { transaction },
     )
