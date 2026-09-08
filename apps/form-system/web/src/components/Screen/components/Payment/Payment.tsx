@@ -110,10 +110,6 @@ export const Payment = () => {
       return <Text>{convertToPaymentNumber(price)} kr.</Text>
     }
 
-    if (loading) {
-      return <LoadingDots />
-    }
-
     return (
       <AlertMessage
         type="error"
@@ -186,31 +182,35 @@ export const Payment = () => {
                 </Text>
               )}
             </Box>
-            <Stack space={1}>
-              <Box marginBottom={2}>
-                <Text variant="h4" fontWeight="semiBold">
-                  Til greiðslu
-                </Text>
+            {loading ? (
+              <Box display="flex" justifyContent="center" paddingY={4}>
+                <LoadingDots size="large" color="gradient" />
               </Box>
+            ) : (
+              <Stack space={1}>
+                <Box marginBottom={2}>
+                  <Text variant="h4" fontWeight="semiBold">
+                    Til greiðslu
+                  </Text>
+                </Box>
 
-              {paymentFields.map((field, index) => {
-                if (!field) return null
-                return <QuantityStack field={field} index={index} key={index} />
-              })}
-              <Divider />
-              <Box display="flex" justifyContent="spaceBetween">
-                <Text variant="h5" fontWeight="semiBold">
-                  {formatMessage(m.total)}
-                </Text>
-                {loading ? (
-                  <LoadingDots />
-                ) : (
+                {paymentFields.map((field, index) => {
+                  if (!field) return null
+                  return (
+                    <QuantityStack field={field} index={index} key={index} />
+                  )
+                })}
+                <Divider />
+                <Box display="flex" justifyContent="spaceBetween">
+                  <Text variant="h5" fontWeight="semiBold">
+                    {formatMessage(m.total)}
+                  </Text>
                   <Text variant="h5" fontWeight="semiBold" color="blue400">
                     {convertToPaymentNumber(total)} kr.
                   </Text>
-                )}
-              </Box>
-            </Stack>
+                </Box>
+              </Stack>
+            )}
           </GridColumn>
         </GridRow>
       </Box>
