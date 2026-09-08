@@ -31,6 +31,7 @@ import {
   DefendantRepositoryService,
   EventLogRepositoryService,
   IndictmentCountRepositoryService,
+  OffenseRepositoryService,
   SubpoenaRepositoryService,
   VerdictRepositoryService,
   VictimRepositoryService,
@@ -98,6 +99,8 @@ describe('CaseController - Split defendant from case', () => {
 
   let transaction: Transaction
   let splitCaseId: string
+  let oldIndictmentCountId: string
+  let newIndictmentCountId: string
   let splitCase: Case
   let fullSplitCase: Case
 
@@ -108,6 +111,7 @@ describe('CaseController - Split defendant from case', () => {
   let mockVerdictRepositoryService: jest.Mocked<VerdictRepositoryService>
   let mockDefendantEventLogRepositoryService: jest.Mocked<DefendantEventLogRepositoryService>
   let mockIndictmentCountRepositoryService: jest.Mocked<IndictmentCountRepositoryService>
+  let mockOffenseRepositoryService: jest.Mocked<OffenseRepositoryService>
   let mockVictimRepositoryService: jest.Mocked<VictimRepositoryService>
   let mockCaseStringRepositoryService: jest.Mocked<CaseStringRepositoryService>
   let mockDateLogRepositoryService: jest.Mocked<DateLogRepositoryService>
@@ -126,6 +130,7 @@ describe('CaseController - Split defendant from case', () => {
       verdictRepositoryService,
       defendantEventLogRepositoryService,
       indictmentCountRepositoryService,
+      offenseRepositoryService,
       victimRepositoryService,
       caseStringRepositoryService,
       dateLogRepositoryService,
@@ -148,6 +153,8 @@ describe('CaseController - Split defendant from case', () => {
       defendantEventLogRepositoryService as jest.Mocked<DefendantEventLogRepositoryService>
     mockIndictmentCountRepositoryService =
       indictmentCountRepositoryService as jest.Mocked<IndictmentCountRepositoryService>
+    mockOffenseRepositoryService =
+      offenseRepositoryService as jest.Mocked<OffenseRepositoryService>
     mockVictimRepositoryService =
       victimRepositoryService as jest.Mocked<VictimRepositoryService>
     mockCaseStringRepositoryService =
@@ -161,6 +168,8 @@ describe('CaseController - Split defendant from case', () => {
 
     splitCaseId = uuid()
     splitCase = { id: splitCaseId } as Case
+    oldIndictmentCountId = uuid()
+    newIndictmentCountId = uuid()
     // The re-read split case, as the initial court documents need it
     fullSplitCase = {
       id: splitCaseId,
@@ -187,8 +196,9 @@ describe('CaseController - Split defendant from case', () => {
     mockEventLogRepositoryService.copyByTypesToCase.mockResolvedValue()
     mockVictimRepositoryService.copyAllToCase.mockResolvedValue()
     mockIndictmentCountRepositoryService.copyAllToCase.mockResolvedValue(
-      new Map(),
+      new Map([[oldIndictmentCountId, newIndictmentCountId]]),
     )
+    mockOffenseRepositoryService.copyAllForIndictmentCounts.mockResolvedValue()
     mockCaseFileRepositoryService.moveAllForDefendantToCase.mockResolvedValue(1)
     mockCaseFileRepositoryService.copyAllWithoutDefendantToCase.mockResolvedValue()
     mockPoliceCaseNumberRepositoryService.moveAssignedRowsToCaseForDefendant.mockResolvedValue()
@@ -325,6 +335,15 @@ describe('CaseController - Split defendant from case', () => {
       expect(
         mockIndictmentCountRepositoryService.copyAllToCase,
       ).toHaveBeenCalledWith(caseId, splitCaseId, { transaction })
+    })
+
+    it('should put the offenses on the copied indictment counts', () => {
+      expect(
+        mockOffenseRepositoryService.copyAllForIndictmentCounts,
+      ).toHaveBeenCalledWith(
+        new Map([[oldIndictmentCountId, newIndictmentCountId]]),
+        { transaction },
+      )
     })
 
     it("should move the defendant's case files and copy the ones linked to no defendant", () => {

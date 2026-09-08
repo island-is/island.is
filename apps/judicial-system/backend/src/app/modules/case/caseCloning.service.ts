@@ -386,8 +386,9 @@ export class CaseCloningService {
   // Splits a defendant off into a case of their own. The defendant and what
   // hangs off them - subpoenas, verdicts, defendant event logs, case files -
   // move to the new case; what the two cases share - victims, indictment
-  // counts, the civil demands, the arraignment date, the case level files and
-  // the events that brought the indictment to court - is copied. As with
+  // counts with their offenses, the civil demands, the arraignment date, the
+  // case level files and the events that brought the indictment to court - is
+  // copied. As with
   // duplication, the case is the one the route resolved, not a second read.
   async split(
     caseToSplit: Case,
@@ -493,12 +494,18 @@ export class CaseCloningService {
         transaction,
       })
 
-      // The offenses are not copied along with the counts - the split has
-      // never done so, and whether it should is a decision about the split,
-      // not about where the code lives
-      await this.indictmentCountRepositoryService.copyAllToCase(
-        caseId,
-        newCaseId,
+      // Copy all indictment counts and their offenses to the new case. The
+      // offenses hang off the counts, so they are copied against the new count
+      // ids - the split used to leave them behind
+      const indictmentCountIdMap =
+        await this.indictmentCountRepositoryService.copyAllToCase(
+          caseId,
+          newCaseId,
+          { transaction },
+        )
+
+      await this.offenseRepositoryService.copyAllForIndictmentCounts(
+        indictmentCountIdMap,
         { transaction },
       )
 
