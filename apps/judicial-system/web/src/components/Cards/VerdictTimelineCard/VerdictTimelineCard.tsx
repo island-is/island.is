@@ -30,7 +30,7 @@ import {
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'
@@ -567,7 +567,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               initial={false}
               animate="visible"
               transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
-              className={grid({ gap: 2, marginTop: 1 })}
+              className={stack({ gap: 2, marginTop: 1 })}
             >
               <Text variant="eyebrow">Afstaða dómfellda til dóms</Text>
               <VerdictAppealDecisionChoice

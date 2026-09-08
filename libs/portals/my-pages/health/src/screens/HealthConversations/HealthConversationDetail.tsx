@@ -436,7 +436,10 @@ const HealthConversationDetail = () => {
                   fluid={isPhoneWidth}
                 />
               ) : item.patientCanReply === false ? (
-                <ReplyBlockedAlert reason={item.replyBlockedReason} />
+                <ReplyBlockedAlert
+                  reason={item.replyBlockedReason}
+                  replyWindowDays={item.patientReplyWindowDays}
+                />
               ) : (
                 <Button
                   variant="ghost"
