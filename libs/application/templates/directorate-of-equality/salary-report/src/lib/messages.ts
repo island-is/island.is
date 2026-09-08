@@ -1330,7 +1330,24 @@ export const messages = {
       spreadNote: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.spreadNote',
         defaultMessage:
-          'Dæmigerð dreifing um línuna hjá þessu fyrirtæki er {down} til {up}. Hér eru starfsmenn sem víkja {threshold} staðalvik eða meira frá henni.',
+          'Dæmigerð dreifing um línuna hjá þessu fyrirtæki er {down} til {up}.',
+      },
+      // `counts` states the pool the ábendingar were drawn from — everyone past
+      // the threshold — NOT the number of ábendingar. It must always be
+      // followed by `listRule`: on its own it invites the reader to add the two
+      // figures and ask where the missing rows went. It is also the only place
+      // the threshold is now stated, which is what gives the "Staðalvik frá
+      // línu" column its unit — spreadNote used to carry that and no longer
+      // can, because the list is no longer defined by the threshold alone.
+      counts: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.counts',
+        defaultMessage:
+          'Starfsmenn sem víkja {threshold} staðalvik eða meira frá línunni: {below} niður, {above} upp.',
+      },
+      listRule: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.listRule',
+        defaultMessage:
+          'Ábendingar eru gerðar um þá sem víkja mest í hvora átt.',
       },
       allClear: {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.allClear',

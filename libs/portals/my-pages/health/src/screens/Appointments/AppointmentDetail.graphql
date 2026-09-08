@@ -8,7 +8,7 @@ fragment AppointmentDetailFields on HealthDirectorateAppointmentDetail {
   status
   practitioners
   canCancel
-  cancelBlockedReason
+  canCancelBefore
   assignees {
     type
     name
