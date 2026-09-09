@@ -56,6 +56,7 @@ export const periodSubSection = buildSubSection({
           condition: isOneMonth,
           options: () => getSalaryPeriodYearOptions(),
           marginBottom: 4,
+          menuPlacement: 'top',
         }),
         buildSelectField({
           id: 'period.month',
@@ -63,6 +64,7 @@ export const periodSubSection = buildSubSection({
           required: true,
           width: 'half',
           marginBottom: 4,
+          menuPlacement: 'top',
           condition: isOneMonth,
           options: ({ answers }) =>
             getSalaryPeriodMonthOptions(

@@ -49,6 +49,7 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
     | ((
         optionValue: MultiValue<Value> | SingleValue<Value> | undefined,
       ) => Promise<{ key: string; value: any }[]>)
+  menuPlacement?: 'auto' | 'bottom' | 'top'
 }
 
 export const SelectController = <Value, IsMulti extends boolean = false>({
@@ -76,6 +77,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   clearOnChangeDefaultValue,
   setOnChange,
   readOnly,
+  menuPlacement,
 }: SelectControllerProps<Value, IsMulti> & TestSupport) => {
   const { clearErrors, setValue, getValues } = useFormContext()
 
@@ -186,6 +188,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
             isClearable={isClearable}
             isLoading={isLoading}
             size={size}
+            menuPlacement={menuPlacement}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             onChange={async (newVal) => {
