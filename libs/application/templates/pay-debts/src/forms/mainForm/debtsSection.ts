@@ -36,6 +36,7 @@ export const debtsSection = buildSection({
       id: 'debtsSection',
       title: messages.general.sectionTitle,
       description: messages.general.description,
+      nextButtonText: messages.general.nextButtonText,
       children: [
         buildCustomField({
           id: 'debtsLoader',

@@ -13,6 +13,11 @@ export const debts = {
         'Yfirlit þeirra skulda sem hægt er að greiða til ríkisins. Nánara yfirlit og sundurliðun skulda er undir [Fjármál á Mínum síðum](/minarsidur/fjarmal).',
       description: 'Description shown under the first section title',
     },
+    nextButtonText: {
+      id: 'pd.application:debts.general.nextButtonText',
+      defaultMessage: 'Áfram í greiðslu',
+      description: 'Label of the submit button on the debts screen',
+    },
   }),
   fetch: defineMessages({
     errorTitle: {
