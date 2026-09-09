@@ -197,7 +197,7 @@ const AppealFiles = () => {
           />
         </Box>
         {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section">
             <RequestAppealRulingNotToBePublishedCheckbox />
           </Box>
         )}

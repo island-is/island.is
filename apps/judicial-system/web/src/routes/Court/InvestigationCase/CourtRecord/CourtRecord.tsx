@@ -51,7 +51,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
 import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
@@ -316,9 +316,9 @@ const CourtRecord: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <DateTime
                 name="courtStartDate"
                 datepickerLabel={formatMessage(

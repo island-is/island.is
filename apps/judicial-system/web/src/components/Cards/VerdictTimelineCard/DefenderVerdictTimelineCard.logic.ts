@@ -12,6 +12,16 @@ import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
 
 /**
+ * Whether there is anything yet to tell the defence about a verdict. Until the
+ * public prosecution office has decided whether the verdict must be served, the
+ * timeline has no first entry, so the card is not shown at all rather than shown
+ * empty. Decided per defendant, since each has their own verdict.
+ */
+export const hasVerdictServiceDecision = (
+  verdict?: Pick<Verdict, 'serviceRequirement'> | null,
+): boolean => Boolean(verdict?.serviceRequirement)
+
+/**
  * The bullets a defence user sees about the service and appeal of one verdict.
  * Deliberately leaves out the appeal deadline, which defence users already get
  * from InfoCardClosedIndictment, and everything about enforcement, which is

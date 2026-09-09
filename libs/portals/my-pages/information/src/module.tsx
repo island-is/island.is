@@ -9,6 +9,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
 import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-collection'
 import { Navigate } from 'react-router-dom'
+import { Features } from '@island.is/feature-flags'
 
 const UserInfoOverview = lazy(() =>
   import('./screens/UserInfo/UserInfoOverview/UserInfoOverview'),
@@ -71,14 +72,14 @@ export const informationModule: PortalModule = {
         name: m.contracts,
         path: InformationPaths.MyContracts,
         enabled: scopes.includes(ApiScope.meDetails),
-        key: 'MyContracts',
+        key: Features.isServicePortalMyContractsPageEnabled,
         element: <UserContractsOverview />,
       },
       {
         name: m.contract,
         path: InformationPaths.MyContractsDetail,
         enabled: scopes.includes(ApiScope.meDetails),
-        key: 'MyContracts',
+        key: Features.isServicePortalMyContractsPageEnabled,
         element: <UserContract />,
       },
       {

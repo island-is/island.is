@@ -30,7 +30,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const formatInstitutionName = (name?: string | null) => {
@@ -191,7 +191,7 @@ const PoliceDemands = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icDemands.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading

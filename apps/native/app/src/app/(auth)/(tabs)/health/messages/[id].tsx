@@ -11,7 +11,12 @@ import {
   SafeAreaView,
   View,
 } from 'react-native'
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  usePathname,
+} from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
 import { ButtonDrawer } from '@/components/button-drawer'
@@ -29,11 +34,14 @@ import {
 } from '@/graphql/types/schema'
 import { useAuthStore } from '@/stores/auth-store'
 import { uiStore } from '@/stores/ui-store'
+import { useBrowser } from '@/hooks/use-browser'
+import { useMyPagesLinks } from '@/lib/my-pages-links'
 import {
   Alert,
   Button,
   GeneralCardSkeleton,
   ListItemSkeleton,
+  ProblemTemplate,
   theme,
 } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
@@ -47,6 +55,17 @@ type ConversationMessage = NonNullable<
 >['messages'][number]
 
 type FlatListItem = ConversationMessage | { __typename: 'Skeleton'; id: string }
+
+// Hermes ships no Intl.PluralRules and the app has no polyfill for it, so ICU
+// `plural` syntax silently falls back to the raw pattern. Pick the form by
+// hand instead: Icelandic takes the singular for numbers ending in 1 except
+// 11 (1, 21, 31 ...), English only for exactly 1.
+const isSingularDayCount = (days: number, locale: string): boolean => {
+  if (locale.startsWith('is')) {
+    return days % 10 === 1 && days % 100 !== 11
+  }
+  return days === 1
+}
 
 // Maps a reply-blocked reason to its explanatory message.
 const replyBlockedMessageId = (
@@ -73,17 +92,88 @@ export default function HealthMessageDetailScreen() {
   }>()
   const intl = useIntl()
   const client = useApolloClient()
+  const myPagesLinks = useMyPagesLinks()
   const userName = useAuthStore((s) => s.userInfo?.name)
   const [refetching, setRefetching] = useState(false)
+  // Also re-exported in the notifications modal, so compose has to be pushed
+  // onto whichever stack we are in.
+  const pathname = usePathname()
+  const composeHref = pathname.startsWith('/notifications/')
+    ? '/notifications/message/new'
+    : '/health/messages/new'
 
   const res = useGetHealthConversationQuery({
     variables: { id },
     notifyOnNetworkStatusChange: true,
   })
+  const { refetch } = res
+
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
+  // Clear the pending spinner-delay timeout on unmount so it can't fire
+  // setRefetching after the screen is gone.
+  useEffect(() => {
+    return () => {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+    }
+  }, [])
+  // Refetch the conversation, keeping the refresh spinner visible a moment after
+  // the (often instant) refetch resolves so it feels real — matches the inbox.
+  const refreshConversation = useCallback(async () => {
+    try {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+      setRefetching(true)
+      await refetch()
+      loadingTimeout.current = setTimeout(() => {
+        setRefetching(false)
+      }, 1331)
+    } catch {
+      setRefetching(false)
+    }
+  }, [refetch])
+
+  const { openBrowser } = useBrowser()
+  // openBrowser is a fresh closure each render; read it through a ref so the
+  // pay handler below stays stable.
+  const openBrowserRef = useRef(openBrowser)
+  openBrowserRef.current = openBrowser
+
+  // Open My Pages to pay in the in-app browser. openBrowser resolves when the
+  // browser is dismissed, so refetch right after — a completed payment comes
+  // back as paid: true and the certificate becomes available.
+  const handleCertificatePayPress = useCallback(async () => {
+    await openBrowserRef.current(myPagesLinks.healthMessageDetail(id))
+    // Show the same refresh spinner as pull-to-refresh while we re-fetch, so the
+    // user gets feedback that the certificate is being updated after payment.
+    await refreshConversation()
+  }, [myPagesLinks, id, refreshConversation])
 
   const conversation = res.data?.healthDirectorateHealthConversation
   const messages = useMemo(() => conversation?.messages ?? [], [conversation])
   const isSkeleton = res.loading && !res.data
+
+  // An expired reply window is the one reason we can quantify, so name the
+  // number of days when the server sends it. It is nullable, so fall back to
+  // the generic wording rather than rendering a blank count.
+  const replyWindowDays = conversation?.patientReplyWindowDays
+  const replyBlockedMessage =
+    conversation?.replyBlockedReason ===
+      HealthDirectorateHealthConversationReplyBlockedReason.ReplyWindowExpired &&
+    replyWindowDays != null
+      ? intl.formatMessage(
+          {
+            id: isSingularDayCount(replyWindowDays, intl.locale)
+              ? 'health.messages.replyBlocked.windowExpiredDay'
+              : 'health.messages.replyBlocked.windowExpiredDays',
+          },
+          { days: replyWindowDays },
+        )
+      : intl.formatMessage({
+          id: replyBlockedMessageId(conversation?.replyBlockedReason),
+        })
 
   const [markAsRead] = useMarkHealthConversationAsReadMutation({
     // Fire-and-forget: the server state self-corrects on the next load.
@@ -188,25 +278,6 @@ export default function HealthMessageDetailScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation?.id])
 
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
-
-  const handleRefresh = async () => {
-    try {
-      if (loadingTimeout.current) {
-        clearTimeout(loadingTimeout.current)
-      }
-      setRefetching(true)
-      await res.refetch()
-      // Keep the spinner visible a moment after the (often instant) refetch
-      // resolves so the refresh feels real — matches the inbox.
-      loadingTimeout.current = setTimeout(() => {
-        setRefetching(false)
-      }, 1331)
-    } catch (err) {
-      setRefetching(false)
-    }
-  }
-
   const [downloadingAttachmentId, setDownloadingAttachmentId] = useState<
     string | null
   >(null)
@@ -265,6 +336,20 @@ export default function HealthMessageDetailScreen() {
           conversation?.lastSenderGroupName ??
           ''
 
+      // The certificate attached to this message needs paying before it can be
+      // accessed. The app can't take the payment natively, so — matching the
+      // compose flow's certificate notice — we point the user to My Pages.
+      const isUnpaidCertificate = !!item.requiresPayment && !item.paid
+      const certificatePaymentMessage =
+        item.amountIsk != null
+          ? intl.formatMessage(
+              { id: 'health.messages.certificatePayment.text' },
+              { amount: `${intl.formatNumber(item.amountIsk)} kr.` },
+            )
+          : intl.formatMessage({
+              id: 'health.messages.certificatePayment.textNoAmount',
+            })
+
       const sentAt = new Date(item.messageSentAt)
       const dateTime = item.messageSentAt
         ? `${intl.formatDate(sentAt, {
@@ -288,8 +373,29 @@ export default function HealthMessageDetailScreen() {
           }
           title={senderName}
           bodyContent={
-            item.content ? (
-              <HealthConversationMessageContent content={item.content} />
+            item.content || isUnpaidCertificate ? (
+              <View style={{ rowGap: theme.spacing[2] }}>
+                {item.content ? (
+                  <HealthConversationMessageContent content={item.content} />
+                ) : null}
+                {isUnpaidCertificate ? (
+                  <ProblemTemplate
+                    variant="info"
+                    showIcon
+                    title={intl.formatMessage({
+                      id: 'health.messages.certificatePayment.title',
+                    })}
+                    message={certificatePaymentMessage}
+                    detailLink={{
+                      text: intl.formatMessage({
+                        id: 'health.messages.certificatePayment.link',
+                      }),
+                      url: myPagesLinks.healthMessageDetail(id),
+                      onPress: handleCertificatePayPress,
+                    }}
+                  />
+                ) : null}
+              </View>
             ) : undefined
           }
           date={dateTime}
@@ -312,6 +418,9 @@ export default function HealthMessageDetailScreen() {
       messages.length,
       intl,
       userName,
+      id,
+      myPagesLinks,
+      handleCertificatePayPress,
       conversation?.lastSenderGroupName,
       conversation?.organization?.name,
       conversation?.organization?.logoUrl,
@@ -384,7 +493,10 @@ export default function HealthMessageDetailScreen() {
           renderItem={renderItem}
           style={{ flex: 1 }}
           refreshControl={
-            <RefreshControl refreshing={refetching} onRefresh={handleRefresh} />
+            <RefreshControl
+              refreshing={refetching}
+              onRefresh={refreshConversation}
+            />
           }
           contentContainerStyle={{ flexGrow: 1 }}
           contentInsetAdjustmentBehavior="automatic"
@@ -432,7 +544,7 @@ export default function HealthMessageDetailScreen() {
                   icon={require('@/assets/icons/reply.png')}
                   onPress={() =>
                     router.push({
-                      pathname: '/health/messages/new',
+                      pathname: composeHref,
                       params: {
                         conversationId: id,
                         recipientName:
@@ -448,9 +560,7 @@ export default function HealthMessageDetailScreen() {
                 <Alert
                   type="info"
                   size="small"
-                  message={intl.formatMessage({
-                    id: replyBlockedMessageId(conversation?.replyBlockedReason),
-                  })}
+                  message={replyBlockedMessage}
                   hasBorder
                 />
               )}

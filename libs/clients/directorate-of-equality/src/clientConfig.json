@@ -823,6 +823,73 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/reports/{providerId}/equality-content/pdf": {
+      "get": {
+        "operationId": "getApplicationEqualityContentPdf",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the uploaded jafnréttisáætlun PDF verbatim. 404 when the report's equality content is HTML rather than an uploaded PDF.",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/{providerId}/outliers": {
       "get": {
         "description": "Paginated list of the report's employee outliers. Split out from the report-detail payload because a single salary report can carry hundreds of rows. Ordered by role title and then by the employee's ordinal within the report — the same grouped-by-role order the draft employee lists serve.",
@@ -3004,6 +3071,10 @@
           "salaryReportOverdue": {
             "type": "boolean",
             "description": "Derived: the company's next salary-report due date has passed."
+          },
+          "hasLegacyReports": {
+            "type": "boolean",
+            "description": "Derived: the Directorate's retired SharePoint register holds at least one row for this company. Drives whether the detail view offers the legacy-data tab; says nothing about compliance — the row may record a lapsed or surrendered certificate."
           }
         },
         "required": [
@@ -3020,7 +3091,8 @@
           "sectorOverride",
           "reportStatus",
           "equalityReportOverdue",
-          "salaryReportOverdue"
+          "salaryReportOverdue",
+          "hasLegacyReports"
         ]
       },
       "ApiErrorDto": {
@@ -3229,16 +3301,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "personalStepAssignments": {
             "type": "array",
@@ -3766,6 +3838,19 @@
           "employees": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/PayDispersionEmployeeDto" }
+          },
+          "countBelowExpected": {
+            "type": "number",
+            "description": "CONTEXT — how many employees sit more than `threshold` spreads BELOW the fitted line. This is the POOL the ábendingar were drawn from, not a count of ábendingar: the list is the most extreme few per direction, and `employees` holds all of them. Print it to show the instrument is a triage of something larger; do not present it as a number of findings. Zero when unavailable."
+          },
+          "countAboveExpected": {
+            "type": "number",
+            "description": "The same for ABOVE the fitted line — context, not a count of ábendingar. Zero when unavailable."
+          },
+          "chanceCriticalSpreads": {
+            "type": "number",
+            "nullable": true,
+            "description": "CONTEXT ONLY — never a filter. The familywise critical value z(0,05 / 2n): the distance past which chance alone would rarely put ANY of this company's employees. It grows with headcount (3,5 at 120 employees, 4,6 at 10 000) because screening more people produces more extremes, and it exists so a reader can tell a long list on a large workforce from a real finding. ⚠️ Do NOT filter rows on it: `threshold` decides membership. Null when no list could be produced."
           }
         },
         "required": [
@@ -3773,7 +3858,9 @@
           "blockers",
           "population",
           "threshold",
-          "employees"
+          "employees",
+          "countBelowExpected",
+          "countAboveExpected"
         ]
       },
       "SalaryAnalysisResponseDto": {
@@ -3925,7 +4012,11 @@
             "description": "FK to the approved EQUALITY report this salary was audited against."
           },
           "importedFromExcel": { "type": "boolean" },
-          "providerId": { "type": "string" },
+          "providerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Upstream island.is application UUID, stored as the report provider_id."
+          },
           "companyAdminName": { "type": "string" },
           "companyAdminTitle": {
             "type": "string",
@@ -4011,7 +4102,11 @@
       "SubmitEqualityReportDto": {
         "type": "object",
         "properties": {
-          "providerId": { "type": "string" },
+          "providerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Upstream island.is application UUID, stored as the report provider_id."
+          },
           "companyAdminName": { "type": "string" },
           "companyAdminTitle": {
             "type": "string",
@@ -4033,7 +4128,15 @@
           "contactPhone": { "type": "string" },
           "equalityReportContent": {
             "type": "string",
-            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`."
+            "description": "Narrative gender-equality plan as plain HTML. Persisted as `report.equality_report_content` and rendered into the approved PDF, so send the markup itself — not a base64 blob, not a document. Mutually exclusive with `equalityReportPdf`."
+          },
+          "equalityReportPdf": {
+            "type": "string",
+            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent`. Max 4MB decoded."
+          },
+          "equalityReportPdfFilename": {
+            "type": "string",
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
           },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },
           "averageEmployeeFemaleCount": { "type": "number", "nullable": true },
@@ -4054,7 +4157,6 @@
           "contactName",
           "contactEmail",
           "contactPhone",
-          "equalityReportContent",
           "company"
         ]
       },
@@ -4106,6 +4208,7 @@
           "isatCategory"
         ]
       },
+      "EqualityContentTypeEnum": { "type": "string", "enum": ["HTML", "PDF"] },
       "SalaryAggregateMetricsDto": {
         "type": "object",
         "properties": {
@@ -4282,6 +4385,15 @@
             ]
           },
           "equalityReportContent": { "type": "string", "nullable": true },
+          "equalityReportContentType": {
+            "allOf": [
+              { "$ref": "#/components/schemas/EqualityContentTypeEnum" }
+            ]
+          },
+          "equalityReportContentFilename": {
+            "type": "string",
+            "nullable": true
+          },
           "salaryDataBasis": {
             "nullable": true,
             "description": "Salary-only. Whether the submitted salary data describes one specific payroll month (`MONTH`, with the month in `salaryDataPeriod`) or a twelve-month average (`AVERAGE`). Reads back the basis the applicant declared while drafting. Null on equality reports.",
@@ -4319,6 +4431,7 @@
           "type",
           "status",
           "companies",
+          "equalityReportContentType",
           "includesImprovementPlan",
           "externalComments"
         ]
@@ -4444,10 +4557,17 @@
         "properties": {
           "equalityReportContent": {
             "type": "string",
-            "description": "New narrative content for the equality report as base64-encoded HTML. Decoded server-side and replaces the prior `equality_report_content` in place."
+            "description": "New narrative content for the equality report as base64-encoded HTML. Decoded server-side and replaces the prior `equality_report_content` in place. Mutually exclusive with `equalityReportPdf`."
+          },
+          "equalityReportPdf": {
+            "type": "string",
+            "description": "New narrative content as a base64-encoded PDF, stored verbatim and replacing the prior content in place. Mutually exclusive with `equalityReportContent`. Max 4MB decoded."
+          },
+          "equalityReportPdfFilename": {
+            "type": "string",
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
           }
-        },
-        "required": ["equalityReportContent"]
+        }
       },
       "EditOutlierGroupDto": {
         "type": "object",
@@ -4652,6 +4772,7 @@
           "type": { "type": "string", "enum": ["SALARY", "EQUALITY"] },
           "providerId": {
             "type": "string",
+            "format": "uuid",
             "description": "Upstream island.is application UUID, stored as the report provider_id."
           },
           "company": { "$ref": "#/components/schemas/CreateDraftCompanyDto" }
@@ -4715,6 +4836,15 @@
             "description": "The payroll month the salary data is based on (`YYYY-MM-01`). Set when `salaryDataBasis` is `MONTH`, always null for `AVERAGE`."
           },
           "equalityReportContent": { "type": "string", "nullable": true },
+          "equalityReportContentType": {
+            "allOf": [
+              { "$ref": "#/components/schemas/EqualityContentTypeEnum" }
+            ]
+          },
+          "equalityReportContentFilename": {
+            "type": "string",
+            "nullable": true
+          },
           "importedFromExcel": {
             "type": "boolean",
             "description": "Whether this draft's scoring content was uploaded as an Excel workbook (`POST …/draft/import`) rather than keyed in through the portal UI. Set by the server when the parser runs; sticky, so hand-editing rows afterwards does not clear it. False on a draft that has never been imported."
@@ -4733,7 +4863,14 @@
             "nullable": true
           }
         },
-        "required": ["id", "type", "status", "importedFromExcel", "counts"]
+        "required": [
+          "id",
+          "type",
+          "status",
+          "equalityReportContentType",
+          "importedFromExcel",
+          "counts"
+        ]
       },
       "UpdateDraftDto": {
         "type": "object",
@@ -4772,8 +4909,18 @@
           },
           "equalityReportContent": {
             "type": "string",
-            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`.",
+            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`. Mutually exclusive with `equalityReportPdf`.",
             "nullable": true
+          },
+          "equalityReportPdf": {
+            "type": "string",
+            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent`. Max 4MB decoded.",
+            "nullable": true
+          },
+          "equalityReportPdfFilename": {
+            "type": "string",
+            "nullable": true,
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
           }
         }
       },
@@ -4959,16 +5106,16 @@
           },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "stepIds": {
             "description": "Full set of personal step ids assigned to this employee (replace-all). Every id must be a step on the same draft.",
@@ -5112,16 +5259,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "additionalSalary": { "type": "number" },
           "bonusSalary": { "type": "number" },
@@ -5166,16 +5313,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "additionalSalary": { "type": "number" },
           "bonusSalary": { "type": "number" },

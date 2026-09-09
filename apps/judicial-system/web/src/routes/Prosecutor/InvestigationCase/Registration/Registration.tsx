@@ -35,7 +35,7 @@ import {
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isRegistrationStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -94,7 +94,7 @@ const Registration: FC = () => {
       <PageHeader title="Efni kröfu - Réttarvörslugátt" />
       <FormContentContainer>
         <PageTitle>Rannsóknarheimild</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <PoliceCaseNumbers
               workingCase={workingCase}
@@ -105,7 +105,7 @@ const Registration: FC = () => {
           </Box>
           <Box component="section">
             <SectionHeading title="Efni kröfu" />
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <Select
                 name="type"
                 options={InvestigationCaseTypes}

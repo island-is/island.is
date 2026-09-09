@@ -47,7 +47,7 @@ import {
   useFileList,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { strings } from './Summary.strings'
@@ -225,9 +225,9 @@ const Summary: FC = () => {
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <AppealRulingModifiedAlert />
-          <Box component="section" className={grid({ gap: 1 })}>
+          <Box component="section" className={stack({ gap: 1 })}>
             <Text variant="h2" as="h2">
               {formatMessage(core.caseNumber, {
                 caseNumber: workingCase.courtCaseNumber,

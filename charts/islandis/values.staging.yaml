@@ -55,6 +55,7 @@ air-discount-scheme-backend:
       hostnames:
         - 'loftbru.staging01.devland.is'
         - 'loftbru-cf.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -247,7 +248,6 @@ api:
     XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
     XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: 'IS-TEST/GOV/5501692829/test-client'
     XROAD_HMS_PROPERTY_SEARCH_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/fasteignir-v2-beta'
-    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS-TEST/GOV/5501692829/test-client'
     XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1'
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-TEST/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1'
@@ -618,7 +618,6 @@ application-system-api:
     XROAD_HMS_APPLICATION_SYSTEM_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/formbuilder-v1'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
-    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS-TEST/GOV/5501692829/test-client'
     XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1'
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-TEST/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-TEST/EDU/10049/LHI-Protected/brautskraning-v1'
@@ -1337,7 +1336,6 @@ download-service:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
-    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS-TEST/GOV/5501692829/test-client'
     XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1'
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-TEST/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-TEST/EDU/10049/LHI-Protected/brautskraning-v1'
@@ -1377,6 +1375,7 @@ download-service:
     primary-gw:
       hostnames:
         - 'api.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -1963,6 +1962,7 @@ payments:
     primary-gw:
       hostnames:
         - 'beta.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2234,6 +2234,7 @@ search-indexer-service:
     primary-gw:
       hostnames:
         - 'search-indexer-service.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2457,8 +2458,8 @@ service-portal-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 30
-        min: 2
+        max: 2
+        min: 1
   httpRoute:
     internal-gw:
       hostnames:
@@ -2502,9 +2503,9 @@ service-portal-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 30
-    min: 2
+    default: 1
+    max: 2
+    min: 1
   resources:
     limits:
       cpu: '800m'
@@ -2584,6 +2585,7 @@ services-bff-portals-admin:
     primary-gw:
       hostnames:
         - 'beta.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2672,6 +2674,7 @@ services-bff-portals-my-pages:
     primary-gw:
       hostnames:
         - 'beta.staging01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -4056,8 +4059,8 @@ user-notification:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 3
+        max: 2
+        min: 1
   httpRoute:
     internal-gw:
       hostnames:
@@ -4087,9 +4090,9 @@ user-notification:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
-    max: 10
-    min: 3
+    default: 1
+    max: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -4508,8 +4511,8 @@ web:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 50
-        min: 3
+        max: 2
+        min: 1
   httpRoute:
     primary-gw:
       hostnames:
@@ -4530,9 +4533,9 @@ web:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
-    max: 50
-    min: 3
+    default: 1
+    max: 2
+    min: 1
   resources:
     limits:
       cpu: '3000m'

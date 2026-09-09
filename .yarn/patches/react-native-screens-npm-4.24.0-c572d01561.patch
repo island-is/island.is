@@ -1,0 +1,57 @@
+diff --git a/android/src/main/java/com/swmansion/rnscreens/gamma/tabs/TabsHost.kt b/android/src/main/java/com/swmansion/rnscreens/gamma/tabs/TabsHost.kt
+index 3ab574b435d14313755e482f8f28e4bfd396931a..3d6aa4ee2c9d5b18cf9a10b64b6ace38a2c3d401 100644
+--- a/android/src/main/java/com/swmansion/rnscreens/gamma/tabs/TabsHost.kt
++++ b/android/src/main/java/com/swmansion/rnscreens/gamma/tabs/TabsHost.kt
+@@ -1,5 +1,6 @@
+ package com.swmansion.rnscreens.gamma.tabs
+ 
++import android.content.Context
+ import android.content.res.Configuration
+ import android.os.Build
+ import android.view.Choreographer
+@@ -11,6 +12,9 @@ import android.widget.FrameLayout
+ import androidx.appcompat.view.ContextThemeWrapper
+ import androidx.core.graphics.drawable.toDrawable
+ import androidx.core.view.children
++import androidx.core.view.isVisible
++import com.facebook.react.uimanager.PointerEvents
++import com.facebook.react.uimanager.ReactPointerEventsView
+ import androidx.fragment.app.FragmentManager
+ import com.facebook.react.modules.core.ReactChoreographer
+ import com.facebook.react.uimanager.ThemedReactContext
+@@ -126,7 +130,7 @@ class TabsHost(
+         )
+ 
+     private val bottomNavigationView: BottomNavigationView =
+-        BottomNavigationView(wrappedContext).apply {
++        PointerEventsAwareBottomNavigationView(wrappedContext).apply {
+             layoutParams =
+                 LayoutParams(
+                     LayoutParams.MATCH_PARENT,
+@@ -564,3 +568,26 @@ class TabsHost(
+         const val TAG = "TabsHost"
+     }
+ }
++
++/**
++ * PATCH (island.is): backport of upstream PR software-mansion/react-native-screens#4489,
++ * which fixes issue #4132.
++ *
++ * When `tabBarHidden` is set, `TabsHostAppearanceApplicator` flips this view to GONE, but the
++ * view keeps the layout bounds it was last measured with. React Native's touch target
++ * resolution still treats that rectangle as a valid target, so taps landing in the strip the
++ * tab bar used to occupy are swallowed instead of reaching the content underneath — any
++ * Pressable anchored to the bottom of a stack-pushed screen becomes dead.
++ *
++ * Reporting NONE while the bar is hidden makes RN's hit-testing skip the view entirely, which
++ * matches how Android itself treats a GONE view.
++ *
++ * Remove this patch once #4489 lands and we are on a react-native-screens that includes it.
++ */
++private class PointerEventsAwareBottomNavigationView(
++    context: Context,
++) : BottomNavigationView(context),
++    ReactPointerEventsView {
++    override val pointerEvents: PointerEvents
++        get() = if (isVisible) PointerEvents.AUTO else PointerEvents.NONE
++}

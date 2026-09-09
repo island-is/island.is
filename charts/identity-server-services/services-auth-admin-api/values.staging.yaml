@@ -80,6 +80,7 @@ httpRoute:
   primary-gw:
     hostnames:
       - 'identity-server.staging01.devland.is'
+    noAuth: true
     parentRefs:
       - name: 'gateway-external'
         namespace: 'envoy-gateway-external'

@@ -40,7 +40,7 @@ import {
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -115,7 +115,7 @@ const HearingArrangements = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
           <ProsecutorSectionHeightenedSecurity />
           <Box component="section">

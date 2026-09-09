@@ -477,6 +477,9 @@ export const en: TranslatedMessages = {
   'vehicleDetail.totalWeight': 'Maximum weight',
   'vehicleDetail.capacityWeight': 'Road train weight',
   'vehicleDetail.odometer': 'Odometer',
+  'vehicleDetail.lastOdometer': 'Last mileage status',
+  'vehicleDetail.moreInfo': 'More information',
+  'vehicleDetail.viewMore': 'View',
   'vehicleDetail.noInfo': 'No information received',
   'vehicleDetail.moreOptions': 'More options',
 
@@ -901,6 +904,10 @@ export const en: TranslatedMessages = {
     "You can't reply to messages outside opening hours.",
   'health.messages.replyBlocked.windowExpired':
     "You can't reply to this conversation because the reply window has passed.",
+  'health.messages.replyBlocked.windowExpiredDay':
+    "You can't reply to messages older than {days} day.",
+  'health.messages.replyBlocked.windowExpiredDays':
+    "You can't reply to messages older than {days} days.",
   'health.messages.replyBlocked.awaitingStaff':
     "You can't reply to this conversation until staff have responded to you.",
   'health.messages.compose.newTitle': 'New message',
@@ -911,11 +918,8 @@ export const en: TranslatedMessages = {
   'health.messages.compose.to': 'To: {name}',
   'health.messages.compose.messageLabel': 'Message',
   'health.messages.compose.messagePlaceholder': 'Write your message here',
-  'health.messages.compose.termsAccept': 'I accept the',
-  'health.messages.compose.termsLink': 'terms',
-  'health.messages.compose.termsTitle': 'Terms for messages',
-  'health.messages.compose.termsBody':
-    '- Messages are answered during opening hours, usually within three business days\n- Messages and replies are automatically saved to your medical record\n- The type of message determines who answers your inquiry\n- A healthcare professional will have access to your medical record to answer your inquiry',
+  'health.messages.compose.termsAccept':
+    'I agree that the message will be saved to my medical record and that the appropriate healthcare professional with access to it will answer the inquiry.',
   'health.messages.compose.availabilityWindow':
     '{name} accepts messages every day from {openTime} to {closeTime}.',
   'health.messages.compose.availabilityInfo':
@@ -939,6 +943,12 @@ export const en: TranslatedMessages = {
   'health.messages.compose.certificateText':
     'It is currently not possible to request certificates through the Ísland.is app. Please request certificates through Ísland.is My Pages.',
   'health.messages.compose.certificateLink': 'Request a certificate',
+  'health.messages.certificatePayment.title': 'Certificate ready for payment',
+  'health.messages.certificatePayment.text':
+    'This certificate costs {amount} and is unpaid. Pay for it on Ísland.is My Pages.',
+  'health.messages.certificatePayment.textNoAmount':
+    'This certificate is unpaid. Pay for it on Ísland.is My Pages.',
+  'health.messages.certificatePayment.link': 'Pay on My Pages',
   'health.messages.attachmentError':
     'Failed to download the document. Please try again later.',
   'health.messages.sentTitle': 'Message received',

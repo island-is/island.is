@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'consultation-portal',
   preset: './jest.preset.js',

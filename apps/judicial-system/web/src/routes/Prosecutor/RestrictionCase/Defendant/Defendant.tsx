@@ -43,7 +43,7 @@ import {
   useInstitution,
   useSyncDefendantsFromPolice,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -160,7 +160,7 @@ export const Defendant = () => {
         <>
           <FormContentContainer>
             <PageTitle>{formatMessage(m.heading)}</PageTitle>
-            <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <div className={stack({ gap: 5 })}>
               <Box component="section">
                 <PoliceCaseNumbers
                   workingCase={workingCase}
