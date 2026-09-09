@@ -85,9 +85,7 @@ export class LimitedAccessAppealCaseController {
         user,
         dto.rulingFileId,
         transaction,
-        dto.appealType === AppealCaseType.VERDICT
-          ? { defendantId: dto.defendantId }
-          : undefined,
+        dto.appealType === AppealCaseType.VERDICT ? dto : undefined,
       ),
     )
 
