@@ -2,12 +2,12 @@ import {
   buildCustomField,
   buildHiddenInput,
   buildMultiField,
-  buildSubSection,
+  buildSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
-export const subSectionRequirements = () =>
-  buildSubSection({
+export const sectionRequirements = () =>
+  buildSection({
     id: 'requirements',
     title: m.applicationEligibilityTitle,
     children: [

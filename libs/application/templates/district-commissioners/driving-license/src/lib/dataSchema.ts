@@ -66,7 +66,7 @@ export const dataSchema = z.object({
     ),
   hasHealthRemarks: z.enum([YES, NO]),
   // Submission-contract constants written as `true` by hidden inputs in the
-  // draft form (subSectionApplicantInfo.ts). The shared driving-license
+  // draft form (sectionRequirements.ts). The shared driving-license
   // submission service branches on these frozen answers to pick the RLS
   // endpoint; this app only runs the current flow, so they are always true.
   // Required-ness of `healthCertificate` for the 65+ flow is enforced at the

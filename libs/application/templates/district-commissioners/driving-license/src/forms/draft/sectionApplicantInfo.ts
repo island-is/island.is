@@ -5,7 +5,7 @@ import {
   buildAsyncSelectField,
   buildDividerField,
   buildTextField,
-  buildSubSection,
+  buildSection,
   buildPhoneField,
   getValueViaPath,
   coreErrorMessages,
@@ -19,7 +19,7 @@ import { m } from '../../lib/messages'
 import { B_TEMP, B_FULL_RENEWAL_65, B_FULL } from '../../utils/constants'
 import { GET_DRIVING_LICENSE_TEACHERS } from '../../graphql/teachersQuery'
 
-export const subSectionApplicantInfo = buildSubSection({
+export const sectionApplicantInfo = buildSection({
   id: 'infoStep',
   title: m.informationApplicant,
   children: [

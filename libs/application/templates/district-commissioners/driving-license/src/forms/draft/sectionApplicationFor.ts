@@ -1,7 +1,7 @@
 import {
   buildMultiField,
   buildRadioField,
-  buildSubSection,
+  buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -13,8 +13,8 @@ import {
 } from '../../utils/constants'
 import { structuralCandidates } from '../../utils'
 
-export const subSectionApplicationFor = (allow65Renewal = false) =>
-  buildSubSection({
+export const sectionApplicationFor = (allow65Renewal = false) =>
+  buildSection({
     id: 'applicationFor',
     title: m.applicationDrivingLicenseTitle,
     children: [
@@ -25,7 +25,7 @@ export const subSectionApplicationFor = (allow65Renewal = false) =>
         children: [
           buildRadioField({
             id: 'applicationFor',
-            backgroundColor: 'white',
+            backgroundColor: 'blue',
             largeButtons: true,
             // Which types the applicant can structurally apply for (from their
             // current license + age) is decided here; each option disables itself

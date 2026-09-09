@@ -1,18 +1,14 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
-import { m } from '../../lib/messages'
-import { subSectionApplicationFor } from './subSectionApplicationFor'
-import { subSectionRequirements } from './subSectionRequirements'
-import { subSectionApplicantInfo } from './subSectionApplicantInfo'
-import { subSectionOtherCountry } from './subSectionOtherCountry'
-import { subSectionOtherCountryDirections } from './subSectionOtherCountryDirections'
-import { subSectionQualityPhoto65 } from './subSectionQualityPhoto65'
-import { subSectionQualityPhotoTemp } from './subSectionQualityPhotoTemp'
-import { subSectionQualityPhotoBFull } from './subSectionQualityPhotoBFull'
-import { subSectionDelivery } from './subSectionDelivery'
-import { subSectionHealthDeclaration } from './subSectionHealthDeclaration'
-import { subSectionSummary } from './subSectionSummary'
+import { sectionApplicationFor } from './sectionApplicationFor'
+import { sectionRequirements } from './sectionRequirements'
+import { sectionApplicantInfo } from './sectionApplicantInfo'
+import { sectionOtherCountry } from './sectionOtherCountry'
+import { sectionPhoto } from './sectionPhoto'
+import { sectionDelivery } from './sectionDelivery'
+import { sectionHealthDeclaration } from './sectionHealthDeclaration'
+import { sectionSummary } from './sectionSummary'
 
 interface DrivingLicenseFormConfig {
   allowPickLicense?: boolean
@@ -30,24 +26,13 @@ export const getForm = ({
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
-      buildSection({
-        id: 'info',
-        title: m.informationTitle,
-        children: [
-          ...(allowPickLicense
-            ? [subSectionApplicationFor(allow65Renewal)]
-            : []),
-          subSectionRequirements(),
-          subSectionApplicantInfo,
-          subSectionOtherCountry,
-          subSectionOtherCountryDirections,
-          subSectionQualityPhoto65,
-          subSectionQualityPhotoTemp,
-          subSectionQualityPhotoBFull,
-          subSectionDelivery,
-          subSectionHealthDeclaration,
-          subSectionSummary,
-        ],
-      }),
+      ...(allowPickLicense ? [sectionApplicationFor(allow65Renewal)] : []),
+      sectionRequirements(),
+      sectionApplicantInfo,
+      sectionOtherCountry,
+      sectionPhoto,
+      sectionDelivery,
+      sectionHealthDeclaration,
+      sectionSummary,
     ],
   })

@@ -1,6 +1,6 @@
 import {
   buildMultiField,
-  buildSubSection,
+  buildSection,
   buildAlertMessageField,
   buildDescriptionField,
   buildFileUploadField,
@@ -131,7 +131,7 @@ const hasHealthRemarksInput = () =>
         : NO,
   })
 
-export const subSectionHealthDeclaration = buildSubSection({
+export const sectionHealthDeclaration = buildSection({
   id: 'healthDeclaration',
   title: m.healthDeclarationSectionTitle,
   condition: hasNoDrivingLicenseInOtherCountry,

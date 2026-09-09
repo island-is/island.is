@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildRadioField,
   buildSelectField,
-  buildSubSection,
+  buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -12,7 +12,7 @@ import { hasNoDrivingLicenseInOtherCountry } from '../../utils/formUtils'
 import { Jurisdiction } from '@island.is/clients/driving-license'
 import { Pickup } from '../../utils/constants'
 
-export const subSectionDelivery = buildSubSection({
+export const sectionDelivery = buildSection({
   id: 'user',
   title: m.informationSectionTitle,
   condition: hasNoDrivingLicenseInOtherCountry,
