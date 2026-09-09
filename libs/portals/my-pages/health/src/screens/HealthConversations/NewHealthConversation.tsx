@@ -134,6 +134,9 @@ const NewHealthConversation = () => {
     recipient?.allowedMessageTypes.map((t) => ({
       label: t.title,
       value: t.patientInitiatedTypeCode,
+      description: t.externalLinkUrl
+        ? t.description ?? undefined
+        : undefined,
     })) ?? []
 
   const selectedOption =
@@ -213,6 +216,11 @@ const NewHealthConversation = () => {
     const newType = recipient?.allowedMessageTypes.find(
       (t) => t.patientInitiatedTypeCode === typeCode,
     )
+
+    if (newType?.externalLinkUrl) {
+      window.open(newType.externalLinkUrl, '_blank', 'noopener,noreferrer')
+      return
+    }
 
     setSelectedTypeCode(typeCode)
     setCertificateForm({})
