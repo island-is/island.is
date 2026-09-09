@@ -664,11 +664,15 @@ export const HelmOutput: OutputFormat<HelmService> = {
         (value) => {
           const url = new URL(value)
           // Replace auth-delegation-api.internal.identity-server with feature-specific URL
-          if (url.hostname.includes('auth-delegation-api.internal.identity-server')) {
+          if (
+            url.hostname.includes(
+              'auth-delegation-api.internal.identity-server',
+            )
+          ) {
             return `https://${env.feature}-auth-delegation-api.internal.identity-server.${env.domain}`
           }
           return value
-        }
+        },
       )
     }
 
@@ -676,7 +680,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     if (s.env.AUTH_PUBLIC_API_URL) {
       s.env.AUTH_PUBLIC_API_URL = rewriteDevEnv(
         s.env.AUTH_PUBLIC_API_URL,
-        (value) => getFeatureIdsUrl(env, new URL(value).pathname)
+        (value) => getFeatureIdsUrl(env, new URL(value).pathname),
       )
     }
 
@@ -684,20 +688,22 @@ export const HelmOutput: OutputFormat<HelmService> = {
     if (s.env.AUTH_ADMIN_API_PATH) {
       s.env.AUTH_ADMIN_API_PATH = rewriteDevEnv(
         s.env.AUTH_ADMIN_API_PATH,
-        (value) => getFeatureIdsUrl(env, new URL(value).pathname)
+        (value) => getFeatureIdsUrl(env, new URL(value).pathname),
       )
     }
 
     // Rewrite auth IDS API URL
     if (s.env.AUTH_IDS_API_URL) {
-      s.env.AUTH_IDS_API_URL = rewriteDevEnv(
-        s.env.AUTH_IDS_API_URL,
-        (value) => getFeatureIdsUrl(env, new URL(value).pathname)
+      s.env.AUTH_IDS_API_URL = rewriteDevEnv(s.env.AUTH_IDS_API_URL, (value) =>
+        getFeatureIdsUrl(env, new URL(value).pathname),
       )
     }
 
     // Handle AUTH_ADMIN_API_PATHS JSON object
-    if (s.env.AUTH_ADMIN_API_PATHS && typeof s.env.AUTH_ADMIN_API_PATHS === 'object') {
+    if (
+      s.env.AUTH_ADMIN_API_PATHS &&
+      typeof s.env.AUTH_ADMIN_API_PATHS === 'object'
+    ) {
       // AUTH_ADMIN_API_PATHS is a json() wrapped object, need to handle carefully
       // May need custom logic depending on the structure
     }
