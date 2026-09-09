@@ -2281,12 +2281,20 @@ export const m = defineMessages({
   },
   sidebarContactBoxTitle: {
     id: 'service.portal:sidebar-contact-box-title',
-    defaultMessage: 'Ertu með spurningu?',
+    defaultMessage: 'Aðstoð við Mínar síður',
   },
   sidebarContactBoxBody: {
     id: 'service.portal:sidebar-contact-box-body',
     defaultMessage:
-      'Ef þú ert í vandræðum getur þú sent okkur fyrirspurn eða ábendingu á netfangið island@island.is',
+      'Finnurðu ekki það sem þú leitar að eða ertu í tæknilegum vandræðum? Sendu fyrirspurn eða ábendingu.',
+  },
+  sidebarContactBoxLinkText: {
+    id: 'service.portal:sidebar-contact-box-link-text',
+    defaultMessage: 'Opna form',
+  },
+  sidebarContactBoxLinkUrl: {
+    id: 'service.portal:sidebar-contact-box-link-url',
+    defaultMessage: 'https://island.is/s/stafraen-heilsa/hafa-samband',
   },
   unemploymentHasConfirmedJobSearch: {
     id: 'service.portal:unemployment-has-confirmed-job-search',
