@@ -67,9 +67,9 @@ export const rcCourtRecord = {
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       autofillDefender: {
-        id: 'judicial.system.restriction_cases:court_record.session_bookings.autofill_defender',
+        id: 'judicial.system.restriction_cases:court_record.session_bookings.autofill_defender_v2',
         defaultMessage:
-          '{defender} lögmaður er skipaður verjandi sakbornings að hans ósk.',
+          '{defender} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.',
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
