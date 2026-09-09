@@ -630,12 +630,14 @@ describe('PaymentFlowService', () => {
       // ...and `fjs_charge_one_active_per_payment_flow_id` rejects the local row. Simulated rather
       // than provoked: the index is created in raw SQL by a migration, so it is not present in a
       // model-synced test database.
-      jest.spyOn(fjsChargeModel, 'create').mockRejectedValueOnce(
-        Object.assign(
-          new Error('duplicate key value violates unique constraint'),
-          { name: 'SequelizeUniqueConstraintError' },
-        ),
-      )
+      jest
+        .spyOn(fjsChargeModel, 'create')
+        .mockRejectedValueOnce(
+          Object.assign(
+            new Error('duplicate key value violates unique constraint'),
+            { name: 'SequelizeUniqueConstraintError' },
+          ),
+        )
 
       // `logger` is a singleton, so `spyOn` returns any spy an earlier test already installed,
       // history included. Clear it here so the assertions below see only this test's calls —
@@ -712,12 +714,14 @@ describe('PaymentFlowService', () => {
         user4: 'doc-same',
       } as TestPartial)
 
-      jest.spyOn(fjsChargeModel, 'create').mockRejectedValueOnce(
-        Object.assign(
-          new Error('duplicate key value violates unique constraint'),
-          { name: 'SequelizeUniqueConstraintError' },
-        ),
-      )
+      jest
+        .spyOn(fjsChargeModel, 'create')
+        .mockRejectedValueOnce(
+          Object.assign(
+            new Error('duplicate key value violates unique constraint'),
+            { name: 'SequelizeUniqueConstraintError' },
+          ),
+        )
 
       // `logger` is a singleton, so `spyOn` returns any spy an earlier test already installed,
       // history included. Clear it here so the assertions below see only this test's calls —
