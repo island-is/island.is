@@ -597,10 +597,31 @@ const getFeatureIdsUrl = (env: EnvironmentConfig, path = '') =>
 const getFeaturePortalUrl = (env: EnvironmentConfig, path = '') =>
   `https://${env.feature}-beta.${env.domain}${path}`
 
+const getFeatureInternalUrl = (env: EnvironmentConfig, value: string) => {
+  const url = new URL(value)
+  const internalSuffixes = [
+    `.internal.${env.domain}`,
+    `.internal.identity-server.${env.domain}`,
+  ]
+  const suffix = internalSuffixes.find((candidate) =>
+    url.hostname.endsWith(candidate),
+  )
+
+  if (!suffix || url.hostname.startsWith(`${env.feature}-`)) {
+    return value
+  }
+
+  return `https://${env.feature}-${url.hostname}${url.pathname}${url.search}${url.hash}`
+}
+
 const rewriteDevEnv = (
   value: EnvironmentVariableValue,
   rewrite: (value: string) => string,
 ): EnvironmentVariableValue => {
+  if (typeof value === 'string') {
+    return rewrite(value)
+  }
+
   if (typeof value === 'object' && value !== null && 'dev' in value) {
     if (typeof value.dev === 'string') {
       return rewrite(value.dev)
@@ -635,7 +656,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     ]
     const serviceName = s.image ?? s.name
 
-    if (serviceName === 'service-portal-api') {
+    if (s.env.SERVICE_PORTAL_BASE_URL !== undefined) {
       s.env.SERVICE_PORTAL_BASE_URL = rewriteDevEnv(
         s.env.SERVICE_PORTAL_BASE_URL,
         (value) => {
@@ -646,8 +667,18 @@ export const HelmOutput: OutputFormat<HelmService> = {
       )
     }
 
-    if (serviceName === 'services-auth-ids-api') {
-      s.env.USER_PROFILE_CLIENT_URL = 'http://service-portal-api'
+    for (const [name, value] of Object.entries(s.env)) {
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        'dev' in value &&
+        typeof value.dev === 'string' &&
+        value.dev.startsWith('http')
+      ) {
+        s.env[name] = rewriteDevEnv(value, (devValue) =>
+          getFeatureInternalUrl(env, devValue),
+        )
+      }
     }
 
     if (s.env.IDENTITY_SERVER_ISSUER_URL) {
@@ -657,21 +688,17 @@ export const HelmOutput: OutputFormat<HelmService> = {
       )
     }
 
-    // Rewrite delegation API URL for feature deployments
-    if (s.env.AUTH_DELEGATION_API_URL) {
-      s.env.AUTH_DELEGATION_API_URL = rewriteDevEnv(
-        s.env.AUTH_DELEGATION_API_URL,
+    if (s.env.IDENTITY_SERVER_ISSUER_URL_LIST !== undefined) {
+      s.env.IDENTITY_SERVER_ISSUER_URL_LIST = rewriteDevEnv(
+        s.env.IDENTITY_SERVER_ISSUER_URL_LIST,
         (value) => {
-          const url = new URL(value)
-          // Replace auth-delegation-api.internal.identity-server with feature-specific URL
-          if (
-            url.hostname.includes(
-              'auth-delegation-api.internal.identity-server',
-            )
-          ) {
-            return `https://${env.feature}-auth-delegation-api.internal.identity-server.${env.domain}`
-          }
-          return value
+          const issuers = JSON.parse(value) as string[]
+          const featureIssuer = getFeatureIdsUrl(env)
+
+          return JSON.stringify([
+            featureIssuer,
+            ...issuers.filter((issuer) => issuer !== featureIssuer),
+          ])
         },
       )
     }
@@ -707,13 +734,6 @@ export const HelmOutput: OutputFormat<HelmService> = {
       // AUTH_ADMIN_API_PATHS is a json() wrapped object, need to handle carefully
       // May need custom logic depending on the structure
     }
-    if (serviceName === 'identity-server') {
-      s.env.ActorUserProfileApiSettings__BaseAddress =
-        'http://service-portal-api'
-      s.env.EmailsApiSettings__BaseAddress = 'http://service-portal-api'
-      s.env.MeUserProfileApiSettings__BaseAddress = 'http://service-portal-api'
-    }
-
     if (idsServices.includes(serviceName)) {
       const rewriteIdsUrl = (value: string) => {
         const url = new URL(value)
