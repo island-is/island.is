@@ -108,7 +108,6 @@ export default function AppointmentsScreen() {
                 message={intl.formatMessage({
                   id: 'health.appointments.errorMessage',
                 })}
-                tag={appointmentsRes.error.message}
               />
             </ErrorWrapper>
           )}

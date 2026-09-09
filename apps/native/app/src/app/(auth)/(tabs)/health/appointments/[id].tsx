@@ -324,7 +324,6 @@ export default function AppointmentDetailScreen() {
               message={intl.formatMessage({
                 id: 'health.appointments.errorMessage',
               })}
-              tag={error.message}
             />
           </ProblemContainer>
         )}

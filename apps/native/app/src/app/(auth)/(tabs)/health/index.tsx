@@ -396,6 +396,11 @@ export default function HealthOverviewScreen() {
 
   const isOrganDonor = organDonationData?.isDonor ?? false
 
+  // The two co-payment queries are independent, so a failure only affects the
+  // fields it feeds rather than erroring the whole section. Inneign and Skuld
+  // fall back to '-' on their own, so only these two need the warning.
+  const paymentStatusFailed = !!paymentStatusRes.error && !paymentStatusRes.data
+
   const onRefresh = useCallback(async () => {
     setRefetching(true)
 
@@ -544,7 +549,6 @@ export default function HealthOverviewScreen() {
                   message={intl.formatMessage({
                     id: 'health.appointments.errorMessage',
                   })}
-                  tag={appointmentsRes.error.message}
                 />
               </AppointmentsContainer>
             )}
@@ -652,77 +656,91 @@ export default function HealthOverviewScreen() {
             )
           }
         />
-        {(paymentOverviewRes.loading || paymentOverviewRes.data) && (
-          <>
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.maxMonthlyPayment',
-                })}
-                value={
-                  paymentStatusData?.maximumMonthlyPayment
-                    ? `${intl.formatNumber(
-                        paymentStatusData?.maximumMonthlyPayment,
-                      )} kr.`
-                    : '0 kr.'
-                }
-                loading={paymentStatusRes.loading && !paymentStatusRes.data}
-                error={paymentStatusRes.error && !paymentStatusRes.data}
-                darkBorder
-              />
-            </InputRow>
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.paymentLimit',
-                })}
-                value={
-                  paymentStatusData?.maximumPayment
-                    ? `${intl.formatNumber(
-                        paymentStatusData?.maximumPayment,
-                      )} kr.`
-                    : '0 kr.'
-                }
-                loading={paymentStatusRes.loading && !paymentStatusRes.data}
-                error={paymentStatusRes.error && !paymentStatusRes.data}
-                darkBorder
-              />
-            </InputRow>
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.paymentCredit',
-                })}
-                value={
-                  paymentOverviewData?.credit
-                    ? `${intl.formatNumber(paymentOverviewData?.credit)} kr.`
-                    : '0 kr.'
-                }
-                loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
-                error={paymentOverviewRes.error && !paymentOverviewRes.data}
-                noBorder
-              />
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.paymentDebt',
-                })}
-                value={
-                  paymentOverviewData?.debt
-                    ? `${intl.formatNumber(paymentOverviewData?.debt)} kr.`
-                    : '0 kr.'
-                }
-                loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
-                error={paymentOverviewRes.error && !paymentOverviewRes.data}
-                noBorder
-              />
-            </InputRow>
-          </>
-        )}
-        {paymentOverviewRes.error &&
-          !paymentOverviewRes.data &&
-          paymentStatusRes.error &&
-          !paymentStatusRes.data &&
-          showErrorComponent(paymentOverviewRes.error)}
+        <InputRow background>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.maxMonthlyPayment',
+            })}
+            value={
+              paymentStatusData?.maximumMonthlyPayment != null
+                ? `${intl.formatNumber(
+                    paymentStatusData.maximumMonthlyPayment,
+                  )} kr.`
+                : ''
+            }
+            loading={
+              !hasBeenFocused ||
+              (paymentStatusRes.loading && !paymentStatusRes.data)
+            }
+            // No '-' placeholder on these two, the warning stands on its own
+            allowEmptyValue={paymentStatusFailed}
+            warningText={
+              paymentStatusFailed
+                ? intl.formatMessage({ id: 'problem.thirdParty.message' })
+                : ''
+            }
+            fullWidthWarning
+            darkBorder
+          />
+        </InputRow>
+        <InputRow background>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.paymentLimit',
+            })}
+            value={
+              paymentStatusData?.maximumPayment != null
+                ? `${intl.formatNumber(paymentStatusData.maximumPayment)} kr.`
+                : ''
+            }
+            loading={
+              !hasBeenFocused ||
+              (paymentStatusRes.loading && !paymentStatusRes.data)
+            }
+            allowEmptyValue={paymentStatusFailed}
+            warningText={
+              paymentStatusFailed
+                ? intl.formatMessage({ id: 'problem.thirdParty.message' })
+                : ''
+            }
+            fullWidthWarning
+            darkBorder
+          />
+        </InputRow>
+        <InputRow background>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.paymentCredit',
+            })}
+            value={
+              // A missing value is not the same as a zero balance, so only
+              // format an actual number and let the rest fall back to '-'
+              paymentOverviewData?.credit != null
+                ? `${intl.formatNumber(paymentOverviewData.credit)} kr.`
+                : ''
+            }
+            loading={
+              !hasBeenFocused ||
+              (paymentOverviewRes.loading && !paymentOverviewRes.data)
+            }
+            noBorder
+          />
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.paymentDebt',
+            })}
+            value={
+              paymentOverviewData?.debt != null
+                ? `${intl.formatNumber(paymentOverviewData.debt)} kr.`
+                : ''
+            }
+            loading={
+              !hasBeenFocused ||
+              (paymentOverviewRes.loading && !paymentOverviewRes.data)
+            }
+            noBorder
+          />
+        </InputRow>
         <HeadingSection
           title={intl.formatMessage({
             id: 'health.overview.medicinePurchase',
@@ -779,7 +797,8 @@ export default function HealthOverviewScreen() {
                 warningText={
                   !isMedicinePeriodActive
                     ? intl.formatMessage({
-                        id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
+                        id:
+                          'health.overview.medicinePurchaseNoActivePeriodWarning',
                       })
                     : ''
                 }
