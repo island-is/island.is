@@ -1,8 +1,10 @@
 import {
   AccessModes,
   IngressForEnv,
+  isPerEnvReplicaCount,
   PostgresInfo,
   PostgresInfoForEnv,
+  ReplicaCount,
   Resources,
   ServiceDefinition,
   ServiceDefinitionForEnv,
@@ -26,6 +28,42 @@ import {
 } from './serialization-helpers'
 
 import { getScaledValue } from '../utils/scale-value'
+
+/** Internal flat bounds produced by `resolveReplicaCount` for a single environment. */
+type ResolvedReplicas = { min: number; max: number; default: number }
+
+/**
+ * Collapse either replicaCount form into flat bounds for a single environment.
+ * Runs BEFORE the dev/staging clamp so downstream logic is unchanged.
+ *
+ * - No config      ⇒ env defaults `{ defaultMinReplicas, defaultMaxReplicas, defaultMinReplicas }`.
+ * - Flat form       ⇒ identity `{ min, max, default }` (via `!isPerEnvReplicaCount`).
+ * - Per-env form    ⇒ the block matching `env.type`, else env defaults.
+ */
+function resolveReplicaCount(
+  rc: ReplicaCount | undefined,
+  env: EnvironmentConfig,
+): ResolvedReplicas {
+  const envDefaults: ResolvedReplicas = {
+    min: env.defaultMinReplicas,
+    max: env.defaultMaxReplicas,
+    default: env.defaultMinReplicas,
+  }
+
+  // No replicaCount at all: env defaults (matches today's else-branch).
+  if (!rc) return envDefaults
+
+  // Flat form: identity — same bounds for every environment.
+  if (!isPerEnvReplicaCount(rc)) {
+    return { min: rc.min, max: rc.max, default: rc.default }
+  }
+
+  // Per-env form: pick the block for this environment, else env defaults.
+  const block = rc[env.type as 'dev' | 'staging' | 'prod']
+  if (!block) return envDefaults
+
+  return { min: block.min, max: block.max, default: block.default }
+}
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -142,7 +180,9 @@ const serializeService: SerializeMethod<HelmService> = async (
   // resources
   result.resources = serviceDef.resources
 
-  // replicas
+  // replicas — resolve first, then apply the existing dev/staging clamp.
+  const resolved = resolveReplicaCount(serviceDef.replicaCount, env1)
+
   if (
     (env1.type == 'staging' || env1.type == 'dev') &&
     service.name.indexOf('search-indexer') == -1 &&
@@ -155,35 +195,34 @@ const serializeService: SerializeMethod<HelmService> = async (
       default: 1,
     }
   } else {
-    if (serviceDef.replicaCount) {
-      result.replicaCount = {
-        min: serviceDef.replicaCount.min,
-        max: serviceDef.replicaCount.max,
-        default: serviceDef.replicaCount.default,
-      }
-    } else {
-      result.replicaCount = {
-        min: env1.defaultMinReplicas,
-        max: env1.defaultMaxReplicas,
-        default: env1.defaultMinReplicas,
-      }
+    // Uses resolved flat bounds instead of reading serviceDef.replicaCount directly.
+    result.replicaCount = {
+      min: resolved.min,
+      max: resolved.max,
+      default: resolved.default,
     }
   }
 
-  result.hpa = {
-    scaling: {
-      replicas: {
-        min: result.replicaCount.min,
-        max: result.replicaCount.max,
+  if (result.replicaCount.max === 0) {
+    // Scale-to-zero: no autoscaler (Requirement 4.2), flat zero output (Requirement 4.3).
+    result.replicaCount = { min: 0, max: 0, default: 0 }
+    // Do NOT set result.hpa — leave it undefined.
+  } else {
+    result.hpa = {
+      scaling: {
+        replicas: {
+          min: result.replicaCount.min,
+          max: result.replicaCount.max,
+        },
+        metric: {
+          cpuAverageUtilization:
+            serviceDef.replicaCount?.cpuAverageUtilization || 90,
+        },
       },
-      metric: {
-        cpuAverageUtilization:
-          serviceDef.replicaCount?.cpuAverageUtilization || 90,
-      },
-    },
+    }
+    result.hpa.scaling.metric.nginxRequestsIrate =
+      serviceDef.replicaCount?.scalingMagicNumber || 5
   }
-  result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 5
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
@@ -640,10 +679,26 @@ export const HelmOutput: OutputFormat<HelmService> = {
         (host) => `${env.feature}-${host}`,
       )
     })
-    s.replicaCount = {
-      min: Math.min(1, s.replicaCount?.min ?? 1),
-      max: Math.min(1, s.replicaCount?.max ?? 1),
-      default: Math.min(1, s.replicaCount?.default ?? 1),
+    // Feature deployments run in the dev environment, so resolve the (possibly
+    // per-env) replicaCount to flat dev bounds first. Only honor dev when it
+    // scales to zero: when the resolved dev block is scale-to-zero
+    // (max === 0), pass {0,0,0} through verbatim so the feature deployment also
+    // runs zero replicas. Every other value keeps the existing cost-saving cap
+    // at 1 replica. For the flat form this resolution is the identity map, so
+    // the cap behavior is byte-identical to before the union was introduced;
+    // the per-env form now correctly reads its dev block instead of falling
+    // through to the `?? 1` default.
+    const featureRc = resolveReplicaCount(s.replicaCount, env)
+    if (featureRc.max === 0) {
+      // Scale-to-zero dev config is honored verbatim in feature deployments.
+      s.replicaCount = { min: 0, max: 0, default: 0 }
+    } else {
+      // Otherwise keep the existing cost-saving cap at 1 replica.
+      s.replicaCount = {
+        min: Math.min(1, featureRc.min),
+        max: Math.min(1, featureRc.max),
+        default: Math.min(1, featureRc.default),
+      }
     }
     s.namespace = getFeatureDeploymentNamespace(env)
     if (s.postgres) {
