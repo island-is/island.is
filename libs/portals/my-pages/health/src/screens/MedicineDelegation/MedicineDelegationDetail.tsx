@@ -1,7 +1,7 @@
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
@@ -44,10 +44,12 @@ const MedicineDelegationDetail = () => {
     },
   })
 
-  const [deleteMedicineDelegation, { loading: deleteLoading }] =
-    useDeleteMedicineDelegationMutation({
-      refetchQueries: ['GetMedicineDelegations'],
-    })
+  const [
+    deleteMedicineDelegation,
+    { loading: deleteLoading },
+  ] = useDeleteMedicineDelegationMutation({
+    refetchQueries: ['GetMedicineDelegations'],
+  })
 
   const filteredData = data?.healthDirectorateMedicineDelegations?.items?.find(
     (item) => item.nationalId === id,
@@ -83,8 +85,10 @@ const MedicineDelegationDetail = () => {
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.medicineDelegationIntroText)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(
+          messages.stafraenHeilsaMedicineDelegationTooltip,
+        ),
       }}
       loading={loading}
       desktopContentSpan="10/12"

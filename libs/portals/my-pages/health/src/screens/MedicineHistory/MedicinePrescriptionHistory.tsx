@@ -3,7 +3,7 @@ import { Box, Button, Icon } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   SortableTable,
 } from '@island.is/portals/my-pages/core'
@@ -43,10 +43,12 @@ const MedicinePrescriptionHistory = () => {
     variables: { locale: lang },
   })
 
-  const [getMedicineDispensationsATC, { loading: atcLoading, data: atcData }] =
-    useGetMedicineDispensationForAtcLazyQuery({
-      fetchPolicy: 'no-cache',
-    })
+  const [
+    getMedicineDispensationsATC,
+    { loading: atcLoading, data: atcData },
+  ] = useGetMedicineDispensationForAtcLazyQuery({
+    fetchPolicy: 'no-cache',
+  })
 
   const history = data?.healthDirectorateMedicineHistory.medicineHistory ?? []
 
@@ -65,9 +67,9 @@ const MedicinePrescriptionHistory = () => {
       title={formatMessage(messages.medicinePrescriptionHistory)}
       intro={formatMessage(messages.medicinePrescriptionHistoryIntroText)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
+        slug: STAFRAEN_HEILSA_SLUG,
         tooltip: formatMessage(
-          messages.landlaeknirMedicinePrescriptionsTooltip,
+          messages.stafraenHeilsaMedicinePrescriptionsTooltip,
         ),
       }}
       marginBottom={6}

@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -42,8 +42,9 @@ const MedicinePrescriptions = () => {
   const { formatMessage, lang } = useLocale()
   useHealthPlausibleSwap()
   const [page, setPage] = useState(1)
-  const [filterValues, setFilterValues] =
-    useState<FilterValues>(defaultFilterValues)
+  const [filterValues, setFilterValues] = useState<FilterValues>(
+    defaultFilterValues,
+  )
 
   const { data, error, loading } = useGetMedicinePrescriptionsQuery({
     variables: { locale: lang },
@@ -133,9 +134,9 @@ const MedicinePrescriptions = () => {
       title={formatMessage(messages.medicinePrescriptions)}
       intro={formatMessage(messages.medicinePrescriptionIntroText)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
+        slug: STAFRAEN_HEILSA_SLUG,
         tooltip: formatMessage(
-          messages.landlaeknirMedicinePrescriptionsTooltip,
+          messages.stafraenHeilsaMedicinePrescriptionsTooltip,
         ),
       }}
     >

@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   ActionCardLoader,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
   formatDate,
@@ -49,21 +49,23 @@ const MedicineDelegation = () => {
   const dataLength =
     data?.healthDirectorateMedicineDelegations?.items?.length ?? 0
 
-  const filteredData =
-    data?.healthDirectorateMedicineDelegations?.items?.filter((item) =>
+  const filteredData = data?.healthDirectorateMedicineDelegations?.items?.filter(
+    (item) =>
       showExpiredPermits
         ? item.status
         : item.status === HealthDirectoratePermitStatus.active ||
           item.status === HealthDirectoratePermitStatus.awaitingApproval,
-    )
+  )
 
   return (
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.medicineDelegationIntroText)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(
+          messages.stafraenHeilsaMedicineDelegationTooltip,
+        ),
       }}
       loading={loading}
       buttonGroup={{
