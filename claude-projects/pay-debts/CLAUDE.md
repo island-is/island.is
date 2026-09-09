@@ -17,7 +17,7 @@ Both are **per-row arrays indexed by row**, not lists of selections:
 - `answers.selectedDebts` — `boolean[]`, that row's checkbox.
 - `answers.debtsToPay` — `string[]`, the amount typed for that row.
 
-Row index is the index into `getDebts(application)`, so everything (pagination, `getSelectedDebts`, `getMaxAmount`) has to stay index-aligned with that list.
+Row index is the index into `getDebts(application)`, so everything (`getSelectedDebts`, `getMaxAmount`) has to stay index-aligned with that list.
 
 ## State machine (`src/lib/template.ts`)
 
@@ -34,7 +34,7 @@ Row index is the index into `getDebts(application)`, so everything (pagination, 
 
 **`debtsSection.ts`** — `DebtsLoader` + a `buildInteractiveTableField` (`id: 'selectedDebts'`, `dataTestId: 'debts-table'`) + a `buildStickyFooterField`, all under one multi-field. Table and footer are gated on `hasDebtsToPay` (fetched **and** non-empty), so an empty result leaves the loader's own message on screen.
 
-- `selectable`, `pageSize: 50`, `inputColumn` (`id: 'debtsToPay'`, capped per row by `getMaxAmount`). Selecting a row pre-fills the full debt; deselecting clears it.
+- `selectable`, `inputColumn` (`id: 'debtsToPay'`, capped per row by `getMaxAmount`). Selecting a row pre-fills the full debt; deselecting clears it.
 - `header` cells are objects carrying `width`/`truncate`/`expandable`/`tooltip` (the abbreviated "Gjaldgr." header uses `tooltip` to spell out "Gjaldgrunnur"). `expandedRows` gives each row a sub-table (Gjalddagi, Tímabil, Höfuðstóll, Vextir, Kostnaður), all from the real `principal`/`interest`/`cost` fields.
 - `footerRow` totals **all** debts ("Heildarskuld"), not just selected. The sticky footer shows live "Til greiðslu"/"Eftirstöðvar" on every keystroke.
 - `isSubmitDisabled` blocks submit until at least one row is ticked.
@@ -45,7 +45,7 @@ Row index is the index into `getDebts(application)`, so everything (pagination, 
 ## Field types (`libs/application/ui-fields`)
 
 - **`StaticTableFormField`** — read-only, `id` always `''`. Shared by 12+ templates; not used here anymore.
-- **`InteractiveTableField`** (`FieldTypes.INTERACTIVE_TABLE`) — checkboxes, input column, footer row, expandable sub-rows, client-side pagination. Rows are `memo`-wrapped with a **value-based** comparator (`field.rows()` returns a fresh array each call, so reference equality would defeat the memo), each watching only its own `selectedDebts[rowIndex]`. `rows`/`footerRow`/`inputMaxAmounts` are memoized on `[field.x, application]` — safe because `application`'s reference only changes on an autosave landing, not per keystroke. Pagination is what keeps large debt counts (~11k rows used to crash the tab) survivable; select-all still writes every row, not just the page.
+- **`InteractiveTableField`** (`FieldTypes.INTERACTIVE_TABLE`) — checkboxes, input column, footer row, expandable sub-rows. No pagination — every row renders at once (`pageSize` and the `<Pagination>` render were removed 9.9.2026 once pay-debts, the only consumer, stopped using them). Rows are `memo`-wrapped with a **value-based** comparator (`field.rows()` returns a fresh array each call, so reference equality would defeat the memo), each watching only its own `selectedDebts[rowIndex]`. `rows`/`footerRow`/`inputMaxAmounts` are memoized on `[field.x, application]` — safe because `application`'s reference only changes on an autosave landing, not per keystroke. **Scope**: only the first 100 debts are supported for now (decided 9.9.2026, not yet enforced in code), so rendering every row at once is fine; revisit the memoization and the missing pagination only if that cap is lifted.
   - Truncated cells are CSS-only (`text-overflow: ellipsis`), full text always in the DOM. Overflowing labels get a `HoverTooltip`; on the expandable column the tooltip anchors the toggle **button**, not the inner span, so it opens on `Tab` and the cell keeps one tab stop.
 - **`StickyFooterField`** — `position: fixed`, floats while the table extends below the viewport and docks into normal flow otherwise (so it structurally can't overlap the page's own "Halda áfram"). Aligns itself by measuring `thead th[data-column-index="0"|"1"]` of `widthReferenceTestId`, with `labelOffset`/`labelWidth`/`valueWidth` as fallbacks. **Gotcha**: if `widthReferenceTestId` matches no real `data-testid` it silently renders `null` forever — check that first if the footer "disappears".
 
@@ -53,7 +53,7 @@ Row index is the index into `getDebts(application)`, so everything (pagination, 
 
 - `getDebts.ts` — single source of truth, reads `externalData.customerDebts.data.debts`. Also `DEBTS_EXTERNAL_DATA_ID`, `DEBTS_MAX_AGE_MS` (1h), `hasFetchedDebts`, `debtsAreStale`, `getDebtsFromExternalData` (raw `externalData`, for pre-commit conditions), `debtsSignature`.
 - `getSelectedDebts.ts` — ticked rows only, each `amountToPay` clamped to `[1, debt.debts]`, falling back to the full debt if the typed value doesn't parse.
-- `types.ts` — `CustomerDebt`: `chargeTypeId`, `chargeTypeName`, `chargeItemSubject`, `timePeriod`, `dueDate`, `finalDueDate`, `principal`, `interest`, `cost`, `debts`. The backend also returns `payID` and `nextkey`, neither modeled on the frontend. Amounts arrive as `bigint` (int64) from the client and are `Number()`-ed in `PayDebtsService`. `timePeriod` is passed through exactly as FJS sends it.
+- `types.ts` — `CustomerDebt`: `chargeTypeId`, `chargeTypeName`, `chargeItemSubject`, `timePeriod`, `dueDate`, `finalDueDate`, `principal`, `interest`, `cost`, `debts`. The backend also returns `payID`, which is not modeled on the frontend. Amounts arrive as `bigint` (int64) from the client and are `Number()`-ed in `PayDebtsService`. `timePeriod` is passed through exactly as FJS sends it.
 - `formatDate.ts` — `YYYY-MM-DD` → `dd.MM.yyyy`, or `null` when there is no real date. **Gotcha**: FJS sends .NET's `DateTime.MinValue` for a debt with no gjalddagi/eindagi, as either `00010101` or `0001-01-01` — the second parses fine, so the year has to be checked as well as parseability. `debtsSection.ts` turns the `null` into the "Á ekki við" message.
 
 ## Messages (`src/lib/messages`)
@@ -64,7 +64,7 @@ One file per concern (`application`, `debts`, `payment`, `error`, `completedForm
 
 `yarn nx test pay-debts` and `yarn nx test application-ui-fields`.
 
-Coverage: state machine + api allowlist, `DebtsLoader` (empty result, submit gating), `debtsSection` (declared answers, fetch/empty/failure gating, column config, loader ordering), `getDebts` helpers, `getSelectedDebts` clamping, and on the field side pagination and the truncation/tooltip/keyboard behaviour.
+Coverage: state machine + api allowlist, `DebtsLoader` (empty result, submit gating), `debtsSection` (declared answers, fetch/empty/failure gating, column config, loader ordering), `getDebts` helpers, `getSelectedDebts` clamping, and on the field side row rendering at 60/100/281 rows, answer seeding and the truncation/tooltip/keyboard behaviour.
 
 - Specs that render (`DebtsLoader`, the field specs) mock `@island.is/localization`. `debtsSection.spec.ts` only inspects the field tree, so it needs no mock — `formatCurrency` comes from `@island.is/shared/utils`, which doesn't drag vanilla-extract in.
 - jsdom reports `scrollWidth`/`clientWidth` as 0, so truncation tests stub them on `HTMLElement.prototype`.
@@ -74,5 +74,5 @@ Coverage: state machine + api allowlist, `DebtsLoader` (empty result, submit gat
 
 - `dataSchema.ts` is still the scaffold dummy — no validation of `selectedDebts`/`debtsToPay` (clamping happens in `getSelectedDebts`, not the schema).
 - Charge creation uses the wrong-granularity code (see `payment` above). The v3_2 spec answers this: `/payDebt` and `/validatePayment` take `payDebts: [{ payid, payAmount }]` — the per-debt `payID`, not a charge code. Both operations are generated (`payDebtPost3`, `validatePaymentPost4`) but nothing calls them yet, and `payID` still isn't carried to the frontend.
-- FJS paginates with `nextkey`; the client only ever fetches the first page.
+- FJS's `nextkey` is ignored: measured 9.9.2026, it comes back empty on every successful `/customerDebts` response, so `PayDebtsService` neither sends nor returns it. Irrelevant while the supported set is capped at 100 debts.
 - Nothing on the `completed` side confirms what was actually paid.

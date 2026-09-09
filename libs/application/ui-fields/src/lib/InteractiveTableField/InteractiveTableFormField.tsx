@@ -4,14 +4,13 @@ import {
   InteractiveTableHeaderCell,
   StaticText,
 } from '@island.is/application/types'
-import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
+import { FC, ReactNode, useEffect, useMemo } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   Box,
   Checkbox,
   HoverTooltip,
-  Pagination,
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
@@ -51,7 +50,6 @@ export const InteractiveTableFormField: FC<Props> = ({
     title = '',
     titleVariant,
     selectable,
-    pageSize,
   } = field
   const { formatMessage, lang: locale } = useLocale()
   const user = useUserInfo()
@@ -75,23 +73,6 @@ export const InteractiveTableFormField: FC<Props> = ({
       typeof field.rows === 'function' ? field.rows(application) : field.rows,
     [field.rows, application],
   )
-  const [page, setPage] = useState(1)
-  const isPaginated = !!pageSize && rows.length > pageSize
-  const totalPages = pageSize
-    ? Math.max(1, Math.ceil(rows.length / pageSize))
-    : 1
-  const firstRowOnPage = pageSize ? (page - 1) * pageSize : 0
-  const rowsOnPage = useMemo(
-    () =>
-      pageSize ? rows.slice(firstRowOnPage, firstRowOnPage + pageSize) : rows,
-    [rows, pageSize, firstRowOnPage],
-  )
-
-  useEffect(() => {
-    if (page <= totalPages) return
-    setPage(totalPages)
-  }, [page, totalPages])
-
   const footerRow = useMemo(
     () =>
       typeof field.footerRow === 'function'
@@ -283,28 +264,24 @@ export const InteractiveTableFormField: FC<Props> = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            {rowsOnPage.map((row, indexOnPage) => {
-              const rowIndex = firstRowOnPage + indexOnPage
-
-              return (
-                <InteractiveTableFormFieldRow
-                  key={`row-${rowIndex}`}
-                  row={row}
-                  rowIndex={rowIndex}
-                  application={application}
-                  selectable={!!selectable}
-                  fieldId={fieldId}
-                  hasInputColumn={hasInputColumn}
-                  inputFieldId={inputFieldId}
-                  inputMaxAmount={inputMaxAmounts[rowIndex]}
-                  inputPlaceholder={inputPlaceholder}
-                  columns={columns}
-                  expandedHeader={expandedHeader}
-                  expandedRows={expandedRows?.[rowIndex]}
-                  colSpan={colSpan}
-                />
-              )
-            })}
+            {rows.map((row, rowIndex) => (
+              <InteractiveTableFormFieldRow
+                key={`row-${rowIndex}`}
+                row={row}
+                rowIndex={rowIndex}
+                application={application}
+                selectable={!!selectable}
+                fieldId={fieldId}
+                hasInputColumn={hasInputColumn}
+                inputFieldId={inputFieldId}
+                inputMaxAmount={inputMaxAmounts[rowIndex]}
+                inputPlaceholder={inputPlaceholder}
+                columns={columns}
+                expandedHeader={expandedHeader}
+                expandedRows={expandedRows?.[rowIndex]}
+                colSpan={colSpan}
+              />
+            ))}
             {footerRow && (
               <T.Row dataTestId={styles.footerRowTestId}>
                 {leadingColumn(fillerCell('footer-checkbox-column'))}
@@ -327,25 +304,6 @@ export const InteractiveTableFormField: FC<Props> = ({
           </T.Body>
         </T.Table>
       </Box>
-      {isPaginated && (
-        <Box marginTop={3}>
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            renderLink={(nextPage, className, children) => (
-              <Box
-                component="button"
-                type="button"
-                cursor="pointer"
-                className={className}
-                onClick={() => setPage(nextPage)}
-              >
-                {children}
-              </Box>
-            )}
-          />
-        </Box>
-      )}
     </Box>
   )
 }

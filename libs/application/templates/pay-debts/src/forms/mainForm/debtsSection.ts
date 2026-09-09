@@ -47,7 +47,6 @@ export const debtsSection = buildSection({
           condition: hasDebtsToPay,
           dataTestId: 'debts-table',
           selectable: true,
-          pageSize: 50,
           header: [
             {
               label: messages.table.chargeTypeNameHeader,

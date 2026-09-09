@@ -1044,7 +1044,6 @@ export interface InteractiveTableField extends BaseField {
   rows: StaticText[][] | ((application: Application) => StaticText[][])
   titleVariant?: TitleVariants
   selectable?: boolean
-  pageSize?: number
   inputColumn?: {
     id: string
     getMaxAmount?: (application: Application) => Array<number | undefined>

@@ -8,7 +8,6 @@ describe('PayDebtsService', () => {
     const getCustomerDebts = jest.fn().mockResolvedValue({
       message: 'Success',
       timestamp: '2026-08-19T12:00:00Z',
-      nextkey: 'next-page',
       debts: [
         {
           chargeTypeId: 'A1',
@@ -36,17 +35,14 @@ describe('PayDebtsService', () => {
       application: {} as ApplicationWithAttachments,
       auth,
       currentUserLocale: 'is',
-      params: { nextKey: 'current-page' },
     })
 
     expect(getCustomerDebts).toHaveBeenCalledWith(auth, {
       nationalID: nationalId,
-      nextKey: 'current-page',
     })
     expect(result).toEqual({
       message: 'Success',
       timestamp: '2026-08-19T12:00:00Z',
-      nextkey: 'next-page',
       debts: [
         {
           chargeTypeId: 'A1',

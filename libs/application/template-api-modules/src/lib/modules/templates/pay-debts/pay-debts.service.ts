@@ -10,19 +10,14 @@ export class PayDebtsService extends BaseTemplateApiService {
     super(ApplicationTypes.PAY_DEBTS)
   }
 
-  async getCustomerDebts({
-    auth,
-    params,
-  }: TemplateApiModuleActionProps<{ nextKey?: string }>) {
+  async getCustomerDebts({ auth }: TemplateApiModuleActionProps) {
     const result = await this.financeClientV3Service.getCustomerDebts(auth, {
       nationalID: auth.nationalId,
-      nextKey: params?.nextKey,
     })
 
     return {
       message: result?.message ?? '',
       timestamp: result?.timestamp ?? '',
-      nextkey: result?.nextkey ?? '',
       debts: (result?.debts ?? []).map((debt) => ({
         chargeTypeId: debt.chargeTypeId,
         chargeTypeName: debt.chargeTypeName,
