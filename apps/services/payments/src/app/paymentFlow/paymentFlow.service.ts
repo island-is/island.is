@@ -80,6 +80,13 @@ interface PaymentFlowUpdateConfig {
   throwOnError?: boolean
 }
 
+/**
+ * Sentinel used to retry the local `fjs_charge` read in `reconcileExistingFjsCharge`. Retrying is
+ * only ever correct for "the winner's row has not committed yet" — every other failure (a dropped
+ * connection, a pool timeout) must surface, not be flattened into "no row exists".
+ */
+const FJS_CHARGE_NOT_YET_VISIBLE = 'fjs_charge row not yet visible'
+
 @Injectable()
 export class PaymentFlowService {
   constructor(
@@ -979,26 +986,51 @@ export class PaymentFlowService {
       return newCharge
     } catch (e) {
       if ((e as Error)?.name === 'SequelizeUniqueConstraintError') {
-        // A concurrent finalizer already holds the one active row for this flow
-        // (`fjs_charge_one_active_per_payment_flow_id`). Since both of us reached FJS, FJS accepted
-        // a charge it should have rejected on `requestID` — so the charge we just created is a
-        // duplicate whose reception id exists nowhere but this stack frame. Log it before adopting
-        // the winner's row: this is the only moment we hold it, and it has to be reversed by hand.
+        // Something already holds a conflicting `fjs_charge` row. *Which* constraint fired decides
+        // what that means, and the error does not tell us: the table has both a partial unique on
+        // (payment_flow_id) WHERE NOT is_deleted, and a non-partial unique on
+        // (payment_flow_id, reception_id) that soft-deleted rows still occupy. So compare reception
+        // ids rather than asserting a duplicate — the alert below is only truthful for one case.
+        const reconciled = await this.reconcileExistingFjsCharge(
+          paymentFlowId,
+          chargePayload,
+        )
+
+        if (reconciled?.receptionId === charge.receptionID) {
+          // Same reception id: FJS handed back the charge it already had instead of creating a
+          // second one. Nothing is orphaned and nothing needs reversing.
+          this.logger.info(
+            `[${paymentFlowId}] FJS returned an existing charge; adopted the persisted row`,
+            { receptionId: charge.receptionID },
+          )
+          return reconciled
+        }
+
+        if (reconciled) {
+          // Different reception ids, and a concurrent finalizer holds the active row: FJS accepted
+          // a charge it should have rejected on `requestID`, and ours was never persisted. This
+          // log line is the only handle anyone has for reversing it, so it must carry the id.
+          this.logger.error(
+            `[${paymentFlowId}] CRITICAL: FJS accepted a duplicate charge — this reception id was never persisted and must be reversed manually`,
+            {
+              receptionId: charge.receptionID,
+              user4: charge.user4,
+            },
+          )
+
+          return reconciled
+        }
+
+        // No active row to adopt, so the conflict is with a soft-deleted one carrying this
+        // reception id (a previously refunded charge, most likely). The charge exists at FJS and is
+        // not linked locally, but it is not a duplicate we can claim — say only what we know.
         this.logger.error(
-          `[${paymentFlowId}] CRITICAL: FJS accepted a duplicate charge — this reception id was never persisted and must be reversed manually`,
+          `[${paymentFlowId}] FJS charge conflicts with a soft-deleted local row and has no active row to adopt — needs reconciliation`,
           {
             receptionId: charge.receptionID,
             user4: charge.user4,
           },
         )
-
-        const reconciled = await this.reconcileExistingFjsCharge(
-          paymentFlowId,
-          chargePayload,
-        )
-        if (reconciled) {
-          return reconciled
-        }
       }
 
       // The charge exists at FJS but we could not record it. Reported as a create failure so the
@@ -1033,13 +1065,26 @@ export class PaymentFlowService {
         })
 
         if (!found) {
-          throw new Error('fjs_charge row not yet visible')
+          throw new Error(FJS_CHARGE_NOT_YET_VISIBLE)
         }
 
         return found
       },
-      { maxRetries: 3, retryDelayMs: 200 },
-    ).catch(() => null)
+      {
+        maxRetries: 3,
+        retryDelayMs: 200,
+        shouldRetryOnError: (error) =>
+          error.message === FJS_CHARGE_NOT_YET_VISIBLE,
+      },
+    ).catch((error: Error) => {
+      // Only "not visible yet" becomes `null`; a real database failure keeps its identity rather
+      // than being reported as an orphaned FJS charge.
+      if (error?.message === FJS_CHARGE_NOT_YET_VISIBLE) {
+        return null
+      }
+
+      throw error
+    })
 
     if (!charge) {
       return null

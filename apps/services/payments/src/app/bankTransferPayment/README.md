@@ -261,19 +261,23 @@ stateDiagram-v2
 > **Two finalizers can both reach FJS.** Step 2's tolerated race is precisely that: the loser of
 > the `payment_fulfillment` unique index carries on to step 3, so a webhook and a poll landing
 > together produce two `createFjsCharge` calls. What keeps that safe is **FJS**, not us —
-> `requestID = paymentFlowId` is stable per flow (`utils/fjsCharge.ts`), and FJS keys charge
-> status and deletion on it too, so the second call is rejected as `AlreadyCreatedCharge` and
-> reconciled by step 4. Two consequences worth knowing:
+> `requestID = paymentFlowId` is stable per flow (`utils/fjsCharge.ts`), and FJS keys charge status
+> and deletion on it too, so the second call is *expected* to be rejected as
+> `AlreadyCreatedCharge` and reconciled by step 4. That expectation is inferred from the client
+> surface, not verified — what FJS does with two simultaneous creates on one `requestID` is unknown
+> from our side, which is why the duplicate case below is handled rather than assumed away. Two
+> consequences worth knowing:
 >
 > - The reconciling caller may read before the winner's `fjs_charge` insert commits. That read is
 >   retried briefly inside `reconcileExistingFjsCharge`; if it still misses, the `CRITICAL: …
 >   could not be found to reconcile` log fires on a flow that is in fact healthy. **Do not page on
 >   that message alone.**
 > - If FJS's own dedup ever fails to hold, both charges are created and our second local insert
->   loses `fjs_charge_one_active_per_payment_flow_id`. `createFjsCharge` logs that duplicate's
->   reception id at `error` (`CRITICAL: FJS accepted a duplicate charge …`) and then adopts the
->   winner's row, because that log line is the only handle anyone has for reversing the extra
->   charge — it is never persisted locally. Alert on it.
+>   loses a unique index on `fjs_charge`. `createFjsCharge` compares the reception id FJS returned
+>   against the row it adopts, and only when they differ does it log
+>   `CRITICAL: FJS accepted a duplicate charge …` with that id — the only handle anyone has for
+>   reversing a charge that was never persisted. **Alert on that message.** A matching reception id
+>   means FJS handed back the charge it already had, which is logged at `info` and needs nothing.
 >
 > Note this is a duplicate *record*, not a duplicate debit: the payer's money moves once, at the
 > provider, and the FJS charge is created already-paid.

@@ -637,7 +637,11 @@ describe('PaymentFlowService', () => {
         ),
       )
 
+      // `logger` is a singleton, so `spyOn` returns any spy an earlier test already installed,
+      // history included. Clear it here so the assertions below see only this test's calls —
+      // `mockRestore` would instead uninstall a spy other spec files in this worker rely on.
       const errorSpy = jest.spyOn(logger, 'error')
+      errorSpy.mockClear()
 
       const result = await service.createFjsCharge(
         paymentFlowId,
@@ -664,6 +668,75 @@ describe('PaymentFlowService', () => {
         where: { paymentFlowId, isDeleted: false },
       })
       expect(fulfillment?.fjsChargeId).toBe(winner.id)
+    })
+
+    it('does not claim a duplicate when FJS returns the reception id we already hold', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const paymentFulfillmentModel = app.get<typeof PaymentFulfillment>(
+        getModelToken(PaymentFulfillment),
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      const logger = app.get<Logger>(LOGGER_PROVIDER)
+
+      const paymentFlowId = uuid()
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        organisationId: '5534567890',
+      } as TestPartial)
+      await paymentFulfillmentModel.create({
+        paymentFlowId,
+        paymentMethod: 'bank_transfer',
+        confirmationRefId: uuid(),
+      } as TestPartial)
+
+      jest.spyOn(fjsChargeModel, 'findOne').mockRestore()
+
+      const existing = await fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: 'recept-same',
+        user4: 'doc-same',
+        status: 'paid',
+      } as TestPartial)
+
+      // FJS hands back the charge it already had rather than erroring — so the reception id
+      // matches the row we are about to collide with. Nothing was duplicated.
+      jest.spyOn(chargeFjsService, 'createCharge').mockResolvedValueOnce({
+        receptionID: 'recept-same',
+        user4: 'doc-same',
+      } as TestPartial)
+
+      jest.spyOn(fjsChargeModel, 'create').mockRejectedValueOnce(
+        Object.assign(
+          new Error('duplicate key value violates unique constraint'),
+          { name: 'SequelizeUniqueConstraintError' },
+        ),
+      )
+
+      // `logger` is a singleton, so `spyOn` returns any spy an earlier test already installed,
+      // history included. Clear it here so the assertions below see only this test's calls —
+      // `mockRestore` would instead uninstall a spy other spec files in this worker rely on.
+      const errorSpy = jest.spyOn(logger, 'error')
+      errorSpy.mockClear()
+
+      const result = await service.createFjsCharge(
+        paymentFlowId,
+        chargePayloadWithPayInfo(paymentFlowId),
+      )
+
+      expect(result.id).toBe(existing.id)
+      // The alert must NOT fire: there is no orphaned charge at FJS to reverse, and this message
+      // is the one operators are told to page on.
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('FJS accepted a duplicate charge'),
+        expect.anything(),
+      )
     })
   })
 
