@@ -56,9 +56,9 @@ const DRAFT_EMPLOYEES_QUERY = gql`
         baseSalary
         additionalFixedOvertime
         additionalFixedCarAllowance
-        bonusOccasionalCarAllowance
+        additionalFixedOther
         bonusOccasionalOvertime
-        bonusPayments
+        bonusOccasionalCarAllowance
         bonusOther
         additionalSalary
         bonusSalary
@@ -93,9 +93,9 @@ const toEmployee = (e: ReportEmployeeDto): Employee => ({
   baseSalary: e.baseSalary,
   additionalFixedOvertime: e.additionalFixedOvertime,
   additionalFixedCarAllowance: e.additionalFixedCarAllowance,
-  bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance,
+  additionalFixedOther: e.additionalFixedOther,
   bonusOccasionalOvertime: e.bonusOccasionalOvertime,
-  bonusPayments: e.bonusPayments,
+  bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance,
   bonusOther: e.bonusOther,
   outlierGroupId: null,
 })

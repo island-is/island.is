@@ -57,7 +57,11 @@ fs.mkdirSync(path.join(newDir, 'src', 'utils'), { recursive: true })
 
 // /
 readAndWriteFile(readAndWriteFileParams, '.babelrc.txt', '.babelrc')
-readAndWriteFile(readAndWriteFileParams, '.eslintrc.json.txt', '.eslintrc.json')
+readAndWriteFile(
+  readAndWriteFileParams,
+  'eslint.config.mjs.txt',
+  'eslint.config.mjs',
+)
 readAndWriteFile(readAndWriteFileParams, 'jest.config.ts.txt', 'jest.config.ts')
 readAndWriteFile(readAndWriteFileParams, 'project.json.txt', 'project.json')
 readAndWriteFile(readAndWriteFileParams, 'README.md.txt', 'README.md')

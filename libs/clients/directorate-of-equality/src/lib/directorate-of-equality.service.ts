@@ -9,6 +9,7 @@ import {
   editApplicationOutliers,
   getApplicationActiveEqualityReport,
   getApplicationBlankExcelTemplate,
+  getApplicationEqualityContentPdf,
   getApplicationCompany,
   getApplicationDraftAnalysis,
   getApplicationDraftCriteriaTree,
@@ -106,6 +107,25 @@ export class DirectorateOfEqualityClientService {
       user,
       () => getApplicationEqualityReportTemplateDocx(),
       'Failed to get equality report template DOCX',
+    )
+  }
+
+  /**
+   * The company's own uploaded jafnréttisáætlun PDF.
+   *
+   * Separate from `getReport` because the report detail deliberately omits
+   * these bytes — they are megabytes of base64 and would otherwise ride along
+   * on every read. 404 when the report's content is rich text rather than an
+   * uploaded file.
+   */
+  async getEqualityContentPdf(
+    user: User,
+    providerId: string,
+  ): Promise<Blob | File> {
+    return this.unwrap(
+      user,
+      () => getApplicationEqualityContentPdf({ path: { providerId } }),
+      'Failed to get equality content PDF',
     )
   }
 
