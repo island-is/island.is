@@ -63,6 +63,17 @@ export class FileService {
             applicationId = value.applicationId
             key = `${applicationId}/${sourceKey}`
 
+            const application = await this.applicationModel.findByPk(
+              applicationId,
+              { transaction },
+            )
+            if (!application) {
+              throw new NotFoundException(
+                `Application with id '${applicationId}' not found`,
+              )
+            }
+            isTest = application.isTest
+
             const res =
               await this.fileStorageService.copyObjectFromUploadBucket(
                 sourceKey,
@@ -86,16 +97,6 @@ export class FileService {
 
             await value.save({ transaction })
           })
-
-          const application = await this.applicationModel.findByPk(
-            applicationId,
-          )
-          if (!application) {
-            throw new NotFoundException(
-              `Application with id '${applicationId}' not found`,
-            )
-          }
-          isTest = application.isTest
 
           this.logger.info('form system file uploaded', {
             applicationId,
