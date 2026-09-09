@@ -5,13 +5,17 @@ export const m = defineMessages({
     id: 'api.health-directorate:web-chat-title',
     defaultMessage: 'Ráðgjöf í netspjalli Heilsuveru',
   },
-  webChatDescriptionOpen: {
-    id: 'api.health-directorate:web-chat-description-open',
-    defaultMessage: 'Opið núna. Opið frá 8:00 til 15:30 virka daga.',
+  webChatStatusOpen: {
+    id: 'api.health-directorate:web-chat-status-open',
+    defaultMessage: 'Opið núna.',
   },
-  webChatDescriptionClosed: {
-    id: 'api.health-directorate:web-chat-description-closed',
-    defaultMessage: 'Lokað núna. Opið frá 8:00 til 15:30 virka daga.',
+  webChatStatusClosed: {
+    id: 'api.health-directorate:web-chat-status-closed',
+    defaultMessage: 'Lokað núna.',
+  },
+  webChatDescription: {
+    id: 'api.health-directorate:web-chat-description',
+    defaultMessage: '{status} Opið frá 8:00 til 15:30 virka daga.',
   },
   webChatUrl: {
     id: 'api.health-directorate:web-chat-url',

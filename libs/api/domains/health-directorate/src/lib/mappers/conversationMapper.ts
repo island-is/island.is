@@ -175,9 +175,11 @@ export const getWebChatConversationType = (
   return {
     patientInitiatedTypeCode: WEB_CHAT_TYPE_CODE,
     title: formatMessage(m.webChatTitle),
-    description: formatMessage(
-      isCurrentlyOpen ? m.webChatDescriptionOpen : m.webChatDescriptionClosed,
-    ),
+    description: formatMessage(m.webChatDescription, {
+      status: formatMessage(
+        isCurrentlyOpen ? m.webChatStatusOpen : m.webChatStatusClosed,
+      ),
+    }),
     isCertificate: false,
     externalLinkUrl: formatMessage(m.webChatUrl),
     isCurrentlyOpen,
