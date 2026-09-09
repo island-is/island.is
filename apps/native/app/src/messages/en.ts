@@ -904,8 +904,10 @@ export const en: TranslatedMessages = {
     "You can't reply to messages outside opening hours.",
   'health.messages.replyBlocked.windowExpired':
     "You can't reply to this conversation because the reply window has passed.",
+  'health.messages.replyBlocked.windowExpiredDay':
+    "You can't reply to messages older than {days} day.",
   'health.messages.replyBlocked.windowExpiredDays':
-    "You can't reply to messages older than {days, plural, one {# day} other {# days}}.",
+    "You can't reply to messages older than {days} days.",
   'health.messages.replyBlocked.awaitingStaff':
     "You can't reply to this conversation until staff have responded to you.",
   'health.messages.compose.newTitle': 'New message',

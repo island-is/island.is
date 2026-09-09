@@ -901,8 +901,10 @@ export const is = {
     'Ekki er hægt að svara skilaboðum utan opnunartíma.',
   'health.messages.replyBlocked.windowExpired':
     'Ekki er hægt að svara þessum skilaboðum þar sem svarfrestur er liðinn.',
+  'health.messages.replyBlocked.windowExpiredDay':
+    'Ekki er hægt að svara skilaboðum sem eru eldri en {days} dagur.',
   'health.messages.replyBlocked.windowExpiredDays':
-    'Ekki er hægt að svara skilaboðum sem eru eldri en {days, plural, one {# dagur} other {# dagar}}.',
+    'Ekki er hægt að svara skilaboðum sem eru eldri en {days} dagar.',
   'health.messages.replyBlocked.awaitingStaff':
     'Ekki er hægt að svara þessum skilaboðum fyrr en starfsfólk hefur svarað þér.',
   'health.messages.compose.newTitle': 'Ný skilaboð',
