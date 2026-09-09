@@ -11,7 +11,7 @@ export const payment = {
   description: defineMessages({
     title: {
       id: 'pd.application:payment.description.title',
-      defaultMessage: 'Greiða inn á skuld',
+      defaultMessage: 'Greiðsluyfirlit',
       description: 'Title of payment description field',
     },
   }),
