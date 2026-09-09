@@ -53,17 +53,15 @@ export const debtsSection = buildSection({
               label: messages.table.chargeTypeNameHeader,
               expandable: true,
               truncate: true,
-              width: 200,
             },
             {
               label: messages.table.chargeItemSubjectHeader,
-              tooltip: messages.table.chargeItemSubjectHeaderTooltip,
               truncate: true,
-              width: 90,
+              width: 130,
             },
-            { label: messages.table.finalDueDateHeader, width: 120 },
-            { label: messages.table.amountHeader, width: 120 },
-            messages.table.toPayLabel,
+            { label: messages.table.finalDueDateHeader, width: 108 },
+            { label: messages.table.amountHeader, width: 130 },
+            { label: messages.table.toPayLabel, width: 140 },
           ],
           rows: (application) =>
             getDebts(application).map<StaticText[]>((debt) => [
