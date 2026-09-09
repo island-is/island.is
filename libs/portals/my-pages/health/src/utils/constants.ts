@@ -31,3 +31,9 @@ export const ATC_URL_BASE = 'https://www.serlyfjaskra.is/atc?category='
 export const DEFAULT_APPOINTMENTS_STATUS = [
   HealthDirectorateAppointmentStatus.BOOKED,
 ]
+
+export const PAST_APPOINTMENTS_STATUS = [
+  HealthDirectorateAppointmentStatus.FULFILLED,
+  HealthDirectorateAppointmentStatus.ARRIVED,
+  HealthDirectorateAppointmentStatus.CHECKED_IN,
+]

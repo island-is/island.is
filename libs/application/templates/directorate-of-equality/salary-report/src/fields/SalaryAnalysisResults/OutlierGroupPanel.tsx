@@ -7,7 +7,7 @@ import {
 } from 'react-hook-form'
 import { YES } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
@@ -56,6 +56,17 @@ export const OutlierGroupPanel: FC<Props> = ({
 
   return (
     <Box>
+      <Box display="flex" justifyContent="flexEnd" marginBottom={4}>
+        <a
+          href={formatMessage(m.instructionsLink)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button variant="utility" icon="open" iconType="outline" as="span">
+            {formatMessage(m.instructionsLabel)}
+          </Button>
+        </a>
+      </Box>
       {!hidePostponeCheckbox && (
         <Box
           background="blue100"

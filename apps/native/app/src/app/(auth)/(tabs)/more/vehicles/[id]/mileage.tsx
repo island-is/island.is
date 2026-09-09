@@ -149,10 +149,13 @@ export default function VehicleMileageScreen() {
     [latestMileage, intl],
   )
 
-  const handleFailedToUpdate = () => {
+  // Samgöngustofa explains why a registration was rejected (mileage too low,
+  // interval not elapsed, ...) - prefer that over the generic copy.
+  const handleFailedToUpdate = (serviceMessage?: string) => {
     Alert.alert(
       intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
-      intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
+      serviceMessage ??
+        intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
     )
   }
 
@@ -167,13 +170,21 @@ export default function VehicleMileageScreen() {
       },
     })
       .then((res) => {
-        if (res.data?.vehicleMileagePost?.mileage !== String(mileage)) {
-          handleFailedToUpdate()
-        } else {
+        const result = res.data?.vehicleMileagePostV2
+        if (
+          result?.__typename === 'VehicleMileageDetail' &&
+          result.mileage === String(mileage)
+        ) {
           setInput('')
           Alert.alert(
             intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
             intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
+          )
+        } else {
+          handleFailedToUpdate(
+            result?.__typename === 'VehiclesMileageUpdateError'
+              ? result.message
+              : undefined,
           )
         }
       })
@@ -205,12 +216,20 @@ export default function VehicleMileageScreen() {
         },
       })
         .then((res) => {
-          if (res.data?.vehicleMileagePut?.mileage !== String(mileage)) {
-            handleFailedToUpdate()
-          } else {
+          const result = res.data?.vehicleMileagePutV2
+          if (
+            result?.__typename === 'VehicleMileagePutModel' &&
+            result.mileage === String(mileage)
+          ) {
             Alert.alert(
               intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
               intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
+            )
+          } else {
+            handleFailedToUpdate(
+              result?.__typename === 'VehiclesMileageUpdateError'
+                ? result.message
+                : undefined,
             )
           }
         })

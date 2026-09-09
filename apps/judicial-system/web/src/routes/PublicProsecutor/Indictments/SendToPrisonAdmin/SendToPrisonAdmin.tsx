@@ -130,24 +130,22 @@ const SendToPrisonAdmin: FC = () => {
           title={formatMessage(strings.fileUploadTitle)}
           description={formatMessage(strings.fileUploadDescription)}
         />
-        <Box marginBottom={10}>
-          <InputFileUpload
-            name="sentToPrisonAdminFileUpload"
-            files={uploadFiles.filter(
-              (file) =>
-                file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
-            )}
-            accept="application/pdf"
-            title={formatMessage(core.uploadBoxTitle)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={handleFileUpload}
-            onRemove={handleRemoveFile}
-            onOpenFile={(file) => onOpenFile(file)}
-          />
-        </Box>
+        <InputFileUpload
+          name="sentToPrisonAdminFileUpload"
+          files={uploadFiles.filter(
+            (file) =>
+              file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+          )}
+          accept="application/pdf"
+          title={formatMessage(core.uploadBoxTitle)}
+          description={formatMessage(core.uploadBoxDescription, {
+            fileEndings: '.pdf',
+          })}
+          buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+          onChange={handleFileUpload}
+          onRemove={handleRemoveFile}
+          onOpenFile={(file) => onOpenFile(file)}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

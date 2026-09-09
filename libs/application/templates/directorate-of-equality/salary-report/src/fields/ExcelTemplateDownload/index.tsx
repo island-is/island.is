@@ -9,6 +9,8 @@ import {
   BulletList,
   Button,
   InputFileUpload,
+  Link,
+  LinkV2,
   LoadingDots,
   Stack,
   Text,
@@ -54,7 +56,14 @@ const ANALYSIS_SCREEN_ID = ScreenIds.analysisOverview
 
 export const ExcelTemplateDownload: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application, goToScreen, setBeforeSubmitCallback, answerQuestions }) => {
+> = ({
+  application,
+  goToScreen,
+  setBeforeSubmitCallback,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
+  answerQuestions,
+}) => {
   const { formatMessage, lang: locale } = useLocale()
   const m = messages.report.dataEntry
   const [isImporting, setIsImporting] = useState(false)
@@ -313,6 +322,16 @@ export const ExcelTemplateDownload: FC<
     }
   }
 
+  // Reading the workbook is a multi-leg server round-trip (presign, upload,
+  // import, read back), and the footer's own "Halda áfram" would meanwhile
+  // seed default job factors and advance past an import that is still running
+  // — see setBeforeSubmitCallback below. Same pair FileUploadController uses:
+  // the loading state puts the button in its spinner, disabled throughout.
+  useEffect(() => {
+    setFieldLoadingState?.(isImporting)
+    setSubmitButtonDisabled?.(isImporting)
+  }, [isImporting, setFieldLoadingState, setSubmitButtonDisabled])
+
   const handleFilesChanged = (newFiles: File[]) => {
     const file = newFiles[0]
     if (!file) return
@@ -432,7 +451,22 @@ export const ExcelTemplateDownload: FC<
   return (
     <Box>
       {base64Template && (
-        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          marginBottom={3}
+          columnGap={2}
+        >
+          <a
+            href={formatMessage(messages.general.instructionsLink)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="utility" icon="open" iconType="outline" as="span">
+              {formatMessage(messages.general.instructionsLabel)}
+            </Button>
+          </a>
+
           <Button
             variant="utility"
             icon="download"

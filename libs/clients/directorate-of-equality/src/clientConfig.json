@@ -3071,6 +3071,10 @@
           "salaryReportOverdue": {
             "type": "boolean",
             "description": "Derived: the company's next salary-report due date has passed."
+          },
+          "hasLegacyReports": {
+            "type": "boolean",
+            "description": "Derived: the Directorate's retired SharePoint register holds at least one row for this company. Drives whether the detail view offers the legacy-data tab; says nothing about compliance — the row may record a lapsed or surrendered certificate."
           }
         },
         "required": [
@@ -3087,7 +3091,8 @@
           "sectorOverride",
           "reportStatus",
           "equalityReportOverdue",
-          "salaryReportOverdue"
+          "salaryReportOverdue",
+          "hasLegacyReports"
         ]
       },
       "ApiErrorDto": {
@@ -3296,16 +3301,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "personalStepAssignments": {
             "type": "array",
@@ -3833,6 +3838,19 @@
           "employees": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/PayDispersionEmployeeDto" }
+          },
+          "countBelowExpected": {
+            "type": "number",
+            "description": "CONTEXT — how many employees sit more than `threshold` spreads BELOW the fitted line. This is the POOL the ábendingar were drawn from, not a count of ábendingar: the list is the most extreme few per direction, and `employees` holds all of them. Print it to show the instrument is a triage of something larger; do not present it as a number of findings. Zero when unavailable."
+          },
+          "countAboveExpected": {
+            "type": "number",
+            "description": "The same for ABOVE the fitted line — context, not a count of ábendingar. Zero when unavailable."
+          },
+          "chanceCriticalSpreads": {
+            "type": "number",
+            "nullable": true,
+            "description": "CONTEXT ONLY — never a filter. The familywise critical value z(0,05 / 2n): the distance past which chance alone would rarely put ANY of this company's employees. It grows with headcount (3,5 at 120 employees, 4,6 at 10 000) because screening more people produces more extremes, and it exists so a reader can tell a long list on a large workforce from a real finding. ⚠️ Do NOT filter rows on it: `threshold` decides membership. Null when no list could be produced."
           }
         },
         "required": [
@@ -3840,7 +3858,9 @@
           "blockers",
           "population",
           "threshold",
-          "employees"
+          "employees",
+          "countBelowExpected",
+          "countAboveExpected"
         ]
       },
       "SalaryAnalysisResponseDto": {
@@ -4108,7 +4128,7 @@
           "contactPhone": { "type": "string" },
           "equalityReportContent": {
             "type": "string",
-            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`. Mutually exclusive with `equalityReportPdf`."
+            "description": "Narrative gender-equality plan as plain HTML. Persisted as `report.equality_report_content` and rendered into the approved PDF, so send the markup itself — not a base64 blob, not a document. Mutually exclusive with `equalityReportPdf`."
           },
           "equalityReportPdf": {
             "type": "string",
@@ -5086,16 +5106,16 @@
           },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "stepIds": {
             "description": "Full set of personal step ids assigned to this employee (replace-all). Every id must be a step on the same draft.",
@@ -5239,16 +5259,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "additionalSalary": { "type": "number" },
           "bonusSalary": { "type": "number" },
@@ -5293,16 +5313,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "additionalSalary": { "type": "number" },
           "bonusSalary": { "type": "number" },
