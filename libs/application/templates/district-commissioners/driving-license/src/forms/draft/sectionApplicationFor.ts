@@ -27,6 +27,7 @@ export const sectionApplicationFor = (allow65Renewal = false) =>
             id: 'applicationFor',
             backgroundColor: 'blue',
             largeButtons: true,
+            required: true,
             // Which types the applicant can structurally apply for (from their
             // current license + age) is decided here; each option disables itself
             // when it isn't a candidate. The deeper per-type requirements

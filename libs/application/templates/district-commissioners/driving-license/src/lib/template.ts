@@ -21,7 +21,7 @@ import {
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-import { FeatureFlagClient } from '@island.is/feature-flags'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import {
   Events,
   States,
@@ -58,8 +58,7 @@ const DrivingLicenseTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE,
-  // TEMP local bypass — do NOT commit. Re-enable once the ConfigCat flag exists.
-  // featureFlag: Features.isDistrictCommissionerDrivingLicenseEnabled,
+  featureFlag: Features.isNewDrivingLicenseEnabled,
   name: (application) =>
     application.answers.applicationFor === B_TEMP
       ? m.applicationForDrivingLicense.defaultMessage +
