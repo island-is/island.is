@@ -59,6 +59,8 @@ export default function HealthMessageComposeScreen() {
   const [recipientKey, setRecipientKey] = useState<string>()
   const [typeCode, setTypeCode] = useState<string>()
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const [recipientMenuOpen, setRecipientMenuOpen] = useState(false)
+  const [serviceMenuOpen, setServiceMenuOpen] = useState(false)
 
   const recipientsRes = useGetHealthConversationRecipientsQuery({
     variables: { locale: locale === 'is' ? LocaleEnum.Is : LocaleEnum.En },
@@ -252,9 +254,19 @@ export default function HealthMessageComposeScreen() {
       ? sendButtonHeight + theme.spacing[4]
       : 0
 
+  // A selection menu lives in its own platform view controller that is not
+  // torn down with this sheet, so dragging the sheet away while one is open
+  // leaves the menu stranded over whatever is shown next. Block the dismiss
+  // gesture while a menu is up; the close button still works, because that
+  // path lets us dismiss the menu before the sheet goes.
+  const isMenuOpen = recipientMenuOpen || serviceMenuOpen
+
   return (
     <>
-      <StackScreen closeable options={{ title: '' }} />
+      <StackScreen
+        closeable
+        options={{ title: '', gestureEnabled: !isMenuOpen }}
+      />
       <ToastHost ignoreTabBar bottomOffset={toastBottomOffset} />
       <ScrollView
         style={{ flex: 1 }}
@@ -360,6 +372,7 @@ export default function HealthMessageComposeScreen() {
                   value: getRecipientKey(r),
                 }))}
                 onSelect={setRecipientKey}
+                onOpenChange={setRecipientMenuOpen}
               />
             )}
             {selectedRecipient && (
@@ -386,6 +399,7 @@ export default function HealthMessageComposeScreen() {
                     value: s.patientInitiatedTypeCode,
                   }))}
                   onSelect={setTypeCode}
+                  onOpenChange={setServiceMenuOpen}
                   disabled={isFormLocked}
                 />
               )}
