@@ -52,6 +52,7 @@ export const EditTenant = () => {
             title={displayName || tenant.id || formatMessage(m.editTenant)}
             selectedEnvironment={selectedEnvironment.environment}
             availableEnvironments={tenant.availableEnvironments}
+            optionEnvironments={tenant.configuredEnvironments}
             onChange={onEnvironmentChange}
           />
         }
