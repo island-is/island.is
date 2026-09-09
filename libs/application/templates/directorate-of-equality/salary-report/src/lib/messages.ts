@@ -834,16 +834,21 @@ export const messages = {
         id: 'doe.sr.application:report.employees.baseSalaryLabel',
         defaultMessage: 'Grunnlaun',
       },
-      additionalSalaryLabel: {
-        id: 'doe.sr.application:report.employees.additionalSalaryLabel',
-        defaultMessage: 'Viðbótarlaun',
+      // Band headings over the pay INPUTS, matching row 4 of the workbook. Named
+      // for the bands rather than for the derived read-only totals the API returns
+      // (Viðbótarlaun / Aukagreiðslur, workbook columns P and Q) — different
+      // things, and those two live in salaryAnalysis.components below.
+      fixedPaymentsGroupLabel: {
+        id: 'doe.sr.application:report.employees.fixedPaymentsGroupLabel',
+        defaultMessage: 'Fastar greiðslur',
       },
-      bonusSalaryLabel: {
-        id: 'doe.sr.application:report.employees.bonusSalaryLabel',
-        defaultMessage: 'Aukagreiðslur',
+      occasionalPaymentsGroupLabel: {
+        id: 'doe.sr.application:report.employees.occasionalPaymentsGroupLabel',
+        defaultMessage: 'Tilfallandi greiðslur',
       },
-      // Icelandic labels below are best-guess mappings of the API fields —
-      // adjust wording as needed.
+      // Verbatim from row 5 of the 2.0 workbook (DMR PR #1482), minus the sheet's
+      // "(kr.)" suffix — the row view formats these with formatCurrency. Declared
+      // in workbook column order J–O, the order SALARY_COMPONENT_GROUPS renders.
       additionalFixedOvertimeLabel: {
         id: 'doe.sr.application:report.employees.additionalFixedOvertimeLabel',
         defaultMessage: 'Föst yfirvinna',
@@ -852,21 +857,21 @@ export const messages = {
         id: 'doe.sr.application:report.employees.additionalFixedCarAllowanceLabel',
         defaultMessage: 'Föst bifreiðahlunnindi',
       },
-      bonusOccasionalCarAllowanceLabel: {
-        id: 'doe.sr.application:report.employees.bonusOccasionalCarAllowanceLabel',
-        defaultMessage: 'Tilfallandi bifreiðahlunnindi',
+      additionalFixedOtherLabel: {
+        id: 'doe.sr.application:report.employees.additionalFixedOtherLabel',
+        defaultMessage: 'Aðrar reglulegar greiðslur / hlunnindi',
       },
       bonusOccasionalOvertimeLabel: {
         id: 'doe.sr.application:report.employees.bonusOccasionalOvertimeLabel',
-        defaultMessage: 'Tilfallandi yfirvinna',
+        defaultMessage: 'Tilfallandi / mæld yfirvinna',
       },
-      bonusPaymentsLabel: {
-        id: 'doe.sr.application:report.employees.bonusPaymentsLabel',
-        defaultMessage: 'Bónusgreiðslur',
+      bonusOccasionalCarAllowanceLabel: {
+        id: 'doe.sr.application:report.employees.bonusOccasionalCarAllowanceLabel',
+        defaultMessage: 'Tilfallandi / mældur bifreiðastyrkur',
       },
       bonusOtherLabel: {
         id: 'doe.sr.application:report.employees.bonusOtherLabel',
-        defaultMessage: 'Aðrar greiðslur',
+        defaultMessage: 'Aðrar tilfallandi greiðslur / hlunnindi',
       },
       addButton: {
         id: 'doe.sr.application:report.employees.addButton',
@@ -916,6 +921,15 @@ export const messages = {
       paidHoursPlaceholder: {
         id: 'doe.sr.application:report.employees.paidHoursPlaceholder',
         defaultMessage: 'T.d. 173,33',
+      },
+      // Template 2.0 narrowed Greiddar stundir: fixed overtime hours still count,
+      // incidental paid hours no longer do. A manual-entry applicant never sees
+      // the workbook's column-E header, so this line is their only source for it —
+      // hence visible text rather than InputController's `tooltip`.
+      paidHoursHelperText: {
+        id: 'doe.sr.application:report.employees.paidHoursHelperText',
+        defaultMessage:
+          'Fastar yfirvinnustundir meðtaldar, en ekki tilfallandi greiddar stundir.',
       },
       paidHoursRangeError: {
         id: 'doe.sr.application:report.employees.paidHoursRangeError',
@@ -1159,7 +1173,7 @@ export const messages = {
       warningRowsExcluded: {
         id: 'doe.sr.application:salaryAnalysis.results.warningRowsExcluded',
         defaultMessage:
-          '{excluded} starfsmenn eru undanskildir í útreikningnum þar sem reglulegt tímakaup reiknaðist ekki hærra en núll. Kannaðu greiddar stundir og laun hjá þeim.',
+          '{excluded, plural, one {# starfsmaður er undanskilinn í útreikningnum þar sem reglulegt tímakaup reiknaðist ekki hærra en núll. Kannaðu greiddar stundir og laun hjá þeim starfsmanni.} other {# starfsmenn eru undanskildir í útreikningnum þar sem reglulegt tímakaup reiknaðist ekki hærra en núll. Kannaðu greiddar stundir og laun hjá þeim.}}',
       },
       warningNoScoreOverlap: {
         id: 'doe.sr.application:salaryAnalysis.results.warningNoScoreOverlap',
