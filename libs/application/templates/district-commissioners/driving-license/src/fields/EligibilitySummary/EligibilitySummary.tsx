@@ -16,7 +16,7 @@ import { B_FULL, DrivingLicenseApplicationFor } from '../../utils/constants'
 // `requirementsMet.refine`) and the DRAFT→PAYMENT transition.
 export const EligibilitySummary: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application }) => {
+> = ({ application, setSubmitButtonDisabled }) => {
   const { setValue } = useFormContext()
   const { lang } = useLocale()
 
@@ -32,9 +32,18 @@ export const EligibilitySummary: FC<
     applicationFor,
   )
 
+  const isEligible = eligibility?.isEligible ?? false
+
   useEffect(() => {
-    setValue('requirementsMet', eligibility?.isEligible ?? false)
-  }, [eligibility?.isEligible, setValue])
+    setValue('requirementsMet', isEligible)
+  }, [isEligible, setValue])
+
+  // When the applicant is not eligible there is nothing to submit — disable the
+  // footer's "continue" button so they can't proceed.
+  useEffect(() => {
+    setSubmitButtonDisabled?.(!isEligible)
+    return () => setSubmitButtonDisabled?.(false)
+  }, [isEligible, setSubmitButtonDisabled])
 
   const steps = eligibility ? extractReasons(eligibility, lang) : []
 
