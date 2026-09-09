@@ -24,6 +24,7 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
+  DefendantRepositoryService,
   VerdictRepositoryService,
 } from '../../../repository'
 import { TransitionAppealCaseDto } from '../../dto/transitionAppealCase.dto'
@@ -102,6 +103,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockDefendantRepositoryService: DefendantRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
@@ -114,6 +116,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
       appealCaseRepositoryService,
       appealEventLogRepositoryService,
       caseRepositoryService,
+      defendantRepositoryService,
       verdictRepositoryService,
       sequelize,
     } = await createTestingAppealCaseModule()
@@ -121,6 +124,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockCaseRepositoryService = caseRepositoryService
+    mockDefendantRepositoryService = defendantRepositoryService
     mockVerdictRepositoryService = verdictRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -192,6 +196,22 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
         defendantId,
         verdictId,
         { appealDate: null },
+        { transaction },
+      )
+    })
+
+    // The appeal defender belongs to the appeal that was just withdrawn.
+    it('should clear the appeal defender recorded on the defendant', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        {
+          appealDefenderName: null,
+          appealDefenderNationalId: null,
+          appealDefenderEmail: null,
+          appealDefenderPhoneNumber: null,
+          isAppealDefenderConfirmed: null,
+        },
         { transaction },
       )
     })

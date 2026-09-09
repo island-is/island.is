@@ -307,6 +307,63 @@ describe('AppealCaseController - Register verdict appeal', () => {
     })
   })
 
+  // The web sends the date as an ISO string and the validation pipe does not
+  // transform the body, so that is what the service gets, whatever the DTO says.
+  describe('the office registers with the filing date as a string', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(buildCase(), {
+        ...dto,
+        appealDate: appealDate.toISOString() as unknown as Date,
+      })
+    })
+
+    it('should read it as the filing date', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
+        caseId,
+        expect.objectContaining({ appealDate }),
+        { transaction },
+      )
+      expect(mockVerdictRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        verdictId,
+        { appealDate },
+        { transaction },
+      )
+    })
+  })
+
+  // The fields describe one person, so the ones left out are cleared rather
+  // than kept from whoever was recorded before.
+  describe('the office names the defender by name only', () => {
+    beforeEach(async () => {
+      await givenWhenThen(buildCase(), {
+        appealType: AppealCaseType.VERDICT,
+        defendantId,
+        appealDate,
+        appealDefenderName: 'Lára Landsréttarlögmaður',
+      })
+    })
+
+    it('should clear the other defender fields', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        {
+          appealDefenderName: 'Lára Landsréttarlögmaður',
+          appealDefenderNationalId: null,
+          appealDefenderEmail: null,
+          appealDefenderPhoneNumber: null,
+          isAppealDefenderConfirmed: false,
+        },
+        { transaction },
+      )
+    })
+  })
+
   describe('the office registers without naming the defender', () => {
     let then: Then
 
@@ -348,6 +405,15 @@ describe('AppealCaseController - Register verdict appeal', () => {
       const then = await expectRejected(buildCase(), {
         appealType: AppealCaseType.VERDICT,
         defendantId,
+      })
+
+      expect(then.error).toBeInstanceOf(BadRequestException)
+    })
+
+    it('should reject a filing date that is not a date', async () => {
+      const then = await expectRejected(buildCase(), {
+        ...dto,
+        appealDate: 'not a date' as unknown as Date,
       })
 
       expect(then.error).toBeInstanceOf(BadRequestException)
@@ -424,15 +490,15 @@ describe('AppealCaseController - Register verdict appeal', () => {
       title: 'lögmaður',
     } as User
 
-    // Inside the deadline, measured against the real clock.
-    const servedNow = {
-      ...verdict,
-      serviceDate: new Date(),
-    }
-
     let then: Then
 
     beforeEach(async () => {
+      // Inside the deadline, measured against the real clock at test time.
+      const servedNow = {
+        ...verdict,
+        serviceDate: new Date(),
+      }
+
       then = await givenWhenThen(
         buildCase({
           rulingDate: new Date(),
