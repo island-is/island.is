@@ -216,19 +216,21 @@ export const drawConfirmation = (
     const dateString = formatDate(date) ?? ''
     const dateWidth = doc.widthOfString(dateString)
 
-    doc.fontSize(fontSize).text(
-      formatDate(date) ?? '',
-      coatOfArmsX +
-        coatOfArmsWidth +
-        (totalWidth - coatOfArmsWidth) -
-        dateWidth -
-        calculatePt(8),
-      titleTextY,
-      {
-        align: 'right',
-        width: dateWidth,
-      },
-    )
+    doc
+      .fontSize(fontSize)
+      .text(
+        formatDate(date) ?? '',
+        coatOfArmsX +
+          coatOfArmsWidth +
+          (totalWidth - coatOfArmsWidth) -
+          dateWidth -
+          calculatePt(8),
+        titleTextY,
+        {
+          align: 'right',
+          width: dateWidth,
+        },
+      )
   }
 
   const boxY = titleBoxY + titleHeight
