@@ -19,6 +19,9 @@ const debt = (overrides: Partial<CustomerDebt> = {}): CustomerDebt => ({
   timePeriod: '202601',
   dueDate: '2026-01-01',
   finalDueDate: '2026-02-01',
+  principal: 800,
+  interest: 150,
+  cost: 50,
   debts: 1000,
   ...overrides,
 })

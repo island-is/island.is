@@ -8,6 +8,7 @@ You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` environnement variable to r
 
 {% hint style="danger" %}
 A newly created PAT must also be **authorized for the organization** before it can reach any space. On the token's row in the [token list](https://app.contentful.com/account/profile/cma_tokens), click **Authorize** and authorize **Digital Iceland**. The "Token authorization" dialog should then list Digital Iceland with a `Deauthorize` option next to it.
+{% endhint %}
 
 ## Usage in Next.js
 

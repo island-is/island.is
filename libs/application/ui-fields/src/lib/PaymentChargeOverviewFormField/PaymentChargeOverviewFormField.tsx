@@ -10,11 +10,9 @@ import {
 } from '@island.is/application/types'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatCurrency } from '@island.is/shared/utils'
 import { FC } from 'react'
 import * as styles from './PaymentChargeOverviewFormField.css'
-
-const formatIsk = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 interface Props extends FieldBaseProps {
   field: PaymentChargeOverviewField
@@ -59,7 +57,7 @@ export const PaymentChargeOverviewFormField: FC<
         <Text variant="small">
           {formatText(charge.subLabel, application, formatMessage)}
         </Text>
-        <Text variant="small">{formatIsk(charge.subAmount)}</Text>
+        <Text variant="small">{formatCurrency(charge.subAmount)}</Text>
       </Box>
     ) : null
 
@@ -91,7 +89,7 @@ export const PaymentChargeOverviewFormField: FC<
                       : ''}
                   </Text>
                   <Text>
-                    {formatIsk(
+                    {formatCurrency(
                       (charge?.priceAmount || 0) * (charge?.quantity || 1),
                     )}
                   </Text>
@@ -114,7 +112,7 @@ export const PaymentChargeOverviewFormField: FC<
               className={styles.fontSize14}
               fontWeight="regular"
             >
-              {formatIsk(field.getAdditionalSummaryAmount(application))}
+              {formatCurrency(field.getAdditionalSummaryAmount(application))}
             </Text>
           </Box>
         )}
@@ -135,7 +133,7 @@ export const PaymentChargeOverviewFormField: FC<
                         coreDefaultFieldMessages.defaultUnitPriceTitle,
                       )}
                 </Text>
-                <Text> {formatIsk(charge?.priceAmount || 0)}</Text>
+                <Text> {formatCurrency(charge?.priceAmount || 0)}</Text>
               </Box>
               <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
                 <Text>
@@ -167,7 +165,7 @@ export const PaymentChargeOverviewFormField: FC<
                   </Text>
                   <Text variant="h5">
                     {' '}
-                    {formatIsk(
+                    {formatCurrency(
                       (charge?.priceAmount || 0) * (charge?.quantity || 1),
                     )}
                   </Text>
@@ -188,7 +186,7 @@ export const PaymentChargeOverviewFormField: FC<
       <Box paddingBottom={4} display="flex" justifyContent="spaceBetween">
         <Text variant="h5">{formatMessage(field.totalLabel)}</Text>
         <Text color="blue400" variant="h3">
-          {formatIsk(totalPrice)}
+          {formatCurrency(totalPrice)}
         </Text>
       </Box>
     </Box>
