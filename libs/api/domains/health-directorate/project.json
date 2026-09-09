@@ -14,12 +14,6 @@
       "options": {
         "jestConfig": "libs/api/domains/health-directorate/jest.config.ts"
       }
-    },
-    "extract-strings": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/api/domains/health-directorate/src/lib/messages.ts'"
-      }
     }
   }
 }
