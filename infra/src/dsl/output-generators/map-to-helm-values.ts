@@ -646,11 +646,21 @@ export const HelmOutput: OutputFormat<HelmService> = {
       )
     }
 
+    if (serviceName === 'services-auth-ids-api') {
+      s.env.USER_PROFILE_CLIENT_URL = 'http://service-portal-api'
+    }
+
     if (s.env.IDENTITY_SERVER_ISSUER_URL) {
       s.env.IDENTITY_SERVER_ISSUER_URL = rewriteDevEnv(
         s.env.IDENTITY_SERVER_ISSUER_URL,
         () => getFeatureIdsUrl(env),
       )
+    }
+
+    if (serviceName === 'identity-server') {
+      s.env.ActorUserProfileApiSettings__BaseAddress = 'http://service-portal-api'
+      s.env.EmailsApiSettings__BaseAddress = 'http://service-portal-api'
+      s.env.MeUserProfileApiSettings__BaseAddress = 'http://service-portal-api'
     }
 
     if (idsServices.includes(serviceName)) {
