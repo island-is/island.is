@@ -51,6 +51,7 @@ export enum HealthPaths {
   HealthVaccinationsOther = `${patientData}/bolusetningar/adrar`,
   HealthWaitlists = `${patientData}/bidlistar`,
   HealthWaitlistsDetail = `${patientData}/bidlistar/:id`,
+  HealthOldPregnancies = `${patientData}/eldri-medgongur`,
   HealthQuestionnaires = '/heilsa/spurningalistar',
   HealthQuestionnairesDetail = '/heilsa/spurningalistar/:org/:id',
   HealthQuestionnairesAnswer = '/heilsa/spurningalistar/:org/:id/svara',

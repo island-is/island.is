@@ -2255,6 +2255,37 @@ export const messages = defineMessages({
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',
   },
+  oldPregnanciesTitle: {
+    defaultMessage: 'Eldri meðgöngur',
+    id: 'sp.health:old-pregnancies-title',
+  },
+  oldPregnanciesIntro: {
+    defaultMessage:
+      'Við erum að vinna að nýrri lausn fyrir eldri meðgöngur á Mínum síðum á Ísland.is. Þar til hún er tilbúin getur þú áfram nálgast gögn um eldri meðgöngur á Mínum síðum Heilsuveru.',
+    id: 'sp.health:old-pregnancies-intro',
+  },
+  oldPregnanciesOnHeilsuveruTitle: {
+    defaultMessage: 'Eldri meðgöngur á Heilsuveru',
+    id: 'sp.health:old-pregnancies-on-heilsuveru-title',
+  },
+  oldPregnanciesOnHeilsuveruText: {
+    defaultMessage:
+      'Í Heilsuveru getur þú áfram skoðað gögn frá eldri meðgöngum.',
+    id: 'sp.health:old-pregnancies-on-heilsuveru-text',
+  },
+  loginToHeilsuvera: {
+    defaultMessage: 'Innskráning á Heilsuveru',
+    id: 'sp.health:login-to-heilsuvera',
+  },
+  oldPregnanciesHeilsuveruLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/',
+    id: 'sp.health:old-pregnancies-heilsuveru-link',
+  },
+  landlaeknirOldPregnanciesTooltip: {
+    defaultMessage:
+      'Landlæknir hefur umsjón með gögnum um þínar eldri meðgöngur.',
+    id: 'sp.health:landlaeknir-old-pregnancies-tooltip',
+  },
   noSearchResults: {
     id: 'sp.health:no-search-results',
     defaultMessage: 'Engar niðurstöður fundust',

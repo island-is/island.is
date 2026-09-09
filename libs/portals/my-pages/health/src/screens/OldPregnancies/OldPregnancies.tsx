@@ -7,29 +7,30 @@ import { RedirectCard } from '../../components/RedirectCard/RedirectCard'
 import { messages } from '../../lib/messages'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
-const BookAppointment = () => {
+const OldPregnancies = () => {
   useNamespaces('sp.health')
   useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
 
   return (
     <IntroWrapper
-      title={messages.bookAppointmentTitle}
-      intro={messages.bookAppointmentIntro}
+      title={formatMessage(messages.oldPregnanciesTitle)}
+      intro={formatMessage(messages.oldPregnanciesIntro)}
+      marginBottom={6}
       serviceProvider={{
         slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirAppointmentsTooltip),
+        tooltip: formatMessage(messages.landlaeknirOldPregnanciesTooltip),
       }}
     >
       <RedirectCard
-        title={formatMessage(messages.bookAppointmentStillOnHeilsuveruTitle)}
-        text={formatMessage(messages.bookAppointmentStillOnHeilsuveruText)}
-        linkUrl={formatMessage(messages.bookAppointmentHeilsuveruLink)}
-        linkText={formatMessage(messages.viewBookAppointmentOnHeilsuveru)}
-        imageSrc="./assets/images/book-appointment.svg"
+        title={formatMessage(messages.oldPregnanciesOnHeilsuveruTitle)}
+        text={formatMessage(messages.oldPregnanciesOnHeilsuveruText)}
+        linkUrl={formatMessage(messages.oldPregnanciesHeilsuveruLink)}
+        linkText={formatMessage(messages.loginToHeilsuvera)}
+        imageSrc="./assets/images/digitalServices.svg"
       />
     </IntroWrapper>
   )
 }
 
-export default BookAppointment
+export default OldPregnancies
