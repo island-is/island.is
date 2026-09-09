@@ -1,10 +1,11 @@
 import { MessageDescriptor } from 'react-intl'
 import { requirementsMessages } from '../../lib/messages'
-import { ApplicationEligibility, RequirementKey } from '@island.is/api/schema'
+import { RequirementKey } from '@island.is/api/schema'
 import { ReviewSectionState, Step } from './ReviewSection/types'
+import { TypeEligibility } from '../../utils'
 
 export const extractReasons = (
-  eligibility: ApplicationEligibility,
+  eligibility: TypeEligibility,
   locale: 'is' | 'en' = 'is',
 ): Step[] => {
   return eligibility.requirements.map(

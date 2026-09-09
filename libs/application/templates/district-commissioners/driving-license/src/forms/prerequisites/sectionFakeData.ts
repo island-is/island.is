@@ -94,8 +94,80 @@ export const sectionFakeData = buildSubSection({
               label: 'Bráðabirgðaskírteini',
             },
             {
-              value: 'full',
+              value: 'B',
               label: 'Fullnaðarskírteini',
+            },
+            {
+              value: 'BE',
+              label: 'Kerruréttindi',
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'fakeData.hasExtendedLicense',
+          title: '65+ endurnýjun: með aukin ökuréttindi (C/CE/D...)?',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: NO,
+          options: [
+            {
+              value: NO,
+              label: 'Nei',
+            },
+            {
+              value: YES,
+              label: 'Já — læsir endurnýjun (aukin réttindi)',
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'fakeData.hasRenewalBlockingRemark',
+          title: '65+ endurnýjun: með læsandi tákntölu (400/450/95)?',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: NO,
+          options: [
+            {
+              value: NO,
+              label: 'Nei',
+            },
+            {
+              value: YES,
+              label: 'Já — læsir endurnýjun (tákntala)',
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'fakeData.hasDrivingAssessment',
+          title: 'B-full: er með akstursmat?',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: YES,
+          options: [
+            {
+              value: YES,
+              label: 'Já',
+            },
+            {
+              value: NO,
+              label: 'Nei — akstursmat vantar',
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'fakeData.hasFinishedDrivingSchool',
+          title: 'B-full: hefur lokið ökuskóla 3?',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: YES,
+          options: [
+            {
+              value: YES,
+              label: 'Já',
+            },
+            {
+              value: NO,
+              label: 'Nei — ökuskóla vantar',
             },
           ],
         }),

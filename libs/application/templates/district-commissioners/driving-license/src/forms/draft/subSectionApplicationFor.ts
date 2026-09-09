@@ -5,13 +5,13 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { DrivingLicense } from '../../types'
 import {
   B_FULL,
   B_FULL_RENEWAL_65,
   B_TEMP,
   DrivingLicenseFakeData,
 } from '../../utils/constants'
+import { structuralCandidates } from '../../utils'
 
 export const subSectionApplicationFor = (allow65Renewal = false) =>
   buildSubSection({
@@ -27,55 +27,44 @@ export const subSectionApplicationFor = (allow65Renewal = false) =>
             id: 'applicationFor',
             backgroundColor: 'white',
             largeButtons: true,
+            // Which types the applicant can structurally apply for (from their
+            // current license + age) is decided here; each option disables itself
+            // when it isn't a candidate. The deeper per-type requirements
+            // (driving school, residency, RLS can-apply) are shown on the
+            // eligibility summary that follows, not gated here.
             options: (app) => {
-              let { currentLicense } = getValueViaPath<DrivingLicense>(
-                app.externalData,
-                'currentLicense.data',
-              ) ?? { currentLicense: null }
-
-              let age =
-                getValueViaPath<number>(
-                  app.externalData,
-                  'nationalRegistry.data.age',
-                ) ?? 0
-
               const fakeData = getValueViaPath<DrivingLicenseFakeData>(
                 app.answers,
                 'fakeData',
               )
+              const candidates = structuralCandidates(app.externalData, fakeData)
 
-              if (fakeData?.useFakeData === 'yes') {
-                // 'none' must stay falsy — it is a string, so it would
-                // otherwise read as "has a license" and disable B-temp.
-                currentLicense =
-                  fakeData.currentLicense && fakeData.currentLicense !== 'none'
-                    ? fakeData.currentLicense
-                    : null
-
-                age = fakeData?.age
-              }
-
-              let options = [
+              const options: Array<{
+                label: typeof m.applicationForTempLicenseTitle
+                subLabel: typeof m.applicationForTempLicenseDescription
+                value: string
+                disabled: boolean
+              }> = [
                 {
                   label: m.applicationForTempLicenseTitle,
                   subLabel: m.applicationForTempLicenseDescription,
                   value: B_TEMP,
-                  disabled: !!currentLicense,
+                  disabled: !candidates.includes(B_TEMP),
                 },
                 {
                   label: m.applicationForFullLicenseTitle,
                   subLabel: m.applicationForFullLicenseDescription,
                   value: B_FULL,
-                  disabled: !currentLicense,
+                  disabled: !candidates.includes(B_FULL),
                 },
               ]
 
               if (allow65Renewal) {
-                options = options.concat({
+                options.push({
                   label: m.applicationForRenewalLicenseTitle,
                   subLabel: m.applicationForRenewalLicenseDescription,
                   value: B_FULL_RENEWAL_65,
-                  disabled: !currentLicense || age < 65,
+                  disabled: !candidates.includes(B_FULL_RENEWAL_65),
                 })
               }
 

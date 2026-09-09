@@ -55,6 +55,11 @@ export const codesExtendedLicenseCategories = [
 ]
 export const remarksCannotRenew65 = ['400', '450', '95']
 
+// RLS models a temporary (bráðabirgða) B license as category B with validToCode
+// 8, and a full B license with validToCode 9. Used to tell an upgrade applicant
+// (temporary B → full B) apart from someone who already holds a full B.
+export const TEMPORARY_LICENSE_VALID_CODE = 8
+
 export type DrivingLicenseApplicationFor =
   | typeof B_FULL
   | typeof B_TEMP
@@ -79,7 +84,10 @@ export enum States {
   PREREQUISITES = 'prerequisites',
 }
 
-type FakeCurrentLicense = 'none' | 'temp' | 'full'
+// These values must match what the shared `buildFakeCurrentLicense` understands:
+// 'temp' → category B validToCode 8 (temporary), 'B' → category B validToCode 9
+// (full), 'BE' → full B + BE, anything else → no license.
+type FakeCurrentLicense = 'none' | 'temp' | 'B' | 'BE'
 
 // Fake-photo modes for hasThjodskraPhoto / hasRLSPhoto:
 //   'yes'           — inject a fake photo
@@ -97,4 +105,19 @@ export interface DrivingLicenseFakeData {
   age: number
   hasThjodskraPhoto?: FakePhotoMode
   hasRLSPhoto?: FakePhotoMode
+  // Dev-only: simulate a 65+ applicant who also holds an extended (additional)
+  // license (C/CE/D/…). The shared fake-license builder gives every category the
+  // same issued date, so it can't reproduce the "issued at a different time"
+  // rule the real check uses — this toggle drives the renewal-65 extended-license
+  // block on the eligibility summary directly instead.
+  hasExtendedLicense?: YesOrNo
+  // Dev-only: simulate a 65+ applicant whose license carries a remark that blocks
+  // renewal (400 / 450 / 95). The generic `remarks` toggle above injects a
+  // non-blocking remark (0.3), so this drives the renewal-65 remark block.
+  hasRenewalBlockingRemark?: YesOrNo
+  // Dev-only: B-full requirements. Default to met (met unless explicitly 'no'),
+  // so an existing fake setup stays eligible. Residency is driven by
+  // `howManyDaysHaveYouLivedInIceland` (< 185 → unmet), so it has no toggle.
+  hasDrivingAssessment?: YesOrNo
+  hasFinishedDrivingSchool?: YesOrNo
 }

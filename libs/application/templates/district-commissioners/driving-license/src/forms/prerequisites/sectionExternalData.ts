@@ -17,6 +17,7 @@ import {
   AllPhotosFromThjodskraApi,
 } from '@island.is/application/types'
 import {
+  EligibilityApi,
   GlassesCheckApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
@@ -81,6 +82,13 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: QualityPhotoAndSignatureApi,
+        }),
+        // Silent eligibility gate — surfaces only as an error on this screen when
+        // the applicant can't apply for any license type, blocking entry to the
+        // draft state. Runs last (order 1) so it can read the fetched license and
+        // photos.
+        buildDataProviderItem({
+          provider: EligibilityApi,
         }),
       ],
     }),

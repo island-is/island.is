@@ -923,6 +923,20 @@ export const m = defineMessages({
     description:
       'Validation error when health certificate upload is required but missing',
   },
+  // Shown when the applicant does not qualify to apply for any license type.
+  // The `checkEligibility` data provider throws with these on the external-data
+  // screen, and the applicationFor screen shows the same copy as an alert.
+  notEligibleTitle: {
+    id: 'dl.application:notEligibleTitle',
+    defaultMessage: 'Þú uppfyllir ekki skilyrði til að sækja um',
+    description: 'Applicant is not eligible for any license type - title',
+  },
+  notEligibleDescription: {
+    id: 'dl.application:notEligibleDescription',
+    defaultMessage:
+      'Miðað við fyrirliggjandi gögn getur þú ekki sótt um neina tegund ökuskírteinis að svo stöddu. Vinsamlega hafðu samband við næsta sýslumannsembætti fyrir nánari upplýsingar.',
+    description: 'Applicant is not eligible for any license type - description',
+  },
 })
 
 export const requirementsMessages = defineMessages({
@@ -1023,5 +1037,16 @@ export const requirementsMessages = defineMessages({
     defaultMessage:
       'Þú ert með aukin ökuréttindi (t.d. C, CE, D1 eða D1E) sem voru gefin út á öðrum tíma en almennu ökuréttindin þín. Endurnýjun á slíkum réttindum fer ekki fram hér. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet 65 plus renewal',
+  },
+  personNot17Title: {
+    id: 'dl.application:requirementunmet.personNot17Title',
+    defaultMessage: 'Aldursskilyrði ekki uppfyllt',
+    description: 'requirement unmet - applicant is younger than 17',
+  },
+  personNot17Description: {
+    id: 'dl.application:requirementunmet.personNot17Description#markdown',
+    defaultMessage:
+      'Umsækjandi þarf að hafa náð 17 ára aldri til að sækja um bráðabirgðaskírteini.',
+    description: 'requirement unmet - applicant is younger than 17',
   },
 })

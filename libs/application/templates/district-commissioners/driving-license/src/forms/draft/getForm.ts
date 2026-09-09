@@ -31,19 +31,13 @@ export const getForm = ({
     renderLastScreenBackButton: true,
     children: [
       buildSection({
-        id: 'externalData',
-        title: m.externalDataSection,
+        id: 'info',
+        title: m.informationTitle,
         children: [
           ...(allowPickLicense
             ? [subSectionApplicationFor(allow65Renewal)]
             : []),
           subSectionRequirements(),
-        ],
-      }),
-      buildSection({
-        id: 'info',
-        title: m.informationTitle,
-        children: [
           subSectionApplicantInfo,
           subSectionOtherCountry,
           subSectionOtherCountryDirections,
