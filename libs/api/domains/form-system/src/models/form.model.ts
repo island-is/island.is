@@ -96,6 +96,9 @@ export class Form {
   isInaccessible!: boolean
 
   @Field(() => Boolean)
+  validatePremises!: boolean
+
+  @Field(() => Boolean)
   hasSummaryScreen!: boolean
 
   @Field(() => OrganizationZendeskInstance, { nullable: true })

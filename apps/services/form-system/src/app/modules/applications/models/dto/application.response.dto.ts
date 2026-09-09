@@ -23,4 +23,7 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   isInaccessible?: boolean
+
+  @ApiPropertyOptional()
+  validatePremises?: boolean
 }

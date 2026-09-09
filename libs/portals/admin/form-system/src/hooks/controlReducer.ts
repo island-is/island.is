@@ -169,6 +169,10 @@ type ChangeActions =
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
+      type: 'CHANGE_VALIDATE_PREMISES'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
       type: 'CHANGE_HAS_SUMMARY_SCREEN'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
@@ -919,6 +923,17 @@ export const controlReducer = (
         form: {
           ...form,
           isInaccessible: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_VALIDATE_PREMISES': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          validatePremises: action.payload.value,
         },
       }
       action.payload.update({ ...updatedState.form })

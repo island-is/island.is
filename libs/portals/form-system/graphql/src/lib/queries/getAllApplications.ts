@@ -16,6 +16,7 @@ export const GET_ALL_APPLICATIONS = gql`
       isLoginTypeAllowed
       hasRequiredDelegation
       isInaccessible
+      validatePremises
     }
   }
   ${ApplicationFragment}
