@@ -27,6 +27,9 @@ export const SidebarContactBox = () => {
         <LinkResolver
           className={linkButtonStyles.link}
           href={formatMessage(m.sidebarContactBoxLinkUrl)}
+          aria-label={`${formatMessage(
+            m.sidebarContactBoxLinkText,
+          )} – ${formatMessage(m.sidebarContactBoxTitle)}`}
         >
           <Button
             as="span"
