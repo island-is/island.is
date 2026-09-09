@@ -65,7 +65,7 @@ export const LicensesOverview = () => {
               userLicense.payload?.metadata.ctaLink?.value ??
                 `${getPathFromType(userLicense.license.type)}/${
                   userLicense.payload?.metadata.licenseId
-                } `,
+                }`,
             ),
           variant: 'text',
         }}
