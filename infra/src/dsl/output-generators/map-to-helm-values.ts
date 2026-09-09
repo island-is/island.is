@@ -658,7 +658,8 @@ export const HelmOutput: OutputFormat<HelmService> = {
     }
 
     if (serviceName === 'identity-server') {
-      s.env.ActorUserProfileApiSettings__BaseAddress = 'http://service-portal-api'
+      s.env.ActorUserProfileApiSettings__BaseAddress =
+        'http://service-portal-api'
       s.env.EmailsApiSettings__BaseAddress = 'http://service-portal-api'
       s.env.MeUserProfileApiSettings__BaseAddress = 'http://service-portal-api'
     }
