@@ -2,7 +2,6 @@ import type { Dispatch, SetStateAction } from 'react'
 import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type {
@@ -13,6 +12,7 @@ import type {
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { applyUpdateToCase } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCaseMutation } from './createCase.generated'

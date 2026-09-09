@@ -48,6 +48,7 @@ export enum Features {
   isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
   isNewDrivingLicenseEnabled = 'isNewDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
+  isU2ApplicationEnabled = 'isU2ApplicationEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 

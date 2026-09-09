@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
 
 import type { UploadFile } from '@island.is/island-ui/core'
-import { FileUploadStatus, toast } from '@island.is/island-ui/core'
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
@@ -15,6 +15,7 @@ import type {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useAttachRulingOrderDocumentMutation } from './attachRulingOrderDocument.generated'
 import type { CreateCivilClaimantFileMutation } from './createCivilClaimantFile.generated'
@@ -555,7 +556,9 @@ const useS3Upload = (
           )
         } catch (error) {
           if (noNationalId) {
-            toast.error(`Ákærði: ${defendantName} er ekki með kennitölu`)
+            toast.error(`Ákærði: ${defendantName} er ekki með kennitölu`, {
+              logMessage: 'Defendant has no national id',
+            })
           } else {
             toast.error(formatMessage(strings.uploadFailed))
             updateFile({

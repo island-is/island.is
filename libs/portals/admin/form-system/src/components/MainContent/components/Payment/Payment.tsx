@@ -7,13 +7,14 @@ import {
 } from '@island.is/form-system/graphql'
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/ui'
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn as Column,
   LoadingDots,
   Stack,
 } from '@island.is/island-ui/core'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { PaymentItem } from './components/PaymentItem'
 
@@ -31,13 +32,55 @@ export const Payment = () => {
     fields?.filter((f) => f?.screenId === paymentScreen?.id) || []
 
   const createField = useMutation(CREATE_FIELD)
-  const { data, loading } = useQuery(GET_PAYMENT_CATALOG, {
+  const { data, loading, error } = useQuery(GET_PAYMENT_CATALOG, {
     variables: {
       input: {
         performingOrganizationID: control.organizationNationalId,
       },
     },
+    skip: !control.organizationNationalId,
   })
+
+  const paymentCatalog = data?.paymentCatalog?.items || []
+  const hasPaymentCatalog = paymentCatalog.length > 0
+  const paymentSetupError = !control.organizationNationalId
+    ? 'Vantar kennitolu stofnunar áður en hægt er að bæta við greiðslu.'
+    : error
+    ? 'Ekki tókst að sækja greiðsluskrá. Ekki er hægt að bæta við greiðslu fyrr en greiðsluskrá hefur verið sótt.'
+    : !loading && !hasPaymentCatalog
+    ? 'Engir greiðsluliðir fundust fyrir þessa stofnun. Ekki er hægt að bæta við greiðslu fyrr en greiðsluskrá er til staðar.'
+    : undefined
+  const canCreatePaymentField =
+    !isReadOnly && !paymentSetupError && hasPaymentCatalog
+
+  useEffect(() => {
+    if (error) {
+      console.error('GET_PAYMENT_CATALOG failed', {
+        organizationNationalId: control.organizationNationalId,
+        error,
+      })
+    }
+  }, [control.organizationNationalId, error])
+
+  useEffect(() => {
+    if (
+      control.organizationNationalId &&
+      !loading &&
+      !error &&
+      paymentCatalog.length === 0
+    ) {
+      console.warn('GET_PAYMENT_CATALOG returned an empty catalog', {
+        organizationNationalId: control.organizationNationalId,
+        data,
+      })
+    }
+  }, [
+    control.organizationNationalId,
+    data,
+    error,
+    loading,
+    paymentCatalog.length,
+  ])
 
   if (loading) {
     return (
@@ -54,7 +97,6 @@ export const Payment = () => {
     )
   }
 
-  const paymentCatalog = data?.paymentCatalog?.items || []
   const catalogNames = paymentCatalog.map((item: PaymentCatalogItem) => {
     return {
       label: `${item.chargeItemCode} - ${item.chargeItemName}`,
@@ -63,6 +105,10 @@ export const Payment = () => {
   })
 
   const addField = async () => {
+    if (!canCreatePaymentField) {
+      return
+    }
+
     const newField = await createField[0]({
       variables: {
         input: {
@@ -109,7 +155,7 @@ export const Payment = () => {
             <Button
               variant="primary"
               icon="add"
-              disabled={isReadOnly}
+              disabled={!canCreatePaymentField}
               onClick={addField}
             >
               Bæta við greiðslu
@@ -117,6 +163,14 @@ export const Payment = () => {
           </Box>
         </Column>
       </Box>
+      {paymentSetupError && (
+        <Box paddingTop={2}>
+          <AlertMessage
+            type={error ? 'error' : 'warning'}
+            message={paymentSetupError}
+          />
+        </Box>
+      )}
       <Stack space={2}>
         {paymentFields.map((field) => (
           <PaymentItem

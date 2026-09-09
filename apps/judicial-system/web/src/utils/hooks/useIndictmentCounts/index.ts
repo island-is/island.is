@@ -2,13 +2,13 @@ import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import type {
   Case,
   Offense,
   UpdateIndictmentCountInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { normalizeBlankStrings } from '../../formatters'
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
@@ -16,8 +16,10 @@ import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.genera
 import { useReorderIndictmentCountsMutation } from './reorderIndictmentCounts.generated'
 import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
 
-export interface UpdateIndictmentCount
-  extends Omit<UpdateIndictmentCountInput, 'caseId' | 'indictmentCountId'> {}
+export type UpdateIndictmentCount = Omit<
+  UpdateIndictmentCountInput,
+  'caseId' | 'indictmentCountId'
+>
 
 export type UpdateIndictmentCountState = UpdateIndictmentCount & {
   offenses?: Offense[] | null

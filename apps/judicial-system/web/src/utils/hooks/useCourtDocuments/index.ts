@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
 import type {
   CreateCourtDocumentInput,
   DeleteCourtDocumentInput,
   FileCourtDocumentInCourtSessionInput,
   UpdateCourtDocumentInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useCreateCourtDocumentMutation } from './createCourtDocument.generated'
 import { useDeleteCourtDocumentMutation } from './deleteCourtDocument.generated'
