@@ -178,20 +178,27 @@ export const createDefaultSubCriterion = (
   ],
 })
 
+// Order is load-bearing, not cosmetic: this drives the order of the pay inputs in
+// EmployeeForm and of the detail rows in EmployeeRow, and it mirrors columns J–O
+// of the 2.0 workbook the applicant just filled in. The two groups are the
+// workbook's row-4 bands, Fastar greiðslur and Tilfallandi greiðslur.
 export const SALARY_COMPONENT_GROUPS: {
   group: 'additional' | 'bonus'
   keys: SalaryComponentKey[]
 }[] = [
   {
     group: 'additional',
-    keys: ['additionalFixedOvertime', 'additionalFixedCarAllowance'],
+    keys: [
+      'additionalFixedOvertime',
+      'additionalFixedCarAllowance',
+      'additionalFixedOther',
+    ],
   },
   {
     group: 'bonus',
     keys: [
-      'bonusOccasionalCarAllowance',
       'bonusOccasionalOvertime',
-      'bonusPayments',
+      'bonusOccasionalCarAllowance',
       'bonusOther',
     ],
   },
