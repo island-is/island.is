@@ -51,7 +51,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   > {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -320,7 +324,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   ): Promise<NationalRegistryV3Individual | NationalRegistryIndividual | null> {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -382,7 +390,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   > {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -404,7 +416,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   > {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -474,7 +490,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   > {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -596,7 +616,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   > {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -634,7 +658,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<NationalRegistryMaritalTitle | null> {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -663,7 +691,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<BirthplaceParameters>): Promise<NationalRegistryBirthplace | null> {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -704,7 +736,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<NationalRegistryResidenceHistory | null> {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -738,7 +774,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   > {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -770,7 +810,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<string[] | null> {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -800,7 +844,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   ): Promise<(NationalRegistryOtherIndividual | null)[]> {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       props.auth,
     )
     if (!shouldUseNationalRegistryV3) {
@@ -835,7 +883,11 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<NationalRegistryCustodian[]> {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
-      false,
+      // The flag is on in production, and Þjóðskrá is deprecating v2, so an
+      // unreadable flag must not silently downgrade the request to v2. This
+      // default only applies when ConfigCat cannot be reached; turning the
+      // flag off there still rolls back to v2 while that service exists.
+      true,
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
