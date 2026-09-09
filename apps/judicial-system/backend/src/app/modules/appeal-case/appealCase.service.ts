@@ -881,20 +881,34 @@ export class AppealCaseService {
   // The date the public prosecution office registers is the one on the filing
   // it received, which cannot be in the future. Anything else about it - a
   // filing after the deadline in particular - is for the office to judge.
-  private registeredVerdictAppealDate(appealDate: Date | undefined): Date {
+  //
+  // The DTO declares a Date, but the validation pipe does not transform the
+  // body, so what arrives is whatever the client sent - an ISO string from the
+  // web. Read it as a date here rather than trust the declared type.
+  private registeredVerdictAppealDate(
+    appealDate: Date | string | undefined,
+  ): Date {
     if (!appealDate) {
       throw new BadRequestException(
         'Registering a verdict appeal must state when it was filed',
       )
     }
 
-    if (appealDate.getTime() > nowFactory().getTime()) {
+    const date = new Date(appealDate)
+
+    if (Number.isNaN(date.getTime())) {
+      throw new BadRequestException(
+        `${appealDate} is not a date a verdict appeal can have been filed on`,
+      )
+    }
+
+    if (date.getTime() > nowFactory().getTime()) {
       throw new BadRequestException(
         'A verdict appeal cannot have been filed in the future',
       )
     }
 
-    return appealDate
+    return date
   }
 
   // Records which defender filed the appeal the public prosecution office is
@@ -907,23 +921,56 @@ export class AppealCaseService {
     request: VerdictAppealRequest,
     transaction: Transaction,
   ): Promise<void> {
-    const appealDefender: UpdateDefendant = {
-      appealDefenderName: request.appealDefenderName,
-      appealDefenderNationalId: request.appealDefenderNationalId,
-      appealDefenderEmail: request.appealDefenderEmail,
-      appealDefenderPhoneNumber: request.appealDefenderPhoneNumber,
-    }
+    const supplied = [
+      request.appealDefenderName,
+      request.appealDefenderNationalId,
+      request.appealDefenderEmail,
+      request.appealDefenderPhoneNumber,
+    ]
 
-    if (Object.values(appealDefender).every((value) => value === undefined)) {
+    if (supplied.every((value) => value === undefined)) {
       return
     }
 
-    // A new appeal defender is a new person for the court of appeals to
-    // confirm, whatever it had decided about the previous one.
+    // The supplied fields describe one person, so the ones left out are
+    // cleared rather than kept from whoever was recorded before - Sequelize
+    // skips undefined, so the clearing has to be explicit. A new appeal
+    // defender is also a new person for the court of appeals to confirm,
+    // whatever it had decided about the previous one.
+    const appealDefender: UpdateDefendant = {
+      appealDefenderName: request.appealDefenderName ?? null,
+      appealDefenderNationalId: request.appealDefenderNationalId ?? null,
+      appealDefenderEmail: request.appealDefenderEmail ?? null,
+      appealDefenderPhoneNumber: request.appealDefenderPhoneNumber ?? null,
+      isAppealDefenderConfirmed: false,
+    }
+
     await this.defendantRepositoryService.update(
       theCase.id,
       defendantId,
-      { ...appealDefender, isAppealDefenderConfirmed: false },
+      appealDefender,
+      { transaction },
+    )
+  }
+
+  // The appeal defender belongs to the appeal: withdrawn, there is no appeal
+  // for them to have filed, and a later registration that names nobody must
+  // not show them again.
+  private async clearAppealDefender(
+    theCase: Case,
+    defendantId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    await this.defendantRepositoryService.update(
+      theCase.id,
+      defendantId,
+      {
+        appealDefenderName: null,
+        appealDefenderNationalId: null,
+        appealDefenderEmail: null,
+        appealDefenderPhoneNumber: null,
+        isAppealDefenderConfirmed: null,
+      },
       { transaction },
     )
   }
@@ -1291,6 +1338,8 @@ export class AppealCaseService {
         { transaction },
       )
     }
+
+    await this.clearAppealDefender(theCase, defendantId, transaction)
 
     const remainingAppellantIds = standingAppellantIds.filter(
       (id) => id !== defendantId,
