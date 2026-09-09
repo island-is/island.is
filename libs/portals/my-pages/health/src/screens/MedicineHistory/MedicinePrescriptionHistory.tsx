@@ -43,12 +43,10 @@ const MedicinePrescriptionHistory = () => {
     variables: { locale: lang },
   })
 
-  const [
-    getMedicineDispensationsATC,
-    { loading: atcLoading, data: atcData },
-  ] = useGetMedicineDispensationForAtcLazyQuery({
-    fetchPolicy: 'no-cache',
-  })
+  const [getMedicineDispensationsATC, { loading: atcLoading, data: atcData }] =
+    useGetMedicineDispensationForAtcLazyQuery({
+      fetchPolicy: 'no-cache',
+    })
 
   const history = data?.healthDirectorateMedicineHistory.medicineHistory ?? []
 

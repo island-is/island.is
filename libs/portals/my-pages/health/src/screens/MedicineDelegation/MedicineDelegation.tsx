@@ -49,13 +49,13 @@ const MedicineDelegation = () => {
   const dataLength =
     data?.healthDirectorateMedicineDelegations?.items?.length ?? 0
 
-  const filteredData = data?.healthDirectorateMedicineDelegations?.items?.filter(
-    (item) =>
+  const filteredData =
+    data?.healthDirectorateMedicineDelegations?.items?.filter((item) =>
       showExpiredPermits
         ? item.status
         : item.status === HealthDirectoratePermitStatus.active ||
           item.status === HealthDirectoratePermitStatus.awaitingApproval,
-  )
+    )
 
   return (
     <IntroWrapper

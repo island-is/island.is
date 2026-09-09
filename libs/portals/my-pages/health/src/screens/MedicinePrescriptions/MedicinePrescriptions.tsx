@@ -42,9 +42,8 @@ const MedicinePrescriptions = () => {
   const { formatMessage, lang } = useLocale()
   useHealthPlausibleSwap()
   const [page, setPage] = useState(1)
-  const [filterValues, setFilterValues] = useState<FilterValues>(
-    defaultFilterValues,
-  )
+  const [filterValues, setFilterValues] =
+    useState<FilterValues>(defaultFilterValues)
 
   const { data, error, loading } = useGetMedicinePrescriptionsQuery({
     variables: { locale: lang },

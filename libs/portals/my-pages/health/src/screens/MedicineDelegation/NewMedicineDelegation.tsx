@@ -24,13 +24,11 @@ const NewMedicineDelegation = () => {
   const [formState, setFormState] = useState<DelegationState>()
   const navigate = useNavigate()
 
-  const [
-    postMedicineDelegation,
-    { loading },
-  ] = usePostMedicineDelegationMutation({
-    refetchQueries: ['GetMedicineDelegations'],
-    awaitRefetchQueries: true,
-  })
+  const [postMedicineDelegation, { loading }] =
+    usePostMedicineDelegationMutation({
+      refetchQueries: ['GetMedicineDelegations'],
+      awaitRefetchQueries: true,
+    })
 
   const handleSubmit = () => {
     if (formState?.nationalId && formState?.dateFrom && formState?.dateTo) {
