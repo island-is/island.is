@@ -31,7 +31,7 @@ export const paymentSection = buildSection({
 
               return {
                 chargeItemCode: `${debt.chargeTypeId}-${index}`,
-                chargeItemName: debt.chargeTypeName,
+                chargeItemName: `${debt.chargeTypeName} - ${debt.chargeItemSubject}`,
                 chargeItemAmount: debt.amountToPay,
                 ...(remaining > 0
                   ? {
