@@ -127,7 +127,11 @@ describe('Feature: auth-admin-web-dev-scaledown, Property 7: dev/staging clamp o
       const min = randInt(rng, 1, 20)
       const max = min + randInt(rng, 1, 20)
       const def = randInt(rng, min, max)
-      const sut = service(`flat-${seed}`).replicaCount({ min, max, default: def })
+      const sut = service(`flat-${seed}`).replicaCount({
+        min,
+        max,
+        default: def,
+      })
 
       const devResult = await generate(sut, Dev)
       const stagingResult = await generate(sut, Staging)
@@ -213,7 +217,11 @@ describe('Feature: auth-admin-web-dev-scaledown, Property 9: prod never clamps',
     for (let seed = 1; seed <= RUNS; seed++) {
       const rng = mulberry32(seed + 30_000)
       // Positive-max prod block so output equals the explicit resolved values.
-      const prod: ReplicaBounds = { min: randInt(rng, 1, 10), max: 0, default: 0 }
+      const prod: ReplicaBounds = {
+        min: randInt(rng, 1, 10),
+        max: 0,
+        default: 0,
+      }
       prod.max = prod.min + randInt(rng, 0, 10)
       prod.default = randInt(rng, prod.min, prod.max)
 
