@@ -112,13 +112,16 @@ describe('CivilClaimantRepositoryService', () => {
   })
 
   describe('deleteByIdAndCase', () => {
-    it('scopes the delete to the civil claimant within its case and returns the row count', async () => {
+    it('scopes the delete to the civil claimant within its case in the transaction and returns the row count', async () => {
       model.destroy.mockResolvedValueOnce(1)
 
-      const result = await service.deleteByIdAndCase(civilClaimantId, caseId)
+      const result = await service.deleteByIdAndCase(civilClaimantId, caseId, {
+        transaction,
+      })
 
       expect(model.destroy).toHaveBeenCalledWith({
         where: { id: civilClaimantId, caseId },
+        transaction,
       })
       expect(result).toBe(1)
     })
@@ -128,7 +131,7 @@ describe('CivilClaimantRepositoryService', () => {
       model.destroy.mockRejectedValueOnce(error)
 
       await expect(
-        service.deleteByIdAndCase(civilClaimantId, caseId),
+        service.deleteByIdAndCase(civilClaimantId, caseId, { transaction }),
       ).rejects.toThrow(error)
     })
   })

@@ -36,6 +36,7 @@ import type {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseFileCategory,
   CaseState,
   CaseTransition,
   DefendantPlea,
@@ -284,10 +285,14 @@ const Processing: FC = () => {
       return
     }
 
+    // The claimant's civil claim files are deleted with the claimant
     setWorkingCase((prev) => ({
       ...prev,
       civilClaimants: prev.civilClaimants?.filter(
         (civilClaimant) => civilClaimant.id !== civilClaimantId,
+      ),
+      caseFiles: prev.caseFiles?.filter(
+        (caseFile) => caseFile.civilClaimantId !== civilClaimantId,
       ),
     }))
   }
@@ -301,10 +306,16 @@ const Processing: FC = () => {
       return
     }
 
+    // Turning civil claims off deletes every claimant along with their files
     setWorkingCase((prev) => ({
       ...prev,
       hasCivilClaims,
       civilClaimants: res.civilClaimants,
+      caseFiles: hasCivilClaims
+        ? prev.caseFiles
+        : prev.caseFiles?.filter(
+            (caseFile) => caseFile.category !== CaseFileCategory.CIVIL_CLAIM,
+          ),
     }))
 
     if (hasCivilClaims) {

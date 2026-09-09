@@ -378,4 +378,74 @@ describe('CaseFileRepositoryService', () => {
       ).rejects.toThrow(error)
     })
   })
+
+  describe('deleteAllForCivilClaimant', () => {
+    const civilClaimantId = 'some-civil-claimant-id'
+
+    it("soft-deletes the claimant's files within the case, clears the claimant reference and returns the count", async () => {
+      model.update.mockResolvedValueOnce([2, []])
+
+      const result = await service.deleteAllForCivilClaimant(
+        caseId,
+        civilClaimantId,
+        { transaction },
+      )
+
+      expect(model.update).toHaveBeenCalledWith(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          civilClaimantId: null,
+        },
+        {
+          where: { caseId, civilClaimantId },
+          transaction,
+        },
+      )
+      expect(result).toBe(2)
+    })
+
+    it('rethrows when the update fails', async () => {
+      const error = new Error('Some error')
+      model.update.mockRejectedValueOnce(error)
+
+      await expect(
+        service.deleteAllForCivilClaimant(caseId, civilClaimantId, {
+          transaction,
+        }),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('deleteAllForCivilClaimantsOfCase', () => {
+    it('soft-deletes every file of the case linked to a claimant, clears the claimant references and returns the count', async () => {
+      model.update.mockResolvedValueOnce([3, []])
+
+      const result = await service.deleteAllForCivilClaimantsOfCase(caseId, {
+        transaction,
+      })
+
+      expect(model.update).toHaveBeenCalledWith(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          civilClaimantId: null,
+        },
+        {
+          where: { caseId, civilClaimantId: { [Op.not]: null } },
+          transaction,
+        },
+      )
+      expect(result).toBe(3)
+    })
+
+    it('rethrows when the update fails', async () => {
+      const error = new Error('Some error')
+      model.update.mockRejectedValueOnce(error)
+
+      await expect(
+        service.deleteAllForCivilClaimantsOfCase(caseId, { transaction }),
+      ).rejects.toThrow(error)
+    })
+  })
 })
