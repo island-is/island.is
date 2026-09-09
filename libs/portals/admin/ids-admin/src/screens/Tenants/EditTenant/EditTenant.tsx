@@ -39,6 +39,7 @@ export const EditTenant = () => {
       'displayName',
       'description',
       'contactEmail',
+      'municipalityCode',
     ])
 
   return (
@@ -133,6 +134,20 @@ export const EditTenant = () => {
                       actionData?.errors?.contactEmail,
                     )}
                     tooltip={formatMessage(m.tenantContactEmailTooltip)}
+                  />
+                </GridColumn>
+                <GridColumn span="12/12">
+                  <Input
+                    key={`municipalityCode-${selectedEnvironment.environment}`}
+                    name="municipalityCode"
+                    label={formatMessage(m.tenantMunicipalityCode)}
+                    size="sm"
+                    backgroundColor="blue"
+                    defaultValue={selectedEnvironment.municipalityCode ?? ''}
+                    errorMessage={formatErrorMessage(
+                      actionData?.errors?.municipalityCode,
+                    )}
+                    tooltip={formatMessage(m.tenantMunicipalityCodeTooltip)}
                   />
                 </GridColumn>
               </GridRow>
