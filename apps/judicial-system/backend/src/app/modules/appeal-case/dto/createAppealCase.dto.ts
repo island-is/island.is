@@ -1,4 +1,5 @@
-import { IsEnum, IsOptional, IsUUID } from 'class-validator'
+import { Type } from 'class-transformer'
+import { IsDate, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -32,4 +33,42 @@ export class CreateAppealCaseDto {
   @IsUUID()
   @ApiPropertyOptional({ type: String })
   readonly defendantId?: string
+
+  /**********
+   * When the verdict appeal was filed. Only honoured when the public
+   * prosecution office registers an appeal that reached it outside the system,
+   * by letter or email - the date is then the one on that filing. A defender
+   * appealing in the system appeals now, and the field is ignored.
+   **********/
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly appealDate?: Date
+
+  /**********
+   * The defender who filed the verdict appeal, when the public prosecution
+   * office registers it - typically a new defender with rights before the court
+   * of appeals, who is not the defender of record. Recorded on the defendant as
+   * information only; no access follows until the court of appeals confirms them.
+   **********/
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly appealDefenderName?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly appealDefenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly appealDefenderEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly appealDefenderPhoneNumber?: string
 }
