@@ -40,6 +40,7 @@ export const debtsSignature = (debts: CustomerDebt[]): string =>
   debts
     .map((debt) =>
       [
+        debt.payID,
         debt.chargeTypeId,
         debt.chargeItemSubject,
         debt.timePeriod,

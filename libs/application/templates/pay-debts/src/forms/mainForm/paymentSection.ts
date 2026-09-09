@@ -22,15 +22,13 @@ export const paymentSection = buildSection({
           totalLabel: messages.summary.totalLabel,
           simplifiedList: true,
           getSelectedChargeItems: (application) =>
-            // chargeTypeId is a charge *category*, not a unique per-debt id,
-            // so two selected debts can share it - suffix with index to keep
-            // this list's React keys unique. Display-only, unrelated to the
-            // chargeItems used for the actual FJS charge in template.ts.
-            getSelectedDebts(application).map((debt, index) => {
+            // payID is FJS' per-debt identifier - the one that goes with the
+            // payment - so it is what identifies a line here as well.
+            getSelectedDebts(application).map((debt) => {
               const remaining = debt.debts - debt.amountToPay
 
               return {
-                chargeItemCode: `${debt.chargeTypeId}-${index}`,
+                chargeItemCode: debt.payID,
                 chargeItemName: `${debt.chargeTypeName} - ${debt.chargeItemSubject}`,
                 chargeItemAmount: debt.amountToPay,
                 ...(remaining > 0

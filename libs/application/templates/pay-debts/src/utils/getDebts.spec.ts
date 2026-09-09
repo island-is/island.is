@@ -13,6 +13,7 @@ const debtsFetchedAt = (date: Date | string | undefined, status = 'success') =>
   } as unknown as ExternalData)
 
 const debt = (overrides: Partial<CustomerDebt> = {}): CustomerDebt => ({
+  payID: 'PAY-1',
   chargeTypeId: 'AB',
   chargeTypeName: 'Gjaldflokkur',
   chargeItemSubject: '2024-1',
@@ -61,6 +62,12 @@ describe('debtsSignature', () => {
   it('is stable for an identical list', () => {
     expect(debtsSignature([debt(), debt({ chargeTypeId: 'CD' })])).toBe(
       debtsSignature([debt(), debt({ chargeTypeId: 'CD' })]),
+    )
+  })
+
+  it('changes when a payID changes', () => {
+    expect(debtsSignature([debt({ payID: 'PAY-1' })])).not.toBe(
+      debtsSignature([debt({ payID: 'PAY-2' })]),
     )
   })
 

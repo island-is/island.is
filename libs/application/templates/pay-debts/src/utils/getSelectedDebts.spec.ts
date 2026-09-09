@@ -3,6 +3,7 @@ import { CustomerDebt } from './types'
 import { getSelectedDebts } from './getSelectedDebts'
 
 const debt = (overrides: Partial<CustomerDebt> = {}): CustomerDebt => ({
+  payID: 'PAY-1',
   chargeTypeId: 'AB',
   chargeTypeName: 'Gjaldflokkur',
   chargeItemSubject: '2024-1',
