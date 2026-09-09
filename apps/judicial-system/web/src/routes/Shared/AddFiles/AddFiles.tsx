@@ -247,7 +247,6 @@ const AddFiles: FC = () => {
           onDelete={removeUploadFile}
           onRename={handleRename}
           setEditCount={setEditCount}
-          isBottomComponent={!hasFileRepresentativeSelection}
         />
         {hasFileRepresentativeSelection && (
           <SelectCaseFileRepresentative

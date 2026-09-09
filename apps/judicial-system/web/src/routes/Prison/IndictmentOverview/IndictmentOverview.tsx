@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import type { Option } from '@island.is/island-ui/core'
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
@@ -40,6 +40,7 @@ import {
   useDefendants,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { DefendantPrisonAdminCard } from './DefendantPrisonAdminCard'
 

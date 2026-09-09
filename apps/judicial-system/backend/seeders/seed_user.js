@@ -160,7 +160,7 @@ const userSeeds = `[
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    var model = queryInterface.sequelize.define('user', {
+    const model = queryInterface.sequelize.define('user', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,

@@ -57,7 +57,7 @@ import { CivilClaimantFields } from './CivilClaimantFields'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
-interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+type UpdateDefendant = Omit<UpdateDefendantInput, 'caseId'>
 
 interface CivilClaimantAccordionLabelProps {
   label: string
@@ -455,7 +455,7 @@ const Processing: FC = () => {
           </BlueBox>
         </Box>
         {workingCase.hasCivilClaims && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section">
             <Accordion dividerOnTop={false}>
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
                 <CivilClaimantAccordionItem

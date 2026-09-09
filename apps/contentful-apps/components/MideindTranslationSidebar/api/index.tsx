@@ -43,7 +43,8 @@ async function sendTexts(
 ) {
   const body = {
     machineTranslatedText: '', // Required even if empty
-    translationReference: 1 || reference, // Reference to be accepted later by Miðeind
+    // eslint-disable-next-line no-constant-binary-expression -- placeholder until Miðeind accepts the reference
+    translationReference: 1 || reference,
     originalText: iceTexts.join(' '), // String expected, not array
     correctedText: enTexts.join(' '), // String expected, not array
     languagePair: 'is-en',

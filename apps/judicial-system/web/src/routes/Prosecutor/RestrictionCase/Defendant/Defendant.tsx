@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, LoadingDots, toast } from '@island.is/island-ui/core'
+import { Box, Input, LoadingDots } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
   PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
@@ -43,7 +43,8 @@ import {
   useInstitution,
   useSyncDefendantsFromPolice,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
@@ -159,7 +160,7 @@ export const Defendant = () => {
         <>
           <FormContentContainer>
             <PageTitle>{formatMessage(m.heading)}</PageTitle>
-            <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <div className={stack({ gap: 5 })}>
               <Box component="section">
                 <PoliceCaseNumbers
                   workingCase={workingCase}

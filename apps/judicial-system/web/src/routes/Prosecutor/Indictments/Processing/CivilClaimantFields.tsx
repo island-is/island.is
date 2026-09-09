@@ -40,8 +40,7 @@ import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks
 
 import { strings } from './processing.strings'
 
-interface UpdateCivilClaimant
-  extends Omit<UpdateCivilClaimantInput, 'caseId'> {}
+type UpdateCivilClaimant = Omit<UpdateCivilClaimantInput, 'caseId'>
 
 export const CivilClaimantFields = ({
   caseId,

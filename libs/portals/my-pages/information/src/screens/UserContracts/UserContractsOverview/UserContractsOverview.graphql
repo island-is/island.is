@@ -1,9 +1,8 @@
-query UserContractsOverview($hideInactiveContracts: Boolean) {
-  hmsRentalAgreements(hideInactiveAgreements: $hideInactiveContracts) {
+query UserContractsOverview($input: HmsRentalAgreementsInput!) {
+  hmsRentalAgreements(input: $input) {
     data {
       id
       status
-      contractType
       contractProperty {
         id
         propertyId
@@ -13,9 +12,7 @@ query UserContractsOverview($hideInactiveContracts: Boolean) {
         postalCode
       }
     }
-    pageInfo {
-      hasNextPage
-    }
     totalCount
+    pageSize
   }
 }

@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
 import type {
   CreateCourtSessionInput,
   DeleteCourtSessionInput,
@@ -9,6 +8,7 @@ import type {
   UpdateCourtSessionInput,
   UpdateCourtSessionStringInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCourtSessionMutation } from './createCourtSession.generated'
