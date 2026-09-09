@@ -384,6 +384,13 @@ export class FormsService {
               transaction,
             },
           )
+          await this.formModel.update(
+            { validatePremises: false },
+            {
+              where: { id },
+              transaction,
+            },
+          )
         }
       })
     } catch (error) {

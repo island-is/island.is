@@ -78,7 +78,11 @@ export const SubmissionUrls = () => {
       type: 'CHANGE_USE_VALIDATE',
       payload: { value },
     })
-    formUpdate({ ...form, useValidate: value })
+    formUpdate({
+      ...form,
+      useValidate: value,
+      validatePremises: value ? form.validatePremises : false,
+    })
   }
 
   const persistZendeskApplicantRequirements = async () => {
@@ -416,6 +420,7 @@ export const SubmissionUrls = () => {
                   ...form,
                   submissionServiceUrl: e.target.id,
                   useValidate: false,
+                  validatePremises: false,
                 })
                 await persistZendeskApplicantRequirements()
               }}

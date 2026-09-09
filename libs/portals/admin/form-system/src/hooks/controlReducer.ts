@@ -169,8 +169,11 @@ type ChangeActions =
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
-      type: 'CHANGE_VALIDATE_PREMISES'
-      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+      type: 'TOGGLE_VALIDATE_PREMISES'
+      payload: {
+        checked: boolean
+        update: (updatedForm: FormSystemForm) => void
+      }
     }
   | {
       type: 'CHANGE_HAS_SUMMARY_SCREEN'
@@ -928,12 +931,12 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
-    case 'CHANGE_VALIDATE_PREMISES': {
+    case 'TOGGLE_VALIDATE_PREMISES': {
       const updatedState = {
         ...state,
         form: {
           ...form,
-          validatePremises: action.payload.value,
+          validatePremises: action.payload.checked,
         },
       }
       action.payload.update({ ...updatedState.form })
@@ -1008,6 +1011,7 @@ export const controlReducer = (
           fields: nextFields,
           screens: nextScreens,
           useValidate: nextUseValidate,
+          validatePremises: nextUseValidate ? form.validatePremises : false,
         },
       }
       return updatedState
@@ -1050,6 +1054,9 @@ export const controlReducer = (
           ...form,
           screens: nextScreens,
           useValidate: action.payload.value,
+          validatePremises: action.payload.value
+            ? form.validatePremises
+            : false,
         },
       }
       return updatedState
