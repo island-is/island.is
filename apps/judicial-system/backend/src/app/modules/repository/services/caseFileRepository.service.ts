@@ -337,4 +337,73 @@ export class CaseFileRepositoryService {
       throw error
     }
   }
+
+  // A civil claimant's files go with the claimant. Files are soft-deleted, so
+  // the row stays for anything that references it, but the claimant reference
+  // has to be cleared: the foreign key does not cascade, and a soft-deleted row
+  // still pointing at the claimant would block the claimant's own delete.
+  async deleteAllForCivilClaimant(
+    caseId: string,
+    civilClaimantId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting the case files of civil claimant ${civilClaimantId} of case ${caseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.caseFileModel.update(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          civilClaimantId: null,
+        },
+        {
+          where: { caseId, civilClaimantId },
+          transaction: options.transaction,
+        },
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error deleting the case files of civil claimant ${civilClaimantId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async deleteAllForCivilClaimantsOfCase(
+    caseId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting the case files of all civil claimants of case ${caseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.caseFileModel.update(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          civilClaimantId: null,
+        },
+        {
+          where: { caseId, civilClaimantId: { [Op.not]: null } },
+          transaction: options.transaction,
+        },
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error deleting the case files of all civil claimants of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }
