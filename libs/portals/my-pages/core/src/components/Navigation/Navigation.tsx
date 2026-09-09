@@ -219,7 +219,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
         href={asSpan ? undefined : titleLink?.href}
         borderRadius="large"
         className={styles.link}
-        paddingX={[2, 2, 2, 4]}
+        paddingX={[2, 2, 3]}
         paddingY={basePadding.paddingY}
       >
         {({ isFocused, isHovered }) => {
@@ -245,7 +245,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       titleProps,
     )
   ) : (
-    <Box paddingX={[2, 2, 2, 4]} paddingBottom={1} style={{ paddingTop: 6 }}>
+    <Box paddingX={[2, 2, 3]} paddingBottom={1} style={{ paddingTop: 6 }}>
       <Box display="flex" flexDirection="row" alignItems="center">
         {titleIcon && (
           <Box
@@ -537,9 +537,9 @@ export const NavigationTree: FC<
                 component={asSpan ? 'span' : 'a'}
                 href={asSpan ? undefined : href}
                 borderRadius="large"
-                paddingLeft={isChildren ? [2, 2, 2, 3] : [3, 3, 3, 4]}
+                paddingLeft={isChildren ? 2 : 3}
                 paddingRight={2}
-                paddingY={isChildren ? 'smallGutter' : 1}
+                paddingY="smallGutter"
                 className={styles.link}
                 onClick={() => {
                   if (linkOnClick && !isAccordion) {
@@ -591,7 +591,7 @@ export const NavigationTree: FC<
                       toggleAccordion(accordionId)
                     }}
                     //background={colorSchemeColors[colorScheme]['dividerColor']}
-                    marginRight={2}
+                    marginRight={[2, 2, 3]}
                     aria-expanded={activeAccordion}
                     aria-controls={ariaId}
                     aria-labelledby={titleId}
