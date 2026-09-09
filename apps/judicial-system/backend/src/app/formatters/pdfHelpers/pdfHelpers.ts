@@ -129,9 +129,6 @@ interface ConfirmationConfig {
 }
 
 export const formatActor = (name: string, title?: string) => {
-  // DEBUG: force a long samþykktaraðili to check wrap/overflow — remove before commit
-  name = 'Guðrún Sigríður Halldóra Bjarnhéðinsdóttir'
-  title = title ?? 'saksóknari við embætti héraðssaksóknara'
   return `${name}${title ? ` ${lowercase(title)}` : ''}`
 }
 
