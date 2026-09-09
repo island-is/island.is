@@ -3004,6 +3004,10 @@
           "salaryReportOverdue": {
             "type": "boolean",
             "description": "Derived: the company's next salary-report due date has passed."
+          },
+          "hasLegacyReports": {
+            "type": "boolean",
+            "description": "Derived: the Directorate's retired SharePoint register holds at least one row for this company. Drives whether the detail view offers the legacy-data tab; says nothing about compliance — the row may record a lapsed or surrendered certificate."
           }
         },
         "required": [
@@ -3020,7 +3024,8 @@
           "sectorOverride",
           "reportStatus",
           "equalityReportOverdue",
-          "salaryReportOverdue"
+          "salaryReportOverdue",
+          "hasLegacyReports"
         ]
       },
       "ApiErrorDto": {
@@ -3229,16 +3234,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "personalStepAssignments": {
             "type": "array",
@@ -4056,7 +4061,7 @@
           "contactPhone": { "type": "string" },
           "equalityReportContent": {
             "type": "string",
-            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`."
+            "description": "Narrative gender-equality plan as plain HTML. Persisted as `report.equality_report_content` and rendered into the approved PDF, so send the markup itself — not a base64 blob, not a document."
           },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },
           "averageEmployeeFemaleCount": { "type": "number", "nullable": true },
@@ -4983,16 +4988,16 @@
           },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "stepIds": {
             "description": "Full set of personal step ids assigned to this employee (replace-all). Every id must be a step on the same draft.",
@@ -5136,16 +5141,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "additionalSalary": { "type": "number" },
           "bonusSalary": { "type": "number" },
@@ -5190,16 +5195,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "additionalSalary": { "type": "number" },
           "bonusSalary": { "type": "number" },
