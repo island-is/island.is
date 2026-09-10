@@ -1,13 +1,18 @@
 import { useCallback, useContext, useEffect } from 'react'
 
 import { CaseOrigin } from '@island.is/judicial-system/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
+import { canAccessPoliceDigitalCaseFiles } from './usePoliceDigitalCaseFile.logic'
 
 const usePoliceDigitalCaseFile = () => {
+  const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, refreshCase } =
     useContext(FormContext)
   const { id: caseId, origin: caseOrigin, originalAncestorId } = workingCase
@@ -34,7 +39,10 @@ const usePoliceDigitalCaseFile = () => {
     refetch,
   } = usePoliceDigitalCaseFilesQuery({
     variables: { input: { caseId: effectiveCaseId } },
-    skip: isLoadingWorkingCase || caseOrigin !== CaseOrigin.LOKE,
+    skip:
+      isLoadingWorkingCase ||
+      caseOrigin !== CaseOrigin.LOKE ||
+      !canAccessPoliceDigitalCaseFiles(user),
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: handleCompleted,
