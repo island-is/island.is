@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  ApplicationEligibility,
   DrivingLicenseApplicationType,
   DrivingLicenseCategory,
   DrivingLicenseService,
   NewDrivingLicenseResult,
   Pickup,
+  RequirementKey as DomainRequirementKey,
 } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../../shared'
@@ -54,6 +56,35 @@ import {
   DrivingLicenseSchema,
 } from './utils/healthDeclarationMapper'
 import { formatPhoneNumber } from './utils'
+
+// The schema `RequirementKey` the template consumes lives in a `lib:dom` package
+// this API scope may not import, so we can't reference it here. It only differs
+// from the domain `RequirementKey` (what `getApplicationEligibility` returns,
+// mirroring RLS) in its string values: the schema uses camelCase values that equal
+// each member's name, the domain uses PascalCase. Reverse-mapping a domain value to
+// its member name therefore yields the schema value, and we type it through the
+// template's own `TypeEligibility` rather than importing the schema enum.
+type SchemaRequirementKey = TypeEligibility['requirements'][number]['key']
+
+const domainValueToMemberName: Record<string, string> = Object.fromEntries(
+  Object.entries(DomainRequirementKey).map(([name, value]) => [value, name]),
+)
+
+// Convert the domain eligibility result into the schema-keyed shape the template's
+// `buildTypeEligibility` and eligibility summary expect.
+const toTypeEligibility = (
+  serverResult: ApplicationEligibility,
+): TypeEligibility => ({
+  isEligible: serverResult.isEligible,
+  requirements: serverResult.requirements.map((r) => ({
+    key: (domainValueToMemberName[r.key] ??
+      r.key) as unknown as SchemaRequirementKey,
+    requirementMet: r.requirementMet,
+    daysOfResidency: r.daysOfResidency,
+    messageIs: r.messageIs,
+    messageEn: r.messageEn,
+  })),
+})
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -167,7 +198,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
             application.applicant,
             type as DrivingLicenseApplicationType,
           )
-        byType[type] = buildTypeEligibility(type, serverResult, externalData)
+        byType[type] = buildTypeEligibility(
+          type,
+          toTypeEligibility(serverResult),
+          externalData,
+        )
       }
     }
 

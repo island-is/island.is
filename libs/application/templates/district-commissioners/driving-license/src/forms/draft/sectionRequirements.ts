@@ -5,8 +5,15 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { DrivingLicenseApplicationFor } from '../../utils/constants'
 
-export const sectionRequirements = () =>
+// `fixedApplicationFor` is passed when the license-selection screen is hidden
+// (ALLOW_LICENSE_SELECTION off), so no radio writes `applicationFor`. We freeze
+// it here instead so the required field is populated. When selection is on this
+// is undefined and the radio in sectionApplicationFor owns the value.
+export const sectionRequirements = (
+  fixedApplicationFor?: DrivingLicenseApplicationFor,
+) =>
   buildSection({
     id: 'requirements',
     title: m.applicationEligibilityTitle,
@@ -16,6 +23,14 @@ export const sectionRequirements = () =>
         title: m.applicationEligibilityTitle,
         description: m.eligibilityRequirementTitle,
         children: [
+          ...(fixedApplicationFor
+            ? [
+                buildHiddenInput({
+                  id: 'applicationFor',
+                  defaultValue: fixedApplicationFor,
+                }),
+              ]
+            : []),
           // Submission-contract constants: the shared driving-license submission
           // service branches on these frozen answers to pick the RLS endpoint.
           // This app only runs the current flow, so they are always true — see

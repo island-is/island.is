@@ -70,10 +70,11 @@ const teacherName = (answers: FormValue, externalData: ExternalData): string => 
 }
 
 const chargeTotal = (answers: FormValue, externalData: ExternalData): string => {
-  const items = externalData.payment.data as {
-    priceAmount: number
-    chargeItemCode: string
-  }[]
+  const items =
+    getValueViaPath<{ priceAmount: number; chargeItemCode: string }[]>(
+      externalData,
+      'payment.data',
+    ) ?? []
 
   const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
   const targetCode =

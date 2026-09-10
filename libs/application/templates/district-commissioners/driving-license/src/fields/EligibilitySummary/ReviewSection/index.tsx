@@ -68,12 +68,8 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
       >
         <Text variant="h3">{formatMessage(title)}</Text>
         {state === ReviewSectionState.complete && (
-          <Box pointerEvents="none">
-            <button type="button" className={styles.container}>
-              <Text variant="eyebrow" as="span">
-                {formatMessage(m.externalDataComplete)}
-              </Text>
-            </button>
+          <Box pointerEvents="none" style={{ whiteSpace: 'nowrap' }}>
+            <Tag variant="mint">{formatMessage(m.externalDataComplete)}</Tag>
           </Box>
         )}
         {state === ReviewSectionState.requiresAction && (

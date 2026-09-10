@@ -55,6 +55,11 @@ template.
 
 ## Feature flags
 
+- `isNewDrivingLicenseEnabled` is the template-level flag (see
+  `DrivingLicenseTemplate.featureFlag`) that makes the whole application
+  available. Until it evaluates to true the template is treated as not ready and
+  cannot be started. The in-application flags below only refine behavior once the
+  template is enabled.
 - `applicationTemplateDrivingLicenseAllowFakeData` (`ALLOW_FAKE`) — enables the
   dev-only fake-data (Gervigögn) screen used to exercise the flow without real
   RLS data in staging.

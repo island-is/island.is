@@ -1,4 +1,4 @@
-import { MessageDescriptor } from '@formatjs/intl'
+import { MessageDescriptor } from 'react-intl'
 
 // Pure, React-free types for the eligibility review steps. Kept separate from
 // the ReviewSection component so the step-mapping logic (extractReasons) can be
