@@ -21,6 +21,11 @@ export const attachmentIcon = style({
   height: 20,
 })
 
+export const certificateAvatar = style({
+  width: 64,
+  height: 64,
+})
+
 export const detailHeader = style({
   minHeight: 32,
   ...themeUtils.responsiveStyle({

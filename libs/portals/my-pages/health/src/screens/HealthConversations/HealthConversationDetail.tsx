@@ -371,10 +371,15 @@ const HealthConversationDetail = () => {
                           certificateId={msg.certificateId}
                           requiresPayment={msg.requiresPayment}
                           paid={msg.paid}
+                          amountIsk={msg.amountIsk}
                           pendingPaymentId={msg.pendingPaymentId}
                           isReturningFromPayment={
                             !!msg.certificateId &&
                             msg.certificateId === certificatePaymentReturnId
+                          }
+                          fileName={msg.attachments[0]?.fileName}
+                          downloadServiceURL={
+                            msg.attachments[0]?.downloadServiceURL
                           }
                           onPaid={handleCertificatePaid}
                         />
@@ -382,7 +387,8 @@ const HealthConversationDetail = () => {
 
                       {/* Attachments */}
                       {msg.attachments.length > 0 &&
-                        !(msg.requiresPayment && !msg.paid) && (
+                        !msg.certificateId &&
+                        !msg.requiresPayment && (
                           <Box
                             display="flex"
                             flexWrap="wrap"
