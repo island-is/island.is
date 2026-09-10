@@ -42,7 +42,7 @@ export const debts = {
     },
     emptyMessage: {
       id: 'pd.application:debts.fetch.emptyMessage',
-      defaultMessage: 'Þú ert ekki með ógreidda reikninga hjá ríkinu.',
+      defaultMessage: 'Þú ert ekki með ógreiddar skuldir frá ríkinu.',
       description: 'Message shown when the customer has no debts to pay',
     },
     refreshedTitle: {
