@@ -230,11 +230,7 @@ export const InteractiveTableFormField: FC<Props> = ({
           <T.Head>
             <T.Row>
               {leadingColumn(
-                <T.HeadData
-                  style={
-                    hasInputColumn ? styles.checkboxColumnStyle : undefined
-                  }
-                >
+                <T.HeadData style={styles.checkboxColumnStyle}>
                   <Checkbox
                     id={`${fieldId}-select-all`}
                     ariaLabel={formatMessage(

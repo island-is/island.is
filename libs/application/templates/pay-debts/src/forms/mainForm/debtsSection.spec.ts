@@ -5,6 +5,7 @@ import {
   FieldTypes,
   InteractiveTableField,
   MultiField,
+  StickyFooterField,
 } from '@island.is/application/types'
 import { debts as messages } from '../../lib/messages'
 import { debtsSection } from './debtsSection'
@@ -53,8 +54,46 @@ describe('debtsSection', () => {
       | undefined
 
     expect(table?.id).toBe('selectedDebts')
-    expect(table?.inputColumn?.id).toBe('debtsToPay')
     expect(children.map((child) => child.id)).toContain('shouldUseMockPayment')
+  })
+
+  it('offers no per-row amount, since a debt can only be paid in full', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const header = table?.header
+    const footer = findByType(FieldTypes.STICKY_FOOTER) as
+      | StickyFooterField
+      | undefined
+
+    if (typeof header === 'function' || !header) {
+      throw new Error('Expected a static header')
+    }
+
+    expect(table?.inputColumn).toBeUndefined()
+    expect(header).toHaveLength(4)
+    expect(footer?.watchFieldIds).toEqual(['selectedDebts'])
+  })
+
+  it('sums the full debt of every ticked row in the sticky footer', () => {
+    const footer = findByType(FieldTypes.STICKY_FOOTER) as
+      | StickyFooterField
+      | undefined
+    const rows = footer?.rows
+
+    if (typeof rows !== 'function') {
+      throw new Error('Expected the footer rows to be derived from the answers')
+    }
+
+    const application = {
+      externalData: fetched([debt, { ...debt, debts: 10000 }]),
+      answers: { selectedDebts: [false, true] },
+    } as unknown as Application
+
+    expect(rows(application)).toEqual([
+      { label: messages.table.totalToPayLabel, value: '10.000 kr.' },
+      { label: messages.table.totalLeftLabel, value: '565.990 kr.' },
+    ])
   })
 
   it('hides the table and its footer until the debts have been fetched', () => {

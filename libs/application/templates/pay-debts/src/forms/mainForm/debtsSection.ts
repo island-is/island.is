@@ -57,11 +57,15 @@ export const debtsSection = buildSection({
             {
               label: messages.table.chargeItemSubjectHeader,
               truncate: true,
-              width: 130,
             },
-            { label: messages.table.finalDueDateHeader, width: 108 },
-            { label: messages.table.amountHeader, width: 130 },
-            { label: messages.table.toPayLabel, width: 140 },
+            {
+              label: messages.table.finalDueDateHeader,
+            },
+            {
+              label: messages.table.amountHeader,
+              width: 110,
+            },
+            // { label: messages.table.toPayLabel, width: 140 },
           ],
           rows: (application) =>
             getDebts(application).map<StaticText[]>((debt) => [
@@ -89,11 +93,11 @@ export const debtsSection = buildSection({
                 ],
               ]),
           },
-          inputColumn: {
-            id: 'debtsToPay',
-            getMaxAmount: (application) =>
-              getDebts(application).map((debt) => debt.debts),
-          },
+          // inputColumn: {
+          //   id: 'debtsToPay',
+          //   getMaxAmount: (application) =>
+          //     getDebts(application).map((debt) => debt.debts),
+          // },
           isSubmitDisabled: ({ selectedRows }) => !selectedRows.some(Boolean),
           footerRow: (application) => [
             messages.table.totalDebtsLabel,
@@ -111,17 +115,32 @@ export const debtsSection = buildSection({
           id: 'debtsSummaryFooter',
           condition: hasDebtsToPay,
           widthReferenceTestId: 'debts-table',
-          watchFieldIds: ['debtsToPay', 'selectedDebts'],
+          // watchFieldIds: ['debtsToPay', 'selectedDebts'],
+          watchFieldIds: ['selectedDebts'],
           labelOffset: 56,
           labelMinWidth: 180,
           rows: (application: Application) => {
-            const totalDebts = getDebts(application).reduce(
+            const debts = getDebts(application)
+            const selected =
+              getValueViaPath<boolean[]>(
+                application.answers,
+                'selectedDebts',
+              ) ?? []
+
+            const totalDebts = debts.reduce(
               (total, debt) => total + debt.debts,
               0,
             )
-            const totalToPay = (
-              getValueViaPath<string[]>(application.answers, 'debtsToPay') ?? []
-            ).reduce((total, amount) => total + (parseInt(amount, 10) || 0), 0)
+            // While partial payments are hidden, a selected row is always paid
+            // in full. Once `inputColumn` comes back, this becomes:
+            // const totalToPay = (
+            //   getValueViaPath<string[]>(application.answers, 'debtsToPay') ?? []
+            // ).reduce((total, amount) => total + (parseInt(amount, 10) || 0), 0)
+            const totalToPay = debts.reduce(
+              (total, debt, index) =>
+                selected[index] ? total + debt.debts : total,
+              0,
+            )
 
             return [
               {
