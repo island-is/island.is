@@ -2,12 +2,11 @@ import { FormValue } from '@island.is/application/types'
 import { sectionDigitalLicense } from './sectionDigitalLicense'
 import { B_FULL, B_FULL_RENEWAL_65, B_TEMP, BE } from '../../lib/constants'
 
-// The digital-licence info screen is reusable: it takes the application types it
-// should appear for and its sub-section condition gates on `applicationFor`, so
-// the screen (and its stepper entry) render only for those types. This pins:
-//   - it shows for the configured types and hides for the rest,
-//   - it defaults to B-full only,
-//   - an unanswered applicationFor never shows it,
+// The digital-licence info screen applies to every driving-licence flow, so by
+// default it has no condition and always renders. Passing a list of
+// `applicationFor` values restricts it to those flows. This pins:
+//   - default: shown for every type (and even when applicationFor is unanswered),
+//   - restricted: shown only for the configured types,
 //   - it carries the info alert and persists nothing (doesNotRequireAnswer).
 
 const evalCondition = (
@@ -15,8 +14,10 @@ const evalCondition = (
   answers: FormValue,
 ): boolean => {
   const { condition } = subSection
+  // No condition means the sub-section always renders.
+  if (condition === undefined) return true
   if (typeof condition !== 'function') {
-    throw new Error('expected a dynamic (function) condition')
+    throw new Error('expected a dynamic (function) condition or none')
   }
   return condition(answers, {}, null)
 }
@@ -30,26 +31,26 @@ const collectFields = (node: unknown): Array<Record<string, unknown>> => {
 }
 
 describe('sectionDigitalLicense', () => {
-  describe('default (B-full only)', () => {
+  describe('default — applies to every flow', () => {
     const section = sectionDigitalLicense()
 
-    it('shows for B-full', () => {
-      expect(evalCondition(section, { applicationFor: B_FULL })).toBe(true)
+    it('has no condition (renders unconditionally)', () => {
+      expect(section.condition).toBeUndefined()
     })
 
-    it.each([B_TEMP, BE, B_FULL_RENEWAL_65])(
-      'is hidden for %s',
+    it.each([B_FULL, B_TEMP, BE, B_FULL_RENEWAL_65])(
+      'shows for %s',
       (applicationFor) => {
-        expect(evalCondition(section, { applicationFor })).toBe(false)
+        expect(evalCondition(section, { applicationFor })).toBe(true)
       },
     )
 
-    it('is hidden when applicationFor is unanswered', () => {
-      expect(evalCondition(section, {})).toBe(false)
+    it('shows even when applicationFor is unanswered', () => {
+      expect(evalCondition(section, {})).toBe(true)
     })
   })
 
-  describe('reusable across types', () => {
+  describe('restricted to specific flows', () => {
     it('shows for every configured type and hides the rest', () => {
       const section = sectionDigitalLicense([B_FULL, B_TEMP])
       expect(evalCondition(section, { applicationFor: B_FULL })).toBe(true)

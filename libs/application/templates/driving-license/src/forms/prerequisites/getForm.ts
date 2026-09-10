@@ -7,7 +7,6 @@ import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
 import { sectionDigitalLicense } from './sectionDigitalLicense'
 import { sectionRequirements } from './sectionRequirements'
-import { B_FULL } from '../../lib/constants'
 
 interface DrivingLicenseFormConfig {
   allowFakeData?: boolean
@@ -44,7 +43,7 @@ export const getForm = ({
           ...(allowPickLicense
             ? [sectionApplicationFor(allowBELicense, allow65Renewal)]
             : []),
-          sectionDigitalLicense([B_FULL]),
+          sectionDigitalLicense(),
           sectionRequirements(
             allow65RenewalRedesign,
             allowBTempRedesign,

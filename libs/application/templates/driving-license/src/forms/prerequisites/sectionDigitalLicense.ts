@@ -6,25 +6,28 @@ import {
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { B_FULL } from '../../lib/constants'
 
 // Informational screen in the prerequisites flow: the licence is now issued
-// digitally first and made available as soon as the application is completed,
+// digitally first (available in the Ísland.is app once processing completes),
 // with the plastic card produced and posted to the applicant's legal domicile
 // afterwards. Purely informational — nothing is persisted.
 //
-// Reusable across application types: pass the `applicationFor` values it should
-// appear for and the sub-section (and its stepper entry) only renders for those.
-// Wired to B-full for now; extend the list once product confirms which other
-// types it applies to.
-export const sectionDigitalLicense = (applicationTypes: string[] = [B_FULL]) =>
+// The notice applies to every driving-licence issuance flow, so by default it is
+// shown unconditionally. Pass a list of `applicationFor` values to restrict it to
+// specific flows instead (the sub-section and its stepper entry then render only
+// for those types).
+export const sectionDigitalLicense = (applicationTypes?: string[]) =>
   buildSubSection({
     id: 'digitalLicense',
     title: m.digitalLicenseSubSectionTitle,
-    condition: (answers: FormValue) =>
-      applicationTypes.includes(
-        getValueViaPath<string>(answers, 'applicationFor') ?? '',
-      ),
+    ...(applicationTypes && applicationTypes.length > 0
+      ? {
+          condition: (answers: FormValue) =>
+            applicationTypes.includes(
+              getValueViaPath<string>(answers, 'applicationFor') ?? '',
+            ),
+        }
+      : {}),
     children: [
       buildMultiField({
         id: 'digitalLicenseInfo',
