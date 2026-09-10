@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useRef, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { RecordObject } from '@island.is/application/types'
 import {
@@ -100,8 +100,18 @@ export const OutlierEditor: FC<Props> = ({
     cloneGroups(initialSavedGroups),
   )
   const [savingIndex, setSavingIndex] = useState<number>()
+  const [removingIndex, setRemovingIndex] = useState<number>()
   const [saveErrorIndex, setSaveErrorIndex] = useState<number>()
   const [removeFailed, setRemoveFailed] = useState(false)
+
+  // Every save and every removal writes the whole plan, so two of them in
+  // flight together race: the server keeps whichever response lands last,
+  // regardless of which plan it carries, and the loser's completion would still
+  // mark its own values as saved. One write at a time, then — every save and
+  // remove button goes inert while one runs, and the ref catches a second click
+  // that lands before that render does.
+  const writeInFlight = useRef(false)
+  const isWriting = savingIndex !== undefined || removingIndex !== undefined
 
   // Membership is edited with setValue (assigning into an existing group, or a
   // pill click freeing one member), which useFieldArray's `fields` does not
@@ -212,29 +222,44 @@ export const OutlierEditor: FC<Props> = ({
   }
 
   const handleRemoveGroup = async (index: number) => {
-    // Read before the removal, and the save error goes with the card it was
-    // reported on: the index it is keyed by belongs to a different group once
-    // the array closes up.
+    if (writeInFlight.current) return
+    // The save error goes with the card it was reported on: the index it is
+    // keyed by belongs to a different group once the array closes up.
     const savedIndex = savedIndexOf(watchedGroups[index], index)
     setSaveErrorIndex(undefined)
     setRemoveFailed(false)
-    remove(index)
+
+    // A group that was never saved needs no write at all and goes straight
+    // away, which is the common case: created, then thought better of.
+    if (savedIndex === -1) {
+      remove(index)
+      return
+    }
 
     // A group the buffer already holds has to come out of it too, or the next
     // visit seeds it straight back in. Written as the saved set minus this
     // group rather than as the live values, so removing one group does not
     // quietly persist the half-finished text in the others — the button is
     // still the only thing that saves.
-    //
-    // A group that was never saved needs no write at all, which is the common
-    // case: created, then thought better of.
-    if (savedIndex === -1) return
-
     const remaining = savedGroups.filter(
       (_group, position) => position !== savedIndex,
     )
-    if (await onSaveGroups(remaining)) setSavedGroups(remaining)
-    else setRemoveFailed(true)
+    writeInFlight.current = true
+    setRemovingIndex(index)
+    const persisted = await onSaveGroups(remaining)
+    writeInFlight.current = false
+    setRemovingIndex(undefined)
+    // Both sets drop the group in the same breath, or not at all: a form that
+    // had closed up over a buffer that had not would leave the positional
+    // savedIndexOf fallback pointing every card below it at the wrong saved
+    // group — and the card the applicant asked to remove is still there to try
+    // again on.
+    if (!persisted) {
+      setRemoveFailed(true)
+      return
+    }
+    setSavedGroups(remaining)
+    remove(index)
   }
 
   const handleRemoveMember = (index: number, ordinal: number) => {
@@ -251,15 +276,18 @@ export const OutlierEditor: FC<Props> = ({
   // as react-hook-form holds them — cloned on the way out, since it keeps
   // writing into them while the request is in flight.
   const handleSave = async (index: number) => {
+    if (writeInFlight.current) return
     const groups = cloneGroups(
       (getValues(fieldName) ?? []) as OutlierGroupAnswer[],
     )
+    writeInFlight.current = true
     setSavingIndex(index)
     setSaveErrorIndex(undefined)
-    // A save writes the whole array from the live values, which no longer hold
-    // the removed group — so it settles whatever a failed removal left behind.
+    // A save writes the whole array from the live values, which is the plan a
+    // failed removal left in place — so it settles that error too.
     setRemoveFailed(false)
     const persisted = await onSaveGroups(groups)
+    writeInFlight.current = false
     setSavingIndex(undefined)
     if (!persisted) {
       // Reported on the card whose button was pressed, so the failure is where
@@ -507,6 +535,8 @@ export const OutlierEditor: FC<Props> = ({
               errors={errors}
               isSaved={isGroupSaved(index)}
               isSaving={savingIndex === index}
+              isRemoving={removingIndex === index}
+              isWriting={isWriting}
               saveFailed={saveErrorIndex === index}
               onRemove={() => void handleRemoveGroup(index)}
               onRemoveMember={(ordinal) => handleRemoveMember(index, ordinal)}
@@ -516,16 +546,23 @@ export const OutlierEditor: FC<Props> = ({
         })}
       </Box>
 
-      {/* Editor-level rather than on a card, because the card whose removal
-          failed to persist is the one that has just gone. */}
-      {removeFailed && (
-        <Box marginTop={2}>
-          <AlertMessage
-            type="error"
-            message={formatMessage(m.removeGroupError)}
-          />
-        </Box>
-      )}
+      {/* Editor-level rather than on a card: the removal carries the whole
+          plan, so the failure is the plan's rather than any one group's.
+
+          The live region is the outer Box, which stays mounted and carries no
+          margin of its own, for the same two reasons as the selection count
+          above — and assertive, because the removal the applicant asked for did
+          not happen. */}
+      <Box aria-live="assertive">
+        {removeFailed && (
+          <Box marginTop={2}>
+            <AlertMessage
+              type="error"
+              message={formatMessage(m.removeGroupError)}
+            />
+          </Box>
+        )}
+      </Box>
       {unassignedOutliers.length > 0 && (
         <Box marginTop={2}>
           <AlertMessage

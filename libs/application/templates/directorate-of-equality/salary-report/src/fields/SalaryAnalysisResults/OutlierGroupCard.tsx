@@ -43,6 +43,11 @@ type Props = {
   // carries every group, so a save from any card leaves them all saved.
   isSaved: boolean
   isSaving: boolean
+  // A removal writes the plan too, so it holds the card until it has landed.
+  isRemoving: boolean
+  // Whether a plan write is in flight anywhere in the editor — one save carries
+  // every group, so no card may start a second one alongside it.
+  isWriting: boolean
   saveFailed: boolean
   onRemove: () => void
   onRemoveMember: (ordinal: number) => void
@@ -61,6 +66,8 @@ export const OutlierGroupCard: FC<Props> = ({
   errors,
   isSaved,
   isSaving,
+  isRemoving,
+  isWriting,
   saveFailed,
   onRemove,
   onRemoveMember,
@@ -120,7 +127,13 @@ export const OutlierGroupCard: FC<Props> = ({
         startExpanded
       >
         <Box marginBottom={2} display="flex" justifyContent="flexEnd">
-          <Button variant="text" size="small" onClick={onRemove}>
+          <Button
+            variant="text"
+            size="small"
+            disabled={isWriting}
+            loading={isRemoving}
+            onClick={onRemove}
+          >
             {formatMessage(m.removeGroupButton)}
           </Button>
         </Box>
@@ -281,21 +294,28 @@ export const OutlierGroupCard: FC<Props> = ({
             size="small"
             variant="ghost"
             icon={isSaved ? 'checkmark' : undefined}
-            disabled={isSaved}
+            disabled={isSaved || isWriting}
             loading={isSaving}
             onClick={onSave}
           >
             {formatMessage(isSaved ? m.groupSavedButton : m.saveGroupButton)}
           </Button>
         </Box>
-        {saveFailed && (
-          <Box marginTop={2}>
-            <AlertMessage
-              type="error"
-              message={formatMessage(m.saveGroupError)}
-            />
-          </Box>
-        )}
+        {/* The live region is the wrapper here too, for the same reason: the
+            save fails a round trip after the button was pressed, and a message
+            that arrives with its own region announces nothing. Assertive,
+            because the save the applicant asked for did not happen. No margin
+            on the mounted wrapper, so an unfailed card spends none. */}
+        <Box aria-live="assertive">
+          {saveFailed && (
+            <Box marginTop={2}>
+              <AlertMessage
+                type="error"
+                message={formatMessage(m.saveGroupError)}
+              />
+            </Box>
+          )}
+        </Box>
       </AccordionCard>
     </Box>
   )
