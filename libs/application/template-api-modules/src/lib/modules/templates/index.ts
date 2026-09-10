@@ -1,3 +1,5 @@
+import { U2CertificateModule } from './vmst/u2-certificate/u2-certificate.module'
+import { U2CertificateService } from './vmst/u2-certificate/u2-certificate.service'
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
 import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
 import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'
@@ -194,6 +196,8 @@ import { ExemptionForTransportationModule } from './transport-authority/exemptio
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 import { CarRentalDayrateReturnsModule } from './car-rental-dayrate-returns/car-rental-dayrate-returns.module'
 import { CarRentalDayrateReturnsService } from './car-rental-dayrate-returns/car-rental-dayrate-returns.service'
+import { DrivingLicenseAdditionalModule } from './district-commissioner/driving-license-additional/driving-license-additional.module'
+import { DrivingLicenseAdditionalService } from './district-commissioner/driving-license-additional/driving-license-additional.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -293,7 +297,9 @@ export const modules = [
   DeRegisterUnemploymentBenefitsModule,
   SubmitDocumentsModule,
   ConfirmTravelModule,
+  DrivingLicenseAdditionalModule,
   DirectorateOfEqualityModule,
+  U2CertificateModule,
 ]
 
 export const services = [
@@ -393,5 +399,7 @@ export const services = [
   DeRegisterUnemploymentBenefitsService,
   SubmitDocumentsService,
   ConfirmTravelService,
+  DrivingLicenseAdditionalService,
   DirectorateOfEqualityService,
+  U2CertificateService,
 ]

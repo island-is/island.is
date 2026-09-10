@@ -21,7 +21,7 @@ import {
 } from './rows'
 import { SectionType, RowProps, RowItemType } from './types'
 import { getValueViaPath } from '@island.is/application/core'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { calculateTotalAssets } from '../../../lib/utils/calculateTotalAssets'
 import { PREPAID_INHERITANCE } from '../../../lib/constants'
 import { getPrePaidOverviewSectionsToDisplay } from '../../../lib/utils/helpers'

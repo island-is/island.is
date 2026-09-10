@@ -17,9 +17,11 @@ export const getFakeData = (
 export const buildFakeCurrentLicense = (fakeData: DrivingLicenseFakeData) => {
   const currentLicense = (() => {
     switch (fakeData.currentLicense) {
+      // Real RLS models a temporary license as category B (nr: 'B', validToCode 8).
       case 'temp':
         return 'B'
       case 'B':
+      case 'BE':
       case 'C':
       case 'C1':
       case 'D':
@@ -30,17 +32,46 @@ export const buildFakeCurrentLicense = (fakeData: DrivingLicenseFakeData) => {
     }
   })()
 
+  // RLS marks a temporary license with validToCode 8 and a full one with 9.
+  const TEMP_VALIDTO_CODE = 8
+  const FULL_VALIDTO_CODE = 9
+
+  const buildCategory = (code: string | null, validToCode: number | null) => ({
+    id: Math.floor(Math.random() * 100000000),
+    nr: code,
+    name: code || '', // for useLegacyVersion
+    issued: getTodayDateWithMonthDiff(-12),
+    expires: getTodayDateWithMonthDiff(14 * 12), // license is valid for 15 years total
+    comments: '',
+    validToCode,
+  })
+
+  // Mirror the real RLS category shape so consuming screens can read
+  // `currentLicense.data` directly instead of reconstructing categories: a
+  // temporary license is a B with validToCode 8, and a BE holder also holds B.
+  const baseCategories =
+    fakeData.currentLicense === 'temp'
+      ? [buildCategory('B', TEMP_VALIDTO_CODE)]
+      : fakeData.currentLicense === 'BE'
+      ? [
+          buildCategory('B', FULL_VALIDTO_CODE),
+          buildCategory('BE', FULL_VALIDTO_CODE),
+        ]
+      : [
+          buildCategory(
+            currentLicense,
+            currentLicense ? FULL_VALIDTO_CODE : null,
+          ),
+        ]
+
   return {
     currentLicense,
     categories: [
-      {
-        id: Math.floor(Math.random() * 100000000),
-        nr: currentLicense,
-        name: currentLicense || '', // for useLegacyVersion
-        issued: getTodayDateWithMonthDiff(-12),
-        expires: getTodayDateWithMonthDiff(14 * 12), // license is valid for 15 years total
-        comments: '',
-      },
+      ...baseCategories,
+      // Advanced categories the applicant already holds (e.g. 'C1', 'CE').
+      ...(fakeData.advancedCategories ?? []).map((code) =>
+        buildCategory(code, FULL_VALIDTO_CODE),
+      ),
     ],
     remarks:
       fakeData.remarks === YES

@@ -50,6 +50,8 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'indictmentIntroduction',
   'requestDriversLicenseSuspension',
   'indictmentDeniedExplanation',
+  'indictmentApproverId',
+  'indictmentReviewReturnedExplanation',
   'civilDemands',
   'hasCivilClaims',
   'penalties',
@@ -168,9 +170,12 @@ export const prosecutorTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
+    CaseTransition.ACCEPT_REVIEW,
+    CaseTransition.ASK_FOR_REVIEW,
     CaseTransition.OPEN,
     CaseTransition.ASK_FOR_CONFIRMATION,
     CaseTransition.DENY_INDICTMENT,
+    CaseTransition.DENY_REVIEW,
     CaseTransition.SUBMIT,
     CaseTransition.ASK_FOR_CANCELLATION,
     CaseTransition.DELETE,
@@ -180,7 +185,6 @@ export const prosecutorTransitionRule: RolesRule = {
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
-    // Deny if something is missing - should never happen
     if (!user || !dto || !theCase) {
       return false
     }
@@ -191,6 +195,17 @@ export const prosecutorTransitionRule: RolesRule = {
       dto.transition === CaseTransition.DENY_INDICTMENT
     ) {
       return user.canConfirmIndictment
+    }
+
+    if (dto.transition === CaseTransition.ACCEPT_REVIEW) {
+      return user.id === theCase.indictmentApproverId
+    }
+
+    if (dto.transition === CaseTransition.DENY_REVIEW) {
+      return (
+        user.id === theCase.indictmentApproverId ||
+        user.id === theCase.prosecutorId
+      )
     }
 
     return true
@@ -204,6 +219,7 @@ export const prosecutorRepresentativeTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.ASK_FOR_CONFIRMATION,
+    CaseTransition.ASK_FOR_REVIEW,
     CaseTransition.ASK_FOR_CANCELLATION,
     CaseTransition.DELETE,
   ],

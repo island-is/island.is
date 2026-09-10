@@ -1,4 +1,10 @@
-import { Box, RadioButton, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputError,
+  RadioButton,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import React from 'react'
 import HtmlParser from 'react-html-parser'
 
@@ -69,11 +75,7 @@ export const Radio: React.FC<RadioProps> = ({
       ) : (
         <Stack space={2}>{radioButtons}</Stack>
       )}
-      {error && (
-        <Text color="red400" variant="small" marginTop={1}>
-          {error}
-        </Text>
-      )}
+      {error && <InputError errorMessage={error} />}
     </Box>
   )
 }

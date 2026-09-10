@@ -18,9 +18,8 @@ import {
   hasFamilySelected,
 } from '../../utils'
 import format from 'date-fns/format'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { applicantInformationMessages } from '@island.is/application/ui-forms'
-import { removeCountryCode } from '@island.is/application/ui-components'
 import * as m from '../../lib/messages'
 
 export const overviewSection = buildSection({
