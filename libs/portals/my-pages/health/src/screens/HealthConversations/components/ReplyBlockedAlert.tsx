@@ -1,11 +1,12 @@
 import { MessageDescriptor } from 'react-intl'
-import { AlertMessage, AlertMessageType, Box } from '@island.is/island-ui/core'
+import { AlertMessage, AlertMessageType } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { HealthDirectorateHealthConversationReplyBlockedReason } from '@island.is/api/schema'
 import { messages } from '../../../lib/messages'
 
 interface Props {
   reason?: HealthDirectorateHealthConversationReplyBlockedReason | null
+  replyWindowDays?: number | null
 }
 
 interface ReasonAlert {
@@ -58,19 +59,27 @@ const fallbackAlert: ReasonAlert = {
   text: messages.healthConversationReplyBlockedGenericText,
 }
 
-const ReplyBlockedAlert = ({ reason }: Props) => {
+const ReplyBlockedAlert = ({ reason, replyWindowDays }: Props) => {
   const { formatMessage } = useLocale()
 
   const entry = (reason && reasonMessageMap[reason]) || fallbackAlert
 
+  const message =
+    reason ===
+      HealthDirectorateHealthConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED &&
+    replyWindowDays != null
+      ? formatMessage(
+          messages.healthConversationReplyBlockedWindowExpiredDaysText,
+          { days: replyWindowDays },
+        )
+      : formatMessage(entry.text)
+
   return (
-    <Box marginTop={4}>
-      <AlertMessage
-        type={entry.type}
-        title={entry.title ? formatMessage(entry.title) : undefined}
-        message={formatMessage(entry.text)}
-      />
-    </Box>
+    <AlertMessage
+      type={entry.type}
+      title={entry.title ? formatMessage(entry.title) : undefined}
+      message={message}
+    />
   )
 }
 

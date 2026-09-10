@@ -13,13 +13,20 @@ import {
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import { ApiActions, draftActionId } from '../../utils/constants'
+import {
+  ApiActions,
+  draftActionId,
+  ScreenIds,
+  States,
+} from '../../utils/constants'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
 import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
 import { getProviderErrorMessage } from '../../utils/providerError'
-import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import type { ReportEmployeeDto } from '../../utils/types'
-import { useDraftQuery } from '../../utils/useDraftQuery'
+import {
+  getProviderSuccessData,
+  type ProviderExternalData,
+} from '../../utils/providerResult'
 import { buildPayComponentsBreakdown } from '../../utils/payComponents'
 import {
   getSalaryAnalysisResult,
@@ -32,39 +39,65 @@ import { StatisticCard } from './StatisticsCard'
 import { SalaryDistributionChart } from './SalaryDistributionChart'
 
 type Props = FieldBaseProps
-type DraftEmployeesExternalData = {
-  status?: 'success' | 'failure'
-  data?: { employees: ReportEmployeeDto[] }
-}
 
 export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   application,
-  field,
   answerQuestions,
   setBeforeSubmitCallback,
   goToScreen,
 }) => {
   const { formatMessage, lang: locale } = useLocale()
-  const hidePostponeCheckbox =
-    'props' in field &&
-    typeof field.props?.['hidePostponeCheckbox'] === 'boolean'
-      ? field.props['hidePostponeCheckbox']
-      : false
-  const isDraftPhase = !hidePostponeCheckbox
-  const { content: employeesContent, refetch: refetchEmployees } =
-    useDraftQuery<{
-      employees: ReportEmployeeDto[]
-    }>(
-      application,
-      draftActionId(ApiActions.listDraftEmployees),
-      'draftEmployees',
-    )
-  const [draftEmployees, setDraftEmployees] = useState<
+  // Read off the state, not off hidePostponeCheckbox: this decides whether the
+  // analysis is ever recomputed, which the state governs — DRAFT owns the live
+  // draft, the review states own the submitted snapshot. This screen renders no
+  // checkbox of its own, so it no longer reads that prop at all.
+  //
+  // The postpone checkbox itself lives in OutlierGroupPanel, which still takes
+  // hidePostponeCheckbox from SalaryImprovementPlan.
+  const isDraftPhase = application.state === States.DRAFT
+  /**
+   * The employees list that arrived WITH the analysis now in `result`, and the
+   * only source the pay-components table derives from.
+   *
+   * The list and the analysis are separate providers in one mutation, and
+   * updateApplicationExternalData reports their statuses independently (its
+   * endpoint never applies throwOnError). So the only way to know a component
+   * average and a gap figure describe the same draft is to keep the list that
+   * came back beside the analysis — a tracked "are they still in step?" flag
+   * cannot hold that invariant, because any other writer of the list is free to
+   * replace it without telling the flag.
+   *
+   * Which is why nothing else here fetches employees: handleAnalyze asks for
+   * both legs on every arrival, so a standalone refresh has no reason to exist
+   * and no way to pair a newer list with an older analysis.
+   *
+   * The review states are the one exception, and they seed from the stored
+   * externalData instead. They are not granted the employee read at all, so a
+   * fresh pair is unobtainable there — and unnecessary: neither POSTPONED nor
+   * DRAFT_RETRY exposes a screen that can edit the employee list (DRAFT_RETRY's
+   * editable sections are still empty placeholders), so the stored list is the
+   * one the report was submitted with. Nothing to fall out of step with.
+   */
+  const [analyzedEmployees, setAnalyzedEmployees] = useState<
     ReportEmployeeDto[] | undefined
-  >(() => employeesContent?.employees)
+  >(() =>
+    isDraftPhase
+      ? undefined
+      : getProviderSuccessData(
+          application.externalData.draftEmployees as
+            | ProviderExternalData<{ employees: ReportEmployeeDto[] }>
+            | undefined,
+        )?.employees,
+  )
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [hasRequestedAnalysis, setHasRequestedAnalysis] = useState(() =>
-    Boolean(getSalaryAnalysisResult(application.externalData)),
+  // The review states never ask on their own (see the auto-analyse effect
+  // below), so nothing is pending there — start as "asked" so a missing stored
+  // analysis lands on its own banner with the manual retry instead of an
+  // endless spinner.
+  const [hasRequestedAnalysis, setHasRequestedAnalysis] = useState(
+    () =>
+      !isDraftPhase ||
+      Boolean(getSalaryAnalysisResult(application.externalData)),
   )
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
@@ -82,21 +115,10 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   // hands down a new identity, which re-fires the effect — a render loop. The
   // ref keeps the latest callback while the effect stays keyed to the result.
   const answerQuestionsRef = useRef(answerQuestions)
-  const refreshedEmployeesForRestoredResultRef = useRef(false)
 
   useEffect(() => {
     answerQuestionsRef.current = answerQuestions
   }, [answerQuestions])
-
-  useEffect(() => {
-    if (employeesContent) setDraftEmployees(employeesContent.employees)
-  }, [employeesContent])
-
-  useEffect(() => {
-    if (!result || refreshedEmployeesForRestoredResultRef.current) return
-    refreshedEmployeesForRestoredResultRef.current = true
-    void refetchEmployees({ silent: true })
-  }, [refetchEmployees, result])
 
   /**
    * The navigation flags have to reach the FORM, not just the shell's answer
@@ -117,10 +139,22 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       const answers = navigationAnswersForAnalysisResult(analysis, {
         resetReviewed,
       })
-      const { hasMinimumSetOutliers, outlierPlanReviewed } =
-        answers.salaryAnalysis
+      const {
+        hasMinimumSetOutliers,
+        benchmarkVerdict,
+        adjustedGapPercent,
+        adjustedGapDirection,
+        outlierPlanReviewed,
+      } = answers.salaryAnalysis
 
       setValue('salaryAnalysis.hasMinimumSetOutliers', hasMinimumSetOutliers)
+      setValue('salaryAnalysis.benchmarkVerdict', benchmarkVerdict)
+      // Absent means the gap was not computable — leave any earlier figure be
+      // rather than writing undefined over it.
+      if (typeof adjustedGapPercent === 'number') {
+        setValue('salaryAnalysis.adjustedGapPercent', adjustedGapPercent)
+        setValue('salaryAnalysis.adjustedGapDirection', adjustedGapDirection)
+      }
       // Absent means "leave it alone" — a plan already signed off must not be
       // reopened just because this screen re-mounted.
       if (typeof outlierPlanReviewed === 'boolean') {
@@ -134,7 +168,6 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
 
   const handleAnalyze = useCallback(async () => {
     setHasRequestedAnalysis(true)
-    refreshedEmployeesForRestoredResultRef.current = true
     setIsAnalyzing(true)
     setHasError(false)
     setErrorMessage(undefined)
@@ -148,10 +181,19 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
                 actionId: draftActionId(ApiActions.analyzeSalaryReport),
                 order: 0,
               },
-              {
-                actionId: draftActionId(ApiActions.listDraftEmployees),
-                order: 1,
-              },
+              // DRAFT is the only state whose role grants the employee read,
+              // and the controller rejects the entire mutation on the first
+              // ungranted actionId — so asking for it in the review states
+              // takes the analysis down with it, leaving the screen on its
+              // error banner with submission blocked.
+              ...(isDraftPhase
+                ? [
+                    {
+                      actionId: draftActionId(ApiActions.listDraftEmployees),
+                      order: 1,
+                    },
+                  ]
+                : []),
             ],
           },
           locale,
@@ -162,21 +204,30 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       const salaryAnalysisResult = externalData.salaryAnalysisResult as
         | AnalysisExternalData
         | undefined
-      const draftEmployeesResult = externalData.draftEmployees as
-        | DraftEmployeesExternalData
-        | undefined
-      if (
-        draftEmployeesResult?.status === 'success' &&
-        draftEmployeesResult.data
-      ) {
-        setDraftEmployees(draftEmployeesResult.data.employees)
-      }
-      if (
-        salaryAnalysisResult?.status === 'success' &&
-        salaryAnalysisResult.data
-      ) {
-        applyNavigationAnswers(salaryAnalysisResult.data, true)
-        setResult(salaryAnalysisResult.data)
+      const employees = getProviderSuccessData(
+        externalData.draftEmployees as
+          | ProviderExternalData<{ employees: ReportEmployeeDto[] }>
+          | undefined,
+      )
+      const analysis = getProviderSuccessData(salaryAnalysisResult)
+
+      // Both legs, or the table stands down: a new analysis with no list of its
+      // own clears the stored one, since that list belongs to the analysis being
+      // replaced. An analysis that did not land leaves the existing pair alone —
+      // it still describes what is on screen.
+      //
+      // A failed employees leg is deliberately not surfaced as an error: the
+      // analysis is the artifact this screen gates submission on and it stands
+      // on its own, so a failed side-read must not discard it or block the
+      // applicant. Only the derived table stands down.
+      // Draft phase only: the review states never asked for the list, so an
+      // absent one there says nothing about the pair and must not clear the
+      // seed above.
+      if (analysis && isDraftPhase) setAnalyzedEmployees(employees?.employees)
+
+      if (analysis) {
+        applyNavigationAnswers(analysis, true)
+        setResult(analysis)
       } else {
         setErrorMessage(getProviderErrorMessage(salaryAnalysisResult?.reason))
         setHasError(true)
@@ -190,18 +241,29 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   }, [
     application.id,
     applyNavigationAnswers,
+    isDraftPhase,
     locale,
     updateApplicationExternalData,
   ])
 
-  // Run automatically on every arrival at this screen — the applicant
-  // shouldn't have to press a button to see results, and the draft can have
-  // changed since the last visit (re-imported workbook, edited criteria,
-  // edited employees) with nothing here to know that and invalidate a cached
-  // `result`, so always recompute rather than trusting the last analysis.
+  // Draft phase only. There the applicant shouldn't have to press a button to
+  // see results, and the draft can have changed since the last visit
+  // (re-imported workbook, edited criteria, edited employees) with nothing here
+  // to know that and invalidate a cached `result`, so always recompute rather
+  // than trusting the last analysis.
+  //
+  // The review states are the opposite case: the stored analysis IS the one the
+  // report was submitted with, and no screen they expose can change the data it
+  // was computed from. Recomputing on arrival would re-run the analysis every
+  // time the applicant stepped back onto this screen to read the outliers their
+  // úrbótaáætlun explains — and would replace the snapshot the plan was written
+  // against. So they seed from the stored externalData and leave it alone; the
+  // recalculate button below stays as the manual escape hatch for the case
+  // where no snapshot is stored at all.
   useEffect(() => {
+    if (!isDraftPhase) return
     handleAnalyze()
-  }, [handleAnalyze])
+  }, [handleAnalyze, isDraftPhase])
 
   // Re-assert the flags whenever a result appears, so the conditional
   // úrbótaáætlun subsection and the overview gate resolve on a restored draft
@@ -210,12 +272,6 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     if (!result) return
     applyNavigationAnswers(result, false)
   }, [applyNavigationAnswers, result])
-
-  const identifierForOrdinal = useMemo(
-    () => (ordinal: number) =>
-      formatEmployeeIdentifier(application.id, ordinal),
-    [application.id],
-  )
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
@@ -255,8 +311,9 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const outlierCount = result?.outliers?.length ?? 0
   const gapState = deriveWageGapState(decomposition, outlierCount)
   const payComponents = useMemo(
-    () => (draftEmployees ? buildPayComponentsBreakdown(draftEmployees) : null),
-    [draftEmployees],
+    () =>
+      analyzedEmployees ? buildPayComponentsBreakdown(analyzedEmployees) : null,
+    [analyzedEmployees],
   )
   const r = messages.salaryAnalysis.results
 
@@ -338,7 +395,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             size="small"
             preTextIcon="arrowBack"
             disabled={isAnalyzing}
-            onClick={() => goToScreen?.('criteriaMultiField')}
+            onClick={() => goToScreen?.(ScreenIds.criteria)}
           >
             {formatMessage(messages.salaryAnalysis.results.reviewDataButton)}
           </Button>
@@ -360,17 +417,21 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
               formatMessage(messages.salaryAnalysis.results.analyzeError)
             }
           />
-          <Box marginTop={2}>
-            <Button
-              variant="ghost"
-              size="small"
-              icon="reload"
-              onClick={handleAnalyze}
-              disabled={isAnalyzing}
-            >
-              {formatMessage(messages.salaryAnalysis.results.recalculateButton)}
-            </Button>
-          </Box>
+          {isDraftPhase && (
+            <Box marginTop={2}>
+              <Button
+                variant="ghost"
+                size="small"
+                icon="reload"
+                onClick={handleAnalyze}
+                disabled={isAnalyzing}
+              >
+                {formatMessage(
+                  messages.salaryAnalysis.results.recalculateButton,
+                )}
+              </Button>
+            </Box>
+          )}
         </Box>
       )}
 
@@ -381,16 +442,18 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             title={formatMessage(r.unknownTitle)}
             message={formatMessage(r.noAnalysisMessage)}
           />
-          <Box marginTop={2}>
-            <Button
-              variant="ghost"
-              size="small"
-              icon="reload"
-              onClick={handleAnalyze}
-            >
-              {formatMessage(r.recalculateButton)}
-            </Button>
-          </Box>
+          {isDraftPhase && (
+            <Box marginTop={2}>
+              <Button
+                variant="ghost"
+                size="small"
+                icon="reload"
+                onClick={handleAnalyze}
+              >
+                {formatMessage(r.recalculateButton)}
+              </Button>
+            </Box>
+          )}
         </Box>
       )}
 
@@ -535,15 +598,11 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         data={result?.regularHourlyWageByScoreAll}
         decomposition={decomposition}
         payDispersion={result?.payDispersion}
-        identifierForOrdinal={identifierForOrdinal}
       />
 
-      <PayComponentsTable data={result ? payComponents : null} />
+      <PayComponentsTable data={payComponents} />
 
-      <PayDispersionTable
-        payDispersion={result?.payDispersion}
-        identifierForOrdinal={identifierForOrdinal}
-      />
+      <PayDispersionTable payDispersion={result?.payDispersion} />
     </Box>
   )
 

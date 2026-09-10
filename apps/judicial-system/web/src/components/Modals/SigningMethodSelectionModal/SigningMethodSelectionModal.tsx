@@ -2,7 +2,6 @@ import type { FC } from 'react'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
 import { Modal } from '@island.is/judicial-system-web/src/components'
 import type {
@@ -10,6 +9,7 @@ import type {
   RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useRequestCourtRecordSignatureMutation } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/requestCourtRecordSignature.generated'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useRequestRulingSignatureMutation } from './requestRulingSignature.generated'
 

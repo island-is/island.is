@@ -14,7 +14,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  InlineLink,
   IntroWrapper,
   m,
   useIsPhoneWidth,
@@ -23,7 +22,6 @@ import ConversationAvailabilityAlert from './components/ConversationAvailability
 import ConversationBackButton from './components/ConversationBackButton'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMobileBackHeader from './components/ConversationMobileBackHeader'
-import ConversationTermsModal from './components/ConversationTermsModal'
 import MobileActionFooter from './components/MobileActionFooter'
 import CertificateRequestForm, {
   CertificateFormState,
@@ -31,7 +29,7 @@ import CertificateRequestForm, {
 } from './components/CertificateRequestForm'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
@@ -50,8 +48,16 @@ interface CertificateAlert {
   message?: string
 }
 
-const getRecipientKey = (recipient: { nodeId: string; groupId: number }) =>
-  `${recipient.nodeId}-${recipient.groupId}`
+const getRecipientKey = (recipient: {
+  nodeId: string
+  groupId: number
+  treatmentId?: string | null
+}) =>
+  `${recipient.nodeId}-${recipient.groupId}${
+    recipient.treatmentId ? `-${recipient.treatmentId}` : ''
+  }`
+
+const MAX_MESSAGE_LENGTH = 300
 
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
@@ -63,17 +69,20 @@ const NewHealthConversation = () => {
     string | null
   >(null)
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
+  const [searchParams] = useSearchParams()
   const [messageText, setMessageText] = useState('')
   const [certificateForm, setCertificateForm] = useState<CertificateFormState>(
     {},
   )
   const [termsAccepted, setTermsAccepted] = useState(false)
-  const [termsModalOpen, setTermsModalOpen] = useState(false)
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
+      fetchPolicy: 'cache-and-network',
       variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
     })
+
+  const initialLoading = loading && !data
 
   const [createMessage, { loading: sending }] =
     useCreateHealthConversationMutation({
@@ -95,8 +104,23 @@ const NewHealthConversation = () => {
       value: getRecipientKey(r),
     })) ?? []
 
+  const preselectedTreatment = searchParams.get('treatment')
+  const treatmentMatch = preselectedTreatment
+    ? recipients?.find((r) => r.treatmentId === preselectedTreatment)
+    : undefined
+  const preselectedNode = searchParams.get('node')
+  const nodeMatches = preselectedNode
+    ? recipients?.filter((r) => r.nodeId === preselectedNode)
+    : undefined
+  const preselectMatchKey = treatmentMatch
+    ? getRecipientKey(treatmentMatch)
+    : nodeMatches?.length === 1
+    ? getRecipientKey(nodeMatches[0])
+    : null
+
   const effectiveRecipientKey =
     selectedRecipientKey ??
+    preselectMatchKey ??
     (recipients?.length === 1 ? getRecipientKey(recipients[0]) : null)
 
   const recipient = recipients?.find(
@@ -233,6 +257,7 @@ const NewHealthConversation = () => {
             input: {
               nodeId: recipient.nodeId,
               groupId: recipient.groupId,
+              treatmentId: recipient.treatmentId,
               ...certificateInput,
             },
           },
@@ -252,6 +277,7 @@ const NewHealthConversation = () => {
           input: {
             nodeId: recipient.nodeId,
             groupId: recipient.groupId,
+            treatmentId: recipient.treatmentId,
             patientInitiatedTypeCode: selectedTypeCode,
             title: selectedType.title,
             messageTextContent: messageText.trim(),
@@ -276,19 +302,19 @@ const NewHealthConversation = () => {
         intro={introText}
         desktopContentSpan="10/12"
       >
-        {loading && <CardLoader />}
+        {initialLoading && <CardLoader />}
         {error && <Problem error={error} noBorder={false} />}
-        {!loading && !error && !hasRecipients && (
+        {!initialLoading && !error && !hasRecipients && (
           <Problem
             type="no_data"
             noBorder={false}
             title={formatMessage(messages.healthConversationsNoRecipient)}
           />
         )}
-        {!loading && !error && recipient && (
+        {!initialLoading && !error && recipient && (
           <ConversationAvailabilityAlert recipient={recipient} />
         )}
-        {!loading && !error && hasRecipients && (
+        {!initialLoading && !error && hasRecipients && (
           <Box className={styles.messageCard} background="white">
             <Hidden below="sm">
               <Box
@@ -395,32 +421,32 @@ const NewHealthConversation = () => {
                     textarea
                     rows={8}
                     name="message-body"
-                    label={formatMessage(m.messages)}
+                    label={`${formatMessage(m.messages)} (${
+                      messageText.length
+                    }/${MAX_MESSAGE_LENGTH})`}
                     placeholder={formatMessage(
                       messages.healthConversationsNewBodyPlaceholder,
                     )}
                     backgroundColor="blue"
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
+                    maxLength={MAX_MESSAGE_LENGTH}
                     disabled={isFormLocked}
                   />
                 </Box>
               )}
 
-              <Box marginTop={4} marginBottom={4}>
+              <Box
+                marginTop={4}
+                marginBottom={4}
+                className={styles.termsCheckbox}
+              >
                 <Checkbox
                   id="terms-accept"
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
                   label={formatMessage(
-                    messages.healthConversationsNewTermsLabel,
-                    {
-                      link: (str: React.ReactNode) => (
-                        <InlineLink onClick={() => setTermsModalOpen(true)}>
-                          {str}
-                        </InlineLink>
-                      ),
-                    },
+                    messages.healthConversationsNewTermsInline,
                   )}
                   disabled={isFormLocked}
                 />
@@ -440,10 +466,6 @@ const NewHealthConversation = () => {
             </Box>
           </Box>
         )}
-        <ConversationTermsModal
-          isOpen={termsModalOpen}
-          onClose={() => setTermsModalOpen(false)}
-        />
       </IntroWrapper>
     </Box>
   )

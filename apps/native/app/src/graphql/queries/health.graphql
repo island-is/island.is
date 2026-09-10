@@ -287,15 +287,24 @@ query getAppointmentDetail($id: String!) {
     duration
     modality
     practitioners
+    assignees {
+      type
+      name
+    }
     links {
       type
       url
+      activatesAt
+      expiresAt
     }
     location {
       name
       organization
-      directions
       address
+      department
+      wing
+      floor
+      room
       city
       postalCode
       country
@@ -346,6 +355,7 @@ query GetHealthConversation($id: ID!) {
     isRead
     patientCanReply
     replyBlockedReason
+    patientReplyWindowDays
     organization {
       name
       logoUrl
@@ -358,6 +368,11 @@ query GetHealthConversation($id: ID!) {
         ...HealthConversationMessageContent
       }
       senderGroupName
+      certificateId
+      requiresPayment
+      paid
+      amountIsk
+      pendingPaymentId
       attachments {
         id
         fileName
@@ -372,6 +387,7 @@ query GetHealthConversationRecipients($locale: LocaleEnum) {
   healthDirectorateHealthConversationRecipients(locale: $locale) {
     nodeId
     groupId
+    treatmentId
     name
     allowsMessaging
     isCurrentlyWithinWindow

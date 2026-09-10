@@ -1807,6 +1807,19 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenant-contact-email',
     defaultMessage: 'Contact email',
   },
+  tenantMunicipalityCode: {
+    id: 'ap.ids-admin:tenant-municipality-code',
+    defaultMessage: 'Municipality number',
+  },
+  tenantMunicipalityCodeTooltip: {
+    id: 'ap.ids-admin:tenant-municipality-code-tooltip',
+    defaultMessage:
+      'Only for municipality domains: the 4-digit municipality number (sveitarfélagsnúmer). Used to match users to their municipality.',
+  },
+  errorMunicipalityCode: {
+    id: 'ap.ids-admin:error-municipality-code',
+    defaultMessage: 'Municipality number must be 4 digits',
+  },
   errorTenantName: {
     id: 'ap.ids-admin:error-tenant-name',
     defaultMessage:

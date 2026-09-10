@@ -154,18 +154,110 @@ export const MARKER_NONE_CLASS = 'marker-none'
 
 const MARKER_NONE_REGEX = /list-style-type\s*:\s*none/i
 const BACKGROUND_REGEX = /background(?:-color)?\s*:\s*([^;]+)/i
-const LEFT_OFFSET_REGEX = /(?:margin|padding)-left\s*:\s*([\d.]+)(pt|px)/i
+const LEFT_OFFSET_REGEX = /(?:margin|padding)-left\s*:\s*([\d.]+)(pt|px|in|cm)/i
 // Word's AutoFormat turns a Tab at the start of a paragraph into a first-line
 // indent, which reaches the clipboard as text-indent (in pt) — indenting a
 // multi-paragraph selection uses margin-left instead. It can be negative
 // (hanging indents), so the sign is captured and the offsets are summed.
-const TEXT_INDENT_REGEX = /text-indent\s*:\s*(-?[\d.]+)(pt|px)/i
+const TEXT_INDENT_REGEX = /text-indent\s*:\s*(-?[\d.]+)(pt|px|in|cm)/i
 const BOLD_REGEX = /font-weight\s*:\s*(?:bold|bolder|[6-9]00)/i
 const ITALIC_REGEX = /font-style\s*:\s*(?:italic|oblique)/i
 
 const offsetToPx = (offset: RegExpMatchArray): number => {
   const numeric = parseFloat(offset[1])
-  return offset[2].toLowerCase() === 'pt' ? numeric * (96 / 72) : numeric
+  switch (offset[2].toLowerCase()) {
+    case 'pt':
+      return numeric * (96 / 72)
+    case 'in':
+      return numeric * 96
+    case 'cm':
+      return numeric * (96 / 2.54)
+    default:
+      return numeric
+  }
+}
+
+const indentLevelFromElement = (el: Element): number => {
+  let level = 0
+  for (const className of Array.from(el.classList)) {
+    const parsed = levelFromIndentClass(className)
+    if (parsed !== null) {
+      level = Math.max(level, parsed)
+    }
+  }
+  return level
+}
+
+const setIndentLevelOnElement = (el: Element, level: number) => {
+  for (const className of Array.from(el.classList)) {
+    if (levelFromIndentClass(className) !== null) {
+      el.classList.remove(className)
+    }
+  }
+  if (level > 0) {
+    el.classList.add(indentClassFromLevel(level))
+  } else if (el.classList.length === 0) {
+    el.removeAttribute('class')
+  }
+}
+
+const addIndentLevelOnElement = (el: Element, delta: number) => {
+  if (delta <= 0) return
+  setIndentLevelOnElement(
+    el,
+    Math.min(MAX_INDENT_LEVEL, indentLevelFromElement(el) + delta),
+  )
+}
+
+// Word sometimes wraps an indented paragraph in a div/blockquote. The editor
+// schema only keeps indent on <p>, so hoist the class down and unwrap a lone
+// div wrapper — the same block indent TinyMCE kept on the paragraph itself.
+const hoistWrapperIndentToParagraph = (doc: Document) => {
+  for (const wrapper of Array.from(
+    doc.body.querySelectorAll('div, blockquote'),
+  )) {
+    const wrapperLevel = indentLevelFromElement(wrapper)
+    if (wrapperLevel === 0) continue
+
+    const paragraphs = Array.from(wrapper.querySelectorAll(':scope > p'))
+    if (paragraphs.length !== 1) continue
+
+    const paragraph = paragraphs[0]
+    setIndentLevelOnElement(
+      paragraph,
+      Math.min(
+        MAX_INDENT_LEVEL,
+        wrapperLevel + indentLevelFromElement(paragraph),
+      ),
+    )
+    setIndentLevelOnElement(wrapper, 0)
+
+    if (
+      wrapper.tagName === 'DIV' &&
+      wrapper.childNodes.length === 1 &&
+      wrapper.firstChild === paragraph
+    ) {
+      wrapper.replaceWith(paragraph)
+    }
+  }
+}
+
+// When Word emits literal Tab characters (common for 2+ tabs at line start)
+// instead of a larger text-indent, map each leading tab to one indent step.
+// TinyMCE's paste filter retained text-indent CSS; this covers the remainder.
+const convertLeadingTabsToIndent = (doc: Document) => {
+  for (const paragraph of Array.from(doc.body.querySelectorAll('p'))) {
+    const walker = doc.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT)
+    const firstText = walker.nextNode()
+    if (!firstText) continue
+
+    const content = firstText.textContent ?? ''
+    const match = content.match(/^\t+/)
+    if (!match) continue
+
+    addIndentLevelOnElement(paragraph, match[0].length)
+    firstText.textContent = content.slice(match[0].length)
+  }
 }
 
 // LI is deliberately absent: a list item's level is expressed by how deeply it
@@ -202,18 +294,214 @@ export const normalizeRichTextHtml = (html: string): string => {
   if (typeof DOMParser === 'undefined' || !html) return html
 
   const doc = new DOMParser().parseFromString(html, 'text/html')
+  normalizeTables(doc)
   normalizeDoc(doc)
 
   // Markup without visible text (e.g. '<p>&nbsp;&nbsp;</p>' from typing only
   // spaces - the editor stores consecutive spaces as non-breaking spaces) is
   // effectively empty. Emit '' so required-field validation and persistence
   // treat it like any other blank input. textContent decodes the entities and
-  // trim() removes the resulting non-breaking spaces.
-  if (!doc.body.textContent?.trim()) {
+  // trim() removes the resulting non-breaking spaces. A table is content even
+  // before anything is typed into it — a just-inserted empty table must not
+  // be wiped on the next save/load round-trip.
+  if (!hasVisibleDocContent(doc)) {
     return ''
   }
 
   return doc.body.innerHTML
+}
+
+const hasVisibleDocContent = (doc: Document): boolean =>
+  Boolean(doc.body.textContent?.trim()) ||
+  doc.body.querySelector('table') !== null
+
+// Whether saved editor HTML holds anything a user would consider content: text
+// or an (even empty) table. Consumers use this instead of a plain-text check
+// when deciding to persist or wipe a value.
+export const hasVisibleContent = (html: string): boolean => {
+  if (!html) return false
+  if (typeof DOMParser === 'undefined') return true
+  return hasVisibleDocContent(
+    new DOMParser().parseFromString(html, 'text/html'),
+  )
+}
+
+// Tags whose background style is table chrome (Word shades cells with
+// background:#d9d9d9), not a text highlight — converting it to an hl- class
+// would color the cell's text.
+const TABLE_CHROME_TAGS = new Set([
+  'TABLE',
+  'THEAD',
+  'TBODY',
+  'TFOOT',
+  'TR',
+  'TD',
+  'TH',
+])
+
+// Block-level elements a table cell can hold; whitespace-only text next to
+// one of these is layout, not content.
+const CELL_BLOCK_TAGS = new Set(['P', 'DIV', 'BLOCKQUOTE', 'UL', 'OL', 'TABLE'])
+
+// Attributes Word/Docs put on table markup that the schema would drop anyway;
+// scrubbed here so the pipeline's own output stays clean and testable.
+const TABLE_PRESENTATION_ATTRIBUTES = [
+  'align',
+  'bgcolor',
+  'border',
+  'cellpadding',
+  'cellspacing',
+  'height',
+  'valign',
+  'width',
+]
+
+// Reduce every pasted or loaded table to the minimal shape the schema can
+// hold: no nested tables, no headers, no merged cells, no colgroup — the same
+// contract the editor itself serializes and the PDF renderer lays out.
+const normalizeTables = (doc: Document) => {
+  // Nested tables cannot live inside a cell, and the schema parser would
+  // hoist them out behind their host table — unwrap them into their host
+  // cell instead, innermost first so each replacement leaves no nesting
+  // behind it.
+  for (const inner of Array.from(
+    doc.body.querySelectorAll('table table'),
+  ).reverse()) {
+    const blocks: Element[] = []
+    for (const cell of Array.from(inner.querySelectorAll('td, th'))) {
+      for (const node of Array.from(cell.childNodes)) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          blocks.push(node as Element)
+        } else if (
+          node.nodeType === Node.TEXT_NODE &&
+          node.textContent?.trim()
+        ) {
+          // Loose cell text keeps its place via a paragraph wrapper.
+          const p = doc.createElement('p')
+          p.textContent = node.textContent
+          blocks.push(p)
+        }
+      }
+    }
+    inner.replaceWith(...blocks)
+  }
+
+  for (const table of Array.from(doc.body.querySelectorAll('table'))) {
+    // A caption is real text; keep it as a paragraph before the table.
+    for (const caption of Array.from(table.querySelectorAll('caption'))) {
+      const p = doc.createElement('p')
+      p.textContent = caption.textContent ?? ''
+      table.before(p)
+      caption.remove()
+    }
+    for (const el of Array.from(table.querySelectorAll('colgroup, col'))) {
+      el.remove()
+    }
+    for (const th of Array.from(table.querySelectorAll('th'))) {
+      const td = doc.createElement('td')
+      for (const attribute of Array.from(th.attributes)) {
+        td.setAttribute(attribute.name, attribute.value)
+      }
+      while (th.firstChild) {
+        td.appendChild(th.firstChild)
+      }
+      th.replaceWith(td)
+    }
+
+    flattenMergedCells(table)
+
+    for (const el of [table, ...Array.from(table.querySelectorAll('*'))]) {
+      for (const attribute of TABLE_PRESENTATION_ATTRIBUTES) {
+        el.removeAttribute(attribute)
+      }
+
+      // Word separates table markup with literal newlines; whitespace-only
+      // text between structural elements (and around the block elements
+      // inside a cell) is not content — the same cleanup the paste pipeline
+      // does between body-level blocks. Whitespace between a cell's inline
+      // children ("<strong>a</strong> <em>b</em>") is content and stays.
+      const structural = ['TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR'].includes(
+        el.tagName,
+      )
+      if (structural || el.tagName === 'TD') {
+        for (const node of Array.from(el.childNodes)) {
+          if (node.nodeType !== Node.TEXT_NODE || node.textContent?.trim()) {
+            continue
+          }
+          const touchesBlock = [node.previousSibling, node.nextSibling].some(
+            (sibling) =>
+              sibling !== null &&
+              sibling.nodeType === Node.ELEMENT_NODE &&
+              CELL_BLOCK_TAGS.has((sibling as Element).tagName),
+          )
+          if (structural || touchesBlock) {
+            node.remove()
+          }
+        }
+      }
+    }
+  }
+}
+
+// Expand colspan/rowspan merges into a rectangular grid of plain cells.
+// Dropping the attributes alone would shift every later cell out of its
+// column; instead each merged cell keeps its top-left position and the
+// covered positions become empty cells.
+const flattenMergedCells = (table: Element) => {
+  const doc = table.ownerDocument
+  // How many upcoming rows each column position is still covered by a
+  // rowspan from above.
+  const pendingRowspans: number[] = []
+
+  for (const row of Array.from(table.querySelectorAll('tr'))) {
+    let column = 0
+
+    for (const cell of Array.from(row.children)) {
+      if (cell.tagName !== 'TD') continue
+
+      // Positions covered by a rowspan from above get an empty cell so this
+      // row's own cells stay in their columns.
+      while ((pendingRowspans[column] ?? 0) > 0) {
+        pendingRowspans[column] -= 1
+        row.insertBefore(doc.createElement('td'), cell)
+        column += 1
+      }
+
+      const colspan = Math.max(
+        1,
+        parseInt(cell.getAttribute('colspan') ?? '1', 10) || 1,
+      )
+      const rowspan = Math.max(
+        1,
+        parseInt(cell.getAttribute('rowspan') ?? '1', 10) || 1,
+      )
+      cell.removeAttribute('colspan')
+      cell.removeAttribute('rowspan')
+
+      for (let i = 0; i < colspan; i++) {
+        pendingRowspans[column + i] =
+          (pendingRowspans[column + i] ?? 0) + (rowspan - 1)
+      }
+      for (let i = 1; i < colspan; i++) {
+        row.insertBefore(doc.createElement('td'), cell.nextSibling)
+      }
+      column += colspan
+    }
+
+    // Trailing positions covered from above: pad up to the last covered
+    // column so every pending position keeps its alignment.
+    let lastPending = pendingRowspans.length - 1
+    while (lastPending >= column && (pendingRowspans[lastPending] ?? 0) === 0) {
+      lastPending -= 1
+    }
+    while (column <= lastPending) {
+      if ((pendingRowspans[column] ?? 0) > 0) {
+        pendingRowspans[column] -= 1
+      }
+      row.appendChild(doc.createElement('td'))
+      column += 1
+    }
+  }
 }
 
 const normalizeDoc = (doc: Document) => {
@@ -222,7 +510,11 @@ const normalizeDoc = (doc: Document) => {
     el.removeAttribute('style')
 
     const background = style.match(BACKGROUND_REGEX)
-    if (background && parseCssColor(background[1].trim())) {
+    if (
+      background &&
+      parseCssColor(background[1].trim()) &&
+      !TABLE_CHROME_TAGS.has(el.tagName)
+    ) {
       el.classList.add(
         highlightClassFromColor(
           findNearestHighlightColor(background[1].trim()),
@@ -276,6 +568,9 @@ const normalizeDoc = (doc: Document) => {
       item.removeAttribute('class')
     }
   }
+
+  hoistWrapperIndentToParagraph(doc)
+  convertLeadingTabsToIndent(doc)
 }
 
 // --- External-paste pipeline -----------------------------------------------
@@ -529,6 +824,7 @@ export const normalizePastedHtml = (html: string): string => {
 
   const doc = new DOMParser().parseFromString(html, 'text/html')
   removeWordArtifacts(doc)
+  normalizeTables(doc)
   convertWordFakeLists(doc)
   normalizeDoc(doc)
   removeUnknownClasses(doc)

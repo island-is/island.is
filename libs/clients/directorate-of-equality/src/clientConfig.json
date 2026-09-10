@@ -350,7 +350,7 @@
     },
     "/api/v1/application/reports/equality/active": {
       "get": {
-        "description": "Returns the resolved company's currently-APPROVED equality report (if any). The application portal references the returned `id` as `equalityReportId` when submitting a salary report.",
+        "description": "Returns the resolved company's currently-APPROVED equality report (if any). The application portal references the returned `id` as `equalityReportId` when submitting a salary report, and passes the returned `providerId` to `GET /application/reports/:providerId` to read the report itself. Neither `id` nor `identifier` is a lookup handle here: `id` only resolves against the admin-only `GET /reports/:id`, and `identifier` is a human-facing display code.",
         "operationId": "getApplicationActiveEqualityReport",
         "parameters": [],
         "responses": {
@@ -823,6 +823,73 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/reports/{providerId}/equality-content/pdf": {
+      "get": {
+        "operationId": "getApplicationEqualityContentPdf",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the uploaded jafnréttisáætlun PDF verbatim. 404 when the report's equality content is HTML rather than an uploaded PDF.",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/{providerId}/outliers": {
       "get": {
         "description": "Paginated list of the report's employee outliers. Split out from the report-detail payload because a single salary report can carry hundreds of rows. Ordered by role title and then by the employee's ordinal within the report — the same grouped-by-role order the draft employee lists serve.",
@@ -1163,6 +1230,186 @@
                 "schema": {
                   "$ref": "#/components/schemas/ApplicationReportDetailDto"
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/api-keys": {
+      "post": {
+        "description": "Mints an API key for the authenticated company and returns it with the plaintext secret. **The secret is shown exactly once** — it is stored only as a hash and cannot be retrieved again, so a lost key is replaced rather than recovered. Several live keys per company are allowed, which is how a credential is rotated without downtime.",
+        "operationId": "issueApplicationApiKey",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateApiKeyDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IssuedApiKeyDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "get": {
+        "description": "Every API key the authenticated company holds, newest first. Revoked and expired keys are included so the list doubles as an audit view. Never contains a secret — none is recoverable.",
+        "operationId": "getApplicationApiKeys",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApiKeysResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/api-keys/{id}": {
+      "delete": {
+        "description": "Revokes one of the authenticated company's keys. Idempotent — re-revoking leaves the original actor and timestamp intact rather than overwriting the audit trail. A key belonging to another company answers 404, not 403.",
+        "operationId": "revokeApplicationApiKey",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The key's `id` as listed, not the `keyId` inside the credential.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiKeyDto" }
               }
             }
           },
@@ -2824,6 +3071,10 @@
           "salaryReportOverdue": {
             "type": "boolean",
             "description": "Derived: the company's next salary-report due date has passed."
+          },
+          "hasLegacyReports": {
+            "type": "boolean",
+            "description": "Derived: the Directorate's retired SharePoint register holds at least one row for this company. Drives whether the detail view offers the legacy-data tab; says nothing about compliance — the row may record a lapsed or surrendered certificate."
           }
         },
         "required": [
@@ -2840,7 +3091,8 @@
           "sectorOverride",
           "reportStatus",
           "equalityReportOverdue",
-          "salaryReportOverdue"
+          "salaryReportOverdue",
+          "hasLegacyReports"
         ]
       },
       "ApiErrorDto": {
@@ -3049,16 +3301,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "personalStepAssignments": {
             "type": "array",
@@ -3109,6 +3361,11 @@
         "properties": {
           "employeeOrdinal": { "type": "number" },
           "gender": { "type": "string", "enum": ["MALE", "FEMALE", "NEUTRAL"] },
+          "roleTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Starf — the title of the employee's role, denormalized here so the úrbótaáætlun table needs no client-side join against the draft roles list. Mirrors `ReportEmployeeOutlierDto.roleTitle`, which the submitted-report endpoints already carry. Null only when the caller could not resolve a title for the ordinal."
+          },
           "score": { "type": "number" },
           "regularHourlyWage": {
             "type": "number",
@@ -3581,6 +3838,19 @@
           "employees": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/PayDispersionEmployeeDto" }
+          },
+          "countBelowExpected": {
+            "type": "number",
+            "description": "CONTEXT — how many employees sit more than `threshold` spreads BELOW the fitted line. This is the POOL the ábendingar were drawn from, not a count of ábendingar: the list is the most extreme few per direction, and `employees` holds all of them. Print it to show the instrument is a triage of something larger; do not present it as a number of findings. Zero when unavailable."
+          },
+          "countAboveExpected": {
+            "type": "number",
+            "description": "The same for ABOVE the fitted line — context, not a count of ábendingar. Zero when unavailable."
+          },
+          "chanceCriticalSpreads": {
+            "type": "number",
+            "nullable": true,
+            "description": "CONTEXT ONLY — never a filter. The familywise critical value z(0,05 / 2n): the distance past which chance alone would rarely put ANY of this company's employees. It grows with headcount (3,5 at 120 employees, 4,6 at 10 000) because screening more people produces more extremes, and it exists so a reader can tell a long list on a large workforce from a real finding. ⚠️ Do NOT filter rows on it: `threshold` decides membership. Null when no list could be produced."
           }
         },
         "required": [
@@ -3588,7 +3858,9 @@
           "blockers",
           "population",
           "threshold",
-          "employees"
+          "employees",
+          "countBelowExpected",
+          "countAboveExpected"
         ]
       },
       "SalaryAnalysisResponseDto": {
@@ -3621,6 +3893,7 @@
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "identifier": { "type": "string", "nullable": true },
+          "providerId": { "type": "string", "nullable": true },
           "approvedAt": {
             "type": "string",
             "format": "date-time",
@@ -3709,6 +3982,12 @@
           "action": { "type": "string", "minLength": 1 },
           "signatureName": { "type": "string", "minLength": 1 },
           "signatureRole": { "type": "string", "minLength": 1 },
+          "remedyDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the company commits to having this group’s improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`. Required alongside the rest of the explanation. Must be in the future and no more than three years out — the next reporting cycle, beyond which the date belongs to a period this report cannot speak for."
+          },
           "employeeOrdinals": {
             "description": "Ordinals of the employees in `parsed.employees[]` this group covers.",
             "type": "array",
@@ -3720,6 +3999,7 @@
           "action",
           "signatureName",
           "signatureRole",
+          "remedyDate",
           "employeeOrdinals"
         ]
       },
@@ -3732,7 +4012,11 @@
             "description": "FK to the approved EQUALITY report this salary was audited against."
           },
           "importedFromExcel": { "type": "boolean" },
-          "providerId": { "type": "string" },
+          "providerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Upstream island.is application UUID, stored as the report provider_id."
+          },
           "companyAdminName": { "type": "string" },
           "companyAdminTitle": {
             "type": "string",
@@ -3745,6 +4029,11 @@
             "enum": ["MALE", "FEMALE", "NEUTRAL"]
           },
           "contactName": { "type": "string" },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string" },
           "contactPhone": { "type": "string" },
           "averageEmployeeMaleCount": { "type": "number" },
@@ -3813,7 +4102,11 @@
       "SubmitEqualityReportDto": {
         "type": "object",
         "properties": {
-          "providerId": { "type": "string" },
+          "providerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Upstream island.is application UUID, stored as the report provider_id."
+          },
           "companyAdminName": { "type": "string" },
           "companyAdminTitle": {
             "type": "string",
@@ -3826,11 +4119,24 @@
             "enum": ["MALE", "FEMALE", "NEUTRAL"]
           },
           "contactName": { "type": "string" },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string" },
           "contactPhone": { "type": "string" },
           "equalityReportContent": {
             "type": "string",
-            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`."
+            "description": "Narrative gender-equality plan as plain HTML. Persisted as `report.equality_report_content` and rendered into the approved PDF, so send the markup itself — not a base64 blob, not a document. Mutually exclusive with `equalityReportPdf`."
+          },
+          "equalityReportPdf": {
+            "type": "string",
+            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent`. Max 4MB decoded."
+          },
+          "equalityReportPdfFilename": {
+            "type": "string",
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
           },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },
           "averageEmployeeFemaleCount": { "type": "number", "nullable": true },
@@ -3851,7 +4157,6 @@
           "contactName",
           "contactEmail",
           "contactPhone",
-          "equalityReportContent",
           "company"
         ]
       },
@@ -3903,6 +4208,7 @@
           "isatCategory"
         ]
       },
+      "EqualityContentTypeEnum": { "type": "string", "enum": ["HTML", "PDF"] },
       "SalaryAggregateMetricsDto": {
         "type": "object",
         "properties": {
@@ -4079,6 +4385,15 @@
             ]
           },
           "equalityReportContent": { "type": "string", "nullable": true },
+          "equalityReportContentType": {
+            "allOf": [
+              { "$ref": "#/components/schemas/EqualityContentTypeEnum" }
+            ]
+          },
+          "equalityReportContentFilename": {
+            "type": "string",
+            "nullable": true
+          },
           "salaryDataBasis": {
             "nullable": true,
             "description": "Salary-only. Whether the submitted salary data describes one specific payroll month (`MONTH`, with the month in `salaryDataPeriod`) or a twelve-month average (`AVERAGE`). Reads back the basis the applicant declared while drafting. Null on equality reports.",
@@ -4116,6 +4431,7 @@
           "type",
           "status",
           "companies",
+          "equalityReportContentType",
           "includesImprovementPlan",
           "externalComments"
         ]
@@ -4155,6 +4471,13 @@
           "action": { "type": "string", "nullable": true },
           "signatureName": { "type": "string", "nullable": true },
           "signatureRole": { "type": "string", "nullable": true },
+          "remedyDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the group commits to having its improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`. Denormalized from the outlier group like the rest of the explanation — every outlier in the same group carries the same value."
+          },
           "regularHourlyWage": {
             "type": "number",
             "nullable": true,
@@ -4234,10 +4557,17 @@
         "properties": {
           "equalityReportContent": {
             "type": "string",
-            "description": "New narrative content for the equality report as base64-encoded HTML. Decoded server-side and replaces the prior `equality_report_content` in place."
+            "description": "New narrative content for the equality report as base64-encoded HTML. Decoded server-side and replaces the prior `equality_report_content` in place. Mutually exclusive with `equalityReportPdf`."
+          },
+          "equalityReportPdf": {
+            "type": "string",
+            "description": "New narrative content as a base64-encoded PDF, stored verbatim and replacing the prior content in place. Mutually exclusive with `equalityReportContent`. Max 4MB decoded."
+          },
+          "equalityReportPdfFilename": {
+            "type": "string",
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
           }
-        },
-        "required": ["equalityReportContent"]
+        }
       },
       "EditOutlierGroupDto": {
         "type": "object",
@@ -4250,6 +4580,12 @@
           "action": { "type": "string", "minLength": 1 },
           "signatureName": { "type": "string", "minLength": 1 },
           "signatureRole": { "type": "string", "minLength": 1 },
+          "remedyDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the company commits to having this group’s improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`. Required alongside the rest of the explanation. Must be in the future and no more than three years out."
+          },
           "employeeOrdinals": {
             "description": "Ordinals of the outlier employees in this group (1-indexed, matches the `report_employee.ordinal` snapshot). Resolved against the canonical detected set from `report_result.outlier_analysis_snapshot`.",
             "type": "array",
@@ -4261,6 +4597,7 @@
           "action",
           "signatureName",
           "signatureRole",
+          "remedyDate",
           "employeeOrdinals"
         ]
       },
@@ -4274,6 +4611,151 @@
           }
         },
         "required": ["groups"]
+      },
+      "CreateApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free-text label to tell this key apart from the others in a list, e.g. the name of the payroll system it was issued for."
+          },
+          "scopes": {
+            "type": "array",
+            "description": "Narrows what the key may do. Omit to grant the full set. An unrecognised scope is rejected rather than stored.",
+            "items": {
+              "type": "string",
+              "enum": ["salary:submit", "equality:submit", "report:read"]
+            }
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When the key stops being accepted. Omit for no expiry."
+          }
+        }
+      },
+      "IssuedApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The full plaintext key. Shown exactly once — it cannot be retrieved again, only replaced."
+          },
+          "id": { "type": "string", "format": "uuid" },
+          "keyId": { "type": "string" },
+          "label": { "type": "string", "nullable": true },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["salary:submit", "equality:submit", "report:read"]
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          }
+        },
+        "required": ["key", "id", "keyId", "scopes", "createdAt"]
+      },
+      "ApiKeyOriginEnum": {
+        "type": "string",
+        "enum": ["ISLAND_IS", "ADMIN"],
+        "description": "Which issuance path minted the key — self-service through island.is, or a DoE reviewer."
+      },
+      "ApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "companyId": { "type": "string", "format": "uuid" },
+          "keyId": {
+            "type": "string",
+            "description": "Public half of the key, as it appears in the issued credential. Not a secret."
+          },
+          "label": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free-text label set by whoever issued the key."
+          },
+          "scopes": {
+            "type": "array",
+            "description": "What this key is permitted to do.",
+            "items": {
+              "type": "string",
+              "enum": ["salary:submit", "equality:submit", "report:read"]
+            }
+          },
+          "createdVia": {
+            "description": "Which issuance path minted the key — self-service through island.is, or a DoE reviewer.",
+            "allOf": [{ "$ref": "#/components/schemas/ApiKeyOriginEnum" }]
+          },
+          "createdByNationalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Kennitala of the person who minted the key on the island.is path. Null on the admin path, where `createdByUserId` names the reviewer instead."
+          },
+          "createdByUserId": {
+            "type": "string",
+            "nullable": true,
+            "description": "DoE reviewer who minted the key. Null on the island.is path."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When the key stops being accepted. Null means no expiry."
+          },
+          "lastUsedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "Last time the key authenticated a request. Written at most once a minute per key, so it is an activity indicator rather than an exact timestamp."
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          },
+          "revokedByNationalId": { "type": "string", "nullable": true },
+          "revokedByUserId": { "type": "string", "nullable": true },
+          "revokedReason": { "type": "string", "nullable": true }
+        },
+        "required": [
+          "id",
+          "companyId",
+          "keyId",
+          "scopes",
+          "createdVia",
+          "createdAt"
+        ]
+      },
+      "GetApiKeysResponseDto": {
+        "type": "object",
+        "properties": {
+          "apiKeys": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApiKeyDto" }
+          }
+        },
+        "required": ["apiKeys"]
       },
       "CreateDraftCompanyDto": {
         "type": "object",
@@ -4290,6 +4772,7 @@
           "type": { "type": "string", "enum": ["SALARY", "EQUALITY"] },
           "providerId": {
             "type": "string",
+            "format": "uuid",
             "description": "Upstream island.is application UUID, stored as the report provider_id."
           },
           "company": { "$ref": "#/components/schemas/CreateDraftCompanyDto" }
@@ -4332,6 +4815,11 @@
             "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
           },
           "contactName": { "type": "string", "nullable": true },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string", "nullable": true },
           "contactPhone": { "type": "string", "nullable": true },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },
@@ -4348,6 +4836,19 @@
             "description": "The payroll month the salary data is based on (`YYYY-MM-01`). Set when `salaryDataBasis` is `MONTH`, always null for `AVERAGE`."
           },
           "equalityReportContent": { "type": "string", "nullable": true },
+          "equalityReportContentType": {
+            "allOf": [
+              { "$ref": "#/components/schemas/EqualityContentTypeEnum" }
+            ]
+          },
+          "equalityReportContentFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "importedFromExcel": {
+            "type": "boolean",
+            "description": "Whether this draft's scoring content was uploaded as an Excel workbook (`POST …/draft/import`) rather than keyed in through the portal UI. Set by the server when the parser runs; sticky, so hand-editing rows afterwards does not clear it. False on a draft that has never been imported."
+          },
           "counts": { "$ref": "#/components/schemas/DraftCountsDto" },
           "createdAt": {
             "type": "string",
@@ -4362,7 +4863,14 @@
             "nullable": true
           }
         },
-        "required": ["id", "type", "status", "counts"]
+        "required": [
+          "id",
+          "type",
+          "status",
+          "equalityReportContentType",
+          "importedFromExcel",
+          "counts"
+        ]
       },
       "UpdateDraftDto": {
         "type": "object",
@@ -4379,6 +4887,11 @@
             "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
           },
           "contactName": { "type": "string", "nullable": true },
+          "contactTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company contact (tengiliður)."
+          },
           "contactEmail": { "type": "string", "nullable": true },
           "contactPhone": { "type": "string", "nullable": true },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },
@@ -4396,8 +4909,18 @@
           },
           "equalityReportContent": {
             "type": "string",
-            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`.",
+            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`. Mutually exclusive with `equalityReportPdf`.",
             "nullable": true
+          },
+          "equalityReportPdf": {
+            "type": "string",
+            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent`. Max 4MB decoded.",
+            "nullable": true
+          },
+          "equalityReportPdfFilename": {
+            "type": "string",
+            "nullable": true,
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
           }
         }
       },
@@ -4583,16 +5106,16 @@
           },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "stepIds": {
             "description": "Full set of personal step ids assigned to this employee (replace-all). Every id must be a step on the same draft.",
@@ -4603,7 +5126,7 @@
             "type": "string",
             "format": "uuid",
             "nullable": true,
-            "description": "Outlier-group membership (null clears). Applied after detection; the employee must be a currently-detected outlier."
+            "description": "Outlier-group membership (null clears). Recorded as sent; a membership for an employee who is no longer a detected outlier is dropped at submit."
           }
         }
       },
@@ -4629,7 +5152,14 @@
           "reason": { "type": "string", "nullable": true },
           "action": { "type": "string", "nullable": true },
           "signatureName": { "type": "string", "nullable": true },
-          "signatureRole": { "type": "string", "nullable": true }
+          "signatureRole": { "type": "string", "nullable": true },
+          "remedyDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the company commits to having this group’s improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`. Must be in the future and no more than three years out."
+          }
         }
       },
       "ChangeOutlierGroupDto": {
@@ -4729,16 +5259,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "additionalSalary": { "type": "number" },
           "bonusSalary": { "type": "number" },
@@ -4783,16 +5313,16 @@
           "startDate": { "type": "string" },
           "paidHours": {
             "type": "number",
-            "description": "Greiddar stundir í mánuðinum, yfirvinnustundir meðtaldar. Nefnari reglulegs tímakaups.",
+            "description": "Greiddar stundir í mánuðinum, fastar yfirvinnustundir meðtaldar en ekki tilfallandi greiddar stundir. Nefnari reglulegs tímakaups.",
             "minimum": 4,
             "maximum": 750
           },
           "baseSalary": { "type": "number" },
           "additionalFixedOvertime": { "type": "number", "nullable": true },
           "additionalFixedCarAllowance": { "type": "number", "nullable": true },
-          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "additionalFixedOther": { "type": "number", "nullable": true },
           "bonusOccasionalOvertime": { "type": "number", "nullable": true },
-          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
           "bonusOther": { "type": "number", "nullable": true },
           "additionalSalary": { "type": "number" },
           "bonusSalary": { "type": "number" },
@@ -5011,6 +5541,13 @@
           "action": { "type": "string", "nullable": true },
           "signatureName": { "type": "string", "nullable": true },
           "signatureRole": { "type": "string", "nullable": true },
+          "remedyDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date",
+            "example": "2027-03-01",
+            "description": "Date the company commits to having this group’s improvements completed by (\"Dagsetning úrbóta\"), as `YYYY-MM-DD`."
+          },
           "memberEmployeeIds": {
             "description": "Ids of the employees in this group.",
             "type": "array",

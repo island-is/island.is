@@ -22,11 +22,12 @@ import type {
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
-import { formatSalaryAnalysisGenderLabel } from '../../utils/salaryAnalysisLabels'
 import {
-  formatSignedPercentMagnitude,
-  hasIdentifiableRegressionFit,
-} from '../../utils/wageGap'
+  formatDeviationLabel,
+  formatSalaryAnalysisGenderLabel,
+} from '../../utils/salaryAnalysisLabels'
+import { hasIdentifiableRegressionFit } from '../../utils/wageGap'
+import * as styles from './SalaryDistributionChart.css'
 
 type PayDispersionDto = SalaryAnalysisResponseDto['payDispersion']
 
@@ -34,7 +35,6 @@ type Props = {
   data?: SalaryByGenderAndScoreDto | null
   decomposition?: WageGapDecompositionDto | null
   payDispersion?: PayDispersionDto | null
-  identifierForOrdinal: (ordinal: number) => string
 }
 
 type ChartPoint = {
@@ -120,29 +120,15 @@ const isChartPoint = (datum: unknown): datum is ChartPoint =>
   'employee' in datum &&
   'gender' in datum
 
-const payStatusWord = (
-  payStatus: WageGapEmployeeDto['payStatus'],
-  formatMessage: ReturnType<typeof useLocale>['formatMessage'],
-) => {
-  const m = messages.salaryAnalysis.outlierGroup
-  return formatMessage(
-    payStatus === 'UNDERPAID'
-      ? m.payStatusUnderpaid
-      : payStatus === 'OVERPAID'
-      ? m.payStatusOverpaid
-      : m.payStatusOnLine,
-  )
-}
-
 const ChartTooltip = ({
   active,
   payload,
   markedLabel,
-  identifierForOrdinal,
+  markedIsDeviation,
   formatMessage,
 }: Partial<TooltipContentProps<number, string>> & {
   markedLabel: string | null
-  identifierForOrdinal: (ordinal: number) => string
+  markedIsDeviation: boolean
   formatMessage: ReturnType<typeof useLocale>['formatMessage']
 }) => {
   const datum = active ? payload?.[0]?.payload : undefined
@@ -174,9 +160,15 @@ const ChartTooltip = ({
     ])
     rows.push([
       formatMessage(tooltipMessages.deviation),
-      `${formatSignedPercentMagnitude(
+      // The shared helper, not a locally assembled string: this is the same
+      // figure the úrbótaáætlun and ábendingar tables show, so it goes through
+      // the same localised `deviationCell` template rather than hardcoding the
+      // "{value}% ({status})" shape a third time.
+      formatDeviationLabel(
         employee.deviationPercent,
-      )}% (${payStatusWord(employee.payStatus, formatMessage)})`,
+        employee.payStatus,
+        formatMessage,
+      ),
     ])
   }
 
@@ -192,9 +184,7 @@ const ChartTooltip = ({
     >
       <Text variant="small" fontWeight="semiBold">
         {employee
-          ? `${formatMessage(tooltipMessages.employee)} ${identifierForOrdinal(
-              employee.ordinal,
-            )}`
+          ? `${formatMessage(tooltipMessages.employee)} ${employee.ordinal}`
           : formatMessage(messages.salaryAnalysis.chart.title)}
       </Text>
       {rows.map(([label, value]) => (
@@ -207,7 +197,14 @@ const ChartTooltip = ({
       ))}
       {datum.marked && markedLabel && (
         <Box marginTop={1}>
-          <Text variant="small" fontWeight="semiBold">
+          {/* Red only for frávik — the same slot carries "Ábending" when the
+              óskýrt gap is within the benchmark, which is advisory, not a
+              breach. */}
+          <Text
+            variant="small"
+            fontWeight="semiBold"
+            color={markedIsDeviation ? 'red600' : undefined}
+          >
             {markedLabel}
           </Text>
         </Box>
@@ -377,7 +374,6 @@ export const SalaryDistributionChart: FC<Props> = ({
   data,
   decomposition,
   payDispersion,
-  identifierForOrdinal,
 }) => {
   const { formatMessage } = useLocale()
   const m = messages.salaryAnalysis.chart
@@ -414,12 +410,12 @@ export const SalaryDistributionChart: FC<Props> = ({
 
   const malePoints = points.filter((point) => point.gender === 'MALE')
   const femalePoints = points.filter((point) => point.gender !== 'MALE')
-  const markedLabel =
-    decomposition?.oskyrtWithinBenchmark === false
-      ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.minimumSet)
-      : decomposition?.oskyrtWithinBenchmark === true
-      ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.abending)
-      : null
+  const markedIsDeviation = decomposition?.oskyrtWithinBenchmark === false
+  const markedLabel = markedIsDeviation
+    ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.minimumSet)
+    : decomposition?.oskyrtWithinBenchmark === true
+    ? formatMessage(messages.salaryAnalysis.chartMarkedLegend.abending)
+    : null
   const hasMarked = points.some((point) => point.marked)
 
   const scoreBucketMax =
@@ -451,11 +447,12 @@ export const SalaryDistributionChart: FC<Props> = ({
       <Text variant="h4">{formatMessage(m.title)}</Text>
       <Text>{formatMessage(m.intro)}</Text>
 
-      <ResponsiveContainer width="100%" height={420}>
-        <ScatterChart
-          margin={{ top: 24, right: 0, left: 0, bottom: 24 }}
-          style={{ outline: 'none' }}
-        >
+      <ResponsiveContainer
+        width="100%"
+        height={420}
+        className={styles.chartFocus}
+      >
+        <ScatterChart margin={{ top: 24, right: 0, left: 0, bottom: 24 }}>
           <CartesianGrid vertical={false} stroke={theme.color.blue200} />
           <XAxis
             type="number"
@@ -505,7 +502,7 @@ export const SalaryDistributionChart: FC<Props> = ({
             content={
               <ChartTooltip
                 markedLabel={hasMarked ? markedLabel : null}
-                identifierForOrdinal={identifierForOrdinal}
+                markedIsDeviation={markedIsDeviation}
                 formatMessage={formatMessage}
               />
             }

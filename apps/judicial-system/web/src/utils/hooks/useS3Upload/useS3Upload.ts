@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
 
 import type { UploadFile } from '@island.is/island-ui/core'
-import { FileUploadStatus, toast } from '@island.is/island-ui/core'
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
@@ -15,7 +15,9 @@ import type {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { useAttachRulingOrderDocumentMutation } from './attachRulingOrderDocument.generated'
 import type { CreateCivilClaimantFileMutation } from './createCivilClaimantFile.generated'
 import { useCreateCivilClaimantFileMutation } from './createCivilClaimantFile.generated'
 import type { CreateDefendantFileMutation } from './createDefendantFile.generated'
@@ -233,6 +235,7 @@ const useS3Upload = (
   const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
   const [uploadCriminalRecordFile] = useUploadCriminalRecordFileMutation()
+  const [attachRulingOrderDocument] = useAttachRulingOrderDocumentMutation()
 
   const getPresignedPost = useCallback(
     async (file: TUploadFile) => {
@@ -435,6 +438,61 @@ const useS3Upload = (
     [getPresignedPost, addFileToCaseState, formatMessage],
   )
 
+  // The district court writes up a ruling order that was pronounced orally and
+  // uploads the document. Unlike every other upload this fills in a case file
+  // that already exists: the court record points at it, and the parties' appeal
+  // decisions and any appeal are keyed on it, so a new file would strand all of
+  // it.
+  const handleUploadRulingOrderDocument = useCallback(
+    async (
+      file: TUploadFile,
+      rulingOrderFileId: string,
+      updateFile: (file: TUploadFile) => void,
+    ) => {
+      try {
+        updateFile({ ...file, status: FileUploadStatus.uploading })
+
+        const presignedPost = await getPresignedPost(file)
+
+        await uploadToS3(file, presignedPost, (percent) => {
+          updateFile({ ...file, percent })
+        })
+
+        const { data } = await attachRulingOrderDocument({
+          variables: {
+            input: {
+              id: rulingOrderFileId,
+              caseId,
+              key: presignedPost.key,
+              size: file.size ?? 0,
+              type: file.type ?? '',
+              userGeneratedFilename: file.userGeneratedFilename,
+            },
+          },
+        })
+
+        if (!data?.attachRulingOrderDocument?.id) {
+          throw Error('Failed to attach the document to the ruling order')
+        }
+
+        updateFile({
+          ...file,
+          key: presignedPost.key,
+          percent: 100,
+          status: FileUploadStatus.done,
+        })
+
+        return true
+      } catch {
+        toast.error(formatMessage(strings.uploadFailed))
+        updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
+
+        return false
+      }
+    },
+    [attachRulingOrderDocument, caseId, getPresignedPost, formatMessage],
+  )
+
   const handleUploadCriminalRecord = (
     defendants: Defendant[],
     addUploadFile: (file: TUploadFile) => void,
@@ -498,7 +556,9 @@ const useS3Upload = (
           )
         } catch (error) {
           if (noNationalId) {
-            toast.error(`Ákærði: ${defendantName} er ekki með kennitölu`)
+            toast.error(`Ákærði: ${defendantName} er ekki með kennitölu`, {
+              logMessage: 'Defendant has no national id',
+            })
           } else {
             toast.error(formatMessage(strings.uploadFailed))
             updateFile({
@@ -630,6 +690,7 @@ const useS3Upload = (
     handleRemove,
     handleUploadFromPolice,
     handleUploadCriminalRecord,
+    handleUploadRulingOrderDocument,
   }
 }
 

@@ -42,6 +42,7 @@ import { Subpoena } from '../models/subpoena.model'
 import { User } from '../models/user.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
+import { UpdateDateLog } from '../services/dateLogRepository.service'
 
 export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -72,6 +73,20 @@ export const caseInclude: Includeable[] = [
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
       },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'verdictAppealCase',
+    required: false,
+    include: [
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -150,6 +165,11 @@ export const caseInclude: Includeable[] = [
   {
     model: User,
     as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'indictmentApprover',
     include: [{ model: Institution, as: 'institution' }],
   },
   {
@@ -528,11 +548,6 @@ export const caseInclude: Includeable[] = [
   },
 ]
 
-interface UpdateDateLog {
-  date?: Date
-  location?: string
-}
-
 export interface UpdateCaseDefendantEventLogDecision {
   defendantId: string
   rulingDate?: Date
@@ -601,6 +616,7 @@ export interface UpdateCase
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
+    | 'isArraignmentSummonsSkipped'
     | 'hasCivilClaims'
     | 'isArchived'
   > {
@@ -617,6 +633,7 @@ export interface UpdateCase
   courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
   parentCaseId?: Case['parentCaseId'] | null
   indictmentReviewerId?: Case['indictmentReviewerId'] | null
+  indictmentApproverId?: Case['indictmentApproverId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
@@ -629,6 +646,7 @@ export interface UpdateCase
   penalties?: string
   defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
   reopenReason?: string
+  indictmentReviewReturnedExplanation?: string | null
 }
 
 export interface UpdateAppealCase
@@ -654,6 +672,14 @@ export interface UpdateAppealCase
   appealState?: AppealCase['appealState']
 }
 
+// An appeal case is created with its type and never changes it, so the type is
+// required here and absent from UpdateAppealCase. That is what keeps a new
+// creation path from quietly omitting it - the column's database default exists
+// for old pods mid-rollout, not for application code to lean on.
+export type CreateAppealCase = UpdateAppealCase & {
+  appealType: AppealCase['appealType']
+}
+
 export interface UpdateDefendant {
   noNationalId?: boolean
   nationalId?: string
@@ -674,6 +700,11 @@ export interface UpdateDefendant {
   requestedDefenderName?: string
   isDefenderChoiceConfirmed?: boolean
   caseFilesSharedWithDefender?: boolean
+  appealDefenderName?: string | null
+  appealDefenderNationalId?: string | null
+  appealDefenderEmail?: string | null
+  appealDefenderPhoneNumber?: string | null
+  isAppealDefenderConfirmed?: boolean | null
   isSentToPrisonAdmin?: boolean
   punishmentType?: PunishmentType
   isAlternativeService?: boolean

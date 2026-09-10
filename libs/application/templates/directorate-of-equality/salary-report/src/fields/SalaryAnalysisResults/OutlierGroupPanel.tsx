@@ -7,7 +7,7 @@ import {
 } from 'react-hook-form'
 import { YES } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
@@ -25,7 +25,6 @@ type Props = {
   // the persistence-mode signal for OutlierEditor's `mode` prop.
   hidePostponeCheckbox?: boolean
   errors?: RecordObject
-  identifierForOrdinal: (ordinal: number) => string
   // Draft phase only: local form scope for outlierGroups (not answers-backed pre-submit); the postponed checkbox stays on the ambient form regardless.
   outlierGroupsFormMethods?: UseFormReturn<{
     salaryAnalysis: { outlierGroups: OutlierGroupAnswer[] }
@@ -36,7 +35,6 @@ export const OutlierGroupPanel: FC<Props> = ({
   outliers,
   hidePostponeCheckbox,
   errors,
-  identifierForOrdinal,
   outlierGroupsFormMethods,
 }) => {
   const { formatMessage } = useLocale()
@@ -58,6 +56,17 @@ export const OutlierGroupPanel: FC<Props> = ({
 
   return (
     <Box>
+      <Box display="flex" justifyContent="flexEnd" marginBottom={4}>
+        <a
+          href={formatMessage(m.instructionsLink)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button variant="utility" icon="open" iconType="outline" as="span">
+            {formatMessage(m.instructionsLabel)}
+          </Button>
+        </a>
+      </Box>
       {!hidePostponeCheckbox && (
         <Box
           background="blue100"
@@ -88,7 +97,6 @@ export const OutlierGroupPanel: FC<Props> = ({
               outliers={outliers}
               errors={errors}
               mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-              identifierForOrdinal={identifierForOrdinal}
             />
           </FormProvider>
         ) : (
@@ -96,7 +104,6 @@ export const OutlierGroupPanel: FC<Props> = ({
             outliers={outliers}
             errors={errors}
             mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-            identifierForOrdinal={identifierForOrdinal}
           />
         ))}
     </Box>

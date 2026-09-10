@@ -48,18 +48,20 @@ export type SubCriterion = {
 // context for display is looked up elsewhere, not carried here.
 export type StepAssignment = { stepId: string }
 
-// Per-key breakdown (see README): the two additionalFixed* values sum to the
-// old flat additionalSalary; the four bonus/occasional values sum to bonusSalary.
+// Per-key breakdown, in workbook column order: the three additionalFixed* values
+// (columns J–L) sum to the derived additionalSalary, the three bonus* values
+// (M–O) to bonusSalary. Template 2.0 folded Bónusgreiðslur into bonusOther and
+// added additionalFixedOther, which counts toward regluleg laun.
 export type SalaryComponentKey =
   | 'additionalFixedOvertime'
   | 'additionalFixedCarAllowance'
-  | 'bonusOccasionalCarAllowance'
+  | 'additionalFixedOther'
   | 'bonusOccasionalOvertime'
-  | 'bonusPayments'
+  | 'bonusOccasionalCarAllowance'
   | 'bonusOther'
 
-// id is the client-minted UUID join key; the human-facing ABC-000 label is
-// derived from ordinal at display time (see utils/employeeIdentifier.ts).
+// id is the client-minted UUID join key; `ordinal` is the human-facing number
+// shown on every screen and in the workbook.
 export type Employee = {
   id: string
   ordinal: number
@@ -73,9 +75,9 @@ export type Employee = {
   baseSalary: number
   additionalFixedOvertime?: number | null
   additionalFixedCarAllowance?: number | null
-  bonusOccasionalCarAllowance?: number | null
+  additionalFixedOther?: number | null
   bonusOccasionalOvertime?: number | null
-  bonusPayments?: number | null
+  bonusOccasionalCarAllowance?: number | null
   bonusOther?: number | null
   outlierGroupId?: string | null
 }

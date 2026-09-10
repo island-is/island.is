@@ -3,7 +3,7 @@ import { gql, useMutation } from '@apollo/client'
 import type { Application } from '@island.is/application/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
-import { ApiActions } from './constants'
+import { ApiActions, draftActionId } from './constants'
 
 // Custom resolvers, not the standard updateApplicationExternalData provider
 // mechanism — that only takes {actionId, order}, with no channel for an
@@ -43,7 +43,7 @@ export const useEnsureEqualityDraft = (application: Application) => {
             id: application.id,
             dataProviders: [
               {
-                actionId: `DirectorateOfEquality.${ApiActions.createEqualityDraft}`,
+                actionId: draftActionId(ApiActions.createEqualityDraft),
                 order: 0,
               },
             ],
@@ -61,24 +61,48 @@ export const useEnsureEqualityDraft = (application: Application) => {
   }, [application.id, locale, updateApplicationExternalData])
 }
 
+/**
+ * The plan being pushed, in whichever representation the applicant uploaded.
+ *
+ * A discriminated union rather than three loose optional strings, so a caller
+ * cannot express "PDF with no filename" or "both kinds at once" — the two
+ * states DMR rejects. The wire shape stays flat; this is only about making the
+ * invalid combinations unrepresentable at the call site.
+ */
+export type EqualityContentPayload =
+  | { kind: 'html'; base64: string }
+  | { kind: 'pdf'; base64: string; filename: string }
+
+const toVariables = (
+  applicationId: string,
+  content: EqualityContentPayload,
+) => ({
+  input:
+    content.kind === 'pdf'
+      ? {
+          applicationId,
+          equalityReportPdf: content.base64,
+          equalityReportPdfFilename: content.filename,
+        }
+      : { applicationId, equalityReportContent: content.base64 },
+})
+
 export const useEqualityContentPush = () => {
   const [updateDraftContent] = useMutation(UPDATE_EQUALITY_DRAFT_CONTENT)
   const [editContent] = useMutation(EDIT_EQUALITY_CONTENT)
 
   const pushDraftContent = useCallback(
-    async (applicationId: string, equalityReportContent: string) => {
+    async (applicationId: string, content: EqualityContentPayload) => {
       await updateDraftContent({
-        variables: { input: { applicationId, equalityReportContent } },
+        variables: toVariables(applicationId, content),
       })
     },
     [updateDraftContent],
   )
 
   const pushRetryContent = useCallback(
-    async (applicationId: string, equalityReportContent: string) => {
-      await editContent({
-        variables: { input: { applicationId, equalityReportContent } },
-      })
+    async (applicationId: string, content: EqualityContentPayload) => {
+      await editContent({ variables: toVariables(applicationId, content) })
     },
     [editContent],
   )

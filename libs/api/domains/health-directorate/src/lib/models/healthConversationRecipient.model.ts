@@ -12,6 +12,12 @@ export class HealthDirectorateHealthConversationRecipient {
   })
   groupId!: number
 
+  @Field({
+    nullable: true,
+    description: 'Set when this recipient is one of the patient care teams',
+  })
+  treatmentId?: string
+
   @Field()
   name!: string
 

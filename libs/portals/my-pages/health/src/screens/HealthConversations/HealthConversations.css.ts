@@ -21,11 +21,37 @@ export const attachmentIcon = style({
   height: 20,
 })
 
-export const backButton = style({})
+export const detailHeader = style({
+  minHeight: 32,
+  ...themeUtils.responsiveStyle({
+    md: {
+      minHeight: 40,
+    },
+  }),
+})
 
-globalStyle(
-  `${backButton} span, ${backButton} span:hover, ${backButton} span:focus`,
-  {
-    boxShadow: 'none',
+// The back arrow is a 40px circle button with a 20px icon; pull it left so
+// the arrow glyph stays flush with the content edge.
+export const backButton = style({
+  marginLeft: -10,
+})
+
+// Keeps the row's white button hover circle on a tinted background
+export const conversationRow = style({
+  selectors: {
+    '&:hover': {
+      backgroundColor: theme.color.blue100,
+    },
   },
-)
+})
+
+export const termsCheckbox = style({})
+
+globalStyle(`${termsCheckbox} label`, {
+  alignItems: 'flex-start',
+})
+
+globalStyle(`${termsCheckbox} label > div`, {
+  alignSelf: 'flex-start',
+  marginTop: 2,
+})

@@ -1,14 +1,18 @@
 import type { FC, MouseEvent } from 'react'
 import { useContext, useState } from 'react'
 
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
-import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  isDistrictCourtUser,
+  isRulingOrderWithoutDocument,
+} from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useConfirmRulingOrderMutation } from './confirmRulingOrder.generated'
 
@@ -45,6 +49,12 @@ const RulingOrderConfirmationStatus: FC<Props> = ({ file }) => {
   const isRegisteredJudge = Boolean(
     user?.id && user.id === workingCase.judge?.id,
   )
+
+  // There is nothing to confirm until the district court has written the ruling
+  // up: a ruling pronounced orally is confirmed by the judge pronouncing it.
+  if (isRulingOrderWithoutDocument(file)) {
+    return null
+  }
 
   const handleConfirm = async () => {
     try {

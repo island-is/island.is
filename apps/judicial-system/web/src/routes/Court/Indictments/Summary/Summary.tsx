@@ -4,13 +4,7 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import router from 'next/router'
 
-import {
-  Accordion,
-  Box,
-  PdfViewer,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Accordion, Box, PdfViewer, Text } from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
@@ -53,7 +47,8 @@ import {
   useFileList,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { strings } from './Summary.strings'
 import * as styles from './Summary.css'
@@ -230,9 +225,9 @@ const Summary: FC = () => {
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <AppealRulingModifiedAlert />
-          <Box component="section" className={grid({ gap: 1 })}>
+          <Box component="section" className={stack({ gap: 1 })}>
             <Text variant="h2" as="h2">
               {formatMessage(core.caseNumber, {
                 caseNumber: workingCase.courtCaseNumber,

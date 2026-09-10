@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-mortgage-certificate',
   preset: './jest.preset.js',

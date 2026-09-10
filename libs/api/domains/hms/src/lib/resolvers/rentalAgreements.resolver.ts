@@ -10,8 +10,7 @@ import { Audit } from '@island.is/nest/audit'
 import { PaginatedRentalAgreementCollection } from '../models/rentalAgreements/rentalAgreementCollection.model'
 import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
 import { RentalAgreement } from '../models/rentalAgreements/rentalAgreement.model'
-import { mapToRentalAgreement } from '../mappers'
-import { handle404 } from '@island.is/clients/middlewares'
+import { mapToContractSortOrder, mapToRentalAgreement } from '../mappers'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -19,8 +18,12 @@ import {
 } from '@island.is/nest/feature-flags'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
+import { RentalAgreementsInput } from '../dto/rentalAgreements.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver()
 @Audit({ namespace: '@island.is/api/hms' })
 @FeatureFlag(Features.isServicePortalMyContractsPageEnabled)
@@ -39,20 +42,32 @@ export class RentalAgreementsResolver {
   @Audit()
   async getRentalAgreements(
     @CurrentUser() user: User,
-    @Args('hideInactiveAgreements', { nullable: true })
-    hideInactiveAgreements?: boolean,
+    @Args('input') input: RentalAgreementsInput,
   ): Promise<PaginatedRentalAgreementCollection> {
-    const res = await this.service.getRentalAgreements(
+    const { hideInactiveAgreements, page, pageSize, sort } = input
+    const {
+      data: dtos,
+      totalCount,
+      page: resolvedPage,
+      pageSize: resolvedPageSize,
+    } = await this.service.getRentalAgreements(
       user,
       hideInactiveAgreements,
+      page,
+      pageSize,
+      mapToContractSortOrder(sort),
     )
-    const data = res.map(mapToRentalAgreement)
+    const data = dtos.map(mapToRentalAgreement)
 
     return {
       data,
-      totalCount: data.length,
+      totalCount,
+      pageSize: resolvedPageSize,
       pageInfo: {
-        hasNextPage: false,
+        hasNextPage:
+          resolvedPage !== undefined && resolvedPageSize !== undefined
+            ? resolvedPage * resolvedPageSize < totalCount
+            : false,
       },
     }
   }
@@ -66,19 +81,16 @@ export class RentalAgreementsResolver {
     @CurrentUser() user: User,
     @Args('contractId', { type: () => ID }) contractId: string,
   ): Promise<RentalAgreement | undefined> {
-    const data = await this.service
-      .getRentalAgreement(user, +contractId)
-      .catch(handle404)
+    const dto = await this.service.getRentalAgreement(user, contractId)
 
-    const contractData = data ? mapToRentalAgreement(data) : undefined
+    if (!dto) return undefined
 
-    if (!contractData) {
-      return undefined
-    }
+    const mapped = mapToRentalAgreement(dto)
+    const baseUrl = `${this.downloadServiceConfig.baseUrl}/download/v1/rental-agreements/${contractId}`
 
     return {
-      ...contractData,
-      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/rental-agreements/${contractId}`,
+      ...mapped,
+      latestDocumentDownloadUrl: dto.infoAvailable ? baseUrl : undefined,
     }
   }
 }

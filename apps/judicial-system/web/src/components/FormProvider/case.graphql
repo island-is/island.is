@@ -2,7 +2,6 @@ query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
     created
-    modified
     type
     splitCases {
       id
@@ -41,6 +40,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
     }
     splitCase {
@@ -281,6 +281,7 @@ query Case($input: CaseQueryInput!) {
       defendantId
       civilClaimantId
       rulingFileId
+      isPronouncedOrally
       hasBeenAppealed
       canBeAppealed
       appealDeadline
@@ -321,6 +322,7 @@ query Case($input: CaseQueryInput!) {
       speedLimit
     }
     withCourtSessions
+    isArraignmentSummonsSkipped
     courtSessions {
       id
       created
@@ -451,6 +453,22 @@ query Case($input: CaseQueryInput!) {
       appealIsolationToDate
       rulingFileId
     }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
+    }
     rulingOrderAppealCases {
       id
       appealState
@@ -511,6 +529,7 @@ query Case($input: CaseQueryInput!) {
       withdrawnDate
     }
     indictmentDeniedExplanation
+    indictmentReviewReturnedExplanation
     arraignmentDate {
       date
       location
@@ -527,6 +546,10 @@ query Case($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentRulingDecision
     indictmentReviewer {
+      id
+      name
+    }
+    indictmentApprover {
       id
       name
     }
@@ -687,6 +710,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
       policeCaseNumbers
       indictmentSubtypes

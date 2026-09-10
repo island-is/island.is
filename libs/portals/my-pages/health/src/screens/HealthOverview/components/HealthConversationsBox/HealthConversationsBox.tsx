@@ -57,6 +57,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
   const hasHealthScope = !!userInfo?.scopes?.includes(ApiScope.health)
 
   const { data, loading, error } = useGetHealthConversationsQuery({
+    fetchPolicy: 'network-only',
     variables: { input: {} },
     skip: !hasHealthScope,
   })
@@ -95,12 +96,30 @@ export const HealthConversationsBox = ({ limit }: Props) => {
             columnGap={2}
             overflow="hidden"
           >
-            <Icon icon="mail" type="outline" color="blue400" size="medium" />
+            <Icon
+              icon="chatbubble"
+              type="outline"
+              color="blue400"
+              size="medium"
+            />
             <Text variant="h4" as="h2" color="blue400" truncate>
               {formatMessage(messages.healthConversationsBoxTitle)}
             </Text>
           </Box>
         </LinkResolver>
+        {hasHealthScope && (
+          <LinkResolver
+            href={HealthPaths.HealthConversations}
+            aria-label={formatMessage(messages.seeAllMessages)}
+          >
+            <Icon
+              icon="arrowForward"
+              type="filled"
+              color="blue400"
+              size="medium"
+            />
+          </LinkResolver>
+        )}
       </Box>
 
       {loading && (
@@ -148,18 +167,21 @@ export const HealthConversationsBox = ({ limit }: Props) => {
               )}
               className={styles.conversationLink}
             >
-              <Box paddingX={3}>
+              {/* Rows bleed to the card edges on mobile, inset on desktop */}
+              <Box paddingX={[0, 0, 3]}>
                 <Box
                   display="flex"
                   alignItems="center"
                   columnGap={2}
                   borderTopWidth="standard"
                   borderColor="blue200"
-                  style={{ paddingTop: 12, paddingBottom: 12 }}
+                  paddingY={2}
+                  paddingX={[3, 3, 2]}
                   className={unread ? styles.unreadRow : undefined}
                 >
                   <ConversationAvatar
                     variant="organization"
+                    tone={unread ? 'light' : 'tinted'}
                     logoUrl={item.organization?.logoUrl ?? undefined}
                   />
                   <Box flexGrow={1} overflow="hidden">
@@ -171,7 +193,8 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                     >
                       <Box overflow="hidden">
                         <Text variant="medium" truncate>
-                          {item.organization?.name}
+                          {item.organization?.name?.trim() ||
+                            item.lastSenderGroupName}
                         </Text>
                       </Box>
                       {item.lastMessageSentAt && (
