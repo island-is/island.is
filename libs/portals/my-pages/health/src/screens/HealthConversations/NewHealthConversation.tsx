@@ -34,6 +34,8 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { getMessagingWindowInfo } from './utils/messagingWindow'
+import { MAX_MESSAGE_LENGTH } from './utils/constants'
+import { Markdown } from '@island.is/shared/components'
 import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
 import * as styles from './HealthConversations.css'
 import {
@@ -56,8 +58,6 @@ const getRecipientKey = (recipient: {
   `${recipient.nodeId}-${recipient.groupId}${
     recipient.treatmentId ? `-${recipient.treatmentId}` : ''
   }`
-
-const MAX_MESSAGE_LENGTH = 300
 
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
@@ -412,6 +412,12 @@ const NewHealthConversation = () => {
                 </Box>
               )}
 
+              {!isCertificateSelected && selectedType?.instructions && (
+                <Box marginBottom={3} className={styles.typeInstructions}>
+                  <Markdown>{selectedType.instructions}</Markdown>
+                </Box>
+              )}
+
               {isCertificateSelected ? (
                 <CertificateRequestForm
                   formState={certificateForm}
@@ -420,6 +426,7 @@ const NewHealthConversation = () => {
                   }
                   disabled={isFormLocked}
                   hidePaymentNotice={isCertificateBlocked}
+                  instructions={selectedType?.instructions}
                 />
               ) : (
                 <Box>

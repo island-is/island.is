@@ -11,7 +11,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { HealthDirectorateCertificateType } from '@island.is/api/schema'
 import { formatDate } from '@island.is/portals/my-pages/core'
+import { Markdown } from '@island.is/shared/components'
 import { messages } from '../../../lib/messages'
+import * as styles from '../HealthConversations.css'
 
 export interface CertificateFormState {
   certificateType?: HealthDirectorateCertificateType
@@ -57,6 +59,7 @@ export interface CertificateRequestFormProps {
   onChange: (patch: Partial<CertificateFormState>) => void
   disabled?: boolean
   hidePaymentNotice?: boolean
+  instructions?: string | null
 }
 
 const CertificateRequestForm = ({
@@ -64,6 +67,7 @@ const CertificateRequestForm = ({
   onChange,
   disabled,
   hidePaymentNotice,
+  instructions,
 }: CertificateRequestFormProps) => {
   const { formatMessage } = useLocale()
 
@@ -80,9 +84,15 @@ const CertificateRequestForm = ({
         </Box>
       )}
 
-      <Text variant="h5" marginBottom={2}>
-        {formatMessage(messages.healthConversationsCertificateTypeTitle)}
-      </Text>
+      {instructions ? (
+        <Box marginBottom={2} className={styles.typeInstructions}>
+          <Markdown>{instructions}</Markdown>
+        </Box>
+      ) : (
+        <Text variant="h5" marginBottom={2}>
+          {formatMessage(messages.healthConversationsCertificateTypeTitle)}
+        </Text>
+      )}
       <GridRow marginBottom={3}>
         {certificateTypeOptions.map((option, index) => (
           <GridColumn

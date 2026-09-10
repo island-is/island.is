@@ -987,11 +987,11 @@ export class HealthDirectorateService {
     // A link-out entry without a link is useless and would render as a
     // broken regular option — skip it if the URL was blanked in Contentful.
     if (!webChat.externalLinkUrl) {
-      return items.map(mapMessagingRecipient)
+      return items.map((item) => mapMessagingRecipient(item, formatMessage))
     }
 
     return items.map((item) => {
-      const recipient = mapMessagingRecipient(item)
+      const recipient = mapMessagingRecipient(item, formatMessage)
       return {
         ...recipient,
         allowedMessageTypes: [...recipient.allowedMessageTypes, webChat],

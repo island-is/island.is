@@ -26,7 +26,10 @@ const TextContent = ({
 }: {
   content: HealthConversationTextContentFragment
 }) => (
-  <Box marginBottom={4} style={{ whiteSpace: 'pre-line' }}>
+  <Box
+    marginBottom={4}
+    style={{ whiteSpace: 'pre-line', overflowWrap: 'anywhere' }}
+  >
     <Text fontWeight="light">
       {linkifyText(content.text).map((part, index) =>
         part.type === 'link' && part.href ? (
@@ -46,7 +49,7 @@ const SegmentedContent = ({
 }: {
   content: HealthConversationSegmentedContentFragment
 }) => (
-  <Box marginBottom={4}>
+  <Box marginBottom={4} style={{ overflowWrap: 'anywhere' }}>
     <Text fontWeight="light">
       {content.segments.map((segment, index) =>
         segment.type === HealthDirectorateHealthConversationSegmentType.LINK &&
