@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
 import type {
   NationalRegistryResponseBusiness,
   NationalRegistryResponsePerson,
 } from '@island.is/judicial-system-web/src/types'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
