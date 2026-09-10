@@ -102,9 +102,11 @@ describe('buildTypeEligibility', () => {
   })
 
   it('blocks renewal-65 on a blocking remark without adding a requirement row', () => {
-    const externalData = externalDataWith([{ nr: 'B', issued: '2000-01-01' }], 70, [
-      { code: '400' },
-    ])
+    const externalData = externalDataWith(
+      [{ nr: 'B', issued: '2000-01-01' }],
+      70,
+      [{ code: '400' }],
+    )
     const result = buildTypeEligibility(B_FULL_RENEWAL_65, served, externalData)
 
     expect(result.isEligible).toBe(false)

@@ -3,7 +3,10 @@ import { getCodes } from './formUtils'
 
 // getCodes drives the charge — the codes here map to real fees, so assert the
 // exact set per type and delivery method.
-const appWith = (applicationFor?: string, deliveryMethod?: string): Application =>
+const appWith = (
+  applicationFor?: string,
+  deliveryMethod?: string,
+): Application =>
   ({
     answers: {
       ...(applicationFor ? { applicationFor } : {}),
@@ -31,6 +34,8 @@ describe('getCodes', () => {
   })
 
   it('falls back to the B-full code when applicationFor is unset', () => {
-    expect(getCodes(appWith(undefined, 'district'))).toEqual([{ code: 'AY110' }])
+    expect(getCodes(appWith(undefined, 'district'))).toEqual([
+      { code: 'AY110' },
+    ])
   })
 })
