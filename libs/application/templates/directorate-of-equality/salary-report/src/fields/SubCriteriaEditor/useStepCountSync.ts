@@ -102,8 +102,18 @@ export const useStepCountSync = (fieldName: string) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepCountStr])
 
+  // Whether raising the count back to what loaded would restore the parked
+  // steps rather than mint blanks. False once the list has been replaced
+  // wholesale — a catalog template forgets the tail, and those definitions are
+  // not coming back — so the screen must not offer that as a way out.
+  const stepsInForm: SubCriterionStep[] = getValues(`${fieldName}.steps`) ?? []
+  const canRestoreTrimmedSteps =
+    loadedStepCount.current !== undefined &&
+    trimmedTail.current.length >= loadedStepCount.current - stepsInForm.length
+
   return {
     loadedStepCount: loadedStepCount.current,
+    canRestoreTrimmedSteps,
     // A blank field is someone part-way through typing, not a mistake to
     // colour red; anything else the hook declined to act on is worth saying
     // out loud, since the step list below it stayed where it was.

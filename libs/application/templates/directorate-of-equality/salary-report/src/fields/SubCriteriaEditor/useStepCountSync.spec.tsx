@@ -48,6 +48,21 @@ const setup = (stepCount: number) => {
         }),
       ),
     steps: () => methods().getValues('sc.steps'),
+    // What applyCatalogEntry does, in its order and in one event: forget the
+    // parked tail, then replace both the count and the list with the
+    // template's own steps.
+    applyTemplate: (count: number) =>
+      act(() => {
+        result.current.forgetTrimmedSteps()
+        methods().setValue('sc.stepCount', String(count))
+        methods().setValue(
+          'sc.steps',
+          Array.from({ length: count }, (_, i) => ({
+            id: `t${i + 1}`,
+            description: `sniðmát ${i + 1}`,
+          })),
+        )
+      }),
   }
 }
 
@@ -139,6 +154,38 @@ describe('useStepCountSync', () => {
       expect(idsOf(steps())).toEqual(['s1', 's2', 's3', 's4', 's5'])
     },
   )
+
+  // What the applicant is told hangs on this: the warning offers "raise the
+  // count back and nothing changes", which is only true while the trimmed steps
+  // are still parked.
+  it('reports a plain reduction as restorable', () => {
+    const { result, type } = setup(5)
+
+    type('4')
+
+    expect(result.current.canRestoreTrimmedSteps).toBe(true)
+  })
+
+  it('reports a shorter catalog template as unrestorable', () => {
+    const { result, applyTemplate, steps } = setup(5)
+
+    applyTemplate(3)
+
+    // The template's steps stand, unshortened by the resize effect…
+    expect(idsOf(steps())).toEqual(['t1', 't2', 't3'])
+    // …and there is nothing parked to put the discarded þrep back.
+    expect(result.current.canRestoreTrimmedSteps).toBe(false)
+  })
+
+  it('keeps a same-length catalog template out of the warning entirely', () => {
+    const { result, applyTemplate, steps } = setup(5)
+
+    applyTemplate(5)
+
+    expect(steps()).toHaveLength(5)
+    // Nothing was reduced, so SubCriterionItem never asks about restoring.
+    expect(result.current.loadedStepCount).toBe(5)
+  })
 
   it('restores the trimmed steps, ids and all, when the count goes back up', () => {
     const { type, steps } = setup(5)

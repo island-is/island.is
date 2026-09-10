@@ -48,8 +48,12 @@ export const SubCriterionItem: FC<Props> = ({
     value: String(i),
   }))
 
-  const { loadedStepCount, isStepCountOutOfRange, forgetTrimmedSteps } =
-    useStepCountSync(fieldName)
+  const {
+    loadedStepCount,
+    canRestoreTrimmedSteps,
+    isStepCountOutOfRange,
+    forgetTrimmedSteps,
+  } = useStepCountSync(fieldName)
   const steps: SubCriterionStep[] =
     useWatch({ name: `${fieldName}.steps` }) ?? []
 
@@ -179,10 +183,21 @@ export const SubCriterionItem: FC<Props> = ({
             title={formatMessage(
               messages.report.subCriteria.stepReductionWarningTitle,
             )}
-            message={formatMessage(
-              messages.report.subCriteria.stepReductionWarning,
-              { loaded: loadedStepCount, current: steps.length },
-            )}
+            message={[
+              formatMessage(messages.report.subCriteria.stepReductionWarning, {
+                loaded: loadedStepCount,
+                current: steps.length,
+              }),
+              // Only where raising the count back really does undo it: after a
+              // sniðmát replaced the list, the þrep it discarded are gone.
+              canRestoreTrimmedSteps &&
+                formatMessage(
+                  messages.report.subCriteria.stepReductionUndoHint,
+                  { loaded: loadedStepCount },
+                ),
+            ]
+              .filter(Boolean)
+              .join(' ')}
           />
         </Box>
       )}

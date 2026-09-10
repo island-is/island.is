@@ -747,7 +747,16 @@ export const messages = {
       stepReductionWarning: {
         id: 'doe.sr.application:report.subCriteria.stepReductionWarning',
         defaultMessage:
-          'Þrepin voru {loaded} en eru nú {current}. Þegar þú heldur áfram eyðast skilgreiningar þrepanna sem falla brott og starfsheiti — og starfsfólk — sem voru í þeim færast í {current}. þrep. Fjölgir þú þrepunum aftur upp í {loaded} áður en þú heldur áfram helst allt óbreytt.',
+          'Þrepin voru {loaded} en eru nú {current}. Þegar þú heldur áfram eyðast skilgreiningar þrepanna sem falla brott og starfsheiti — og starfsfólk — sem voru í þeim færast í {current}. þrep.',
+      },
+      // Appended to the warning only while the þrep really can be put back —
+      // see canRestoreTrimmedSteps. Picking a sniðmát discards the þrep it
+      // replaced, so raising the count afterwards yields blank þrep and this
+      // sentence would be a promise the screen cannot keep.
+      stepReductionUndoHint: {
+        id: 'doe.sr.application:report.subCriteria.stepReductionUndoHint',
+        defaultMessage:
+          'Fjölgir þú þrepunum aftur upp í {loaded} áður en þú heldur áfram helst allt óbreytt.',
       },
       stepsLabel: {
         id: 'doe.sr.application:report.subCriteria.stepsLabel',
