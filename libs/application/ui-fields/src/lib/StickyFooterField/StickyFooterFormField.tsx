@@ -28,16 +28,21 @@ const contentLeft = (cell: Element) => {
   )
 }
 
-const measureColumns = (target: Element, targetLeft: number) => {
+const measureColumns = (target: Element, targetRect: DOMRect) => {
   const labelColumn = target.querySelector('thead th[data-column-index="0"]')
   const valueColumn = target.querySelector('thead th[data-column-index="1"]')
+  const table = target.querySelector('table')
 
-  if (!labelColumn || !valueColumn) {
+  if (!labelColumn || !valueColumn || !table) {
+    return null
+  }
+
+  if (table.getBoundingClientRect().width > targetRect.width + 1) {
     return null
   }
 
   return {
-    labelOffset: contentLeft(labelColumn) - targetLeft - FOOTER_PADDING_X,
+    labelOffset: contentLeft(labelColumn) - targetRect.left - FOOTER_PADDING_X,
     labelWidth: contentLeft(valueColumn) - contentLeft(labelColumn),
   }
 }
@@ -90,7 +95,7 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
         isFloating: targetRect.bottom > floatingTopY,
         left: targetRect.left,
         width: targetRect.width,
-        columns: measureColumns(target, targetRect.left),
+        columns: measureColumns(target, targetRect),
       })
     }
 
@@ -119,6 +124,16 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
   if (!state) {
     return null
   }
+
+  const labelWidth = state.columns?.labelWidth ?? field.labelWidth
+  const labelStyle =
+    labelWidth === undefined
+      ? { flexGrow: 1 }
+      : {
+          marginLeft: state.columns?.labelOffset ?? field.labelOffset,
+          width: labelWidth,
+          flexShrink: 0,
+        }
 
   return (
     <Box
@@ -149,13 +164,7 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
             paddingBottom={1}
             className={styles.row}
           >
-            <Box
-              style={{
-                marginLeft: state.columns?.labelOffset ?? field.labelOffset,
-                width: state.columns?.labelWidth ?? field.labelWidth,
-                flexShrink: 0,
-              }}
-            >
+            <Box style={labelStyle}>
               <Text
                 variant="medium"
                 fontWeight={index === 0 ? 'semiBold' : 'regular'}
