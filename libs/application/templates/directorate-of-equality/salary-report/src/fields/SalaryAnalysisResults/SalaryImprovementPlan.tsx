@@ -111,10 +111,7 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     [outlierGroupsContent, employeesContent],
   )
   const { sync } = useDraftSync(application)
-  const writeOutlierPlan = useOutlierPlanBuffer(
-    application.id,
-    answerQuestions,
-  )
+  const writeOutlierPlan = useOutlierPlanBuffer(application.id, answerQuestions)
   // Both captured on the first render rather than watched, because the shell's
   // answers move underneath this screen: saving the plan mirrors it into them,
   // as does the navigation-flag effect below. A seed keyed on the live value
