@@ -39,7 +39,7 @@ const useCivilClaimants = () => {
           }
         }
         return null
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.createCivilClaimant))
         return null
       }
@@ -55,7 +55,7 @@ const useCivilClaimants = () => {
         })
 
         return Boolean(data?.deleteCivilClaimant.deleted)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.deleteCivilClaimant))
         return false
       }
@@ -73,7 +73,7 @@ const useCivilClaimants = () => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateCivilClaimant))
         return false
       }

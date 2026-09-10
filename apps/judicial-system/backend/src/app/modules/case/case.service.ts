@@ -12,7 +12,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {

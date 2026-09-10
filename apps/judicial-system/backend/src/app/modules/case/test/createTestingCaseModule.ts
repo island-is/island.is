@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended'
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { IntlService } from '@island.is/cms-translations'

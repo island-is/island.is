@@ -1,5 +1,4 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
