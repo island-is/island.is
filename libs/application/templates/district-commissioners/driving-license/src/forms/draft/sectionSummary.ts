@@ -24,7 +24,10 @@ import {
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
 } from '../../utils/constants'
-import { hasNoDrivingLicenseInOtherCountry, needsHealthCertificateCondition } from '../../utils'
+import {
+  hasNoDrivingLicenseInOtherCountry,
+  needsHealthCertificateCondition,
+} from '../../utils'
 import { formatPhoneNumber } from '@island.is/shared/utils'
 import { Pickup } from '../../types'
 
@@ -44,7 +47,10 @@ const typeValue = (applicationFor: unknown): StaticText =>
     ? m.applicationForRenewalLicenseTitle
     : m.applicationForFullLicenseTitle
 
-const teacherName = (answers: FormValue, externalData: ExternalData): string => {
+const teacherName = (
+  answers: FormValue,
+  externalData: ExternalData,
+): string => {
   if (answers.applicationFor === B_TEMP) {
     const selectedNationalId = getValueViaPath<string>(
       answers,
@@ -69,7 +75,10 @@ const teacherName = (answers: FormValue, externalData: ExternalData): string => 
   )
 }
 
-const chargeTotal = (answers: FormValue, externalData: ExternalData): string => {
+const chargeTotal = (
+  answers: FormValue,
+  externalData: ExternalData,
+): string => {
   const items =
     getValueViaPath<{ priceAmount: number; chargeItemCode: string }[]>(
       externalData,
