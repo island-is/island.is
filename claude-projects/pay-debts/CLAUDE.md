@@ -76,3 +76,7 @@ Coverage: state machine + api allowlist, `DebtsLoader` (empty result, submit gat
 - Charge creation uses the wrong-granularity code (see `payment` above). The v3_2 spec answers this: `/payDebt` and `/validatePayment` take `payDebts: [{ payid, payAmount }]` — the per-debt `payID`, not a charge code. Both operations are generated (`payDebtPost3`, `validatePaymentPost4`) but nothing calls them yet, and `payID` still isn't carried to the frontend.
 - FJS's `nextkey` is ignored: measured 9.9.2026, it comes back empty on every successful `/customerDebts` response, so `PayDebtsService` neither sends nor returns it. Irrelevant while the supported set is capped at 100 debts.
 - Nothing on the `completed` side confirms what was actually paid.
+
+## Notes
+
+Only comment non-obvious logic, don't restate what the code already says
