@@ -1,7 +1,8 @@
 // Health conversation message bodies arrive as free text with no markup, so any
 // URL in them has to be detected before it can be rendered as a tappable link.
 // Mirrors the my-pages implementation so both clients linkify the same way.
-const URL_REGEX = /(https?:\/\/[^\s<]+[^\s<.,:;!?'")\]]|www\.[^\s<]+[^\s<.,:;!?'")\]])/gi
+const URL_REGEX =
+  /(https?:\/\/[^\s<]+[^\s<.,:;!?'")\]]|www\.[^\s<]+[^\s<.,:;!?'")\]])/gi
 
 export interface LinkifiedTextPart {
   type: 'text' | 'link'
