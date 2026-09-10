@@ -3,9 +3,21 @@ import {
   buildMultiField,
   buildSubSection,
   buildAlertMessageField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
-import { isCasualWork } from '../../../utils/conditions'
+import { hasCasualWorkOverlap, isCasualWork } from '../../../utils/conditions'
+import {
+  getCurrentMonthEndDate,
+  getCurrentMonthStartDate,
+} from '../../../utils/date'
+import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
+
+type WorkshiftPeriod = {
+  id?: string
+  name?: string
+  english?: string | null
+}
 
 export const casualWorkSection = buildSubSection({
   id: 'casualWorkSection',
@@ -22,6 +34,15 @@ export const casualWorkSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           initActiveFieldIfEmpty: true,
           hideTableHeaderIfEmpty: true,
+          title: () => {
+            const month = new Date().toLocaleDateString('is-IS', {
+              month: 'long',
+            })
+            return {
+              ...m.application.partTimeRegisteredIncomeTitle,
+              values: { month },
+            }
+          },
           fields: {
             company: {
               component: 'nationalIdWithName',
@@ -37,25 +58,42 @@ export const casualWorkSection = buildSubSection({
               clearOnChange: (index: number) => [
                 `registerCasualWork[${index}].dateTo`,
               ],
-              minDate: () => {
-                const tomorrow = new Date()
-                tomorrow.setDate(tomorrow.getDate() + 1)
-                return tomorrow
-              },
+              minDate: getCurrentMonthStartDate,
+              maxDate: getCurrentMonthEndDate,
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
               required: true,
+
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
                   return new Date(fromDate)
                 }
-                const tomorrow = new Date()
-                tomorrow.setDate(tomorrow.getDate() + 1)
-                return tomorrow
+                return getCurrentMonthStartDate()
+              },
+            },
+            workshiftPeriod: {
+              component: 'select',
+              label: m.application.workshiftPeriod,
+              width: 'half',
+              required: true,
+              options: (application, _, locale) => {
+                const workshiftPeriods =
+                  getValueViaPath<Array<WorkshiftPeriod>>(
+                    application.externalData,
+                    'workshiftPeriods.data',
+                  ) ?? []
+
+                return workshiftPeriods.map((period) => ({
+                  label:
+                    locale === 'en'
+                      ? period.english || period.name || ''
+                      : period.name || '',
+                  value: period.id ?? '',
+                }))
               },
             },
             estimatedIncome: {
@@ -74,6 +112,7 @@ export const casualWorkSection = buildSubSection({
               m.application.tableHeaderCompany,
               m.application.tableHeaderDateFrom,
               m.application.tableHeaderDateTo,
+              m.application.tableHeaderWorkshiftPeriod,
               m.application.tableHeaderEstimatedIncome,
             ],
             rows: [
@@ -81,6 +120,7 @@ export const casualWorkSection = buildSubSection({
               'company.name',
               'dateFrom',
               'dateTo',
+              'workshiftPeriod',
               'estimatedIncome',
             ],
             format: {
@@ -89,42 +129,30 @@ export const casualWorkSection = buildSubSection({
                 const clean = value.replace('-', '')
                 return `${clean.slice(0, 6)}-${clean.slice(6)}`
               },
-              dateFrom: (value) => {
-                if (!value) return ''
-                const date = new Date(value)
-                if (isNaN(date.getTime())) return value
-                return date.toLocaleDateString('is-IS', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
+              dateFrom: formatIsDateLong,
+              dateTo: formatIsDateLong,
+              workshiftPeriod: (value, _displayIndex, application) => {
+                if (!value || !application) return ''
+                const workshiftPeriods =
+                  getValueViaPath<Array<WorkshiftPeriod>>(
+                    application.externalData,
+                    'workshiftPeriods.data',
+                  ) ?? []
+                const period = workshiftPeriods.find((p) => p.id === value)
+                return period?.name ?? value
               },
-              dateTo: (value) => {
-                if (!value) return ''
-                const date = new Date(value)
-                if (isNaN(date.getTime())) return value
-                return date.toLocaleDateString('is-IS', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
-              },
-              estimatedIncome: (value) => {
-                if (!value) return ''
-                const num = Number(value)
-                return `${num.toLocaleString('is-IS')} kr.`
-              },
+              estimatedIncome: formatIsCurrency,
             },
           },
         }),
-        // buildAlertMessageField({
-        //   id: 'contractWorkAlert',
-        //   title: 'Tímabil mega ekki skarast',
-        //   message:
-        //     'Tvö tímabil hjá Byko skarast. Þú getur eytt út línu eða breytt tímabilum til að geta haldið áfram með skráninguna.',
-        //   alertType: 'warning',
-        //   marginTop: 6,
-        // }),
+        buildAlertMessageField({
+          id: 'casualWorkOverlapAlert',
+          title: m.errorMessages.casualWorkOverlappingPeriods,
+          message: m.errorMessages.casualWorkOverlappingPeriodsAlertMessage,
+          alertType: 'warning',
+          marginTop: 6,
+          condition: hasCasualWorkOverlap,
+        }),
       ],
     }),
   ],

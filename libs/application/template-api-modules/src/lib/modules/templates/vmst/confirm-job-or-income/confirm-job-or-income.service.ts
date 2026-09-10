@@ -147,6 +147,10 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
     }
   }
 
+  async getWorkshiftPeriods() {
+    return await this.vmstUnemploymentClientService.getWorkshiftPeriods()
+  }
+
   async submitApplication({
     application,
     auth,

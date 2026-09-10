@@ -6,6 +6,11 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
 import { isContractWork } from '../../../utils/conditions'
+import {
+  getCurrentMonthEndDate,
+  getCurrentMonthStartDate,
+} from '../../../utils/date'
+import { formatIsDateLong } from '../../../utils/formatters'
 
 export const contractWorkSection = buildSubSection({
   id: 'contractWorkSection',
@@ -37,11 +42,8 @@ export const contractWorkSection = buildSubSection({
               clearOnChange: (index: number) => [
                 `registerContractWork[${index}].workEnds`,
               ],
-              minDate: () => {
-                const tomorrow = new Date()
-                tomorrow.setDate(tomorrow.getDate() + 1)
-                return tomorrow
-              },
+              minDate: getCurrentMonthStartDate,
+              maxDate: getCurrentMonthEndDate,
             },
             workEnds: {
               component: 'date',
@@ -53,9 +55,7 @@ export const contractWorkSection = buildSubSection({
                 if (fromDate) {
                   return new Date(fromDate)
                 }
-                const tomorrow = new Date()
-                tomorrow.setDate(tomorrow.getDate() + 1)
-                return tomorrow
+                return getCurrentMonthStartDate()
               },
             },
           },
@@ -66,26 +66,8 @@ export const contractWorkSection = buildSubSection({
             ],
             rows: ['contractJobStart', 'workEnds'],
             format: {
-              contractJobStart: (value) => {
-                if (!value) return ''
-                const date = new Date(value)
-                if (isNaN(date.getTime())) return value
-                return date.toLocaleDateString('is-IS', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
-              },
-              workEnds: (value) => {
-                if (!value) return ''
-                const date = new Date(value)
-                if (isNaN(date.getTime())) return value
-                return date.toLocaleDateString('is-IS', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
-              },
+              contractJobStart: formatIsDateLong,
+              workEnds: formatIsDateLong,
             },
           },
         }),

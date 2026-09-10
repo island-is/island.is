@@ -22,6 +22,7 @@ import {
   PensionFundsApi,
   IncomeTypesApi,
   IncomeApi,
+  WorkshiftPeriodsApi,
   SubmitApi,
 } from '../dataProviders'
 import { application as applicationMessages } from './messages'
@@ -64,6 +65,7 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
                 PensionFundsApi,
                 IncomeTypesApi,
                 IncomeApi,
+                WorkshiftPeriodsApi,
               ],
               delete: true,
             },

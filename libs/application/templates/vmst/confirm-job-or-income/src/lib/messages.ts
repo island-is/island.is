@@ -109,7 +109,7 @@ export const application = defineMessages({
   casualWorkDescription: {
     id: 'vmst.cjoi.application:casualWorkDescription#markdown',
     defaultMessage:
-      'Tilfallandi vinna er vinna sem er óregluleg eða í stuttan tíma. Til dæmis einstaka vaktir eða skammtímaverkefni.\n\n**Þetta þarftu að vita:**\n* Tilkynna þarf allar tilfallandi vinnu í hverjum mánuði\n* Þetta gildir jafnvel þótt þú hafir unnið hjá sama atvinnurekanda áður\n* Vinna er skráð mánaðarlega. Ekki þarf að tilkynna hvern dag fyrir sig\n* Ekki þarf að skila launaseðli',
+      'Tilfallandi vinna er vinna sem er óregluleg eða í stuttan tíma. Til dæmis einstaka vaktir eða skammtímaverkefni.\n\n**Þetta þarftu að vita:**\n* Tilkynna þarf allar tilfallandi vinnu í hverjum mánuði\n* Þetta gildir jafnvel þótt þú hafir unnið hjá sama atvinnurekanda áður\n* Vinna er skráð mánaðarlega. Ekki þarf að tilkynna hvern dag fyrir sig\n* Ekki er þörf á afriti af launaseðli nema óskað verði eftir honum síðar.',
     description: 'Description for casual work type',
   },
 
@@ -126,10 +126,11 @@ export const application = defineMessages({
       'Ef eitthvað breytist varðandi hlutastarf þitt, hvort sem er tekjur, starfshlutfall eða lok starfs, þarftu að tilkynna það aftur með sama hætti.',
     description: 'Alert for part-time work',
   },
-  partTimeAlertTitle: {
-    id: 'vmst.cjoi.application:partTimeAlertTitle',
-    defaultMessage: 'Þarftu að gera breytingar?',
-    description: 'Alert title for part-time work',
+  partTimeRegisteredIncomeTitle: {
+    id: 'vmst.cjoi.application:partTimeRegisteredIncomeTitle',
+    defaultMessage: 'Skráðar tekjur í {month} mánuði',
+    description:
+      'Title for the part-time registered income table, with dynamic month name',
   },
 
   // Contract work descriptions
@@ -241,6 +242,11 @@ export const application = defineMessages({
     defaultMessage: 'Áætlaðar tekjur á mánuði fyrir skatt',
     description: 'Estimated monthly income before tax label',
   },
+  workshiftPeriod: {
+    id: 'vmst.cjoi.application:workshiftPeriod',
+    defaultMessage: 'Vinnutími',
+    description: 'Workshift period label',
+  },
   paymentType: {
     id: 'vmst.cjoi.application:paymentType',
     defaultMessage: 'Tegund greiðslu',
@@ -283,6 +289,11 @@ export const application = defineMessages({
     defaultMessage: 'Dagsetning til',
     description: 'Table header for date to',
   },
+  tableHeaderWorkshiftPeriod: {
+    id: 'vmst.cjoi.application:tableHeaderWorkshiftPeriod',
+    defaultMessage: 'Vinnutími',
+    description: 'Table header for workshift period',
+  },
   tableHeaderEstimatedIncome: {
     id: 'vmst.cjoi.application:tableHeaderEstimatedIncome',
     defaultMessage: 'Áætlaðar upphæð',
@@ -317,11 +328,6 @@ export const application = defineMessages({
     id: 'vmst.cjoi.application:tableHeaderAmount',
     defaultMessage: 'Upphæð',
     description: 'Table header for amount',
-  },
-  tableHeaderFrequency: {
-    id: 'vmst.cjoi.application:tableHeaderFrequency',
-    defaultMessage: 'Tíðni',
-    description: 'Table header for payment frequency',
   },
 
   // Payment type options - capital income
@@ -526,5 +532,36 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Villa við að skila inn umsókn. Reyndu aftur eða hafðu samband við Ísland.is',
     description: 'Error message when submit fails',
+  },
+  dateToRequiredForOneTime: {
+    id: 'vmst.cjoi.application:errorMessages.dateToRequiredForOneTime',
+    defaultMessage: 'Dagsetning til er skylda þegar valin er eingreiðsla',
+    description: 'Error shown when dateTo is missing for a one-time payment',
+  },
+  casualWorkOverlappingPeriods: {
+    id: 'vmst.cjoi.application:errorMessages.casualWorkOverlappingPeriods',
+    defaultMessage: 'Tímabil mega ekki skarast',
+    description:
+      'Error shown when two casual work entries for the same company have overlapping date ranges',
+  },
+  casualWorkOverlappingPeriodsAlertMessage: {
+    id: 'vmst.cjoi.application:errorMessages.casualWorkOverlappingPeriodsAlertMessage',
+    defaultMessage:
+      'Tímabil hjá sama fyrirtæki skarast. Þú getur eytt út línu eða breytt tímabilum til að geta haldið áfram með skráninguna.',
+    description:
+      'Alert message body shown when casual work entries have overlapping periods for the same company',
+  },
+  partTimeOverlappingPeriods: {
+    id: 'vmst.cjoi.application:errorMessages.partTimeOverlappingPeriods',
+    defaultMessage: 'Tímabil mega ekki skarast',
+    description:
+      'Error shown when two part time entries for the same company have overlapping date ranges',
+  },
+  partTimeOverlappingPeriodsAlertMessage: {
+    id: 'vmst.cjoi.application:errorMessages.partTimeOverlappingPeriodsAlertMessage',
+    defaultMessage:
+      'Tímabil hjá sama fyrirtæki skarast. Þú getur eytt út línu eða breytt tímabilum til að geta haldið áfram með skráninguna. Ef starfslok eru ekki skráð telst starfið vera ótímabundið.',
+    description:
+      'Alert message body shown when part time entries have overlapping periods for the same company',
   },
 })

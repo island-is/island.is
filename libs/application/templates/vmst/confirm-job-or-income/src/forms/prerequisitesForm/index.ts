@@ -14,6 +14,7 @@ import {
   PensionFundsApi,
   IncomeTypesApi,
   IncomeApi,
+  WorkshiftPeriodsApi,
 } from '../../dataProviders'
 
 export const Prerequisites = buildForm({
@@ -44,6 +45,9 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: IncomeApi,
+            }),
+            buildDataProviderItem({
+              provider: WorkshiftPeriodsApi,
             }),
           ],
           submitField: buildSubmitField({

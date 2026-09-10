@@ -9,6 +9,7 @@ import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
 import { ApplicationAnswers } from '../lib/dataSchema'
 import * as m from '../lib/messages'
+import { PaymentFrequency } from './constants'
 
 const formatDateStr = (dateStr: string | undefined): string =>
   dateStr ? format(new Date(dateStr), 'dd.MM.yyyy') : ''
@@ -19,10 +20,10 @@ const getOptionLabel = (
 ): string => options?.find((option) => option.id === value)?.name ?? value ?? ''
 
 const getPaymentFrequencyLabel = (frequency: string | undefined) => {
-  if (frequency === 'oneTime') {
+  if (frequency === PaymentFrequency.ONE_TIME) {
     return m.application.oneTimePayment
   }
-  if (frequency === 'monthly') {
+  if (frequency === PaymentFrequency.MONTHLY) {
     return m.application.monthlyPayment
   }
   return frequency ?? ''

@@ -6,6 +6,16 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
 import { isSocialInsurance } from '../../../utils/conditions'
+import { PaymentFrequency } from '../../../utils/constants'
+import {
+  getCurrentMonthEndDate,
+  getCurrentMonthStartDate,
+} from '../../../utils/date'
+import {
+  formatIsCurrency,
+  formatIsDateLong,
+  formatIsDateLongOrDash,
+} from '../../../utils/formatters'
 
 export const socialInsuranceSection = buildSubSection({
   id: 'socialInsuranceSection',
@@ -26,6 +36,7 @@ export const socialInsuranceSection = buildSubSection({
             socialPaymentType: {
               component: 'select',
               label: m.application.paymentType,
+              width: 'half',
               required: true,
               options: (application) => {
                 const incomeTypes =
@@ -44,28 +55,64 @@ export const socialInsuranceSection = buildSubSection({
               component: 'input',
               label: m.application.amountPerMonth,
               type: 'number',
+              width: 'half',
               currency: true,
               required: true,
               min: 0,
             },
             paymentFrequency: {
               component: 'radio',
-              largeButtons: true,
               required: true,
+              largeButtons: false,
               width: 'half',
-              options: [
-                { value: 'oneTime', label: m.application.oneTimePayment },
-                { value: 'monthly', label: m.application.monthlyPayment },
+              clearOnChange: (index: number) => [
+                `registerSocialInsurance[${index}].dateTo`,
               ],
+              options: [
+                {
+                  value: PaymentFrequency.ONE_TIME,
+                  label: m.application.oneTimePayment,
+                },
+                {
+                  value: PaymentFrequency.MONTHLY,
+                  label: m.application.monthlyPayment,
+                },
+              ],
+            },
+            dateFrom: {
+              component: 'date',
+              label: m.application.dateFrom,
+              width: 'half',
+              required: true,
+              clearOnChange: (index: number) => [
+                `registerSocialInsurance[${index}].dateTo`,
+              ],
+              minDate: getCurrentMonthStartDate,
+              maxDate: getCurrentMonthEndDate,
+            },
+            dateTo: {
+              component: 'date',
+              label: m.application.dateTo,
+              width: 'half',
+              required: (_application, activeField) =>
+                activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
+              minDate: (_application, activeField) => {
+                const fromDate = activeField?.dateFrom
+                if (fromDate) {
+                  return new Date(fromDate)
+                }
+                return getCurrentMonthStartDate()
+              },
             },
           },
           table: {
             header: [
               m.application.tableHeaderPaymentType,
+              m.application.tableHeaderDateFrom,
+              m.application.tableHeaderDateTo,
               m.application.tableHeaderAmount,
-              m.application.tableHeaderFrequency,
             ],
-            rows: ['socialPaymentType', 'amountPerMonth', 'paymentFrequency'],
+            rows: ['socialPaymentType', 'dateFrom', 'dateTo', 'amountPerMonth'],
             format: {
               socialPaymentType: (value, _displayIndex, application) => {
                 if (!value || !application) return ''
@@ -77,17 +124,9 @@ export const socialInsuranceSection = buildSubSection({
                 const type = incomeTypes.find((t) => t.id === value)
                 return type?.name ?? value
               },
-              amountPerMonth: (value) => {
-                if (!value) return ''
-                const num = Number(value)
-                return `${num.toLocaleString('is-IS')} kr.`
-              },
-              paymentFrequency: (value) => {
-                if (!value) return ''
-                return value === 'oneTime'
-                  ? m.application.oneTimePayment
-                  : m.application.monthlyPayment
-              },
+              dateFrom: formatIsDateLong,
+              dateTo: formatIsDateLongOrDash,
+              amountPerMonth: formatIsCurrency,
             },
           },
         }),

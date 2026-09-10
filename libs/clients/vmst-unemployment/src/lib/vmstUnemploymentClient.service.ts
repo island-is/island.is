@@ -48,9 +48,11 @@ import {
   ApplicantWithdrawLatestApplicationRequest,
   GaldurExternalDomainRequestsHasValidApplicationResponse,
   IncomePostRequest,
-  GaldurExternalDomainModelsIncomeCreateIncomesResponse,
   IncomeGetRequest,
   GaldurExternalDomainModelsIncomeIncomesDTO,
+  GaldurExternalDomainModelsIncomeIncomesResponse,
+  IncomeValidateRequest,
+  GaldurDomainModelsSettingsWorkShiftPeriodsWorkShiftPeriodDTO,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -588,63 +590,13 @@ export class VmstUnemploymentClientService {
 
   async createIncome(
     requestParameters: IncomePostRequest,
-  ): Promise<GaldurExternalDomainModelsIncomeCreateIncomesResponse> {
+  ): Promise<GaldurExternalDomainModelsIncomeIncomesResponse> {
     const api = await this.createApiClient(
       IncomeApi,
       'clients-vmst-unemployment',
     )
     return await api.incomePost(requestParameters)
   }
-
-  // async createIrregularJob(
-  //   requestParameters: IncomeCreateIrregularJobRequest,
-  // ): Promise<GaldurExternalDomainModelsIncomeIrregularJobDTO> {
-  //   const api = await this.createApiClient(
-  //     IncomeApi,
-  //     'clients-vmst-unemployment',
-  //   )
-  //   return await api.incomeCreateIrregularJob(requestParameters)
-  // }
-
-  // async createPartTimeJob(
-  //   requestParameters: IncomeCreatePartTimeJobRequest,
-  // ): Promise<GaldurExternalDomainModelsIncomePartTimeJobDTO> {
-  //   const api = await this.createApiClient(
-  //     IncomeApi,
-  //     'clients-vmst-unemployment',
-  //   )
-  //   return await api.incomeCreatePartTimeJob(requestParameters)
-  // }
-
-  // async createCapitalIncomePayment(
-  //   requestParameters: IncomeCreateCapitalIncomePaymentRequest,
-  // ): Promise<GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO> {
-  //   const api = await this.createApiClient(
-  //     IncomeApi,
-  //     'clients-vmst-unemployment',
-  //   )
-  //   return await api.incomeCreateCapitalIncomePayment(requestParameters)
-  // }
-
-  // async createTRPayment(
-  //   requestParameters: IncomeCreateTRPaymentRequest,
-  // ): Promise<GaldurExternalDomainModelsIncomeTRPaymentDTO> {
-  //   const api = await this.createApiClient(
-  //     IncomeApi,
-  //     'clients-vmst-unemployment',
-  //   )
-  //   return await api.incomeCreateTRPayment(requestParameters)
-  // }
-
-  // async createContractorJob(
-  //   requestParameters: UncompensatedPeriodsCreateContractorJobRequest,
-  // ): Promise<GaldurExternalDomainModelsIncomeContractorJobDTO> {
-  //   const api = await this.createApiClient(
-  //     UncompensatedPeriodsApi,
-  //     'clients-vmst-unemployment',
-  //   )
-  //   return await api.uncompensatedPeriodsCreateContractorJob(requestParameters)
-  // }
 
   async getIncomeTypes(options?: {
     onlyTrTypes?: boolean
@@ -657,16 +609,6 @@ export class VmstUnemploymentClientService {
     )
     return await api.incomeSupportDataGetIncomeTypes(options ?? {})
   }
-
-  // async createPensionPayment(
-  //   requestParameters: IncomeCreatePensionPaymentRequest,
-  // ): Promise<GaldurExternalDomainModelsIncomePensionPaymentDTO> {
-  //   const api = await this.createApiClient(
-  //     IncomeApi,
-  //     'clients-vmst-unemployment',
-  //   )
-  //   return await api.incomeCreatePensionPayment(requestParameters)
-  // }
 
   async getPensionFunds(): Promise<
     Array<GaldurExternalDomainModelsPensionFundPensionFundItemDTO>
@@ -739,5 +681,25 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
     return await api.incomeGet(requestParameters)
+  }
+
+  async validatIncome(
+    requestParameters: IncomeValidateRequest,
+  ): Promise<GaldurExternalDomainModelsIncomeIncomesResponse> {
+    const api = await this.createApiClient(
+      IncomeApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomeValidate(requestParameters)
+  }
+
+  async getWorkshiftPeriods(): Promise<
+    Array<GaldurDomainModelsSettingsWorkShiftPeriodsWorkShiftPeriodDTO>
+  > {
+    const api = await this.createApiClient(
+      SupportDataApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.supportDataGetAllWorkShiftPeriods()
   }
 }

@@ -20,6 +20,11 @@ export const IncomeApi = defineTemplateApi({
   externalDataId: 'income',
 })
 
+export const WorkshiftPeriodsApi = defineTemplateApi({
+  action: 'getWorkshiftPeriods',
+  externalDataId: 'workshiftPeriods',
+})
+
 export const SubmitApi = defineTemplateApi({
   action: 'submitApplication',
 })

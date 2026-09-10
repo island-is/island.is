@@ -6,6 +6,16 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
 import { isPension } from '../../../utils/conditions'
+import { PaymentFrequency } from '../../../utils/constants'
+import {
+  getCurrentMonthEndDate,
+  getCurrentMonthStartDate,
+} from '../../../utils/date'
+import {
+  formatIsCurrency,
+  formatIsDateLong,
+  formatIsDateLongOrDash,
+} from '../../../utils/formatters'
 
 export const pensionSection = buildSubSection({
   id: 'pensionSection',
@@ -23,23 +33,6 @@ export const pensionSection = buildSubSection({
           initActiveFieldIfEmpty: true,
           hideTableHeaderIfEmpty: true,
           fields: {
-            pensionFund: {
-              component: 'select',
-              label: m.application.pensionFund,
-              required: true,
-              options: (application) => {
-                const pensionFunds =
-                  getValueViaPath<Array<{ id?: string; name?: string }>>(
-                    application.externalData,
-                    'pensionFunds.data',
-                  ) ?? []
-
-                return pensionFunds.map((fund) => ({
-                  label: fund.name ?? '',
-                  value: fund.id ?? '',
-                }))
-              },
-            },
             pensionType: {
               component: 'select',
               label: m.application.paymentType,
@@ -58,6 +51,68 @@ export const pensionSection = buildSubSection({
                 }))
               },
             },
+            pensionFund: {
+              component: 'select',
+              label: m.application.pensionFund,
+              width: 'half',
+              required: true,
+              options: (application) => {
+                const pensionFunds =
+                  getValueViaPath<Array<{ id?: string; name?: string }>>(
+                    application.externalData,
+                    'pensionFunds.data',
+                  ) ?? []
+
+                return pensionFunds.map((fund) => ({
+                  label: fund.name ?? '',
+                  value: fund.id ?? '',
+                }))
+              },
+            },
+            paymentFrequency: {
+              component: 'radio',
+              largeButtons: false,
+              required: true,
+              width: 'half',
+              clearOnChange: (index: number) => [
+                `registerPension[${index}].dateTo`,
+              ],
+              options: [
+                {
+                  value: PaymentFrequency.ONE_TIME,
+                  label: m.application.oneTimePayment,
+                },
+                {
+                  value: PaymentFrequency.MONTHLY,
+                  label: m.application.monthlyPayment,
+                },
+              ],
+            },
+            dateFrom: {
+              component: 'date',
+              label: m.application.dateFrom,
+              width: 'half',
+              required: true,
+              clearOnChange: (index: number) => [
+                `registerPension[${index}].dateTo`,
+              ],
+              minDate: getCurrentMonthStartDate,
+              maxDate: getCurrentMonthEndDate,
+            },
+            dateTo: {
+              component: 'date',
+              label: m.application.dateTo,
+              width: 'half',
+              required: (_application, activeField) =>
+                activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
+              minDate: (_application, activeField) => {
+                const fromDate = activeField?.dateFrom
+                if (fromDate) {
+                  return new Date(fromDate)
+                }
+                return getCurrentMonthStartDate()
+              },
+            },
             amountPerMonth: {
               component: 'input',
               label: m.application.pensionAmountPerMonth,
@@ -72,9 +127,17 @@ export const pensionSection = buildSubSection({
             header: [
               m.application.tableHeaderPensionFund,
               m.application.tableHeaderPaymentType,
+              m.application.tableHeaderDateFrom,
+              m.application.tableHeaderDateTo,
               m.application.tableHeaderAmount,
             ],
-            rows: ['pensionFund', 'pensionType', 'amountPerMonth'],
+            rows: [
+              'pensionFund',
+              'pensionType',
+              'dateFrom',
+              'dateTo',
+              'amountPerMonth',
+            ],
             format: {
               pensionFund: (value, _displayIndex, application) => {
                 if (!value || !application) return ''
@@ -96,11 +159,9 @@ export const pensionSection = buildSubSection({
                 const type = incomeTypes.find((t) => t.id === value)
                 return type?.name ?? value
               },
-              amountPerMonth: (value) => {
-                if (!value) return ''
-                const num = Number(value)
-                return `${num.toLocaleString('is-IS')} kr.`
-              },
+              dateFrom: formatIsDateLong,
+              dateTo: formatIsDateLongOrDash,
+              amountPerMonth: formatIsCurrency,
             },
           },
         }),

@@ -13,3 +13,8 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export enum PaymentFrequency {
+  ONE_TIME = 'oneTime',
+  MONTHLY = 'monthly',
+}

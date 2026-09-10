@@ -1,6 +1,7 @@
 import { Application } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { application as applicationMessages } from '../lib/messages'
+import { formatIsDateLong } from './formatters'
 
 export const getHistoryLogMessage = (application: Application) => {
   const casualDateFrom = getValueViaPath<string>(
@@ -27,19 +28,11 @@ export const getHistoryLogMessage = (application: Application) => {
     return applicationMessages.historyLogSubmitted
   }
 
-  const formattedFrom = new Date(dateFrom).toLocaleDateString('is-IS', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-  const formattedTo = new Date(dateTo).toLocaleDateString('is-IS', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-
   return {
     ...applicationMessages.historyLogReceivedForPeriod,
-    values: { dateFrom: formattedFrom, dateTo: formattedTo },
+    values: {
+      dateFrom: formatIsDateLong(dateFrom),
+      dateTo: formatIsDateLong(dateTo),
+    },
   }
 }

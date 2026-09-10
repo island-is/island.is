@@ -4,10 +4,16 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
+  buildTitleField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import * as m from '../../../lib/messages'
-import { isPartTime } from '../../../utils/conditions'
+import { hasPartTimeOverlap, isPartTime } from '../../../utils/conditions'
+import {
+  getCurrentMonthEndDate,
+  getCurrentMonthStartDate,
+} from '../../../utils/date'
+import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
 
 type PartTimeJobExternalData = {
   employerSSN?: string
@@ -50,14 +56,24 @@ export const partTimeSection = buildSubSection({
       children: [
         buildAlertMessageField({
           id: 'partTimeAlert',
-          title: m.application.partTimeAlertTitle,
           message: m.application.partTimeAlert,
           alertType: 'info',
         }),
+        buildTitleField({}),
         buildTableRepeaterField({
           id: 'registerPartTime',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
+          title: () => {
+            const month = new Date().toLocaleDateString('is-IS', {
+              month: 'long',
+            })
+            return {
+              ...m.application.partTimeRegisteredIncomeTitle,
+              values: { month },
+            }
+          },
+          // titleVariant: '',
           defaultValue: getPartTimeDefaults,
           fields: {
             company: {
@@ -71,11 +87,8 @@ export const partTimeSection = buildSubSection({
               label: m.application.jobStart,
               width: 'half',
               required: true,
-              minDate: () => {
-                const tomorrow = new Date()
-                tomorrow.setDate(tomorrow.getDate() + 1)
-                return tomorrow
-              },
+              minDate: getCurrentMonthStartDate,
+              maxDate: getCurrentMonthEndDate,
             },
             jobEnd: {
               component: 'date',
@@ -86,9 +99,7 @@ export const partTimeSection = buildSubSection({
                 if (fromDate) {
                   return new Date(fromDate)
                 }
-                const tomorrow = new Date()
-                tomorrow.setDate(tomorrow.getDate() + 1)
-                return tomorrow
+                return getCurrentMonthStartDate()
               },
             },
             workPercentage: {
@@ -132,27 +143,22 @@ export const partTimeSection = buildSubSection({
                 const clean = value.replace('-', '')
                 return `${clean.slice(0, 6)}-${clean.slice(6)}`
               },
-              jobStart: (value) => {
-                if (!value) return ''
-                const date = new Date(value)
-                if (isNaN(date.getTime())) return value
-                return date.toLocaleDateString('is-IS', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
-              },
+              jobStart: formatIsDateLong,
               workPercentage: (value) => {
                 if (!value) return ''
                 return `${value}%`
               },
-              estimatedIncome: (value) => {
-                if (!value) return ''
-                const num = Number(value)
-                return `${num.toLocaleString('is-IS')} kr.`
-              },
+              estimatedIncome: formatIsCurrency,
             },
           },
+        }),
+        buildAlertMessageField({
+          id: 'partTimeOverlapAlert',
+          title: m.errorMessages.partTimeOverlappingPeriods,
+          message: m.errorMessages.partTimeOverlappingPeriodsAlertMessage,
+          alertType: 'warning',
+          marginTop: 6,
+          condition: hasPartTimeOverlap,
         }),
       ],
     }),
