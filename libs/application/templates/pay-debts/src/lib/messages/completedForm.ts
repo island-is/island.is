@@ -16,15 +16,10 @@ export const completedForm = defineMessages({
     defaultMessage: 'Greiðsla til Fjársýslunnar hefur verið móttekin!',
     description: 'Message of the alert message in the completed form',
   },
-  nextStepsIntro: {
-    id: 'pd.application:completedForm.nextStepsIntro#markdown',
-    defaultMessage: 'Greiðslunni verður ráðstafað inn á valdar skuldir.',
-    description: 'Intro of the "what happens next" section',
-  },
   nextStepsDescription: {
     id: 'pd.application:completedForm.nextStepsDescription#markdown',
     defaultMessage:
-      '* Í framhaldinu verður greiðslukvittun send í pósthólfið þitt.\\n\\n* Greiðslukvittun er einnig að finna undir Fjármál.',
+      'Greiðslunni verður ráðstafað inn á valdar skuldir.\\n\\n* Í framhaldinu verður greiðslukvittun send í pósthólfið þitt.\\n\\n* Greiðslukvittun er einnig að finna undir Fjármál.',
     description: 'Description of the "what happens next" section',
   },
   financeButtonMessage: {
