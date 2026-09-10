@@ -545,6 +545,7 @@ export default function HealthOverviewScreen() {
                 <Problem
                   type="error"
                   size="small"
+                  error={appointmentsRes.error}
                   title={intl.formatMessage({ id: 'problem.error.title' })}
                   message={intl.formatMessage({
                     id: 'health.appointments.errorMessage',
@@ -601,6 +602,7 @@ export default function HealthOverviewScreen() {
                 <Problem
                   type="error"
                   size="small"
+                  error={messagesRes.error}
                   title={intl.formatMessage({ id: 'problem.error.title' })}
                   message={intl.formatMessage({
                     id: 'health.messages.errorMessage',

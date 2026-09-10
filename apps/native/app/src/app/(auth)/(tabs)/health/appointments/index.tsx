@@ -104,6 +104,7 @@ export default function AppointmentsScreen() {
             <ErrorWrapper>
               <Problem
                 type="error"
+                error={appointmentsRes.error}
                 title={intl.formatMessage({ id: 'problem.error.title' })}
                 message={intl.formatMessage({
                   id: 'health.appointments.errorMessage',

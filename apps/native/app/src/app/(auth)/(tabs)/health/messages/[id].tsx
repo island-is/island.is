@@ -566,6 +566,7 @@ export default function HealthMessageDetailScreen() {
                 {hasError ? (
                   <Problem
                     type="error"
+                    error={res.error}
                     title={intl.formatMessage({ id: 'problem.error.title' })}
                     message={intl.formatMessage({
                       id: 'health.messages.errorMessage',

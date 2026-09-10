@@ -320,6 +320,7 @@ export default function AppointmentDetailScreen() {
           <ProblemContainer>
             <Problem
               type="error"
+              error={error}
               title={intl.formatMessage({ id: 'problem.error.title' })}
               message={intl.formatMessage({
                 id: 'health.appointments.errorMessage',
