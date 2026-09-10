@@ -2,6 +2,8 @@ import type {
   CalculatorContract,
   CalculatorField,
   CalculatorKey,
+  CalculatorOutputField,
+  CalculatorScalarOutputField,
 } from '@island.is/clients/rsk/calculators'
 
 /* A bare Error, surfacing to a consumer as an unqualified
@@ -23,10 +25,7 @@ const assertFieldShape = (
 ): void => {
   if (field.type === 'select') {
     if (!field.options || field.options.length === 0) {
-      fail(
-        calculatorKey,
-        `select field "${field.name}" publishes no options`,
-      )
+      fail(calculatorKey, `select field "${field.name}" publishes no options`)
       return
     }
 
@@ -37,10 +36,7 @@ const assertFieldShape = (
     }
 
     if (new Set(values).size !== values.length) {
-      fail(
-        calculatorKey,
-        `field "${field.name}" has duplicate option values`,
-      )
+      fail(calculatorKey, `field "${field.name}" has duplicate option values`)
     }
   } else if (field.options) {
     fail(
@@ -126,10 +122,7 @@ const assertNoCycles = (
 
     while (current) {
       if (path.has(current)) {
-        fail(
-          calculatorKey,
-          `dependency cycle through field "${current}"`,
-        )
+        fail(calculatorKey, `dependency cycle through field "${current}"`)
         return
       }
 
@@ -144,6 +137,65 @@ const assertNoCycles = (
 
     path.forEach((visited) => settled.add(visited))
   }
+}
+
+const assertOutputScalarShape = (
+  calculatorKey: CalculatorKey,
+  field: CalculatorScalarOutputField,
+  label: string,
+): void => {
+  if (field.semantic && field.type !== 'number') {
+    fail(
+      calculatorKey,
+      `${label} ${field.type} field "${field.name}" must not carry a semantic`,
+    )
+  }
+}
+
+const assertKeySet = (
+  calculatorKey: CalculatorKey,
+  names: string[],
+  label: string,
+): void => {
+  if (names.some((name) => name.length === 0)) {
+    fail(calculatorKey, `${label} has a field with an empty name`)
+  }
+
+  if (new Set(names).size !== names.length) {
+    fail(calculatorKey, `${label} has duplicate field names`)
+  }
+}
+
+const assertOutputFieldShape = (
+  calculatorKey: CalculatorKey,
+  field: CalculatorOutputField,
+): void => {
+  if (field.kind === 'scalar') {
+    assertOutputScalarShape(calculatorKey, field, 'output')
+    return
+  }
+
+  if (field.itemFields.length === 0) {
+    fail(
+      calculatorKey,
+      `array output field "${field.name}" publishes no item fields`,
+    )
+    return
+  }
+
+  assertKeySet(
+    calculatorKey,
+    field.itemFields.map((itemField) => itemField.name),
+    `array output field "${field.name}"`,
+  )
+
+  field.itemFields.forEach((itemField) =>
+    assertOutputScalarShape(
+      calculatorKey,
+      itemField,
+      `array output field "${field.name}" item`,
+    ),
+  )
 }
 
 export const assertPublishableContract = (
@@ -181,4 +233,18 @@ export const assertPublishableContract = (
   })
 
   assertNoCycles(requestedKey, fieldsByName)
+
+  if (contract.outputFields.length === 0) {
+    fail(requestedKey, 'contract publishes no output fields')
+  }
+
+  assertKeySet(
+    requestedKey,
+    contract.outputFields.map((field) => field.name),
+    'output contract',
+  )
+
+  contract.outputFields.forEach((field) =>
+    assertOutputFieldShape(requestedKey, field),
+  )
 }

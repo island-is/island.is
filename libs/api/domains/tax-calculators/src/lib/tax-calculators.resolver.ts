@@ -23,7 +23,7 @@ export class TaxCalculatorsResolver {
   @Query(() => TaxCalculator, {
     name: 'taxCalculator',
     description:
-      'The input contract for a calculator: which fields RSK accepts, of what kind, and under what condition. Display text and layout come from the Contentful `configJson`, not from here.',
+      'The contract for a calculator: which fields RSK accepts as input, of what kind and under what condition, and which values it returns. Metadata only -- this runs no calculation. Display text and layout come from the Contentful `configJson`, not from here.',
   })
   taxCalculator(
     /* TaxCalculatorType is declared in @island.is/tax-calculators and

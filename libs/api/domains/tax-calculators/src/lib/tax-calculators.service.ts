@@ -5,8 +5,9 @@ import { TaxCalculatorType } from '@island.is/tax-calculators'
 
 import { toCalculatorKey } from './mappings/calculatorType'
 import { toInputField } from './mappings/inputField'
+import { toOutputField } from './mappings/outputField'
 import { TaxCalculator } from './models/taxCalculator.model'
-import { assertPublishableContract } from './validation/inputContract'
+import { assertPublishableContract } from './validation/contract'
 
 @Injectable()
 export class TaxCalculatorsService {
@@ -27,6 +28,7 @@ export class TaxCalculatorsService {
     return {
       type,
       inputFields: contract.inputFields.map(toInputField),
+      outputFields: contract.outputFields.map(toOutputField),
     }
   }
 }

@@ -2,21 +2,40 @@ import type {
   CalculatorContract,
   CalculatorField,
   CalculatorKey,
+  CalculatorOutputField,
 } from '@island.is/clients/rsk/calculators'
 
-import { assertPublishableContract } from './inputContract'
+import { assertPublishableContract } from './contract'
+
+/* Output fields default to a minimal valid set so an input-focused case is not
+ * tripped by the separate "publishes no output fields" invariant. */
+const VALID_OUTPUT_FIELDS: CalculatorOutputField[] = [
+  { name: 'total', kind: 'scalar', type: 'number', semantic: 'currency' },
+]
 
 const contractOf = (
   fields: CalculatorField[],
   key: CalculatorKey = 'childBenefit',
+  outputFields: CalculatorOutputField[] = VALID_OUTPUT_FIELDS,
 ): CalculatorContract<CalculatorKey> => ({
   key,
   inputFields: fields,
-  outputFields: [],
+  outputFields,
 })
 
 const assertFields = (fields: CalculatorField[]) => () =>
   assertPublishableContract('childBenefit', contractOf(fields))
+
+/* Input fields default to a minimal valid set for the same reason, reversed. */
+const VALID_INPUT_FIELDS: CalculatorField[] = [
+  { name: 'year', type: 'number', required: true, semantic: 'year' },
+]
+
+const assertOutputFields = (outputFields: CalculatorOutputField[]) => () =>
+  assertPublishableContract(
+    'childBenefit',
+    contractOf(VALID_INPUT_FIELDS, 'childBenefit', outputFields),
+  )
 
 describe('assertPublishableContract', () => {
   it('accepts a well-formed contract', () => {
@@ -246,5 +265,139 @@ describe('assertPublishableContract', () => {
         },
       ]),
     ).toThrow(/dependency cycle/)
+  })
+})
+
+describe('assertPublishableContract output invariants', () => {
+  it('accepts a well-formed output contract', () => {
+    expect(
+      assertOutputFields([
+        { name: 'total', kind: 'scalar', type: 'number', semantic: 'currency' },
+        { name: 'periodLabel', kind: 'scalar', type: 'string' },
+        {
+          name: 'taxBrackets',
+          kind: 'array',
+          itemFields: [
+            { name: 'lowerBound', kind: 'scalar', type: 'number' },
+            { name: 'label', kind: 'scalar', type: 'string' },
+          ],
+        },
+      ]),
+    ).not.toThrow()
+  })
+
+  it('rejects a contract with no output fields', () => {
+    expect(assertOutputFields([])).toThrow(/publishes no output fields/)
+  })
+
+  it('rejects an empty output field name', () => {
+    expect(
+      assertOutputFields([{ name: '', kind: 'scalar', type: 'number' }]),
+    ).toThrow(/output contract has a field with an empty name/)
+  })
+
+  it('rejects duplicate output field names', () => {
+    expect(
+      assertOutputFields([
+        { name: 'total', kind: 'scalar', type: 'number' },
+        { name: 'total', kind: 'scalar', type: 'string' },
+      ]),
+    ).toThrow(/output contract has duplicate field names/)
+  })
+
+  it.each(['string', 'boolean', 'date'] as const)(
+    'rejects a semantic on a top-level %s output',
+    (type) => {
+      expect(
+        assertOutputFields([
+          { name: 'total', kind: 'scalar', type, semantic: 'currency' },
+        ]),
+      ).toThrow(
+        new RegExp(`output ${type} field "total" must not carry a semantic`),
+      )
+    },
+  )
+
+  it('accepts a semantic on a number output', () => {
+    expect(
+      assertOutputFields([
+        { name: 'total', kind: 'scalar', type: 'number', semantic: 'currency' },
+      ]),
+    ).not.toThrow()
+  })
+
+  it('rejects an array output with no item fields', () => {
+    expect(
+      assertOutputFields([
+        { name: 'taxBrackets', kind: 'array', itemFields: [] },
+      ]),
+    ).toThrow(/array output field "taxBrackets" publishes no item fields/)
+  })
+
+  it('rejects an empty array item field name', () => {
+    expect(
+      assertOutputFields([
+        {
+          name: 'taxBrackets',
+          kind: 'array',
+          itemFields: [{ name: '', kind: 'scalar', type: 'number' }],
+        },
+      ]),
+    ).toThrow(/array output field "taxBrackets" has a field with an empty name/)
+  })
+
+  it('rejects duplicate array item field names', () => {
+    expect(
+      assertOutputFields([
+        {
+          name: 'taxBrackets',
+          kind: 'array',
+          itemFields: [
+            { name: 'lowerBound', kind: 'scalar', type: 'number' },
+            { name: 'lowerBound', kind: 'scalar', type: 'string' },
+          ],
+        },
+      ]),
+    ).toThrow(/array output field "taxBrackets" has duplicate field names/)
+  })
+
+  it('rejects a semantic on a non-number array item field', () => {
+    expect(
+      assertOutputFields([
+        {
+          name: 'taxBrackets',
+          kind: 'array',
+          itemFields: [
+            {
+              name: 'label',
+              kind: 'scalar',
+              type: 'string',
+              semantic: 'count',
+            },
+          ],
+        },
+      ]),
+    ).toThrow(
+      /array output field "taxBrackets" item string field "label" must not carry a semantic/,
+    )
+  })
+
+  it('accepts a semantic on a number array item field', () => {
+    expect(
+      assertOutputFields([
+        {
+          name: 'taxBrackets',
+          kind: 'array',
+          itemFields: [
+            {
+              name: 'withholdingRate',
+              kind: 'scalar',
+              type: 'number',
+              semantic: 'percentage',
+            },
+          ],
+        },
+      ]),
+    ).not.toThrow()
   })
 })

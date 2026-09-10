@@ -11,9 +11,9 @@ current CMS/web assumptions. Consumer retooling may be required later, but that
 work is outside this roadmap.
 
 Output/calculation follows the same relationship as input fields: the client
-must first curate the RSK-facing output contract, and the domain then mediates
-that contract into the curated public GraphQL shape. Do not design or implement
-domain calculation output ahead of the client output contract.
+curates the RSK-facing output contract, and the domain mediates that contract
+into the curated public GraphQL shape. Calculation execution is separate from
+output metadata publication and must not be designed from old output handling.
 
 ## Section 1: Establish The Domain Boundary
 
@@ -64,8 +64,29 @@ Settled input decisions:
 - model dependency equality with a GraphQL union over boolean, string, and
   number value objects; use `__typename` as the discriminator
 - expose dependency targets as `fieldKey`
-- keep calculation execution deferred until the client has an explicit output
-  contract; reserve the future operation name `taxCalculatorCalculate`
+
+Settled output decisions:
+
+- expose output fields on the same calculator object as
+  `outputFields: [TaxCalculatorOutputField!]!`
+- keep input and output GraphQL types separate; reuse the input contract's
+  conditioning pattern, not its public types
+- model output fields with `TaxCalculatorOutputField`, so consumers can query
+  common `key` and `type` fields without fragments, matching the input
+  contract's enum-discriminator precedent
+- expose reusable scalar output metadata through
+  `TaxCalculatorOutputScalarField`, which represents only non-array output
+  fields
+- expose number `semantic` only on number output fields
+- model array outputs with `TaxCalculatorArrayOutputField { key, itemFields }`
+- keep array item fields scalar-only, matching the client v1 output contract
+- include `ARRAY` in `TaxCalculatorOutputFieldType`, mirroring input's `SELECT`
+  as a public field type whose concrete object carries extra metadata
+- expose no public `kind`; it is a client contract detail
+- expose no `required`, `dependsOn`, `options`, labels, layout, grouping, or
+  RSK source keys on output fields
+- keep calculation execution separate from output metadata; this round does not
+  add a calculation operation
 
 Target input contract:
 
@@ -77,6 +98,7 @@ type Query {
 type TaxCalculator {
   type: TaxCalculatorType!
   inputFields: [TaxCalculatorInputField!]!
+  outputFields: [TaxCalculatorOutputField!]!
 }
 
 interface TaxCalculatorInputField {
@@ -150,38 +172,82 @@ type TaxCalculatorNumberInputDependencyValue {
 }
 ```
 
+Target output contract:
+
+```graphql
+interface TaxCalculatorOutputField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
+
+interface TaxCalculatorOutputScalarField implements TaxCalculatorOutputField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
+
+type TaxCalculatorNumberOutputField implements TaxCalculatorOutputField & TaxCalculatorOutputScalarField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+  semantic: TaxCalculatorOutputFieldSemantic
+}
+
+type TaxCalculatorStringOutputField implements TaxCalculatorOutputField & TaxCalculatorOutputScalarField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
+
+type TaxCalculatorBooleanOutputField implements TaxCalculatorOutputField & TaxCalculatorOutputScalarField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
+
+type TaxCalculatorDateOutputField implements TaxCalculatorOutputField & TaxCalculatorOutputScalarField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
+
+type TaxCalculatorArrayOutputField implements TaxCalculatorOutputField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+  itemFields: [TaxCalculatorOutputScalarField!]!
+}
+```
+
 Output:
 
 - target GraphQL query shape
 - target GraphQL model and enum shape
 - calculator reachability decision
-- explicit calculation deferral decision, unless the client output contract is
-  already finished
+- explicit calculation-execution non-goal for this metadata round
 - explicit non-goals for this domain
 
 ## Section 3: Output Contract Checkpoint
 
-Goal: prevent the domain from inventing result/output shape before the client
-has curated the RSK-facing output contract.
+Goal: prevent the domain from inventing result/output shape and ensure it
+mediates the client-owned output contract into a public GraphQL model.
 
 Work:
 
-- confirm whether `libs/clients/rsk/calculators` exposes an output contract
-  parallel to its input field contract
-- if it does not, stop output-domain design and move the output contract work
-  to the client roadmap
-- if it does, inspect the client result keys, value types, grouping concepts,
-  and response mapping responsibilities
+- confirm `libs/clients/rsk/calculators` exposes an output contract parallel to
+  its input field contract
+- inspect the client output keys, scalar value types, array concepts, and
+  response mapping responsibilities
 - decide which client output concepts should be mediated publicly by the domain
   and which are client details
+- decide how much GraphQL conditioning the domain should apply so consumers do
+  not need to reason about optional metadata
+- verified: NestJS emits interface-implements-interface correctly for
+  `TaxCalculatorOutputScalarField implements TaxCalculatorOutputField` at
+  `@nestjs/graphql` 13.4.2 / `graphql` 16.14.2, and adds the transitive
+  interface to the concrete types itself. No union fallback is needed.
 
 Output:
 
 - client output contract status
 - list of result/output concepts the domain is allowed to design against
-- explicit note that domain calculation remains deferred when the client output
-  contract is not ready
-- follow-up questions for the domain once the client output contract exists
+- explicit note that domain calculation execution remains separate from output
+  metadata
+- public output GraphQL model shape and non-goals
 
 ## Section 4: Define Domain Mediation
 
@@ -223,6 +289,16 @@ Publication invariants:
 - dependency cycles are forbidden
 - invalid client metadata throws; do not degrade
 
+Output publication invariants:
+
+- curated calculators must publish at least one output field
+- output field keys must be non-empty and unique within a calculator
+- scalar output `semantic` is allowed only on number output fields
+- array output fields must publish at least one item field
+- array item field keys must be non-empty and unique within that array
+- array item `semantic` is allowed only on number item fields
+- output field order has no domain meaning
+
 ## Resolved Outputs (Sections 1-4)
 
 Recorded after the rebuild, so this control document states what was settled
@@ -233,46 +309,54 @@ detail.
 
 - Domain responsibilities today: public calculator identity, the GraphQL shape,
   and the invariants a contract must satisfy before publication.
-- Client responsibilities relied on: RSK endpoint choice, field naming, types,
-  requiredness, numeric semantics, option values, dependency facts, and the
-  deterministic sort by field name.
+- Client responsibilities relied on: RSK endpoint choice, field naming, input
+  types, output types, requiredness, numeric semantics, option values,
+  dependency facts, output array shape, curated output keys, response mapping,
+  and deterministic sorting by field name.
 - Removed from the domain: nothing derived from zod introspection remains; the
   old `getCalculatorInputProps` path and the warn-and-degrade dependency
   narrowing are both gone.
 - Consumer assumptions broken: `apps/web` and `apps/contentful-apps` both
   selected `fields`/`inputType`/`options: [String!]`/`dependsOn.field` and
   passed a `calculatorType` argument. All four are renamed or restructured.
-- Output/calculation questions moved back to the client roadmap: the whole
-  result contract. See Section 3 below.
+- Output metadata now follows the same boundary: the client owns the output
+  contract, and the domain owns its GraphQL publication shape. Calculation
+  execution remains outside this output-metadata round.
 
 ### Section 2 -- domain contract
 
-- Query shape and model/enum shape: exactly the target SDL above, emitted
-  verbatim into the merged schema.
+- Query shape and model/enum shape: the target input and output SDL above.
 - Calculator reachability: **four**. `TaxCalculatorType` keeps its four members;
   `vehicleDepreciation` and `interestBenefit` stay unreachable until that enum
   grows, which touches `libs/tax-calculators`, `libs/cms`,
   `apps/contentful-apps` and the Contentful content model together.
-- Calculation deferral: **deferred**, since the client output contract does not
-  exist. `taxCalculatorCalculate` is reserved by name only.
+- Calculation execution: **not part of this round**. The domain exposes output
+  metadata but does not add a calculation operation here.
 - Non-goals: no display text of any kind, no field ordering with meaning, no
   RSK interpretation, no client-local `CalculatorKey` in the public schema, no
-  calculation.
+  calculation execution.
 - Deviation from the suggested structure below: the two enums live in a single
   `models/enums.ts` per `conventions/domain-module.md`, not in per-enum
   `*.model.ts` files -- a `.model.ts` containing no `@ObjectType` reads wrong.
 
 ### Section 3 -- output contract checkpoint
 
-- Client output contract status: **absent**. Every client mapper is
-  outbound-only, and the only result types re-exported are the raw generated
-  `Get*Response`. There is no response mapping anywhere in the client.
-- Result/output concepts the domain may design against: **none**.
-- Domain calculation therefore remains deferred, as Section 2 records.
-- Follow-up questions for once the client output contract exists: which result
-  keys are public versus client detail; whether results carry grouping; how
-  result values express currency/percentage units; whether the operation takes
-  the curated `TaxCalculatorType` and a typed input per calculator.
+- Client output contract status: **present**. The client exposes
+  `outputFields` beside `inputFields` from `getCalculator(key)` and owns
+  per-calculator response mappers into curated output shapes.
+- Result/output concepts the domain may design against: scalar output fields,
+  array output fields with scalar `itemFields`, scalar value types, and numeric
+  semantics.
+- Concepts the domain must not invent: labels, layout, nested object groups,
+  public RSK source keys, and output requiredness.
+- Domain calculation execution remains separate. This roadmap section settles
+  output metadata publication only.
+- Output percentage semantics deliberately do not assert a universal 0-1 scale,
+  because the client documents that output ratio scale is unverified.
+- The union alternative was rejected because it makes common fields like `key`
+  and `type` unqueryable without fragments, unlike the input contract. The
+  two-interface shape keeps those common fields queryable while preserving the
+  scalar-only guarantee for array `itemFields`.
 
 ### Section 4 -- domain mediation
 
@@ -280,34 +364,33 @@ detail.
   `Record<TaxCalculatorType, CalculatorKey>`, keyed on the enum so a fifth
   member fails to compile rather than resolving to undefined. The client never
   imports `TaxCalculatorType`.
-- Field mapping policy: `mappings/inputField.ts` maps client field to concrete
-  GraphQL type. Its two `Record`s are keyed on the client's own literal unions,
-  so this module is where a client contract change stops compiling.
-- Validation policy: `validation/inputContract.ts` asserts every publication
+- Field mapping policy: `mappings/inputField.ts` maps client input fields to
+  concrete GraphQL types; `mappings/outputField.ts` maps client output fields
+  to the output interface model. Their `Record`s are keyed on the
+  client's own literal unions, so these modules are where client contract
+  changes stop compiling.
+- Validation policy: validation asserts every input and output publication
   invariant listed above and throws on violation. It runs per request, scoped to
   the requested calculator.
 - Documentation boundary: RSK interpretation stays in the client's README
   (including the percentage-conversion asymmetry). The domain README documents
   publication semantics, reachability, and its two deliberate deviations.
-- Testable domain contract: 61 tests across the service, the mapper and the
-  validation module.
+- Testable domain contract: focused tests across the service, mappers and
+  validation modules.
 
-## Section 5: Domain Implementation Plan
+## Section 5: Domain Output Implementation Plan
 
-Goal: turn the chosen domain boundary into concrete code changes.
+Goal: turn the chosen output metadata boundary into concrete code changes.
 
 Work:
 
-- update `TaxCalculatorsModule` imports if the domain should inject the rebuilt
-  client service
-- update `TaxCalculatorsService` to call the chosen client boundary
-- update or move the calculator identity mapping
-- update the field mapper
-- update GraphQL models and descriptions
-- remove stale references to old client helpers or Zod-derived contracts
-- update tests around public behavior and mapping rules
-- split mapping and validation into focused modules; do not leave all behavior
-  in the service
+- add output-specific GraphQL enums and models
+- add a client-output to domain-output mapper
+- add output publication validation
+- add `TaxCalculator.outputFields`
+- update `TaxCalculatorsService` to map `contract.outputFields`
+- update tests around public output behavior and mapping rules
+- update documentation once the model is implemented
 
 Output:
 
@@ -316,25 +399,30 @@ Output:
 - verification commands
 - known risks and intentional downstream breaks
 
-Suggested domain structure:
+See `PLAN.md` for the file-by-file implementation plan. Keep detailed file
+lists, test cases and verification commands there rather than duplicating them
+in this roadmap.
+
+Target domain structure after output metadata:
 
 ```text
 src/lib/
   models/
     taxCalculator.model.ts
     inputField.model.ts
-    inputFieldType.model.ts
-    inputFieldSemantic.model.ts
+    outputField.model.ts
     inputFieldOption.model.ts
     inputFieldDependency.model.ts
     inputDependencyValue.model.ts
+    enums.ts
 
   mappings/
     calculatorType.ts
     inputField.ts
+    outputField.ts
 
   validation/
-    inputContract.ts
+    contract.ts
 
   tax-calculators.module.ts
   tax-calculators.resolver.ts
@@ -352,8 +440,8 @@ Checks:
 - the domain consumes the rebuilt client boundary intentionally
 - public GraphQL shape is intentional
 - calculator reachability is intentional
-- calculation remains deferred unless the client output contract exists and the
-  domain output contract was designed from it
+- output metadata is mediated from the client contract rather than invented
+- calculation execution remains outside this output-metadata round
 - stale docs and comments are gone
 - downstream breaks, if any, are explicit and not accidental
 

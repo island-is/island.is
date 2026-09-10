@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { TaxCalculatorType } from '@island.is/tax-calculators'
 
 import { InputField } from './inputField.model'
+import { OutputField } from './outputField.model'
 
 @ObjectType()
 export class TaxCalculator {
@@ -21,4 +22,10 @@ export class TaxCalculator {
       'Every input RSK accepts for this calculator. Order carries no meaning -- match fields by `key`, never by position. A field carrying `dependsOn` applies only under that condition.',
   })
   inputFields!: InputField[]
+
+  @Field(() => [OutputField], {
+    description:
+      'Every value RSK returns for this calculator, as metadata rather than results -- a consumer reads it to know what a result will contain. Order carries no meaning -- match fields by `key`, never by position. Carries no display text.',
+  })
+  outputFields!: OutputField[]
 }

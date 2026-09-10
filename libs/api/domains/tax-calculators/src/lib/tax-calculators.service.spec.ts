@@ -4,11 +4,17 @@ import { TaxCalculatorType } from '@island.is/tax-calculators'
 import {
   TaxCalculatorInputFieldSemantic,
   TaxCalculatorInputFieldType,
+  TaxCalculatorOutputFieldSemantic,
+  TaxCalculatorOutputFieldType,
 } from './models/enums'
 import type {
   NumberInputField,
   SelectInputField,
 } from './models/inputField.model'
+import type {
+  ArrayOutputField,
+  NumberOutputField,
+} from './models/outputField.model'
 import { TaxCalculatorsService } from './tax-calculators.service'
 
 /* Instantiated directly rather than through Test.createTestingModule: building
@@ -23,6 +29,12 @@ const inputFieldsFor = (type: TaxCalculatorType) =>
 
 const findField = (type: TaxCalculatorType, key: string) =>
   inputFieldsFor(type).find((field) => field.key === key)
+
+const outputFieldsFor = (type: TaxCalculatorType) =>
+  service.getCalculator(type).outputFields
+
+const findOutputField = (type: TaxCalculatorType, key: string) =>
+  outputFieldsFor(type).find((field) => field.key === key)
 
 describe('TaxCalculatorsService', () => {
   describe('calculator identity mapping', () => {
@@ -124,8 +136,13 @@ describe('TaxCalculatorsService', () => {
    * client publishes today; it deliberately does not assert that every number
    * field must carry one, since `semantic` is optional in the contract. */
   describe('number field semantics', () => {
-    const { CURRENCY, PERCENTAGE, YEAR, MONTH, COUNT } =
-      TaxCalculatorInputFieldSemantic
+    const {
+      CURRENCY,
+      PERCENTAGE,
+      YEAR,
+      MONTH,
+      COUNT,
+    } = TaxCalculatorInputFieldSemantic
 
     it.each([
       [TaxCalculatorType.CHILD_BENEFIT, 'incomeYear', YEAR],
@@ -169,6 +186,99 @@ describe('TaxCalculatorsService', () => {
 
       expect(field?.type).toBe(TaxCalculatorInputFieldType.SELECT)
       expect(field?.options).toEqual(values.map((value) => ({ value })))
+    })
+  })
+})
+
+describe('TaxCalculatorsService output contract', () => {
+  it.each(Object.values(TaxCalculatorType))(
+    'publishes a non-empty output contract for %s',
+    (type) => {
+      const outputFields = outputFieldsFor(type)
+
+      expect(outputFields.length).toBeGreaterThan(0)
+      expect(outputFields.every((field) => field.key.length > 0)).toBe(true)
+    },
+  )
+
+  describe('withholdingTaxOnWages tax brackets', () => {
+    const taxBrackets = () =>
+      findOutputField(
+        TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
+        'taxBrackets',
+      ) as ArrayOutputField | undefined
+
+    it('exposes taxBrackets as an array output', () => {
+      expect(taxBrackets()?.type).toBe(TaxCalculatorOutputFieldType.ARRAY)
+    })
+
+    it('describes one bracket row through itemFields', () => {
+      const keys = taxBrackets()?.itemFields.map((field) => field.key)
+
+      expect(keys).toEqual(
+        expect.arrayContaining([
+          'lowerBound',
+          'bracketNumber',
+          'withholdingRate',
+          'calculatedWithholding',
+        ]),
+      )
+    })
+  })
+
+  describe('scalar output conditioning', () => {
+    it('exposes vehicleTax as a currency number', () => {
+      const field = findOutputField(
+        TaxCalculatorType.VEHICLE_TAX,
+        'vehicleTax',
+      ) as NumberOutputField | undefined
+
+      expect(field?.type).toBe(TaxCalculatorOutputFieldType.NUMBER)
+      expect(field?.semantic).toBe(TaxCalculatorOutputFieldSemantic.CURRENCY)
+    })
+
+    it('exposes periodLabel as a string', () => {
+      expect(
+        findOutputField(TaxCalculatorType.VEHICLE_TAX, 'periodLabel')?.type,
+      ).toBe(TaxCalculatorOutputFieldType.STRING)
+    })
+
+    /* A number without a semantic is the common case, and must stay absent
+     * rather than defaulting to something formattable. */
+    it('leaves vehicleWeight a number with no semantic', () => {
+      const field = findOutputField(
+        TaxCalculatorType.VEHICLE_TAX,
+        'vehicleWeight',
+      ) as NumberOutputField | undefined
+
+      expect(field?.type).toBe(TaxCalculatorOutputFieldType.NUMBER)
+      expect(field?.semantic).toBeUndefined()
+    })
+
+    it('exposes monthlyBenefit as a currency number', () => {
+      const field = findOutputField(
+        TaxCalculatorType.VEHICLE_BENEFIT,
+        'monthlyBenefit',
+      ) as NumberOutputField | undefined
+
+      expect(field?.semantic).toBe(TaxCalculatorOutputFieldSemantic.CURRENCY)
+    })
+
+    it('exposes splitCustody as a boolean', () => {
+      expect(
+        findOutputField(TaxCalculatorType.CHILD_BENEFIT, 'splitCustody')?.type,
+      ).toBe(TaxCalculatorOutputFieldType.BOOLEAN)
+    })
+  })
+
+  /* The client exposes `kind` to discriminate scalar from array; the public
+   * contract uses __typename and `type` instead, so `kind` must not leak. */
+  it('leaks no client kind onto any output field', () => {
+    Object.values(TaxCalculatorType).forEach((type) => {
+      outputFieldsFor(type).forEach((field) => {
+        expect(field).not.toHaveProperty('kind')
+        expect(field).not.toHaveProperty('name')
+      })
     })
   })
 })

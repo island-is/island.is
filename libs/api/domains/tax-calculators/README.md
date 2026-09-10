@@ -1,7 +1,9 @@
 # api-domains-tax-calculators
 
-Serves the input contract for Skatturinn's (RSK) tax calculators, so a consumer
-can render a generic form instead of per-calculator UI code.
+Serves the input and output contracts for Skatturinn's (RSK) tax calculators,
+so a consumer can render a generic form, and know what a result will contain,
+instead of writing per-calculator UI code. Metadata only -- this domain runs no
+calculation.
 
 ## The query
 
@@ -11,6 +13,7 @@ taxCalculator(type: TaxCalculatorType!): TaxCalculator!
 type TaxCalculator {
   type: TaxCalculatorType!
   inputFields: [TaxCalculatorInputField!]!
+  outputFields: [TaxCalculatorOutputField!]!
 }
 
 interface TaxCalculatorInputField {
@@ -26,6 +29,47 @@ interface TaxCalculatorInputField {
 field exposes `semantic`, and only the select field exposes
 `options: [TaxCalculatorInputFieldOption!]!` -- the interface exists so those
 two live where they are meaningful instead of being nullable everywhere.
+
+### Output fields
+
+```graphql
+interface TaxCalculatorOutputField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
+
+interface TaxCalculatorOutputScalarField implements TaxCalculatorOutputField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
+
+type TaxCalculatorArrayOutputField implements TaxCalculatorOutputField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+  itemFields: [TaxCalculatorOutputScalarField!]!
+}
+```
+
+`TaxCalculatorOutputScalarField` is implemented by
+`TaxCalculator{Number,String,Boolean,Date}OutputField`, and only the number
+field exposes `semantic`. `TaxCalculatorArrayOutputField` describes a repeating
+group: its `itemFields` are the columns of one row, not values.
+
+Output fields are metadata, not results. They carry no `required`, `dependsOn`,
+`options`, labels, layout or grouping, and no RSK source keys -- `key` is the
+join to the Contentful `configJson`, exactly as on the input side.
+
+The second interface is the one structural difference from the input side, and
+it is deliberate: typing `itemFields` as scalar-only is what makes an array
+inside an array unrepresentable, matching the client's
+`itemFields: readonly CalculatorScalarOutputField[]`. A single flat interface
+would let the schema express nesting the contract does not have.
+
+`TaxCalculatorOutputFieldSemantic` is a separate enum from
+`TaxCalculatorInputFieldSemantic` despite identical members. The input enum
+documents `PERCENTAGE` as a 0-1 ratio; RSK does not document output ratio
+scale, and the client passes it through unchanged, so the output enum asserts
+no scale.
 
 `dependsOn.equals` is a union over
 `TaxCalculator{Boolean,String,Number}InputDependencyValue`; read `__typename` to
@@ -52,9 +96,15 @@ code bug the domain tests catch in CI -- not upstream API drift arriving at
 runtime.
 
 Taken together these two mean one bad contract entry nulls the whole response
-rather than one field. That is the intended trade: `validation/inputContract.ts`
-enumerates what must hold before anything is published, and a violation should
-never reach a deploy.
+rather than one field. That is the intended trade: `validation/contract.ts`
+enumerates what must hold before anything is published -- for input and output
+fields alike -- and a violation should never reach a deploy.
+
+Note that "only number fields carry `semantic`" is a runtime invariant on both
+sides by necessity: the client permits `semantic` on any scalar type, so
+nothing enforces the rule at compile time. The mapper rejects a violation
+rather than dropping the semantic, so client drift cannot be published as a
+quietly wrong contract.
 
 ## Where the fields come from
 
@@ -117,11 +167,9 @@ Deliberately out of scope for the domain rebuild; see `PLAN.md`.
 
 ## Performing a calculation
 
-Not implemented. The client exposes no curated output contract -- every client
-mapper is outbound-only, and the only result types it re-exports are the raw
-generated `Get*Response`. Per `ROADMAP.md` Section 3 the domain must not invent
-result shape ahead of that, so calculation stays deferred and the operation
-name `taxCalculatorCalculate` is reserved.
+Not implemented, and separate from output metadata. `outputFields` describes
+what a result will contain; executing a calculation and mapping its values is a
+later round. The operation name `taxCalculatorCalculate` stays reserved for it.
 
 ## Running unit tests
 

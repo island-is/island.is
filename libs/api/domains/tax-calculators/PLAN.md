@@ -1,409 +1,468 @@
-# Tax Calculators Domain — Implementation Plan
+# Tax Calculators Domain Output Contract — Implementation Plan
 
-Implementer-facing plan for `libs/api/domains/tax-calculators`, derived from
-`ROADMAP.md` in this directory and from the rebuilt client in
-`libs/clients/rsk/calculators`.
+Implementer-facing plan for adding output metadata to
+`libs/api/domains/tax-calculators`.
 
-Intent: **rebuild of an existing module**. No NX generation. Scope is this
-library only.
+Intent: GraphQL/domain modeling only. The client already owns the RSK-facing
+output contract and curated output mappers. This domain mediates that contract
+into a public GraphQL shape that consumers can query without reasoning about
+client internals.
 
-Read `ROADMAP.md` first — it is the control document. This plan is the
-file-by-file execution of its Sections 1–5.
+Read `ROADMAP.md` first. It is the control document and records the settled
+design. This file is the file-by-file execution plan.
 
-## Starting state (verified against source)
+## Goal Checkpoint
 
-- The domain **does not compile**: `tax-calculators.service.ts` imports
-  `getCalculatorInputProps` and `InputProp`, neither exported by the client any
-  more since `cfe4db9245`. The client's `ROADMAP.md` §6 says this is deliberate
-  — Sections 1–6 are meant to land together.
-- The client exposes `getCalculator(key: CalculatorKey):
-  CalculatorContract<CalculatorKey>` — synchronous, registry-backed, returning
-  fields sorted by `name` in code-unit order. `new CalculatorsClientService()`
-  takes no constructor arguments.
-- Client field shape: `{ name, type: 'number'|'string'|'boolean'|'date'|'select',
-  required, semantic?, options?: readonly {value}[], dependsOn?: { field,
-  equals: string|number|boolean } }`.
-- **No client output contract exists.** Every client mapper is outbound-only
-  (`toChildBenefitQuery` and siblings map input → RSK query params); there is no
-  response mapping anywhere, and the only result types exported are raw
-  generated `Get*Response`. Roadmap §3's checkpoint therefore resolves to:
-  **calculation stays deferred; output-contract work belongs to the client
-  roadmap.**
-- **Only two dependencies exist across all six calculators**, both in
-  `childBenefit`, both `{ field: 'splitCustody', equals: true }`. No string or
-  number dependency exists in real data.
-- Every number field in all four reachable calculators carries a `semantic`
-  today.
-- `apps/api/src/api.graphql`, `libs/api/schema/src/lib/schema.ts` and
-  `apps/native/app/src/graphql/types/schema.tsx` are **all gitignored**
-  (`.gitignore` 81/83/84). None is authoritative; each currently describes a
-  different historical shape. Note the client's `PLAN.md` claims these are
-  "checked in" — that is wrong.
-- Live consumers, both already mismatched with the resolver on disk — they query
-  `taxCalculator(calculatorType: …) { fields { … } }`, which no longer exists:
-  `apps/web/screens/queries/TaxCalculators.ts` (+
-  `components/Organization/Slice/Calculator/Calculator.tsx`) and
-  `apps/contentful-apps/components/editors/CalculatorEditor/{constants.ts,types.ts}`.
-- **No native consumer.** The gitignored native `schema.tsx` holds a fifth shape
-  (`taxCalculatorFields`, `TaxCalculatorField { kind, options }`), but nothing
-  under `apps/native/app/src/graphql/queries/` or `src/screens/` references
-  `taxCalculator`. Recorded because those stale types look alarming on first
-  encounter.
-
-## Settled decisions
-
-| Decision | Answer |
-|---|---|
-| Scope | This library only. Consumers stay red; fixed in follow-up work. |
-| Reachability | Four calculators. `TaxCalculatorType` keeps its 4 members; `vehicleDepreciation` and `interestBenefit` stay unreachable (growing the enum touches `libs/tax-calculators`, `libs/cms`, `apps/contentful-apps` and the Contentful content model). |
-| Root query nullability | **Non-null** `TaxCalculator!`, per roadmap. 374 of 666 root Query fields in the merged schema are already non-nullable, so `conventions/graphql.md`'s "always nullable" is a preference in practice. The source is a static in-process registry — no network, no service-down mode. |
-| Enum file placement | Single `models/enums.ts` per `conventions/domain-module.md`, **not** the roadmap's per-enum `*.model.ts` files (a `.model.ts` with no `@ObjectType` reads wrong; the roadmap calls its layout "suggested"). |
-| Feature flag | None. Consumer is a public Contentful-driven web slice. |
-| Auth | Public/unauthenticated — no `IdsUserGuard`, `ScopesGuard`, `@Scopes`, `@Audit`. `ApiScope.internal` not applicable. |
-| Calculation | Deferred. `taxCalculatorCalculate` reserved by name only. |
-| GQL prefix | `TaxCalculator*`. No collisions outside this module. |
-| Input semantics | The domain exposes the client's five input semantics (`currency`, `percentage`, `year`, `month`, `count`) as the public `TaxCalculatorInputFieldSemantic` set. `semantic` is optional and only appears on number input fields. |
-
-## Target contract
-
-Exactly `ROADMAP.md` §2's SDL:
-
-```graphql
-taxCalculator(type: TaxCalculatorType!): TaxCalculator!
-
-type TaxCalculator { type: TaxCalculatorType!, inputFields: [TaxCalculatorInputField!]! }
-
-interface TaxCalculatorInputField {
-  key: String!
-  type: TaxCalculatorInputFieldType!
-  required: Boolean!
-  dependsOn: TaxCalculatorInputFieldDependency
-}
-# implemented by TaxCalculator{Number,String,Boolean,Date,Select}InputField
-# Number adds  semantic: TaxCalculatorInputFieldSemantic
-# Select adds  options: [TaxCalculatorInputFieldOption!]!
-
-type TaxCalculatorInputFieldOption { value: String! }
-type TaxCalculatorInputFieldDependency { fieldKey: String!, equals: TaxCalculatorInputDependencyValue! }
-union TaxCalculatorInputDependencyValue =
-    TaxCalculatorBooleanInputDependencyValue
-  | TaxCalculatorStringInputDependencyValue
-  | TaxCalculatorNumberInputDependencyValue
+```text
+Goal: expose the client-owned calculator output contract through a robust public GraphQL model.
+Current phase: implement the domain GraphQL output metadata contract.
+Scope: libs/api/domains/tax-calculators only.
+Reachability: the four public TaxCalculatorType calculators only.
+Non-goals: no web renderer, no Contentful editor work, no calculation execution, no old output compatibility, no new public calculator enum members.
+Next action: add output-specific GraphQL models because output fields have different invariants from input fields and must not reuse input GraphQL types.
 ```
 
-## Field descriptions must migrate
+## Settled Decisions
 
-The files being deleted carry consumer-facing `@Field({ description })` text for
-exactly the fields that need it, and nothing in the verification step would
-catch its loss. Carry these across, reworded for the new names:
+- The domain exposes output metadata on `TaxCalculator.outputFields`.
+- The domain does not execute calculations in this round.
+- The public output contract is not a thin wrapper around the client contract.
+  It conditions the data in the same spirit as the input contract.
+- Input and output GraphQL types stay separate. They share a modeling pattern,
+  not public types.
+- Top-level output fields expose common `key` and `type` through
+  `TaxCalculatorOutputField`, matching the input contract's consumer-friendly
+  enum-discriminator pattern.
+- Scalar output metadata is reusable through `TaxCalculatorOutputScalarField`,
+  which represents only non-array output fields.
+- Number output fields are the only output fields that expose `semantic`.
+- Array output fields expose scalar `itemFields`; nested arrays and object
+  groups are not part of the client v1 output contract and are not invented here.
+- `TaxCalculatorOutputFieldType.ARRAY` mirrors input's `SELECT`: it is an
+  ordinary public field type whose concrete object carries extra metadata.
+- Output fields expose no `required`, `dependsOn`, `options`, labels, layout,
+  grouping, public `kind`, or RSK source keys.
+- Public reachability stays at the four current `TaxCalculatorType` members:
+  `withholdingTaxOnWages`, `childBenefit`, `vehicleTax`, and `vehicleBenefit`.
+- `vehicleDepreciation` and `interestBenefit` remain unreachable until the
+  shared enum/content model work happens elsewhere.
+- "Only number outputs carry `semantic`" is a throwing publication invariant,
+  not a lenient drop-the-field mapping -- confirmed deliberately for outputs,
+  not inherited from the input side. Validation reads the client's static
+  in-process contract registry, never live RSK response data, so a violation is
+  a code bug the domain tests catch before deploy rather than a runtime data
+  condition. This matches the resolver's existing documented decision to keep
+  the root query non-nullable and surface publication-invariant violations
+  instead of degrading around them. Serving the field with `semantic` dropped
+  would instead render an unformatted currency figure on the public site with
+  nothing signalling why.
+- Output percentage semantics must not assert a universal 0-1 scale. The client
+  documents that output ratio scale is unverified and passed through unchanged.
 
-- `key` — "Stable identifier for the input, as RSK names it. This is what a
-  section field's `key` in the Contentful `configJson` must match."
-- `required` — "Whether RSK rejects the calculation when this field is absent."
-- `options` (now on `SelectInputField`) — raw identifiers, no display text.
-- `dependsOn` — "Set when the field is only part of the input contract under a
-  condition. Absent means the field always applies."
-- `fieldKey` (was `field`) — "The `key` of the sibling field this one is
-  conditional on. Not this field's own key."
-- `equals` — what the referenced field must hold for this field to apply.
+## Target GraphQL Shape
 
-`fieldKey` and `equals` are the least self-evident fields in the new contract;
-they need descriptions most.
+```graphql
+type TaxCalculator {
+  type: TaxCalculatorType!
+  inputFields: [TaxCalculatorInputField!]!
+  outputFields: [TaxCalculatorOutputField!]!
+}
 
-## Changes
+interface TaxCalculatorOutputField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
 
-### Deleted
+interface TaxCalculatorOutputScalarField implements TaxCalculatorOutputField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
 
-| File | Why |
-|---|---|
-| `src/lib/mapper.ts` | Maps the deleted `InputProp` shape; replaced by `mappings/inputField.ts`. |
-| `src/lib/models/field.model.ts` | Flat `TaxCalculatorField` replaced by the interface + five concrete types. |
-| `src/lib/models/fieldDependency.model.ts` | `equals: Boolean!` replaced by the three-member union. |
+type TaxCalculatorNumberOutputField implements TaxCalculatorOutputField & TaxCalculatorOutputScalarField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+  semantic: TaxCalculatorOutputFieldSemantic
+}
 
-### `src/lib/models/enums.ts` (rewritten)
+type TaxCalculatorStringOutputField implements TaxCalculatorOutputField & TaxCalculatorOutputScalarField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
 
-Replaces `TaxCalculatorFieldInputType`, which conflated control kind with
-number semantic, with the two enums the new contract separates:
+type TaxCalculatorBooleanOutputField implements TaxCalculatorOutputField & TaxCalculatorOutputScalarField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
 
-- `TaxCalculatorInputFieldType { NUMBER='number', STRING='string',
-  BOOLEAN='boolean', DATE='date', SELECT='select' }` — `SELECT`, not `ENUM`.
-- `TaxCalculatorInputFieldSemantic { CURRENCY, PERCENTAGE, YEAR, MONTH, COUNT }`.
+type TaxCalculatorDateOutputField implements TaxCalculatorOutputField & TaxCalculatorOutputScalarField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+}
 
-Values mirror the client's literals so the mappers are plain `Record` lookups;
-lowercase matches the convention for simple enums. Both registered via
-`registerEnumType` with per-member `valuesMap` descriptions, carrying over the
-useful ones from the current file (PERCENTAGE is a 0–1 ratio, not 0–100;
-MONTH's base is undocumented by RSK so no range is asserted). Do **not** restate
-the client's percentage-conversion asymmetry — the client README owns it, and
-the roadmap's documentation boundary assigns it there.
+type TaxCalculatorArrayOutputField implements TaxCalculatorOutputField {
+  key: String!
+  type: TaxCalculatorOutputFieldType!
+  itemFields: [TaxCalculatorOutputScalarField!]!
+}
+```
 
-### `src/lib/models/` (new)
+`TaxCalculatorOutputFieldType` values mirror the client scalar output type
+literals:
 
-One model per file, except the input-field interface and its five implementors,
-which share `inputField.model.ts` — see below for why that exception is load-bearing
-rather than a convenience.
+- `number`
+- `string`
+- `boolean`
+- `date`
+- `array`
 
-Three repo precedents exist for relating an implementor to its interface, and the
-choice between them is not ergonomic. `implements: () => …` and the body of
-`resolveType` are lazy thunks, but **`extends` is evaluated at class-definition
-time**, and a custom `resolveType` forces the interface to reference its
-implementors. So the question is whether that reference crosses a module boundary:
+`TaxCalculatorOutputFieldSemantic` values mirror the client semantic literals:
 
-| Shape | Form | Precedent |
-|---|---|---|
-| Interface + implementors in **one file** | `extends` — the reference never crosses a module boundary, and `resolveType`'s body runs long after evaluation | `auth/src/lib/models/delegation.model.ts` (6 implementors, custom `resolveType`) |
-| **Split** across files, no custom `resolveType` | `extends` — nothing imports the implementors, so no cycle exists | `icelandic-medicines-agency/.../pharmacyContact.model.ts` |
-| **Split** across files **with** a custom `resolveType` | `implements` + redeclare every shared field | `education/.../gradeCategory.model.ts`, `intellectual-properties/.../intellectualProperty.model.ts` |
+- `currency`
+- `percentage`
+- `year`
+- `month`
+- `count`
 
-**This plan takes the first row.** One file keeps `extends`, so the four shared
-fields and their `@Field` descriptions are declared once instead of five times,
-and it matches the single `inputField.model.ts` that `ROADMAP.md`'s suggested
-structure named in the first place.
+The output semantic enum is separate from the input semantic enum so its
+descriptions can reflect output-specific uncertainty. In particular,
+`percentage` must not say "0-1 ratio".
 
-The split-with-`implements` form was tried first and reverted. It is safe, but it
-costs 4 fields × 5 classes = 20 restatements, plus a leaf constants module holding
-the shared descriptions so those 20 copies could not drift — both of which the
-one-file form removes outright. What ruled out the remaining combination,
-split-plus-`extends`, is that it throws `TypeError: Class extends value undefined
-is not a constructor or null` depending on which module loads first: entering via
-the interface file crashes, entering via an implementor happens to work. Verified
-with a minimal repro.
+## Domain Conditioning
 
-`libs/api/domains/tax-calculators/tsconfig.json` enables `noImplicitOverride`.
-The implementors add only their own fields, so no `override` modifier is needed.
-If one later redeclares an inherited field to customize its metadata, that
-property must be marked `override`; making the base fields abstract would avoid
-TS4114 but would also lose the inherited `@Field` metadata that motivates
-`extends`.
+Map client output metadata into public GraphQL concepts:
 
-| File | Contents |
-|---|---|
-| `taxCalculator.model.ts` | `@ObjectType()` `class TaxCalculator` — class name already equals the GQL name, so no explicit arg. `@Field(() => TaxCalculatorType) type!`; `@Field(() => [InputField]) inputFields!: InputField[]` (interface-in-list has precedent in `education`'s `course.model.ts`). `TaxCalculatorType` is imported from `@island.is/tax-calculators` and **must not** be re-registered — `libs/cms/src/lib/models/calculator.model.ts:17` owns its `registerEnumType`, and registering twice throws. |
-| `inputField.model.ts` | The interface **and all five implementors**, in declaration order. `@InterfaceType('TaxCalculatorInputField', { resolveType })` `abstract class InputField` declares `key`/`type`/`required`/`dependsOn?` once, with their descriptions. Annotate the callback parameter explicitly — `resolveType(value: InputField)` — because NestJS types it loosely and the exhaustive `never` default only compiles into a guarantee with the annotation; switch on `value.type`. Then `NumberInputField extends InputField` (adds `@Field(() => TaxCalculatorInputFieldSemantic, { nullable: true }) semantic?`), `StringInputField`, `BooleanInputField`, `DateInputField` (empty bodies — no `GraphQLISODateTime` anywhere: the client's `date` type means "render a date control", and nothing in this contract carries a date *value*), and `SelectInputField` (adds `@Field(() => [InputFieldOption]) options!: InputFieldOption[]` — non-null list, guaranteed by validation). |
-| `inputFieldOption.model.ts` | `@ObjectType('TaxCalculatorInputFieldOption') class InputFieldOption { @Field() value!: string }`. |
-| `booleanInputDependencyValue.model.ts` | `@ObjectType('TaxCalculatorBooleanInputDependencyValue')`, single `@Field() value!: boolean`. |
-| `stringInputDependencyValue.model.ts` | Same, `value!: string`. |
-| `numberInputDependencyValue.model.ts` | Same, `@Field(() => Float) value!: number`. |
-| `inputDependencyValue.model.ts` | `createUnionType({ name: 'TaxCalculatorInputDependencyValue', types, resolveType })` only — not an `@ObjectType`, so it keeps this file to itself. **`resolveType` must switch on `typeof value.value`**: all three members are structurally `{ value }`, so the field-presence discrimination used by `health-directorate`'s union precedent cannot work here. Return `null` otherwise. |
-| `inputFieldDependency.model.ts` | `@ObjectType('TaxCalculatorInputFieldDependency') class InputFieldDependency { @Field() fieldKey!: string; @Field(() => InputDependencyValue) equals!: BooleanInputDependencyValue \| StringInputDependencyValue \| NumberInputDependencyValue }`. The explicit three-class TS union beats `health-directorate`'s `typeof UnionConst` idiom, which is less precise. |
+| Client                   | Domain                                             |
+| ------------------------ | -------------------------------------------------- |
+| `name`                   | `key`                                              |
+| scalar `type: 'number'`  | `TaxCalculatorNumberOutputField`                   |
+| scalar `type: 'string'`  | `TaxCalculatorStringOutputField`                   |
+| scalar `type: 'boolean'` | `TaxCalculatorBooleanOutputField`                  |
+| scalar `type: 'date'`    | `TaxCalculatorDateOutputField`                     |
+| scalar `semantic`        | `semantic` only on number output fields            |
+| `kind: 'array'`          | `TaxCalculatorArrayOutputField` with `type: array` |
+| array `itemFields`       | `[TaxCalculatorOutputScalarField!]!`               |
 
-### `src/lib/mappings/` (new)
+Do not expose client `kind`. Consumers can query `key` and `type` on every
+output field without fragments, and can use `__typename` when they need
+type-specific fields such as `semantic` or `itemFields`.
 
-| File | Contents |
-|---|---|
-| `calculatorType.ts` | `CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE: Record<TaxCalculatorType, CalculatorKey>` — exhaustive 4-entry map (`withholdingTaxOnWages → withholdingTax` is the one differing name), plus `toCalculatorKey(type)`. Keyed on the enum so a fifth member fails to compile. The domain's identity-mediation point; the client never sees `TaxCalculatorType`. |
-| `inputField.ts` | `toInputField(field: CalculatorField): InputField` — switch on `field.type`; `toDependency(dep)`; `toDependencyValue(equals: string \| number \| boolean)`. **This is where a new client `CalculatorFieldType` is caught at compile time** — via the exhaustive switch and the `Record<CalculatorFieldType, …>` keying, not via the interface's `resolveType`, which switches on the *domain* enum. Returns plain objects typed as the concrete classes, not `new`-ed instances: both `resolveType`s are data-driven, so no `instanceof` is needed. Use `?? undefined`, never `null`. |
+## File Changes
 
-### `src/lib/validation/inputContract.ts` (new)
+### `src/lib/models/enums.ts`
 
-`assertPublishableContract(requestedKey: CalculatorKey, contract:
-CalculatorContract<CalculatorKey>): void`, throwing `Error`s that name the
-calculator and field. A short comment should record why a bare `Error`
-(surfacing as an unqualified `INTERNAL_SERVER_ERROR`) is acceptable: each one is
-a contract bug in authored client data, caught by this library's own tests, not
-an upstream condition a consumer could act on.
+Add:
 
-Invariants, per `ROADMAP.md` §4:
+- `TaxCalculatorOutputFieldType`
+- `TaxCalculatorOutputFieldSemantic`
 
-- requested key equals returned key
-- at least one input field
-- field names non-empty and unique
-- `select` fields have a defined, non-empty `options`
-- non-`select` fields expose no `options`
-- option values non-empty and unique within the field
-- `dependsOn.field` names a **different** field in the same calculator
-- the equality value's `typeof` is compatible with the referenced field's `type`
-  (`boolean`→boolean, `number`→number, `string`→string or select; for a select,
-  the value must be one of that field's option values)
-- dependencies on `date` fields are rejected
-- no dependency cycles — DFS over the `dependsOn` edges; self-reference is
-  caught by the "different field" rule, longer loops by the walk
+Keep input and output semantic enums separate even though their values match.
+The descriptions are different: input percentage asserts 0-1, output percentage
+does not.
 
-- a `semantic` on a non-number field is rejected, because only
-  `NumberInputField` exposes `semantic`, so the mapper would otherwise drop it
-  silently and hide client drift
+Give both new enums a full `valuesMap` with a description per member, matching
+what the input-side enums already do -- do not leave the members bare.
+`TaxCalculatorOutputFieldType.ARRAY`'s description must tell consumers where to
+go next: switch on `__typename` to `TaxCalculatorArrayOutputField` and read
+`itemFields`. That entry is the only signpost from the enum to the one output
+type carrying extra structure.
 
-Field order is explicitly *not* validated — it carries no domain meaning.
+### `src/lib/models/outputField.model.ts` (new)
 
-### Rewritten
+Defines, as TS symbol -> GraphQL name. Follow `inputField.model.ts`: give each
+output type a short TS name and its prefixed public name via the decorator
+argument. (A bare `@ObjectType()` on a class whose name already carries the
+prefix is also fine in this repo — `TaxCalculator` itself does that. What to
+avoid is the redundant form, an explicit decorator argument identical to the
+class name.)
 
-| File | What & why |
-|---|---|
-| `src/lib/tax-calculators.service.ts` | Injects `CalculatorsClientService`. `getCalculator(type: TaxCalculatorType): TaxCalculator` → `toCalculatorKey(type)` → `client.getCalculator(key)` → `assertPublishableContract(key, contract)` → `{ type, inputFields: contract.inputFields.map(toInputField) }`. Synchronous. Validate and map on every request, scoped to the requested calculator. `LOGGER_PROVIDER` is removed: the roadmap replaces warn-and-degrade with throw, so there is nothing to warn about. |
-| `src/lib/tax-calculators.resolver.ts` | `@CodeOwner(CodeOwners.Hugsmidjan)` + `@Resolver(() => TaxCalculator)`. `@Query(() => TaxCalculator, { name: 'taxCalculator', description })` with `@Args('type', { type: () => TaxCalculatorType })` and an explicit `TaxCalculator` return-type annotation. Query name is prefix-once. No guards, no `@Audit`, no `registerEnumType`. **Put a short comment at the `@Query` recording the non-null deviation** from `conventions/graphql.md:42` — that is where the next reader will ask, and README/ROADMAP alone won't reach them. |
-| `src/lib/tax-calculators.module.ts` | `imports: [CalculatorsClientModule]` added. `providers: [TaxCalculatorsResolver, TaxCalculatorsService]`; no `exports`. No `apps/api` config or infra work: `CalculatorsClientConfig` self-registers via `registerOptional()`, `RSK_CALCULATORS_BASE_URL` has a default and is already in `apps/api/infra/api.ts`, and the RSK API is open — no X-Road, no auth. |
-| `src/index.ts` | `export { TaxCalculatorsModule } from './lib/tax-calculators.module'` — named export replacing `export *`. Resolver and service stay unexported. |
-| `README.md` | New query/SDL; four-of-six reachability; "no display text — it comes from `configJson`"; calculation deferred with `taxCalculatorCalculate` reserved; the two known-red consumers. Must state **both** deviations (non-null root query, throw-don't-degrade). Delete the now-false claims that field metadata comes from zod introspection and that the module needs no `imports`. Do not restate client-owned RSK interpretation. |
-| `ROADMAP.md` | Fill in §§1–4 outputs: reachability = four, nullability = non-null, output-contract status = absent → deferred, and the enum-file deviation from the suggested structure. |
+| TS symbol            | GraphQL name                      | Decorator                                            |
+| -------------------- | --------------------------------- | ---------------------------------------------------- |
+| `OutputField`        | `TaxCalculatorOutputField`        | `@InterfaceType`                                     |
+| `OutputScalarField`  | `TaxCalculatorOutputScalarField`  | `@InterfaceType`, `implements: () => OutputField`    |
+| `NumberOutputField`  | `TaxCalculatorNumberOutputField`  | `@ObjectType`, `implements: () => OutputScalarField` |
+| `StringOutputField`  | `TaxCalculatorStringOutputField`  | `@ObjectType`, `implements: () => OutputScalarField` |
+| `BooleanOutputField` | `TaxCalculatorBooleanOutputField` | `@ObjectType`, `implements: () => OutputScalarField` |
+| `DateOutputField`    | `TaxCalculatorDateOutputField`    | `@ObjectType`, `implements: () => OutputScalarField` |
+| `ArrayOutputField`   | `TaxCalculatorArrayOutputField`   | `@ObjectType`, `implements: () => OutputField`       |
 
-### Unchanged (verified)
+`OutputField` and `OutputScalarField` are `abstract class`es. The full chain,
+as built and verified in the probe:
 
-- `project.json` — dep constraints already permit `scope:api → lib:client` and
-  `lib:js`. Note there is **no `tsc` target**.
-- `jest.config.ts` — discovers specs anywhere under the project; new
-  `mappings/` and `validation/` specs need no registration. It uses
-  `tsconfig.spec.json`, so spec type errors *are* caught by the test target.
-- `apps/api/src/app/app.module.ts` — already imported (line 86) and registered
-  (line 396), both alphabetically placed.
-- `libs/clients/rsk/calculators/**` source — no client change, confirming the
-  roadmap's boundary check that the client never learns about
-  `TaxCalculatorType`.
+- `OutputField` declares `key` and `type` with their `@Field` descriptions.
+- `OutputScalarField extends OutputField` **and** passes
+  `implements: () => OutputField` to its `@InterfaceType`. Both are required:
+  `extends` is what inherits the field metadata and descriptions so they are
+  declared once, and `implements` is what makes GraphQL emit
+  `interface TaxCalculatorOutputScalarField implements TaxCalculatorOutputField`.
+  Its body stays empty -- `type` is declared once on `OutputField` (see
+  below).
+- the four scalar object types `extends OutputScalarField` with
+  `implements: () => OutputScalarField`. NestJS adds the transitive
+  `TaxCalculatorOutputField` itself, so do not list both.
+- `ArrayOutputField extends OutputField` with `implements: () => OutputField`,
+  adding `itemFields`.
 
-## Test plan
+Use data-driven `resolveType`, following the input model's pattern. Mapper
+objects should remain plain objects; no `instanceof` dependency.
 
-**`src/lib/tax-calculators.service.spec.ts`** (rewritten) — instantiate directly
-as `new TaxCalculatorsService(new CalculatorsClientService())`, **not** via
-`Test.createTestingModule`: building a schema here fails on `TaxCalculatorType`,
-whose `registerEnumType` lives in `libs/cms` and never runs in this project's
-test context. Cases:
+Both interfaces need a `resolveType`, and the `type` -> class table must exist
+in exactly one place. Use one shared function over the whole enum, and give it
+to both interfaces:
 
-- all four `TaxCalculatorType` members return a non-empty `inputFields` with
-  non-empty keys
-- `withholdingTaxOnWages` resolves to the withholding-tax calculator (contains
-  `salary` and `paymentFrequency`) — the guard for the one hand-maintained
-  cross-vocabulary entry, which compiles fine when wrong
-- `childBenefit`'s `splitCustodyChildrenOver7`/`Under7` carry
-  `{ fieldKey: 'splitCustody', equals: { value: true } }`; the rest are
-  unconditional
-- `vehicleTax.period` is a `SelectInputField` with
-  `[{value:'firstHalf'},{value:'secondHalf'}]`
-- `vehicleTax.periodSplitDate` is a `DateInputField` with no `options`
-- a per-field semantic table (carried over from the current spec — this is what
-  catches a *mis*-annotation)
-- no blanket assertion that every number field has a `semantic`: `semantic` is
-  optional in the public contract, so tests may pin known current semantics but
-  must not turn that data property into a domain invariant.
+```ts
+const resolveOutputField = (value: OutputField) => {
+  switch (value.type) {
+    case TaxCalculatorOutputFieldType.NUMBER:
+      return NumberOutputField
+    case TaxCalculatorOutputFieldType.STRING:
+      return StringOutputField
+    case TaxCalculatorOutputFieldType.BOOLEAN:
+      return BooleanOutputField
+    case TaxCalculatorOutputFieldType.DATE:
+      return DateOutputField
+    case TaxCalculatorOutputFieldType.ARRAY:
+      return ArrayOutputField
+    default: {
+      const unhandled: never = value.type
+      return unhandled
+    }
+  }
+}
+```
 
-**`src/lib/mappings/inputField.spec.ts`** (new) — each `CalculatorFieldType`
-maps to the right concrete shape; a `semantic` on a number field survives;
-`options` become `{value}` objects only on select; each of the three `typeof`s
-of `dependsOn.equals` maps to the matching union member. The string and number
-cases **must** use hand-built contracts — real data has only the two boolean
-dependencies in `childBenefit`.
+Both interfaces pass `resolveType: resolveOutputField`. Sharing it is sound
+because the mapping is total: ARRAY never arrives through the scalar interface,
+since no array field implements it.
 
-**`src/lib/validation/inputContract.spec.ts`** (new) — one hand-built invalid
-contract per invariant, each asserted to throw, plus one valid contract asserted
-not to. These are the only tests for rules no type can enforce, and the
-select-option-membership and number-compatibility branches are reachable only
-here.
+`ScalarOutputFieldType` (`Exclude<TaxCalculatorOutputFieldType, ...ARRAY>`) is
+still needed, but only to type the mapper's `Record` so a client scalar output
+type cannot map to ARRAY. It is not used by `resolveType`.
 
-Not covered by jest: both `resolveType` functions run only during real schema
-execution, which this project's test context cannot build. The schema build
-below is what proves they register.
+**Do not narrow `type` by redeclaring it on `OutputScalarField`.** It looks
+tempting -- it would let a scalar-only helper keep a tighter exhaustiveness
+check -- but `noImplicitOverride` then requires the `override` modifier, and
+this repo's prettier is pinned at **2.2.0**, which predates that syntax
+(prettier added it in 2.3) and fails with `SyntaxError: Unexpected token`. One
+shared switch avoids the question entirely and keeps `type` declared once, on
+`OutputField`.
+
+Annotate the `value` parameter explicitly, as `inputField.model.ts` does —
+NestJS types the `resolveType` argument loosely, and without the annotation the
+`const unhandled: never` is dead code instead of a compile-time guarantee that
+every enum member is handled.
+
+Co-locate both interfaces and all five implementors in this one file, and say
+why in a header comment: `extends` is evaluated at class-definition time, and a
+custom `resolveType` forces each interface to reference its concrete classes.
+Split across files, that cycle makes module load order decide whether the
+library throws `TypeError: Class extends value undefined`. This is the same
+constraint `inputField.model.ts` documents, so a later reader does not "fix" it
+by splitting the file the way `inputDependencyValue.model.ts` is split.
+
+Give every field a `description`. This module describes all of them, including
+`type` (redundant with `__typename`, kept for consumers that would rather switch
+on an enum) and `itemFields`.
+
+`ArrayOutputField.itemFields` must be typed `[OutputScalarField!]!`, never
+`[OutputField!]!` — that is what keeps an array inside an array unrepresentable
+in the schema, matching the client's
+`CalculatorArrayOutputField.itemFields: readonly CalculatorScalarOutputField[]`.
+
+Interface-implements-interface is confirmed working at this repo's versions
+(`@nestjs/graphql` 13.4.2, `graphql` 16.14.2) — this exact type graph was built
+and its schema printed during review:
+
+- `interface TaxCalculatorOutputScalarField implements TaxCalculatorOutputField`
+  emits.
+- The concrete types emit as
+  `implements TaxCalculatorOutputScalarField & TaxCalculatorOutputField`.
+  NestJS adds the transitive interface itself from the prototype chain
+  (`object-type-definition.factory`'s `generateInterfaces` unions
+  `metadata.interfaces` with `parentClass.getInterfaces()`), so declaring only
+  `implements: () => OutputScalarField` satisfies GraphQL's transitive
+  declaration rule.
+- `itemFields: [TaxCalculatorOutputScalarField!]!` emits, and all five
+  implementors register without `orphanedTypes`.
+
+No union fallback is needed.
+
+### `src/lib/mappings/outputField.ts` (new)
+
+Map `CalculatorOutputField` to the public domain model.
+
+Use `Record` mappings keyed on the client's literal unions:
+
+- `CalculatorOutputScalarType -> TaxCalculatorOutputFieldType`
+- `CalculatorFieldSemantic -> TaxCalculatorOutputFieldSemantic`
+
+Use exhaustive switches so a new client output `kind` or scalar `type` fails at
+compile time here.
+
+Semantic _placement_ is not compile-time enforced, and the plan must not imply
+it is: the client's `CalculatorScalarOutputField.semantic?` is permitted on any
+scalar type, so "only number outputs carry `semantic`" is a runtime validation
+invariant. No current client contract violates it. This mirrors the input side.
+
+Map client array fields to `TaxCalculatorOutputFieldType.ARRAY`. Scalar fields
+map to their scalar type.
+
+### `src/lib/models/taxCalculator.model.ts`
+
+Add:
+
+```ts
+@Field(() => [OutputField], {
+  description: '...',
+})
+outputFields!: OutputField[]
+```
+
+`OutputField` is the abstract interface class from `outputField.model.ts`; the
+public name `TaxCalculatorOutputField` comes from its decorator, so the
+`@Field` thunk takes the TS symbol, exactly as `inputFields` takes `InputField`.
+
+Write the description to mirror `inputFields`: order carries no meaning (the
+client sorts by `name`, `itemFields` included), consumers match on `key`, and it
+carries no display text.
+
+### `src/lib/tax-calculators.service.ts`
+
+Return:
+
+```ts
+{
+  type,
+  inputFields: contract.inputFields.map(toInputField),
+  outputFields: contract.outputFields.map(toOutputField),
+}
+```
+
+Keep service synchronous. The client contract lookup is still an in-process
+registry lookup.
+
+The `validation/inputContract.ts` -> `validation/contract.ts` rename also
+changes this file's import at `tax-calculators.service.ts:9`. The compiler
+catches it, but it is part of this change, not an incidental fixup.
+
+### Validation
+
+Rename `validation/inputContract.ts` -> `validation/contract.ts` (and
+`inputContract.spec.ts` -> `contract.spec.ts`) and add the output invariants
+inside the existing `assertPublishableContract`. Do not add a second validator
+module.
+
+Rationale: the exported function is already named `assertPublishableContract`
+and already receives the whole `CalculatorContract`, which already carries
+`outputFields`. A second module would mean two entry points validating one
+object and two calls from the service, for no gain. Keep the existing internal
+helper structure (`fail`, `assertFieldShape`, ...) and add output helpers
+alongside them.
+
+Output publishability invariants:
+
+- `outputFields` is non-empty for each reachable published calculator.
+- top-level output keys are non-empty.
+- top-level output keys are unique within the calculator.
+- number outputs may carry `semantic`.
+- non-number scalar outputs must not carry `semantic`.
+- array output `itemFields` is non-empty.
+- array item keys are non-empty.
+- array item keys are unique within the array.
+- number array item fields may carry `semantic`.
+- non-number array item fields must not carry `semantic`.
+
+Do not validate output field order. Order carries no meaning.
+
+Do not validate output value availability. That belongs to calculation result
+mapping, not metadata publication.
+
+## Tests
+
+### `src/lib/mappings/outputField.spec.ts`
+
+Cover mapper shape with hand-built fields:
+
+- number scalar maps to `TaxCalculatorNumberOutputField` shape and preserves
+  semantic.
+- string scalar maps to `TaxCalculatorStringOutputField`.
+- boolean scalar maps to `TaxCalculatorBooleanOutputField`.
+- date scalar maps to `TaxCalculatorDateOutputField`, even if no current
+  reachable calculator publishes one.
+- array output maps to `TaxCalculatorArrayOutputField`.
+- array `itemFields` reuse the scalar mapper and preserve number semantics.
+
+### Contract validation specs
+
+Add output invalid-contract cases:
+
+- empty `outputFields`
+- empty top-level output key
+- duplicate top-level output key
+- semantic on non-number top-level scalar
+- empty array `itemFields`
+- empty array item key
+- duplicate array item key
+- semantic on non-number array item scalar
+
+### `src/lib/tax-calculators.service.spec.ts`
+
+Keep testing only the four reachable `TaxCalculatorType` members.
+
+Add representative output assertions:
+
+- every reachable calculator returns non-empty `outputFields`.
+- `withholdingTaxOnWages` exposes `taxBrackets` as an array output.
+- `taxBrackets.itemFields` includes `lowerBound`, `bracketNumber`,
+  `withholdingRate`, and `calculatedWithholding`.
+- `vehicleTax.vehicleTax` is a number output with `currency`.
+- `vehicleTax.periodLabel` is a string output.
+- `vehicleTax.vehicleWeight` is a number output with no semantic.
+- `vehicleBenefit.monthlyBenefit` is a number output with `currency`.
+- `childBenefit.splitCustody` is a boolean output.
 
 ## Verification
 
-```bash
-npx tsc --noEmit -p libs/api/domains/tax-calculators/tsconfig.lib.json
-npx eslint libs/api/domains/tax-calculators/src --ext .ts --max-warnings 0
-yarn nx run api-domains-tax-calculators:test
-yarn nx run clients-rsk-calculators:test
+Focused checks, when practical:
 
-# Merged-schema build — the load-bearing check
+```bash
+yarn nx run api-domains-tax-calculators:test
+```
+
+Schema build is the load-bearing check for interface registration, and the only
+thing that proves interface-implements-interface emits correctly. Run it before
+reporting done, not only the unit tests:
+
+```bash
 INIT_SCHEMA=true yarn ts-node -P apps/api/tsconfig.json scripts/build-graphql-schema.ts apps/api/src/app/app.module
 ```
 
-Two notes on why these and not the obvious ones:
+Do not broaden scope to web or Contentful consumers in this round.
 
-- **Do not** run `nx run api:codegen/backend-schema`. `nx.json`'s
-  `targetDefaults` gives it `dependsOn: ["codegen/backend-client",
-  "^codegen/backend-client", "^codegen/backend-schema"]`, dragging in the whole
-  client-codegen chain. The raw command above is what that target executes.
-- `tsc` runs directly because `project.json` has no `tsc` target, so the nx
-  targets alone never typecheck `tsconfig.lib`. **Filter its output** -- it
-  reports 29 pre-existing errors in dependency libraries (`libs/auth-nest-tools`,
-  `libs/logging`, `libs/nest/config`, ...), because this library's stricter flags
-  (`noImplicitOverride`, `noPropertyAccessFromIndexSignature`,
-  `noImplicitReturns`) apply to everything pulled in through the path aliases.
-  Grep for `domains/tax-calculators` to see only this library's own errors.
-- `nx run api-domains-tax-calculators:lint` **fails repo-wide** on
-  `Failed to load plugin 'storybook': require() of ES Module ... not supported`.
-  Pre-existing and environmental -- the untouched `occupational-licenses` domain
-  fails identically -- so it is not a signal about this work.
+## Documentation Updates
 
-The schema build is load-bearing: an interface with no implementing types, a
-union whose members aren't registered, and a duplicate `registerEnumType` all
-fail there and nowhere else. It rewrites the gitignored `api.graphql`.
+After implementation:
 
-## Key decisions
-
-- **Interface + union over a flat field type** — roadmap-settled. Buys
-  schema-level guarantees the flat shape couldn't express: `options` only where
-  meaningful, `semantic` only on numbers.
-- **One file for the interface and its five implementors, using `extends`** —
-  keeps the four shared fields and their descriptions declared once. Safe because
-  the interface never references the implementors across a module boundary; the
-  crash case is split files *plus* `extends`, not `extends` itself. See the models
-  section for the three-way rule and its precedents. An earlier revision of this
-  plan chose split-plus-`implements`, which is also safe but costs 20 field
-  restatements and a constants module to stop them drifting; the refactor to one
-  file was verified to leave the emitted schema unchanged — 2199 types before and
-  after, zero definition changes, textual diff limited to emission order.
-- **The interface keeps a `type` field** now redundant with `__typename` — kept
-  deliberately as a convenience for renderers that switch on an enum rather than
-  a typename, and it is what `resolveType` discriminates on.
-- **`type` as both argument and field name**, despite `domain-module.md` naming
-  `type` under "avoid reserved words as property names" — roadmap-settled, and
-  it reads correctly at the call site (`taxCalculator(type: VEHICLE_TAX)`).
-- **Non-null root query** — see settled decisions; comment it at the `@Query`.
-- **Throw, don't degrade** on invalid client metadata — roadmap-settled, and a
-  deliberate reversal of the decision the current module documents at length
-  (warn and drop, because a public unauthenticated page turns a throw into a 500
-  for every visitor). Defensible now for a reason that did not hold before: the
-  contract is authored plain data in the client, not derived from zod
-  introspection, so a violation is a code bug caught in CI rather than upstream
-  drift arriving at runtime.
-- **Validation runs per request, not at boot.** A reviewer proposed validating
-  all four contracts in `OnModuleInit` so a violation fails the deploy rather
-  than a visitor's request. Rejected: `OnModuleInit` appears in only three files
-  repo-wide and in no `libs/api/domains` module, and it trades a localized
-  failure for a global one — a malformed contract would stop the entire
-  `apps/api` gateway from booting rather than breaking one slice. Validate only
-  the requested calculator on each `taxCalculator(type)` execution; full curated
-  coverage comes from the validation and service specs.
-- ⚠️ ASSUMPTION: mappers return plain objects, not class instances — safe because
-  both `resolveType`s are data-driven, but nothing would catch a later
-  `instanceof` check.
-
-## Downstream breakage
-
-Both live consumers break: same query *name* (`taxCalculator`, which is what
-they already call), renamed *argument* (`calculatorType` → `type`), renamed and
-restructured *fields*. `apps/web`'s `Calculator.tsx` reads
-`data.taxCalculator.fields` with `key/inputType/required/options/dependsOn{field,equals}`;
-`apps/contentful-apps`' `types.ts` derives `ContractField` from
-`['taxCalculator']['fields'][number]`. Neither is silently compatible.
-
-The gitignored generated artefacts (`libs/api/schema/src/lib/schema.ts`,
-`apps/web/graphql/schema.d.ts`, `apps/contentful-apps/graphql/schema.ts`) also
-go stale.
-
-Fixed in follow-up work via `/develop-web` and `/develop-contentful-app` — out
-of scope here by decision. Breaking per `conventions/domain-module.md`'s
-taxonomy, and sanctioned by `ROADMAP.md`'s opening statement that this domain may
-publish a relationship that breaks current CMS/web assumptions.
-
-Two union members ship with no producer: every `dependsOn.equals` in the client
-is `true`, so `TaxCalculatorStringInputDependencyValue` and
-`TaxCalculatorNumberInputDependencyValue` register with no data path reaching
-them. Roadmap-settled — the client types `equals` as `string | number | boolean`,
-so the union matches the client contract rather than only its current data.
-
-## Open follow-ups (not blocking)
-
-- **Select option values are display strings doing duty as stable keys** —
-  `pensionFundRatio` publishes `[{value:'0%'},{value:'4%'}]` and
-  `employerPensionMatchRatio` goes up to `{value:'13.5%'}`, so a consumer must
-  string-parse to get a number. Meanwhile `semantic: 'percentage'` marks a 0–1
-  ratio on `taxCardUtilization`/`spouseTaxCardUtilization` — so consumers meet
-  percentages in two unrelated shapes within one calculator. That is the
-  client's contract, not this domain's, and `TaxCalculatorInputFieldOption` is
-  already an object type with room to grow. Unresolved: whether a future
-  `label`/`numericValue` lands on the option type, or `configJson` gains
-  per-option display text. Worth settling before the web form renderer, not
-  before this lands.
-- **Output/calculation contract** — belongs to the client roadmap first, then a
-  follow-up round here.
-- **Non-domain doc cleanup** — `libs/tax-calculators/src/lib/calculatorConfig.schema.ts`
-  and `libs/clients/rsk/calculators/PLAN.md` contain stale references after this
-  domain rebuild. Correcting them is useful but outside this domain-only plan.
+- update the `taxCalculator` query description in
+  `tax-calculators.resolver.ts`. It currently says "The input contract for a
+  calculator", which stops being true the moment `outputFields` ships. This is a
+  code change, not just docs — do it as part of implementation.
+- update `README.md` to describe `outputFields`. Three concrete spots go stale,
+  beyond the two listed below: the opening summary at `README.md:3-4` ("Serves
+  the input contract ... so a consumer can render a generic form"), the
+  `## The query` SDL block at `README.md:8-22`, which shows `type TaxCalculator`
+  without `outputFields`, and `README.md:118-124`, which reserves the operation
+  name `taxCalculatorCalculate` — keep that reservation, since calculation
+  execution stays a later round.
+- update `README.md:55`, which names `validation/inputContract.ts` by path —
+  the rename makes it a dangling reference.
+- remove `README.md`'s claim that "The client exposes no curated output
+  contract" — it is now false.
+- remove the statement that calculation/output contract is deferred, replacing
+  it with: output metadata is exposed; calculation execution remains separate
+  unless implemented in a later round.
+- revisit `README.md`'s "deliberate deviations" list: the output side adds a
+  second interface (`TaxCalculatorOutputScalarField`) purely to keep nested
+  arrays unrepresentable, which the input side has no equivalent of. Record it
+  there so it reads as intentional.
+- keep `ROADMAP.md` at the design/control level. Do not duplicate this file's
+  file-by-file plan there.
