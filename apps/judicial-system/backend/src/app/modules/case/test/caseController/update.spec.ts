@@ -38,6 +38,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { CourtSessionService } from '../../../court-session'
 import { DefendantService } from '../../../defendant'
 import { EventLogService } from '../../../event-log/eventLog.service'
 import { FileService } from '../../../file'
@@ -101,6 +102,7 @@ describe('CaseController - Update', () => {
   let mockVerdictService: VerdictService
   let mockCaseStringRepositoryService: CaseStringRepositoryService
   let mockDateLogRepositoryService: DateLogRepositoryService
+  let mockCourtSessionService: CourtSessionService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -116,6 +118,7 @@ describe('CaseController - Update', () => {
       verdictService,
       caseStringRepositoryService,
       dateLogRepositoryService,
+      courtSessionService,
       caseController,
     } = await createTestingCaseModule()
 
@@ -129,6 +132,7 @@ describe('CaseController - Update', () => {
     mockVerdictService = verdictService
     mockCaseStringRepositoryService = caseStringRepositoryService
     mockDateLogRepositoryService = dateLogRepositoryService
+    mockCourtSessionService = courtSessionService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {
@@ -448,6 +452,77 @@ describe('CaseController - Update', () => {
           },
         ]),
       )
+    })
+  })
+
+  // An indictment case that completes by merging into a parent case joins the
+  // parent's latest court session, provided that session is still open. The
+  // court session service owns what joining means; this is the decision to call it.
+  describe('indictment case completed by merging into a parent case', () => {
+    const parentCaseId = uuid()
+    const caseToUpdate = { state: CaseState.COMPLETED } as UpdateCaseDto
+
+    const mergingCase = (latestSessionConfirmed: boolean) =>
+      ({
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        state: CaseState.RECEIVED,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
+        mergeCaseId: parentCaseId,
+        mergeCase: {
+          id: parentCaseId,
+          state: CaseState.RECEIVED,
+          withCourtSessions: true,
+          courtSessions: [
+            { id: uuid(), isConfirmed: true },
+            { id: uuid(), isConfirmed: latestSessionConfirmed },
+          ],
+        },
+      } as Case)
+
+    describe('whose latest court session is open', () => {
+      beforeEach(async () => {
+        await givenWhenThen(caseId, user, mergingCase(false), caseToUpdate)
+      })
+
+      it('should add the case to the latest court session of the parent case', () => {
+        expect(
+          mockCourtSessionService.addMergedCaseToLatestCourtSession,
+        ).toHaveBeenCalledWith(parentCaseId, caseId, transaction)
+      })
+    })
+
+    describe('whose latest court session is confirmed', () => {
+      beforeEach(async () => {
+        await givenWhenThen(caseId, user, mergingCase(true), caseToUpdate)
+      })
+
+      it('should leave the court sessions of the parent case alone', () => {
+        expect(
+          mockCourtSessionService.addMergedCaseToLatestCourtSession,
+        ).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('that is not received', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const notReceived = mergingCase(false)
+        notReceived.mergeCase = {
+          ...notReceived.mergeCase,
+          state: CaseState.COMPLETED,
+        } as Case
+
+        then = await givenWhenThen(caseId, user, notReceived, caseToUpdate)
+      })
+
+      it('should refuse the merge', () => {
+        expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(
+          mockCourtSessionService.addMergedCaseToLatestCourtSession,
+        ).not.toHaveBeenCalled()
+      })
     })
   })
 

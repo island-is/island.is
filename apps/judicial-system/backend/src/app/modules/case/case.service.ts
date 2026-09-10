@@ -81,6 +81,7 @@ import {
 } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
@@ -97,7 +98,6 @@ import {
   CaseRepositoryService,
   CaseStringRepositoryService,
   CourtDocumentRepositoryService,
-  CourtSessionRepositoryService,
   DateLog,
   DateLogRepositoryService,
   Defendant,
@@ -178,7 +178,8 @@ export class CaseService {
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
-    private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
+    @Inject(forwardRef(() => CourtSessionService))
+    private readonly courtSessionService: CourtSessionService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
@@ -2485,10 +2486,10 @@ export class CaseService {
         !parentCase.courtSessions[parentCase.courtSessions.length - 1]
           .isConfirmed
       ) {
-        await this.courtSessionRepositoryService.addMergedCaseToLatestCourtSession(
+        await this.courtSessionService.addMergedCaseToLatestCourtSession(
           parentCase.id,
           theCase.id,
-          { transaction },
+          transaction,
         )
       }
     }

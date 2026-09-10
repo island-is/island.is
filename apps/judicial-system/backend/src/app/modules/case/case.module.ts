@@ -7,6 +7,7 @@ import { SigningModule } from '@island.is/dokobit-signing'
 import {
   AwsS3Module,
   CourtModule,
+  CourtSessionModule,
   DefendantModule,
   EventLogModule,
   EventModule,
@@ -40,6 +41,7 @@ import { PdfService } from './pdf.service'
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),
     forwardRef(() => CourtModule),
+    forwardRef(() => CourtSessionModule),
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
