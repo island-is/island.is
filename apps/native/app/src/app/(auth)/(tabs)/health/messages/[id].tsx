@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { gql, useApolloClient } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import {
   FlatList,
@@ -41,6 +41,7 @@ import {
   Button,
   GeneralCardSkeleton,
   ListItemSkeleton,
+  Problem,
   ProblemTemplate,
   theme,
 } from '@/ui'
@@ -66,6 +67,14 @@ const isSingularDayCount = (days: number, locale: string): boolean => {
   }
   return days === 1
 }
+
+// The list and detail queries normalize to separate cache entries, so the list's
+// title survives a failed detail fetch. Read it to fall back on for the header.
+const CONVERSATION_TITLE_FRAGMENT = gql`
+  fragment HealthConversationTitle on HealthDirectorateHealthConversation {
+    title
+  }
+`
 
 // Maps a reply-blocked reason to its explanatory message.
 const replyBlockedMessageId = (
@@ -154,6 +163,30 @@ export default function HealthMessageDetailScreen() {
   const conversation = res.data?.healthDirectorateHealthConversation
   const messages = useMemo(() => conversation?.messages ?? [], [conversation])
   const isSkeleton = res.loading && !res.data
+  // Only surface the error when we have nothing to show, so a cached
+  // conversation still renders through a failed background refetch.
+  const hasError = !!res.error && !conversation
+  // A bad or stale id (e.g. a notification outliving the thread) is a successful
+  // response carrying null, not a failure, so it needs its own branch.
+  const notFound = !hasError && !isSkeleton && !!res.data && !conversation
+
+  // Falls back to the title the list query cached, so the header still names the
+  // message when the detail fetch fails instead of going blank.
+  const cachedTitle = useMemo(() => {
+    const cacheId = client.cache.identify({
+      __typename: 'HealthDirectorateHealthConversation',
+      id,
+    })
+    if (!cacheId) {
+      return undefined
+    }
+    return (
+      client.readFragment<{ title?: string | null }>({
+        id: cacheId,
+        fragment: CONVERSATION_TITLE_FRAGMENT,
+      })?.title ?? undefined
+    )
+  }, [client, id])
 
   // An expired reply window is the one reason we can quantify, so name the
   // number of days when the server sends it. It is nullable, so fall back to
@@ -440,7 +473,7 @@ export default function HealthMessageDetailScreen() {
       <StackScreen
         networkStatus={res.networkStatus}
         options={{
-          title: conversation?.title ?? '',
+          title: conversation?.title ?? cachedTitle ?? '',
           // Android centers a long title over the back arrow; left-align there
           // so it truncates next to it instead. iOS reserves the button space.
           headerTitleAlign: Platform.OS === 'android' ? 'left' : 'center',
@@ -519,6 +552,34 @@ export default function HealthMessageDetailScreen() {
                   })}
                   hasBorder
                 />
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            hasError || notFound ? (
+              <View
+                style={{
+                  paddingHorizontal: theme.spacing[2],
+                  paddingTop: theme.spacing[3],
+                }}
+              >
+                {hasError ? (
+                  <Problem
+                    type="error"
+                    title={intl.formatMessage({ id: 'problem.error.title' })}
+                    message={intl.formatMessage({
+                      id: 'health.messages.errorMessage',
+                    })}
+                  />
+                ) : (
+                  <Problem
+                    type="no_data"
+                    title={intl.formatMessage({ id: 'problem.noData.title' })}
+                    message={intl.formatMessage({
+                      id: 'health.messages.notFoundMessage',
+                    })}
+                  />
+                )}
               </View>
             ) : null
           }
