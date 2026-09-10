@@ -2,22 +2,18 @@ import React, { FC } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
 import { requirementsMessages } from '../../../lib/messages'
 import { m } from '../../../lib/messages'
-import isNumber from 'lodash/isNumber'
 import { ReviewSectionState, type Step } from './types'
 
 // Re-export so existing `from './ReviewSection'` consumers keep resolving.
 export { ReviewSectionState, type Step } from './types'
 
 type ReviewSectionProps = {
-  application: Application
   step: Step
-  index: number
 }
 
 const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
@@ -26,7 +22,7 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   const { formatMessage } = useLocale()
 
   const showLocalRequirementDays: boolean =
-    isNumber(daysOfResidency) &&
+    typeof daysOfResidency === 'number' &&
     state === ReviewSectionState.requiresAction &&
     title === requirementsMessages.localResidencyTitle
 

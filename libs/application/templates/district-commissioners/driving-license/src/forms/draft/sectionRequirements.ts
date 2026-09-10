@@ -3,17 +3,22 @@ import {
   buildHiddenInput,
   buildMultiField,
   buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { DrivingLicenseApplicationFor } from '../../utils/constants'
+import { DrivingLicenseFakeData } from '../../utils/constants'
+import { structuralCandidates } from '../../utils'
 
-// `fixedApplicationFor` is passed when the license-selection screen is hidden
+// `freezeApplicationFor` is true when the license-selection screen is hidden
 // (ALLOW_LICENSE_SELECTION off), so no radio writes `applicationFor`. We freeze
-// it here instead so the required field is populated. When selection is on this
-// is undefined and the radio in sectionApplicationFor owns the value.
-export const sectionRequirements = (
-  fixedApplicationFor?: DrivingLicenseApplicationFor,
-) =>
+// it to the single structural candidate for this applicant — holds-no-B → B-temp,
+// holds-temp-B → B-full, full-B & 65+ → renewal-65 (they are mutually exclusive,
+// so there is at most one) — so `checkEligibility` has a matching `byType` entry.
+// If there is no candidate (e.g. a full-B holder under 65) this stays undefined
+// and EligibilitySummary renders the "not eligible" floor. When selection is on
+// this is false and the radio in sectionApplicationFor owns the value.
+export const sectionRequirements = (freezeApplicationFor = false) =>
   buildSection({
     id: 'requirements',
     title: m.applicationEligibilityTitle,
@@ -23,11 +28,18 @@ export const sectionRequirements = (
         title: m.applicationEligibilityTitle,
         description: m.eligibilityRequirementTitle,
         children: [
-          ...(fixedApplicationFor
+          ...(freezeApplicationFor
             ? [
                 buildHiddenInput({
                   id: 'applicationFor',
-                  defaultValue: fixedApplicationFor,
+                  defaultValue: (application: Application) =>
+                    structuralCandidates(
+                      application.externalData,
+                      getValueViaPath<DrivingLicenseFakeData>(
+                        application.answers,
+                        'fakeData',
+                      ),
+                    )[0],
                 }),
               ]
             : []),

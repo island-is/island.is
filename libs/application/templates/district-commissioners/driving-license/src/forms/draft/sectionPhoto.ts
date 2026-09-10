@@ -1,5 +1,4 @@
 import {
-  buildAlertMessageField,
   buildDescriptionField,
   buildImageField,
   buildMultiField,
@@ -9,7 +8,7 @@ import {
   toBase64DataUrl,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { requirementsMessages, m } from '../../lib/messages'
+import { m } from '../../lib/messages'
 import {
   hasNoDrivingLicenseInOtherCountry,
   hasUsableRlsQualityPhoto,
@@ -45,19 +44,6 @@ export const sectionPhoto = buildSection({
       title: m.photoSelectionTitle,
       description: m.photoSelectionDescription,
       children: [
-        buildAlertMessageField({
-          id: 'noUsablePhotoAlert',
-          title: requirementsMessages.beLicenseQualityPhotoTitle,
-          message: requirementsMessages.beLicenseQualityPhotoDescription,
-          alertType: 'warning',
-          condition: (_answers, externalData) => {
-            const hasThjodskraFacial = getFacialPhotos(externalData).length > 0
-
-            return (
-              !hasThjodskraFacial && !hasUsableRlsQualityPhoto(externalData)
-            )
-          },
-        }),
         buildRadioField({
           id: 'selectLicensePhoto',
           title: '',

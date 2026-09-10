@@ -147,4 +147,11 @@ export interface DrivingLicenseFakeData {
   // `howManyDaysHaveYouLivedInIceland` (< 185 → unmet), so it has no toggle.
   hasDrivingAssessment?: YesOrNo
   hasFinishedDrivingSchool?: YesOrNo
+  // Dev-only submit controls, read by the submission service (see
+  // driving-license-submission.service.ts): `submitToRLS` = 'yes' calls the real
+  // RLS endpoint; otherwise the service returns a fake response, and a non-empty
+  // `submitErrorCode` makes it throw a simulated RLS error with that code so the
+  // payment-step error UI can be exercised.
+  submitToRLS?: YesOrNo
+  submitErrorCode?: string
 }

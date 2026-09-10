@@ -37,12 +37,12 @@ export const sectionApplicantInfo = buildSection({
         }),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
-          value: m.applicationForRenewalLicenseDescription,
+          value: m.applicationForRenewalLicenseTitle,
           condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
         }),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
-          value: m.applicationForBFullDescription,
+          value: m.applicationForFullLicenseTitle,
           condition: (answers) => answers.applicationFor === B_FULL,
         }),
         buildKeyValueField({

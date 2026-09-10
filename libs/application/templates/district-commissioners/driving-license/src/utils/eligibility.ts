@@ -173,7 +173,8 @@ export const buildTypeEligibility = (
 // can-apply and (for B-full) assessment/school are assumed met. For renewal-65
 // the extended-license block is driven by the `hasExtendedLicense` fake toggle
 // (the shared fake-license builder can't reproduce the differing issued dates
-// the real check reads), and the blocking-remark check reads the faked license.
+// the real check reads), and the blocking-remark block by the
+// `hasRenewalBlockingRemark` fake toggle.
 export const fakeTypeEligibility = (
   type: DrivingLicenseApplicationFor,
   fakeData?: DrivingLicenseFakeData,

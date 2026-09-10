@@ -9,7 +9,6 @@ import { sectionPhoto } from './sectionPhoto'
 import { sectionDelivery } from './sectionDelivery'
 import { sectionHealthDeclaration } from './sectionHealthDeclaration'
 import { sectionSummary } from './sectionSummary'
-import { B_FULL } from '../../utils/constants'
 
 interface DrivingLicenseFormConfig {
   allowPickLicense?: boolean
@@ -28,9 +27,9 @@ export const getForm = ({
     renderLastScreenBackButton: true,
     children: [
       ...(allowPickLicense ? [sectionApplicationFor(allow65Renewal)] : []),
-      // When selection is hidden no radio sets `applicationFor`, so freeze it to
-      // B_FULL; otherwise the radio in sectionApplicationFor owns the value.
-      sectionRequirements(allowPickLicense ? undefined : B_FULL),
+      // When selection is hidden no radio sets `applicationFor`; sectionRequirements
+      // freezes it to the applicant's single structural candidate instead.
+      sectionRequirements(!allowPickLicense),
       sectionApplicantInfo,
       sectionOtherCountry,
       sectionPhoto,

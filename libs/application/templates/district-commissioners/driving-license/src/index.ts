@@ -17,5 +17,6 @@ export {
   ELIGIBILITY_EXTERNAL_DATA_ID,
 } from './utils/eligibility'
 export type { TypeEligibility } from './utils/eligibility'
+export { RequirementKey } from './utils/constants'
 export type { DrivingLicenseApplicationFor } from './utils/constants'
 export type { DrivingLicenseFakeData } from './utils/constants'
