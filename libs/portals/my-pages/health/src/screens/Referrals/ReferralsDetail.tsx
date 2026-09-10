@@ -1,7 +1,7 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatDate,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
@@ -34,8 +34,8 @@ const ReferralsDetail: React.FC = () => {
       title={referral?.serviceName || formatMessage(messages.referrals)}
       intro={formatMessage(messages.referralsDetailIntro)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirReferralTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaReferralTooltip),
       }}
       loading={loading}
       marginBottom={6}
