@@ -149,6 +149,7 @@ interface Props {
   inputFieldId?: string
   inputMaxAmount?: number
   inputPlaceholder: string
+  inputColumnLabel?: string
   columns: InteractiveTableColumn[]
   expandedHeader?: StaticText[]
   expandedRows?: StaticText[][]
@@ -165,6 +166,7 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
   inputFieldId,
   inputMaxAmount,
   inputPlaceholder,
+  inputColumnLabel,
   columns,
   expandedHeader,
   expandedRows,
@@ -178,6 +180,11 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
   const expandedRowId = useId()
 
   const checkboxFieldId = `${fieldId}[${rowIndex}]`
+
+  const rowLabel = row
+    .map((cell) => formatText(cell, application, formatMessage))
+    .filter(Boolean)
+    .join(', ')
 
   const isExpandable =
     !!expandedHeader && !!expandedRows && expandedRows.length > 0
@@ -243,6 +250,7 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
             {isOpen && <div className={styles.line} />}
             <Checkbox
               id={`${fieldId}-select-${rowIndex}`}
+              ariaLabel={rowLabel}
               checked={checked}
               onChange={toggleRow}
             />
@@ -295,6 +303,9 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
             <InputController
               id={`${inputFieldId}-${rowIndex}`}
               name={`${inputFieldId}[${rowIndex}]`}
+              ariaLabel={
+                inputColumnLabel ? `${inputColumnLabel}: ${rowLabel}` : rowLabel
+              }
               type="number"
               currency
               rightAlign
@@ -365,6 +376,7 @@ const arePropsEqual = (prev: Props, next: Props) =>
   prev.inputFieldId === next.inputFieldId &&
   prev.inputMaxAmount === next.inputMaxAmount &&
   prev.inputPlaceholder === next.inputPlaceholder &&
+  prev.inputColumnLabel === next.inputColumnLabel &&
   prev.colSpan === next.colSpan &&
   prev.row.length === next.row.length &&
   prev.row.every((cell, index) => cell === next.row[index]) &&

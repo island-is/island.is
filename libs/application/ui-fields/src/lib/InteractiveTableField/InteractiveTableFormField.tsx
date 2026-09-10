@@ -16,6 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  coreMessages,
   formatText,
   formatTextWithLocale,
   resolveFieldId,
@@ -101,6 +102,17 @@ export const InteractiveTableFormField: FC<Props> = ({
   const inputPlaceholder = field.inputColumn?.placeholder
     ? formatText(field.inputColumn.placeholder, application, formatMessage)
     : 'kr.'
+
+  const inputColumnLabel = useMemo(() => {
+    if (!hasInputColumn || header.length === 0) {
+      return undefined
+    }
+    const headerCell = header[header.length - 1]
+    const label = isHeaderColumnConfig(headerCell)
+      ? headerCell.label
+      : headerCell
+    return formatText(label, application, formatMessage)
+  }, [hasInputColumn, header, application, formatMessage])
 
   const colSpan = header.length + (selectable ? 1 : 0)
 
@@ -225,6 +237,9 @@ export const InteractiveTableFormField: FC<Props> = ({
                 >
                   <Checkbox
                     id={`${fieldId}-select-all`}
+                    ariaLabel={formatMessage(
+                      coreMessages.interactiveTableSelectAll,
+                    )}
                     checked={allSelected}
                     onChange={toggleAll}
                   />
@@ -276,6 +291,7 @@ export const InteractiveTableFormField: FC<Props> = ({
                 inputFieldId={inputFieldId}
                 inputMaxAmount={inputMaxAmounts[rowIndex]}
                 inputPlaceholder={inputPlaceholder}
+                inputColumnLabel={inputColumnLabel}
                 columns={columns}
                 expandedHeader={expandedHeader}
                 expandedRows={expandedRows?.[rowIndex]}

@@ -25,6 +25,7 @@ interface Props {
   error?: string
   id: string
   label?: string
+  ariaLabel?: string
   name?: string
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -87,6 +88,7 @@ export const InputController = forwardRef(
       id,
       icon,
       label,
+      ariaLabel,
       name = id,
       placeholder,
       control,
@@ -138,6 +140,7 @@ export const InputController = forwardRef(
             placeholder={placeholder}
             data-testid={dataTestId}
             label={label}
+            ariaLabel={ariaLabel}
             suffix={suffix ?? (currency ? ' kr.' : undefined)}
             value={value}
             format={format}
@@ -207,6 +210,7 @@ export const InputController = forwardRef(
             data-testid={dataTestId}
             placeholder={placeholder}
             label={label}
+            ariaLabel={ariaLabel}
             type={type as 'text' | 'tel'}
             value={value}
             format={format}
@@ -259,6 +263,7 @@ export const InputController = forwardRef(
             icon={icon ? { name: icon } : undefined}
             placeholder={placeholder}
             label={label}
+            ariaLabel={ariaLabel}
             backgroundColor={backgroundColor}
             autoFocus={autoFocus}
             data-testid={dataTestId}

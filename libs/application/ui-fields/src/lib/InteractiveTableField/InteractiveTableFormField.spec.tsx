@@ -162,3 +162,75 @@ describe('InteractiveTableFormField header tooltip', () => {
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
   })
 })
+
+describe('InteractiveTableFormField accessible names', () => {
+  const renderWithInputColumn = () =>
+    render(
+      <InteractiveTableFormField
+        field={
+          buildInteractiveTableField({
+            id: 'selectedDebts',
+            selectable: true,
+            header: [
+              'Gjaldflokkur',
+              'Gjaldgrunnur',
+              'Eindagi',
+              'Skuldir',
+              'Til greiðslu',
+            ],
+            rows: makeRows(2),
+            inputColumn: {
+              id: 'debtsToPay',
+              getMaxAmount: () => [565990, 565990],
+            },
+          }) as InteractiveTableField
+        }
+        application={application}
+      />,
+      { wrapper: Wrapper },
+    )
+
+  it('names the select-all checkbox', () => {
+    renderField(2)
+
+    expect(
+      screen.getByRole('checkbox', { name: 'Velja allar línur' }),
+    ).toBeInTheDocument()
+  })
+
+  it('names each row checkbox after the row it selects', () => {
+    renderField(2)
+
+    expect(
+      screen.getByRole('checkbox', {
+        name: 'Gjaldflokkur 0, 453-78857-53, 31.08.2025, 565.990 kr.',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('checkbox', {
+        name: 'Gjaldflokkur 1, 453-78857-53, 31.08.2025, 565.990 kr.',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('names each amount input after its column and row', () => {
+    renderWithInputColumn()
+
+    expect(
+      screen.getByRole('textbox', {
+        name: 'Til greiðslu: Gjaldflokkur 0, 453-78857-53, 31.08.2025, 565.990 kr.',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('leaves no control on the screen without an accessible name', () => {
+    renderWithInputColumn()
+
+    const unnamed = [
+      ...screen.getAllByRole('checkbox'),
+      ...screen.getAllByRole('textbox'),
+    ].filter((control) => !control.getAttribute('aria-label'))
+
+    expect(unnamed).toHaveLength(0)
+  })
+})
