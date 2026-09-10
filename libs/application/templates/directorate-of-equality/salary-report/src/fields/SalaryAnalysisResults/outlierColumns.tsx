@@ -9,7 +9,10 @@ import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS } from '../../utils/constants'
-import { formatDeviationLabel } from '../../utils/salaryAnalysisLabels'
+import {
+  formatDeviationLabel,
+  formatStig,
+} from '../../utils/salaryAnalysisLabels'
 import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 import { formatWageAmount } from '../EmployeesEditor/utils'
 
@@ -202,7 +205,7 @@ const GenderCell = ({ row }: CellProps) =>
   compactCell(GENDER_LABELS[row.original.gender] ?? row.original.gender)
 
 const StigCell = ({ row }: CellProps) =>
-  compactCell(String(row.original.score), 'right')
+  compactCell(formatStig(row.original.score), 'right')
 
 const HourlyWageCell = ({ row }: CellProps) =>
   compactCell(formatWageAmount(row.original.regularHourlyWage), 'right')

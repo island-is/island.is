@@ -4,6 +4,7 @@ import { getErrorViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
 import {
   AccordionCard,
+  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -38,8 +39,14 @@ type Props = {
   direction: GroupDirection
   mode: 'draft' | 'postponed'
   errors?: RecordObject
+  // Whether this group still matches the copy last written to answers. One save
+  // carries every group, so a save from any card leaves them all saved.
+  isSaved: boolean
+  isSaving: boolean
+  saveFailed: boolean
   onRemove: () => void
   onRemoveMember: (ordinal: number) => void
+  onSave: () => void
 }
 
 // One accordion card per outlier group, split out of OutlierEditor.
@@ -52,8 +59,12 @@ export const OutlierGroupCard: FC<Props> = ({
   direction,
   mode,
   errors,
+  isSaved,
+  isSaving,
+  saveFailed,
   onRemove,
   onRemoveMember,
+  onSave,
 }) => {
   const { formatMessage, lang } = useLocale()
   const m = messages.salaryAnalysis.outlierGroup
@@ -217,6 +228,8 @@ export const OutlierGroupCard: FC<Props> = ({
               locale={lang as Locale}
               minDate={minRemedyDate}
               maxDate={maxRemedyDate}
+              maxYear={maxRemedyDate.getFullYear()}
+              minYear={minRemedyDate.getFullYear()}
               required
               backgroundColor="blue"
               error={remedyDateError}
@@ -255,6 +268,34 @@ export const OutlierGroupCard: FC<Props> = ({
             />
           </Box>
         </Box>
+        {/* The live region is the wrapper, which stays mounted: a disabled
+            button announces nothing when it becomes disabled, so the change
+            from "Vista" to "Vistað" would otherwise pass silently. */}
+        <Box
+          marginTop={3}
+          display="flex"
+          justifyContent="flexEnd"
+          aria-live="polite"
+        >
+          <Button
+            size="small"
+            variant="ghost"
+            icon={isSaved ? 'checkmark' : undefined}
+            disabled={isSaved}
+            loading={isSaving}
+            onClick={onSave}
+          >
+            {formatMessage(isSaved ? m.groupSavedButton : m.saveGroupButton)}
+          </Button>
+        </Box>
+        {saveFailed && (
+          <Box marginTop={2}>
+            <AlertMessage
+              type="error"
+              message={formatMessage(m.saveGroupError)}
+            />
+          </Box>
+        )}
       </AccordionCard>
     </Box>
   )
