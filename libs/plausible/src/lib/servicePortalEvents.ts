@@ -43,6 +43,32 @@ export const myPagesHeaderSearchInputInitialized = myPagesHeaderEvent(
   'Search Input Initialized',
 )
 
+const myPagesHealthEvent =
+  (eventName: string) =>
+  (params: Pick<ParamType, 'url' | 'location'> & { label?: string }) =>
+    plausibleCustomEvent({
+      eventName,
+      featureName: 'Health',
+      params: {
+        location: params.location,
+        ...(params.label && { label: params.label }),
+      },
+      url: params.url,
+    })
+
+export const healthOverviewQuickLinkClick = myPagesHealthEvent(
+  'Overview Quick Link Click',
+)
+export const healthOverviewWebchatClick = myPagesHealthEvent(
+  'Overview Webchat Click',
+)
+export const healthOverviewSendMessageClick = myPagesHealthEvent(
+  'Overview Send Message Click',
+)
+export const healthAppointmentsSendMessageClick = myPagesHealthEvent(
+  'Appointments Send Message Click',
+)
+
 // Event sent when the search feature of documents is interacted with by the user
 export const documentsSearchDocumentsInitialized = (params: ParamType) => {
   const event: BaseEvent = {
