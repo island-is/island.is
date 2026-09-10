@@ -13,10 +13,10 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { getTransactionContext } from '../../../../middleware'
-import { runInRequestContext } from '../../../../test'
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
+import { getTransactionContext } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   CaseRepositoryService,
