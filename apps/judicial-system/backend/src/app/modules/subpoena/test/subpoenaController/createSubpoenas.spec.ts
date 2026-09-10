@@ -13,6 +13,8 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
+import { getTransactionContext } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
 import {
@@ -119,12 +121,23 @@ describe('SubpoenaController - Create subpoenas', () => {
       mockQueuedMessages.length = 0
 
       try {
-        then.result = await subpoenaController.createSubpoenas(
-          caseId,
-          theCase,
-          createSubpoenasDto,
-          { id: uuid() } as User,
-        )
+        // Revocation messages register via registerAfterCommit; unit tests do
+        // not run TransactionCommitInterceptor, so drain callbacks here after
+        // a successful handler return (matching the success-path interceptor).
+        await runInRequestContext(async () => {
+          then.result = await subpoenaController.createSubpoenas(
+            caseId,
+            theCase,
+            createSubpoenasDto,
+            { id: uuid() } as User,
+          )
+
+          await Promise.all(
+            (getTransactionContext()?.afterCommit ?? []).map((callback) =>
+              callback(),
+            ),
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -404,7 +417,35 @@ describe('SubpoenaController - Create subpoenas', () => {
         location,
       }
 
-      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+      const user = { id: uuid() } as User
+      let result: Subpoena[] | undefined
+
+      mockQueuedMessages.length = 0
+
+      await runInRequestContext(async () => {
+        result = await subpoenaController.createSubpoenas(
+          caseId,
+          theCase,
+          createSubpoenasDto,
+          user,
+        )
+
+        // Delivery messages are buffered immediately; revocation waits for commit.
+        expect(
+          mockQueuedMessages.some(
+            (message) =>
+              message.type ===
+              MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+          ),
+        ).toBe(false)
+        expect(getTransactionContext()?.afterCommit).toHaveLength(1)
+
+        await Promise.all(
+          (getTransactionContext()?.afterCommit ?? []).map((callback) =>
+            callback(),
+          ),
+        )
+      })
 
       expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
@@ -427,8 +468,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       )
       expect(mockQueuedMessages).toHaveLength(3)
 
-      expect(then.result).toEqual([subpoena1])
-      expect(then.error).toBeUndefined()
+      expect(result).toEqual([subpoena1])
     })
 
     it('should not revoke previous subpoenas with a past arraignment date', async () => {

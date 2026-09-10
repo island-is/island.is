@@ -17,6 +17,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
+  Message,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
@@ -34,6 +35,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import { getCaseFileHash } from '../../formatters'
+import { registerAfterCommit } from '../../middleware'
 import { PdfService } from '../case/pdf.service'
 import {
   CourtDocumentFolder,
@@ -231,7 +233,7 @@ export class SubpoenaService {
     user: TUser,
   ): void {
     const now = nowFactory()
-    const messages = []
+    const messages: Message[] = []
 
     for (const defendant of defendants) {
       for (const subpoena of defendant.subpoenas ?? []) {
@@ -247,7 +249,10 @@ export class SubpoenaService {
     }
 
     if (messages.length > 0) {
-      addMessagesToQueue(...messages)
+      // Only buffer after commit so a rollback cannot publish via MessageMiddleware.
+      registerAfterCommit(async () => {
+        addMessagesToQueue(...messages)
+      })
     }
   }
 
