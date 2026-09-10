@@ -403,4 +403,24 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn þín hefur verið móttekin og skírteini pantað',
     description: 'text for pending action application completed title',
   },
+  // Shared with the driving-license application: same `dl.application:digitalLicense.*`
+  // ids on purpose, so the notice resolves to one Contentful entry across both
+  // templates (edit the copy once).
+  digitalLicenseSubSectionTitle: {
+    id: 'dl.application:digitalLicense.subSectionTitle',
+    defaultMessage: 'Stafrænt skírteini',
+    description: 'Title of the digital-licence information section',
+  },
+  digitalLicenseAlertTitle: {
+    id: 'dl.application:digitalLicense.alertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Title of the digital-licence information alert box',
+  },
+  digitalLicenseAlertMessage: {
+    id: 'dl.application:digitalLicense.alertMessage#markdown',
+    defaultMessage:
+      'Ökuskírteinið verður fyrst gefið út á stafrænu formi og verður aðgengilegt í Ísland.is appinu þegar afgreiðslu er lokið.\n\nPlastökuskírteinið verður framleitt um miðjan nóvember og sent í pósti á skráð lögheimili um leið og það er tilbúið.',
+    description:
+      'Body of the digital-licence information alert: licence is issued digitally first (available in the Ísland.is app), plastic card produced mid-November and mailed afterwards',
+  },
 })
