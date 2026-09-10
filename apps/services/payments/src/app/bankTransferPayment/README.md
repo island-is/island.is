@@ -96,10 +96,8 @@ sequenceDiagram
 ```
 
 The webhook and the FE polling loop are **two independent paths to the same idempotent
-`verify`**. Either one settles the flow. The loser is a no-op for the *state transition* — the
-`lastKnownStatus` compare-and-set means only one finalizer emits `payment_completed` — but not
-for the FJS charge: nothing serialises the two before that call, so both can reach FJS. See
-[Settlement & FJS charge](#settlement--fjs-charge) for what absorbs it.
+`verify`**. Either one settles the flow; the loser is a no-op for the state transition, but not
+for the FJS charge — see [Settlement & FJS charge](#settlement--fjs-charge).
 
 ## Blikk status model
 
@@ -258,29 +256,19 @@ stateDiagram-v2
    retries, the fulfillment is kept (we don't un-settle) and a warning is logged — the payment
    worker retries the charge on its next run.
 
-> **Two finalizers can both reach FJS.** Step 2's tolerated race is precisely that: the loser of
-> the `payment_fulfillment` unique index carries on to step 3, so a webhook and a poll landing
-> together produce two `createFjsCharge` calls. What keeps that safe is **FJS**, not us —
-> `requestID = paymentFlowId` is stable per flow (`utils/fjsCharge.ts`), and FJS keys charge status
-> and deletion on it too, so the second call is *expected* to be rejected as
-> `AlreadyCreatedCharge` and reconciled by step 4. That expectation is inferred from the client
-> surface, not verified — what FJS does with two simultaneous creates on one `requestID` is unknown
-> from our side, which is why the duplicate case below is handled rather than assumed away. Two
-> consequences worth knowing:
->
-> - The reconciling caller may read before the winner's `fjs_charge` insert commits. That read is
->   retried briefly inside `reconcileExistingFjsCharge`; if it still misses, the `CRITICAL: …
->   could not be found to reconcile` log fires on a flow that is in fact healthy. **Do not page on
->   that message alone.**
-> - If FJS's own dedup ever fails to hold, both charges are created and our second local insert
->   loses a unique index on `fjs_charge`. `createFjsCharge` compares the reception id FJS returned
->   against the row it adopts, and only when they differ does it log
->   `CRITICAL: FJS accepted a duplicate charge …` with that id — the only handle anyone has for
->   reversing a charge that was never persisted. **Alert on that message.** A matching reception id
->   means FJS handed back the charge it already had, which is logged at `info` and needs nothing.
->
-> Note this is a duplicate *record*, not a duplicate debit: the payer's money moves once, at the
-> provider, and the FJS charge is created already-paid.
+> **Two finalizers can both reach FJS.** The loser of the `payment_fulfillment` race in step 2
+> carries on to step 3, so a webhook and a poll landing together produce two `createFjsCharge`
+> calls. FJS is what makes that safe: `requestID = paymentFlowId` is stable, so the second create
+> is rejected as `AlreadyCreatedCharge` and reconciled by step 4. That is inferred from the client
+> surface rather than verified, so the duplicate case is handled anyway — `createFjsCharge`
+> compares the reception id FJS returned against the row it adopts, and logs
+> `CRITICAL: FJS accepted a duplicate charge …` only when they differ.
+> Alert on the structured fields rather than the prose: `needsManualReversal` (a charge at FJS we
+> never persisted) and `needsReconciliation` (conflict with a soft-deleted row). The
+> `no local row was found to reconcile` line is a deliberate `warn` with no alert field, since it
+> cannot tell a lagging commit from a real orphan — page instead on a settled flow that still has
+> no `fjs_charge` row. Either way this is a duplicate *record*, not a second debit: the payer's
+> money moves once, at the provider.
 
 > **Worker backstop (FJS charge only).** The payment worker sweeps paid flows without an FJS
 > charge — once per payment method

@@ -620,28 +620,17 @@ describe('PaymentFlowService', () => {
         status: 'paid',
       } as TestPartial)
 
-      // FJS accepted our charge as well — its dedup on requestID did not hold — so we come back
-      // holding a second, distinct reception id.
+      // FJS's dedup did not hold, so we come back with a second, distinct reception id.
       jest.spyOn(chargeFjsService, 'createCharge').mockResolvedValueOnce({
         receptionID: 'recept-duplicate',
         user4: 'doc-duplicate',
       } as TestPartial)
 
-      // ...and `fjs_charge_one_active_per_payment_flow_id` rejects the local row. Simulated rather
-      // than provoked: the index is created in raw SQL by a migration, so it is not present in a
-      // model-synced test database.
-      jest
-        .spyOn(fjsChargeModel, 'create')
-        .mockRejectedValueOnce(
-          Object.assign(
-            new Error('duplicate key value violates unique constraint'),
-            { name: 'SequelizeUniqueConstraintError' },
-          ),
-        )
+      // No mock for the failing insert: the index is declared on the model, so the real partial
+      // unique constraint rejects it — the winner above holds the one active row for this flow.
 
-      // `logger` is a singleton, so `spyOn` returns any spy an earlier test already installed,
-      // history included. Clear it here so the assertions below see only this test's calls —
-      // `mockRestore` would instead uninstall a spy other spec files in this worker rely on.
+      // `logger` is a singleton, so `spyOn` may return an earlier test's spy with its history.
+      // Clear rather than restore — restoring would uninstall a spy other spec files rely on.
       const errorSpy = jest.spyOn(logger, 'error')
       errorSpy.mockClear()
 
@@ -650,16 +639,16 @@ describe('PaymentFlowService', () => {
         chargePayloadWithPayInfo(paymentFlowId),
       )
 
-      // Adopted the winner rather than throwing FailedToCreateCharge at a caller whose charge did
-      // in fact reach FJS.
+      // Adopted the winner rather than failing a caller whose charge did reach FJS.
       expect(result.id).toBe(winner.id)
       expect(result.receptionId).toBe('recept-winner')
 
-      // The duplicate's reception id is recorded, because this is the only moment we ever hold it
-      // and it is the only handle anyone has to reverse the extra charge.
+      // The duplicate's reception id is the only handle for reversing the extra charge.
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('FJS accepted a duplicate charge'),
         expect.objectContaining({
+          // Part of the alerting contract, so pinned here.
+          needsManualReversal: true,
           receptionId: 'recept-duplicate',
           user4: 'doc-duplicate',
         }),
@@ -707,8 +696,8 @@ describe('PaymentFlowService', () => {
         status: 'paid',
       } as TestPartial)
 
-      // FJS hands back the charge it already had rather than erroring — so the reception id
-      // matches the row we are about to collide with. Nothing was duplicated.
+      // FJS hands back the charge it already had, so the reception id matches the row we collide
+      // with. Nothing was duplicated.
       jest.spyOn(chargeFjsService, 'createCharge').mockResolvedValueOnce({
         receptionID: 'recept-same',
         user4: 'doc-same',
@@ -723,9 +712,8 @@ describe('PaymentFlowService', () => {
           ),
         )
 
-      // `logger` is a singleton, so `spyOn` returns any spy an earlier test already installed,
-      // history included. Clear it here so the assertions below see only this test's calls —
-      // `mockRestore` would instead uninstall a spy other spec files in this worker rely on.
+      // `logger` is a singleton, so `spyOn` may return an earlier test's spy with its history.
+      // Clear rather than restore — restoring would uninstall a spy other spec files rely on.
       const errorSpy = jest.spyOn(logger, 'error')
       errorSpy.mockClear()
 
@@ -735,8 +723,7 @@ describe('PaymentFlowService', () => {
       )
 
       expect(result.id).toBe(existing.id)
-      // The alert must NOT fire: there is no orphaned charge at FJS to reverse, and this message
-      // is the one operators are told to page on.
+      // The alert must not fire: there is no orphaned charge to reverse.
       expect(errorSpy).not.toHaveBeenCalledWith(
         expect.stringContaining('FJS accepted a duplicate charge'),
         expect.anything(),

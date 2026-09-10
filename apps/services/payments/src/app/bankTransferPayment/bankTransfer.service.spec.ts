@@ -806,11 +806,9 @@ describe('BankTransferService', () => {
       })
 
     /**
-     * Stands in for Postgres so the guard can be tested through its *predicate* rather than by
-     * mocking the affected-row count. Mocking `[0]` only proves the branch is wired up — it cannot
-     * catch a predicate that matches when it should not, which is exactly the bug that shipped.
-     * Applies the where-clause against one mutable row and counts a matched row as affected even
-     * when the value written is identical, which is what the driver reports.
+     * Evaluates the where-clause against one mutable row, counting a same-value write as a row
+     * affected like Postgres does. Mocking the affected-row count instead would not catch a
+     * predicate that matches when it should not — the bug that shipped.
      */
     const statefulUpdate = (row: {
       id: string
@@ -1004,8 +1002,7 @@ describe('BankTransferService', () => {
       const second = await service.verify({ paymentFlowId: 'flow-1' })
 
       expect(first.status).toBe(BankTransferStatus.ERROR)
-      // The repeat caller still gets the right answer — only the event is suppressed, because the
-      // event is what reaches the consuming organisation's webhook.
+      // The repeat caller still gets the right status; only the event is suppressed.
       expect(second.status).toBe(BankTransferStatus.ERROR)
       expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
     })
@@ -1019,9 +1016,7 @@ describe('BankTransferService', () => {
       mockGetPayment(BankTransferStatus.ERROR, 'ERROR')
       await service.verify({ paymentFlowId: 'flow-1' })
 
-      // The straggler reports a *different* terminal status. On a bare `ne` guard this would match
-      // (the row holds ERROR, not REJECTED) and fire a second payment_failed; the `eq` half is
-      // what rejects it, since the row has moved on from the snapshot it read.
+      // A different terminal status: a bare `ne` guard would match and fire a second event.
       mockGetPayment(BankTransferStatus.REJECTED, 'REJECTED')
       await service.verify({ paymentFlowId: 'flow-1' })
 

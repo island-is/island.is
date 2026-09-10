@@ -873,10 +873,7 @@ export class BankTransferService {
     }
   }
 
-  /**
-   * Race-guarded persist of a terminal failure + payment_failed event. Fires once per actual
-   * transition: the race winner only, and never again once the row already holds that status.
-   */
+  /** Persists a terminal failure + payment_failed event, once per actual transition. */
   private async finalizeBankTransferFailure(
     row: BankTransferPayment,
     result: BankTransferPaymentResult,
@@ -887,14 +884,8 @@ export class BankTransferService {
         where: {
           id: row.id,
           isDeleted: false,
-          // Both halves matter. `eq` is the compare-and-set proper: it stops a stale reader from
-          // overwriting a terminal status that moved on under it. Unlike the success path, the
-          // target value alone cannot pin the transition here — three raw statuses map to a
-          // failure (ERROR / REJECTED / CANCELLED), only one maps to SUCCESS. `ne` rejects the
-          // degenerate re-entry where the row already holds `rawStatus`: that predicate matches
-          // in Postgres and reports a row updated (rowCount counts rows matched and written, not
-          // rows whose value changed), which is what fired `payment_failed` — and its upstream
-          // webhook — a second time on every repeat verify of an already-failed row.
+          // `eq` is the compare-and-set. `ne` rejects a re-entry rewriting the same status,
+          // which Postgres still counts as a row updated — that fired `payment_failed` twice.
           lastKnownStatus: {
             [Op.eq]: row.lastKnownStatus,
             [Op.ne]: result.rawStatus,
