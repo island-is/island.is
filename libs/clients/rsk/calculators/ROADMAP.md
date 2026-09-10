@@ -86,7 +86,7 @@ Non-goals:
 
 Work:
 
-- create `src/lib/domains/childBenefit/schema.ts`
+- create `src/lib/domains/childBenefit/contract.ts`
 - create `src/lib/domains/childBenefit/childBenefit.ts`
 - create `src/lib/domains/childBenefit/index.ts`
 - author the contract as plain data
@@ -96,7 +96,7 @@ Work:
 
 Design checks:
 
-- `schema.ts` is plain contract data, not a validation schema
+- `contract.ts` is plain contract data, not a validation schema
 - field identity is by `name`
 - option labels/translations are not authored in the client
 - RSK-side number semantics are encoded in the contract when they affect field
@@ -127,7 +127,7 @@ Work through calculators one at a time:
 
 For each calculator:
 
-- create or update `schema.ts`
+- create or update `contract.ts`
 - create or update `<calculator>.ts`
 - create or update `index.ts`
 - author the contract as plain data
@@ -181,22 +181,116 @@ Verification:
 - run focused tests/typecheck when practical
 - log removals and export-boundary decisions in the Obsidian decision log
 
-## Section 6: GraphQL Domain Mediation
+## Section 6: Client Output Flow Design — settled
+
+Settled. The decisions are recorded in `DESIGN.md`'s Output Flow section, with
+the reasoning and rejected alternatives in the Obsidian decision log and
+`output-contract-registry.md`. In short: output metadata rides on
+`getCalculator(key)` as `outputFields` alongside the renamed `inputFields`;
+output keys are curated English client names; v1 supports scalar and array
+fields but not nested object groups; output fields have no `required`; mapped
+values expose no `null`; calculation methods return mapped output.
+
+Goal: design the client-owned output contract before any downstream domain
+calculation or renderer work is planned.
+
+Work:
+
+- inspect generated `Get*Response` result types for all six calculators
+- identify which response properties are scalar fields and which are nested or
+  repeated result structures
+- decide whether v1 output is flat-only or needs explicit group/table contract
+  primitives
+- decide whether output field names are generated RSK property names or curated
+  client names
+- decide the meaning of `required` for optional/generated-null response fields
+- decide whether output metadata is exposed through `getCalculatorOutput(key)`
+  or included in `getCalculator(key)`
+- decide whether calculation methods keep returning raw generated responses or
+  mapped client output values
+- write the client output follow-up questions into `PLAN.md` before any code is
+  changed
+
+Design checks:
+
+- keep GraphQL, CMS, frontend, labels, layout, and formatting out of the client
+- do not expose raw generated `Get*Response` types as the public output contract
+- do not introduce `TaxCalculatorType` into the client
+- keep calculation methods explicit per calculator
+- do not add a generic `calculate(key, input)` method unless the design changes
+  with a written reason
+
+Verification:
+
+- record the chosen output shape and rejected alternatives in `DESIGN.md`
+- update the Obsidian decision log for every contract-shape decision
+- leave implementation out until the output contract shape is settled
+
+## Section 7: Client Output Contract Implementation — implemented
+
+Implemented. `contracts/output.ts` holds the primitives, `contracts/byName.ts`
+the single comparator for all three ordering levels, `utils/toNumber.ts` the
+guarded `bigint` conversion. All six calculators publish `outputFields` and have
+a `<calculator>Output.ts` mapper with its own spec. `Get*Response` types are no
+longer exported. The `CalculatorContract.fields` -> `inputFields` rename was
+carried through `libs/api/domains/tax-calculators` mechanically; no output
+validation was added there — that is Section 8 work.
+
+One item stays open rather than settled: output ratio scale is unverified, and
+the mappers pass ratios through unchanged. Tracked as D5b in `deferred-todo.md`.
+
+Goal: implement the settled client output contract and per-calculator response
+mappers.
+
+Work:
+
+- add output contract primitives under `src/lib/contracts`
+- add authored output contracts beside each calculator's input contract
+- add explicit output value types where the mapper/service needs them
+- implement one response mapper as the proving slice before expanding
+- implement response mappers for the remaining calculators one at a time
+- expose the chosen output metadata service method
+- update calculation methods only according to the Section 6 decision
+
+Design checks:
+
+- response mapping is explicit per calculator
+- generated RSK result types stay an authority for source fields, not the
+  exported output contract
+- nested/table results follow the Section 6 decision exactly
+- output field order has no meaning and is deterministic at the service boundary
+- downstream presentation concerns remain out of the client
+
+Verification:
+
+- add focused output-contract fixture tests per calculator
+- add response mapper tests that assert exact output keys and important values
+- run focused client tests after each calculator when practical
+- run typecheck/lint checks if practical
+- log field, requiredness, nested-structure, and mapper decisions in the
+  Obsidian decision log
+
+## Section 8: GraphQL Domain Mediation
 
 Goal: update `libs/api/domains/tax-calculators` to consume the new client
 contract through the client service.
 
-Sections 1-5 and this section should land in the same PR. Sections 1-5 alone
+Input Sections 1-5 can land before this section by accepted follow-up. They
 leave `apps/api` red because the GraphQL domain still consumes the old client
-contract.
+contract. Output mediation must wait until client Sections 6 and 7 are settled
+and implemented.
 
 Work:
 
 - inject the RSK calculators client module/service
-- call `getCalculator(key)` for metadata
+- call `getCalculator(key)` for input metadata
+- call the chosen client output metadata boundary when calculation output is in
+  scope
 - keep the mapping from `TaxCalculatorType` to client-local `CalculatorKey` in
   the GraphQL domain
 - map the client contract to GraphQL models/enums
+- map the client output contract to GraphQL models/enums only after Sections 6
+  and 7 are complete
 - keep downstream publication semantics in the domain
 
 Design checks:
@@ -212,7 +306,7 @@ Verification:
 - verify public GraphQL field shape remains intentional
 - log boundary and mapping decisions in the Obsidian decision log
 
-## Section 7: Final Review
+## Section 9: Final Review
 
 Goal: verify the rebuild as a whole against the design.
 
@@ -220,6 +314,10 @@ Checks:
 
 - every calculator has a plain authored contract
 - every calculator has an explicit outbound mapper
+- every calculator has a plain authored output contract once output sections are
+  implemented
+- every calculator has an explicit response mapper once output sections are
+  implemented
 - `getCalculator(key)` returns contract fields sorted by `name` using code-unit
   comparison
 - calculation methods remain explicit

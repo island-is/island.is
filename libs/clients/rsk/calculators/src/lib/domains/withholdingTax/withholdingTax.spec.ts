@@ -1,10 +1,10 @@
 import type { CalculatorField } from '../../contracts/field'
-import type { WithholdingTaxInput } from './schema'
-import { withholdingTaxCalculator } from './schema'
+import type { WithholdingTaxInput } from './contract'
+import { withholdingTaxCalculator } from './contract'
 import { toWithholdingTaxQuery } from './withholdingTax'
 
 const fieldsByName: Record<string, CalculatorField> = Object.fromEntries(
-  withholdingTaxCalculator.fields.map((field) => [field.name, field]),
+  withholdingTaxCalculator.inputFields.map((field) => [field.name, field]),
 )
 
 describe('withholdingTax contract', () => {
@@ -82,7 +82,7 @@ describe('withholdingTax contract', () => {
   })
 
   it('marks every field optional', () => {
-    for (const field of withholdingTaxCalculator.fields) {
+    for (const field of withholdingTaxCalculator.inputFields) {
       expect(field.required).toBe(false)
     }
   })

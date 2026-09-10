@@ -1,6 +1,6 @@
 import type { GetWithholdingTaxData } from '../../../../gen/fetch'
 import { toRskValue } from '../../utils/toRskValue'
-import type { WithholdingTaxInput } from './schema'
+import type { WithholdingTaxInput } from './contract'
 
 type OptionValue<TName extends keyof WithholdingTaxInput> = NonNullable<
   WithholdingTaxInput[TName]
@@ -14,7 +14,10 @@ const RSK_VALUE_BY_PAYMENT_FREQUENCY: Record<
   monthly: true,
 }
 
-const RSK_VALUE_BY_MARITAL_STATUS: Record<OptionValue<'maritalStatus'>, number> = {
+const RSK_VALUE_BY_MARITAL_STATUS: Record<
+  OptionValue<'maritalStatus'>,
+  number
+> = {
   single: 1,
   singleParent: 2,
   marriedOrCohabiting: 3,

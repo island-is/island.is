@@ -1,5 +1,5 @@
 import type { GetInterestBenefitData } from '../../../../gen/fetch'
-import type { InterestBenefitInput } from './schema'
+import type { InterestBenefitInput } from './contract'
 
 const RSK_VALUE_BY_MARITAL_STATUS: Record<
   InterestBenefitInput['maritalStatus'],

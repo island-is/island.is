@@ -6,50 +6,70 @@ can render a generic form instead of per-calculator UI code.
 ## The query
 
 ```graphql
-taxCalculatorFields(calculatorType: TaxCalculatorType!): [TaxCalculatorField!]
+taxCalculator(type: TaxCalculatorType!): TaxCalculator!
 
-type TaxCalculatorField {
+type TaxCalculator {
+  type: TaxCalculatorType!
+  inputFields: [TaxCalculatorInputField!]!
+}
+
+interface TaxCalculatorInputField {
   key: String!
-  dataType: TaxCalculatorFieldDataType!
+  type: TaxCalculatorInputFieldType!
   required: Boolean!
-  options: [String!]
-  dependsOn: TaxCalculatorFieldDependency
+  dependsOn: TaxCalculatorInputFieldDependency
 }
-
-type TaxCalculatorFieldDependency {
-  field: String!
-  equals: Boolean!
-}
-
-enum TaxCalculatorFieldDataType { NUMBER STRING BOOLEAN DATE ENUM }
 ```
+
+`TaxCalculatorInputField` is implemented by
+`TaxCalculator{Number,String,Boolean,Date,Select}InputField`. Only the number
+field exposes `semantic`, and only the select field exposes
+`options: [TaxCalculatorInputFieldOption!]!` -- the interface exists so those
+two live where they are meaningful instead of being nullable everywhere.
+
+`dependsOn.equals` is a union over
+`TaxCalculator{Boolean,String,Number}InputDependencyValue`; read `__typename` to
+learn which scalar it carries. Today every dependency RSK publishes is boolean,
+but the client types the comparison as `string | number | boolean`, so the
+public contract matches the client contract rather than only its current data.
 
 Public and unauthenticated -- no `IdsUserGuard`, `ScopesGuard` or `@Audit`,
 since the consumer is the Contentful-driven Calculator slice on the public web.
 
+## Two deliberate deviations
+
+**The root query is non-nullable**, against `conventions/graphql.md`'s "all root
+Query fields must be nullable". That rule protects consumers from a query that
+fronts a service which can be down; this one reads a static in-process registry
+with no network behind it.
+
+**Invalid client metadata throws rather than degrading.** An earlier version of
+this module warned and dropped the offending piece, on the reasoning that a
+public unauthenticated page turns a throw into a 500 for every visitor. That
+reasoning does not hold any more: the field contract is now authored plain data
+in the client, not derived by introspecting a zod schema, so a violation is a
+code bug the domain tests catch in CI -- not upstream API drift arriving at
+runtime.
+
+Taken together these two mean one bad contract entry nulls the whole response
+rather than one field. That is the intended trade: `validation/inputContract.ts`
+enumerates what must hold before anything is published, and a violation should
+never reach a deploy.
+
 ## Where the fields come from
 
-Nothing here is hand-maintained. `TaxCalculatorsService` calls
-`getCalculatorInputProps` from `@island.is/clients/rsk/calculators`, which
-derives the field list from each calculator's zod schema
-(`libs/clients/rsk/calculators/src/lib/calculatorTypes/*.ts`). An earlier
-version of this module restated the field list by hand, drifted from RSK's real
-contract, and was deleted for it -- so field metadata must keep coming from the
-client, never from a table in this library.
+`TaxCalculatorsService` calls `getCalculator(key)` on
+`@island.is/clients/rsk/calculators` and mediates the result. Nothing here is
+hand-maintained: an earlier version of this module restated the field list by
+hand, drifted from RSK's real contract, and was deleted for it -- so field
+metadata must keep coming from the client.
 
-`dependsOn` falls out of the same derivation: `childBenefit` is a zod
-discriminated union on `splitCustody`, so `splitCustodyChildrenOver7` and
-`splitCustodyChildrenUnder7` are reported as valid only when `splitCustody` is
-true. A consumer must neither render nor submit a field whose dependency is
-unmet.
-
-`equals` is `Boolean!` by deliberate choice, not by accident: every discriminant
-across the exposed calculators is a zod boolean literal. `InputProp.dependsOn.value`
-is typed `unknown`, so the service narrows it and -- if RSK ever introduces a
-non-boolean discriminant -- logs a warning and drops that one dependency rather
-than throwing, which on a public page would turn schema drift into a 500 for
-every visitor. The dropped dependency makes the field unconditional, so the
-warning is the signal to widen this type.
+The split of responsibilities is deliberate and documented on both sides. The
+client owns RSK interpretation (which endpoint, which query parameter, what a
+number means, requiredness, option values). This domain owns Ísland.is
+publication semantics: the `TaxCalculatorType` -> `CalculatorKey` mapping, the
+GraphQL shape, and the invariants a contract must satisfy before it is
+published. Do not restate client-side RSK detail here; see the client's README.
 
 ## Only four of six calculators are reachable
 
@@ -57,8 +77,8 @@ The client covers six calculators (`childBenefit`, `vehicleTax`,
 `vehicleBenefit`, `vehicleDepreciation`, `withholdingTax`, `interestBenefit`),
 but `TaxCalculatorType` -- the enum Contentful authors against -- declares four.
 `vehicleDepreciation` and `interestBenefit` stay unreachable until that enum
-grows, which touches `libs/tax-calculators`, `libs/cms` and
-`apps/contentful-apps` together.
+grows, which touches `libs/tax-calculators`, `libs/cms`,
+`apps/contentful-apps` and the Contentful content model together.
 
 Note the one name that differs between the two vocabularies:
 `TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES` (`withholdingTaxOnWages`) maps to
@@ -78,40 +98,33 @@ calculator's fields.
   through the `calculator` content type's `configJson`. See
   `libs/tax-calculators/src/lib/calculatorConfig.schema.ts` and
   `apps/contentful-apps` for the editor. The two sides join on `key`.
+- **Field order carries no meaning.** `getCalculator` returns fields sorted by
+  name for determinism. Match on `key`, never on array position.
 
-## Known-stale consumers
+## Known-red consumers
 
-- **`apps/contentful-apps` CalculatorEditor** still selects a `label` field that
-  this module no longer returns, so its query fails GraphQL *validation* -- the
-  whole document errors, `data` is undefined, and the field picker renders
-  empty rather than partially working. Nothing catches this at build time: the
-  app has no codegen target and types the response with a hand-written local
-  interface, so the mismatch surfaces only at runtime. Deliberately deferred.
-  The fix spans three files under
-  `apps/contentful-apps/components/editors/CalculatorEditor/`:
-  - `constants.ts` -- drop `label` from the `GET_TAX_CALCULATOR_FIELDS`
-    selection set
-  - `types.ts` -- narrow `AvailableField` to `{ key: string }`
-  - `components/SectionFieldRow.tsx` -- render `key` as the option text, and
-    remove the now-dead prefill that seeded the editor's label from the
-    backend's
+Both consumers of this query still select the previous shape and need updating
+(`fields` -> `inputFields`, `inputType` -> `type` + `semantic`, `options` from
+`[String!]` to structured objects, `dependsOn.field` -> `fieldKey`, `equals`
+from a scalar to a union, and the argument `calculatorType` -> `type`):
 
-  `CalculatorConfigEditor.tsx` also consumes the query but compiles unchanged
-  once `types.ts` is narrowed.
-- **`apps/web` Calculator slice** renders `null`; the form renderer is deferred.
-  It also needs somewhere to author per-option display text, since enum options
-  arrive as raw identifiers (`firstHalf`, `secondHalf`) and `sectionFieldSchema`
-  has no slot for them -- that will require a `configJson` schema change.
+- `apps/web/screens/queries/TaxCalculators.ts` and
+  `components/Organization/Slice/Calculator/Calculator.tsx`
+- `apps/contentful-apps/components/editors/CalculatorEditor/`
+  (`constants.ts`, `types.ts`)
+
+Deliberately out of scope for the domain rebuild; see `PLAN.md`.
 
 ## Performing a calculation
 
-Not implemented. An earlier version exposed `taxCalculatorCalculation` backed
-by per-calculator mappers over the RSK client; it was removed because the
-output contract is being redesigned to live in `configJson` alongside the input
-sections. The v1 contract -- including the RSK response field mappings -- is
-recorded outside this repo and is deferred until the input flow is finished end
-to end.
+Not implemented. The client exposes no curated output contract -- every client
+mapper is outbound-only, and the only result types it re-exports are the raw
+generated `Get*Response`. Per `ROADMAP.md` Section 3 the domain must not invent
+result shape ahead of that, so calculation stays deferred and the operation
+name `taxCalculatorCalculate` is reserved.
 
-Note that the module needs no `imports` today because `getCalculatorInputProps`
-is a pure function. `CalculatorsClientModule` becomes necessary only when the
-calculation query is built, since that one injects `CalculatorsClientService`.
+## Running unit tests
+
+```
+nx test api-domains-tax-calculators
+```

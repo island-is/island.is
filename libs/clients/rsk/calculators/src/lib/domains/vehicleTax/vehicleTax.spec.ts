@@ -1,10 +1,10 @@
 import type { CalculatorField } from '../../contracts/field'
-import type { VehicleTaxInput } from './schema'
-import { vehicleTaxCalculator } from './schema'
+import type { VehicleTaxInput } from './contract'
+import { vehicleTaxCalculator } from './contract'
 import { toVehicleTaxQuery } from './vehicleTax'
 
 const fieldsByName: Record<string, CalculatorField> = Object.fromEntries(
-  vehicleTaxCalculator.fields.map((field) => [field.name, field]),
+  vehicleTaxCalculator.inputFields.map((field) => [field.name, field]),
 )
 
 describe('vehicleTax contract', () => {
@@ -49,8 +49,9 @@ describe('toVehicleTaxQuery', () => {
   })
 
   it('maps the period to the boolean RSK expects', () => {
-    expect(toVehicleTaxQuery({ ...input, period: 'secondHalf' }).gjaldtimabil).
-      toBe(true)
+    expect(
+      toVehicleTaxQuery({ ...input, period: 'secondHalf' }).gjaldtimabil,
+    ).toBe(true)
   })
 
   it('converts the date string to a UTC-midnight Date', () => {

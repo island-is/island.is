@@ -1,10 +1,10 @@
 import type { CalculatorField } from '../../contracts/field'
 import { toInterestBenefitQuery } from './interestBenefit'
-import type { InterestBenefitInput } from './schema'
-import { interestBenefitCalculator } from './schema'
+import type { InterestBenefitInput } from './contract'
+import { interestBenefitCalculator } from './contract'
 
 const fieldsByName: Record<string, CalculatorField> = Object.fromEntries(
-  interestBenefitCalculator.fields.map((field) => [field.name, field]),
+  interestBenefitCalculator.inputFields.map((field) => [field.name, field]),
 )
 
 describe('interestBenefit contract', () => {

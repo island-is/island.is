@@ -1,10 +1,10 @@
 import type { CalculatorField } from '../../contracts/field'
-import type { VehicleBenefitInput } from './schema'
-import { vehicleBenefitCalculator } from './schema'
+import type { VehicleBenefitInput } from './contract'
+import { vehicleBenefitCalculator } from './contract'
 import { toVehicleBenefitQuery } from './vehicleBenefit'
 
 const fieldsByName: Record<string, CalculatorField> = Object.fromEntries(
-  vehicleBenefitCalculator.fields.map((field) => [field.name, field]),
+  vehicleBenefitCalculator.inputFields.map((field) => [field.name, field]),
 )
 
 describe('vehicleBenefit contract', () => {

@@ -9,18 +9,35 @@ export type {
   CalculatorFieldSemantic,
   CalculatorFieldType,
 } from './lib/contracts/field'
-export type { CalculatorKey } from './lib/contracts/registry'
-export type { ChildBenefitInput } from './lib/domains/childBenefit'
-export type { InterestBenefitInput } from './lib/domains/interestBenefit'
-export type { VehicleBenefitInput } from './lib/domains/vehicleBenefit'
-export type { VehicleDepreciationInput } from './lib/domains/vehicleDepreciation'
-export type { VehicleTaxInput } from './lib/domains/vehicleTax'
-export type { WithholdingTaxInput } from './lib/domains/withholdingTax'
 export type {
-  GetChildBenefitResponse,
-  GetVehicleTaxResponse,
-  GetVehicleBenefitResponse,
-  GetVehicleDepreciationResponse,
-  GetWithholdingTaxResponse,
-  GetInterestBenefitResponse,
-} from '../gen/fetch/types.gen'
+  CalculatorArrayOutputField,
+  CalculatorOutputField,
+  CalculatorOutputScalarType,
+  CalculatorScalarOutputField,
+} from './lib/contracts/output'
+export type { CalculatorKey } from './lib/contracts/registry'
+export type {
+  ChildBenefitInput,
+  ChildBenefitOutput,
+} from './lib/domains/childBenefit'
+export type {
+  InterestBenefitInput,
+  InterestBenefitOutput,
+} from './lib/domains/interestBenefit'
+export type {
+  VehicleBenefitInput,
+  VehicleBenefitOutput,
+} from './lib/domains/vehicleBenefit'
+export type {
+  VehicleDepreciationInput,
+  VehicleDepreciationOutput,
+} from './lib/domains/vehicleDepreciation'
+export type {
+  VehicleTaxInput,
+  VehicleTaxOutput,
+} from './lib/domains/vehicleTax'
+export type {
+  WithholdingTaxBracketOutput,
+  WithholdingTaxInput,
+  WithholdingTaxOutput,
+} from './lib/domains/withholdingTax'

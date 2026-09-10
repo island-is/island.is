@@ -1,5 +1,5 @@
 import type { GetVehicleBenefitData } from '../../../../gen/fetch'
-import type { VehicleBenefitInput } from './schema'
+import type { VehicleBenefitInput } from './contract'
 
 export const toVehicleBenefitQuery = (
   input: VehicleBenefitInput,

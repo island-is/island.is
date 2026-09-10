@@ -1,1 +1,1 @@
-export * from './lib/tax-calculators.module'
+export { TaxCalculatorsModule } from './lib/tax-calculators.module'

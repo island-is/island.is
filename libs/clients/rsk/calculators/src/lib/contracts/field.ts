@@ -1,6 +1,9 @@
+import type { CalculatorOutputField } from './output'
+
 export interface CalculatorContract<TKey extends string = string> {
   key: TKey
-  fields: readonly CalculatorField[]
+  inputFields: readonly CalculatorField[]
+  outputFields: readonly CalculatorOutputField[]
 }
 
 export type CalculatorFieldType =

@@ -1,684 +1,655 @@
-# RSK Calculators Client Rebuild — Implementation Plan
+# RSK Calculators Client Output Flow — Implementation Plan
 
-> **Status: executed.** Sections 1–5 are implemented and green — the library
-> contributes zero typecheck errors, lint is clean, and 27 tests pass across 7
-> suites. `DESIGN.md` is the authority on the shape that actually landed; this
-> document is the record of what was planned and why, kept because the
-> reasoning is still the useful part.
->
-> Three things landed differently from what is written below. They are recorded
-> here rather than edited into the text, so the plan stays a record of intent
-> rather than a retrofit:
->
-> 1. **The input-type derivation helper was removed.** `contracts/inputType.ts`
->    existed briefly and is gone; every calculator now authors its input type as
->    an explicit `interface` beside its contract. The mapped-type machinery was
->    judged too opaque for ordinary debugging at this size. Everything below
->    about deriving through a helper — including the anti-widening rule's second
->    half — describes a mechanism that no longer exists. The `as const satisfies`
->    discipline on the fields array does remain, and still matters.
-> 2. **`src/lib/archive/` was deleted.** The plan's requirement that it stay out
->    of the commit is moot, and the 16 typecheck errors it contributed are gone.
-> 3. **The PR boundary was relaxed.** Sections 1–5 may land without Section 6,
->    leaving `apps/api` red for now. See Sequencing And The PR Boundary below,
->    which has been corrected in place because leaving it would read as a live
->    constraint.
+Scope: `ROADMAP.md` Sections 6-7, in `libs/clients/rsk/calculators` only.
+Intent: extend the rebuilt client with a curated output contract and response
+mappers. No NX scaffolding.
 
+Read `DESIGN.md` first; it is the authority on boundaries. This plan is the
+file-by-file execution for the client output flow only.
 
-Scope: `ROADMAP.md` Sections 1–5, in `libs/clients/rsk/calculators` only.
-Intent: update an existing library. No NX scaffolding.
+## Pre-Implementation Documentation
 
-Section 6 (`libs/api/domains/tax-calculators` mediation) is out of scope for
-this pass, by decision. See Consequences for what that leaves broken and why
-that is accepted rather than overlooked.
+Before changing source, update `DESIGN.md`'s Output Flow section from checkpoint
+language to settled v1 design. Record these decisions and rejected alternatives:
 
-Read `DESIGN.md` first; it is the authority on shape. This document records only
-what will be done to satisfy it, in what order, and what was deliberately left
-out. Nothing in it is open: every question raised in planning is settled and
-recorded in the design docs or the decision log.
+- output is part of the full `getCalculator(key)` contract, not a separate
+  `getCalculatorOutput(key)` lookup
+- output fields are stable English client keys, not RSK-native property names
+- output fields are addressable data, not layout groups
+- v1 supports scalar and array fields, not nested object groups
+- output fields do not have `required`
+- scalar output values expose no `null`
+- array output values fall back to `[]`
+
+Four further `DESIGN.md` sections go stale in the same round and must be updated
+with it. The Output Flow section is not the only one that describes the old
+contract:
+
+| Section | What is stale |
+|---|---|
+| Client Contract | still declares `CalculatorContract { key; fields }` |
+| Module Shape | file tree omits `contracts/output.ts`, `contracts/byName.ts`, and `domains/*/<calculator>Output.ts` |
+| Field Ordering | pins the inline comparator this plan extracts to `byName` |
+| Non-Goals | "Do not implement the output contract until the nested/table result questions are settled" becomes false once this round lands |
+
+Also correct `DESIGN.md`'s decision-log path. It is written as the iCloud
+container path; the canonical path for this workspace is
+`/Users/mani/obsidian-hxm/digital-iceland/rsk-calculators-notes/`. Both resolve
+to the same files today.
+
+Also update the Obsidian decision log before implementation. Append the
+contract-shape and boundary decisions to
+`client-rebuild-decision-log.md`, and add an `output-contract-registry.md`
+beside `input-contract-registry.md`. Keep reasoning in the registry; keep field
+tables in this plan and in code.
 
 ## Goal Checkpoint
 
 ```text
-Goal: rebuild the RSK calculators client as explicit per-calculator modules.
-Current phase: implement the v1 custom input contract, Sections 1-5.
-Non-goals: no Zod-built contract, no generic calculator execution, no public/domain identities in the client, no percentage-conversion change.
-Next action: add the shared contract primitives in contracts/field.ts because every later section depends on them and the library currently has no contract types at all.
+Goal: add a client-owned output flow that mirrors the explicit input contract.
+Current phase: implement the v1 custom output contract.
+Non-goals: no GraphQL shape, no Contentful config shape, no frontend rendering, no public/domain identities in the client.
+Next action: add output contract primitives in contracts/output.ts because output fields have different metadata from input fields and withholding tax requires arrays in v1.
 ```
 
-## Starting State
+## Settled Decisions
 
-Verified by `npx tsc -p libs/clients/rsk/calculators/tsconfig.lib.json --noEmit`:
+- Output keys are stable English client names, not raw RSK response property
+  names.
+- Echoed RSK display text and echoed RSK codes must be named by value shape, not
+  by the input field name they resemble. Use `Label` for RSK display text such
+  as `hjuskaparstada?: string | null` and `timabil?: string | null`; use `Code`
+  for coded numeric values such as withholding tax `hjuskaparstada?: number`.
+- Output ratio fields that represent RSK-applied numeric ratios must not reuse
+  input select field names whose accepted values are percentage strings. Use
+  `applied*Ratio` to distinguish applied numeric output from submitted string
+  input.
+- `getCalculator(key)` returns the full machine-readable calculator contract:
+  `inputFields` and `outputFields`.
+- Existing calculation methods return mapped client outputs once the output
+  contract lands. Preserve current generated-client absence behavior: if
+  generated `data` is `undefined`, the service returns `undefined`; otherwise it
+  returns the mapped `*Output`.
+- Raw generated `Get*Response` types are removed from the public export surface.
+- V1 output supports scalar fields and array fields. It does not support layout
+  groups.
+- Array fields use inline `itemFields` in the contract.
+- Output field order is not meaningful. The service sorts output fields by
+  `name` using the same code-unit comparator as input fields. Array
+  `itemFields` are sorted the same way.
+- Mapped output exposes no `null`. Scalar fields are optional and are omitted or
+  set to `undefined` when RSK returns `undefined` or `null`. Array fields are
+  always arrays and fall back to `[]`.
+- Output fields do not have `required`; availability is represented by the
+  mapped output value shape.
+- Numeric `semantic: 'count'` is only for numbers that mean "how many of a
+  thing". Do not use it for numeric codes.
+- Output contracts do not expose RSK source keys. Source traceability lives in
+  response mapper code and tests.
+- The client does not runtime-validate output contracts. Authored data plus
+  focused tests are the safety net.
+- Output contract primitives live in `src/lib/contracts/output.ts`.
+- Response mappers live in separate files, one per calculator.
 
-- `src/index.ts` lines 4, 5 and 23, and `src/lib/calculators.service.ts` lines
-  18 and 26, import `./lib/calculatorTypes`. That module does not exist. The
-  library does not compile.
-- `src/lib/contracts/` and `src/lib/domains/` do not exist. Sections 1–4 have
-  not been started.
-- The library has no test files. `jest.config.ts` and the `test` target exist,
-  so the tests this plan adds are the first here.
-- `project.json` declares no `build` target — only `lint`, `test`,
-  `update-openapi-document` and `codegen/backend-client`. This library is
-  therefore only ever typechecked through a consumer. See Verification.
-- `src/lib/archive/**` is out of consideration: not a source of truth, not a
-  work item. It does not compile, which has a verification consequence noted
-  below, but no action in this plan.
+## Current Response Shapes
 
-## The Authority, And The Safety Net
+Generated source: `gen/fetch/types.gen.ts`.
 
-Two independent references, and neither is `archive/`.
+Top-level scalar-only enough for v1:
 
-**`gen/fetch/types.gen.ts`** — generated from the committed `src/clientConfig.json`
-— is the authority for parameter names, types, requiredness and RSK's own coded
-value sets. It carries RSK's Icelandic doc comments, so value tables are
-checkable rather than transcribed from memory.
+- `ChildBenefitResult`
+- `VehicleBenefitResult`
+- `VehicleDepreciationResult`
+- `InterestBenefitResult`
 
-**`git HEAD` holds the entire previous contract.** The twelve
-`src/lib/calculatorTypes/*.ts` files and `src/lib/utils/zodToInputProp.ts` were
-deleted in the worktree but never committed as deleted, so they are still
-tracked and `git show HEAD:<path>` returns each one intact. An earlier draft of
-this plan claimed the old contract was unavailable and that Sections 3–4 would
-therefore have no diff net. That was wrong: it reasoned from `archive/` being
-the only surviving copy and overlooked the uncommitted deletion.
+Nested or repeated responses that must be handled deliberately:
 
-So the net recommended in `input-contract-registry.md` item 8 is available and
-this plan uses it, in its intended three-step order — pin, replace, then trim,
-each green before the next. `archive/` is never the authority for any of this;
-`git show HEAD:<path>` is.
+- `VehicleTaxResult.fyrraTimabil` and `VehicleTaxResult.seinnaTimabil` are
+  nested `VehicleTaxPeriodSplit` objects. V1 does not add layout groups. Flatten
+  these into stable scalar output keys if they are exposed.
+- `WithholdingTaxResult.skattthrep` is `Array<TaxBracket> | null` and is
+  required for v1. Expose it as an array output field named `taxBrackets`.
 
-Per calculator, in Sections 3 and 4:
+`TaxBracket` contains `bigint` fields:
 
-1. **Pin.** Read the previous definition with
-   `git show HEAD:libs/clients/rsk/calculators/src/lib/calculatorTypes/<calculator>.ts`
-   and write the mapper test against the query it emits today, asserting the
-   exact key set as well as the values.
-2. **Replace.** Author the new contract and mapper.
-3. **Trim.** Reduce the pin to the invariants worth keeping permanently, once it
-   has run green against the new implementation.
+- `nedriMork`
+- `numerThreps`
+- `reiknudStadgreidsla`
 
-Step 3 must not be folded into step 2: if the pin is trimmed in the same move
-that replaces the definition, it never runs against the new data and the whole
-exercise buys nothing. That is item 8's own warning.
+Map these to numbers in the curated output with a guarded helper. The rest of
+the calculator output surface uses numbers, and downstream formatting expects
+numeric values rather than `bigint`.
 
-**Why the diff is load-bearing rather than belt-and-braces.** Every HEAD mapper
-already declares an explicit return type — `(input): GetChildBenefitData['query'] =>`
-and so on, all six verified. Keeping that is correct, but it is the status quo,
-not a new safeguard, and it does not catch the failure mode that matters most
-here: **an omitted optional parameter compiles clean.** `GetWithholdingTaxData['query']`
-has sixteen optional members, so a mapper that silently drops `orlof` typechecks
-perfectly. The same hole covers `skiptBornYfir7ara`, `skiptBornUndir7ara` and
-`gjaldskipting`. An annotated return type catches renames and type mismatches,
-never omissions.
-
-Each mapper test therefore **asserts the exact emitted key set**, not just
-individual values. That, plus the HEAD diff, is what covers the omission class.
-
-A second tracked record exists and is worth cross-checking against for the four
-calculators it reaches: `libs/api/domains/tax-calculators/src/lib/tax-calculators.service.spec.ts`
-pins `salary`, `paymentFrequency`, `taxCardUtilization`,
-`splitCustody`/`splitCustodyChildrenOver7`, `periodSplitDate` as an optional
-date, and the exact ratio option sets `['0%','4%']`,
-`['0%','1%','2%','3%','4%']` and
-`['0%','8%','8.5%','10%','10.5%','11.5%','12%','13.5%']`. It is not only Section
-6 cleanup — it is evidence for Sections 3–4.
-
-## Changes
-
-| File/Module | What & why |
-|---|---|
-| `src/lib/contracts/field.ts` (new) | Section 1. The v1 contract types: `CalculatorContract`, `CalculatorField`, `CalculatorFieldType`, `CalculatorFieldSemantic`, `CalculatorFieldOption`, `CalculatorFieldDependency`. Plain typed data, no Zod. Imports nothing at all — deliberately a leaf, which is what keeps the registry from forming a cycle with the calculators consuming these types. |
-| `src/lib/contracts/registry.ts` (new) | Section 2. `calculatorRegistry` over the six contracts, `CalculatorKey` derived as `keyof typeof calculatorRegistry`. A client-local RSK identity; never imports `TaxCalculatorType`. `CalculatorKey` stays exported from `src/index.ts` because the downstream domain owns the public-to-client key mapping. |
-| `src/lib/domains/childBenefit/{schema.ts,childBenefit.ts,index.ts}` (new) | Section 3, the proving slice. `schema.ts` authors the fields and an explicit `ChildBenefitInput`; `childBenefit.ts` owns `toChildBenefitQuery` with an explicit return type; `index.ts` exports contract, input type and mapper. |
-| `src/lib/domains/{vehicleTax,vehicleBenefit,vehicleDepreciation,withholdingTax,interestBenefit}/{schema.ts,<name>.ts,index.ts}` (new) | Section 4, one calculator at a time, same shape as the proving slice. `vehicleTax` additionally converts its `yyyy-MM-dd` `periodSplitDate` string to the `Date` that `GetVehicleTaxData.query.gjaldskipting` requires — in the mapper, per the date decision below. The `RSK_VALUE_BY_*` lookup tables live in `<calculator>.ts`, importing the option literal union from `schema.ts`: `DESIGN.md` requires `schema.ts` to be plain contract data, and an RSK wire-value table is mapper knowledge, not contract data. |
-| `src/lib/utils/toRskValue.ts` (moved, not new) | The shared option-to-RSK-value lookup. It exists at HEAD as `src/lib/calculatorTypes/toRskValue.ts` — verified, and `utils/toRskValue.ts` does not exist there — so this is a move into `utils/`, body unchanged. It imports nothing, so nothing needs rewriting. Its `undefined` passthrough is what makes the sixteen optional `withholdingTax` selects work. Lives in `utils/` because it is shared mapper plumbing, not contract shape; `DESIGN.md`'s Module Shape already lists it, and the decision log already sanctioned it. Not mandatory — a mapper may inline where that reads more clearly. |
-| `src/lib/calculators.service.ts` | Sections 2 and 5. Add `getCalculator(key: CalculatorKey): CalculatorContract<CalculatorKey>` returning fields sorted lexically by `name`, sorting a copy so the authored contract is never mutated. Return type is `CalculatorContract<CalculatorKey>`: the simple form, pinning `key` to the union rather than the `string` default. No per-key narrowing at the service boundary — `<K extends CalculatorKey>(key: K): CalculatorContract<K>` would be type cleverness that prevents no real drift. The generic earns its keep at the definitions instead, where each calculator is declared as `CalculatorContract<'childBenefit'>` and so checked against its literal key. Synchronous. The six calculation methods stay explicit; no generic `calculate(key, input)`. `getWithholdingTax` keeps its optional parameter and today's `query: input && toWithholdingTaxQuery(input)` shape. Imports repointed from `./calculatorTypes` to `./domains/*`. |
-| `src/index.ts` | Section 5. See Export Surface below. |
-| `src/lib/domains/*/<name>.spec.ts` (new, 6 files) | A contract fixture test and a mapper test per calculator. Fixtures compare fields keyed by `name`, never as an array, so no fixture can pin authoring order. |
-| `src/lib/calculators.service.spec.ts` (new) | The one test pinning lexical sorting, on `getCalculator`. The only place ordering is asserted anywhere. |
-| `README.md` | Gains a `getCalculator` line once Section 2 lands; it currently documents only the six endpoints and the base-URL config. |
-
-## Export Surface
-
-Kept: `CalculatorsClientModule`, `CalculatorsClientConfig`,
-`CalculatorsClientService`, and the six `Get*Response` types.
-
-Added: `CalculatorContract`, `CalculatorField`, `CalculatorFieldType`,
-`CalculatorFieldSemantic`, `CalculatorFieldOption` and
-`CalculatorFieldDependency`. Every type appearing in a public method signature
-is exported, parameter types included, not only return types.
-
-Kept, not added: `CalculatorKey` and the six `*Input` types are already exported
-today (`src/index.ts:4` and `:7-22`). They are **redefined**, not introduced —
-worth stating because `CalculatorKey` keeping its name and members means the
-downstream `Record<TaxCalculatorType, CalculatorKey>` mapping survives Section 6
-untouched.
-
-**Changed, and it is an intentional contract change:**
-`VehicleTaxInput.periodSplitDate` goes from an optional `Date` — forwarded raw
-to `gjaldskipting` — to an optional `yyyy-MM-dd` string that the mapper converts.
-This retypes an already-exported member of an already-exported type. Blast
-radius is nil today (nothing outside the library imports `VehicleTaxInput`), but
-`DESIGN.md`'s Compatibility section requires a contract change to be recorded
-deliberately rather than noticed later, and the decision log's date entry
-records the rationale without recording that it retypes an export. That gets
-added to the log when Section 4 runs.
-
-Removed deliberately, not by omission: `getCalculatorInputProps`, `InputProp`,
-`ChildBenefitKey`, `VehicleTaxKey`, `VehicleBenefitKey`,
-`VehicleDepreciationKey`, `WithholdingTaxKey`, `InterestBenefitKey`,
-`PaymentFrequency`, `VehicleTaxPeriod`, `WithholdingMaritalStatus`,
-`InterestBenefitMaritalStatus`.
-
-The `*Key` and option-union removals are safe: the only client imports anywhere
-outside this library are `getCalculatorInputProps`, `CalculatorKey` and
-`InputProp`, all in `libs/api/domains/tax-calculators`. One knock-on: with
-option values inlined into the explicit input types, downstream loses any
-nameable handle on those value sets. If Section 6 needs one, export named
-aliases then rather than pre-emptively now.
-
-## Decisions
-
-### Field ordering is destroyed at the boundary, not preserved
-
-`getCalculator` sorts lexically by `name`. Per-calculator files may be authored
-in any order, and no per-calculator fixture pins order; a single service test
-pins the sort.
-
-Why: authoring order is an accident, and a test pinning it would fossilise that
-accident and force future contracts into a shape nobody chose. Sorting at the
-boundary serves that concern rather than fighting it — it destroys authoring
-order instead of publishing it, so nothing accidental leaks downstream, and the
-output is still deterministic.
-
-Evidence: neither consuming frontend uses order as *identity* — both build a
-`Map` keyed by the field, and the public form renders in the order a content
-editor arranged. One nuance, so it is not a surprise: the Contentful editor's
-field picker iterates that Map
-(`apps/contentful-apps/components/editors/CalculatorEditor/CalculatorConfigEditor.tsx:60-66`),
-so publication order *is* visible in the picker dropdown — sorting changes that
-list to alphabetical. No identity impact, and arguably an improvement for an
-editor scanning for a field by name. Confirmed with the programmer, and recorded
-in `DESIGN.md` under Field Ordering.
-
-Not decided: any visual or editorial ordering. That belongs downstream.
-
-### The sort comparator is code-unit order, and the sort test lives on `withholdingTax`
-
-`getCalculator` sorts with a code-unit comparison:
+Put this helper at `src/lib/utils/toNumber.ts`, beside the existing
+`toRskValue.ts`; without a named home each of the six mappers inlines its own.
+Use `== null`, not a truthiness check, because `0n` is a valid value:
 
 ```ts
-[...contract.fields].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+const toNumber = (
+  value: bigint | number | null | undefined,
+): number | undefined => (value == null ? undefined : Number(value))
 ```
 
-Not `localeCompare`, and **not `sortAlpha` from `@island.is/shared/utils`** —
-named explicitly because it is the helper a later agent will reach for:
-`libs/clients/verdicts/src/lib/verdicts-client.service.ts` already uses
-`sortAlpha('label')` for exactly this shape of sort, so its absence here looks
-like an oversight unless the reason is written down.
+## Contract Shape
 
-All three disagree on real data in this contract. `withholdingTax` carries both
-`paymentFrequency` and `payMonth`:
-
-| Comparator | Result |
-|---|---|
-| code unit (chosen) | `payMonth`, `paymentFrequency` |
-| `localeCompare` | `paymentFrequency`, `payMonth` |
-| `sortAlpha('name')` | `paymentFrequency`, `payMonth` |
-
-Verified in node for the first two; `sortAlpha` follows from reading it — it
-collates against the literal order string
-`0123456789aAáÁbB…lLmMnN…`, in which lowercase precedes its uppercase pair, so
-`m` sorts before `M` and `paymentFrequency` comes first.
-
-Why code unit:
-
-- `localeCompare` without an explicit locale is environment dependent, so its
-  result can differ between a developer machine, CI, and a container with
-  another ICU build. Deterministic output is the entire reason this sort exists,
-  and a locale-sensitive comparator quietly forfeits it.
-- `sortAlpha` is deterministic, but it is an **Icelandic display collation** —
-  built to order Icelandic words the way a reader expects, including `þ`, `æ`
-  and `ö`. Field names are machine identifiers in ASCII camelCase, never shown
-  to a user, so Icelandic collation buys nothing and its case-insensitivity
-  actively obscures the camelCase boundary that distinguishes these two fields.
-  It also returns `0` for a falsy key, silently declining to order rather than
-  failing.
-- `DESIGN.md` says "lexically", which is the code-unit reading.
-
-Consequence for the test: the single sort test must use `withholdingTax`, not
-`childBenefit`. On a calculator whose field names don't straddle the two
-comparators, a sort test passes under either implementation and therefore pins
-nothing — which would make the one test that exists to pin ordering useless.
-
-Not decided: any human-friendly or editorial ordering. Still downstream.
-
-### `splitCustody` is a boolean field, not a two-option select
-
-It gets `type: 'boolean'` and no `options`. The two dependent fields get
-`dependsOn: { field: 'splitCustody', equals: true }`, `equals` a boolean.
-
-Why: a live transcription hazard, not a stylistic preference. The previous
-definition expresses the field as two permitted literal values, so transcribing
-it by eye produces a two-option choice list. That version compiles cleanly and
-breaks two things silently — the control becomes a dropdown, and the dependent
-fields stop appearing, because the value is then the string `'true'` rather than
-the boolean, so the condition never matches.
-
-Evidence: `GetChildBenefitData.query.skiptBuseta` is a `boolean`, and both
-dependent parameters carry RSK's own note *"Bara notað ef skiptBuseta == true"*.
-
-Mitigation: asserted directly in the childBenefit contract test — the field's
-type, the absence of `options`, and the boolean-ness of `equals`.
-
-### The child-benefit outbound gate survives the flattening
-
-The mapper keeps the ternary it has today:
+Add `src/lib/contracts/output.ts`:
 
 ```ts
-skiptBornYfir7ara: input.splitCustody ? input.splitCustodyChildrenOver7 : undefined,
-skiptBornUndir7ara: input.splitCustody ? input.splitCustodyChildrenUnder7 : undefined,
-```
+import type { CalculatorFieldSemantic } from './field'
 
-Why it has to be said out loud: the old input type was a discriminated union, so
-passing a count alongside `splitCustody: false` was a compile error and the
-ternary was belt-and-braces. The explicit input type is flat — a boolean plus two
-optional counts — so that compile-time guarantee is gone, and unconditional
-forwarding would send counts RSK documents as *"Bara notað ef skiptBuseta ==
-true"*. A flat optional input type must not become unconditional forwarding.
+export type CalculatorOutputField =
+  | CalculatorScalarOutputField
+  | CalculatorArrayOutputField
 
-Evidence: `GetChildBenefitData.query` carries that note on both dependent
-parameters. The gate is asserted in the childBenefit mapper test with
-`splitCustody: false` and both counts populated, checking neither reaches the
-query.
+export type CalculatorOutputScalarType =
+  | 'number'
+  | 'string'
+  | 'boolean'
+  | 'date'
 
-Not decided: whether the contract should be able to express the conditionality
-as a type rather than as mapper logic. That would be a v2 contract-shape
-question, and `DESIGN.md` forbids extending the shape during the rebuild.
+export interface CalculatorScalarOutputField {
+  name: string
+  kind: 'scalar'
+  type: CalculatorOutputScalarType
+  semantic?: CalculatorFieldSemantic
+}
 
-### Input types are explicit
-
-Input types are handwritten in each calculator's `schema.ts`, next to the field
-contract.
-
-Why: a helper can derive the call shape from the authored contract, but the
-necessary mapped types are hard to read and harder to debug than the duplication
-they remove. This client has six small input shapes. For v1, the maintainability
-tradeoff favours boring explicit interfaces.
-
-The contract is still authored first because it carries facts a TypeScript
-input interface cannot: currency/year/month/count semantics, dependencies, and
-field metadata for downstream rendering. The explicit input type records only
-the TypeScript values accepted by the mapper/service method.
-
-The calculator's key is pinned with `satisfies`, not a type annotation:
-
-```ts
-const childBenefitFields = [ /* ... */ ] as const satisfies readonly CalculatorField[]
-
-export const childBenefitCalculator = {
-  key: 'childBenefit',
-  fields: childBenefitFields,
-} as const satisfies CalculatorContract<'childBenefit'>
-
-export interface ChildBenefitInput {
-  marriedOrCohabiting: boolean
-  incomeYear: number
-  // ...
+export interface CalculatorArrayOutputField {
+  name: string
+  kind: 'array'
+  itemFields: readonly CalculatorScalarOutputField[]
 }
 ```
 
-Using `satisfies` keeps the authored contract checked against
-`CalculatorContract<'childBenefit'>` without widening the literal key and field
-data while the object is being authored.
+Update `src/lib/contracts/field.ts`:
 
-Not decided: nothing here validates input at runtime. That is a scope boundary,
-not a deferral — if calculator inputs are ever validated it belongs where
-untrusted input arrives, at the GraphQL boundary, not in a client library whose
-callers are all internal and already typechecked.
+```ts
+export interface CalculatorContract<TKey extends string = string> {
+  key: TKey
+  inputFields: readonly CalculatorField[]
+  outputFields: readonly CalculatorOutputField[]
+}
+```
 
-### Option sets live per calculator, with no shared constants module
+Import `CalculatorOutputField` from `contracts/output`. The old `fields`
+property is renamed to `inputFields`.
 
-Why: each calculator's option set is a fact about one RSK endpoint, and the
-endpoints evolve independently. Keeping a set beside the mapper that consumes it
-means a change to one endpoint cannot reach another, and the value table sits
-next to the RSK doc comment that justifies it.
+Add `src/lib/contracts/byName.ts`:
 
-One transcription hazard follows directly from this, and it sits in the file
-being transcribed from: HEAD's `calculatorTypes/constants.ts` carries a comment
-on `INTEREST_BENEFIT_MARITAL_STATUSES` claiming RSK "reuses `hjuskaparstada`
-with a different shape per endpoint, so matching values today are a
-coincidence." That comment is false, per the evidence below. **Do not carry it
-over.** Copying option sets out of that file while leaving its justification
-comment attached would re-import the retracted claim into the new code.
+```ts
+export const byName = <T extends { name: string }>(a: T, b: T): number =>
+  a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+```
 
-Evidence, and a correction: an earlier draft of this plan justified the split by
-claiming the withholding-tax and interest-benefit marital-status sets match
-"only by coincidence" because RSK reuses `hjuskaparstada` with a different shape
-per endpoint. `gen/fetch/types.gen.ts` does not support that. Those two are
-genuinely identical — same value set, same doc string, differing only in
-requiredness. The endpoint that actually diverges is `childBenefit`, where
-`hjuskaparstada` is a `boolean` documented *"1 - Hjón/í sambúð 0 - Einstætt
-foreldri"*. So one of the three shapes differs, not all three, and the reason
-above stands on locality rather than on a coincidence that was not there.
+Use this comparator everywhere the client sorts input or output contract fields.
+Do not duplicate the inline comparator now that it applies to input fields,
+output fields, and array `itemFields`.
 
-### Requiredness is preserved as authored, not re-derived from the swagger
+It lives in `contracts/` rather than the existing `utils/` because deterministic
+ordering is part of the contract boundary, not a general-purpose utility -
+`DESIGN.md`'s Field Ordering section treats the comparator as contract behavior
+and forbids `localeCompare` here. Recorded because `DESIGN.md`'s Decision
+Discipline requires a reason for any shared helper.
 
-Requiredness corrections are a non-goal for every calculator, per the decision
-log entry of 2026-09-08.
+Author output fields with `as const satisfies`, same as the input contracts:
 
-Worth recording what that actually resolves to, because "preserve" and "derive
-from RSK" happen to agree almost everywhere. Comparing the existing contract
-against `gen/fetch/types.gen.ts`:
+```ts
+const withholdingTaxOutputFields = [
+  {
+    name: 'monthlySalary',
+    kind: 'scalar',
+    type: 'number',
+    semantic: 'currency',
+  },
+  { name: 'maritalStatusCode', kind: 'scalar', type: 'number' },
+  {
+    name: 'taxBrackets',
+    kind: 'array',
+    itemFields: [
+      {
+        name: 'lowerBound',
+        kind: 'scalar',
+        type: 'number',
+        semantic: 'currency',
+      },
+      { name: 'bracketNumber', kind: 'scalar', type: 'number' },
+      {
+        name: 'withholdingRate',
+        kind: 'scalar',
+        type: 'number',
+        semantic: 'percentage',
+      },
+      {
+        name: 'calculatedWithholding',
+        kind: 'scalar',
+        type: 'number',
+        semantic: 'currency',
+      },
+    ],
+  },
+] as const satisfies readonly CalculatorOutputField[]
 
-- `childBenefit`, `vehicleTax`, `vehicleDepreciation` and `interestBenefit`
-  already match the swagger exactly, including the three optional members
-  `skiptBornYfir7ara`, `skiptBornUndir7ara` and `gjaldskipting`. Preserving and
-  deriving produce the same contract; there is nothing to choose between.
-- `withholdingTax` matches too: `GetWithholdingTaxData.query?` is itself
-  optional and every member within it is optional, so all sixteen fields stay
-  `required: false`. The Figma design marks `salary` and `incomeYear` mandatory,
-  but `DESIGN.md` forbids inferring requiredness from UI preference, so that
-  stays a downstream concern.
-- `vehicleBenefit` is the single divergence. `GetVehicleBenefitData.query` marks
-  `rafbill`, `starfsmadurGreidirHledslu` and
-  `starfsmadurGreidirRekstrarkostnad` required, while the existing contract
-  marks all three optional and the mapper sends `?? false`. They stay optional,
-  with the outbound default preserved.
+export const withholdingTaxCalculator = {
+  key: 'withholdingTax',
+  inputFields: withholdingTaxInputFields,
+  outputFields: withholdingTaxOutputFields,
+} as const satisfies CalculatorContract<'withholdingTax'>
+```
 
-Why the divergence is kept rather than corrected: `DESIGN.md` explicitly
-sanctions this exact pattern under the client's RSK-facing responsibilities —
-"outbound defaults required by RSK, such as optional booleans sent as `false`".
-RSK requires the parameter to be present; it does not require the caller to
-supply it. Optional-with-a-default satisfies both, and it is the behavior in
-production today.
+Derive output field metadata from the per-calculator tables mechanically:
 
-Not decided: whether any of this is right for the form. That is D1, and it is
-not settled here.
+- `currency`, `percentage`, `year`, `month`, or `count` -> `type: 'number'`
+  with that `semantic`
+- `string` or `boolean` -> that scalar `type`, with no `semantic`
+- `number` -> `type: 'number'`, with no `semantic`
+- `date` is part of `CalculatorOutputScalarType` but unused in v1; the only
+  generated Date values live in `VehicleTaxPeriodSplit`, which v1 excludes
 
-### `type: 'date'` carries a `yyyy-MM-dd` string, not a `Date`
+## File Changes
 
-The contract keeps `type: 'date'`, and the explicit input value for such a field
-is a `yyyy-MM-dd` string. Where the generated RSK client wants a `Date`, the
-per-calculator mapper converts. In practice that is exactly one field:
-`vehicleTax`'s `periodSplitDate`, feeding
-`GetVehicleTaxData.query.gjaldskipting`.
+| File/Module | What & why |
+|---|---|
+| `src/lib/contracts/output.ts` (new) | Output contract primitives. Kept separate from `field.ts` because output has `kind`, arrays, no `required`, no options, and no dependencies. |
+| `src/lib/contracts/byName.ts` (new) | Shared code-unit comparator for input fields, output fields, and array `itemFields`. |
+| `src/lib/contracts/field.ts` | Rename `CalculatorContract.fields` to `inputFields`; add `outputFields`. This makes `getCalculator(key)` the full calculator contract. |
+| `src/lib/contracts/registry.ts` | Update registry members after every calculator contract gains `inputFields` and `outputFields`. No `TaxCalculatorType`. |
+| `src/lib/calculators.service.ts` | `getCalculator` returns sorted `inputFields` and sorted `outputFields`; calculation methods call RSK and then response mappers, returning curated `*Output | undefined` types. |
+| `src/index.ts` | Export output contract types, six `*Output` types, and `WithholdingTaxBracketOutput`. Remove public exports of raw generated `Get*Response` types. |
+| `src/lib/domains/*/contract.ts` (renamed from `schema.ts`) | Rename `<calculator>Fields` to `<calculator>InputFields`; add `<calculator>OutputFields`; add explicit `<Calculator>Output` interfaces. Keep labels/layout out. |
+| `src/lib/domains/*/<calculator>Output.ts` (new) | Response mapper from generated RSK result to curated output. Separate from input query mapper. |
+| `src/lib/domains/*/index.ts` | Export output fields through the calculator contract, output type, and response mapper. |
+| `src/lib/domains/*/<calculator>.spec.ts` | Extend existing contract tests for `inputFields`; add or import output contract fixture checks. |
+| `src/lib/domains/*/<calculator>Output.spec.ts` (new or colocated) | Mapper tests for exact output keys and representative values. |
+| `README.md` | Replace "output not implemented" with the final output contract and mapped-return behavior. |
+| `DESIGN.md` / `ROADMAP.md` | Update from checkpoint language to implemented v1 decisions once code lands. |
+| `libs/api/domains/tax-calculators` mechanical follow-through | The client rename `CalculatorContract.fields` -> `inputFields` breaks current domain imports/usages. Include the three mechanical domain fixes for this rename so the repo does not stay red for a purely mechanical contract-name change. Do not design or implement domain output/calculation here. |
 
-Why: `type: 'date'` is metadata telling a downstream consumer to render a date
-control; it is not a claim about the runtime type of the submitted value. Making
-the contract's value a `Date` would push a detail of the generated RSK client
-out of the mapper and into the form and domain path that feeds it.
+## Service Shape
 
-Evidence: `GetVehicleTaxData.query.gjaldskipting` is generated as `Date`, while
-the calculator UI renders date fields with `DatePickerController`
-(`apps/web/components/Organization/Slice/Calculator/CalculatorField.tsx`), which
-already stores `yyyy-MM-dd` strings in form state. The string is what the form
-actually produces, so the contract matches reality and the mapper absorbs the
-difference. Recorded in `DESIGN.md` under Input Types and in the decision log.
+`calculators.service.ts` gains two imports alongside its existing
+`CalculatorContract` / `CalculatorKey` ones:
 
-Not decided: nothing about GraphQL `DateTime` conventions elsewhere in the repo.
-This settles only the submitted value type for the RSK calculator contract.
+```ts
+import { byName } from './contracts/byName'
+import type { CalculatorOutputField } from './contracts/output'
+```
 
-### `getCalculator` throws on an unknown key
+`getCalculator` must sort copies at each level:
 
-Rather than returning `undefined`.
+```ts
+getCalculator(key: CalculatorKey): CalculatorContract<CalculatorKey> {
+  const calculator = calculatorRegistry[key]
 
-Why: `CalculatorKey` is derived from the registry, so an unknown key is
-unreachable for any typed caller. The throw guards only the untyped boundary,
-which the domain already validates, and states that this is a programming error
-rather than a normal absence a caller should handle.
+  if (!calculator) {
+    throw new Error(`Unknown calculator key: ${key}`)
+  }
 
-Open: whether the domain wants a typed absence instead. A Section 6
-conversation; nothing in Sections 1–5 depends on the answer.
+  const outputFields: readonly CalculatorOutputField[] = calculator.outputFields
 
-## Non-Goals
+  return {
+    key: calculator.key,
+    inputFields: [...calculator.inputFields].sort(byName),
+    outputFields: [...outputFields]
+      .map((field) =>
+        field.kind === 'array'
+          ? { ...field, itemFields: [...field.itemFields].sort(byName) }
+          : field,
+      )
+      .sort(byName),
+  }
+}
+```
 
-Named explicitly so they cannot be quietly attached to this work.
-`ROADMAP.md` Sections 3 and 4 carry the first two as per-section non-goals.
+Response mappers take non-undefined generated results. The service handles
+generated `data` absence once:
 
-- **No percentage conversion at the mapper boundary.** RSK documents every ratio
-  parameter as *"gefið sem tala milli 0 og 1"*. This pass rewrites every mapper,
-  so the change would be cheap now and dearer later — and it is still out,
-  because it changes what the client sends. Tracked as **D5**.
+```ts
+async getChildBenefit(input: ChildBenefitInput) {
+  const { data } = await getChildBenefit({
+    query: toChildBenefitQuery(input),
+  })
+  return data && toChildBenefitOutput(data)
+}
+```
 
-  Two things get recorded rather than fixed, because dropping the old
-  `percentage()` builder removes the only artifact that carried the 0–1 rule.
-  First, **the rule itself** moves into prose: a doc comment on the
-  `percentage` member of `CalculatorFieldSemantic` in `contracts/field.ts`,
-  where anyone authoring a ratio field will read it, plus a line in `README.md`.
-  Deliberately prose and not an assertion — the registry note already settled
-  that an unenforced assertion reads as a guarantee and is worse than a note.
-  The wording must be a statement about **RSK's wire format plus the mapper's
-  obligation**, not about the contract's own values: "RSK expects every ratio
-  parameter as a number between 0 and 1; the mapper is responsible for
-  converting the client value to that." Saying "percentage values lie between 0
-  and 1" would be false of the client contract — `taxCardUtilization` carries
-  whole percent from the form, and the select ratios carry `'4%'` strings. HEAD
-  made exactly that mistake in the opposite direction: its `percentage()` builder
-  asserted `.min(0).max(1)` while `nytingSkattkorts` forwarded a raw whole
-  percent. That contradiction is D5's mechanism, not an aside.
-  Second, **the actual bug is an asymmetry, not a uniform convention.** The
-  select ratio fields — `pensionFundRatio`, `privatePensionRatio`,
-  `employerPensionMatchRatio` — already convert to 0–1 through their
-  `toRskValue` tables, while `taxCardUtilization` and
-  `spouseTaxCardUtilization` forward their raw value. Only the latter two are
-  wrong. Naming that here so the eventual fix is a two-field change and not a
-  sweep across every ratio.
-- **No requiredness corrections, in any calculator.** See the decision below for
-  what that resolves to per calculator. Tracked as **D1**.
-- **No numeric bounds in the contract.** Bounds belong in the contract as data
-  eventually, which would also retire the renderer's invented year and month
-  ranges, but a new kind of field crosses into the domain and the public API.
-  Tracked as **D3**.
-- **Section 6 is not done.** See Consequences.
-- **`archive/` is untouched.**
-- No `TaxCalculatorType` in the client. No generic `calculate(key, input)`. No
-  translated labels. No input validation.
+Use `?? undefined`, not `|| undefined`, so legitimate `0` values survive:
 
-## Consequences
+```ts
+import type { ChildBenefitResult } from '../../../../gen/fetch'
+import type { ChildBenefitOutput } from './schema'
 
-Removing `InputProp` and `getCalculatorInputProps` from `src/index.ts` breaks
-the build of `libs/api/domains/tax-calculators`, which imports both — in
-`tax-calculators.service.ts` (lines 4, 6 and 40), `mapper.ts` (line 1),
-`models/enums.ts`, whose comment mirrors `InputProp['inputType']`, and
-`tax-calculators.service.spec.ts`, which breaks transitively — and which is also
-a tracked record of the old contract, so it is evidence for Sections 3–4 before
-it is cleanup for Section 6.
+export const toChildBenefitOutput = (
+  result: ChildBenefitResult,
+): ChildBenefitOutput => ({
+  maritalStatusLabel: result.hjuskaparstada ?? undefined,
+  upperReductionThreshold: result.efriSkerdingarmork ?? undefined,
+})
+```
 
-That breakage lasts until Section 6. It is inherent to finishing the client
-first, not a defect in this plan, and is written down so the choice is visible
-rather than discovered at the next build.
+## Export Surface
 
-Section 6 is larger than an import swap, and this plan does not do any of it:
+Export all public output contract and output value types directly from
+`src/index.ts`:
 
-- The contract shape changes, not just names. `dependsOn.value` becomes
-  `dependsOn.equals`. The old `inputType`, which folded structural type and
-  numeric semantic into one field, splits into `type` plus optional `semantic` —
-  and GraphQL's `TaxCalculatorFieldInputType` is a single flat union containing
-  `enum`, with no `select`. `CalculatorFieldOption` is a `{ value }` object
-  where GraphQL `options` is `[String]`.
-- The published GraphQL surface is already out of step, in committed generated
-  artifacts. `apps/api/src/api.graphql:13529` and
-  `libs/api/schema/src/lib/schema.ts:15501` both still declare
-  `taxCalculator(calculatorType: TaxCalculatorType!): TaxCalculator!`, while the
-  resolver in this tree exposes `taxCalculatorFields`. Both must be regenerated
-  in the same PR — they are checked in, so a stale copy is a merged
-  inconsistency, not a local one. Separately,
-  `apps/api/src/api.graphql:8941`'s field description says fields come "in the
-  order the underlying schema declares them", which `getCalculator`'s sort makes
-  actively false; it needs rewording in the same pass.
-- Moving contract lookup from a static function onto the Nest service means
-  Section 6 must add `CalculatorsClientModule` to `TaxCalculatorsModule`'s
-  `imports` and register `CalculatorsClientConfig` in `apps/api`'s config load
-  list. Nothing outside this library imports either today. No X-Road wiring is
-  needed — this is an open, unauthenticated API.
+```ts
+export type {
+  CalculatorArrayOutputField,
+  CalculatorOutputField,
+  CalculatorOutputScalarType,
+  CalculatorScalarOutputField,
+} from './lib/contracts/output'
+export type { ChildBenefitOutput } from './lib/domains/childBenefit'
+export type { InterestBenefitOutput } from './lib/domains/interestBenefit'
+export type { VehicleBenefitOutput } from './lib/domains/vehicleBenefit'
+export type { VehicleDepreciationOutput } from './lib/domains/vehicleDepreciation'
+export type { VehicleTaxOutput } from './lib/domains/vehicleTax'
+export type {
+  WithholdingTaxBracketOutput,
+  WithholdingTaxOutput,
+} from './lib/domains/withholdingTax'
+```
+
+Remove the current raw generated `Get*Response` export block.
+
+## Rename Sites
+
+Client reads of `CalculatorContract.fields` to update:
+
+- `src/lib/calculators.service.ts:38`
+- `src/lib/calculators.service.spec.ts:7`
+- `src/lib/calculators.service.spec.ts:18`
+- `src/lib/calculators.service.spec.ts:21`
+- `src/lib/domains/childBenefit/childBenefit.spec.ts:7`
+- `src/lib/domains/interestBenefit/interestBenefit.spec.ts:7`
+- `src/lib/domains/vehicleBenefit/vehicleBenefit.spec.ts:7`
+- `src/lib/domains/vehicleDepreciation/vehicleDepreciation.spec.ts:7`
+- `src/lib/domains/vehicleTax/vehicleTax.spec.ts:7`
+- `src/lib/domains/withholdingTax/withholdingTax.spec.ts:7`
+- `src/lib/domains/withholdingTax/withholdingTax.spec.ts:85`
+
+Mechanical domain follow-through for the rename:
+
+- `libs/api/domains/tax-calculators/src/lib/tax-calculators.service.ts:29`:
+  `contract.fields.map(toInputField)` -> `contract.inputFields.map(toInputField)`
+- `libs/api/domains/tax-calculators/src/lib/validation/inputContract.ts:160`,
+  `:164`, `:175`, `:178`: read `contract.inputFields`
+- `libs/api/domains/tax-calculators/src/lib/validation/inputContract.spec.ts:12`:
+  helper contracts become `{ key, inputFields: fields, outputFields: [] }`
+
+Documentation that embeds the old property and must be updated with it:
+
+- `libs/api/domains/tax-calculators/PLAN.md:232`: its file table contains
+  `{ type, inputFields: contract.fields.map(toInputField) }`. Prose, not code,
+  but it is a live plan a later round executes from.
+
+Do not change `mappings/inputField.ts` or `mappings/calculatorType.ts` for this
+rename; they import field-level types and `CalculatorKey`, not
+`CalculatorContract.fields`. Do not add domain output validation in this round.
+
+## Per-Calculator Output Direction
+
+The key names below are the planned client output contract. Change one only with
+a recorded reason, such as a generated response comment, an existing client input
+name, or a clearer client-side semantic.
+
+### Child Benefit
+
+Map scalar fields from `ChildBenefitResult`.
+
+Examples:
+
+- `hjuskaparstada` -> `maritalStatusLabel`, string
+- `fjoldiBarna` -> `numberOfChildren`, count
+- `fjoldiBarnaUndir7ara` -> `numberOfChildrenUnder7`, count
+- `tekjuar` -> `incomeYear`, year
+- `botaAr` -> `benefitYear`, year
+- `tekjustofn` -> `incomeBase`, currency
+- `skerdingarhlutfall` -> `reductionRate`, percentage
+- `skerdingarmork` -> `reductionThreshold`, currency
+- `efriSkerdingarmork` -> `upperReductionThreshold`, currency
+- `stofnTilSkerdingar` -> `reductionBase`, currency
+- `stofnTilUmframskerdingar` -> `excessReductionBase`, currency
+- `skerdingVegnaTekna` -> `incomeReduction`, currency
+- `umframskerdingVegnaTekna` -> `excessIncomeReduction`, currency
+- `umframskerdingarhlutfall` -> `excessReductionRate`, percentage
+- `oskertarBarnabaetur` -> `unreducedChildBenefit`, currency
+- `barnabaeturPerBarn` -> `childBenefitPerChild`, currency
+- `barnabaeturAlls` -> `totalChildBenefit`, currency
+- `greidslurArsfjordungi` -> `quarterlyPayments`, currency
+- `tekjutengdarBarnabaetur` -> `incomeRelatedChildBenefit`, currency
+- `barnabaeturAllsPrHjon` -> `totalChildBenefitPerCouple`, currency
+- `vidbotBornYngriEn7ara` -> `additionalBenefitForChildrenUnder7`, currency
+- `vidbotPerBarnYngraEn7ara` -> `additionalBenefitPerChildUnder7`, currency
+- `skerdingUndir7ara` -> `reductionForChildrenUnder7`, currency
+- `skerdingarhlutfallUndir7ara` -> `reductionRateForChildrenUnder7`, percentage
+- `faedingararBarna` -> `childrenBirthYears`, string
+- `skiptBuseta` -> `splitCustody`, boolean
+- `skiptYfir7ara` -> `splitCustodyChildrenOver7`, count
+- `skiptUndir7ara` -> `splitCustodyChildrenUnder7`, count
+- `barnabaeturFyrirSkiptingu` -> `childBenefitBeforeSplit`, currency
+
+### Vehicle Tax
+
+Expose top-level scalar fields only. `fyrraTimabil` and `seinnaTimabil` are
+nested period breakdowns and are out of v1 because the client output contract
+does not add layout groups or nested object groups. If a later output design
+needs them, add stable prefixed scalar keys or an explicit structural primitive
+with a recorded reason.
+
+Examples:
+
+- `timabil` -> `periodLabel`, string
+- `gjaldar` -> `feeYear`, year
+- `eiginthyngd` -> `vehicleWeight`, number
+- `co2` -> `co2`, number
+- `nedc` -> `nedc`, number
+- `wltp` -> `wltp`, number
+- `bifreidagjold` -> `vehicleTax`, currency
+- `urvinnslugjald` -> `recyclingFee`, currency
+- `bifreidagjoldAlls` -> `totalVehicleTax`, currency
+
+### Vehicle Benefit
+
+This calculator is scalar-only. The Figma result's assumptions/prose block is
+downstream content, not client output.
+
+- `kaupar` -> `purchaseYear`, year
+- `kaupverd` -> `purchasePrice`, currency
+- `arshlunnindi` -> `annualBenefit`, currency
+- `manadarhlunnindi` -> `monthlyBenefit`, currency
+
+### Vehicle Depreciation
+
+Scalar-only.
+
+- `kaupreikningur` -> `hasPurchaseInvoice`, boolean
+- `verd` -> `price`, currency
+- `vsk` -> `vat`, currency
+- `alagning` -> `markup`, currency
+- `vorugjald` -> `exciseFee`, currency
+- `vatrygging` -> `insurance`, currency
+- `flutningsgjald` -> `transportFee`, currency
+- `fyrstu12Manudir` -> `first12MonthsDepreciation`, currency
+- `naestu24Manudir` -> `next24MonthsDepreciation`, currency
+- `rest` -> `remainingValue`, currency
+- `totalFyrning` -> `totalDepreciation`, currency
+- `finalAmount` -> `finalAmount`, currency
+
+### Withholding Tax
+
+Must include `taxBrackets`.
+
+Scalar examples:
+
+- `manadarlaun` -> `monthlySalary`, currency
+- `lifeyrisjodurProsenta` -> `appliedPensionFundRatio`, percentage
+- `sereignProsenta` -> `appliedPrivatePensionRatio`, percentage
+- `lifeyrissjodur` -> `pensionFundPayment`, currency
+- `sereignarsjodur` -> `privatePensionPayment`, currency
+- `fradratturAlls` -> `totalDeductions`, currency
+- `personuafslattur` -> `personalTaxCredit`, currency
+- `personuafslatturFraMaka` -> `spousePersonalTaxCredit`, currency
+- `skattstofn` -> `taxBase`, currency
+- `reiknudStadgreidsla` -> `calculatedWithholding`, currency
+- `greiddStadgreidsla` -> `paidWithholding`, currency
+- `hatekjuskattur` -> `highIncomeTax`, currency
+- `reiknadiHatekjuskatt` -> `highIncomeTaxApplied`, boolean
+- `utborgudLaun` -> `salaryAfterDeductions`, currency
+- `uppsafnadurPersonuafslattur` -> `accumulatedPersonalTaxCredit`, currency
+- `tekjuar` -> `incomeYear`, year
+- `hjuskaparstada` -> `maritalStatusCode`, number
+- `launamanudur` -> `payMonth`, month
+- `fritekjumarkBarns` -> `childIncomeLimit`, currency
+- `faedingararBarns` -> `childBirthYear`, year
+- `stadgreidsluhlutfall` -> `withholdingRate`, percentage
+- `motframlag` -> `employerPensionMatch`, currency
+- `tryggingagjaldsstofn` -> `payrollTaxBase`, currency
+- `tryggingagjald` -> `payrollTax`, currency
+
+Array:
+
+```ts
+export interface WithholdingTaxBracketOutput {
+  lowerBound?: number
+  bracketNumber?: number
+  withholdingRate?: number
+  calculatedWithholding?: number
+}
+
+export interface WithholdingTaxOutput {
+  // scalar fields...
+  taxBrackets: WithholdingTaxBracketOutput[]
+}
+```
+
+Map:
+
+- `skattthrep[].nedriMork` -> `lowerBound`, currency
+- `skattthrep[].numerThreps` -> `bracketNumber`, number
+- `skattthrep[].stadgreidsluhlutfall` -> `withholdingRate`, percentage
+- `skattthrep[].reiknudStadgreidsla` -> `calculatedWithholding`, currency
+
+Use the guarded `toNumber` helper for `bigint` fields.
+
+Known gap: percentage scale is not verified for output fields. RSK documents
+ratio inputs as values between 0 and 1, but this plan does not assert whether
+output fields such as `appliedPensionFundRatio`, `withholdingRate`,
+`reductionRate`, and the interest-benefit reduction rates arrive as `0.04` or
+`4`. Record the output half beside the existing percentage-conversion deferred
+item before implementation, and write mapper tests from observed/generated
+fixtures rather than assuming a scale.
+
+### Interest Benefit
+
+Scalar-only.
+
+- `hjuskaparstada` -> `maritalStatusLabel`, string
+- `tekjuar` -> `incomeYear`, year
+- `botaar` -> `benefitYear`, year
+- `hamarkVaxtagjalda` -> `maximumInterestExpenses`, currency
+- `vaxtagjoldTilUtreiknings` -> `interestExpensesForCalculation`, currency
+- `tekjustofn` -> `incomeBase`, currency
+- `eignastofn` -> `assetBase`, currency
+- `eftirstodvar` -> `loanBalance`, currency
+- `vaxtagjold` -> `interestExpenses`, currency
+- `hamarkVaxtabota` -> `maximumInterestBenefit`, currency
+- `skerdingVegnaTekna` -> `incomeReduction`, currency
+- `vaxtabaeturEftirSkerdinguTekna` -> `interestBenefitAfterIncomeReduction`, currency
+- `tekjuskerdingarhlutfall` -> `incomeReductionRate`, percentage
+- `skuldaskerdingarhlutfall` -> `debtReductionRate`, percentage
+- `skerdingVegnaEigna` -> `assetReduction`, currency
+- `eignaskerdingarhlutfall` -> `assetReductionRate`, percentage
+- `skerdingLog2003` -> `reductionLaw2003`, currency
+- `skerdingLog2004` -> `reductionLaw2004`, currency
+- `vaxtabaeturAlls` -> `totalInterestBenefit`, currency
+- `serstokVaxtanidurgreidsla` -> `specialInterestReimbursement`, currency
+- `nadiHamarki` -> `reachedMaximum`, boolean
+- `varUndirLamarki` -> `wasBelowMinimum`, boolean
+
+## Sequencing
+
+0. Update `DESIGN.md` and the Obsidian decision log as described above.
+1. Add `contracts/output.ts`.
+2. Add `contracts/byName.ts` and update the existing input sort to use it.
+3. Update `CalculatorContract` from `fields` to `inputFields`/`outputFields`.
+4. Update each existing calculator schema to use `inputFields` and add empty
+   `outputFields` only temporarily if needed for compilation.
+5. Update `getCalculator` sorting for both input and output fields, including
+   array `itemFields`.
+6. Add the withholding-tax output contract and response mapper first because
+   `taxBrackets` proves the array shape.
+7. Add withholding-tax output tests.
+8. Add the five remaining output contracts and response mappers one calculator
+   at a time.
+9. Update service calculation methods to return mapped outputs, preserving
+   `undefined` when generated `data` is absent.
+10. Update public exports.
+11. Apply the three mechanical domain fixes needed by the client
+   `fields` -> `inputFields` rename.
+12. Update docs from "planned" to "implemented".
+
+Do not leave a final state with temporary empty `outputFields`, and do not let
+one cross a commit boundary.
+`libs/api/domains/tax-calculators/src/lib/tax-calculators.service.spec.ts:19`
+constructs a real `CalculatorsClientService` and runs `assertPublishableContract`
+against the real registry contracts, so an empty `outputFields` is visible to the
+domain suite as soon as it is committed - and goes red across all six calculators
+if Section 8 later adds an output emptiness invariant.
+
+No output-side invariant is added to `assertPublishableContract` in this round;
+that is domain Section 8 work.
+
+## Test Plan
+
+- Update existing contract tests to read `inputFields` instead of `fields`.
+- Add a service test asserting `getCalculator('withholdingTax').outputFields`
+  sorts scalar and array fields by `name`.
+- Add a focused test that `taxBrackets.itemFields` are sorted by `name`.
+- Add output contract fixture checks by field `name`, not by array position.
+- Add response mapper tests per calculator:
+  - exact emitted key set for representative non-null data
+  - `null` scalar source values become `undefined`
+  - `undefined` scalar source values remain `undefined`
+  - array source values map to arrays
+  - `null`/`undefined` array source values map to `[]`
+  - withholding-tax `bigint` bracket fields convert to numbers
+  - guarded number conversion never emits `NaN` for missing bracket fields
+- Keep mapper tests explicit enough that a dropped optional response field fails.
 
 ## Verification
 
-Three commands, each with a constraint that has to be respected or it reports
-nothing useful.
+Run when practical:
 
-### Run under node 22.22.3, not the pinned 20.15.0
+```bash
+yarn nx run clients-rsk-calculators:test
+npx eslint libs/clients/rsk/calculators/src --ext .ts --max-warnings 0
+npx tsc -p libs/clients/rsk/calculators/tsconfig.lib.json --noEmit
+```
 
-`.nvmrc` pins `v20.15.0`, but `package.json` engines requires `22.22.3`, and
-lint only works on the higher one. Under 20.15.0,
-`nx lint clients-rsk-calculators` does not run at all — it fails loading config
-with `ERR_REQUIRE_ESM` from `eslint-plugin-storybook` via `@eslint/eslintrc`,
-because a CJS `require` of an ESM-only plugin is unsupported there. Under
-22.22.3 the same command succeeds (both verified). Node 22 supports
-`require()` of ES modules, which is presumably why engines was raised.
+If typecheck reports unrelated monorepo errors, filter for
+`libs/clients/rsk/calculators/src/lib` and document the baseline before
+proceeding.
 
-No merge from `main` is needed for this, despite the flat-config migration that
-has since landed there. If a merge happens for other reasons it must be a real
-`git merge`, never a squash — a squash breaks the merge base and drags in
-unrelated CODEOWNERS reviewers.
+Use `rg` before finishing:
 
-### Baseline the typecheck before Section 1
+```bash
+rg -n "\bfields\b" libs/clients/rsk/calculators/src libs/api/domains/tax-calculators/src
+rg -n "Get.*Response" libs/clients/rsk/calculators/src/index.ts
+```
 
-`npx tsc -p libs/clients/rsk/calculators/tsconfig.lib.json --noEmit` reports
-**46 errors before any of this work starts**, measured under node 22.22.3:
+Expected final state:
 
-- **25 from outside this library**, pulled in transitively through
-  `@island.is/clients/middlewares` and `@island.is/nest/config` in
-  `calculators.module.ts` / `calculators.config.ts`, and surfaced by the base
-  tsconfig's `noImplicitOverride` / `noImplicitReturns` /
-  `noPropertyAccessFromIndexSignature`. Spread across `libs/auth-nest-tools`
-  (TS4114 ×6), `libs/nest/config` (×4), `libs/logging` (×4),
-  `libs/feature-flags` (×4), `libs/clients/middlewares` (×4),
-  `libs/shared/pii` (×1) and `libs/shared/problem` (×1).
-- **16 from `src/lib/archive/**`**, which is out of consideration.
-- **5 on the judged surface** — the known `./lib/calculatorTypes` breakage in
-  `src/index.ts` (lines 4, 5, 23) and `src/lib/calculators.service.ts`
-  (lines 18, 26).
+- no raw generated `Get*Response` types exported from `src/index.ts`
+- no active client code reads `CalculatorContract.fields`
+- every calculator has non-empty `outputFields`
+- every calculation method returns a curated output type or `undefined`
 
-An earlier draft of this plan put the out-of-library figure at ten. That was
-measured on node 20 through a truncated `head`, and was wrong; the real count is
-25 across eight libraries.
+## Non-Goals
 
-None are this work's business and none can be fixed from here. So the gate is
-not "zero errors": capture this baseline before Section 1 and diff against it,
-or filter output to `src/lib/(contracts|domains|calculators)`. A plan that
-demanded a clean typecheck would be unachievable on step one and would train the
-implementer to ignore the command.
-
-### Spec files are not covered by that command
-
-`tsconfig.lib.json` excludes `jest.config.ts`, `src/**/*.spec.ts` and
-`src/**/*.test.ts`. The seven new spec files are typechecked only by ts-jest via
-`tsconfig.spec.json` when `nx test` runs, and that config extends the
-`strict: true` base with diagnostics on. `nx test` is therefore load-bearing
-rather than optional, because the fixtures are partly compile-time contract
-pins — a fixture that stops matching the contract's type is a real failure and
-`tsc` will not see it.
-
-### `archive/` affects only the typecheck, and must stay out of the commit
-
-It does not compile, and `tsconfig.lib.json` has no exclusion for it, so local
-`tsc` reports it; those errors are filtered along with the baseline above. It
-does **not** break lint — verified green with the directory present, because the
-config does not resolve imports. And it is untracked, so it is invisible to CI.
-
-The requirement is about the commit, not the code: **`archive/` must stay out of
-the commit.** `git add`ed, it would become CI's problem. It is never consulted
-as an authority; `git show HEAD:<path>` is.
-
-### Section 5 checks
-
-- `rg` for `calculatorTypes`, `getCalculatorInputProps` and `InputProp` — no
-  active client path may still reach the old machinery.
-- `rg` for `zod` under `src/lib`, per ROADMAP §5's design check that no
-  Zod-built calculator input contract remains in the active path. The other
-  three greps do not cover this: `calculators.config.ts` legitimately keeps its
-  Zod use for env config, so the check is that no *contract* file imports it.
-- **Stage the deletions.** `src/lib/calculatorTypes/*.ts` (12 files) and
-  `src/lib/utils/zodToInputProp.ts` are deleted in the worktree but unstaged.
-  Until they are staged, the `rg` checks pass locally while the commit still
-  carries both contract paths. Confirm with `git status` that what remains is
-  the intended adds plus untracked `archive/`, nothing else.
-
-### Decision-log deliverables
-
-Per section, not as a wrap-up task. At minimum: the no-shared-constants choice
-with its corrected reason, the requiredness stance with its `vehicleBenefit`
-divergence, the child-benefit outbound gate, the sort comparator choice, and the
-`VehicleTaxInput.periodSplitDate` retype as an intentional contract change. Not
-the `utils/` placement or the date mapping — both are already logged, and
-re-logging them would be the implementation noise `DESIGN.md` warns against.
-
-## Sequencing And The PR Boundary
-
-Sections 1–5 are the scope of this plan. They are not, on their own, a shippable
-change: removing the old export surface leaves
-`libs/api/domains/tax-calculators` unbuildable, so `apps/api` stays red until
-Section 6 lands.
-
-**Superseded.** The original decision was that Sections 1–6 land together and
-`apps/api` is never left red. The programmer has since accepted partial
-redness — "a little redness is fine, we'll update later" — so Sections 1–5 may
-land on their own, with Section 6 following separately.
-
-What that leaves broken, so it is not discovered later: four files in
-`libs/api/domains/tax-calculators` fail to build on removed exports —
-`tax-calculators.service.ts`, `mapper.ts`, `models/enums.ts` and
-`tax-calculators.service.spec.ts`. It is a build failure, not a runtime one, so
-it surfaces the moment anything typechecks `apps/api`.
-
-Nothing in Sections 1–5 depends on Section 6's answers, so the two can be
-planned separately without either constraining the other. Section 6 gets its own
-plan when this one is done.
-
-## Registry Open Points
-
-`input-contract-registry.md` still lists open points that this plan touches.
-Their disposition:
-
-- **Item 1 — six now-false prose sites in the domain layer** (its README twice,
-  a model comment, the resolver's justification comment, a test file pointing at
-  a deleted spec, and one published API description claiming field order follows
-  a schema that will no longer exist). **Deferred, deliberately.** They live in
-  `libs/api/domains/tax-calculators`, cross a layer boundary, and break nothing.
-  A documentation-only pass in that layer once the client work is green, as the
-  note itself recommends — folded into Section 6's cycle rather than done
-  quietly here.
-- **Item 6 — two directories would both be called "config".** **Resolved** by
-  naming the contract directory `contracts/`, which `DESIGN.md`'s Module Shape
-  now fixes. Recorded as resolved so it is not re-raised.
-- **Item 7 — two stale build-configuration entries.** Its description needs
-  correcting on two counts. They are not uncommitted, and the second is not a
-  relaxation: `tsconfig.lib.json` re-asserts `strictNullChecks`, `noImplicitAny`
-  and `strictBindCallApply` as `true` beneath an already-`strict: true` base, so
-  they are redundant, not loosening. And the file did not exist before
-  `f32b5a76db` created it — it is the unmodified NX scaffold, not something
-  added for the deleted tests. **Deferred** either way: redundant-but-correct
-  build config is not contract work, and changing `tsconfig` strictness while
-  the library does not compile would confuse cause and effect. A separate pass
-  once Sections 1–5 are green, where removal can be verified by running the
-  suite rather than reverted blind.
-- **Item 9 — the intended numeric bounds become unwritten.** **Addressed as
-  prose**, per the D5 non-goal above: a wire-side statement on
-  `CalculatorFieldSemantic.percentage` plus `README.md`, deliberately not an
-  assertion.
-- **Item 10 — requiredness untouched by this pass.** **Confirmed out of scope**,
-  per the requiredness decision above, including the explicit
-  `vehicleBenefit` divergence so the exception is recorded rather than
-  discovered.
-- **Item 8 — the pin/replace/trim sequencing.** **Adopted**, see The Authority,
-  And The Safety Net.
-- **Item 2, item 3, item 5** — already answered in the note itself.
-
-## Open Questions
-
-None outstanding. Everything raised during planning has been answered and
-recorded in `DESIGN.md`, `ROADMAP.md`, or the decision log:
-
-- field ordering — sort at the `getCalculator` boundary
-- requiredness — non-goal, with the `vehicleBenefit` divergence preserved
-- percentage conversion — non-goal
-- input types — explicit per calculator; no shared `CalculatorInput` helper
-- `type: 'date'` — a `yyyy-MM-dd` string, converted in the mapper
-- `getWithholdingTax` — keeps its optional argument
-- `utils/toRskValue.ts` — allowed, not mandatory, and restored from HEAD
-- PR boundary — Sections 1–6 land together; `apps/api` is not left red
-- prior-contract source — `git show HEAD:<path>`, never `archive/`
-- mapper safety — key-set assertions, since return types miss omissions
-- `getCalculator` return type — the simple `CalculatorContract<CalculatorKey>`;
-  the generic is for pinning each definition to its literal key
+- No GraphQL/domain output or calculation implementation.
+- No Contentful `configJson` schema.
+- No frontend renderer.
+- No labels, descriptions, assumptions copy, result groups, or layout ordering.
+- No runtime output-contract validation in the client.
+- No generic `calculate(key, input)` method.
+- No public/domain calculator identities in the client.

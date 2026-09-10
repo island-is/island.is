@@ -1,5 +1,5 @@
 import type { GetVehicleTaxData } from '../../../../gen/fetch'
-import type { VehicleTaxInput } from './schema'
+import type { VehicleTaxInput } from './contract'
 
 const RSK_VALUE_BY_PERIOD: Record<VehicleTaxInput['period'], boolean> = {
   firstHalf: false,

@@ -1,10 +1,10 @@
 import type { CalculatorField } from '../../contracts/field'
 import { toChildBenefitQuery } from './childBenefit'
-import type { ChildBenefitInput } from './schema'
-import { childBenefitCalculator } from './schema'
+import type { ChildBenefitInput } from './contract'
+import { childBenefitCalculator } from './contract'
 
 const fieldsByName: Record<string, CalculatorField> = Object.fromEntries(
-  childBenefitCalculator.fields.map((field) => [field.name, field]),
+  childBenefitCalculator.inputFields.map((field) => [field.name, field]),
 )
 
 describe('childBenefit contract', () => {

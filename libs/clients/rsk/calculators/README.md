@@ -15,11 +15,11 @@ connection or authentication is required.
 
 ## Input contract
 
-- `getCalculator(key)` — the machine-readable input contract for one
-  calculator: its fields, their types, requiredness, numeric semantic, select
-  options and simple equality dependencies. Fields come back sorted by `name`
-  in code-unit order, so consumers must treat `name` as identity and never
-  array position.
+- `getCalculator(key)` — the machine-readable contract for one calculator, both
+  halves: `inputFields` and `outputFields`. An input field carries its type,
+  requiredness, numeric semantic, select options and simple equality
+  dependencies. Fields come back sorted by `name` in code-unit order, so
+  consumers must treat `name` as identity and never array position.
 
 A field's `semantic` says what a number means, not what range it may take. RSK
 declares no bounds on any numeric parameter, so this library asserts none.
@@ -44,6 +44,57 @@ needs to know here.
 
 Labels, translations and layout belong downstream — the client authors
 identifiers only.
+
+## Output contract
+
+`getCalculator(key).outputFields` describes the curated result of a calculator:
+which values it publishes, of what type, and what a number means. Output keys
+are stable English client names — never RSK response property names — because
+downstream layers store and reference them.
+
+An output field is either a scalar or an array:
+
+- a scalar field has `kind: 'scalar'`, a `type`, and a `semantic` when a number
+  means currency, a percentage, a year, a month or a count
+- an array field has `kind: 'array'` and inline `itemFields`, all scalars.
+  `withholdingTax.taxBrackets` is the only one today
+
+Output fields have no `required`. Requiredness tells a caller what it must
+submit; on output there is nothing to act on, and RSK's own omissions are
+carried by the mapped value instead. Output fields carry no layout, labels or
+grouping, and no nested object groups — `vehicleTax`'s `fyrraTimabil` and
+`seinnaTimabil` period breakdowns are deliberately outside the contract.
+
+`outputFields` and array `itemFields` are sorted by `name` in code-unit order,
+like input fields. Order carries no meaning.
+
+## Mapped results
+
+The six calculation methods return the curated output, not the generated RSK
+shape:
+
+```text
+RSK response
+  -> per-calculator response mapper
+  -> curated <Calculator>Output
+```
+
+Each returns `<Calculator>Output | undefined` — `undefined` only when the
+generated client produced no `data` at all.
+
+A mapped result never contains `null`. Scalar properties are optional and are
+`undefined` when RSK returned `undefined` or `null`; array properties are
+always arrays and fall back to `[]`. Callers therefore need one absence check,
+not two.
+
+The generated `Get*Response` types are no longer exported. They are internal
+wire shapes.
+
+One thing this contract does **not** assert: the scale of output ratio fields.
+RSK documents ratio *inputs* as 0-1 but says nothing about ratios in a
+response, so `appliedPensionFundRatio`, `withholdingRate`, `reductionRate` and
+the interest-benefit reduction rates are passed through unchanged and their
+tests assert mapping only. Observe a real response before formatting them.
 
 ## Configuration
 

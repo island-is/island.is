@@ -1,5 +1,5 @@
 import type { GetChildBenefitData } from '../../../../gen/fetch'
-import type { ChildBenefitInput } from './schema'
+import type { ChildBenefitInput } from './contract'
 
 export const toChildBenefitQuery = (
   input: ChildBenefitInput,
