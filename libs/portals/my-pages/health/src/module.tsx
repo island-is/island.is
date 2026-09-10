@@ -26,6 +26,9 @@ const AidsAndNutrition = lazy(() =>
 const MovementPrescriptions = lazy(() =>
   import('./screens/MovementPrescriptions/MovementPrescriptions'),
 )
+const OldPregnancies = lazy(() =>
+  import('./screens/OldPregnancies/OldPregnancies'),
+)
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 
 const HealthCenter = lazy(() => import('./screens/HealthCenter/HealthCenter'))
@@ -544,6 +547,13 @@ export const healthModule: PortalModule = {
       name: hm.waitlists,
       path: HealthPaths.HealthWaitlistsDetailOld,
       element: <Navigate to={HealthPaths.HealthWaitlists} replace />,
+    },
+    {
+      name: hm.oldPregnanciesTitle,
+      path: HealthPaths.HealthOldPregnancies,
+      key: 'HealthOldPregnancies',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <OldPregnancies />,
     },
     {
       name: hm.questionnaires,
