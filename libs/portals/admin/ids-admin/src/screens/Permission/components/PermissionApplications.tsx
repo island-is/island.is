@@ -96,11 +96,18 @@ export const PermissionApplications = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialClients])
 
-  // After a successful save, clear the pending add/remove buckets.
+  // After a successful save, clear the pending add/remove buckets. The action
+  // always returns a (possibly empty) list of successful environments, so the
+  // staged changes must be kept whenever the selected environment failed.
   useEffect(() => {
+    const selectedEnvironmentFailed = actionData?.failedEnvironments?.some(
+      ({ environment }) => environment === selectedEnvironment,
+    )
+
     if (
       actionData?.intent === PermissionFormTypes.APPLICATIONS &&
-      actionData?.data
+      actionData?.data &&
+      !selectedEnvironmentFailed
     ) {
       setAddedClients([])
       setRemovedClients([])
@@ -109,11 +116,14 @@ export const PermissionApplications = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionData])
 
-  const { data: clientsData, loading: clientsLoading } =
-    useGetGrantableClientsQuery({
-      skip: !hasOpened,
-      variables: { input: { environment: selectedEnvironment } },
-    })
+  const {
+    data: clientsData,
+    loading: clientsLoading,
+    error: grantableClientsError,
+  } = useGetGrantableClientsQuery({
+    skip: !hasOpened,
+    variables: { input: { environment: selectedEnvironment } },
+  })
 
   const groupedOptions = useMemo<GroupBase<ClientOption>[]>(() => {
     const excluded = new Set<string>(clients.map((c) => c.clientId))
@@ -219,7 +229,11 @@ export const PermissionApplications = () => {
             isMulti
             onMenuOpen={() => setHasOpened(true)}
             isLoading={clientsLoading}
-            noOptionsMessage={formatMessage(m.permissionApplicationsNoOptions)}
+            noOptionsMessage={formatMessage(
+              grantableClientsError
+                ? m.errorLoadingData
+                : m.permissionApplicationsNoOptions,
+            )}
             filterConfig={{
               stringify: (option) =>
                 `${option.label} ${option.value} ${

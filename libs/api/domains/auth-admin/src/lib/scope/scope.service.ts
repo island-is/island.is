@@ -564,16 +564,28 @@ export class ScopeService extends MultiEnvironmentService {
 
     const settledPromises = await Promise.allSettled(
       targetEnvironments.map((environment) =>
-        this.makeRequest(user, environment, (api) =>
-          api.meScopeClientsControllerUpdateScopeClientsRaw({
-            tenantId,
-            scopeName,
-            updateScopeClientsDto: {
-              addedClientIds: Array.from(addedSet),
-              removedClientIds: dedupedRemovedIds,
-            },
-          }),
-        ),
+        this.makeRequest(user, environment, async (api) => {
+          const response =
+            await api.meScopeClientsControllerUpdateScopeClientsRaw({
+              tenantId,
+              scopeName,
+              updateScopeClientsDto: {
+                addedClientIds: Array.from(addedSet),
+                removedClientIds: dedupedRemovedIds,
+              },
+            })
+
+          // A successful update answers 200. The admin api answers 204 when the
+          // scope does not belong to the tenant, which handle204 would turn
+          // into a fulfilled null and report as a success.
+          if (response.raw.status === 204) {
+            throw new Error(
+              `Scope ${scopeName} does not belong to tenant ${tenantId}`,
+            )
+          }
+
+          return response
+        }),
       ),
     )
 
