@@ -29,17 +29,11 @@ import {
 
 import { getScaledValue } from '../utils/scale-value'
 
-/** Internal flat bounds produced by `resolveReplicaCount` for a single environment. */
 type ResolvedReplicas = { min: number; max: number; default: number }
 
-/**
- * Collapse either replicaCount form into flat bounds for a single environment.
- * Runs BEFORE the dev/staging clamp so downstream logic is unchanged.
- *
- * - No config      ⇒ env defaults `{ defaultMinReplicas, defaultMaxReplicas, defaultMinReplicas }`.
- * - Flat form       ⇒ identity `{ min, max, default }` (via `!isPerEnvReplicaCount`).
- * - Per-env form    ⇒ the block matching `env.type`, else env defaults.
- */
+// Resolve either replicaCount form to flat bounds for one environment. The
+// flat form applies to all envs; the per-env form uses the matching block,
+// falling back to env defaults when the block (or the whole config) is absent.
 function resolveReplicaCount(
   rc: ReplicaCount | undefined,
   env: EnvironmentConfig,
@@ -50,15 +44,12 @@ function resolveReplicaCount(
     default: env.defaultMinReplicas,
   }
 
-  // No replicaCount at all: env defaults (matches today's else-branch).
   if (!rc) return envDefaults
 
-  // Flat form: identity — same bounds for every environment.
   if (!isPerEnvReplicaCount(rc)) {
     return { min: rc.min, max: rc.max, default: rc.default }
   }
 
-  // Per-env form: pick the block for this environment, else env defaults.
   const block = rc[env.type as 'dev' | 'staging' | 'prod']
   if (!block) return envDefaults
 
@@ -180,7 +171,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   // resources
   result.resources = serviceDef.resources
 
-  // replicas — resolve first, then apply the existing dev/staging clamp.
+  // replicas
   const resolved = resolveReplicaCount(serviceDef.replicaCount, env1)
 
   if (
@@ -195,7 +186,6 @@ const serializeService: SerializeMethod<HelmService> = async (
       default: 1,
     }
   } else {
-    // Uses resolved flat bounds instead of reading serviceDef.replicaCount directly.
     result.replicaCount = {
       min: resolved.min,
       max: resolved.max,
@@ -204,9 +194,8 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
 
   if (result.replicaCount.max === 0) {
-    // Scale-to-zero: no autoscaler (Requirement 4.2), flat zero output (Requirement 4.3).
+    // max 0 means scale to zero: no HPA
     result.replicaCount = { min: 0, max: 0, default: 0 }
-    // Do NOT set result.hpa — leave it undefined.
   } else {
     result.hpa = {
       scaling: {
@@ -679,21 +668,12 @@ export const HelmOutput: OutputFormat<HelmService> = {
         (host) => `${env.feature}-${host}`,
       )
     })
-    // Feature deployments run in the dev environment, so resolve the (possibly
-    // per-env) replicaCount to flat dev bounds first. Only honor dev when it
-    // scales to zero: when the resolved dev block is scale-to-zero
-    // (max === 0), pass {0,0,0} through verbatim so the feature deployment also
-    // runs zero replicas. Every other value keeps the existing cost-saving cap
-    // at 1 replica. For the flat form this resolution is the identity map, so
-    // the cap behavior is byte-identical to before the union was introduced;
-    // the per-env form now correctly reads its dev block instead of falling
-    // through to the `?? 1` default.
+    // Feature deployments run in dev. Honor a scale-to-zero dev config
+    // verbatim; otherwise keep the existing cap of 1 replica.
     const featureRc = resolveReplicaCount(s.replicaCount, env)
     if (featureRc.max === 0) {
-      // Scale-to-zero dev config is honored verbatim in feature deployments.
       s.replicaCount = { min: 0, max: 0, default: 0 }
     } else {
-      // Otherwise keep the existing cost-saving cap at 1 replica.
       s.replicaCount = {
         min: Math.min(1, featureRc.min),
         max: Math.min(1, featureRc.max),

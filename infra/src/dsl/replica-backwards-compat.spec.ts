@@ -5,26 +5,9 @@ import { EnvironmentConfig } from './types/charts'
 import { HelmService, SerializeSuccess } from './types/output-types'
 import { renderers } from './upstream-dependencies'
 
-/**
- * Feature: auth-admin-web-dev-scaledown, Property 1: Flat-form output equals baseline
- *
- * These tests lock in the *pre-feature* behavior of the Helm generator for
- * flat-form `replicaCount` services. Because the per-environment resolver runs
- * the flat form through as an identity transform, flat-form services must keep
- * producing byte-identical `replicaCount` / `hpa` output.
- *
- * The expected values below are a hardcoded baseline snapshot of what the OLD
- * flat logic produced, as documented in design.md:
- *   - dev/staging (non-`search-indexer`, no bypass): clamp -> {min:1,max:2,default:1},
- *     hpa present with replicas {1,2}, cpuAverageUtilization 90, nginxRequestsIrate 5
- *     (unless overridden by globals).
- *   - prod: uses the explicit/resolved values with an hpa; a service with no
- *     replicaCount falls back to the env defaults.
- *   - `search-indexer` services are exempt from the dev/staging clamp and use
- *     their explicit/resolved values there too.
- *
- * Validates: Requirements 2.1, 2.2, 2.3, 2.4
- */
+// Feature: auth-admin-web-dev-scaledown
+// Locks in the pre-feature Helm output for flat-form replicaCount so the
+// per-env resolver stays a no-op for it. Expected values are the old baseline.
 
 const baseEnv = {
   auroraHost: 'a',

@@ -2,11 +2,9 @@ import { service } from './dsl'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
 
-// Feature-deployment environment fixture. Feature deployments run in the `dev`
-// environment; the presence of `feature` is what routes the rendering pipeline
-// through `HelmOutput.featureDeployment` (see rendering-pipeline.ts). The
-// non-default replica values are chosen so the cost-saving cap to {1,1,1} is
-// always distinguishable from resolved values.
+// Feature: auth-admin-web-dev-scaledown
+// Feature deployments run in dev; the `feature` name routes rendering through
+// featureDeployment. Non-default replica values keep the {1,1,1} cap distinct.
 const baseEnv: Omit<EnvironmentConfig, 'type' | 'domain' | 'feature'> = {
   auroraHost: 'a',
   redisHost: 'b',
@@ -37,15 +35,8 @@ function featureReplicaCount(sut: ReturnType<typeof service>) {
   return sut.serviceDef.replicaCount
 }
 
-// Feature: auth-admin-web-dev-scaledown — feature-deployment replica handling.
-//
-// Feature deployments keep the existing cost-saving cap of Math.min(1, ...) for
-// resolved values >= 1, but when the resolved dev block is scale-to-zero
-// (max === 0), the feature deployment honors dev verbatim and produces
-// {0,0,0} (new scale-to-zero-in-feature behavior). Because feature deployments
-// run in dev, resolveReplicaCount already returns the dev block.
-// Validates: Requirements 6.1, 6.2, 6.3 (cap preserved) plus the new
-// scale-to-zero-in-feature behavior.
+// Feature deployments cap resolved values >= 1 to {1,1,1}, but honor a
+// scale-to-zero dev block ({0,0,0}) verbatim.
 describe('Feature: auth-admin-web-dev-scaledown, feature-deployment replica handling', () => {
   it('honors a scale-to-zero dev block ({0,0,0}) verbatim in a feature deployment', () => {
     // Per-env dev {0,0,0} with bypassReplicaClamp true, like auth-admin-web.

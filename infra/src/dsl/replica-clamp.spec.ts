@@ -6,10 +6,9 @@ import { renderers } from './upstream-dependencies'
 import { generateOutputOne } from './processing/rendering-pipeline'
 import { PerEnvReplicaCount, ReplicaBounds } from './types/input-types'
 
-// Base environment fixtures. `type` drives clamp/resolution behavior in the
-// generator; the non-default replica values are chosen so a clamp to
-// { min: 1, max: 2, default: 1 } is always distinguishable from resolved
-// values.
+// Feature: auth-admin-web-dev-scaledown
+// Base env fixtures; non-default replica values so the {1,2,1} clamp is
+// distinguishable from resolved values.
 const baseEnv: Omit<EnvironmentConfig, 'type' | 'domain'> = {
   auroraHost: 'a',
   redisHost: 'b',
@@ -94,12 +93,7 @@ async function generate(
 
 const CLAMP = { min: 1, max: 2, default: 1 }
 
-// Feature: auth-admin-web-dev-scaledown, Property 7: Dev/staging clamp
-// overrides resolved values without bypass — for any service generated for
-// `dev` or `staging` whose name does not include `search-indexer` and for
-// which bypassReplicaClamp is not set, the output replicaCount equals
-// { min: 1, max: 2, default: 1 } regardless of the resolved per-env values.
-// Validates: Requirements 5.1
+// Dev/staging clamp to {1,2,1} overrides resolved values when bypass is unset.
 describe('Feature: auth-admin-web-dev-scaledown, Property 7: dev/staging clamp overrides resolved values without bypass', () => {
   it('clamps to {1,2,1} for random per-env configs in dev and staging (no bypass)', async () => {
     for (let seed = 1; seed <= RUNS; seed++) {
@@ -142,11 +136,7 @@ describe('Feature: auth-admin-web-dev-scaledown, Property 7: dev/staging clamp o
   })
 })
 
-// Feature: auth-admin-web-dev-scaledown, Property 8: Bypass uses resolved
-// values in both dev and staging — for any service with bypassReplicaClamp
-// set, the output replicaCount for both dev and staging equals the resolved
-// per-environment values rather than the clamp values.
-// Validates: Requirements 5.2, 5.4
+// With bypass set, dev and staging use resolved values instead of the clamp.
 describe('Feature: auth-admin-web-dev-scaledown, Property 8: bypass uses resolved values in both dev and staging', () => {
   it('uses resolved per-env values in dev and staging when bypass is set', async () => {
     for (let seed = 1; seed <= RUNS; seed++) {
@@ -208,10 +198,7 @@ describe('Feature: auth-admin-web-dev-scaledown, Property 8: bypass uses resolve
   })
 })
 
-// Feature: auth-admin-web-dev-scaledown, Property 9: Prod never clamps — for
-// any service generated for prod, the output replicaCount equals the resolved
-// per-environment values (no clamp applied).
-// Validates: Requirements 5.3
+// Prod never clamps: output uses the resolved values.
 describe('Feature: auth-admin-web-dev-scaledown, Property 9: prod never clamps', () => {
   it('uses resolved prod values for random per-env configs (no bypass)', async () => {
     for (let seed = 1; seed <= RUNS; seed++) {
@@ -260,10 +247,7 @@ describe('Feature: auth-admin-web-dev-scaledown, Property 9: prod never clamps',
   })
 })
 
-// Example (existing exemption preserved): a service named `search-indexer` in
-// dev is NOT clamped — it keeps its explicit/resolved replica values even
-// without bypassReplicaClamp.
-// Validates: Requirements 5.1 (search-indexer exemption)
+// search-indexer is exempt from the dev/staging clamp even without bypass.
 describe('Feature: auth-admin-web-dev-scaledown, Property 7 example: search-indexer is not clamped in dev', () => {
   it('search-indexer keeps its resolved values in dev without bypass', async () => {
     const cfg: PerEnvReplicaCount = {

@@ -282,10 +282,7 @@ export type PerEnvReplicaCount = ReplicaGlobals & {
 export type ReplicaCount = FlatReplicaCount | PerEnvReplicaCount
 
 /**
- * Distinguishes the per-environment form from the flat form. The flat form
- * always carries a numeric `min` at the top level; the per-env form does not.
- * Total over the union and independent of optional fields, so a per-env config
- * with no env blocks is still classified as per-env.
+ * The flat form carries a numeric top-level `min`; the per-env form does not.
  */
 export function isPerEnvReplicaCount(
   rc: ReplicaCount,
