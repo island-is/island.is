@@ -58,7 +58,7 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     return async (plate: string) => {
       const variables = { permno: plate }
       const result = await getVehicleDetailsFunction(variables)
-      const data = result.data.vehiclePlateOrderChecksByPermno
+      const data = result.data.myVehiclePlateOrderChecksByPermno
       setValue(
         'plateType.regGroup',
         data?.basicVehicleInformation?.regGroup || '',

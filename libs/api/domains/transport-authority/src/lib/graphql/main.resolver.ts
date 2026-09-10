@@ -116,14 +116,14 @@ export class MainResolver {
 
   @Scopes(ApiScope.samgongustofaVehicles)
   @Query(() => VehiclePlateOrderChecksByPermno, {
-    name: 'vehiclePlateOrderChecksByPermno',
+    name: 'myVehiclePlateOrderChecksByPermno',
     nullable: true,
   })
-  async getVehiclePlateOrderChecksByPermno(
+  async getMyVehiclePlateOrderChecksByPermno(
     @Args('permno', { type: () => String }) permno: string,
     @CurrentUser() user: User,
   ) {
-    return await this.transportAuthorityApi.getVehiclePlateOrderChecksByPermno(
+    return await this.transportAuthorityApi.getMyVehiclePlateOrderChecksByPermno(
       user,
       permno,
     )
@@ -196,6 +196,21 @@ export class MainResolver {
     @CurrentUser() user: User,
   ) {
     return await this.transportAuthorityApi.getMyBasicVehicleInfoByPermno(
+      user,
+      permno,
+    )
+  }
+
+  @Scopes(ApiScope.samgongustofaVehicles)
+  @Query(() => BasicVehicleInformation, {
+    name: 'myVehicleMilesInfoByPermno',
+    nullable: true,
+  })
+  async getMyVehicleMilesInfoByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getMyVehicleMilesInfoByPermno(
       user,
       permno,
     )

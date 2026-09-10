@@ -120,6 +120,27 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     }
   }
 
+  private async assertUserOwnsVehicle(auth: Auth, permno: string) {
+    const result = await this.vehiclesApiWithAuth(
+      auth,
+    ).currentvehicleswithmileageandinspGet({
+      permno: permno,
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    if (!result?.data?.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehicleNotOwner,
+          summary: coreErrorMessages.vehicleNotOwner,
+        },
+        400,
+      )
+    }
+  }
+
   async getPlateTypeList() {
     return await this.vehicleCodetablesClient.getPlateTypes()
   }
@@ -129,6 +150,12 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as OrderVehicleLicensePlateAnswers
+
+    /* Answers are user-supplied, so the ownership check done when the vehicle was
+     * looked up cannot be trusted here - re-assert it against the user's own
+     * vehicles before validating, and before the payment charge is created.
+     * Owner-only, mirroring the list backing this application's vehicle picker. */
+    await this.assertUserOwnsVehicle(auth, answers?.pickVehicle?.plate)
 
     const includeRushFee =
       answers?.plateDelivery?.includeRushFee?.includes(YES) || false

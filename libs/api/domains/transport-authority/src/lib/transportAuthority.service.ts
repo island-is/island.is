@@ -35,6 +35,7 @@ import {
 import { GraphQLError } from 'graphql'
 import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
+import { isDefined } from '@island.is/shared/utils'
 import { ExemptionForTransportationClient } from '@island.is/clients/transport-authority/exemption-for-transportation'
 
 @Injectable()
@@ -71,24 +72,49 @@ export class TransportAuthorityApi {
     return { exists: hasActiveCard }
   }
 
-  private async fetchVehicleDataForOwnerCoOwner(auth: User, permno: string) {
+  /*
+   * Looks a vehicle up inside the current user's own vehicle list. Samgongustofa
+   * derive the kennitala from the bearer token, so the requested roles are the
+   * only thing that can match - an empty result means the user holds none of
+   * them on that permno. This is the ownership guard, not merely a lookup.
+   */
+  private async fetchVehicleDataForRoles(
+    auth: User,
+    permno: string,
+    roles: { owned: boolean; coOwned: boolean; operated: boolean },
+  ) {
     const result = await this.vehiclesApiWithAuth(
       auth,
     ).currentvehicleswithmileageandinspGet({
       permno: permno,
-      showOwned: true,
-      showCoowned: true,
-      showOperated: false,
+      showOwned: roles.owned,
+      showCoowned: roles.coOwned,
+      showOperated: roles.operated,
     })
     if (!result || !result.data || result.data.length === 0) {
+      const allowedRoles = [
+        roles.owned ? 'owner' : undefined,
+        roles.coOwned ? 'co-owner' : undefined,
+        roles.operated ? 'operator' : undefined,
+      ]
+        .filter(isDefined)
+        .join(' or ')
       throw Error(
-        'Did not find the vehicle with that permno, or you are neither owner nor co-owner of the vehicle',
+        `Did not find the vehicle with that permno, or you are not ${allowedRoles} of the vehicle`,
       )
     }
 
     const vehicle = result.data[0]
 
     return { vehicle }
+  }
+
+  private async fetchVehicleDataForOwnerCoOwner(auth: User, permno: string) {
+    return this.fetchVehicleDataForRoles(auth, permno, {
+      owned: true,
+      coOwned: true,
+      operated: false,
+    })
   }
 
   private async fetchVehicleDataAndMileageForOwnerCoOwner(
@@ -332,10 +358,19 @@ export class TransportAuthorityApi {
     return result
   }
 
-  async getVehiclePlateOrderChecksByPermno(
+  async getMyVehiclePlateOrderChecksByPermno(
     auth: User,
     permno: string,
   ): Promise<VehiclePlateOrderChecksByPermno | null | GraphQLError> {
+    /* Make sure user is only ordering plates for vehicles where he is the owner.
+     * Mirrors the owner-only list backing the <= 20 vehicle picker, so the
+     * free-text (> 20) path admits the same people as the picker. */
+    await this.fetchVehicleDataForRoles(auth, permno, {
+      owned: true,
+      coOwned: false,
+      operated: false,
+    })
+
     // Get basic information about vehicle
     const vehicleInfo = await this.vehiclesApiWithAuth(
       auth,
@@ -462,6 +497,28 @@ export class TransportAuthorityApi {
       // Note: subModel (vehcom+speccom) has already been added to this field
       make: vehicle.make,
       color: vehicle.colorName,
+    }
+  }
+
+  async getMyVehicleMilesInfoByPermno(
+    auth: User,
+    permno: string,
+  ): Promise<BasicVehicleInformation | null | GraphQLError> {
+    /* Mile-car is available to owners, co-owners and operators (an operator
+     * registers the odometer on a vehicle they drive but do not own), mirroring
+     * the role set backing that application's <= 20 vehicle picker. */
+    const { vehicle } = await this.fetchVehicleDataForRoles(auth, permno, {
+      owned: true,
+      coOwned: true,
+      operated: true,
+    })
+
+    return {
+      permno: vehicle.permno,
+      // Note: subModel (vehcom+speccom) has already been added to this field
+      make: vehicle.make,
+      color: vehicle.colorName,
+      vehicleHasMilesOdometer: vehicle.vehicleHasMilesOdometer ?? false,
     }
   }
 
