@@ -1217,8 +1217,7 @@ export const buildStickyFooterField = (
     widthReferenceTestId,
     watchFieldIds,
     labelOffset,
-    labelWidth,
-    valueWidth,
+    labelMinWidth,
   } = data
 
   return {
@@ -1235,8 +1234,7 @@ export const buildStickyFooterField = (
     widthReferenceTestId,
     watchFieldIds,
     labelOffset,
-    labelWidth,
-    valueWidth,
+    labelMinWidth,
   }
 }
 

@@ -89,7 +89,7 @@ export const interactiveTableSubsection = buildSubSection({
             'interactiveTableSelectedRows',
           ],
           labelOffset: 56,
-          labelWidth: 160,
+          labelMinWidth: 160,
           rows: (application: Application) => {
             const amountsToPay =
               getValueViaPath<string[]>(

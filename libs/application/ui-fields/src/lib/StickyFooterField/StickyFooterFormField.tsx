@@ -3,10 +3,9 @@ import {
   FormValue,
   StickyFooterField,
 } from '@island.is/application/types'
-import { FC, useEffect, useRef, useState } from 'react'
+import { CSSProperties, FC, Fragment, useEffect, useRef, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { Box, Text } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import * as styles from './StickyFooterFormField.css'
@@ -16,36 +15,6 @@ interface Props extends FieldBaseProps {
 }
 
 const BOTTOM_GAP = 16
-
-const FOOTER_PADDING_X = theme.spacing[2]
-
-const contentLeft = (cell: Element) => {
-  const paddingLeft = parseFloat(window.getComputedStyle(cell).paddingLeft)
-
-  return (
-    cell.getBoundingClientRect().left +
-    (Number.isNaN(paddingLeft) ? 0 : paddingLeft)
-  )
-}
-
-const measureColumns = (target: Element, targetRect: DOMRect) => {
-  const labelColumn = target.querySelector('thead th[data-column-index="0"]')
-  const valueColumn = target.querySelector('thead th[data-column-index="1"]')
-  const table = target.querySelector('table')
-
-  if (!labelColumn || !valueColumn || !table) {
-    return null
-  }
-
-  if (table.getBoundingClientRect().width > targetRect.width + 1) {
-    return null
-  }
-
-  return {
-    labelOffset: contentLeft(labelColumn) - targetRect.left - FOOTER_PADDING_X,
-    labelWidth: contentLeft(valueColumn) - contentLeft(labelColumn),
-  }
-}
 
 export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
   const { formatMessage } = useLocale()
@@ -72,7 +41,6 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
     isFloating: boolean
     left: number
     width: number
-    columns: { labelOffset: number; labelWidth: number } | null
   } | null>(null)
 
   useEffect(() => {
@@ -95,7 +63,6 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
         isFloating: targetRect.bottom > floatingTopY,
         left: targetRect.left,
         width: targetRect.width,
-        columns: measureColumns(target, targetRect),
       })
     }
 
@@ -125,15 +92,14 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
     return null
   }
 
-  const labelWidth = state.columns?.labelWidth ?? field.labelWidth
-  const labelStyle =
-    labelWidth === undefined
-      ? { flexGrow: 1 }
-      : {
-          marginLeft: state.columns?.labelOffset ?? field.labelOffset,
-          width: labelWidth,
-          flexShrink: 0,
-        }
+  const gridStyle = {
+    '--sticky-footer-label-indent':
+      field.labelOffset === undefined ? undefined : `${field.labelOffset}px`,
+    '--sticky-footer-label-min-width':
+      field.labelMinWidth === undefined
+        ? undefined
+        : `${field.labelMinWidth}px`,
+  } as CSSProperties
 
   return (
     <Box
@@ -146,39 +112,26 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
       }
     >
       <Box
-        paddingLeft={2}
-        paddingRight={2}
-        paddingTop={1}
-        paddingBottom={1}
         borderRadius="large"
+        style={gridStyle}
         className={
           state.isFloating
-            ? `${styles.footer} ${styles.floatingShadow}`
-            : styles.footer
+            ? `${styles.grid} ${styles.footer} ${styles.floatingShadow}`
+            : `${styles.grid} ${styles.footer}`
         }
       >
         {rows.map((row, index) => (
-          <Box
-            key={`sticky-footer-row-${index}`}
-            paddingTop={1}
-            paddingBottom={1}
-            className={styles.row}
-          >
-            <Box style={labelStyle}>
+          <Fragment key={`sticky-footer-row-${index}`}>
+            <Box className={`${styles.cell} ${styles.labelCell}`}>
               <Text
+                truncate
                 variant="medium"
                 fontWeight={index === 0 ? 'semiBold' : 'regular'}
               >
                 {formatText(row.label, application, formatMessage)}
               </Text>
             </Box>
-            <Box
-              style={
-                field.valueWidth
-                  ? { width: field.valueWidth, flexShrink: 0 }
-                  : undefined
-              }
-            >
+            <Box className={`${styles.cell} ${styles.valueCell}`}>
               <Text
                 variant="medium"
                 fontWeight={index === 0 ? 'semiBold' : 'regular'}
@@ -186,7 +139,7 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
                 {formatText(row.value, application, formatMessage)}
               </Text>
             </Box>
-          </Box>
+          </Fragment>
         ))}
       </Box>
     </Box>

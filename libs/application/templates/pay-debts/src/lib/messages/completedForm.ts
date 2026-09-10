@@ -29,7 +29,8 @@ export const completedForm = defineMessages({
   },
   financeButtonMessage: {
     id: 'pd.application:completedForm.financeButtonMessage',
-    defaultMessage: 'Á síðum Fjármála getur þú nú séð uppfærða stöðu',
+    defaultMessage:
+      'Á mínum síðum undir Fjármál getur þú nú séð uppfærða stöðu.',
     description: 'Message above the button that opens Fjármál',
   },
   financeButtonLabel: {

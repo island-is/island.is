@@ -112,6 +112,8 @@ export const debtsSection = buildSection({
           condition: hasDebtsToPay,
           widthReferenceTestId: 'debts-table',
           watchFieldIds: ['debtsToPay', 'selectedDebts'],
+          labelOffset: 56,
+          labelMinWidth: 180,
           rows: (application: Application) => {
             const totalDebts = getDebts(application).reduce(
               (total, debt) => total + debt.debts,
