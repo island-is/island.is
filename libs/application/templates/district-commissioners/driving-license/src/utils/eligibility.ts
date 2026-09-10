@@ -156,7 +156,12 @@ export const buildTypeEligibility = (
     requirements: [
       ...serverResult.requirements,
       ...(extended
-        ? [{ key: RequirementKey.noExtendedDrivingLicense, requirementMet: false }]
+        ? [
+            {
+              key: RequirementKey.noExtendedDrivingLicense,
+              requirementMet: false,
+            },
+          ]
         : []),
     ],
   }

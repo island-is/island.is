@@ -38,7 +38,10 @@ export const sectionApplicationFor = (allow65Renewal = false) =>
                 app.answers,
                 'fakeData',
               )
-              const candidates = structuralCandidates(app.externalData, fakeData)
+              const candidates = structuralCandidates(
+                app.externalData,
+                fakeData,
+              )
 
               const options: Array<{
                 label: typeof m.applicationForTempLicenseTitle

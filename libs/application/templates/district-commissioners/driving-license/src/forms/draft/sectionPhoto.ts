@@ -10,7 +10,10 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { requirementsMessages, m } from '../../lib/messages'
-import { hasNoDrivingLicenseInOtherCountry, hasUsableRlsQualityPhoto } from '../../utils'
+import {
+  hasNoDrivingLicenseInOtherCountry,
+  hasUsableRlsQualityPhoto,
+} from '../../utils'
 
 export interface ThjodskraImage {
   biometricId: string
