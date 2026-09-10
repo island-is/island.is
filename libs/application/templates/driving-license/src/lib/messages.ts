@@ -466,6 +466,23 @@ export const m = defineMessages({
     defaultMessage: 'Tegund umsóknar',
     description: 'Type of application for driving license',
   },
+  digitalLicenseSubSectionTitle: {
+    id: 'dl.application:digitalLicense.subSectionTitle',
+    defaultMessage: 'Stafrænt skírteini',
+    description: 'Title of the digital-licence information sub-section',
+  },
+  digitalLicenseAlertTitle: {
+    id: 'dl.application:digitalLicense.alertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Title of the digital-licence information alert box',
+  },
+  digitalLicenseAlertMessage: {
+    id: 'dl.application:digitalLicense.alertMessage',
+    defaultMessage:
+      'Ökuskírteinið þitt verður fyrst gefið út á stafrænu formi og verður aðgengilegt um leið og þú hefur lokið þessari umsókn. Plastökuskírteini er framleitt í kjölfarið og sent með Póstinum á skráð lögheimili þitt þegar það er tilbúið.',
+    description:
+      'Body of the digital-licence information alert: licence is issued digitally first, plastic card mailed afterwards',
+  },
   drivingLicenseApplyingForTitle: {
     id: 'dl.application:drivingLicenseApplyingForTitle',
     defaultMessage: 'Ég er að sækja um:',
