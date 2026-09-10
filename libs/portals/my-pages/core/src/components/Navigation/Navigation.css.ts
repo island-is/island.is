@@ -86,10 +86,13 @@ export const listItem = style({
 })
 
 export const itemLevel = styleVariants({
-  1: {},
+  1: {
+    paddingTop: 2,
+    paddingBottom: 2,
+  },
   2: {
-    paddingBottom: theme.spacing['smallGutter'],
-    paddingTop: theme.spacing['smallGutter'],
+    paddingTop: 2,
+    paddingBottom: 2,
   },
 })
 

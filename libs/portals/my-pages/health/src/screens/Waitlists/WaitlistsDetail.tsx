@@ -2,7 +2,7 @@ import { HealthDirectorateWaitlist } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatDate,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
@@ -37,8 +37,8 @@ const WaitlistsDetail: React.FC = () => {
       title={formatMessage(messages.waitlists)}
       intro={formatMessage(messages.waitlistsIntro)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirWaitlistTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaWaitlistTooltip),
       }}
       marginBottom={6}
       desktopContentSpan="10/12"
