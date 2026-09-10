@@ -205,12 +205,11 @@ const VerdictTimelineCard: FC<Props> = (props) => {
         }),
       })
 
+      // Same wording as the defence card (design, 2026-09-10).
       pushIf(
         !!verdict?.appealDate,
         withAppealDefender(
-          formatMessage(strings.defendantAppealDate, {
-            date: formatDate(verdict?.appealDate),
-          }),
+          `Dómfelldi áfrýjaði ${formatDate(verdict?.appealDate)}`,
           defendant.appealDefenderName,
         ),
       )

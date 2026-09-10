@@ -571,7 +571,7 @@ describe('VerdictTimelineCard', () => {
 
       expect(
         await screen.findByText(
-          /Dómi áfrýjað 16\.08\.2026 \(Vaka Dagsdóttir verjandi\)/,
+          /Dómfelldi áfrýjaði 16\.08\.2026 \(Vaka Dagsdóttir verjandi\)/,
         ),
       ).toBeInTheDocument()
     })
