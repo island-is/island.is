@@ -175,7 +175,8 @@ const ModifyDatesModal: FC<Props> = ({
   isUpdatingCase,
   closeModal,
 }) => {
-  const [modifiedValidToDate, setModifiedValidToDate] = useState<DateTimeValue>()
+  const [modifiedValidToDate, setModifiedValidToDate] =
+    useState<DateTimeValue>()
   const [modifiedIsolationToDate, setModifiedIsolationToDate] =
     useState<DateTimeValue>()
   const [caseModifiedExplanation, setCaseModifiedExplanation] =
