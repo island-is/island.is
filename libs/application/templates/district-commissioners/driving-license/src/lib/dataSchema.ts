@@ -11,7 +11,6 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 }
 
 export const dataSchema = z.object({
-  type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
   delivery: z
     .object({
@@ -44,6 +43,14 @@ export const dataSchema = z.object({
   applicationFor: z.enum([B_FULL, B_TEMP, B_FULL_RENEWAL_65]),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  // Only collected for B_TEMP (the instructor screen is hidden for B_FULL /
+  // B_FULL_RENEWAL_65). Under partial validation this already gives the intended
+  // per-type behaviour: enforced non-empty for B_TEMP (present + `.min(1)`),
+  // skipped when absent for the other types. It is deliberately NOT expressed as
+  // a cross-field rule — that requires a top-level `superRefine`, which converts
+  // `dataSchema` to a ZodEffects and flips the shared validator from partial to
+  // full-schema validation on every save (libs/application/core/src/validation/
+  // validators.ts), breaking the draft flow.
   drivingInstructor: z.string().min(1),
   otherCountry: z
     .object({

@@ -18,7 +18,7 @@ export const sectionDelivery = buildSection({
   condition: hasNoDrivingLicenseInOtherCountry,
   children: [
     buildMultiField({
-      id: 'info',
+      id: 'deliveryInfo',
       title: m.pickupLocationTitle,
       description: m.pickupLocationDescription,
       children: [

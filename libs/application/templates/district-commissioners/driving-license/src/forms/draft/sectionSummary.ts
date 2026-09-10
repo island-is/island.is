@@ -55,12 +55,15 @@ const teacherName = (answers: FormValue, externalData: ExternalData): string => 
     const teacher = teachers.find(
       ({ nationalId }) => nationalId === selectedNationalId,
     )
-    // Fall back to the kennitala if the chosen instructor isn't in the
-    // (snapshot) list — e.g. an instructor registered after this application
-    // was created, now selectable via the live dropdown.
+    // If the chosen instructor isn't in the (snapshot) list — e.g. one
+    // registered after this application was created, now selectable via the
+    // live dropdown — fall back to the six-digit (DDMMYY) prefix of their
+    // kennitala rather than rendering the full national ID on the overview.
     return (
       teacher?.name ??
-      (selectedNationalId ? formatNationalId(selectedNationalId) : '')
+      (selectedNationalId
+        ? selectedNationalId.replace(/\D/g, '').slice(0, 6)
+        : '')
     )
   }
   return (

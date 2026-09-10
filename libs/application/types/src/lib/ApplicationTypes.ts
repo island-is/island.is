@@ -158,7 +158,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: {
     slug: 'okuskirteini-syslumadur',
-    translation: ['dl.application', 'uiForms.application'],
+    translation: ['dl.dc.application', 'uiForms.application'],
   },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     slug: 'akstursmat',

@@ -2,351 +2,351 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   externalDataAgreement: {
-    id: 'dl.application:externalData.agreement',
+    id: 'dl.dc.application:externalData.agreement',
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
   externalDataTitle: {
-    id: 'dl.application:externalData.title',
+    id: 'dl.dc.application:externalData.title',
     defaultMessage: 'Umsókn um ökuskírteini',
     description: 'Title of the application',
   },
   externalDataSubTitle: {
-    id: 'dl.application:externalData.subTitle',
+    id: 'dl.dc.application:externalData.subTitle',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'The following data will be retrieved electronically',
   },
   yes: {
-    id: 'dl.application:shared.yes',
+    id: 'dl.dc.application:shared.yes',
     defaultMessage: 'Já',
     description: 'Yes',
   },
   no: {
-    id: 'dl.application:shared.no',
+    id: 'dl.dc.application:shared.no',
     defaultMessage: 'Nei',
     description: 'No',
   },
   applicationName: {
-    id: 'dl.application:application.name',
+    id: 'dl.dc.application:application.name',
     defaultMessage: 'Ökuskírteini',
     description: 'Driving license',
   },
   externalDataSection: {
-    id: 'dl.application:externalData.section',
+    id: 'dl.dc.application:externalData.section',
     defaultMessage: 'Forsendur',
     description: 'Information',
   },
   externalDataComplete: {
-    id: 'dl.application:externalData.complete',
+    id: 'dl.dc.application:externalData.complete',
     defaultMessage: 'Uppfletting í lagi',
     description: 'Information',
   },
   nationalRegistryTitle: {
-    id: 'dl.application:nationalRegistry.title',
+    id: 'dl.dc.application:nationalRegistry.title',
     defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
     description: 'Personal information from the National Registry',
   },
   nationalRegistrySubTitle: {
-    id: 'dl.application:nationalRegistry.subTitle',
+    id: 'dl.dc.application:nationalRegistry.subTitle',
     defaultMessage:
       'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
     description:
       'Information from the National Registry will be used to prefill the data in the application',
   },
   userProfileInformationTitle: {
-    id: 'dl.application:userprofile.title',
+    id: 'dl.dc.application:userprofile.title',
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
     description: 'Your user profile information',
   },
   userProfileInformationSubTitle: {
-    id: 'dl.application:userprofile.subTitle',
+    id: 'dl.dc.application:userprofile.subTitle',
     defaultMessage:
       'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
     description:
       'In order to apply for this application we need your email and phone number',
   },
   residenceTitle: {
-    id: 'dl.application:residence.title',
+    id: 'dl.dc.application:residence.title',
     defaultMessage: 'Búseta',
     description: 'Residence',
   },
   residenceSubTitle: {
-    id: 'dl.application:residence.subtitle',
+    id: 'dl.dc.application:residence.subtitle',
     defaultMessage:
       'Ég hef fasta búsetu hér á landi eins og hún er skilgreind í VIII. viðauka reglugerðar um ökuskírteini eða tel mig fullnægja skilyrðum um búsetu hér á landi til að fá gefið út ökuskírteini.',
     description:
       "I've lived in Iceland according to VIII and here by confirm that I meet the conditions to apply for a driving license",
   },
   glassesPrescriptionTitle: {
-    id: 'dl.application:glassesPrescription.title',
+    id: 'dl.dc.application:glassesPrescription.title',
     defaultMessage: 'Gleraugnavottorð',
     description: 'Glasses prescription',
   },
   glassesPrescriptionSubTitle: {
-    id: 'dl.application:glassesPrescription.subtitle',
+    id: 'dl.dc.application:glassesPrescription.subtitle',
     defaultMessage:
       'Til þess að auðvelda umsóknarferlið er sótt gleraugnavottorð frá samgöngustofu',
     description:
       'In order to facilitate the application process, a glasses certificate is obtained from the transport office',
   },
   informationSectionTitle: {
-    id: 'dl.application:informationSection.title',
+    id: 'dl.dc.application:informationSection.title',
     defaultMessage: 'Sýslumannsembætti',
     description: 'Information',
   },
   pickupLocationTitle: {
-    id: 'dl.application:pickupLocationTitle',
+    id: 'dl.dc.application:pickupLocationTitle',
     defaultMessage: 'Afhendingarstaður',
     description: 'location for pickup',
   },
   pickupLocationDescription: {
-    id: 'dl.application:pickupLocationDescription',
+    id: 'dl.dc.application:pickupLocationDescription',
     defaultMessage:
       'Veldu hvort þú vilt fá ökuskírteinið sent á lögheimili með pósti eða sækja það hjá völdu sýslumannsembætti.',
     description: 'location for pickup',
   },
   postalCodeTooltip: {
-    id: 'dl.application:postalCodeTooltip',
+    id: 'dl.dc.application:postalCodeTooltip',
     defaultMessage: 'Póstnúmer {zip}',
     description:
       'Postal code tooltip shown on a jurisdiction (sýslumaður) option',
   },
   deliveryMethodHeader: {
-    id: 'dl.application:deliveryMethodHeader',
+    id: 'dl.dc.application:deliveryMethodHeader',
     defaultMessage: 'Hvernig vilt þú fá plastökuskírteini þitt afhent?',
     description: 'Where do you want to pick up your driving license?',
   },
   informationApplicant: {
-    id: 'dl.application:information.applicant',
+    id: 'dl.dc.application:information.applicant',
     defaultMessage: 'Umsækjandi',
     description: 'Applicant',
   },
   informationApplicantDescription: {
-    id: 'dl.application:information.applicantDescription',
+    id: 'dl.dc.application:information.applicantDescription',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingar hér að neðan til að staðfesta að þær séu réttar.',
     description: '',
   },
   healthDeclarationSectionTitle: {
-    id: 'dl.application:healthDeclarationSection.title',
+    id: 'dl.dc.application:healthDeclarationSection.title',
     defaultMessage: 'Læknisvottorð',
     description: 'Health declaration',
   },
   healthDeclarationMultiFieldTitle: {
-    id: 'dl.application:healthDeclarationMultiField.title',
+    id: 'dl.dc.application:healthDeclarationMultiField.title',
     defaultMessage: 'Læknisvottorð',
     description: 'Health declaration',
   },
   healthDeclarationMultiField65Description: {
-    id: 'dl.application:healthDeclarationMultiField65Description#markdown',
+    id: 'dl.dc.application:healthDeclarationMultiField65Description#markdown',
     defaultMessage:
       'Þú þarft að skila inn læknisvottorði vegna ökuleyfis til að endurnýja ökuskírteini þitt. Læknisvottorðið þarf að vera frá **heimilislækni** og vegna ökuleyfis. Þegar búið er að ljúka umsókn þarf að skila inn læknisvottorði á valið sýslumannsembætti til að hægt sé að panta skírteinið.  **Athugið að skírteinið verður ekki pantað fyrr en búið er að skila inn vottorði.**',
     description: 'Health declaration',
   },
   healthDeclarationMultiField65DescriptionRedesigned: {
-    id: 'dl.application:healthDeclarationMultiField65DescriptionRedesigned#markdown',
+    id: 'dl.dc.application:healthDeclarationMultiField65DescriptionRedesigned#markdown',
     defaultMessage:
       'Þú þarft að skila inn læknisvottorði vegna ökuleyfis til að endurnýja ökuskírteini þitt. Læknisvottorðið þarf að vera frá **heimilislækni** og má ekki vera eldra en 3 mánaða. Hladdu vottorðinu hér að neðan til að halda áfram með umsóknina. Starfsmaður mun fara yfir vottorðið og samþykkja það áður en nýtt skírteini er pantað.',
     description:
       'Health declaration intro for 65+ renewal redesigned flow (in-app upload)',
   },
   healthDeclarationMultiFieldSubTitle: {
-    id: 'dl.application:healthDeclarationMultiField.subTitle',
+    id: 'dl.dc.application:healthDeclarationMultiField.subTitle',
     defaultMessage: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
     description: 'Statement of physical and mental health',
   },
   declaration: {
-    id: 'dl.application:declaration',
+    id: 'dl.dc.application:declaration',
     defaultMessage: 'Yfirlýsing',
     description: '',
   },
   healthDeclarationSubTitle: {
-    id: 'dl.application:healthDeclarationSubTitle',
+    id: 'dl.dc.application:healthDeclarationSubTitle',
     defaultMessage:
       'Ef einhverri spurningu er svarað játandi í heilbrigðisyfirlýsingu þarf læknisvottorð frá heimilislækni eða viðeigandi sérfræðilækni.',
     description: '',
   },
   healthDeclarationAge65MultiFieldSubTitle: {
-    id: 'dl.application:healthDeclarationAge65MultiFieldSubTitle.subTitle',
+    id: 'dl.dc.application:healthDeclarationAge65MultiFieldSubTitle.subTitle',
     defaultMessage:
       'Við endurnýjun ökuskírteinis fyrir 65 ára og eldri þarf að skila inn læknisvottorði frá heimilislækni. Vottorðið má ekki vera eldra en 3 mánaða.',
     description: 'Health declaration for 65+',
   },
   alertHealthDeclarationGlassesMismatch: {
-    id: 'dl.application:alertHealthDeclarationGlassesMismatch',
+    id: 'dl.dc.application:alertHealthDeclarationGlassesMismatch',
     defaultMessage:
       'Athugaðu að þar sem breyting hefur orðið á sjón síðan síðast var sótt um ökuskírteini þarftu að skila vottorði frá heimilislækni þess efnis.',
     description: '',
   },
   healthDeclaration1: {
-    id: 'dl.application:healthDeclaration.1',
+    id: 'dl.dc.application:healthDeclaration.1',
     defaultMessage: '1. Notar þú gleraugu, snertilinsur eða hefur skerta sjón?',
     description:
       '1. Do you wear glasses, contact lenses or have impaired vision?',
   },
   healthDeclaration2: {
-    id: 'dl.application:healthDeclaration.2',
+    id: 'dl.dc.application:healthDeclaration.2',
     defaultMessage:
       '2. Hefur þú skert sjónsvið til annarrar hliðar eða beggja?',
     description:
       '2. Do you have limited peripheral vision to one side or both?',
   },
   healthDeclaration3: {
-    id: 'dl.application:healthDeclaration.3',
+    id: 'dl.dc.application:healthDeclaration.3',
     defaultMessage:
       '3. Hefur þú verið flogaveik(ur) eða orðið fyrir alvarlegri truflun á meðvitund og stjórn hreyfinga?',
     description:
       '3. Have you had epilepsy or a severe disturbance of consciousness and control of movement?',
   },
   healthDeclaration4: {
-    id: 'dl.application:healthDeclaration.4',
+    id: 'dl.dc.application:healthDeclaration.4',
     defaultMessage:
       '4. Hefur þú nú eða hefur þú haft alvarlegan hjartasjúkdóm?',
     description:
       '4. Do you now have or have you had a serious heart condition?',
   },
   healthDeclaration5: {
-    id: 'dl.application:healthDeclaration.5',
+    id: 'dl.dc.application:healthDeclaration.5',
     defaultMessage: '5. Hefur þú nú eða hefur þú haft alvarlegan geðsjúkdóm?',
     description: '5. Do you now have or have you had a serious mental illness?',
   },
   healthDeclaration6: {
-    id: 'dl.application:healthDeclaration.6',
+    id: 'dl.dc.application:healthDeclaration.6',
     defaultMessage:
       '6. Notar þú að staðaldri læknislyf eða lyfjablöndur sem geta haft áhrif á meðvitund?',
     description:
       '6. Do you always use medicines or combinations of medicines that may affect your consciousness?',
   },
   healthDeclaration7: {
-    id: 'dl.application:healthDeclaration.7',
+    id: 'dl.dc.application:healthDeclaration.7',
     defaultMessage:
       '7. Ert þú háð(ur) áfengi, ávana- og/eða fíkniefnum eða misnotar þú geðræn lyf sem verkað gætu á meðvitund?',
     description:
       '7. Are you addicted to alcohol, drugs and/or drugs or are you abusing psychotropic drugs that could affect your consciousness?',
   },
   healthDeclaration8: {
-    id: 'dl.application:healthDeclaration.8',
+    id: 'dl.dc.application:healthDeclaration.8',
     defaultMessage: '8. Notar þú insúlín og/eða töflur við sykursýki?',
     description: '8. Do you use insulin and/or tablets for diabetes?',
   },
   healthDeclaration9: {
-    id: 'dl.application:healthDeclaration.9',
+    id: 'dl.dc.application:healthDeclaration.9',
     defaultMessage:
       '9. Hefur þú nú eða hefur þú haft hömlur í hreyfikerfi líkamans?',
     description:
       "9. Do you now have or have you had restrictions on your body's motor system?",
   },
   healthDeclaration10: {
-    id: 'dl.application:healthDeclaration.10',
+    id: 'dl.dc.application:healthDeclaration.10',
     defaultMessage:
       '10. Átt þú við einhvern annan sjúkdóm að stríða sem þú telur að geti haft áhrif á öryggi þitt í akstri í framtíðinni?',
     description:
       '10. Do you have any other illnesses that you think may affect your driving safety in the future?',
   },
   overviewSectionTitle: {
-    id: 'dl.application:overviewSection.title',
+    id: 'dl.dc.application:overviewSection.title',
     defaultMessage: 'Staðfesting',
     description: 'Confirmation',
   },
   overviewMultiFieldTitle: {
-    id: 'dl.application:overviewMultiField.title',
+    id: 'dl.dc.application:overviewMultiField.title',
     defaultMessage: 'Yfirlit',
     description: 'Overview',
   },
   overviewMultiFieldDescription: {
-    id: 'dl.application:overviewMultiField.Description',
+    id: 'dl.dc.application:overviewMultiField.Description',
     defaultMessage:
       'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
     description: "Please review the data below to confirm they're correct.",
   },
   overviewSubType: {
-    id: 'dl.application:overview.subType',
+    id: 'dl.dc.application:overview.subType',
     defaultMessage: 'Tegund ökuréttinda',
     description: 'Driving license type',
   },
   overviewName: {
-    id: 'dl.application:overview.Name',
+    id: 'dl.dc.application:overview.Name',
     defaultMessage: 'Nafn',
     description: 'Name',
   },
   overviewPhoneNumber: {
-    id: 'dl.application:overview.phoneNumber',
+    id: 'dl.dc.application:overview.phoneNumber',
     defaultMessage: 'Sími',
     description: 'Phone number',
   },
   overviewNationalId: {
-    id: 'dl.application:overview.nationalId',
+    id: 'dl.dc.application:overview.nationalId',
     defaultMessage: 'Kennitala',
     description: 'National Id',
   },
   overviewStreetAddress: {
-    id: 'dl.application:overview.streetAddress',
+    id: 'dl.dc.application:overview.streetAddress',
     defaultMessage: 'Heimilisfang',
     description: 'Street address',
   },
   overviewPostalCode: {
-    id: 'dl.application:overview.postalCode',
+    id: 'dl.dc.application:overview.postalCode',
     defaultMessage: 'Póstnúmer',
     description: 'Postal code',
   },
   overviewEmail: {
-    id: 'dl.application:overview.email',
+    id: 'dl.dc.application:overview.email',
     defaultMessage: 'Netfang',
     description: 'Email',
   },
   overviewCity: {
-    id: 'dl.application:overview.City',
+    id: 'dl.dc.application:overview.City',
     defaultMessage: 'Staður',
     description: 'City',
   },
   overviewTeacher: {
-    id: 'dl.application:overview.teacher',
+    id: 'dl.dc.application:overview.teacher',
     defaultMessage: 'Ökukennari',
     description: 'Teacher',
   },
   applicationQualityPhotoTitle: {
-    id: 'dl.application:applicationQualityPhotoTitle',
+    id: 'dl.dc.application:applicationQualityPhotoTitle',
     defaultMessage: 'Ljósmynd',
     description: 'title for quality photo section',
   },
   qualityPhotoTitle: {
-    id: 'dl.application:qualityPhotoTitle',
+    id: 'dl.dc.application:qualityPhotoTitle',
     defaultMessage: 'Ljósmynd í ökuskírteinaskrá',
     description: 'title for quality photo section',
   },
   qualityPhotoAltText: {
-    id: 'dl.application:qualityPhotoAltText',
+    id: 'dl.dc.application:qualityPhotoAltText',
     defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
     description: `Alt text for the user's quality photo`,
   },
   qualityPhotoSubTitle: {
-    id: 'dl.application:qualityPhotoSubTitle',
+    id: 'dl.dc.application:qualityPhotoSubTitle',
     defaultMessage: 'Hér er núverandi ljósmynd í ökuskírteinaskrá',
     description: 'sub title for quality photo section',
   },
   qualityPhotoWarningTitle: {
-    id: 'dl.application:qualityPhotoWarningTitle',
+    id: 'dl.dc.application:qualityPhotoWarningTitle',
     defaultMessage: 'Ljósmynd í ökuskírteinaskrá ekki gæðamerkt',
     description: 'title for quality photo warning',
   },
   qualityPhotoWarningDescription: {
-    id: 'dl.application:qualityPhotoWarningDescription',
+    id: 'dl.dc.application:qualityPhotoWarningDescription',
     defaultMessage:
       'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
     description: 'Description for quality photo warning',
   },
   qualityPhotoAcknowledgement: {
-    id: 'dl.application:qualityPhoto.acknowledgement',
+    id: 'dl.dc.application:qualityPhoto.acknowledgement',
     defaultMessage: 'Ég kem með nýja ljósmynd til sýslumanns',
     description: 'I will bring a new photo',
   },
   qualityPhotoNoAcknowledgement: {
-    id: 'dl.application:qualityPhoto.noacknowledgement',
+    id: 'dl.dc.application:qualityPhoto.noacknowledgement',
     defaultMessage: 'Ég staðfesti að nota núverandi mynd',
     description: 'I want to use current photo',
   },
   qualityPhotoInstructions: {
-    id: 'dl.application:qualityPhoto.instructions',
+    id: 'dl.dc.application:qualityPhoto.instructions',
     defaultMessage: `
     Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats)
     og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi
@@ -356,192 +356,192 @@ export const m = defineMessages({
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionBullets: {
-    id: 'dl.application:qualityPhoto.instructionbullets#markdown',
+    id: 'dl.dc.application:qualityPhoto.instructionbullets#markdown',
     defaultMessage:
       '* Myndin skal vera andlitsmynd, tekin þannig að andlitið snúi beint að myndavél og bæði augu sjáist.\n* Umsækjandi má ekki bera höfuðfat. Þó má heimila slíkt ef umsækjandi fer fram á það af trúarástæðum.\n* Lýsing andlits þarf að vera jöfn og góð.\n* Umsækjandi má ekki bera dökk gleraugu eða gleraugu með speglun.\n* Myndin skal vera jafnlýst, bakgrunnur ljósgrár, hlutlaus og án skugga.\n* Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.',
     description: 'Description of photo requirements',
   },
   overviewBringAlongTitle: {
-    id: 'dl.application:overview.overviewBringAlongTitle',
+    id: 'dl.dc.application:overview.overviewBringAlongTitle',
     defaultMessage: 'Gögn höfð meðferðis til sýslumanns',
     description: `Data to bring along`,
   },
   overviewBringCertificateData: {
-    id: 'dl.application:overview.bringCertificateData',
+    id: 'dl.dc.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
     description: `I'll bring a certificate from a doctor`,
   },
   overviewPickupPost: {
-    id: 'dl.application:overview.pickupPost',
+    id: 'dl.dc.application:overview.pickupPost',
     defaultMessage: 'Sent heim í pósti',
     description: 'By mail',
   },
   overviewPickupDistrict: {
-    id: 'dl.application:overview.pickupDistrict',
+    id: 'dl.dc.application:overview.pickupDistrict',
     defaultMessage: 'Sækja á afhendingarstað',
     description: 'Pickup location',
   },
   applicationDone: {
-    id: 'dl.application:overview.done',
+    id: 'dl.dc.application:overview.done',
     defaultMessage: 'Umsókn móttekin',
     description: 'Confirmation',
   },
   applicationDenied: {
-    id: 'dl.application:applicationDenied',
+    id: 'dl.dc.application:applicationDenied',
     defaultMessage: 'Umsókn hafnað',
     description: 'Application denied',
   },
   overviewPaymentCharge: {
-    id: 'dl.application:overview.paymentcharge',
+    id: 'dl.dc.application:overview.paymentcharge',
     defaultMessage: 'Greiðsla',
     description: 'Cost',
   },
   overviewPaymentChargeWithDelivery: {
-    id: 'dl.application:overview.paymentChargeWithDelivery',
+    id: 'dl.dc.application:overview.paymentChargeWithDelivery',
     defaultMessage: 'Greiðsla (sendingarkostnaður innifalinn)',
     description: 'Cost',
   },
   errorDataProvider: {
-    id: 'dl.application:error.dataProvider',
+    id: 'dl.dc.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in driving license data provider',
   },
   orderDrivingLicense: {
-    id: 'dl.application:order.drivingLicense',
+    id: 'dl.dc.application:order.drivingLicense',
     defaultMessage: 'Panta ökuskírteini',
     description: 'Order driving license',
   },
   continue: {
-    id: 'dl.application:continue',
+    id: 'dl.dc.application:continue',
     defaultMessage: 'Halda áfram',
     description: 'Continue',
   },
   payment: {
-    id: 'dl.application:DrivingLicenseApplicationPaymentForm',
+    id: 'dl.dc.application:DrivingLicenseApplicationPaymentForm',
     defaultMessage: 'greiðsla',
     description: 'payment',
   },
   paymentPendingConfirmation: {
-    id: 'dl.application:paymentPendingConfirmation',
+    id: 'dl.dc.application:paymentPendingConfirmation',
     defaultMessage: 'Beðið eftir staðfestingu greiðsluveitu',
     description: 'Pending confirmation from payment handler',
   },
   applicationForDrivingLicense: {
-    id: 'dl.application:applicationForDrivingLicense',
+    id: 'dl.dc.application:applicationForDrivingLicense',
     defaultMessage: 'Umsókn um ökuskírteini',
     description: 'Application for driving license',
   },
   eligibilityRequirementTitle: {
-    id: 'dl.application:eligibilityTitle',
+    id: 'dl.dc.application:eligibilityTitle',
     defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla:',
     description: 'title for requirement component',
   },
   applicationEligibilityTitle: {
-    id: 'dl.application:applicationEligibilityTitle',
+    id: 'dl.dc.application:applicationEligibilityTitle',
     defaultMessage: 'Skilyrði umsóknar',
     description: 'title for requirement section',
   },
   applicationDrivingLicenseTitle: {
-    id: 'dl.application:applicationDrivingLicenseTitle',
+    id: 'dl.dc.application:applicationDrivingLicenseTitle',
     defaultMessage: 'Tegund umsóknar',
     description: 'Type of application for driving license',
   },
   drivingLicenseApplyingForTitle: {
-    id: 'dl.application:drivingLicenseApplyingForTitle',
+    id: 'dl.dc.application:drivingLicenseApplyingForTitle',
     defaultMessage: 'Ég er að sækja um:',
     description: 'I am applying for:',
   },
   congratulationsHelpText: {
-    id: 'dl.application:congratulationsHelpText',
+    id: 'dl.dc.application:congratulationsHelpText',
     defaultMessage:
       'Umsókn þín um fullnaðarskírteinið hefur verið móttekin. Áður en hægt er að panta fullnaðarskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum.',
     description:
       'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
   },
   localResidencyDaysSpent: {
-    id: 'dl.application:localResidencyDaysSpent',
+    id: 'dl.dc.application:localResidencyDaysSpent',
     defaultMessage:
       '{days, plural, one {Þú hefur aðeins búið á Íslandi í # dag.} other {Þú hefur aðeins búið á Íslandi í # daga.}}',
     description:
       'Shown under the residency requirement: number of days the applicant has lived in Iceland (ICU plural)',
   },
   loadingEligibility: {
-    id: 'dl.application:loadingEligibility',
+    id: 'dl.dc.application:loadingEligibility',
     defaultMessage: 'Sæki upplýsingar',
     description:
       'Screen-reader label for the loading spinner while eligibility is being fetched',
   },
   congratulationsTempHelpText: {
-    id: 'dl.application:congratulationsTempHelpText',
+    id: 'dl.dc.application:congratulationsTempHelpText',
     defaultMessage:
       'Umsókn þín um bráðabirgðaskírteini hefur verið móttekin. Áður en hægt er að panta bráðabirgðaskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum.',
     description:
       'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
   },
   congratulationsTitleSuccess: {
-    id: 'dl.application:congratulationsTitleSuccess',
+    id: 'dl.dc.application:congratulationsTitleSuccess',
     defaultMessage:
       'Umsókn þín um fullnaðarskírteini tókst og verður tilbúið á afhendingarstað eftir 3 til 4 vikur. Skila þarf inn bráðabirgðaskírteini til sýslumanns við afhendingu fullnaðarskírteinis.',
     description: 'Your application for full driving license was successful.',
   },
   congratulationsTempTitleSuccess: {
-    id: 'dl.application:congratulationsTempTitleSuccess',
+    id: 'dl.dc.application:congratulationsTempTitleSuccess',
     defaultMessage:
       'Umsókn þín um að hefja ökunám og fá bráðabirgðaskírteini hefur verið móttekin. Þegar þú hefur lokið ökunámi og staðist bæði verklegt og bóklegt ökupróf, verður skírteini þitt pantað og tilbúið til afhendingar hjá völdu sýslumannsembætti þremur vikum síðar.',
     description: 'Your application for full driving license was successful.',
   },
   congratulationsTitle: {
-    id: 'dl.application:congratulationsTitle',
+    id: 'dl.dc.application:congratulationsTitle',
     defaultMessage: 'Til hamingju',
     description: 'Congratulations',
   },
   applicationDoneAlertMessage: {
-    id: 'dl.application:applicationDoneAlertMessage',
+    id: 'dl.dc.application:applicationDoneAlertMessage',
     defaultMessage:
       'Umsókn þín um að hefja ökunám og fá bráðabirgðaskírteini hefur verið móttekin. ',
     description: 'Application received',
   },
   applicationDoneAlertMessageBFull: {
-    id: 'dl.application:applicationDoneAlertMessageBFull',
+    id: 'dl.dc.application:applicationDoneAlertMessageBFull',
     defaultMessage: 'Umsókn þín um fullnaðarskírteini hefur verið móttekin.',
     description: 'Application received',
   },
   applicationDoneAlertMessage65Renewal: {
-    id: 'dl.application:applicationDoneAlertMessage65Renewal',
+    id: 'dl.dc.application:applicationDoneAlertMessage65Renewal',
     defaultMessage:
       'Umsókn þín um endurnýjun ökuskírteina fyrir 65 og eldra hefur verið móttekin.',
     description: 'Application received',
   },
   applicationDoneAlertMessage65RenewalRedesigned: {
-    id: 'dl.application:applicationDoneAlertMessage65RenewalRedesigned',
+    id: 'dl.dc.application:applicationDoneAlertMessage65RenewalRedesigned',
     defaultMessage:
       'Umsókn þín um endurnýjun ökuskírteinis hefur verið móttekin.',
     description: 'Application received - 65+ renewal (redesigned flow)',
   },
   nextStepsTitle: {
-    id: 'dl.application:nextStepsTitle',
+    id: 'dl.dc.application:nextStepsTitle',
     defaultMessage: 'Næstu skref',
     description: 'Next steps',
   },
   nextStepsDescription: {
-    id: 'dl.application:nextStepsDescription#markdown',
+    id: 'dl.dc.application:nextStepsDescription#markdown',
     defaultMessage:
       'Næst þarf umsækjandi að mæta til sýslumanns með mynd og gefa rithandarsýnishorn. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: 'Next steps',
   },
   nextStepsDescriptionBFull: {
-    id: 'dl.application:nextStepsDescriptionBFull#markdown',
+    id: 'dl.dc.application:nextStepsDescriptionBFull#markdown',
     defaultMessage:
       'Næst þarf umsækjandi að mæta til sýslumanns. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
   },
   nextStepsIntroDefault: {
-    id: 'dl.application:nextStepsIntroDefault',
+    id: 'dl.dc.application:nextStepsIntroDefault',
     defaultMessage: 'Umsókn þín hefur verið móttekin og verður skoðuð.',
     description: '',
   },
   nextStepsIntro65RenewalRedesigned: {
-    id: 'dl.application:nextStepsIntro65RenewalRedesigned',
+    id: 'dl.dc.application:nextStepsIntro65RenewalRedesigned',
     defaultMessage:
       'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
     description: 'Next steps intro - 65+ renewal (redesigned flow)',
@@ -549,7 +549,7 @@ export const m = defineMessages({
   // Legacy 65+ flow: user submits the application here, then must take a
   // health certificate to a district office before the license can be ordered.
   nextStepsDescription65Renewal: {
-    id: 'dl.application:nextStepsDescription65Renewal#markdown',
+    id: 'dl.dc.application:nextStepsDescription65Renewal#markdown',
     defaultMessage:
       'Umsókn þín hefur verið send. Til þess að nýtt ökuskírteini verði pantað þarftu að skila inn læknisvottorði á valið sýslumannsembætti. Skírteinið verður ekki pantað fyrr en vottorðinu hefur verið skilað inn.',
     description: '',
@@ -558,367 +558,367 @@ export const m = defineMessages({
   // already uploaded the health certificate; an employee reviews it and the
   // license is ordered automatically once approved.
   nextStepsDescription65RenewalRedesigned: {
-    id: 'dl.application:nextStepsDescription65RenewalRedesigned#markdown',
+    id: 'dl.dc.application:nextStepsDescription65RenewalRedesigned#markdown',
     defaultMessage:
       'Þegar umsóknin hefur verið samþykkt verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
     description: '',
   },
   nextStepsInfoLink: {
-    id: 'dl.application:nextStepsInfoLink#markdown',
+    id: 'dl.dc.application:nextStepsInfoLink#markdown',
     defaultMessage:
       '[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
   },
   congratulationsCertificateTitle: {
-    id: 'dl.application:congratulationsCertificateTitle',
+    id: 'dl.dc.application:congratulationsCertificateTitle',
     defaultMessage: 'Læknisvottorð',
     description: 'Health Certificate',
   },
   congratulationsQualityPictureTitle: {
-    id: 'dl.application:congratulationsQualityPictureTitle',
+    id: 'dl.dc.application:congratulationsQualityPictureTitle',
     defaultMessage: 'Passamynd',
     description: 'Quality photo',
   },
   congratulationsCertificateDescription: {
-    id: 'dl.application:congratulationsCertificateDescription',
+    id: 'dl.dc.application:congratulationsCertificateDescription',
     defaultMessage:
       'Þörf er á læknisvottorði frá heimilislækni miðað við útfyllta heilbrigðisyfirlýsingu. Læknisvottorði þarf að skila til sýslumannsembættis. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Health Certificate',
   },
   congratulationsQualityPictureDescription: {
-    id: 'dl.application:congratulationsQualityPictureDescription',
+    id: 'dl.dc.application:congratulationsQualityPictureDescription',
     defaultMessage:
       'Skila þarf passamynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Quality photo',
   },
   paymentSuccessExtraDocuments: {
-    id: 'dl.application:paymentSuccessExtraDocuments',
+    id: 'dl.dc.application:paymentSuccessExtraDocuments',
     defaultMessage:
       'Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í pöntun.',
     description:
       'If extra documents are required(new photograph or doctor certificate), you must return them to district commissioner so the driving license can be ordered.',
   },
   paymentSuccessIfNotReadyFewWeeks: {
-    id: 'dl.application:paymentSuccessIfNotReadyFewWeeks',
+    id: 'dl.dc.application:paymentSuccessIfNotReadyFewWeeks',
     defaultMessage:
       'Ef svo var ekki þá verður fullnaðarskírteinið tilbúið á afhendingarstað eftir 3 til 4 vikur.',
     description:
       'If not then the driving license will be ready at the drop off location in 3 to 4 weeks.',
   },
   paymentApprovedContinue: {
-    id: 'dl.application:paymentApprovedContinue',
+    id: 'dl.dc.application:paymentApprovedContinue',
     defaultMessage: `Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina.`,
     description:
       'The payment has been confirmed, choose "Continue" to finish the application.',
   },
   paymentImage: {
-    id: 'dl.application:paymentImage',
+    id: 'dl.dc.application:paymentImage',
     defaultMessage: `Skrautmynd`,
     description: 'Company Image',
   },
   districtCommisionerTitle: {
-    id: 'dl.application:districtCommisionerTitle',
+    id: 'dl.dc.application:districtCommisionerTitle',
     defaultMessage: 'Sýslumannsembætti',
     description: 'Title for district commissioner',
   },
   districtCommissionerPickup: {
-    id: 'dl.application:districtCommisionerPickup',
+    id: 'dl.dc.application:districtCommisionerPickup',
     defaultMessage: 'Afhending',
     description: 'Pickup for district commissioner',
   },
   selectDistrictCommissionerPickup: {
-    id: 'dl.application:selectDistrictCommissionerPickup',
+    id: 'dl.dc.application:selectDistrictCommissionerPickup',
     defaultMessage: 'Veldu afhendingarstað',
     description: 'Pickup for district commissioner',
   },
   districtCommissionerPickupPlaceholder: {
-    id: 'dl.application:districtCommisionerPickupPlaceholder',
+    id: 'dl.dc.application:districtCommisionerPickupPlaceholder',
     defaultMessage: 'Veldu sýslumannsembætti',
     description: 'Choose district commissioner',
   },
   chooseDistrictCommissionerForFullLicense: {
-    id: 'dl.application:chooseDistrictCommissionerForFullLicense',
+    id: 'dl.dc.application:chooseDistrictCommissionerForFullLicense',
     defaultMessage:
       'Veldu það embætti sýslumanns þar sem þú vilt skila inn eldra ökuskírteini og fá afhent nýtt með nýjum réttindunum',
     description:
       'Choose district commissioner for returning a temporary license and recieve a new full license',
   },
   chooseDistrictCommissionerForTempLicense: {
-    id: 'dl.application:chooseDistrictCommissionerForTempLicense',
+    id: 'dl.dc.application:chooseDistrictCommissionerForTempLicense',
     defaultMessage:
       'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd',
     description: 'Choose district commissioner for submitting a quality photo',
   },
   confirmationStatusOfEligability: {
-    id: 'dl.application:confirmationStatusOfEligability',
+    id: 'dl.dc.application:confirmationStatusOfEligability',
     defaultMessage:
       'Sóttar eru almennar upplýsingar um núverandi réttindi, sviptingar, punktastöðu og akstursmat ef við á.',
     description:
       'General information about current licenses, license loss, penalties and driving assessment if applicable.',
   },
   infoFromLicenseRegistry: {
-    id: 'dl.application:infoFromLicenseRegistry',
+    id: 'dl.dc.application:infoFromLicenseRegistry',
     defaultMessage: 'Upplýsingar úr ökuskírteinaskrá',
     description: 'Information from driving license registry',
   },
   actionCardDraft: {
-    id: 'dl.application:actionCardDraft',
+    id: 'dl.dc.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
     description:
       'Description of application state/status when the application is in progress',
   },
   actionCardPayment: {
-    id: 'dl.application:actionCardPayment',
+    id: 'dl.dc.application:actionCardPayment',
     defaultMessage: 'Greiðslu vantar',
     description:
       'Description of application state/status when payment is pending',
   },
   submitErrorButtonCaption: {
-    id: 'dl.application:submitErrorButtonCaption',
+    id: 'dl.dc.application:submitErrorButtonCaption',
     defaultMessage: 'Reyna aftur',
     description:
       'Button that shows up when submitting the application fails, allowing you to retry',
   },
   submitErrorTitle: {
-    id: 'dl.application:submitErrorTitle',
+    id: 'dl.dc.application:submitErrorTitle',
     defaultMessage: 'Móttaka umsóknar tókst ekki',
     description:
       'title that shows up when an error occurs while submitting the application',
   },
   submitErrorMessage: {
-    id: 'dl.application:submitErrorMessage',
+    id: 'dl.dc.application:submitErrorMessage',
     defaultMessage:
       'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
   informationTitle: {
-    id: 'dl.application:informationTitle',
+    id: 'dl.dc.application:informationTitle',
     defaultMessage: 'Upplýsingar',
     description: 'Title for information section',
   },
   chooseDrivingInstructor: {
-    id: 'dl.application:chooseDrivingInstructor',
+    id: 'dl.dc.application:chooseDrivingInstructor',
     defaultMessage: 'Finndu og veldu nafn ökukennara þíns úr listanum',
     description:
       'Find and select the name of your driving instructor from the list',
   },
   drivingLicenseTypeRequested: {
-    id: 'dl.application:drivingLicenseTypeRequested',
+    id: 'dl.dc.application:drivingLicenseTypeRequested',
     defaultMessage: 'Réttindi sem sótt er um',
     description: 'Driving license type that is requested',
   },
   informationFullName: {
-    id: 'dl.application:informationFullName',
+    id: 'dl.dc.application:informationFullName',
     defaultMessage: 'Nafn',
     description: 'Full Name',
   },
   informationStreetAddress: {
-    id: 'dl.application:informationStreetAddress',
+    id: 'dl.dc.application:informationStreetAddress',
     defaultMessage: 'Heimilisfang',
     description: 'Street address',
   },
   informationYourEmail: {
-    id: 'dl.application:informationYourEmail',
+    id: 'dl.dc.application:informationYourEmail',
     defaultMessage: 'Netfangið þitt',
     description: 'Your email',
   },
   informationYourPhone: {
-    id: 'dl.application:informationYourPhone',
+    id: 'dl.dc.application:informationYourPhone',
     defaultMessage: 'Símanúmerið þitt',
     description: 'Your phone number',
   },
   drivingInstructor: {
-    id: 'dl.application:drivingInstructor',
+    id: 'dl.dc.application:drivingInstructor',
     defaultMessage: 'Ökukennari',
     description: 'Driving instructor',
   },
   drivingLicenseInOtherCountry: {
-    id: 'dl.application:drivingLicenseInOtherCountry',
+    id: 'dl.dc.application:drivingLicenseInOtherCountry',
     defaultMessage: 'Ertu með ökuskírteini í öðru landi?',
     description: 'Do you have a driving license in another country?',
   },
   foreignDrivingLicense: {
-    id: 'dl.application:foreignDrivingLicense',
+    id: 'dl.dc.application:foreignDrivingLicense',
     defaultMessage: 'Erlent ökuskírteini',
     description: 'Foreign driving license',
   },
   noDeprivedDrivingLicenseInOtherCountryTitle: {
-    id: 'dl.application:noDeprivedDrivingLicenseInOtherCountryTitle',
+    id: 'dl.dc.application:noDeprivedDrivingLicenseInOtherCountryTitle',
     defaultMessage: 'Ég er ekki með sviptingu í öðru landi',
     description: 'I do not have a deprived driving license in another country',
   },
   noDeprivedDrivingLicenseInOtherCountryDescription: {
-    id: 'dl.application:noDeprivedDrivingLicenseInOtherCountryDescription',
+    id: 'dl.dc.application:noDeprivedDrivingLicenseInOtherCountryDescription',
     defaultMessage:
       'Staðfesting að umsækjandi hafi ekki undir höndum ökuskírteini gefið út af öðru ríki sem er aðili að Evrópska efnahagssvæðinu né hafi sætt takmörkunum á ökurétti eða verið svipt(ur) ökuréttindum í þeim ríkjum',
     description:
       'Confirmation that the applicant did not hold a driving license issued by another Member State of the European Economic Area, nor were they subject to a driving license restriction or were deprived of their driving license in those countries',
   },
   applicationForFullLicenseTitle: {
-    id: 'dl.application:applicationForFullLicenseTitle',
+    id: 'dl.dc.application:applicationForFullLicenseTitle',
     defaultMessage: 'Fullnaðarréttindi',
     description: 'Option title for selecting to apply for full driving license',
   },
   applicationForFullLicenseDescription: {
-    id: 'dl.application:applicationForFullLicenseDescription',
+    id: 'dl.dc.application:applicationForFullLicenseDescription',
     defaultMessage:
       'Ef ökumaður hefur haft bráðabirgðaskírteini í að minnsta kosti ár og farið í akstursmat með ökukennara getur hann sótt um fullnaðarskírteini.',
     description:
       'Option description for selecting to apply for full driving license',
   },
   applicationForTempLicenseTitle: {
-    id: 'dl.application:applicationForTempLicenseTitle',
+    id: 'dl.dc.application:applicationForTempLicenseTitle',
     defaultMessage: 'Almenn ökuréttindi - B flokkur (Fólksbifreið)',
     description:
       'Option title for selecting to apply for temporary driving license',
   },
   applicationForTempLicenseDescription: {
-    id: 'dl.application:applicationForTempLicenseDescription',
+    id: 'dl.dc.application:applicationForTempLicenseDescription',
     defaultMessage:
       'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
     description:
       'Option description for selecting to apply for temporary driving license',
   },
   applicationForRenewalLicenseTitle: {
-    id: 'dl.application:applicationForRenewalLicenseTitle',
+    id: 'dl.dc.application:applicationForRenewalLicenseTitle',
     defaultMessage: 'Endurnýjun ökuskírteina fyrir 65 ára og eldri',
     description: 'Option title for selecting to renew driving license',
   },
   applicationForRenewalLicenseDescription: {
-    id: 'dl.application:applicationForRenewalLicenseDescription',
+    id: 'dl.dc.application:applicationForRenewalLicenseDescription',
     defaultMessage:
       'Umsókn um endurnýjun ökuréttinda í B flokki (fólksbifreið), fyrir 65 ára og eldri.',
     description: 'Option description for selecting to renew driving license',
   },
   applicationForBFullDescription: {
-    id: 'dl.application:applicationForBFullDescription',
+    id: 'dl.dc.application:applicationForBFullDescription',
     defaultMessage: 'Umsókn um fullnaðarréttindi í B flokki (fólksbifreið)',
     description: 'Option description for selecting to renew driving license',
   },
   declinedOtherCountryHelpText: {
-    id: 'dl.application:declinedOtherCountryHelpText',
+    id: 'dl.dc.application:declinedOtherCountryHelpText',
     defaultMessage:
       'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'Requirement not met for driving license application',
   },
   declinedOtherEESCountryTitle: {
-    id: 'dl.application:declinedOtherEESCountryTitle',
+    id: 'dl.dc.application:declinedOtherEESCountryTitle',
     defaultMessage: 'Ökuskírteini frá EES',
     description: 'Driving license from other EES country title',
   },
   declinedOtherEESCountryDescription: {
-    id: 'dl.application:declinedOtherEESCountryDescription',
+    id: 'dl.dc.application:declinedOtherEESCountryDescription',
     defaultMessage:
       'Umsækjandi með ökuskírteini frá landi innan EES, Bretlandi og Japan má skipta yfir í íslenskt ökuskírteini án þess að taka próf.',
     description: 'Driving license from other EES country description',
   },
   declinedOtherNonEESCountryTitle: {
-    id: 'dl.application:declinedOtherNonEESCountryTitle',
+    id: 'dl.dc.application:declinedOtherNonEESCountryTitle',
     defaultMessage: 'Ökuskírteini utan EES',
     description: 'Driving license from other country title',
   },
   declinedOtherNonEESCountryDescription: {
-    id: 'dl.application:declinedOtherNonEESCountryDescription',
+    id: 'dl.dc.application:declinedOtherNonEESCountryDescription',
     defaultMessage:
       'Umsækjandi með ökuskírteini utan EES getur sótt um að skipta yfir í íslenskt ökuskírteini eftir 6 mánaða fasta búsetu. Taka þarf bæði bóklegt og verklegt próf og öðlast fullnaðarskírteini.',
     description: 'Driving license from other country description',
   },
   nationalCommissionerOfPolice: {
-    id: 'dl.application:nationalCommissionerOfPolice',
+    id: 'dl.dc.application:nationalCommissionerOfPolice',
     defaultMessage: 'Sýslumenn',
     description: 'Institution responsible for the driving license application',
   },
   countryDirectionsTitle: {
-    id: 'dl.application:countryDirectionsTitle',
+    id: 'dl.dc.application:countryDirectionsTitle',
     defaultMessage: 'Leiðbeiningar',
     description:
       'Title of the section that explains the next steps when they have a driving license in a different country',
   },
   healthRemarksTitle: {
-    id: 'dl.application:healthRemarksTitle',
+    id: 'dl.dc.application:healthRemarksTitle',
     defaultMessage: 'Athugið',
     description: 'Alert message title for health remarks on driving license',
   },
   healthRemarksDescription: {
-    id: 'dl.application:healthRemarksDescriptionV2',
+    id: 'dl.dc.application:healthRemarksDescriptionV2',
     defaultMessage:
       'Ef tákntala vegna heilsufars er skráð á núverandi ökuskírteini, skal ávallt skila læknisvottorði jafnvel þótt öllum heilbrigðisspurningum sé svarað neitandi í þessari umsókn. Tákntölur eru m.a. notaðar fyrir gleraugu/sjónleiðréttingu, sérútbúin ökutæki o.fl.',
     description: 'Alert message for health remarks on driving license',
   },
   phoneNumberTitle: {
-    id: 'dl.application:phoneNumberTitle',
+    id: 'dl.dc.application:phoneNumberTitle',
     defaultMessage: 'Símanúmer',
     description: 'Phone number',
   },
   phoneNumberDescription: {
-    id: 'dl.application:phoneNumberDescription',
+    id: 'dl.dc.application:phoneNumberDescription',
     defaultMessage:
       'Vinsamlegast gefðu upp símanúmerið þitt eða þá staðfestu að símanúmerið þitt sé rétt',
     description: 'Your phone number',
   },
   photoSelectionTitle: {
-    id: 'dl.application:photoSelection.title',
+    id: 'dl.dc.application:photoSelection.title',
     defaultMessage: 'Mynd í ökuskírteini',
     description: 'Photo selection section title',
   },
   photoSelectionDescription: {
-    id: 'dl.application:photoSelection.description',
+    id: 'dl.dc.application:photoSelection.description',
     defaultMessage:
       'Hér fyrir neðan eru upplýsingar um þær myndir sem hægt er að nota í ökuskírteinið.',
     description: 'Photo selection section description',
   },
   usePassportImage: {
-    id: 'dl.application:photoSelection.usePassportImage#markdown',
+    id: 'dl.dc.application:photoSelection.usePassportImage#markdown',
     defaultMessage:
       'Ég staðfesti að nota núverandi mynd úr vegabréfa- og skilríkjaskrá í ökuskírteinið',
     description: 'Use photo from national registry',
   },
   useDriversLicenseImage: {
-    id: 'dl.application:photoSelection.useDriversLicenseImage#markdown',
+    id: 'dl.dc.application:photoSelection.useDriversLicenseImage#markdown',
     defaultMessage:
       'Ég staðfesti að nota núverandi mynd úr ökuskírteinaskrá í ökuskírteinið',
     description: 'Use photo from driving license registry',
   },
   useFakeImage: {
-    id: 'dl.application:photoSelection.useFakeImage',
+    id: 'dl.dc.application:photoSelection.useFakeImage',
     defaultMessage: 'Ég staðfesti að nota fakeData mynd',
     description: 'Use fake photo for testing',
   },
   healthCertificateTitle: {
-    id: 'dl.application:healthCertificate.title',
+    id: 'dl.dc.application:healthCertificate.title',
     defaultMessage: 'Læknisvottorð',
     description: 'Health certificate title',
   },
   healthCertificateDescription: {
-    id: 'dl.application:healthCertificate.description',
+    id: 'dl.dc.application:healthCertificate.description',
     defaultMessage:
       'Þú þarft að hlaða inn læknisvottorði vegna heilbrigðisyfirlýsingar.',
     description: 'Health certificate upload description',
   },
   healthCertificateUploadHeader: {
-    id: 'dl.application:healthCertificate.uploadHeader',
+    id: 'dl.dc.application:healthCertificate.uploadHeader',
     defaultMessage: 'Dragðu læknisvottorð hingað til að hlaða upp',
     description: 'Health certificate upload header',
   },
   healthCertificateUploadDescription: {
-    id: 'dl.application:healthCertificate.uploadDescription',
+    id: 'dl.dc.application:healthCertificate.uploadDescription',
     defaultMessage:
       'Tekið er við skjölum með endingunum: .pdf, .jpg, .jpeg, .png',
     description: 'Health certificate upload format description',
   },
   healthCertificateUploadButtonLabel: {
-    id: 'dl.application:healthCertificate.uploadButtonLabel',
+    id: 'dl.dc.application:healthCertificate.uploadButtonLabel',
     defaultMessage: 'Velja skjöl til að hlaða upp',
     description: 'Health certificate upload button label',
   },
   overviewHealthCertificateUploaded: {
-    id: 'dl.application:overview.healthCertificateUploaded',
+    id: 'dl.dc.application:overview.healthCertificateUploaded',
     defaultMessage: 'Læknisvottorð hlaðið upp',
     description: 'Uploaded health certificate',
   },
   healthCertificateRequired: {
-    id: 'dl.application:validation.healthCertificateRequired',
+    id: 'dl.dc.application:validation.healthCertificateRequired',
     defaultMessage: 'Þú þarft að hlaða upp læknisvottorði til að halda áfram.',
     description:
       'Validation error when health certificate upload is required but missing',
@@ -927,12 +927,12 @@ export const m = defineMessages({
   // The `checkEligibility` data provider throws with these on the external-data
   // screen, and the applicationFor screen shows the same copy as an alert.
   notEligibleTitle: {
-    id: 'dl.application:notEligibleTitle',
+    id: 'dl.dc.application:notEligibleTitle',
     defaultMessage: 'Þú uppfyllir ekki skilyrði til að sækja um',
     description: 'Applicant is not eligible for any license type - title',
   },
   notEligibleDescription: {
-    id: 'dl.application:notEligibleDescription',
+    id: 'dl.dc.application:notEligibleDescription',
     defaultMessage:
       'Miðað við fyrirliggjandi gögn getur þú ekki sótt um neina tegund ökuskírteinis að svo stöddu. Vinsamlega hafðu samband við næsta sýslumannsembætti fyrir nánari upplýsingar.',
     description: 'Applicant is not eligible for any license type - description',
@@ -941,70 +941,70 @@ export const m = defineMessages({
 
 export const requirementsMessages = defineMessages({
   rlsAcceptedDescription: {
-    id: 'dl.application:requirementunmet.accepted',
+    id: 'dl.dc.application:requirementunmet.accepted',
     defaultMessage: 'Þú uppfyllir þær kröfur sem gerðar eru',
     description: 'RLS / driving license api approves of the applicant',
   },
   rlsDefaultDeniedDescription: {
-    id: 'dl.application:requirementunmet.deniedbyservicedescription',
+    id: 'dl.dc.application:requirementunmet.deniedbyservicedescription',
     defaultMessage:
       'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description:
       'requirement unmet api returned false for an unspecified reason',
   },
   invalidLicense: {
-    id: 'dl.application:requirementunmet.invalidlicense',
+    id: 'dl.dc.application:requirementunmet.invalidlicense',
     defaultMessage:
       'Bráðabirgðaskírteini er ekki til staðar. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description:
       'requirement unmet api returned NO_TEMP_LICENSE / NO_LICENSE_FOUND',
   },
   hasPointsOrDeprivation: {
-    id: 'dl.application:requirementunmet.haspointsordeprivation',
+    id: 'dl.dc.application:requirementunmet.haspointsordeprivation',
     defaultMessage:
       'Þú ert með punkta eða sviptingu. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet api returned HAS_DEPRIVATION / HAS_POINTS',
   },
   drivingAssessmentTitle: {
-    id: 'dl.application:requirementunmet.drivingassessmenttitle',
+    id: 'dl.dc.application:requirementunmet.drivingassessmenttitle',
     defaultMessage: 'Akstursmat',
     description: 'requirement unmet assessment',
   },
   drivingAssessmentDescription: {
-    id: 'dl.application:requirementunmet.drivingassessmentdescription',
+    id: 'dl.dc.application:requirementunmet.drivingassessmentdescription',
     defaultMessage:
       'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
     description: 'requirement unmet assessment',
   },
   drivingSchoolTitle: {
-    id: 'dl.application:requirementunmet.drivingschooltitle',
+    id: 'dl.dc.application:requirementunmet.drivingschooltitle',
     defaultMessage: 'Ökuskóli 3',
     description: 'requirement unmet driving school',
   },
   drivingSchoolDescription: {
-    id: 'dl.application:requirementunmet.drivingschooldescription',
+    id: 'dl.dc.application:requirementunmet.drivingschooldescription',
     defaultMessage:
       'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini.',
     description: 'requirement unmet driving school',
   },
   rlsTitle: {
-    id: 'dl.application:requirementunmet.deniedbyservicetitle',
+    id: 'dl.dc.application:requirementunmet.deniedbyservicetitle',
     defaultMessage: 'Ökuskírteinaskrá',
     description: 'requirement unmet api returned false',
   },
   localResidencyTitle: {
-    id: 'dl.application:requirementunmet.localResidencyTitle',
+    id: 'dl.dc.application:requirementunmet.localResidencyTitle',
     defaultMessage: 'Búseta á Íslandi',
     description: 'requirement unmet api returned false',
   },
   localResidencyDescription: {
-    id: 'dl.application:requirementunmet.localResidencyDescription',
+    id: 'dl.dc.application:requirementunmet.localResidencyDescription',
     defaultMessage:
       'Þú þarft að hafa búið að minnsta kosti 185 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
     description: 'requirement unmet api returned false',
   },
   currentLocalResidencyDescription: {
-    id: 'dl.application:requirementunmet.currentLocalResidencyDescription',
+    id: 'dl.dc.application:requirementunmet.currentLocalResidencyDescription',
     defaultMessage:
       'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
@@ -1012,19 +1012,19 @@ export const requirementsMessages = defineMessages({
   // Used by the redesigned 65+ / photo-selection flows when no usable photo
   // (Þjóðskrá facial photo or RLS quality photo) is available.
   beLicenseQualityPhotoTitle: {
-    id: 'dl.application:requirementunmet.beLicenseQualityPhotoTitle',
+    id: 'dl.dc.application:requirementunmet.beLicenseQualityPhotoTitle',
     defaultMessage: 'Gæðavottuð mynd',
     description:
       'requirement unmet api returned false for an unspecified reason',
   },
   beLicenseQualityPhotoDescription: {
-    id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescriptionV2',
+    id: 'dl.dc.application:requirementunmet.beLicenseQualityPhotoDescriptionV2',
     defaultMessage:
       'Ef hvorki er hægt að nota mynd sem uppfyllir skilyrði úr skilríkjaskrá né ökutækjaskrá, verður þú að koma með passamynd á ljósmyndapappír (4,5 cm x 3,5 cm) til næsta sýslumannsembættis og skila inn umsókn á staðnum. Ef fyrra ökuskírteini var gefið út fyrir júlí 2013 þarf að uppfæra myndina.',
     description: 'Quality photo requirement description',
   },
   noExtendedDrivingLicenseTitle: {
-    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseTitle',
+    id: 'dl.dc.application:requirementunmet.noExtendedDrivingLicenseTitle',
     defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
     description: 'requirement unmet 65 plus renewal',
   },
@@ -1033,18 +1033,18 @@ export const requirementsMessages = defineMessages({
     // explained why the applicant was blocked. Id bumped so the new text is
     // picked up rather than overridden by the old Contentful entry (same
     // approach as beLicenseQualityPhotoDescriptionV2 above).
-    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseDescriptionV2#markdown',
+    id: 'dl.dc.application:requirementunmet.noExtendedDrivingLicenseDescriptionV2#markdown',
     defaultMessage:
       'Þú ert með aukin ökuréttindi (t.d. C, CE, D1 eða D1E) sem voru gefin út á öðrum tíma en almennu ökuréttindin þín. Endurnýjun á slíkum réttindum fer ekki fram hér. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet 65 plus renewal',
   },
   personNot17Title: {
-    id: 'dl.application:requirementunmet.personNot17Title',
+    id: 'dl.dc.application:requirementunmet.personNot17Title',
     defaultMessage: 'Aldursskilyrði ekki uppfyllt',
     description: 'requirement unmet - applicant is younger than 17',
   },
   personNot17Description: {
-    id: 'dl.application:requirementunmet.personNot17Description#markdown',
+    id: 'dl.dc.application:requirementunmet.personNot17Description#markdown',
     defaultMessage:
       'Umsækjandi þarf að hafa náð 17 ára aldri til að sækja um bráðabirgðaskírteini.',
     description: 'requirement unmet - applicant is younger than 17',
