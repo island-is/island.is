@@ -564,4 +564,17 @@ export const errorMessages = defineMessages({
     description:
       'Alert message body shown when part time entries have overlapping periods for the same company',
   },
+  partTimeValidationErrorTitle: {
+    id: 'vmst.cjoi.application:errorMessages.partTimeValidationErrorTitle',
+    defaultMessage: 'Ekki tókst að staðfesta skráningu',
+    description:
+      'Fallback title shown when the 3rd party part time validation request fails (e.g. network error)',
+  },
+  partTimeValidationErrorMessage: {
+    id: 'vmst.cjoi.application:errorMessages.partTimeValidationErrorMessage',
+    defaultMessage:
+      'Ekki tókst að staðfesta skráningu hlutastarfa. Vinsamlegast reyndu aftur.',
+    description:
+      'Fallback message shown when the 3rd party part time validation request fails (e.g. network error)',
+  },
 })

@@ -58,6 +58,9 @@ const partTimeEntrySchema = z.object({
   jobEnd: z.string().optional(),
   workPercentage: z.string().min(1),
   estimatedIncome: z.string().min(1),
+  // Used to correlate this row with the 3rd party validation response.
+  validationId: z.string().optional(),
+  disabled: z.enum(['true', 'false']).optional(),
 })
 
 const partTimeArraySchema = z
@@ -170,6 +173,8 @@ export const dataSchema = z.object({
   registerCapitalIncome: z.array(capitalIncomeEntrySchema).optional(),
   registerSocialInsurance: z.array(socialInsuranceEntrySchema).optional(),
   registerPension: z.array(pensionEntrySchema).optional(),
+  partTimeValidationErrorTitle: z.string().optional(),
+  partTimeValidationErrorMessage: z.string().optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

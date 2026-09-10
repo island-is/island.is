@@ -16,8 +16,10 @@ import {
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
   VmstApplicationsAttachment,
+  PartTimeJobValidationResult,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
+import { PartTimeJobValidationInput } from './dto/partTimeJobValidation.input'
 import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
@@ -71,6 +73,18 @@ export class VMSTApplicationsResolver {
     input: VmstApplicationsVacationValidationInput,
   ) {
     return this.vmstApplicationsService.validateVacationDays(auth, input)
+  }
+
+  @Query(() => PartTimeJobValidationResult, {
+    name: 'vmstApplicationsValidatePartTimeJobs',
+  })
+  @Audit()
+  async validatePartTimeJobs(
+    @CurrentUser() auth: User,
+    @Args('input', { type: () => [PartTimeJobValidationInput] })
+    input: PartTimeJobValidationInput[],
+  ) {
+    return this.vmstApplicationsService.validatePartTimeJobs(auth, input)
   }
 
   @Query(() => VmstApplicationsUnemploymentApplicationOverview, {

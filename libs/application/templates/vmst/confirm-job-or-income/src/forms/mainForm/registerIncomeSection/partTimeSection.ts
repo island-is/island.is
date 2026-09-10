@@ -1,12 +1,14 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
   getValueViaPath,
   buildTitleField,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
+import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { hasPartTimeOverlap, isPartTime } from '../../../utils/conditions'
 import {
@@ -121,6 +123,11 @@ export const partTimeSection = buildSubSection({
               required: true,
               min: 0,
             },
+            // Correlates each row with the 3rd party validation response.
+            validationId: {
+              component: 'hiddenInput',
+              defaultValue: () => uuid(),
+            },
           },
           table: {
             header: [
@@ -159,6 +166,31 @@ export const partTimeSection = buildSubSection({
           alertType: 'warning',
           marginTop: 6,
           condition: hasPartTimeOverlap,
+        }),
+        buildCustomField({
+          id: 'partTimeValidation',
+          doesNotRequireAnswer: true,
+          component: 'PartTimeValidation',
+        }),
+        buildAlertMessageField({
+          id: 'partTimeValidationErrorAlert',
+          title: (application) =>
+            getValueViaPath<string>(
+              application.answers,
+              'partTimeValidationErrorTitle',
+            ) ?? '',
+          message: (application) =>
+            getValueViaPath<string>(
+              application.answers,
+              'partTimeValidationErrorMessage',
+            ) ?? '',
+          alertType: 'error',
+          marginTop: 6,
+          condition: (answers: FormValue) =>
+            !!getValueViaPath<string>(
+              answers,
+              'partTimeValidationErrorMessage',
+            ),
         }),
       ],
     }),
