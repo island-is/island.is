@@ -20,7 +20,6 @@ import { useUserContractsOverviewQuery } from './UserContractsOverview.generated
 import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { mapPropertyTypeToMessage } from '../../../utils/mapPropertyTypeToMessage'
-import { InformationPaths } from '../../../lib/paths'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -129,10 +128,7 @@ const UserContractsOverview = () => {
                   headingVariant="h4"
                   cta={{
                     label: formatMessage(cm.seeInfo),
-                    onClick: () =>
-                      navigate(
-                        InformationPaths.MyContractsDetail.replace(':id', id),
-                      ),
+                    onClick: () => navigate(id),
                     variant: 'text',
                   }}
                   subText={subText}
