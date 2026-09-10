@@ -60,6 +60,33 @@ export const remarksCannotRenew65 = ['400', '450', '95']
 // (temporary B → full B) apart from someone who already holds a full B.
 export const TEMPORARY_LICENSE_VALID_CODE = 8
 
+// Local mirror of `@island.is/api/schema`'s `RequirementKey` (RLS's
+// `ApplicationEligibilityRequirement.key`). Kept in-template so the eligibility
+// logic below stays out of the `@island.is/api/schema` dependency: `index.ts`
+// eagerly re-exports `eligibility.ts` and the shared driving-license submission
+// service imports it, so it is part of the backend/OpenAPI build graph — which
+// generates `@island.is/api/schema` itself and so cannot import from it. String
+// values are identical to the generated enum, so stored external-data rows and
+// downstream comparisons are unchanged.
+export enum RequirementKey {
+  currentLocalResidency = 'currentLocalResidency',
+  deniedByService = 'deniedByService',
+  drivingAssessmentMissing = 'drivingAssessmentMissing',
+  drivingSchoolMissing = 'drivingSchoolMissing',
+  hasDeprivation = 'hasDeprivation',
+  hasHadValidCategoryForFiveYearsOrMore = 'hasHadValidCategoryForFiveYearsOrMore',
+  hasNoPhoto = 'hasNoPhoto',
+  hasNoSignature = 'hasNoSignature',
+  hasPoints = 'hasPoints',
+  localResidency = 'localResidency',
+  noExtendedDrivingLicense = 'noExtendedDrivingLicense',
+  noLicenseFound = 'noLicenseFound',
+  noTempLicense = 'noTempLicense',
+  personNot17YearsOld = 'personNot17YearsOld',
+  personNotAtLeast24YearsOld = 'personNotAtLeast24YearsOld',
+  personNotFoundInNationalRegistry = 'personNotFoundInNationalRegistry',
+}
+
 export type DrivingLicenseApplicationFor =
   | typeof B_FULL
   | typeof B_TEMP

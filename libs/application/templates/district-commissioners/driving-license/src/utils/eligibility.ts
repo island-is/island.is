@@ -1,6 +1,5 @@
 import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/types'
-import { RequirementKey } from '@island.is/api/schema'
 import { DrivingLicense } from '../types'
 import {
   B_FULL,
@@ -10,6 +9,7 @@ import {
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
   remarksCannotRenew65,
+  RequirementKey,
   TEMPORARY_LICENSE_VALID_CODE,
 } from './constants'
 import { hasUsableRlsQualityPhoto } from './formUtils'

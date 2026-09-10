@@ -1,8 +1,8 @@
 import { MessageDescriptor } from 'react-intl'
 import { requirementsMessages } from '../../lib/messages'
-import { RequirementKey } from '@island.is/api/schema'
 import { ReviewSectionState, Step } from './ReviewSection/types'
 import { TypeEligibility } from '../../utils'
+import { RequirementKey } from '../../utils/constants'
 
 export const extractReasons = (
   eligibility: TypeEligibility,
