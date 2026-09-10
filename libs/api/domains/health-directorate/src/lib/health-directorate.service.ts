@@ -984,6 +984,12 @@ export class HealthDirectorateService {
 
     const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
     const webChat = getWebChatConversationType(formatMessage)
+    // A link-out entry without a link is useless and would render as a
+    // broken regular option — skip it if the URL was blanked in Contentful.
+    if (!webChat.externalLinkUrl) {
+      return items.map(mapMessagingRecipient)
+    }
+
     return items.map((item) => {
       const recipient = mapMessagingRecipient(item)
       return {
