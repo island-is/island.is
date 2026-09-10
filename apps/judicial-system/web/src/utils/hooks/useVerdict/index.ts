@@ -1,7 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback, useMemo } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
 import type {
   Case,
   CreateVerdictsInput,
@@ -9,6 +8,7 @@ import type {
   UpdateVerdictInput,
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useCreateVerdictsMutation } from './createVerdicts.generated'
 import { useDeliverCaseVerdictMutation } from './deliverCaseVerdict.generated'

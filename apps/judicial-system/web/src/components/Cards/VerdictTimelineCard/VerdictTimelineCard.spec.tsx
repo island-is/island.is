@@ -2,7 +2,6 @@ import faker from 'faker'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { toast } from '@island.is/island-ui/core'
 import { Feature } from '@island.is/judicial-system/types'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type {
@@ -23,6 +22,7 @@ import {
   IntlProviderWrapper,
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import VerdictTimelineCard from './VerdictTimelineCard'
 

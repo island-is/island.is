@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Box, Button, Icon, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import {
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE,
@@ -41,6 +41,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'

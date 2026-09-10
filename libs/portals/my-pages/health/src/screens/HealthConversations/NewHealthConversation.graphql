@@ -14,7 +14,10 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
   allowedMessageTypes {
     patientInitiatedTypeCode
     title
+    description
     isCertificate
+    externalLinkUrl
+    isCurrentlyOpen
   }
 }
 

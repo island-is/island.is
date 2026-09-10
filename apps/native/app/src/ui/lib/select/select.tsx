@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
+import { useFocusEffect } from 'expo-router'
 import { SelectionMenu } from 'react-native-platform-components'
 import styled, { css } from 'styled-components/native'
 
@@ -75,6 +76,12 @@ interface SelectProps {
   onSelect: (value: string) => void
   placeholder?: string
   disabled?: boolean
+  /**
+   * Notified whenever the menu opens or closes. The platform presents the menu
+   * in its own view controller which is not torn down with the React tree, so
+   * screens that can be dismissed by gesture need to know it is up.
+   */
+  onOpenChange?: (open: boolean) => void
 }
 
 export const Select = ({
@@ -84,13 +91,34 @@ export const Select = ({
   onSelect,
   placeholder,
   disabled = false,
+  onOpenChange,
 }: SelectProps) => {
   const [open, setOpen] = useState(false)
   const selected = options.find((option) => option.value === value)
 
+  const changeOpen = useCallback(
+    (next: boolean) => {
+      setOpen(next)
+      onOpenChange?.(next)
+    },
+    [onOpenChange],
+  )
+
+  // The platform presents the menu itself and does not tear it down when this
+  // component unmounts, so a menu still open when the screen goes away stays
+  // presented and bleeds over whatever is shown next. Close it on the way out,
+  // while we are still mounted and can tell native to dismiss.
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        changeOpen(false)
+      }
+    }, [changeOpen]),
+  )
+
   return (
     <Wrapper>
-      <Host disabled={disabled} onPress={() => setOpen(true)}>
+      <Host disabled={disabled} onPress={() => changeOpen(true)}>
         <Content>
           <Label variant="eyebrow">{label}</Label>
           <Value
@@ -115,9 +143,9 @@ export const Select = ({
         selected={value ?? null}
         onSelect={(data) => {
           onSelect(data)
-          setOpen(false)
+          changeOpen(false)
         }}
-        onRequestClose={() => setOpen(false)}
+        onRequestClose={() => changeOpen(false)}
       />
     </Wrapper>
   )

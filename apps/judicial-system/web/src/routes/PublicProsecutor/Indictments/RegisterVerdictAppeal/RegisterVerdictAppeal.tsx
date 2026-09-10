@@ -8,7 +8,6 @@ import {
   FileUploadStatus,
   InputFileUpload,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -45,6 +44,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import type { AppealDefender } from '@island.is/judicial-system-web/src/utils/hooks/useAppealCase'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 /**
  * The public prosecution office registers a verdict appeal that reached it
