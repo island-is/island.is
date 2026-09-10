@@ -687,8 +687,11 @@ export const contractsMessages = defineMessages({
   },
   rentalAgreementDate: {
     id: 'sp.contracts:rental-agreement-date',
-    defaultMessage:
-      '{from, date, long} - {to, select, undefined {} other {to, date, long}}',
+    defaultMessage: '{from, date, long} - {to, date, long}',
+  },
+  rentalAgreementDateFrom: {
+    id: 'sp.contracts:rental-agreement-date-from',
+    defaultMessage: '{from, date, long}',
   },
   status: {
     id: 'sp.contracts:status',
