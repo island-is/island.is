@@ -6,8 +6,11 @@ import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import ReviewSection from './ReviewSection'
 import { extractReasons } from './extractReasons'
-import { getStoredTypeEligibility } from '../../utils'
-import { B_FULL, DrivingLicenseApplicationFor } from '../../utils/constants'
+import { getStoredTypeEligibility, structuralCandidates } from '../../utils'
+import {
+  DrivingLicenseApplicationFor,
+  DrivingLicenseFakeData,
+} from '../../utils/constants'
 import { m } from '../../lib/messages'
 
 // Renders the requirement rows for the *selected* license type. The rows are
@@ -21,17 +24,26 @@ export const EligibilitySummary: FC<
   const { setValue } = useFormContext()
   const { formatMessage, lang } = useLocale()
 
+  // `applicationFor` may not be in persisted answers yet: in the hidden-selection
+  // flow the frozen value is written to react-hook-form by the hidden input in
+  // sectionRequirements and only persisted to answers on submit, so on this
+  // screen's first render answers.applicationFor is still undefined. Resolve it
+  // from the same deterministic source the hidden input uses (the single
+  // structural candidate) rather than assuming a type, so the byType lookup
+  // matches the applicant's actual candidate.
+  const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+    application.answers,
+    'fakeData',
+  )
   const applicationFor =
     getValueViaPath<DrivingLicenseApplicationFor>(
       application.answers,
       'applicationFor',
-      B_FULL,
-    ) ?? B_FULL
+    ) ?? structuralCandidates(application.externalData, fakeData)[0]
 
-  const eligibility = getStoredTypeEligibility(
-    application.externalData,
-    applicationFor,
-  )
+  const eligibility = applicationFor
+    ? getStoredTypeEligibility(application.externalData, applicationFor)
+    : undefined
 
   const isEligible = eligibility?.isEligible ?? false
 
@@ -46,12 +58,12 @@ export const EligibilitySummary: FC<
     return () => setSubmitButtonDisabled?.(false)
   }, [isEligible, setSubmitButtonDisabled])
 
-  const steps = eligibility ? extractReasons(eligibility, lang) : []
-
   return (
     <Box marginTop={3} marginBottom={8}>
       {eligibility ? (
-        steps.map((step, i) => <ReviewSection key={i} step={step} />)
+        extractReasons(eligibility, lang).map((step, i) => (
+          <ReviewSection key={i} step={step} />
+        ))
       ) : (
         // Defensive fallback: no stored eligibility for the resolved type.
         // The normal zero-candidate case (e.g. a full-B holder under 65) is
