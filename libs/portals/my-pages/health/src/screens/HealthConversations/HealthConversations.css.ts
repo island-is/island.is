@@ -55,3 +55,10 @@ globalStyle(`${termsCheckbox} label > div`, {
   alignSelf: 'flex-start',
   marginTop: 2,
 })
+
+export const typeInstructions = style({})
+
+// Out-specifies the shared Markdown component's light-weight p global
+globalStyle(`${typeInstructions} div p`, {
+  fontWeight: theme.typography.semiBold,
+})
