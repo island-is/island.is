@@ -727,6 +727,28 @@ export const messages = {
         id: 'doe.sr.application:report.subCriteria.stepCountLabel',
         defaultMessage: 'Fjöldi þrepa',
       },
+      stepCountRange: {
+        id: 'doe.sr.application:report.subCriteria.stepCountRange',
+        defaultMessage:
+          'Fjöldi þrepa þarf að vera {min}–{max}. Þrepin hér að neðan fylgja síðasta gilda fjölda.',
+      },
+      // Shown while the reduction is still undoable — see useStepCountSync:
+      // raising the count back restores the same þrep, but once "Halda áfram"
+      // has flushed the screen their definitions are gone and DMR has moved
+      // everyone who stood in them down to the highest þrep left.
+      //
+      // Which, since a reduction only ever removes from the top of the scale,
+      // is the new count itself: dropping 5 þrep to 4 moves the roles that were
+      // on þrep 5 to þrep 4 — so name the number rather than describe the rule.
+      stepReductionWarningTitle: {
+        id: 'doe.sr.application:report.subCriteria.stepReductionWarningTitle',
+        defaultMessage: 'Þrepum hefur verið fækkað',
+      },
+      stepReductionWarning: {
+        id: 'doe.sr.application:report.subCriteria.stepReductionWarning',
+        defaultMessage:
+          'Þrepin voru {loaded} en eru nú {current}. Þegar þú heldur áfram eyðast skilgreiningar þrepanna sem falla brott og starfsheiti — og starfsfólk — sem voru í þeim færast í {current}. þrep. Fjölgir þú þrepunum aftur upp í {loaded} áður en þú heldur áfram helst allt óbreytt.',
+      },
       stepsLabel: {
         id: 'doe.sr.application:report.subCriteria.stepsLabel',
         defaultMessage: 'Þrep',
