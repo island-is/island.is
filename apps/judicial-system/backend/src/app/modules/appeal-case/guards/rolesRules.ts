@@ -2,6 +2,7 @@ import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   AppealCaseTransition,
   AppealCaseType,
+  isProsecutionUser,
   type User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -9,6 +10,7 @@ import {
 import { AppealCase, Case } from '../../repository'
 import {
   canWithdrawCaseLevelAppeal,
+  hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
   userHasActiveInCourtAppeal,
 } from '../appealCase.helpers'
@@ -117,6 +119,7 @@ const userAppealedAppealCase = (request: {
   user?: { currentUser?: User }
   case?: Case
   appealCase?: AppealCase
+  body?: { defendantId?: string }
 }): boolean => {
   const user = request.user?.currentUser
   const theCase = request.case
@@ -124,6 +127,23 @@ const userAppealedAppealCase = (request: {
 
   if (!user || !theCase || !appealCase) {
     return false
+  }
+
+  // A verdict appeal is per defendant on both sides, so the prosecution is an
+  // appellant of the requested defendant's appeal, not of the case: the
+  // prosecution reviewer withdraws the prosecution's appeal regarding one
+  // defendant, and only where one stands. The defence rules for verdict appeals
+  // go through the per-party branch of userIsAppellant below.
+  if (
+    appealCase.appealType === AppealCaseType.VERDICT &&
+    isProsecutionUser(user)
+  ) {
+    const defendantId = request.body?.defendantId
+
+    return Boolean(
+      defendantId &&
+        hasStandingVerdictAppeal(appealCase, defendantId, 'PROSECUTION'),
+    )
   }
 
   // In-court ruling-order appeals are per party and withdrawn on the decision
