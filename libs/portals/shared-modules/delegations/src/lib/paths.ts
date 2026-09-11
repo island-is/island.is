@@ -11,4 +11,7 @@ export enum DelegationPaths {
   ServiceCategories = '/umbod/thjonustuflokkar', // Service categories with permissions
   CategoryDetails = '/umbod/thjonustuflokkar/:slug', // Category details
   Faq = '/umbod/faq', // FAQ page
+
+  // Request-a-delegation ("Beiðni um umboð")
+  DelegationRequest = '/umbod/bidja', // Request a delegation from someone
 }

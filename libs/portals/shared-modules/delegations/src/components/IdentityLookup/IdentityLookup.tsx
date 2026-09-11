@@ -1,4 +1,5 @@
 import { Control, UseFormReturn } from 'react-hook-form'
+import type { MessageDescriptor } from 'react-intl'
 import { Button, Icon, toast } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -21,12 +22,21 @@ export const IdentityLookup = ({
   index = 0,
   showRemoveButton = false,
   onRemove,
+  allowCompany = false,
+  nationalIdLabel = m.grantFormAccessHolder,
+  sameSsnMessage = m.grantSameSsn,
 }: {
   setFormError: (error: Error) => void
   methods: UseFormReturn<FormData>
   index?: number
   showRemoveButton?: boolean
   onRemove?: () => void
+  // When requesting a delegation you may target a company (its procuration
+  // holders decide), so company national ids are accepted in that flow.
+  allowCompany?: boolean
+  // The request flow looks up the grantor, not the access holder.
+  nationalIdLabel?: MessageDescriptor
+  sameSsnMessage?: MessageDescriptor
 }) => {
   const { formatMessage } = useLocale()
 
@@ -78,7 +88,7 @@ export const IdentityLookup = ({
     if (
       value.length === 10 &&
       kennitala.isValid(value) &&
-      !kennitala.isCompany(value) &&
+      (allowCompany || !kennitala.isCompany(value)) &&
       value !== userInfo.profile.nationalId &&
       value !== userInfo.profile.actor?.nationalId
     ) {
@@ -109,7 +119,7 @@ export const IdentityLookup = ({
             control={control as unknown as Control}
             id={`identities.${index}.nationalId`}
             name={`identities.${index}.nationalId`}
-            label={formatMessage(m.grantFormAccessHolder)}
+            label={formatMessage(nationalIdLabel)}
             format="######-####"
             icon={watchName || queryLoading ? undefined : 'search'}
             backgroundColor="blue"
@@ -140,14 +150,14 @@ export const IdentityLookup = ({
                   }
 
                   if (valueAsString === userInfo.profile.nationalId) {
-                    return formatMessage(m.grantSameSsn)
+                    return formatMessage(sameSsnMessage)
                   }
 
                   if (valueAsString === userInfo.profile.actor?.nationalId) {
                     return formatMessage(m.grantActorSsn)
                   }
 
-                  if (kennitala.isCompany(valueAsString)) {
+                  if (!allowCompany && kennitala.isCompany(valueAsString)) {
                     return formatMessage(m.grantCompanySsn)
                   }
                 },

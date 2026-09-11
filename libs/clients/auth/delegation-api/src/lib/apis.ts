@@ -3,6 +3,7 @@ import {
   Configuration,
   DomainsApi,
   MeDelegationsApi,
+  MeDelegationRequestsApi,
   MeLoginRestrictionsApi,
   ScopesApi,
   DelegationIndexApi,
@@ -12,6 +13,7 @@ import { ApiConfiguration } from './api-configuration'
 
 export const exportedApis = [
   MeDelegationsApi,
+  MeDelegationRequestsApi,
   MeLoginRestrictionsApi,
   DomainsApi,
   ClientsApi,

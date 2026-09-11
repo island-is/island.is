@@ -21,6 +21,8 @@ import { LoginRestrictionResolver } from './resolvers/loginRestriction.resolver'
 import { LoginRestrictionService } from './services/loginRestriction.service'
 import { ConsentTenantsResolver } from './resolvers/consentTenants.resolver'
 import { DelegationResolver } from './resolvers/delegation.resolver'
+import { DelegationRequestResolver } from './resolvers/delegationRequest.resolver'
+import { DelegationRequestsService } from './services/delegationRequests.service'
 import { CustomDelegationResolver } from './resolvers/customDelegation.resolver'
 import { MergedDelegationResolver } from './resolvers/mergedDelegation.resolver'
 import { DelegationScopeResolver } from './resolvers/delegationScope.resolver'
@@ -35,6 +37,8 @@ import { ScopeCategoriesResolver } from './resolvers/scopeCategories.resolver'
 @Module({
   providers: [
     DelegationResolver,
+    DelegationRequestResolver,
+    DelegationRequestsService,
     CustomDelegationResolver,
     MergedDelegationResolver,
     DelegationScopeResolver,

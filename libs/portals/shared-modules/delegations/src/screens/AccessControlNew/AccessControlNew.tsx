@@ -36,6 +36,8 @@ import {
   getProcuringHolderTableData,
 } from '../../components/tables/getTableData'
 import CustomDelegationsTable from '../../components/tables/CustomDelegationsTable'
+import { IncomingRequests } from '../../components/delegationRequests/IncomingRequests'
+import { OutgoingRequests } from '../../components/delegationRequests/OutgoingRequests'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import * as styles from './AccessControlNew.css'
 import { theme } from '@island.is/island-ui/theme'
@@ -274,6 +276,9 @@ const AccessControlNew = () => {
         />
       )}
 
+      {/* Outgoing delegation requests (requests I have sent) */}
+      <OutgoingRequests />
+
       {/* Outgoing general mandate delegations table */}
       {outgoingGeneralMandateDelegations &&
         outgoingGeneralMandateDelegations.length > 0 && (
@@ -328,6 +333,9 @@ const AccessControlNew = () => {
             </Text>
           </Box>
         )}
+
+      {/* Incoming delegation requests (others asking me for a delegation) */}
+      {!onlyOutgoingDelegations && <IncomingRequests />}
 
       {/* Legal guardian delegations table */}
       {!onlyOutgoingDelegations &&
