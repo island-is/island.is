@@ -223,6 +223,13 @@ export const slices = gql`
     thumbnailImageUrl
   }
 
+  fragment CalculatorFields on Calculator {
+    __typename
+    id
+    calculatorType
+    configJson
+  }
+
   fragment SectionWithImageFields on SectionWithImage {
     __typename
     id
@@ -1158,6 +1165,7 @@ export const slices = gql`
     ...ImageFields
     ...AssetFields
     ...EmbeddedVideoFields
+    ...CalculatorFields
     ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields

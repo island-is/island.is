@@ -222,13 +222,19 @@ export const removeEntryHyperlinkFields = (node: any) => {
 
 export const pruneNonSearchableSliceUnionFields = (
   slice: typeof SliceUnion,
-) => {
+): typeof SliceUnion => {
   if ((slice as { typename?: string })?.typename === 'ConnectedComponent') {
     return {
       ...slice,
       json: {},
       configJson: {},
       translationStrings: {},
+    }
+  }
+  if ((slice as { typename?: string })?.typename === 'Calculator') {
+    return {
+      ...slice,
+      configJson: {},
     }
   }
   if ((slice as { typename?: string })?.typename === 'EmailSignup') {
