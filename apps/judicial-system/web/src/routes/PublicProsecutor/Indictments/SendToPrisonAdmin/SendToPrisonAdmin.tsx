@@ -4,11 +4,7 @@ import { useIntl } from 'react-intl'
 import { useParams, useRouter } from 'next/navigation'
 
 import type { UploadFile } from '@island.is/island-ui/core'
-import {
-  Box,
-  FileUploadStatus,
-  InputFileUpload,
-} from '@island.is/island-ui/core'
+import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import {

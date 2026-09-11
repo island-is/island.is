@@ -60,7 +60,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
       })
 
       return Boolean(data)
-    } catch (error) {
+    } catch {
       toast.error('Upp kom villa við að uppfæra mál')
       return false
     }
@@ -76,7 +76,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra dóm')
         return false
       }
@@ -124,7 +124,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
           variables: { input: { caseId } },
         })
         return result.data?.deliverCaseVerdict?.queued ?? false
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við senda dóm í birtingu')
         return false
       }

@@ -84,7 +84,7 @@ const usePoliceDigitalCaseFile = () => {
         }
 
         return Boolean(data?.deletePoliceDigitalCaseFile)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að eyða hljóð- og myndupptöku')
         return false
       }
