@@ -36,9 +36,11 @@ import {
   isIndictmentCase,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
+  verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { FileService } from '../file'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -93,6 +95,8 @@ export class AppealCaseService {
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly verdictRepositoryService: VerdictRepositoryService,
     private readonly defendantRepositoryService: DefendantRepositoryService,
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
     @Inject(appealCaseModuleConfig.KEY)
     private readonly config: ConfigType<typeof appealCaseModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -1340,6 +1344,20 @@ export class AppealCaseService {
     }
 
     await this.clearAppealDefender(theCase, defendantId, transaction)
+
+    // Soft-delete this defendant's áfrýjunaryfirlýsing and accompanying files.
+    // They are otherwise locked while a verdict appeal case exists, so leaving
+    // them behind blocks a fresh appeal upload after withdrawal.
+    const appealDeclarationFiles = (theCase.caseFiles ?? []).filter(
+      (file) =>
+        file.defendantId === defendantId &&
+        file.category &&
+        verdictAppealDeclarationFileCategories.includes(file.category),
+    )
+
+    for (const file of appealDeclarationFiles) {
+      await this.fileService.deleteCaseFile(theCase, file, transaction)
+    }
 
     const remainingAppellantIds = standingAppellantIds.filter(
       (id) => id !== defendantId,
