@@ -1,155 +1,81 @@
-import type { Dispatch, FC, SetStateAction } from 'react'
+import type { FC } from 'react'
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 
 import { RadioButton } from '@island.is/island-ui/core'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
   FormContext,
-  Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import { IndictmentCaseReviewDecision } from '@island.is/judicial-system-web/src/graphql/schema'
-import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
-import { isConfirmProsecutorDecisionModal } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
 
 interface Props {
   caseId: string
   defendant: Defendant
-  modalVisible?: ModalId
-  setModalVisible: Dispatch<SetStateAction<ModalId | undefined>>
   isFine: boolean
 }
 
+/**
+ * One defendant's review decision - appeal or accept - as a radio pair. Only
+ * the working case changes here; the decisions of the whole case are confirmed
+ * and saved together by ReviewDecisionModal.
+ */
 export const ReviewDecision: FC<Props> = (props) => {
-  const { caseId, defendant, modalVisible, setModalVisible, isFine } = props
+  const { caseId, defendant, isFine } = props
 
   const { user } = useContext(UserContext)
-  const { workingCase, setWorkingCase } = useContext(FormContext)
-  const router = useRouter()
-  const { formatMessage: fm } = useIntl()
-  const { updateDefendant, updateDefendantState } = useDefendants()
-
-  const handleReviewDecision = async () => {
-    if (!defendant.indictmentReviewDecision) {
-      return
-    }
-    const promises = []
-
-    for (const d of workingCase.defendants || []) {
-      // Defendants whose indictment was cancelled or dismissed (completed for
-      // some) do not receive a verdict and require no review decision.
-      if (d.indictmentCancelledOrDismissedState) {
-        continue
-      }
-
-      if (!d.indictmentReviewDecision) {
-        return
-      }
-
-      promises.push(
-        updateDefendant({
-          caseId,
-          defendantId: d.id,
-          indictmentReviewDecision: d.indictmentReviewDecision,
-        }),
-      )
-    }
-
-    const results = await Promise.all(promises)
-    const updateSuccess = results.every((result) => result)
-
-    if (!updateSuccess) {
-      return
-    }
-
-    router.push(getStandardUserDashboardRoute(user))
-  }
+  const { setWorkingCase } = useContext(FormContext)
+  const { updateDefendantState } = useDefendants()
 
   if (!(isPublicProsecutionUser(user) || isPublicProsecutionOfficeUser(user))) {
     return null
   }
 
+  const choose = (indictmentReviewDecision: IndictmentCaseReviewDecision) =>
+    updateDefendantState(
+      { caseId, defendantId: defendant.id, indictmentReviewDecision },
+      setWorkingCase,
+    )
+
   return (
-    <>
-      <div className={styles.gridRow}>
-        <RadioButton
-          id={`review-option-appeal-${defendant.id}`}
-          name={`review-option-appeal-${defendant.id}`}
-          label={
-            isFine
-              ? 'Kæra viðurlagaákvörðun til Landsréttar'
-              : 'Áfrýja héraðsdómi til Landsréttar'
-          }
-          value={IndictmentCaseReviewDecision.APPEAL}
-          checked={
-            defendant.indictmentReviewDecision ===
-            IndictmentCaseReviewDecision.APPEAL
-          }
-          onChange={() =>
-            updateDefendantState(
-              {
-                caseId,
-                defendantId: defendant.id,
-                indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
-              },
-              setWorkingCase,
-            )
-          }
-          backgroundColor="white"
-          large
-        />
-        <RadioButton
-          id={`review-option-accept-${defendant.id}`}
-          name={`review-option-accept-${defendant.id}`}
-          label={isFine ? 'Una viðurlagaákvörðun' : 'Una héraðsdómi'}
-          value={IndictmentCaseReviewDecision.ACCEPT}
-          checked={
-            defendant.indictmentReviewDecision ===
-            IndictmentCaseReviewDecision.ACCEPT
-          }
-          onChange={() =>
-            updateDefendantState(
-              {
-                caseId,
-                defendantId: defendant.id,
-                indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
-              },
-              setWorkingCase,
-            )
-          }
-          backgroundColor="white"
-          large
-        />
-      </div>
-      {isConfirmProsecutorDecisionModal(modalVisible) && (
-        <Modal
-          title={fm(strings.reviewModalTitle)}
-          text="Ertu viss um að þú viljir ljúka yfirlestri?"
-          buttons={[
-            {
-              text: fm(strings.reviewModalSecondaryButtonText),
-              onClick: () => setModalVisible(undefined),
-              variant: 'ghost',
-            },
-            {
-              text: fm(strings.reviewModalPrimaryButtonText),
-              onClick: handleReviewDecision,
-            },
-          ]}
-          onClose={() => setModalVisible(undefined)}
-        />
-      )}
-    </>
+    <div className={styles.gridRow}>
+      <RadioButton
+        id={`review-option-appeal-${defendant.id}`}
+        name={`review-option-appeal-${defendant.id}`}
+        label={
+          isFine
+            ? 'Kæra viðurlagaákvörðun til Landsréttar'
+            : 'Áfrýja héraðsdómi til Landsréttar'
+        }
+        value={IndictmentCaseReviewDecision.APPEAL}
+        checked={
+          defendant.indictmentReviewDecision ===
+          IndictmentCaseReviewDecision.APPEAL
+        }
+        onChange={() => choose(IndictmentCaseReviewDecision.APPEAL)}
+        backgroundColor="white"
+        large
+      />
+      <RadioButton
+        id={`review-option-accept-${defendant.id}`}
+        name={`review-option-accept-${defendant.id}`}
+        label={isFine ? 'Una viðurlagaákvörðun' : 'Una héraðsdómi'}
+        value={IndictmentCaseReviewDecision.ACCEPT}
+        checked={
+          defendant.indictmentReviewDecision ===
+          IndictmentCaseReviewDecision.ACCEPT
+        }
+        onChange={() => choose(IndictmentCaseReviewDecision.ACCEPT)}
+        backgroundColor="white"
+        large
+      />
+    </div>
   )
 }

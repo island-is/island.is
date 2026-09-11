@@ -34,7 +34,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
-import type { IndictmentCaseReviewDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
@@ -43,10 +42,14 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReviewDecision } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision'
+import type { ReviewDecisions } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision.logic'
+import { getChangedReviewDecisions } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision.logic'
+import { ReviewDecisionModal } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecisionModal'
 import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import {
   CONFIRM_PROSECUTOR_DECISION,
   DUPLICATE_INDICTMENT,
+  isConfirmProsecutorDecisionModal,
   isDuplicateIndictmentModal,
 } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -111,9 +114,8 @@ const IndictmentOverview: FC = () => {
       workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
       workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
 
-  const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
-    Record<string, IndictmentCaseReviewDecision | null | undefined>
-  >({})
+  const [originalReviewDecisions, setOriginalReviewDecisions] =
+    useState<ReviewDecisions>({})
 
   // Store original review decisions when workingCase loads to see if they change
   useEffect(() => {
@@ -125,16 +127,17 @@ const IndictmentOverview: FC = () => {
       const decisions = defendantsRequiringReview.reduce((acc, defendant) => {
         acc[defendant.id] = defendant.indictmentReviewDecision
         return acc
-      }, {} as Record<string, IndictmentCaseReviewDecision | null | undefined>)
+      }, {} as ReviewDecisions)
       setOriginalReviewDecisions(decisions)
     }
   }, [defendantsRequiringReview, originalReviewDecisions])
 
-  const hasReviewDecisionChanged = defendantsRequiringReview?.some(
-    (defendant) =>
-      defendant.indictmentReviewDecision !==
-      originalReviewDecisions[defendant.id],
+  // Confirming saves only the decisions that changed since the page loaded.
+  const changedReviewDecisions = getChangedReviewDecisions(
+    defendantsRequiringReview,
+    originalReviewDecisions,
   )
+  const hasReviewDecisionChanged = changedReviewDecisions.length > 0
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -271,8 +274,6 @@ const IndictmentOverview: FC = () => {
                         <ReviewDecision
                           caseId={workingCase.id}
                           defendant={defendant}
-                          modalVisible={modalVisible}
-                          setModalVisible={setModalVisible}
                           isFine={
                             workingCase.indictmentRulingDecision ===
                             CaseIndictmentRulingDecision.FINE
@@ -316,6 +317,28 @@ const IndictmentOverview: FC = () => {
           />
         </FormContentContainer>
         {appealModals}
+        {isConfirmProsecutorDecisionModal(modalVisible) && (
+          <ReviewDecisionModal
+            caseId={workingCase.id}
+            changedDefendants={changedReviewDecisions}
+            onClose={() => setModalVisible(undefined)}
+            // A saved decision is the new original: it no longer counts as
+            // changed, so a retry after a partial failure sends only the rest.
+            onSaved={(savedDefendantIds) =>
+              setOriginalReviewDecisions((previous) => ({
+                ...previous,
+                ...Object.fromEntries(
+                  savedDefendantIds.map((id) => [
+                    id,
+                    workingCase.defendants?.find((d) => d.id === id)
+                      ?.indictmentReviewDecision,
+                  ]),
+                ),
+              }))
+            }
+            onConfirmed={() => router.push(getStandardUserDashboardRoute(user))}
+          />
+        )}
         {isDuplicateIndictmentModal(modalVisible) && (
           <DuplicateIndictmentModal
             onClose={() => setModalVisible(undefined)}
