@@ -1,12 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
+import { ClientType } from '../../../types'
 
-export class AdminScopeClientDto {
-  @ApiProperty({
-    description: 'The client identifier',
-    example: '@island.is/web',
-  })
+export class AdminClientListDto {
+  @ApiProperty()
   clientId!: string
 
   @ApiProperty({
@@ -16,18 +14,14 @@ export class AdminScopeClientDto {
   tenantId!: string
 
   @ApiProperty({
-    description: 'The type of the client',
     example: 'web',
+    enum: ClientType,
+    enumName: 'ClientType',
   })
   clientType!: string
 
   @ApiProperty({
     type: [TranslatedValueDto],
-    description: 'Translated display name of the client',
-    example: [
-      { locale: 'is', value: 'Mínar síður' },
-      { locale: 'en', value: 'My pages' },
-    ],
   })
   displayName!: TranslatedValueDto[]
 }
