@@ -114,4 +114,36 @@ describe('zendeskService', () => {
 
     expect(results).toEqual(true)
   })
+
+  it('should create a ticket and return it', async () => {
+    server.use(
+      rest.post(`${api}/tickets.json`, (req, res, ctx) =>
+        res.once(ctx.status(201), ctx.json({ ticket: { id: 123 } })),
+      ),
+    )
+
+    const ticket = await zendeskService.createTicket({
+      message: 'Here is a message',
+      subject: 'Here is a subject',
+      requesterId: testUser.id,
+    })
+
+    expect(ticket).toMatchObject({ id: 123 })
+  })
+
+  it('should throw when the created ticket has no id', async () => {
+    server.use(
+      rest.post(`${api}/tickets.json`, (req, res, ctx) =>
+        res.once(ctx.status(201), ctx.json({})),
+      ),
+    )
+
+    await expect(
+      zendeskService.createTicket({
+        message: 'Here is a message',
+        subject: 'Here is a subject',
+        requesterId: testUser.id,
+      }),
+    ).rejects.toThrow('Zendesk ticket response is missing the ticket id')
+  })
 })

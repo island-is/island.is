@@ -122,7 +122,7 @@ export class CoursesService extends BaseTemplateApiService {
         jobTitle,
       )
 
-      const success = await this.zendeskService.submitTicket({
+      const ticket = await this.zendeskService.createTicket({
         message,
         subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
         requester: {
@@ -161,6 +161,7 @@ export class CoursesService extends BaseTemplateApiService {
           course,
           courseInstance,
           participantList,
+          ticket.id,
           auth.authorization,
         )
       } catch (error) {
@@ -170,7 +171,7 @@ export class CoursesService extends BaseTemplateApiService {
         )
       }
 
-      return { success }
+      return { success: true }
     } catch (error) {
       this.logger.error('Failed to submit HH courses application to Zendesk', {
         applicationId: application.id,
@@ -490,6 +491,7 @@ export class CoursesService extends BaseTemplateApiService {
       chargeItemCode?: string | null
     },
     participantList: ApplicationAnswers['participantList'],
+    ticketId: string,
     authorization: string,
   ): Promise<void> {
     let priceAmount: number | undefined
@@ -526,11 +528,12 @@ export class CoursesService extends BaseTemplateApiService {
         name: courseInstance.displayedTitle ?? course.title,
         external_id: courseInstance.id,
         custom_object_fields: {
-          upphafsdagsetning: courseInstance.startDate.split('T')[0],
-          upphafstímasetning:
+          course_start_date: courseInstance.startDate.split('T')[0],
+          course_start_time:
             courseInstance.startDateTimeDuration?.startTime ?? '',
-          lýsing: courseInstance.description ?? '',
-          verð_per_skráningu: priceAmount?.toString() ?? '',
+          course_description: courseInstance.description ?? '',
+          course_price: priceAmount ?? null,
+          course_id: courseRecord.id,
           course: courseRecord.id,
         },
       },
@@ -548,6 +551,7 @@ export class CoursesService extends BaseTemplateApiService {
           kennitala: p.nationalIdWithName.nationalId,
           email: p.nationalIdWithName.email,
           course_instance: instanceRecord.id,
+          ticket_id: String(ticketId),
         },
       })),
     )
