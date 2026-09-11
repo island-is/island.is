@@ -1,5 +1,5 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -22,9 +22,11 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision'
+import useSerializedSave from '@island.is/judicial-system-web/src/utils/hooks/useSerializedSave'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   caseLevelAppealDecision,
+  caseLevelAppealDecisionRow,
   revertCaseLevelAppealDecision,
   withCaseLevelAppealDecision,
 } from '@island.is/judicial-system-web/src/utils/utils'
@@ -32,6 +34,13 @@ import {
 import useDebouncedAppealAnnouncement from './useDebouncedAppealAnnouncement'
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
+
+type AppealDecisionRow = NonNullable<Case['appealDecisions']>[number]
+
+interface AppealDecisionPatch {
+  decision?: CaseAppealDecision
+  announcement?: string
+}
 
 interface Props {
   workingCase: Case
@@ -60,11 +69,8 @@ const AppealSections: FC<Props> = ({
     useState<CaseAppealDecision>()
   const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
     useState<CaseAppealDecision>()
-  // The id of each party's most recent save, so that a slow request failing
-  // after a newer one succeeded does not roll the newer decision back.
-  const latestSaveIds = useRef<
-    Partial<Record<AppealDecisionPartyRole, number>>
-  >({})
+  // Runs each party's saves one at a time and knows which row the server has
+  const saveAppealDecision = useSerializedSave<AppealDecisionRow | undefined>()
 
   const accusedAppealDecision = caseLevelAppealDecision(
     workingCase.appealDecisions,
@@ -90,22 +96,22 @@ const AppealSections: FC<Props> = ({
   const lock = appealCorrectionLock(workingCase.appealCase)
   const disabled = Boolean(lock)
 
-  // Rolls an optimistic case-level update back to the rows the case held before
-  // the change, so the working case only claims a decision the server has. The
-  // court record step is validated against the working case, and a decision
-  // that never reached the server (network down, backend error) would
-  // otherwise let the judge continue and complete the case with an incomplete
-  // court record - the backend rejects that completion, but the judge should
-  // see the problem here, where it can be fixed.
+  // Puts a party's case-level row back to the one the server holds, so the
+  // working case only claims a decision the server has. The court record step
+  // is validated against the working case, and a decision that never reached
+  // the server (network down, backend error) would otherwise let the judge
+  // continue and complete the case with an incomplete court record - the
+  // backend rejects that completion, but the judge should see the problem
+  // here, where it can be fixed.
   const revertAppealDecision = (
     partyRole: AppealDecisionPartyRole,
-    previousAppealDecisions: Case['appealDecisions'],
+    confirmedRow: AppealDecisionRow | undefined,
   ) => {
     setWorkingCase((prev) => ({
       ...prev,
       appealDecisions: revertCaseLevelAppealDecision(
         prev.appealDecisions,
-        previousAppealDecisions,
+        confirmedRow ? [confirmedRow] : [],
         partyRole,
       ),
     }))
@@ -118,111 +124,106 @@ const AppealSections: FC<Props> = ({
     }
   }
 
+  // Persists one party's row. The mutation toasts its own error and resolves
+  // to undefined on failure. Resolves to whether the save succeeded and is
+  // still the party's latest - a superseded save must drive nothing, since the
+  // newer one owns the row now.
+  const persistAppealDecision = (
+    partyRole: AppealDecisionPartyRole,
+    patch: AppealDecisionPatch,
+  ) =>
+    saveAppealDecision({
+      key: partyRole,
+      // Read before the optimistic update below is applied
+      confirmed: caseLevelAppealDecisionRow(
+        workingCase.appealDecisions,
+        partyRole,
+      ),
+      value: caseLevelAppealDecisionRow(
+        withCaseLevelAppealDecision(
+          workingCase.appealDecisions,
+          partyRole,
+          patch,
+        ),
+        partyRole,
+      ),
+      persist: async () =>
+        Boolean(
+          await updateCaseAppealDecision({
+            caseId: workingCase.id,
+            partyRole,
+            decision: patch.decision,
+            announcement: patch.announcement,
+          }),
+        ),
+      rollback: (confirmedRow) => revertAppealDecision(partyRole, confirmedRow),
+    })
+
+  const toPatch = (
+    decision?: CaseAppealDecision,
+    announcement?: string,
+  ): AppealDecisionPatch | undefined =>
+    decision !== undefined || announcement !== undefined
+      ? {
+          ...(decision !== undefined ? { decision } : {}),
+          ...(announcement !== undefined ? { announcement } : {}),
+        }
+      : undefined
+
   const handleChange = async (update: {
     accusedAppealDecision?: CaseAppealDecision
     accusedAppealAnnouncement?: string
     prosecutorAppealDecision?: CaseAppealDecision
     prosecutorAppealAnnouncement?: string
   }) => {
-    // The rows as last confirmed by the server, kept for a rollback
-    const previousAppealDecisions = workingCase.appealDecisions
+    const accusedPatch = toPatch(
+      update.accusedAppealDecision,
+      update.accusedAppealAnnouncement,
+    )
+    const prosecutorPatch = toPatch(
+      update.prosecutorAppealDecision,
+      update.prosecutorAppealAnnouncement,
+    )
 
     // Optimistically update the case-level appeal_decision rows the UI reads;
     // the mutation persists them server-side.
     setWorkingCase((prev) => {
       let appealDecisions = prev.appealDecisions
-      if (
-        update.accusedAppealDecision !== undefined ||
-        update.accusedAppealAnnouncement !== undefined
-      ) {
+
+      if (accusedPatch) {
         appealDecisions = withCaseLevelAppealDecision(
           appealDecisions,
           AppealDecisionPartyRole.DEFENDANT,
-          {
-            ...(update.accusedAppealDecision !== undefined
-              ? { decision: update.accusedAppealDecision }
-              : {}),
-            ...(update.accusedAppealAnnouncement !== undefined
-              ? { announcement: update.accusedAppealAnnouncement }
-              : {}),
-          },
+          accusedPatch,
         )
       }
-      if (
-        update.prosecutorAppealDecision !== undefined ||
-        update.prosecutorAppealAnnouncement !== undefined
-      ) {
+
+      if (prosecutorPatch) {
         appealDecisions = withCaseLevelAppealDecision(
           appealDecisions,
           AppealDecisionPartyRole.PROSECUTOR,
-          {
-            ...(update.prosecutorAppealDecision !== undefined
-              ? { decision: update.prosecutorAppealDecision }
-              : {}),
-            ...(update.prosecutorAppealAnnouncement !== undefined
-              ? { announcement: update.prosecutorAppealAnnouncement }
-              : {}),
-          },
+          prosecutorPatch,
         )
       }
+
       return { ...prev, appealDecisions }
     })
 
-    // Persists one party's row. The mutation toasts its own error and resolves
-    // to undefined on failure. Resolves to whether this save both succeeded and
-    // is still the party's latest - a superseded save must neither roll back
-    // nor drive anything, since the newer one owns the row now.
-    const saveAppealDecision = async (
-      partyRole: AppealDecisionPartyRole,
-      decision?: CaseAppealDecision,
-      announcement?: string,
-    ) => {
-      const saveId = (latestSaveIds.current[partyRole] ?? 0) + 1
-      latestSaveIds.current[partyRole] = saveId
-
-      const saved = await updateCaseAppealDecision({
-        caseId: workingCase.id,
-        partyRole,
-        decision,
-        announcement,
-      })
-
-      if (latestSaveIds.current[partyRole] !== saveId) {
-        return false
-      }
-
-      if (!saved) {
-        revertAppealDecision(partyRole, previousAppealDecisions)
-
-        return false
-      }
-
-      return true
-    }
-
     let saved = true
 
-    if (
-      update.accusedAppealDecision !== undefined ||
-      update.accusedAppealAnnouncement !== undefined
-    ) {
+    if (accusedPatch) {
       saved =
-        (await saveAppealDecision(
+        (await persistAppealDecision(
           AppealDecisionPartyRole.DEFENDANT,
-          update.accusedAppealDecision,
-          update.accusedAppealAnnouncement,
+          accusedPatch,
         )) && saved
     }
 
-    if (
-      update.prosecutorAppealDecision !== undefined ||
-      update.prosecutorAppealAnnouncement !== undefined
-    ) {
+    if (prosecutorPatch) {
       saved =
-        (await saveAppealDecision(
+        (await persistAppealDecision(
           AppealDecisionPartyRole.PROSECUTOR,
-          update.prosecutorAppealDecision,
-          update.prosecutorAppealAnnouncement,
+          prosecutorPatch,
         )) && saved
     }
 
@@ -234,6 +235,7 @@ const AppealSections: FC<Props> = ({
       onChange(update)
     }
   }
+
   return (
     <>
       <SectionHeading

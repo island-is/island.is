@@ -297,7 +297,12 @@ const assertRequestCaseCourtRecordComplete = (
   update: UpdateCase,
   theCase: Case,
 ): void => {
-  const courtEndTime = update.courtEndTime ?? theCase.courtEndTime
+  // An update may clear the court end time explicitly (null), which is not
+  // the same as leaving it alone (undefined)
+  const courtEndTime =
+    update.courtEndTime !== undefined
+      ? update.courtEndTime
+      : theCase.courtEndTime
 
   if (!courtEndTime) {
     throw new ForbiddenException(
@@ -334,7 +339,10 @@ const requestCaseCompletionSideEffect =
       ...update,
       state,
       // Asserted above, so the ruling date is always the actual court end time
-      rulingDate: update.courtEndTime ?? theCase.courtEndTime,
+      rulingDate:
+        update.courtEndTime !== undefined
+          ? update.courtEndTime
+          : theCase.courtEndTime,
     }
 
     // Handle completed without ruling

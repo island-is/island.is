@@ -1050,6 +1050,12 @@ describe('Transition Case', () => {
           ).toThrow(ForbiddenException)
         })
 
+        it('should not complete when the update clears the court end time', () => {
+          expect(act(completeCourtRecord, { courtEndTime: null })).toThrow(
+            ForbiddenException,
+          )
+        })
+
         it('should not complete without any appeal decisions', () => {
           expect(
             act({ ...completeCourtRecord, appealDecisions: undefined }),

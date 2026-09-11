@@ -311,7 +311,10 @@ export const canDefenceUserOpenLinkedCase = (
 }
 
 // The case-level appeal_decision row of a party - the one with no rulingFileId.
-const caseLevelAppealDecisionRow = (
+/**
+ * The case-level (no rulingFileId) appeal_decision row of a party, if any.
+ */
+export const caseLevelAppealDecisionRow = (
   appealDecisions: Case['appealDecisions'],
   partyRole: AppealDecisionPartyRole,
 ) =>

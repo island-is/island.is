@@ -241,9 +241,10 @@ describe('AppealSections', () => {
       expect(onChange).not.toHaveBeenCalled()
     })
 
-    // A slow save that fails after a newer one succeeded describes a row the
-    // newer save now owns - rolling it back would discard the newer decision.
-    it('ignores a superseded save that fails after a newer save succeeded', async () => {
+    // Saves for a party run one at a time, so a second click waits for the
+    // first save to settle. Its failure then rolls nothing back - the newer
+    // save decides - and the newer decision survives.
+    it('lets a newer successful save stand when the save before it fails', async () => {
       let failFirstSave: (value: undefined) => void = () => undefined
       mockUpdateCaseAppealDecision
         .mockImplementationOnce(
@@ -258,19 +259,20 @@ describe('AppealSections', () => {
       fireEvent.click(prosecutorDecision())
       fireEvent.click(prosecutorAcceptRadio())
 
+      // The second save is queued behind the first
+      expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(1)
+
+      await act(async () => {
+        failFirstSave(undefined)
+      })
+
       await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
+      expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(2)
       expect(onChange).toHaveBeenCalledWith(
         expect.objectContaining({
           prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
         }),
       )
-
-      // Let the superseded save fail and its continuation run
-      await act(async () => {
-        failFirstSave(undefined)
-      })
-
-      expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(2)
       expect(
         caseLevelAppealDecision(
           workingCase().appealDecisions,
@@ -278,7 +280,43 @@ describe('AppealSections', () => {
         ),
       ).toBe(CaseAppealDecision.ACCEPT)
       expect(prosecutorAcceptRadio()).toBeChecked()
-      expect(onChange).toHaveBeenCalledTimes(1)
+    })
+
+    // The first decision was never on the server, so it must not be what the
+    // second failure falls back to.
+    it('falls back to the confirmed decision when two quick saves both fail', async () => {
+      let failFirstSave: (value: undefined) => void = () => undefined
+      mockUpdateCaseAppealDecision
+        .mockImplementationOnce(
+          () =>
+            new Promise<undefined>((resolve) => {
+              failFirstSave = resolve
+            }),
+        )
+        .mockResolvedValueOnce(undefined)
+      const { workingCase, onChange } = renderHarness(baseCase)
+
+      fireEvent.click(prosecutorDecision())
+      fireEvent.click(prosecutorAcceptRadio())
+
+      await act(async () => {
+        failFirstSave(undefined)
+      })
+
+      await waitFor(() =>
+        expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(2),
+      )
+      await waitFor(() =>
+        expect(
+          caseLevelAppealDecision(
+            workingCase().appealDecisions,
+            AppealDecisionPartyRole.PROSECUTOR,
+          ),
+        ).toBeUndefined(),
+      )
+      expect(prosecutorDecision()).not.toBeChecked()
+      expect(prosecutorAcceptRadio()).not.toBeChecked()
+      expect(onChange).not.toHaveBeenCalled()
     })
 
     it('puts the previously saved decision back', async () => {

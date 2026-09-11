@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useCallback, useContext, useRef } from 'react'
+import { useCallback, useContext } from 'react'
 import type { IntlShape } from 'react-intl'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
@@ -50,6 +50,7 @@ import {
   useCase,
   useDebouncedInput,
   useOnceOn,
+  useSerializedSave,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
@@ -96,9 +97,8 @@ const getSessionBookingsAutofill = (
 const CourtRecord: FC = () => {
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
-  // The id of the most recent court end time save, so that a slow request
-  // failing after a newer one succeeded does not roll the newer time back
-  const latestCourtEndTimeSaveId = useRef(0)
+  // Runs court end time saves one at a time and knows which value the server has
+  const saveCourtEndTime = useSerializedSave<string | null | undefined>()
   const {
     workingCase,
     setWorkingCase,
@@ -478,34 +478,31 @@ const CourtRecord: FC = () => {
                 }
                 maxDate={new Date()}
                 selectedDate={workingCase.courtEndTime}
-                onChange={async (date: Date | undefined, valid: boolean) => {
+                onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    // The value the server last confirmed, kept for a rollback
-                    const previousCourtEndTime = workingCase.courtEndTime
-                    const saveId = ++latestCourtEndTimeSaveId.current
-
-                    const saved = await setAndSendCaseToServer(
-                      [
-                        {
-                          courtEndTime: formatDateForServer(date),
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
+                    const courtEndTime = formatDateForServer(date)
 
                     // A failed save toasts, but the optimistic value would still
                     // validate the step and let the judge continue with a court
-                    // end time the server never got. Roll it back so the step
-                    // stays invalid until the time is actually persisted - unless
-                    // a newer save has taken over the field in the meantime.
-                    if (!saved && saveId === latestCourtEndTimeSaveId.current) {
-                      setWorkingCase((prev) => ({
-                        ...prev,
-                        courtEndTime: previousCourtEndTime,
-                      }))
-                    }
+                    // end time the server never got. The save rolls the field
+                    // back to the value the server has, so the step stays invalid
+                    // until the time is actually persisted.
+                    saveCourtEndTime({
+                      key: 'courtEndTime',
+                      confirmed: workingCase.courtEndTime,
+                      value: courtEndTime,
+                      persist: () =>
+                        setAndSendCaseToServer(
+                          [{ courtEndTime, force: true }],
+                          workingCase,
+                          setWorkingCase,
+                        ),
+                      rollback: (confirmedCourtEndTime) =>
+                        setWorkingCase((prev) => ({
+                          ...prev,
+                          courtEndTime: confirmedCourtEndTime,
+                        })),
+                    })
                   }
                 }}
                 blueBox={false}
