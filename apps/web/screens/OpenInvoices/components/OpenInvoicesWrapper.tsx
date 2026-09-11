@@ -4,7 +4,6 @@ import { Box, BreadCrumbItem, Breadcrumbs } from '@island.is/island-ui/core'
 import {
   CustomPageLayoutHeader,
   CustomPageLayoutHeaderProps,
-  CustomPageLayoutWrapper,
   OrganizationFooter,
 } from '@island.is/web/components'
 import { Organization } from '@island.is/web/graphql/schema'
@@ -29,11 +28,7 @@ interface Props {
 export const OpenInvoicesWrapper = (props: Props) => {
   const description = props.header?.description?.text ?? props.description
   return (
-    <CustomPageLayoutWrapper
-      pageTitle={props.title}
-      pageDescription={props.description}
-      pageFeaturedImage={props.featuredImage?.src}
-    >
+    <>
       <CustomPageLayoutHeader
         title={props.header?.title ?? props.title}
         description={
@@ -81,6 +76,6 @@ export const OpenInvoicesWrapper = (props: Props) => {
           />
         </Box>
       )}
-    </CustomPageLayoutWrapper>
+    </>
   )
 }
