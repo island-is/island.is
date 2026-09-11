@@ -358,7 +358,7 @@ export class TransportAuthorityApi {
     return result
   }
 
-  async getMyVehiclePlateOrderChecksByPermno(
+  async getVehiclePlateOrderChecksByPermno(
     auth: User,
     permno: string,
   ): Promise<VehiclePlateOrderChecksByPermno | null | GraphQLError> {

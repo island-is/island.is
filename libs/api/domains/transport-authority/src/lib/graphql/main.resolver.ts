@@ -116,14 +116,14 @@ export class MainResolver {
 
   @Scopes(ApiScope.samgongustofaVehicles)
   @Query(() => VehiclePlateOrderChecksByPermno, {
-    name: 'myVehiclePlateOrderChecksByPermno',
+    name: 'vehiclePlateOrderChecksByPermno',
     nullable: true,
   })
-  async getMyVehiclePlateOrderChecksByPermno(
+  async getVehiclePlateOrderChecksByPermno(
     @Args('permno', { type: () => String }) permno: string,
     @CurrentUser() user: User,
   ) {
-    return await this.transportAuthorityApi.getMyVehiclePlateOrderChecksByPermno(
+    return await this.transportAuthorityApi.getVehiclePlateOrderChecksByPermno(
       user,
       permno,
     )
