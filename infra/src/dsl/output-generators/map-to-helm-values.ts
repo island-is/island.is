@@ -638,6 +638,7 @@ const rewriteDevEnv = (
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
     const featureIdsHost = getFeatureIdsHost(env)
+
     const idsServices = [
       'identity-server',
       'auth-admin-web',
@@ -648,12 +649,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
       'services-auth-personal-representative',
       'services-auth-personal-representative-public',
     ]
-    const publicIdsServices = [
-      'identity-server',
-      'auth-admin-web',
-      'services-auth-admin-api',
-      'services-auth-public-api',
-    ]
+
     const serviceName = s.image ?? s.name
 
     if (s.env.SERVICE_PORTAL_BASE_URL !== undefined) {
@@ -726,13 +722,28 @@ export const HelmOutput: OutputFormat<HelmService> = {
       )
     }
 
-    // Handle AUTH_ADMIN_API_PATHS JSON object
-    if (
-      s.env.AUTH_ADMIN_API_PATHS &&
-      typeof s.env.AUTH_ADMIN_API_PATHS === 'object'
-    ) {
-      // AUTH_ADMIN_API_PATHS is a json() wrapped object, need to handle carefully
-      // May need custom logic depending on the structure
+    if (s.env.AUTH_ADMIN_API_PATHS !== undefined) {
+      s.env.AUTH_ADMIN_API_PATHS = rewriteDevEnv(
+        s.env.AUTH_ADMIN_API_PATHS,
+        (value) => {
+          const paths = JSON.parse(value) as Record<string, string>
+          const developmentPath = paths.development
+            ? new URL(paths.development)
+            : null
+
+          return JSON.stringify({
+            ...paths,
+            ...(developmentPath
+              ? {
+                  development: getFeatureIdsUrl(
+                    env,
+                    `${developmentPath.pathname}${developmentPath.search}${developmentPath.hash}`,
+                  ),
+                }
+              : {}),
+          })
+        },
+      )
     }
     if (idsServices.includes(serviceName)) {
       const rewriteIdsUrl = (value: string) => {
@@ -758,10 +769,8 @@ export const HelmOutput: OutputFormat<HelmService> = {
       }
     }
 
-    if (
-      serviceName === 'identity-server' &&
-      s.env.Application__AllowedRedirectUris !== undefined
-    ) {
+
+    if (s.env.Application__AllowedRedirectUris) {
       s.env.Application__AllowedRedirectUris = rewriteDevEnv(
         s.env.Application__AllowedRedirectUris,
         (value) =>
@@ -785,8 +794,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
-
-      if (publicIdsServices.includes(serviceName)) {
+      if (['identity-server','auth-admin-web','services-auth-admin-api','services-auth-public-api',].includes(serviceName)) {
         ingress.host.dev = ingress.host.dev.map(() => featureIdsHost)
       } else {
         ingress.host.dev = ingress.host.dev.map(
@@ -794,6 +802,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
         )
       }
     })
+
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
       max: Math.min(1, s.replicaCount?.max ?? 1),

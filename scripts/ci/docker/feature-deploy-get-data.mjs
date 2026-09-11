@@ -24,7 +24,13 @@ function getCommitMsg(context) {
 }
 
 async function getLatestIdsImageTag() {
+  
+  // will not work untill https://github.com/island-is/identity-server.web/tree/feat/ids-feature-deploy
+  // is merged
+  
+  // test image: here
   return 'test_ids_feature_deploy_j98h09u'
+
   // const ecr = new AWS.ECR({ region: 'eu-west-1' })
 
   // // get response from aws.
