@@ -112,11 +112,6 @@ export const prerequisitesMessages = {
         'Hér er átt við almennt netfang sem notað er fyrir „hafa samband“. Dæmi: info@ eða postur@',
       description: 'Work email tooltip',
     },
-    workPhone: {
-      id: 'cpn.application:prerequisites.serviceProvider.workPhone',
-      defaultMessage: 'Vinnunúmer',
-      description: 'Work phone',
-    },
     workPhoneTooltip: {
       id: 'cpn.application:prerequisites.serviceProvider.workPhoneTooltip',
       defaultMessage:

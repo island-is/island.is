@@ -149,7 +149,7 @@ export const serviceProviderSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'serviceProvider.contactPersonWorkPhone',
-          title: prerequisitesMessages.serviceProvider.workPhone,
+          title: sharedMessages.phone,
           width: 'half',
           format: '###-####',
           placeholder: '000-0000',

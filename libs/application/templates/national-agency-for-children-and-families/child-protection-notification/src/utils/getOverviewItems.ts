@@ -233,7 +233,7 @@ export const getServiceProviderContactPersonItems = (
     },
     {
       width: 'half',
-      keyText: prerequisitesMessages.serviceProvider.workPhone,
+      keyText: sharedMessages.phone,
       valueText: formatPhoneNumber(
         removeCountryCode(serviceProviderContactPersonWorkPhone ?? ''),
       ),
