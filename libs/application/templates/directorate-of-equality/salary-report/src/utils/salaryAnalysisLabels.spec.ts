@@ -4,6 +4,7 @@ import {
   formatDeviationLabel,
   formatPayStatusLabel,
   formatSalaryAnalysisGenderLabel,
+  formatStig,
 } from './salaryAnalysisLabels'
 
 // Real react-intl over the bundled defaultMessages, so the ICU template in
@@ -59,5 +60,32 @@ describe('formatDeviationLabel', () => {
     expect(formatDeviationLabel(0, 'ON_LINE', formatMessage)).toBe(
       '0,0% (á línu)',
     )
+  })
+})
+
+describe('formatStig', () => {
+  // The reported figure: summing the per-step weights leaves floating-point
+  // noise on what is really a two-decimal number.
+  it('trims floating-point noise to two decimals', () => {
+    expect(formatStig(524.6700000000001)).toBe('524,67')
+  })
+
+  it('rounds a longer figure rather than truncating it', () => {
+    expect(formatStig(524.6789)).toBe('524,68')
+  })
+
+  it('leaves a whole score whole', () => {
+    expect(formatStig(524)).toBe('524')
+    expect(formatStig(0)).toBe('0')
+  })
+
+  it('groups thousands the Icelandic way', () => {
+    expect(formatStig(1234.5)).toBe('1.234,5')
+  })
+
+  // A dash, not a zero: a missing score is not a score of nothing.
+  it('shows a dash for a missing score', () => {
+    expect(formatStig(null)).toBe('—')
+    expect(formatStig(undefined)).toBe('—')
   })
 })

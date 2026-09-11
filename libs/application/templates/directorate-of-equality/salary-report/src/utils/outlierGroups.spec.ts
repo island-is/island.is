@@ -5,6 +5,7 @@ import {
   outlierGroupsWithMembers,
   isOutlierGroupComplete,
   isOutlierGroupSubmittable,
+  outlierGroupFingerprint,
   unassignedOutlierOrdinals,
   withFallbackOutlierGroupNames,
 } from './outlierGroups'
@@ -267,5 +268,62 @@ describe('buildOutlierSyncCommands with an emptied group', () => {
 
     expect(outlierGroups).toEqual([])
     expect(employees).toEqual([])
+  })
+})
+
+// What decides whether a group's "Vista" button still reads "Vistað".
+describe('outlierGroupFingerprint', () => {
+  const GROUP = {
+    id: 'group-1',
+    name: 'Sölufólk',
+    reason: 'Reynsla',
+    action: 'Endurskoðun',
+    remedyDate: '2027-01-31',
+    signatureName: 'Jón Jónsson',
+    signatureRole: 'Framkvæmdastjóri',
+    employeeOrdinals: [1, 2],
+  }
+
+  it('matches a group against an unedited copy of itself', () => {
+    expect(outlierGroupFingerprint(GROUP)).toBe(
+      outlierGroupFingerprint({ ...GROUP }),
+    )
+  })
+
+  it('ignores the id, which the applicant cannot change', () => {
+    expect(outlierGroupFingerprint({ ...GROUP, id: 'group-2' })).toBe(
+      outlierGroupFingerprint(GROUP),
+    )
+  })
+
+  it.each([
+    ['name', { name: 'Sérfræðingar' }],
+    ['reason', { reason: 'Menntun' }],
+    ['action', { action: 'Launaleiðrétting' }],
+    ['remedyDate', { remedyDate: '2027-02-01' }],
+    ['signatureName', { signatureName: 'Anna Ansdóttir' }],
+    ['signatureRole', { signatureRole: 'Mannauðsstjóri' }],
+    ['employeeOrdinals', { employeeOrdinals: [1] }],
+  ])('notices an edit to %s', (_field, edit) => {
+    expect(outlierGroupFingerprint({ ...GROUP, ...edit })).not.toBe(
+      outlierGroupFingerprint(GROUP),
+    )
+  })
+
+  // A blank field and a missing one are the same group as far as the button is
+  // concerned: emptyOutlierGroupAnswer writes '' where the buffer round-trip
+  // can hand back undefined.
+  it('reads a missing field as blank', () => {
+    expect(outlierGroupFingerprint({ employeeOrdinals: [] })).toBe(
+      outlierGroupFingerprint({
+        name: '',
+        reason: '',
+        action: '',
+        remedyDate: '',
+        signatureName: '',
+        signatureRole: '',
+        employeeOrdinals: [],
+      }),
+    )
   })
 })

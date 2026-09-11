@@ -59,6 +59,28 @@ export const emptyOutlierGroupAnswer = (
   employeeOrdinals,
 })
 
+// What the "Vista" button compares to decide whether a group still matches the
+// copy last written to answers. By content rather than by identity: useWatch
+// hands back a fresh clone of its whole subtree on every keystroke, so two
+// renders never share an object.
+//
+// `id` is left out — it is bookkeeping, not something the applicant can change,
+// and a group seeded from the buffer without one gets a fresh id on the way in.
+//
+// Keep this in step with OutlierGroupAnswer, as with emptyOutlierGroupAnswer
+// above: a field added there but not here can be edited without the button ever
+// leaving its "Vistað" state.
+export const outlierGroupFingerprint = (group?: OutlierGroupAnswer): string =>
+  JSON.stringify([
+    group?.name ?? '',
+    group?.reason ?? '',
+    group?.action ?? '',
+    group?.remedyDate ?? '',
+    group?.signatureName ?? '',
+    group?.signatureRole ?? '',
+    group?.employeeOrdinals ?? [],
+  ])
+
 // An empty group (all its members freed by a removal) has nothing to explain,
 // so it's vacuously complete — same exemption dataSchema's superRefine makes.
 //

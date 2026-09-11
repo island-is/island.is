@@ -29,6 +29,8 @@ type Props = {
   outlierGroupsFormMethods?: UseFormReturn<{
     salaryAnalysis: { outlierGroups: OutlierGroupAnswer[] }
   }>
+  onSaveGroups: (groups: OutlierGroupAnswer[]) => Promise<boolean>
+  initialSavedGroups: OutlierGroupAnswer[]
 }
 
 export const OutlierGroupPanel: FC<Props> = ({
@@ -36,6 +38,8 @@ export const OutlierGroupPanel: FC<Props> = ({
   hidePostponeCheckbox,
   errors,
   outlierGroupsFormMethods,
+  onSaveGroups,
+  initialSavedGroups,
 }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -53,6 +57,18 @@ export const OutlierGroupPanel: FC<Props> = ({
   }, [hidePostponeCheckbox])
 
   if (outliers.length === 0) return null
+
+  // One element, two scopes: draft phase wraps it in the local form, the review
+  // states leave it on the ambient one.
+  const editor = (
+    <OutlierEditor
+      outliers={outliers}
+      errors={errors}
+      mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
+      onSaveGroups={onSaveGroups}
+      initialSavedGroups={initialSavedGroups}
+    />
+  )
 
   return (
     <Box>
@@ -92,19 +108,9 @@ export const OutlierGroupPanel: FC<Props> = ({
 
       {!isPostponed &&
         (outlierGroupsFormMethods ? (
-          <FormProvider {...outlierGroupsFormMethods}>
-            <OutlierEditor
-              outliers={outliers}
-              errors={errors}
-              mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-            />
-          </FormProvider>
+          <FormProvider {...outlierGroupsFormMethods}>{editor}</FormProvider>
         ) : (
-          <OutlierEditor
-            outliers={outliers}
-            errors={errors}
-            mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-          />
+          editor
         ))}
     </Box>
   )

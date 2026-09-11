@@ -7,6 +7,7 @@ import { formatWageAmount } from '../EmployeesEditor/utils'
 import {
   formatDeviationLabel,
   formatSalaryAnalysisGenderLabel,
+  formatStig,
 } from '../../utils/salaryAnalysisLabels'
 import { formatSignedPercentMagnitude } from '../../utils/wageGap'
 import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
@@ -232,7 +233,9 @@ export const PayDispersionTable = ({ payDispersion }: Props) => {
                       formatMessage,
                     )}
                   </DataCell>
-                  <DataCell align="right">{employee.score}</DataCell>
+                  <DataCell align="right">
+                    {formatStig(employee.score)}
+                  </DataCell>
                   <DataCell align="right">
                     {formatWageAmount(employee.regularHourlyWage)}
                   </DataCell>

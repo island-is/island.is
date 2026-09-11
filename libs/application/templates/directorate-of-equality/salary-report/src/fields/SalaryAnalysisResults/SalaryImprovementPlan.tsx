@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm, useFormContext, useWatch } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { YES } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import {
@@ -37,6 +37,7 @@ import {
 import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQueries } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
+import { useOutlierPlanBuffer } from '../../utils/useOutlierPlanBuffer'
 import { useSeedOnce } from '../../utils/useSeedOnce'
 import { OutlierGroupPanel } from './OutlierGroupPanel'
 
@@ -110,11 +111,66 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     [outlierGroupsContent, employeesContent],
   )
   const { sync } = useDraftSync(application)
+  const writeOutlierPlan = useOutlierPlanBuffer(application.id, answerQuestions)
+  // Both captured on the first render rather than watched, because the shell's
+  // answers move underneath this screen: saving the plan mirrors it into them,
+  // as does the navigation-flag effect below. A seed keyed on the live value
+  // would fire again on a save and setValue the editor's own work back over it,
+  // taking focus with it. What a seed wants is the plan as this visit found it.
+  const [bufferedGroups] = useState(() =>
+    getValueViaPath<OutlierGroupAnswer[]>(
+      application.answers,
+      'salaryAnalysis.outlierGroupsDraft',
+    ),
+  )
+  // Presence, not length. An empty buffer is the applicant having removed every
+  // group, and it has to win over the committed plan the same way a full one
+  // does — otherwise deleting the last group leaves nothing to shadow the DMR
+  // draft, and it comes straight back. That is why beforeSubmit refreshes the
+  // buffer rather than emptying it: `[]` has to keep meaning "no groups".
+  const hasBufferedPlan = bufferedGroups !== undefined
+  const [answeredGroups] = useState(
+    () =>
+      getValueViaPath<OutlierGroupAnswer[]>(
+        application.answers,
+        'salaryAnalysis.outlierGroups',
+      ) ?? NO_GROUPS,
+  )
+  // Whether there is anything in the buffer to clear on the way out. The frozen
+  // answers only know about saves from earlier visits, so a save made in this
+  // session has to flip it too. Without the guard, every Continue from this
+  // screen would write an empty buffer into the answers of applicants who never
+  // pressed the button.
+  const hasSavedPlan = useRef(hasBufferedPlan)
+
+  const saveOutlierPlan = useCallback(
+    async (groups: OutlierGroupAnswer[]) => {
+      const persisted = await writeOutlierPlan(groups)
+      if (persisted) hasSavedPlan.current = true
+      return persisted
+    },
+    [writeOutlierPlan],
+  )
+
+  // Brings the buffer up to what a Continue has just committed. Only for a
+  // buffer that already exists: an applicant who never pressed the button gets
+  // no key at all, and so keeps seeding from the committed plan.
+  const commitSavedPlan = useCallback(
+    async (groups: OutlierGroupAnswer[]) => {
+      if (!hasSavedPlan.current) return
+      await writeOutlierPlan(groups)
+    },
+    [writeOutlierPlan],
+  )
+
   const draftForm = useForm<DraftOutlierFormValues>({
     defaultValues: { salaryAnalysis: { outlierGroups: [] } },
   })
-  const { control: ambientControl, setValue: setAmbientValue } =
-    useFormContext()
+  const {
+    control: ambientControl,
+    getValues: getAmbientValues,
+    setValue: setAmbientValue,
+  } = useFormContext()
   const postponed: string[] =
     useWatch({
       name: 'salaryAnalysis.postponed',
@@ -228,11 +284,29 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     }))
   }, [content])
 
+  // What the editor opens with, and equally what its save buttons treat as
+  // already persisted — every source below has been written somewhere.
+  //
+  // The buffer wins wherever it exists, empty included: the "Vista" button
+  // writes it and beforeSubmit brings it up to whatever a Continue committed,
+  // so it is never older than either — while the sources below are only ever as
+  // new as the last Continue.
+  const seedGroups = useMemo((): OutlierGroupAnswer[] => {
+    if (bufferedGroups) return bufferedGroups
+    if (!isDraftPhase && answeredGroups.length > 0) return answeredGroups
+    // Empty outside DRAFT and DRAFT_RETRY: the review states are not granted
+    // the draft providers, so there is no content to cross over from.
+    return outlierGroupAnswersFromDraft()
+  }, [
+    answeredGroups,
+    bufferedGroups,
+    isDraftPhase,
+    outlierGroupAnswersFromDraft,
+  ])
+
   useSeedOnce(isDraftPhase && Boolean(content), () => {
     if (!content) return
-    draftForm.reset({
-      salaryAnalysis: { outlierGroups: outlierGroupAnswersFromDraft() },
-    })
+    draftForm.reset({ salaryAnalysis: { outlierGroups: seedGroups } })
   })
 
   const draftOutlierGroups =
@@ -258,6 +332,14 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     setAmbientValue('salaryAnalysis.outlierGroups', draftOutlierGroups)
   }, [draftOutlierGroups, isDraftPhase, setAmbientValue])
 
+  // The review states edit the plan on the ambient form, so a saved buffer has
+  // to be put back there. Not gated on the ambient groups being empty, unlike
+  // the DRAFT_RETRY seed below: the answers already hold whatever the last
+  // "Halda áfram" wrote, and the buffer is never older than that.
+  useSeedOnce(!isDraftPhase && hasBufferedPlan, () => {
+    setAmbientValue('salaryAnalysis.outlierGroups', seedGroups)
+  })
+
   // The mirror above is what puts a DRAFT-phase plan into the answers, and it
   // only exists as of the postpone-flow change. Applications that left DRAFT
   // before it carry their groups on the stored draft snapshot alone, so
@@ -270,9 +352,14 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   // branch in beforeSubmit) precisely so the plan is written from scratch there
   // — seeding it from a snapshot taken before that clear would resurrect a plan
   // the applicant chose to defer.
+  //
+  // Behind the buffer seed above, and explicitly so: both read
+  // `ambientOutlierGroups` from the same render, so without the guard this one
+  // would still see it empty and overwrite the buffer it had just been given.
   useSeedOnce(
     application.state === States.DRAFT_RETRY &&
       Boolean(content) &&
+      !hasBufferedPlan &&
       ambientOutlierGroups.length === 0,
     () => {
       const groups = outlierGroupAnswersFromDraft()
@@ -373,6 +460,7 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       }
 
       if (currentOutliers.length === 0) {
+        await commitSavedPlan(NO_GROUPS)
         return [true, null]
       }
 
@@ -396,6 +484,17 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
         }
       }
 
+      // What this Continue has persisted, and so what the buffer has to be
+      // brought up to below. The review states carry the plan in the answers
+      // the screen's own submit writes; read from the form at this point rather
+      // than from the render's watch value, so it cannot be a beat behind.
+      let committedGroups = isDraftPhase
+        ? NO_GROUPS
+        : getValueViaPath<OutlierGroupAnswer[]>(
+            getAmbientValues(),
+            'salaryAnalysis.outlierGroups',
+          ) ?? NO_GROUPS
+
       if (isDraftPhase) {
         if (!content) {
           return [false, formatMessage(messages.errors.draftLoadFailed)]
@@ -412,18 +511,18 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
               await sync(clear)
             }
             draftForm.setValue('salaryAnalysis.outlierGroups', [])
+            committedGroups = NO_GROUPS
           } else {
             // Emptied groups are discarded rather than synced as memberless
             // rows on the draft.
-            const finalGroups = outlierGroupsWithMembers(
-              draftForm.getValues().salaryAnalysis.outlierGroups,
-            )
-            await sync(
-              buildOutlierSyncCommands(
-                content,
-                withFallbackOutlierGroupNames(finalGroups, fallbackGroupName),
+            const finalGroups = withFallbackOutlierGroupNames(
+              outlierGroupsWithMembers(
+                draftForm.getValues().salaryAnalysis.outlierGroups,
               ),
+              fallbackGroupName,
             )
+            await sync(buildOutlierSyncCommands(content, finalGroups))
+            committedGroups = finalGroups
           }
           await refetch({ silent: true })
         } catch (error) {
@@ -431,6 +530,14 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
           return [false, formatMessage(messages.errors.draftSyncFailed)]
         }
       }
+
+      // The buffer follows what was just committed, rather than being emptied:
+      // a Continue carries the whole screen, including text no button was ever
+      // pressed on, so a buffer left at the last explicit save would shadow the
+      // newer plan the next time this screen seeds. Never blocks Continue — the
+      // write reports a failure rather than throwing, and what it would have
+      // recorded is what the applicant just submitted anyway.
+      await commitSavedPlan(committedGroups)
 
       return [true, null]
     })
@@ -451,6 +558,8 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     refetch,
     formatMessage,
     fallbackGroupName,
+    commitSavedPlan,
+    getAmbientValues,
   ])
 
   if (hasError) {
@@ -531,6 +640,8 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
       hidePostponeCheckbox={hidePostponeCheckbox}
       errors={errors}
       outlierGroupsFormMethods={isDraftPhase ? draftForm : undefined}
+      onSaveGroups={saveOutlierPlan}
+      initialSavedGroups={seedGroups}
     />
   )
 }

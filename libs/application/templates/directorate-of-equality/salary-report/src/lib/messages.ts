@@ -1648,6 +1648,23 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupButton',
         defaultMessage: 'Fjarlægja hóp',
       },
+      saveGroupButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.saveGroupButton',
+        defaultMessage: 'Vista',
+      },
+      groupSavedButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupSavedButton',
+        defaultMessage: 'Vistað',
+      },
+      saveGroupError: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.saveGroupError',
+        defaultMessage: 'Ekki tókst að vista hópinn. Reyndu aftur.',
+      },
+      removeGroupError: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupError',
+        defaultMessage:
+          'Ekki tókst að uppfæra vistuðu gögnin. Hópurinn getur birst aftur næst þegar þú opnar þennan skjá.',
+      },
       unassignedWarning: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.unassignedWarning',
         defaultMessage:
