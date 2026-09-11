@@ -44,6 +44,7 @@ export const applicantInformationArray = (
     cityRequired = true,
     baseInfoReadOnly = false,
     emailAndPhoneReadOnly = false,
+    makePhoneEditableIfMissing = false,
     compactFields = false,
     customAddressLabel,
     includeBankAccount = false,
@@ -55,6 +56,16 @@ export const applicantInformationArray = (
   // Note: base info fields are not editable, and are default displayed as disabled fields.
   // If baseInfoReadOnly=true, then these fields will be displayed as readonly instead of disabled
   const baseInfoDisabled = !baseInfoReadOnly
+
+  // Phone is effectively read-only unless we've opted into `makePhoneEditableIfMissing`
+  // AND the user profile has no phone number on file.
+  const isPhoneReadOnly = (
+    externalData: ApplicantInformationInterface['externalData'],
+  ) => {
+    if (!emailAndPhoneReadOnly) return false
+    if (!makePhoneEditableIfMissing) return true
+    return !!externalData?.userProfile?.data?.mobilePhoneNumber
+  }
 
   return [
     buildTextField({
@@ -194,7 +205,10 @@ export const applicantInformationArray = (
       condition: phoneCondition,
       required: phoneRequired,
       disabled: phoneDisabled && !emailAndPhoneReadOnly,
-      readOnly: emailAndPhoneReadOnly,
+      readOnly: (_, externalData) =>
+        isPhoneReadOnly(
+          externalData as unknown as ApplicantInformationInterface['externalData'],
+        ),
       enableCountrySelector: phoneEnableCountrySelector,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
@@ -228,7 +242,24 @@ export const applicantInformationArray = (
           isExternal: false,
         },
       ],
-      condition: () => emailAndPhoneReadOnly,
+      condition: (_, externalData) =>
+        emailAndPhoneReadOnly && isPhoneReadOnly(externalData as any),
+    }),
+    buildAlertMessageField({
+      id: 'applicationInfoEmailAlertMessage',
+      title: '',
+      alertType: 'info',
+      doesNotRequireAnswer: true,
+      message: applicantInformation.labels.alertMessageEmailOnly,
+      links: [
+        {
+          title: applicantInformation.labels.alertMessageLinkTitle,
+          url: applicantInformation.labels.alertMessageLink,
+          isExternal: false,
+        },
+      ],
+      condition: (_, externalData) =>
+        emailAndPhoneReadOnly && !isPhoneReadOnly(externalData as any),
     }),
   ]
 }
