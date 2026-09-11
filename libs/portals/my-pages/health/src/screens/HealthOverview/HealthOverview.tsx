@@ -220,7 +220,7 @@ export const HealthOverview = () => {
                       callback={() =>
                         healthOverviewQuickLinkClick({
                           ...formatPlausiblePathToParams(pathname),
-                          label: link.label,
+                          label: link.href,
                         })
                       }
                     >
