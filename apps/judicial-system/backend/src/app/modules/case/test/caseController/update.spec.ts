@@ -17,6 +17,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
+  CaseTransition,
   CaseType,
   DateType,
   DefendantEventType,
@@ -39,6 +40,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { DefendantService } from '../../../defendant'
+import { EventService } from '../../../event'
 import { EventLogService } from '../../../event-log/eventLog.service'
 import { FileService } from '../../../file'
 import {
@@ -92,6 +94,7 @@ describe('CaseController - Update', () => {
 
   let mockQueuedMessages: Message[]
   let mockEventLogService: EventLogService
+  let mockEventService: EventService
   let mockUserService: UserService
   let mockFileService: FileService
   let transaction: Transaction
@@ -107,6 +110,7 @@ describe('CaseController - Update', () => {
     const {
       queuedMessages,
       eventLogService,
+      eventService,
       userService,
       fileService,
       sequelize,
@@ -121,6 +125,7 @@ describe('CaseController - Update', () => {
 
     mockQueuedMessages = queuedMessages
     mockEventLogService = eventLogService
+    mockEventService = eventService
     mockUserService = userService
     mockFileService = fileService
     mockCaseRepositoryService = caseRepositoryService
@@ -1710,6 +1715,13 @@ describe('CaseController - Update', () => {
         caseId,
         user,
         transaction,
+      )
+    })
+
+    it('should post a REOPEN Slack event', () => {
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        CaseTransition.REOPEN,
+        expect.objectContaining({ id: caseId, state: CaseState.RECEIVED }),
       )
     })
   })
