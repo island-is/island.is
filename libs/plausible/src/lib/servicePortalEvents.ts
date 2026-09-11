@@ -68,6 +68,9 @@ export const healthOverviewSendMessageClick = myPagesHealthEvent(
 export const healthAppointmentsSendMessageClick = myPagesHealthEvent(
   'Appointments Send Message Click',
 )
+export const healthAppointmentsHeilsuveraClick = myPagesHealthEvent(
+  'Appointments Heilsuvera Click',
+)
 
 // Event sent when the search feature of documents is interacted with by the user
 export const documentsSearchDocumentsInitialized = (params: ParamType) => {

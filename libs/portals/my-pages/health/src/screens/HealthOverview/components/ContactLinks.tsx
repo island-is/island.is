@@ -20,6 +20,7 @@ type ContactLinkItem = {
   href: string
   icon: IconMapIcon
   onClick?: () => void
+  skipOutboundTrack?: boolean
 }
 
 const ContactLinks = () => {
@@ -34,6 +35,7 @@ const ContactLinks = () => {
       icon: 'open',
       onClick: () =>
         healthOverviewWebchatClick(formatPlausiblePathToParams(pathname)),
+      skipOutboundTrack: true,
     },
     {
       title: formatMessage(messages.contactSendMessage),
@@ -68,6 +70,7 @@ const ContactLinks = () => {
       href={link.href}
       className={styles.rowLink}
       callback={link.onClick}
+      skipOutboundTrack={link.skipOutboundTrack}
     >
       <Box paddingX={3} paddingY={2} width="full">
         <Box

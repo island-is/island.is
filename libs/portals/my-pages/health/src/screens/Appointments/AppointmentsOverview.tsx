@@ -9,7 +9,10 @@ import {
   IntroWrapper,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
-import { healthAppointmentsSendMessageClick } from '@island.is/plausible'
+import {
+  healthAppointmentsHeilsuveraClick,
+  healthAppointmentsSendMessageClick,
+} from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { Problem } from '@island.is/react-spa/shared'
@@ -140,6 +143,12 @@ const AppointmentsOverview = () => {
           variant="utility"
           size="small"
           icon="open"
+          callback={() =>
+            healthAppointmentsHeilsuveraClick(
+              formatPlausiblePathToParams(pathname),
+            )
+          }
+          skipOutboundTrack
         />
       </Box>
       <Tabs
