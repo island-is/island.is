@@ -47,6 +47,7 @@ export const CalculatorConfigEditor = () => {
   const [calculatorTypeValue, setCalculatorTypeValue] = useState<string>(
     sdk.entry.fields.type?.getValue() ?? '',
   )
+  const [activeTab, setActiveTab] = useState('input')
   const [isDisabled, setIsDisabled] = useState(false)
   const [schemaErrors, setSchemaErrors] = useState<ValidationError[]>([])
 
@@ -356,7 +357,7 @@ export const CalculatorConfigEditor = () => {
         </Note>
       )}
 
-      <Tabs defaultTab="input">
+      <Tabs currentTab={activeTab} onTabChange={setActiveTab}>
         <Tabs.List>
           <Tabs.Tab panelId="input">
             Input sections ({state.inputSections.length})
@@ -369,8 +370,13 @@ export const CalculatorConfigEditor = () => {
         {/* `forceMount`: Forma 36's panel is Radix `Tabs.Content`, which
          * unmounts the inactive panel by default -- that would reset every
          * uncontrolled markdown editor's undo history and remount the DnD
-         * context on each tab switch. */}
-        <Tabs.Panel id="input" forceMount>
+         * context on each tab switch. Forced panels need explicit inactive
+         * hiding, otherwise both panels render visibly. */}
+        <Tabs.Panel
+          id="input"
+          forceMount
+          style={{ display: activeTab === 'input' ? undefined : 'none' }}
+        >
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -408,7 +414,11 @@ export const CalculatorConfigEditor = () => {
           </DndContext>
         </Tabs.Panel>
 
-        <Tabs.Panel id="output" forceMount>
+        <Tabs.Panel
+          id="output"
+          forceMount
+          style={{ display: activeTab === 'output' ? undefined : 'none' }}
+        >
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
