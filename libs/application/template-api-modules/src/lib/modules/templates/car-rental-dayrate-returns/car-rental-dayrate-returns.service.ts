@@ -19,6 +19,7 @@ import {
   UploadSelection,
 } from '@island.is/application/templates/car-rental-dayrate-returns'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { FetchError } from '@island.is/clients/middlewares'
 import { AttachmentS3Service } from '../../shared/services'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -83,6 +84,19 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           period,
         })
         .catch((error) => {
+          if (error instanceof FetchError && error.status === 404) {
+            throw new TemplateApiError(
+              {
+                title: messages.serviceErrors.noVehiclesFound.title,
+                summary: {
+                  ...messages.serviceErrors.noVehiclesFound.summary,
+                  values: { period },
+                },
+              },
+              404,
+            )
+          }
+
           this.logger.error(
             'Error getting previous period day rate entries from Skatturinn',
             { endpoint: 'dayRateEntriesPeriodsGet', error },
