@@ -466,6 +466,23 @@ export const m = defineMessages({
     defaultMessage: 'Tegund umsóknar',
     description: 'Type of application for driving license',
   },
+  digitalLicenseSubSectionTitle: {
+    id: 'dl.application:digitalLicense.subSectionTitle',
+    defaultMessage: 'Stafrænt skírteini',
+    description: 'Title of the digital-licence information sub-section',
+  },
+  digitalLicenseAlertTitle: {
+    id: 'dl.application:digitalLicense.alertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Title of the digital-licence information alert box',
+  },
+  digitalLicenseAlertMessage: {
+    id: 'dl.application:digitalLicense.alertMessage#markdown',
+    defaultMessage:
+      'Ökuskírteinið verður fyrst gefið út á stafrænu formi og verður aðgengilegt í Ísland.is appinu þegar afgreiðslu er lokið.\n\nPlastökuskírteinið verður framleitt um miðjan nóvember og sent í pósti á skráð lögheimili um leið og það er tilbúið.',
+    description:
+      'Body of the digital-licence information alert: licence is issued digitally first (available in the Ísland.is app), plastic card produced mid-November and mailed afterwards to the registered legal domicile',
+  },
   drivingLicenseApplyingForTitle: {
     id: 'dl.application:drivingLicenseApplyingForTitle',
     defaultMessage: 'Ég er að sækja um:',
