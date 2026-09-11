@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'pay-debts',
   preset: '../../../../jest.preset.js',
