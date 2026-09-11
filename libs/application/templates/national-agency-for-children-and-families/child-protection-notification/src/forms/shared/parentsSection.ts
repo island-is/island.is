@@ -1,7 +1,6 @@
 import {
   YES,
   buildAlertMessageField,
-  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildNationalIdWithNameField,
@@ -17,7 +16,10 @@ import {
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
 import { parentsMessages, sharedMessages } from '../../lib/messages'
-import { getYesNoOptions } from '../../utils/childProtectionNotificationUtils'
+import {
+  getNeedsInterpreterOptions,
+  getYesNoOptions,
+} from '../../utils/childProtectionNotificationUtils'
 import {
   doesNotKnowParentIds,
   isKnowsNationalId,
@@ -197,15 +199,11 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
         )
       },
     }),
-    buildCheckboxField({
+    buildRadioField({
       id: `${base}.needsInterpreter`,
-      spacing: 0,
-      options: [
-        {
-          value: YES,
-          label: sharedMessages.needsInterpreter,
-        },
-      ],
+      title: sharedMessages.needsInterpreter,
+      widthWithIllustration: '1/3',
+      options: getNeedsInterpreterOptions(),
       condition: (answers) => {
         const parent = getApplicationAnswers(answers)[`${parentKey}`]
 
@@ -236,7 +234,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
           doesNotKnowParentIds(answers) &&
           !!parent?.citizenship &&
           parent?.citizenship !== IS &&
-          !!parent?.needsInterpreter?.includes(YES)
+          parent?.needsInterpreter === YES
         )
       },
     }),

@@ -140,11 +140,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.nationalIdInfo.language',
   )
 
-  const childNeedsInterpreter =
-    getValueViaPath<string[]>(
-      answers,
-      'child.nationalIdInfo.needsInterpreter',
-    ) ?? []
+  const childNeedsInterpreter = getValueViaPath<string>(
+    answers,
+    'child.nationalIdInfo.needsInterpreter',
+  )
 
   const childManualName = getValueViaPath<string>(
     answers,
@@ -206,9 +205,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.manualInfo.language',
   )
 
-  const childManualNeedsInterpreter =
-    getValueViaPath<string[]>(answers, 'child.manualInfo.needsInterpreter') ??
-    []
+  const childManualNeedsInterpreter = getValueViaPath<string>(
+    answers,
+    'child.manualInfo.needsInterpreter',
+  )
 
   const parentsKnowsNationalIds = getValueViaPath<YesOrNo>(
     answers,
@@ -306,8 +306,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'memm.culture.preferredLanguage',
   )
 
-  const memmCultureNeedsInterpreter =
-    getValueViaPath<string[]>(answers, 'memm.culture.needsInterpreter') ?? []
+  const memmCultureNeedsInterpreter = getValueViaPath<string>(
+    answers,
+    'memm.culture.needsInterpreter',
+  )
 
   const memmWellbeingIntegratedService = getValueViaPath<string>(
     answers,
