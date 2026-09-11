@@ -289,6 +289,16 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
       } as User)
     })
 
+    // The guard's snapshot may predate a reassignment; the lock is taken as the
+    // case assigned to this reviewer, so it fails instead.
+    it('should reject a reviewer who was reassigned away before the lock', async () => {
+      ;(
+        mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
+      ).mockResolvedValue(false)
+
+      await expectRejected(dto)
+    })
+
     // The guard's snapshot predates the transaction; what counts is the state
     // under the lock.
     it('should reject a withdrawal once the court of appeals has received the case', async () => {
@@ -303,6 +313,7 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
       expect(mockCaseRepositoryService.lockByIdForUpdate).toHaveBeenCalledWith(
         caseId,
         transaction,
+        { id: caseId, indictmentReviewerId: reviewerId },
       )
       expect(mockAppealCaseRepositoryService.findById).toHaveBeenCalledWith(
         appealCaseId,

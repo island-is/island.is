@@ -823,7 +823,7 @@ export class AppealCaseService {
     // DISTINCT, so it holds for the null ruling file of a case-level appeal - is
     // the backstop, not the mechanism: it would turn the race into a failed
     // appeal rather than a joined one.
-    await this.caseRepositoryService.lockByIdForUpdate(theCase.id, transaction)
+    await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
 
     const [existingAppealCase] = await this.appealCaseRepositoryService.findAll(
       {
@@ -932,6 +932,38 @@ export class AppealCaseService {
     // its own story, and the ruling appeal notifications do not apply here.
 
     return appealCase
+  }
+
+  // Locks the case row for a verdict appeal action. The reviewer's authority
+  // comes from the case's reviewer assignment, which the guard read before the
+  // transaction; locking the row *as* the case assigned to this reviewer makes
+  // the check and the lock one statement, so a reassignment committed in the
+  // meantime fails the lock instead of slipping past a stale snapshot.
+  private async lockCaseForVerdictAppeal(
+    theCase: Case,
+    user: User,
+    actor: 'DEFENDER' | 'OFFICE' | 'REVIEWER',
+    transaction: Transaction,
+  ): Promise<void> {
+    const locked =
+      actor === 'REVIEWER'
+        ? await this.caseRepositoryService.lockByIdForUpdate(
+            theCase.id,
+            transaction,
+            { id: theCase.id, indictmentReviewerId: user.id },
+          )
+        : await this.caseRepositoryService.lockByIdForUpdate(
+            theCase.id,
+            transaction,
+          )
+
+    if (!locked) {
+      throw new ForbiddenException(
+        actor === 'REVIEWER'
+          ? 'Only the reviewer assigned to the case can act on a verdict appeal for the prosecution'
+          : `Case ${theCase.id} does not exist`,
+      )
+    }
   }
 
   // The date the public prosecution office registers is the one on the filing
@@ -1356,7 +1388,7 @@ export class AppealCaseService {
     // the other as standing, so neither would withdraw the appeal case and it
     // would stand with no appellants left. The second transaction blocks here
     // and re-reads the freshly committed events.
-    await this.caseRepositoryService.lockByIdForUpdate(theCase.id, transaction)
+    await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
 
     // Once the court of appeals has received the case the prosecution's
     // decision is made. The guard loaded the appeal case before the

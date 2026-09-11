@@ -356,6 +356,21 @@ describe('AppealCaseController - Prosecution verdict appeal', () => {
       await expectRejected(buildCase({ indictmentReviewerId: uuid() }))
     })
 
+    // The lock is taken as the case assigned to this reviewer, so a
+    // reassignment committed after the guard's snapshot fails it.
+    it('should reject a reviewer who was reassigned away before the lock', async () => {
+      ;(
+        mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
+      ).mockResolvedValue(false)
+
+      await expectRejected(buildCase())
+      expect(mockCaseRepositoryService.lockByIdForUpdate).toHaveBeenCalledWith(
+        caseId,
+        transaction,
+        { id: caseId, indictmentReviewerId: reviewerId },
+      )
+    })
+
     // Seen only under the lock: the prosecution has no mirror on the verdict.
     it('should reject appealing a defendant the prosecution has already appealed', async () => {
       ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
