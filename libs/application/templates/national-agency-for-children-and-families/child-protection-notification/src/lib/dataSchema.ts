@@ -251,16 +251,32 @@ const memmSchema = z.object({
   wellbeing: z
     .object({
       integratedService: z.string(),
-      wellbeingContact: z.string(),
+      wellbeingContact: z.string().optional(),
       wellbeingContactEmail: z.string().email().optional().or(z.literal('')),
       wellbeingContactName: z.string().optional(),
-      wellbeingManager: z.string(),
+      wellbeingManager: z.string().optional(),
       wellbeingManagerEmail: z.string().email().optional().or(z.literal('')),
       wellbeingManagerName: z.string().optional(),
       disability: z.string(),
       disabilityService: z.string().optional(),
     })
     .superRefine((data, ctx) => {
+      if (data.integratedService === YES) {
+        if (!data.wellbeingContact) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['wellbeingContact'],
+            params: errorMessages.required,
+          })
+        }
+        if (!data.wellbeingManager) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['wellbeingManager'],
+            params: errorMessages.required,
+          })
+        }
+      }
       if (data.wellbeingContact === YES) {
         if (!data.wellbeingContactEmail) {
           ctx.addIssue({
