@@ -120,17 +120,21 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     }
   }
 
-  private async assertUserOwnsVehicle(auth: Auth, permno: string) {
-    const result = await this.vehiclesApiWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
-      permno: permno,
-      showOwned: true,
-      showCoowned: false,
-      showOperated: false,
-    })
+  private async assertUserOwnsVehicle(auth: Auth, permno?: string) {
+    const wanted = permno?.trim().toLowerCase()
 
-    if (!result?.data?.length) {
+    const result = wanted
+      ? await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          permno: permno,
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+        })
+      : undefined
+
+    if (!result?.data?.some((v) => v.permno?.trim().toLowerCase() === wanted)) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.vehicleNotOwner,
@@ -151,10 +155,6 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as OrderVehicleLicensePlateAnswers
 
-    /* Answers are user-supplied, so the ownership check done when the vehicle was
-     * looked up cannot be trusted here - re-assert it against the user's own
-     * vehicles before validating, and before the payment charge is created.
-     * Owner-only, mirroring the list backing this application's vehicle picker. */
     await this.assertUserOwnsVehicle(auth, answers?.pickVehicle?.plate)
 
     const includeRushFee =

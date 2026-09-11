@@ -91,20 +91,22 @@ export class MileCarService extends BaseTemplateApiService {
     const permno =
       getValueViaPath<string>(application.answers, 'pickVehicle.plate') || ''
 
-    /* Answers are user-supplied, so the ownership check done when the vehicle was
-     * looked up cannot be trusted here - re-assert it before writing to
-     * Samgongustofa. Owners, co-owners and operators are all allowed, mirroring
-     * the list backing this application's vehicle picker. */
-    const ownVehicle = await this.vehiclesApiWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
-      permno: permno,
-      showOwned: true,
-      showCoowned: true,
-      showOperated: true,
-    })
+    const wanted = permno.trim().toLowerCase()
 
-    if (!ownVehicle?.data?.length) {
+    const ownVehicle = wanted
+      ? await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          permno: permno,
+          showOwned: true,
+          showCoowned: true,
+          showOperated: true,
+        })
+      : undefined
+
+    if (
+      !ownVehicle?.data?.some((v) => v.permno?.trim().toLowerCase() === wanted)
+    ) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.vehicleNotFoundForPermno,
