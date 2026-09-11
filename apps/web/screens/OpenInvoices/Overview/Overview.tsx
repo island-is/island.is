@@ -516,11 +516,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               href: formatMessage(m.overview.headerLink1Url),
               variant: 'purple',
             },
-            {
-              title: formatMessage(m.overview.headerLink2Title),
-              href: formatMessage(m.overview.headerLink2Url),
-              variant: 'purple',
-            },
           ],
         },
       }}
