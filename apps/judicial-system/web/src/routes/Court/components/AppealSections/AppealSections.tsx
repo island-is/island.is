@@ -25,6 +25,7 @@ import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hook
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   caseLevelAppealDecision,
+  revertCaseLevelAppealDecision,
   withCaseLevelAppealDecision,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -84,12 +85,43 @@ const AppealSections: FC<Props> = ({
   const lock = appealCorrectionLock(workingCase.appealCase)
   const disabled = Boolean(lock)
 
-  const handleChange = (update: {
+  // Rolls an optimistic case-level update back to the rows the case held before
+  // the change, so the working case only claims a decision the server has. The
+  // court record step is validated against the working case, and a decision
+  // that never reached the server (network down, backend error) would
+  // otherwise let the judge continue and complete the case with an incomplete
+  // court record - the backend rejects that completion, but the judge should
+  // see the problem here, where it can be fixed.
+  const revertAppealDecision = (
+    partyRole: AppealDecisionPartyRole,
+    previousAppealDecisions: Case['appealDecisions'],
+  ) => {
+    setWorkingCase((prev) => ({
+      ...prev,
+      appealDecisions: revertCaseLevelAppealDecision(
+        prev.appealDecisions,
+        previousAppealDecisions,
+        partyRole,
+      ),
+    }))
+
+    // Let the radio fall back to whatever the working case now holds
+    if (partyRole === AppealDecisionPartyRole.DEFENDANT) {
+      setCheckedAccusedRadio(undefined)
+    } else {
+      setCheckedProsecutorRadio(undefined)
+    }
+  }
+
+  const handleChange = async (update: {
     accusedAppealDecision?: CaseAppealDecision
     accusedAppealAnnouncement?: string
     prosecutorAppealDecision?: CaseAppealDecision
     prosecutorAppealAnnouncement?: string
   }) => {
+    // The rows as last confirmed by the server, kept for a rollback
+    const previousAppealDecisions = workingCase.appealDecisions
+
     // Optimistically update the case-level appeal_decision rows the UI reads;
     // the mutation persists them server-side.
     setWorkingCase((prev) => {
@@ -131,32 +163,47 @@ const AppealSections: FC<Props> = ({
       return { ...prev, appealDecisions }
     })
 
+    if (onChange) {
+      onChange(update)
+    }
+
+    // The mutation toasts its own error and resolves to undefined on failure
     if (
       update.accusedAppealDecision !== undefined ||
       update.accusedAppealAnnouncement !== undefined
     ) {
-      updateCaseAppealDecision({
+      const saved = await updateCaseAppealDecision({
         caseId: workingCase.id,
         partyRole: AppealDecisionPartyRole.DEFENDANT,
         decision: update.accusedAppealDecision,
         announcement: update.accusedAppealAnnouncement,
       })
+
+      if (!saved) {
+        revertAppealDecision(
+          AppealDecisionPartyRole.DEFENDANT,
+          previousAppealDecisions,
+        )
+      }
     }
 
     if (
       update.prosecutorAppealDecision !== undefined ||
       update.prosecutorAppealAnnouncement !== undefined
     ) {
-      updateCaseAppealDecision({
+      const saved = await updateCaseAppealDecision({
         caseId: workingCase.id,
         partyRole: AppealDecisionPartyRole.PROSECUTOR,
         decision: update.prosecutorAppealDecision,
         announcement: update.prosecutorAppealAnnouncement,
       })
-    }
 
-    if (onChange) {
-      onChange(update)
+      if (!saved) {
+        revertAppealDecision(
+          AppealDecisionPartyRole.PROSECUTOR,
+          previousAppealDecisions,
+        )
+      }
     }
   }
   return (

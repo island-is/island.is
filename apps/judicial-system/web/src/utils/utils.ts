@@ -379,6 +379,31 @@ export const withCaseLevelAppealDecision = (
 }
 
 /**
+ * Returns a new appeal-decisions array where the case-level (no rulingFileId)
+ * row for `partyRole` is put back to what `previousAppealDecisions` held for it
+ * - dropped when there was none. Rolls back the optimistic update of
+ * withCaseLevelAppealDecision when its mutation fails, leaving the other
+ * party's row (which may have been saved in the meantime) alone.
+ */
+export const revertCaseLevelAppealDecision = (
+  appealDecisions: Case['appealDecisions'],
+  previousAppealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+): Case['appealDecisions'] => {
+  const otherDecisions = (appealDecisions ?? []).filter(
+    (decision) => decision.rulingFileId || decision.partyRole !== partyRole,
+  )
+  const previousDecision = caseLevelAppealDecisionRow(
+    previousAppealDecisions,
+    partyRole,
+  )
+
+  return previousDecision
+    ? [...otherDecisions, previousDecision]
+    : otherDecisions
+}
+
+/**
  * The appeal of a specific ruling order, if it has one. A case can carry several
  * ruling-order appeals at once, keyed by the ruling file they were made against
  * - so anything acting on one ruling must resolve its own appeal rather than the

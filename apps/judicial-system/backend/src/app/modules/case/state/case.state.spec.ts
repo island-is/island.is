@@ -4,6 +4,8 @@ import { ForbiddenException } from '@nestjs/common'
 
 import {
   AppealCaseState,
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
@@ -18,6 +20,23 @@ import { Case } from '../../repository'
 import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {
+  // A request case can only be concluded against a complete court record: the
+  // court end time and both parties' in-court appeal decisions.
+  const courtEndTime = new Date()
+  const completeCourtRecord = {
+    courtEndTime,
+    appealDecisions: [
+      {
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: CaseAppealDecision.ACCEPT,
+      },
+      {
+        partyRole: AppealDecisionPartyRole.DEFENDANT,
+        decision: CaseAppealDecision.POSTPONE,
+      },
+    ],
+  }
+
   // --- OPEN ---
 
   describe.each(indictmentCases)('open %s', (type) => {
@@ -816,12 +835,20 @@ describe('Transition Case', () => {
           // Act
           const res = transitionCase(
             CaseTransition.ACCEPT,
-            { id: uuid(), state: fromState, type } as Case,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              ...completeCourtRecord,
+            } as Case,
             { id: uuid() } as User,
           )
 
           // Assert
-          expect(res).toMatchObject({ state: CaseState.ACCEPTED })
+          expect(res).toMatchObject({
+            state: CaseState.ACCEPTED,
+            rulingDate: courtEndTime,
+          })
         })
       })
 
@@ -874,12 +901,20 @@ describe('Transition Case', () => {
           // Act
           const res = transitionCase(
             CaseTransition.REJECT,
-            { id: uuid(), state: fromState, type } as Case,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              ...completeCourtRecord,
+            } as Case,
             { id: uuid() } as User,
           )
 
           // Assert
-          expect(res).toMatchObject({ state: CaseState.REJECTED })
+          expect(res).toMatchObject({
+            state: CaseState.REJECTED,
+            rulingDate: courtEndTime,
+          })
         })
       })
 
@@ -932,12 +967,20 @@ describe('Transition Case', () => {
           // Act
           const res = transitionCase(
             CaseTransition.DISMISS,
-            { id: uuid(), state: fromState, type } as Case,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              ...completeCourtRecord,
+            } as Case,
             { id: uuid() } as User,
           )
 
           // Assert
-          expect(res).toMatchObject({ state: CaseState.DISMISSED })
+          expect(res).toMatchObject({
+            state: CaseState.DISMISSED,
+            rulingDate: courtEndTime,
+          })
         })
       })
 
@@ -959,6 +1002,125 @@ describe('Transition Case', () => {
       })
     },
   )
+
+  // --- COMPLETE WITH AN INCOMPLETE COURT RECORD ---
+
+  // The court record screen saves field by field, so a failed save can leave
+  // the persisted case without a value the client believes it has. Completion
+  // is where the state machine refuses to conclude such a case.
+  describe.each([
+    CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+    CaseTransition.DISMISS,
+  ])('%s a request case', (transition) => {
+    describe.each([...restrictionCases, ...investigationCases])(
+      '%s',
+      (type) => {
+        const act =
+          (courtRecord: Partial<Case>, update?: Partial<Case>) => () =>
+            transitionCase(
+              transition,
+              {
+                id: uuid(),
+                state: CaseState.RECEIVED,
+                type,
+                ...courtRecord,
+              } as Case,
+              { id: uuid() } as User,
+              update,
+            )
+
+        it('should complete with a court end time from the update', () => {
+          // Arrange
+          const updatedCourtEndTime = new Date()
+
+          // Act
+          const res = act(
+            { ...completeCourtRecord, courtEndTime: undefined },
+            { courtEndTime: updatedCourtEndTime },
+          )()
+
+          // Assert
+          expect(res).toMatchObject({ rulingDate: updatedCourtEndTime })
+        })
+
+        it('should not complete without a court end time', () => {
+          expect(
+            act({ ...completeCourtRecord, courtEndTime: undefined }),
+          ).toThrow(ForbiddenException)
+        })
+
+        it('should not complete without any appeal decisions', () => {
+          expect(
+            act({ ...completeCourtRecord, appealDecisions: undefined }),
+          ).toThrow(ForbiddenException)
+        })
+
+        it('should not complete without the prosecutor appeal decision', () => {
+          expect(
+            act({
+              ...completeCourtRecord,
+              appealDecisions: completeCourtRecord.appealDecisions.filter(
+                (decision) =>
+                  decision.partyRole !== AppealDecisionPartyRole.PROSECUTOR,
+              ),
+            }),
+          ).toThrow(ForbiddenException)
+        })
+
+        it('should not complete without the defendant appeal decision', () => {
+          expect(
+            act({
+              ...completeCourtRecord,
+              appealDecisions: completeCourtRecord.appealDecisions.filter(
+                (decision) =>
+                  decision.partyRole !== AppealDecisionPartyRole.DEFENDANT,
+              ),
+            }),
+          ).toThrow(ForbiddenException)
+        })
+
+        // A case-level row is created as soon as an announcement is typed, so
+        // its presence alone does not mean the party has picked a decision.
+        it('should not complete when a party only has an announcement', () => {
+          expect(
+            act({
+              ...completeCourtRecord,
+              appealDecisions: [
+                {
+                  partyRole: AppealDecisionPartyRole.PROSECUTOR,
+                  decision: CaseAppealDecision.ACCEPT,
+                },
+                {
+                  partyRole: AppealDecisionPartyRole.DEFENDANT,
+                  announcement: 'Varnaraðili tekur sér lögboðinn frest',
+                },
+              ],
+            }),
+          ).toThrow(ForbiddenException)
+        })
+
+        it('should not count ruling-order appeal decisions', () => {
+          expect(
+            act({
+              ...completeCourtRecord,
+              appealDecisions: [
+                {
+                  partyRole: AppealDecisionPartyRole.PROSECUTOR,
+                  decision: CaseAppealDecision.ACCEPT,
+                },
+                {
+                  partyRole: AppealDecisionPartyRole.DEFENDANT,
+                  decision: CaseAppealDecision.ACCEPT,
+                  rulingFileId: uuid(),
+                },
+              ],
+            }),
+          ).toThrow(ForbiddenException)
+        })
+      },
+    )
+  })
 
   // --- DELETE ---
 

@@ -477,9 +477,12 @@ const CourtRecord: FC = () => {
                 }
                 maxDate={new Date()}
                 selectedDate={workingCase.courtEndTime}
-                onChange={(date: Date | undefined, valid: boolean) => {
+                onChange={async (date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendCaseToServer(
+                    // The value the server last confirmed, kept for a rollback
+                    const previousCourtEndTime = workingCase.courtEndTime
+
+                    const saved = await setAndSendCaseToServer(
                       [
                         {
                           courtEndTime: formatDateForServer(date),
@@ -489,6 +492,17 @@ const CourtRecord: FC = () => {
                       workingCase,
                       setWorkingCase,
                     )
+
+                    // A failed save toasts, but the optimistic value would still
+                    // validate the step and let the judge continue with a court
+                    // end time the server never got. Roll it back so the step
+                    // stays invalid until the time is actually persisted.
+                    if (!saved) {
+                      setWorkingCase((prev) => ({
+                        ...prev,
+                        courtEndTime: previousCourtEndTime,
+                      }))
+                    }
                   }
                 }}
                 blueBox={false}
