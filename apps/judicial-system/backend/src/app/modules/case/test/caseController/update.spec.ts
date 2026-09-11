@@ -366,7 +366,7 @@ describe('CaseController - Update', () => {
         defendantId1,
         user,
         transaction,
-        expectedCreated,
+        { created: expectedCreated },
       )
 
       expect(

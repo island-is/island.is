@@ -31,7 +31,7 @@ import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { createCaseModifiedExplanation } from './ModifyDatesModal.logic'
 
-interface DateTime {
+interface DateTimeValue {
   value?: Date
   isValid: boolean
 }
@@ -46,8 +46,8 @@ interface Props {
 
 const getModificationSuccessText = (
   workingCase: Case,
-  modifiedValidToDate: DateTime | undefined,
-  modifiedIsolationToDate: DateTime | undefined,
+  modifiedValidToDate: DateTimeValue | undefined,
+  modifiedIsolationToDate: DateTimeValue | undefined,
   formatMessage: IntlShape['formatMessage'],
   userRole?: UserRole | null,
 ) => {
@@ -175,9 +175,10 @@ const ModifyDatesModal: FC<Props> = ({
   isUpdatingCase,
   closeModal,
 }) => {
-  const [modifiedValidToDate, setModifiedValidToDate] = useState<DateTime>()
+  const [modifiedValidToDate, setModifiedValidToDate] =
+    useState<DateTimeValue>()
   const [modifiedIsolationToDate, setModifiedIsolationToDate] =
-    useState<DateTime>()
+    useState<DateTimeValue>()
   const [caseModifiedExplanation, setCaseModifiedExplanation] =
     useState<string>()
 

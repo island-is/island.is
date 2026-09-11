@@ -20,12 +20,41 @@ import { useLocale } from '@island.is/localization'
 import { ApiActions, draftActionId } from '../utils/constants'
 import { escapeHtml, htmlToPlainText } from '../utils/htmlHelpers'
 import {
+  EqualityContentPayload,
   useEnsureEqualityDraft,
   useEqualityContentPush,
 } from '../utils/useEqualityDraft'
 
 interface Props extends FieldBaseProps {
   field: CustomField
+}
+
+/**
+ * Mirrors DMR's 4MB cap on a decoded PDF.
+ *
+ * Not an arbitrary UX limit: the file rides as base64 inside a GraphQL
+ * variable, and base64 inflates by 4/3 against DMR's own request-body ceiling.
+ * Raising it here alone would just move the rejection later.
+ */
+const MAX_PDF_BYTES = 4 * 1024 * 1024
+
+/**
+ * Reads a File into base64, without the data-URI prefix `readAsDataURL` adds.
+ *
+ * Chunked rather than `String.fromCharCode(...bytes)`: spreading a
+ * multi-megabyte array into an argument list overflows the call stack well
+ * below the 4MB this has to handle.
+ */
+const fileToBase64 = async (file: File): Promise<string> => {
+  const bytes = new Uint8Array(await file.arrayBuffer())
+  const CHUNK = 0x8000
+  let binary = ''
+
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK))
+  }
+
+  return btoa(binary)
 }
 
 export const Editor = ({
@@ -147,41 +176,71 @@ export const Editor = ({
     setSelectedFile({ name: file.name, status: FileUploadStatus.uploading })
 
     try {
-      let html = ''
+      const name = file.name.toLowerCase()
+      let payload: EqualityContentPayload
 
-      if (file.name.endsWith('.docx')) {
-        const arrayBuffer = await file.arrayBuffer()
-        const result = await mammoth.convertToHtml({ arrayBuffer })
-        html = result.value
-      } else if (file.name.endsWith('.txt')) {
-        const text = await file.text()
-        html = text
-          .split(/\n\n+/)
-          .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br />')}</p>`)
-          .join('')
+      if (name.endsWith('.pdf')) {
+        /*
+         * Uploaded as-is, with no conversion — that is the point of accepting
+         * PDFs. The company's layout, tables and images survive, where mammoth
+         * would have flattened them.
+         *
+         * Size is checked here because the file travels as base64 inside a
+         * GraphQL variable, which inflates it by 4/3 against a 4MB server cap.
+         * Failing on selection tells the applicant what is wrong; failing after
+         * the upload just says "villa".
+         */
+        if (file.size > MAX_PDF_BYTES) {
+          resetAfterFailure()
+          setUploadFailed(true)
+          setRejectionMessage(formatMessage(m.editorFileTooLarge))
+          return
+        }
+
+        payload = {
+          kind: 'pdf',
+          base64: await fileToBase64(file),
+          filename: file.name,
+        }
       } else {
-        resetAfterFailure()
-        setUploadFailed(true)
-        setRejectionMessage(formatMessage(m.editorUnsupportedFile))
-        return
-      }
+        let html = ''
 
-      // Converts to nothing, so there is nothing to send: same as unsupported.
-      const plainTextLength = htmlToPlainText(html).length
-      if (plainTextLength === 0) {
-        resetAfterFailure()
-        setUploadFailed(true)
-        setRejectionMessage(formatMessage(m.editorUnsupportedFile))
-        return
-      }
+        if (name.endsWith('.docx')) {
+          const arrayBuffer = await file.arrayBuffer()
+          const result = await mammoth.convertToHtml({ arrayBuffer })
+          html = result.value
+        } else if (name.endsWith('.txt')) {
+          const text = await file.text()
+          html = text
+            .split(/\n\n+/)
+            .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br />')}</p>`)
+            .join('')
+        } else {
+          resetAfterFailure()
+          setUploadFailed(true)
+          setRejectionMessage(formatMessage(m.editorUnsupportedFile))
+          return
+        }
 
-      const base64 = Buffer.from(html).toString('base64')
+        // Converts to nothing, so there is nothing to send: same as unsupported.
+        // Deliberately not applied to the PDF branch — a scanned plan is all
+        // images and has no extractable text, but it is still a real plan.
+        const plainTextLength = htmlToPlainText(html).length
+        if (plainTextLength === 0) {
+          resetAfterFailure()
+          setUploadFailed(true)
+          setRejectionMessage(formatMessage(m.editorUnsupportedFile))
+          return
+        }
+
+        payload = { kind: 'html', base64: Buffer.from(html).toString('base64') }
+      }
 
       if (mode === 'draft') {
         await ensureDraft()
-        await pushDraftContent(application.id, base64)
+        await pushDraftContent(application.id, payload)
       } else {
-        await pushRetryContent(application.id, base64)
+        await pushRetryContent(application.id, payload)
       }
 
       lastGoodFilenameRef.current = file.name
@@ -313,7 +372,7 @@ export const Editor = ({
         disabled={isUploading}
         description={formatMessage(m.editorSupportedFileTypes)}
         buttonLabel={formatMessage(m.editorUploadFile)}
-        accept={['.txt', '.docx']}
+        accept={['.pdf', '.txt', '.docx']}
         multiple={false}
         onChange={handleFilesChanged}
         onRemove={handleRemove}

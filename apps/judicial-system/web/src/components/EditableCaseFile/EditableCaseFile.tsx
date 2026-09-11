@@ -15,13 +15,13 @@ import {
   Input,
   LoadingDots,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import type { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'

@@ -135,9 +135,10 @@ export const informationNavigation: PortalNavigationItem = {
       path: InformationPaths.MyContracts,
       children: [
         {
-          name: m.contracts,
+          name: m.contract,
           navHide: true,
           searchHide: true,
+          breadcrumbHide: true,
           path: InformationPaths.MyContractsDetail,
         },
       ],
@@ -162,6 +163,24 @@ export const companyInformationNavigation: PortalNavigationItem = {
       name: m.companyData,
       description: m.companyIntro,
       path: InformationPaths.Company,
+    },
+    {
+      name: m.contracts,
+      description: m.contractsDescription,
+      searchTags: [
+        searchTagsMessages.rent,
+        searchTagsMessages.rentalAgreements,
+      ],
+      path: InformationPaths.CompanyContracts,
+      children: [
+        {
+          name: m.contract,
+          navHide: true,
+          searchHide: true,
+          breadcrumbHide: true,
+          path: InformationPaths.CompanyContractsDetail,
+        },
+      ],
     },
     {
       name: m.companySettings,

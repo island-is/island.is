@@ -2088,7 +2088,7 @@ export class CaseService {
           defendantId,
           user,
           transaction,
-          created,
+          created ? { created } : undefined,
         )
       }),
     )

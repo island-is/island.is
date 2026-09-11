@@ -4,7 +4,7 @@ import { Box, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
@@ -105,8 +105,8 @@ const AppointmentsOverview = () => {
       title={messages.appointmentsOverviewTitle}
       intro={messages.appointmentsIntro}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirAppointmentsTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaAppointmentsTooltip),
       }}
     >
       <Box
