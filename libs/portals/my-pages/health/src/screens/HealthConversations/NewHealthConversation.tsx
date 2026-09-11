@@ -150,23 +150,7 @@ const NewHealthConversation = () => {
     windowClose: recipient?.messagingWindowClose,
   })
 
-  const hasWindowInfo =
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel &&
-    recipient?.patientReplyWindowDays !== undefined
-
-  const introText = recipient
-    ? hasWindowInfo
-      ? formatMessage(messages.healthConversationsNewIntroWithWindow, {
-          name: recipient.name,
-          openTime: windowInfo.windowOpenLabel,
-          closeTime: windowInfo.windowCloseLabel,
-          days: recipient.patientReplyWindowDays,
-        })
-      : formatMessage(messages.healthConversationsNewIntroWithRecipient, {
-          name: recipient.name,
-        })
-    : formatMessage(messages.healthConversationsNewIntro)
+  const introText = formatMessage(messages.healthConversationsNewIntro)
 
   const isCertificateBlocked =
     isCertificateSelected && recipient?.canRequestCertificate === false
@@ -413,7 +397,7 @@ const NewHealthConversation = () => {
               )}
 
               {!isCertificateSelected && selectedType?.instructions && (
-                <Box marginBottom={3} className={styles.typeInstructions}>
+                <Box marginBottom={2} className={styles.typeInstructions}>
                   <Markdown>{selectedType.instructions}</Markdown>
                 </Box>
               )}
@@ -450,7 +434,7 @@ const NewHealthConversation = () => {
               )}
 
               <Box
-                marginTop={4}
+                marginTop={3}
                 marginBottom={4}
                 className={styles.termsCheckbox}
               >
