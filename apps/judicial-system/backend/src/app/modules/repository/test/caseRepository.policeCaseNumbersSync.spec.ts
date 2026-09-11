@@ -13,18 +13,16 @@ import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
-import { CivilClaimant } from '../models/civilClaimant.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 import { EventLog } from '../models/eventLog.model'
 import { IndictmentCount } from '../models/indictmentCount.model'
-import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
-import { Victim } from '../models/victim.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
+import { CivilClaimantRepositoryService } from '../services/civilClaimantRepository.service'
 
 const mockSequelizeModel = () => ({
   findOne: jest.fn(),
@@ -78,7 +76,6 @@ describe('CaseRepositoryService — police case number junction sync', () => {
   let caseStringModel: ReturnType<typeof mockSequelizeModel>
   let dateLogModel: ReturnType<typeof mockSequelizeModel>
   let eventLogModel: ReturnType<typeof mockSequelizeModel>
-  let victimModel: ReturnType<typeof mockSequelizeModel>
   let indictmentCountModel: ReturnType<typeof mockSequelizeModel>
   let caseFileModel: ReturnType<typeof mockSequelizeModel>
 
@@ -112,7 +109,6 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     caseStringModel = mockSequelizeModel()
     dateLogModel = mockSequelizeModel()
     eventLogModel = mockSequelizeModel()
-    victimModel = mockSequelizeModel()
     indictmentCountModel = mockSequelizeModel()
     caseFileModel = mockSequelizeModel()
 
@@ -125,7 +121,6 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     caseStringModel.create.mockResolvedValue({})
     dateLogModel.findOne.mockResolvedValue(null)
     eventLogModel.findAll.mockResolvedValue([])
-    victimModel.findAll.mockResolvedValue([])
     indictmentCountModel.findAll.mockResolvedValue([])
     caseFileModel.findAll.mockResolvedValue([])
 
@@ -146,15 +141,9 @@ describe('CaseRepositoryService — police case number junction sync', () => {
         { provide: getModelToken(CaseString), useValue: caseStringModel },
         { provide: getModelToken(DateLog), useValue: dateLogModel },
         { provide: getModelToken(EventLog), useValue: eventLogModel },
-        { provide: getModelToken(Victim), useValue: victimModel },
         {
           provide: getModelToken(IndictmentCount),
           useValue: indictmentCountModel,
-        },
-        { provide: getModelToken(Offense), useValue: mockSequelizeModel() },
-        {
-          provide: getModelToken(CivilClaimant),
-          useValue: mockSequelizeModel(),
         },
         { provide: getModelToken(CaseFile), useValue: caseFileModel },
         { provide: getModelToken(AppealCase), useValue: mockSequelizeModel() },
@@ -166,6 +155,14 @@ describe('CaseRepositoryService — police case number junction sync', () => {
             findDistinctPoliceCaseNumbersByCaseIds,
             resolvePoliceCaseNumbersForCases,
             findUnassignedPoliceCaseNumbersForSplit,
+          },
+        },
+        {
+          provide: CivilClaimantRepositoryService,
+          useValue: {
+            copyApplicableToCaseForDefendant: jest
+              .fn()
+              .mockResolvedValue(new Map()),
           },
         },
         CaseRepositoryService,

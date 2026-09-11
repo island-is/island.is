@@ -27,7 +27,6 @@ import {
   DefendantRepositoryService,
   IndictmentCountRepositoryService,
   OffenseRepositoryService,
-  VictimRepositoryService,
 } from '../../../repository'
 
 interface Then {
@@ -71,7 +70,6 @@ describe('CaseController - Duplicate', () => {
   let mockDefendantRepositoryService: jest.Mocked<DefendantRepositoryService>
   let mockIndictmentCountRepositoryService: jest.Mocked<IndictmentCountRepositoryService>
   let mockOffenseRepositoryService: jest.Mocked<OffenseRepositoryService>
-  let mockVictimRepositoryService: jest.Mocked<VictimRepositoryService>
   let mockCaseStringRepositoryService: jest.Mocked<CaseStringRepositoryService>
   let mockCivilClaimantRepositoryService: jest.Mocked<CivilClaimantRepositoryService>
   let mockCaseFileRepositoryService: jest.Mocked<CaseFileRepositoryService>
@@ -87,7 +85,6 @@ describe('CaseController - Duplicate', () => {
       defendantRepositoryService,
       indictmentCountRepositoryService,
       offenseRepositoryService,
-      victimRepositoryService,
       caseStringRepositoryService,
       civilClaimantRepositoryService,
       caseFileRepositoryService,
@@ -105,8 +102,6 @@ describe('CaseController - Duplicate', () => {
       indictmentCountRepositoryService as jest.Mocked<IndictmentCountRepositoryService>
     mockOffenseRepositoryService =
       offenseRepositoryService as jest.Mocked<OffenseRepositoryService>
-    mockVictimRepositoryService =
-      victimRepositoryService as jest.Mocked<VictimRepositoryService>
     mockCaseStringRepositoryService =
       caseStringRepositoryService as jest.Mocked<CaseStringRepositoryService>
     mockCivilClaimantRepositoryService =
@@ -382,14 +377,6 @@ describe('CaseController - Duplicate', () => {
       )
     })
 
-    it('should copy the victims', () => {
-      expect(mockVictimRepositoryService.copyAllToCase).toHaveBeenCalledWith(
-        caseId,
-        newCaseId,
-        { transaction },
-      )
-    })
-
     it('should copy only the prosecutor entered case strings', () => {
       expect(
         mockCaseStringRepositoryService.copyByTypesToCase,
@@ -596,7 +583,9 @@ describe('CaseController - Duplicate', () => {
     it('should abort the duplication', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
-      expect(mockVictimRepositoryService.copyAllToCase).not.toHaveBeenCalled()
+      expect(
+        mockCivilClaimantRepositoryService.copyAllToCase,
+      ).not.toHaveBeenCalled()
       expect(mockCaseFileRepositoryService.copyToCase).not.toHaveBeenCalled()
     })
   })

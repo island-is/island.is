@@ -222,4 +222,70 @@ export class CivilClaimantRepositoryService {
       throw error
     }
   }
+
+  // When a defendant is split into a new case, only civil claimants that apply
+  // to that defendant are copied: claimants with no defendant references
+  // (they apply to every defendant) and claimants whose defendantIds include
+  // the split defendant. Specific defendant references are narrowed to just
+  // that defendant - the defendant keeps its id when moved. Returns a map from
+  // each original civil claimant id to its copy so the caller can remap the
+  // references that point at civil claimants.
+  async copyApplicableToCaseForDefendant(
+    caseId: string,
+    newCaseId: string,
+    defendantId: string,
+    options: { transaction: Transaction },
+  ): Promise<Map<string, string>> {
+    try {
+      this.logger.debug(
+        `Copying civil claimants of case ${caseId} that apply to defendant ${defendantId} to case ${newCaseId}`,
+      )
+
+      const civilClaimants = await this.civilClaimantModel.findAll({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      const civilClaimantIdMap = new Map<string, string>()
+
+      for (const civilClaimant of civilClaimants) {
+        const appliesToDefendant =
+          !civilClaimant.defendantIds?.length ||
+          civilClaimant.defendantIds.includes(defendantId)
+
+        if (!appliesToDefendant) {
+          continue
+        }
+
+        const remappedDefendantIds = !civilClaimant.defendantIds?.length
+          ? civilClaimant.defendantIds
+          : [defendantId]
+
+        const newCivilClaimant = await this.civilClaimantModel.create(
+          {
+            ...civilClaimant.toJSON(),
+            id: undefined,
+            caseId: newCaseId,
+            defendantIds: remappedDefendantIds,
+          },
+          { transaction: options.transaction },
+        )
+
+        civilClaimantIdMap.set(civilClaimant.id, newCivilClaimant.id)
+      }
+
+      this.logger.debug(
+        `Copied ${civilClaimantIdMap.size} civil claimants of case ${caseId} that apply to defendant ${defendantId} to case ${newCaseId}`,
+      )
+
+      return civilClaimantIdMap
+    } catch (error) {
+      this.logger.error(
+        `Error copying civil claimants of case ${caseId} that apply to defendant ${defendantId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }
