@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -11,10 +13,12 @@ import { VictimRepositoryService } from '../services/victimRepository.service'
 describe('VictimRepositoryService', () => {
   const victimId = 'some-victim-id'
   const caseId = 'some-case-id'
+  const transaction = {} as Transaction
 
   let service: VictimRepositoryService
   let model: {
     findByPk: jest.Mock
+    findAll: jest.Mock
     create: jest.Mock
     update: jest.Mock
     destroy: jest.Mock
@@ -23,6 +27,7 @@ describe('VictimRepositoryService', () => {
   beforeEach(async () => {
     model = {
       findByPk: jest.fn().mockResolvedValue(null),
+      findAll: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
       update: jest.fn().mockResolvedValue([0, []]),
       destroy: jest.fn().mockResolvedValue(0),
@@ -138,6 +143,45 @@ describe('VictimRepositoryService', () => {
       await expect(service.deleteByIdAndCase(victimId, caseId)).rejects.toThrow(
         error,
       )
+    })
+  })
+
+  describe('copyAllToCase', () => {
+    const newCaseId = 'some-new-case-id'
+
+    it('copies every victim of the case to the new case as a new row', async () => {
+      model.findAll.mockResolvedValueOnce([
+        { toJSON: () => ({ id: victimId, caseId, name: 'Victim' }) },
+        { toJSON: () => ({ id: 'other-victim-id', caseId, name: 'Other' }) },
+      ])
+
+      await service.copyAllToCase(caseId, newCaseId, { transaction })
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { caseId },
+        transaction,
+      })
+      expect(model.create).toHaveBeenCalledTimes(2)
+      expect(model.create).toHaveBeenCalledWith(
+        { id: undefined, caseId: newCaseId, name: 'Victim' },
+        { transaction },
+      )
+      expect(model.create).toHaveBeenCalledWith(
+        { id: undefined, caseId: newCaseId, name: 'Other' },
+        { transaction },
+      )
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([
+        { toJSON: () => ({ id: victimId }) },
+      ])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyAllToCase(caseId, newCaseId, { transaction }),
+      ).rejects.toThrow(error)
     })
   })
 })

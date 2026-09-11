@@ -8,7 +8,6 @@ import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import { Base64 } from 'js-base64'
 import { Op, Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -34,7 +33,6 @@ import {
   CourtSessionRulingType,
   courtSubtypes,
   DateType,
-  DefendantEventType,
   EventType,
   getIndictmentAppealDeadline,
   isIndictmentCase,
@@ -96,6 +94,7 @@ import {
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
+import { getLatestVerdict } from '../verdict/getLatestVerdict'
 import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusion.dto'
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
@@ -104,6 +103,7 @@ import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
+import { wasVerdictServiceCertificateDeliveredToPolice } from './verdictServiceCertificateDelivery'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -775,7 +775,6 @@ export class InternalCaseService {
   async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
     { theCase: Case; defendant: Defendant }[]
   > {
-    const minDate = addDays(Date.now(), -VERDICT_APPEAL_WINDOW_DAYS)
     const cases = await this.caseRepositoryService.findAll({
       include: [
         {
@@ -798,26 +797,10 @@ export class InternalCaseService {
               model: Verdict,
               as: 'verdicts',
               required: true,
-              where: {
-                serviceRequirement: ServiceRequirement.REQUIRED,
-                serviceStatus: {
-                  [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
-                },
-                serviceDate: {
-                  [Op.lte]: minDate,
-                },
-              },
+              separate: true,
+              order: [['created', 'DESC']],
             },
           ],
-          where: {
-            id: {
-              [Op.notIn]: Sequelize.literal(`
-                (SELECT defendant_id
-                  FROM defendant_event_log
-                  WHERE event_type = '${DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE}')
-              `),
-            },
-          },
         },
       ],
       where: {
@@ -833,20 +816,34 @@ export class InternalCaseService {
       pipe(
         theCase.defendants ?? [],
         filterMap((defendant) => {
-          // Only the latest verdict is relevant
-          const latestVerdict = defendant.verdicts?.sort(
-            (a, b) => b.created.getTime() - a.created.getTime(),
-          )[0]
+          // Resolve the current verdict first; eligibility applies only to it.
+          const latestVerdict = getLatestVerdict(defendant.verdicts)
 
-          if (latestVerdict?.serviceDate) {
-            const { isDeadlineExpired } = getIndictmentAppealDeadline({
-              baseDate: latestVerdict?.serviceDate,
-              isFine: false,
-            })
+          if (
+            !latestVerdict?.serviceDate ||
+            latestVerdict.serviceRequirement !== ServiceRequirement.REQUIRED ||
+            latestVerdict.serviceStatus === VerdictServiceStatus.NOT_APPLICABLE
+          ) {
+            return option.none
+          }
 
-            if (isDeadlineExpired) {
-              return option.some({ theCase, defendant })
-            }
+          const alreadyDeliveredForLatestVerdict =
+            wasVerdictServiceCertificateDeliveredToPolice(
+              defendant.eventLogs,
+              latestVerdict,
+            )
+
+          if (alreadyDeliveredForLatestVerdict) {
+            return option.none
+          }
+
+          const { isDeadlineExpired } = getIndictmentAppealDeadline({
+            baseDate: latestVerdict.serviceDate,
+            isFine: false,
+          })
+
+          if (isDeadlineExpired) {
+            return option.some({ theCase, defendant })
           }
 
           return option.none
