@@ -104,17 +104,24 @@ const AppealSections: FC<Props> = ({
   // backend rejects that completion, but the judge should see the problem
   // here, where it can be fixed.
   const revertAppealDecision = (
+    caseId: string,
     partyRole: AppealDecisionPartyRole,
     confirmedRow: AppealDecisionRow | undefined,
   ) => {
-    setWorkingCase((prev) => ({
-      ...prev,
-      appealDecisions: revertCaseLevelAppealDecision(
-        prev.appealDecisions,
-        confirmedRow ? [confirmedRow] : [],
-        partyRole,
-      ),
-    }))
+    setWorkingCase((prev) =>
+      // The page is reused across cases, so a save that fails after the judge
+      // has moved on to another case must not touch that case
+      prev.id !== caseId
+        ? prev
+        : {
+            ...prev,
+            appealDecisions: revertCaseLevelAppealDecision(
+              prev.appealDecisions,
+              confirmedRow ? [confirmedRow] : [],
+              partyRole,
+            ),
+          },
+    )
 
     // Let the radio fall back to whatever the working case now holds
     if (partyRole === AppealDecisionPartyRole.DEFENDANT) {
@@ -133,7 +140,8 @@ const AppealSections: FC<Props> = ({
     patch: AppealDecisionPatch,
   ) =>
     saveAppealDecision({
-      key: partyRole,
+      // Per case as well as per party: the component outlives a case change
+      key: `${workingCase.id}:${partyRole}`,
       // Read before the optimistic update below is applied
       confirmed: caseLevelAppealDecisionRow(
         workingCase.appealDecisions,
@@ -156,7 +164,8 @@ const AppealSections: FC<Props> = ({
             announcement: patch.announcement,
           }),
         ),
-      rollback: (confirmedRow) => revertAppealDecision(partyRole, confirmedRow),
+      rollback: (confirmedRow) =>
+        revertAppealDecision(workingCase.id, partyRole, confirmedRow),
     })
 
   const toPatch = (

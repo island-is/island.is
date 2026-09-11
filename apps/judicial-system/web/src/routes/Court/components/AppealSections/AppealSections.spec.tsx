@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
 import { useState } from 'react'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
@@ -153,10 +153,12 @@ describe('AppealSections', () => {
     const Harness: FC<{
       initialCase: Case
       onWorkingCase: (workingCase: Case) => void
+      onSetWorkingCase: (set: Dispatch<SetStateAction<Case>>) => void
       onChange?: jest.Mock
-    }> = ({ initialCase, onWorkingCase, onChange }) => {
+    }> = ({ initialCase, onWorkingCase, onSetWorkingCase, onChange }) => {
       const [workingCase, setWorkingCase] = useState(initialCase)
       onWorkingCase(workingCase)
+      onSetWorkingCase(setWorkingCase)
 
       return (
         <IntlProviderWrapper>
@@ -171,6 +173,7 @@ describe('AppealSections', () => {
 
     const renderHarness = (initialCase: Case) => {
       let latest = initialCase
+      let setWorkingCase: Dispatch<SetStateAction<Case>> = () => undefined
       const onChange = jest.fn()
       render(
         <Harness
@@ -178,11 +181,19 @@ describe('AppealSections', () => {
           onWorkingCase={(workingCase) => {
             latest = workingCase
           }}
+          onSetWorkingCase={(set) => {
+            setWorkingCase = set
+          }}
           onChange={onChange}
         />,
       )
 
-      return { workingCase: () => latest, onChange }
+      return {
+        workingCase: () => latest,
+        // What FormProvider does when the route moves to another case
+        switchToCase: (theCase: Case) => act(() => setWorkingCase(theCase)),
+        onChange,
+      }
     }
 
     const prosecutorDecision = () =>
@@ -316,6 +327,46 @@ describe('AppealSections', () => {
       )
       expect(prosecutorDecision()).not.toBeChecked()
       expect(prosecutorAcceptRadio()).not.toBeChecked()
+      expect(onChange).not.toHaveBeenCalled()
+    })
+
+    // The page is reused across cases, so a save that fails after the judge
+    // has moved on must leave the new case alone.
+    it('does not roll back into another case', async () => {
+      let failSave: (value: undefined) => void = () => undefined
+      mockUpdateCaseAppealDecision.mockImplementationOnce(
+        () =>
+          new Promise<undefined>((resolve) => {
+            failSave = resolve
+          }),
+      )
+      const { workingCase, switchToCase, onChange } = renderHarness(baseCase)
+      const otherCase = {
+        ...baseCase,
+        id: 'other_case_id',
+        appealDecisions: [
+          {
+            partyRole: AppealDecisionPartyRole.PROSECUTOR,
+            rulingFileId: null,
+            decision: CaseAppealDecision.ACCEPT,
+          },
+        ],
+      } as Case
+
+      fireEvent.click(prosecutorDecision())
+      await switchToCase(otherCase)
+
+      await act(async () => {
+        failSave(undefined)
+      })
+
+      expect(workingCase()).toBe(otherCase)
+      expect(
+        caseLevelAppealDecision(
+          workingCase().appealDecisions,
+          AppealDecisionPartyRole.PROSECUTOR,
+        ),
+      ).toBe(CaseAppealDecision.ACCEPT)
       expect(onChange).not.toHaveBeenCalled()
     })
 

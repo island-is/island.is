@@ -506,7 +506,8 @@ export const CourtRecord: FC = () => {
                         // back to the value the server has, so the step stays invalid
                         // until the time is actually persisted.
                         saveCourtEndTime({
-                          key: 'courtEndTime',
+                          // Per case: the page is reused when the judge moves to another case
+                          key: `courtEndTime:${workingCase.id}`,
                           confirmed: workingCase.courtEndTime,
                           value: courtEndTime,
                           persist: () =>
@@ -516,10 +517,16 @@ export const CourtRecord: FC = () => {
                               setWorkingCase,
                             ),
                           rollback: (confirmedCourtEndTime) =>
-                            setWorkingCase((prev) => ({
-                              ...prev,
-                              courtEndTime: confirmedCourtEndTime,
-                            })),
+                            setWorkingCase((prev) =>
+                              // A save that fails after the judge has moved on to another
+                              // case must not touch that case
+                              prev.id !== workingCase.id
+                                ? prev
+                                : {
+                                    ...prev,
+                                    courtEndTime: confirmedCourtEndTime,
+                                  },
+                            ),
                         })
                       }
                     }}
