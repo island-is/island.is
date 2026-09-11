@@ -805,6 +805,53 @@ describe('BankTransferService', () => {
         message,
       })
 
+    /**
+     * Evaluates the where-clause against one mutable row, counting a same-value write as a row
+     * affected like Postgres does. Mocking the affected-row count instead would not catch a
+     * predicate that matches when it should not — the bug that shipped.
+     */
+    const statefulUpdate = (row: {
+      id: string
+      isDeleted: boolean
+      lastKnownStatus: string
+    }) =>
+      jest.fn(
+        async (
+          values: { lastKnownStatus?: string },
+          options: {
+            where: {
+              id: string
+              isDeleted: boolean
+              lastKnownStatus: string | { [Op.eq]?: string; [Op.ne]?: string }
+            }
+          },
+        ) => {
+          const { where } = options
+          const predicate = where.lastKnownStatus
+          const statusMatches =
+            typeof predicate === 'string'
+              ? predicate === row.lastKnownStatus
+              : (predicate[Op.eq] === undefined ||
+                  predicate[Op.eq] === row.lastKnownStatus) &&
+                (predicate[Op.ne] === undefined ||
+                  predicate[Op.ne] !== row.lastKnownStatus)
+
+          if (
+            where.id !== row.id ||
+            where.isDeleted !== row.isDeleted ||
+            !statusMatches
+          ) {
+            return [0]
+          }
+
+          if (values.lastKnownStatus !== undefined) {
+            row.lastKnownStatus = values.lastKnownStatus
+          }
+
+          return [1]
+        },
+      )
+
     it('looks up the active row by providerPaymentId, falling back to paymentFlowId', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
       mockGetPayment(BankTransferStatus.PENDING, 'PENDING')
@@ -894,7 +941,10 @@ describe('BankTransferService', () => {
             where: {
               id: 'corr-1',
               isDeleted: false,
-              lastKnownStatus: activeRow.lastKnownStatus,
+              lastKnownStatus: {
+                [Op.eq]: activeRow.lastKnownStatus,
+                [Op.ne]: rawStatus,
+              },
             },
           },
         )
@@ -937,6 +987,41 @@ describe('BankTransferService', () => {
       expect(bankTransferPaymentModel.update).toHaveBeenCalledTimes(1)
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
       expect(result.status).toBe(BankTransferStatus.ERROR)
+    })
+
+    it('does not emit a second payment_failed when verify runs again on a row already at ERROR', async () => {
+      const row = { ...activeRow, lastKnownStatus: 'PENDING' }
+      // A fresh read each call, as each request would do.
+      bankTransferPaymentModel.findOne.mockImplementation(async () => ({
+        ...row,
+      }))
+      bankTransferPaymentModel.update = statefulUpdate(row)
+      mockGetPayment(BankTransferStatus.ERROR, 'ERROR', 'provider detail')
+
+      const first = await service.verify({ paymentFlowId: 'flow-1' })
+      const second = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(first.status).toBe(BankTransferStatus.ERROR)
+      // The repeat caller still gets the right status; only the event is suppressed.
+      expect(second.status).toBe(BankTransferStatus.ERROR)
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+    })
+
+    it('emits payment_failed once when two finalizers converge on different terminal statuses', async () => {
+      const row = { ...activeRow, lastKnownStatus: 'SCA_REQUIRED' }
+      // Both callers hold a read taken before either wrote — the interleaving the guard is for.
+      bankTransferPaymentModel.findOne.mockResolvedValue({ ...row })
+      bankTransferPaymentModel.update = statefulUpdate(row)
+
+      mockGetPayment(BankTransferStatus.ERROR, 'ERROR')
+      await service.verify({ paymentFlowId: 'flow-1' })
+
+      // A different terminal status: a bare `ne` guard would match and fire a second event.
+      mockGetPayment(BankTransferStatus.REJECTED, 'REJECTED')
+      await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      expect(row.lastKnownStatus).toBe('ERROR')
     })
 
     it('updates lastKnownStatus race-guarded when the provider returns a different non-terminal status', async () => {
@@ -1315,7 +1400,10 @@ describe('BankTransferService', () => {
             where: {
               id: 'corr-1',
               isDeleted: false,
-              lastKnownStatus: 'PENDING',
+              lastKnownStatus: {
+                [Op.eq]: 'PENDING',
+                [Op.ne]: failureRawStatus,
+              },
             },
           },
         )
@@ -1858,7 +1946,10 @@ describe('BankTransferService', () => {
             where: {
               id: baseRow.id,
               isDeleted: false,
-              lastKnownStatus: baseRow.lastKnownStatus,
+              lastKnownStatus: {
+                [Op.eq]: baseRow.lastKnownStatus,
+                [Op.ne]: rawStatus,
+              },
             },
           },
         )

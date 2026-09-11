@@ -2,6 +2,8 @@ import { BadRequestException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { TestApp } from '@island.is/testing/nest'
@@ -580,6 +582,152 @@ describe('PaymentFlowService', () => {
           chargePayloadWithPayInfo(paymentFlowId),
         ),
       ).rejects.toBeInstanceOf(BadRequestException)
+    })
+
+    it('adopts the winner and logs the orphaned reception id when the local insert loses the unique-index race', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const paymentFulfillmentModel = app.get<typeof PaymentFulfillment>(
+        getModelToken(PaymentFulfillment),
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      const logger = app.get<Logger>(LOGGER_PROVIDER)
+
+      const paymentFlowId = uuid()
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        organisationId: '5534567890',
+      } as TestPartial)
+      await paymentFulfillmentModel.create({
+        paymentFlowId,
+        paymentMethod: 'bank_transfer',
+        confirmationRefId: uuid(),
+      } as TestPartial)
+
+      jest.spyOn(fjsChargeModel, 'findOne').mockRestore()
+
+      // The concurrent finalizer's row, already committed.
+      const winner = await fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: 'recept-winner',
+        user4: 'doc-winner',
+        status: 'paid',
+      } as TestPartial)
+
+      // FJS's dedup did not hold, so we come back with a second, distinct reception id.
+      jest.spyOn(chargeFjsService, 'createCharge').mockResolvedValueOnce({
+        receptionID: 'recept-duplicate',
+        user4: 'doc-duplicate',
+      } as TestPartial)
+
+      // No mock for the failing insert: the index is declared on the model, so the real partial
+      // unique constraint rejects it — the winner above holds the one active row for this flow.
+
+      // `logger` is a singleton, so `spyOn` may return an earlier test's spy with its history.
+      // Clear rather than restore — restoring would uninstall a spy other spec files rely on.
+      const errorSpy = jest.spyOn(logger, 'error')
+      errorSpy.mockClear()
+
+      const result = await service.createFjsCharge(
+        paymentFlowId,
+        chargePayloadWithPayInfo(paymentFlowId),
+      )
+
+      // Adopted the winner rather than failing a caller whose charge did reach FJS.
+      expect(result.id).toBe(winner.id)
+      expect(result.receptionId).toBe('recept-winner')
+
+      // The duplicate's reception id is the only handle for reversing the extra charge.
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('FJS accepted a duplicate charge'),
+        expect.objectContaining({
+          // Part of the alerting contract, so pinned here.
+          needsManualReversal: true,
+          receptionId: 'recept-duplicate',
+          user4: 'doc-duplicate',
+        }),
+      )
+
+      // And the fulfillment ends up linked to exactly one charge.
+      const fulfillment = await paymentFulfillmentModel.findOne({
+        where: { paymentFlowId, isDeleted: false },
+      })
+      expect(fulfillment?.fjsChargeId).toBe(winner.id)
+    })
+
+    it('does not claim a duplicate when FJS returns the reception id we already hold', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const paymentFulfillmentModel = app.get<typeof PaymentFulfillment>(
+        getModelToken(PaymentFulfillment),
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      const logger = app.get<Logger>(LOGGER_PROVIDER)
+
+      const paymentFlowId = uuid()
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        organisationId: '5534567890',
+      } as TestPartial)
+      await paymentFulfillmentModel.create({
+        paymentFlowId,
+        paymentMethod: 'bank_transfer',
+        confirmationRefId: uuid(),
+      } as TestPartial)
+
+      jest.spyOn(fjsChargeModel, 'findOne').mockRestore()
+
+      const existing = await fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: 'recept-same',
+        user4: 'doc-same',
+        status: 'paid',
+      } as TestPartial)
+
+      // FJS hands back the charge it already had, so the reception id matches the row we collide
+      // with. Nothing was duplicated.
+      jest.spyOn(chargeFjsService, 'createCharge').mockResolvedValueOnce({
+        receptionID: 'recept-same',
+        user4: 'doc-same',
+      } as TestPartial)
+
+      jest
+        .spyOn(fjsChargeModel, 'create')
+        .mockRejectedValueOnce(
+          Object.assign(
+            new Error('duplicate key value violates unique constraint'),
+            { name: 'SequelizeUniqueConstraintError' },
+          ),
+        )
+
+      // `logger` is a singleton, so `spyOn` may return an earlier test's spy with its history.
+      // Clear rather than restore — restoring would uninstall a spy other spec files rely on.
+      const errorSpy = jest.spyOn(logger, 'error')
+      errorSpy.mockClear()
+
+      const result = await service.createFjsCharge(
+        paymentFlowId,
+        chargePayloadWithPayInfo(paymentFlowId),
+      )
+
+      expect(result.id).toBe(existing.id)
+      // The alert must not fire: there is no orphaned charge to reverse.
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('FJS accepted a duplicate charge'),
+        expect.anything(),
+      )
     })
   })
 
