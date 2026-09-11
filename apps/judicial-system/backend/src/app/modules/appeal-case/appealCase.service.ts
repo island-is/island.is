@@ -35,6 +35,7 @@ import {
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -48,10 +49,14 @@ import {
   CivilClaimant,
   CreateAppealCase,
   Defendant,
+  DefendantRepositoryService,
   UpdateAppealCase,
+  UpdateDefendant,
   VerdictRepositoryService,
 } from '../repository'
+import { getLatestVerdict } from '../verdict/getLatestVerdict'
 import { validateVerdictAppealUpdate } from '../verdict/verdict.helpers'
+import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { UpdateAppealCaseDto } from './dto/updateAppealCase.dto'
 import {
   AppealTransitionResult,
@@ -65,6 +70,20 @@ import {
   userRulingOrderAppealDecisions,
 } from './appealCase.helpers'
 
+// What a verdict appeal is filed with, beyond the case and the user. A defender
+// appealing in the system supplies the defendant only; the public prosecution
+// office registering an appeal that arrived by letter or email also supplies
+// when it was filed and by which defender.
+export type VerdictAppealRequest = Pick<
+  CreateAppealCaseDto,
+  | 'defendantId'
+  | 'appealDate'
+  | 'appealDefenderName'
+  | 'appealDefenderNationalId'
+  | 'appealDefenderEmail'
+  | 'appealDefenderPhoneNumber'
+>
+
 @Injectable()
 export class AppealCaseService {
   constructor(
@@ -74,6 +93,7 @@ export class AppealCaseService {
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly verdictRepositoryService: VerdictRepositoryService,
+    private readonly defendantRepositoryService: DefendantRepositoryService,
     @Inject(appealCaseModuleConfig.KEY)
     private readonly config: ConfigType<typeof appealCaseModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -510,17 +530,12 @@ export class AppealCaseService {
     user: User,
     rulingFileId: string | undefined,
     transaction: Transaction,
-    verdictAppeal?: { defendantId?: string },
+    verdictAppeal?: VerdictAppealRequest,
   ): Promise<AppealCase> {
     this.logger.debug(`Creating appeal case for case ${theCase.id}`)
 
     if (verdictAppeal) {
-      return this.createVerdictAppeal(
-        theCase,
-        user,
-        verdictAppeal.defendantId,
-        transaction,
-      )
+      return this.createVerdictAppeal(theCase, user, verdictAppeal, transaction)
     }
 
     if (rulingFileId) {
@@ -665,12 +680,25 @@ export class AppealCaseService {
   private async createVerdictAppeal(
     theCase: Case,
     user: User,
-    defendantId: string | undefined,
+    request: VerdictAppealRequest,
     transaction: Transaction,
   ): Promise<AppealCase> {
-    if (!isDefenceUser(user)) {
-      throw new ForbiddenException('Only a defence user can appeal a verdict')
+    // Two ways in: the defendant's confirmed defender appeals in the system, or
+    // the public prosecution office registers an appeal that reached it outside
+    // the system - by letter or email, typically from a new defender who is not
+    // in the system. The office acts for the defendant, so it is not held to
+    // being their defender, and it records an act that already happened, so the
+    // appeal date is the filing's and the deadline is not enforced here (see
+    // below).
+    const isRegisteredByProsecutionOffice = isPublicProsecutionOfficeUser(user)
+
+    if (!isDefenceUser(user) && !isRegisteredByProsecutionOffice) {
+      throw new ForbiddenException(
+        'Only a defence user or the public prosecution office can appeal a verdict',
+      )
     }
+
+    const { defendantId } = request
 
     if (!defendantId) {
       throw new BadRequestException(
@@ -687,6 +715,7 @@ export class AppealCaseService {
     }
 
     if (
+      !isRegisteredByProsecutionOffice &&
       !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
     ) {
       throw new ForbiddenException(
@@ -704,9 +733,8 @@ export class AppealCaseService {
       )
     }
 
-    // A defendant has at most one verdict; the array is how the association is
-    // modelled.
-    const verdict = defendant.verdicts?.[0]
+    // Prefer the newest verdict when a corrected ruling created a replacement.
+    const verdict = getLatestVerdict(defendant.verdicts)
 
     // Covers the útivistardómur (reopened rather than appealed) and the service
     // state: the defendant must have been made aware of the verdict.
@@ -716,18 +744,29 @@ export class AppealCaseService {
       )
     }
 
-    validateVerdictAppealUpdate({
-      caseId: theCase.id,
-      indictmentRulingDecision: theCase.indictmentRulingDecision,
-      rulingDate: theCase.rulingDate,
-      verdict,
-    })
+    // The deadline is hard for a defender appealing in the system: the filing
+    // is the legal act. The public prosecution office registers an appeal that
+    // already happened, possibly after the deadline - late bookkeeping of a
+    // timely appeal, or a genuinely late one - and its screen confirms the
+    // latter with the user, the same way its appeal date picker did before.
+    if (!isRegisteredByProsecutionOffice) {
+      validateVerdictAppealUpdate({
+        caseId: theCase.id,
+        indictmentRulingDecision: theCase.indictmentRulingDecision,
+        rulingDate: theCase.rulingDate,
+        verdict,
+      })
+    }
 
     if (verdict.appealDate) {
       throw new ForbiddenException(
         `The verdict of defendant ${defendantId} has already been appealed`,
       )
     }
+
+    const appealedAt = isRegisteredByProsecutionOffice
+      ? this.registeredVerdictAppealDate(request.appealDate)
+      : nowFactory()
 
     // One Landsréttur case per district court case, whoever the appellants are:
     // the first defendant to appeal creates it and later ones join it, each
@@ -771,8 +810,6 @@ export class AppealCaseService {
       }
     }
 
-    const appealedAt = nowFactory()
-
     let appealCase =
       existingAppealCase ??
       (await this.appealCaseRepositoryService.create(
@@ -811,6 +848,15 @@ export class AppealCaseService {
       transaction,
     )
 
+    if (isRegisteredByProsecutionOffice) {
+      await this.recordAppealDefender(
+        theCase,
+        defendantId,
+        request,
+        transaction,
+      )
+    }
+
     // AppealCase is the source of truth for who appealed; verdict.appealDate is
     // kept as a one-way mirror so the public prosecution office's existing
     // screen keeps working untouched. To be retired with that screen.
@@ -830,6 +876,103 @@ export class AppealCaseService {
     // its own story, and the ruling appeal notifications do not apply here.
 
     return appealCase
+  }
+
+  // The date the public prosecution office registers is the one on the filing
+  // it received, which cannot be in the future. Anything else about it - a
+  // filing after the deadline in particular - is for the office to judge.
+  //
+  // The DTO declares a Date, but the validation pipe does not transform the
+  // body, so what arrives is whatever the client sent - an ISO string from the
+  // web. Read it as a date here rather than trust the declared type.
+  private registeredVerdictAppealDate(
+    appealDate: Date | string | undefined,
+  ): Date {
+    if (!appealDate) {
+      throw new BadRequestException(
+        'Registering a verdict appeal must state when it was filed',
+      )
+    }
+
+    const date = new Date(appealDate)
+
+    if (Number.isNaN(date.getTime())) {
+      throw new BadRequestException(
+        `${appealDate} is not a date a verdict appeal can have been filed on`,
+      )
+    }
+
+    if (date.getTime() > nowFactory().getTime()) {
+      throw new BadRequestException(
+        'A verdict appeal cannot have been filed in the future',
+      )
+    }
+
+    return date
+  }
+
+  // Records which defender filed the appeal the public prosecution office is
+  // registering. Information only - the defender of record is untouched and
+  // nothing grants the appeal defender access; that follows once the court of
+  // appeals confirms them.
+  private async recordAppealDefender(
+    theCase: Case,
+    defendantId: string,
+    request: VerdictAppealRequest,
+    transaction: Transaction,
+  ): Promise<void> {
+    const supplied = [
+      request.appealDefenderName,
+      request.appealDefenderNationalId,
+      request.appealDefenderEmail,
+      request.appealDefenderPhoneNumber,
+    ]
+
+    if (supplied.every((value) => value === undefined)) {
+      return
+    }
+
+    // The supplied fields describe one person, so the ones left out are
+    // cleared rather than kept from whoever was recorded before - Sequelize
+    // skips undefined, so the clearing has to be explicit. A new appeal
+    // defender is also a new person for the court of appeals to confirm,
+    // whatever it had decided about the previous one.
+    const appealDefender: UpdateDefendant = {
+      appealDefenderName: request.appealDefenderName ?? null,
+      appealDefenderNationalId: request.appealDefenderNationalId ?? null,
+      appealDefenderEmail: request.appealDefenderEmail ?? null,
+      appealDefenderPhoneNumber: request.appealDefenderPhoneNumber ?? null,
+      isAppealDefenderConfirmed: false,
+    }
+
+    await this.defendantRepositoryService.update(
+      theCase.id,
+      defendantId,
+      appealDefender,
+      { transaction },
+    )
+  }
+
+  // The appeal defender belongs to the appeal: withdrawn, there is no appeal
+  // for them to have filed, and a later registration that names nobody must
+  // not show them again.
+  private async clearAppealDefender(
+    theCase: Case,
+    defendantId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    await this.defendantRepositoryService.update(
+      theCase.id,
+      defendantId,
+      {
+        appealDefenderName: null,
+        appealDefenderNationalId: null,
+        appealDefenderEmail: null,
+        appealDefenderPhoneNumber: null,
+        isAppealDefenderConfirmed: null,
+      },
+      { transaction },
+    )
   }
 
   async update(
@@ -966,6 +1109,17 @@ export class AppealCaseService {
         defendantId,
         user,
         transaction,
+      )
+    }
+
+    // Withdrawal is the only transition a verdict appeal supports so far. The
+    // ones that carry a ruling appeal to and through the court of appeals were
+    // written for that, and the court of appeals work has to take them on for
+    // verdict appeals deliberately - until then they are refused rather than
+    // applied to a case they were never checked against.
+    if (appealCase.appealType === AppealCaseType.VERDICT) {
+      throw new ForbiddenException(
+        `Verdict appeals cannot be transitioned with ${transition} yet`,
       )
     }
 
@@ -1106,9 +1260,13 @@ export class AppealCaseService {
     user: User,
     transaction: Transaction,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
-    if (!isDefenceUser(user)) {
+    // The public prosecution office withdraws on the defendant's behalf, as it
+    // registers on their behalf, so it is not held to being their defender.
+    const isWithdrawnByProsecutionOffice = isPublicProsecutionOfficeUser(user)
+
+    if (!isDefenceUser(user) && !isWithdrawnByProsecutionOffice) {
       throw new ForbiddenException(
-        'Only a defence user can withdraw a verdict appeal',
+        'Only a defence user or the public prosecution office can withdraw a verdict appeal',
       )
     }
 
@@ -1120,8 +1278,14 @@ export class AppealCaseService {
 
     const defendant = theCase.defendants?.find((d) => d.id === defendantId)
 
+    if (!defendant) {
+      throw new NotFoundException(
+        `Defendant ${defendantId} of case ${theCase.id} does not exist`,
+      )
+    }
+
     if (
-      !defendant ||
+      !isWithdrawnByProsecutionOffice &&
       !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
     ) {
       throw new ForbiddenException(
@@ -1163,7 +1327,7 @@ export class AppealCaseService {
 
     // Clear the mirror on the verdict, so the public prosecution office's screen
     // stops showing this defendant as having appealed.
-    const verdict = defendant.verdicts?.[0]
+    const verdict = getLatestVerdict(defendant.verdicts)
 
     if (verdict) {
       await this.verdictRepositoryService.update(
@@ -1174,6 +1338,8 @@ export class AppealCaseService {
         { transaction },
       )
     }
+
+    await this.clearAppealDefender(theCase, defendantId, transaction)
 
     const remainingAppellantIds = standingAppellantIds.filter(
       (id) => id !== defendantId,

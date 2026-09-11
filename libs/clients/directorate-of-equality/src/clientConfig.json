@@ -823,6 +823,73 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/reports/{providerId}/equality-content/pdf": {
+      "get": {
+        "operationId": "getApplicationEqualityContentPdf",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the uploaded jafnréttisáætlun PDF verbatim. 404 when the report's equality content is HTML rather than an uploaded PDF.",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/{providerId}/outliers": {
       "get": {
         "description": "Paginated list of the report's employee outliers. Split out from the report-detail payload because a single salary report can carry hundreds of rows. Ordered by role title and then by the employee's ordinal within the report — the same grouped-by-role order the draft employee lists serve.",
@@ -4061,7 +4128,15 @@
           "contactPhone": { "type": "string" },
           "equalityReportContent": {
             "type": "string",
-            "description": "Narrative gender-equality plan as plain HTML. Persisted as `report.equality_report_content` and rendered into the approved PDF, so send the markup itself — not a base64 blob, not a document."
+            "description": "Narrative gender-equality plan as plain HTML. Persisted as `report.equality_report_content` and rendered into the approved PDF, so send the markup itself — not a base64 blob, not a document. Mutually exclusive with `equalityReportPdf`."
+          },
+          "equalityReportPdf": {
+            "type": "string",
+            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent`. Max 4MB decoded."
+          },
+          "equalityReportPdfFilename": {
+            "type": "string",
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
           },
           "averageEmployeeMaleCount": { "type": "number", "nullable": true },
           "averageEmployeeFemaleCount": { "type": "number", "nullable": true },
@@ -4082,7 +4157,6 @@
           "contactName",
           "contactEmail",
           "contactPhone",
-          "equalityReportContent",
           "company"
         ]
       },
@@ -4134,6 +4208,7 @@
           "isatCategory"
         ]
       },
+      "EqualityContentTypeEnum": { "type": "string", "enum": ["HTML", "PDF"] },
       "SalaryAggregateMetricsDto": {
         "type": "object",
         "properties": {
@@ -4310,6 +4385,15 @@
             ]
           },
           "equalityReportContent": { "type": "string", "nullable": true },
+          "equalityReportContentType": {
+            "allOf": [
+              { "$ref": "#/components/schemas/EqualityContentTypeEnum" }
+            ]
+          },
+          "equalityReportContentFilename": {
+            "type": "string",
+            "nullable": true
+          },
           "salaryDataBasis": {
             "nullable": true,
             "description": "Salary-only. Whether the submitted salary data describes one specific payroll month (`MONTH`, with the month in `salaryDataPeriod`) or a twelve-month average (`AVERAGE`). Reads back the basis the applicant declared while drafting. Null on equality reports.",
@@ -4347,6 +4431,7 @@
           "type",
           "status",
           "companies",
+          "equalityReportContentType",
           "includesImprovementPlan",
           "externalComments"
         ]
@@ -4472,10 +4557,17 @@
         "properties": {
           "equalityReportContent": {
             "type": "string",
-            "description": "New narrative content for the equality report as base64-encoded HTML. Decoded server-side and replaces the prior `equality_report_content` in place."
+            "description": "New narrative content for the equality report as base64-encoded HTML. Decoded server-side and replaces the prior `equality_report_content` in place. Mutually exclusive with `equalityReportPdf`."
+          },
+          "equalityReportPdf": {
+            "type": "string",
+            "description": "New narrative content as a base64-encoded PDF, stored verbatim and replacing the prior content in place. Mutually exclusive with `equalityReportContent`. Max 4MB decoded."
+          },
+          "equalityReportPdfFilename": {
+            "type": "string",
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
           }
-        },
-        "required": ["equalityReportContent"]
+        }
       },
       "EditOutlierGroupDto": {
         "type": "object",
@@ -4744,6 +4836,15 @@
             "description": "The payroll month the salary data is based on (`YYYY-MM-01`). Set when `salaryDataBasis` is `MONTH`, always null for `AVERAGE`."
           },
           "equalityReportContent": { "type": "string", "nullable": true },
+          "equalityReportContentType": {
+            "allOf": [
+              { "$ref": "#/components/schemas/EqualityContentTypeEnum" }
+            ]
+          },
+          "equalityReportContentFilename": {
+            "type": "string",
+            "nullable": true
+          },
           "importedFromExcel": {
             "type": "boolean",
             "description": "Whether this draft's scoring content was uploaded as an Excel workbook (`POST …/draft/import`) rather than keyed in through the portal UI. Set by the server when the parser runs; sticky, so hand-editing rows afterwards does not clear it. False on a draft that has never been imported."
@@ -4762,7 +4863,14 @@
             "nullable": true
           }
         },
-        "required": ["id", "type", "status", "importedFromExcel", "counts"]
+        "required": [
+          "id",
+          "type",
+          "status",
+          "equalityReportContentType",
+          "importedFromExcel",
+          "counts"
+        ]
       },
       "UpdateDraftDto": {
         "type": "object",
@@ -4801,8 +4909,18 @@
           },
           "equalityReportContent": {
             "type": "string",
-            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`.",
+            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`. Mutually exclusive with `equalityReportPdf`.",
             "nullable": true
+          },
+          "equalityReportPdf": {
+            "type": "string",
+            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent`. Max 4MB decoded.",
+            "nullable": true
+          },
+          "equalityReportPdfFilename": {
+            "type": "string",
+            "nullable": true,
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
           }
         }
       },

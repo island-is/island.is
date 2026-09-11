@@ -32,6 +32,18 @@ import {
 
 const MESSAGE_MAX_LENGTH = 300
 
+// A recipient is only unique across all three identifiers: the same node and
+// group can appear more than once, once per treatment. Mirrors the my-pages
+// getRecipientKey so both clients key the dropdown the same way.
+const getRecipientKey = (recipient: {
+  nodeId: string
+  groupId: number
+  treatmentId?: string | null
+}) =>
+  `${recipient.nodeId}-${recipient.groupId}${
+    recipient.treatmentId ? `-${recipient.treatmentId}` : ''
+  }`
+
 export default function HealthMessageComposeScreen() {
   const { conversationId, recipientName, subject } = useLocalSearchParams<{
     conversationId?: string
@@ -44,9 +56,11 @@ export default function HealthMessageComposeScreen() {
   const isReply = !!conversationId
 
   const [message, setMessage] = useState('')
-  const [recipientNodeId, setRecipientNodeId] = useState<string>()
+  const [recipientKey, setRecipientKey] = useState<string>()
   const [typeCode, setTypeCode] = useState<string>()
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const [recipientMenuOpen, setRecipientMenuOpen] = useState(false)
+  const [serviceMenuOpen, setServiceMenuOpen] = useState(false)
 
   const recipientsRes = useGetHealthConversationRecipientsQuery({
     variables: { locale: locale === 'is' ? LocaleEnum.Is : LocaleEnum.En },
@@ -63,7 +77,9 @@ export default function HealthMessageComposeScreen() {
     () => allRecipients.filter((r) => r.allowsMessaging),
     [allRecipients],
   )
-  const selectedRecipient = recipients.find((r) => r.nodeId === recipientNodeId)
+  const selectedRecipient = recipients.find(
+    (r) => getRecipientKey(r) === recipientKey,
+  )
 
   // When the user has a single recipient that can't take messages (its window
   // is closed, or it doesn't offer messaging at all), we replace the whole form
@@ -104,10 +120,10 @@ export default function HealthMessageComposeScreen() {
 
   // Default to the only recipient when there is a single option.
   useEffect(() => {
-    if (!isReply && !recipientNodeId && recipients.length === 1) {
-      setRecipientNodeId(recipients[0].nodeId)
+    if (!isReply && !recipientKey && recipients.length === 1) {
+      setRecipientKey(getRecipientKey(recipients[0]))
     }
-  }, [isReply, recipients, recipientNodeId])
+  }, [isReply, recipients, recipientKey])
 
   // Reset / default the service when the recipient changes.
   useEffect(() => {
@@ -192,6 +208,9 @@ export default function HealthMessageComposeScreen() {
           input: {
             groupId: selectedRecipient.groupId,
             nodeId: selectedRecipient.nodeId,
+            // Treatment-scoped recipients share a node and group with their
+            // siblings, so the treatment is what tells them apart on send.
+            treatmentId: selectedRecipient.treatmentId,
             patientInitiatedTypeCode: typeCode,
             title: selectedType?.title,
             messageTextContent: message.trim(),
@@ -235,9 +254,19 @@ export default function HealthMessageComposeScreen() {
       ? sendButtonHeight + theme.spacing[4]
       : 0
 
+  // A selection menu lives in its own platform view controller that is not
+  // torn down with this sheet, so dragging the sheet away while one is open
+  // leaves the menu stranded over whatever is shown next. Block the dismiss
+  // gesture while a menu is up; the close button still works, because that
+  // path lets us dismiss the menu before the sheet goes.
+  const isMenuOpen = recipientMenuOpen || serviceMenuOpen
+
   return (
     <>
-      <StackScreen closeable options={{ title: '' }} />
+      <StackScreen
+        closeable
+        options={{ title: '', gestureEnabled: !isMenuOpen }}
+      />
       <ToastHost ignoreTabBar bottomOffset={toastBottomOffset} />
       <ScrollView
         style={{ flex: 1 }}
@@ -337,12 +366,13 @@ export default function HealthMessageComposeScreen() {
                 label={intl.formatMessage({
                   id: 'health.messages.compose.selectRecipient',
                 })}
-                value={recipientNodeId}
+                value={recipientKey}
                 options={recipients.map((r) => ({
                   label: r.name,
-                  value: r.nodeId,
+                  value: getRecipientKey(r),
                 }))}
-                onSelect={setRecipientNodeId}
+                onSelect={setRecipientKey}
+                onOpenChange={setRecipientMenuOpen}
               />
             )}
             {selectedRecipient && (
@@ -369,6 +399,7 @@ export default function HealthMessageComposeScreen() {
                     value: s.patientInitiatedTypeCode,
                   }))}
                   onSelect={setTypeCode}
+                  onOpenChange={setServiceMenuOpen}
                   disabled={isFormLocked}
                 />
               )}

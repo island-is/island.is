@@ -56,6 +56,17 @@ type ConversationMessage = NonNullable<
 
 type FlatListItem = ConversationMessage | { __typename: 'Skeleton'; id: string }
 
+// Hermes ships no Intl.PluralRules and the app has no polyfill for it, so ICU
+// `plural` syntax silently falls back to the raw pattern. Pick the form by
+// hand instead: Icelandic takes the singular for numbers ending in 1 except
+// 11 (1, 21, 31 ...), English only for exactly 1.
+const isSingularDayCount = (days: number, locale: string): boolean => {
+  if (locale.startsWith('is')) {
+    return days % 10 === 1 && days % 100 !== 11
+  }
+  return days === 1
+}
+
 // Maps a reply-blocked reason to its explanatory message.
 const replyBlockedMessageId = (
   reason?: HealthDirectorateHealthConversationReplyBlockedReason | null,
@@ -143,6 +154,26 @@ export default function HealthMessageDetailScreen() {
   const conversation = res.data?.healthDirectorateHealthConversation
   const messages = useMemo(() => conversation?.messages ?? [], [conversation])
   const isSkeleton = res.loading && !res.data
+
+  // An expired reply window is the one reason we can quantify, so name the
+  // number of days when the server sends it. It is nullable, so fall back to
+  // the generic wording rather than rendering a blank count.
+  const replyWindowDays = conversation?.patientReplyWindowDays
+  const replyBlockedMessage =
+    conversation?.replyBlockedReason ===
+      HealthDirectorateHealthConversationReplyBlockedReason.ReplyWindowExpired &&
+    replyWindowDays != null
+      ? intl.formatMessage(
+          {
+            id: isSingularDayCount(replyWindowDays, intl.locale)
+              ? 'health.messages.replyBlocked.windowExpiredDay'
+              : 'health.messages.replyBlocked.windowExpiredDays',
+          },
+          { days: replyWindowDays },
+        )
+      : intl.formatMessage({
+          id: replyBlockedMessageId(conversation?.replyBlockedReason),
+        })
 
   const [markAsRead] = useMarkHealthConversationAsReadMutation({
     // Fire-and-forget: the server state self-corrects on the next load.
@@ -529,9 +560,7 @@ export default function HealthMessageDetailScreen() {
                 <Alert
                   type="info"
                   size="small"
-                  message={intl.formatMessage({
-                    id: replyBlockedMessageId(conversation?.replyBlockedReason),
-                  })}
+                  message={replyBlockedMessage}
                   hasBorder
                 />
               )}

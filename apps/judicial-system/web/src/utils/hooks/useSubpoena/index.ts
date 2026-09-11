@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
 import { isSuccessfulServiceStatus } from '@island.is/judicial-system/types'
 import type { Subpoena } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useCreateSubpoenasMutation } from './createSubpoenas.generated'
 import { useSubpoenaQuery } from './subpoena.generated'
@@ -60,7 +60,7 @@ export const useCreateSubpoenas = () => {
           }
         }
         return false
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að búa til fyrirkall')
         return false
       }
