@@ -1,5 +1,5 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -60,6 +60,11 @@ const AppealSections: FC<Props> = ({
     useState<CaseAppealDecision>()
   const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
     useState<CaseAppealDecision>()
+  // The id of each party's most recent save, so that a slow request failing
+  // after a newer one succeeded does not roll the newer decision back.
+  const latestSaveIds = useRef<
+    Partial<Record<AppealDecisionPartyRole, number>>
+  >({})
 
   const accusedAppealDecision = caseLevelAppealDecision(
     workingCase.appealDecisions,
@@ -163,47 +168,70 @@ const AppealSections: FC<Props> = ({
       return { ...prev, appealDecisions }
     })
 
-    if (onChange) {
-      onChange(update)
+    // Persists one party's row. The mutation toasts its own error and resolves
+    // to undefined on failure. Resolves to whether this save both succeeded and
+    // is still the party's latest - a superseded save must neither roll back
+    // nor drive anything, since the newer one owns the row now.
+    const saveAppealDecision = async (
+      partyRole: AppealDecisionPartyRole,
+      decision?: CaseAppealDecision,
+      announcement?: string,
+    ) => {
+      const saveId = (latestSaveIds.current[partyRole] ?? 0) + 1
+      latestSaveIds.current[partyRole] = saveId
+
+      const saved = await updateCaseAppealDecision({
+        caseId: workingCase.id,
+        partyRole,
+        decision,
+        announcement,
+      })
+
+      if (latestSaveIds.current[partyRole] !== saveId) {
+        return false
+      }
+
+      if (!saved) {
+        revertAppealDecision(partyRole, previousAppealDecisions)
+
+        return false
+      }
+
+      return true
     }
 
-    // The mutation toasts its own error and resolves to undefined on failure
+    let saved = true
+
     if (
       update.accusedAppealDecision !== undefined ||
       update.accusedAppealAnnouncement !== undefined
     ) {
-      const saved = await updateCaseAppealDecision({
-        caseId: workingCase.id,
-        partyRole: AppealDecisionPartyRole.DEFENDANT,
-        decision: update.accusedAppealDecision,
-        announcement: update.accusedAppealAnnouncement,
-      })
-
-      if (!saved) {
-        revertAppealDecision(
+      saved =
+        (await saveAppealDecision(
           AppealDecisionPartyRole.DEFENDANT,
-          previousAppealDecisions,
-        )
-      }
+          update.accusedAppealDecision,
+          update.accusedAppealAnnouncement,
+        )) && saved
     }
 
     if (
       update.prosecutorAppealDecision !== undefined ||
       update.prosecutorAppealAnnouncement !== undefined
     ) {
-      const saved = await updateCaseAppealDecision({
-        caseId: workingCase.id,
-        partyRole: AppealDecisionPartyRole.PROSECUTOR,
-        decision: update.prosecutorAppealDecision,
-        announcement: update.prosecutorAppealAnnouncement,
-      })
-
-      if (!saved) {
-        revertAppealDecision(
+      saved =
+        (await saveAppealDecision(
           AppealDecisionPartyRole.PROSECUTOR,
-          previousAppealDecisions,
-        )
-      }
+          update.prosecutorAppealDecision,
+          update.prosecutorAppealAnnouncement,
+        )) && saved
+    }
+
+    // The parents derive and persist the end-of-session text from the
+    // decision, so only tell them once the decision itself is on the server -
+    // otherwise a failed save would leave text describing a decision that was
+    // rolled back.
+    if (saved && onChange) {
+      onChange(update)
     }
   }
   return (

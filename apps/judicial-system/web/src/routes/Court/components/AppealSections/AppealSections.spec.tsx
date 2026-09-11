@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 import { useState } from 'react'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -153,7 +153,8 @@ describe('AppealSections', () => {
     const Harness: FC<{
       initialCase: Case
       onWorkingCase: (workingCase: Case) => void
-    }> = ({ initialCase, onWorkingCase }) => {
+      onChange?: jest.Mock
+    }> = ({ initialCase, onWorkingCase, onChange }) => {
       const [workingCase, setWorkingCase] = useState(initialCase)
       onWorkingCase(workingCase)
 
@@ -162,6 +163,7 @@ describe('AppealSections', () => {
           <AppealSections
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            onChange={onChange}
           />
         </IntlProviderWrapper>
       )
@@ -169,16 +171,18 @@ describe('AppealSections', () => {
 
     const renderHarness = (initialCase: Case) => {
       let latest = initialCase
+      const onChange = jest.fn()
       render(
         <Harness
           initialCase={initialCase}
           onWorkingCase={(workingCase) => {
             latest = workingCase
           }}
+          onChange={onChange}
         />,
       )
 
-      return { workingCase: () => latest }
+      return { workingCase: () => latest, onChange }
     }
 
     const prosecutorDecision = () =>
@@ -190,17 +194,23 @@ describe('AppealSections', () => {
       mockUpdateCaseAppealDecision.mockReset()
     })
 
-    it('keeps the decision when the save succeeds', async () => {
+    it('keeps the decision and tells the parent when the save succeeds', async () => {
       mockUpdateCaseAppealDecision.mockResolvedValue({
         decision: CaseAppealDecision.APPEAL,
       })
-      const { workingCase } = renderHarness(baseCase)
+      const { workingCase, onChange } = renderHarness(baseCase)
 
       fireEvent.click(prosecutorDecision())
 
-      await waitFor(() =>
-        expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(1),
+      // The parent derives and persists the end-of-session text from the
+      // decision, so it is only told once the decision is on the server
+      await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
+      expect(onChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+        }),
       )
+      expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(1)
       expect(
         caseLevelAppealDecision(
           workingCase().appealDecisions,
@@ -210,12 +220,15 @@ describe('AppealSections', () => {
       expect(prosecutorDecision()).toBeChecked()
     })
 
-    it('drops a decision the party did not have before', async () => {
+    it('drops a decision the party did not have before and does not tell the parent', async () => {
       mockUpdateCaseAppealDecision.mockResolvedValue(undefined)
-      const { workingCase } = renderHarness(baseCase)
+      const { workingCase, onChange } = renderHarness(baseCase)
 
       fireEvent.click(prosecutorDecision())
 
+      await waitFor(() =>
+        expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(1),
+      )
       await waitFor(() =>
         expect(
           caseLevelAppealDecision(
@@ -225,6 +238,47 @@ describe('AppealSections', () => {
         ).toBeUndefined(),
       )
       expect(prosecutorDecision()).not.toBeChecked()
+      expect(onChange).not.toHaveBeenCalled()
+    })
+
+    // A slow save that fails after a newer one succeeded describes a row the
+    // newer save now owns - rolling it back would discard the newer decision.
+    it('ignores a superseded save that fails after a newer save succeeded', async () => {
+      let failFirstSave: (value: undefined) => void = () => undefined
+      mockUpdateCaseAppealDecision
+        .mockImplementationOnce(
+          () =>
+            new Promise<undefined>((resolve) => {
+              failFirstSave = resolve
+            }),
+        )
+        .mockResolvedValueOnce({ decision: CaseAppealDecision.ACCEPT })
+      const { workingCase, onChange } = renderHarness(baseCase)
+
+      fireEvent.click(prosecutorDecision())
+      fireEvent.click(prosecutorAcceptRadio())
+
+      await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
+      expect(onChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+        }),
+      )
+
+      // Let the superseded save fail and its continuation run
+      await act(async () => {
+        failFirstSave(undefined)
+      })
+
+      expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(2)
+      expect(
+        caseLevelAppealDecision(
+          workingCase().appealDecisions,
+          AppealDecisionPartyRole.PROSECUTOR,
+        ),
+      ).toBe(CaseAppealDecision.ACCEPT)
+      expect(prosecutorAcceptRadio()).toBeChecked()
+      expect(onChange).toHaveBeenCalledTimes(1)
     })
 
     it('puts the previously saved decision back', async () => {
