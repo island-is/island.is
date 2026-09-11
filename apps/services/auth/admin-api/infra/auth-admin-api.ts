@@ -143,10 +143,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       },
     })
     .replicaCount({
-      dev: { min: 0, max: 0, default: 0 },
-      staging: { min: 0, max: 0, default: 0 },
-      prod: { min: 2, max: 10, default: 2 },
-      bypassReplicaClamp: true,
+      default: 2,
+      min: 2,
+      max: 10,
     })
     .grantNamespaces(
       'nginx-ingress-external',
