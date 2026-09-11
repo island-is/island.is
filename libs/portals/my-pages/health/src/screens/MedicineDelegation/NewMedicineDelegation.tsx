@@ -1,7 +1,7 @@
 import { ActionCard, Box, Button, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -71,8 +71,10 @@ const NewMedicineDelegation = () => {
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.newMedicineDelegationIntroText)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(
+          messages.stafraenHeilsaMedicineDelegationTooltip,
+        ),
       }}
       desktopContentSpan="10/12"
     >

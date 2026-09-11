@@ -1,3 +1,4 @@
+import type { FormatMessage } from '@island.is/cms-translations'
 import {
   ContentSegmentDto,
   ContentSegmentType,
@@ -16,6 +17,7 @@ import {
   HealthConversationSegmentTypeEnum,
   HealthConversationStatusFilterEnum,
 } from '../models/enums'
+import { m } from '../messages'
 import { HealthDirectorateHealthConversationMessageContent } from '../models/healthConversationMessageContent.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 import { HealthDirectorateHealthConversationSegment } from '../models/healthConversationSegment.model'
@@ -140,6 +142,47 @@ export const toConversationRecipientBlockedReasonEnum = (
       return HealthConversationRecipientBlockedReasonEnum.NO_ALLOWED_TYPES
     default:
       return undefined
+  }
+}
+
+/* 
+  The Heilsuvera web chat is not a Hekla conversation type, it's appended
+  manually to every recipient's service list so both web and app render it
+  from the same source, as an external link at the bottom of the dropdown.
+*/
+export const WEB_CHAT_TYPE_CODE = 'HEILSUVERA_WEB_CHAT'
+// Must match the hours stated in the translated web chat description strings.
+const WEB_CHAT_OPENS_MINUTES = 8 * 60 // 08:00
+const WEB_CHAT_CLOSES_MINUTES = 15 * 60 + 30 // 15:30
+
+const isWebChatOpen = (now: Date): boolean => {
+  const day = now.getUTCDay()
+  const minutes = now.getUTCHours() * 60 + now.getUTCMinutes()
+  const isWeekday = day >= 1 && day <= 5
+  return (
+    isWeekday &&
+    minutes >= WEB_CHAT_OPENS_MINUTES &&
+    minutes < WEB_CHAT_CLOSES_MINUTES
+  )
+}
+
+export const getWebChatConversationType = (
+  formatMessage: FormatMessage,
+  now: Date = new Date(),
+): HealthDirectorateHealthConversationType => {
+  const isCurrentlyOpen = isWebChatOpen(now)
+
+  return {
+    patientInitiatedTypeCode: WEB_CHAT_TYPE_CODE,
+    title: formatMessage(m.webChatTitle),
+    description: formatMessage(m.webChatDescription, {
+      status: formatMessage(
+        isCurrentlyOpen ? m.webChatStatusOpen : m.webChatStatusClosed,
+      ),
+    }),
+    isCertificate: false,
+    externalLinkUrl: formatMessage(m.webChatUrl),
+    isCurrentlyOpen,
   }
 }
 

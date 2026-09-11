@@ -1,13 +1,14 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
-import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import {
   calculatePt,
   Confirmation,
+  confirmationFontSize,
   drawTextWithEllipsisPDFKit,
-  xsFontSize,
+  formatActor,
 } from '../pdfHelpers'
 import { PDFKitCoatOfArms } from '../svgs/PDFKitCoatOfArms'
 
@@ -88,24 +89,25 @@ const createRulingConfirmation = async (
   const timesRomanBoldFont = await pdfDoc.embedFont(
     StandardFonts.TimesRomanBold,
   )
+  const fontSize = calculatePt(confirmationFontSize)
   doc.drawText('Réttarvörslugátt', {
     x: titleX,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(xsFontSize),
+    size: fontSize,
     font: timesRomanBoldFont,
   })
 
   doc.drawText('Rafræn staðfesting', {
     x: 158,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(xsFontSize),
+    size: fontSize,
     font: timesRomanFont,
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
     x: shadowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(xsFontSize),
+    size: fontSize,
     font: timesRomanFont,
   })
 
@@ -123,7 +125,7 @@ const createRulingConfirmation = async (
   doc.drawText('Dómstóll', {
     x: titleX,
     y: height - pageMargin - titleHeight - calculatePt(10),
-    size: calculatePt(xsFontSize),
+    size: fontSize,
     font: timesRomanBoldFont,
   })
 
@@ -132,7 +134,7 @@ const createRulingConfirmation = async (
       x: titleX,
       y: height - pageMargin - titleHeight - calculatePt(22),
       font: timesRomanFont,
-      size: calculatePt(xsFontSize),
+      size: fontSize,
     })
   }
 
@@ -150,23 +152,15 @@ const createRulingConfirmation = async (
   doc.drawText('Samþykktaraðili', {
     x: titleX + institutionWidth,
     y: height - pageMargin - titleHeight - calculatePt(10),
-    size: calculatePt(xsFontSize),
+    size: fontSize,
     font: timesRomanBoldFont,
   })
 
   if (confirmation?.actor) {
-    timesRomanFont.widthOfTextAtSize(
-      `${confirmation.actor}${
-        confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
-      }`,
-      calculatePt(xsFontSize),
-    )
     drawTextWithEllipsisPDFKit(
       doc,
-      `${confirmation.actor}${
-        confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
-      }`,
-      { type: timesRomanFont, size: calculatePt(xsFontSize) },
+      formatActor(confirmation.actor, confirmation.title),
+      { type: timesRomanFont, size: fontSize },
       titleX + institutionWidth,
       height - pageMargin - titleHeight - calculatePt(22),
       confirmedByWidth - 16,
@@ -225,24 +219,25 @@ const createCourtRecordConfirmation = async (
   const timesRomanBoldFont = await pdfDoc.embedFont(
     StandardFonts.TimesRomanBold,
   )
+  const fontSize = calculatePt(confirmationFontSize)
   doc.drawText('Réttarvörslugátt', {
     x: titleX,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(xsFontSize),
+    size: fontSize,
     font: timesRomanBoldFont,
   })
 
   doc.drawText('Rafræn staðfesting', {
     x: 158,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(xsFontSize),
+    size: fontSize,
     font: timesRomanFont,
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
     x: shadowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(xsFontSize),
+    size: fontSize,
     font: timesRomanFont,
   })
 
@@ -260,7 +255,7 @@ const createCourtRecordConfirmation = async (
   doc.drawText('Dómstóll', {
     x: titleX,
     y: height - pageMargin - titleHeight - calculatePt(10),
-    size: calculatePt(xsFontSize),
+    size: fontSize,
     font: timesRomanBoldFont,
   })
 
@@ -269,7 +264,7 @@ const createCourtRecordConfirmation = async (
       x: titleX,
       y: height - pageMargin - titleHeight - calculatePt(22),
       font: timesRomanFont,
-      size: calculatePt(xsFontSize),
+      size: fontSize,
     })
   }
 }
