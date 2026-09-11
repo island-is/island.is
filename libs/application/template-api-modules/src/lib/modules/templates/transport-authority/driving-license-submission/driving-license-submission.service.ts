@@ -626,7 +626,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         application,
       )
 
-      return this.drivingLicenseService.applyForRenewal65(auth.authorization, {
+      return this.drivingLicenseService.applyForRenewal65(auth, {
         jurisdiction: jurisdictionId
           ? jurisdictionId
           : setJurisdictionToKopavogur,
@@ -778,7 +778,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       }
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
-        auth.authorization.replace('Bearer ', ''),
+        auth,
         {
           jurisdictionId: jurisdictionId
             ? jurisdictionId
@@ -828,23 +828,19 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         healthDeclarationAnswers,
       )
 
-      return this.drivingLicenseService.applyForBELicense(
-        nationalId,
-        auth.authorization,
-        {
-          jurisdiction: jurisdictionId
-            ? jurisdictionId
-            : setJurisdictionToKopavogur,
-          instructorSSN: instructorSSN ?? '',
-          primaryPhoneNumber: bePhone,
-          studentEmail: beEmail ?? '',
-          contentList,
-          photoBiometricsId,
-          signatureBiometricsId,
-          sendPlasticToPerson: deliveryMethod === Pickup.POST,
-          healthDeclarationModel,
-        },
-      )
+      return this.drivingLicenseService.applyForBELicense(nationalId, auth, {
+        jurisdiction: jurisdictionId
+          ? jurisdictionId
+          : setJurisdictionToKopavogur,
+        instructorSSN: instructorSSN ?? '',
+        primaryPhoneNumber: bePhone,
+        studentEmail: beEmail ?? '',
+        contentList,
+        photoBiometricsId,
+        signatureBiometricsId,
+        sendPlasticToPerson: deliveryMethod === Pickup.POST,
+        healthDeclarationModel,
+      })
     }
 
     throw new Error('application for unknown type of license')
@@ -894,7 +890,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
   async glassesCheck({ auth }: TemplateApiModuleActionProps): Promise<boolean> {
     const licences: DriverLicenseWithoutImages[] =
-      await this.drivingLicenseService.getAllDriverLicenses(auth.authorization)
+      await this.drivingLicenseService.getAllDriverLicenses(auth)
     const hasGlasses: boolean = licences.some((license) => {
       // Visual impairments comments on driving licenses are prefixed with "01."
       return !!license.comments?.some((comment) => comment.nr?.includes('01.'))

@@ -48,7 +48,7 @@ export class MainResolver {
         action: 'drivingLicense',
         resources: user.nationalId,
       },
-      this.drivingLicenseService.getDrivingLicense(user.authorization),
+      this.drivingLicenseService.getDrivingLicense(user),
     )
   }
 
@@ -85,7 +85,7 @@ export class MainResolver {
       },
       this.drivingLicenseService.getTeachingRights({
         nationalId: user.nationalId,
-        token: user.authorization,
+        auth: user,
       }),
     )
   }
@@ -138,7 +138,7 @@ export class MainResolver {
   @Scopes(ApiScope.internal)
   @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getDrivingAssessment(user.authorization)
+    return this.drivingLicenseService.getDrivingAssessment(user)
   }
 
   @Scopes(ApiScope.internal)
@@ -149,7 +149,7 @@ export class MainResolver {
   ) {
     return this.drivingLicenseService.studentCanGetPracticePermit({
       studentSSN: input.studentSSN,
-      token: user.authorization.replace('Bearer ', '') ?? '', // Need to remove "Bearer" part
+      auth: user,
     })
   }
 }
