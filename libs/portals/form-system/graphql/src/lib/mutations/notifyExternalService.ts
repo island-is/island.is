@@ -9,6 +9,17 @@ export const NOTIFY_EXTERNAL_SERVICE = gql`
       screen {
         ...Screen
       }
+      screenError {
+        hasError
+        title {
+          is
+          en
+        }
+        message {
+          is
+          en
+        }
+      }
     }
   }
   ${ScreenFragment}

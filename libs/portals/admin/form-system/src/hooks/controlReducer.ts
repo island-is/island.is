@@ -169,6 +169,13 @@ type ChangeActions =
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
+      type: 'TOGGLE_VALIDATE_ELIGIBILITY'
+      payload: {
+        checked: boolean
+        update: (updatedForm: FormSystemForm) => void
+      }
+    }
+  | {
       type: 'CHANGE_HAS_SUMMARY_SCREEN'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
@@ -924,6 +931,17 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
+    case 'TOGGLE_VALIDATE_ELIGIBILITY': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          validateEligibility: action.payload.checked,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
     case 'CHANGE_HAS_SUMMARY_SCREEN': {
       const updatedState = {
         ...state,
@@ -993,6 +1011,9 @@ export const controlReducer = (
           fields: nextFields,
           screens: nextScreens,
           useValidate: nextUseValidate,
+          validateEligibility: nextUseValidate
+            ? form.validateEligibility
+            : false,
         },
       }
       return updatedState
@@ -1035,6 +1056,9 @@ export const controlReducer = (
           ...form,
           screens: nextScreens,
           useValidate: action.payload.value,
+          validateEligibility: action.payload.value
+            ? form.validateEligibility
+            : false,
         },
       }
       return updatedState

@@ -44,6 +44,7 @@ export const updateFormFn = async (
             submissionDaysToLive: newForm.submissionDaysToLive,
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             isInaccessible: newForm.isInaccessible,
+            validateEligibility: newForm.validateEligibility,
             hasPayment: newForm.hasPayment,
             zendeskInternal: newForm.zendeskInternal,
             useValidate: newForm.useValidate,

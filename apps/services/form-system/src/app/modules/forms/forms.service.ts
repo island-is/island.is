@@ -156,6 +156,7 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'isInaccessible',
+      'validateEligibility',
       'hasSummaryScreen',
       'sectionInfo',
       'lastModifiedBy',
@@ -342,6 +343,10 @@ export class FormsService {
 
     Object.assign(form, updateFormDto)
 
+    if (form.useValidate === false) {
+      form.validateEligibility = false
+    }
+
     if (originalHasPayment !== form.hasPayment) {
       if (originalHasPayment) {
         form.draftTotalSteps--
@@ -380,6 +385,13 @@ export class FormsService {
               where: {
                 sectionId: { [Op.in]: sections.map((section) => section.id) },
               },
+              transaction,
+            },
+          )
+          await this.formModel.update(
+            { validateEligibility: false },
+            {
+              where: { id },
               transaction,
             },
           )
@@ -1132,6 +1144,7 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'isInaccessible',
+      'validateEligibility',
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',

@@ -12,6 +12,7 @@ export const CREATE_APPLICATION = gql`
       isLoginTypeAllowed
       hasRequiredDelegation
       isInaccessible
+      validateEligibility
     }
   }
   ${ApplicationFragment}
