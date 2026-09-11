@@ -45,6 +45,16 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.removeColumn('application', 'actor_national_id')
+    return queryInterface.sequelize.transaction(async (transaction) => {
+      await queryInterface.sequelize.query(
+        `UPDATE "application"
+         SET "national_id" = "actor_national_id"`,
+        { transaction },
+      )
+
+      await queryInterface.removeColumn('application', 'actor_national_id', {
+        transaction,
+      })
+    })
   },
 }

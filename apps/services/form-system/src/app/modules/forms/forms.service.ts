@@ -343,6 +343,10 @@ export class FormsService {
 
     Object.assign(form, updateFormDto)
 
+    if (form.useValidate === false) {
+      form.validateEligibility = false
+    }
+
     if (originalHasPayment !== form.hasPayment) {
       if (originalHasPayment) {
         form.draftTotalSteps--

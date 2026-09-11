@@ -48,8 +48,6 @@ export const ExternalData = ({
   }>()
 
   useEffect(() => {
-    setHasValidateEligibilityNotificationError(false)
-
     if (
       !validateEligibility ||
       application.submissionServiceUrl === 'zendesk' ||
@@ -58,6 +56,7 @@ export const ExternalData = ({
       return
     }
 
+    setHasValidateEligibilityNotificationError(false)
     hasNotified.current = true
     setIsNotificationLoading(true)
     setIsValidateEligibilityNotificationLoading(true)
@@ -88,6 +87,8 @@ export const ExternalData = ({
         )
       } catch (error) {
         console.error('Error notifying external service:', error)
+        setHasValidateEligibilityNotificationError(true)
+        hasNotified.current = false
       } finally {
         setIsNotificationLoading(false)
         setIsValidateEligibilityNotificationLoading(false)
