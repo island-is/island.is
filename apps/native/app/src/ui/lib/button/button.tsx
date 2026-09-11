@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   ImageSourcePropType,
   ImageStyle,
+  StyleSheet,
   TextProps,
   TextStyle,
   TouchableHighlightProps,
@@ -188,22 +189,21 @@ export function Button({
       isFilledUtilityButton={isFilledUtilityButton}
       {...rest}
     >
-      {loading ? (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingHorizontal: theme.spacing.p3,
-          }}
-        >
-          <ActivityIndicator color={spinnerColor} />
-        </View>
-      ) : (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             columnGap: theme.spacing.p1,
+            // Stays mounted while loading so the button keeps its size; the
+            // spinner is laid over it rather than replacing it.
+            opacity: loading ? 0 : 1,
           }}
         >
           {icon && iconPosition === 'start' && renderIcon()}
@@ -224,7 +224,18 @@ export function Button({
           )}
           {icon && iconPosition === 'end' && renderIcon()}
         </View>
-      )}
+        {loading && (
+          <View
+            pointerEvents="none"
+            style={[
+              StyleSheet.absoluteFillObject,
+              { justifyContent: 'center', alignItems: 'center' },
+            ]}
+          >
+            <ActivityIndicator color={spinnerColor} />
+          </View>
+        )}
+      </View>
     </Host>
   )
 }

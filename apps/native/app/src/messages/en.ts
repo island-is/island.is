@@ -874,6 +874,22 @@ export const en: TranslatedMessages = {
   'health.appointments.assigneeTypeService': 'Service',
   'health.appointments.assigneeTypeTeam': 'Team',
   'health.appointments.assigneeTypeOther': 'Other',
+  'health.appointments.cancelAppointment': 'Cancel appointment',
+  'health.appointments.cancelDeadline':
+    'Can be cancelled online until {date} at {time}',
+  'health.appointments.cancelNotPossible':
+    'This appointment cannot be cancelled online. Call the service provider to cancel or reschedule.',
+  'health.appointments.cancelPromptTitle':
+    'Are you sure you want to cancel the appointment?',
+  'health.appointments.cancelPromptMessage':
+    'You are about to cancel an appointment you have booked.',
+  'health.appointments.cancelPromptConfirm': 'Confirm',
+  'health.appointments.cancelPromptCancel': 'Cancel',
+  'health.appointments.cancelSuccessTitle':
+    'The appointment has been cancelled',
+  'health.appointments.cancelErrorTitle': 'Could not cancel the appointment',
+  'health.appointments.cancelErrorMessage':
+    'The action could not be completed, please try again.',
 
   // health - messages
   'health.messages.screenTitle': 'Messages',

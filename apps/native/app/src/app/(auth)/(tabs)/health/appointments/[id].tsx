@@ -1,18 +1,21 @@
 import React, { useCallback, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   ImageSourcePropType,
   Linking,
   SafeAreaView,
   ScrollView,
   View,
 } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
+import { toast, ToastHost } from '@/components/toast'
 import { useFragment_experimental } from '@apollo/client/react/hooks'
 import styled, { useTheme } from 'styled-components/native'
 import calendarIcon from '@/assets/icons/calendar.png'
+import calendarCancelIcon from '@/assets/icons/calendar-cancel.png'
 import clockIcon from '@/assets/icons/clock.png'
 import externalLink from '@/assets/icons/external-link.png'
 import infoIcon from '@/assets/icons/info-bubble-outline.png'
@@ -25,6 +28,8 @@ import {
   HealthDirectorateAppointmentAssigneeType,
   HealthDirectorateAppointmentLinkType,
   HealthDirectorateAppointmentModality,
+  HealthDirectorateAppointmentStatus,
+  useCancelAppointmentMutation,
   useGetAppointmentDetailQuery,
 } from '@/graphql/types/schema'
 import { Alert, Button, Icon, Input, InputRow, Problem, Typography } from '@/ui'
@@ -79,11 +84,17 @@ const MoreInfoRow = styled.View`
 const EyebrowContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const ProblemContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const CancelSection = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-top: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const StickyFooter = styled.View`
@@ -125,6 +136,7 @@ export default function AppointmentDetailScreen() {
   const { id: appointmentId } = useLocalSearchParams<{ id: string }>()
   const intl = useIntl()
   const theme = useTheme()
+  const router = useRouter()
 
   const appointmentFromCache =
     useFragment_experimental<HealthDirectorateAppointment>({
@@ -141,6 +153,15 @@ export default function AppointmentDetailScreen() {
     variables: { id: appointmentId ?? '' },
     skip: !appointmentId,
   })
+
+  const [cancelAppointment, { loading: cancelling }] =
+    useCancelAppointmentMutation({
+      // The list and the detail both carry the status that just changed.
+      refetchQueries: ['getAppointments', 'getAppointmentDetail'],
+      // Hold the mutation until they have settled, so the cancelled
+      // appointment is already gone from the list the sheet returns to.
+      awaitRefetchQueries: true,
+    })
 
   const appointment =
     data?.healthDirectorateAppointment ?? appointmentFromCache?.data
@@ -289,6 +310,68 @@ export default function AppointmentDetailScreen() {
     date: dateStr,
     time,
   } = formatAppointmentDate(intl, appointment?.date)
+
+  // Whether cancelling is offered at all, and until when, is the server's
+  // call - never inferred from the appointment date on the client.
+  const canCancel = detail?.canCancel === true
+  const isBooked =
+    appointment?.status === HealthDirectorateAppointmentStatus.Booked
+  const cancelDeadline = formatAppointmentDate(intl, detail?.canCancelBefore)
+
+  const showCancelError = useCallback(() => {
+    toast.error(
+      intl.formatMessage({ id: 'health.appointments.cancelErrorTitle' }),
+      {
+        message: intl.formatMessage({
+          id: 'health.appointments.cancelErrorMessage',
+        }),
+      },
+    )
+  }, [intl])
+
+  const confirmCancel = useCallback(() => {
+    if (!appointmentId) {
+      return
+    }
+    cancelAppointment({ variables: { id: appointmentId } })
+      .then((res) => {
+        if (!res.data?.healthDirectorateCancelAppointment) {
+          showCancelError()
+          return
+        }
+        router.back()
+        // Rendered by the root ToastHost, the sheet having gone.
+        toast.success(
+          intl.formatMessage({ id: 'health.appointments.cancelSuccessTitle' }),
+        )
+      })
+      .catch(showCancelError)
+  }, [appointmentId, cancelAppointment, intl, router, showCancelError])
+
+  const handleCancelPress = useCallback(() => {
+    RNAlert.alert(
+      intl.formatMessage({ id: 'health.appointments.cancelPromptTitle' }),
+      intl.formatMessage({ id: 'health.appointments.cancelPromptMessage' }),
+      [
+        {
+          text: intl.formatMessage({
+            id: 'health.appointments.cancelPromptCancel',
+          }),
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({
+            id: 'health.appointments.cancelPromptConfirm',
+          }),
+          style: 'destructive',
+          // Marks this the preferred action, which iOS gives the prominent
+          // (filled) treatment in its alert.
+          isPreferred: true,
+          onPress: confirmCancel,
+        },
+      ],
+    )
+  }, [confirmCancel, intl])
 
   const hasMoreInfo =
     !!appointment &&
@@ -487,6 +570,44 @@ export default function AppointmentDetailScreen() {
               </IconList>
             </Header>
 
+            {isBooked && canCancel && (
+              <CancelSection>
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.appointments.cancelAppointment',
+                  })}
+                  icon={calendarCancelIcon as ImageSourcePropType}
+                  isUtilityButton
+                  isOutlined
+                  loading={cancelling}
+                  disabled={cancelling}
+                  onPress={handleCancelPress}
+                  style={{ alignSelf: 'flex-start' }}
+                />
+                {detail?.canCancelBefore && (
+                  <Typography variant="body3">
+                    {intl.formatMessage(
+                      { id: 'health.appointments.cancelDeadline' },
+                      { date: cancelDeadline.date, time: cancelDeadline.time },
+                    )}
+                  </Typography>
+                )}
+              </CancelSection>
+            )}
+
+            {isBooked && !!detail && !canCancel && (
+              <CancelSection>
+                <Alert
+                  type="info"
+                  size="small"
+                  hasBorder
+                  message={intl.formatMessage({
+                    id: 'health.appointments.cancelNotPossible',
+                  })}
+                />
+              </CancelSection>
+            )}
+
             {hasMoreInfo && (
               <EyebrowContainer>
                 <Typography variant="eyebrow" color={theme.color.purple400}>
@@ -633,6 +754,9 @@ export default function AppointmentDetailScreen() {
           <SafeAreaView />
         </StickyFooter>
       )}
+
+      {/* A formSheet renders above the root host, so toasts need one here. */}
+      <ToastHost ignoreTabBar />
     </View>
   )
 }
