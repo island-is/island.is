@@ -3,18 +3,7 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
-import { CaseFile } from '../models/caseFile.model'
-import { CaseString } from '../models/caseString.model'
-import { DateLog } from '../models/dateLog.model'
-import { Defendant } from '../models/defendant.model'
-import { DefendantEventLog } from '../models/defendantEventLog.model'
-import { EventLog } from '../models/eventLog.model'
-import { IndictmentCount } from '../models/indictmentCount.model'
-import { Subpoena } from '../models/subpoena.model'
-import { Verdict } from '../models/verdict.model'
-import { Victim } from '../models/victim.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
 
@@ -42,31 +31,12 @@ export const createTestingRepositoryModule = async () => {
         },
       },
       { provide: getModelToken(Case), useValue: mockModel() },
-      { provide: getModelToken(Defendant), useValue: mockModel() },
-      { provide: getModelToken(Subpoena), useValue: mockModel() },
-      { provide: getModelToken(Verdict), useValue: mockModel() },
-      { provide: getModelToken(DefendantEventLog), useValue: mockModel() },
-      { provide: getModelToken(CaseString), useValue: mockModel() },
-      { provide: getModelToken(DateLog), useValue: mockModel() },
-      { provide: getModelToken(EventLog), useValue: mockModel() },
-      { provide: getModelToken(Victim), useValue: mockModel() },
-      { provide: getModelToken(IndictmentCount), useValue: mockModel() },
-      { provide: getModelToken(CaseFile), useValue: mockModel() },
-      { provide: getModelToken(AppealCase), useValue: mockModel() },
       {
         provide: CaseDefendantPoliceCaseNumberRepositoryService,
         useValue: {
           replaceUnassignedFromPoliceCaseNumbersArray: jest
             .fn()
             .mockResolvedValue(undefined),
-          moveAssignedRowsToCaseForDefendant: jest
-            .fn()
-            .mockResolvedValue(undefined),
-          findDistinctPoliceCaseNumbersByCaseIds: jest
-            .fn()
-            .mockResolvedValue(new Map()),
-          findAssignedLinksByCaseId: jest.fn().mockResolvedValue([]),
-          assignDefendantPoliceCaseNumbers: jest.fn().mockResolvedValue([]),
           resolvePoliceCaseNumbersForCases: jest
             .fn()
             .mockResolvedValue(undefined),
@@ -76,29 +46,7 @@ export const createTestingRepositoryModule = async () => {
     ],
   }).compile()
 
-  const appealCaseModel = repositoryModule.get<typeof AppealCase>(
-    getModelToken(AppealCase),
-  )
-
   const caseModel = repositoryModule.get<typeof Case>(getModelToken(Case))
-
-  const defendantModel = repositoryModule.get<typeof Defendant>(
-    getModelToken(Defendant),
-  )
-
-  const indictmentCountModel = repositoryModule.get<typeof IndictmentCount>(
-    getModelToken(IndictmentCount),
-  )
-
-  const victimModel = repositoryModule.get<typeof Victim>(getModelToken(Victim))
-
-  const caseFileModel = repositoryModule.get<typeof CaseFile>(
-    getModelToken(CaseFile),
-  )
-
-  const caseStringModel = repositoryModule.get<typeof CaseString>(
-    getModelToken(CaseString),
-  )
 
   const caseDefendantPoliceCaseNumberRepositoryService =
     repositoryModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
@@ -113,13 +61,7 @@ export const createTestingRepositoryModule = async () => {
 
   return {
     caseRepositoryService,
-    appealCaseModel,
     caseModel,
-    defendantModel,
-    indictmentCountModel,
-    victimModel,
-    caseFileModel,
-    caseStringModel,
     caseDefendantPoliceCaseNumberRepositoryService,
   }
 }

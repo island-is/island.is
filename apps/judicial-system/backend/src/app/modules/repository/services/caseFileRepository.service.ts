@@ -426,4 +426,91 @@ export class CaseFileRepositoryService {
       throw error
     }
   }
+
+  // Moves the files of a defendant in the given categories to another case,
+  // when the defendant is split off into a case of their own. The rows move as
+  // they are - same S3 object, same state - since a file leaves with its
+  // defendant rather than being duplicated. Returns the number of files moved.
+  async moveAllForDefendantToCase(
+    caseId: string,
+    defendantId: string,
+    newCaseId: string,
+    categories: CaseFileCategory[],
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Moving the case files of defendant ${defendantId} in ${categories.length} categories from case ${caseId} to case ${newCaseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.caseFileModel.update(
+        { caseId: newCaseId },
+        {
+          where: { caseId, defendantId, category: categories },
+          transaction: options.transaction,
+        },
+      )
+
+      this.logger.debug(
+        `Moved ${numberOfAffectedRows} case files of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error moving the case files of defendant ${defendantId} from case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Copies the files of a case that are linked to no defendant, in the given
+  // categories, to another case as new rows. Unlike copyToCase the copy is not
+  // an independent draft: it keeps the original's S3 key, state and hash,
+  // because both cases need the same document. Deleted files are soft-deleted
+  // and stay in the table, so they are excluded.
+  async copyAllWithoutDefendantToCase(
+    caseId: string,
+    newCaseId: string,
+    categories: CaseFileCategory[],
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Copying the case files linked to no defendant in ${categories.length} categories of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const caseFiles = await this.caseFileModel.findAll({
+        where: {
+          caseId,
+          defendantId: null,
+          category: categories,
+          state: { [Op.not]: CaseFileState.DELETED },
+        },
+        transaction: options.transaction,
+      })
+
+      await Promise.all(
+        caseFiles.map((caseFile) =>
+          this.caseFileModel.create(
+            { ...caseFile.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction: options.transaction },
+          ),
+        ),
+      )
+
+      this.logger.debug(
+        `Copied ${caseFiles.length} case files linked to no defendant of case ${caseId} to case ${newCaseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying the case files linked to no defendant of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

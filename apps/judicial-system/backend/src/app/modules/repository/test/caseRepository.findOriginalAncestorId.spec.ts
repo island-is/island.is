@@ -5,20 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CaseType } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
-import { CaseFile } from '../models/caseFile.model'
-import { CaseString } from '../models/caseString.model'
-import { CivilClaimant } from '../models/civilClaimant.model'
-import { DateLog } from '../models/dateLog.model'
-import { Defendant } from '../models/defendant.model'
-import { DefendantEventLog } from '../models/defendantEventLog.model'
-import { EventLog } from '../models/eventLog.model'
-import { IndictmentCount } from '../models/indictmentCount.model'
-import { Offense } from '../models/offense.model'
-import { Subpoena } from '../models/subpoena.model'
-import { Verdict } from '../models/verdict.model'
-import { Victim } from '../models/victim.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
 
@@ -60,28 +47,6 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
           useValue: { debug: jest.fn(), error: jest.fn() },
         },
         { provide: getModelToken(Case), useValue: caseModel },
-        { provide: getModelToken(Defendant), useValue: mockSequelizeModel() },
-        { provide: getModelToken(Subpoena), useValue: mockSequelizeModel() },
-        { provide: getModelToken(Verdict), useValue: mockSequelizeModel() },
-        {
-          provide: getModelToken(DefendantEventLog),
-          useValue: mockSequelizeModel(),
-        },
-        { provide: getModelToken(CaseString), useValue: mockSequelizeModel() },
-        { provide: getModelToken(DateLog), useValue: mockSequelizeModel() },
-        { provide: getModelToken(EventLog), useValue: mockSequelizeModel() },
-        { provide: getModelToken(Victim), useValue: mockSequelizeModel() },
-        {
-          provide: getModelToken(IndictmentCount),
-          useValue: mockSequelizeModel(),
-        },
-        { provide: getModelToken(Offense), useValue: mockSequelizeModel() },
-        {
-          provide: getModelToken(CivilClaimant),
-          useValue: mockSequelizeModel(),
-        },
-        { provide: getModelToken(CaseFile), useValue: mockSequelizeModel() },
-        { provide: getModelToken(AppealCase), useValue: mockSequelizeModel() },
         {
           provide: CaseDefendantPoliceCaseNumberRepositoryService,
           useValue: {},

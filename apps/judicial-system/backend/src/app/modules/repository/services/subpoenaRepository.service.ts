@@ -246,4 +246,37 @@ export class SubpoenaRepositoryService {
       throw error
     }
   }
+
+  // Moves every subpoena of a defendant to another case, when the defendant is
+  // split off into a case of their own. Returns the number of subpoenas moved.
+  async moveAllForDefendantToCase(
+    caseId: string,
+    defendantId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Moving the subpoenas of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.subpoenaModel.update(
+        { caseId: newCaseId },
+        { where: { caseId, defendantId }, transaction: options.transaction },
+      )
+
+      this.logger.debug(
+        `Moved ${numberOfAffectedRows} subpoenas of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error moving the subpoenas of defendant ${defendantId} from case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

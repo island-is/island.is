@@ -132,4 +132,49 @@ export class EventLogRepositoryService {
       throw error
     }
   }
+
+  // Copies the event logs of the given types to another case as new rows,
+  // timestamps included - the copy records that the event happened, not that
+  // it was copied. Which types travel is the caller's decision.
+  async copyByTypesToCase(
+    caseId: string,
+    newCaseId: string,
+    eventTypes: EventType[],
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Copying the event logs of types ${eventTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const eventLogs = await this.eventLogModel.findAll({
+        where: { caseId, eventType: eventTypes },
+        transaction: options.transaction,
+      })
+
+      await Promise.all(
+        eventLogs.map((eventLog) =>
+          this.eventLogModel.create(
+            { ...eventLog.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction: options.transaction },
+          ),
+        ),
+      )
+
+      this.logger.debug(
+        `Copied ${eventLogs.length} event logs of case ${caseId} to case ${newCaseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying the event logs of types ${eventTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

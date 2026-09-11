@@ -522,4 +522,125 @@ describe('CaseFileRepositoryService', () => {
       ).rejects.toThrow(error)
     })
   })
+
+  describe('moveAllForDefendantToCase', () => {
+    const defendantId = 'some-defendant-id'
+    const newCaseId = 'some-new-case-id'
+    const categories = [
+      CaseFileCategory.CASE_FILE,
+      CaseFileCategory.DEFENDANT_CASE_FILE,
+    ]
+
+    it('moves the files of the defendant in the given categories to the new case and reports the row count', async () => {
+      model.update.mockResolvedValueOnce([3])
+
+      const result = await service.moveAllForDefendantToCase(
+        caseId,
+        defendantId,
+        newCaseId,
+        categories,
+        { transaction },
+      )
+
+      expect(model.update).toHaveBeenCalledWith(
+        { caseId: newCaseId },
+        { where: { caseId, defendantId, category: categories }, transaction },
+      )
+      expect(result).toBe(3)
+    })
+
+    it('rethrows when the move fails', async () => {
+      const error = new Error('Some error')
+      model.update.mockRejectedValueOnce(error)
+
+      await expect(
+        service.moveAllForDefendantToCase(
+          caseId,
+          defendantId,
+          newCaseId,
+          categories,
+          { transaction },
+        ),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('copyAllWithoutDefendantToCase', () => {
+    const newCaseId = 'some-new-case-id'
+    const categories = [
+      CaseFileCategory.CASE_FILE,
+      CaseFileCategory.PROSECUTOR_CASE_FILE,
+    ]
+
+    it('copies the live files linked to no defendant in the given categories to the new case as new rows', async () => {
+      const key = `${caseId}/abc/document.pdf`
+      model.findAll.mockResolvedValueOnce([
+        {
+          toJSON: () => ({
+            id: fileId,
+            caseId,
+            key,
+            state: CaseFileState.STORED_IN_COURT,
+            hash: 'some-hash',
+          }),
+        },
+      ])
+
+      await service.copyAllWithoutDefendantToCase(
+        caseId,
+        newCaseId,
+        categories,
+        {
+          transaction,
+        },
+      )
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: {
+          caseId,
+          defendantId: null,
+          category: categories,
+          state: { [Op.not]: CaseFileState.DELETED },
+        },
+        transaction,
+      })
+      // Unlike a duplicate's copy, both cases need the same document, so the
+      // copy keeps the key, the state and the hash
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          id: undefined,
+          caseId: newCaseId,
+          key,
+          state: CaseFileState.STORED_IN_COURT,
+          hash: 'some-hash',
+        },
+        { transaction },
+      )
+    })
+
+    it('copies nothing when the case has no such files', async () => {
+      await service.copyAllWithoutDefendantToCase(
+        caseId,
+        newCaseId,
+        categories,
+        {
+          transaction,
+        },
+      )
+
+      expect(model.create).not.toHaveBeenCalled()
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([{ toJSON: () => ({ id: fileId }) }])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyAllWithoutDefendantToCase(caseId, newCaseId, categories, {
+          transaction,
+        }),
+      ).rejects.toThrow(error)
+    })
+  })
 })
