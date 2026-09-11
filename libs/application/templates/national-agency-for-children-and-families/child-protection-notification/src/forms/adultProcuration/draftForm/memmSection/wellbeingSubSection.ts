@@ -10,6 +10,7 @@ import { memmMessages, sharedMessages } from '../../../../lib/messages'
 import { getYesNoDoNotKnowOptions } from '../../../../utils/childProtectionNotificationUtils'
 import {
   showDisabilityService,
+  showWellbeingContactAndManagerQuestions,
   showWellbeingContactFields,
   showWellbeingManagerFields,
 } from '../../../../utils/conditionUtils'
@@ -50,12 +51,14 @@ export const wellbeingSubSection = buildSubSection({
           titleTooltip: memmMessages.wellbeing.wellbeingContactTooltip,
           titleVariant: 'h5',
           space: 3,
+          condition: showWellbeingContactAndManagerQuestions,
         }),
         buildRadioField({
           id: 'memm.wellbeing.wellbeingContact',
           widthWithIllustration: '1/3',
           space: 0,
           options: getYesNoDoNotKnowOptions(),
+          condition: showWellbeingContactAndManagerQuestions,
         }),
         buildTextField({
           id: 'memm.wellbeing.wellbeingContactEmail',
@@ -74,12 +77,14 @@ export const wellbeingSubSection = buildSubSection({
           titleTooltip: memmMessages.wellbeing.wellbeingManagerTooltip,
           titleVariant: 'h5',
           space: 3,
+          condition: showWellbeingContactAndManagerQuestions,
         }),
         buildRadioField({
           id: 'memm.wellbeing.wellbeingManager',
           widthWithIllustration: '1/3',
           space: 0,
           options: getYesNoDoNotKnowOptions(),
+          condition: showWellbeingContactAndManagerQuestions,
         }),
         buildTextField({
           id: 'memm.wellbeing.wellbeingManagerEmail',
