@@ -194,5 +194,5 @@ export class ApplicationResponse {
   isInaccessible?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  validatePremises?: boolean
+  validateEligibility?: boolean
 }

@@ -156,7 +156,7 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'isInaccessible',
-      'validatePremises',
+      'validateEligibility',
       'hasSummaryScreen',
       'sectionInfo',
       'lastModifiedBy',
@@ -385,7 +385,7 @@ export class FormsService {
             },
           )
           await this.formModel.update(
-            { validatePremises: false },
+            { validateEligibility: false },
             {
               where: { id },
               transaction,
@@ -1140,7 +1140,7 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'isInaccessible',
-      'validatePremises',
+      'validateEligibility',
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',

@@ -35,6 +35,13 @@ export class NotifyService {
     notificationDto: NotificationDto,
     url: string,
   ): Promise<NotificationResponseDto> {
+    console.log('NotifyService sendNotification called:', {
+      applicationId: notificationDto.applicationId,
+      command: notificationDto.command,
+      formSlug: notificationDto.slug,
+      url,
+    })
+
     const logContext = {
       applicationId: notificationDto.applicationId,
       formSlug: notificationDto.slug,

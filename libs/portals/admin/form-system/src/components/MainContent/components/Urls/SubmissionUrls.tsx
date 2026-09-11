@@ -81,7 +81,7 @@ export const SubmissionUrls = () => {
     formUpdate({
       ...form,
       useValidate: value,
-      validatePremises: value ? form.validatePremises : false,
+      validateEligibility: value ? form.validateEligibility : false,
     })
   }
 
@@ -420,7 +420,7 @@ export const SubmissionUrls = () => {
                   ...form,
                   submissionServiceUrl: e.target.id,
                   useValidate: false,
-                  validatePremises: false,
+                  validateEligibility: false,
                 })
                 await persistZendeskApplicantRequirements()
               }}

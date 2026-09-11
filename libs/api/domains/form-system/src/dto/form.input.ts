@@ -99,7 +99,7 @@ export class UpdateFormDtoInput {
   isInaccessible?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  validatePremises?: boolean
+  validateEligibility?: boolean
 
   @Field(() => Boolean, { nullable: true })
   hasSummaryScreen?: boolean
@@ -174,7 +174,7 @@ export class FormInput {
   isInaccessible?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  validatePremises?: boolean
+  validateEligibility?: boolean
 
   @Field(() => SectionInfoInput, { nullable: true })
   sectionInfo?: SectionInfoInput

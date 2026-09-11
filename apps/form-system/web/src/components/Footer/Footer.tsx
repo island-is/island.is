@@ -86,9 +86,13 @@ const stripFieldListsFromSections = (
 
 interface Props {
   externalDataAgreement: boolean
+  isValidateEligibilityError: boolean
 }
 
-export const Footer = ({ externalDataAgreement }: Props) => {
+export const Footer = ({
+  externalDataAgreement,
+  isValidateEligibilityError,
+}: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useLocale()
   const { trigger } = useFormContext()
@@ -500,6 +504,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               onClick={handleIncrement}
               disabled={
                 !enableContinueButton ||
+                isValidateEligibilityError ||
                 isPaymentLoading ||
                 submitLoading ||
                 saveLoading ||

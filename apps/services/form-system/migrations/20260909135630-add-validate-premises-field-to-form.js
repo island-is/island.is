@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('form', 'validate_premises', {
+    await queryInterface.addColumn('form', 'validate_eligibility', {
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false,
@@ -10,6 +10,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn('form', 'validate_premises')
+    await queryInterface.removeColumn('form', 'validate_eligibility')
   },
 }

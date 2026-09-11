@@ -40,7 +40,7 @@ export class ApplicationsService {
   ) {}
 
   // eslint-disable-next-line
-  handleError(error: any, errorDetail?: string): ApolloError | null {
+  handleError = (error: any, errorDetail?: string): ApolloError | null => {
     const err = {
       error: JSON.stringify(error),
       category: 'forms-service',

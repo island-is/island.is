@@ -82,7 +82,7 @@ export class FormDto {
   isInaccessible!: boolean
 
   @ApiProperty()
-  validatePremises!: boolean
+  validateEligibility!: boolean
 
   @ApiProperty()
   hasSummaryScreen!: boolean

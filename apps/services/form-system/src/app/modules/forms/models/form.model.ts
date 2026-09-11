@@ -170,7 +170,7 @@ export class Form extends Model<Form> {
     allowNull: false,
     defaultValue: false,
   })
-  validatePremises!: boolean
+  validateEligibility!: boolean
 
   @Column({
     type: DataType.BOOLEAN,

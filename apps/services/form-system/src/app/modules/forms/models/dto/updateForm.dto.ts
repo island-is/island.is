@@ -105,7 +105,7 @@ export class UpdateFormDto {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
-  validatePremises?: boolean
+  validateEligibility?: boolean
 
   @IsBoolean()
   @IsOptional()

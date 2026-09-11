@@ -96,7 +96,7 @@ export class Form {
   isInaccessible!: boolean
 
   @Field(() => Boolean)
-  validatePremises!: boolean
+  validateEligibility!: boolean
 
   @Field(() => Boolean)
   hasSummaryScreen!: boolean

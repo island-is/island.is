@@ -169,7 +169,7 @@ type ChangeActions =
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
-      type: 'TOGGLE_VALIDATE_PREMISES'
+      type: 'TOGGLE_VALIDATE_ELIGIBILITY'
       payload: {
         checked: boolean
         update: (updatedForm: FormSystemForm) => void
@@ -931,12 +931,12 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
-    case 'TOGGLE_VALIDATE_PREMISES': {
+    case 'TOGGLE_VALIDATE_ELIGIBILITY': {
       const updatedState = {
         ...state,
         form: {
           ...form,
-          validatePremises: action.payload.checked,
+          validateEligibility: action.payload.checked,
         },
       }
       action.payload.update({ ...updatedState.form })
@@ -1011,7 +1011,9 @@ export const controlReducer = (
           fields: nextFields,
           screens: nextScreens,
           useValidate: nextUseValidate,
-          validatePremises: nextUseValidate ? form.validatePremises : false,
+          validateEligibility: nextUseValidate
+            ? form.validateEligibility
+            : false,
         },
       }
       return updatedState
@@ -1054,8 +1056,8 @@ export const controlReducer = (
           ...form,
           screens: nextScreens,
           useValidate: action.payload.value,
-          validatePremises: action.payload.value
-            ? form.validatePremises
+          validateEligibility: action.payload.value
+            ? form.validateEligibility
             : false,
         },
       }

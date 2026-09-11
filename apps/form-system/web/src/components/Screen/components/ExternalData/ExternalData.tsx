@@ -1,24 +1,130 @@
+import { useMutation } from '@apollo/client'
+import { NotificationCommands } from '@island.is/form-system/enums'
+import {
+  NOTIFY_EXTERNAL_SERVICE,
+  removeTypename,
+} from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
-import { Box, Checkbox, Icon, Stack, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Checkbox,
+  Icon,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
+import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
+  disabled: boolean
+  setHasValidateEligibilityNotificationError: (value: boolean) => void
+  setIsValidateEligibilityNotificationLoading: (value: boolean) => void
   setExternalDataAgreement: (value: boolean) => void
 }
 
-export const ExternalData = ({ setExternalDataAgreement }: Props) => {
-  const { state } = useApplicationContext()
+export const ExternalData = ({
+  disabled,
+  setHasValidateEligibilityNotificationError,
+  setIsValidateEligibilityNotificationLoading,
+  setExternalDataAgreement,
+}: Props) => {
+  const { state, validateEligibility } = useApplicationContext()
   const { application } = state
   const { lang } = useLocale()
   const { certificationTypes } = application
   const { formatMessage } = useIntl()
   const additionalPremises = application.sectionInfo?.additionalPremises || []
+  const [notifyExternal] = useMutation(NOTIFY_EXTERNAL_SERVICE)
+  const hasNotified = useRef(false)
+  const [isNotificationLoading, setIsNotificationLoading] = useState(false)
+  const [notificationError, setNotificationError] = useState<{
+    hasError?: boolean
+    title?: { is?: string; en?: string }
+    message?: { is?: string; en?: string }
+  }>()
+
+  useEffect(() => {
+    setHasValidateEligibilityNotificationError(false)
+
+    console.log('Validate eligibility notification conditions:', {
+      validateEligibility,
+      submissionServiceUrl: application.submissionServiceUrl,
+      hasNotified: hasNotified.current,
+    })
+    if (
+      !validateEligibility ||
+      application.submissionServiceUrl === 'zendesk' ||
+      hasNotified.current
+    ) {
+      console.log('Skipping notify due to validation conditions')
+      return
+    }
+
+    hasNotified.current = true
+    setIsNotificationLoading(true)
+    setIsValidateEligibilityNotificationLoading(true)
+    console.log('about to call notify')
+    const notify = async () => {
+      try {
+        const { data } = await notifyExternal({
+          variables: {
+            input: {
+              applicationId: application.id,
+              nationalId: '',
+              organizationNationalId: application.organizationNationalId ?? '',
+              slug: application.slug,
+              isTest: application.isTest,
+              command: NotificationCommands.VALIDATE_ELIGIBILITY,
+              screenDto: undefined,
+            },
+          },
+        })
+
+        console.log('Validate eligibility notification response:', data)
+
+        const screenError = removeTypename(
+          data?.notifyFormSystemExternalSystem?.screenError,
+        )
+        setNotificationError(screenError)
+        setHasValidateEligibilityNotificationError(
+          screenError?.hasError === true,
+        )
+      } catch (error) {
+        console.error('Error notifying external service:', error)
+      } finally {
+        setIsNotificationLoading(false)
+        setIsValidateEligibilityNotificationLoading(false)
+      }
+    }
+
+    void notify()
+  }, [
+    application,
+    notifyExternal,
+    setHasValidateEligibilityNotificationError,
+    setIsValidateEligibilityNotificationLoading,
+    validateEligibility,
+  ])
 
   return (
     <Box>
+      {notificationError?.hasError && (
+        <Box marginBottom={[4, 4, 5]}>
+          <AlertMessage
+            type="error"
+            title={notificationError.title?.[lang]}
+            message={
+              <Text variant="small" whiteSpace="breakSpaces">
+                {notificationError.message?.[lang]}
+              </Text>
+            }
+          />
+        </Box>
+      )}
       <Box marginTop={2} marginBottom={5}>
         <Box marginBottom={5}>
           <Text variant="h2">{formatMessage(m.externalDataHeader)}</Text>
@@ -73,6 +179,7 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
         large={true}
         backgroundColor="blue"
         label={formatMessage(m.externalDataAgreement)}
+        disabled={disabled || isNotificationLoading}
         onChange={(event) => setExternalDataAgreement(event.target.checked)}
       />
     </Box>

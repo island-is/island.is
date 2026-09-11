@@ -597,6 +597,7 @@ export class ApplicationsService {
       responseDto.application = applicationDto
       responseDto.isLoginTypeAllowed = true
       responseDto.isInaccessible = form.isInaccessible
+      responseDto.validateEligibility = form.validateEligibility
 
       return responseDto
     } catch (error) {
@@ -1409,7 +1410,10 @@ export class ApplicationsService {
 
     notificationDto.nationalId = nationalId
 
-    if (!notificationDto.screenDto) {
+    if (
+      !notificationDto.screenDto &&
+      notificationDto.command !== NotificationCommands.VALIDATE_ELIGIBILITY
+    ) {
       throw new BadRequestException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
@@ -1435,28 +1439,50 @@ export class ApplicationsService {
 
     response.screen = screen
 
-    response.screen.screenError = {
-      hasError: false,
-      title: { is: '', en: '' },
-      message: { is: '', en: '' },
+    if (response.screen) {
+      response.screen.screenError = {
+        hasError: false,
+        title: { is: '', en: '' },
+        message: { is: '', en: '' },
+      }
     }
 
     if (!response.operationSuccessful) {
-      if (notificationDto.command === NotificationCommands.VALIDATE) {
-        response.screen.screenError = this.getDefaultScreenErrorValidate()
+      if (
+        notificationDto.command === NotificationCommands.VALIDATE ||
+        notificationDto.command === NotificationCommands.VALIDATE_ELIGIBILITY
+      ) {
+        const screenError = this.getDefaultScreenErrorValidate()
+        if (response.screen) {
+          response.screen.screenError = screenError
+        } else {
+          response.screenError = screenError
+        }
       }
     } else if (response.screenError?.hasError) {
-      if (notificationDto.command === NotificationCommands.VALIDATE) {
-        response.screen.screenError =
+      if (
+        notificationDto.command === NotificationCommands.VALIDATE ||
+        notificationDto.command === NotificationCommands.VALIDATE_ELIGIBILITY
+      ) {
+        const screenError =
           response.screenError.title?.is || response.screenError.message?.is
             ? response.screenError
             : this.getDefaultScreenErrorValidate()
+        if (response.screen) {
+          response.screen.screenError = screenError
+        } else {
+          response.screenError = screenError
+        }
       }
     }
 
     if (!response.operationSuccessful || response.screenError?.hasError) {
       this.logger.error(
-        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${screen.id}' with command ${notificationDto.command}`,
+        `Failed to notify external service for application '${
+          notificationDto.applicationId
+        }'${
+          screen ? ` on screen: '${screen.id}'` : ' for premises'
+        } with command ${notificationDto.command}`,
       )
     }
 

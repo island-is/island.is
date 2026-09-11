@@ -176,13 +176,13 @@ export const Premises = () => {
             <Column>
               <Box marginTop={1}>
                 <Checkbox
-                  name="validatePremises"
+                  name="validateEligibility"
                   label={formatMessage(m.screenValidate)}
-                  checked={control.form.validatePremises ?? false}
+                  checked={control.form.validateEligibility ?? false}
                   disabled={isReadOnly}
                   onChange={(e) =>
                     controlDispatch({
-                      type: 'TOGGLE_VALIDATE_PREMISES',
+                      type: 'TOGGLE_VALIDATE_ELIGIBILITY',
                       payload: {
                         checked: e.target.checked,
                         update: formUpdate,

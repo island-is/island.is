@@ -25,5 +25,5 @@ export class ApplicationResponseDto {
   isInaccessible?: boolean
 
   @ApiPropertyOptional()
-  validatePremises?: boolean
+  validateEligibility?: boolean
 }
