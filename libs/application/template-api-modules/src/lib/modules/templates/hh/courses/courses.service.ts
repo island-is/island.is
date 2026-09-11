@@ -161,7 +161,7 @@ export class CoursesService extends BaseTemplateApiService {
           course,
           courseInstance,
           participantList,
-          ticket?.id,
+          ticket.id,
           auth.authorization,
         )
       } catch (error) {
@@ -491,7 +491,7 @@ export class CoursesService extends BaseTemplateApiService {
       chargeItemCode?: string | null
     },
     participantList: ApplicationAnswers['participantList'],
-    ticketId: string | number | undefined,
+    ticketId: string,
     authorization: string,
   ): Promise<void> {
     let priceAmount: number | undefined
@@ -551,7 +551,7 @@ export class CoursesService extends BaseTemplateApiService {
           kennitala: p.nationalIdWithName.nationalId,
           email: p.nationalIdWithName.email,
           course_instance: instanceRecord.id,
-          ticket_id: ticketId !== undefined ? String(ticketId) : '',
+          ticket_id: String(ticketId),
         },
       })),
     )

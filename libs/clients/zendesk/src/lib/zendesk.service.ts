@@ -184,11 +184,23 @@ export class ZendeskService {
   }
 
   async submitTicket(input: SubmitTicketInput): Promise<boolean> {
-    await this.createTicket(input)
+    await this.postTicket(input)
     return true
   }
 
-  async createTicket({
+  async createTicket(input: SubmitTicketInput): Promise<Ticket> {
+    const ticket = await this.postTicket(input)
+
+    if (!ticket?.id) {
+      const errMsg = 'Zendesk ticket response is missing the ticket id'
+      this.logger.error(errMsg)
+      throw new Error(errMsg)
+    }
+
+    return ticket
+  }
+
+  private async postTicket({
     message,
     subject,
     requesterId,
@@ -197,7 +209,7 @@ export class ZendeskService {
     customFields = [],
     brandId,
     ticketFormId,
-  }: SubmitTicketInput): Promise<Ticket> {
+  }: SubmitTicketInput): Promise<Ticket | undefined> {
     const newTicket = JSON.stringify({
       ticket: {
         requester_id: requesterId,
