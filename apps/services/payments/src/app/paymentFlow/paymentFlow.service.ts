@@ -942,12 +942,8 @@ export class PaymentFlowService {
         if (reconciled) {
           return reconciled
         }
-        // Cannot tell a not-yet-committed concurrent finalizer from a genuine orphan, so `warn`
-        // with no alert field. Page on settled flows that still lack an `fjs_charge` row.
-        this.logger.warn(
-          `[${paymentFlowId}] FJS reports the charge exists but no local row was found to reconcile — may be a concurrent finalizer that has not committed yet`,
-          e,
-        )
+        // Not logged: this cannot tell a not-yet-committed concurrent finalizer from a genuine
+        // orphan, and the throw below is already surfaced by the caller and the worker's retries.
       } else {
         this.logger.error(
           `[${paymentFlowId}] Failed to create payment charge`,
@@ -1013,9 +1009,11 @@ export class PaymentFlowService {
         )
       }
 
-      // Reported as a create failure so the caller's `retry`, then the worker, try again.
+      // The charge exists at FJS either way — the local row may have been inserted and only the
+      // linking failed. Reported as a create failure so the caller's `retry`, then the worker,
+      // try again; the retry reconciles rather than charging twice.
       this.logger.error(
-        `[${paymentFlowId}] FJS accepted the charge but it could not be persisted locally`,
+        `[${paymentFlowId}] FJS accepted the charge but the local record could not be completed`,
         e,
       )
       throw new BadRequestException(FjsErrorCode.FailedToCreateCharge)
