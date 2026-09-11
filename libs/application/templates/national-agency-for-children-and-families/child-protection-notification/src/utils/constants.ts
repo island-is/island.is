@@ -3,6 +3,10 @@ import { DefaultEvents } from '@island.is/application/types'
 export const RISK_TO_UNBORN = 'RiskToUnborn'
 export const IS = 'IS'
 
+// Client requested this section be temporarily removed from the flow but may
+// want it reinstated later, so it's hidden via this flag rather than deleted.
+export const SHOW_REASON_FOR_NOTIFICATION_SUBSECTION = false
+
 export type Events = {
   type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
 }
