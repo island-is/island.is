@@ -5,7 +5,7 @@ import { Auth, User } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   InsertRentalDaysModel,
-  RentalDaysEntry,
+  RentalDayRegistrationModel,
   RskRentalDayRateClient,
   RskRentalDaysClient,
 } from '@island.is/clients-rental-day-rate'
@@ -19,6 +19,7 @@ import {
   UploadSelection,
 } from '@island.is/application/templates/car-rental-dayrate-returns'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { FetchError } from '@island.is/clients/middlewares'
 import { AttachmentS3Service } from '../../shared/services'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -30,15 +31,15 @@ const toPeriod = (year: number, monthIndex: number): string =>
  * A vehicle can appear more than once when its days were reported in batches.
  */
 const sumRentalDaysByPermno = (
-  entries: Array<RentalDaysEntry>,
+  registration: RentalDayRegistrationModel,
 ): Map<string, number> => {
   const totals = new Map<string, number>()
 
-  for (const entry of entries) {
-    if (!entry.fastnr) continue
+  for (const entry of registration.entries ?? []) {
+    if (!entry.permno) continue
     totals.set(
-      entry.fastnr,
-      (totals.get(entry.fastnr) ?? 0) + (entry.fjoldiDaga ?? 0),
+      entry.permno,
+      (totals.get(entry.permno) ?? 0) + (entry.numberOfDays ?? 0),
     )
   }
 
@@ -83,6 +84,19 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           period,
         })
         .catch((error) => {
+          if (error instanceof FetchError && error.status === 404) {
+            throw new TemplateApiError(
+              {
+                title: messages.serviceErrors.noVehiclesFound.title,
+                summary: {
+                  ...messages.serviceErrors.noVehiclesFound.summary,
+                  values: { period },
+                },
+              },
+              404,
+            )
+          }
+
           this.logger.error(
             'Error getting previous period day rate entries from Skatturinn',
             { endpoint: 'dayRateEntriesPeriodsGet', error },
