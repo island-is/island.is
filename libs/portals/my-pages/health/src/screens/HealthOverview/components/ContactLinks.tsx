@@ -1,6 +1,14 @@
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LinkResolver } from '@island.is/portals/my-pages/core'
+import {
+  formatPlausiblePathToParams,
+  LinkResolver,
+} from '@island.is/portals/my-pages/core'
+import {
+  healthOverviewSendMessageClick,
+  healthOverviewWebchatClick,
+} from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import * as styles from './ContactLinks.css'
@@ -11,10 +19,13 @@ type ContactLinkItem = {
   emergencyDescription?: string
   href: string
   icon: IconMapIcon
+  onClick?: () => void
+  skipOutboundTrack?: boolean
 }
 
 const ContactLinks = () => {
   const { formatMessage } = useLocale()
+  const { pathname } = useLocation()
 
   const links: ContactLinkItem[] = [
     {
@@ -22,12 +33,17 @@ const ContactLinks = () => {
       description: formatMessage(messages.contactChatDesc),
       href: formatMessage(messages.heilsuveraChatLink),
       icon: 'open',
+      onClick: () =>
+        healthOverviewWebchatClick(formatPlausiblePathToParams(pathname)),
+      skipOutboundTrack: true,
     },
     {
       title: formatMessage(messages.contactSendMessage),
       description: formatMessage(messages.contactSendMessageDesc),
       href: HealthPaths.HealthConversationsNew,
       icon: 'arrowForward',
+      onClick: () =>
+        healthOverviewSendMessageClick(formatPlausiblePathToParams(pathname)),
     },
   ]
 
@@ -50,7 +66,12 @@ const ContactLinks = () => {
   )
 
   const renderRowContent = (link: ContactLinkItem) => (
-    <LinkResolver href={link.href} className={styles.rowLink}>
+    <LinkResolver
+      href={link.href}
+      className={styles.rowLink}
+      callback={link.onClick}
+      skipOutboundTrack={link.skipOutboundTrack}
+    >
       <Box paddingX={3} paddingY={2} width="full">
         <Box
           display="flex"

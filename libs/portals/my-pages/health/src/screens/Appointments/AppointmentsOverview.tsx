@@ -4,10 +4,16 @@ import { Box, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
+  formatPlausiblePathToParams,
   STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
+import {
+  healthAppointmentsHeilsuveraClick,
+  healthAppointmentsSendMessageClick,
+} from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
@@ -24,6 +30,7 @@ import { useGetAppointmentsQuery } from './Appointments.generated'
 const AppointmentsOverview = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+  const { pathname } = useLocation()
   useHealthPlausibleSwap()
 
   const [pastTabVisited, setPastTabVisited] = useState(false)
@@ -123,6 +130,11 @@ const AppointmentsOverview = () => {
             variant="utility"
             size="small"
             icon="arrowForward"
+            callback={() =>
+              healthAppointmentsSendMessageClick(
+                formatPlausiblePathToParams(pathname),
+              )
+            }
           />
         )}
         <LinkButton
@@ -131,6 +143,12 @@ const AppointmentsOverview = () => {
           variant="utility"
           size="small"
           icon="open"
+          callback={() =>
+            healthAppointmentsHeilsuveraClick(
+              formatPlausiblePathToParams(pathname),
+            )
+          }
+          skipOutboundTrack
         />
       </Box>
       <Tabs
