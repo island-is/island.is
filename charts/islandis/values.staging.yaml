@@ -339,8 +339,8 @@ api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 50
-        min: 3
+        max: 2
+        min: 1
   httpRoute:
     primary-gw:
       hostnames:
@@ -362,9 +362,9 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
-    max: 50
-    min: 3
+    default: 1
+    max: 2
+    min: 1
   resources:
     limits:
       cpu: '3000m'
