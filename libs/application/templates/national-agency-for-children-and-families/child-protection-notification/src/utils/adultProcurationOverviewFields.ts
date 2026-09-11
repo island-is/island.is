@@ -9,6 +9,7 @@ import {
   protectiveFactorsMessages,
   reasonForNotificationMessages,
 } from '../lib/messages'
+import { SHOW_REASON_FOR_NOTIFICATION_SUBSECTION } from './constants'
 import {
   isKnowsNationalId,
   isNoNationalId,
@@ -139,6 +140,9 @@ export const adultProcurationOverviewFields = (editable?: boolean) => [
     backId: editable ? 'reasonForNotification' : undefined,
     items: getReasonForNotificationItems,
     hideIfEmpty: true,
+    // Client requested this be temporarily hidden; keeping the implementation
+    // intact in case they want it back.
+    condition: () => SHOW_REASON_FOR_NOTIFICATION_SUBSECTION,
   }),
   buildOverviewField({
     id: 'overview.reasonNotificationHistory',
