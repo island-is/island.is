@@ -183,7 +183,12 @@ export class ZendeskService {
     return response.data.user
   }
 
-  async submitTicket({
+  async submitTicket(input: SubmitTicketInput): Promise<boolean> {
+    await this.createTicket(input)
+    return true
+  }
+
+  async createTicket({
     message,
     subject,
     requesterId,
@@ -192,7 +197,7 @@ export class ZendeskService {
     customFields = [],
     brandId,
     ticketFormId,
-  }: SubmitTicketInput): Promise<boolean> {
+  }: SubmitTicketInput): Promise<Ticket> {
     const newTicket = JSON.stringify({
       ticket: {
         requester_id: requesterId,
@@ -207,7 +212,12 @@ export class ZendeskService {
     })
 
     try {
-      await axios.post(`${this.api}/tickets.json`, newTicket, this.params)
+      const response = await axios.post(
+        `${this.api}/tickets.json`,
+        newTicket,
+        this.params,
+      )
+      return response.data?.ticket
     } catch (e) {
       const errMsg = 'Failed to submit Zendesk ticket'
       const description = e.response.data.description
@@ -218,8 +228,6 @@ export class ZendeskService {
 
       throw new Error(`${errMsg}: ${description}`)
     }
-
-    return true
   }
 
   async searchTickets(query: string): Promise<Array<Ticket>> {
