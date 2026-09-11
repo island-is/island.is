@@ -7,6 +7,8 @@ import { ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -177,6 +179,17 @@ describe('CaseController - Transition', () => {
             },
           ]
           const courtEndTime = randomDate()
+          // Completing a request case requires a complete court record
+          const appealDecisions = [
+            {
+              partyRole: AppealDecisionPartyRole.PROSECUTOR,
+              decision: CaseAppealDecision.ACCEPT,
+            },
+            {
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.ACCEPT,
+            },
+          ]
           const theCase = {
             id: caseId,
             origin: CaseOrigin.LOKE,
@@ -185,6 +198,7 @@ describe('CaseController - Transition', () => {
             state: oldState,
             caseFiles,
             courtEndTime,
+            appealDecisions,
           } as Case
           const updatedCase = {
             id: caseId,
@@ -194,6 +208,7 @@ describe('CaseController - Transition', () => {
             state: newState,
             caseFiles,
             courtEndTime,
+            appealDecisions,
           } as Case
           let then: Then
 

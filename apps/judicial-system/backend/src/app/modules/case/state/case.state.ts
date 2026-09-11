@@ -2,6 +2,7 @@ import { ForbiddenException } from '@nestjs/common'
 
 import {
   AppealCaseState,
+  AppealDecisionPartyRole,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
@@ -283,14 +284,65 @@ const indictmentCaseStateMachine: Map<
   ],
 ])
 
+// The court record screen persists its fields one at a time, and the client
+// moves on to the confirmation screen on its own step validation. When a save
+// fails (network down, backend error) the client's optimistic state can pass
+// that validation while the row it is about to conclude never got the value -
+// and a request case concluded without a court end time or without both
+// parties' in-court appeal decisions cannot be appealed to the court of
+// appeals. Completion is the last point where the row is still open, so the
+// state machine checks the persisted court record rather than trusting the
+// client.
+const assertRequestCaseCourtRecordComplete = (
+  update: UpdateCase,
+  theCase: Case,
+): void => {
+  // An update may clear the court end time explicitly (null), which is not
+  // the same as leaving it alone (undefined)
+  const courtEndTime =
+    update.courtEndTime !== undefined
+      ? update.courtEndTime
+      : theCase.courtEndTime
+
+  if (!courtEndTime) {
+    throw new ForbiddenException(
+      'Cannot complete a request case without a court end time',
+    )
+  }
+
+  // The in-court decisions live in the case-level appeal_decision rows (no
+  // ruling file). A row may exist with only an announcement, so the decision
+  // itself is what has to be there.
+  const hasCaseLevelAppealDecision = (partyRole: AppealDecisionPartyRole) =>
+    theCase.appealDecisions?.some(
+      (decision) =>
+        !decision.rulingFileId &&
+        decision.partyRole === partyRole &&
+        Boolean(decision.decision),
+    ) ?? false
+
+  if (
+    !hasCaseLevelAppealDecision(AppealDecisionPartyRole.PROSECUTOR) ||
+    !hasCaseLevelAppealDecision(AppealDecisionPartyRole.DEFENDANT)
+  ) {
+    throw new ForbiddenException(
+      'Cannot complete a request case without in-court appeal decisions for both the prosecutor and the defendant',
+    )
+  }
+}
+
 const requestCaseCompletionSideEffect =
   (state: CaseState) => (update: UpdateCase, theCase: Case) => {
-    const currentCourtEndTime =
-      update.courtEndTime ?? theCase.courtEndTime ?? nowFactory()
+    assertRequestCaseCourtRecordComplete(update, theCase)
+
     const newUpdate: UpdateCase = {
       ...update,
       state,
-      rulingDate: currentCourtEndTime,
+      // Asserted above, so the ruling date is always the actual court end time
+      rulingDate:
+        update.courtEndTime !== undefined
+          ? update.courtEndTime
+          : theCase.courtEndTime,
     }
 
     // Handle completed without ruling

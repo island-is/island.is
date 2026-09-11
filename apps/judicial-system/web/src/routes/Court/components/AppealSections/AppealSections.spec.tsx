@@ -1,21 +1,28 @@
-import { render, screen } from '@testing-library/react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useState } from 'react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
+import { caseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
 
 import AppealSections from './AppealSections'
+
+const mockUpdateCaseAppealDecision = jest.fn()
 
 jest.mock(
   '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision',
   () => ({
     __esModule: true,
-    default: () => ({ updateCaseAppealDecision: jest.fn() }),
+    default: () => ({ updateCaseAppealDecision: mockUpdateCaseAppealDecision }),
   }),
 )
 
@@ -135,5 +142,290 @@ describe('AppealSections', () => {
 
     expectAllControlsDisabled(true)
     expect(screen.getByText(progressedMessage)).toBeInTheDocument()
+  })
+
+  // The court record step is validated against the working case, so a decision
+  // that never reached the server must not stay in it - otherwise the judge can
+  // continue and complete the case with an incomplete court record.
+  describe('when the save fails', () => {
+    // Holds the working case the way FormProvider does, so the component's
+    // optimistic update and its rollback can be observed.
+    const Harness: FC<{
+      initialCase: Case
+      onWorkingCase: (workingCase: Case) => void
+      onSetWorkingCase: (set: Dispatch<SetStateAction<Case>>) => void
+      onChange?: jest.Mock
+    }> = ({ initialCase, onWorkingCase, onSetWorkingCase, onChange }) => {
+      const [workingCase, setWorkingCase] = useState(initialCase)
+      onWorkingCase(workingCase)
+      onSetWorkingCase(setWorkingCase)
+
+      return (
+        <IntlProviderWrapper>
+          <AppealSections
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            onChange={onChange}
+          />
+        </IntlProviderWrapper>
+      )
+    }
+
+    const renderHarness = (initialCase: Case) => {
+      let latest = initialCase
+      let setWorkingCase: Dispatch<SetStateAction<Case>> = () => undefined
+      const onChange = jest.fn()
+      render(
+        <Harness
+          initialCase={initialCase}
+          onWorkingCase={(workingCase) => {
+            latest = workingCase
+          }}
+          onSetWorkingCase={(set) => {
+            setWorkingCase = set
+          }}
+          onChange={onChange}
+        />,
+      )
+
+      return {
+        workingCase: () => latest,
+        // What FormProvider does when the route moves to another case
+        switchToCase: (theCase: Case) => act(() => setWorkingCase(theCase)),
+        onChange,
+      }
+    }
+
+    const prosecutorDecision = () =>
+      document.getElementById('prosecutor-appeal') as HTMLInputElement
+    const prosecutorAcceptRadio = () =>
+      document.getElementById('prosecutor-accept') as HTMLInputElement
+
+    beforeEach(() => {
+      mockUpdateCaseAppealDecision.mockReset()
+    })
+
+    it('keeps the decision and tells the parent when the save succeeds', async () => {
+      mockUpdateCaseAppealDecision.mockResolvedValue({
+        decision: CaseAppealDecision.APPEAL,
+      })
+      const { workingCase, onChange } = renderHarness(baseCase)
+
+      fireEvent.click(prosecutorDecision())
+
+      // The parent derives and persists the end-of-session text from the
+      // decision, so it is only told once the decision is on the server
+      await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
+      expect(onChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+        }),
+      )
+      expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(1)
+      expect(
+        caseLevelAppealDecision(
+          workingCase().appealDecisions,
+          AppealDecisionPartyRole.PROSECUTOR,
+        ),
+      ).toBe(CaseAppealDecision.APPEAL)
+      expect(prosecutorDecision()).toBeChecked()
+    })
+
+    it('drops a decision the party did not have before and does not tell the parent', async () => {
+      mockUpdateCaseAppealDecision.mockResolvedValue(undefined)
+      const { workingCase, onChange } = renderHarness(baseCase)
+
+      fireEvent.click(prosecutorDecision())
+
+      await waitFor(() =>
+        expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(1),
+      )
+      await waitFor(() =>
+        expect(
+          caseLevelAppealDecision(
+            workingCase().appealDecisions,
+            AppealDecisionPartyRole.PROSECUTOR,
+          ),
+        ).toBeUndefined(),
+      )
+      expect(prosecutorDecision()).not.toBeChecked()
+      expect(onChange).not.toHaveBeenCalled()
+    })
+
+    // Saves for a party run one at a time, so a second click waits for the
+    // first save to settle. Its failure then rolls nothing back - the newer
+    // save decides - and the newer decision survives.
+    it('lets a newer successful save stand when the save before it fails', async () => {
+      let failFirstSave: (value: undefined) => void = () => undefined
+      mockUpdateCaseAppealDecision
+        .mockImplementationOnce(
+          () =>
+            new Promise<undefined>((resolve) => {
+              failFirstSave = resolve
+            }),
+        )
+        .mockResolvedValueOnce({ decision: CaseAppealDecision.ACCEPT })
+      const { workingCase, onChange } = renderHarness(baseCase)
+
+      fireEvent.click(prosecutorDecision())
+      fireEvent.click(prosecutorAcceptRadio())
+
+      // The second save is queued behind the first
+      expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(1)
+
+      await act(async () => {
+        failFirstSave(undefined)
+      })
+
+      await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
+      expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(2)
+      expect(onChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+        }),
+      )
+      expect(
+        caseLevelAppealDecision(
+          workingCase().appealDecisions,
+          AppealDecisionPartyRole.PROSECUTOR,
+        ),
+      ).toBe(CaseAppealDecision.ACCEPT)
+      expect(prosecutorAcceptRadio()).toBeChecked()
+    })
+
+    // The first decision was never on the server, so it must not be what the
+    // second failure falls back to.
+    it('falls back to the confirmed decision when two quick saves both fail', async () => {
+      let failFirstSave: (value: undefined) => void = () => undefined
+      mockUpdateCaseAppealDecision
+        .mockImplementationOnce(
+          () =>
+            new Promise<undefined>((resolve) => {
+              failFirstSave = resolve
+            }),
+        )
+        .mockResolvedValueOnce(undefined)
+      const { workingCase, onChange } = renderHarness(baseCase)
+
+      fireEvent.click(prosecutorDecision())
+      fireEvent.click(prosecutorAcceptRadio())
+
+      await act(async () => {
+        failFirstSave(undefined)
+      })
+
+      await waitFor(() =>
+        expect(mockUpdateCaseAppealDecision).toHaveBeenCalledTimes(2),
+      )
+      await waitFor(() =>
+        expect(
+          caseLevelAppealDecision(
+            workingCase().appealDecisions,
+            AppealDecisionPartyRole.PROSECUTOR,
+          ),
+        ).toBeUndefined(),
+      )
+      expect(prosecutorDecision()).not.toBeChecked()
+      expect(prosecutorAcceptRadio()).not.toBeChecked()
+      expect(onChange).not.toHaveBeenCalled()
+    })
+
+    // The page is reused across cases, so a save that fails after the judge
+    // has moved on must leave the new case alone.
+    it('does not roll back into another case', async () => {
+      let failSave: (value: undefined) => void = () => undefined
+      mockUpdateCaseAppealDecision.mockImplementationOnce(
+        () =>
+          new Promise<undefined>((resolve) => {
+            failSave = resolve
+          }),
+      )
+      const { workingCase, switchToCase, onChange } = renderHarness(baseCase)
+      const otherCase = {
+        ...baseCase,
+        id: 'other_case_id',
+        appealDecisions: [
+          {
+            partyRole: AppealDecisionPartyRole.PROSECUTOR,
+            rulingFileId: null,
+            decision: CaseAppealDecision.ACCEPT,
+          },
+        ],
+      } as Case
+
+      fireEvent.click(prosecutorDecision())
+      await switchToCase(otherCase)
+
+      await act(async () => {
+        failSave(undefined)
+      })
+
+      expect(workingCase()).toBe(otherCase)
+      expect(
+        caseLevelAppealDecision(
+          workingCase().appealDecisions,
+          AppealDecisionPartyRole.PROSECUTOR,
+        ),
+      ).toBe(CaseAppealDecision.ACCEPT)
+      expect(onChange).not.toHaveBeenCalled()
+    })
+
+    it('puts the previously saved decision back', async () => {
+      mockUpdateCaseAppealDecision.mockResolvedValue(undefined)
+      const { workingCase } = renderHarness({
+        ...baseCase,
+        appealDecisions: [
+          {
+            partyRole: AppealDecisionPartyRole.PROSECUTOR,
+            rulingFileId: null,
+            decision: CaseAppealDecision.ACCEPT,
+          },
+        ],
+      } as Case)
+
+      fireEvent.click(prosecutorDecision())
+
+      await waitFor(() =>
+        expect(
+          caseLevelAppealDecision(
+            workingCase().appealDecisions,
+            AppealDecisionPartyRole.PROSECUTOR,
+          ),
+        ).toBe(CaseAppealDecision.ACCEPT),
+      )
+      expect(prosecutorAcceptRadio()).toBeChecked()
+      expect(prosecutorDecision()).not.toBeChecked()
+    })
+
+    it('leaves the other party alone', async () => {
+      mockUpdateCaseAppealDecision.mockResolvedValue(undefined)
+      const { workingCase } = renderHarness({
+        ...baseCase,
+        appealDecisions: [
+          {
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            rulingFileId: null,
+            decision: CaseAppealDecision.POSTPONE,
+          },
+        ],
+      } as Case)
+
+      fireEvent.click(prosecutorDecision())
+
+      await waitFor(() =>
+        expect(
+          caseLevelAppealDecision(
+            workingCase().appealDecisions,
+            AppealDecisionPartyRole.PROSECUTOR,
+          ),
+        ).toBeUndefined(),
+      )
+      expect(
+        caseLevelAppealDecision(
+          workingCase().appealDecisions,
+          AppealDecisionPartyRole.DEFENDANT,
+        ),
+      ).toBe(CaseAppealDecision.POSTPONE)
+    })
   })
 })
