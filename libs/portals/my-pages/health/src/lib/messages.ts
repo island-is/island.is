@@ -1955,18 +1955,8 @@ export const messages = defineMessages({
   },
   healthConversationsNewIntro: {
     defaultMessage:
-      'Heilsugæslan svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+      'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma. Ef erindið er brýnt og þarfnast svars samdægurs, hringdu í 1700 eða hafðu samband við þitt meðferðarteymi. Í neyðartilvikum, hringdu í 112.',
     id: 'sp.health:health-messages-new-intro',
-  },
-  healthConversationsNewIntroWithWindow: {
-    defaultMessage:
-      '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
-    id: 'sp.health:health-messages-new-intro-with-window',
-  },
-  healthConversationsNewIntroWithRecipient: {
-    defaultMessage:
-      '{name} svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
-    id: 'sp.health:health-messages-new-intro-with-recipient',
   },
   healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',

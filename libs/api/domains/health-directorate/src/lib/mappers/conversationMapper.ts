@@ -1,4 +1,5 @@
 import type { FormatMessage } from '@island.is/cms-translations'
+import type { MessageDescriptor } from 'react-intl'
 import {
   ContentSegmentDto,
   ContentSegmentType,
@@ -186,8 +187,15 @@ export const getWebChatConversationType = (
   }
 }
 
+const TYPE_INSTRUCTIONS: Record<string, MessageDescriptor> = {
+  MEDICATION_INQUIRY: m.instructionsMedication,
+  CERTIFICATE: m.instructionsCertificate,
+  REFERRAL_REQUEST: m.instructionsReferral,
+}
+
 export const mapMessagingRecipient = (
   r: MessagingRecipientDto,
+  formatMessage: FormatMessage,
 ): HealthDirectorateHealthConversationRecipient => ({
   nodeId: r.nodeId,
   groupId: r.groupId,
@@ -199,12 +207,16 @@ export const mapMessagingRecipient = (
   isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
   patientReplyWindowDays: r.patientReplyWindowDays,
   allowedMessageTypes: r.allowedConversationTypes.map(
-    (t): HealthDirectorateHealthConversationType => ({
-      patientInitiatedTypeCode: t.patientInitiatedTypeCode,
-      title: t.title,
-      description: t.description,
-      isCertificate: t.isCertificate,
-    }),
+    (t): HealthDirectorateHealthConversationType => {
+      const instructions = TYPE_INSTRUCTIONS[t.patientInitiatedTypeCode]
+      return {
+        patientInitiatedTypeCode: t.patientInitiatedTypeCode,
+        title: t.title,
+        description: t.description,
+        instructions: instructions ? formatMessage(instructions) : undefined,
+        isCertificate: t.isCertificate,
+      }
+    },
   ),
   canCreateConversation: r.canCreateConversation,
   conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
