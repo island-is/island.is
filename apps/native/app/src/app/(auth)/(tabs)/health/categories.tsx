@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native'
 import styled from 'styled-components/native'
 
 import calendarIcon from '@/assets/icons/calendar.png'
+import envelopeIcon from '@/assets/icons/tabbar-mail.png'
 import medicineIcon from '@/assets/icons/medicine.png'
 import readerIcon from '@/assets/icons/reader.png'
 import vaccinationsIcon from '@/assets/icons/vaccinations.png'
@@ -67,6 +68,11 @@ export default function HealthCategoriesScreen() {
     false,
     null,
   )
+  const isHealthMessagesEnabled = useFeatureFlag(
+    'isAppHealthMessagesEnabled',
+    false,
+    null,
+  )
 
   const healthCardRows = useMemo(() => {
     // Build the medicine subLinks based on feature flags
@@ -124,6 +130,13 @@ export default function HealthCategoriesScreen() {
           enabled: isAppointmentsEnabled,
         },
         {
+          id: 'messages',
+          titleId: 'health.messages.screenTitle',
+          icon: envelopeIcon,
+          route: '/health/messages',
+          enabled: isHealthMessagesEnabled,
+        },
+        {
           id: 'questionnaires',
           titleId: 'health.overview.questionnaires',
           icon: readerIcon,
@@ -145,6 +158,7 @@ export default function HealthCategoriesScreen() {
     isQuestionnaireFeatureEnabled,
     isVaccinationsEnabled,
     isAppointmentsEnabled,
+    isHealthMessagesEnabled,
   ])
 
   const externalLinks = [
