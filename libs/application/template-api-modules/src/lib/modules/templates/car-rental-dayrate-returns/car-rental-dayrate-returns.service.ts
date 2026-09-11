@@ -5,7 +5,7 @@ import { Auth, User } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   InsertRentalDaysModel,
-  RentalDaysEntry,
+  RentalDayRegistrationModel,
   RskRentalDayRateClient,
   RskRentalDaysClient,
 } from '@island.is/clients-rental-day-rate'
@@ -30,15 +30,15 @@ const toPeriod = (year: number, monthIndex: number): string =>
  * A vehicle can appear more than once when its days were reported in batches.
  */
 const sumRentalDaysByPermno = (
-  entries: Array<RentalDaysEntry>,
+  registration: RentalDayRegistrationModel,
 ): Map<string, number> => {
   const totals = new Map<string, number>()
 
-  for (const entry of entries) {
-    if (!entry.fastnr) continue
+  for (const entry of registration.entries ?? []) {
+    if (!entry.permno) continue
     totals.set(
-      entry.fastnr,
-      (totals.get(entry.fastnr) ?? 0) + (entry.fjoldiDaga ?? 0),
+      entry.permno,
+      (totals.get(entry.permno) ?? 0) + (entry.numberOfDays ?? 0),
     )
   }
 
