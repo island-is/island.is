@@ -1321,18 +1321,10 @@ export class AppealCaseService {
     // to being their defender; the reviewer the prosecution's.
     const { actor, side } = this.verdictAppealActor(user)
 
-    if (actor === 'REVIEWER') {
-      if (theCase.indictmentReviewerId !== user.id) {
-        throw new ForbiddenException(
-          'Only the reviewer assigned to the case can withdraw a verdict appeal for the prosecution',
-        )
-      }
-
-      if (appealCase.appealState !== AppealCaseState.APPEALED) {
-        throw new ForbiddenException(
-          'The verdict appeal has been received by the court of appeals',
-        )
-      }
+    if (actor === 'REVIEWER' && theCase.indictmentReviewerId !== user.id) {
+      throw new ForbiddenException(
+        'Only the reviewer assigned to the case can withdraw a verdict appeal for the prosecution',
+      )
     }
 
     if (!defendantId) {
@@ -1365,6 +1357,22 @@ export class AppealCaseService {
     // would stand with no appellants left. The second transaction blocks here
     // and re-reads the freshly committed events.
     await this.caseRepositoryService.lockByIdForUpdate(theCase.id, transaction)
+
+    // Once the court of appeals has received the case the prosecution's
+    // decision is made. The guard loaded the appeal case before the
+    // transaction, so the state is read again under the lock.
+    if (actor === 'REVIEWER') {
+      const lockedAppealCase = await this.appealCaseRepositoryService.findById(
+        appealCase.id,
+        { transaction },
+      )
+
+      if (lockedAppealCase?.appealState !== AppealCaseState.APPEALED) {
+        throw new ForbiddenException(
+          'The verdict appeal has been received by the court of appeals',
+        )
+      }
+    }
 
     const appealEventLogs = await this.appealEventLogRepositoryService.findAll({
       where: { appealCaseId: appealCase.id },

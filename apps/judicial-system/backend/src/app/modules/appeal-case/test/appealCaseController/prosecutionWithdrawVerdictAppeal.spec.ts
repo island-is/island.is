@@ -139,6 +139,10 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
       ...appealCase,
       appealState: AppealCaseState.WITHDRAWN,
     })
+    // The state is re-read under the case lock; by default it is unchanged.
+    ;(mockAppealCaseRepositoryService.findById as jest.Mock).mockResolvedValue(
+      appealCase,
+    )
 
     givenWhenThen = async (
       transitionDto,
@@ -285,11 +289,25 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
       } as User)
     })
 
+    // The guard's snapshot predates the transaction; what counts is the state
+    // under the lock.
     it('should reject a withdrawal once the court of appeals has received the case', async () => {
-      await expectRejected(dto, {
+      ;(
+        mockAppealCaseRepositoryService.findById as jest.Mock
+      ).mockResolvedValue({
         ...appealCase,
         appealState: AppealCaseState.RECEIVED,
-      } as AppealCase)
+      })
+
+      await expectRejected(dto)
+      expect(mockCaseRepositoryService.lockByIdForUpdate).toHaveBeenCalledWith(
+        caseId,
+        transaction,
+      )
+      expect(mockAppealCaseRepositoryService.findById).toHaveBeenCalledWith(
+        appealCaseId,
+        { transaction },
+      )
     })
   })
 })
