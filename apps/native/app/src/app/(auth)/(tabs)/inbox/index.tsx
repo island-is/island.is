@@ -451,7 +451,7 @@ export default function InboxScreen() {
           text: intl.formatMessage({
             id: 'inbox.markAllAsReadPromptConfirm',
           }),
-          style: 'destructive',
+          isPreferred: true,
           onPress: async () => {
             await markAllAsRead()
           },

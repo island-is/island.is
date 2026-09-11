@@ -286,6 +286,9 @@ query getAppointmentDetail($id: String!) {
     date
     duration
     modality
+    status
+    canCancel
+    canCancelBefore
     practitioners
     assignees {
       type
@@ -319,6 +322,10 @@ query getAppointmentDetail($id: String!) {
       }
     }
   }
+}
+
+mutation cancelAppointment($id: String!) {
+  healthDirectorateCancelAppointment(id: $id)
 }
 
 query GetHealthConversations(
