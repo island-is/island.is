@@ -92,6 +92,47 @@ describe('EventLogRepositoryService', () => {
     })
   })
 
+  describe('findLatestForCaseAndTypes', () => {
+    const eventTypes = [
+      EventType.CASE_SENT_TO_COURT,
+      EventType.INDICTMENT_CONFIRMED,
+    ]
+
+    it('reads the newest event of any of the types in the given transaction', async () => {
+      const transaction = {} as never
+      const eventLog = { id: 'some-event-log-id' }
+      model.findOne.mockResolvedValueOnce(eventLog)
+
+      const result = await service.findLatestForCaseAndTypes(
+        'some-case-id',
+        eventTypes,
+        { transaction },
+      )
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { caseId: 'some-case-id', eventType: eventTypes },
+        order: [['created', 'DESC']],
+        transaction,
+      })
+      expect(result).toBe(eventLog)
+    })
+
+    it('returns null when the case has no such event', async () => {
+      expect(
+        await service.findLatestForCaseAndTypes('some-case-id', eventTypes),
+      ).toBeNull()
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(
+        service.findLatestForCaseAndTypes('some-case-id', eventTypes),
+      ).rejects.toThrow(error)
+    })
+  })
+
   describe('create', () => {
     it('creates the event log in the given transaction', async () => {
       const transaction = {} as never

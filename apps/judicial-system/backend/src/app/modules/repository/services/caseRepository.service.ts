@@ -209,6 +209,41 @@ export class CaseRepositoryService {
     }
   }
 
+  // The cases merged into a given case, oldest merge first. Read through the
+  // aggregate's own path so each merged case carries its police case numbers.
+  async findAllMergedToCase(
+    caseId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case[]> {
+    try {
+      this.logger.debug(`Finding cases merged into case ${caseId}`)
+
+      const results = await this.caseModel.findAll({
+        where: { mergeCaseId: caseId },
+        order: [['created', 'ASC']],
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(
+        `Found ${results.length} cases merged into case ${caseId}`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results, {
+          transaction: options?.transaction,
+        })
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error(`Error finding cases merged into case ${caseId}:`, {
+        error,
+      })
+
+      throw error
+    }
+  }
+
   async findParentCaseId(id: string): Promise<string | null | undefined> {
     const result = await this.caseModel.findByPk(id, {
       attributes: ['parentCaseId'],
