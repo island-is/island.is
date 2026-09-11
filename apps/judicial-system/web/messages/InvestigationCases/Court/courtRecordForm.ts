@@ -73,13 +73,6 @@ export const icCourtRecord = {
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum þegar varnaraðili mætir.',
       },
-      autofillDefender: {
-        id: 'judicial.system.investigation_cases:court_record.session_bookings.autofill_defender_v2',
-        defaultMessage:
-          '{defender} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.',
-        description:
-          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       autofillTranslator: {
         id: 'judicial.system.investigation_cases:court_record.session_bookings.autofill_translator',
         defaultMessage:
