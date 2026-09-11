@@ -120,6 +120,31 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     }
   }
 
+  private async assertUserOwnsVehicle(auth: Auth, permno?: string) {
+    const wanted = permno?.trim().toLowerCase()
+
+    const result = wanted
+      ? await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          permno: permno,
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+        })
+      : undefined
+
+    if (!result?.data?.some((v) => v.permno?.trim().toLowerCase() === wanted)) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehicleNotOwner,
+          summary: coreErrorMessages.vehicleNotOwner,
+        },
+        400,
+      )
+    }
+  }
+
   async getPlateTypeList() {
     return await this.vehicleCodetablesClient.getPlateTypes()
   }
@@ -129,6 +154,8 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as OrderVehicleLicensePlateAnswers
+
+    await this.assertUserOwnsVehicle(auth, answers?.pickVehicle?.plate)
 
     const includeRushFee =
       answers?.plateDelivery?.includeRushFee?.includes(YES) || false
