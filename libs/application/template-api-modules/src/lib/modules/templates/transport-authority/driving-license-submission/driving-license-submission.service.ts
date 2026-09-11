@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  ApplicationEligibility,
+  DrivingLicenseApplicationType,
   DrivingLicenseCategory,
   DrivingLicenseService,
   NewDrivingLicenseResult,
   Pickup,
+  RequirementKey as DomainRequirementKey,
 } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../../shared'
@@ -37,10 +40,51 @@ import {
 } from '@island.is/clients/driving-license'
 import { messages as drivingLicenseMessages } from '@island.is/application/templates/driving-license'
 import {
+  structuralCandidates,
+  hasUsablePhoto,
+  buildTypeEligibility,
+  fakeTypeEligibility,
+  messages as districtCommissionerMessages,
+  requirementsMessages as districtCommissionerRequirementsMessages,
+} from '@island.is/application/templates/district-commissioners/driving-license'
+import type {
+  TypeEligibility,
+  DrivingLicenseFakeData as DistrictCommissionerFakeData,
+} from '@island.is/application/templates/district-commissioners/driving-license'
+import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
   DrivingLicenseSchema,
 } from './utils/healthDeclarationMapper'
 import { formatPhoneNumber } from './utils'
+
+// The schema `RequirementKey` the template consumes lives in a `lib:dom` package
+// this API scope may not import, so we can't reference it here. It only differs
+// from the domain `RequirementKey` (what `getApplicationEligibility` returns,
+// mirroring RLS) in its string values: the schema uses camelCase values that equal
+// each member's name, the domain uses PascalCase. Reverse-mapping a domain value to
+// its member name therefore yields the schema value, and we type it through the
+// template's own `TypeEligibility` rather than importing the schema enum.
+type SchemaRequirementKey = TypeEligibility['requirements'][number]['key']
+
+const domainValueToMemberName: Record<string, string> = Object.fromEntries(
+  Object.entries(DomainRequirementKey).map(([name, value]) => [value, name]),
+)
+
+// Convert the domain eligibility result into the schema-keyed shape the template's
+// `buildTypeEligibility` and eligibility summary expect.
+const toTypeEligibility = (
+  serverResult: ApplicationEligibility,
+): TypeEligibility => ({
+  isEligible: serverResult.isEligible,
+  requirements: serverResult.requirements.map((r) => ({
+    key: (domainValueToMemberName[r.key] ??
+      r.key) as unknown as SchemaRequirementKey,
+    requirementMet: r.requirementMet,
+    daysOfResidency: r.daysOfResidency,
+    messageIs: r.messageIs,
+    messageEn: r.messageEn,
+  })),
+})
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -95,6 +139,74 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     private readonly attachmentS3Service: AttachmentS3Service,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE)
+  }
+
+  async checkEligibility({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{
+    byType: Record<string, TypeEligibility>
+  }> {
+    const { externalData, answers } = application
+    const fakeData = getValueViaPath<DistrictCommissionerFakeData>(
+      answers,
+      'fakeData',
+    )
+    const usingFakeData = fakeData?.useFakeData === YES
+
+    const candidates = structuralCandidates(externalData, fakeData)
+
+    // Universal block 1: the applicant can't apply for any license type. Stop here, before the draft.
+    if (candidates.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: districtCommissionerMessages.notEligibleTitle,
+          summary: districtCommissionerMessages.notEligibleDescription,
+        },
+        400,
+      )
+    }
+
+    // Universal block 2: a usable quality photo is required for every type, so
+    // it is enforced here rather than per type on the eligibility summary.
+    if (!hasUsablePhoto(externalData)) {
+      throw new TemplateApiError(
+        {
+          title:
+            districtCommissionerRequirementsMessages.beLicenseQualityPhotoTitle,
+          summary:
+            districtCommissionerRequirementsMessages.beLicenseQualityPhotoDescription,
+        },
+        400,
+      )
+    }
+
+    // Per-type requirements the eligibility summary renders (driving school /
+    // assessment / residency / RLS can-apply, plus 65+ extras). These are NOT
+    // blocked here — the summary shows them and gates progression per type.
+    const byType: Record<string, TypeEligibility> = {}
+    for (const type of candidates) {
+      if (usingFakeData) {
+        byType[type] = fakeTypeEligibility(type, fakeData)
+      } else {
+        // renewal-65 is not in the DrivingLicenseApplicationType union but flows
+        // through the same as it does on the GraphQL eligibility path (a String
+        // field); canApplyFor handles the value at runtime.
+        const serverResult =
+          await this.drivingLicenseService.getApplicationEligibility(
+            auth,
+            application.applicant,
+            type as DrivingLicenseApplicationType,
+          )
+        byType[type] = buildTypeEligibility(
+          type,
+          toTypeEligibility(serverResult),
+          externalData,
+        )
+      }
+    }
+
+    return { byType }
   }
 
   async createCharge({
