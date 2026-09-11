@@ -395,6 +395,7 @@ export const Footer = ({
             input: {
               applicationId: state.application.id,
               nationalId: '',
+              actorNationalId: '',
               organizationNationalId:
                 state.application.organizationNationalId ?? '',
               slug: state.application.slug,

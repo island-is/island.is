@@ -120,7 +120,8 @@ export class ApplicationsService {
 
     const isTest = form.status !== FormStatus.PUBLISHED
 
-    const nationalId = user.actor?.nationalId || user.nationalId
+    const nationalId = user.nationalId
+    const actorNationalId = user.actor?.nationalId || user.nationalId
 
     try {
       await this.sequelize.transaction(async (transaction) => {
@@ -132,6 +133,7 @@ export class ApplicationsService {
             dependencies: form.dependencies,
             status: ApplicationStatus.DRAFT,
             nationalId,
+            actorNationalId,
             draftTotalSteps: form.draftTotalSteps,
             pruneAt: calculatePruneAt(form.draftDaysToLive),
           } as Application,
@@ -1406,9 +1408,11 @@ export class ApplicationsService {
       )
     }
 
-    const nationalId = user.actor?.nationalId || user.nationalId
+    const nationalId = user.nationalId
+    const actorNationalId = user.actor?.nationalId || user.nationalId
 
     notificationDto.nationalId = nationalId
+    notificationDto.actorNationalId = actorNationalId
 
     if (
       !notificationDto.screenDto &&

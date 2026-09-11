@@ -50,24 +50,18 @@ export const ExternalData = ({
   useEffect(() => {
     setHasValidateEligibilityNotificationError(false)
 
-    console.log('Validate eligibility notification conditions:', {
-      validateEligibility,
-      submissionServiceUrl: application.submissionServiceUrl,
-      hasNotified: hasNotified.current,
-    })
     if (
       !validateEligibility ||
       application.submissionServiceUrl === 'zendesk' ||
       hasNotified.current
     ) {
-      console.log('Skipping notify due to validation conditions')
       return
     }
 
     hasNotified.current = true
     setIsNotificationLoading(true)
     setIsValidateEligibilityNotificationLoading(true)
-    console.log('about to call notify')
+
     const notify = async () => {
       try {
         const { data } = await notifyExternal({
@@ -75,6 +69,7 @@ export const ExternalData = ({
             input: {
               applicationId: application.id,
               nationalId: '',
+              actorNationalId: '',
               organizationNationalId: application.organizationNationalId ?? '',
               slug: application.slug,
               isTest: application.isTest,
@@ -83,8 +78,6 @@ export const ExternalData = ({
             },
           },
         })
-
-        console.log('Validate eligibility notification response:', data)
 
         const screenError = removeTypename(
           data?.notifyFormSystemExternalSystem?.screenError,
