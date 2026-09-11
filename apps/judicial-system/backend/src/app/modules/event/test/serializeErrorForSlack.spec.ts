@@ -38,4 +38,20 @@ describe('serializeErrorForSlack', () => {
       'stack',
     )
   })
+
+  it('strips an enumerable stack property', () => {
+    const error = new Error('with enumerable stack') as Error & {
+      stack: string
+    }
+    Object.defineProperty(error, 'stack', {
+      value: 'Error: with enumerable stack\n    at fake',
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    })
+
+    expect(JSON.parse(serializeErrorForSlack(error))).not.toHaveProperty(
+      'stack',
+    )
+  })
 })
