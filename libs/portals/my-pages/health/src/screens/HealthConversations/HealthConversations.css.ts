@@ -62,3 +62,12 @@ export const typeInstructions = style({})
 globalStyle(`${typeInstructions} div p`, {
   fontWeight: theme.typography.semiBold,
 })
+
+export const messageTextContent = style({
+  whiteSpace: 'pre-line',
+  overflowWrap: 'anywhere',
+})
+
+export const messageSegmentedContent = style({
+  overflowWrap: 'anywhere',
+})
