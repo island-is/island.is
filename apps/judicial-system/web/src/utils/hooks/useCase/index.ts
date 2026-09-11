@@ -110,7 +110,7 @@ const useCase = () => {
               return data.createCase as Case
             }
           }
-        } catch (error) {
+        } catch {
           toast.error(formatMessage(errors.createCase))
         }
       },
@@ -130,7 +130,7 @@ const useCase = () => {
               return data.createCourtCase.courtCaseNumber
             }
           }
-        } catch (error) {
+        } catch {
           // Catch all so we can return the empty string
         }
 
@@ -155,7 +155,7 @@ const useCase = () => {
         const res = data as LimitedAccessUpdateCaseMutation
 
         return res.limitedAccessUpdateCase
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateCase))
       }
     },
@@ -178,7 +178,7 @@ const useCase = () => {
         const res = data as UpdateCaseMutation
 
         return res.updateCase
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateCase))
       }
     },
@@ -233,7 +233,7 @@ const useCase = () => {
           }
 
           return true
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.transitionCase))
 
           return false
@@ -258,7 +258,7 @@ const useCase = () => {
             },
           })
           return Boolean(data?.sendNotification?.notificationSent)
-        } catch (e) {
+        } catch {
           return false
         }
       },
@@ -283,7 +283,7 @@ const useCase = () => {
             },
           })
           return Boolean(data?.sendAppealNotification?.notificationSent)
-        } catch (e) {
+        } catch {
           return false
         }
       },
@@ -298,7 +298,7 @@ const useCase = () => {
         })
 
         return data?.extendCase
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.extendCase))
       }
     },
@@ -313,7 +313,7 @@ const useCase = () => {
         })
 
         return data?.duplicateIndictmentCase
-      } catch (error) {
+      } catch {
         toast.error('Ekki tókst að afrita mál í drög')
       }
     },
@@ -328,7 +328,7 @@ const useCase = () => {
         })
 
         return data?.splitDefendantFromCase?.id
-      } catch (error) {
+      } catch {
         toast.error('Ekki tókst að kljúfa varnaraðila frá máli')
       }
     },
@@ -363,7 +363,7 @@ const useCase = () => {
       }
 
       return true
-    } catch (error) {
+    } catch {
       toast.error(formatMessage(errors.updateCase))
 
       return false

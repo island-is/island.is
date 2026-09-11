@@ -54,6 +54,7 @@ import {
   UpdateDefendant,
   VerdictRepositoryService,
 } from '../repository'
+import { getLatestVerdict } from '../verdict/getLatestVerdict'
 import { validateVerdictAppealUpdate } from '../verdict/verdict.helpers'
 import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { UpdateAppealCaseDto } from './dto/updateAppealCase.dto'
@@ -732,9 +733,8 @@ export class AppealCaseService {
       )
     }
 
-    // A defendant has at most one verdict; the array is how the association is
-    // modelled.
-    const verdict = defendant.verdicts?.[0]
+    // Prefer the newest verdict when a corrected ruling created a replacement.
+    const verdict = getLatestVerdict(defendant.verdicts)
 
     // Covers the útivistardómur (reopened rather than appealed) and the service
     // state: the defendant must have been made aware of the verdict.
@@ -1327,7 +1327,7 @@ export class AppealCaseService {
 
     // Clear the mirror on the verdict, so the public prosecution office's screen
     // stops showing this defendant as having appealed.
-    const verdict = defendant.verdicts?.[0]
+    const verdict = getLatestVerdict(defendant.verdicts)
 
     if (verdict) {
       await this.verdictRepositoryService.update(
