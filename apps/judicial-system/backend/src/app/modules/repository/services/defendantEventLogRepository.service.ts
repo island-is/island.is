@@ -27,7 +27,7 @@ export class DefendantEventLogRepositoryService {
     defendantId: string,
     user: User,
     transaction: Transaction,
-    created?: Date,
+    options?: { created?: Date; verdictId?: string },
   ): Promise<void> {
     await this.create(
       {
@@ -39,7 +39,8 @@ export class DefendantEventLogRepositoryService {
         userName: user.name,
         userTitle: user.title,
         institutionName: user.institution?.name,
-        ...(created ? { created } : {}),
+        ...(options?.created ? { created: options.created } : {}),
+        ...(options?.verdictId ? { verdictId: options.verdictId } : {}),
       },
       { transaction },
     )

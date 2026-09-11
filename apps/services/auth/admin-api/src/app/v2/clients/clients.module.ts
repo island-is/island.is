@@ -6,11 +6,12 @@ import {
 } from '@island.is/auth-api-lib'
 
 import { ClientSecretsService } from '../secrets/client-secrets.service'
+import { ClientsController } from './clients.controller'
 import { MeClientsController } from './me-clients.controller'
 
 @Module({
   imports: [ClientsLibModule, ResourcesLibModule],
   providers: [ClientSecretsService],
-  controllers: [MeClientsController],
+  controllers: [MeClientsController, ClientsController],
 })
 export class ClientsModule {}

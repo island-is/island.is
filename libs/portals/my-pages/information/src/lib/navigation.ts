@@ -165,6 +165,24 @@ export const companyInformationNavigation: PortalNavigationItem = {
       path: InformationPaths.Company,
     },
     {
+      name: m.contracts,
+      description: m.contractsDescription,
+      searchTags: [
+        searchTagsMessages.rent,
+        searchTagsMessages.rentalAgreements,
+      ],
+      path: InformationPaths.CompanyContracts,
+      children: [
+        {
+          name: m.contract,
+          navHide: true,
+          searchHide: true,
+          breadcrumbHide: true,
+          path: InformationPaths.CompanyContractsDetail,
+        },
+      ],
+    },
+    {
       name: m.companySettings,
       path: InformationPaths.CompanySettings,
     },
