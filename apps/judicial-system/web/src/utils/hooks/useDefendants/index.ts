@@ -48,7 +48,7 @@ const useDefendants = () => {
             return data.createDefendant?.id
           }
         }
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.createDefendant))
       }
     },
@@ -63,7 +63,7 @@ const useDefendants = () => {
         })
 
         return Boolean(data?.deleteDefendant?.deleted)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.deleteDefendant))
 
         return false
@@ -82,7 +82,7 @@ const useDefendants = () => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateDefendant))
 
         return false
@@ -101,7 +101,7 @@ const useDefendants = () => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateDefendant))
 
         return false
