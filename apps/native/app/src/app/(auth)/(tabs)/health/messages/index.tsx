@@ -200,6 +200,7 @@ export default function HealthMessagesScreen() {
             <View style={{ marginHorizontal: 16, marginTop: 24 }}>
               <Problem
                 type="error"
+                error={messagesRes.error}
                 title={intl.formatMessage({ id: 'problem.error.title' })}
                 message={intl.formatMessage({
                   id: 'health.messages.errorMessage',

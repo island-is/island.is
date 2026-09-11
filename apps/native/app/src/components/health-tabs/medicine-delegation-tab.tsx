@@ -181,7 +181,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
 
         {hasError ? (
           <View style={{ marginTop: theme.spacing[3] }}>
-            <Problem />
+            <Problem error={medicineDelegationsRes.error} />
           </View>
         ) : isInitialLoading ? (
           <View style={{ paddingVertical: theme.spacing[2] }}>
