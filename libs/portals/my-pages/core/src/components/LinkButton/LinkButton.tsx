@@ -10,10 +10,13 @@ interface Props {
   size?: ButtonProps['size']
   disabled?: ButtonProps['disabled']
   skipOutboundTrack?: boolean
+  // For external links, LinkResolver also fires the generic outbound-link
+  // Set skipOutboundTrack when the callback sends its own
+  // Plausible event, otherwise the click is tracked twice
   callback?: () => void
 }
 
-type LinkButtonProps = Props & ButtonTypes
+export type LinkButtonProps = Props & ButtonTypes
 
 export const LinkButton = (props: LinkButtonProps) => {
   const {
