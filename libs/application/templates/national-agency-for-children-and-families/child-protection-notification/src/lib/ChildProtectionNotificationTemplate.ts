@@ -2,6 +2,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 import {
   Application,
   ApplicationConfigurations,
@@ -51,6 +52,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
   name: sharedMessages.applicationName,
+  featureFlag: Features.childProtectionNotification,
   codeOwner: CodeOwners.Deloitte,
   institution: sharedMessages.institution, // TODO: Confirm correct institution name
   translationNamespaces: [
