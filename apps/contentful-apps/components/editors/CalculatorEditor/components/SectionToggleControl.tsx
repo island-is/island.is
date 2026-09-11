@@ -6,7 +6,7 @@ import {
 } from '@contentful/f36-components'
 
 import type {
-  CalculatorFieldSection,
+  CalculatorInputSection,
   CalculatorLocalizedText,
   CalculatorSectionToggle,
 } from '@island.is/tax-calculators'
@@ -15,13 +15,14 @@ import { LocalizedTextFields } from './LocalizedTextFields'
 
 interface Props {
   toggle?: CalculatorSectionToggle
-  gate?: CalculatorFieldSection['gate']
+  gate?: CalculatorInputSection['gate']
   otherToggles: CalculatorSectionToggle[]
   onEnable: () => void
   onDisable: () => void
   onSelectGate: (toggleKey: string) => void
   onLabelChange: (label: CalculatorLocalizedText | undefined) => void
   onToggleDisableOnly: () => void
+  isDisabled?: boolean
 }
 
 // A section is either controlled by a toggle it owns (the switch reveals it) or
@@ -37,6 +38,7 @@ export const SectionToggleControl = ({
   onSelectGate,
   onLabelChange,
   onToggleDisableOnly,
+  isDisabled,
 }: Props) => {
   const isControlled = Boolean(toggle || gate)
 
@@ -44,6 +46,7 @@ export const SectionToggleControl = ({
     <Stack flexDirection="column" alignItems="stretch" spacing="spacingXs">
       <Checkbox
         isChecked={isControlled}
+        isDisabled={isDisabled}
         onChange={() => (isControlled ? onDisable() : onEnable())}
       >
         Controlled by a toggle switch
@@ -56,6 +59,7 @@ export const SectionToggleControl = ({
               <FormControl.Label>Toggle switch</FormControl.Label>
               <Select
                 value={gate?.toggle ?? ''}
+                isDisabled={isDisabled}
                 onChange={(ev) => onSelectGate(ev.target.value)}
               >
                 <Select.Option value="">
@@ -74,6 +78,7 @@ export const SectionToggleControl = ({
             <LocalizedTextFields
               label="Toggle label"
               value={toggle.label}
+              isDisabled={isDisabled}
               onChange={onLabelChange}
             />
           )}
@@ -81,6 +86,7 @@ export const SectionToggleControl = ({
           {gate && (
             <Checkbox
               isChecked={Boolean(gate.disableOnly)}
+              isDisabled={isDisabled}
               onChange={onToggleDisableOnly}
             >
               Grey out instead of hiding

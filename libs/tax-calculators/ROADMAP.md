@@ -248,14 +248,17 @@ Scope is `libs/tax-calculators` only. See `PLAN.md`.
 
 **Round 2 -- the Contentful editor.** Query `inputFields` and `outputFields`,
 edit input sections from `inputSections`, add an output section editor with
-field placement by key, `variant`/`divider`/markdown `content` support and
-explicit array `itemFields`, and warn for stale keys against live GraphQL
-metadata.
+field placement by key, `variant` and markdown `content` support, explicit array
+`itemFields`, drag-and-drop ordering for sections and fields, and inline
+validation for stale keys against live GraphQL metadata. Metadata mismatches
+block publish, not save, so authors can keep repairing a stale draft. Do not
+expose `divider` in the editor in this round; dividers are rendered between
+sections by convention.
 
 **Round 3 -- the web renderer.** Render the form from `inputSections`, join
 output fields to `outputFields` metadata by key, render markdown `content`
-with `MarkdownText`, apply section accordion/divider presentation, and never
-expose raw keys as public labels.
+with `MarkdownText`, render accordions and dividers between output sections, and
+never expose raw keys as public labels.
 
 **Later.** Calculation execution. `outputSections` describes how a result is
 laid out; producing one is a separate round and must not be designed from the
