@@ -867,7 +867,7 @@ export const is = {
   'health.appointments.locationFloor': 'Hæð',
   'health.appointments.locationRoom': 'Herbergi',
   'health.appointments.assigneeTypeRole': 'Hlutverk',
-  'health.appointments.assigneeTypeRoom': 'Herbergi',
+  'health.appointments.assigneeTypeRoom': 'Stofa',
   'health.appointments.assigneeTypeEquipment': 'Tæki',
   'health.appointments.assigneeTypeService': 'Þjónusta',
   'health.appointments.assigneeTypeTeam': 'Teymi',
