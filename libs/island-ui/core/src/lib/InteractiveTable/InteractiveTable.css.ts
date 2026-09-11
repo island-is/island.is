@@ -6,8 +6,8 @@ export const mobileRow = style({
     content: '',
     position: 'absolute',
     bottom: 0,
-    left: `-${theme.spacing[2]}px`,
-    right: `-${theme.spacing[2]}px`,
+    left: 0,
+    right: 0,
     height: '1px',
     background: theme.border.color.standard,
   },
@@ -31,6 +31,10 @@ export const sortButton = style({
   cursor: 'pointer',
   textAlign: 'left',
   width: '100%',
+})
+
+export const sortButtonRight = style({
+  textAlign: 'right',
 })
 
 export const container = style({

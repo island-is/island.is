@@ -164,24 +164,19 @@ export const LanguageToggler = ({
       }
     }
 
-    // Special case for grants since it's a custom page and doesn't have slugs or title in english
-    if ((type as string) === 'grantsplazasearch') {
-      title = {
-        is: 'Styrkjatorg - Leit',
-        en: 'Grantsplaza - Search',
-      }
-    }
-
-    if ((type as string) === 'grantsplaza') {
-      title = {
-        is: 'Styrkjatorg',
-        en: 'Grantsplaza',
-      }
-
+    // Static CustomPage root routes take no slug/id — the entry has no real
+    // Contentful slug or title, so skip slug matching and navigate directly
+    const staticCustomPageTypes: LinkType[] = [
+      'grantsplaza',
+      'grantsplazasearch',
+      'openinvoices',
+    ]
+    if (staticCustomPageTypes.includes(type as LinkType)) {
       return goToOtherLanguagePage(
-        linkResolver('grantsplaza', [], otherLanguage).href,
+        linkResolver(type as LinkType, [], otherLanguage).href,
       )
     }
+
     // Some content models are set up such that a slug is generated from the title
     // Unfortunately, Contentful generates slug for both locales which frequently
     // results in bogus english content. Therefore we check whether the other language has a title as well.
