@@ -498,7 +498,8 @@ export default function HealthMessageDetailScreen() {
               onRefresh={refreshConversation}
             />
           }
-          contentContainerStyle={{ flexGrow: 1 }}
+          // No `flexGrow: 1`: it stretches the content past the visible area
+          // by the header's content inset, so even one message scrolled.
           contentInsetAdjustmentBehavior="automatic"
           automaticallyAdjustContentInsets
           ListHeaderComponent={
@@ -522,11 +523,9 @@ export default function HealthMessageDetailScreen() {
               </View>
             ) : null
           }
-          ListFooterComponent={
-            <SafeAreaView
-              style={{ height: conversation?.patientCanReply ? 160 : 24 }}
-            />
-          }
+          // Just an end-of-thread gap — the reply drawer below is a flow
+          // sibling, not an overlay, so it needs no space reserved here.
+          ListFooterComponent={<View style={{ height: theme.spacing[3] }} />}
         />
         {isSkeleton || conversation ? (
           <ButtonDrawer>
