@@ -1,0 +1,207 @@
+import {
+  Application,
+  ExternalData,
+  Field,
+  FieldTypes,
+  InteractiveTableField,
+  MultiField,
+  StickyFooterField,
+} from '@island.is/application/types'
+import { debts as messages } from '../../lib/messages'
+import { debtsSection } from './debtsSection'
+
+const multiField = debtsSection.children[0] as MultiField
+const children = multiField.children as Field[]
+
+const findByType = (type: FieldTypes) => children.find((c) => c.type === type)
+
+const conditionOf = (field?: Field) => {
+  const condition = field?.condition
+  if (typeof condition !== 'function') {
+    throw new Error(`Expected a dynamic condition on ${field?.id}`)
+  }
+  return condition
+}
+
+const fetched = (debts: unknown[]) =>
+  ({
+    customerDebts: {
+      data: { debts },
+      date: new Date(),
+      status: 'success',
+    },
+  } as unknown as ExternalData)
+
+const debt = {
+  chargeTypeId: 'AB',
+  chargeTypeName: 'Gjaldflokkur 1',
+  dueDate: '2025-08-01',
+  finalDueDate: '2025-08-31',
+  principal: 500000,
+  interest: 55990,
+  cost: 10000,
+  debts: 565990,
+  chargeItemSubject: '453-78857-53',
+  timePeriod: '202508',
+}
+
+const externalDataWithDebts = fetched([debt])
+
+describe('debtsSection', () => {
+  it('declares every answer the screen writes', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+
+    expect(table?.id).toBe('selectedDebts')
+    expect(children.map((child) => child.id)).toContain('shouldUseMockPayment')
+  })
+
+  it('offers no per-row amount, since a debt can only be paid in full', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const header = table?.header
+    const footer = findByType(FieldTypes.STICKY_FOOTER) as
+      | StickyFooterField
+      | undefined
+
+    if (typeof header === 'function' || !header) {
+      throw new Error('Expected a static header')
+    }
+
+    expect(table?.inputColumn).toBeUndefined()
+    expect(header).toHaveLength(4)
+    expect(footer?.watchFieldIds).toEqual(['selectedDebts'])
+  })
+
+  it('sums the full debt of every ticked row in the sticky footer', () => {
+    const footer = findByType(FieldTypes.STICKY_FOOTER) as
+      | StickyFooterField
+      | undefined
+    const rows = footer?.rows
+
+    if (typeof rows !== 'function') {
+      throw new Error('Expected the footer rows to be derived from the answers')
+    }
+
+    const application = {
+      externalData: fetched([debt, { ...debt, debts: 10000 }]),
+      answers: { selectedDebts: [false, true] },
+    } as unknown as Application
+
+    expect(rows(application)).toEqual([
+      { label: messages.table.totalToPayLabel, value: '10.000 kr.' },
+      { label: messages.table.totalLeftLabel, value: '565.990 kr.' },
+    ])
+  })
+
+  it('hides the table and its footer until the debts have been fetched', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE)
+    const footer = findByType(FieldTypes.STICKY_FOOTER)
+
+    for (const field of [table, footer]) {
+      const condition = conditionOf(field)
+
+      expect(condition({}, {} as ExternalData, null)).toBe(false)
+      expect(condition({}, externalDataWithDebts, null)).toBe(true)
+    }
+  })
+
+  it('truncates the Gjaldflokkur column rather than letting it wrap', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const header = table?.header
+
+    if (typeof header === 'function' || !header) {
+      throw new Error('Expected a static header')
+    }
+
+    expect(header[0]).toMatchObject({ expandable: true, truncate: true })
+  })
+
+  it('breaks each debt down into höfuðstóll, vextir and kostnaður', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const rows = table?.expandedRows?.rows
+
+    if (typeof rows !== 'function') {
+      throw new Error('Expected dynamic expanded rows')
+    }
+
+    const application = {
+      externalData: externalDataWithDebts,
+      answers: {},
+    } as unknown as Application
+
+    expect(rows(application)).toEqual([
+      [['01.08.2025', '202508', '500.000 kr.', '55.990 kr.', '10.000 kr.']],
+    ])
+  })
+
+  it('says a debt has no gjalddagi or eindagi rather than showing the placeholder date', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const rows = table?.rows
+    const expandedRows = table?.expandedRows?.rows
+
+    if (typeof rows !== 'function' || typeof expandedRows !== 'function') {
+      throw new Error('Expected the table rows to be derived from the debts')
+    }
+
+    const application = {
+      externalData: fetched([
+        {
+          ...debt,
+          dueDate: '00010101',
+          finalDueDate: '0001-01-01',
+        },
+      ]),
+      answers: {},
+    } as unknown as Application
+
+    expect(rows(application)[0][2]).toBe(messages.table.noDateLabel)
+    expect(expandedRows(application)[0][0][0]).toBe(messages.table.noDateLabel)
+  })
+
+  it('hides the table and its footer when the fetch found no debts', () => {
+    for (const field of [
+      findByType(FieldTypes.INTERACTIVE_TABLE),
+      findByType(FieldTypes.STICKY_FOOTER),
+    ]) {
+      expect(conditionOf(field)({}, fetched([]), null)).toBe(false)
+    }
+  })
+
+  it('never renders a row for an empty list, so nothing is selectable', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const rows = table?.rows
+
+    if (typeof rows !== 'function') {
+      throw new Error('Expected the table rows to be derived from the debts')
+    }
+
+    expect(
+      rows({ externalData: fetched([]) } as unknown as Application),
+    ).toEqual([])
+  })
+
+  it('treats a failed fetch as nothing to show', () => {
+    const failed = {
+      customerDebts: { date: new Date(), status: 'failure' },
+    } as unknown as ExternalData
+
+    expect(
+      conditionOf(findByType(FieldTypes.INTERACTIVE_TABLE))({}, failed, null),
+    ).toBe(false)
+  })
+
+  it('keeps the loader ahead of the table so it renders in its place', () => {
+    expect(children[0].id).toBe('debtsLoader')
+  })
+})

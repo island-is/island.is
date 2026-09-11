@@ -3,7 +3,7 @@
   "info": {
     "title": "Finance Service  v3",
     "description": "Finance Service v3,   get customer records  ....",
-    "version": "3.0"
+    "version": "3.1"
   },
   "servers": [{ "url": "/rad/TBRIslandis.api.v3:financeServiceApi_v3" }],
   "paths": {
@@ -59,10 +59,118 @@
           "401": { "description": "Access Denied", "content": {} }
         }
       }
+    },
+    "/customerDebts/{nationalID}": {
+      "get": {
+        "description": "Returns chargeItemSubjects/periods  for nationalid/ assessment Year/charge type",
+        "operationId": "customerDebtsnationalID_GET_2",
+        "parameters": [
+          {
+            "name": "nationalID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "nextKey",
+            "in": "query",
+            "description": "next key if more data",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/customerDebtsnationalID_GET_response"
+                }
+              }
+            }
+          },
+          "401": { "description": "Access Denied", "content": {} }
+        }
+      }
+    },
+    "/payDebt": {
+      "post": {
+        "description": "Returns chargeItemSubjects/periods  for nationalid/ assessment Year/charge type",
+        "operationId": "payDebt_POST_3",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/payments_in_dt" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "OK", "content": {} },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/payDebt_POST_response"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/payDebt_POST_response"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad Request", "content": {} },
+          "401": { "description": "Access Denied", "content": {} }
+        },
+        "x-codegen-request-body-name": "payInput"
+      }
+    },
+    "/validatePayment": {
+      "post": {
+        "description": "Returns chargeItemSubjects/periods  for nationalid/ assessment Year/charge type",
+        "operationId": "validatePayment_POST_4",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/validatePayments_in_dt"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/validatePayment_POST_response"
+                }
+              }
+            }
+          },
+          "401": { "description": "Access Denied", "content": {} }
+        },
+        "x-codegen-request-body-name": "validateInput"
+      }
     }
   },
   "components": {
     "schemas": {
+      "validatePayments_out_dt": {
+        "required": ["paymentOptions"],
+        "type": "object",
+        "properties": { "paymentOptions": { "type": "string" } }
+      },
       "errors": {
         "required": ["detail", "title"],
         "type": "object",
@@ -72,6 +180,116 @@
           "detail": { "type": "string" },
           "param": { "type": "string" },
           "traceId": { "type": "string" }
+        }
+      },
+      "customerDebts_output": {
+        "required": ["debts", "message", "nextkey", "timestamp"],
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "timestamp": { "type": "string" },
+          "nextkey": { "type": "string" },
+          "debts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/debts_details_dt" }
+          }
+        }
+      },
+      "debts_details_dt": {
+        "required": [
+          "chargeItemSubject",
+          "chargeTypeId",
+          "chargeTypeName",
+          "cost",
+          "debts",
+          "dueDate",
+          "finalDueDate",
+          "interest",
+          "payID",
+          "principal",
+          "timePeriod"
+        ],
+        "type": "object",
+        "properties": {
+          "chargeTypeId": { "type": "string" },
+          "chargeTypeName": { "type": "string" },
+          "chargeItemSubject": {
+            "type": "string",
+            "description": "gjaldgrunnur"
+          },
+          "timePeriod": {
+            "type": "string",
+            "description": "Álagningartímabil"
+          },
+          "dueDate": { "type": "string" },
+          "finalDueDate": { "type": "string" },
+          "principal": { "type": "integer", "format": "int64" },
+          "interest": { "type": "integer", "format": "int64" },
+          "cost": { "type": "integer", "format": "int64" },
+          "debts": { "type": "integer", "format": "int64" },
+          "payID": { "type": "string" }
+        }
+      },
+      "customerDebtsnationalID_GET_response": {
+        "required": ["customerDebtsResult"],
+        "type": "object",
+        "properties": {
+          "error": { "$ref": "#/components/schemas/ProblemDetails_DT" },
+          "customerDebtsResult": {
+            "$ref": "#/components/schemas/customerDebts_output"
+          }
+        }
+      },
+      "customerRecordsnationalID_GET_response": {
+        "required": ["resultCustomerRecords"],
+        "type": "object",
+        "properties": {
+          "error": { "$ref": "#/components/schemas/ProblemDetails_DT" },
+          "resultCustomerRecords": {
+            "$ref": "#/components/schemas/customerRercords_output_dt"
+          }
+        }
+      },
+      "validatePayments_in_dt": {
+        "required": [
+          "nationalId",
+          "payDebts",
+          "payFlowId",
+          "paymentDate",
+          "totalAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "payFlowId": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "totalAmount": { "type": "integer", "format": "int64" },
+          "paymentDate": { "type": "string" },
+          "payDebts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/payid_details_dt" }
+          }
+        }
+      },
+      "payments_in_dt": {
+        "required": [
+          "nationalId",
+          "payDebts",
+          "payFlowId",
+          "payInfo",
+          "paymentDate",
+          "totalAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "payFlowId": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "totalAmount": { "type": "integer", "format": "int64" },
+          "paymentDate": { "type": "string" },
+          "payDebts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/payid_details_dt" }
+          },
+          "payInfo": { "$ref": "#/components/schemas/payInfo" }
         }
       },
       "ProblemDetails_DT": {
@@ -163,18 +381,26 @@
           }
         }
       },
-      "customerRecordsnationalID_GET_response": {
-        "required": ["resultCustomerRecords"],
+      "validatePayment_POST_response": {
+        "required": ["validatePaymentResult"],
         "type": "object",
         "properties": {
           "error": { "$ref": "#/components/schemas/ProblemDetails_DT" },
-          "resultCustomerRecords": {
-            "$ref": "#/components/schemas/customerRercords_output_dt"
+          "validatePaymentResult": {
+            "$ref": "#/components/schemas/validatePayments_out_dt"
           }
         }
       },
+      "payments_out_dt": {
+        "required": ["dateCreated", "payFlowId"],
+        "type": "object",
+        "properties": {
+          "payFlowId": { "type": "string" },
+          "dateCreated": { "type": "string" }
+        }
+      },
       "customerRercords_output_dt": {
-        "required": ["message", "more", "nextKey", "pagesize", "records"],
+        "required": ["more", "pagesize"],
         "type": "object",
         "properties": {
           "more": { "type": "boolean", "description": "true more data" },
@@ -185,6 +411,39 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/record" }
           }
+        }
+      },
+      "payDebt_POST_response": {
+        "required": ["payDebtsResult"],
+        "type": "object",
+        "properties": {
+          "error": { "$ref": "#/components/schemas/ProblemDetails_DT" },
+          "payDebtsResult": { "$ref": "#/components/schemas/payments_out_dt" }
+        }
+      },
+      "payInfo": {
+        "required": ["RRN", "payableAmount", "paymentMeans"],
+        "type": "object",
+        "properties": {
+          "RRN": { "type": "string" },
+          "cardType": { "type": "string" },
+          "paymentMeans": {
+            "type": "string",
+            "description": "Greiðslumáti  debet/Kredit kort",
+            "enum": ["Kreditkort", "Debetkort", "Milli"]
+          },
+          "authCode": { "type": "string", "description": "Heimildarnúmer" },
+          "PAN": { "type": "string", "description": "Síðustu stafir korts" },
+          "payableAmount": { "type": "integer", "format": "int64" },
+          "correlationId": { "type": "string" }
+        }
+      },
+      "payid_details_dt": {
+        "required": ["payAmount", "payid"],
+        "type": "object",
+        "properties": {
+          "payid": { "type": "string" },
+          "payAmount": { "type": "integer", "format": "int64" }
         }
       }
     }

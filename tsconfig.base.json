@@ -414,6 +414,9 @@
       "@island.is/application/templates/directorate-of-immigration/citizenship": [
         "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
       ],
+      "@island.is/application/templates/district-commissioners/driving-license-additional": [
+        "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
+      ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
@@ -579,6 +582,9 @@
       "@island.is/application/templates/passport-annulment": [
         "libs/application/templates/passport-annulment/src/index.ts"
       ],
+      "@island.is/application/templates/pay-debts": [
+        "libs/application/templates/pay-debts/src/index.ts"
+      ],
       "@island.is/application/templates/public-debt-payment-plan": [
         "libs/application/templates/public-debt-payment-plan/src/index.ts"
       ],
@@ -632,9 +638,6 @@
       ],
       "@island.is/application/templates/social-insurance-administration/pension-supplement": [
         "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
-      ],
-      "@island.is/application/templates/district-commissioners/driving-license-additional": [
-        "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
@@ -705,6 +708,9 @@
       "@island.is/application/templates/vmst/submit-documents": [
         "libs/application/templates/vmst/submit-documents/src/index.ts"
       ],
+      "@island.is/application/templates/vmst/u2-certificate": [
+        "libs/application/templates/vmst/u2-certificate/src/index.ts"
+      ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
       ],
@@ -767,9 +773,7 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
-      "@island.is/clients/blikk": [
-        "libs/clients/blikk/src/index.ts"
-      ],
+      "@island.is/clients/blikk": ["libs/clients/blikk/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -888,15 +892,11 @@
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
-      "@island.is/clients/lsh": [
-        "libs/clients/lsh/src/index.ts"
-      ],
+      "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
       "@island.is/clients/lyfjastofnun-health-providers": [
         "libs/clients/lyfjastofnun-health-providers/src/index.ts"
       ],
-      "@island.is/clients/matilda": [
-        "libs/clients/matilda/src/index.ts"
-      ],
+      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -1393,12 +1393,7 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
-      "my-pages": [
-        "libs/api/domains/my-pages/src/index.ts"
-      ],
-      "@island.is/application/templates/vmst/u2-certificate": [
-        "libs/application/templates/vmst/u2-certificate/src/index.ts"
-      ]
+      "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true
   }
