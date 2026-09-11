@@ -163,6 +163,21 @@ export const createDefaultJobFactors = (): JobFactor[] => [
   },
 ]
 
+// How many þrep a sub-criterion may be scored on. Mirrors DMR's own MIN_STEPS /
+// MAX_STEPS (report-excel/workbook.schema.ts), which its Excel parser and its
+// parsed-payload integrity check both enforce — so a workbook-imported draft
+// cannot exceed this. `POST …/draft/sync` enforces neither, and submit does not
+// re-validate, so on a portal-authored draft this bound is ours alone to keep.
+//
+// Enforced on the "Fjöldi þrepa" input itself (min/max) rather than by silently
+// rewriting the step list behind the applicant's back — see useStepCountSync,
+// where an out-of-range value is a no-op precisely so that nothing is
+// destroyed mid-keystroke. A draft that somehow arrives outside the range is
+// therefore left alone rather than trimmed to fit, and can only be brought back
+// into it by the applicant.
+export const MIN_SUB_CRITERION_STEPS = 2
+export const MAX_SUB_CRITERION_STEPS = 8
+
 export const createDefaultSubCriterion = (
   criterionId: string,
 ): SubCriterion => ({
@@ -171,11 +186,11 @@ export const createDefaultSubCriterion = (
   title: '',
   description: '',
   weight: '',
-  stepCount: '2',
-  steps: [
-    { id: crypto.randomUUID(), description: '' },
-    { id: crypto.randomUUID(), description: '' },
-  ],
+  stepCount: String(MIN_SUB_CRITERION_STEPS),
+  steps: Array.from({ length: MIN_SUB_CRITERION_STEPS }, () => ({
+    id: crypto.randomUUID(),
+    description: '',
+  })),
 })
 
 // Order is load-bearing, not cosmetic: this drives the order of the pay inputs in
