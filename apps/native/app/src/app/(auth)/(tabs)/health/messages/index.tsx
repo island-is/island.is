@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { NetworkStatus } from '@apollo/client'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   FlatList,
@@ -64,6 +65,14 @@ export default function HealthMessagesScreen() {
   }, [conversations, query])
 
   const showSearch = conversations.length > 0 || query.length > 0
+
+  // `cache-and-network` hands back a persisted empty inbox before the network
+  // reply lands, so `data` being set is no proof we have rows — that flashed the
+  // empty state on open. Refresh keeps its spinner instead.
+  const showSkeletons =
+    messagesRes.loading &&
+    messagesRes.networkStatus !== NetworkStatus.refetch &&
+    conversations.length === 0
 
   const [refetching, setRefetching] = useState(false)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -190,7 +199,7 @@ export default function HealthMessagesScreen() {
           </Pressable>
         )}
         ListEmptyComponent={
-          messagesRes.loading && !messagesRes.data ? (
+          showSkeletons ? (
             <View>
               {Array.from({ length: 8 }).map((_, index) => (
                 <ListItemSkeleton key={index} />
