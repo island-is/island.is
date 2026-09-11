@@ -25,7 +25,8 @@ import {
   Injectable,
 } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
-import { PATIENT_PERMIT_CODE } from './constants'
+import { IntlService } from '@island.is/cms-translations'
+import { NAMESPACE, PATIENT_PERMIT_CODE } from './constants'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
@@ -53,6 +54,8 @@ import {
   mapVaccinationStatus,
 } from './mappers/basicInformationMapper'
 import {
+  getWebChatConversationType,
+  WEB_CHAT_TYPE_CODE,
   mapConversationMessageContent,
   mapMessagingRecipient,
   toConversationDirectionEnum,
@@ -130,6 +133,7 @@ export class HealthDirectorateService {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
+    private readonly intlService: IntlService,
   ) {}
 
   /* Organ Donation */
@@ -908,6 +912,14 @@ export class HealthDirectorateService {
     auth: Auth,
     input: HealthDirectorateCreateConversationInput,
   ): Promise<HealthDirectorateHealthConversationDetail | null> {
+    // The web chat entry is advertised in allowedMessageTypes but is an
+    // external link, not a conversation type Hekla knows about.
+    if (input.patientInitiatedTypeCode === WEB_CHAT_TYPE_CODE) {
+      throw new BadRequestException(
+        'patientInitiatedTypeCode is not a valid conversation type',
+      )
+    }
+
     const body: CreateConversationRequestDto = {
       nodeId: input.nodeId,
       groupId: input.groupId,
@@ -970,7 +982,21 @@ export class HealthDirectorateService {
     const items = await this.healthApi.getMessagingRecipients(auth, locale)
     if (!items) return null
 
-    return items.map(mapMessagingRecipient)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
+    const webChat = getWebChatConversationType(formatMessage)
+    // A link-out entry without a link is useless and would render as a
+    // broken regular option — skip it if the URL was blanked in Contentful.
+    if (!webChat.externalLinkUrl) {
+      return items.map(mapMessagingRecipient)
+    }
+
+    return items.map((item) => {
+      const recipient = mapMessagingRecipient(item)
+      return {
+        ...recipient,
+        allowedMessageTypes: [...recipient.allowedMessageTypes, webChat],
+      }
+    })
   }
 
   /* Certificates */
