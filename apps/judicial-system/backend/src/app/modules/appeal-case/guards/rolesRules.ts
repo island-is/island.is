@@ -1,6 +1,7 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   AppealCaseTransition,
+  AppealCaseType,
   type User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -166,4 +167,25 @@ export const defenderTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
   canActivate: (request) => userAppealedAppealCase(request),
+}
+
+// Public prosecution office rules. The office registers verdict appeals that
+// reach it outside the system - by letter or email - and may withdraw them
+// again. It has no part in ruling appeals, so both rules are limited to verdict
+// appeals: on creation by the requested appeal type, on withdrawal by the type
+// of the appeal case being withdrawn.
+export const publicProsecutorStaffCreateRule: RolesRule = {
+  role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'appealType',
+  dtoFieldValues: [AppealCaseType.VERDICT],
+}
+
+export const publicProsecutorStaffTransitionRule: RolesRule = {
+  role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
+  canActivate: (request: { appealCase?: AppealCase }) =>
+    request.appealCase?.appealType === AppealCaseType.VERDICT,
 }

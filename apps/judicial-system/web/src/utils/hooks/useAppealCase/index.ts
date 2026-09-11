@@ -2,7 +2,6 @@ import type { Dispatch, SetStateAction } from 'react'
 import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type {
@@ -13,6 +12,7 @@ import type {
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { AppealCaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
 import type { CreateAppealCaseMutation } from './createAppealCase.generated'
@@ -24,11 +24,21 @@ import { useLimitedAccessCreateAppealEventLogMutation } from './limitedAccessCre
 import { useLimitedAccessCreateVerdictAppealMutation } from './limitedAccessCreateVerdictAppeal.generated'
 import type { LimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
 import { useLimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
+import { useRegisterVerdictAppealMutation } from './registerVerdictAppeal.generated'
 import type { TransitionAppealCaseMutation } from './transitionAppealCase.generated'
 import { useTransitionAppealCaseMutation } from './transitionAppealCase.generated'
 import { useUpdateAppealCaseMutation } from './updateAppealCase.generated'
 
 type UpdateAppealCase = Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>
+
+// The defender who filed a verdict appeal outside the system, as the public
+// prosecution office records them when registering it.
+export interface AppealDefender {
+  name?: string | null
+  nationalId?: string | null
+  email?: string | null
+  phoneNumber?: string | null
+}
 
 const useAppealCase = () => {
   const { limitedAccess } = useContext(UserContext)
@@ -44,6 +54,10 @@ const useAppealCase = () => {
     limitedAccessCreateVerdictAppealMutation,
     { loading: isCreatingVerdictAppeal },
   ] = useLimitedAccessCreateVerdictAppealMutation()
+  const [
+    registerVerdictAppealMutation,
+    { loading: isRegisteringVerdictAppeal },
+  ] = useRegisterVerdictAppealMutation()
   const [transitionAppealCaseMutation, { loading: isTransitioningAppealCase }] =
     useTransitionAppealCaseMutation()
   const [
@@ -138,6 +152,42 @@ const useAppealCase = () => {
         }
       },
     [limitedAccessCreateVerdictAppealMutation, formatMessage],
+  )
+
+  // The public prosecution office registers a verdict appeal that reached it
+  // outside the system - by letter or email - for one specific defendant, dated
+  // to the filing and naming the defender who made it. Never limited access.
+  const registerVerdictAppeal = useMemo(
+    () =>
+      async (
+        caseId: string,
+        defendantId: string,
+        appealDate: string,
+        appealDefender: AppealDefender,
+      ): Promise<AppealCase | undefined> => {
+        try {
+          const { data } = await registerVerdictAppealMutation({
+            variables: {
+              input: {
+                caseId,
+                defendantId,
+                appealType: AppealCaseType.VERDICT,
+                appealDate,
+                appealDefenderName: appealDefender.name,
+                appealDefenderNationalId: appealDefender.nationalId,
+                appealDefenderEmail: appealDefender.email,
+                appealDefenderPhoneNumber: appealDefender.phoneNumber,
+              },
+            },
+          })
+
+          return data?.createAppealCase ?? undefined
+        } catch (e) {
+          toast.error(formatMessage(errors.transitionCase))
+          return undefined
+        }
+      },
+    [registerVerdictAppealMutation, formatMessage],
   )
 
   const transitionAppealCase = useMemo(
@@ -259,10 +309,12 @@ const useAppealCase = () => {
   return {
     createAppealCase,
     createVerdictAppeal,
+    registerVerdictAppeal,
     isCreatingAppealCase:
       isCreatingAppealCase ||
       isLimitedAccessCreatingAppealCase ||
-      isCreatingVerdictAppeal,
+      isCreatingVerdictAppeal ||
+      isRegisteringVerdictAppeal,
     transitionAppealCase,
     isTransitioningAppealCase:
       isTransitioningAppealCase || isLimitedAccessTransitioningAppealCase,

@@ -217,7 +217,7 @@ const extractRentalAmount = (
     answers,
     'rentalAmount.paymentMethodNationalId',
   ),
-  securityDepositRequired: getValueViaPath<YesOrNoEnum>(
+  securityDepositRequired: getValueViaPath<Array<YesOrNoEnum>>(
     answers,
     'rentalAmount.securityDepositRequired',
   ),
@@ -302,7 +302,7 @@ const extractOtherFees = (
     answers,
     'otherFees.heatingCostMeterStatus',
   ),
-  otherCostPayedByTenant: getValueViaPath<YesOrNoEnum>(
+  otherCostPayedByTenant: getValueViaPath<Array<YesOrNoEnum>>(
     answers,
     'otherFees.otherCosts',
   ),
@@ -357,7 +357,7 @@ export const draftAnswers = (
     paymentMethodOptions: answers.paymentMethodOptions ?? '',
     paymentMethodBankAccountNumber:
       answers.paymentMethodBankAccountNumber ?? ({} as BankAccount),
-    securityDepositRequired: answers.securityDepositRequired ?? YesOrNoEnum.NO,
+    securityDepositRequired: answers.securityDepositRequired || [],
     securityType: answers.securityType ?? '',
     bankGuaranteeInfo: answers.bankGuaranteeInfo ?? '',
     thirdPartyGuaranteeInfo: answers.thirdPartyGuaranteeInfo ?? '',
@@ -389,7 +389,7 @@ export const draftAnswers = (
     heatingCostMeterStatusDate: answers.heatingCostMeterStatusDate,
     heatingCostMeterNumber: answers.heatingCostMeterNumber,
     heatingCostMeterStatus: answers.heatingCostMeterStatus,
-    otherCostPayedByTenant: answers.otherCostPayedByTenant ?? YesOrNoEnum.NO,
+    otherCostPayedByTenant: answers.otherCostPayedByTenant || [],
     otherCostItems: answers.otherCostItems || [], // '' is not nullish
     currentUserLocale: currentUserLocale ?? 'is',
   }
