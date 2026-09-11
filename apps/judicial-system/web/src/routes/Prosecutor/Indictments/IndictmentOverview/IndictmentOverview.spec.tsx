@@ -256,6 +256,55 @@ describe('Prosecutor IndictmentOverview', () => {
       await waitFor(() => expect(mockPush).toHaveBeenCalled())
     })
 
+    // The saves are independent requests; one that succeeded must not be sent
+    // again when the reviewer retries after another failed.
+    it('retries only the decision whose save failed', async () => {
+      mockUpdateDefendant.mockImplementation(
+        async ({ defendantId }: { defendantId: string }) =>
+          defendantId === 'reviewed_defendant_id'
+            ? { id: defendantId }
+            : undefined,
+      )
+      const { container } = renderReview()
+
+      await waitFor(() =>
+        expect(
+          container.querySelector(
+            '#review-option-appeal-undecided_defendant_id',
+          ),
+        ).toBeInTheDocument(),
+      )
+      // Change both: the reviewed one flips to APPEAL, the undecided one is set.
+      await userEvent.click(
+        screen.getByLabelText('Áfrýja héraðsdómi til Landsréttar', {
+          selector: '#review-option-appeal-reviewed_defendant_id',
+        }),
+      )
+      await userEvent.click(
+        screen.getByLabelText('Áfrýja héraðsdómi til Landsréttar', {
+          selector: '#review-option-appeal-undecided_defendant_id',
+        }),
+      )
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Ljúka yfirlestri' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Staðfesta' }),
+      )
+
+      await waitFor(() => expect(mockUpdateDefendant).toHaveBeenCalledTimes(2))
+      expect(mockPush).not.toHaveBeenCalled()
+
+      // Retry: only the failed defendant is sent.
+      mockUpdateDefendant.mockClear()
+      await userEvent.click(screen.getByRole('button', { name: 'Staðfesta' }))
+
+      await waitFor(() => expect(mockUpdateDefendant).toHaveBeenCalledTimes(1))
+      expect(mockUpdateDefendant).toHaveBeenCalledWith(
+        expect.objectContaining({ defendantId: 'undecided_defendant_id' }),
+      )
+    })
+
     it('stays on the page when a save fails', async () => {
       mockUpdateDefendant.mockResolvedValue(undefined)
       const { container } = renderReview()

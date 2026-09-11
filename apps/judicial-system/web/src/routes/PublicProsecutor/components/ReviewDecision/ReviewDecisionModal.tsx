@@ -12,6 +12,10 @@ interface Props {
   // The defendants whose review decision changed - the only ones saved.
   changedDefendants: Defendant[]
   onClose: () => void
+  // Called with the defendants whose decision was saved, whether or not every
+  // save succeeded, so the page can stop counting them as changed and a retry
+  // sends only what failed.
+  onSaved: (savedDefendantIds: string[]) => void
   // Called once every changed decision has been saved.
   onConfirmed: () => void
 }
@@ -23,22 +27,36 @@ interface Props {
  * pair - knows which of them changed.
  */
 export const ReviewDecisionModal: FC<Props> = (props) => {
-  const { caseId, changedDefendants, onClose, onConfirmed } = props
+  const { caseId, changedDefendants, onClose, onSaved, onConfirmed } = props
   const { formatMessage: fm } = useIntl()
   const { updateDefendant, isUpdatingDefendant } = useDefendants()
 
+  // The saves are independent requests, not one transaction: some may succeed
+  // while another fails. Those that did are reported back so they are not sent
+  // again; the modal stays open for the rest.
   const handleConfirm = async () => {
     const results = await Promise.all(
-      changedDefendants.map((defendant) =>
-        updateDefendant({
-          caseId,
-          defendantId: defendant.id,
-          indictmentReviewDecision: defendant.indictmentReviewDecision,
-        }),
-      ),
+      changedDefendants.map(async (defendant) => ({
+        defendant,
+        saved: Boolean(
+          await updateDefendant({
+            caseId,
+            defendantId: defendant.id,
+            indictmentReviewDecision: defendant.indictmentReviewDecision,
+          }),
+        ),
+      })),
     )
 
-    if (!results.every(Boolean)) {
+    const savedDefendantIds = results
+      .filter(({ saved }) => saved)
+      .map(({ defendant }) => defendant.id)
+
+    if (savedDefendantIds.length > 0) {
+      onSaved(savedDefendantIds)
+    }
+
+    if (savedDefendantIds.length < changedDefendants.length) {
       return
     }
 
