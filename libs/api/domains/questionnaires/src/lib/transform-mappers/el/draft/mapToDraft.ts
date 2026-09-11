@@ -1,4 +1,3 @@
-/* eslint-disable func-style */
 /**
  * Health Directorate Draft Mapper - Converts draft replies from Health Directorate API
  * into the answer format expected by the frontend questionnaire UI.
@@ -73,22 +72,16 @@ export const mapDraftRepliesToAnswers = (
           const column = columns?.find((col) => col.id === cell.questionId)
           if (!column) return
 
-          // Determine the type based on the answer value type
-          let cellType = 'string'
+          // EL column type verbatim ('bool', not 'boolean') to match the
+          // encoding the frontend Table component produces
+          const cellType = column.type
           let cellValue = ''
 
           // Handle different cell reply types based on the structure
           if ('answer' in cell) {
             const cellAnswer = cell.answer
 
-            if (typeof cellAnswer === 'boolean') {
-              cellType = 'boolean'
-              cellValue = String(cellAnswer)
-            } else if (typeof cellAnswer === 'number') {
-              cellType = 'number'
-              cellValue = String(cellAnswer)
-            } else if (column.type === 'date') {
-              cellType = 'date'
+            if (column.type === 'date') {
               // Format date as YYYY-MM-DD
               if (cellAnswer instanceof Date) {
                 cellValue = cellAnswer.toISOString().split('T')[0]
@@ -99,12 +92,11 @@ export const mapDraftRepliesToAnswers = (
                 } catch {
                   cellValue = String(cellAnswer)
                 }
-              } else {
-                cellValue = cellAnswer ? String(cellAnswer) : ''
+              } else if (cellAnswer) {
+                cellValue = String(cellAnswer)
               }
-            } else {
-              // String type
-              cellValue = cellAnswer ? String(cellAnswer) : ''
+            } else if (cellAnswer !== null && cellAnswer !== undefined) {
+              cellValue = String(cellAnswer)
             }
           }
 

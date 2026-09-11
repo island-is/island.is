@@ -139,6 +139,8 @@ export type ServiceDefinition = ServiceDefinitionCore & {
   extraAttributes?: ExtraValues
   xroadConfig: XroadConfig[]
   scheduledJob?: ScheduledJobConfig
+  strategy?: RolloutStrategyInput
+  gracefulShutdown?: GracefulShutdownInput
 }
 
 /**
@@ -152,6 +154,8 @@ export type ServiceDefinitionForEnv = ServiceDefinitionCore & {
   redis?: RedisInfoForEnv
   extraAttributes?: ExtraValuesForEnv
   scheduledJob?: ScheduledJobConfigForEnv
+  strategy?: RolloutStrategy
+  gracefulShutdown?: GracefulShutdown
 }
 
 export interface Ingress {
@@ -180,6 +184,44 @@ export type PodDisruptionBudget = {
   maxUnavailable?: number | string
   unhealthyPodEvictionPolicy?: 'IfHealthyBudget' | 'AlwaysAllow'
 }
+
+/**
+ * Deployment rollout strategy, mapped to `Deployment.spec.strategy`. Set
+ * `rollingUpdate.maxUnavailable: 0` for zero-downtime rollouts.
+ *
+ * NOTE: this is safe. Do NOT mirror `maxUnavailable: 0` onto the PDB
+ * (`.podDisruption()`) — there it blocks node drains and deadlocks.
+ */
+export type RolloutStrategy = {
+  type?: 'RollingUpdate' | 'Recreate'
+  rollingUpdate?: {
+    maxSurge?: number | string
+    maxUnavailable?: number | string
+  }
+}
+
+/** RolloutStrategy applied to all envs, or keyed per-env. */
+export type RolloutStrategyByEnv = Partial<{ [env in OpsEnv]: RolloutStrategy }>
+export type RolloutStrategyInput = RolloutStrategy | RolloutStrategyByEnv
+
+/**
+ * Graceful shutdown knobs. `maxUnavailable: 0` guarantees replica count but not
+ * that in-flight requests finish; these close that gap.
+ */
+export type GracefulShutdown = {
+  /** Time a new pod must stay Ready before it counts as available. */
+  minReadySeconds?: number
+  /** Drain window after SIGTERM before force-kill. */
+  terminationGracePeriodSeconds?: number
+  /** preStop `sleep` so the pod keeps serving while endpoints are removed. */
+  preStopSleepSeconds?: number
+}
+
+/** GracefulShutdown applied to all envs, or keyed per-env. */
+export type GracefulShutdownByEnv = Partial<{
+  [env in OpsEnv]: GracefulShutdown
+}>
+export type GracefulShutdownInput = GracefulShutdown | GracefulShutdownByEnv
 export type PersistentVolumeClaim = {
   name?: string
   size: '1Gi' | '5Gi' | '10Gi' | string
@@ -204,16 +246,48 @@ export type Resources = {
   }
 }
 
-export type ReplicaCount = {
+/** Fields resolved per environment. */
+export type ReplicaBounds = {
   default: number
   max: number
   min: number
+}
+
+/** Options that apply to all environments regardless of form. */
+export type ReplicaGlobals = {
   /**
    * This is mostly for internal use by the DevOps team. If you would like to know more about it, please be in touch with them.
    * For more info, see this - https://prometheus.io/docs/prometheus/latest/querying/functions/#irate
    */
   scalingMagicNumber?: number
   cpuAverageUtilization?: number
+  /**
+   * Opt this service out of the dev/staging `min:1, max:2` cost-saving clamp
+   * so its explicit `replicaCount` applies there too (e.g. for load testing,
+   * or for scale-to-zero in a single environment).
+   */
+  bypassReplicaClamp?: boolean
+}
+
+/** Existing flat form: same bounds for every environment. */
+export type FlatReplicaCount = ReplicaBounds & ReplicaGlobals
+
+/** New per-environment form. Any subset of envs may be provided. */
+export type PerEnvReplicaCount = ReplicaGlobals & {
+  dev?: ReplicaBounds
+  staging?: ReplicaBounds
+  prod?: ReplicaBounds
+}
+
+export type ReplicaCount = FlatReplicaCount | PerEnvReplicaCount
+
+/**
+ * The flat form carries a numeric top-level `min`; the per-env form does not.
+ */
+export function isPerEnvReplicaCount(
+  rc: ReplicaCount,
+): rc is PerEnvReplicaCount {
+  return typeof (rc as FlatReplicaCount).min !== 'number'
 }
 
 type Container = {

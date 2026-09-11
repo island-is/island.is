@@ -114,6 +114,24 @@ export class Defendant {
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithDefender?: boolean
 
+  // The defender who appealed the verdict, when the public prosecution office
+  // registered the appeal on their letter. Information only; no access follows
+  // until the court of appeals confirms them.
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderName?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderEmail?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderPhoneNumber?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealDefenderConfirmed?: boolean
+
   @Field(() => Boolean, { nullable: true })
   readonly isSentToPrisonAdmin?: boolean
 

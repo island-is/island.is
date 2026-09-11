@@ -1,7 +1,7 @@
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
@@ -83,8 +83,10 @@ const MedicineDelegationDetail = () => {
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.medicineDelegationIntroText)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(
+          messages.stafraenHeilsaMedicineDelegationTooltip,
+        ),
       }}
       loading={loading}
       desktopContentSpan="10/12"

@@ -172,7 +172,7 @@ const AppealFiles = () => {
           marginBottom={isProsecutionUser(user) ? 5 : 10}
         >
           <SectionHeading title="Gögn" marginBottom={1} />
-          <Text marginBottom={3} whiteSpace="pre">
+          <Text marginBottom={3} whiteSpace="preWrap">
             Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að
             neðan.
             {'\n'}
@@ -197,7 +197,7 @@ const AppealFiles = () => {
           />
         </Box>
         {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section">
             <RequestAppealRulingNotToBePublishedCheckbox />
           </Box>
         )}

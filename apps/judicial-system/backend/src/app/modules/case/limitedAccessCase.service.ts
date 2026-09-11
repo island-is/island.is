@@ -116,14 +116,13 @@ export const attributes: (keyof Case)[] = [
   'withCourtSessions',
 ]
 
-export interface LimitedAccessUpdateCase
-  extends Pick<
-    Case,
-    | 'caseModifiedExplanation'
-    | 'isolationToDate'
-    | 'validToDate'
-    | 'openedByDefender'
-  > {}
+export type LimitedAccessUpdateCase = Pick<
+  Case,
+  | 'caseModifiedExplanation'
+  | 'isolationToDate'
+  | 'validToDate'
+  | 'openedByDefender'
+>
 
 const linkedCaseDefendantAccessAttributes: (keyof Defendant)[] = [
   'id',
@@ -251,6 +250,11 @@ export const getInclude = (user?: TUser): Includeable[] => [
     include: [{ model: Institution, as: 'institution' }],
   },
   {
+    model: User,
+    as: 'indictmentApprover',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
     model: AppealCase,
     as: 'appealCase',
     required: false,
@@ -275,6 +279,20 @@ export const getInclude = (user?: TUser): Includeable[] => [
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
       },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'verdictAppealCase',
+    required: false,
+    include: [
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -448,6 +466,8 @@ export const getInclude = (user?: TUser): Includeable[] => [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
         CaseFileCategory.APPEAL_COURT_RECORD,
         CaseFileCategory.COURT_RECORD,

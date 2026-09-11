@@ -33,14 +33,6 @@ auth-admin-web:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
-      replicas:
-        max: 2
-        min: 1
   httpRoute:
     primary-gw:
       hostnames:
@@ -62,9 +54,9 @@ auth-admin-web:
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 0
+    max: 0
+    min: 0
   resources:
     limits:
       cpu: '400m'
@@ -166,6 +158,7 @@ identity-server:
     primary-gw:
       hostnames:
         - 'identity-server.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -282,18 +275,11 @@ services-auth-admin-api:
       initialDelaySeconds: 3
       path: '/backend/health/check'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
-      replicas:
-        max: 2
-        min: 1
   httpRoute:
     primary-gw:
       hostnames:
         - 'identity-server.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -310,9 +296,9 @@ services-auth-admin-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 0
+    max: 0
+    min: 0
   resources:
     limits:
       cpu: '400m'
@@ -922,6 +908,7 @@ services-auth-public-api:
     primary-gw:
       hostnames:
         - 'identity-server.dev01.devland.is'
+      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'

@@ -128,6 +128,49 @@ describe('PoliceCaseList', () => {
     expect(mockUpdateCaseMutation).not.toHaveBeenCalled()
   })
 
+  it('should not show a validation error while a number is being typed', async () => {
+    // Arrange
+    const user = userEvent.setup()
+    renderPoliceCaseList(mockIndictment())
+
+    // Act
+    await user.click(screen.getByTestId('addPoliceCaseInfoButton'))
+    await user.type(await screen.findByTestId('policeCaseNumber1'), '007')
+
+    // Assert
+    expect(screen.queryByText('Dæmi: 012-3456-7890')).not.toBeInTheDocument()
+  })
+
+  it('should show a validation error when an unfinished number is left', async () => {
+    // Arrange
+    const user = userEvent.setup()
+    renderPoliceCaseList(mockIndictment())
+
+    // Act
+    await user.click(screen.getByTestId('addPoliceCaseInfoButton'))
+    await user.type(await screen.findByTestId('policeCaseNumber1'), '007')
+    await user.tab()
+
+    // Assert
+    expect(screen.getByText('Dæmi: 012-3456-7890')).toBeInTheDocument()
+  })
+
+  it('should clear the validation error once a valid number has been entered', async () => {
+    // Arrange
+    const user = userEvent.setup()
+    renderPoliceCaseList(mockIndictment())
+
+    // Act
+    await user.click(screen.getByTestId('addPoliceCaseInfoButton'))
+    const input = await screen.findByTestId('policeCaseNumber1')
+    await user.type(input, '007')
+    await user.tab()
+    await user.type(input, '20241')
+
+    // Assert
+    expect(screen.queryByText('Dæmi: 012-3456-7890')).not.toBeInTheDocument()
+  })
+
   it('should send a police case to the server once it has been given a number', async () => {
     // Arrange
     const user = userEvent.setup()

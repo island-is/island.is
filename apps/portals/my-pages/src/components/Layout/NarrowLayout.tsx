@@ -108,7 +108,7 @@ export const NarrowLayout = ({
   const sidebar = (
     <Sticky>
       <Box style={{ marginTop: height }} paddingBottom={4}>
-        <GoBack />
+        <GoBack marginBottom={2} />
 
         {subNavItems && subNavItems.length > 0 && (
           <Box borderRadius="large" background="blue100">
@@ -136,6 +136,7 @@ export const NarrowLayout = ({
               title={formatMessage(activeParent?.name ?? m.tableOfContents)}
               items={subNavItems ?? []}
               expand
+              singleAccordion
               titleIcon={activeParent?.icon}
             />
           </Box>
@@ -184,6 +185,7 @@ export const NarrowLayout = ({
                 }
                 items={subNavItems}
                 titleIcon={activeParent?.icon}
+                singleAccordion
                 isMenuDialog={true}
               />
             </Box>

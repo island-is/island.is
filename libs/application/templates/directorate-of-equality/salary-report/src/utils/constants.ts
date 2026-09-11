@@ -68,6 +68,32 @@ export const ScreenIds = {
   improvementPlan: 'salaryAnalysisImprovementPlanMultiField',
 } as const
 
+// Per-step completion markers under `answers.progress`, declared as each report
+// screen's `childInputIds` so the form shell can see that the step is done.
+//
+// This is what lets a returning applicant resume: findCurrentScreen walks the
+// screens while they are answered, and only ever reads `answers` — the report
+// data itself lives on the DMR draft, so without a marker every screen from
+// `dataEntry` onwards looks unanswered forever and the landing screen is capped
+// at `dataEntry`. Deliberately stops at `employeeClassification`: leaving the
+// two salary-analysis screens unmarked is what makes the analysis overview the
+// screen a fully populated report lands on (see the `lastAnswerIndex + 1` cap in
+// the shell's findCurrentScreen).
+//
+// A marker means "this step's data reached the DMR draft", and is written again
+// every time the applicant passes through, so it is a cache of what the draft
+// holds rather than an independent source of truth.
+export const ProgressPaths = {
+  dataEntry: 'progress.dataEntry',
+  criteria: 'progress.criteria',
+  subCriteria: 'progress.subCriteria',
+  employees: 'progress.employees',
+  jobClassification: 'progress.jobClassification',
+  employeeClassification: 'progress.employeeClassification',
+} as const
+
+export type ProgressStep = keyof typeof ProgressPaths
+
 const DOE_NAMESPACE = 'DirectorateOfEquality'
 
 // Builds the `actionId` string the updateApplicationExternalData mutation expects,
@@ -152,20 +178,27 @@ export const createDefaultSubCriterion = (
   ],
 })
 
+// Order is load-bearing, not cosmetic: this drives the order of the pay inputs in
+// EmployeeForm and of the detail rows in EmployeeRow, and it mirrors columns J–O
+// of the 2.0 workbook the applicant just filled in. The two groups are the
+// workbook's row-4 bands, Fastar greiðslur and Tilfallandi greiðslur.
 export const SALARY_COMPONENT_GROUPS: {
   group: 'additional' | 'bonus'
   keys: SalaryComponentKey[]
 }[] = [
   {
     group: 'additional',
-    keys: ['additionalFixedOvertime', 'additionalFixedCarAllowance'],
+    keys: [
+      'additionalFixedOvertime',
+      'additionalFixedCarAllowance',
+      'additionalFixedOther',
+    ],
   },
   {
     group: 'bonus',
     keys: [
-      'bonusOccasionalCarAllowance',
       'bonusOccasionalOvertime',
-      'bonusPayments',
+      'bonusOccasionalCarAllowance',
       'bonusOther',
     ],
   },

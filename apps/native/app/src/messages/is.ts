@@ -350,6 +350,9 @@ export const is = {
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
+  'vehicleDetail.lastOdometer': 'Síðasta kílómetrastaða',
+  'vehicleDetail.moreInfo': 'Fleiri upplýsingar',
+  'vehicleDetail.viewMore': 'Sjá nánar',
   'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
   'vehicleDetail.moreOptions': 'Fleiri valmöguleikar',
 
@@ -801,14 +804,14 @@ export const is = {
   'health.questionnaires.action.answer': 'Svara lista',
   'health.questionnaires.action.continue-draft': 'Halda áfram',
   'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.action.answer-again': 'Svara aftur',
   'health.questionnaires.action.show-expired': 'Sýna útrunna',
   'health.questionnaires.action.hide-expired': 'Fela útrunna',
-  'health.questionnaires.detail.description':
-    'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
   'health.questionnaires.detail.status': 'Staða',
   'health.questionnaires.detail.institution': 'Stofnun',
   'health.questionnaires.detail.sentBy': 'Sent af',
-  'health.questionnaires.detail.sentDate': 'Sent dags',
+  'health.questionnaires.detail.sentDate': 'Dagsetning',
+  'health.questionnaires.detail.expirationDate': 'Gildir til',
   'health.questionnaires.detail.notFound': 'Spurningalisti fannst ekki',
 
   // health - vaccinations
@@ -858,6 +861,17 @@ export const is = {
     'Tímabókun fannst ekki. Hún kann að hafa verið felld niður.',
   'health.appointments.minutesFormat': '{minutes} mínútur',
   'health.appointments.moreInfo': 'Nánari upplýsingar',
+  'health.appointments.preparation': 'Undirbúningur',
+  'health.appointments.locationDepartment': 'Deild',
+  'health.appointments.locationWing': 'Álma',
+  'health.appointments.locationFloor': 'Hæð',
+  'health.appointments.locationRoom': 'Herbergi',
+  'health.appointments.assigneeTypeRole': 'Hlutverk',
+  'health.appointments.assigneeTypeRoom': 'Herbergi',
+  'health.appointments.assigneeTypeEquipment': 'Tæki',
+  'health.appointments.assigneeTypeService': 'Þjónusta',
+  'health.appointments.assigneeTypeTeam': 'Teymi',
+  'health.appointments.assigneeTypeOther': 'Annað',
 
   // health - messages
   'health.messages.screenTitle': 'Skilaboð',
@@ -887,6 +901,10 @@ export const is = {
     'Ekki er hægt að svara skilaboðum utan opnunartíma.',
   'health.messages.replyBlocked.windowExpired':
     'Ekki er hægt að svara þessum skilaboðum þar sem svarfrestur er liðinn.',
+  'health.messages.replyBlocked.windowExpiredDay':
+    'Ekki er hægt að svara skilaboðum sem eru eldri en {days} dagur.',
+  'health.messages.replyBlocked.windowExpiredDays':
+    'Ekki er hægt að svara skilaboðum sem eru eldri en {days} dagar.',
   'health.messages.replyBlocked.awaitingStaff':
     'Ekki er hægt að svara þessum skilaboðum fyrr en starfsfólk hefur svarað þér.',
   'health.messages.compose.newTitle': 'Ný skilaboð',
@@ -897,11 +915,8 @@ export const is = {
   'health.messages.compose.to': 'Til: {name}',
   'health.messages.compose.messageLabel': 'Skilaboð',
   'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
-  'health.messages.compose.termsAccept': 'Ég samþykki',
-  'health.messages.compose.termsLink': 'skilmála',
-  'health.messages.compose.termsTitle': 'Skilmálar vegna skilaboða',
-  'health.messages.compose.termsBody':
-    '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
+  'health.messages.compose.termsAccept':
+    'Ég samþykki að skilaboðin vistist í sjúkraskrá og að viðeigandi heilbrigðisstarfsmaður með aðgang að henni svari erindinu.',
   'health.messages.compose.availabilityWindow':
     '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}.',
   'health.messages.compose.availabilityInfo':
@@ -926,6 +941,12 @@ export const is = {
   'health.messages.compose.certificateText':
     'Eins og er er ekki hægt að sækja um vottorð í gegnum Ísland.is appið. Vinsamlegast sækið um vottorð í gegnum Mínar síður Ísland.is.',
   'health.messages.compose.certificateLink': 'Sækja um vottorð',
+  'health.messages.certificatePayment.title': 'Vottorð tilbúið til greiðslu',
+  'health.messages.certificatePayment.text':
+    'Vottorðið kostar {amount} og er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',
+  'health.messages.certificatePayment.textNoAmount':
+    'Vottorðið er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',
+  'health.messages.certificatePayment.link': 'Greiða á Mínum síðum',
   'health.messages.attachmentError':
     'Ekki tókst að sækja skjalið. Vinsamlegast reyndu aftur síðar.',
   'health.messages.sentTitle': 'Skilaboð móttekin',
@@ -1052,6 +1073,11 @@ export const is = {
   'health.prescriptions.renewalPossible': 'Hægt að endurnýja',
   'health.prescriptions.renewalValid': 'Gild lyfjaávísun',
   'health.prescriptions.renewalNotAvailable': 'Endurnýjun ekki í boði',
+  'health.prescriptions.renewalStatusApproved': 'Endurnýjun samþykkt',
+  'health.prescriptions.renewalStatusPending': 'Endurnýjun í vinnslu',
+  'health.prescriptions.renewalStatusRejected': 'Endurnýjun hafnað',
+  'health.prescriptions.renewalStatusDismissed': 'Endurnýjun vísað frá',
+  'health.prescriptions.renewalStatusUnknown': 'Staða endurnýjunar óþekkt',
   'health.prescriptions.renewalBlockedIsRegiment':
     'Ekki er hægt að endurnýja lyfjakúr',
   'health.prescriptions.renewalBlockedNoMedCard': 'Ekkert lyfjakort skráð',

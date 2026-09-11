@@ -21,12 +21,15 @@ import type {
   ServiceDefinition,
   XroadConfig,
   PodDisruptionBudget,
+  RolloutStrategyInput,
+  GracefulShutdownInput,
   IngressMapping,
   BffInfo,
 } from './types/input-types'
 import { bffConfig } from './bff'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
+import { validateReplicaCount } from './replica-count'
 
 /**
  * Allows you to make some properties of a type optional.
@@ -259,6 +262,26 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
+   * Deployment rollout strategy (`Deployment.spec.strategy`). Use
+   * `maxUnavailable: 0` for zero-downtime rollouts. Accepts a flat config or a
+   * per-env map, e.g. `{ dev: {...}, prod: {...} }`.
+   */
+  strategy(strategy: RolloutStrategyInput) {
+    this.serviceDef.strategy = strategy
+    return this
+  }
+
+  /**
+   * Graceful shutdown settings; complements `strategy({ maxUnavailable: 0 })`
+   * so in-flight requests finish during a rollout. Flat or per-env. See
+   * {@link GracefulShutdown}.
+   */
+  gracefulShutdown(cfg: GracefulShutdownInput) {
+    this.serviceDef.gracefulShutdown = cfg
+    return this
+  }
+
+  /**
    * Secrets are configuration that is resolved at deployment time. Their values are _paths_ in the Parameter Store in AWS Systems Manager. There is a service in Kubernetes that resolves the concrete value of these secrets and they appear as environment variables on the service or the `initContainer`. Mapped to [ExternalSecrets](https://github.com/godaddy/kubernetes-external-secrets). Like environment variables, secrets are only applied to the service. If you need those on an `initContainer` you need to specify them at that scope.
    *
    * To provision secrets in the Parameter Store, you need to get in touch with the DevOps team.
@@ -292,6 +315,7 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   replicaCount(replicaCount: ReplicaCount) {
+    validateReplicaCount(replicaCount)
     this.serviceDef.replicaCount = replicaCount
     return this
   }

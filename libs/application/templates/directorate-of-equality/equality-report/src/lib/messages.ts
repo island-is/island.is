@@ -121,9 +121,10 @@ export const messages = {
         id: 'doe.er.application:prerequisites.section.title',
         defaultMessage: 'Gagnaöflun',
       },
-      intro: {
-        id: 'doe.er.application:prerequisites.section.intro',
-        defaultMessage: equalityReportIntro,
+      description: {
+        id: 'doe.er.application:prerequisites.section.description#markdown',
+        defaultMessage:
+          'Hér má lesa nánar um [þjónustu- og gagnakerfi Jafnréttisstofu](https://island.is/s/jafnrettisstofa/thjonustu-og-gagnakerfi).',
       },
       checkboxLabel: {
         id: 'doe.er.application:prerequisites.section.checkboxLabel',
@@ -236,11 +237,6 @@ export const messages = {
       title: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.title',
         defaultMessage: 'Æðsti stjórnandi',
-      },
-      intro: {
-        id: 'doe.er.application:aboutTheCompany.chiefExecutive.intro',
-        defaultMessage:
-          'Óskað er sérstaklega eftir upplýsingum um kyn æðsta stjórnanda til að fylgjast með kynjaskiptingu í æðstu stjórnendastöðum á vinnumarkaði. Þá er hægt að greina þróun yfir tíma, bera saman atvinnugreinar og meta hvort markmið jafnréttislaga um að jafna stöðu kynjanna séu að nást.',
       },
       name: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.name',
@@ -483,12 +479,18 @@ export const messages = {
       },
       editorSupportedFileTypes: {
         id: 'doe.er.application:equalityReport.information.editorSupportedFileTypes',
-        defaultMessage: 'Samþykktar skráartegundir eru: .docx, .txt',
+        defaultMessage: 'Samþykktar skráartegundir eru: .pdf, .docx, .txt',
       },
       editorUnsupportedFile: {
         id: 'doe.er.application:equalityReport.information.editorUnsupportedFile',
         defaultMessage:
-          'Ekki stutt skráarsnið. Vinsamlegast hlaðið upp .txt eða .docx skrá.',
+          'Ekki stutt skráarsnið. Vinsamlegast hlaðið upp .pdf, .docx eða .txt skrá.',
+      },
+      // PDF only. The .docx/.txt paths convert to HTML in the browser, so their
+      // size on disk says nothing about the size of what gets sent.
+      editorFileTooLarge: {
+        id: 'doe.er.application:equalityReport.information.editorFileTooLarge',
+        defaultMessage: 'Skráin er of stór. Hámarksstærð PDF skjals er 4 MB.',
       },
       editorUploadError: {
         id: 'doe.er.application:equalityReport.information.editorUploadError',
@@ -547,6 +549,22 @@ export const messages = {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.loadError',
         defaultMessage:
           'Ekki tókst að sækja eldri jafnréttisáætlun. Vinsamlegast reynið aftur síðar.',
+      },
+      // Shown instead of the read-only editor when the earlier plan was
+      // uploaded as a PDF — there is no rich text to display or copy.
+      pdfNotice: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.pdfNotice',
+        defaultMessage:
+          'Eldri jafnréttisáætlunin var send inn sem PDF skjal. Sæktu skjalið til að lesa það.',
+      },
+      pdfDownload: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.pdfDownload',
+        defaultMessage: 'Sækja eldri áætlun (PDF)',
+      },
+      pdfDownloadError: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.pdfDownloadError',
+        defaultMessage:
+          'Ekki tókst að sækja PDF skjalið. Vinsamlegast reynið aftur síðar.',
       },
       copyError: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.copyError',

@@ -216,6 +216,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
   },
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: {
+    nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
+    slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
+    contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
+  },
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
@@ -540,5 +545,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
     slug: InstitutionTypes.JAFNRETTISSTOFA,
     contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
+  },
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
 }

@@ -2,7 +2,6 @@ query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
     created
-    modified
     type
     splitCases {
       id
@@ -71,6 +70,11 @@ query Case($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
+      appealDefenderName
+      appealDefenderNationalId
+      appealDefenderEmail
+      appealDefenderPhoneNumber
+      isAppealDefenderConfirmed
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -454,6 +458,22 @@ query Case($input: CaseQueryInput!) {
       appealIsolationToDate
       rulingFileId
     }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
+    }
     rulingOrderAppealCases {
       id
       appealState
@@ -514,6 +534,7 @@ query Case($input: CaseQueryInput!) {
       withdrawnDate
     }
     indictmentDeniedExplanation
+    indictmentReviewReturnedExplanation
     arraignmentDate {
       date
       location
@@ -530,6 +551,10 @@ query Case($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentRulingDecision
     indictmentReviewer {
+      id
+      name
+    }
+    indictmentApprover {
       id
       name
     }

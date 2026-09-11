@@ -106,6 +106,7 @@ export const DEFENDER_REQUEST_CASE_ROUTE = '/verjandi/krafa'
 
 export const DEFENDER_INDICTMENT_CASE_ROUTE = '/verjandi/akaera'
 export const DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE = '/verjandi/akaera/gogn'
+export const DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE = '/verjandi/akaera/afryjun'
 
 export const DEFENDER_APPEAL_CASE_APPEAL_ROUTE = '/verjandi/kaera'
 export const DEFENDER_APPEAL_CASE_STATEMENT_ROUTE =
@@ -118,6 +119,8 @@ export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE =
   '/rikissaksoknari/akaera/yfirlit'
 export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE =
   '/rikissaksoknari/akaera/senda-til-fmst'
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE =
+  '/rikissaksoknari/akaera/afryjun'
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes

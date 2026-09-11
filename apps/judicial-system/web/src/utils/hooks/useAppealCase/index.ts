@@ -2,7 +2,6 @@ import type { Dispatch, SetStateAction } from 'react'
 import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type {
@@ -12,6 +11,8 @@ import type {
   Case,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { AppealCaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
 import type { CreateAppealCaseMutation } from './createAppealCase.generated'
@@ -20,13 +21,24 @@ import { useCreateAppealEventLogMutation } from './createAppealEventLog.generate
 import type { LimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
 import { useLimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
 import { useLimitedAccessCreateAppealEventLogMutation } from './limitedAccessCreateAppealEventLog.generated'
+import { useLimitedAccessCreateVerdictAppealMutation } from './limitedAccessCreateVerdictAppeal.generated'
 import type { LimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
 import { useLimitedAccessTransitionAppealCaseMutation } from './limitedAccessTransitionAppealCase.generated'
+import { useRegisterVerdictAppealMutation } from './registerVerdictAppeal.generated'
 import type { TransitionAppealCaseMutation } from './transitionAppealCase.generated'
 import { useTransitionAppealCaseMutation } from './transitionAppealCase.generated'
 import { useUpdateAppealCaseMutation } from './updateAppealCase.generated'
 
 type UpdateAppealCase = Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>
+
+// The defender who filed a verdict appeal outside the system, as the public
+// prosecution office records them when registering it.
+export interface AppealDefender {
+  name?: string | null
+  nationalId?: string | null
+  email?: string | null
+  phoneNumber?: string | null
+}
 
 const useAppealCase = () => {
   const { limitedAccess } = useContext(UserContext)
@@ -38,6 +50,14 @@ const useAppealCase = () => {
     limitedAccessCreateAppealCaseMutation,
     { loading: isLimitedAccessCreatingAppealCase },
   ] = useLimitedAccessCreateAppealCaseMutation()
+  const [
+    limitedAccessCreateVerdictAppealMutation,
+    { loading: isCreatingVerdictAppeal },
+  ] = useLimitedAccessCreateVerdictAppealMutation()
+  const [
+    registerVerdictAppealMutation,
+    { loading: isRegisteringVerdictAppeal },
+  ] = useRegisterVerdictAppealMutation()
   const [transitionAppealCaseMutation, { loading: isTransitioningAppealCase }] =
     useTransitionAppealCaseMutation()
   const [
@@ -93,7 +113,7 @@ const useAppealCase = () => {
           }
 
           return appealCase
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.transitionCase))
           return undefined
         }
@@ -106,6 +126,70 @@ const useAppealCase = () => {
     ],
   )
 
+  // A defender files a verdict appeal - the appeal of an indictment verdict - for one
+  // specific defendant. Always limited access: only defence users can.
+  const createVerdictAppeal = useMemo(
+    () =>
+      async (
+        caseId: string,
+        defendantId: string,
+      ): Promise<AppealCase | undefined> => {
+        try {
+          const { data } = await limitedAccessCreateVerdictAppealMutation({
+            variables: {
+              input: {
+                caseId,
+                defendantId,
+                appealType: AppealCaseType.VERDICT,
+              },
+            },
+          })
+
+          return data?.limitedAccessCreateAppealCase ?? undefined
+        } catch {
+          toast.error(formatMessage(errors.transitionCase))
+          return undefined
+        }
+      },
+    [limitedAccessCreateVerdictAppealMutation, formatMessage],
+  )
+
+  // The public prosecution office registers a verdict appeal that reached it
+  // outside the system - by letter or email - for one specific defendant, dated
+  // to the filing and naming the defender who made it. Never limited access.
+  const registerVerdictAppeal = useMemo(
+    () =>
+      async (
+        caseId: string,
+        defendantId: string,
+        appealDate: string,
+        appealDefender: AppealDefender,
+      ): Promise<AppealCase | undefined> => {
+        try {
+          const { data } = await registerVerdictAppealMutation({
+            variables: {
+              input: {
+                caseId,
+                defendantId,
+                appealType: AppealCaseType.VERDICT,
+                appealDate,
+                appealDefenderName: appealDefender.name,
+                appealDefenderNationalId: appealDefender.nationalId,
+                appealDefenderEmail: appealDefender.email,
+                appealDefenderPhoneNumber: appealDefender.phoneNumber,
+              },
+            },
+          })
+
+          return data?.createAppealCase ?? undefined
+        } catch {
+          toast.error(formatMessage(errors.transitionCase))
+          return undefined
+        }
+      },
+    [registerVerdictAppealMutation, formatMessage],
+  )
+
   const transitionAppealCase = useMemo(
     () =>
       async (
@@ -113,6 +197,9 @@ const useAppealCase = () => {
         appealCaseId: string,
         transition: AppealCaseTransition,
         setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        // Withdrawing a verdict appeal is per defendant; every other transition
+        // ignores this.
+        defendantId?: string,
       ): Promise<boolean> => {
         const mutation = limitedAccess
           ? limitedAccessTransitionAppealCaseMutation
@@ -125,7 +212,7 @@ const useAppealCase = () => {
         try {
           const { data } = await mutation({
             variables: {
-              input: { caseId, appealCaseId, transition },
+              input: { caseId, appealCaseId, transition, defendantId },
             },
           })
 
@@ -149,7 +236,7 @@ const useAppealCase = () => {
           }
 
           return true
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.transitionCase))
           return false
         }
@@ -181,7 +268,7 @@ const useAppealCase = () => {
           })
 
           return data?.updateAppealCase as AppealCase | undefined
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.updateCase))
           return undefined
         }
@@ -206,7 +293,7 @@ const useAppealCase = () => {
           })
 
           return Boolean(data)
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.updateCase))
           return false
         }
@@ -221,8 +308,13 @@ const useAppealCase = () => {
 
   return {
     createAppealCase,
+    createVerdictAppeal,
+    registerVerdictAppeal,
     isCreatingAppealCase:
-      isCreatingAppealCase || isLimitedAccessCreatingAppealCase,
+      isCreatingAppealCase ||
+      isLimitedAccessCreatingAppealCase ||
+      isCreatingVerdictAppeal ||
+      isRegisteringVerdictAppeal,
     transitionAppealCase,
     isTransitioningAppealCase:
       isTransitioningAppealCase || isLimitedAccessTransitioningAppealCase,

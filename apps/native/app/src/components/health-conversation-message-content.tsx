@@ -26,11 +26,19 @@ export const HealthConversationMessageContent = ({
 
   switch (content.__typename) {
     case 'HealthDirectorateHealthConversationTextContent':
-      return <Markdown>{content.text}</Markdown>
+      return (
+        <Markdown fontSize={16} lineHeight={24}>
+          {content.text}
+        </Markdown>
+      )
 
     case 'HealthDirectorateHealthConversationSegmentedContent':
       return (
-        <Typography variant="body2" color={theme.color.dark400}>
+        <Typography
+          variant="body2"
+          color={theme.color.dark400}
+          style={{ fontSize: 16, lineHeight: 24 }}
+        >
           {(content.segments ?? []).map((segment, index) => {
             // Treat any segment carrying an href as a link (robust to enum
             // casing); everything else renders as text.
@@ -42,7 +50,11 @@ export const HealthConversationMessageContent = ({
                   variant="body2"
                   weight="600"
                   color={theme.color.blue400}
-                  style={{ textDecorationLine: 'underline' }}
+                  style={{
+                    textDecorationLine: 'underline',
+                    fontSize: 16,
+                    lineHeight: 24,
+                  }}
                   onPress={() => openBrowser(href)}
                 >
                   {segment.label ?? href}
@@ -54,6 +66,7 @@ export const HealthConversationMessageContent = ({
                 key={index}
                 variant="body2"
                 color={theme.color.dark400}
+                style={{ fontSize: 16, lineHeight: 24 }}
               >
                 {segment.text ?? segment.label ?? ''}
               </Typography>

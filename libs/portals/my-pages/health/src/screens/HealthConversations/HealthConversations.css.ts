@@ -1,5 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const messageCard = style(
   themeUtils.responsiveStyle({
@@ -43,4 +43,31 @@ export const conversationRow = style({
       backgroundColor: theme.color.blue100,
     },
   },
+})
+
+export const termsCheckbox = style({})
+
+globalStyle(`${termsCheckbox} label`, {
+  alignItems: 'flex-start',
+})
+
+globalStyle(`${termsCheckbox} label > div`, {
+  alignSelf: 'flex-start',
+  marginTop: 2,
+})
+
+export const typeInstructions = style({})
+
+// Out-specifies the shared Markdown component's light-weight p global
+globalStyle(`${typeInstructions} div p`, {
+  fontWeight: theme.typography.semiBold,
+})
+
+export const messageTextContent = style({
+  whiteSpace: 'pre-line',
+  overflowWrap: 'anywhere',
+})
+
+export const messageSegmentedContent = style({
+  overflowWrap: 'anywhere',
 })
