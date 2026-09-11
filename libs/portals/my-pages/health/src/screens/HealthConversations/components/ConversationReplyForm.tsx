@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
 import { forwardRef, Ref } from 'react'
 import { messages } from '../../../lib/messages'
+import { MAX_MESSAGE_LENGTH } from '../utils/constants'
 import ConversationAvatar from './ConversationAvatar'
 
 interface Props {
@@ -76,10 +77,13 @@ export const ConversationReplyForm = forwardRef<HTMLDivElement, Props>(
             textarea
             rows={6}
             name="reply-message"
-            label={formatMessage(m.messages)}
+            label={`${formatMessage(m.messages)} (${
+              value.length
+            }/${MAX_MESSAGE_LENGTH})`}
             backgroundColor="blue"
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            maxLength={MAX_MESSAGE_LENGTH}
             ref={inputRef}
           />
         </Box>

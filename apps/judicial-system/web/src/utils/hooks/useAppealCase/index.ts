@@ -113,7 +113,7 @@ const useAppealCase = () => {
           }
 
           return appealCase
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.transitionCase))
           return undefined
         }
@@ -146,7 +146,7 @@ const useAppealCase = () => {
           })
 
           return data?.limitedAccessCreateAppealCase ?? undefined
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.transitionCase))
           return undefined
         }
@@ -182,7 +182,7 @@ const useAppealCase = () => {
           })
 
           return data?.createAppealCase ?? undefined
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.transitionCase))
           return undefined
         }
@@ -236,7 +236,7 @@ const useAppealCase = () => {
           }
 
           return true
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.transitionCase))
           return false
         }
@@ -268,7 +268,7 @@ const useAppealCase = () => {
           })
 
           return data?.updateAppealCase as AppealCase | undefined
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.updateCase))
           return undefined
         }
@@ -293,7 +293,7 @@ const useAppealCase = () => {
           })
 
           return Boolean(data)
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.updateCase))
           return false
         }
