@@ -58,7 +58,8 @@ describe('CaseRepositoryService — split civil claimants and files', () => {
     verdictModel = module.verdictModel as unknown as typeof verdictModel
     defendantEventLogModel =
       module.defendantEventLogModel as unknown as typeof defendantEventLogModel
-    caseStringModel = module.caseStringModel as unknown as typeof caseStringModel
+    caseStringModel =
+      module.caseStringModel as unknown as typeof caseStringModel
     dateLogModel = module.dateLogModel as unknown as typeof dateLogModel
     eventLogModel = module.eventLogModel as unknown as typeof eventLogModel
     indictmentCountModel =
