@@ -80,12 +80,17 @@ public contract matches the client contract rather than only its current data.
 Public and unauthenticated -- no `IdsUserGuard`, `ScopesGuard` or `@Audit`,
 since the consumer is the Contentful-driven Calculator slice on the public web.
 
-## Two deliberate deviations
+## Deliberate deviations
 
 **The root query is non-nullable**, against `conventions/graphql.md`'s "all root
 Query fields must be nullable". That rule protects consumers from a query that
 fronts a service which can be down; this one reads a static in-process registry
 with no network behind it.
+
+**Output uses a second scalar interface**, unlike input fields. This lets
+`TaxCalculatorArrayOutputField.itemFields` be typed as
+`[TaxCalculatorOutputScalarField!]!`, making nested arrays unrepresentable in
+the public schema and matching the client output contract.
 
 **Invalid client metadata throws rather than degrading.** An earlier version of
 this module warned and dropped the offending piece, on the reasoning that a
@@ -95,10 +100,11 @@ in the client, not derived by introspecting a zod schema, so a violation is a
 code bug the domain tests catch in CI -- not upstream API drift arriving at
 runtime.
 
-Taken together these two mean one bad contract entry nulls the whole response
-rather than one field. That is the intended trade: `validation/contract.ts`
-enumerates what must hold before anything is published -- for input and output
-fields alike -- and a violation should never reach a deploy.
+The non-null root query and throw-on-invalid-metadata decisions together mean
+one bad contract entry nulls the whole response rather than one field. That is
+the intended trade: `validation/contract.ts` enumerates what must hold before
+anything is published -- for input and output fields alike -- and a violation
+should never reach a deploy.
 
 Note that "only number fields carry `semantic`" is a runtime invariant on both
 sides by necessity: the client permits `semantic` on any scalar type, so

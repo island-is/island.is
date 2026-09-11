@@ -159,21 +159,14 @@ Keep input and output semantic enums separate even though their values match.
 The descriptions are different: input percentage asserts 0-1, output percentage
 does not.
 
-Give both new enums a full `valuesMap` with a description per member, matching
-what the input-side enums already do -- do not leave the members bare.
-`TaxCalculatorOutputFieldType.ARRAY`'s description must tell consumers where to
-go next: switch on `__typename` to `TaxCalculatorArrayOutputField` and read
-`itemFields`. That entry is the only signpost from the enum to the one output
-type carrying extra structure.
+Give both new enums a `valuesMap`, matching the input-side enums. Keep the
+descriptions short; `ARRAY` only needs to say that it is a repeating group.
 
 ### `src/lib/models/outputField.model.ts` (new)
 
 Defines, as TS symbol -> GraphQL name. Follow `inputField.model.ts`: give each
 output type a short TS name and its prefixed public name via the decorator
-argument. (A bare `@ObjectType()` on a class whose name already carries the
-prefix is also fine in this repo — `TaxCalculator` itself does that. What to
-avoid is the redundant form, an explicit decorator argument identical to the
-class name.)
+argument.
 
 | TS symbol            | GraphQL name                      | Decorator                                            |
 | -------------------- | --------------------------------- | ---------------------------------------------------- |
@@ -251,17 +244,9 @@ NestJS types the `resolveType` argument loosely, and without the annotation the
 `const unhandled: never` is dead code instead of a compile-time guarantee that
 every enum member is handled.
 
-Co-locate both interfaces and all five implementors in this one file, and say
-why in a header comment: `extends` is evaluated at class-definition time, and a
-custom `resolveType` forces each interface to reference its concrete classes.
-Split across files, that cycle makes module load order decide whether the
-library throws `TypeError: Class extends value undefined`. This is the same
-constraint `inputField.model.ts` documents, so a later reader does not "fix" it
-by splitting the file the way `inputDependencyValue.model.ts` is split.
-
-Give every field a `description`. This module describes all of them, including
-`type` (redundant with `__typename`, kept for consumers that would rather switch
-on an enum) and `itemFields`.
+Co-locate both interfaces and all five implementors in this one file for the
+same module-load-order reason as `inputField.model.ts`. Keep comments and field
+descriptions short; the domain README and roadmap carry the design rationale.
 
 `ArrayOutputField.itemFields` must be typed `[OutputScalarField!]!`, never
 `[OutputField!]!` — that is what keeps an array inside an array unrepresentable

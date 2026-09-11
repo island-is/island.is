@@ -10,6 +10,7 @@ export type ScalarOutputFieldType = Exclude<
   TaxCalculatorOutputFieldType.ARRAY
 >
 
+// Keep these co-located for the same module-load-order reason as inputField.model.ts.
 const resolveOutputField = (value: OutputField) => {
   switch (value.type) {
     case TaxCalculatorOutputFieldType.NUMBER:
