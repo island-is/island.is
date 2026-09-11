@@ -95,9 +95,9 @@ sequenceDiagram
     FE->>U: Receipt screen
 ```
 
-The webhook and the FE polling loop are **two independent paths to the same idempotent
-`verify`**. Either one settles the flow; the loser is a no-op for the state transition, but not
-for the FJS charge — see [Settlement & FJS charge](#settlement--fjs-charge).
+The webhook and the FE polling loop are **two independent paths into the same `verify`**. Only the
+terminal state transition is idempotent: one caller wins the compare-and-set and emits the event.
+The loser still reaches `createFjsCharge` — see [Settlement & FJS charge](#settlement--fjs-charge).
 
 ## Blikk status model
 

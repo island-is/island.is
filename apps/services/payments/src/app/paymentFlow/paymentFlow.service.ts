@@ -983,11 +983,7 @@ export class PaymentFlowService {
         )
 
         if (reconciled?.receptionId === charge.receptionID) {
-          // FJS handed back the charge it already had; nothing was duplicated.
-          this.logger.info(
-            `[${paymentFlowId}] FJS returned an existing charge; adopted the persisted row`,
-            { receptionId: charge.receptionID },
-          )
+          // FJS handed back the charge it already had; nothing was duplicated, nothing to report.
           return reconciled
         }
 
