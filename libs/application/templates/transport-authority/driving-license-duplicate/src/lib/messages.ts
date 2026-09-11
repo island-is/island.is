@@ -421,6 +421,6 @@ export const m = defineMessages({
     defaultMessage:
       'Ökuskírteinið verður fyrst gefið út á stafrænu formi og verður aðgengilegt í Ísland.is appinu þegar afgreiðslu er lokið.\n\nPlastökuskírteinið verður framleitt um miðjan nóvember og sent í pósti á skráð lögheimili um leið og það er tilbúið.',
     description:
-      'Body of the digital-licence information alert: licence is issued digitally first (available in the Ísland.is app), plastic card produced mid-November and mailed afterwards',
+      'Body of the digital-licence information alert: licence is issued digitally first (available in the Ísland.is app), plastic card produced mid-November and mailed afterwards to the registered legal domicile',
   },
 })
