@@ -40,9 +40,9 @@ import { EventLog } from '../models/eventLog.model'
 import { IndictmentCount } from '../models/indictmentCount.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
-import { Victim } from '../models/victim.model'
 import { caseInclude, UpdateCase } from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
+import { CivilClaimantRepositoryService } from './civilClaimantRepository.service'
 
 interface FindByIdOptions {
   transaction?: Transaction
@@ -113,11 +113,11 @@ export class CaseRepositoryService {
     private readonly caseStringModel: typeof CaseString,
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(EventLog) private readonly eventLogModel: typeof EventLog,
-    @InjectModel(Victim) private readonly victimModel: typeof Victim,
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
+    private readonly civilClaimantRepositoryService: CivilClaimantRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -753,23 +753,6 @@ export class CaseRepositoryService {
         )
       }
 
-      // Copy all victims to the new case
-      const victims = await this.victimModel.findAll({
-        where: { caseId },
-        transaction,
-      })
-
-      const victimCreateOptions: CreateOptions = { transaction }
-
-      for (const victim of victims) {
-        promises.push(
-          this.victimModel.create(
-            { ...victim.toJSON(), id: undefined, caseId: splitCaseId },
-            victimCreateOptions,
-          ),
-        )
-      }
-
       // Copy all indicment counts to the new case
       const indictmentCounts = await this.indictmentCountModel.findAll({
         where: { caseId },
@@ -790,6 +773,16 @@ export class CaseRepositoryService {
       // Copy all indictment count offenses to the new case
       // Nothing to do here, offenses are only linked to indictment counts
       // Consider removing case id from other tables not directly linked to cases
+
+      // Copy civil claimants that apply to the split defendant. Done before the
+      // case file work so files that point at those claimants can be remapped.
+      const civilClaimantIdMap =
+        await this.civilClaimantRepositoryService.copyApplicableToCaseForDefendant(
+          caseId,
+          splitCaseId,
+          defendantId,
+          { transaction },
+        )
 
       // Move the defendant's case files to the new case
       const caseFilesCategoriesToMove = [
@@ -816,7 +809,9 @@ export class CaseRepositoryService {
         ),
       )
 
-      // Copy all case files linked to the case but not to any defendant
+      // Copy all case files linked to the case but not to any defendant. Files
+      // that point at a civil claimant that was not copied with the defendant
+      // stay on the original case.
       const caseFiles = await this.caseFileModel.findAll({
         where: {
           caseId,
@@ -829,15 +824,65 @@ export class CaseRepositoryService {
       const caseFileCreateOptions: CreateOptions = { transaction }
 
       for (const caseFile of caseFiles) {
+        if (
+          caseFile.civilClaimantId &&
+          !civilClaimantIdMap.has(caseFile.civilClaimantId)
+        ) {
+          continue
+        }
+
         promises.push(
           this.caseFileModel.create(
-            { ...caseFile.toJSON(), id: undefined, caseId: splitCaseId },
+            {
+              ...caseFile.toJSON(),
+              id: undefined,
+              caseId: splitCaseId,
+              civilClaimantId: caseFile.civilClaimantId
+                ? civilClaimantIdMap.get(caseFile.civilClaimantId)
+                : undefined,
+            },
             caseFileCreateOptions,
           ),
         )
       }
 
       await Promise.all(promises)
+
+      // Remap civil claimant references on files that moved with the defendant.
+      // Copied files already carry the new ids from create above.
+      await Promise.all(
+        [...civilClaimantIdMap.entries()].map(
+          ([oldCivilClaimantId, newCivilClaimantId]) =>
+            this.caseFileModel.update(
+              { civilClaimantId: newCivilClaimantId },
+              {
+                where: {
+                  caseId: splitCaseId,
+                  civilClaimantId: oldCivilClaimantId,
+                },
+                transaction,
+              },
+            ),
+        ),
+      )
+
+      // Moved files whose civilClaimantId was not copied with this defendant
+      // must not keep a pointer into the original case.
+      const remappedCivilClaimantIds = [...civilClaimantIdMap.values()]
+
+      await this.caseFileModel.update(
+        { civilClaimantId: null },
+        {
+          where: {
+            caseId: splitCaseId,
+            civilClaimantId:
+              remappedCivilClaimantIds.length > 0
+                ? { [Op.notIn]: remappedCivilClaimantIds }
+                : { [Op.ne]: null },
+          },
+          transaction,
+        },
+      )
 
       await this.caseDefendantPoliceCaseNumberRepositoryService.moveAssignedRowsToCaseForDefendant(
         caseId,

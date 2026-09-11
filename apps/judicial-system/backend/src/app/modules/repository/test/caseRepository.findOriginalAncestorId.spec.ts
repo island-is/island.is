@@ -9,18 +9,16 @@ import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
-import { CivilClaimant } from '../models/civilClaimant.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 import { EventLog } from '../models/eventLog.model'
 import { IndictmentCount } from '../models/indictmentCount.model'
-import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
-import { Victim } from '../models/victim.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
+import { CivilClaimantRepositoryService } from '../services/civilClaimantRepository.service'
 
 const mockSequelizeModel = () => ({
   findOne: jest.fn(),
@@ -70,14 +68,8 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
         { provide: getModelToken(CaseString), useValue: mockSequelizeModel() },
         { provide: getModelToken(DateLog), useValue: mockSequelizeModel() },
         { provide: getModelToken(EventLog), useValue: mockSequelizeModel() },
-        { provide: getModelToken(Victim), useValue: mockSequelizeModel() },
         {
           provide: getModelToken(IndictmentCount),
-          useValue: mockSequelizeModel(),
-        },
-        { provide: getModelToken(Offense), useValue: mockSequelizeModel() },
-        {
-          provide: getModelToken(CivilClaimant),
           useValue: mockSequelizeModel(),
         },
         { provide: getModelToken(CaseFile), useValue: mockSequelizeModel() },
@@ -85,6 +77,14 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
         {
           provide: CaseDefendantPoliceCaseNumberRepositoryService,
           useValue: {},
+        },
+        {
+          provide: CivilClaimantRepositoryService,
+          useValue: {
+            copyApplicableToCaseForDefendant: jest
+              .fn()
+              .mockResolvedValue(new Map()),
+          },
         },
         CaseRepositoryService,
       ],

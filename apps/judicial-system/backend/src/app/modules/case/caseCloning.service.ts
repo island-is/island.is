@@ -24,7 +24,6 @@ import {
   DefendantRepositoryService,
   IndictmentCountRepositoryService,
   OffenseRepositoryService,
-  VictimRepositoryService,
 } from '../repository'
 
 interface DuplicateCaseOptions {
@@ -70,10 +69,10 @@ const caseFileCategoriesToCopy = [
 ]
 
 // Copies a case's object graph - the case row, its defendants, indictment
-// counts and offenses, victims, case strings, civil claimants and case files -
-// into a new case, with variations. The per-model copies live in the
-// repositories; this service owns the order, the id remapping between them
-// and the S3 objects behind the case files.
+// counts and offenses, case strings, civil claimants and case files - into a
+// new case, with variations. The per-model copies live in the repositories;
+// this service owns the order, the id remapping between them and the S3
+// objects behind the case files.
 @Injectable()
 export class CaseCloningService {
   constructor(
@@ -82,7 +81,6 @@ export class CaseCloningService {
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly indictmentCountRepositoryService: IndictmentCountRepositoryService,
     private readonly offenseRepositoryService: OffenseRepositoryService,
-    private readonly victimRepositoryService: VictimRepositoryService,
     private readonly caseStringRepositoryService: CaseStringRepositoryService,
     private readonly civilClaimantRepositoryService: CivilClaimantRepositoryService,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
@@ -257,10 +255,6 @@ export class CaseCloningService {
         indictmentCountIdMap,
         { transaction },
       )
-
-      await this.victimRepositoryService.copyAllToCase(caseId, newCaseId, {
-        transaction,
-      })
 
       await this.caseStringRepositoryService.copyByTypesToCase(
         caseId,

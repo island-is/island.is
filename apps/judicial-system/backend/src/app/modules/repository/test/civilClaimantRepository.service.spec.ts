@@ -285,4 +285,171 @@ describe('CivilClaimantRepositoryService', () => {
       ).rejects.toThrow(error)
     })
   })
+
+  describe('copyApplicableToCaseForDefendant', () => {
+    const newCaseId = 'some-new-case-id'
+    const defendantId = 'split-defendant-id'
+    const otherDefendantId = 'other-defendant-id'
+
+    it('copies only claimants that apply to the defendant and narrows their defendant references', async () => {
+      const applicableClaimantId = 'applicable-civil-claimant-id'
+      const sharedClaimantId = 'shared-civil-claimant-id'
+      const allDefendantsClaimantId = 'all-defendants-civil-claimant-id'
+      const otherClaimantId = 'other-civil-claimant-id'
+
+      model.findAll.mockResolvedValueOnce([
+        {
+          id: applicableClaimantId,
+          defendantIds: [defendantId],
+          toJSON: () => ({
+            id: applicableClaimantId,
+            caseId,
+            name: 'Applicable',
+            defendantIds: [defendantId],
+          }),
+        },
+        {
+          id: sharedClaimantId,
+          defendantIds: [defendantId, otherDefendantId],
+          toJSON: () => ({
+            id: sharedClaimantId,
+            caseId,
+            name: 'Shared',
+            defendantIds: [defendantId, otherDefendantId],
+          }),
+        },
+        {
+          id: allDefendantsClaimantId,
+          defendantIds: [],
+          toJSON: () => ({
+            id: allDefendantsClaimantId,
+            caseId,
+            name: 'All',
+            defendantIds: [],
+          }),
+        },
+        {
+          id: otherClaimantId,
+          defendantIds: [otherDefendantId],
+          toJSON: () => ({
+            id: otherClaimantId,
+            caseId,
+            name: 'Other',
+            defendantIds: [otherDefendantId],
+          }),
+        },
+      ])
+      model.create
+        .mockResolvedValueOnce({ id: 'new-applicable-id' })
+        .mockResolvedValueOnce({ id: 'new-shared-id' })
+        .mockResolvedValueOnce({ id: 'new-all-id' })
+
+      const result = await service.copyApplicableToCaseForDefendant(
+        caseId,
+        newCaseId,
+        defendantId,
+        { transaction },
+      )
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { caseId },
+        transaction,
+      })
+      expect(model.create).toHaveBeenCalledTimes(3)
+      expect(model.create).toHaveBeenNthCalledWith(
+        1,
+        {
+          id: undefined,
+          caseId: newCaseId,
+          name: 'Applicable',
+          defendantIds: [defendantId],
+        },
+        { transaction },
+      )
+      expect(model.create).toHaveBeenNthCalledWith(
+        2,
+        {
+          id: undefined,
+          caseId: newCaseId,
+          name: 'Shared',
+          defendantIds: [defendantId],
+        },
+        { transaction },
+      )
+      expect(model.create).toHaveBeenNthCalledWith(
+        3,
+        {
+          id: undefined,
+          caseId: newCaseId,
+          name: 'All',
+          defendantIds: [],
+        },
+        { transaction },
+      )
+      expect(result).toEqual(
+        new Map([
+          [applicableClaimantId, 'new-applicable-id'],
+          [sharedClaimantId, 'new-shared-id'],
+          [allDefendantsClaimantId, 'new-all-id'],
+        ]),
+      )
+    })
+
+    it('treats undefined defendantIds as applying to every defendant', async () => {
+      model.findAll.mockResolvedValueOnce([
+        {
+          id: civilClaimantId,
+          defendantIds: undefined,
+          toJSON: () => ({
+            id: civilClaimantId,
+            caseId,
+            name: 'All',
+            defendantIds: undefined,
+          }),
+        },
+      ])
+      model.create.mockResolvedValueOnce({ id: 'new-civil-claimant-id' })
+
+      const result = await service.copyApplicableToCaseForDefendant(
+        caseId,
+        newCaseId,
+        defendantId,
+        { transaction },
+      )
+
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          id: undefined,
+          caseId: newCaseId,
+          name: 'All',
+          defendantIds: undefined,
+        },
+        { transaction },
+      )
+      expect(result).toEqual(
+        new Map([[civilClaimantId, 'new-civil-claimant-id']]),
+      )
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([
+        {
+          id: civilClaimantId,
+          defendantIds: [defendantId],
+          toJSON: () => ({ id: civilClaimantId }),
+        },
+      ])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyApplicableToCaseForDefendant(
+          caseId,
+          newCaseId,
+          defendantId,
+          { transaction },
+        ),
+      ).rejects.toThrow(error)
+    })
+  })
 })
