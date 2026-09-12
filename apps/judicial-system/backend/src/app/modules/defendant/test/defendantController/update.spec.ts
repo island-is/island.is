@@ -5,10 +5,12 @@ import { BadRequestException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseType,
   DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
+  IndictmentCaseReviewDecision,
   RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
@@ -16,6 +18,7 @@ import {
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
 import {
+  AppealCase,
   Case,
   Defendant,
   DefendantEventLogRepositoryService,
@@ -33,6 +36,7 @@ type GivenWhenThen = (
   type: CaseType,
   courtCaseNumber?: string,
   existingDefendant?: Defendant,
+  caseOverrides?: Partial<Case>,
 ) => Promise<Then>
 
 describe('DefendantController - Update', () => {
@@ -79,6 +83,7 @@ describe('DefendantController - Update', () => {
       type: CaseType,
       courtCaseNumber?: string,
       existingDefendant?: Defendant,
+      caseOverrides: Partial<Case> = {},
     ) => {
       const then = {} as Then
 
@@ -87,7 +92,7 @@ describe('DefendantController - Update', () => {
           caseId,
           defendantId,
           user,
-          { id: caseId, courtCaseNumber, type } as Case,
+          { id: caseId, courtCaseNumber, type, ...caseOverrides } as Case,
           existingDefendant ?? defendant,
           defendantUpdate,
         )
@@ -430,6 +435,67 @@ describe('DefendantController - Update', () => {
     it('should reject the update', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  // The reviewer's decision is the prosecution's verdict appeal or its absence;
+  // once the court of appeals has received the appeal it is made.
+  describe('review decision changed after the court of appeals received the verdict appeal', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        { indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT },
+        CaseType.INDICTMENT,
+        caseId,
+        {
+          ...defendant,
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+        } as Defendant,
+        {
+          verdictAppealCase: {
+            appealState: AppealCaseState.RECEIVED,
+          } as AppealCase,
+        },
+      )
+    })
+
+    it('should reject the update', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('review decision changed while the verdict appeal is still with the district court', () => {
+    const updatedDefendant = {
+      ...defendant,
+      indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
+
+      then = await givenWhenThen(
+        { indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT },
+        CaseType.INDICTMENT,
+        caseId,
+        {
+          ...defendant,
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+        } as Defendant,
+        {
+          verdictAppealCase: {
+            appealState: AppealCaseState.APPEALED,
+          } as AppealCase,
+        },
+      )
+    })
+
+    it('should update the defendant', () => {
+      expect(then.error).toBeUndefined()
+      expect(then.result).toBe(updatedDefendant)
     })
   })
 
