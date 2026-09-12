@@ -2,6 +2,7 @@ import {
   buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSelectField,
   buildTextField,
@@ -13,6 +14,7 @@ import {
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
 import { childMessages, sharedMessages } from '../../lib/messages'
+import { getNeedsInterpreterOptions } from '../../utils/childProtectionNotificationUtils'
 import { isNoNationalId } from '../../utils/conditionUtils'
 import { IS } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
@@ -183,15 +185,11 @@ export const childInfoManualSection = buildSection({
             label: l.name,
           })),
         }),
-        buildCheckboxField({
+        buildRadioField({
           id: 'child.manualInfo.needsInterpreter',
-          spacing: 0,
-          options: [
-            {
-              value: YES,
-              label: sharedMessages.needsInterpreter,
-            },
-          ],
+          title: sharedMessages.needsInterpreter,
+          widthWithIllustration: '1/3',
+          options: getNeedsInterpreterOptions(),
         }),
       ],
     }),

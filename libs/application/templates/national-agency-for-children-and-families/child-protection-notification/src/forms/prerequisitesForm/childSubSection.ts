@@ -21,6 +21,7 @@ import {
   prerequisitesMessages,
   sharedMessages,
 } from '../../lib/messages'
+import { getNeedsInterpreterOptions } from '../../utils/childProtectionNotificationUtils'
 import {
   isChildOver18,
   isKnowsNationalId,
@@ -228,15 +229,11 @@ export const childSubSection = buildSubSection({
             )
           },
         }),
-        buildCheckboxField({
+        buildRadioField({
           id: 'child.nationalIdInfo.needsInterpreter',
-          spacing: 0,
-          options: [
-            {
-              value: YES,
-              label: sharedMessages.needsInterpreter,
-            },
-          ],
+          title: sharedMessages.needsInterpreter,
+          widthWithIllustration: '1/3',
+          options: getNeedsInterpreterOptions(),
           condition: (answers, _, user) => {
             const role = getApplicantRole(user?.profile?.nationalId ?? '')
             return (

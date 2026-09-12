@@ -83,6 +83,12 @@ const wellbeingRadioLabelMap = {
   [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
 } as const
 
+const needsInterpreterLabelMap = {
+  [YES]: sharedMessages.radioYes,
+  [NO]: sharedMessages.radioNo,
+  [DO_NOT_KNOW]: sharedMessages.needsInterpreterDoNotKnow,
+} as const
+
 export const getOverviewItems = (answers: FormValue): Array<KeyValueItem> => {
   return [
     {
@@ -400,9 +406,13 @@ export const getChildWithNationalIdItems = (
                 {
                   width: 'half' as const,
                   keyText: sharedMessages.needsInterpreter,
-                  valueText: childNeedsInterpreter.includes(YES)
-                    ? sharedMessages.radioYes
-                    : sharedMessages.radioNo,
+                  valueText:
+                    needsInterpreterLabelMap[
+                      childNeedsInterpreter as keyof typeof needsInterpreterLabelMap
+                    ] ??
+                    childNeedsInterpreter ??
+                    '',
+                  hideIfEmpty: true,
                 },
               ]
             : []),
@@ -541,9 +551,13 @@ export const getChildManualItems = (
     {
       width: 'half',
       keyText: sharedMessages.needsInterpreter,
-      valueText: childManualNeedsInterpreter.includes(YES)
-        ? sharedMessages.radioYes
-        : sharedMessages.radioNo,
+      valueText:
+        needsInterpreterLabelMap[
+          childManualNeedsInterpreter as keyof typeof needsInterpreterLabelMap
+        ] ??
+        childManualNeedsInterpreter ??
+        '',
+      hideIfEmpty: true,
     },
   ]
 }
@@ -654,11 +668,15 @@ const buildParentItems = (
           {
             width: 'half' as const,
             keyText: sharedMessages.needsInterpreter,
-            valueText: parent.needsInterpreter?.includes(YES)
-              ? sharedMessages.radioYes
-              : sharedMessages.radioNo,
+            valueText:
+              needsInterpreterLabelMap[
+                parent.needsInterpreter as keyof typeof needsInterpreterLabelMap
+              ] ??
+              parent.needsInterpreter ??
+              '',
+            hideIfEmpty: true,
           },
-          ...(parent.needsInterpreter?.includes(YES)
+          ...(parent.needsInterpreter === YES
             ? [
                 {
                   width: 'half' as const,
@@ -824,9 +842,13 @@ export const getMemmCultureItems = (
           {
             width: 'full' as const,
             keyText: sharedMessages.needsInterpreter,
-            valueText: memmCultureNeedsInterpreter.includes(YES)
-              ? sharedMessages.radioYes
-              : sharedMessages.radioNo,
+            valueText:
+              needsInterpreterLabelMap[
+                memmCultureNeedsInterpreter as keyof typeof needsInterpreterLabelMap
+              ] ??
+              memmCultureNeedsInterpreter ??
+              '',
+            hideIfEmpty: true,
           },
         ]
       : []),

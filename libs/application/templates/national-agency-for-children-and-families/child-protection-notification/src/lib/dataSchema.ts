@@ -91,7 +91,7 @@ const childSchema = z
         municipality: z.string().optional(),
         municipalityPostalCode: z.string().optional(),
         language: z.string().optional(),
-        needsInterpreter: z.array(z.string()).optional(),
+        needsInterpreter: z.string().optional(),
       })
       .optional(),
   })
@@ -145,7 +145,7 @@ const parentSchema = z.object({
   postalCode: z.string().optional(),
   municipality: z.string().optional(),
   municipalityPostalCode: z.string().optional(),
-  needsInterpreter: z.array(z.string()).optional(),
+  needsInterpreter: z.string().optional(),
   preferredLanguage: z.string().optional(),
 })
 
@@ -190,7 +190,7 @@ const parentsSchema = z
       for (const key of ['parent1', 'parent2'] as const) {
         const parent = data[key]
         const needsPreferredLanguage =
-          parent?.citizenship !== IS && parent?.needsInterpreter?.includes(YES)
+          parent?.citizenship !== IS && parent?.needsInterpreter === YES
 
         // If parent is non-Icelandic and interpreter is requested, preferred language is required.
         if (needsPreferredLanguage && !parent?.preferredLanguage) {
@@ -223,7 +223,7 @@ const memmSchema = z.object({
       languageUsage: z.string(),
       languages: z.array(z.string()).optional(),
       preferredLanguage: z.string().nullish(),
-      needsInterpreter: z.array(z.string()).nullish(),
+      needsInterpreter: z.string().nullish(),
     })
     .superRefine((data, ctx) => {
       const showsLanguageSection = SHOW_LANGUAGE_SECTION_TYPES.includes(
