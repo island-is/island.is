@@ -92,15 +92,10 @@ export const isRowExpired = (
 ): boolean => row.expiresAt.getTime() < Date.now()
 
 /**
- * The identifiers every bank-transfer log line carries, as structured logger metadata rather than
- * interpolated into the message. Winston serialises these to top-level JSON fields in production
- * (`format.json()`), so Datadog reads them as attributes and the lifecycle can be joined on
- * `correlationId` (our per-attempt key) or `rrn` (the provider's payment id) with no Grok parsing.
- *
- * All three are required: a bank-transfer log line that cannot name its attempt is not joinable,
- * and a partially-filled context silently looks joinable while not being so. The call sites that
- * genuinely cannot supply all three log what they have under the same field names, leaving the
- * rest absent rather than placeheld — see `toResult` here and the refund saga.
+ * Identifiers on every bank-transfer log line. Winston writes metadata as top-level JSON fields,
+ * so Datadog joins on `correlationId` / `rrn` without Grok. The flow id is also prefixed onto the
+ * message, as every other payment method does. Call sites that lack a field omit it rather than
+ * placehold it — a blank id looks joinable and is not.
  */
 export type BankTransferLogContext = {
   paymentFlowId: string
@@ -108,21 +103,14 @@ export type BankTransferLogContext = {
   rrn: string
 }
 
-/**
- * Single source of the bank-transfer log identifiers — no call site assembles them by hand.
- * `rrn` is the provider's payment id; `correlationId` is our own per-attempt key.
- */
+/** `rrn` is the provider's payment id; `correlationId` our per-attempt key. */
 export const bankTransferLogContext = (
   paymentFlowId: string,
   correlationId: string,
   rrn: string,
 ): BankTransferLogContext => ({ paymentFlowId, correlationId, rrn })
 
-/**
- * Row-driven convenience wrapper around `bankTransferLogContext`. Takes the correlationId from
- * `id` rather than `sourceReferenceId`: `create` sets both to the same uuid, and `id` is what every
- * other call site in the module already passes as the correlationId.
- */
+/** Correlation id comes from `id`, not `sourceReferenceId` — `create` sets both to the same uuid. */
 export const rowLogContext = (
   row: Pick<BankTransferPayment, 'paymentFlowId' | 'id' | 'providerPaymentId'>,
 ): BankTransferLogContext =>

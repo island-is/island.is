@@ -148,9 +148,7 @@ export class BankTransferService {
           reason: 'payment_failed',
           message: `Failed to create bank transfer: ${errorMessage}`,
           metadata: { error: errorMessage },
-          // No `rrn`: the provider call is what just failed, so there is no provider payment id
-          // to name. Logged without the field rather than with a placeholder — an empty or
-          // freshly-generated value would look joinable in Datadog without being so.
+          // No `rrn`: the provider call is what failed, so there is no payment id yet.
           logContext: { paymentFlowId: input.paymentFlowId, correlationId },
         },
         { useRetry: true, throwOnError: false },
@@ -161,7 +159,7 @@ export class BankTransferService {
     // Blikk can return 200 for a payment that is already terminal, with its reason in `message`.
     if (isBankTransferFailureStatus(providerResult.status)) {
       this.logger.warn(
-        `Bank transfer created already ${providerResult.status}`,
+        `[${input.paymentFlowId}] Bank transfer created already ${providerResult.status}`,
         {
           ...bankTransferLogContext(
             input.paymentFlowId,
@@ -202,7 +200,7 @@ export class BankTransferService {
 
       if (!cancelled) {
         this.logger.error(
-          'Bank transfer row insert failed and the Blikk payment could not be cancelled — it may still settle with no local record',
+          `[${logContext.paymentFlowId}] Bank transfer row insert failed and the Blikk payment could not be cancelled — it may still settle with no local record`,
           { ...logContext, error: errorMessage },
         )
       }
@@ -363,10 +361,13 @@ export class BankTransferService {
       //   settlement may be in flight — refuse, and let verify/webhook/TTL keep tracking it.
       if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
         if (lastKnownStatus !== 'DRAFT' && lastKnownStatus !== 'SCA_REQUIRED') {
-          this.logger.warn('Cancel refused — payment may be settling', {
-            ...logContext,
-            lastKnownStatus,
-          })
+          this.logger.warn(
+            `[${logContext.paymentFlowId}] Cancel refused — payment may be settling`,
+            {
+              ...logContext,
+              lastKnownStatus,
+            },
+          )
           throw new BadRequestException(
             BankTransferErrorCode.BankTransferAlreadyInProgress,
           )
@@ -487,7 +488,7 @@ export class BankTransferService {
         rawStatus: row.lastKnownStatus,
       }).catch((error) => {
         this.logger.warn(
-          'Failed to repair settled bank transfer during status read',
+          `[${row.paymentFlowId}] Failed to repair settled bank transfer during status read`,
           { ...rowLogContext(row), error: (error as Error)?.message },
         )
       })
@@ -498,10 +499,13 @@ export class BankTransferService {
     // UNPAID. The Blikk refresh above is what guards against discarding a settled-but-uncallbacked row.
     if (isExpired) {
       void this.softDeleteRow(row.id).catch((error) => {
-        this.logger.warn('Failed to soft-delete expired bank transfer row', {
-          ...rowLogContext(row),
-          error: (error as Error)?.message,
-        })
+        this.logger.warn(
+          `[${row.paymentFlowId}] Failed to soft-delete expired bank transfer row`,
+          {
+            ...rowLogContext(row),
+            error: (error as Error)?.message,
+          },
+        )
       })
       return null
     }
@@ -606,8 +610,7 @@ export class BankTransferService {
   async createBankTransferFulfillment({
     paymentFlowId,
     confirmationRefId,
-    // Carried for logging only — the charge payload holds it as `payInfo.RRN`, but typed optional
-    // there, and a log identifier must not be optional. The caller always has it.
+    // Logging only. `payInfo.RRN` holds it too, but typed optional there.
     providerPaymentId,
     chargePayload,
   }: {
@@ -645,8 +648,8 @@ export class BankTransferService {
       }
     }
 
-    // `payableAmount` deliberately omitted: the bank-transfer log carries identifiers only.
-    this.logger.info('Creating bank transfer FJS charge', {
+    // No `payableAmount`: identifiers only.
+    this.logger.info(`[${paymentFlowId}] Creating bank transfer FJS charge`, {
       ...logContext,
       paymentMeans: chargePayload.payInfo?.paymentMeans,
     })
@@ -660,8 +663,7 @@ export class BankTransferService {
           maxRetries: 3,
           retryDelayMs: 1000,
           logger: this.logger,
-          // `retry`'s Logger interface takes a message string and no metadata, so this one sink
-          // gets the identifiers rendered into the prefix instead of as structured fields.
+          // `retry`'s Logger takes no metadata, so the ids go in the prefix here.
           logPrefix: `${formatBankTransferLogContext(
             logContext,
           )}Create bank transfer FJS charge`,
@@ -673,7 +675,7 @@ export class BankTransferService {
       // Fulfillment is committed; we don't un-pay. The payment worker reconciles fulfillments
       // that lack an FJS charge, so this inline failure is retried automatically — not critical.
       this.logger.warn(
-        'Bank transfer settled but inline FJS charge failed after retries — the payment worker will retry',
+        `[${paymentFlowId}] Bank transfer settled but inline FJS charge failed after retries — the payment worker will retry`,
         {
           ...logContext,
           errorName: (error as Error)?.name,
@@ -705,14 +707,16 @@ export class BankTransferService {
     } catch (e) {
       if (e instanceof BlikkClientError) {
         // Joins the flow to Blikk's reason (in e.message); the thrown code is deliberately generic.
-        this.logger.error('Blikk create payment failed', {
-          // No `rrn`: the create call is what failed, so there is no provider payment id yet —
-          // the same case as the `payment_failed` event in `create`.
-          paymentFlowId: input.paymentFlowId,
-          correlationId: input.correlationId,
-          status: e.status,
-          error: e.message,
-        })
+        this.logger.error(
+          `[${input.paymentFlowId}] Blikk create payment failed`,
+          {
+            // No `rrn`: the create call is what failed.
+            paymentFlowId: input.paymentFlowId,
+            correlationId: input.correlationId,
+            status: e.status,
+            error: e.message,
+          },
+        )
         throw new BadRequestException(
           BankTransferErrorCode.FailedToCreateBankTransfer,
         )
@@ -859,8 +863,7 @@ export class BankTransferService {
 
   /** Best-effort Blikk GET; logs and returns null on failure. Not for verify (which must throw). */
   private async refreshFromBlikkOrWarn(
-    // `id` is included solely so the log line can carry the correlationId; both callers pass a
-    // full row, so nothing had to be threaded any further than this signature.
+    // `id` is here only so the log can carry the correlationId; both callers pass a full row.
     row: Pick<
       BankTransferPayment,
       'providerPaymentId' | 'paymentFlowId' | 'id'
@@ -869,10 +872,13 @@ export class BankTransferService {
     try {
       return await this.getPayment(row.providerPaymentId)
     } catch (e) {
-      this.logger.warn('Blikk refresh failed during status read', {
-        ...rowLogContext(row),
-        error: (e as Error)?.message,
-      })
+      this.logger.warn(
+        `[${row.paymentFlowId}] Blikk refresh failed during status read`,
+        {
+          ...rowLogContext(row),
+          error: (e as Error)?.message,
+        },
+      )
       return null
     }
   }
@@ -943,13 +949,9 @@ export class BankTransferService {
       return
     }
 
-    // One line per state transition: this terminal state used to be logged twice — once here with
-    // the identifiers and once by `logPaymentFlowUpdate` without them. The identifiers and Blikk's
-    // own failure reason now ride along on `logPaymentFlowUpdate`'s single line as structured
-    // fields, so nothing is lost. The reason matters because it is what separates a routine payer
-    // decline from a provider-side fault failing every payment (an expired Blikk certificate,
-    // say); it is already persisted on the event and sent upstream, so logging it adds no
-    // exposure the flow did not already have.
+    // One line per transition: this used to log here *and* via `logPaymentFlowUpdate`. The ids and
+    // Blikk's reason now ride on that single line — the reason separates a payer decline from a
+    // provider-side fault failing every payment.
     await this.paymentFlowService.logPaymentFlowUpdate(
       {
         paymentFlowId: row.paymentFlowId,
@@ -1024,8 +1026,8 @@ export class BankTransferService {
         }
         if (e.status !== undefined) {
           this.logger.warn(
-            'Blikk refused to cancel — SCA session still live',
-            // `providerPaymentId` dropped from the metadata: it is `rrn` on the log context.
+            `[${logContext.paymentFlowId}] Blikk refused to cancel — SCA session still live`,
+            // `providerPaymentId` dropped: it is `rrn` on the context.
             { ...logContext, status: e.status, error: e.message },
           )
           return false
@@ -1033,7 +1035,7 @@ export class BankTransferService {
       }
 
       this.logger.warn(
-        'Could not reach Blikk to cancel — leaving attempt live',
+        `[${logContext.paymentFlowId}] Could not reach Blikk to cancel — leaving attempt live`,
         { ...logContext, error: (e as Error)?.message },
       )
       throw new BadRequestException(
@@ -1076,12 +1078,9 @@ export class BankTransferService {
     message?: string
   }): BankTransferPaymentResult {
     if (!isBlikkStatus(data.status)) {
-      // The only line in the flow that cannot carry the full context: `toResult` maps a raw
-      // provider payload and has no access to the paymentFlowId or the correlationId. The
-      // provider payment id is reported as `rrn` — the same field name the rest of the flow
-      // uses, so this line still joins on it — and the other two are left absent rather than
-      // guessed. Note the previous message interpolated this id into the leading `[...]` slot,
-      // where every other line put the paymentFlowId.
+      // The one line without full context: `toResult` sees only the raw provider payload. Reports
+      // `rrn` so it still joins; the other two are omitted, not guessed. (The old message put this
+      // id in the leading `[...]` slot, where every other line puts the flow id.)
       this.logger.warn('Unknown bank transfer status received', {
         rrn: data.id,
         status: data.status,

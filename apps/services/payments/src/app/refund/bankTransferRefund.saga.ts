@@ -103,10 +103,13 @@ export const createBankTransferRefundSaga = (
       }
 
       if (deletedPaymentFulfillment) {
-        logger.info('Restoring bank transfer payment fulfillment', {
-          paymentFlowId: ctx.paymentFlowId,
-          correlationId: ctx.paymentFulfillment.confirmationRefId,
-        })
+        logger.info(
+          `[${ctx.paymentFlowId}] Restoring bank transfer payment fulfillment`,
+          {
+            paymentFlowId: ctx.paymentFlowId,
+            correlationId: ctx.paymentFulfillment.confirmationRefId,
+          },
+        )
         await paymentFlowService.restorePaymentFulfillment({
           paymentFlowId: ctx.paymentFlowId,
           confirmationRefId: deletedPaymentFulfillment.confirmationRefId,
@@ -174,9 +177,7 @@ export const createBankTransferRefundSaga = (
           reasonForRefund: RefundType.FULFILLMENT_FAILURE,
           originalError: ctx.input.reasonForRefund,
         },
-        // No `rrn`: the refund context carries the fulfillment, not the bank-transfer row, and the
-        // provider payment id is only looked up on the `needsFjsCreate` branch. Left absent rather
-        // than guessed — see the note in `bankTransfer.utils.ts`.
+        // No `rrn`: only looked up on the `needsFjsCreate` branch.
         logContext: {
           paymentFlowId: ctx.paymentFlowId,
           correlationId: ctx.paymentFulfillment.confirmationRefId,
@@ -211,7 +212,7 @@ export const createBankTransferRefundSaga = (
             action: 'deleted_fjs',
             reason: ctx.input.reasonForRefund,
           },
-          // No `rrn` — same reason as in DELETE_FJS_CHARGE above.
+          // No `rrn` — as above.
           logContext: {
             paymentFlowId: ctx.paymentFlowId,
             correlationId: ctx.paymentFulfillment.confirmationRefId,

@@ -219,13 +219,16 @@ describe('BankTransferService', () => {
       ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
 
       // The generic code goes to the payer; the Blikk reason must land in the logs with flow context.
-      expect(logger.error).toHaveBeenCalledWith('Blikk create payment failed', {
-        paymentFlowId: 'flow-1',
-        correlationId: 'btp-err',
-        status: 403,
-        error:
-          'Blikk request failed (403): sales channel does not allow direct debtor payments',
-      })
+      expect(logger.error).toHaveBeenCalledWith(
+        '[flow-1] Blikk create payment failed',
+        {
+          paymentFlowId: 'flow-1',
+          correlationId: 'btp-err',
+          status: 403,
+          error:
+            'Blikk request failed (403): sales channel does not allow direct debtor payments',
+        },
+      )
     })
   })
 
@@ -579,10 +582,9 @@ describe('BankTransferService', () => {
 
       await service.create(createInput)
 
-      // The identifiers moved out of the message into structured metadata; the provider's reason
-      // still has to reach the log, which is what this test is for.
+      // Ids are metadata now; the provider's reason still has to reach the log.
       expect(logger.warn).toHaveBeenCalledWith(
-        'Bank transfer created already error',
+        '[flow-1] Bank transfer created already error',
         {
           paymentFlowId: 'flow-1',
           correlationId: expect.any(String),
@@ -968,11 +970,7 @@ describe('BankTransferService', () => {
             rawStatus,
             providerMessage: 'provider detail',
           },
-          // One line per state transition: the identifiers and the provider's reason ride on
-          // logPaymentFlowUpdate's own log line, so the flow no longer logs a second one of its
-          // own. The reason has to reach the application log because it is what separates a
-          // routine payer decline from a provider-side fault failing every payment (an expired
-          // Blikk certificate, say).
+          // Ids and the provider's reason ride on logPaymentFlowUpdate's single line.
           logContext: {
             paymentFlowId: 'flow-1',
             correlationId: 'corr-1',

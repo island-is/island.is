@@ -248,10 +248,9 @@ export class WorkerService {
     // The charge is PAID — payInfo must carry the amount that actually settled, not the
     // catalog price at worker-run time (prices may have changed since settlement).
     if (catalogTotalPrice !== bankTransferPayment.amount) {
-      // The two amounts are deliberately not logged — the bank-transfer log carries identifiers
-      // only. Both are recoverable from the row and the catalog for any flow this line names.
+      // Amounts not logged: identifiers only. Both are recoverable from the row and catalog.
       this.logger.warn(
-        'Catalog total differs from settled bank transfer amount — charging the settled amount',
+        `[${paymentFlow.id}] Catalog total differs from settled bank transfer amount — charging the settled amount`,
         bankTransferLogContext(
           paymentFlow.id,
           fulfillment.confirmationRefId,

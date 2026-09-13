@@ -81,9 +81,8 @@ interface PaymentFlowUpdateConfig {
 }
 
 /**
- * Structured fields merged onto a log line's record. `message` and `level` are excluded because
- * winston merges metadata onto the record itself: a `message` key is concatenated onto the real
- * message text, and a `level` key is silently dropped — both quietly corrupting the line.
+ * Fields merged onto a log record. `message` and `level` are excluded: winston concatenates a
+ * `message` key onto the real text and drops a `level` key, corrupting the line either way.
  */
 type LogContextFields = Record<
   string,
@@ -514,14 +513,8 @@ export class PaymentFlowService {
       message: string
       metadata?: object
       /**
-       * Identifiers attached to this call's application log line as structured logger metadata
-       * (top-level JSON fields in production, so Datadog reads them as attributes). Distinct from
-       * `metadata`, which is persisted on the event and sent upstream in the webhook body.
-       *
-       * The bank-transfer flow passes its canonical log context here so that the one line this
-       * method emits per state transition is joinable on `correlationId` / `rrn`, without the flow
-       * having to log a second line of its own alongside it. The message text is unchanged, so
-       * parsers matching the existing `[id] type: message` string keep working.
+       * Identifiers for this call's log line only — unlike `metadata`, which is persisted and sent
+       * upstream. Lets the caller skip logging a second line of its own. Message text unchanged.
        */
       logContext?: LogContextFields
     },
@@ -529,8 +522,8 @@ export class PaymentFlowService {
   ) {
     this.logger.info(
       `[${update.paymentFlowId}] ${update.type}: ${update.message}`,
-      // Spread rather than passed through: winston merges the metadata object onto the log record,
-      // and an empty one contributes no fields — so callers that pass no context are unaffected.
+      // Spread, not passed through: an empty object contributes no fields, so callers that pass
+      // no context are unaffected.
       { ...update.logContext },
     )
     const paymentFlow = (
