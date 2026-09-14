@@ -59,7 +59,7 @@ export const LinkV2: React.FC<React.PropsWithChildren<LinkProps>> = ({
   if (isInternal) {
     const hrefString = href?.toString()
 
-    if (shouldLinkBeAnAnchorTag(hrefString)) {
+    if (newTab || shouldLinkBeAnAnchorTag(hrefString)) {
       return (
         <a
           className={classNames}
@@ -67,6 +67,7 @@ export const LinkV2: React.FC<React.PropsWithChildren<LinkProps>> = ({
           href={hrefString}
           {...linkProps}
           {...(newTab && { target: '_blank' })}
+          {...(newTab && { rel: 'noopener noreferrer' })}
           tabIndex={skipTab ? -1 : undefined}
         >
           {children}
@@ -92,7 +93,6 @@ export const LinkV2: React.FC<React.PropsWithChildren<LinkProps>> = ({
             className={classNames}
             data-testid={dataTestId}
             {...linkProps}
-            {...(newTab && { target: '_blank' })}
             tabIndex={skipTab ? -1 : undefined}
           >
             {children}
