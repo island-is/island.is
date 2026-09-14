@@ -433,6 +433,17 @@ export class CourtDocumentRepositoryService {
         `Copying court documents of case ${mergedCaseId} into court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
       )
 
+      // Lock the parent's court documents before asking whether this merged
+      // case is already among them. Two requests merging the same case - the
+      // completion of the merged case and the creation of a court session -
+      // would otherwise both find none and both copy.
+      await this.courtDocumentModel.findAll({
+        where: { caseId: parentCaseId },
+        attributes: ['id'],
+        lock: transaction.LOCK.UPDATE,
+        transaction,
+      })
+
       const numAlreadyCopied = await this.courtDocumentModel.count({
         where: { caseId: parentCaseId, mergedFromCaseId: mergedCaseId },
         transaction,

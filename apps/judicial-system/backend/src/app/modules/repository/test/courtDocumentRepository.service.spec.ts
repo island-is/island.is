@@ -176,10 +176,26 @@ describe('CourtDocumentRepositoryService', () => {
         transaction,
       })
 
+    // The documents of the merged case the copies are made from - the query
+    // that asks for them is the one scoped to the merged case, told apart from
+    // the row locks the method takes on the parent's own documents.
+    const sourceQuery = () =>
+      courtDocumentModel.findAll.mock.calls
+        .map(([options]) => options)
+        .find((options) => options.where?.caseId === mergedCaseId)
+
+    // The source documents are returned by that query alone; every other
+    // findAll in this method locks the parent's rows and returns nothing.
+    const givenSourceDocuments = (documents: unknown[]) =>
+      courtDocumentModel.findAll.mockImplementation(
+        async ({ where }: { where?: { caseId?: string } }) =>
+          where?.caseId === mergedCaseId ? documents : [],
+      )
+
     it('copies the filed documents of a merged case that held court sessions', async () => {
       courtSessionModel.count.mockResolvedValueOnce(2)
       const caseFileId = uuid()
-      courtDocumentModel.findAll.mockResolvedValueOnce([
+      givenSourceDocuments([
         {
           id: 'source-1',
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
@@ -202,8 +218,7 @@ describe('CourtDocumentRepositoryService', () => {
 
       expect(copied).toBe(true)
       // Only the documents the merged case actually laid before its own court
-      const [sourceQuery] = courtDocumentModel.findAll.mock.calls[0]
-      expect(sourceQuery.where).toEqual({
+      expect(sourceQuery()?.where).toEqual({
         caseId: mergedCaseId,
         mergedFromCaseId: null,
         courtSessionId: { [Op.ne]: null },
@@ -241,14 +256,11 @@ describe('CourtDocumentRepositoryService', () => {
 
     it('copies every document of a merged case that never held a court session', async () => {
       courtSessionModel.count.mockResolvedValueOnce(0)
-      courtDocumentModel.findAll.mockResolvedValueOnce([
-        { id: 'source-1', name: 'Ákæra' },
-      ])
+      givenSourceDocuments([{ id: 'source-1', name: 'Ákæra' }])
 
       await copy()
 
-      const [sourceQuery] = courtDocumentModel.findAll.mock.calls[0]
-      expect(sourceQuery.where).toEqual({
+      expect(sourceQuery()?.where).toEqual({
         caseId: mergedCaseId,
         mergedFromCaseId: null,
       })
@@ -267,11 +279,23 @@ describe('CourtDocumentRepositoryService', () => {
         where: { caseId: parentCaseId, mergedFromCaseId: mergedCaseId },
         transaction,
       })
+      // The parent's rows are locked before the question is asked, so a second
+      // request merging the same case waits and then sees the copies
+      expect(courtDocumentModel.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { caseId: parentCaseId },
+          lock: transaction.LOCK.UPDATE,
+        }),
+      )
+      const lockCall = courtDocumentModel.findAll.mock.invocationCallOrder[0]
+      expect(lockCall).toBeLessThan(
+        courtDocumentModel.count.mock.invocationCallOrder[0],
+      )
       expect(courtDocumentModel.bulkCreate).not.toHaveBeenCalled()
     })
 
     it('copies nothing when the merged case has no documents', async () => {
-      courtDocumentModel.findAll.mockResolvedValueOnce([])
+      givenSourceDocuments([])
 
       const copied = await copy()
 
