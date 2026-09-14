@@ -34,12 +34,16 @@ import {
 const daysOfResidency = 365
 
 // v6 takes the caller's identity from the forwarded X-Road token rather than a
-// per-call param. The DrivingLicenseApi wrapper establishes that auth context
-// itself (withAuthContext, per call), so these tests deliberately do NOT set it
-// up — `asUser` is a pass-through that only documents which caller a case is
-// about. If the production wrapper ever stops wrapping, these tests fail, which
-// is the point: the mock handlers route on the `authorization` header that only
-// withAuth can forward.
+// per-call param, and the DrivingLicenseApi wrapper establishes that auth
+// context itself (withAuthContext, per call). These tests deliberately do NOT
+// set it up: `asUser` is a pure pass-through whose only job is to document which
+// caller a case is about, keeping the call sites readable.
+//
+// It asserts nothing. The v6 mock handlers identify the caller from the
+// `jwttoken` header (see requestHandlers.ts and apiConfiguration.ts) and most do
+// not inspect it at all, so these tests would still pass if the production
+// wrapper stopped wrapping. The auth wiring is pinned in the client spec
+// instead, which asserts the outgoing `jwttoken` on the v6 request itself.
 const asUser = <T>(_authorization: string, fn: () => Promise<T>): Promise<T> =>
   fn()
 
