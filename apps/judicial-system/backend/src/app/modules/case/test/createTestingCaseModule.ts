@@ -39,9 +39,12 @@ import {
   DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
+  EventLogRepositoryService,
   IndictmentCountRepositoryService,
   OffenseRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
+  SubpoenaRepositoryService,
+  VerdictRepositoryService,
   VictimRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
@@ -95,7 +98,10 @@ jest.mock('../../repository/services/caseStringRepository.service')
 jest.mock('../../repository/services/dateLogRepository.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock('../../repository/services/eventLogRepository.service')
 jest.mock('../../repository/services/policeDigitalCaseFileRepository.service')
+jest.mock('../../repository/services/subpoenaRepository.service')
+jest.mock('../../repository/services/verdictRepository.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -137,9 +143,12 @@ export const createTestingCaseModule = async () => {
       DateLogRepositoryService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      EventLogRepositoryService,
       IndictmentCountRepositoryService,
       OffenseRepositoryService,
       PoliceDigitalCaseFileRepositoryService,
+      SubpoenaRepositoryService,
+      VerdictRepositoryService,
       VictimRepositoryService,
       {
         provide: IntlService,
@@ -290,6 +299,18 @@ export const createTestingCaseModule = async () => {
     VictimRepositoryService,
   )
 
+  const subpoenaRepositoryService = caseModule.get<SubpoenaRepositoryService>(
+    SubpoenaRepositoryService,
+  )
+
+  const verdictRepositoryService = caseModule.get<VerdictRepositoryService>(
+    VerdictRepositoryService,
+  )
+
+  const eventLogRepositoryService = caseModule.get<EventLogRepositoryService>(
+    EventLogRepositoryService,
+  )
+
   const internalCaseService =
     caseModule.get<InternalCaseService>(InternalCaseService)
 
@@ -349,6 +370,9 @@ export const createTestingCaseModule = async () => {
     indictmentCountRepositoryService,
     offenseRepositoryService,
     victimRepositoryService,
+    subpoenaRepositoryService,
+    verdictRepositoryService,
+    eventLogRepositoryService,
     internalCaseService,
     limitedAccessCaseService,
     caseController,

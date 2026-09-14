@@ -23,6 +23,7 @@ describe('DateLogRepositoryService', () => {
   let service: DateLogRepositoryService
   let model: {
     findOne: jest.Mock
+    findAll: jest.Mock
     create: jest.Mock
     update: jest.Mock
     destroy: jest.Mock
@@ -31,6 +32,7 @@ describe('DateLogRepositoryService', () => {
   beforeEach(async () => {
     model = {
       findOne: jest.fn().mockResolvedValue(null),
+      findAll: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
       update: jest.fn().mockResolvedValue([0]),
       destroy: jest.fn().mockResolvedValue(0),
@@ -160,6 +162,67 @@ describe('DateLogRepositoryService', () => {
 
       await expect(
         service.deleteByCaseAndType(caseId, dateType, { transaction }),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('copyByTypesToCase', () => {
+    const newCaseId = 'some-new-case-id'
+    const dateTypes = [DateType.ARRAIGNMENT_DATE]
+
+    it('copies only the date logs of the given types to the new case as new rows', async () => {
+      const date = new Date('2026-01-01T09:00:00Z')
+      model.findAll.mockResolvedValueOnce([
+        {
+          toJSON: () => ({
+            id: 'some-date-log-id',
+            caseId,
+            dateType: DateType.ARRAIGNMENT_DATE,
+            date,
+            location: 'Courtroom 1',
+          }),
+        },
+      ])
+
+      await service.copyByTypesToCase(caseId, newCaseId, dateTypes, {
+        transaction,
+      })
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { caseId, dateType: dateTypes },
+        transaction,
+      })
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          id: undefined,
+          caseId: newCaseId,
+          dateType: DateType.ARRAIGNMENT_DATE,
+          date,
+          location: 'Courtroom 1',
+        },
+        { transaction },
+      )
+    })
+
+    it('copies nothing when the case has no date log of those types', async () => {
+      await service.copyByTypesToCase(caseId, newCaseId, dateTypes, {
+        transaction,
+      })
+
+      expect(model.create).not.toHaveBeenCalled()
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([
+        { toJSON: () => ({ id: 'some-date-log-id' }) },
+      ])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyByTypesToCase(caseId, newCaseId, dateTypes, {
+          transaction,
+        }),
       ).rejects.toThrow(error)
     })
   })
