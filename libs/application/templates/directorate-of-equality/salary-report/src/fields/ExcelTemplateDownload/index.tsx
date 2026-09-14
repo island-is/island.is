@@ -169,6 +169,7 @@ export const ExcelTemplateDownload: FC<
       },
     }
     setValue('salaryAnalysis.outlierGroups', [])
+    setValue('salaryAnalysis.outlierGroupsDraft', [])
     setValue('salaryAnalysis.hasMinimumSetOutliers', false)
     setValue('salaryAnalysis.outlierPlanReviewed', false)
     try {
