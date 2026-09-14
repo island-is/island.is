@@ -127,14 +127,11 @@ const NewHealthConversation = () => {
       }
     }) ?? []
 
-  // The design replaces the whole form with the closed alert, but only when
-  // nothing on it is usable: every recipient blocks new conversations AND
-  // certificate requests, with at least one closed by the messaging window.
+  // A recipient closed for new conversations never accepts certificate
+  // requests either, so conversation availability alone decides this.
   const allRecipientsClosed =
     hasRecipients &&
-    !!recipients?.every(
-      (r) => !r.canCreateConversation && !r.canRequestCertificate,
-    ) &&
+    !!recipients?.every((r) => !r.canCreateConversation) &&
     !!recipients?.some(isRecipientOutsideWindow)
 
   const allClosedAlertRecipient =
