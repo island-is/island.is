@@ -276,37 +276,37 @@ const memmSchema = z.object({
             params: errorMessages.required,
           })
         }
-      }
-      if (data.wellbeingContact === YES) {
-        if (!data.wellbeingContactEmail) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['wellbeingContactEmail'],
-            params: errorMessages.required,
-          })
+        if (data.wellbeingContact === YES) {
+          if (!data.wellbeingContactEmail) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['wellbeingContactEmail'],
+              params: errorMessages.required,
+            })
+          }
+          if (!data.wellbeingContactName) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['wellbeingContactName'],
+              params: errorMessages.required,
+            })
+          }
         }
-        if (!data.wellbeingContactName) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['wellbeingContactName'],
-            params: errorMessages.required,
-          })
-        }
-      }
-      if (data.wellbeingManager === YES) {
-        if (!data.wellbeingManagerEmail) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['wellbeingManagerEmail'],
-            params: errorMessages.required,
-          })
-        }
-        if (!data.wellbeingManagerName) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['wellbeingManagerName'],
-            params: errorMessages.required,
-          })
+        if (data.wellbeingManager === YES) {
+          if (!data.wellbeingManagerEmail) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['wellbeingManagerEmail'],
+              params: errorMessages.required,
+            })
+          }
+          if (!data.wellbeingManagerName) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['wellbeingManagerName'],
+              params: errorMessages.required,
+            })
+          }
         }
       }
       if (data.disability === YES && !data.disabilityService) {
