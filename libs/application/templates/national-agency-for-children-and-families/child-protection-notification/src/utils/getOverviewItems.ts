@@ -48,7 +48,7 @@ import {
   showDisabilityService,
   showPreferredLanguage,
   showWellbeingContactFields,
-  showWellbeingManagerFields
+  showWellbeingManagerFields,
 } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
