@@ -2186,6 +2186,8 @@ export class CaseService {
       theCase.courtId !== update.courtId &&
       theCase.state === CaseState.RECEIVED
 
+    const isReopeningCase = update.reopenReason !== undefined
+
     if (isReceivingCase) {
       update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
     }
@@ -2194,7 +2196,7 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
-    if (update.reopenReason !== undefined) {
+    if (isReopeningCase) {
       const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`
@@ -2539,6 +2541,10 @@ export class CaseService {
         from: theCase.court?.name,
         to: updatedCase?.court?.name,
       })
+    }
+
+    if (isReopeningCase) {
+      this.eventService.postEvent(CaseTransition.REOPEN, updatedCase)
     }
 
     if (returnUpdatedCase) {
