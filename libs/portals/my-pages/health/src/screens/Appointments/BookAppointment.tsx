@@ -6,7 +6,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
@@ -23,8 +23,8 @@ const BookAppointment = () => {
       title={messages.bookAppointmentTitle}
       intro={messages.bookAppointmentIntro}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirAppointmentsTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaAppointmentsTooltip),
       }}
     >
       <Box

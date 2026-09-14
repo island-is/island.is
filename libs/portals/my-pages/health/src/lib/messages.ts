@@ -802,31 +802,38 @@ export const messages = defineMessages({
     defaultMessage: 'Reikningar',
     id: 'sp.health:invoices',
   },
-  landlaeknirMedicineDelegationTooltip: {
-    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þín lyfjaumboð.',
-    id: 'sp.health:landlaeknir-delegation-tooltip',
-  },
-  landlaeknirMedicinePrescriptionsTooltip: {
+  landlaeknirOrganDonationTooltip: {
     defaultMessage:
-      'Landlæknir hefur umsjón með gögnum um þínar lyfjaávísanir.',
-    id: 'sp.health:landlaeknir-prescriptions-tooltip',
+      'Landlæknir hefur umsjón með gögnum um afstöðu þína til líffæragjafar.',
+    id: 'sp.health:landlaeknir-organ-donation-tooltip',
   },
-  landlaeknirVaccinationsTooltip: {
+  stafraenHeilsaMedicineDelegationTooltip: {
+    defaultMessage: 'Stafræn heilsa hefur umsjón með gögnum um þín lyfjaumboð.',
+    id: 'sp.health:stafraen-heilsa-delegation-tooltip',
+  },
+  stafraenHeilsaMedicinePrescriptionsTooltip: {
     defaultMessage:
-      'Landlæknir hefur umsjón með gögnum um þínar bólusetningar.',
-    id: 'sp.health:landlaeknir-tooltip',
+      'Stafræn heilsa hefur umsjón með gögnum um þínar lyfjaávísanir.',
+    id: 'sp.health:stafraen-heilsa-prescriptions-tooltip',
   },
-  landlaeknirPatientPermitsTooltip: {
-    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar heimildir.',
-    id: 'sp.health:landlaeknir-patient-permits-tooltip',
+  stafraenHeilsaVaccinationsTooltip: {
+    defaultMessage:
+      'Stafræn heilsa hefur umsjón með gögnum um þínar bólusetningar.',
+    id: 'sp.health:stafraen-heilsa-vaccinations-tooltip',
   },
-  landlaeknirWaitlistTooltip: {
-    defaultMessage: 'Landlæknir hefur umsjón með stöðu þinni á biðlistum.',
-    id: 'sp.health:landlaeknir-waitlist-tooltip',
+  stafraenHeilsaPatientPermitsTooltip: {
+    defaultMessage:
+      'Stafræn heilsa hefur umsjón með gögnum um þínar heimildir.',
+    id: 'sp.health:stafraen-heilsa-patient-permits-tooltip',
   },
-  landlaeknirReferralTooltip: {
-    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar tilvísanir.',
-    id: 'sp.health:landlaeknir-referral-tooltip',
+  stafraenHeilsaWaitlistTooltip: {
+    defaultMessage: 'Stafræn heilsa hefur umsjón með stöðu þinni á biðlistum.',
+    id: 'sp.health:stafraen-heilsa-waitlist-tooltip',
+  },
+  stafraenHeilsaReferralTooltip: {
+    defaultMessage:
+      'Stafræn heilsa hefur umsjón með gögnum um þínar tilvísanir.',
+    id: 'sp.health:stafraen-heilsa-referral-tooltip',
   },
   lastDispensed: {
     defaultMessage: 'Síðast afgreitt',
@@ -1948,18 +1955,8 @@ export const messages = defineMessages({
   },
   healthConversationsNewIntro: {
     defaultMessage:
-      'Heilsugæslan svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+      'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma. Ef erindið er brýnt og þarfnast svars samdægurs, hringdu í 1700 eða hafðu samband við þitt meðferðarteymi. Í neyðartilvikum, hringdu í 112.',
     id: 'sp.health:health-messages-new-intro',
-  },
-  healthConversationsNewIntroWithWindow: {
-    defaultMessage:
-      '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
-    id: 'sp.health:health-messages-new-intro-with-window',
-  },
-  healthConversationsNewIntroWithRecipient: {
-    defaultMessage:
-      '{name} svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
-    id: 'sp.health:health-messages-new-intro-with-recipient',
   },
   healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
@@ -2247,9 +2244,10 @@ export const messages = defineMessages({
     defaultMessage: 'https://minarsidur.heilsuvera.is/timabokun/boka-tima',
     id: 'sp.health:book-appointment-heilsuveru-link',
   },
-  landlaeknirAppointmentsTooltip: {
-    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar tímabókanir.',
-    id: 'sp.health:landlaeknir-appointments-tooltip',
+  stafraenHeilsaAppointmentsTooltip: {
+    defaultMessage:
+      'Stafræn heilsa hefur umsjón með gögnum um þínar tímabókanir.',
+    id: 'sp.health:stafraen-heilsa-appointments-tooltip',
   },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
@@ -2429,9 +2427,10 @@ export const messages = defineMessages({
       'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt.',
     id: 'sp.health:treatment-intro',
   },
-  landlaeknirTreatmentTooltip: {
-    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar meðferðir.',
-    id: 'sp.health:landlaeknir-treatment-tooltip',
+  stafraenHeilsaTreatmentTooltip: {
+    defaultMessage:
+      'Stafræn heilsa hefur umsjón með gögnum um þínar meðferðir.',
+    id: 'sp.health:stafraen-heilsa-treatment-tooltip',
   },
   treatmentTeam: {
     defaultMessage: 'Meðferðarteymi',

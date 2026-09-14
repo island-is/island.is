@@ -29,6 +29,29 @@ export default [
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
       eqeqeq: ['error', 'always'],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            'lodash',
+            'date-fns',
+            'date-fns/locale',
+            'styled-components',
+            '.',
+            {
+              name: '@island.is/island-ui/core',
+              importNames: ['toast'],
+              message:
+                "Import toast from '@island.is/judicial-system-web/src/utils/toast' so that user-facing errors are logged.",
+            },
+            {
+              name: 'react-toastify',
+              message:
+                "Import toast from '@island.is/judicial-system-web/src/utils/toast' so that user-facing errors are logged.",
+            },
+          ],
+        },
+      ],
       'no-restricted-syntax': [
         'error',
         {

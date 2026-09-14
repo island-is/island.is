@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize'
+
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -105,6 +107,44 @@ export class VictimRepositoryService {
         {
           error,
         },
+      )
+
+      throw error
+    }
+  }
+
+  // Copies every victim of a case to another case as a new row.
+  async copyAllToCase(
+    caseId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Copying all victims of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const victims = await this.victimModel.findAll({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      await Promise.all(
+        victims.map((victim) =>
+          this.victimModel.create(
+            { ...victim.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction: options.transaction },
+          ),
+        ),
+      )
+
+      this.logger.debug(
+        `Copied ${victims.length} victims of case ${caseId} to case ${newCaseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying all victims of case ${caseId} to case ${newCaseId}:`,
+        { error },
       )
 
       throw error

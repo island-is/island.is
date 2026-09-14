@@ -16,6 +16,7 @@ export interface Confirmation {
 
 export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
 export const xsFontSize = 5
+export const confirmationFontSize = 7
 export const smallFontSize = 9
 export const baseFontSize = 11
 export const basePlusFontSize = 12
@@ -128,7 +129,7 @@ interface ConfirmationConfig {
 }
 
 export const formatActor = (name: string, title?: string) => {
-  return `${name}${title ? `, ${lowercase(title)}` : ''}`
+  return `${name}${title ? ` ${lowercase(title)}` : ''}`
 }
 
 export const drawConfirmation = (
@@ -144,7 +145,7 @@ export const drawConfirmation = (
   const coatOfArmsX = pageMargin + calculatePt(8)
   const titleHeight = calculatePt(16)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
-  const fontSize = calculatePt(xsFontSize) * 0.7
+  const fontSize = calculatePt(confirmationFontSize)
 
   // Page width minus 2 times the page margin
   const totalWidth = doc.page.width - pageMargin * 2
@@ -189,12 +190,10 @@ export const drawConfirmation = (
   // Draw the title text
   doc.fill('black')
   doc.font('Times-Bold')
-  doc
-    .fontSize(calculatePt(xsFontSize))
-    .text('Réttarvörslugátt', titleX, titleTextY, {
-      continued: true,
-      lineBreak: false,
-    })
+  doc.fontSize(fontSize).text('Réttarvörslugátt', titleX, titleTextY, {
+    continued: true,
+    lineBreak: false,
+  })
 
   doc.text('  ', { continued: true })
 
@@ -218,7 +217,7 @@ export const drawConfirmation = (
     const dateWidth = doc.widthOfString(dateString)
 
     doc
-      .fontSize(calculatePt(xsFontSize))
+      .fontSize(fontSize)
       .text(
         formatDate(date) ?? '',
         coatOfArmsX +
@@ -247,6 +246,7 @@ export const drawConfirmation = (
       .fillAndStroke('white', darkGray)
     doc.fill('black')
     doc.font('Times-Bold')
+    doc.fontSize(fontSize)
     doc.text(box.title, currentX + calculatePt(8), boxY + calculatePt(9), {
       lineGap: 1,
       width: boxWidth - calculatePt(16),

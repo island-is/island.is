@@ -4,7 +4,7 @@ import { createContext, useEffect, useState } from 'react'
 import { Feature } from '@island.is/judicial-system/types'
 import { getFeature } from '@island.is/judicial-system-web/src/services/api'
 
-interface FeatureProvider {
+interface FeatureContextValue {
   // The features that are not hidden in this environment. Empty until the
   // first round trip completes, so it cannot tell "hidden" from "not loaded
   // yet" on its own - read it together with isLoading.
@@ -17,7 +17,7 @@ interface FeatureProvider {
 
 const availableFeatures = Object.values(Feature)
 
-export const FeatureContext = createContext<FeatureProvider>({
+export const FeatureContext = createContext<FeatureContextValue>({
   features: [],
   isLoading: true,
 })

@@ -132,12 +132,14 @@ const UserContract = () => {
               label={cm.lengthOfRentalAgreement}
               content={
                 contract?.dateFrom
-                  ? formatMessage(cm.rentalAgreementDate, {
-                      from: new Date(contract.dateFrom),
-                      to: contract.dateTo
-                        ? new Date(contract.dateTo)
-                        : undefined,
-                    })
+                  ? contract.dateTo
+                    ? formatMessage(cm.rentalAgreementDate, {
+                        from: new Date(contract.dateFrom),
+                        to: new Date(contract.dateTo),
+                      })
+                    : formatMessage(cm.rentalAgreementDateFrom, {
+                        from: new Date(contract.dateFrom),
+                      })
                   : undefined
               }
             />
