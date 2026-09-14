@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import {
   FormProvider,
   useFormContext,
@@ -12,6 +12,7 @@ import { CheckboxController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
+import { cloneOutlierGroups } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { OutlierEditor } from './OutlierEditor'
 
@@ -30,6 +31,8 @@ type Props = {
     salaryAnalysis: { outlierGroups: OutlierGroupAnswer[] }
   }>
   onSaveGroups: (groups: OutlierGroupAnswer[]) => Promise<boolean>
+  // What the screen was seeded with — already persisted, so the editor's save
+  // buttons open in their "Vistað" state.
   initialSavedGroups: OutlierGroupAnswer[]
 }
 
@@ -49,6 +52,15 @@ export const OutlierGroupPanel: FC<Props> = ({
     useWatch({ name: 'salaryAnalysis.postponed' }) ?? []
   const isPostponed = postponed.includes(YES)
 
+  // The plan as last written to the answers buffer, held here rather than in
+  // OutlierEditor: ticking the postpone checkbox unmounts the editor while the
+  // form values live on in the parent form, so the editor's own copy would
+  // reopen as the visit-start plan and the next removal would write that over
+  // everything saved since. Cloned, so nothing here is aliased to the form.
+  const [savedGroups, setSavedGroups] = useState(() =>
+    cloneOutlierGroups(initialSavedGroups),
+  )
+
   useEffect(() => {
     if (hidePostponeCheckbox && postponed.length > 0) {
       setValue('salaryAnalysis.postponed', [])
@@ -66,7 +78,8 @@ export const OutlierGroupPanel: FC<Props> = ({
       errors={errors}
       mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
       onSaveGroups={onSaveGroups}
-      initialSavedGroups={initialSavedGroups}
+      savedGroups={savedGroups}
+      onSavedGroupsChange={setSavedGroups}
     />
   )
 

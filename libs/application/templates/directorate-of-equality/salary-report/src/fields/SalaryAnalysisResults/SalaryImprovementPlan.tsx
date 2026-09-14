@@ -294,8 +294,11 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   const seedGroups = useMemo((): OutlierGroupAnswer[] => {
     if (bufferedGroups) return bufferedGroups
     if (!isDraftPhase && answeredGroups.length > 0) return answeredGroups
-    // Empty outside DRAFT and DRAFT_RETRY: the review states are not granted
-    // the draft providers, so there is no content to cross over from.
+    // Reached in the review states too, contrary to how it reads: they are not
+    // granted the draft providers, but useDraftQueries seeds its contents from
+    // the persisted snapshot precisely when it is disabled. Empty there all the
+    // same — postponing clears the groups off the draft and refetches before
+    // leaving DRAFT, so the snapshot this crosses over is already empty.
     return outlierGroupAnswersFromDraft()
   }, [
     answeredGroups,

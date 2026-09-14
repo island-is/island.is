@@ -63,7 +63,17 @@ export const useOutlierPlanBuffer = (
       // Only on success, unlike useProgressMarker: a mirror of a write that
       // failed would read back as "Vistað" on the next visit while nothing had
       // been persisted.
-      answerQuestionsRef.current?.(answers)
+      //
+      // In its own try: the PUT above is what "persisted" means, and a throw
+      // from the shell's dispatch must not reject `save` — no caller catches,
+      // so it would leave the card's button spinning behind the editor's
+      // one-write-at-a-time guard, and take beforeSubmit's own write down with
+      // it.
+      try {
+        answerQuestionsRef.current?.(answers)
+      } catch (error) {
+        console.error('Failed to mirror the outlier plan into answers', error)
+      }
       return true
     },
     [applicationId, locale, updateApplication],

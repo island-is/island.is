@@ -14,10 +14,12 @@ import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import {
+  cloneOutlierGroups,
   emptyOutlierGroupAnswer,
   foldGroupDirection,
   isOutlierGroupComplete,
   outlierGroupFingerprint,
+  savedOutlierGroupIndex,
 } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer, PayStatus } from '../../utils/outlierGroups'
 import { TablePagination } from '../TablePagination'
@@ -27,16 +29,6 @@ import { Markdown } from '@island.is/shared/components'
 
 const OUTLIERS_PAGE_SIZE = 10
 
-// react-hook-form's getValues hands back live references into the form's own
-// values, and it writes into those objects in place as the applicant types — so
-// anything meant to outlast a keystroke has to be copied out of them first.
-// (useWatch is the exception: it deep-clones its subtree on every change.)
-const cloneGroups = (groups: OutlierGroupAnswer[]): OutlierGroupAnswer[] =>
-  groups.map((group) => ({
-    ...group,
-    employeeOrdinals: [...(group.employeeOrdinals ?? [])],
-  }))
-
 type Props = {
   outliers: SalaryAnalysisOutlierDto[]
   errors?: RecordObject
@@ -45,10 +37,21 @@ type Props = {
   // Writes the whole plan to the answers buffer, resolving to whether it was
   // persisted — see useOutlierPlanBuffer.
   onSaveGroups: (groups: OutlierGroupAnswer[]) => Promise<boolean>
-  // What the screen was seeded with, from the buffer or from the DMR draft.
-  // Either way it is already persisted, so everything on screen starts out
-  // saved and the buttons open in their "Vistað" state.
-  initialSavedGroups: OutlierGroupAnswer[]
+  // The plan exactly as last written to the answers buffer — the values, not
+  // just their fingerprints, because a removal has to be able to write this set
+  // back minus one group. It opens as what the screen was seeded with, from the
+  // buffer or from the DMR draft: either way that is already persisted, so
+  // everything starts out saved and the buttons open in their "Vistað" state.
+  //
+  // One save carries the whole array, so this is what every card compares
+  // itself against: a save from any one of them leaves them all matching.
+  //
+  // Held by OutlierGroupPanel rather than here: ticking the postpone checkbox
+  // unmounts this editor while the form values live on in the parent, so state
+  // kept here would fall back to the visit-start plan on the way back in and
+  // the next removal would write that over the session's saves.
+  savedGroups: OutlierGroupAnswer[]
+  onSavedGroupsChange: (groups: OutlierGroupAnswer[]) => void
 }
 
 export const OutlierEditor: FC<Props> = ({
@@ -56,7 +59,8 @@ export const OutlierEditor: FC<Props> = ({
   errors,
   mode,
   onSaveGroups,
-  initialSavedGroups,
+  savedGroups,
+  onSavedGroupsChange,
 }) => {
   const { formatMessage } = useLocale()
   const { control, getValues, setValue } = useFormContext()
@@ -90,15 +94,6 @@ export const OutlierEditor: FC<Props> = ({
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [page, setPage] = useState(1)
 
-  // The plan exactly as last written to the answers buffer — the values, not
-  // just their fingerprints, because a removal has to be able to write this set
-  // back minus one group. Cloned, so nothing here is aliased to the form.
-  //
-  // One save carries the whole array, so this is what every card compares
-  // itself against: a save from any one of them leaves them all matching.
-  const [savedGroups, setSavedGroups] = useState(() =>
-    cloneGroups(initialSavedGroups),
-  )
   const [savingIndex, setSavingIndex] = useState<number>()
   const [removingIndex, setRemovingIndex] = useState<number>()
   const [saveErrorIndex, setSaveErrorIndex] = useState<number>()
@@ -204,28 +199,15 @@ export const OutlierEditor: FC<Props> = ({
     setPage(1)
   }
 
-  // Where this group sits in the saved set, or -1 if it was never saved.
-  //
-  // Matched by id where there is one (draft mode mints one per group), so a
-  // removal higher up the list doesn't make every group below it look edited.
-  // POSTPONED has no ids and falls back to the position: both arrays only ever
-  // grow at the end, and the removal keeps them in step, so the positions
-  // line up — and a group past the end of the saved set is simply not in it.
-  const savedIndexOf = (
-    group: OutlierGroupAnswer | undefined,
-    index: number,
-  ) => {
-    if (group?.id) {
-      return savedGroups.findIndex((candidate) => candidate.id === group.id)
-    }
-    return index < savedGroups.length ? index : -1
-  }
-
   const handleRemoveGroup = async (index: number) => {
     if (writeInFlight.current) return
     // The save error goes with the card it was reported on: the index it is
     // keyed by belongs to a different group once the array closes up.
-    const savedIndex = savedIndexOf(watchedGroups[index], index)
+    const savedIndex = savedOutlierGroupIndex(
+      savedGroups,
+      watchedGroups[index],
+      index,
+    )
     setSaveErrorIndex(undefined)
     setRemoveFailed(false)
 
@@ -258,7 +240,7 @@ export const OutlierEditor: FC<Props> = ({
       setRemoveFailed(true)
       return
     }
-    setSavedGroups(remaining)
+    onSavedGroupsChange(remaining)
     remove(index)
   }
 
@@ -277,7 +259,7 @@ export const OutlierEditor: FC<Props> = ({
   // writing into them while the request is in flight.
   const handleSave = async (index: number) => {
     if (writeInFlight.current) return
-    const groups = cloneGroups(
+    const groups = cloneOutlierGroups(
       (getValues(fieldName) ?? []) as OutlierGroupAnswer[],
     )
     writeInFlight.current = true
@@ -295,12 +277,12 @@ export const OutlierEditor: FC<Props> = ({
       setSaveErrorIndex(index)
       return
     }
-    setSavedGroups(groups)
+    onSavedGroupsChange(groups)
   }
 
   const isGroupSaved = (index: number) => {
     const group = watchedGroups[index]
-    const savedIndex = savedIndexOf(group, index)
+    const savedIndex = savedOutlierGroupIndex(savedGroups, group, index)
     return (
       savedIndex !== -1 &&
       outlierGroupFingerprint(savedGroups[savedIndex]) ===
