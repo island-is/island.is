@@ -2196,7 +2196,7 @@
     },
     "/v1/me/appointments/{id}/cancel": {
       "post": {
-        "description": "Cancel an appointment. 200: appointment cancelled, 409: request blocked or refused.",
+        "description": "Cancel an appointment. 200: appointment cancelled, 409: request blocked or refused. An answered 200 or 409 carries the appointment as it now stands.",
         "operationId": "MeAppointmentController_cancelAppointment_v1",
         "parameters": [
           {
@@ -9406,9 +9406,17 @@
             "type": "string",
             "enum": ["CANCELLED"],
             "description": "Always CANCELLED: this response exists only when the provider agreed. A refusal is a 409 carrying CANCELLATION_REFUSED, no answer is a 504 carrying ACK_NOT_CONFIRMED."
+          },
+          "appointment": {
+            "description": "The appointment as it stands after the answer, so no second read is needed to update the view.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AppointmentDetailDto"
+              }
+            ]
           }
         },
-        "required": ["conversationId", "requestedAt", "status"]
+        "required": ["conversationId", "requestedAt", "status", "appointment"]
       },
       "CancelAppointmentConflictReason": {
         "type": "string",
@@ -9463,6 +9471,14 @@
           "resourceId": {
             "type": "string",
             "description": "The id of the resource a 402 wants paid for. Absent on every other status."
+          },
+          "appointment": {
+            "description": "Present only for CANCELLATION_REFUSED: the appointment as it stands after the refusal, so no second read is needed to update the view.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AppointmentDetailDto"
+              }
+            ]
           }
         },
         "required": ["type", "title"]
@@ -11296,6 +11312,10 @@
           "title": {
             "type": "string",
             "description": "Title of the conversation carrying the document. Nullable in storage, so the client labels an untitled document itself."
+          },
+          "groupName": {
+            "type": "string",
+            "description": "Name of the provider group the conversation carrying the document was opened with. Nullable in storage, so omitted when the provider did not name one."
           },
           "messageSentAt": {
             "format": "date-time",
