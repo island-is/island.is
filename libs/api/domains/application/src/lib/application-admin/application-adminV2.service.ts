@@ -26,6 +26,10 @@ import {
   ApplicationStatistics,
 } from '../application.model'
 
+// Cap for the merge-pagination window. See findAllApplicationsFor{Super,Institution}Admin
+// below. Also duplicated in the admin portal client as MAX_PAGE — keep in sync.
+const MAX_MERGE_PAGES = 10
+
 @Injectable()
 export class ApplicationAdminV2Service {
   constructor(
@@ -51,8 +55,11 @@ export class ApplicationAdminV2Service {
     // If the user is filtering by a typeId from the opposite system we should skip the call to the other system
     const skipAppSystem = !!filters.typeIdValue && isUUID(filters.typeIdValue)
     const skipFormSystem = !!filters.typeIdValue && !isUUID(filters.typeIdValue)
-    // Fetch enough items from each source to cover the requested page
-    const fetchCount = filters.page * filters.count
+    // Fetch enough items from each source to cover the requested page, but never
+    // more than MAX_MERGE_PAGES worth. Beyond that we return an empty page and
+    // the client is expected to prompt the user to narrow filters.
+    const cappedPage = Math.min(filters.page, MAX_MERGE_PAGES)
+    const fetchCount = cappedPage * filters.count
 
     const appSystemPromise = skipAppSystem
       ? null
@@ -118,9 +125,12 @@ export class ApplicationAdminV2Service {
 
     // Merge, sort, and slice to correct page offset
     const offset = (filters.page - 1) * filters.count
-    const mergedRows = [...appSystemRows, ...formSystemRows]
-      .sort(applicationAdminSortByModified)
-      .slice(offset, offset + filters.count)
+    const mergedRows =
+      filters.page > MAX_MERGE_PAGES
+        ? []
+        : [...appSystemRows, ...formSystemRows]
+            .sort(applicationAdminSortByModified)
+            .slice(offset, offset + filters.count)
 
     return {
       rows: mergedRows,
@@ -136,8 +146,9 @@ export class ApplicationAdminV2Service {
     // If the user is filtering by a typeId from the opposite system we should skip the call to the other system
     const skipAppSystem = !!filters.typeIdValue && isUUID(filters.typeIdValue)
     const skipFormSystem = !!filters.typeIdValue && !isUUID(filters.typeIdValue)
-    // Fetch enough items from each source to cover the requested page
-    const fetchCount = filters.page * filters.count
+    // See findAllApplicationsForSuperAdmin above for the cap rationale.
+    const cappedPage = Math.min(filters.page, MAX_MERGE_PAGES)
+    const fetchCount = cappedPage * filters.count
 
     const appSystemPromise = skipAppSystem
       ? null
@@ -201,9 +212,12 @@ export class ApplicationAdminV2Service {
 
     // Merge, sort, and slice to correct page offset
     const offset = (filters.page - 1) * filters.count
-    const mergedRows = [...appSystemRows, ...formSystemRows]
-      .sort(applicationAdminSortByModified)
-      .slice(offset, offset + filters.count)
+    const mergedRows =
+      filters.page > MAX_MERGE_PAGES
+        ? []
+        : [...appSystemRows, ...formSystemRows]
+            .sort(applicationAdminSortByModified)
+            .slice(offset, offset + filters.count)
 
     return {
       rows: mergedRows,

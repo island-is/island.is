@@ -387,7 +387,6 @@ type InputSettingsActions =
         chargeItemName?: string
         chargeType?: string
         performingOrgID?: string
-        priceAmount?: number
         update: (updatedActiveItem?: ActiveItem) => void
       }
     }
@@ -1419,10 +1418,12 @@ export const controlReducer = (
         chargeItemName,
         chargeType,
         performingOrgID,
-        priceAmount,
         update,
         field,
       } = action.payload
+      const { priceAmount, ...fieldSettings } = removeTypename(
+        field.fieldSettings ?? {},
+      )
 
       const newField = {
         ...field,
@@ -1431,16 +1432,13 @@ export const controlReducer = (
           en: chargeItemName,
         },
         fieldSettings: {
-          ...field.fieldSettings,
-          __typename: undefined,
+          ...fieldSettings,
           chargeItemCode,
           chargeItemName,
           chargeType,
           performingOrgID,
-          priceAmount,
         },
       }
-      console.log('Updating payment settings with', newField.fieldSettings)
       update({ type: 'Field', data: newField })
       return {
         ...state,

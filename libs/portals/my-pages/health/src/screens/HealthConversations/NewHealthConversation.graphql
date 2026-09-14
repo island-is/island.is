@@ -1,6 +1,7 @@
 fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecipient {
   nodeId
   groupId
+  treatmentId
   name
   allowsMessaging
   messagingWindowOpen
@@ -13,7 +14,11 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
   allowedMessageTypes {
     patientInitiatedTypeCode
     title
+    description
+    instructions
     isCertificate
+    externalLinkUrl
+    isCurrentlyOpen
   }
 }
 

@@ -355,6 +355,7 @@ query GetHealthConversation($id: ID!) {
     isRead
     patientCanReply
     replyBlockedReason
+    patientReplyWindowDays
     organization {
       name
       logoUrl
@@ -386,6 +387,7 @@ query GetHealthConversationRecipients($locale: LocaleEnum) {
   healthDirectorateHealthConversationRecipients(locale: $locale) {
     nodeId
     groupId
+    treatmentId
     name
     allowsMessaging
     isCurrentlyWithinWindow

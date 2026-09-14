@@ -258,4 +258,59 @@ export class DefendantRepositoryService {
       throw error
     }
   }
+
+  // Copies the defendants of a case to another case, keeping only the fields
+  // the prosecution enters - none of the court or process data. Returns a map
+  // from each original defendant id to its copy so the caller can remap the
+  // references that point at defendants.
+  async copyProsecutorEnteredToCase(
+    caseId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<Map<string, string>> {
+    try {
+      this.logger.debug(
+        `Copying the prosecutor entered defendant data of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const defendants = await this.defendantModel.findAll({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      const defendantIdMap = new Map<string, string>()
+
+      for (const defendant of defendants) {
+        const newDefendant = await this.defendantModel.create(
+          {
+            caseId: newCaseId,
+            noNationalId: defendant.noNationalId,
+            nationalId: defendant.nationalId,
+            dateOfBirth: defendant.dateOfBirth,
+            name: defendant.name,
+            gender: defendant.gender,
+            address: defendant.address,
+            citizenship: defendant.citizenship,
+            defendantPlea: defendant.defendantPlea,
+          },
+          { transaction: options.transaction },
+        )
+
+        defendantIdMap.set(defendant.id, newDefendant.id)
+      }
+
+      this.logger.debug(
+        `Copied ${defendantIdMap.size} defendants of case ${caseId} to case ${newCaseId}`,
+      )
+
+      return defendantIdMap
+    } catch (error) {
+      this.logger.error(
+        `Error copying the defendants of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

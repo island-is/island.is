@@ -299,6 +299,39 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
+  /**
+   * The previous plan's PDF, when that plan was uploaded rather than typed.
+   *
+   * On demand only: the applicant presses "view the earlier áætlun" and the
+   * bytes are fetched then. Returned as base64 for the same reason
+   * `getEqualityReportTemplateDocx` does — the provider channel carries JSON,
+   * and the field turns it back into a Blob to hand the browser.
+   */
+  async getPreviousEqualityReportPdf({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to get previous equality report PDF',
+      async () => {
+        const activeReport =
+          await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+
+        if (!activeReport?.providerId) return null
+
+        const blob =
+          await this.directorateOfEqualityService.getEqualityContentPdf(
+            auth,
+            activeReport.providerId,
+          )
+        const arrayBuffer = await blob.arrayBuffer()
+
+        return { base64: Buffer.from(arrayBuffer).toString('base64') }
+      },
+    )
+  }
+
   async getPreviousEqualityReportContent({
     auth,
     application,
@@ -321,7 +354,24 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           auth,
           activeReport.providerId,
         )
-        return { equalityReportContent: report.equalityReportContent ?? '' }
+
+        /*
+         * `contentType` travels with the content because the two are not
+         * separable: DMR returns `equalityReportContent: null` for a PDF-backed
+         * plan (the bytes are megabytes of base64 and would ride along on every
+         * read), so without the type an uploaded plan is indistinguishable from
+         * no plan at all — and the screen would tell the applicant there was no
+         * earlier áætlun when there was one.
+         *
+         * The bytes themselves are fetched on demand by
+         * `getPreviousEqualityReportPdf`, not here.
+         */
+        return {
+          equalityReportContent: report.equalityReportContent ?? '',
+          contentType: report.equalityReportContentType,
+          contentFilename: report.equalityReportContentFilename ?? null,
+          providerId: activeReport.providerId,
+        }
       },
     )
   }

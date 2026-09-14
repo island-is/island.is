@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-rsk-personal-tax-return',
   preset: './jest.preset.js',

@@ -19,6 +19,7 @@ describe('CivilClaimantRepositoryService', () => {
   let service: CivilClaimantRepositoryService
   let model: {
     findOne: jest.Mock
+    findAll: jest.Mock
     create: jest.Mock
     update: jest.Mock
     destroy: jest.Mock
@@ -27,6 +28,7 @@ describe('CivilClaimantRepositoryService', () => {
   beforeEach(async () => {
     model = {
       findOne: jest.fn().mockResolvedValue(null),
+      findAll: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
       update: jest.fn().mockResolvedValue([0, []]),
       destroy: jest.fn().mockResolvedValue(0),
@@ -196,6 +198,90 @@ describe('CivilClaimantRepositoryService', () => {
 
       await expect(
         service.findLatestBySpokespersonNationalId(nationalId),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('copyAllToCase', () => {
+    const newCaseId = 'some-new-case-id'
+    const oldDefendantId = 'old-defendant-id'
+    const newDefendantId = 'new-defendant-id'
+    const defendantIdMap = new Map([[oldDefendantId, newDefendantId]])
+
+    it('copies every civil claimant to the new case with its defendant references remapped and maps old ids to new', async () => {
+      const otherCivilClaimantId = 'other-civil-claimant-id'
+      model.findAll.mockResolvedValueOnce([
+        {
+          id: civilClaimantId,
+          defendantIds: [oldDefendantId, 'defendant-not-copied'],
+          toJSON: () => ({
+            id: civilClaimantId,
+            caseId,
+            name: 'Claimant',
+            defendantIds: [oldDefendantId, 'defendant-not-copied'],
+          }),
+        },
+        {
+          id: otherCivilClaimantId,
+          toJSON: () => ({ id: otherCivilClaimantId, caseId, name: 'Other' }),
+        },
+      ])
+      model.create
+        .mockResolvedValueOnce({ id: 'new-civil-claimant-id' })
+        .mockResolvedValueOnce({ id: 'new-other-civil-claimant-id' })
+
+      const result = await service.copyAllToCase(
+        caseId,
+        newCaseId,
+        defendantIdMap,
+        { transaction },
+      )
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { caseId },
+        transaction,
+      })
+      // The reference to the defendant that was not copied is dropped
+      expect(model.create).toHaveBeenNthCalledWith(
+        1,
+        {
+          id: undefined,
+          caseId: newCaseId,
+          name: 'Claimant',
+          defendantIds: [newDefendantId],
+        },
+        { transaction },
+      )
+      // A claimant with no defendant references stays that way
+      expect(model.create).toHaveBeenNthCalledWith(
+        2,
+        {
+          id: undefined,
+          caseId: newCaseId,
+          name: 'Other',
+          defendantIds: undefined,
+        },
+        { transaction },
+      )
+      expect(result).toEqual(
+        new Map([
+          [civilClaimantId, 'new-civil-claimant-id'],
+          [otherCivilClaimantId, 'new-other-civil-claimant-id'],
+        ]),
+      )
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([
+        { id: civilClaimantId, toJSON: () => ({ id: civilClaimantId }) },
+      ])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyAllToCase(caseId, newCaseId, defendantIdMap, {
+          transaction,
+        }),
       ).rejects.toThrow(error)
     })
   })

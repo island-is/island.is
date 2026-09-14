@@ -978,13 +978,13 @@ export class Case extends Model {
   /**********
    * The case's case-level appeal record (the appeal of the case as a whole).
    * Scoped to rows with no ruling_file_id so ruling-order appeals don't
-   * collide with the HasOne cardinality, and to kæra so an áfrýjun - which is
-   * also case-level, and so also has no ruling_file_id - does not collide with
-   * it either. Sequelize applies an association scope to every include of this
-   * alias, which is what keeps áfrýjun out of the case tables, the case views
+   * collide with the HasOne cardinality, and to ruling appeal so a verdict appeal -
+   * which is also case-level, and so also has no ruling_file_id - does not collide
+   * with it either. Sequelize applies an association scope to every include of this
+   * alias, which is what keeps verdict appeals out of the case tables, the case views
    * and the appeal banner without each of them having to filter for it. When
-   * Landsréttur starts handling áfrýjun, it reads its own association rather
-   * than widening this one.
+   * the court of appeals starts handling verdict appeals, it reads its own
+   * association rather than widening this one.
    **********/
   @HasOne(() => AppealCase, {
     foreignKey: 'caseId',
@@ -995,9 +995,9 @@ export class Case extends Model {
   appealCase?: AppealCase
 
   /**********
-   * The case's áfrýjun - the appeal of the verdict concluding an indictment
+   * The case's verdict appeal - the appeal of the verdict concluding an indictment
    * case. Case level like `appealCase`, and told apart from it only by the
-   * appeal type, so that everything built for kæra keeps seeing kæra alone.
+   * appeal type, so that everything built for ruling appeals keeps seeing ruling appeals alone.
    **********/
   @HasOne(() => AppealCase, {
     foreignKey: 'caseId',

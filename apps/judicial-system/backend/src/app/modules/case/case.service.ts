@@ -12,7 +12,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
@@ -1087,6 +1086,16 @@ export class CaseService {
             caseId: theCase.id,
             elementId: [defendant.id, subpoena.id],
           })
+          // After arraignment so defender choice on the certificate is correct.
+          // Only LOKE cases have a police case to update.
+          if (theCase.origin === CaseOrigin.LOKE) {
+            addMessagesToQueue({
+              type: MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE,
+              user,
+              caseId: theCase.id,
+              elementId: [defendant.id, subpoena.id],
+            })
+          }
         }
       }
     }
@@ -2077,7 +2086,7 @@ export class CaseService {
           defendantId,
           user,
           transaction,
-          created,
+          created ? { created } : undefined,
         )
       }),
     )
@@ -2855,18 +2864,6 @@ export class CaseService {
     }
 
     return extendedCase
-  }
-
-  async duplicateIndictmentCase(
-    theCase: Case,
-    user: TUser,
-    transaction: Transaction,
-  ): Promise<Case> {
-    return this.caseRepositoryService.duplicateIndictmentToDraft(theCase.id, {
-      transaction,
-      prosecutorId: user.id,
-      prosecutorsOfficeId: user.institution?.id,
-    })
   }
 
   async splitDefendantFromCase(

@@ -67,6 +67,7 @@ export {
   DispensationHistoryItemDto,
   MessageType,
   MessagingRecipientDto,
+  AllowedInteraction,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
   TreatmentBaseDto,

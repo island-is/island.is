@@ -4,7 +4,7 @@ import { isPerson } from 'kennitala'
 // Copy/paste from services-endorsements-api
 
 export const IsNationalId = (validationOptions?: ValidationOptions) => {
-  return (object: Object, propertyName: string) => {
+  return (object: object, propertyName: string) => {
     registerDecorator({
       name: 'IsNationalId',
       target: object.constructor,

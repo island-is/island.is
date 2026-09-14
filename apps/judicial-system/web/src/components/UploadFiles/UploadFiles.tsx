@@ -24,7 +24,6 @@ interface Props {
   onDelete: (file: TUploadFile) => void
   onRename: (fileId: string, newName: string, newDisplayDate: string) => void
   setEditCount: Dispatch<SetStateAction<number>>
-  isBottomComponent?: boolean
   /**
    * Which fields of an uploaded file can be edited. Defaults to all editable
    * fields (file name and display date).
@@ -40,7 +39,6 @@ const UploadFiles: FC<Props> = (props) => {
     onDelete,
     onRename,
     setEditCount,
-    isBottomComponent,
     editableFileAttributes = editableFields,
   } = props
   const { formatMessage } = useIntl()
@@ -96,12 +94,7 @@ const UploadFiles: FC<Props> = (props) => {
   }, [])
 
   return (
-    <div
-      className={`${styles.container} ${
-        !isBottomComponent ? styles.bottomContainer : ''
-      }`}
-      {...getRootProps()}
-    >
+    <div className={styles.container} {...getRootProps()}>
       <Box marginBottom={1}>
         <Text variant="h4" as="h4">
           {formatMessage(strings.heading)}

@@ -70,6 +70,11 @@ query Case($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
+      appealDefenderName
+      appealDefenderNationalId
+      appealDefenderEmail
+      appealDefenderPhoneNumber
+      isAppealDefenderConfirmed
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -452,6 +457,22 @@ query Case($input: CaseQueryInput!) {
       isAppealCustodyIsolation
       appealIsolationToDate
       rulingFileId
+    }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
     }
     rulingOrderAppealCases {
       id
