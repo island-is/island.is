@@ -106,20 +106,72 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   if (itemType === 'VEHICLE') {
     const vehicles = itemList as VehicleDetails[]
     for (const [index, vehicle] of vehicles.entries()) {
+      const hasValidationError =
+        shouldValidateErrorMessages && !!vehicle.validationErrorMessages?.length
+      const disabled = hasValidationError
+
       options.push({
         value: `${index}`,
         label: (
           <Box display="flex" flexDirection="column">
             <Box>
-              <Text variant="default" color={'dark400'}>
+              <Text variant="default" color={disabled ? 'dark200' : 'dark400'}>
                 {vehicle.make}
               </Text>
-              <Text variant="small" color={'dark400'}>
+              <Text variant="small" color={disabled ? 'dark200' : 'dark400'}>
                 {vehicle.color} - {vehicle.permno}
               </Text>
             </Box>
+            {hasValidationError && (
+              <Box marginTop={2}>
+                <AlertMessage
+                  type="error"
+                  title={
+                    alertMessageErrorTitle &&
+                    formatText(
+                      alertMessageErrorTitle,
+                      application,
+                      formatMessage,
+                    )
+                  }
+                  message={
+                    <Box>
+                      <BulletList>
+                        {vehicle.validationErrorMessages?.map((error) => {
+                          const message =
+                            validationErrorMessages &&
+                            formatMessage(
+                              getValueViaPath<MessageDescriptor>(
+                                validationErrorMessages,
+                                error.errorNo || '',
+                              ) || '',
+                            )
+                          const defaultMessage = error.defaultMessage
+                          const fallbackMessage =
+                            (validationErrorFallbackMessage &&
+                              formatText(
+                                validationErrorFallbackMessage,
+                                application,
+                                formatMessage,
+                              )) +
+                            ' - ' +
+                            error.errorNo
+
+                          return (
+                            <Bullet>
+                              {message || defaultMessage || fallbackMessage}
+                            </Bullet>
+                          )
+                        })}
+                      </BulletList>
+                    </Box>
+                  }
+                />
+              </Box>
+            )}
           </Box>
         ),
+        disabled,
       })
     }
   } else if (itemType === 'PLATE') {
