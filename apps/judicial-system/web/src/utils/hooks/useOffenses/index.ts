@@ -51,7 +51,7 @@ const useOffenses = () => {
         }
 
         return data?.createOffense
-      } catch (e) {
+      } catch {
         toast.error(formatMessage(errors.createOffense))
       }
     },
@@ -72,7 +72,7 @@ const useOffenses = () => {
         })
 
         return data?.deleteOffense?.deleted
-      } catch (e) {
+      } catch {
         toast.error(formatMessage(errors.deleteOffense))
       }
     },
@@ -102,7 +102,7 @@ const useOffenses = () => {
           toast.error(formatMessage(errors.updateOffense))
         }
         return data?.updateOffense
-      } catch (e) {
+      } catch {
         toast.error(formatMessage(errors.updateOffense))
       }
     },

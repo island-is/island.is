@@ -1,5 +1,4 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
@@ -22,6 +21,7 @@ import {
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
+import { CaseCloningService } from './caseCloning.service'
 import { InternalCaseController } from './internalCase.controller'
 import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
@@ -48,6 +48,7 @@ import { PdfService } from './pdf.service'
   ],
   providers: [
     CaseService,
+    CaseCloningService,
     CaseInterceptor,
     InternalCaseService,
     LimitedAccessCaseService,

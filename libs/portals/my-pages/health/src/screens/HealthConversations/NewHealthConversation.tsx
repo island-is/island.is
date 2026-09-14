@@ -13,6 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  ActionCard,
   CardLoader,
   IntroWrapper,
   m,
@@ -28,12 +29,14 @@ import CertificateRequestForm, {
   toCertificateRequestInput,
 } from './components/CertificateRequestForm'
 import { Problem } from '@island.is/react-spa/shared'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { getMessagingWindowInfo } from './utils/messagingWindow'
+import { MAX_MESSAGE_LENGTH } from './utils/constants'
+import { Markdown } from '@island.is/shared/components'
 import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
 import * as styles from './HealthConversations.css'
 import {
@@ -56,8 +59,6 @@ const getRecipientKey = (recipient: {
   `${recipient.nodeId}-${recipient.groupId}${
     recipient.treatmentId ? `-${recipient.treatmentId}` : ''
   }`
-
-const MAX_MESSAGE_LENGTH = 300
 
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
@@ -94,8 +95,10 @@ const NewHealthConversation = () => {
       refetchQueries: ['GetHealthConversations'],
     })
 
-  const recipients = data?.healthDirectorateHealthConversationRecipients
+  const allRecipients = data?.healthDirectorateHealthConversationRecipients
+  const recipients = allRecipients?.filter((r) => r.allowsMessaging)
   const hasRecipients = !!recipients?.length
+  const messagingUnavailable = !!allRecipients && !hasRecipients
   const hasMultipleRecipients = (recipients?.length ?? 0) > 1
 
   const recipientOptions =
@@ -150,23 +153,7 @@ const NewHealthConversation = () => {
     windowClose: recipient?.messagingWindowClose,
   })
 
-  const hasWindowInfo =
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel &&
-    recipient?.patientReplyWindowDays !== undefined
-
-  const introText = recipient
-    ? hasWindowInfo
-      ? formatMessage(messages.healthConversationsNewIntroWithWindow, {
-          name: recipient.name,
-          openTime: windowInfo.windowOpenLabel,
-          closeTime: windowInfo.windowCloseLabel,
-          days: recipient.patientReplyWindowDays,
-        })
-      : formatMessage(messages.healthConversationsNewIntroWithRecipient, {
-          name: recipient.name,
-        })
-    : formatMessage(messages.healthConversationsNewIntro)
+  const introText = formatMessage(messages.healthConversationsNewIntro)
 
   const isCertificateBlocked =
     isCertificateSelected && recipient?.canRequestCertificate === false
@@ -298,6 +285,41 @@ const NewHealthConversation = () => {
     }
   }
 
+  if (!initialLoading && !error && messagingUnavailable) {
+    return (
+      <Box marginTop={[1, 0, 0]}>
+        <ConversationMobileBackHeader
+          onClick={() => navigate(HealthPaths.HealthConversations)}
+        />
+        <IntroWrapper
+          title={messages.healthConversationsContactTitle}
+          introComponent={
+            <Text>
+              {formatMessage(messages.healthConversationsContactIntro, {
+                bold: (str: React.ReactNode) => <strong>{str}</strong>,
+              })}
+            </Text>
+          }
+          desktopContentSpan="10/12"
+        >
+          <ActionCard
+            heading={formatMessage(
+              messages.healthConversationsContactWebChatTitle,
+            )}
+            text={formatMessage(messages.healthConversationsContactWebChatText)}
+            cta={{
+              url: formatMessage(messages.heilsuveraChatLink),
+              label: formatMessage(
+                messages.healthConversationsContactWebChatCta,
+              ),
+              variant: 'text',
+            }}
+          />
+        </IntroWrapper>
+      </Box>
+    )
+  }
+
   return (
     <Box marginTop={[1, 0, 0]}>
       <ConversationMobileBackHeader
@@ -310,7 +332,7 @@ const NewHealthConversation = () => {
       >
         {initialLoading && <CardLoader />}
         {error && <Problem error={error} noBorder={false} />}
-        {!initialLoading && !error && !hasRecipients && (
+        {!initialLoading && !error && !allRecipients && (
           <Problem
             type="no_data"
             noBorder={false}
@@ -412,6 +434,12 @@ const NewHealthConversation = () => {
                 </Box>
               )}
 
+              {!isCertificateSelected && selectedType?.instructions && (
+                <Box marginBottom={2} className={styles.typeInstructions}>
+                  <Markdown>{selectedType.instructions}</Markdown>
+                </Box>
+              )}
+
               {isCertificateSelected ? (
                 <CertificateRequestForm
                   formState={certificateForm}
@@ -420,6 +448,7 @@ const NewHealthConversation = () => {
                   }
                   disabled={isFormLocked}
                   hidePaymentNotice={isCertificateBlocked}
+                  instructions={selectedType?.instructions}
                 />
               ) : (
                 <Box>
@@ -443,7 +472,7 @@ const NewHealthConversation = () => {
               )}
 
               <Box
-                marginTop={4}
+                marginTop={3}
                 marginBottom={4}
                 className={styles.termsCheckbox}
               >

@@ -15,6 +15,7 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
     patientInitiatedTypeCode
     title
     description
+    instructions
     isCertificate
     externalLinkUrl
     isCurrentlyOpen

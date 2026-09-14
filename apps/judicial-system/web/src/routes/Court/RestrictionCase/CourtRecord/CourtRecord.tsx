@@ -128,9 +128,7 @@ export const CourtRecord: FC = () => {
 
     if (workingCase.defenderName) {
       autofillSessionBookings.push(
-        `${formatMessage(m.sections.sessionBookings.autofillDefender, {
-          defender: workingCase.defenderName,
-        })}\n\n`,
+        `${workingCase.defenderName} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.\n\n`,
       )
     }
 
