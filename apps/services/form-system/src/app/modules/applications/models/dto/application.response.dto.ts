@@ -20,4 +20,10 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   hasRequiredDelegation?: boolean
+
+  @ApiPropertyOptional()
+  isInaccessible?: boolean
+
+  @ApiPropertyOptional()
+  validateEligibility?: boolean
 }

@@ -1,12 +1,16 @@
-import { useMutation } from '@apollo/client'
-import { FormSystemField } from '@island.is/api/schema'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import {
+  FormSystemField,
+  FormSystemSection,
+  PaymentCatalogItem,
+} from '@island.is/api/schema'
 import { NotificationCommands } from '@island.is/form-system/enums'
 import {
   CREATE_PAYMENT,
+  GET_PAYMENT_CATALOG,
   NOTIFY_EXTERNAL_SERVICE,
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
-  SUBMIT_SECTION,
   UPDATE_APPLICATION_SETTINGS,
   removeTypename,
 } from '@island.is/form-system/graphql'
@@ -22,11 +26,73 @@ import { useFormContext } from 'react-hook-form'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import * as styles from './Footer.css'
 
-interface Props {
-  externalDataAgreement: boolean
+const emptyScreenError = {
+  hasError: false,
+  title: { is: '', en: '' },
+  message: { is: '', en: '' },
 }
 
-export const Footer = ({ externalDataAgreement }: Props) => {
+const saveScreenError = {
+  hasError: true,
+  title: { is: 'Ekki tókst að vista', en: 'Could not save' },
+  message: {
+    is: 'Villa kom upp við að vista umsóknina. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while saving the application. Please try again.',
+  },
+}
+
+const submitApplicationError = {
+  hasError: true,
+  title: { is: 'Ekki tókst að senda umsókn', en: 'Could not submit' },
+  message: {
+    is: 'Villa kom upp við að senda umsóknina. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while submitting the application. Please try again.',
+  },
+}
+
+const paymentCatalogError = {
+  hasError: true,
+  title: {
+    is: 'Ekki tókst að sækja greiðsluupplýsingar',
+    en: 'Could not fetch payment information',
+  },
+  message: {
+    is: 'Villa kom upp við að sækja greiðsluupplýsingar. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while fetching payment information. Please try again.',
+  },
+}
+
+const stripFieldListsFromSections = (
+  sections: FormSystemSection[],
+): FormSystemSection[] =>
+  sections.map((section) => ({
+    ...section,
+    screens: section.screens?.map((screen) =>
+      screen
+        ? {
+            ...screen,
+            fields: screen.fields?.map((field) => {
+              if (!field) return field
+
+              return {
+                ...field,
+                list: undefined,
+              }
+            }),
+          }
+        : screen,
+    ),
+  }))
+
+interface Props {
+  externalDataAgreement: boolean
+  isValidateEligibilityError: boolean
+}
+
+export const Footer = ({
+  externalDataAgreement,
+  isValidateEligibilityError,
+}: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useLocale()
   const { trigger } = useFormContext()
@@ -34,13 +100,20 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const currentSectionType = currentSection?.data?.sectionType
 
   const submitScreen = useMutation(SAVE_SCREEN)
-  const submitSection = useMutation(SUBMIT_SECTION)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
+  const saveLoading = submitScreen[1].loading || updateDependencies[1].loading
   const [notifyExternal, { loading: notifyLoading }] = useMutation(
     NOTIFY_EXTERNAL_SERVICE,
   )
   const [createPayment, { loading: paymentLoading }] =
     useMutation(CREATE_PAYMENT)
+  const [getPaymentCatalog, { loading: paymentCatalogLoading }] = useLazyQuery(
+    GET_PAYMENT_CATALOG,
+    {
+      fetchPolicy: 'network-only',
+    },
+  )
+  const isPaymentLoading = paymentLoading || paymentCatalogLoading
 
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
@@ -84,7 +157,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     state.currentSection.index === 0
       ? formatMessage(m.externalDataConfirmation)
       : onSubmit
-      ? formatMessage(m.submitApplication)
+      ? formatMessage(m.submitApplication2)
       : isCompletedSection
       ? formatMessage(m.openMyPages)
       : formatMessage(m.continue)
@@ -112,8 +185,72 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     (currentSectionType === SectionTypes.PARTIES &&
       hasVisibleApplicantBeforeCurrentScreen())
 
+  const increment = () => {
+    dispatch({
+      type: 'INCREMENT',
+    })
+  }
+
+  const updateCurrentDependencies = async () => {
+    if (currentSectionType !== SectionTypes.INPUT) return true
+
+    try {
+      await updateDependencies[0]({
+        variables: {
+          input: {
+            id: state.application.id,
+            updateApplicationDto: {
+              dependencies: state.application.dependencies,
+            },
+          },
+        },
+      })
+      return true
+    } catch (error) {
+      console.error('Error updating application dependencies:', error)
+      dispatch({
+        type: 'SAVE_FAILED',
+        payload: { screenError: saveScreenError },
+      })
+      return false
+    }
+  }
+
+  const saveCurrentScreen = async (increment?: boolean) => {
+    try {
+      await submitScreen[0]({
+        variables: {
+          input: {
+            submitScreenDto: {
+              applicationId: state.application.id,
+              screenId: state.currentScreen?.data?.id,
+              sectionId: state.currentSection.data.id,
+              increment,
+              sections: stripFieldListsFromSections(
+                removeTypename(state.sections),
+              ),
+            },
+          },
+        },
+      })
+
+      dispatch({
+        type: 'CLEAR_SCREEN_ERROR',
+        payload: { screenError: emptyScreenError },
+      })
+      return true
+    } catch (error) {
+      console.error('Error saving application:', error)
+      dispatch({
+        type: 'SAVE_FAILED',
+        payload: { screenError: saveScreenError },
+      })
+      return false
+    }
+  }
+
   const handleIncrement = async () => {
-    if (paymentLoading) return
+    if (isPaymentLoading) return
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
 
@@ -121,6 +258,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     const isParties = currentSectionType === SectionTypes.PARTIES
 
     if (!isValid && (isParties || !allowProceed)) return
+    if ((state.errors?.length ?? 0) > 0) return
 
     if (isCompletedSection) {
       window.open('/minarsidur', '_blank', 'noopener,noreferrer')
@@ -128,6 +266,26 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
 
     if (shouldShowPay) {
+      const performingOrganizationID =
+        state.application.organizationNationalId ?? ''
+      let paymentCatalogItems: PaymentCatalogItem[] = []
+      try {
+        const { data } = await getPaymentCatalog({
+          variables: {
+            input: {
+              performingOrganizationID,
+            },
+          },
+        })
+        paymentCatalogItems = data?.paymentCatalog?.items ?? []
+      } catch (error) {
+        console.error('Error fetching payment catalog:', error)
+        dispatch({
+          type: 'SAVE_FAILED',
+          payload: { screenError: paymentCatalogError },
+        })
+        return
+      }
       const chargeItems: {
         performingOrgID: string
         chargeType: string
@@ -150,40 +308,63 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         })
       })
 
-      state.sections?.forEach((section) => {
-        section?.screens?.forEach((screen) => {
-          screen?.fields
-            ?.filter(
-              (field) =>
-                field?.fieldType === FieldTypesEnum.PAYMENT &&
-                field?.isHidden === false,
-            )
-            .forEach((field) => {
-              if (field?.fieldSettings?.chargeItemCode) {
-                const code = field.fieldSettings.chargeItemCode
-                let quantity: number | undefined = 1
-                const amount: number | undefined = field.fieldSettings
-                  .priceAmount as number | undefined
-                if (field.fieldSettings.paymentQuantityId) {
-                  const quantityField = paymentQuantityFields.find(
-                    (f) => f.id === field?.fieldSettings?.paymentQuantityId,
-                  )
-                  if (quantityField) {
-                    quantity = getValue(quantityField, 'number')
-                  }
-                }
-                chargeItems.push({
-                  performingOrgID:
-                    state.application.organizationNationalId ?? '',
-                  chargeType: field.fieldSettings.chargeType || 'default',
-                  chargeItemCode: code,
-                  chargeItemName:
-                    field.fieldSettings.chargeItemName || 'Default Name',
-                  priceAmount: amount || 0,
-                  quantity,
-                })
-              }
-            })
+      const visiblePaymentFields =
+        state.sections?.flatMap(
+          (section) =>
+            section?.screens?.flatMap(
+              (screen) =>
+                screen?.fields?.filter(
+                  (field) =>
+                    field?.fieldType === FieldTypesEnum.PAYMENT &&
+                    field?.isHidden === false,
+                ) ?? [],
+            ) ?? [],
+        ) ?? []
+
+      const hasUnresolvedPaymentField = visiblePaymentFields.some((field) => {
+        const code = field?.fieldSettings?.chargeItemCode
+
+        return (
+          !code ||
+          !paymentCatalogItems.some(
+            (item: PaymentCatalogItem) => item.chargeItemCode === code,
+          )
+        )
+      })
+
+      if (hasUnresolvedPaymentField) {
+        dispatch({
+          type: 'SAVE_FAILED',
+          payload: { screenError: paymentCatalogError },
+        })
+        return
+      }
+
+      visiblePaymentFields.forEach((field) => {
+        const code = field?.fieldSettings?.chargeItemCode
+        const paymentCatalogItem = paymentCatalogItems.find(
+          (item: PaymentCatalogItem) => item.chargeItemCode === code,
+        )
+        if (!code || !paymentCatalogItem) return
+
+        let quantity: number | undefined = 1
+        if (field?.fieldSettings?.paymentQuantityId) {
+          const quantityField = paymentQuantityFields.find(
+            (paymentQuantityField) =>
+              paymentQuantityField.id ===
+              field.fieldSettings?.paymentQuantityId,
+          )
+          if (quantityField) {
+            quantity = getValue(quantityField, 'number')
+          }
+        }
+        chargeItems.push({
+          performingOrgID: paymentCatalogItem.performingOrgID,
+          chargeType: paymentCatalogItem.chargeType,
+          chargeItemCode: code,
+          chargeItemName: paymentCatalogItem.chargeItemName,
+          priceAmount: Number(paymentCatalogItem.priceAmount),
+          quantity,
         })
       })
       const { data } = await createPayment({
@@ -191,8 +372,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           input: {
             applicationId: state.application.id,
             createChargeRequestDto: {
-              performingOrganizationID:
-                state.application.organizationNationalId ?? '',
+              performingOrganizationID,
               chargeItems,
             },
           },
@@ -215,6 +395,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             input: {
               applicationId: state.application.id,
               nationalId: '',
+              actorNationalId: '',
               organizationNationalId:
                 state.application.organizationNationalId ?? '',
               slug: state.application.slug,
@@ -245,17 +426,20 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
 
     if (!onSubmit) {
-      dispatch({
-        type: 'INCREMENT',
-        payload: {
-          submitScreen: submitScreen,
-          submitSection: submitSection,
-          updateDependencies: updateDependencies,
-        },
-      })
+      const saved = await saveCurrentScreen(true)
+      if (saved) {
+        increment()
+        await updateCurrentDependencies()
+      }
       return
     }
     try {
+      const saved = await saveCurrentScreen()
+      if (!saved) return
+
+      const updatedDependencies = await updateCurrentDependencies()
+      if (!updatedDependencies) return
+
       const { data } = await submitApplication({
         variables: { input: { id: state.application.id } },
       })
@@ -269,40 +453,38 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         })
         return
       }
-      dispatch({
-        type: 'INCREMENT',
-        payload: {
-          submitScreen: submitScreen,
-          submitSection: submitSection,
-          updateDependencies: updateDependencies,
-        },
-      })
+
+      const completedSaved = await saveCurrentScreen(true)
+      if (!completedSaved) return
+
+      increment()
+
       dispatch({
         type: 'SUBMITTED',
         payload: {
           submitted: true,
-          screenError: {
-            hasError: false,
-            title: { is: '', en: '' },
-            message: { is: '', en: '' },
-          },
+          screenError: emptyScreenError,
         },
       })
     } catch (error) {
       console.error('Error submitting application', error)
-      throw new Error('Error submitting application')
+      dispatch({
+        type: 'SAVE_FAILED',
+        payload: { screenError: submitApplicationError },
+      })
     }
   }
 
-  const handleDecrement = () =>
+  const handleDecrement = async () => {
+    const saved = await saveCurrentScreen(false)
+    if (!saved) return
+
     dispatch({
       type: 'DECREMENT',
-      payload: {
-        submitScreen: submitScreen,
-        submitSection: submitSection,
-        updateDependencies: updateDependencies,
-      },
     })
+
+    await updateCurrentDependencies()
+  }
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
@@ -323,12 +505,14 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               onClick={handleIncrement}
               disabled={
                 !enableContinueButton ||
-                paymentLoading ||
+                isValidateEligibilityError ||
+                isPaymentLoading ||
                 submitLoading ||
+                saveLoading ||
                 notifyLoading ||
                 (onSubmit && state.isValid === false)
               }
-              loading={submitLoading || notifyLoading || paymentLoading}
+              loading={submitLoading || notifyLoading || isPaymentLoading}
             >
               {shouldShowPay ? formatMessage(m.pay) : continueButtonText}
             </Button>
@@ -339,7 +523,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
-                disabled={submitLoading || notifyLoading || paymentLoading}
+                disabled={
+                  submitLoading ||
+                  notifyLoading ||
+                  isPaymentLoading ||
+                  saveLoading
+                }
               >
                 {formatMessage(m.back)}
               </Button>

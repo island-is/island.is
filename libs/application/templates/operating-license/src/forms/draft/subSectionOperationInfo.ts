@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { removeCountryCode } from '@island.is/application/ui-components'
+import { removeCountryCode } from '@island.is/shared/utils'
 
 export const subSectionOperationInfo = buildSubSection({
   id: 'info',

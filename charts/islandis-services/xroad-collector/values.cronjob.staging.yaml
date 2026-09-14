@@ -23,6 +23,7 @@ command:
   - 'node'
 enabled: true
 env:
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { LoadingDots, toast } from '@island.is/island-ui/core'
+import { LoadingDots } from '@island.is/island-ui/core'
 import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RESULT_ROUTE,
@@ -40,16 +40,16 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
-  Case,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-
-import { findFirstInvalidStep } from '../../formHelper'
-import useCase from '../useCase'
-import { resolveTargetAppealCaseByAppealCaseId } from '../useTargetAppealCaseByAppealCaseId'
+import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { resolveTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'housing-benefits',
   preset: '../../../../../jest.preset.js',
   transform: {

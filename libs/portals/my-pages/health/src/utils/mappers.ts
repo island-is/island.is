@@ -1,5 +1,9 @@
-import { HealthDirectoratePrescriptionRenewalBlockedReason } from '@island.is/api/schema'
+import {
+  HealthDirectorateAppointmentAssigneeType,
+  HealthDirectoratePrescriptionRenewalBlockedReason,
+} from '@island.is/api/schema'
 import { FormatMessage } from '@island.is/localization'
+import { getWeekday } from '@island.is/portals/my-pages/core'
 import { messages } from '../lib/messages'
 
 export const mapBlockedStatus = (
@@ -116,7 +120,8 @@ export const mapBlockedStatus = (
   }
 }
 
-export const mapWeekday = (weekday: string, formatMessage: FormatMessage) => {
+export const mapWeekday = (date: string, formatMessage: FormatMessage) => {
+  const weekday = getWeekday(date)
   switch (weekday.toLowerCase()) {
     case 'monday':
       return formatMessage(messages.weekdayMondayAcc)
@@ -134,5 +139,25 @@ export const mapWeekday = (weekday: string, formatMessage: FormatMessage) => {
       return formatMessage(messages.weekdaySundayAcc)
     default:
       return weekday
+  }
+}
+
+export const mapAssigneeType = (
+  type: HealthDirectorateAppointmentAssigneeType,
+  formatMessage: FormatMessage,
+) => {
+  switch (type) {
+    case HealthDirectorateAppointmentAssigneeType.ROLE:
+      return formatMessage(messages.appointmentAssigneeTypeRole)
+    case HealthDirectorateAppointmentAssigneeType.ROOM:
+      return formatMessage(messages.appointmentAssigneeTypeRoom)
+    case HealthDirectorateAppointmentAssigneeType.EQUIPMENT:
+      return formatMessage(messages.appointmentAssigneeTypeEquipment)
+    case HealthDirectorateAppointmentAssigneeType.SERVICE:
+      return formatMessage(messages.appointmentAssigneeTypeService)
+    case HealthDirectorateAppointmentAssigneeType.TEAM:
+      return formatMessage(messages.appointmentAssigneeTypeTeam)
+    default:
+      return formatMessage(messages.appointmentAssigneeTypeOther)
   }
 }

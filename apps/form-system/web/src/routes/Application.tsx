@@ -35,7 +35,12 @@ export const Application = () => {
   const formSystemApp = data?.formSystemApplication
   const isLoginTypeAllowed = formSystemApp?.isLoginTypeAllowed
   const hasRequiredDelegation = formSystemApp?.hasRequiredDelegation
+  const isInaccessible = formSystemApp?.isInaccessible
   const application = removeTypename(formSystemApp?.application)
+
+  if (isInaccessible === true) {
+    return <ErrorShell errorType="notExist" />
+  }
 
   if (hasRequiredDelegation === false) {
     return <ErrorShell errorType="badSubject" />
@@ -45,5 +50,10 @@ export const Application = () => {
     return <ErrorShell errorType="idNotFound" />
   }
 
-  return <ApplicationProvider application={application} />
+  return (
+    <ApplicationProvider
+      application={application}
+      validateEligibility={formSystemApp?.validateEligibility ?? false}
+    />
+  )
 }

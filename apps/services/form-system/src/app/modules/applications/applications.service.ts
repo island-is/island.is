@@ -14,7 +14,6 @@ import type { Locale } from '@island.is/shared/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   HttpException,
   Inject,
@@ -95,6 +94,12 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    if (form.isInaccessible) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isInaccessible = true
+      return responseDto
+    }
+
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
 
     const loginTypes = await this.getLoginTypes(user)
@@ -115,7 +120,8 @@ export class ApplicationsService {
 
     const isTest = form.status !== FormStatus.PUBLISHED
 
-    const nationalId = user.actor?.nationalId || user.nationalId
+    const nationalId = user.nationalId
+    const actorNationalId = user.actor?.nationalId || user.nationalId
 
     try {
       await this.sequelize.transaction(async (transaction) => {
@@ -127,6 +133,7 @@ export class ApplicationsService {
             dependencies: form.dependencies,
             status: ApplicationStatus.DRAFT,
             nationalId,
+            actorNationalId,
             draftTotalSteps: form.draftTotalSteps,
             pruneAt: calculatePruneAt(form.draftDaysToLive),
           } as Application,
@@ -242,6 +249,10 @@ export class ApplicationsService {
       )
     }
 
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
@@ -318,6 +329,10 @@ export class ApplicationsService {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found.`,
       )
+    }
+
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
     }
 
     if (user) {
@@ -401,7 +416,7 @@ export class ApplicationsService {
         )
       }
       zendeskInstance = organization.zendeskInstance ?? ''
-      zendeskBrandId = organization.zendeskBrandId ?? ''
+      zendeskBrandId = form.zendeskBrandId ?? ''
     }
 
     const success = await this.serviceManager.send(
@@ -416,6 +431,15 @@ export class ApplicationsService {
         application.submittedAt = applicationDto.submittedAt
         application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
         await application.save()
+        this.logger.info('form system application submitted', {
+          applicationId: application.id,
+          formId: form.id,
+          formSlug: form.slug,
+          organizationNationalId: applicationDto.organizationNationalId,
+          isTest: application.isTest,
+          submittedWithPayment: !user,
+          datadogEvent: 'form_system_application_submitted',
+        })
       } catch (error) {
         await applicationEvent.destroy()
         throw error
@@ -539,6 +563,12 @@ export class ApplicationsService {
         slug,
       )
 
+      if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+        const responseDto = new ApplicationResponseDto()
+        responseDto.isInaccessible = true
+        return responseDto
+      }
+
       const allowedLoginTypes = await this.getAllowedLoginTypes(form)
       if (user) {
         const loginTypes = await this.getLoginTypes(user)
@@ -568,6 +598,8 @@ export class ApplicationsService {
       const responseDto = new ApplicationResponseDto()
       responseDto.application = applicationDto
       responseDto.isLoginTypeAllowed = true
+      responseDto.isInaccessible = form.isInaccessible
+      responseDto.validateEligibility = form.validateEligibility
 
       return responseDto
     } catch (error) {
@@ -598,6 +630,12 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    if (form.isInaccessible) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isInaccessible = true
+      return responseDto
+    }
+
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
 
     const loginTypes = await this.getLoginTypes(user)
@@ -622,6 +660,7 @@ export class ApplicationsService {
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     responseDto.isLoginTypeAllowed = true
+    responseDto.isInaccessible = form.isInaccessible
     return responseDto
   }
 
@@ -925,10 +964,6 @@ export class ApplicationsService {
       )
     }
 
-    if (form.status === FormStatus.ARCHIVED) {
-      throw new ConflictException(`Form with id '${formId}' is archived`)
-    }
-
     return form
   }
 
@@ -1015,6 +1050,10 @@ export class ApplicationsService {
       )
     }
 
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
@@ -1049,7 +1088,7 @@ export class ApplicationsService {
           }
         }
       }
-    } else {
+    } else if (submitScreenDto.increment === false) {
       if (
         this.doesSectionHaveScreen(currentSection) &&
         !this.isFirstScreenInSection(currentSection, currentScreenId)
@@ -1241,9 +1280,14 @@ export class ApplicationsService {
     }
     const fieldType = field.fieldType
 
+    const form = await this.getForm(slug)
+
+    if (form.isInaccessible) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
     // Ownership + access check: field must belong to the requested form,
     // and the current user's loginTypes must be allowed for that form.
-    const form = await this.getForm(slug)
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
@@ -1287,12 +1331,11 @@ export class ApplicationsService {
         )
       }
 
-      const organizationInstance = await this.getOrganizationZendeskInfo(
-        orgNationalId,
-      )
+      const organizationInstance = await this.getOrganizationZendeskInfo(form)
 
       dataFromUrlRequestDto.zendeskInstance =
         organizationInstance.zendeskInstance
+      dataFromUrlRequestDto.zendeskBrandId = organizationInstance.zendeskBrandId
 
       response = await this.serviceManager.getListFromZendesk(
         fieldSettings,
@@ -1342,6 +1385,10 @@ export class ApplicationsService {
       )
     }
 
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
@@ -1361,11 +1408,16 @@ export class ApplicationsService {
       )
     }
 
-    const nationalId = user.actor?.nationalId || user.nationalId
+    const nationalId = user.nationalId
+    const actorNationalId = user.actor?.nationalId || user.nationalId
 
     notificationDto.nationalId = nationalId
+    notificationDto.actorNationalId = actorNationalId
 
-    if (!notificationDto.screenDto) {
+    if (
+      !notificationDto.screenDto &&
+      notificationDto.command !== NotificationCommands.VALIDATE_ELIGIBILITY
+    ) {
       throw new BadRequestException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
@@ -1391,28 +1443,50 @@ export class ApplicationsService {
 
     response.screen = screen
 
-    response.screen.screenError = {
-      hasError: false,
-      title: { is: '', en: '' },
-      message: { is: '', en: '' },
+    if (response.screen) {
+      response.screen.screenError = {
+        hasError: false,
+        title: { is: '', en: '' },
+        message: { is: '', en: '' },
+      }
     }
 
     if (!response.operationSuccessful) {
-      if (notificationDto.command === NotificationCommands.VALIDATE) {
-        response.screen.screenError = this.getDefaultScreenErrorValidate()
+      if (
+        notificationDto.command === NotificationCommands.VALIDATE ||
+        notificationDto.command === NotificationCommands.VALIDATE_ELIGIBILITY
+      ) {
+        const screenError = this.getDefaultScreenErrorValidate()
+        if (response.screen) {
+          response.screen.screenError = screenError
+        } else {
+          response.screenError = screenError
+        }
       }
     } else if (response.screenError?.hasError) {
-      if (notificationDto.command === NotificationCommands.VALIDATE) {
-        response.screen.screenError =
+      if (
+        notificationDto.command === NotificationCommands.VALIDATE ||
+        notificationDto.command === NotificationCommands.VALIDATE_ELIGIBILITY
+      ) {
+        const screenError =
           response.screenError.title?.is || response.screenError.message?.is
             ? response.screenError
             : this.getDefaultScreenErrorValidate()
+        if (response.screen) {
+          response.screen.screenError = screenError
+        } else {
+          response.screenError = screenError
+        }
       }
     }
 
     if (!response.operationSuccessful || response.screenError?.hasError) {
       this.logger.error(
-        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${screen.id}' with command ${notificationDto.command}`,
+        `Failed to notify external service for application '${
+          notificationDto.applicationId
+        }'${
+          screen ? ` on screen: '${screen.id}'` : ' for premises'
+        } with command ${notificationDto.command}`,
       )
     }
 
@@ -1434,20 +1508,20 @@ export class ApplicationsService {
   }
 
   private async getOrganizationZendeskInfo(
-    organizationNationalId: string,
+    form: Form,
   ): Promise<{ zendeskInstance: string; zendeskBrandId: string }> {
     const organization = await this.organizationModel.findOne({
-      where: { nationalId: organizationNationalId },
+      where: { nationalId: form.organizationNationalId },
     })
 
     if (!organization) {
       throw new NotFoundException(
-        `Organization with nationalId '${organizationNationalId}' not found`,
+        `Organization with nationalId '${form.organizationNationalId}' not found`,
       )
     }
 
     const zendeskInstance = organization.zendeskInstance ?? ''
-    const zendeskBrandId = organization.zendeskBrandId ?? ''
+    const zendeskBrandId = form.zendeskBrandId ?? ''
     return { zendeskInstance, zendeskBrandId }
   }
 

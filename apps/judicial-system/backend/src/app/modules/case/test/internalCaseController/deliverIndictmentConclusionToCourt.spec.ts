@@ -35,6 +35,7 @@ const deliverConclusionCase = (
   mock<Case>({
     rulingModifiedHistory: undefined,
     judgeId: undefined,
+    rulingDate: undefined,
     defendants: undefined,
     splitCases: undefined,
     mergeCase: undefined,

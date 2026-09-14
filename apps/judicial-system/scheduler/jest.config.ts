@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'judicial-system-scheduler',
   preset: './jest.preset.js',
   rootDir: '../../..',

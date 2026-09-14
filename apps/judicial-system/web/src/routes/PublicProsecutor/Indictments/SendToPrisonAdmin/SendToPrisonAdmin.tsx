@@ -1,13 +1,10 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams, useRouter } from 'next/navigation'
 
-import {
-  Box,
-  FileUploadStatus,
-  InputFileUpload,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import type { UploadFile } from '@island.is/island-ui/core'
+import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
@@ -129,24 +126,22 @@ const SendToPrisonAdmin: FC = () => {
           title={formatMessage(strings.fileUploadTitle)}
           description={formatMessage(strings.fileUploadDescription)}
         />
-        <Box marginBottom={10}>
-          <InputFileUpload
-            name="sentToPrisonAdminFileUpload"
-            files={uploadFiles.filter(
-              (file) =>
-                file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
-            )}
-            accept="application/pdf"
-            title={formatMessage(core.uploadBoxTitle)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={handleFileUpload}
-            onRemove={handleRemoveFile}
-            onOpenFile={(file) => onOpenFile(file)}
-          />
-        </Box>
+        <InputFileUpload
+          name="sentToPrisonAdminFileUpload"
+          files={uploadFiles.filter(
+            (file) =>
+              file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+          )}
+          accept="application/pdf"
+          title={formatMessage(core.uploadBoxTitle)}
+          description={formatMessage(core.uploadBoxDescription, {
+            fileEndings: '.pdf',
+          })}
+          buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+          onChange={handleFileUpload}
+          onRemove={handleRemoveFile}
+          onOpenFile={(file) => onOpenFile(file)}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -168,15 +163,18 @@ const SendToPrisonAdmin: FC = () => {
             courtCaseNumber: workingCase.courtCaseNumber,
             defendant: defendant.name,
           })}
-          primaryButton={{
-            text: formatMessage(strings.modalNextButtonText),
-            onClick: handlePrimaryButtonClick,
-            isLoading: isUpdatingDefendant,
-          }}
-          secondaryButton={{
-            text: formatMessage(core.back),
-            onClick: handleSecondaryButtonClick,
-          }}
+          buttons={[
+            {
+              text: formatMessage(core.back),
+              onClick: handleSecondaryButtonClick,
+              variant: 'ghost',
+            },
+            {
+              text: formatMessage(strings.modalNextButtonText),
+              onClick: handlePrimaryButtonClick,
+              isLoading: isUpdatingDefendant,
+            },
+          ]}
           onClose={handleSecondaryButtonClick}
           loading={isUpdatingDefendant}
           errorMessage={uploadFileError}

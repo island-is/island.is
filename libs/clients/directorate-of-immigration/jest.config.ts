@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-directorate-of-immigration',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

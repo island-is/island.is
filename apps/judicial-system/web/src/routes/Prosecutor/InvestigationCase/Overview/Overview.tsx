@@ -53,7 +53,7 @@ import {
   useCase,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
 export const Overview = () => {
@@ -171,7 +171,7 @@ export const Overview = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&
@@ -350,12 +350,15 @@ export const Overview = () => {
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                router.push(getStandardUserDashboardRoute(user))
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  router.push(getStandardUserDashboardRoute(user))
+                },
+                variant: 'ghost',
               },
-            }}
+            ]}
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)

@@ -189,4 +189,10 @@ export class ApplicationResponse {
 
   @Field(() => Boolean, { nullable: true })
   hasRequiredDelegation?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isInaccessible?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  validateEligibility?: boolean
 }

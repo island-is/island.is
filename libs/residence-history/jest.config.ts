@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'residence-history',
   preset: './jest.preset.js',
   rootDir: '../..',

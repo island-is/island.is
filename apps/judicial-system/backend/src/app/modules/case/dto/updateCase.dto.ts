@@ -10,18 +10,19 @@ import {
   IsString,
   IsUUID,
   Length,
+  Matches,
   MaxLength,
   ValidateNested,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -87,7 +88,7 @@ export class UpdateCaseDto {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
-  @MaxLength(255, { each: true })
+  @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly policeCaseNumbers?: string[]
 
@@ -353,26 +354,6 @@ export class UpdateCaseDto {
   readonly endOfSessionBookings?: string
 
   @IsOptional()
-  @IsEnum(CaseAppealDecision)
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  readonly accusedAppealDecision?: CaseAppealDecision
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly accusedAppealAnnouncement?: string
-
-  @IsOptional()
-  @IsEnum(CaseAppealDecision)
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  readonly prosecutorAppealDecision?: CaseAppealDecision
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly prosecutorAppealAnnouncement?: string
-
-  @IsOptional()
   @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
@@ -429,6 +410,16 @@ export class UpdateCaseDto {
   readonly indictmentDeniedExplanation?: string
 
   @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly indictmentApproverId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly indictmentReviewReturnedExplanation?: string
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly postponedIndefinitelyExplanation?: string
@@ -477,6 +468,11 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isCompletedWithoutRuling?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isArraignmentSummonsSkipped?: boolean
 
   @IsOptional()
   @IsString()

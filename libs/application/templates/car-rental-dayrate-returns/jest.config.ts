@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'car-rental-dayrate-returns',
   preset: '../../../../jest.preset.js',
   transform: {

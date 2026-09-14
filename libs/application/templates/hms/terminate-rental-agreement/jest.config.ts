@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'terminate-rental-agreement',
   preset: '../../../../../jest.preset.js',
   transform: {

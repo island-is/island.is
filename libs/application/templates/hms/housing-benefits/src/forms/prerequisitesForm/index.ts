@@ -6,6 +6,7 @@ import { externalDataSection } from './externalDataSection'
 import { confirmReadSection } from './confirmReadSection'
 import { confirmMunicipality } from './confirmMunicipality'
 import { mockDataSection } from './mockDataSection'
+import { shouldRenderMockDataSection } from '../../utils/prerequisiteMockDataUtils'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -13,7 +14,7 @@ export const Prerequisites = buildForm({
   renderLastScreenButton: true,
   logo: HmsLogo,
   children: [
-    mockDataSection,
+    ...(shouldRenderMockDataSection() ? [mockDataSection] : []),
     confirmReadSection,
     confirmMunicipality,
     externalDataSection,

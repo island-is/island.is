@@ -1,8 +1,4 @@
-import getConfig from 'next/config'
-
-const {
-  publicRuntimeConfig: { basepath },
-} = getConfig()
+import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
 export const generateFormHtml = ({
   postUrl,
@@ -18,6 +14,7 @@ export const generateFormHtml = ({
       `intentionally skipping ${scriptPath} for CSP reasons while testing`,
     )
   }
+  const { basepath } = getPublicRuntimeEnv()
   const fieldsHtml = verificationFields
     .map(
       (field) =>

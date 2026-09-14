@@ -11,7 +11,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/skilavottord/web"
+        "outputPath": "dist/apps/skilavottord/web",
+        "webpack": true
       },
       "configurations": {
         "development": {
@@ -49,7 +50,8 @@
       "options": {
         "buildTarget": "skilavottord-web:build",
         "dev": true,
-        "customServerTarget": "skilavottord-web:serve-custom-server"
+        "customServerTarget": "skilavottord-web:serve-custom-server",
+        "webpack": true
       },
       "configurations": {
         "development": {

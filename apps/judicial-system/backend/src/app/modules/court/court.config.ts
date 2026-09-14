@@ -16,5 +16,8 @@ export const courtModuleConfig = defineConfig({
     fromName: env.required('EMAIL_FROM_NAME', 'Réttarvörslugátt'),
     replyToEmail: env.required('EMAIL_REPLY_TO', 'ben10@omnitrix.is'),
     replyToName: env.required('EMAIL_REPLY_TO_NAME', 'Réttarvörslugátt'),
+    courtsEmails: env.requiredJSON('COURTS_EMAILS', {
+      'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf': 'jl+d+court@kolibri.is',
+    }) as { [key: string]: string },
   }),
 })

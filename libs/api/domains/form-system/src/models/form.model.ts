@@ -93,6 +93,12 @@ export class Form {
   allowProceedOnValidationFail!: boolean
 
   @Field(() => Boolean)
+  isInaccessible!: boolean
+
+  @Field(() => Boolean)
+  validateEligibility!: boolean
+
+  @Field(() => Boolean)
   hasSummaryScreen!: boolean
 
   @Field(() => OrganizationZendeskInstance, { nullable: true })

@@ -11,7 +11,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/financial-aid/web-veita"
+        "outputPath": "dist/apps/financial-aid/web-veita",
+        "webpack": true
       },
       "configurations": {
         "development": {
@@ -56,7 +57,8 @@
       "options": {
         "buildTarget": "financial-aid-web-veita:build",
         "dev": true,
-        "customServerTarget": "financial-aid-web-veita:serve-custom-server"
+        "customServerTarget": "financial-aid-web-veita:serve-custom-server",
+        "webpack": true
       },
       "configurations": {
         "development": {

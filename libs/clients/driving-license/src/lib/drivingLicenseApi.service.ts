@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
 import {
   CanApplyErrorCodeBFull,
   CanApplyForCategoryResult,
@@ -7,6 +8,7 @@ import {
 } from '..'
 import * as v4 from '../v4'
 import * as v5 from '../v5'
+import * as v6 from '../v6'
 import {
   CanApplyErrorCodeBTemporary,
   CanApplyErrorCodeRenewal65,
@@ -19,6 +21,8 @@ import {
   Remark,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
+import { extractApplicationGuid } from './utils/extractApplicationGuid'
+
 import {
   DtoV5PracticePermitDto,
   DtoV5DriverLicenseWithoutImagesDto,
@@ -33,7 +37,92 @@ export class DrivingLicenseApi {
     private readonly applicationV5: v5.ApplicationApiV5,
     private readonly v5CodeTable: v5.CodeTableV5,
     private readonly imageApiV5: v5.ImageApiV5,
+    // Appended, not inserted: Nest resolves by type metadata, so appending
+    // keeps the diff to one line.
+    private readonly applicationV6: v6.ApplicationApiV6,
   ) {}
+
+  /**
+   * B-temp submit that carries the health declaration AND the certificate, via
+   * the v6 endpoint RLS added 2026-08-26. Replaces the legacy pair of calls
+   * (`postTemporaryLicenseWithHealthDeclaratio` + `postCreateDrivingLicenseTemporary`)
+   * for applicants whose redesign flag is on.
+   *
+   * The v5 twin above must stay: it is still the flag-off path, and flags are
+   * frozen into application answers, so in-flight drafts keep using it. Hence
+   * the `V6` suffix here — drop it once the v5 method goes.
+   */
+  public async postTemporaryLicenseWithHealthDeclarationV6(input: {
+    auth: Auth
+    model: v6.ModelsV6PostTemporaryLicenseWithHealthDeclaration
+  }): Promise<string | null> {
+    // The Raw variant so we can read RLS's guid from the response body before the
+    // generated DTO parser drops it. Enhanced fetch throws on 4xx, so reaching the
+    // read is success; every error propagates. The duplicate-on-retry policy
+    // (400 APPLICATION_ALREADY_EXISTS) lives in the submission service, which has
+    // the application and so can tell a lost-response retry (safe to treat as
+    // success) from a fresh application (must surface the error).
+    const response = await withAuthContext(input.auth, () =>
+      this.applicationV6.apiApplicationsV6TemporarywithhealthdeclarationPostRaw(
+        {
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+          modelsV6PostTemporaryLicenseWithHealthDeclaration: input.model,
+        },
+      ),
+    )
+
+    // Best-effort: guid capture must never turn a successful create into a
+    // failure, so any problem reading the body just yields a null guid.
+    try {
+      return extractApplicationGuid(await response.raw.clone().json())
+    } catch {
+      return null
+    }
+  }
+
+  /**
+   * B-full counterpart of the temporary endpoint above.
+   *
+   * Deliberately does NOT use `handleCreateResponse`. That helper exists for the
+   * v5 NewCategory endpoint, whose body is `{ value: number }` / a bare number /
+   * an error string. This endpoint has exactly two documented outcomes — 201 with
+   * the new application id, and 400 with ProblemDetails — and `createEnhancedFetch`
+   * throws on 4xx. So reaching the line after the call IS the success signal, and
+   * there is no body shape worth interpreting.
+   *
+   * This was learned the hard way on IS-DEV: routing the 201 body through
+   * `handleCreateResponse` produced "unknown type of response" for an application
+   * RLS had actually created, so the applicant was told the submission failed
+   * after paying — and their retry then failed for real with
+   * "An application already exists for this category". A false failure here is
+   * strictly worse than no check at all.
+   */
+  public async postFullLicenseWithHealthDeclarationV6(input: {
+    auth: Auth
+    category: string
+    model: v6.ModelsV6PostFullLicenseWithHealthDeclaration
+  }): Promise<string | null> {
+    // Enhanced fetch throws on 4xx, so reaching the return is success. RLS
+    // documents an int32 here but actually sends the new application's guid as
+    // the text body; surface it (never gate on it) for logging and so a tester
+    // can deny the created application.
+    // Enhanced fetch throws on 4xx, so reaching the return is success; every
+    // error propagates. RLS documents an int32 here but actually sends the new
+    // application's guid as the text body; surface it (never gate on it). The
+    // duplicate-on-retry policy lives in the submission service (see the temporary
+    // method above for why).
+    const created = await withAuthContext(input.auth, () =>
+      this.applicationV6.apiApplicationsV6CategoryWithhealthdeclarationPost({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        category: input.category,
+        modelsV6PostFullLicenseWithHealthDeclaration: input.model,
+      }),
+    )
+
+    return extractApplicationGuid(created)
+  }
 
   public async postTemporaryLicenseWithHealthDeclaratio(input: {
     nationalId: string
@@ -522,6 +611,8 @@ export class DrivingLicenseApi {
     sendLicenseInMail: number
     sendLicenseToAddress: string
     category: string
+    photoBiometricsId?: string | null
+    signatureBiometricsId?: string | null
   }): Promise<boolean> {
     const response =
       await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost({
@@ -537,6 +628,8 @@ export class DrivingLicenseApi {
           bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
           sendLicenseInMail: params.sendLicenseInMail,
           sendToAddress: params.sendLicenseToAddress,
+          photoBiometricsId: params.photoBiometricsId,
+          signatureBiometricsId: params.signatureBiometricsId,
         },
       })
 

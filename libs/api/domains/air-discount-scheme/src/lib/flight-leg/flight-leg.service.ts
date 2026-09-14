@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { FetchError } from '@island.is/clients/middlewares'
 import { UsersApi } from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -22,10 +22,9 @@ export class FlightLegService {
   handleError(error: any): any {
     this.logger.error(error)
 
-    throw new ApolloError(
-      'Failed to resolve request',
-      error?.message ?? error?.response?.message,
-    )
+    throw new GraphQLError('Failed to resolve request', {
+      extensions: { code: error?.message ?? error?.response?.message },
+    })
   }
 
   private handle4xx(error: FetchError) {

@@ -5,6 +5,7 @@ import { SocialBenefitsPaths } from './lib/paths'
 import { socialInsuranceRoutes } from './lib/routes/socialInsuranceRoutes'
 import { socialInsuranceLegacyRedirects } from './lib/routes/socialInsuranceLegacyRedirects'
 import { unemploymentBenefitsRoutes } from './lib/routes/unemploymentBenefitRoutes'
+import { activationAllowanceRoutes } from './lib/routes/activationAllowanceRoutes'
 
 const SocialBenefitsOverview = lazy(() =>
   import('./screens/SocialBenefitsOverview/SocialBenefitsOverview'),
@@ -23,5 +24,6 @@ export const socialBenefitsModule: PortalModule = {
     ...socialInsuranceRoutes(userInfo),
     ...socialInsuranceLegacyRedirects(userInfo),
     ...unemploymentBenefitsRoutes(userInfo),
+    ...activationAllowanceRoutes(userInfo),
   ],
 }

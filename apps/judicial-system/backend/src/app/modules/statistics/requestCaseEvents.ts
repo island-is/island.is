@@ -1,12 +1,16 @@
+import { laws } from '@island.is/judicial-system/formatters'
 import {
   AppealCaseRulingDecision,
+  AppealEventType,
   CaseDecision,
   CaseOrigin,
   CaseType,
   courtSubtypes,
   EventType,
+  prosecutionRoles,
 } from '@island.is/judicial-system/types'
 
+import { legalProvisionsCompare } from '../../formatters'
 import { Case, EventLog } from '../repository'
 import { RequestCaseEventType } from './models/event.model'
 
@@ -18,6 +22,8 @@ export interface RequestCaseEvent {
   institution?: string
   caseType: CaseType
   caseTypeDescriptor: string
+  isIsolation: string
+  legalProvisions: string
   origin: CaseOrigin
   isExtended: string
   // event specific fields
@@ -37,11 +43,31 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
   return Array.isArray(subtypes) ? subtypes[0] : subtypes
 }
 
+const getIsolationDescriptor = (c: Case) => {
+  if (
+    c.type !== CaseType.CUSTODY &&
+    c.type !== CaseType.ADMISSION_TO_FACILITY
+  ) {
+    return ''
+  }
+
+  return c.isCustodyIsolation ? 'Já' : 'Nei'
+}
+
+const getLegalProvisionsDescriptor = (c: Case) =>
+  (c.legalProvisions ?? [])
+    .slice()
+    .sort(legalProvisionsCompare)
+    .map((provision) => laws[provision])
+    .join(', ')
+
 const commonFields = (c: Case) => {
   const isExtendedCase = !!c.parentCaseId
   return {
     caseType: c.type,
     caseTypeDescriptor: getCaseTypeTranslation(c.type),
+    isIsolation: getIsolationDescriptor(c),
+    legalProvisions: getLegalProvisionsDescriptor(c),
     origin: c.origin,
     isExtended: isExtendedCase ? 'Já' : 'Nei',
     requestDecision: c.decision,
@@ -222,27 +248,40 @@ const courtSessionEnded = (c: Case): RequestCaseEvent | undefined => {
   }
 }
 
+// One REQUEST_APPEALED per appealing side, read from the APPEALED event log (the
+// appellant source since the postponed-date columns were dropped). Each is dated
+// by the appeal case's appeal date; the prosecution side keeps its office
+// attribution.
 const requestAppealed = (c: Case): RequestCaseEvent[] => {
-  const { prosecutorPostponedAppealDate, accusedPostponedAppealDate } = c
+  const appealDate = c.appealCase?.appealDate
+  if (!appealDate) {
+    return []
+  }
 
+  const appealedEvents = (c.appealCase?.appealEventLogs ?? []).filter(
+    (eventLog) => eventLog.eventType === AppealEventType.APPEALED,
+  )
+
+  const date = appealDate.toISOString()
   const requestAppealedEvents: RequestCaseEvent[] = []
-  if (prosecutorPostponedAppealDate) {
+
+  if (appealedEvents.some((e) => prosecutionRoles.includes(e.userRole))) {
     requestAppealedEvents.push({
       id: c.id,
       event: 'REQUEST_APPEALED',
       eventDescriptor: 'Úrskurður kærður',
-      date: prosecutorPostponedAppealDate.toISOString(),
+      date,
       institution: c.prosecutorsOffice?.name,
       ...commonFields(c),
     })
   }
 
-  if (accusedPostponedAppealDate) {
+  if (appealedEvents.some((e) => !prosecutionRoles.includes(e.userRole))) {
     requestAppealedEvents.push({
       id: c.id,
       event: 'REQUEST_APPEALED',
       eventDescriptor: 'Úrskurður kærður',
-      date: accusedPostponedAppealDate.toISOString(),
+      date,
       ...commonFields(c),
     })
   }

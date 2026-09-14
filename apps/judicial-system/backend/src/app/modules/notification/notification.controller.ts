@@ -70,7 +70,6 @@ export class NotificationController {
 
     return this.notificationService.addMessagesForNotificationToQueue(
       notificationDto.type,
-      notificationDto.eventOnly,
       theCase,
       user,
     )

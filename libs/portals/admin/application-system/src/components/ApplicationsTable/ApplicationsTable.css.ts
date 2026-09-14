@@ -29,4 +29,9 @@ export const focusableTableRow = styleVariants({
   pruned: [baseTableRow, { background: '#f9f9f9' }],
 })
 
-globalStyle(`${focusableTableRow}:focus > *`, { borderColor: 'transparent' })
+globalStyle(
+  Object.values(focusableTableRow)
+    .map((variant) => `${variant}:focus > *`)
+    .join(', '),
+  { borderColor: 'transparent' },
+)

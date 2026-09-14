@@ -1,6 +1,7 @@
 import {
   AppealDecisionPartyRole,
   AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   isDefenceUser,
   isProsecutionUser,
@@ -8,6 +9,7 @@ import {
   prosecutionRoles,
   type User,
   UserRole,
+  verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -15,9 +17,71 @@ import {
   AppealDecision,
   AppealEventLog,
   Case,
+  CaseFile,
   CivilClaimant,
   Defendant,
 } from '../repository'
+
+// The appeal case a case file belongs to: the ruling-order appeal the file
+// carries in its rulingFileId, the verdict appeal for an appeal declaration and what
+// is filed with it, or the case-level ruling appeal for everything else.
+//
+// The appeal declaration needs its own arm because it is case level too - the verdict appeal
+// and the ruling appeal are told apart by appeal type, not by a ruling file.
+export const findAppealCaseOfCaseFile = (
+  theCase: Case,
+  file: Pick<CaseFile, 'rulingFileId' | 'category'>,
+): AppealCase | undefined => {
+  if (file.rulingFileId) {
+    return theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === file.rulingFileId,
+    )
+  }
+
+  if (
+    file.category &&
+    verdictAppealDeclarationFileCategories.includes(file.category)
+  ) {
+    return theCase.verdictAppealCase
+  }
+
+  return theCase.appealCase
+}
+
+// The defendants that currently stand as appellants of a verdict appeal:
+// those whose most recent appeal event on it is an APPEALED rather
+// than an APPEAL_WITHDRAWN. A defendant who withdraws may appeal again while the
+// deadline still runs, so it is the latest event that decides, not the mere
+// presence of a withdrawal.
+//
+// The event log is the appellant source for out-of-court appeals - a verdict
+// appeal has no appeal_decision rows, since a party that appeals out of court is
+// precisely one that did not appeal in court.
+export const standingVerdictAppellantIds = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+): string[] => {
+  const latestByDefendant = new Map<string, AppealEventLog>()
+
+  for (const eventLog of appealCase.appealEventLogs ?? []) {
+    if (
+      !eventLog.defendantId ||
+      (eventLog.eventType !== AppealEventType.APPEALED &&
+        eventLog.eventType !== AppealEventType.APPEAL_WITHDRAWN)
+    ) {
+      continue
+    }
+
+    const latest = latestByDefendant.get(eventLog.defendantId)
+
+    if (!latest || eventLog.created > latest.created) {
+      latestByDefendant.set(eventLog.defendantId, eventLog)
+    }
+  }
+
+  return Array.from(latestByDefendant)
+    .filter(([, eventLog]) => eventLog.eventType === AppealEventType.APPEALED)
+    .map(([defendantId]) => defendantId)
+}
 
 // Resolves the appeal decision (Ákvörðun um kæru) recorded in court for the
 // party the user acts for - the prosecution, or the specific defendant / civil
@@ -208,6 +272,10 @@ export const buildInCourtAppealedEvent = (params: {
     caseId: theCase.id,
     appealCaseId: appealCase.id,
     eventType: AppealEventType.APPEALED,
+    // Recorded, not derived: correction reconciliation may discard an in-court
+    // appeal whose decision was corrected away, but must never discard an
+    // out-of-court one, and the decision rows alone cannot tell them apart.
+    appealOrigin: AppealOrigin.IN_COURT,
     userRole: appellant.appellantRole,
     defendantId: appellant.defendantId,
     civilClaimantId: appellant.civilClaimantId,
@@ -218,6 +286,28 @@ export const buildInCourtAppealedEvent = (params: {
     institutionName: actor.institution?.name,
   }
 }
+
+// An APPEALED event for an appeal the party filed itself, outside the court
+// record. Such an appellant has no decision = APPEAL row - they appealed because
+// they postponed in court - so it must never be inferred from the decision rows
+// that they did not appeal.
+//
+// Deliberately "not provably in court" rather than "is out of court". The
+// appeal_event_log_appeal_origin_check constraint guarantees every APPEALED row
+// has an origin, so in practice the two are the same test. The bias is kept
+// because the failure modes are not symmetric: mistaking an out-of-court appeal
+// for an in-court one lets reconciliation delete a real appeal and the filings
+// made for it, while the reverse only leaves a stale appeal case behind for
+// someone to clear up.
+export const isOutOfCourtAppealEvent = (event: AppealEventLog): boolean =>
+  event.eventType === AppealEventType.APPEALED &&
+  event.appealOrigin !== AppealOrigin.IN_COURT
+
+// Whether any party appealed outside the court record. Correcting the court
+// record cannot remove such an appeal, so the appeal case must survive
+// reconciliation even when no in-court appeal remains.
+export const hasOutOfCourtAppeal = (events: AppealEventLog[]): boolean =>
+  events.some(isOutOfCourtAppealEvent)
 
 // Whether the user is an appellant of this appeal case, read from the APPEALED
 // event log rather than the frozen appealed_by_national_id. Authorization keys

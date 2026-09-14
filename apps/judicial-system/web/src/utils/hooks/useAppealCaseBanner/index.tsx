@@ -1,5 +1,7 @@
-import { ReactElement, useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { ReactElement } from 'react'
+import { useContext } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Button, Text, Tooltip } from '@island.is/island-ui/core'
@@ -27,11 +29,14 @@ import {
   AppealCaseTransition,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useAppealCase'
+import useAppealCaseModals from '@island.is/judicial-system-web/src/utils/hooks/useAppealCaseModals'
+import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
+import {
+  getAppealActorText,
+  getCurrentUserStatementDate,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
-import { getAppealActorText, getCurrentUserStatementDate } from '../../utils'
-import useAppealCase from '../useAppealCase'
-import useAppealCaseModals from '../useAppealCaseModals'
-import useTargetAppealCaseByAppealCaseId from '../useTargetAppealCaseByAppealCaseId'
 import * as styles from './useAppealCaseBanner.css'
 
 const renderLinkButton = (text: string, href: string) => (

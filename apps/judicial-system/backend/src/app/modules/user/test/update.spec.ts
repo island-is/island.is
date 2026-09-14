@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingUserModule } from './createTestingUserModule'
 
-import { User } from '../../repository'
+import { User, UserRepositoryService } from '../../repository'
 
 interface Then {
   result: User
@@ -15,13 +15,14 @@ describe('UserController - Update', () => {
   const userId = uuid()
   const name = uuid()
   const title = uuid()
-  let mockUserModel: typeof User
+  let mockUserRepositoryService: UserRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { userModel, userController } = await createTestingUserModule()
+    const { userRepositoryService, userController } =
+      await createTestingUserModule()
 
-    mockUserModel = userModel
+    mockUserRepositoryService = userRepositoryService
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -40,16 +41,19 @@ describe('UserController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockUserModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [user]])
+      const mockUpdateById = mockUserRepositoryService.updateById as jest.Mock
+      mockUpdateById.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        users: [user],
+      })
 
       then = await givenWhenThen()
     })
 
     it('should return the updated user', () => {
-      expect(mockUserModel.update).toHaveBeenCalledWith(
+      expect(mockUserRepositoryService.updateById).toHaveBeenCalledWith(
+        userId,
         { name, title },
-        { where: { id: userId }, returning: true },
       )
       expect(then.result).toBe(user)
     })

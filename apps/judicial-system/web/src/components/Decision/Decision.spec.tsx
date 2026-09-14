@@ -1,9 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
-import {
-  Case,
-  CaseType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import Decision from './Decision'
 

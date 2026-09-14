@@ -2,7 +2,7 @@ import { Locale } from '@island.is/shared/types'
 import { TrWebApiServicesCommonCountriesModelsLanguageDto } from '../..'
 import { GenericKeyValueDto } from './genericKeyValue.dto'
 
-export interface LanguageDto extends GenericKeyValueDto {}
+export type LanguageDto = GenericKeyValueDto
 
 export const mapLanguageDto = (
   { code, nameEn, nameIs }: TrWebApiServicesCommonCountriesModelsLanguageDto,

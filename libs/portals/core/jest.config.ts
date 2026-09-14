@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'portals-core',
   testEnvironment: 'jsdom',
   preset: './jest.preset.js',

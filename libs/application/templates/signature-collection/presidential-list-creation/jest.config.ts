@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-presidential-list-creation',
   preset: './jest.preset.js',
   rootDir: '../../../../..',

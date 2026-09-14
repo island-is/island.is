@@ -2,6 +2,7 @@ import {
   Box,
   Checkbox,
   Filter,
+  Icon,
   Input,
   Stack,
   Text,
@@ -24,6 +25,7 @@ import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ConversationAvatar from './components/ConversationAvatar'
+import * as styles from './HealthConversations.css'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
@@ -56,6 +58,7 @@ const HealthConversations = () => {
   const [searchInput, setSearchInput] = useState('')
 
   const { data, loading, error } = useGetHealthConversationsQuery({
+    fetchPolicy: 'cache-and-network',
     variables: {
       input: {
         ...(filterValues.archived
@@ -69,6 +72,8 @@ const HealthConversations = () => {
   })
 
   const healthConversations = data?.healthDirectorateHealthConversations
+
+  const initialLoading = loading && !data
 
   const debouncedSetSearchQuery = useMemo(
     () =>
@@ -111,6 +116,9 @@ const HealthConversations = () => {
     onError: onMutationError,
   })
 
+  const filterCount =
+    (filterValues.starred ? 1 : 0) + (filterValues.archived ? 1 : 0)
+
   const filteredConversations = useMemo(() => {
     if (!healthConversations) {
       return []
@@ -122,7 +130,9 @@ const HealthConversations = () => {
     return healthConversations.filter((message) => {
       return (
         message.title?.toLowerCase().includes(query) ||
-        message.organization?.name?.toLowerCase().includes(query)
+        (message.organization?.name ?? message.lastSenderGroupName)
+          ?.toLowerCase()
+          .includes(query)
       )
     })
   }, [filterValues, healthConversations])
@@ -159,6 +169,7 @@ const HealthConversations = () => {
             variant="popover"
             align="left"
             mobileWrap={false}
+            filterCount={filterCount}
             filterInput={
               <Input
                 name="messageSearch"
@@ -228,9 +239,9 @@ const HealthConversations = () => {
           />
         </Box>
       </Box>
-      {loading && <CardLoader />}
+      {initialLoading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading &&
+      {!initialLoading &&
         !error &&
         (filteredConversations?.length === 0 ? (
           <EmptyState title={messages.noData} />
@@ -256,6 +267,7 @@ const HealthConversations = () => {
               {filteredConversations?.map((item) => (
                 <Box
                   key={item.id}
+                  className={styles.conversationRow}
                   display="flex"
                   alignItems="center"
                   justifyContent="spaceBetween"
@@ -283,10 +295,24 @@ const HealthConversations = () => {
                   >
                     <ConversationAvatar
                       variant="organization"
+                      tone={item.isRead ? 'tinted' : 'light'}
                       logoUrl={item.organization?.logoUrl ?? undefined}
                     />
                     <Box minWidth={0}>
-                      <Text variant="medium">{item.organization?.name}</Text>
+                      <Box display="flex" alignItems="center" columnGap={1}>
+                        <Text variant="medium">
+                          {item.organization?.name ?? item.lastSenderGroupName}
+                        </Text>
+                        {item.hasAttachment && (
+                          <Icon
+                            icon="attach"
+                            size="small"
+                            color="black"
+                            type="outline"
+                            className={styles.attachmentIcon}
+                          />
+                        )}
+                      </Box>
                       <Text
                         color="blue400"
                         truncate
@@ -314,6 +340,7 @@ const HealthConversations = () => {
                         : ''}
                     </Text>
                     <MessageActions
+                      size="small"
                       colorScheme="negative"
                       bookmarked={item.isStarred}
                       archived={item.isArchived}

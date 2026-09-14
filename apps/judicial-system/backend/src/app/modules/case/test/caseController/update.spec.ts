@@ -45,8 +45,8 @@ import {
   AppealCase,
   Case,
   CaseRepositoryService,
-  CaseString,
-  DateLog,
+  CaseStringRepositoryService,
+  DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   Verdict,
 } from '../../../repository'
@@ -99,8 +99,8 @@ describe('CaseController - Update', () => {
   let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let mockDefendantService: DefendantService
   let mockVerdictService: VerdictService
-  let mockDateLogModel: typeof DateLog
-  let mockCaseStringModel: typeof CaseString
+  let mockCaseStringRepositoryService: CaseStringRepositoryService
+  let mockDateLogRepositoryService: DateLogRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -114,8 +114,8 @@ describe('CaseController - Update', () => {
       defendantEventLogRepositoryService,
       defendantService,
       verdictService,
-      dateLogModel,
-      caseStringModel,
+      caseStringRepositoryService,
+      dateLogRepositoryService,
       caseController,
     } = await createTestingCaseModule()
 
@@ -127,8 +127,8 @@ describe('CaseController - Update', () => {
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockDefendantService = defendantService
     mockVerdictService = verdictService
-    mockDateLogModel = dateLogModel
-    mockCaseStringModel = caseStringModel
+    mockCaseStringRepositoryService = caseStringRepositoryService
+    mockDateLogRepositoryService = dateLogRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {
@@ -366,7 +366,7 @@ describe('CaseController - Update', () => {
         defendantId1,
         user,
         transaction,
-        expectedCreated,
+        { created: expectedCreated },
       )
 
       expect(
@@ -994,6 +994,175 @@ describe('CaseController - Update', () => {
     },
   )
 
+  describe.each([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY])(
+    'valid to date is updated for accepted %s case',
+    (type) => {
+      const validToDate = randomDate()
+      const modifiedValidToDate = new Date(validToDate.getTime() + 1000)
+      const originalCase = {
+        ...theCase,
+        type,
+        state: CaseState.ACCEPTED,
+        validToDate,
+      } as Case
+      const caseToUdate = {
+        caseModifiedExplanation: 'some explanation',
+        validToDate: modifiedValidToDate,
+      }
+      const updatedCase = {
+        ...originalCase,
+        origin: CaseOrigin.LOKE,
+        caseModifiedExplanation: 'some explanation',
+        validToDate: modifiedValidToDate,
+      }
+
+      beforeEach(async () => {
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUdate)
+      })
+
+      it('should post the case update and the custody notice to queue', async () => {
+        expect(mockQueuedMessages).toEqual([
+          {
+            type: MessageType.NOTIFICATION,
+            user,
+            caseId,
+            body: { type: RequestCaseNotificationType.MODIFIED },
+          },
+          { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+          {
+            type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+            user,
+            caseId,
+          },
+        ])
+      })
+    },
+  )
+
+  describe('isolation to date is updated for accepted custody case', () => {
+    const isolationToDate = randomDate()
+    const modifiedIsolationToDate = new Date(isolationToDate.getTime() + 1000)
+    const originalCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      validToDate: randomDate(),
+      isolationToDate,
+    } as Case
+    const caseToUdate = {
+      caseModifiedExplanation: 'some explanation',
+      isolationToDate: modifiedIsolationToDate,
+    }
+    const updatedCase = {
+      ...originalCase,
+      origin: CaseOrigin.LOKE,
+      caseModifiedExplanation: 'some explanation',
+      isolationToDate: modifiedIsolationToDate,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUdate)
+    })
+
+    it('should post the case update and the custody notice to queue', async () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: RequestCaseNotificationType.MODIFIED },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+          user,
+          caseId,
+        },
+      ])
+    })
+  })
+
+  describe('custody dates are not updated for accepted custody case', () => {
+    const originalCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      validToDate: randomDate(),
+      isolationToDate: randomDate(),
+    } as Case
+    const caseToUdate = { caseModifiedExplanation: 'some explanation' }
+    const updatedCase = {
+      ...originalCase,
+      origin: CaseOrigin.LOKE,
+      caseModifiedExplanation: 'some explanation',
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUdate)
+    })
+
+    it('should not post the custody notice to queue', async () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: RequestCaseNotificationType.MODIFIED },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+      ])
+    })
+  })
+
+  describe('valid to date is updated for accepted travel ban case', () => {
+    const validToDate = randomDate()
+    const modifiedValidToDate = new Date(validToDate.getTime() + 1000)
+    const originalCase = {
+      ...theCase,
+      type: CaseType.TRAVEL_BAN,
+      state: CaseState.ACCEPTED,
+      validToDate,
+    } as Case
+    const caseToUdate = {
+      caseModifiedExplanation: 'some explanation',
+      validToDate: modifiedValidToDate,
+    }
+    const updatedCase = {
+      ...originalCase,
+      origin: CaseOrigin.LOKE,
+      caseModifiedExplanation: 'some explanation',
+      validToDate: modifiedValidToDate,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUdate)
+    })
+
+    it('should not post a custody notice to queue', async () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: RequestCaseNotificationType.MODIFIED },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+      ])
+    })
+  })
+
   describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation updated', () => {
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase, {})
@@ -1007,15 +1176,77 @@ describe('CaseController - Update', () => {
   describe('arraignment date updated', () => {
     const arraignmentDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { arraignmentDate }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+    }
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.CUSTODY } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
-      expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
-        { transaction },
+      expect(mockDateLogRepositoryService.createForCase).toHaveBeenCalledWith(
+        caseId,
+        DateType.ARRAIGNMENT_DATE,
+        arraignmentDate,
+        {
+          transaction,
+        },
+      )
+    })
+
+    it('should log a court date scheduled event, which drives court date notifications', () => {
+      expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+        transaction,
+      )
+    })
+  })
+
+  describe('arraignment date unchanged', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        {
+          ...theCase,
+          type: CaseType.CUSTODY,
+          dateLogs: [
+            { dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate },
+          ],
+        } as Case,
+        {},
+      )
+    })
+
+    it('should not log a court date scheduled event', () => {
+      expect(mockEventLogService.createWithUser).not.toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+        transaction,
       )
     })
   })
@@ -1043,9 +1274,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
-        { transaction },
+      expect(mockDateLogRepositoryService.createForCase).toHaveBeenCalledWith(
+        caseId,
+        DateType.ARRAIGNMENT_DATE,
+        arraignmentDate,
+        {
+          transaction,
+        },
       )
       expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
         EventType.COURT_DATE_SCHEDULED,
@@ -1063,6 +1298,100 @@ describe('CaseController - Update', () => {
           caseId: theCase.id,
         },
       ])
+    })
+  })
+
+  describe('indictment arraignment date updated while summons skipped', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const caseToUpdate = {
+      arraignmentDate,
+      isArraignmentSummonsSkipped: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+      })
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should clear the skipped summons flag', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { isArraignmentSummonsSkipped: false },
+        { transaction },
+      )
+    })
+  })
+
+  describe('indictment arraignment date cleared while summons skipped', () => {
+    const caseToUpdate = {
+      arraignmentDate: null,
+      isArraignmentSummonsSkipped: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        isArraignmentSummonsSkipped: true,
+      })
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should keep the skipped summons flag', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { isArraignmentSummonsSkipped: true },
+        { transaction },
+      )
+    })
+  })
+
+  describe('indictment arraignment location updated while summons skipped', () => {
+    const caseToUpdate = {
+      arraignmentDate: { location: uuid() },
+      isArraignmentSummonsSkipped: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        isArraignmentSummonsSkipped: true,
+      })
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should keep the skipped summons flag', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { isArraignmentSummonsSkipped: true },
+        { transaction },
+      )
     })
   })
 
@@ -1088,9 +1417,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.COURT_DATE, caseId, ...courtDate },
-        { transaction },
+      expect(mockDateLogRepositoryService.createForCase).toHaveBeenCalledWith(
+        caseId,
+        DateType.COURT_DATE,
+        courtDate,
+        {
+          transaction,
+        },
       )
       expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
         EventType.COURT_DATE_SCHEDULED,
@@ -1110,16 +1443,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
-        {
-          stringType: StringType.POSTPONED_INDEFINITELY_EXPLANATION,
-          caseId,
-          value: postponedIndefinitelyExplanation,
-        },
-        {
-          conflictFields: ['case_id', 'string_type'],
-          transaction,
-        },
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).toHaveBeenCalledWith(
+        caseId,
+        StringType.POSTPONED_INDEFINITELY_EXPLANATION,
+        postponedIndefinitelyExplanation,
+        { transaction },
       )
     })
   })
@@ -1133,17 +1463,11 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
-        {
-          stringType: StringType.CIVIL_DEMANDS,
-          caseId,
-          value: civilDemands,
-        },
-        {
-          conflictFields: ['case_id', 'string_type'],
-          transaction,
-        },
-      )
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).toHaveBeenCalledWith(caseId, StringType.CIVIL_DEMANDS, civilDemands, {
+        transaction,
+      })
     })
   })
 
@@ -1312,6 +1636,7 @@ describe('CaseController - Update', () => {
     it('should reset defendant fields', () => {
       const resetPayload = {
         isSentToPrisonAdmin: false,
+        isClosedWithoutEnforcement: false,
         indictmentReviewDecision: null,
         publicProsecutorIsRegisteredInPoliceSystem: null,
         isDrivingLicenseSuspended: null,
@@ -1334,16 +1659,13 @@ describe('CaseController - Update', () => {
       const expectedHeader = `${capitalize(formatDate(date, 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`
-      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
-        {
-          caseId,
-          stringType: StringType.REOPEN_REASON,
-          value: `${expectedHeader}\n${originalReopenReason}`,
-        },
-        {
-          conflictFields: ['case_id', 'string_type'],
-          transaction,
-        },
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).toHaveBeenCalledWith(
+        caseId,
+        StringType.REOPEN_REASON,
+        `${expectedHeader}\n${originalReopenReason}`,
+        { transaction },
       )
     })
   })

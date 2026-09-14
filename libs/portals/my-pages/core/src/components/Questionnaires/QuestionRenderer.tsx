@@ -4,6 +4,7 @@ import {
   QuestionnaireQuestion,
 } from '@island.is/api/schema'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
+import * as styles from './QuestionsTypes/QuestionTypes.css'
 import { FC } from 'react'
 import HtmlParser from 'react-html-parser'
 import { useIsMobile } from '@island.is/portals/core'
@@ -13,7 +14,7 @@ import { Multiple } from '../Questionnaires/QuestionsTypes/Multiple'
 import { Radio } from '../Questionnaires/QuestionsTypes/Radio'
 import { TextInput } from '../Questionnaires/QuestionsTypes/TextInput'
 import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
-import { Scale } from './QuestionsTypes/Scale'
+import { Scale } from '@island.is/island-ui/core'
 import { Table } from './QuestionsTypes/Table'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -344,6 +345,12 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             ' - ' +
             question.answerOptions.max +
             ' '}
+        {question.required && (
+          <span aria-hidden="true" className={styles.isRequiredStar}>
+            {' '}
+            *
+          </span>
+        )}
       </Text>
       {question.sublabel && (
         <Text variant="medium" color="dark400" marginBottom={3}>

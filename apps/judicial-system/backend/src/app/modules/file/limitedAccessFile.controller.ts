@@ -44,6 +44,7 @@ import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { DeleteAppealCaseFileGuard } from './guards/deleteAppealCaseFile.guard'
 import { LimitedAccessCreateCaseFileGuard } from './guards/limitedAccessCreateCaseFile.guard'
 import { LimitedAccessCreateCivilClaimantCaseFileGuard } from './guards/limitedAccessCreateCivilClaimantCaseFile.guard'
 import { LimitedAccessCreateDefendantCaseFileGuard } from './guards/limitedAccessCreateDefendantCaseFile.guard'
@@ -217,6 +218,7 @@ export class LimitedAccessFileController {
     CaseWriteGuard,
     CaseFileExistsGuard,
     LimitedAccessDeleteCaseFileGuard,
+    DeleteAppealCaseFileGuard,
   )
   @RolesRules(defenderRule)
   @Delete('file/:fileId')

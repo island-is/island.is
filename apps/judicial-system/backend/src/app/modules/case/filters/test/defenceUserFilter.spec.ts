@@ -234,6 +234,38 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         verifyFullAccess(theCase, user)
       })
     })
+
+    describe('case state RECEIVED without an arraignment date', () => {
+      const confirmedDefenderDefendants = [
+        {},
+        {
+          defenderNationalId: user.nationalId,
+          isDefenderChoiceConfirmed: true,
+        },
+        {},
+      ]
+
+      describe('arraignment summons not skipped', () => {
+        const theCase = {
+          type,
+          state: CaseState.RECEIVED,
+          defendants: confirmedDefenderDefendants,
+        } as Case
+
+        verifyNoAccess(theCase, user)
+      })
+
+      describe('arraignment summons skipped', () => {
+        const theCase = {
+          type,
+          state: CaseState.RECEIVED,
+          defendants: confirmedDefenderDefendants,
+          isArraignmentSummonsSkipped: true,
+        } as Case
+
+        verifyFullAccess(theCase, user)
+      })
+    })
   })
 
   describe.each([...restrictionCases, ...investigationCases])(

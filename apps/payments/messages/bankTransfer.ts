@@ -39,6 +39,13 @@ export const bankTransfer = defineMessages({
     description:
       'Validation error when the bank account number is not 12 digits',
   },
+  accountNumberBankNotSupported: {
+    id: 'payments:bankTransfer.accountNumberBankNotSupported',
+    defaultMessage:
+      'Millifærsla er ekki í boði frá þessum banka. Notaðu reikning í öðrum banka.',
+    description:
+      'Validation error when the account number is well-formed but belongs to a bank the payment provider cannot process. Must not read as a typo error — the number is fine, the bank is the problem. EN: "Bank transfer is not available from this bank. Please use an account at another bank."',
+  },
   cancel: {
     id: 'payments:bankTransfer.cancel',
     defaultMessage: 'Hætta við',
@@ -91,12 +98,6 @@ export const bankTransfer = defineMessages({
     defaultMessage: 'Opnaðu bankaappið þitt til að staðfesta greiðslu.',
     description:
       'Supporting text under the open-banking-app button on the mobile pending screen. EN: "Open your banking app to approve payment."',
-  },
-  waitingForAuthorisation: {
-    id: 'payments:bankTransfer.waitingForAuthorisation',
-    defaultMessage: 'Beðið eftir heimild',
-    description:
-      'Waiting message under the loading dots while SCA is complete/not yet required and we poll for terminal status. EN: "Waiting for authorisation..."',
   },
   checkPhone: {
     id: 'payments:bankTransfer.checkPhone',

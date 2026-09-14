@@ -9,6 +9,8 @@ import {
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { HousingBenefitsService } from './housing-benefits.service'
 import {
@@ -18,6 +20,16 @@ import {
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
 import { AttachmentS3Service } from '../../../shared/services'
+
+jest.mock('@island.is/shared/utils', () => {
+  const actual = jest.requireActual('@island.is/shared/utils')
+  return {
+    ...actual,
+    isRunningOnEnvironment: jest.fn((environment: string) =>
+      actual.isRunningOnEnvironment(environment),
+    ),
+  }
+})
 
 const APPLICANT_ID = '0101303019'
 const ASSIGNEE_A = '0101304929'
@@ -85,12 +97,16 @@ describe('HousingBenefitsService notifications', () => {
   let service: HousingBenefitsService
   let sendNotification: jest.Mock
   let createHousingBenefitsApplication: jest.Mock
+  let hasTaxReturnForYear: jest.Mock
+  let getIndividual: jest.Mock
 
   beforeEach(async () => {
     sendNotification = jest.fn().mockResolvedValue({ id: 'notification-id' })
     createHousingBenefitsApplication = jest
       .fn()
       .mockResolvedValue({ applicationNumber: 4242, success: true })
+    hasTaxReturnForYear = jest.fn().mockResolvedValue(true)
+    getIndividual = jest.fn()
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -111,7 +127,9 @@ describe('HousingBenefitsService notifications', () => {
         },
         {
           provide: NationalRegistryV3Service,
-          useValue: {},
+          useValue: {
+            getIndividual,
+          },
         },
         {
           provide: ConfigService,
@@ -123,7 +141,7 @@ describe('HousingBenefitsService notifications', () => {
           provide: HmsHousingBenefitsClientService,
           useValue: {
             createHousingBenefitsApplication,
-            hasTaxReturnForYear: jest.fn().mockResolvedValue(true),
+            hasTaxReturnForYear,
           },
         },
         {
@@ -586,6 +604,290 @@ describe('HousingBenefitsService notifications', () => {
           currentUserLocale: 'is',
         }),
       ).rejects.toThrow()
+    })
+
+    it('throws a generic error when HMS returns an empty error response', async () => {
+      const middlewarePkg = ['@island.is', 'clients', 'middlewares'].join('/')
+      const { FetchError } = jest.requireActual(middlewarePkg) as {
+        FetchError: {
+          buildMock: (init: { status: number }) => Promise<Error>
+        }
+      }
+      const fetchError = await FetchError.buildMock({ status: 500 })
+      createHousingBenefitsApplication.mockRejectedValueOnce(fetchError)
+      const application = createApplication()
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const thrown = await service
+        .submitApplication({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        })
+        .then(
+          () => {
+            throw new Error('expected submitApplication to reject')
+          },
+          (error: unknown) => error,
+        )
+
+      expect(thrown).toBeInstanceOf(TemplateApiError)
+      expect(
+        (thrown as TemplateApiError).problem as {
+          errorReason?: { title?: string }
+        },
+      ).toEqual(
+        expect.objectContaining({
+          errorReason: expect.objectContaining({
+            title: 'Villa kom upp',
+          }),
+        }),
+      )
+    })
+  })
+
+  describe('getPersonalTaxReturn', () => {
+    afterEach(() => {
+      const actual = jest.requireActual('@island.is/shared/utils')
+      jest
+        .mocked(isRunningOnEnvironment)
+        .mockImplementation((environment) =>
+          actual.isRunningOnEnvironment(environment),
+        )
+    })
+
+    it('returns empty mock without calling tax API when mock variant is emptySuccess', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          devMockSettings: {
+            useMock: 'yes',
+            mockTaxReturn: ['yes'],
+            mockTaxReturnVariant: 'emptySuccess',
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const result = await service.getPersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
+    })
+
+    it('returns sample mock without calling tax API when mock variant is withSampleData', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          devMockSettings: {
+            useMock: 'yes',
+            mockTaxReturn: ['yes'],
+            mockTaxReturnVariant: 'withSampleData',
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const result = await service.getPersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: true,
+        handedInLastFiveYears: true,
+      })
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
+    })
+
+    it('returns fiveYears mock without calling tax API', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          devMockSettings: {
+            useMock: 'yes',
+            mockTaxReturn: ['yes'],
+            mockTaxReturnVariant: 'filedWithinFiveYears',
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const result = await service.getPersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: true,
+      })
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
+    })
+
+    it('calls tax API on production even when mock settings are set', async () => {
+      jest
+        .mocked(isRunningOnEnvironment)
+        .mockImplementation((environment) => environment === 'production')
+
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          devMockSettings: {
+            useMock: 'yes',
+            mockTaxReturn: ['yes'],
+            mockTaxReturnVariant: 'emptySuccess',
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const result = await service.getPersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: true,
+        handedInLastFiveYears: true,
+      })
+      expect(hasTaxReturnForYear).toHaveBeenCalled()
+    })
+  })
+
+  describe('getAssigneePersonalTaxReturn', () => {
+    afterEach(() => {
+      const actual = jest.requireActual('@island.is/shared/utils')
+      jest
+        .mocked(isRunningOnEnvironment)
+        .mockImplementation((environment) =>
+          actual.isRunningOnEnvironment(environment),
+        )
+    })
+
+    it('returns mock payload without calling tax API when assignee mock is enabled', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          [ASSIGNEE_A]: {
+            assigneeDevMockSettings: {
+              useMock: 'yes',
+              mockTaxReturn: ['yes'],
+              mockTaxReturnVariant: 'emptySuccess',
+            },
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: ASSIGNEE_A })
+
+      const result = await service.getAssigneePersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
+    })
+
+    it('calls tax API on production even when assignee mock settings are set', async () => {
+      jest
+        .mocked(isRunningOnEnvironment)
+        .mockImplementation((environment) => environment === 'production')
+
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          [ASSIGNEE_A]: {
+            assigneeDevMockSettings: {
+              useMock: 'yes',
+              mockTaxReturn: ['yes'],
+              mockTaxReturnVariant: 'emptySuccess',
+            },
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: ASSIGNEE_A })
+
+      const result = await service.getAssigneePersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: true,
+        handedInLastFiveYears: true,
+      })
+      expect(hasTaxReturnForYear).toHaveBeenCalled()
+    })
+  })
+
+  describe('assigneeNationalRegistry', () => {
+    afterEach(() => {
+      const actual = jest.requireActual('@island.is/shared/utils')
+      jest
+        .mocked(isRunningOnEnvironment)
+        .mockImplementation((environment) =>
+          actual.isRunningOnEnvironment(environment),
+        )
+    })
+
+    it('does not overlay Funafold address on production when mock checkbox is set', async () => {
+      jest
+        .mocked(isRunningOnEnvironment)
+        .mockImplementation((environment) => environment === 'production')
+
+      getIndividual.mockResolvedValue({
+        nationalId: ASSIGNEE_A,
+        fullName: 'Assignee A',
+        address: {
+          streetAddress: 'Laugavegur 1',
+          postalCode: '101',
+          city: 'Reykjavík',
+          locality: 'Reykjavík',
+          municipalityCode: '0000',
+        },
+      })
+
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          [ASSIGNEE_A]: {
+            assigneeDevMockSettings: {
+              useMock: 'yes',
+              mockNationalRegistryAddress: ['yes'],
+            },
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: ASSIGNEE_A })
+
+      const result = await service.assigneeNationalRegistry({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result.address?.streetAddress).toBe('Laugavegur 1')
+      expect(result.address?.streetAddress).not.toBe('Funafold 31')
     })
   })
 

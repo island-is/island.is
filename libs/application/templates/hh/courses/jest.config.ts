@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'courses',
   preset: '../../../../../jest.preset.js',
   transform: {

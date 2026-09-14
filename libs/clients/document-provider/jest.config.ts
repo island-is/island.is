@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-document-provider',
   preset: './jest.preset.js',
   rootDir: '../../..',

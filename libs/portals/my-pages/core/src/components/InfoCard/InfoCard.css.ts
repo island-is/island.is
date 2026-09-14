@@ -101,3 +101,23 @@ globalStyle(`${flexItemBorder} > div`, {
     },
   }),
 })
+
+// Muted (past appointment) card treatment — Figma uses 50%/60% alpha versions
+// of dark200/dark100/dark400, which the theme palette has no tokens for.
+// The doubled selector out-specifies Box's background/border color classes.
+export const mutedCard = style({
+  selectors: {
+    '&&': {
+      backgroundColor: 'rgba(242, 242, 245, 0.5)',
+      borderColor: 'rgba(204, 204, 216, 0.5)',
+    },
+  },
+})
+
+export const mutedTitle = style({
+  selectors: {
+    '&&': {
+      color: 'rgba(0, 0, 60, 0.6)',
+    },
+  },
+})

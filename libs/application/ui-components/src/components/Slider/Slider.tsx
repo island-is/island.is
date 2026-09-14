@@ -51,7 +51,7 @@ const getColorValues = (color: Colors): ColorValues => {
 }
 
 const useLatest = <T extends number>(value: T) => {
-  const ref = useRef<T>()
+  const ref = useRef<T>(undefined)
   ref.current = value
   return ref
 }
@@ -125,7 +125,7 @@ const Slider = ({
   const [isDragging, setIsDragging] = useState(false)
   const ref = useRef(null)
   const size = useComponentSize(ref)
-  const dragX = useRef<number>()
+  const dragX = useRef<number>(undefined)
   const indexRef = useLatest(currentIndex)
   const stepCount = max - min
   const sizePerCell = size.width / stepCount

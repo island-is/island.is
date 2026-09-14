@@ -4,16 +4,13 @@ import { useLocale } from '@island.is/localization'
 import {
   formatDate,
   getTime,
-  getWeekday,
   InfoCardGrid,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
-import { MessageDescriptor } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
-import { generateGoogleMapsLink } from '../../../utils/googleMaps'
 import { mapWeekday } from '../../../utils/mappers'
 import { DataState } from '../../../utils/types'
 import { HealthDirectorateAppointments } from '@island.is/api/schema'
@@ -21,13 +18,15 @@ import { HealthDirectorateAppointments } from '@island.is/api/schema'
 interface Props {
   data?: DataState<HealthDirectorateAppointments>
   showLinkButton?: boolean
-  title?: MessageDescriptor
+  showHeader?: boolean
+  muted?: boolean
 }
 
 const Appointments: React.FC<Props> = ({
   data,
   showLinkButton,
-  title = messages.myAppointments,
+  showHeader = true,
+  muted = false,
 }) => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
@@ -49,6 +48,7 @@ const Appointments: React.FC<Props> = ({
         id: appointment.id,
         loading: false,
         error: data?.error,
+        muted,
         title: appointment.title ?? '',
         description:
           (appointment.practitioners ?? []).length > 0
@@ -60,17 +60,9 @@ const Appointments: React.FC<Props> = ({
         appointment: {
           date: formatDate(appointment.date ?? ''),
           time: getTime(appointment.date ?? ''),
-          weekday: mapWeekday(
-            getWeekday(appointment.date ?? ''),
-            formatMessage,
-          ),
+          weekday: mapWeekday(appointment.date ?? '', formatMessage),
           location: {
             label: appointment.location?.name ?? '',
-            href:
-              generateGoogleMapsLink(
-                appointment.location?.latitude,
-                appointment.location?.longitude,
-              ) ?? undefined,
           },
         },
       })) ?? []
@@ -81,31 +73,33 @@ const Appointments: React.FC<Props> = ({
 
   return (
     <Box marginBottom={2}>
-      <Box width={isNarrow ? 'half' : 'full'}>
-        <Box
-          display={'flex'}
-          justifyContent="spaceBetween"
-          alignItems="center"
-          marginBottom={2}
-        >
-          <Box>
-            <Text variant="eyebrow" color="foregroundBrandSecondary">
-              {formatMessage(title)}
-            </Text>
-          </Box>
-          {showLinkButton && (
+      {showHeader && (
+        <Box width={isNarrow ? 'half' : 'full'}>
+          <Box
+            display={'flex'}
+            justifyContent="spaceBetween"
+            alignItems="center"
+            marginBottom={2}
+          >
             <Box>
-              <LinkButton
-                to={HealthPaths.HealthAppointments}
-                text={formatMessage(messages.allAppointments)}
-                variant="text"
-                size="small"
-                icon="arrowForward"
-              />
+              <Text variant="eyebrow" color="foregroundBrandSecondary">
+                {formatMessage(messages.myAppointments)}
+              </Text>
             </Box>
-          )}
+            {showLinkButton && (
+              <Box>
+                <LinkButton
+                  to={HealthPaths.HealthAppointments}
+                  text={formatMessage(messages.allAppointments)}
+                  variant="text"
+                  size="small"
+                  icon="arrowForward"
+                />
+              </Box>
+            )}
+          </Box>
         </Box>
-      </Box>
+      )}
       <InfoCardGrid
         cards={cards}
         size={isEmpty ? 'small' : undefined}

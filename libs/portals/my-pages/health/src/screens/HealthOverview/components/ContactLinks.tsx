@@ -1,7 +1,6 @@
-import React from 'react'
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LinkResolver, parseFullNumber } from '@island.is/portals/my-pages/core'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import * as styles from './ContactLinks.css'
@@ -25,15 +24,6 @@ const ContactLinks = () => {
       icon: 'open',
     },
     {
-      title: formatMessage(messages.contactPhone),
-      description: formatMessage(messages.contactPhoneDesc),
-      emergencyDescription: formatMessage(messages.contactPhoneEmergencyDesc),
-      href: `tel:${parseFullNumber(
-        formatMessage(messages.contactPhoneNumber),
-      )}`,
-      icon: 'call',
-    },
-    {
       title: formatMessage(messages.contactSendMessage),
       description: formatMessage(messages.contactSendMessageDesc),
       href: HealthPaths.HealthConversationsNew,
@@ -43,14 +33,14 @@ const ContactLinks = () => {
 
   const renderDescription = (link: ContactLinkItem) => (
     <>
-      <Text variant="medium" fontWeight="light" lineHeight="lg" color="dark400">
+      <Text variant="medium" fontWeight="light" lineHeight="md" color="dark400">
         {link.description}
       </Text>
       {link.emergencyDescription ? (
         <Text
           variant="medium"
           fontWeight="light"
-          lineHeight="lg"
+          lineHeight="md"
           color="red600"
         >
           {link.emergencyDescription}
@@ -59,51 +49,43 @@ const ContactLinks = () => {
     </>
   )
 
-  const renderLink = (link: ContactLinkItem, children: React.ReactNode) =>
-    link.href.startsWith('tel:') ? (
-      <a href={link.href} className={styles.telLink}>
-        {children}
-      </a>
-    ) : (
-      <LinkResolver href={link.href}>{children}</LinkResolver>
-    )
-
   const renderRowContent = (link: ContactLinkItem) => (
-    <Box
-      display="flex"
-      justifyContent="spaceBetween"
-      alignItems="flexStart"
-      paddingX={3}
-      paddingY={2}
-      width="full"
-    >
-      <Box flexGrow={1} minWidth={0}>
-        {renderLink(
-          link,
-          <Text
-            variant="medium"
-            fontWeight="semiBold"
-            lineHeight="lg"
-            color="blue400"
-            className={styles.titleText}
+    <LinkResolver href={link.href} className={styles.rowLink}>
+      <Box paddingX={3} paddingY={2} width="full">
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="flexStart"
+          columnGap={2}
+          style={{ marginBottom: 4 }}
+        >
+          <Box flexGrow={1} minWidth={0}>
+            <Text
+              variant="medium"
+              fontWeight="semiBold"
+              lineHeight="lg"
+              color="blue400"
+              className={styles.titleText}
+            >
+              {link.title}
+            </Text>
+          </Box>
+          <Box
+            flexShrink={0}
+            display="flex"
+            style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
           >
-            {link.title}
-          </Text>,
-        )}
+            <Icon
+              icon={link.icon}
+              type="outline"
+              color="blue400"
+              size="small"
+            />
+          </Box>
+        </Box>
         {renderDescription(link)}
       </Box>
-      <Box
-        flexShrink={0}
-        marginLeft={2}
-        display="flex"
-        style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
-      >
-        {renderLink(
-          link,
-          <Icon icon={link.icon} type="outline" color="blue400" size="small" />,
-        )}
-      </Box>
-    </Box>
+    </LinkResolver>
   )
 
   return (

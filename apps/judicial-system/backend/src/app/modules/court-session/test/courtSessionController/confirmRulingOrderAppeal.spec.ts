@@ -11,8 +11,10 @@ import {
   AppealCaseNotificationType,
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   AppealDecisionPartyRole,
   AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   CourtSessionRulingType,
   UserRole,
@@ -174,6 +176,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
+          appealType: AppealCaseType.RULING,
           appealState: AppealCaseState.APPEALED,
           rulingFileId,
           appealDate: endDate,
@@ -245,16 +248,20 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
   })
 
   describe('converges APPEALED events with the parties that appealed', () => {
+    // Both appealed in court, so both events may be corrected away. An
+    // out-of-court event is covered separately below.
     const prosecutorEvent = {
       id: 'event-prosecutor',
       appealCaseId,
       eventType: AppealEventType.APPEALED,
+      appealOrigin: AppealOrigin.IN_COURT,
       userRole: UserRole.PROSECUTOR,
     } as unknown as AppealEventLog
     const defendantEvent = {
       id: 'event-defendant',
       appealCaseId,
       eventType: AppealEventType.APPEALED,
+      appealOrigin: AppealOrigin.IN_COURT,
       userRole: UserRole.DEFENDER,
       defendantId,
     } as unknown as AppealEventLog

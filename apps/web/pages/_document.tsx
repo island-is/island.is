@@ -7,7 +7,10 @@ import Document, {
   NextScript,
 } from 'next/document'
 
+import { RuntimeEnv } from '@island.is/next/utils'
+
 import { PLAUSIBLE_SCRIPT_SRC } from '../constants'
+import { buildPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 import { getLocaleFromPath } from '../i18n/withLocale'
 
 interface Props {
@@ -30,6 +33,7 @@ class MyDocument extends Document<Props> {
     return (
       <Html lang={String(lang)}>
         <Head>
+          <RuntimeEnv env={buildPublicRuntimeEnv()} />
           {Boolean(domain) && (
             <script
               defer

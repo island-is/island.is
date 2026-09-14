@@ -1,63 +1,87 @@
-import { HealthDirectorateAppointmentModality } from '@island.is/api/schema'
-import { Box, Icon, Stack, Text } from '@island.is/island-ui/core'
+import {
+  HealthDirectorateAppointmentModality,
+  HealthDirectorateAppointmentStatus,
+} from '@island.is/api/schema'
+import {
+  Box,
+  Button,
+  Icon,
+  Stack,
+  Tag,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  InfoLine,
-  InfoLineStack,
-  IntroWrapper,
-  LinkButton,
   formatDate,
   getTime,
-  getWeekday,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 
 import { Problem } from '@island.is/react-spa/shared'
-import { useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import { PAST_APPOINTMENTS_STATUS } from '../../utils/constants'
 
-import { generateGoogleMapsLink } from '../../utils/googleMaps'
-import { mapWeekday } from '../../utils/mappers'
-import { useGetAppointmentDetailQuery } from './AppointmentDetail.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import * as styles from './AppointmentDetail.css'
+import {
+  useCancelAppointmentMutation,
+  useGetAppointmentDetailQuery,
+} from './AppointmentDetail.generated'
+import { AppointmentDetailCardInfo } from './AppointmentDetailCardInfo'
+import { AppointmentDetailInfoLines } from './AppointmentDetailInfoLines'
 import { AppointmentVideoCallAlert } from './AppointmentVideoCallAlert'
+import CancelAppointmentModal from './components/CancelAppointmentModal'
 
 const AppointmentDetail = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   useHealthPlausibleSwap()
+  const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
+  const [cancelModalVisible, setCancelModalVisible] = useState(false)
 
   const { data, loading, error } = useGetAppointmentDetailQuery({
+    fetchPolicy: 'network-only',
     variables: { id: id ?? '' },
     skip: !id,
   })
 
+  const [cancelAppointment, { loading: cancelLoading }] =
+    useCancelAppointmentMutation()
+
   const appointment = data?.healthDirectorateAppointment
+  const isCancelled =
+    appointment?.status === HealthDirectorateAppointmentStatus.CANCELLED
+  // Only booked (upcoming) appointments get actions
+  const isBooked =
+    appointment?.status === HealthDirectorateAppointmentStatus.BOOKED
+  const isPast =
+    !!appointment?.status &&
+    PAST_APPOINTMENTS_STATUS.includes(appointment.status)
 
-  const locationLink =
-    appointment?.location?.locationLinks?.find((l) => l.type === 'WEBSITE')
-      ?.url ??
-    appointment?.location?.link ??
-    undefined
-
-  const mapsLink = generateGoogleMapsLink(
-    appointment?.location?.latitude,
-    appointment?.location?.longitude,
-  )
-
-  const fullAddress =
-    [
-      appointment?.location?.name,
-      appointment?.location?.address,
-      [appointment?.location?.postalCode, appointment?.location?.city]
-        .filter(Boolean)
-        .join(' '),
-    ]
-      .filter(Boolean)
-      .join(', ') || undefined
-
-  const weekday = mapWeekday(getWeekday(appointment?.date ?? ''), formatMessage)
+  const onConfirmCancel = () => {
+    if (!id) {
+      return
+    }
+    cancelAppointment({ variables: { id } })
+      .then((response) => {
+        if (response.data?.healthDirectorateCancelAppointment) {
+          toast.success(formatMessage(messages.cancelAppointmentSuccess))
+          setCancelModalVisible(false)
+          navigate(HealthPaths.HealthAppointments, { replace: true })
+        } else {
+          toast.error(formatMessage(messages.cancelAppointmentError))
+        }
+      })
+      .catch(() => {
+        toast.error(formatMessage(messages.cancelAppointmentError))
+      })
+  }
 
   return (
     <IntroWrapper
@@ -79,200 +103,116 @@ const AppointmentDetail = () => {
       )}
       {!error && appointment && (
         <Stack space={5}>
-          <Box border="standard" borderRadius="large" padding={[2, 2, 3]}>
+          <Box>
             <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
+              border="standard"
+              borderRadius="large"
+              padding={[2, 2, 3]}
+              className={isPast ? styles.pastCard : undefined}
             >
-              <Stack space={3}>
-                <Text variant="h4" color="blue400">
-                  {appointment.title}
-                </Text>
-                <Stack space={2}>
-                  {appointment.date && (
-                    <Box display="flex" alignItems="center" columnGap={1}>
-                      <Icon
-                        icon="calendar"
-                        size="small"
-                        color="blue400"
-                        type="outline"
-                      />
-                      <Text>
-                        {weekday ? `${weekday}, ` : ''}
-                        {formatDate(appointment.date)}
-                      </Text>
-                    </Box>
-                  )}
-                  {appointment.date && (
-                    <Box display="flex" alignItems="center" columnGap={1}>
-                      <Icon
-                        icon="time"
-                        size="small"
-                        color="blue400"
-                        type="outline"
-                      />
-                      <Text>{getTime(appointment.date)}</Text>
-                    </Box>
-                  )}
-                  {appointment.duration && (
-                    <Box display="flex" alignItems="center" columnGap={1}>
-                      <Icon
-                        icon="hourglass"
-                        size="small"
-                        color="blue400"
-                        type="outline"
-                      />
-                      <Text>
-                        {formatMessage(messages.argWithMinutes, {
-                          arg: appointment.duration,
-                        })}
-                      </Text>
-                    </Box>
-                  )}
-                  {appointment.modality ===
-                    HealthDirectorateAppointmentModality.VIDEO && (
-                    <Box display="flex" alignItems="center" columnGap={1}>
-                      <Icon
-                        icon="videoCam"
-                        size="small"
-                        color="blue400"
-                        type="outline"
-                      />
-                      <Text>
-                        {formatMessage(messages.appointmentModalityVideo)}
-                      </Text>
-                    </Box>
-                  )}
-                  {appointment.modality !==
-                    HealthDirectorateAppointmentModality.VIDEO &&
-                    fullAddress && (
-                      <Box display="flex" alignItems="flexStart" columnGap={1}>
-                        <Box flexShrink={0}>
-                          <Icon
-                            icon="location"
-                            size="small"
-                            color="blue400"
-                            type="outline"
-                          />
-                        </Box>
-                        <Box
-                          display="flex"
-                          flexWrap="wrap"
-                          alignItems="center"
-                          columnGap={2}
-                        >
-                          <Text>{fullAddress}</Text>
-                          {mapsLink && (
-                            <LinkButton
-                              to={mapsLink}
-                              text={formatMessage(messages.openMap)}
-                              variant="text"
-                              size="small"
-                              icon="open"
-                            />
-                          )}
-                        </Box>
-                      </Box>
-                    )}
-
-                  {appointment.modality !==
-                    HealthDirectorateAppointmentModality.VIDEO &&
-                    locationLink && (
-                      <Box display="flex" alignItems="flexStart" columnGap={1}>
-                        <Box flexShrink={0}>
-                          <Icon
-                            icon="informationCircle"
-                            size="small"
-                            color="blue400"
-                            type="outline"
-                          />
-                        </Box>
-                        <Box
-                          display="flex"
-                          flexWrap="wrap"
-                          alignItems="center"
-                          columnGap={2}
-                        >
-                          <Text>
-                            {formatMessage(messages.locationInstructions)}
-                          </Text>
-                          {locationLink && (
-                            <LinkButton
-                              to={locationLink}
-                              text={formatMessage(messages.seeMore)}
-                              variant="text"
-                              size="small"
-                              icon="open"
-                            />
-                          )}
-                        </Box>
-                      </Box>
-                    )}
-                </Stack>
-              </Stack>
               <Box
-                display={['none', 'none', 'block']}
-                flexShrink={0}
-                marginLeft={3}
-                marginRight={6}
+                display="flex"
+                justifyContent="spaceBetween"
+                alignItems="center"
               >
-                <img src="./assets/images/appointment.svg" alt="" />
+                <Stack space={3}>
+                  <Box display="flex" alignItems="center" columnGap={2}>
+                    <Text
+                      variant="h4"
+                      as="h4"
+                      color={isPast ? undefined : 'blue400'}
+                      className={isPast ? styles.pastTitle : undefined}
+                    >
+                      {appointment.title}
+                    </Text>
+                    {isCancelled && (
+                      <Tag variant="red" outlined disabled>
+                        {formatMessage(messages.appointmentCancelledStatus)}
+                      </Tag>
+                    )}
+                  </Box>
+                  <AppointmentDetailCardInfo appointment={appointment} />
+                  {isPast && (
+                    <Box>
+                      <Tag variant="darkerBlue" outlined disabled>
+                        {formatMessage(messages.pastAppointmentTag)}
+                      </Tag>
+                    </Box>
+                  )}
+                </Stack>
+                <Box
+                  display={['none', 'none', 'block']}
+                  flexShrink={0}
+                  marginLeft={3}
+                  marginRight={6}
+                >
+                  <img src="./assets/images/appointment.svg" alt="" />
+                </Box>
               </Box>
+
+              {appointment.modality ===
+                HealthDirectorateAppointmentModality.VIDEO && (
+                <AppointmentVideoCallAlert links={appointment.links} />
+              )}
             </Box>
 
-            {appointment.modality ===
-              HealthDirectorateAppointmentModality.VIDEO && (
-              <AppointmentVideoCallAlert links={appointment.links} />
+            {isBooked && (
+              <Box
+                display="flex"
+                alignItems="center"
+                flexWrap="wrap"
+                columnGap={2}
+                rowGap={2}
+                marginTop={2}
+              >
+                {appointment.canCancel && (
+                  <Button
+                    size="small"
+                    variant="utility"
+                    icon="calendarCancel"
+                    iconType="outline"
+                    onClick={() => setCancelModalVisible(true)}
+                  >
+                    {formatMessage(messages.cancelAppointment)}
+                  </Button>
+                )}
+                {appointment.canCancel && appointment.canCancelBefore && (
+                  <Text variant="medium" className={styles.cancelInfoText}>
+                    {formatMessage(messages.cancelDeadlineText, {
+                      date: formatDate(appointment.canCancelBefore),
+                      time: getTime(appointment.canCancelBefore),
+                    })}
+                  </Text>
+                )}
+                {!appointment.canCancel && (
+                  <Box display="flex" alignItems="center" columnGap={1}>
+                    <Icon
+                      icon="informationCircle"
+                      size="small"
+                      color="blue400"
+                      type="outline"
+                    />
+                    <Text variant="medium" className={styles.cancelInfoText}>
+                      {formatMessage(messages.cancelNotPossibleOnline)}
+                    </Text>
+                  </Box>
+                )}
+              </Box>
             )}
           </Box>
 
-          {((appointment.practitioners?.length ?? 0) > 0 ||
-            appointment.instruction ||
-            appointment.location?.phoneNumber ||
-            appointment.location?.openingHoursText) && (
-            <InfoLineStack
-              label={formatMessage(messages.appointmentMoreInfo)}
-              space={1}
-            >
-              {(appointment.practitioners?.length ?? 0) > 0 && (
-                <InfoLine
-                  loading={loading}
-                  label={formatMessage(messages.appointmentAtSimple)}
-                  content={appointment.practitioners.join(', ')}
-                />
-              )}
-              {appointment.instruction && (
-                <InfoLine
-                  loading={loading}
-                  label={formatMessage(messages.instructions)}
-                  content={appointment.instruction}
-                />
-              )}
-              {appointment.location?.phoneNumber && (
-                <InfoLine
-                  loading={loading}
-                  label={formatMessage(messages.phoneNumber)}
-                  content={appointment.location.phoneNumber}
-                />
-              )}
-              {appointment.location?.openingHoursText && (
-                <InfoLine
-                  loading={loading}
-                  label={formatMessage(messages.openingHours)}
-                  content={appointment.location.openingHoursText}
-                />
-              )}
-              {appointment.location?.organization && (
-                <InfoLine
-                  loading={loading}
-                  label={formatMessage(messages.organization)}
-                  content={appointment.location.organization}
-                />
-              )}
-            </InfoLineStack>
-          )}
+          <AppointmentDetailInfoLines appointment={appointment} />
         </Stack>
+      )}
+
+      {appointment && (
+        <CancelAppointmentModal
+          appointment={appointment}
+          visible={cancelModalVisible}
+          loading={cancelLoading}
+          onClose={() => setCancelModalVisible(false)}
+          onSubmit={onConfirmCancel}
+        />
       )}
     </IntroWrapper>
   )

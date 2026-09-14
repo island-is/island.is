@@ -23,6 +23,7 @@ env:
   BACKEND_DL_URL: 'https://samradapi.island.is/api/Documents/'
   BASEPATH: '/consultation-portal'
   CODE_OWNER: 'Advania'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   ENVIRONMENT: 'prod'
   IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
   LOG_LEVEL: 'info'

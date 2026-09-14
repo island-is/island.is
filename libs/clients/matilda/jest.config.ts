@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'matilda',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

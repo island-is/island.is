@@ -103,6 +103,7 @@ describe('InternalCivilClaimantController - Deliver indictment civil claimant to
       civilClaimant.nationalId,
       civilClaimant.name,
       civilClaimant.spokespersonNationalId,
+      civilClaimant.spokespersonName,
       civilClaimant.spokespersonIsLawyer,
     )
 
@@ -135,6 +136,7 @@ describe('InternalCivilClaimantController - Deliver indictment civil claimant to
       legalGuardianCivilClaimant.nationalId,
       legalGuardianCivilClaimant.name,
       legalGuardianCivilClaimant.spokespersonNationalId,
+      legalGuardianCivilClaimant.spokespersonName,
       false,
     )
 
@@ -169,6 +171,7 @@ describe('InternalCivilClaimantController - Deliver indictment civil claimant to
       courtCaseNumber,
       civilClaimantWithoutSpokesperson.nationalId,
       civilClaimantWithoutSpokesperson.name,
+      undefined,
       undefined,
       undefined,
     )

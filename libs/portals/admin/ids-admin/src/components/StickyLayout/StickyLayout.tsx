@@ -19,8 +19,9 @@ export const StickyLayout = ({
 }: StickyLayoutProps) => {
   const mainElmRef = useRef<HTMLDivElement>(null)
   const isIntersecting =
+    // react-use's useIntersection wants a non-null RefObject<HTMLElement>.
     (
-      useIntersection(mainElmRef, {
+      useIntersection(mainElmRef as React.RefObject<HTMLElement>, {
         rootMargin: '0% 0% -100% 0%',
         threshold: 0,
       }) || {}

@@ -1,10 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import {
+import type {
   Case,
-  CaseType,
   IndictmentCount,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
   IndictmentSubtype,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useIndictmentCounts } from '@island.is/judicial-system-web/src/utils/hooks'

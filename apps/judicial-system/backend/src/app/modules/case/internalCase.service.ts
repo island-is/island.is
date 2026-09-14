@@ -8,7 +8,6 @@ import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import { Base64 } from 'js-base64'
 import { Op, Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -18,7 +17,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -35,7 +33,6 @@ import {
   CourtSessionRulingType,
   courtSubtypes,
   DateType,
-  DefendantEventType,
   EventType,
   getIndictmentAppealDeadline,
   isIndictmentCase,
@@ -61,7 +58,11 @@ import {
 } from '../../formatters'
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../court'
+import {
+  CourtDocumentFolder,
+  CourtService,
+  isFileTooLargeForCourt,
+} from '../court'
 import { buildIndictmentConclusionContent } from '../court/court.service'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
@@ -77,6 +78,7 @@ import {
   CaseFile,
   CaseRepositoryService,
   CaseString,
+  CaseStringRepositoryService,
   CourtSession,
   DateLog,
   Defendant,
@@ -92,6 +94,7 @@ import {
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
+import { getLatestVerdict } from '../verdict/getLatestVerdict'
 import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusion.dto'
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
@@ -100,6 +103,7 @@ import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
+import { wasVerdictServiceCertificateDeliveredToPolice } from './verdictServiceCertificateDelivery'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -120,8 +124,6 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'ruling',
   'conclusion',
   'endOfSessionBookings',
-  'accusedAppealAnnouncement',
-  'prosecutorAppealAnnouncement',
   'caseModifiedExplanation',
   'caseResentExplanation',
   'crimeScenes',
@@ -182,8 +184,8 @@ export class InternalCaseService {
   private throttle = Promise.resolve(false)
 
   constructor(
-    @InjectModel(CaseString)
-    private readonly caseStringModel: typeof CaseString,
+    @Inject(forwardRef(() => CaseStringRepositoryService))
+    private readonly caseStringRepositoryService: CaseStringRepositoryService,
     @Inject(forwardRef(() => CaseArchiveRepositoryService))
     private readonly caseArchiveRepositoryService: CaseArchiveRepositoryService,
     @Inject(forwardRef(() => AppealDecisionRepositoryService))
@@ -264,7 +266,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -313,7 +316,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -350,7 +354,8 @@ export class InternalCaseService {
           { error },
         )
 
-        return false
+        // Do not retry an upload the court service will never accept
+        return isFileTooLargeForCourt(error)
       })
   }
 
@@ -399,7 +404,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -715,10 +721,12 @@ export class InternalCaseService {
         collectEncryptionProperties(caseStringEncryptionProperties, caseString)
       caseStringsArchive.push(caseStringArchive)
 
-      await this.caseStringModel.update(clearedCaseStringProperties, {
-        where: { id: caseString.id, caseId: theCase.id },
-        transaction,
-      })
+      await this.caseStringRepositoryService.updateByIdAndCase(
+        caseString.id,
+        theCase.id,
+        clearedCaseStringProperties,
+        { transaction },
+      )
     }
 
     const appealDecisionsArchive = []
@@ -767,7 +775,6 @@ export class InternalCaseService {
   async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
     { theCase: Case; defendant: Defendant }[]
   > {
-    const minDate = addDays(Date.now(), -VERDICT_APPEAL_WINDOW_DAYS)
     const cases = await this.caseRepositoryService.findAll({
       include: [
         {
@@ -790,32 +797,18 @@ export class InternalCaseService {
               model: Verdict,
               as: 'verdicts',
               required: true,
-              where: {
-                serviceRequirement: ServiceRequirement.REQUIRED,
-                serviceStatus: {
-                  [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
-                },
-                serviceDate: {
-                  [Op.lte]: minDate,
-                },
-              },
+              separate: true,
+              order: [['created', 'DESC']],
             },
           ],
-          where: {
-            id: {
-              [Op.notIn]: Sequelize.literal(`
-                (SELECT defendant_id
-                  FROM defendant_event_log
-                  WHERE event_type = '${DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE}')
-              `),
-            },
-          },
         },
       ],
       where: {
         state: completedIndictmentCaseStates,
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        // Only LOKE cases have a corresponding police case to update
+        origin: CaseOrigin.LOKE,
       },
     })
 
@@ -823,20 +816,34 @@ export class InternalCaseService {
       pipe(
         theCase.defendants ?? [],
         filterMap((defendant) => {
-          // Only the latest verdict is relevant
-          const latestVerdict = defendant.verdicts?.sort(
-            (a, b) => b.created.getTime() - a.created.getTime(),
-          )[0]
+          // Resolve the current verdict first; eligibility applies only to it.
+          const latestVerdict = getLatestVerdict(defendant.verdicts)
 
-          if (latestVerdict?.serviceDate) {
-            const { isDeadlineExpired } = getIndictmentAppealDeadline({
-              baseDate: latestVerdict?.serviceDate,
-              isFine: false,
-            })
+          if (
+            !latestVerdict?.serviceDate ||
+            latestVerdict.serviceRequirement !== ServiceRequirement.REQUIRED ||
+            latestVerdict.serviceStatus === VerdictServiceStatus.NOT_APPLICABLE
+          ) {
+            return option.none
+          }
 
-            if (isDeadlineExpired) {
-              return option.some({ theCase, defendant })
-            }
+          const alreadyDeliveredForLatestVerdict =
+            wasVerdictServiceCertificateDeliveredToPolice(
+              defendant.eventLogs,
+              latestVerdict,
+            )
+
+          if (alreadyDeliveredForLatestVerdict) {
+            return option.none
+          }
+
+          const { isDeadlineExpired } = getIndictmentAppealDeadline({
+            baseDate: latestVerdict.serviceDate,
+            isFine: false,
+          })
+
+          if (isDeadlineExpired) {
+            return option.some({ theCase, defendant })
           }
 
           return option.none
@@ -927,7 +934,8 @@ export class InternalCaseService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -1110,7 +1118,7 @@ export class InternalCaseService {
       }
 
       const rulingDate =
-        deliverDto.rulingDate ?? theCase.created ?? theCase.rulingDate
+        deliverDto.rulingDate ?? theCase.rulingDate ?? theCase.created
 
       if (!rulingDate) {
         return { delivered: false }
@@ -1266,7 +1274,8 @@ export class InternalCaseService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -1444,6 +1453,11 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
+    // Never call UpdateRVCase for cases that did not originate in LOKE
+    if (theCase.origin !== CaseOrigin.LOKE) {
+      return true
+    }
+
     const policeCaseId =
       await this.caseRepositoryService.findOriginalAncestorId(theCase)
 
@@ -1469,108 +1483,142 @@ export class InternalCaseService {
     )
   }
 
+  // Only updates the completed case in the police system.
+  // The documents of a completed case are delivered one by one,
+  // so that each of them can be retried on its own.
   async deliverCaseToPolice(
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    const delivered = await this.refreshFormatMessage()
-      .then(async () => {
-        const courtDocuments = [
-          {
-            type: PoliceDocumentType.RVKR,
-            courtDocument: Base64.btoa(
-              await getRequestPdfAsString(theCase, this.formatMessage),
-            ),
-          },
-          {
-            type: PoliceDocumentType.RVTB,
-            courtDocument: Base64.btoa(
-              await getCourtRecordPdfAsString(theCase, this.formatMessage),
-            ),
-          },
-          ...([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
-            theCase.type,
-          ) && theCase.state === CaseState.ACCEPTED
-            ? [
-                {
-                  type: PoliceDocumentType.RVVI,
-                  courtDocument: Base64.btoa(
-                    await getCustodyNoticePdfAsString(
-                      theCase,
-                      this.formatMessage,
-                    ),
-                  ),
-                },
-              ]
-            : []),
-        ]
+    try {
+      const delivered = await this.deliverCaseToPoliceWithFiles(
+        theCase,
+        user,
+        [],
+      )
 
-        return this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments)
-      })
-      .catch((reason) => {
-        // Tolerate failure, but log error
-        this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
-          reason,
-        })
-
-        return false
+      return { delivered }
+    } catch (reason) {
+      // Tolerate failure, but log error
+      this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
+        reason,
       })
 
-    return { delivered }
+      return { delivered: false }
+    }
   }
 
+  // Only updates the completed indictment case in the police system.
+  // The documents of a completed indictment case are delivered one by one,
+  // so that each of them can be retried on its own.
   async deliverIndictmentCaseToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.deliverCaseToPolice(theCase, user)
+  }
+
+  async deliverRequestToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      await this.refreshFormatMessage()
+
+      const request = await getRequestPdfAsString(theCase, this.formatMessage)
+
+      const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
+        {
+          type: PoliceDocumentType.RVKR,
+          courtDocument: Base64.btoa(request),
+        },
+      ])
+
+      return { delivered }
+    } catch (reason) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to deliver the request for case ${theCase.id} to police`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
+  }
+
+  async deliverCourtRecordToPolice(
     theCase: Case,
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-    const delivered = await Promise.all(
-      theCase.caseFiles
-        ?.filter(
-          (caseFile) =>
-            caseFile.category === CaseFileCategory.COURT_RECORD &&
-            caseFile.isKeyAccessible,
+    try {
+      let courtRecord: string
+
+      if (isIndictmentCase(theCase.type)) {
+        const pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+          theCase,
+          user,
+          transaction,
         )
-        .map(async (caseFile) => {
-          const file = await this.fileService.getCaseFileFromS3(
-            theCase,
-            caseFile,
-          )
 
-          return {
-            type: PoliceDocumentType.RVTB,
-            courtDocument: Base64.btoa(file.toString('binary')),
-          }
-        }) ?? [],
-    )
-      .then(async (courtDocuments) => {
-        if (theCase.withCourtSessions) {
-          const pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
-            theCase,
-            user,
-            transaction,
-          )
+        courtRecord = pdf.toString('binary')
+      } else {
+        await this.refreshFormatMessage()
 
-          courtDocuments.push({
-            type: PoliceDocumentType.RVTB,
-            courtDocument: Base64.btoa(pdf.toString('binary')),
-          })
-        }
+        courtRecord = await getCourtRecordPdfAsString(
+          theCase,
+          this.formatMessage,
+        )
+      }
 
-        return courtDocuments
-      })
-      .then((courtDocuments) =>
-        this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
+      const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
+        {
+          type: PoliceDocumentType.RVTB,
+          courtDocument: Base64.btoa(courtRecord),
+        },
+      ])
+
+      return { delivered }
+    } catch (reason) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to deliver the court record for case ${theCase.id} to police`,
+        { reason },
       )
-      .catch((reason) => {
-        this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
-          reason,
-        })
 
-        return false
-      })
+      return { delivered: false }
+    }
+  }
 
-    return { delivered }
+  async deliverCustodyNoticeToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      await this.refreshFormatMessage()
+
+      const custodyNotice = await getCustodyNoticePdfAsString(
+        theCase,
+        this.formatMessage,
+      )
+
+      const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
+        {
+          type: PoliceDocumentType.RVVI,
+          courtDocument: Base64.btoa(custodyNotice),
+        },
+      ])
+
+      return { delivered }
+    } catch (reason) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to deliver the custody notice for case ${theCase.id} to police`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
   }
 
   async deliverIndictmentToPolice(

@@ -4,10 +4,7 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { TableRepeaterFormField } from '@island.is/application/ui-fields'
 import { format as formatKennitala } from 'kennitala'
 import React, { FC } from 'react'
@@ -15,6 +12,7 @@ import { useFriggOptions } from '../../hooks/useFriggOptions'
 import { childrenNGuardiansMessages, sharedMessages } from '../../lib/messages'
 import { AgentType, OptionsType } from '../../utils/constants'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
   getSelectedOptionLabel,
@@ -104,6 +102,12 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             defaultValue: (application: Application) =>
               getOtherGuardian(application.answers, application.externalData)
                 ?.nationalId,
+          },
+          childNationalId: {
+            component: 'hiddenInput',
+            displayInTable: false,
+            defaultValue: (application: Application) =>
+              getApplicationAnswers(application.answers).childNationalId,
           },
         },
         table: {

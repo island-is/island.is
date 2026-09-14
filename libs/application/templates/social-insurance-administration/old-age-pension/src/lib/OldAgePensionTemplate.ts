@@ -128,6 +128,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           'clearBankAccountInfo',
           'clearTemp',
           'restoreAnswersFromTemp',
+          'clearIncomePlanOnOnePaymentPerYear',
           'unsetIncomePlan',
           'clearNoOtherIncomeConfirmation',
         ],
@@ -504,6 +505,24 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
         if (paymentInfo?.bankAccountType === BankAccountType.FOREIGN) {
           unset(application.answers, 'paymentInfo.bank')
+        }
+
+        return context
+      }),
+      clearIncomePlanOnOnePaymentPerYear: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { onePaymentPerYear } = getApplicationAnswers(application.answers)
+
+        /* The income plan screens are skipped when the applicant asks for a
+           single yearly payment, so any plan populated earlier must not be
+           submitted to TR. */
+        if (onePaymentPerYear === YES) {
+          unset(application.answers, 'incomePlanTable')
+          unset(application.answers, 'incomePlan')
         }
 
         return context

@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'shared-problem',
   preset: './jest.preset.js',
   rootDir: '../../..',

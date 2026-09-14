@@ -74,6 +74,9 @@ export default async function handler(
   const organizationSubpageSlug = req.query?.organizationsubpageslug as
     | string
     | undefined
+  // Only needed when the subpage belongs to an organization parent subpage
+  const organizationParentSubpageSlug = req.query
+    ?.organizationparentsubpageslug as string | undefined
 
   const contentType = parseAsStringEnum(CONTENT_TYPES)
     .withDefault('news')
@@ -140,21 +143,41 @@ export default async function handler(
       },
     })
 
+    const getListItemUrl = (itemSlug: string | null | undefined) => {
+      if (!organization || !organizationSubpageSlug || !itemSlug) {
+        return ''
+      }
+
+      // A subpage that belongs to a parent subpage is served on
+      // /[organization]/[parentSubpage]/[subpage] so the item url gets an extra path segment
+      if (organizationParentSubpageSlug) {
+        const subpageUrl = linkResolver(
+          'organizationparentsubpagechild',
+          [
+            organization,
+            organizationParentSubpageSlug,
+            organizationSubpageSlug,
+          ],
+          locale,
+        ).href
+        return `${baseUrl}${subpageUrl}/${itemSlug}`
+      }
+
+      return `${baseUrl}${
+        linkResolver(
+          'organizationsubpagelistitem',
+          [organization, organizationSubpageSlug, itemSlug],
+          locale,
+        ).href
+      }`
+    }
+
     itemString = (listItems.data.getGenericListItems?.items ?? [])
       .map((item) =>
         generateItemString({
           title: item.title,
           description: '',
-          fullUrl:
-            organization && organizationSubpageSlug && item.slug
-              ? `${baseUrl}${
-                  linkResolver(
-                    'organizationsubpagelistitem',
-                    [organization, organizationSubpageSlug, item.slug],
-                    locale,
-                  ).href
-                }`
-              : '',
+          fullUrl: getListItemUrl(item.slug),
           date: item.date ? new Date(item.date).toUTCString() : '',
         }),
       )

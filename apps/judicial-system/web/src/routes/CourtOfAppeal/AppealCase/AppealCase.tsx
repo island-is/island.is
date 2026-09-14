@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -20,12 +21,11 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseNumberInput } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useAppealCase,
   useTargetAppealCaseByAppealCaseId,
@@ -36,7 +36,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { CaseNumberInput } from '../components'
 import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
@@ -345,16 +344,18 @@ const AppealCase: FC = () => {
           <Modal
             title={formatMessage(strings.modalHeading)}
             text={formatMessage(strings.modalMessage)}
-            primaryButton={{
-              text: formatMessage(strings.modalPrimaryButton),
-              onClick: () =>
-                router.push(
-                  appendAppealCaseIdQuery(
-                    `${navigateTo}/${workingCase.id}`,
-                    targetAppealCase?.id,
+            buttons={[
+              {
+                text: formatMessage(strings.modalPrimaryButton),
+                onClick: () =>
+                  router.push(
+                    appendAppealCaseIdQuery(
+                      `${navigateTo}/${workingCase.id}`,
+                      targetAppealCase?.id,
+                    ),
                   ),
-                ),
-            }}
+              },
+            ]}
           />
         )}
       </AnimatePresence>

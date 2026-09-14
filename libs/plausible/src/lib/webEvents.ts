@@ -31,11 +31,22 @@ export const trackSearchQuery = (query: string, source: string) => {
   plausibleCustomEvent(event)
 }
 
-export const webMenuButtonClicked = () => {
+// User opens the main site navigation. Preserves the legacy 'web Menu button'
+// goal — fires on every open (not first-open-per-session) so before/after
+// redesign counts remain directly comparable. `surface` distinguishes the
+// desktop per-section dropdowns from the mobile fullscreen panel; `section`
+// (desktop only) lets us see which section drives engagement.
+export const webMenuButtonClicked = (
+  params: {
+    surface?: 'desktop' | 'mobile'
+    section?: 'organizations' | 'categories' | 'lifeEvents'
+    trigger?: 'menu' | 'search'
+  } = {},
+) => {
   const event: BaseEvent = {
     eventName: 'Menu button',
     featureName: 'web',
-    params: {},
+    params,
   }
   plausibleCustomEvent(event)
 }

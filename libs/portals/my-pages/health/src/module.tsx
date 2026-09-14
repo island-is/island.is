@@ -1,5 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
+import { Features } from '@island.is/react/feature-flags'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
@@ -21,6 +22,9 @@ const TherapiesOccupational = lazy(() =>
 
 const AidsAndNutrition = lazy(() =>
   import('./screens/AidsAndNutrition/AidsAndNutrition'),
+)
+const MovementPrescriptions = lazy(() =>
+  import('./screens/MovementPrescriptions/MovementPrescriptions'),
 )
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 
@@ -140,6 +144,10 @@ const AppointmentDetail = lazy(() =>
   import('./screens/Appointments/AppointmentDetail'),
 )
 
+const BookAppointment = lazy(() =>
+  import('./screens/Appointments/BookAppointment'),
+)
+
 const HealthConversations = lazy(() =>
   import('./screens/HealthConversations/HealthConversations'),
 )
@@ -153,6 +161,16 @@ const HealthConversationDetail = lazy(() =>
 )
 
 const Pregnancy = lazy(() => import('./screens/Pregnancy/Pregnancy'))
+
+const Treatments = lazy(() => import('./screens/Treatments/Treatments'))
+
+const TreatmentOverview = lazy(() =>
+  import('./screens/Treatments/TreatmentOverview'),
+)
+
+const TreatmentEducationalContent = lazy(() =>
+  import('./screens/Treatments/TreatmentEducationalContent'),
+)
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
@@ -256,6 +274,13 @@ export const healthModule: PortalModule = {
       name: hm.aidsAndNutritionTitle,
       path: HealthPaths.HealthAidsAndNutritionOld,
       element: <Navigate to={HealthPaths.HealthAidsAndNutrition} replace />,
+    },
+    {
+      name: hm.movementPrescriptionsTitle,
+      path: HealthPaths.HealthMovementPrescriptions,
+      key: 'HealthMovementPrescriptions',
+      enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
+      element: <MovementPrescriptions />,
     },
     {
       name: hm.payments,
@@ -634,6 +659,15 @@ export const healthModule: PortalModule = {
       element: <AppointmentDetail />,
     },
     {
+      name: hm.bookAppointmentTitle,
+      path: HealthPaths.HealthBookAppointment,
+      key: 'HealthAppointments',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <BookAppointment />,
+    },
+    {
       name: m.messages,
       path: HealthPaths.HealthConversations,
       key: 'HealthMessages',
@@ -655,18 +689,39 @@ export const healthModule: PortalModule = {
       element: <HealthConversationDetail />,
     },
     {
-      name: hm.pregnancy,
+      name: m.healthPregnancy,
       path: HealthPaths.HealthPregnancy,
-      dynamic: true,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Navigate to={HealthPaths.HealthPregnancyOverview} replace />,
     },
     {
-      name: hm.myPregnancy,
+      name: m.healthMyPregnancy,
       path: HealthPaths.HealthPregnancyOverview,
-      dynamic: true,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Pregnancy />,
+    },
+    {
+      name: m.healthTreatment,
+      path: HealthPaths.HealthTreatments,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Treatments />,
+    },
+    {
+      name: m.healthTreatment,
+      path: HealthPaths.HealthTreatment,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <TreatmentOverview />,
+    },
+    {
+      name: m.healthTreatmentEducationalContent,
+      path: HealthPaths.HealthTreatmentEducationalContent,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <TreatmentEducationalContent />,
     },
   ],
 }

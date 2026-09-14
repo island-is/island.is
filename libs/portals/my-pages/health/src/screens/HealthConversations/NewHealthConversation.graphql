@@ -1,6 +1,7 @@
 fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecipient {
   nodeId
   groupId
+  treatmentId
   name
   allowsMessaging
   messagingWindowOpen
@@ -8,10 +9,16 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
   patientReplyWindowDays
   canCreateConversation
   conversationBlockedReason
+  canRequestCertificate
+  certificateBlockedReason
   allowedMessageTypes {
     patientInitiatedTypeCode
     title
+    description
+    instructions
     isCertificate
+    externalLinkUrl
+    isCurrentlyOpen
   }
 }
 
@@ -26,5 +33,14 @@ mutation CreateHealthConversation(
 ) {
   healthDirectorateCreateHealthConversation(input: $input) {
     id
+  }
+}
+
+mutation CreateHealthCertificateRequest(
+  $input: HealthDirectorateCreateCertificateRequestInput!
+) {
+  healthDirectorateCreateCertificateRequest(input: $input) {
+    id
+    conversationId
   }
 }

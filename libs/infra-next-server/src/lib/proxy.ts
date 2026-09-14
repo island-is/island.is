@@ -9,6 +9,8 @@ export const setupProxy = async (
     return
   }
   Object.keys(proxyConfig).forEach((context) => {
-    app.use(createProxyMiddleware(context, proxyConfig[context]))
+    app.use(
+      createProxyMiddleware({ pathFilter: context, ...proxyConfig[context] }),
+    )
   })
 }

@@ -17,6 +17,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
+  Message,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
@@ -32,13 +33,20 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { getCaseFileHash } from '../../formatters'
+import { registerAfterCommit } from '../../middleware'
+import { InternalCaseService } from '../case/internalCase.service'
 import { PdfService } from '../case/pdf.service'
-import { CourtDocumentFolder, CourtService } from '../court'
+import {
+  CourtDocumentFolder,
+  CourtService,
+  isFileTooLargeForCourt,
+} from '../court'
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceService } from '../police'
+import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -99,6 +107,8 @@ export class SubpoenaService {
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => InternalCaseService))
+    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -189,6 +199,8 @@ export class SubpoenaService {
       }
     }
 
+    this.queueSubpoenaRevocationMessages(theCase, defendantsToProcess, user)
+
     // Queue messages for delivering subpoenas to court and national commissioners office
     await this.queueSubpoenaDeliveryMessages(
       theCase,
@@ -197,13 +209,54 @@ export class SubpoenaService {
       user,
     )
 
-    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, false, {
+    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, {
       Varnaraðili: defendantsToProcess
         .map((defendant) => defendant.id)
         .join(', '),
     })
 
     return subpoenas
+  }
+
+  private shouldRevokeSubpoena(subpoena: Subpoena, now: Date): boolean {
+    if (!subpoena.policeSubpoenaId) {
+      return false
+    }
+
+    if (isSuccessfulServiceStatus(subpoena.serviceStatus)) {
+      return false
+    }
+
+    return subpoena.arraignmentDate.getTime() > now.getTime()
+  }
+
+  private queueSubpoenaRevocationMessages(
+    theCase: Case,
+    defendants: Defendant[],
+    user: TUser,
+  ): void {
+    const now = nowFactory()
+    const messages: Message[] = []
+
+    for (const defendant of defendants) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        if (this.shouldRevokeSubpoena(subpoena, now)) {
+          messages.push({
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id, subpoena.id],
+          })
+        }
+      }
+    }
+
+    if (messages.length > 0) {
+      // Only buffer after commit so a rollback cannot publish via MessageMiddleware.
+      registerAfterCommit(async () => {
+        addMessagesToQueue(...messages)
+      })
+    }
   }
 
   private async queueSubpoenaDeliveryMessages(
@@ -375,7 +428,7 @@ export class SubpoenaService {
       update.serviceStatus &&
       update.serviceStatus !== subpoena.serviceStatus
     ) {
-      this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, false, {
+      this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, {
         Staða: getServiceStatusText(update.serviceStatus),
       })
     }
@@ -505,15 +558,10 @@ export class SubpoenaService {
         `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
       )
 
-      this.eventService.postEvent(
-        'SUBPOENA_DELIVERED_TO_POLICE',
-        theCase,
-        false,
-        {
-          Varnaraðili: defendant.id,
-          'RLS auðkenni': createdSubpoena.policeSubpoenaId,
-        },
-      )
+      this.eventService.postEvent('SUBPOENA_DELIVERED_TO_POLICE', theCase, {
+        Varnaraðili: defendant.id,
+        'RLS auðkenni': createdSubpoena.policeSubpoenaId,
+      })
 
       return { delivered: true }
     } catch (error) {
@@ -572,7 +620,8 @@ export class SubpoenaService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -607,8 +656,45 @@ export class SubpoenaService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
+  }
+
+  async deliverServiceCertificateToPolice(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      const pdf = await this.pdfService.getSubpoenaServiceCertificatePdf(
+        theCase,
+        defendant,
+        subpoena,
+      )
+
+      const delivered =
+        await this.internalCaseService.deliverCaseToPoliceWithFiles(
+          theCase,
+          user,
+          [
+            {
+              type: PoliceDocumentType.RVBD,
+              courtDocument: Base64.btoa(pdf.toString('binary')),
+            },
+          ],
+        )
+
+      return { delivered }
+    } catch (reason) {
+      this.logger.warn(
+        `Failed to upload service certificate pdf to police for subpoena ${subpoena.id} of defendant ${defendant.id} and case ${theCase.id}`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
   }
 
   async deliverSubpoenaRevocationToNationalCommissionersOffice(

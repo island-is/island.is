@@ -58,6 +58,11 @@ export const messageTypeToSuspensionCategory: Partial<
   [MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE]:
     MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_INDICTMENT]: MessageSuspensionCategory.POLICE,
+  [MessageType.DELIVERY_TO_POLICE_REQUEST]: MessageSuspensionCategory.POLICE,
+  [MessageType.DELIVERY_TO_POLICE_COURT_RECORD]:
+    MessageSuspensionCategory.POLICE,
+  [MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE]:
+    MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_CASE_FILE]: MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD]:
     MessageSuspensionCategory.POLICE,
@@ -66,6 +71,8 @@ export const messageTypeToSuspensionCategory: Partial<
   [MessageType.DELIVERY_TO_POLICE_SIGNED_RULING]:
     MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_APPEAL]: MessageSuspensionCategory.POLICE,
+  [MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE]:
+    MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA]:
     MessageSuspensionCategory.NATIONAL_COMMISSIONERS_OFFICE,
   [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION]:

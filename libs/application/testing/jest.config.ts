@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-testing',
   preset: './jest.preset.js',
   rootDir: '../../..',

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
-import getConfig from 'next/config'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
@@ -27,16 +26,20 @@ import {
   SkipToMainContent,
 } from '@island.is/web/components'
 
+import { buildHeaderNavData } from '../components/Header/buildHeaderNavData'
+import type { HeaderNavData } from '../components/Header/headerNavData'
 import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import { PRELOADED_FONTS } from '../constants'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
+import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 import {
   ContentLanguage,
   GetAlertBannerQuery,
   GetArticleCategoriesQuery,
   GetGroupedMenuQuery,
   GetNamespaceQuery,
+  GetOrganizationLogosQuery,
   GetOrganizationPageQuery,
   GetSingleArticleQuery,
   Menu,
@@ -44,6 +47,7 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
   QueryGetNamespaceArgs,
+  QueryGetOrganizationsArgs,
 } from '../graphql/schema'
 import { useNamespace } from '../hooks'
 import {
@@ -56,20 +60,15 @@ import { getLocaleFromPath, useI18n } from '../i18n'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
+import { GET_ORGANIZATION_LOGOS_QUERY } from '../screens/queries/Organization'
 import { Screen, ScreenContext } from '../types'
-import { extractOrganizationSlugFromPathname } from '../utils/organization'
-import {
-  formatMegaMenuCategoryLinks,
-  formatMegaMenuLinks,
-} from '../utils/processMenuData'
+import { getHeaderNavigationPropsFromUrl } from '../utils/organization'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
-
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-expect-error make web strict
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -89,6 +88,7 @@ const absoluteUrl = (req, setLocalhost) => {
 
 export interface LayoutProps {
   showSearchInHeader?: boolean
+  showHeaderNavigation?: boolean
   organizationSearchFilter?: string
   wrapContent?: boolean
   showHeader?: boolean
@@ -114,25 +114,26 @@ export interface LayoutProps {
     en: string
   }
   footerVersion?: 'default' | 'organization'
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
   // @ts-expect-error make web strict
   respOrigin
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error make web strict
-  megaMenuData
+  headerNavData?: HeaderNavData | null
   customTopLoginButtonItem: LayoutComponentProps['customTopLoginButtonItem']
   children?: React.ReactNode
 }
 
-if (publicRuntimeConfig.ddLogsClientToken && typeof window !== 'undefined') {
-  userMonitoring.initDdLogs({
-    service: 'islandis',
-    clientToken: publicRuntimeConfig.ddLogsClientToken,
-    env: publicRuntimeConfig.environment || 'local',
-    version: publicRuntimeConfig.appVersion || 'local',
-  })
+if (typeof window !== 'undefined') {
+  const { ddLogsClientToken, environment, appVersion } = getPublicRuntimeEnv()
+  if (ddLogsClientToken) {
+    userMonitoring.initDdLogs({
+      service: 'islandis',
+      clientToken: ddLogsClientToken,
+      env: environment || 'local',
+      version: appVersion || 'local',
+    })
+  }
 }
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-expect-error make web strict
 const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
@@ -146,7 +147,7 @@ const Layout: Screen<LayoutProps> = ({
   categories,
   topMenuCustomLinks,
   footerUpperInfo,
-  footerUpperContact,
+  footerUpperContact: _footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
   footerTagsMenu,
@@ -159,7 +160,8 @@ const Layout: Screen<LayoutProps> = ({
   footerVersion = 'default',
   respOrigin,
   children,
-  megaMenuData,
+  headerNavData,
+  showHeaderNavigation: showHeaderNavigationOverride,
   customTopLoginButtonItem,
   languageToggleHrefOverride,
 }) => {
@@ -192,7 +194,6 @@ const Layout: Screen<LayoutProps> = ({
 
   useEffect(() => {
     setAlertBanners(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error make web strict
       [
         {
@@ -250,9 +251,12 @@ const Layout: Screen<LayoutProps> = ({
 
   const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
-  const organizationSearchFilter =
-    organizationSearchFilterOverride ??
-    extractOrganizationSlugFromPathname(router.asPath, activeLocale)
+  // Route-derived defaults come from getProps so the server markup and first
+  // hydrated render agree. Explicit search filters and `false` remain one-way
+  // overrides that can hide navigation on additional pages.
+  const organizationSearchFilter = organizationSearchFilterOverride ?? ''
+  const showHeaderNavigation =
+    showHeaderNavigationOverride !== false && !organizationSearchFilter
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
@@ -339,50 +343,37 @@ const Layout: Screen<LayoutProps> = ({
         />
         {alertBanners.map((banner) => (
           <AlertBanner
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             key={banner.bannerId}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             title={banner.title}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             description={banner.description}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             link={{
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error make web strict
               ...(!!banner.link &&
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error make web strict
                 !!banner.linkTitle && {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-expect-error make web strict
                   href: linkResolver(banner.link.type as LinkType, [
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-expect-error make web strict
                     banner.link.slug,
                   ]).href,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
                   // @ts-expect-error make web strict
                   title: banner.linkTitle,
                 }),
             }}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             variant={banner.bannerVariant as AlertBannerVariants}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             dismissable={banner.isDismissable}
             onDismiss={() => {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error make web strict
               if (banner.dismissedForDays !== 0) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error make web strict
                 Cookies.set(banner.bannerId, 'hide', {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-expect-error make web strict
                   expires: banner.dismissedForDays,
                 })
@@ -399,14 +390,14 @@ const Layout: Screen<LayoutProps> = ({
         >
           {showHeader && (
             <ColorSchemeContext.Provider
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error make web strict
               value={{ colorScheme: headerColorScheme }}
             >
               <Header
                 buttonColorScheme={headerButtonColorScheme}
                 showSearchInHeader={showSearchInHeader}
-                megaMenuData={megaMenuData}
+                headerNavData={headerNavData}
+                showNavigation={showHeaderNavigation}
                 languageToggleQueryParams={languageToggleQueryParams}
                 organizationSearchFilter={organizationSearchFilter}
                 searchPlaceholder={
@@ -528,71 +519,97 @@ const Layout: Screen<LayoutProps> = ({
     </GlobalContextProvider>
   )
 }
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-expect-error make web strict
 Layout.getProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
   const respOrigin = `${origin}`
-  const [categories, alertBanner, namespace, megaMenuData, footerMenuData] =
-    await Promise.all([
-      apolloClient
-        .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
-          query: GET_CATEGORIES_QUERY,
-          variables: {
-            input: {
-              lang: locale as ContentLanguage,
-            },
+  const headerNavigationProps = getHeaderNavigationPropsFromUrl(
+    req?.url,
+    lang as Locale,
+  )
+  const [
+    categories,
+    alertBanner,
+    namespace,
+    footerMenuData,
+    headerNavMenuData,
+    headerNavOrganizations,
+  ] = await Promise.all([
+    apolloClient
+      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
+        query: GET_CATEGORIES_QUERY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
           },
-        })
-        .then((res) => res.data.getArticleCategories),
-      apolloClient
-        .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
-          query: GET_ALERT_BANNER_QUERY,
-          variables: {
-            input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
+        },
+      })
+      .then((res) => res.data.getArticleCategories),
+    apolloClient
+      .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
+        query: GET_ALERT_BANNER_QUERY,
+        variables: {
+          input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
+        },
+      })
+      .then((res) => res.data.getAlertBanner),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Global',
+            lang,
           },
-        })
-        .then((res) => res.data.getAlertBanner),
-      apolloClient
-        .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-          query: GET_NAMESPACE_QUERY,
-          variables: {
-            input: {
-              namespace: 'Global',
-              lang,
-            },
-          },
-        })
-        .then((res) => {
-          // map data here to reduce data processing in component
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error make web strict
-          return JSON.parse(res.data.getNamespace.fields)
-        }),
-      apolloClient
-        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-          query: GET_GROUPED_MENU_QUERY,
-          variables: {
-            input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
-          },
-        })
-        .then((res) => res.data.getGroupedMenu),
-      apolloClient
-        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-          query: GET_GROUPED_MENU_QUERY,
-          variables: {
-            input: { id: '578dYm6sr8yihBDIClrQYe', lang },
-          },
-        })
-        .then((res) => res.data.getGroupedMenu),
-    ])
+        },
+      })
+      .then((res) => {
+        // map data here to reduce data processing in component
+
+        // @ts-expect-error make web strict
+        return JSON.parse(res.data.getNamespace.fields)
+      }),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '578dYm6sr8yihBDIClrQYe', lang },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
+    // Grouped menu that powers the new DesktopNav / MobileNav sections
+    // (Þjónustuflokkar / Lífsviðburðir / Stofnanir). Matching uses child
+    // menu IDs, so Contentful order does not affect the header order.
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '1SCm5KnfQ3DrWT600MTt82', lang },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu)
+      .catch(() => null),
+    // Organizations — joined client-side to attach a logo URL to each
+    // organizationPage link in the header nav. `MenuLink.link` resolves
+    // to `ReferenceLink { slug, type }`, not to the page union, so the
+    // logo can't be fetched inline via the grouped-menu query. Uses the
+    // slim logos-only query so the result stays small in every page's
+    // getProps payload.
+    apolloClient
+      .query<GetOrganizationLogosQuery, QueryGetOrganizationsArgs>({
+        query: GET_ORGANIZATION_LOGOS_QUERY,
+        variables: {
+          input: { lang: locale as ContentLanguage },
+        },
+      })
+      .then((res) => res.data.getOrganizations?.items ?? [])
+      .catch(() => []),
+  ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error make web strict
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
     item.menuLinks
@@ -623,13 +640,12 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     footerTagsMenu: [],
     footerMiddleMenu: [],
   }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
   // @ts-expect-error make web strict
   const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus[key] = mapLinks(menu as Menu)
       }
@@ -639,31 +655,26 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     switch (menu.id) {
       // Footer lower
       case '5c2EheJw1r0QQGb2VDOJHU':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerLowerMenu = mapLinks(menu as Menu)
         break
       // Footer middle
       case '5Hh1PJAmyy9T9PaQd4qMVv':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerMiddleMenu = mapLinks(menu as Menu)
         break
       // Footer tags
       case '3w5wgyaJo2ZLp74bdm0A0B':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerTagsMenu = mapLinks(menu as Menu)
         break
       // Footer upper info
       case 'NtmV8H8sIEiXe6xdEKXsV':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerUpperInfo = mapLinks(menu as Menu)
         break
       // Footer upper contact
       case '12W37tLOmkxKDfUrw0X0h7':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerUpperContact = mapLinks(menu as Menu)
         break
@@ -673,6 +684,12 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
 
     return menus
   }, initialFooterMenu)
+
+  const headerNavData = buildHeaderNavData(
+    headerNavMenuData,
+    headerNavOrganizations,
+    lang as Locale,
+  )
 
   return {
     categories,
@@ -686,18 +703,8 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     ...footerMenu,
     namespace,
     respOrigin,
-    megaMenuData: {
-      asideTopLinks: formatMegaMenuLinks(
-        lang as Locale,
-        asideTopLinksData.menuLinks,
-      ),
-      asideBottomTitle: asideBottomLinksData.title,
-      asideBottomLinks: formatMegaMenuLinks(
-        lang as Locale,
-        asideBottomLinksData.menuLinks,
-      ),
-      mainLinks: formatMegaMenuCategoryLinks(lang as Locale, categories),
-    },
+    headerNavData,
+    ...headerNavigationProps,
   }
 }
 
@@ -774,17 +781,26 @@ export const withMainLayout = <T, C extends ScreenContext>(
     const languageToggleHrefOverride =
       layoutComponentProps?.languageToggleHrefOverride
 
+    const mergedLayoutProps = {
+      ...layoutProps,
+      ...layoutConfig,
+      ...themeConfig,
+      organizationAlertBannerContent,
+      articleAlertBannerContent,
+      customAlertBannerContent,
+      languageToggleQueryParams,
+      customTopLoginButtonItem,
+      languageToggleHrefOverride,
+    }
+
+    // Route restrictions are authoritative. Page config may hide navigation
+    // elsewhere, but it cannot re-enable it on organization or project pages.
     return {
       layoutProps: {
-        ...layoutProps,
-        ...layoutConfig,
-        ...themeConfig,
-        organizationAlertBannerContent,
-        articleAlertBannerContent,
-        customAlertBannerContent,
-        languageToggleQueryParams,
-        customTopLoginButtonItem,
-        languageToggleHrefOverride,
+        ...mergedLayoutProps,
+        showHeaderNavigation:
+          layoutProps.showHeaderNavigation !== false &&
+          mergedLayoutProps.showHeaderNavigation !== false,
       },
       componentProps,
     }

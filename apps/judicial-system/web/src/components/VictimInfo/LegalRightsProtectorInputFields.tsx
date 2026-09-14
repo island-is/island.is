@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useContext } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import React, { useContext } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
@@ -6,11 +7,11 @@ import {
   InputAdvocate,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  RequestSharedWhen,
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { RequestSharedWhen } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useVictim } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const LegalRightsProtectorInputFields = ({

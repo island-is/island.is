@@ -64,6 +64,7 @@ import { Section } from '../sections/models/section.model'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { CopyFormDto } from './models/dto/copyForm.dto'
 import { Form } from './models/form.model'
 import { OrganizationZendeskInstanceDto } from '../organizations/models/dto/organizationZendeskInstance.dto'
 import {
@@ -73,6 +74,9 @@ import {
   ApplicationJsonValueDto,
 } from '../applications/models/dto/application.json.dto'
 import { FormDelegationDto } from './models/dto/formDelegation.dto'
+import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
+
+const MAX_COPY_SLUG_RETRIES = 5
 
 @Injectable()
 export class FormsService {
@@ -143,6 +147,7 @@ export class FormsService {
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'isTranslated',
       'hasPayment',
       'beenPublished',
@@ -150,6 +155,8 @@ export class FormsService {
       'draftDaysToLive',
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
+      'isInaccessible',
+      'validateEligibility',
       'hasSummaryScreen',
       'sectionInfo',
       'lastModifiedBy',
@@ -332,8 +339,13 @@ export class FormsService {
 
     const originalHasPayment = form.hasPayment
     const originalHasSummary = form.hasSummaryScreen
+    const originalUseValidate = form.useValidate
 
     Object.assign(form, updateFormDto)
+
+    if (form.useValidate === false) {
+      form.validateEligibility = false
+    }
 
     if (originalHasPayment !== form.hasPayment) {
       if (originalHasPayment) {
@@ -354,23 +366,71 @@ export class FormsService {
     const response = new UpdateFormResponse()
 
     try {
-      await form.save()
+      await this.sequelize.transaction(async (transaction) => {
+        await form.save({ transaction })
+
+        if (
+          originalUseValidate === true &&
+          updateFormDto.useValidate === false
+        ) {
+          const sections = await this.sectionModel.findAll({
+            attributes: ['id'],
+            where: { formId: id },
+            transaction,
+          })
+
+          await this.screenModel.update(
+            { shouldValidate: false },
+            {
+              where: {
+                sectionId: { [Op.in]: sections.map((section) => section.id) },
+              },
+              transaction,
+            },
+          )
+          await this.formModel.update(
+            { validateEligibility: false },
+            {
+              where: { id },
+              transaction,
+            },
+          )
+        }
+      })
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
         const slug = updateFormDto.slug
         response.updateSuccess = false
-        response.errors = [
-          {
-            field: 'slug',
-            message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
-          } as UpdateFormError,
-        ]
+        response.errors = [this.getSlugError(slug)]
       } else {
         throw error
       }
     }
 
     return response
+  }
+
+  private getSlugError(slug?: string): UpdateFormError {
+    return {
+      field: 'slug',
+      message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
+    } as UpdateFormError
+  }
+
+  private isSlugUniqueConstraintError(
+    error: unknown,
+  ): error is UniqueConstraintError {
+    return (
+      error instanceof UniqueConstraintError &&
+      Object.keys(error.fields ?? {}).includes('slug')
+    )
+  }
+
+  private throwSlugConflict(slug?: string): never {
+    throw new BadRequestException({
+      updateSuccess: false,
+      errors: [this.getSlugError(slug)],
+    } as UpdateFormResponse)
   }
 
   async addDelegation(
@@ -443,7 +503,12 @@ export class FormsService {
     })
   }
 
-  async copy(user: User, id: string): Promise<FormResponseDto> {
+  async copy(
+    user: User,
+    id: string,
+    copyFormDto: CopyFormDto,
+  ): Promise<FormResponseDto> {
+    const { organizationNationalId } = copyFormDto
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     const form = await this.findById(id)
@@ -460,7 +525,62 @@ export class FormsService {
       )
     }
 
-    const copyForm = await this.copyForm(id, false, `${form.slug}-afrit`)
+    if (!isAdmin && organizationNationalId !== formOwnerNationalId) {
+      throw new ForbiddenException(
+        `User does not have permission to copy form to organization with nationalId '${organizationNationalId}'`,
+      )
+    }
+
+    let destinationOrganization: Organization | undefined
+
+    if (isAdmin && organizationNationalId !== formOwnerNationalId) {
+      const organization = await this.organizationModel.findOne({
+        where: { nationalId: organizationNationalId },
+      })
+      if (!organization) {
+        throw new NotFoundException(
+          `Organization with nationalId ${organizationNationalId} not found`,
+        )
+      }
+
+      destinationOrganization = organization
+    }
+
+    const copyToDifferentOrganization = destinationOrganization !== undefined
+    const newSlugBase = copyToDifferentOrganization
+      ? `${organizationNationalId}-${form.slug}`
+      : `${form.slug}-afrit`
+
+    let copyForm: Form | undefined
+    let newSlug: string | undefined
+
+    for (let retry = 0; retry < MAX_COPY_SLUG_RETRIES; retry++) {
+      newSlug = await this.getUniqueCopySlug(newSlugBase)
+
+      try {
+        copyForm = await this.copyForm(
+          id,
+          false,
+          form.isInaccessible,
+          newSlug,
+          destinationOrganization,
+        )
+        break
+      } catch (error) {
+        if (!this.isSlugUniqueConstraintError(error)) {
+          throw error
+        }
+
+        if (retry === MAX_COPY_SLUG_RETRIES - 1) {
+          this.throwSlugConflict(newSlug)
+        }
+      }
+    }
+
+    if (!copyForm) {
+      this.throwSlugConflict(newSlug)
+    }
+
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -494,6 +614,10 @@ export class FormsService {
     const { newStatus } = updateFormStatusDto
     const currentStatus = form.status
 
+    if (newStatus === FormStatus.PUBLISHED) {
+      await this.validateZendeskSettingsForPublish(form)
+    }
+
     switch (currentStatus) {
       case FormStatus.IN_DEVELOPMENT:
         if (newStatus === FormStatus.PUBLISHED) {
@@ -524,6 +648,41 @@ export class FormsService {
     throw new BadRequestException(
       `Invalid status transition from '${currentStatus}' to '${newStatus}'`,
     )
+  }
+
+  private async validateZendeskSettingsForPublish(form: Form): Promise<void> {
+    if (form.submissionServiceUrl !== 'zendesk') {
+      return
+    }
+
+    const organization = await this.organizationModel.findByPk(
+      form.organizationId,
+    )
+    const zendeskBrandId = form.zendeskBrandId?.trim()
+    const zendeskInstance = organization?.zendeskInstance?.trim()
+    const supportedZendeskInstance = normalizeZendeskInstance(zendeskInstance)
+
+    if (!zendeskBrandId || !zendeskInstance) {
+      throw new BadRequestException(
+        'Zendesk instance and brand ID must be configured before publishing a Zendesk form.',
+      )
+    }
+
+    if (!supportedZendeskInstance) {
+      throw new BadRequestException('Unsupported Zendesk tenant')
+    }
+  }
+
+  private async getUniqueCopySlug(baseSlug: string): Promise<string> {
+    let slug = baseSlug
+    let suffix = 2
+
+    while (await this.formModel.unscoped().count({ where: { slug } })) {
+      slug = `${baseSlug}-${suffix}`
+      suffix++
+    }
+
+    return slug
   }
 
   private async publishFormInDevelopment(
@@ -563,13 +722,29 @@ export class FormsService {
     return new FormResponseDto()
   }
 
-  private async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
+  async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
     const slug = form.slug
-    form.status = FormStatus.ARCHIVED
-    form.slug = `${form.slug}-archived-${Date.now()}`
-    await form.save()
+    let copyForm: Form | undefined
 
-    const copyForm = await this.copyForm(id, false, slug)
+    await this.sequelize.transaction(async (transaction) => {
+      form.status = FormStatus.ARCHIVED
+      form.slug = `${form.slug}-archived-${Date.now()}`
+      await form.save({ transaction })
+
+      copyForm = await this.copyForm(
+        id,
+        false,
+        true,
+        slug,
+        undefined,
+        transaction,
+      )
+    })
+
+    if (!copyForm) {
+      throw new Error('Error copying form')
+    }
+
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -648,7 +823,13 @@ export class FormsService {
     id: string,
     form: Form,
   ): Promise<FormResponseDto> {
-    const copyForm = await this.copyForm(id, true, `${form.slug}-i-breytingu`)
+    const copyForm = await this.copyForm(
+      id,
+      true,
+      form.isInaccessible,
+      `${form.slug}-i-breytingu`,
+      undefined,
+    )
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -749,7 +930,7 @@ export class FormsService {
     return new FormResponseDto()
   }
 
-  private async findById(id: string): Promise<Form> {
+  private async findById(id: string, transaction?: Transaction): Promise<Form> {
     const form = await this.formModel.findByPk(id, {
       include: [
         {
@@ -803,6 +984,7 @@ export class FormsService {
           'ASC',
         ],
       ],
+      transaction,
     })
 
     if (!form) {
@@ -961,9 +1143,12 @@ export class FormsService {
       'draftDaysToLive',
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
+      'isInaccessible',
+      'validateEligibility',
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'hasSummaryScreen',
       'sectionInfo',
       'dependencies',
@@ -1079,7 +1264,7 @@ export class FormsService {
     formDto.organizationZendeskInstance.zendeskInstance =
       organization?.zendeskInstance ?? ''
     formDto.organizationZendeskInstance.zendeskBrandId =
-      organization?.zendeskBrandId ?? ''
+      form.zendeskBrandId ?? ''
 
     return formDto
   }
@@ -1165,9 +1350,12 @@ export class FormsService {
   private async copyForm(
     id: string,
     isDerived: boolean,
+    isBeingArchived: boolean,
     slug: string,
+    destinationOrganization: Organization | undefined,
+    transaction?: Transaction,
   ): Promise<Form> {
-    const existingForm = await this.findById(id)
+    const existingForm = await this.findById(id, transaction)
     if (!existingForm) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
@@ -1177,6 +1365,8 @@ export class FormsService {
         `Cannot copy form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
       )
     }
+
+    const copyToDifferentOrganization = destinationOrganization !== undefined
 
     let deps = existingForm.dependencies || []
 
@@ -1192,6 +1382,37 @@ export class FormsService {
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
     newForm.sectionInfo = existingForm.sectionInfo
+    newForm.isInaccessible = isBeingArchived
+    newForm.invalidationDate = isBeingArchived
+      ? undefined
+      : existingForm.invalidationDate
+    newForm.organizationNationalId = copyToDifferentOrganization
+      ? destinationOrganization.nationalId
+      : existingForm.organizationNationalId
+    newForm.organizationId = copyToDifferentOrganization
+      ? destinationOrganization.id
+      : existingForm.organizationId
+    newForm.organizationDisplayName = copyToDifferentOrganization
+      ? { is: '', en: '' }
+      : existingForm.organizationDisplayName
+    newForm.submissionServiceUrl = copyToDifferentOrganization
+      ? ''
+      : existingForm.submissionServiceUrl
+    newForm.zendeskBrandId = copyToDifferentOrganization
+      ? ''
+      : existingForm.zendeskBrandId
+    newForm.zendeskInternal = copyToDifferentOrganization
+      ? false
+      : existingForm.zendeskInternal
+    newForm.useValidate = copyToDifferentOrganization
+      ? false
+      : existingForm.useValidate
+    newForm.lastModifiedBy = copyToDifferentOrganization
+      ? undefined
+      : existingForm.lastModifiedBy
+    newForm.delegations = copyToDifferentOrganization
+      ? []
+      : existingForm.delegations
 
     const sections: Section[] = []
     const screens: Screen[] = []
@@ -1247,8 +1468,25 @@ export class FormsService {
     }
     newForm.dependencies = deps
 
+    const destinationCertificationTypeIds = copyToDifferentOrganization
+      ? new Set(
+          (await this.getCertificationTypes(newForm.organizationId)).map(
+            (certificationType) => certificationType.id,
+          ),
+        )
+      : undefined
+
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
+        if (
+          destinationCertificationTypeIds &&
+          !destinationCertificationTypeIds.has(
+            certificationType.certificationTypeId,
+          )
+        ) {
+          continue
+        }
+
         const newFormCertificationType = certificationType.toJSON()
         newFormCertificationType.id = uuidV4()
         newFormCertificationType.formId = newForm.id
@@ -1258,21 +1496,28 @@ export class FormsService {
       }
     }
 
-    try {
-      await this.sequelize.transaction(async (transaction) => {
-        await this.formModel.create(newForm, { transaction })
-        await this.sectionModel.bulkCreate(sections, { transaction })
-        await this.screenModel.bulkCreate(screens, { transaction })
-        await this.fieldModel.bulkCreate(fields, { transaction })
-        await this.listItemModel.bulkCreate(listItems, { transaction })
-        await this.formCertificationTypeModel.bulkCreate(
-          formCertificationTypes,
-          {
-            transaction,
-          },
-        )
+    const createCopy = async (transaction: Transaction) => {
+      await this.formModel.create(newForm, { transaction })
+      await this.sectionModel.bulkCreate(sections, { transaction })
+      await this.screenModel.bulkCreate(screens, { transaction })
+      await this.fieldModel.bulkCreate(fields, { transaction })
+      await this.listItemModel.bulkCreate(listItems, { transaction })
+      await this.formCertificationTypeModel.bulkCreate(formCertificationTypes, {
+        transaction,
       })
+    }
+
+    try {
+      if (transaction) {
+        await createCopy(transaction)
+      } else {
+        await this.sequelize.transaction(createCopy)
+      }
     } catch (error) {
+      if (this.isSlugUniqueConstraintError(error)) {
+        throw error
+      }
+
       this.logger.error(`Failed to copy form '${id}'`, error)
       throw new InternalServerErrorException(
         `Unexpected error copying form '${id}'`,

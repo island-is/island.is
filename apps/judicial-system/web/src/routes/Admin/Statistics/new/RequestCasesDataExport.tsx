@@ -3,12 +3,10 @@ import startOfYear from 'date-fns/startOfYear'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { PageHeader } from '@island.is/judicial-system-web/src/components'
-import {
-  DataGroups,
-  DateFilter,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { DateFilter } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DataGroups } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useGetPreprocessedDataUrlQuery } from '@island.is/judicial-system-web/src/routes/Admin/Statistics/preprocessedDataUrl.generated'
 
-import { useGetPreprocessedDataUrlQuery } from '../preprocessedDataUrl.generated'
 import { Filters } from './shared/StatisticFilter'
 import { StatisticHeader } from './shared/StatisticHeader'
 import StatisticPageLayout from './shared/StatisticPageLayout'

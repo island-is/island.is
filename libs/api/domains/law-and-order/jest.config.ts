@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-law-and-order',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

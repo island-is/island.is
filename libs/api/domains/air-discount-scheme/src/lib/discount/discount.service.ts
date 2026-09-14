@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { FetchError } from '@island.is/clients/middlewares'
 import { UsersApi } from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -20,13 +20,14 @@ export class DiscountService {
     private usersApi: UsersApi,
   ) {}
 
-  handleError(error: FetchError | ApolloError): void {
+  handleError(error: FetchError | GraphQLError): void {
     this.logger.error(error)
 
-    throw new ApolloError(
-      'Failed to resolve request',
-      error?.message ?? error?.response?.message,
-    )
+    // Note: the old `error?.response?.message` fallback was dead code —
+    // FetchError.response is a fetch Response which has no `message`.
+    throw new GraphQLError('Failed to resolve request', {
+      extensions: { code: error?.message },
+    })
   }
 
   discountIsValid(discount: TDiscount): boolean {
