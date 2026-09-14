@@ -56,6 +56,48 @@ module.exports = {
         `,
         { transaction },
       )
+
+      // The two orders shared the parent's sequence but were not always
+      // distinct within it: the reuse model assigned every merged document
+      // `nextOrder + document_order - 1`, so documents that shared an order in
+      // the merged case - the subpoenas of several defendants, filed together
+      // - all landed on the same order in the parent while the parent's own
+      // later documents were still shifted by the full count. One sequence
+      // with ties and gaps, which the reuse machinery tolerated and the
+      // ordinary document machinery does not: it reads a session's first and
+      // last order as the bounds of a move.
+      //
+      // So renumber each affected case's filed documents densely, in the order
+      // they already stood. Court sessions run oldest first and each continues
+      // where the previous ended, which is the sequence the application
+      // maintains. Blocks stay together because a block's documents are
+      // already adjacent. Idempotent - a dense sequence renumbers to itself.
+      await queryInterface.sequelize.query(
+        `
+        WITH renumbered AS (
+          SELECT cd.id,
+                 row_number() OVER (
+                   PARTITION BY cd.case_id
+                   ORDER BY cs.created, cd.document_order, cd.created
+                 ) AS new_order
+          FROM court_document AS cd
+          JOIN court_session AS cs ON cs.id = cd.court_session_id
+          WHERE cd.document_order > 0
+            AND cd.case_id IN (
+              SELECT DISTINCT case_id
+              FROM court_document
+              WHERE merged_from_case_id IS NOT NULL
+            )
+        )
+        UPDATE court_document AS cd
+        SET document_order = renumbered.new_order,
+            modified = NOW()
+        FROM renumbered
+        WHERE cd.id = renumbered.id
+          AND cd.document_order <> renumbered.new_order
+        `,
+        { transaction },
+      )
     })
   },
 
@@ -67,6 +109,11 @@ module.exports = {
   // a copy - an externally filed document with no file behind it and a changed
   // name therefore loses its link, which is as far back as the copies can
   // carry it.
+  //
+  // The restored merged_document_order values come from the renumbered
+  // sequence, so a case that had ties comes back without them. That is the
+  // sequence the reuse machinery would have produced had it not shared an
+  // order between documents, and the reuse code reads it the same way.
   down: async (queryInterface) => {
     await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.sequelize.query(
