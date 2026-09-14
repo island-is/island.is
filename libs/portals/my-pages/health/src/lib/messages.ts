@@ -2311,10 +2311,6 @@ export const messages = defineMessages({
     defaultMessage: 'Væntanlegur fæðingardagur',
     id: 'sp.health:due-date-pregnancy',
   },
-  seeAllMessages: {
-    defaultMessage: 'Sjá öll skilaboð',
-    id: 'sp.health:see-all-messages',
-  },
   noSearchResults: {
     id: 'sp.health:no-search-results',
     defaultMessage: 'Engar niðurstöður fundust',

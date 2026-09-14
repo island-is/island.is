@@ -13,6 +13,14 @@ export const m = defineMessages({
     id: 'service.portal:health-treatment-educational-content',
     defaultMessage: 'Fræðsluefni',
   },
+  healthPregnancy: {
+    id: 'service.portal:health-pregnancy',
+    defaultMessage: 'Meðganga',
+  },
+  healthMyPregnancy: {
+    id: 'service.portal:health-my-pregnancy',
+    defaultMessage: 'Meðgangan mín',
+  },
   goToPage: {
     id: 'service.portal:go-to-page',
     defaultMessage: 'Fara á síðu',
