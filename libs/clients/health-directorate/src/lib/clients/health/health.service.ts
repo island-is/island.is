@@ -34,6 +34,7 @@ import {
   meMessagingRecipientControllerGetMessagingRecipientsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePregnancyControllerHasActivePregnancyV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetCountriesV1,
@@ -333,6 +334,25 @@ export class HealthDirectorateHealthService {
     }
 
     return donationExceptions
+  }
+
+  /* Pregnancy */
+  public async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    const result = await withAuthContext(auth, () =>
+      data(mePregnancyControllerHasActivePregnancyV1()),
+    )
+
+    const hasActivePregnancy = (result as { hasActivePregnancy?: unknown })
+      ?.hasActivePregnancy
+
+    if (typeof hasActivePregnancy !== 'boolean') {
+      this.logger.debug(
+        'Unexpected response shape from hasActivePregnancy, expected { hasActivePregnancy: boolean }',
+      )
+      return null
+    }
+
+    return hasActivePregnancy
   }
 
   public async getQuestionnaires(

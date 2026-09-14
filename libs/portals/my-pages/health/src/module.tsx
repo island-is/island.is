@@ -160,6 +160,8 @@ const HealthConversationDetail = lazy(() =>
   import('./screens/HealthConversations/HealthConversationDetail'),
 )
 
+const Pregnancy = lazy(() => import('./screens/Pregnancy/Pregnancy'))
+
 const Treatments = lazy(() => import('./screens/Treatments/Treatments'))
 
 const TreatmentOverview = lazy(() =>
@@ -685,6 +687,20 @@ export const healthModule: PortalModule = {
       key: 'HealthMessages',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthConversationDetail />,
+    },
+    {
+      name: m.healthPregnancy,
+      path: HealthPaths.HealthPregnancy,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Navigate to={HealthPaths.HealthPregnancyOverview} replace />,
+    },
+    {
+      name: m.healthMyPregnancy,
+      path: HealthPaths.HealthPregnancyOverview,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Pregnancy />,
     },
     {
       name: m.healthTreatment,
