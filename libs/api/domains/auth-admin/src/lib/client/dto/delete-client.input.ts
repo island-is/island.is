@@ -1,5 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
+import { Environment } from '@island.is/shared/types'
+
 @InputType('AuthAdminDeleteClientInput')
 export class DeleteClientInput {
   @Field(() => String)
@@ -7,4 +9,10 @@ export class DeleteClientInput {
 
   @Field(() => String)
   clientId!: string
+
+  @Field(() => [Environment], {
+    nullable: true,
+    description: 'Environments to archive from. Defaults to all environments.',
+  })
+  environments?: Environment[]
 }
