@@ -51,7 +51,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
 import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
@@ -67,9 +67,7 @@ const getSessionBookingsAutofill = (
 
   if (workingCase.defenderName) {
     autofillSessionBookings.push(
-      `${formatMessage(m.sections.sessionBookings.autofillDefender, {
-        defender: workingCase.defenderName,
-      })}\n\n`,
+      `${workingCase.defenderName} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.\n\n`,
     )
   }
 
@@ -316,9 +314,9 @@ const CourtRecord: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <DateTime
                 name="courtStartDate"
                 datepickerLabel={formatMessage(

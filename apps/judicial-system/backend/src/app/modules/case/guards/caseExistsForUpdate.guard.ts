@@ -27,9 +27,14 @@ import { BaseCaseExistsGuard } from './baseCaseExists.guard'
  *   row and hold it until it is rejected. **Check the rules, not just the
  *   guard**: a `RolesRule.canActivate` may read `request.case`, and several do
  *   - `prosecutorTransitionRule` denies outright when it is missing. Where a
- *   rule needs the case, this guard has to run first and the lock exposure
- *   stands; it cannot be closed by ordering. Nothing catches a wrong order
- *   here, because guards do not run in controller unit tests.
+ *   rule needs the case, this guard has to run first, and `RolesGuard` cannot
+ *   close the exposure by ordering. Put `RouteRolesGuard` ahead of both
+ *   instead: it decides from the user's role alone, so it rejects a caller the
+ *   route has no rule for before the lock is taken. Only a spec that *runs*
+ *   the chain catches a wrong order: `transitionGuardChain.spec.ts` does that
+ *   for the one route converted so far, and a route adopting this guard should
+ *   bring its own. `verifyGuards` is not that spec - it pins the declaration
+ *   without ever calling a guard, so it agrees with whatever is written down.
  */
 @Injectable()
 export class CaseExistsForUpdateGuard extends BaseCaseExistsGuard {

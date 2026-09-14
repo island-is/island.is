@@ -20,7 +20,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
@@ -98,8 +98,8 @@ const CaseOverviewHeader: FC<Props> = (props) => {
     targetAppealCase.appealedDate > workingCase.appealDeadline
 
   return (
-    <div className={grid({ gap: 5 })}>
-      <Box className={grid({ gap: 2 })}>
+    <div className={stack({ gap: 5 })}>
+      <Box className={stack({ gap: 2 })}>
         {!targetAppealCase?.appealRulingDecision &&
           wasAppealedAfterDeadline && (
             <AlertMessage

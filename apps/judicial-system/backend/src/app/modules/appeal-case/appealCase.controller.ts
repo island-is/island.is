@@ -23,7 +23,7 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
-import { UserRole } from '@island.is/judicial-system/types'
+import { AppealCaseType, UserRole } from '@island.is/judicial-system/types'
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { CurrentCase } from '../case/guards/case.decorator'
@@ -51,6 +51,8 @@ import {
   prosecutorRepresentativeUpdateRule,
   prosecutorTransitionRule,
   prosecutorUpdateRule,
+  publicProsecutorStaffCreateRule,
+  publicProsecutorStaffTransitionRule,
 } from './guards/rolesRules'
 import { AppealCaseService } from './appealCase.service'
 
@@ -80,7 +82,11 @@ export class AppealCaseController {
   }
 
   @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffCreateRule,
+  )
   @Post('case/:caseId/appealCase')
   @ApiCreatedResponse({
     type: AppealCase,
@@ -100,6 +106,7 @@ export class AppealCaseController {
         user,
         dto.rulingFileId,
         transaction,
+        dto.appealType === AppealCaseType.VERDICT ? dto : undefined,
       ),
     )
 
@@ -200,6 +207,7 @@ export class AppealCaseController {
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
+    publicProsecutorStaffTransitionRule,
     districtCourtJudgeTransitionRule,
     districtCourtRegistrarTransitionRule,
     courtOfAppealsJudgeTransitionRule,
@@ -230,6 +238,7 @@ export class AppealCaseController {
         dto.transition,
         user,
         transaction,
+        dto.defendantId,
       ),
     )
 

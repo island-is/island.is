@@ -10,7 +10,10 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AppealCase } from '../models/appealCase.model'
-import { UpdateAppealCase } from '../types/caseRepository.types'
+import {
+  CreateAppealCase,
+  UpdateAppealCase,
+} from '../types/caseRepository.types'
 
 interface FindByIdOptions {
   transaction?: Transaction
@@ -104,7 +107,7 @@ export class AppealCaseRepositoryService {
 
   async create(
     caseId: string,
-    data: UpdateAppealCase,
+    data: CreateAppealCase,
     options: CreateAppealCaseOptions,
   ): Promise<AppealCase> {
     try {

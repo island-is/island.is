@@ -543,6 +543,46 @@ export const Form = ({ form }: FormProps) => {
     )
   }
 
+  /**
+   * Returns what the user entered for each form field.
+   * The email subject that's defined in the CMS can inject these values via [form field id] tokens.
+   */
+  const getFieldValues = (data: Record<string, string>) =>
+    form.fields
+      .filter((field) => field.type !== FormFieldType.INFORMATION)
+      .map((field) => {
+        const value = data[getUniqueFormFieldValue(field)] ?? ''
+
+        if (field.type === FormFieldType.ACCEPT_TERMS) {
+          return {
+            id: field.id,
+            value: value === 'true' ? 'Já' : value === 'false' ? 'Nei' : '',
+          }
+        }
+        if (field.type === FormFieldType.CHECKBOXES) {
+          const json: Record<string, string> = value ? JSON.parse(value) : {}
+          return {
+            id: field.id,
+            value: Object.entries(json)
+              .filter(([, checked]) => checked === 'true')
+              .map(([option]) => option)
+              .join(', '),
+          }
+        }
+        if (field.type === FormFieldType.FILE) {
+          const json: string[] = JSON.parse(value || '[]')
+          return { id: field.id, value: json.join(', ') }
+        }
+        if (field.type === FormFieldType.DATE) {
+          return {
+            id: field.id,
+            value: value ? format(new Date(value), 'do MMMM yyyy') : '',
+          }
+        }
+
+        return { id: field.id, value }
+      })
+
   /** Returns the value for the form field that decides what email the form will be sent to */
   const getRecipientFormFieldDeciderValue = (): string | undefined => {
     if (!form?.recipientFormFieldDecider?.id) return undefined
@@ -678,6 +718,7 @@ export const Form = ({ form }: FormProps) => {
               name: data['name'] ?? '',
               email: data['email'] ?? '',
               message: formatBody(_data),
+              fieldValues: getFieldValues(_data),
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
               files: files.map((f) => f[1]).flat(),

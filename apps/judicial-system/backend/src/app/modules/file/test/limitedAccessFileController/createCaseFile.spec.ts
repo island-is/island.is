@@ -16,7 +16,7 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { randomDate } from '../../../../test'
-import { Case, CaseFile } from '../../../repository'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
 
 interface Then {
@@ -34,7 +34,7 @@ describe('limitedAccessFileController - Create case file', () => {
   const user = { id: uuid() } as User
 
   let mockQueuedMessages: Message[]
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -42,12 +42,12 @@ describe('limitedAccessFileController - Create case file', () => {
     const {
       queuedMessages,
       sequelize,
-      fileModel,
+      caseFileRepositoryService,
       limitedAccessFileController,
     } = await createTestingFileModule()
 
     mockQueuedMessages = queuedMessages
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -102,21 +102,21 @@ describe('limitedAccessFileController - Create case file', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockCreate = mockFileModel.create as jest.Mock
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
         mockCreate.mockResolvedValueOnce(caseFile)
 
         then = await givenWhenThen(caseId, createCaseFile, theCase)
       })
 
       it('should create a case file', () => {
-        expect(mockFileModel.create).toHaveBeenCalledWith(
+        expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
+          caseId,
           {
             type: 'text/plain',
             state: CaseFileState.STORED_IN_RVG,
             key: `${caseId}/${uuId}/test.txt`,
             size: 99,
             category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-            caseId,
             name: 'test.txt',
             userGeneratedFilename: 'test.txt',
           },
@@ -157,20 +157,20 @@ describe('limitedAccessFileController - Create case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockFileModel.create as jest.Mock
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(caseFile)
 
       then = await givenWhenThen(caseId, createCaseFile, theCase)
     })
 
     it('should create a case file', () => {
-      expect(mockFileModel.create).toHaveBeenCalledWith(
+      expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
+        caseId,
         {
           type: 'text/plain',
           state: CaseFileState.STORED_IN_RVG,
           key: `${caseId}/${uuId}/test.txt`,
           size: 99,
-          caseId,
           name: 'test.txt',
           userGeneratedFilename: 'test.txt',
         },
@@ -215,7 +215,7 @@ describe('limitedAccessFileController - Create case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockFileModel.create as jest.Mock
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, createCaseFile, theCase)

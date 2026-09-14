@@ -47,6 +47,7 @@ const canProsecutionUserAccessCase = (
     ![
       CaseState.NEW,
       CaseState.DRAFT,
+      CaseState.WAITING_FOR_REVIEW,
       CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
       CaseState.WAITING_FOR_CANCELLATION,

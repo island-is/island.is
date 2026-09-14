@@ -8,6 +8,7 @@ import { sectionPayment } from './sections/sectionPayment'
 import { sectionFakeData } from './sections/sectionFakeData'
 import { sectionReasonForApplication } from './sections/sectionReasonForApplication'
 import { sectionPhoto } from './sections/sectionPhoto'
+import { sectionDigitalLicense } from './sections/sectionDigitalLicense'
 import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 
 export const getApplication = ({
@@ -30,6 +31,7 @@ export const getApplication = ({
       sectionDataProviders(allowFakeData, allowThjodskraPhotos),
       sectionReasonForApplication,
       sectionInformation,
+      sectionDigitalLicense,
       sectionPhoto,
       sectionDelivery,
       sectionOverview,

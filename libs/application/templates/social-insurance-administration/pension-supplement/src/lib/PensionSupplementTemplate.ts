@@ -11,7 +11,7 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   DefaultEvents,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   defineTemplateApi,
   InstitutionNationalIds,
   UserProfileApi,
@@ -82,7 +82,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,

@@ -37,11 +37,15 @@ import {
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
-  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
   JobSearchConfirmationApi,
   GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
   ApplicantWithdrawLatestApplicationRequest,
   GaldurExternalDomainRequestsHasValidApplicationResponse,
+  U2CertificateApi,
+  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
+  GaldurExternalDomainModelsSupportDataNationalityDTO,
+  GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
+  GaldurXRoadAPIModelsApplicantU2EligibilityResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -64,6 +68,7 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+  | U2CertificateApi
   | JobSearchConfirmationApi
 
 @Injectable()
@@ -600,6 +605,87 @@ export class VmstUnemploymentClientService {
     })
   }
 
+  async checkU2Eligibility(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsApplicantU2EligibilityResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.u2CertificateCanCreateU2Certificate({
+      applicantId,
+    })
+  }
+
+  async getEESCountries(): Promise<
+    Array<GaldurExternalDomainModelsSupportDataNationalityDTO>
+  > {
+    const api = await this.createApiClient(
+      SupportDataApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.supportDataGetAllNationalities({
+      onlyInEUAndOrEEA: true,
+    })
+  }
+
+  async validateU2(
+    auth: User,
+    dateWhenLeaving: Date,
+    destinationCountryId: string,
+  ): Promise<GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.u2CertificateValidateU2Certificate({
+      applicantId,
+      galdurExternalDomainRequestsU2CertificateCreateU2CertificateRequest: {
+        dateWhenLeaving: dateWhenLeaving,
+        destinationCountryId: destinationCountryId,
+      },
+    })
+  }
+
+  async submitU2Application(
+    auth: User,
+    destinationCountryId: string,
+    departureDate: Date,
+    applicationId: string,
+  ): Promise<GaldurDomainModelsBaseViewModel> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.u2CertificateCreateU2Certificate({
+      applicantId,
+      galdurExternalDomainRequestsU2CertificateCreateU2CertificateRequest: {
+        destinationCountryId,
+        dateWhenLeaving: departureDate,
+        applicationId,
+      },
+    })
+  }
+
   async getEditProfileEligibility(
     auth: User,
   ): Promise<GaldurExternalDomainRequestsHasValidApplicationResponse> {
@@ -608,7 +694,6 @@ export class VmstUnemploymentClientService {
     if (!applicantId) {
       throw new Error('Failed to resolve applicantId')
     }
-
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
@@ -625,5 +710,23 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
     return await api.jobSearchConfirmationGetQuestionaireSchema()
+  }
+
+  async revokeU2Application(
+    auth: User,
+  ): Promise<GaldurDomainModelsBaseViewModel> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.u2CertificateWithdrawU2Certificate({
+      applicantId,
+    })
   }
 }

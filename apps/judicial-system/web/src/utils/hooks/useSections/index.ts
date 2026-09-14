@@ -478,6 +478,7 @@ const useSections = (
     const { id, type, state } = workingCase
     const substepsShouldBeHidden =
       state === CaseState.RECEIVED ||
+      state === CaseState.WAITING_FOR_REVIEW ||
       state === CaseState.WAITING_FOR_CANCELLATION ||
       router.pathname === `${PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE}/[id]`
 

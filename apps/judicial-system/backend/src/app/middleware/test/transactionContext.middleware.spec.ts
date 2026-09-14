@@ -246,6 +246,39 @@ describe('TransactionContextMiddleware', () => {
         expect(getTransactionContext()?.afterCommit).toEqual([first, second])
       })
     })
+
+    it('should refuse to register an after commit callback while the slot is being settled', async () => {
+      await givenARequest(() => {
+        const context = getTransactionContext()
+
+        if (context) {
+          context.settlement = 'settling'
+        }
+
+        expect(() => registerAfterCommit(async () => undefined)).toThrow(
+          InternalServerErrorException,
+        )
+        expect(context?.afterCommit).toEqual([])
+      })
+    })
+
+    it('should refuse to register an after commit callback once the slot is settled', async () => {
+      await givenARequest(() => {
+        const context = getTransactionContext()
+
+        // The interceptor settles the slot before it drains the callbacks, and
+        // the close handler never drains them at all, so a callback registered
+        // now would be one nothing ever runs.
+        if (context) {
+          context.settlement = 'settled'
+        }
+
+        expect(() => registerAfterCommit(async () => undefined)).toThrow(
+          InternalServerErrorException,
+        )
+        expect(context?.afterCommit).toEqual([])
+      })
+    })
   })
 
   describe('when the response ends', () => {
