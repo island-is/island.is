@@ -84,8 +84,14 @@ describe('sortOutliers', () => {
   })
 
   it('has a comparator for every column the table lets a reader sort', () => {
+    // Mirrors TanStack's own getCanSort — `(enableSorting ?? true) &&
+    // !!accessorFn` — rather than looking for `enableSorting: true`. Sorting is
+    // OPT-OUT there: an accessor column added without `...NOT_SORTABLE` leaves
+    // the flag undefined and is sortable, which is the realistic way this
+    // regresses. Matching on the explicit flag would miss exactly that case.
+    // Display columns carry no accessorKey and are never sortable.
     const sortable = OUTLIER_COLUMNS.filter(
-      (column) => column.enableSorting,
+      (column) => 'accessorKey' in column && column.enableSorting !== false,
     ).map((column) => column.id as string)
 
     // Guards the direction of the dependency too: a column enabled for sorting

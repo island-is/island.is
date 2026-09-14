@@ -4,7 +4,7 @@ import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of
 /**
  * The column ids OUTLIER_COLUMNS marks sortable — Stig alone today.
  *
- * Every id in here needs an entry in SORT_VALUE below, and outlierColumns.spec
+ * Every id in here needs an entry in SORT_VALUE below, and outlierSorting.spec
  * fails if a column is enabled for sorting without one. That check is the point
  * of this module being separate: OutlierEditor hands InteractiveTable
  * `manualSorting`, so the ORDER is this file's job, and a column that TanStack

@@ -269,8 +269,17 @@ export const PayDispersionTable = ({ payDispersion }: Props) => {
     return null
   }
 
+  // Resolved once per render, not once per comparison. `genderLabel` is called
+  // from inside the Kyn comparator, so reading it straight off formatMessage put
+  // ~2n·log n message lookups behind every render that sorts by Kyn. There are
+  // only three genders, so a lookup table costs three calls whatever n is.
+  const genderLabels: Record<PayDispersionEmployee['gender'], string> = {
+    MALE: formatSalaryAnalysisGenderLabel('MALE', formatMessage),
+    FEMALE: formatSalaryAnalysisGenderLabel('FEMALE', formatMessage),
+    NEUTRAL: formatSalaryAnalysisGenderLabel('NEUTRAL', formatMessage),
+  }
   const genderLabel = (employee: PayDispersionEmployee) =>
-    formatSalaryAnalysisGenderLabel(employee.gender, formatMessage)
+    genderLabels[employee.gender]
 
   // Not memoised. The list is capped at 100 rows by the API, nothing keys an
   // effect on this array (it feeds a plain <table>, not the InteractiveTable the
