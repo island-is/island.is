@@ -2065,6 +2065,28 @@ export const messages = defineMessages({
     defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
     id: 'sp.health:health-messages-no-recipient',
   },
+  healthConversationsContactTitle: {
+    defaultMessage: 'Hafa samband',
+    id: 'sp.health:health-messages-contact-title',
+  },
+  healthConversationsContactIntro: {
+    defaultMessage:
+      'Heilsugæslan þín tekur ekki á móti skilaboðum á Ísland.is. Á vef heilsugæslunnar finnur þú upplýsingar um hvernig þú getur haft samband og nálgast þá þjónustu sem þú þarft. Ef erindið er brýnt, hringdu í <bold>1700</bold>. Í neyðartilvikum, hringdu í <bold>112</bold>.',
+    id: 'sp.health:health-messages-contact-intro',
+  },
+  healthConversationsContactWebChatTitle: {
+    defaultMessage: 'Netspjall Heilsuveru',
+    id: 'sp.health:health-messages-contact-web-chat-title',
+  },
+  healthConversationsContactWebChatText: {
+    defaultMessage:
+      'Þú getur einnig leitað til heilbrigðisstarfsfólks í gegnum netspjall Heilsuveru sem er opið frá kl. 08:00 – 15:30 alla virka daga',
+    id: 'sp.health:health-messages-contact-web-chat-text',
+  },
+  healthConversationsContactWebChatCta: {
+    defaultMessage: 'Opna netspjall',
+    id: 'sp.health:health-messages-contact-web-chat-cta',
+  },
   healthConversationClosingSoonTitle: {
     defaultMessage: 'Athugið: það lokar bráðlega fyrir skilaboð',
     id: 'sp.health:health-messages-closing-soon-title',
@@ -2253,6 +2275,37 @@ export const messages = defineMessages({
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',
   },
+  oldPregnanciesTitle: {
+    defaultMessage: 'Eldri meðgöngur',
+    id: 'sp.health:old-pregnancies-title',
+  },
+  oldPregnanciesIntro: {
+    defaultMessage:
+      'Við erum að vinna að nýrri lausn fyrir eldri meðgöngur á Mínum síðum á Ísland.is. Þar til hún er tilbúin getur þú áfram nálgast gögn um eldri meðgöngur á Mínum síðum Heilsuveru.',
+    id: 'sp.health:old-pregnancies-intro',
+  },
+  oldPregnanciesOnHeilsuveruTitle: {
+    defaultMessage: 'Eldri meðgöngur á Heilsuveru',
+    id: 'sp.health:old-pregnancies-on-heilsuveru-title',
+  },
+  oldPregnanciesOnHeilsuveruText: {
+    defaultMessage:
+      'Í Heilsuveru getur þú áfram skoðað gögn frá eldri meðgöngum.',
+    id: 'sp.health:old-pregnancies-on-heilsuveru-text',
+  },
+  loginToHeilsuvera: {
+    defaultMessage: 'Innskráning á Heilsuveru',
+    id: 'sp.health:login-to-heilsuvera',
+  },
+  oldPregnanciesHeilsuveruLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/',
+    id: 'sp.health:old-pregnancies-heilsuveru-link',
+  },
+  landlaeknirOldPregnanciesTooltip: {
+    defaultMessage:
+      'Landlæknir hefur umsjón með gögnum um þínar eldri meðgöngur.',
+    id: 'sp.health:landlaeknir-old-pregnancies-tooltip',
+  },
   noSearchResults: {
     id: 'sp.health:no-search-results',
     defaultMessage: 'Engar niðurstöður fundust',
@@ -2400,6 +2453,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Hér finnur þú yfirlit yfir þær meðferðir sem þú ert skráð í.',
     id: 'sp.health:treatments-intro',
+  },
+  treatmentOverviewCardDescription: {
+    defaultMessage:
+      'Hér getur þú fundið allar upplýsingar sem tengjast meðferð þinni',
+    id: 'sp.health:treatment-overview-card-description',
   },
   noTreatmentsTitle: {
     defaultMessage: 'Engin meðferð skráð',
