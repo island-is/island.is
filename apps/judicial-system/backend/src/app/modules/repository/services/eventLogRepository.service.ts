@@ -74,6 +74,37 @@ export class EventLogRepositoryService {
     }
   }
 
+  // The most recent event of any of the given types for a case - for
+  // instance, when an indictment was last confirmed or sent to court.
+  async findLatestForCaseAndTypes(
+    caseId: string,
+    eventTypes: EventType[],
+    options?: EventLogTransactionOptions,
+  ): Promise<EventLog | null> {
+    try {
+      this.logger.debug(
+        `Finding the latest ${eventTypes.join(
+          '/',
+        )} event log for case ${caseId}`,
+      )
+
+      return await this.eventLogModel.findOne({
+        where: { caseId, eventType: eventTypes },
+        order: [['created', 'DESC']],
+        transaction: options?.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error finding the latest ${eventTypes.join(
+          '/',
+        )} event log for case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   async create(
     event: CreateEventLog,
     options?: EventLogTransactionOptions,

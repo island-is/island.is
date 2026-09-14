@@ -17,6 +17,7 @@ import { addMessagesToQueue, Message } from '@island.is/judicial-system/message'
 
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
+import { CourtSessionService } from '../../court-session'
 import { CivilClaimantService } from '../../defendant'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
@@ -66,6 +67,7 @@ jest.mock('../../court/court.service', () => {
   }
 })
 jest.mock('../../police/police.service')
+jest.mock('../../court-session/courtSession.service')
 jest.mock('../../event/event.service')
 jest.mock('../../event-log/eventLog.service')
 jest.mock('../../user/user.service')
@@ -111,6 +113,7 @@ export const createTestingCaseModule = async () => {
       SharedAuthModule,
       EventLogService,
       CourtService,
+      CourtSessionService,
       PoliceService,
       UserService,
       FileService,
@@ -178,6 +181,9 @@ export const createTestingCaseModule = async () => {
   const eventService = caseModule.get<EventService>(EventService)
 
   const courtService = caseModule.get<CourtService>(CourtService)
+
+  const courtSessionService =
+    caseModule.get<CourtSessionService>(CourtSessionService)
 
   const policeService = caseModule.get<PoliceService>(PoliceService)
 
@@ -316,6 +322,7 @@ export const createTestingCaseModule = async () => {
     eventLogService,
     eventService,
     courtService,
+    courtSessionService,
     policeService,
     userService,
     fileService,
