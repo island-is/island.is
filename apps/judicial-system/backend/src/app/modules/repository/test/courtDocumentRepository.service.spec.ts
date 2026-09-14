@@ -232,6 +232,7 @@ describe('CourtDocumentRepositoryService', () => {
             courtSessionId: parentCaseCourtSessionId,
             documentOrder: 1,
             mergedFromCaseId: mergedCaseId,
+            created: expect.any(Date),
             documentType: CourtDocumentType.UPLOADED_DOCUMENT,
             name: 'Ákæra',
             caseFileId,
@@ -243,6 +244,7 @@ describe('CourtDocumentRepositoryService', () => {
             courtSessionId: parentCaseCourtSessionId,
             documentOrder: 2,
             mergedFromCaseId: mergedCaseId,
+            created: expect.any(Date),
             documentType: CourtDocumentType.EXTERNAL_DOCUMENT,
             name: 'Reikningur',
             caseFileId: undefined,
@@ -292,6 +294,25 @@ describe('CourtDocumentRepositoryService', () => {
         courtDocumentModel.count.mock.invocationCallOrder[0],
       )
       expect(courtDocumentModel.bulkCreate).not.toHaveBeenCalled()
+    })
+
+    // Deleting a court session takes the order off every document it held, so
+    // `created` is all that puts a block back in sequence afterwards - and a
+    // whole block stamped at one instant has no sequence to put back.
+    it('stamps the copies in source order so the block can be rebuilt', async () => {
+      givenSourceDocuments([
+        { id: 'source-1', name: 'Fyrirkall a' },
+        { id: 'source-2', name: 'Fyrirkall b' },
+        { id: 'source-3', name: 'Fyrirkall c' },
+      ])
+
+      await copy()
+
+      const [copies] = courtDocumentModel.bulkCreate.mock.calls[0]
+      const created = copies.map((c: { created: Date }) => c.created.getTime())
+
+      expect(new Set(created).size).toBe(3)
+      expect(created).toEqual([...created].sort((a, b) => a - b))
     })
 
     it('copies nothing when the merged case has no documents', async () => {

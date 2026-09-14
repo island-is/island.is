@@ -16,6 +16,7 @@ import {
   CourtDocumentType,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../../factories'
 import { CaseFile } from '../models/caseFile.model'
 import { CourtDocument } from '../models/courtDocument.model'
 import { CourtSession } from '../models/courtSession.model'
@@ -494,12 +495,22 @@ export class CourtDocumentRepositoryService {
         transaction,
       })
 
+      // The copies are stamped now, in source order, one millisecond apart.
+      // Deleting a court session takes the order off every document it held,
+      // so `created` is the only thing left to put a merged case's documents
+      // back in sequence - and to order one merged case's block against
+      // another's, which is when the cases were joined, not how old their
+      // documents are. Left to itself `bulkCreate` would stamp the whole block
+      // at one instant and the sequence within it would be arbitrary.
+      const copiedAt = nowFactory().getTime()
+
       await this.courtDocumentModel.bulkCreate(
         courtDocumentsToCopy.map((courtDocument, index) => ({
           caseId: parentCaseId,
           courtSessionId: parentCaseCourtSessionId,
           documentOrder: nextOrder + index,
           mergedFromCaseId: mergedCaseId,
+          created: new Date(copiedAt + index),
           documentType: courtDocument.documentType,
           name: courtDocument.name,
           caseFileId: courtDocument.caseFileId,

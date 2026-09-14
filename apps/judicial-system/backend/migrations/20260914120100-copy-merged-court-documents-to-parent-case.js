@@ -45,6 +45,11 @@ module.exports = {
         { transaction },
       )
 
+      // Clear exactly what was copied. Both merged columns are nullable, so a
+      // row could in principle carry a session link with no order - nothing
+      // writes that state and there are none, but clearing such a row would
+      // drop a merge with no copy to show for it. Leave it linked instead, so
+      // it is still there to be found.
       await queryInterface.sequelize.query(
         `
         UPDATE court_document
@@ -52,6 +57,7 @@ module.exports = {
             merged_document_order = NULL,
             modified = NOW()
         WHERE merged_court_session_id IS NOT NULL
+          AND merged_document_order IS NOT NULL
           AND merged_from_case_id IS NULL
         `,
         { transaction },
