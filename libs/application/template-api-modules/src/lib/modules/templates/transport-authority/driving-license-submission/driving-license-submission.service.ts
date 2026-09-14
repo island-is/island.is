@@ -249,8 +249,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     success: boolean
     // Persisted by the framework at `externalData.submitApplication.data`, so the
     // RLS application guid is retrievable from the application record for support/
-    // reconciliation — not only from the api logs. Present for the redesigned
-    // B-temp/B-full v6 flows; null for the paths that don't return one.
+    // reconciliation — not only from the api logs. Present for every v6 submit
+    // that returns one: the redesigned B-temp/B-full flows plus BE and 65+; null
+    // for the paths that don't. Note BE and 65+ yield null against production
+    // until RLS ships `applicationGuid` on those two responses (it is on
+    // staging/dev today), which is a missing reconciliation record only — no
+    // caller branches on the guid for those two products.
     applicationGuid?: string | null
   }> {
     const { answers } = application
