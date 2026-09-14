@@ -32,7 +32,11 @@ describe('CourtDocumentRepositoryService', () => {
     update: jest.Mock
     destroy: jest.Mock
   }
-  let courtSessionModel: { findAll: jest.Mock; count: jest.Mock }
+  let courtSessionModel: {
+    findAll: jest.Mock
+    findOne: jest.Mock
+    count: jest.Mock
+  }
 
   beforeEach(async () => {
     courtDocumentModel = {
@@ -49,6 +53,7 @@ describe('CourtDocumentRepositoryService', () => {
     // and no merged-document bookkeeping is triggered.
     courtSessionModel = {
       findAll: jest.fn().mockResolvedValue([]),
+      findOne: jest.fn().mockResolvedValue({ id: 'session-1' }),
       count: jest.fn().mockResolvedValue(0),
     }
 
@@ -281,18 +286,6 @@ describe('CourtDocumentRepositoryService', () => {
         where: { caseId: parentCaseId, mergedFromCaseId: mergedCaseId },
         transaction,
       })
-      // The parent's rows are locked before the question is asked, so a second
-      // request merging the same case waits and then sees the copies
-      expect(courtDocumentModel.findAll).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { caseId: parentCaseId },
-          lock: transaction.LOCK.UPDATE,
-        }),
-      )
-      const lockCall = courtDocumentModel.findAll.mock.invocationCallOrder[0]
-      expect(lockCall).toBeLessThan(
-        courtDocumentModel.count.mock.invocationCallOrder[0],
-      )
       expect(courtDocumentModel.bulkCreate).not.toHaveBeenCalled()
     })
 
@@ -313,6 +306,33 @@ describe('CourtDocumentRepositoryService', () => {
 
       expect(new Set(created).size).toBe(3)
       expect(created).toEqual([...created].sort((a, b) => a - b))
+    })
+
+    // A parent with no court documents of its own has no rows to lock, so the
+    // question "is this merged case already here?" has to be asked behind a
+    // lock on something that always exists - the court session being copied
+    // into. Without it two requests merging the same case both answer no.
+    it('locks the court session before asking whether the merge is already there', async () => {
+      await copy()
+
+      expect(courtSessionModel.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: parentCaseCourtSessionId, caseId: parentCaseId },
+          lock: transaction.LOCK.UPDATE,
+        }),
+      )
+      expect(
+        courtSessionModel.findOne.mock.invocationCallOrder[0],
+      ).toBeLessThan(courtDocumentModel.count.mock.invocationCallOrder[0])
+    })
+
+    it('copies nothing when the court session is not the parent case own', async () => {
+      courtSessionModel.findOne.mockResolvedValueOnce(null)
+
+      await expect(copy()).rejects.toThrow(
+        `Could not find court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
+      )
+      expect(courtDocumentModel.bulkCreate).not.toHaveBeenCalled()
     })
 
     it('copies nothing when the merged case has no documents', async () => {

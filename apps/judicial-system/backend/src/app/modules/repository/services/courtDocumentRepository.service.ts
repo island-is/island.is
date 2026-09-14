@@ -434,10 +434,30 @@ export class CourtDocumentRepositoryService {
         `Copying court documents of case ${mergedCaseId} into court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
       )
 
-      // Lock the parent's court documents before asking whether this merged
-      // case is already among them. Two requests merging the same case - the
-      // completion of the merged case and the creation of a court session -
-      // would otherwise both find none and both copy.
+      // Lock the court session being copied into, before asking whether this
+      // merged case is already there. Two requests merging the same case - the
+      // merged case completing and a court session being created - would
+      // otherwise both find no copies and both make a set, and locking the
+      // parent's court documents is not enough to stop them: a parent with no
+      // documents yet has no rows to lock, and two transactions would sail
+      // past each other. The session row is always there.
+      //
+      // Taken before the document lock below, which is the order the other
+      // paths that hold both use (pronouncing a ruling locks the session, then
+      // reaches the documents through the case file it deletes).
+      const parentCaseCourtSession = await this.courtSessionModel.findOne({
+        where: { id: parentCaseCourtSessionId, caseId: parentCaseId },
+        attributes: ['id'],
+        lock: transaction.LOCK.UPDATE,
+        transaction,
+      })
+
+      if (!parentCaseCourtSession) {
+        throw new InternalServerErrorException(
+          `Could not find court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
+        )
+      }
+
       await this.courtDocumentModel.findAll({
         where: { caseId: parentCaseId },
         attributes: ['id'],
