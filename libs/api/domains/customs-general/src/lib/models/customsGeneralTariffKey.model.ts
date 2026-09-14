@@ -19,4 +19,7 @@ export class CustomsGeneralTariffKey {
 
   @Field(() => String)
   textUrl!: string
+
+  @Field(() => Boolean, { nullable: true })
+  notYetInEffect?: boolean
 }

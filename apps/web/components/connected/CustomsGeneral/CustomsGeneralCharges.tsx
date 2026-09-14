@@ -2,24 +2,27 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { GET_CUSTOMS_GENERAL_CHARGES } from '@island.is/web/screens/queries/CustomsGeneral'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
-import { formatValidityDate } from './customsGeneralUtils'
+import {
+  formatValidityDate,
+  mapValidityFields,
+  NotYetInEffectTag,
+  ValidityFields,
+} from './customsGeneralUtils'
 import { m } from './translation.strings'
 import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralCharges.css'
 
-interface ChargeItem {
+interface ChargeItem extends ValidityFields {
   code: string
   name: string
   description: string
-  validFrom: string
-  validTo: string
   taxtiUpphaed: string
   taxtiProsenta: string
 }
@@ -98,9 +101,14 @@ const ChargeDetailView = ({ item, date, onBack }: DetailViewProps) => {
                 {formatMessage(m.exemptionDetailValidityPeriod)}
               </Text>
             </Box>
-            <Text>
-              {validFrom} - {validTo}
-            </Text>
+            <Inline space={1} alignY="center">
+              <Text>
+                {validFrom} - {validTo}
+              </Text>
+              {item.notYetInEffect && (
+                <NotYetInEffectTag validFrom={item.validFrom} />
+              )}
+            </Inline>
           </Box>
         )}
 
@@ -178,8 +186,7 @@ const CustomsGeneralCharges = () => {
       code: item.code ?? '',
       name: item.name ?? '',
       description: item.description ?? '',
-      validFrom: item.validFrom ?? '',
-      validTo: item.validTo ?? '',
+      ...mapValidityFields(item),
       taxtiUpphaed: item.taxtiUpphaed ?? '',
       taxtiProsenta: item.taxtiProsenta ?? '',
     }),

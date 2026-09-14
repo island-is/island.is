@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client'
 import { GET_CUSTOMS_GENERAL_CLEARANCE_TYPES } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import { mapValidityFields, ValidityFieldsInput } from './customsGeneralUtils'
 import { m } from './translation.strings'
 
 const CustomsGeneralClearanceTypes = () => {
@@ -24,9 +25,10 @@ const CustomsGeneralClearanceTypes = () => {
   )
 
   const items = (data?.customsGeneralClearanceTypes ?? []).map(
-    (item: { code?: string; description?: string }) => ({
+    (item: { code?: string; description?: string } & ValidityFieldsInput) => ({
       code: item.code ?? '',
       description: item.description ?? '',
+      ...mapValidityFields(item),
     }),
   )
 

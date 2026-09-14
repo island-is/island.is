@@ -1,7 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
+import { CustomsGeneralValidity } from './customsGeneralValidity.model'
+
 @ObjectType()
-export class CustomsGeneralProhibition {
+export class CustomsGeneralProhibition extends CustomsGeneralValidity {
   @Field(() => String, { nullable: true })
   code?: string
 
@@ -10,12 +12,6 @@ export class CustomsGeneralProhibition {
 
   @Field(() => String, { nullable: true })
   description?: string
-
-  @Field(() => Date, { nullable: true })
-  validFrom?: Date
-
-  @Field(() => Date, { nullable: true })
-  validTo?: Date
 
   @Field(() => String, { nullable: true })
   exemptionProvider?: string
