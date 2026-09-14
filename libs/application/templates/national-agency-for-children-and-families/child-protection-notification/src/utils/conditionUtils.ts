@@ -73,10 +73,15 @@ export const showPreferredLanguage = (answers: FormValue) => {
   return (languages?.length ?? 0) > 0
 }
 
+export const showWellbeingContactAndManagerQuestions = (answers: FormValue) =>
+  getApplicationAnswers(answers).memmWellbeingIntegratedService === YES
+
 export const showWellbeingContactFields = (answers: FormValue) =>
+  showWellbeingContactAndManagerQuestions(answers) &&
   getApplicationAnswers(answers).memmWellbeingWellbeingContact === YES
 
 export const showWellbeingManagerFields = (answers: FormValue) =>
+  showWellbeingContactAndManagerQuestions(answers) &&
   getApplicationAnswers(answers).memmWellbeingWellbeingManager === YES
 
 export const showDisabilityService = (answers: FormValue) =>

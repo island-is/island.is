@@ -47,6 +47,7 @@ import {
   shouldShowNonPrimarySchoolAgeChildInfo,
   showDisabilityService,
   showPreferredLanguage,
+  showWellbeingContactAndManagerQuestions,
   showWellbeingContactFields,
   showWellbeingManagerFields,
 } from './conditionUtils'
@@ -879,58 +880,62 @@ export const getMemmWellbeingItems = (
         '',
       hideIfEmpty: true,
     },
-    {
-      width: 'full',
-      keyText: memmMessages.wellbeing.wellbeingContactLabel,
-      valueText:
-        yesNoDoNotKnowLabelMap[
-          memmWellbeingWellbeingContact as keyof typeof yesNoDoNotKnowLabelMap
-        ] ??
-        memmWellbeingWellbeingContact ??
-        '',
-      hideIfEmpty: true,
-    },
-    ...(showWellbeingContactFields(answers)
+    ...(showWellbeingContactAndManagerQuestions(answers)
       ? [
           {
-            width: 'half' as const,
-            keyText: memmMessages.wellbeing.wellbeingContactEmail,
-            valueText: memmWellbeingWellbeingContactEmail ?? '',
+            width: 'full' as const,
+            keyText: memmMessages.wellbeing.wellbeingContactLabel,
+            valueText:
+              yesNoDoNotKnowLabelMap[
+                memmWellbeingWellbeingContact as keyof typeof yesNoDoNotKnowLabelMap
+              ] ??
+              memmWellbeingWellbeingContact ??
+              '',
             hideIfEmpty: true,
           },
+          ...(showWellbeingContactFields(answers)
+            ? [
+                {
+                  width: 'half' as const,
+                  keyText: memmMessages.wellbeing.wellbeingContactEmail,
+                  valueText: memmWellbeingWellbeingContactEmail ?? '',
+                  hideIfEmpty: true,
+                },
+                {
+                  width: 'half' as const,
+                  keyText: memmMessages.wellbeing.wellbeingContactName,
+                  valueText: memmWellbeingWellbeingContactName ?? '',
+                  hideIfEmpty: true,
+                },
+              ]
+            : []),
           {
-            width: 'half' as const,
-            keyText: memmMessages.wellbeing.wellbeingContactName,
-            valueText: memmWellbeingWellbeingContactName ?? '',
+            width: 'full' as const,
+            keyText: memmMessages.wellbeing.wellbeingManagerLabel,
+            valueText:
+              yesNoDoNotKnowLabelMap[
+                memmWellbeingWellbeingManager as keyof typeof yesNoDoNotKnowLabelMap
+              ] ??
+              memmWellbeingWellbeingManager ??
+              '',
             hideIfEmpty: true,
           },
-        ]
-      : []),
-    {
-      width: 'full',
-      keyText: memmMessages.wellbeing.wellbeingManagerLabel,
-      valueText:
-        yesNoDoNotKnowLabelMap[
-          memmWellbeingWellbeingManager as keyof typeof yesNoDoNotKnowLabelMap
-        ] ??
-        memmWellbeingWellbeingManager ??
-        '',
-      hideIfEmpty: true,
-    },
-    ...(showWellbeingManagerFields(answers)
-      ? [
-          {
-            width: 'half' as const,
-            keyText: memmMessages.wellbeing.wellbeingManagerEmail,
-            valueText: memmWellbeingWellbeingManagerEmail ?? '',
-            hideIfEmpty: true,
-          },
-          {
-            width: 'half' as const,
-            keyText: memmMessages.wellbeing.wellbeingManagerName,
-            valueText: memmWellbeingWellbeingManagerName ?? '',
-            hideIfEmpty: true,
-          },
+          ...(showWellbeingManagerFields(answers)
+            ? [
+                {
+                  width: 'half' as const,
+                  keyText: memmMessages.wellbeing.wellbeingManagerEmail,
+                  valueText: memmWellbeingWellbeingManagerEmail ?? '',
+                  hideIfEmpty: true,
+                },
+                {
+                  width: 'half' as const,
+                  keyText: memmMessages.wellbeing.wellbeingManagerName,
+                  valueText: memmWellbeingWellbeingManagerName ?? '',
+                  hideIfEmpty: true,
+                },
+              ]
+            : []),
         ]
       : []),
     {
