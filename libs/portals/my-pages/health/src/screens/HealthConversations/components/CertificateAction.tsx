@@ -68,7 +68,7 @@ const useCertificatePaymentPolling = ({
 interface CertificateCardProps {
   icon: IconMapIcon
   heading?: string | null
-  subText: string
+  subText?: string
   cta: {
     label: string
     onClick: () => void
@@ -113,7 +113,7 @@ const CertificateCard = ({
             {heading}
           </Text>
         )}
-        <Text color="dark400">{subText}</Text>
+        {subText && <Text color="dark400">{subText}</Text>}
       </Box>
     </Box>
     <Box flexShrink={0} marginLeft={[0, 0, 5]}>
@@ -203,10 +203,16 @@ const CertificateAction = ({
         <CertificateCard
           icon="lockClosed"
           heading={fileName}
-          subText={formatMessage(
-            messages.healthConversationCertificateLockedStatus,
-            { amount: amountFormat(amountIsk) },
-          )}
+          subText={
+            typeof amountIsk === 'number'
+              ? formatMessage(
+                  messages.healthConversationCertificateLockedStatus,
+                  { amount: amountFormat(amountIsk) },
+                )
+              : formatMessage(
+                  messages.healthConversationCertificateLockedStatusNoAmount,
+                )
+          }
           cta={
             isPolling
               ? {
@@ -230,9 +236,11 @@ const CertificateAction = ({
         <CertificateCard
           icon="document"
           heading={fileName}
-          subText={formatMessage(
-            messages.healthConversationCertificatePaidStatus,
-          )}
+          subText={
+            requiresPayment && paid
+              ? formatMessage(messages.healthConversationCertificatePaidStatus)
+              : undefined
+          }
           cta={{
             label: formatMessage(messages.healthConversationCertificateOpen),
             onClick: () => downloadServiceURL && formSubmit(downloadServiceURL),

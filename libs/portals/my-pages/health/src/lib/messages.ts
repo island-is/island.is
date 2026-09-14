@@ -2034,6 +2034,10 @@ export const messages = defineMessages({
     defaultMessage: 'Læst - {amount} ógreiddar',
     id: 'sp.health:health-messages-certificate-locked-status',
   },
+  healthConversationCertificateLockedStatusNoAmount: {
+    defaultMessage: 'Læst - ógreitt',
+    id: 'sp.health:health-messages-certificate-locked-status-no-amount',
+  },
   healthConversationCertificatePaidStatus: {
     defaultMessage: 'Greitt',
     id: 'sp.health:health-messages-certificate-paid-status',

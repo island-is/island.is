@@ -301,6 +301,10 @@ const HealthConversationDetail = () => {
                   const senderName = isPatient
                     ? userInfo.profile.name ?? ''
                     : item.organization?.name ?? msg.senderGroupName ?? ''
+                  const extraAttachments = msg.certificateId
+                    ? msg.attachments.slice(1)
+                    : msg.attachments
+                  const attachmentsLocked = msg.requiresPayment && !msg.paid
 
                   return (
                     <Box key={msg.id}>
@@ -386,31 +390,29 @@ const HealthConversationDetail = () => {
                       )}
 
                       {/* Attachments */}
-                      {msg.attachments.length > 0 &&
-                        !msg.certificateId &&
-                        !msg.requiresPayment && (
-                          <Box
-                            display="flex"
-                            flexWrap="wrap"
-                            columnGap={2}
-                            rowGap={1}
-                            marginBottom={3}
-                          >
-                            {msg.attachments.map((file) => (
-                              <Button
-                                key={file.id}
-                                variant="utility"
-                                icon="document"
-                                iconType="outline"
-                                onClick={() =>
-                                  formSubmit(file.downloadServiceURL)
-                                }
-                              >
-                                {file.fileName}
-                              </Button>
-                            ))}
-                          </Box>
-                        )}
+                      {extraAttachments.length > 0 && !attachmentsLocked && (
+                        <Box
+                          display="flex"
+                          flexWrap="wrap"
+                          columnGap={2}
+                          rowGap={1}
+                          marginBottom={3}
+                        >
+                          {extraAttachments.map((file) => (
+                            <Button
+                              key={file.id}
+                              variant="utility"
+                              icon="document"
+                              iconType="outline"
+                              onClick={() =>
+                                formSubmit(file.downloadServiceURL)
+                              }
+                            >
+                              {file.fileName}
+                            </Button>
+                          ))}
+                        </Box>
+                      )}
                     </Box>
                   )
                 })}
