@@ -43,6 +43,7 @@ import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
+import { getLatestVerdict } from './getLatestVerdict'
 
 type UpdateVerdict = {
   serviceDate?: Date | null
@@ -125,6 +126,7 @@ export class VerdictService {
   ): Promise<Verdict> {
     const currentVerdict = await this.verdictRepositoryService.findOne({
       where: { defendantId: verdict.defendantId },
+      order: [['created', 'DESC']],
       transaction,
     })
 
@@ -159,7 +161,7 @@ export class VerdictService {
         }
 
         // Only the latest verdict is relevant
-        const currentVerdict = currentDefendant?.verdicts?.[0]
+        const currentVerdict = getLatestVerdict(currentDefendant?.verdicts)
 
         if (currentVerdict) {
           const { defendantId, ...update } = verdict
@@ -562,8 +564,7 @@ export class VerdictService {
       }
 
       // Only the latest verdict is relevant
-      const { verdicts } = defendant
-      const verdict = verdicts?.[0]
+      const verdict = getLatestVerdict(defendant.verdicts)
 
       if (!verdict) {
         this.logger.warn(
@@ -603,6 +604,7 @@ export class VerdictService {
                   defendantId: defendant.id,
                   eventType:
                     DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+                  verdictId: verdict.id,
                 },
                 transaction,
               )
@@ -650,14 +652,14 @@ export class VerdictService {
 
     const queued = await Promise.all(
       defendants
-        .filter(
-          (defendant) =>
-            defendant.verdicts?.[0]?.serviceRequirement ===
-            ServiceRequirement.REQUIRED,
-        )
+        .filter((defendant) => {
+          const verdict = getLatestVerdict(defendant.verdicts)
+
+          return verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+        })
         .map(async (defendant) => {
           // Only the latest verdict is relevant
-          const verdict = defendant.verdicts?.[0]
+          const verdict = getLatestVerdict(defendant.verdicts)
 
           if (verdict?.externalPoliceDocumentId) {
             // Replace the verdict if an older one has already been sent to police

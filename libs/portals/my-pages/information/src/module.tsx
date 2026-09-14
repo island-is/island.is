@@ -169,6 +169,20 @@ export const companyInformationModule: PortalModule = {
         element: <CompanyInfo />,
       },
       {
+        name: m.contracts,
+        path: InformationPaths.CompanyContracts,
+        enabled: hasCompanyAccess,
+        key: Features.isServicePortalMyContractsPageEnabled,
+        element: <UserContractsOverview />,
+      },
+      {
+        name: m.contract,
+        path: InformationPaths.CompanyContractsDetail,
+        enabled: hasCompanyAccess,
+        key: Features.isServicePortalMyContractsPageEnabled,
+        element: <UserContract />,
+      },
+      {
         name: m.companySettings,
         path: InformationPaths.CompanySettings,
         enabled: hasSettingsAccess,
@@ -229,6 +243,14 @@ export const companyInformationModule: PortalModule = {
         element: (
           <Navigate to={InformationPaths.CompanyNotifications} replace />
         ),
+      },
+      {
+        name: m.contracts,
+        path: InformationPaths.MyContracts,
+        enabled: true,
+        navHide: true,
+        key: Features.isServicePortalMyContractsPageEnabled,
+        element: <Navigate to={InformationPaths.CompanyContracts} replace />,
       },
     ]
   },

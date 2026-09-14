@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
   m,
@@ -54,8 +54,8 @@ const TreatmentEducationalContent = () => {
       title={formatMessage(m.healthTreatmentEducationalContent)}
       intro={messages.educationalContentIntro}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirTreatmentTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaTreatmentTooltip),
       }}
     >
       {error && !loading ? (
