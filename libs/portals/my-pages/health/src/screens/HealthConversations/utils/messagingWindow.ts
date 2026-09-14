@@ -115,7 +115,7 @@ export const getNextOpeningInfo = (
   nextOpensAt?: NextOpening | null,
   now: Date = new Date(),
 ):
-  | { when: 'today' | 'tomorrow' | 'later'; timeLabel: string; date: Date }
+  | { when: 'today' | 'tomorrow' | 'later'; timeLabel: string; dateLabel: string }
   | undefined => {
   if (!nextOpensAt) return undefined
   const timeLabel = formatTimeLabel(nextOpensAt.windowOpen)
@@ -128,6 +128,8 @@ export const getNextOpeningInfo = (
   return {
     when: dayDiff <= 0 ? 'today' : dayDiff === 1 ? 'tomorrow' : 'later',
     timeLabel,
-    date,
+    dateLabel: `${pad(date.getUTCDate())}.${pad(
+      date.getUTCMonth() + 1,
+    )}.${date.getUTCFullYear()}`,
   }
 }

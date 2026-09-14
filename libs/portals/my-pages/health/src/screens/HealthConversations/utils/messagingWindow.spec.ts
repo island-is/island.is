@@ -147,6 +147,15 @@ describe('getNextOpeningInfo', () => {
       new Date('2026-07-13T23:14:00Z'),
     )
     expect(info?.when).toBe('later')
+    expect(info?.dateLabel).toBe('18.07.2026')
+  })
+
+  it('formats the date label from the UTC calendar day', () => {
+    const info = getNextOpeningInfo(
+      { ...nextOpensAt, date: '2026-08-01T00:30:00.000Z' },
+      new Date('2026-07-13T23:14:00Z'),
+    )
+    expect(info?.dateLabel).toBe('01.08.2026')
   })
 
   it('is undefined without a next opening', () => {

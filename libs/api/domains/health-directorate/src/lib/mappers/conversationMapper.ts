@@ -124,12 +124,16 @@ export const toConversationReplyBlockedReasonEnum = (
       return HealthConversationReplyBlockedReasonEnum.NO_REPLY_GROUP
     case ConversationReplyBlockedReason.MESSAGING_NOT_ALLOWED:
       return HealthConversationReplyBlockedReasonEnum.MESSAGING_NOT_ALLOWED
+    case ConversationReplyBlockedReason.PATIENT_REPLY_NOT_ALLOWED:
+      return HealthConversationReplyBlockedReasonEnum.PATIENT_REPLY_NOT_ALLOWED
     case ConversationReplyBlockedReason.OUTSIDE_MESSAGING_WINDOW:
       return HealthConversationReplyBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
     case ConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED:
       return HealthConversationReplyBlockedReasonEnum.REPLY_WINDOW_EXPIRED
     case ConversationReplyBlockedReason.AWAITING_STAFF_REPLY:
       return HealthConversationReplyBlockedReasonEnum.AWAITING_STAFF_REPLY
+    case ConversationReplyBlockedReason.AWAITING_ACKNOWLEDGEMENT:
+      return HealthConversationReplyBlockedReasonEnum.AWAITING_ACKNOWLEDGEMENT
     default:
       return undefined
   }

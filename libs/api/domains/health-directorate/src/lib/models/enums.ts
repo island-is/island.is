@@ -171,9 +171,11 @@ export enum HealthConversationReplyBlockedReasonEnum {
   REPLIES_DISABLED = 'repliesDisabled',
   NO_REPLY_GROUP = 'noReplyGroup',
   MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  PATIENT_REPLY_NOT_ALLOWED = 'patientReplyNotAllowed',
   OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
   REPLY_WINDOW_EXPIRED = 'replyWindowExpired',
   AWAITING_STAFF_REPLY = 'awaitingStaffReply',
+  AWAITING_ACKNOWLEDGEMENT = 'awaitingAcknowledgement',
 }
 registerEnumType(HealthConversationReplyBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationReplyBlockedReason',

@@ -188,22 +188,16 @@ const NewHealthConversation = () => {
 
   const isConversationBlocked = recipient?.canCreateConversation === false
 
-  const certificateBlockedOutsideWindow =
-    isCertificateBlocked &&
-    recipient?.certificateBlockedReason ===
-      HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW
-
   const isFormLocked = isConversationBlocked || isCertificateBlocked
 
-  const certificateAlert: CertificateAlert | undefined =
-    !isCertificateBlocked || certificateBlockedOutsideWindow
-      ? undefined
-      : {
-          type: 'warning',
-          message: formatMessage(
-            messages.healthConversationsCertificateBlockedText,
-          ),
-        }
+  const certificateAlert: CertificateAlert | undefined = !isCertificateBlocked
+    ? undefined
+    : {
+        type: 'warning',
+        message: formatMessage(
+          messages.healthConversationsCertificateBlockedText,
+        ),
+      }
 
   const certificateInput = toCertificateRequestInput(certificateForm)
 
@@ -413,13 +407,6 @@ const NewHealthConversation = () => {
                 </GridColumn>
               </GridRow>
 
-              {certificateBlockedOutsideWindow &&
-                recipient &&
-                !isRecipientOutsideWindow(recipient) && (
-                  <Box marginBottom={3}>
-                    <ClosedRecipientAlert recipient={recipient} />
-                  </Box>
-                )}
               {certificateAlert && (
                 <Box marginBottom={3}>
                   <AlertMessage

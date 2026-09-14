@@ -2084,7 +2084,7 @@ export const messages = defineMessages({
   },
   healthConversationClosedNextOpensText: {
     defaultMessage:
-      'Næst er hægt að senda skilaboð frá kl. {time} {when, select, today {í dag} tomorrow {í fyrramálið} other {{date}}}.',
+      'Næst er hægt að senda skilaboð frá kl. {time} {when, select, today {í dag} tomorrow {á morgun} other {{date}}}.',
     id: 'sp.health:health-messages-closed-next-opens-text',
   },
   healthConversationOpeningHoursTitle: {
@@ -2140,6 +2140,15 @@ export const messages = defineMessages({
   healthConversationReplyBlockedMessagingNotAllowedText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
     id: 'sp.health:health-messages-reply-blocked-messaging-not-allowed-text',
+  },
+  healthConversationReplyBlockedPatientReplyNotAllowedText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-patient-reply-not-allowed-text',
+  },
+  healthConversationReplyBlockedAwaitingAcknowledgementText: {
+    defaultMessage:
+      'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda',
+    id: 'sp.health:health-messages-reply-blocked-awaiting-acknowledgement-text',
   },
   healthConversationReplyBlockedOutsideWindowText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',

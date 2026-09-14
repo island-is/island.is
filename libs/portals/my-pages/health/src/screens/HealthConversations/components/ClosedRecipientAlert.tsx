@@ -1,6 +1,5 @@
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatDate } from '@island.is/portals/my-pages/core'
 import { messages } from '../../../lib/messages'
 import { HealthConversationRecipientFragment } from '../NewHealthConversation.generated'
 import {
@@ -55,7 +54,7 @@ const ClosedRecipientAlert = ({ recipient }: Props) => {
               {formatMessage(messages.healthConversationClosedNextOpensText, {
                 time: nextOpening.timeLabel,
                 when: nextOpening.when,
-                date: formatDate(nextOpening.date.toISOString()),
+                date: nextOpening.dateLabel,
               })}
             </Text>
           )}
