@@ -79,7 +79,7 @@ const receptionRadioLabelMap = {
   [NOT_APPLICABLE]: memmMessages.reception.optionNotApplicable,
 } as const
 
-const wellbeingRadioLabelMap = {
+const yesNoDoNotKnowLabelMap = {
   [YES]: sharedMessages.radioYes,
   [NO]: sharedMessages.radioNo,
   [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
@@ -402,9 +402,13 @@ export const getChildWithNationalIdItems = (
                 {
                   width: 'half' as const,
                   keyText: sharedMessages.needsInterpreter,
-                  valueText: childNeedsInterpreter.includes(YES)
-                    ? sharedMessages.radioYes
-                    : sharedMessages.radioNo,
+                  valueText:
+                    yesNoDoNotKnowLabelMap[
+                      childNeedsInterpreter as keyof typeof yesNoDoNotKnowLabelMap
+                    ] ??
+                    childNeedsInterpreter ??
+                    '',
+                  hideIfEmpty: true,
                 },
               ]
             : []),
@@ -543,9 +547,13 @@ export const getChildManualItems = (
     {
       width: 'half',
       keyText: sharedMessages.needsInterpreter,
-      valueText: childManualNeedsInterpreter.includes(YES)
-        ? sharedMessages.radioYes
-        : sharedMessages.radioNo,
+      valueText:
+        yesNoDoNotKnowLabelMap[
+          childManualNeedsInterpreter as keyof typeof yesNoDoNotKnowLabelMap
+        ] ??
+        childManualNeedsInterpreter ??
+        '',
+      hideIfEmpty: true,
     },
   ]
 }
@@ -656,11 +664,15 @@ const buildParentItems = (
           {
             width: 'half' as const,
             keyText: sharedMessages.needsInterpreter,
-            valueText: parent.needsInterpreter?.includes(YES)
-              ? sharedMessages.radioYes
-              : sharedMessages.radioNo,
+            valueText:
+              yesNoDoNotKnowLabelMap[
+                parent.needsInterpreter as keyof typeof yesNoDoNotKnowLabelMap
+              ] ??
+              parent.needsInterpreter ??
+              '',
+            hideIfEmpty: true,
           },
-          ...(parent.needsInterpreter?.includes(YES)
+          ...(parent.needsInterpreter === YES
             ? [
                 {
                   width: 'half' as const,
@@ -826,9 +838,13 @@ export const getMemmCultureItems = (
           {
             width: 'full' as const,
             keyText: sharedMessages.needsInterpreter,
-            valueText: memmCultureNeedsInterpreter.includes(YES)
-              ? sharedMessages.radioYes
-              : sharedMessages.radioNo,
+            valueText:
+              yesNoDoNotKnowLabelMap[
+                memmCultureNeedsInterpreter as keyof typeof yesNoDoNotKnowLabelMap
+              ] ??
+              memmCultureNeedsInterpreter ??
+              '',
+            hideIfEmpty: true,
           },
         ]
       : []),
@@ -857,8 +873,8 @@ export const getMemmWellbeingItems = (
       width: 'full',
       keyText: memmMessages.wellbeing.integratedServiceLabel,
       valueText:
-        wellbeingRadioLabelMap[
-          memmWellbeingIntegratedService as keyof typeof wellbeingRadioLabelMap
+        yesNoDoNotKnowLabelMap[
+          memmWellbeingIntegratedService as keyof typeof yesNoDoNotKnowLabelMap
         ] ??
         memmWellbeingIntegratedService ??
         '',
@@ -870,8 +886,8 @@ export const getMemmWellbeingItems = (
             width: 'full' as const,
             keyText: memmMessages.wellbeing.wellbeingContactLabel,
             valueText:
-              wellbeingRadioLabelMap[
-                memmWellbeingWellbeingContact as keyof typeof wellbeingRadioLabelMap
+              yesNoDoNotKnowLabelMap[
+                memmWellbeingWellbeingContact as keyof typeof yesNoDoNotKnowLabelMap
               ] ??
               memmWellbeingWellbeingContact ??
               '',
@@ -897,8 +913,8 @@ export const getMemmWellbeingItems = (
             width: 'full' as const,
             keyText: memmMessages.wellbeing.wellbeingManagerLabel,
             valueText:
-              wellbeingRadioLabelMap[
-                memmWellbeingWellbeingManager as keyof typeof wellbeingRadioLabelMap
+              yesNoDoNotKnowLabelMap[
+                memmWellbeingWellbeingManager as keyof typeof yesNoDoNotKnowLabelMap
               ] ??
               memmWellbeingWellbeingManager ??
               '',
@@ -926,8 +942,8 @@ export const getMemmWellbeingItems = (
       width: 'full',
       keyText: memmMessages.wellbeing.disabilityLabel,
       valueText:
-        wellbeingRadioLabelMap[
-          memmWellbeingDisability as keyof typeof wellbeingRadioLabelMap
+        yesNoDoNotKnowLabelMap[
+          memmWellbeingDisability as keyof typeof yesNoDoNotKnowLabelMap
         ] ??
         memmWellbeingDisability ??
         '',
