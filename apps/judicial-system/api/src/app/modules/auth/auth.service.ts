@@ -9,7 +9,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { type User, UserRole } from '@island.is/judicial-system/types'
+import {
+  type Lawyer,
+  type User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { authModuleConfig } from './auth.config'
@@ -165,6 +169,26 @@ export class AuthService {
       }
     }
 
+    // Lawyers must be on the lawyer registry to get access, regardless of
+    // whether they are assigned as defenders, spokespersons or victim lawyers.
+    let lawyerRegistryInfo: Lawyer | null = null
+
+    try {
+      const lawyer = await this.backendService.getLawyer(nationalId)
+
+      if (lawyer && lawyer.nationalId === nationalId) {
+        lawyerRegistryInfo = lawyer
+      }
+    } catch (error) {
+      this.logger.info('Error when looking up defender in lawyer registry', {
+        error,
+      })
+    }
+
+    if (!lawyerRegistryInfo) {
+      return []
+    }
+
     try {
       return [await this.backendService.findDefenderByNationalId(nationalId)]
     } catch (error) {
@@ -177,40 +201,27 @@ export class AuthService {
       }
     }
 
-    // If a defender doesn't have any active cases, we look them up
-    // in the lawyer registry because we want to at least display an empty
-    // case list for them to avoid confusion about them not having access to
-    // the judicial system
-    try {
-      const lawyerRegistryInfo = await this.backendService.getLawyer(nationalId)
-
-      if (lawyerRegistryInfo && lawyerRegistryInfo.nationalId === nationalId) {
-        return [
-          {
-            // Reason for this is so we trust the nationalId from the authentication provider
-            // just in case the lawyer registry does something strange, we don't want to create
-            // a user with a nationalId that is not the same as the one from the authentication provider
-            nationalId: nationalId,
-            name: lawyerRegistryInfo.name,
-            role: UserRole.DEFENDER,
-            email: lawyerRegistryInfo.email,
-            mobileNumber: lawyerRegistryInfo.phoneNr,
-            active: true,
-            title: 'verjandi',
-            id: uuid(),
-            created: new Date().toString(),
-            modified: new Date().toString(),
-            canConfirmIndictment: false,
-          },
-        ]
-      }
-    } catch (error) {
-      this.logger.info('Error when looking up defender in lawyer registry', {
-        error,
-      })
-    }
-
-    return []
+    // If a defender doesn't have any active cases, we still create a user from
+    // the lawyer registry so they get an empty case list rather than being
+    // locked out of the judicial system.
+    return [
+      {
+        // Reason for this is so we trust the nationalId from the authentication provider
+        // just in case the lawyer registry does something strange, we don't want to create
+        // a user with a nationalId that is not the same as the one from the authentication provider
+        nationalId: nationalId,
+        name: lawyerRegistryInfo.name,
+        role: UserRole.DEFENDER,
+        email: lawyerRegistryInfo.email,
+        mobileNumber: lawyerRegistryInfo.phoneNr,
+        active: true,
+        title: 'verjandi',
+        id: uuid(),
+        created: new Date().toString(),
+        modified: new Date().toString(),
+        canConfirmIndictment: false,
+      },
+    ]
   }
 
   createEventLog(eventLog: unknown): Promise<boolean> {
