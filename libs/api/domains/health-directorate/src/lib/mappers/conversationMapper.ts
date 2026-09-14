@@ -22,10 +22,8 @@ import {
 } from '../models/enums'
 import { m } from '../messages'
 import { HealthDirectorateHealthConversationMessageContent } from '../models/healthConversationMessageContent.model'
-import {
-  HealthDirectorateHealthConversationOpeningWindow,
-  HealthDirectorateHealthConversationRecipient,
-} from '../models/healthConversationRecipient.model'
+import { HealthDirectorateHealthConversationOpeningWindow } from '../models/healthConversationOpeningHours.model'
+import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 import { HealthDirectorateHealthConversationSegment } from '../models/healthConversationSegment.model'
 import { HealthDirectorateHealthConversationType } from '../models/healthConversationType.model'
 import { HealthDirectorateHealthConversationVideoContent } from '../models/healthConversationVideoContent.model'

@@ -1,49 +1,13 @@
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import {
   HealthConversationDayTypeEnum,
   HealthConversationRecipientBlockedReasonEnum,
 } from './enums'
+import {
+  HealthDirectorateHealthConversationNextOpening,
+  HealthDirectorateHealthConversationOpeningHours,
+} from './healthConversationOpeningHours.model'
 import { HealthDirectorateHealthConversationType } from './healthConversationType.model'
-
-@ObjectType()
-export class HealthDirectorateHealthConversationOpeningWindow {
-  @Field({ description: 'HH:mm:ss, UTC.' })
-  windowOpen!: string
-
-  @Field({ description: 'HH:mm:ss, UTC.' })
-  windowClose!: string
-}
-
-@ObjectType()
-export class HealthDirectorateHealthConversationOpeningHours {
-  @Field(() => HealthDirectorateHealthConversationOpeningWindow, {
-    nullable: true,
-  })
-  weekday?: HealthDirectorateHealthConversationOpeningWindow
-
-  @Field(() => HealthDirectorateHealthConversationOpeningWindow, {
-    nullable: true,
-  })
-  weekend?: HealthDirectorateHealthConversationOpeningWindow
-
-  @Field(() => HealthDirectorateHealthConversationOpeningWindow, {
-    nullable: true,
-    description: 'Takes precedence over a weekend.',
-  })
-  holiday?: HealthDirectorateHealthConversationOpeningWindow
-}
-
-@ObjectType()
-export class HealthDirectorateHealthConversationNextOpening {
-  @Field(() => GraphQLISODateTime)
-  date!: Date
-
-  @Field({ description: 'HH:mm:ss, UTC.' })
-  windowOpen!: string
-
-  @Field({ description: 'HH:mm:ss, UTC.' })
-  windowClose!: string
-}
 
 @ObjectType()
 export class HealthDirectorateHealthConversationRecipient {
