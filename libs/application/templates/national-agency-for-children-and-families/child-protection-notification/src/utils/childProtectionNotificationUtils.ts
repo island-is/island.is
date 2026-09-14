@@ -29,11 +29,6 @@ export const getYesNoDoNotKnowNotApplicableOptions = () => [
   { value: NOT_APPLICABLE, label: memmMessages.reception.optionNotApplicable },
 ]
 
-export const getNeedsInterpreterOptions = () => [
-  ...getYesNoOptions(),
-  { value: DO_NOT_KNOW, label: sharedMessages.needsInterpreterDoNotKnow },
-]
-
 export const getSelectedReasonForNotificationCategoryCodes = (
   answers: FormValue,
 ) => {

@@ -21,7 +21,7 @@ import {
   prerequisitesMessages,
   sharedMessages,
 } from '../../lib/messages'
-import { getNeedsInterpreterOptions } from '../../utils/childProtectionNotificationUtils'
+import { getYesNoDoNotKnowOptions } from '../../utils/childProtectionNotificationUtils'
 import {
   isChildOver18,
   isKnowsNationalId,
@@ -234,7 +234,7 @@ export const childSubSection = buildSubSection({
           title: sharedMessages.needsInterpreter,
           widthWithIllustration: '1/3',
           space: 4,
-          options: getNeedsInterpreterOptions(),
+          options: getYesNoDoNotKnowOptions(),
           condition: (answers, _, user) => {
             const role = getApplicantRole(user?.profile?.nationalId ?? '')
             return (

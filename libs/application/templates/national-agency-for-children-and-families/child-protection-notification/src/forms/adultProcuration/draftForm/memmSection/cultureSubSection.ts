@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { memmMessages, sharedMessages } from '../../../../lib/messages'
-import { getNeedsInterpreterOptions } from '../../../../utils/childProtectionNotificationUtils'
+import { getYesNoDoNotKnowOptions } from '../../../../utils/childProtectionNotificationUtils'
 import {
   showLanguageSection,
   showPreferredLanguage,
@@ -117,7 +117,7 @@ export const cultureSubSection = buildSubSection({
           widthWithIllustration: '1/3',
           space: 4,
           doesNotRequireAnswer: true,
-          options: getNeedsInterpreterOptions(),
+          options: getYesNoDoNotKnowOptions(),
           condition: showPreferredLanguage,
         }),
       ],

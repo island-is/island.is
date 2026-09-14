@@ -17,7 +17,7 @@ import {
 } from '@island.is/shared/utils'
 import { parentsMessages, sharedMessages } from '../../lib/messages'
 import {
-  getNeedsInterpreterOptions,
+  getYesNoDoNotKnowOptions,
   getYesNoOptions,
 } from '../../utils/childProtectionNotificationUtils'
 import {
@@ -205,7 +205,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       titleVariant: 'h5',
       widthWithIllustration: '1/3',
       space: 4,
-      options: getNeedsInterpreterOptions(),
+      options: getYesNoDoNotKnowOptions(),
       condition: (answers) => {
         const parent = getApplicationAnswers(answers)[`${parentKey}`]
 

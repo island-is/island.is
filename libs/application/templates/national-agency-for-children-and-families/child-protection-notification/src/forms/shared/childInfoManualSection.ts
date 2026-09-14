@@ -14,7 +14,7 @@ import {
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
 import { childMessages, sharedMessages } from '../../lib/messages'
-import { getNeedsInterpreterOptions } from '../../utils/childProtectionNotificationUtils'
+import { getYesNoDoNotKnowOptions } from '../../utils/childProtectionNotificationUtils'
 import { isNoNationalId } from '../../utils/conditionUtils'
 import { IS } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
@@ -190,7 +190,7 @@ export const childInfoManualSection = buildSection({
           title: sharedMessages.needsInterpreter,
           widthWithIllustration: '1/3',
           space: 4,
-          options: getNeedsInterpreterOptions(),
+          options: getYesNoDoNotKnowOptions(),
         }),
       ],
     }),
