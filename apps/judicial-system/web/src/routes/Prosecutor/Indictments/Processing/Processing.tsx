@@ -36,7 +36,6 @@ import type {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseFileCategory,
   CaseState,
   CaseTransition,
   DefendantPlea,
@@ -313,9 +312,7 @@ const Processing: FC = () => {
       civilClaimants: res.civilClaimants,
       caseFiles: hasCivilClaims
         ? prev.caseFiles
-        : prev.caseFiles?.filter(
-            (caseFile) => caseFile.category !== CaseFileCategory.CIVIL_CLAIM,
-          ),
+        : prev.caseFiles?.filter((caseFile) => !caseFile.civilClaimantId),
     }))
 
     if (hasCivilClaims) {
