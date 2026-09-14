@@ -60,8 +60,13 @@ module.exports = {
   },
 
   // Puts the links back on the originals from what the copies carry, then
-  // removes the copies. The original is the document of the merged case that
-  // the copy was made from - same name and same backing case file.
+  // removes the copies. The original is the document of the merged case the
+  // copy was made from, matched on what identifies the same document: the
+  // backing case file, or the generated PDF, and only by name when the copy
+  // has neither. Name is the weakest of the three because the court may rename
+  // a copy - an externally filed document with no file behind it and a changed
+  // name therefore loses its link, which is as far back as the copies can
+  // carry it.
   down: async (queryInterface) => {
     await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.sequelize.query(
@@ -75,8 +80,15 @@ module.exports = {
           AND copy.court_session_id IS NOT NULL
           AND original.case_id = copy.merged_from_case_id
           AND original.merged_from_case_id IS NULL
-          AND original.name = copy.name
-          AND original.case_file_id IS NOT DISTINCT FROM copy.case_file_id
+          AND CASE
+                WHEN copy.case_file_id IS NOT NULL
+                  THEN original.case_file_id = copy.case_file_id
+                WHEN copy.generated_pdf_uri IS NOT NULL
+                  THEN original.generated_pdf_uri = copy.generated_pdf_uri
+                ELSE original.name = copy.name
+                  AND original.case_file_id IS NULL
+                  AND original.generated_pdf_uri IS NULL
+              END
         `,
         { transaction },
       )
