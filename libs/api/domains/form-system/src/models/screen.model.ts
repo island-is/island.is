@@ -46,4 +46,7 @@ export class Screen {
 export class NotificationResponse {
   @Field(() => Screen, { nullable: true })
   screen?: Screen
+
+  @Field(() => ValidationError, { nullable: true })
+  screenError?: ValidationError
 }
