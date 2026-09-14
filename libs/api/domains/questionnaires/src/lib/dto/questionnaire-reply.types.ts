@@ -2,7 +2,8 @@ import {
   AttachmentReplyViewDto,
   BooleanReplyViewDto,
   DateReplyViewDto,
-  ListReplyDto,
+  GridReplyViewDto,
+  ListReplyViewDto,
   NumberReplyViewDto,
   StringReplyViewDto,
   TableReplyViewDto,
@@ -12,7 +13,8 @@ export type QuestionnaireReply =
   | AttachmentReplyViewDto
   | BooleanReplyViewDto
   | DateReplyViewDto
-  | ListReplyDto
+  | GridReplyViewDto
+  | ListReplyViewDto
   | NumberReplyViewDto
   | StringReplyViewDto
   | TableReplyViewDto

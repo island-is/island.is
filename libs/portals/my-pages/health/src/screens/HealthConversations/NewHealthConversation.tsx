@@ -34,10 +34,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
-import { getMessagingWindowInfo } from './utils/messagingWindow'
+import { formatTimeLabel, getTodaysWindow } from './utils/messagingWindow'
 import { MAX_MESSAGE_LENGTH } from './utils/constants'
 import { Markdown } from '@island.is/shared/components'
 import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
+import ClosedRecipientAlert from './components/ClosedRecipientAlert'
 import * as styles from './HealthConversations.css'
 import {
   useGetHealthConversationRecipientsForNewQuery,
@@ -50,6 +51,14 @@ interface CertificateAlert {
   title?: string
   message?: string
 }
+
+const isRecipientOutsideWindow = (recipient: {
+  canCreateConversation: boolean
+  conversationBlockedReason?: HealthDirectorateHealthConversationRecipientBlockedReason | null
+}) =>
+  !recipient.canCreateConversation &&
+  recipient.conversationBlockedReason ===
+    HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW
 
 const getRecipientKey = (recipient: {
   nodeId: string
@@ -102,10 +111,34 @@ const NewHealthConversation = () => {
   const hasMultipleRecipients = (recipients?.length ?? 0) > 1
 
   const recipientOptions =
-    recipients?.map((r) => ({
-      label: r.name,
-      value: getRecipientKey(r),
-    })) ?? []
+    recipients?.map((r) => {
+      const todaysWindow = getTodaysWindow(r)
+      const openTime = formatTimeLabel(todaysWindow?.windowOpen)
+      const closeTime = formatTimeLabel(todaysWindow?.windowClose)
+      return {
+        label: r.name,
+        value: getRecipientKey(r),
+        description: !isRecipientOutsideWindow(r)
+          ? undefined
+          : r.isClosedToday || !openTime || !closeTime
+          ? formatMessage(messages.healthConversationRecipientClosedTodayOption)
+          : formatMessage(messages.healthConversationRecipientClosedOption, {
+              name: r.name,
+              openTime,
+              closeTime,
+            }),
+      }
+    }) ?? []
+
+  // A recipient closed for new conversations never accepts certificate
+  // requests either, so conversation availability alone decides this.
+  const allRecipientsClosed =
+    hasRecipients &&
+    !!recipients?.every((r) => !r.canCreateConversation) &&
+    !!recipients?.some(isRecipientOutsideWindow)
+
+  const allClosedAlertRecipient =
+    recipients?.find(isRecipientOutsideWindow) ?? recipients?.[0]
 
   const preselectedTreatment = searchParams.get('treatment')
   const treatmentMatch = preselectedTreatment
@@ -148,11 +181,6 @@ const NewHealthConversation = () => {
   )
   const isCertificateSelected = !!selectedType?.isCertificate
 
-  const windowInfo = getMessagingWindowInfo({
-    windowOpen: recipient?.messagingWindowOpen,
-    windowClose: recipient?.messagingWindowClose,
-  })
-
   const introText = formatMessage(messages.healthConversationsNewIntro)
 
   const isCertificateBlocked =
@@ -160,26 +188,10 @@ const NewHealthConversation = () => {
 
   const isConversationBlocked = recipient?.canCreateConversation === false
 
-  const certificateBlockedOutsideWindow =
-    recipient?.certificateBlockedReason ===
-      HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW &&
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel
-
   const isFormLocked = isConversationBlocked || isCertificateBlocked
 
   const certificateAlert: CertificateAlert | undefined = !isCertificateBlocked
     ? undefined
-    : certificateBlockedOutsideWindow
-    ? {
-        type: 'info',
-        title: formatMessage(messages.healthConversationClosedTitle),
-        message: formatMessage(messages.healthConversationClosedText, {
-          currentTime: windowInfo.currentTimeLabel,
-          openTime: windowInfo.windowOpenLabel,
-          closeTime: windowInfo.windowCloseLabel,
-        }),
-      }
     : {
         type: 'warning',
         message: formatMessage(
@@ -339,10 +351,16 @@ const NewHealthConversation = () => {
             title={formatMessage(messages.healthConversationsNoRecipient)}
           />
         )}
-        {!initialLoading && !error && recipient && (
+        {!initialLoading &&
+          !error &&
+          allRecipientsClosed &&
+          allClosedAlertRecipient && (
+            <ClosedRecipientAlert recipient={allClosedAlertRecipient} />
+          )}
+        {!initialLoading && !error && !allRecipientsClosed && recipient && (
           <ConversationAvailabilityAlert recipient={recipient} />
         )}
-        {!initialLoading && !error && hasRecipients && (
+        {!initialLoading && !error && !allRecipientsClosed && hasRecipients && (
           <Box className={styles.messageCard} background="white">
             <Hidden below="sm">
               <Box

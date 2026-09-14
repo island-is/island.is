@@ -2029,24 +2029,32 @@
             }
           },
           {
-            "name": "page",
-            "required": true,
+            "name": "limit",
+            "required": false,
             "in": "query",
-            "description": "1-based page number.",
-            "schema": {
-              "minimum": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": true,
-            "in": "query",
-            "description": "Number of items per page (max 100).",
+            "description": "Items per page, 1-100. Defaults to 20.",
             "schema": {
               "minimum": 1,
               "maximum": 100,
               "type": "number"
+            }
+          },
+          {
+            "name": "after",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page: fetch the page after it. Not combinable with before.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page: fetch the page before it. Not combinable with after.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2570,7 +2578,8 @@
     },
     "/v1/me/conversations": {
       "get": {
-        "description": "Get the current user's conversations, ordered by most recent activity. Defaults to active (non-archived, non-deleted); use ?status= to override and ?starred= to filter by star.",
+        "deprecated": true,
+        "description": "Get the current user's conversations, ordered by most recent activity. Defaults to active (non-archived, non-deleted); use ?status= to override, ?starred= to filter by star and ?search= to match the title or group name. Deprecated – use v2, which returns a paginated envelope.",
         "operationId": "MeConversationController_getConversations_v1",
         "parameters": [
           {
@@ -2589,6 +2598,16 @@
             "description": "Filter by starred flag.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Case-insensitive substring match on the conversation title or its group name. Whitespace-only is ignored. Matched literally: `%`, `_` and `[` carry no wildcard meaning.",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
             }
           }
         ],
@@ -2650,7 +2669,7 @@
         "tags": ["Conversations"]
       },
       "post": {
-        "description": "Create a new patient-initiated conversation with an initial message and optional attachments. Returns 504 (with `errorCode` `ACK_NOT_CONFIRMED` from `MessagingSubmitFailureReason`) when the provider does not acknowledge the message within the wait: the message was sent and may well have been delivered, it is kept but not shown until the acknowledgement arrives, and repeating the request unchanged waits again.",
+        "description": "Create a new patient-initiated conversation with an initial message and optional attachments. Always returns 201: the message carries `deliveryStatus` `RECEIVED` when the provider acknowledged it within the wait, or `PENDING` otherwise, in which case a later read may show `RECEIVED` or `UNCONFIRMED` once the acknowledgement window has elapsed.",
         "operationId": "MeConversationController_createConversation_v1",
         "parameters": [],
         "requestBody": {
@@ -2735,6 +2754,124 @@
             }
           },
           "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v2/me/conversations": {
+      "get": {
+        "description": "Get the current user's conversations, ordered by most recent activity, paginated. Defaults to active (non-archived, non-deleted); use ?status= to override, ?starred= to filter by star and ?search= to match the title or group name.",
+        "operationId": "MeConversationController_getConversationsV2_v2",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by patient-side status. 'active' (default) excludes archived/deleted. 'archived' returns only archived. 'all' returns both active and archived (deleted is always excluded).",
+            "schema": {
+              "$ref": "#/components/schemas/ConversationStatusFilter"
+            }
+          },
+          {
+            "name": "starred",
+            "required": false,
+            "in": "query",
+            "description": "Filter by starred flag.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Case-insensitive substring match on the conversation title or its group name. Whitespace-only is ignored, and `%`, `_` and `[` carry no wildcard meaning.",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page, 1-100. Defaults to 20.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          },
+          {
+            "name": "after",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page: fetch the page after it. Not combinable with before.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page: fetch the page before it. Not combinable with after.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedConversationsDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
             "description": "",
             "content": {
               "application/json": {
@@ -2944,7 +3081,7 @@
     },
     "/v1/me/conversations/{id}/messages": {
       "post": {
-        "description": "Append a patient reply to an existing conversation. Returns 504 (with `errorCode` `ACK_NOT_CONFIRMED` from `MessagingSubmitFailureReason`) when the provider does not acknowledge the reply within the wait: the reply was sent and may well have been delivered, it is kept but not shown until the acknowledgement arrives, and repeating the request unchanged waits again.",
+        "description": "Append a patient reply to an existing conversation. Always returns 201: the message carries `deliveryStatus` `RECEIVED` when the provider acknowledged it within the wait, or `PENDING` otherwise, in which case a later read may show `RECEIVED` or `UNCONFIRMED` once the acknowledgement window has elapsed.",
         "operationId": "MeConversationController_replyToConversation_v1",
         "parameters": [
           {
@@ -2968,6 +3105,127 @@
             }
           }
         },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/conversations/{id}/messages/{messageId}/retry": {
+      "post": {
+        "description": "Resend a patient message the provider has not acknowledged. Offered only once its `deliveryStatus` reads `UNCONFIRMED`; 409 while still `PENDING` or once already `RECEIVED`. The message goes back unchanged under its own guid, so the provider recognises it as the one it already holds; nothing new is stored and the message reads `PENDING` again.",
+        "operationId": "MeConversationController_retryMessage_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Conversation id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "required": true,
+            "in": "path",
+            "description": "Id of the patient message to retry",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "",
@@ -5250,6 +5508,16 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Case-insensitive substring match on the conversation title or its group name. Whitespace-only is ignored. Matched literally: `%`, `_` and `[` carry no wildcard meaning.",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -6310,7 +6578,11 @@
           "list",
           "table",
           "attachment",
-          "text"
+          "text",
+          "grid",
+          "time",
+          "datetime",
+          "calculated"
         ]
       },
       "BaseQuestionDto": {
@@ -6736,6 +7008,79 @@
         },
         "required": ["id", "type", "label", "required"]
       },
+      "GridQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "multiselect": {
+            "type": "boolean",
+            "description": "Whether a row may hold more than one selected column"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": ["id", "label"]
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": ["id", "label"]
+            }
+          }
+        },
+        "required": ["id", "type", "label", "required", "columns", "rows"]
+      },
       "QuestionTriggerItemDto": {
         "type": "object",
         "properties": {
@@ -6857,6 +7202,24 @@
             "type": "string",
             "x-nestjs_zod-has-null": true
           },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
+            "x-nestjs_zod-has-null": true
+          },
           "answer": {
             "anyOf": [
               {
@@ -6870,13 +7233,31 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
       "BooleanReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
             "x-nestjs_zod-has-null": true
           },
           "answer": {
@@ -6892,7 +7273,7 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
       "DateReplyViewDto": {
         "type": "object",
@@ -6901,12 +7282,39 @@
             "type": "string",
             "x-nestjs_zod-has-null": true
           },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
+            "x-nestjs_zod-has-null": true
+          },
           "answer": {
             "anyOf": [
               {
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                  }
+                ]
               },
               {
                 "type": "null"
@@ -6916,13 +7324,30 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
-      "ListReplyDto": {
+      "ListReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ]
           },
           "values": {
             "type": "array",
@@ -6940,13 +7365,31 @@
             }
           }
         },
-        "required": ["questionId", "values"]
+        "required": ["questionId", "type", "values"]
       },
       "NumberReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
             "x-nestjs_zod-has-null": true
           },
           "answer": {
@@ -6962,13 +7405,31 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
       "StringReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
             "x-nestjs_zod-has-null": true
           },
           "answer": {
@@ -6984,13 +7445,31 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
       "TableReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
             "x-nestjs_zod-has-null": true
           },
           "rows": {
@@ -7005,6 +7484,23 @@
                       "questionId": {
                         "type": "string"
                       },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
+                      },
                       "answer": {
                         "anyOf": [
                           {
@@ -7016,13 +7512,30 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
                       "questionId": {
                         "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
                       },
                       "answer": {
                         "anyOf": [
@@ -7035,13 +7548,30 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
                       "questionId": {
                         "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
                       },
                       "answer": {
                         "anyOf": [
@@ -7054,7 +7584,7 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
@@ -7062,12 +7592,38 @@
                       "questionId": {
                         "type": "string"
                       },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
+                      },
                       "answer": {
                         "anyOf": [
                           {
-                            "type": "string",
-                            "format": "date",
-                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                              },
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                              }
+                            ]
                           },
                           {
                             "type": "null"
@@ -7075,13 +7631,30 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
                       "questionId": {
                         "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
                       },
                       "answer": {
                         "anyOf": [
@@ -7094,13 +7667,30 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
                       "questionId": {
                         "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
                       },
                       "values": {
                         "type": "array",
@@ -7118,7 +7708,7 @@
                         }
                       }
                     },
-                    "required": ["questionId", "values"]
+                    "required": ["questionId", "type", "values"]
                   }
                 ]
               }
@@ -7126,7 +7716,60 @@
             "x-nestjs_zod-has-null": true
           }
         },
-        "required": ["questionId", "rows"]
+        "required": ["questionId", "type", "rows"]
+      },
+      "GridReplyViewDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ]
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["id", "answer"]
+                  }
+                }
+              },
+              "required": ["id", "values"]
+            }
+          }
+        },
+        "required": ["questionId", "type", "rows"]
       },
       "QuestionnaireSubmissionBaseDto": {
         "type": "object",
@@ -7196,6 +7839,9 @@
                 },
                 {
                   "$ref": "#/components/schemas/TableQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/GridQuestionDto"
                 }
               ]
             }
@@ -7322,7 +7968,7 @@
                   "$ref": "#/components/schemas/DateReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/ListReplyDto"
+                  "$ref": "#/components/schemas/ListReplyViewDto"
                 },
                 {
                   "$ref": "#/components/schemas/NumberReplyViewDto"
@@ -7332,6 +7978,9 @@
                 },
                 {
                   "$ref": "#/components/schemas/TableReplyViewDto"
+                },
+                {
+                  "$ref": "#/components/schemas/GridReplyViewDto"
                 }
               ]
             }
@@ -7386,9 +8035,18 @@
                       "type": "string"
                     },
                     "answer": {
-                      "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                        },
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                        }
+                      ]
                     }
                   },
                   "required": ["questionId", "answer"]
@@ -7496,9 +8154,18 @@
                                   "type": "string"
                                 },
                                 "answer": {
-                                  "type": "string",
-                                  "format": "date",
-                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "date",
+                                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                    },
+                                    {
+                                      "type": "string",
+                                      "format": "date-time",
+                                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                                    }
+                                  ]
                                 }
                               },
                               "required": ["questionId", "answer"]
@@ -7541,6 +8208,42 @@
                             }
                           ]
                         }
+                      }
+                    }
+                  },
+                  "required": ["questionId", "rows"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "values": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["id", "answer"]
+                            }
+                          }
+                        },
+                        "required": ["id", "values"]
                       }
                     }
                   },
@@ -7625,6 +8328,23 @@
                     "questionId": {
                       "type": "string"
                     },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
+                    },
                     "answer": {
                       "anyOf": [
                         {
@@ -7636,13 +8356,30 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "answer": {
                       "anyOf": [
@@ -7655,7 +8392,7 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
@@ -7663,12 +8400,38 @@
                     "questionId": {
                       "type": "string"
                     },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
+                    },
                     "answer": {
                       "anyOf": [
                         {
-                          "type": "string",
-                          "format": "date",
-                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                            },
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                            }
+                          ]
                         },
                         {
                           "type": "null"
@@ -7676,13 +8439,30 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "answer": {
                       "anyOf": [
@@ -7695,13 +8475,30 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "answer": {
                       "anyOf": [
@@ -7714,13 +8511,30 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "values": {
                       "type": "array",
@@ -7738,13 +8552,30 @@
                       }
                     }
                   },
-                  "required": ["questionId", "values"]
+                  "required": ["questionId", "type", "values"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "rows": {
                       "type": "array",
@@ -7758,6 +8589,23 @@
                                 "questionId": {
                                   "type": "string"
                                 },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
+                                },
                                 "answer": {
                                   "anyOf": [
                                     {
@@ -7769,13 +8617,30 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "questionId": {
                                   "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
                                 },
                                 "answer": {
                                   "anyOf": [
@@ -7788,13 +8653,30 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "questionId": {
                                   "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
                                 },
                                 "answer": {
                                   "anyOf": [
@@ -7807,7 +8689,7 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
@@ -7815,12 +8697,38 @@
                                 "questionId": {
                                   "type": "string"
                                 },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
+                                },
                                 "answer": {
                                   "anyOf": [
                                     {
-                                      "type": "string",
-                                      "format": "date",
-                                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "format": "date",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                        },
+                                        {
+                                          "type": "string",
+                                          "format": "date-time",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                                        }
+                                      ]
                                     },
                                     {
                                       "type": "null"
@@ -7828,13 +8736,30 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "questionId": {
                                   "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
                                 },
                                 "answer": {
                                   "anyOf": [
@@ -7847,13 +8772,30 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "questionId": {
                                   "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
                                 },
                                 "values": {
                                   "type": "array",
@@ -7871,14 +8813,67 @@
                                   }
                                 }
                               },
-                              "required": ["questionId", "values"]
+                              "required": ["questionId", "type", "values"]
                             }
                           ]
                         }
                       }
                     }
                   },
-                  "required": ["questionId", "rows"]
+                  "required": ["questionId", "type", "rows"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "values": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["id", "answer"]
+                            }
+                          }
+                        },
+                        "required": ["id", "values"]
+                      }
+                    }
+                  },
+                  "required": ["questionId", "type", "rows"]
                 }
               ]
             },
@@ -8085,36 +9080,23 @@
           "canCancel"
         ]
       },
-      "PaginationDto": {
+      "PageInfoDto": {
         "type": "object",
         "properties": {
-          "page": {
-            "type": "number"
-          },
-          "pageSize": {
-            "type": "number"
-          },
-          "totalResults": {
-            "type": "number"
-          },
-          "totalPages": {
-            "type": "number"
-          },
-          "hasNext": {
+          "hasNextPage": {
             "type": "boolean"
           },
-          "hasPrevious": {
+          "hasPreviousPage": {
             "type": "boolean"
+          },
+          "startCursor": {
+            "type": "string"
+          },
+          "endCursor": {
+            "type": "string"
           }
         },
-        "required": [
-          "page",
-          "pageSize",
-          "totalResults",
-          "totalPages",
-          "hasNext",
-          "hasPrevious"
-        ]
+        "required": ["hasNextPage"]
       },
       "PaginatedAppointmentsDto": {
         "type": "object",
@@ -8125,11 +9107,14 @@
               "$ref": "#/components/schemas/AppointmentBaseDto"
             }
           },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationDto"
+          "pageInfo": {
+            "$ref": "#/components/schemas/PageInfoDto"
+          },
+          "totalCount": {
+            "type": "number"
           }
         },
-        "required": ["data", "pagination"]
+        "required": ["data", "pageInfo", "totalCount"]
       },
       "OpeningHoursSlotDto": {
         "type": "object",
@@ -8692,6 +9677,24 @@
           "unread"
         ]
       },
+      "PaginatedConversationsDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationBaseDto"
+            }
+          },
+          "pageInfo": {
+            "$ref": "#/components/schemas/PageInfoDto"
+          },
+          "totalCount": {
+            "type": "number"
+          }
+        },
+        "required": ["data", "pageInfo", "totalCount"]
+      },
       "ConversationReplyBlockedReason": {
         "type": "string",
         "enum": [
@@ -8699,11 +9702,37 @@
           "REPLIES_DISABLED",
           "NO_REPLY_GROUP",
           "MESSAGING_NOT_ALLOWED",
+          "PATIENT_REPLY_NOT_ALLOWED",
           "OUTSIDE_MESSAGING_WINDOW",
           "REPLY_WINDOW_EXPIRED",
-          "AWAITING_STAFF_REPLY"
+          "AWAITING_STAFF_REPLY",
+          "AWAITING_ACKNOWLEDGEMENT"
         ],
         "description": "Why replying is blocked. Only set when patientCanReply is false."
+      },
+      "MessagingDayType": {
+        "type": "string",
+        "enum": ["WEEKDAY", "WEEKEND", "HOLIDAY"],
+        "description": "Which kind of day the messaging window was resolved for, in UTC."
+      },
+      "NextOpeningDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The UTC instant the recipient next opens."
+          },
+          "windowOpen": {
+            "type": "string",
+            "description": "When the recipient opens on that day, `HH:mm:ss` in UTC. Same time of day as `date`."
+          },
+          "windowClose": {
+            "type": "string",
+            "description": "When it closes again on that day, `HH:mm:ss` in UTC."
+          }
+        },
+        "required": ["date", "windowOpen", "windowClose"]
       },
       "MessageType": {
         "type": "string",
@@ -8767,6 +9796,11 @@
           }
         },
         "required": ["type"]
+      },
+      "AckDeliveryStatus": {
+        "type": "string",
+        "enum": ["PENDING", "RECEIVED", "UNCONFIRMED"],
+        "description": "Delivery state of a message the patient sent. Set only on PATIENT messages."
       },
       "ConversationAttachmentDto": {
         "type": "object",
@@ -8849,6 +9883,14 @@
             "type": "string",
             "format": "uuid",
             "description": "An unpaid intent this patient has open on the certificate. Not time-bounded: it persists until the certificate is paid for, so its presence does not mean a payment is in flight. `POST /v1/me/certificates/{certificateId}/payment-intent` resumes it, returning this same `paymentId` and a byte-identical payment-page URL. A UI hint: access is decided by `paid` alone."
+          },
+          "deliveryStatus": {
+            "description": "Delivery state of a message the patient sent. Set only on PATIENT messages.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AckDeliveryStatus"
+              }
+            ]
           },
           "attachments": {
             "type": "array",
@@ -8944,6 +9986,26 @@
           "patientReplyWindowDays": {
             "type": "number",
             "description": "How long the thread accepts replies, in 24-hour periods from the newest `STAFF` message in `messages`."
+          },
+          "isClosedToday": {
+            "type": "boolean",
+            "description": "True when the recipient accepts nothing today because it has no window pair set for this kind of day."
+          },
+          "dayType": {
+            "description": "Which kind of day the messaging window was resolved for, in UTC.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessagingDayType"
+              }
+            ]
+          },
+          "nextOpensAt": {
+            "description": "When the recipient next opens, and the hours of that day. Absent while inside the window and absent when allowsMessaging is false.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NextOpeningDto"
+              }
+            ]
           },
           "unread": {
             "type": "boolean",
@@ -9128,6 +10190,49 @@
         },
         "required": ["messageTextContent"]
       },
+      "OpeningHoursWindowDto": {
+        "type": "object",
+        "properties": {
+          "windowOpen": {
+            "type": "string",
+            "description": "When the recipient opens on that kind of day, `HH:mm:ss` in UTC."
+          },
+          "windowClose": {
+            "type": "string",
+            "description": "When it closes again, `HH:mm:ss` in UTC."
+          }
+        },
+        "required": ["windowOpen", "windowClose"]
+      },
+      "MessagingOpeningHoursDto": {
+        "type": "object",
+        "properties": {
+          "weekday": {
+            "description": "Hours on a weekday. Absent when the recipient is closed on weekdays.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHoursWindowDto"
+              }
+            ]
+          },
+          "weekend": {
+            "description": "Hours on a Saturday or Sunday. Absent when the recipient is closed at weekends.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHoursWindowDto"
+              }
+            ]
+          },
+          "holiday": {
+            "description": "Hours on an Icelandic public holiday, which takes precedence over a weekend. Absent when the recipient is closed on holidays.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHoursWindowDto"
+              }
+            ]
+          }
+        }
+      },
       "AllowedConversationTypeDto": {
         "type": "object",
         "properties": {
@@ -9151,6 +10256,7 @@
         "type": "string",
         "enum": [
           "MESSAGING_NOT_ALLOWED",
+          "PATIENT_INITIATED_NOT_ALLOWED",
           "OUTSIDE_MESSAGING_WINDOW",
           "NO_ALLOWED_TYPES"
         ],
@@ -9174,19 +10280,48 @@
             "description": "Set when this recipient is one of the patient care teams, absent when it is a clinic. A care team and a clinic can share one nodeId + groupId and are then two entries here, so **key the list on all three fields** and send this value back on create to say which was chosen. It is the same id GET /me/treatments returns."
           },
           "allowsMessaging": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the recipient offers patient messaging at all. True when it accepts either new conversations or replies; false only when it accepts neither."
           },
           "messagingWindowOpen": {
             "type": "string",
-            "description": "Effective window open time (HH:mm:ss, UTC)."
+            "description": "Effective window open time (HH:mm:ss, UTC). When isClosedToday is true this is the next open day’s time, not today’s. Optional, so absence is a valid response; isClosedToday and nextOpensAt carry the closure."
           },
           "messagingWindowClose": {
             "type": "string",
-            "description": "Effective window close time (HH:mm:ss, UTC)."
+            "description": "Effective window close time (HH:mm:ss, UTC). When isClosedToday is true this is the next open day’s time, not today’s. Optional, so absence is a valid response; isClosedToday and nextOpensAt carry the closure."
           },
           "isCurrentlyWithinWindow": {
             "type": "boolean",
-            "description": "True when the current UTC time is within the messaging window."
+            "description": "True when the current UTC time is within the messaging window. Always false when isClosedToday is true."
+          },
+          "isClosedToday": {
+            "type": "boolean",
+            "description": "True when the recipient accepts nothing today because it has no window pair set for this kind of day. Unrelated to allowsMessaging, which closes every day."
+          },
+          "dayType": {
+            "description": "Which kind of day the window was resolved for, in UTC. Holidays are Icelandic public holidays and take precedence over weekends.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessagingDayType"
+              }
+            ]
+          },
+          "nextOpensAt": {
+            "description": "When the recipient next opens, and the hours of that day. Absent while inside the window, absent when allowsMessaging is false, and absent when the recipient opens on no day within the next two weeks.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NextOpeningDto"
+              }
+            ]
+          },
+          "openingHours": {
+            "description": "The recipient’s hours for every kind of day. Always present; a day type is absent from it when the recipient is closed on that kind of day, and an empty object means it never opens.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessagingOpeningHoursDto"
+              }
+            ]
           },
           "patientReplyWindowDays": {
             "type": "number"
@@ -9227,9 +10362,10 @@
           "groupId",
           "name",
           "allowsMessaging",
-          "messagingWindowOpen",
-          "messagingWindowClose",
           "isCurrentlyWithinWindow",
+          "isClosedToday",
+          "dayType",
+          "openingHours",
           "patientReplyWindowDays",
           "allowedConversationTypes",
           "canCreateConversation",
