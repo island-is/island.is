@@ -189,6 +189,7 @@ export const childInfoManualSection = buildSection({
           id: 'child.manualInfo.needsInterpreter',
           title: sharedMessages.needsInterpreter,
           widthWithIllustration: '1/3',
+          space: 4,
           options: getNeedsInterpreterOptions(),
         }),
       ],

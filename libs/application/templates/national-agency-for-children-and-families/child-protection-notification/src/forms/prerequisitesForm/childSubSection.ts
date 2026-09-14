@@ -233,6 +233,7 @@ export const childSubSection = buildSubSection({
           id: 'child.nationalIdInfo.needsInterpreter',
           title: sharedMessages.needsInterpreter,
           widthWithIllustration: '1/3',
+          space: 4,
           options: getNeedsInterpreterOptions(),
           condition: (answers, _, user) => {
             const role = getApplicantRole(user?.profile?.nationalId ?? '')

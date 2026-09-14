@@ -91,7 +91,7 @@ const childSchema = z
         municipality: z.string().optional(),
         municipalityPostalCode: z.string().optional(),
         language: z.string().optional(),
-        needsInterpreter: z.string().optional(),
+        needsInterpreter: z.string(),
       })
       .optional(),
   })
@@ -145,7 +145,7 @@ const parentSchema = z.object({
   postalCode: z.string().optional(),
   municipality: z.string().optional(),
   municipalityPostalCode: z.string().optional(),
-  needsInterpreter: z.string().optional(),
+  needsInterpreter: z.string(),
   preferredLanguage: z.string().optional(),
 })
 
@@ -243,6 +243,14 @@ const memmSchema = z.object({
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['preferredLanguage'],
+          params: errorMessages.required,
+        })
+      }
+
+      if (hasLanguages && !data.needsInterpreter) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['needsInterpreter'],
           params: errorMessages.required,
         })
       }

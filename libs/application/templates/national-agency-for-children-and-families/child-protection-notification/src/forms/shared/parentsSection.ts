@@ -202,7 +202,9 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     buildRadioField({
       id: `${base}.needsInterpreter`,
       title: sharedMessages.needsInterpreter,
+      titleVariant: 'h5',
       widthWithIllustration: '1/3',
+      space: 4,
       options: getNeedsInterpreterOptions(),
       condition: (answers) => {
         const parent = getApplicationAnswers(answers)[`${parentKey}`]
