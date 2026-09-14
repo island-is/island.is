@@ -78,7 +78,7 @@ export const SigningMethodSelectionModal: FC<
         })
         response = result.data?.requestCourtRecordSignature
       }
-    } catch (error) {
+    } catch {
       setLoadingMethod(undefined)
     }
 

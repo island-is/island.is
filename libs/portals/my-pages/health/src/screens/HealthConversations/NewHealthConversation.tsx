@@ -34,6 +34,8 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { formatTimeLabel, getTodaysWindow } from './utils/messagingWindow'
+import { MAX_MESSAGE_LENGTH } from './utils/constants'
+import { Markdown } from '@island.is/shared/components'
 import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
 import ClosedRecipientAlert from './components/ClosedRecipientAlert'
 import * as styles from './HealthConversations.css'
@@ -65,8 +67,6 @@ const getRecipientKey = (recipient: {
   `${recipient.nodeId}-${recipient.groupId}${
     recipient.treatmentId ? `-${recipient.treatmentId}` : ''
   }`
-
-const MAX_MESSAGE_LENGTH = 300
 
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
@@ -430,6 +430,12 @@ const NewHealthConversation = () => {
                 </Box>
               )}
 
+              {!isCertificateSelected && selectedType?.instructions && (
+                <Box marginBottom={2} className={styles.typeInstructions}>
+                  <Markdown>{selectedType.instructions}</Markdown>
+                </Box>
+              )}
+
               {isCertificateSelected ? (
                 <CertificateRequestForm
                   formState={certificateForm}
@@ -438,6 +444,7 @@ const NewHealthConversation = () => {
                   }
                   disabled={isFormLocked}
                   hidePaymentNotice={isCertificateBlocked}
+                  instructions={selectedType?.instructions}
                 />
               ) : (
                 <Box>
@@ -461,7 +468,7 @@ const NewHealthConversation = () => {
               )}
 
               <Box
-                marginTop={4}
+                marginTop={3}
                 marginBottom={4}
                 className={styles.termsCheckbox}
               >

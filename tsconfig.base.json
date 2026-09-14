@@ -417,6 +417,9 @@
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
+      "@island.is/application/templates/district-commissioners/driving-license": [
+        "libs/application/templates/district-commissioners/driving-license/src/index.ts"
+      ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
