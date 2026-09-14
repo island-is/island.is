@@ -604,4 +604,136 @@ describe('DatePicker', () => {
       }
     })
   })
+
+  describe('Popper placement', () => {
+    // jsdom has no layout, so lay the input out near the bottom of a viewport
+    // that is too short for the calendar to fit below it.
+    const VIEWPORT_HEIGHT = 768
+    const INPUT_TOP = 700
+    const INPUT_HEIGHT = 40
+    const CALENDAR_HEIGHT = 300
+
+    const rect = (top: number, height: number): DOMRect =>
+      ({
+        x: 0,
+        y: top,
+        top,
+        left: 0,
+        width: 300,
+        height,
+        right: 300,
+        bottom: top + height,
+        toJSON: () => ({}),
+      } as DOMRect)
+
+    const originalGetBoundingClientRect =
+      Element.prototype.getBoundingClientRect
+    const originalOffsetWidth = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      'offsetWidth',
+    )
+    const originalOffsetHeight = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      'offsetHeight',
+    )
+
+    // floating-ui measures the calendar through offsetWidth/offsetHeight,
+    // which jsdom reports as 0.
+    const popperDimension = (dimension: number) =>
+      function (this: HTMLElement) {
+        return this.classList.contains('react-datepicker-popper')
+          ? dimension
+          : 0
+      }
+
+    beforeEach(() => {
+      Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {
+        configurable: true,
+        get: popperDimension(300),
+      })
+      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+        configurable: true,
+        get: popperDimension(CALENDAR_HEIGHT),
+      })
+      Object.defineProperty(document.documentElement, 'clientHeight', {
+        configurable: true,
+        value: VIEWPORT_HEIGHT,
+      })
+      Object.defineProperty(document.documentElement, 'clientWidth', {
+        configurable: true,
+        value: 1024,
+      })
+      Element.prototype.getBoundingClientRect = function () {
+        if (this.classList.contains('react-datepicker-popper')) {
+          return rect(INPUT_TOP + INPUT_HEIGHT, CALENDAR_HEIGHT)
+        }
+        if (this.classList.contains('react-datepicker-wrapper')) {
+          return rect(INPUT_TOP, INPUT_HEIGHT)
+        }
+        return rect(0, 0)
+      }
+    })
+
+    afterEach(() => {
+      Element.prototype.getBoundingClientRect = originalGetBoundingClientRect
+      if (originalOffsetWidth) {
+        Object.defineProperty(
+          HTMLElement.prototype,
+          'offsetWidth',
+          originalOffsetWidth,
+        )
+      }
+      if (originalOffsetHeight) {
+        Object.defineProperty(
+          HTMLElement.prototype,
+          'offsetHeight',
+          originalOffsetHeight,
+        )
+      }
+      delete (document.documentElement as { clientHeight?: number })
+        .clientHeight
+      delete (document.documentElement as { clientWidth?: number }).clientWidth
+    })
+
+    const openCalendar = async (preventFlip: boolean) => {
+      const { container } = render(
+        <DatePicker
+          label="Select date"
+          placeholderText="Pick a date"
+          selected={new Date(2020, 9, 2)}
+          handleChange={jest.fn()}
+          preventFlip={preventFlip}
+        />,
+      )
+      const input = container.querySelector('input')
+      if (input) {
+        await act(async () => {
+          fireEvent.click(input)
+        })
+      }
+      const popper = container.querySelector('.react-datepicker-popper')
+      // The popper is positioned asynchronously; wait until it has moved
+      // away from its initial (0, 0) position.
+      await waitFor(() => {
+        expect(popper).toBeInTheDocument()
+        expect(popper?.getAttribute('style')).toMatch(/translate\(/)
+        expect(popper?.getAttribute('style')).not.toMatch(
+          /translate\(0px, 0px\)/,
+        )
+      })
+      return popper
+    }
+
+    it('should flip above the input when there is no room below by default', async () => {
+      const popper = await openCalendar(false)
+
+      expect(popper).toHaveAttribute('data-placement', 'top-start')
+    })
+
+    it('should stay below the input when preventFlip is set', async () => {
+      const popper = await openCalendar(true)
+
+      expect(popper).toHaveAttribute('data-placement', 'bottom-start')
+    })
+  })
 })
