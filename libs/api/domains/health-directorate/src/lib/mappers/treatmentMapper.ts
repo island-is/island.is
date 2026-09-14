@@ -44,6 +44,7 @@ export const mapTreatmentDocument = (
 ): HealthDirectorateTreatmentDocument => ({
   id: dto.id,
   title: dto.title ?? undefined,
+  groupName: dto.groupName ?? undefined,
   sentAt: dto.messageSentAt,
   links: dto.links.map((link) => ({
     label: link.label,
