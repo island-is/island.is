@@ -236,6 +236,40 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     })
   })
 
+  // The prosecution may appeal the same defendant's verdict; that appeal is the
+  // other side's and keeps the case standing when the defendant withdraws.
+  describe('the last defendant withdraws while the prosecution still appeals', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
+        {
+          defendantId,
+          eventType: AppealEventType.APPEALED,
+          userRole: UserRole.PROSECUTOR,
+          created: new Date('2026-06-05T09:00:00Z'),
+        } as AppealEventLog,
+      ])
+
+      then = await givenWhenThen(theCase, appealCase, dto)
+    })
+
+    it('should withdraw the defendant appeal but leave the appeal case standing', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: AppealEventType.APPEAL_WITHDRAWN,
+          defendantId,
+        }),
+        { transaction },
+      )
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
   describe('withdrawals that are not allowed', () => {
     it('should reject a withdrawal that names no defendant', async () => {
       const then = await givenWhenThen(theCase, appealCase, {
