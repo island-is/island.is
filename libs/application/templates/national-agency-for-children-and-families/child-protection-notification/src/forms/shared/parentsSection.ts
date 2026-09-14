@@ -17,7 +17,10 @@ import {
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
 import { parentsMessages, sharedMessages } from '../../lib/messages'
-import { getYesNoOptions } from '../../utils/childProtectionNotificationUtils'
+import {
+  getYesNoOptions,
+  getParentMessages,
+} from '../../utils/childProtectionNotificationUtils'
 import {
   doesNotKnowParentIds,
   isKnowsNationalId,
@@ -28,17 +31,35 @@ import {
 import { IS } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
+import { ParentKey } from '../../utils/types'
 
-const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
+const buildParentFields = (parentKey: ParentKey) => {
   const base = `parents.${parentKey}`
+  const knows = knowsParentIds(parentKey)
+  const doesNotKnow = doesNotKnowParentIds(parentKey)
+  const titleKey = parentKey === 'parent1' ? 'parent1Title' : 'parent2Title'
 
   return [
+    buildDescriptionField({
+      id: `${base}.title`,
+      title: ({ answers }) => getParentMessages(answers)[titleKey],
+      titleVariant: 'h3',
+      space: parentKey === 'parent2' ? 4 : 0,
+    }),
+    buildRadioField({
+      id: `${base}.knowsNationalId`,
+      title: ({ answers }) => getParentMessages(answers).radioLabel,
+      required: true,
+      width: 'half',
+      options: getYesNoOptions(),
+    }),
+
     // --- Já path: SSN lookup + email + phone ---
     buildNationalIdWithNameField({
       id: `${base}.nationalIdInfo`,
       required: false,
       searchPersons: true,
-      condition: knowsParentIds,
+      condition: knows,
     }),
     buildTextField({
       id: `${base}.nationalIdInfo.email`,
@@ -46,7 +67,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       variant: 'email',
       width: 'half',
       doesNotRequireAnswer: true,
-      condition: knowsParentIds,
+      condition: knows,
     }),
     buildPhoneField({
       id: `${base}.nationalIdInfo.phone`,
@@ -54,27 +75,30 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       width: 'half',
       enableCountrySelector: true,
       doesNotRequireAnswer: true,
-      condition: knowsParentIds,
+      condition: knows,
+    }),
+    buildAlertMessageField({
+      id: `${base}.fetchedDataInfo`,
+      alertType: 'info',
+      message: ({ answers }) => getParentMessages(answers).fetchedDataInfo,
+      condition: (answers) =>
+        knows(answers) &&
+        !!getApplicationAnswers(answers)[parentKey]?.nationalIdInfo?.name,
     }),
 
     // --- Nei path: manual name/age/gender ---
     buildDescriptionField({
       id: `${base}.nameAgeGenderTitle`,
-      title: ({ answers }) =>
-        isUnborn(answers)
-          ? parentsMessages.expectantParents.nameAgeGenderTitle
-          : isKnowsNationalId(answers)
-          ? parentsMessages.custodians.nameAgeGenderTitle
-          : parentsMessages.guardians.nameAgeGenderTitle,
+      title: ({ answers }) => getParentMessages(answers).nameAgeGenderTitle,
       titleVariant: 'h5',
       space: 4,
-      condition: doesNotKnowParentIds,
+      condition: doesNotKnow,
     }),
     buildTextField({
       id: `${base}.name`,
       title: coreMessages.name,
       doesNotRequireAnswer: true,
-      condition: doesNotKnowParentIds,
+      condition: doesNotKnow,
     }),
     buildTextField({
       id: `${base}.age`,
@@ -82,7 +106,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       width: 'half',
       variant: 'number',
       doesNotRequireAnswer: true,
-      condition: doesNotKnowParentIds,
+      condition: doesNotKnow,
     }),
     buildSelectField({
       id: `${base}.gender`,
@@ -99,21 +123,16 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
             .map((g) => ({ value: g.value ?? '', label: g.label ?? '' }))
         )
       },
-      condition: doesNotKnowParentIds,
+      condition: doesNotKnow,
     }),
 
     // --- Nei path: address ---
     buildDescriptionField({
       id: `${base}.addressTitle`,
-      title: ({ answers }) =>
-        isUnborn(answers)
-          ? parentsMessages.expectantParents.addressTitle
-          : isKnowsNationalId(answers)
-          ? parentsMessages.custodians.addressTitle
-          : parentsMessages.guardians.addressTitle,
+      title: ({ answers }) => getParentMessages(answers).addressTitle,
       titleVariant: 'h5',
       space: 4,
-      condition: doesNotKnowParentIds,
+      condition: doesNotKnow,
     }),
     buildSelectField({
       id: `${base}.country`,
@@ -125,7 +144,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
         value: c.code,
         label: c.name_is ?? c.name,
       })),
-      condition: doesNotKnowParentIds,
+      condition: doesNotKnow,
     }),
     buildSelectField({
       id: `${base}.citizenship`,
@@ -137,13 +156,13 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
         value: c.code,
         label: c.code,
       })),
-      condition: doesNotKnowParentIds,
+      condition: doesNotKnow,
     }),
     buildTextField({
       id: `${base}.address`,
       title: sharedMessages.address,
       doesNotRequireAnswer: true,
-      condition: doesNotKnowParentIds,
+      condition: doesNotKnow,
     }),
     buildTextField({
       id: `${base}.postalCode`,
@@ -151,12 +170,10 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       width: 'half',
       doesNotRequireAnswer: true,
       condition: (answers) => {
-        const parent = getApplicationAnswers(answers)[`${parentKey}`]
+        const parent = getApplicationAnswers(answers)[parentKey]
 
         return (
-          doesNotKnowParentIds(answers) &&
-          !!parent?.country &&
-          parent?.country !== IS
+          doesNotKnow(answers) && !!parent?.country && parent?.country !== IS
         )
       },
     }),
@@ -166,12 +183,10 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       width: 'half',
       doesNotRequireAnswer: true,
       condition: (answers) => {
-        const parent = getApplicationAnswers(answers)[`${parentKey}`]
+        const parent = getApplicationAnswers(answers)[parentKey]
 
         return (
-          doesNotKnowParentIds(answers) &&
-          !!parent?.country &&
-          parent?.country !== IS
+          doesNotKnow(answers) && !!parent?.country && parent?.country !== IS
         )
       },
     }),
@@ -188,12 +203,10 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
         }))
       },
       condition: (answers) => {
-        const parent = getApplicationAnswers(answers)[`${parentKey}`]
+        const parent = getApplicationAnswers(answers)[parentKey]
 
         return (
-          doesNotKnowParentIds(answers) &&
-          !!parent?.country &&
-          parent?.country === IS
+          doesNotKnow(answers) && !!parent?.country && parent?.country === IS
         )
       },
     }),
@@ -207,12 +220,12 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
         },
       ],
       condition: (answers) => {
-        const parent = getApplicationAnswers(answers)[`${parentKey}`]
+        const parent = getApplicationAnswers(answers)[parentKey]
 
         // Show only in the manual (does not know IDs) flow.
         // Interpreter is relevant only for non-Icelandic citizenship.
         return (
-          doesNotKnowParentIds(answers) &&
+          doesNotKnow(answers) &&
           !!parent?.citizenship &&
           parent?.citizenship !== IS
         )
@@ -228,12 +241,12 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
         label: l.name,
       })),
       condition: (answers) => {
-        const parent = getApplicationAnswers(answers)[`${parentKey}`]
+        const parent = getApplicationAnswers(answers)[parentKey]
 
         // Show only in the manual (does not know IDs) flow.
         // Preferred language is shown for non-Icelandic citizenship when interpreter support is requested.
         return (
-          doesNotKnowParentIds(answers) &&
+          doesNotKnow(answers) &&
           !!parent?.citizenship &&
           parent?.citizenship !== IS &&
           !!parent?.needsInterpreter?.includes(YES)
@@ -245,12 +258,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
 
 export const parentsSection = buildSection({
   id: 'parentsSection',
-  title: ({ answers }) =>
-    isUnborn(answers)
-      ? parentsMessages.expectantParents.sectionTitle
-      : isKnowsNationalId(answers)
-      ? parentsMessages.custodians.sectionTitle
-      : parentsMessages.guardians.sectionTitle,
+  title: ({ answers }) => getParentMessages(answers).sectionTitle,
   condition: showParentsSection,
   children: [
     buildMultiField({
@@ -261,95 +269,10 @@ export const parentsSection = buildSection({
           : isKnowsNationalId(answers)
           ? parentsMessages.custodians.title
           : parentsMessages.guardians.title,
-      description: ({ answers }) =>
-        isUnborn(answers)
-          ? parentsMessages.expectantParents.description
-          : isKnowsNationalId(answers)
-          ? parentsMessages.custodians.description
-          : parentsMessages.guardians.description,
+      description: ({ answers }) => getParentMessages(answers).description,
       children: [
-        buildRadioField({
-          id: 'parents.knowsParentNationalIds',
-          title: ({ answers }) =>
-            isUnborn(answers)
-              ? parentsMessages.expectantParents.radioLabel
-              : isKnowsNationalId(answers)
-              ? parentsMessages.custodians.radioLabel
-              : parentsMessages.guardians.radioLabel,
-          required: true,
-          width: 'half',
-          options: getYesNoOptions(),
-        }),
-        buildDescriptionField({
-          id: 'parents.parent1Title',
-          title: ({ answers }) =>
-            isUnborn(answers)
-              ? parentsMessages.expectantParents.parent1Title
-              : isKnowsNationalId(answers)
-              ? parentsMessages.custodians.parent1Title
-              : parentsMessages.guardians.parent1Title,
-          titleVariant: 'h5',
-          space: 4,
-          condition: knowsParentIds,
-        }),
-        buildDescriptionField({
-          id: 'parents.parent1Description',
-          title: ({ answers }) =>
-            isUnborn(answers)
-              ? parentsMessages.expectantParents.parent1Title
-              : isKnowsNationalId(answers)
-              ? parentsMessages.custodians.parent1Title
-              : parentsMessages.guardians.parent1Title,
-          description: sharedMessages.fillByBestKnowledge,
-          titleVariant: 'h3',
-          space: 4,
-          condition: doesNotKnowParentIds,
-        }),
         ...buildParentFields('parent1'),
-        buildDescriptionField({
-          id: 'parents.parent2Title',
-          title: ({ answers }) =>
-            isUnborn(answers)
-              ? parentsMessages.expectantParents.parent2Title
-              : isKnowsNationalId(answers)
-              ? parentsMessages.custodians.parent2Title
-              : parentsMessages.guardians.parent2Title,
-          titleVariant: 'h5',
-          space: 4,
-          condition: knowsParentIds,
-        }),
-        buildDescriptionField({
-          id: 'parents.parent2Description',
-          title: ({ answers }) =>
-            isUnborn(answers)
-              ? parentsMessages.expectantParents.parent2Title
-              : isKnowsNationalId(answers)
-              ? parentsMessages.custodians.parent2Title
-              : parentsMessages.guardians.parent2Title,
-          description: sharedMessages.fillByBestKnowledge,
-          titleVariant: 'h3',
-          space: 4,
-          condition: doesNotKnowParentIds,
-        }),
         ...buildParentFields('parent2'),
-        buildAlertMessageField({
-          id: 'parents.fetchedDataInfo',
-          alertType: 'info',
-          message: ({ answers }) =>
-            isUnborn(answers)
-              ? parentsMessages.expectantParents.fetchedDataInfo
-              : isKnowsNationalId(answers)
-              ? parentsMessages.custodians.fetchedDataInfo
-              : parentsMessages.guardians.fetchedDataInfo,
-          condition: (answers) => {
-            const { parent1, parent2 } = getApplicationAnswers(answers)
-            return (
-              knowsParentIds(answers) &&
-              (!!parent1?.nationalIdInfo?.name ||
-                !!parent2?.nationalIdInfo?.name)
-            )
-          },
-        }),
       ],
     }),
   ],

@@ -210,11 +210,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     getValueViaPath<string[]>(answers, 'child.manualInfo.needsInterpreter') ??
     []
 
-  const parentsKnowsNationalIds = getValueViaPath<YesOrNo>(
-    answers,
-    'parents.knowsParentNationalIds',
-  )
-
   const parent1 = getValueViaPath<Parent>(answers, 'parents.parent1')
 
   const parent2 = getValueViaPath<Parent>(answers, 'parents.parent2')
@@ -401,7 +396,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childManualMunicipalityPostalCode,
     childManualLanguage,
     childManualNeedsInterpreter,
-    parentsKnowsNationalIds,
     parent1,
     parent2,
     reasonDescription,

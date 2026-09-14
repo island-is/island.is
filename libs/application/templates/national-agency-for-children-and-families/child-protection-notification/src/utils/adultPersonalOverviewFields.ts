@@ -1,19 +1,13 @@
 import { buildOverviewField } from '@island.is/application/core'
-
 import {
   childMessages,
   childSafetyMessages,
-  parentsMessages,
   prerequisitesMessages,
   reasonForNotificationMessages,
 } from '../lib/messages'
+import { getParentMessages } from './childProtectionNotificationUtils'
+import { isNoNationalId, showParentsSection } from './conditionUtils'
 import { SHOW_REASON_FOR_NOTIFICATION_SUBSECTION } from './constants'
-import {
-  isKnowsNationalId,
-  isNoNationalId,
-  isUnborn,
-  showParentsSection,
-} from './conditionUtils'
 import {
   getChildManualItems,
   getChildSafetyItems,
@@ -21,7 +15,6 @@ import {
   getNotifierInfoItems,
   getParent1Items,
   getParent2Items,
-  getParentsPreItems,
   getReasonDescriptionItems,
   getReasonForNotificationItems,
 } from './getOverviewItems'
@@ -45,25 +38,8 @@ export const adultPersonalOverviewFields = (editable?: boolean) => [
     condition: isNoNationalId,
   }),
   buildOverviewField({
-    id: 'overview.parentsPre',
-    title: ({ answers }) =>
-      isUnborn(answers)
-        ? parentsMessages.expectantParents.sectionTitle
-        : isKnowsNationalId(answers)
-        ? parentsMessages.custodians.sectionTitle
-        : parentsMessages.guardians.sectionTitle,
-    backId: editable ? 'parents' : undefined,
-    items: getParentsPreItems,
-    condition: showParentsSection,
-  }),
-  buildOverviewField({
     id: 'overview.parent1',
-    title: ({ answers }) =>
-      isUnborn(answers)
-        ? parentsMessages.expectantParents.parent1Title
-        : isKnowsNationalId(answers)
-        ? parentsMessages.custodians.parent1Title
-        : parentsMessages.guardians.parent1Title,
+    title: ({ answers }) => getParentMessages(answers).parent1Title,
     backId: editable ? 'parents' : undefined,
     items: getParent1Items,
     hideIfEmpty: true,
@@ -71,12 +47,7 @@ export const adultPersonalOverviewFields = (editable?: boolean) => [
   }),
   buildOverviewField({
     id: 'overview.parent2',
-    title: ({ answers }) =>
-      isUnborn(answers)
-        ? parentsMessages.expectantParents.parent2Title
-        : isKnowsNationalId(answers)
-        ? parentsMessages.custodians.parent2Title
-        : parentsMessages.guardians.parent2Title,
+    title: ({ answers }) => getParentMessages(answers).parent2Title,
     backId: editable ? 'parents' : undefined,
     items: getParent2Items,
     hideIfEmpty: true,
