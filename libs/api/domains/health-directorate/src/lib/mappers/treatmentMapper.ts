@@ -33,6 +33,7 @@ export const mapTreatmentDetail = (
     title: conversation.title ?? undefined,
     lastMessageSentAt: conversation.lastMessageSentAt ?? undefined,
     senderName: conversation.senderName ?? undefined,
+    isRead: !conversation.unread,
   })),
   lastQuestionnaireSentAt: dto.lastQuestionnaireSentAt ?? undefined,
   lastDocumentSentAt: dto.lastDocumentSentAt ?? undefined,
