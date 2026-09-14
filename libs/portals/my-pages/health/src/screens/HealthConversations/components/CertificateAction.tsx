@@ -243,6 +243,7 @@ const CertificateAction = ({
           }
           cta={{
             label: formatMessage(messages.healthConversationCertificateOpen),
+            disabled: !downloadServiceURL,
             onClick: () => downloadServiceURL && formSubmit(downloadServiceURL),
           }}
         />
