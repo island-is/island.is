@@ -2020,6 +2020,22 @@ export const messages = defineMessages({
     defaultMessage: 'Áfram í greiðslu',
     id: 'sp.health:health-messages-certificate-continue-payment',
   },
+  healthConversationCertificateLockedStatus: {
+    defaultMessage: 'Læst - {amount} ógreiddar',
+    id: 'sp.health:health-messages-certificate-locked-status',
+  },
+  healthConversationCertificateLockedStatusNoAmount: {
+    defaultMessage: 'Læst - ógreitt',
+    id: 'sp.health:health-messages-certificate-locked-status-no-amount',
+  },
+  healthConversationCertificatePaidStatus: {
+    defaultMessage: 'Greitt',
+    id: 'sp.health:health-messages-certificate-paid-status',
+  },
+  healthConversationCertificateOpen: {
+    defaultMessage: 'Opna vottorð',
+    id: 'sp.health:health-messages-certificate-open',
+  },
   healthConversationCertificatePaymentInProgress: {
     defaultMessage: 'Greiðsla er í vinnslu',
     id: 'sp.health:health-messages-certificate-payment-in-progress',
@@ -2100,10 +2116,43 @@ export const messages = defineMessages({
     defaultMessage: 'Lokað fyrir ný skilaboð núna',
     id: 'sp.health:health-messages-closed-title',
   },
-  healthConversationClosedText: {
+  healthConversationClosedNowText: {
+    defaultMessage: 'Ekki er hægt að senda ný skilaboð eins og er.',
+    id: 'sp.health:health-messages-closed-now-text',
+  },
+  healthConversationClosedNextOpensText: {
     defaultMessage:
-      'Klukkan er {currentTime}. Þjónustan tekur við skilaboðum frá kl. {openTime} til kl. {closeTime}. Þú getur sent skilaboð aftur kl. {openTime} í fyrramálið.',
-    id: 'sp.health:health-messages-closed-text',
+      'Næst er hægt að senda skilaboð frá kl. {time} {when, select, today {í dag} tomorrow {á morgun} other {{date}}}.',
+    id: 'sp.health:health-messages-closed-next-opens-text',
+  },
+  healthConversationOpeningHoursTitle: {
+    defaultMessage: 'Móttökutími skilaboða',
+    id: 'sp.health:health-messages-opening-hours-title',
+  },
+  healthConversationOpeningHoursWeekdays: {
+    defaultMessage: 'Virkir dagar',
+    id: 'sp.health:health-messages-opening-hours-weekdays',
+  },
+  healthConversationOpeningHoursWeekends: {
+    defaultMessage: 'Helgar',
+    id: 'sp.health:health-messages-opening-hours-weekends',
+  },
+  healthConversationOpeningHoursHolidays: {
+    defaultMessage: 'Lögbundnir frídagar',
+    id: 'sp.health:health-messages-opening-hours-holidays',
+  },
+  healthConversationOpeningHoursClosed: {
+    defaultMessage: 'Lokað',
+    id: 'sp.health:health-messages-opening-hours-closed',
+  },
+  healthConversationRecipientClosedOption: {
+    defaultMessage:
+      'Lokað núna. {name} tekur við skilaboðum frá kl. {openTime} til {closeTime}.',
+    id: 'sp.health:health-messages-recipient-closed-option',
+  },
+  healthConversationRecipientClosedTodayOption: {
+    defaultMessage: 'Lokað núna.',
+    id: 'sp.health:health-messages-recipient-closed-today-option',
   },
   healthConversationMessagingNotAllowedTitle: {
     defaultMessage: 'Ekki hægt að senda skilaboð',
@@ -2129,6 +2178,15 @@ export const messages = defineMessages({
   healthConversationReplyBlockedMessagingNotAllowedText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
     id: 'sp.health:health-messages-reply-blocked-messaging-not-allowed-text',
+  },
+  healthConversationReplyBlockedPatientReplyNotAllowedText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-patient-reply-not-allowed-text',
+  },
+  healthConversationReplyBlockedAwaitingAcknowledgementText: {
+    defaultMessage:
+      'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda',
+    id: 'sp.health:health-messages-reply-blocked-awaiting-acknowledgement-text',
   },
   healthConversationReplyBlockedOutsideWindowText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
