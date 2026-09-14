@@ -95,6 +95,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
+      appealDefenderName
+      appealDefenderNationalId
+      appealDefenderEmail
+      appealDefenderPhoneNumber
+      isAppealDefenderConfirmed
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType

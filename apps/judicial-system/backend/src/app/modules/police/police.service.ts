@@ -24,6 +24,7 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { normalizePersonAddress } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -736,7 +737,7 @@ export class PoliceService {
         nationalId: defendant.accusedNationalId,
         name: defendant.accusedName ?? undefined,
         gender: defendant.accusedGender ?? undefined,
-        address: defendant.accusedAddress ?? undefined,
+        address: normalizePersonAddress(defendant.accusedAddress ?? undefined),
         dateOfBirth: defendant.accusedDOB ?? undefined,
         citizenship: defendant.citizenship ?? undefined,
       }))

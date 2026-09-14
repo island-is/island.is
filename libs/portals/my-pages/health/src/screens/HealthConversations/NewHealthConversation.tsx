@@ -34,6 +34,8 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { getMessagingWindowInfo } from './utils/messagingWindow'
+import { MAX_MESSAGE_LENGTH } from './utils/constants'
+import { Markdown } from '@island.is/shared/components'
 import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
 import * as styles from './HealthConversations.css'
 import {
@@ -56,8 +58,6 @@ const getRecipientKey = (recipient: {
   `${recipient.nodeId}-${recipient.groupId}${
     recipient.treatmentId ? `-${recipient.treatmentId}` : ''
   }`
-
-const MAX_MESSAGE_LENGTH = 300
 
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
@@ -134,6 +134,7 @@ const NewHealthConversation = () => {
     recipient?.allowedMessageTypes.map((t) => ({
       label: t.title,
       value: t.patientInitiatedTypeCode,
+      description: t.externalLinkUrl ? t.description ?? undefined : undefined,
     })) ?? []
 
   const selectedOption =
@@ -149,23 +150,7 @@ const NewHealthConversation = () => {
     windowClose: recipient?.messagingWindowClose,
   })
 
-  const hasWindowInfo =
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel &&
-    recipient?.patientReplyWindowDays !== undefined
-
-  const introText = recipient
-    ? hasWindowInfo
-      ? formatMessage(messages.healthConversationsNewIntroWithWindow, {
-          name: recipient.name,
-          openTime: windowInfo.windowOpenLabel,
-          closeTime: windowInfo.windowCloseLabel,
-          days: recipient.patientReplyWindowDays,
-        })
-      : formatMessage(messages.healthConversationsNewIntroWithRecipient, {
-          name: recipient.name,
-        })
-    : formatMessage(messages.healthConversationsNewIntro)
+  const introText = formatMessage(messages.healthConversationsNewIntro)
 
   const isCertificateBlocked =
     isCertificateSelected && recipient?.canRequestCertificate === false
@@ -213,6 +198,11 @@ const NewHealthConversation = () => {
     const newType = recipient?.allowedMessageTypes.find(
       (t) => t.patientInitiatedTypeCode === typeCode,
     )
+
+    if (newType?.externalLinkUrl) {
+      window.open(newType.externalLinkUrl, '_blank', 'noopener,noreferrer')
+      return
+    }
 
     setSelectedTypeCode(typeCode)
     setCertificateForm({})
@@ -406,6 +396,12 @@ const NewHealthConversation = () => {
                 </Box>
               )}
 
+              {!isCertificateSelected && selectedType?.instructions && (
+                <Box marginBottom={2} className={styles.typeInstructions}>
+                  <Markdown>{selectedType.instructions}</Markdown>
+                </Box>
+              )}
+
               {isCertificateSelected ? (
                 <CertificateRequestForm
                   formState={certificateForm}
@@ -414,6 +410,7 @@ const NewHealthConversation = () => {
                   }
                   disabled={isFormLocked}
                   hidePaymentNotice={isCertificateBlocked}
+                  instructions={selectedType?.instructions}
                 />
               ) : (
                 <Box>
@@ -437,7 +434,7 @@ const NewHealthConversation = () => {
               )}
 
               <Box
-                marginTop={4}
+                marginTop={3}
                 marginBottom={4}
                 className={styles.termsCheckbox}
               >
