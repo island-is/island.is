@@ -124,10 +124,13 @@ const IndictmentOverview: FC = () => {
       defendantsRequiringReview.every((d) => d.id) &&
       !Object.keys(originalReviewDecisions).length
     ) {
-      const decisions = defendantsRequiringReview.reduce((acc, defendant) => {
-        acc[defendant.id] = defendant.indictmentReviewDecision
-        return acc
-      }, {} as ReviewDecisions)
+      const decisions = defendantsRequiringReview.reduce<ReviewDecisions>(
+        (acc, defendant) => {
+          acc[defendant.id] = defendant.indictmentReviewDecision
+          return acc
+        },
+        {},
+      )
       setOriginalReviewDecisions(decisions)
     }
   }, [defendantsRequiringReview, originalReviewDecisions])
