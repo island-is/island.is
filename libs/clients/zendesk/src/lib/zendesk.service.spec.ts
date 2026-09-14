@@ -131,19 +131,19 @@ describe('zendeskService', () => {
     expect(ticket).toMatchObject({ id: 123 })
   })
 
-  it('should throw when the created ticket has no id', async () => {
+  it('should return undefined when the created ticket has no id', async () => {
     server.use(
       rest.post(`${api}/tickets.json`, (req, res, ctx) =>
         res.once(ctx.status(201), ctx.json({})),
       ),
     )
 
-    await expect(
-      zendeskService.createTicket({
-        message: 'Here is a message',
-        subject: 'Here is a subject',
-        requesterId: testUser.id,
-      }),
-    ).rejects.toThrow('Zendesk ticket response is missing the ticket id')
+    const ticket = await zendeskService.createTicket({
+      message: 'Here is a message',
+      subject: 'Here is a subject',
+      requesterId: testUser.id,
+    })
+
+    expect(ticket).toBeUndefined()
   })
 })
