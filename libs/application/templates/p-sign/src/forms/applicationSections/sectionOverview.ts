@@ -15,10 +15,7 @@ import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { SEND_HOME, PICK_UP } from '../../lib/constants'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { NationalRegistryAddress } from '@island.is/api/schema'
 
 export const sectionOverview = buildSection({

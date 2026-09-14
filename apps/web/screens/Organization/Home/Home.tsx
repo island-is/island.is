@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useMemo } from 'react'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'

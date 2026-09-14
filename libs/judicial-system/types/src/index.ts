@@ -20,6 +20,7 @@ export {
   InformationForDefendant,
   informationForDefendantMap,
   mapPoliceVerdictDeliveryStatus,
+  canDefendantAppealVerdict,
 } from './lib/verdict'
 
 export { CourtSessionStringType } from './lib/courtSessionString'
@@ -72,6 +73,7 @@ export {
   AppealCaseState,
   AppealCaseRulingDecision,
   AppealCaseTransition,
+  AppealCaseType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
   getStatementDeadline,
@@ -90,6 +92,7 @@ export {
   CaseFileCategory,
   HashAlgorithm,
   partyAppealFileCategories,
+  verdictAppealDeclarationFileCategories,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
   PoliceFileTypeCode,

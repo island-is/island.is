@@ -1,4 +1,6 @@
 import {
+  AppealCaseTransition,
+  AppealCaseType,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -12,6 +14,8 @@ import {
   defenderTransitionRule,
   prosecutorRepresentativeTransitionRule,
   prosecutorTransitionRule,
+  publicProsecutorStaffCreateRule,
+  publicProsecutorStaffTransitionRule,
 } from '../../guards/rolesRules'
 
 // Builds a minimal request as seen by RolesGuard after CaseExistsGuard and
@@ -299,6 +303,65 @@ describe('AppealCaseController - transition withdrawal rules', () => {
       )
 
       expect(defenderTransitionRule.canActivate?.(request)).toBe(false)
+    })
+  })
+
+  // The public prosecution office registers verdict appeals that reach it by
+  // letter or email and withdraws them again; it has no part in ruling appeals.
+  describe('public prosecution office', () => {
+    const publicProsecutorStaff = {
+      role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+      institution: { type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE },
+    }
+
+    it('may only create verdict appeals', () => {
+      expect(publicProsecutorStaffCreateRule).toEqual(
+        expect.objectContaining({
+          role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+          dtoField: 'appealType',
+          dtoFieldValues: [AppealCaseType.VERDICT],
+        }),
+      )
+    })
+
+    it('may only withdraw', () => {
+      expect(publicProsecutorStaffTransitionRule).toEqual(
+        expect.objectContaining({
+          role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+          dtoField: 'transition',
+          dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
+        }),
+      )
+    })
+
+    it('allows withdrawing a verdict appeal, whoever filed it', () => {
+      const request = buildRequest(
+        { type: CaseType.INDICTMENT },
+        {
+          appealType: AppealCaseType.VERDICT,
+          appealEventLogs: [appealed({ userRole: UserRole.DEFENDER })],
+        },
+        publicProsecutorStaff,
+      )
+
+      expect(publicProsecutorStaffTransitionRule.canActivate?.(request)).toBe(
+        true,
+      )
+    })
+
+    it('denies withdrawing a ruling appeal', () => {
+      const request = buildRequest(
+        { type: CaseType.INDICTMENT },
+        {
+          appealType: AppealCaseType.RULING,
+          appealEventLogs: [appealed({ userRole: UserRole.PROSECUTOR })],
+        },
+        publicProsecutorStaff,
+      )
+
+      expect(publicProsecutorStaffTransitionRule.canActivate?.(request)).toBe(
+        false,
+      )
     })
   })
 })

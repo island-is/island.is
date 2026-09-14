@@ -47,6 +47,9 @@ import {
   mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
+  meTreatmentControllerGetTreatmentDocumentsV1,
+  meTreatmentControllerGetTreatmentV1,
+  meTreatmentControllerGetTreatmentsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
   questionnaireControllerGetAllQuestionnairesV1,
   questionnaireControllerGetQuestionnaireDetailV1,
@@ -82,6 +85,9 @@ import {
   RenewalTargetDto,
   SubmitQuestionnaireDto,
   SubmitQuestionnaireResponseDto,
+  TreatmentBaseDto,
+  TreatmentDetailDto,
+  TreatmentDocumentDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
 
@@ -803,5 +809,45 @@ export class HealthDirectorateHealthService {
     )
 
     return intent ?? null
+  }
+
+  /* Treatments */
+
+  public async getTreatments(auth: Auth): Promise<TreatmentBaseDto[] | null> {
+    const treatments = await withAuthContext(auth, () =>
+      data(meTreatmentControllerGetTreatmentsV1()),
+    )
+
+    return treatments ?? null
+  }
+
+  public async getTreatment(
+    auth: Auth,
+    id: string,
+  ): Promise<TreatmentDetailDto | null> {
+    const treatment = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meTreatmentControllerGetTreatmentV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return treatment ?? null
+  }
+
+  public async getTreatmentDocuments(
+    auth: Auth,
+    id: string,
+  ): Promise<TreatmentDocumentDto[] | null> {
+    const documents = await withAuthContext(auth, () =>
+      data(
+        meTreatmentControllerGetTreatmentDocumentsV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return documents ?? null
   }
 }

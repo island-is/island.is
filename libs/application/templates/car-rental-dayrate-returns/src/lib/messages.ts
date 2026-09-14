@@ -1,6 +1,19 @@
 import { defineMessages } from 'react-intl'
 
 export const serviceErrors = {
+  noVehiclesFound: defineMessages({
+    title: {
+      id: 'rsk.crdr.application:serviceErrors.noVehiclesFound.title',
+      defaultMessage: 'Engin ökutæki skráð á daggjald fundust',
+      description: 'Title shown when the applicant has no day rate vehicles',
+    },
+    summary: {
+      id: 'rsk.crdr.application:serviceErrors.noVehiclesFound.summary',
+      defaultMessage:
+        'Engin ökutæki skráð á daggjald fundust fyrir tímabilið {period}.',
+      description: 'Summary shown when the applicant has no day rate vehicles',
+    },
+  }),
   alreadyReported: defineMessages({
     title: {
       id: 'rsk.crdr.application:serviceErrors.alreadyReported.title',

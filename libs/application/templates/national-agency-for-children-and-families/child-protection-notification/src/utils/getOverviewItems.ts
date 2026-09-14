@@ -11,9 +11,10 @@ import {
 } from '@island.is/application/types'
 import {
   formatPhoneNumber,
+  getCountryByCode,
+  getLanguageByCode,
   removeCountryCode,
-} from '@island.is/application/ui-components'
-import { getCountryByCode, getLanguageByCode } from '@island.is/shared/utils'
+} from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import {

@@ -266,6 +266,7 @@ export class DefendantService {
       caseId: string
       defendantId: string
       eventType: DefendantEventType
+      verdictId?: string
       user?: User
     },
     transaction: Transaction,
@@ -277,6 +278,7 @@ export class DefendantService {
         event.defendantId,
         event.user,
         transaction,
+        ...(event.verdictId ? [{ verdictId: event.verdictId }] : []),
       )
 
       return

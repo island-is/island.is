@@ -9,7 +9,6 @@ import {
   VehiclePlateOrderingClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehiclePlateRenewalClient } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
-import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import {
   BasicVehicleInformationDto,
   VehicleSearchApi,
@@ -36,6 +35,7 @@ import {
 import { GraphQLError } from 'graphql'
 import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
+import { isDefined } from '@island.is/shared/utils'
 import { ExemptionForTransportationClient } from '@island.is/clients/transport-authority/exemption-for-transportation'
 
 @Injectable()
@@ -47,7 +47,6 @@ export class TransportAuthorityApi {
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
     private readonly vehiclePlateRenewalClient: VehiclePlateRenewalClient,
     private readonly exemptionForTransportationClient: ExemptionForTransportationClient,
-    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
   ) {}
@@ -73,24 +72,52 @@ export class TransportAuthorityApi {
     return { exists: hasActiveCard }
   }
 
-  private async fetchVehicleDataForOwnerCoOwner(auth: User, permno: string) {
-    const result = await this.vehiclesApiWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
-      permno: permno,
-      showOwned: true,
-      showCoowned: true,
-      showOperated: false,
-    })
-    if (!result || !result.data || result.data.length === 0) {
+  /* Samgongustofa derive the kennitala from the bearer token, so no match here
+   * means the user holds none of the requested roles on that permno. */
+  private async fetchVehicleDataForRoles(
+    auth: User,
+    permno: string,
+    roles: { owned: boolean; coOwned: boolean; operated: boolean },
+  ) {
+    const wanted = permno?.trim().toLowerCase()
+
+    const result = wanted
+      ? await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          permno: permno,
+          showOwned: roles.owned,
+          showCoowned: roles.coOwned,
+          showOperated: roles.operated,
+        })
+      : undefined
+
+    const vehicle = result?.data?.find(
+      (v) => v.permno?.trim().toLowerCase() === wanted,
+    )
+
+    if (!vehicle) {
+      const allowedRoles = [
+        roles.owned ? 'owner' : undefined,
+        roles.coOwned ? 'co-owner' : undefined,
+        roles.operated ? 'operator' : undefined,
+      ]
+        .filter(isDefined)
+        .join(' or ')
       throw Error(
-        'Did not find the vehicle with that permno, or you are neither owner nor co-owner of the vehicle',
+        `Did not find the vehicle with that permno, or you are not ${allowedRoles} of the vehicle`,
       )
     }
 
-    const vehicle = result.data[0]
-
     return { vehicle }
+  }
+
+  private async fetchVehicleDataForOwnerCoOwner(auth: User, permno: string) {
+    return this.fetchVehicleDataForRoles(auth, permno, {
+      owned: true,
+      coOwned: true,
+      operated: false,
+    })
   }
 
   private async fetchVehicleDataAndMileageForOwnerCoOwner(
@@ -273,11 +300,7 @@ export class TransportAuthorityApi {
     const { vehicle, mileageReadings } =
       await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
-    // Get debt status
-    const debtStatus =
-      await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(auth, permno)
-
-    // Get owner change validation
+    // Get operator change validation
     const operatorChangeValidation =
       await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
         auth,
@@ -285,7 +308,7 @@ export class TransportAuthorityApi {
       )
 
     return {
-      isDebtLess: debtStatus.isDebtLess,
+      isDebtLess: true,
       validationErrorMessages: operatorChangeValidation?.hasError
         ? operatorChangeValidation.errorMessages
         : null,
@@ -342,6 +365,12 @@ export class TransportAuthorityApi {
     auth: User,
     permno: string,
   ): Promise<VehiclePlateOrderChecksByPermno | null | GraphQLError> {
+    await this.fetchVehicleDataForRoles(auth, permno, {
+      owned: true,
+      coOwned: false,
+      operated: false,
+    })
+
     // Get basic information about vehicle
     const vehicleInfo = await this.vehiclesApiWithAuth(
       auth,
@@ -471,10 +500,35 @@ export class TransportAuthorityApi {
     }
   }
 
+  async getMyVehicleMilesInfoByPermno(
+    auth: User,
+    permno: string,
+  ): Promise<BasicVehicleInformation | null | GraphQLError> {
+    const { vehicle } = await this.fetchVehicleDataForRoles(auth, permno, {
+      owned: true,
+      coOwned: true,
+      operated: true,
+    })
+
+    return {
+      permno: vehicle.permno,
+      // Note: subModel (vehcom+speccom) has already been added to this field
+      make: vehicle.make,
+      color: vehicle.colorName,
+      vehicleHasMilesOdometer: vehicle.vehicleHasMilesOdometer ?? false,
+    }
+  }
+
   async getBasicVehicleInfoByPermno(
     auth: User,
     permno: string,
   ): Promise<BasicVehicleInformation | null> {
+    await this.fetchVehicleDataForRoles(auth, permno, {
+      owned: true,
+      coOwned: true,
+      operated: false,
+    })
+
     try {
       const vehicle = await this.vehiclesApiWithAuth(
         auth,

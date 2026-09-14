@@ -25,7 +25,8 @@ import {
   Injectable,
 } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
-import { PATIENT_PERMIT_CODE } from './constants'
+import { IntlService } from '@island.is/cms-translations'
+import { NAMESPACE, PATIENT_PERMIT_CODE } from './constants'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
@@ -53,6 +54,8 @@ import {
   mapVaccinationStatus,
 } from './mappers/basicInformationMapper'
 import {
+  getWebChatConversationType,
+  WEB_CHAT_TYPE_CODE,
   mapConversationMessageContent,
   mapMessagingRecipient,
   toConversationDirectionEnum,
@@ -99,6 +102,14 @@ import { PrescriptionRenewalTarget } from './models/renewalTarget.model'
 import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import { HealthDirectorateTreatment } from './models/treatment.model'
+import { HealthDirectorateTreatmentDetail } from './models/treatmentDetail.model'
+import { HealthDirectorateTreatmentDocument } from './models/treatmentDocument.model'
+import {
+  mapTreatment,
+  mapTreatmentDetail,
+  mapTreatmentDocument,
+} from './mappers/treatmentMapper'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
@@ -122,6 +133,7 @@ export class HealthDirectorateService {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
+    private readonly intlService: IntlService,
   ) {}
 
   /* Organ Donation */
@@ -741,6 +753,7 @@ export class HealthDirectorateService {
         item.canCancel,
         item.canCancelBefore,
       ),
+      canCancelBefore: item.canCancelBefore,
     }
   }
 
@@ -820,9 +833,43 @@ export class HealthDirectorateService {
       replyBlockedReason: toConversationReplyBlockedReasonEnum(
         c.replyBlockedReason,
       ),
+      messagingWindowOpen: c.messagingWindowOpen ?? undefined,
+      messagingWindowClose: c.messagingWindowClose ?? undefined,
+      patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
+  }
+
+  /* Treatments */
+
+  async getTreatments(
+    auth: Auth,
+  ): Promise<HealthDirectorateTreatment[] | null> {
+    const items = await this.healthApi.getTreatments(auth)
+    if (!items) return null
+
+    return items.map(mapTreatment)
+  }
+
+  async getTreatment(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateTreatmentDetail | null> {
+    const treatment = await this.healthApi.getTreatment(auth, id)
+    if (!treatment) return null
+
+    return mapTreatmentDetail(treatment)
+  }
+
+  async getTreatmentDocuments(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateTreatmentDocument[] | null> {
+    const documents = await this.healthApi.getTreatmentDocuments(auth, id)
+    if (!documents) return null
+
+    return documents.map(mapTreatmentDocument)
   }
 
   async getHealthConversations(
@@ -865,9 +912,18 @@ export class HealthDirectorateService {
     auth: Auth,
     input: HealthDirectorateCreateConversationInput,
   ): Promise<HealthDirectorateHealthConversationDetail | null> {
+    // The web chat entry is advertised in allowedMessageTypes but is an
+    // external link, not a conversation type Hekla knows about.
+    if (input.patientInitiatedTypeCode === WEB_CHAT_TYPE_CODE) {
+      throw new BadRequestException(
+        'patientInitiatedTypeCode is not a valid conversation type',
+      )
+    }
+
     const body: CreateConversationRequestDto = {
       nodeId: input.nodeId,
       groupId: input.groupId,
+      treatmentId: input.treatmentId ?? undefined,
       patientInitiatedTypeCode: input.patientInitiatedTypeCode,
       title: input.title ?? '',
       messageTextContent: input.messageTextContent,
@@ -926,7 +982,21 @@ export class HealthDirectorateService {
     const items = await this.healthApi.getMessagingRecipients(auth, locale)
     if (!items) return null
 
-    return items.map(mapMessagingRecipient)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
+    const webChat = getWebChatConversationType(formatMessage)
+    // A link-out entry without a link is useless and would render as a
+    // broken regular option — skip it if the URL was blanked in Contentful.
+    if (!webChat.externalLinkUrl) {
+      return items.map((item) => mapMessagingRecipient(item, formatMessage))
+    }
+
+    return items.map((item) => {
+      const recipient = mapMessagingRecipient(item, formatMessage)
+      return {
+        ...recipient,
+        allowedMessageTypes: [...recipient.allowedMessageTypes, webChat],
+      }
+    })
   }
 
   /* Certificates */
@@ -942,6 +1012,7 @@ export class HealthDirectorateService {
     const body: CreateCertificateRequestBody = {
       nodeId: input.nodeId,
       groupId: input.groupId,
+      treatmentId: input.treatmentId ?? undefined,
       certificateType: toCertificateTypeCode(input.certificateType),
       recipientName: input.recipientName,
       startDate: input.startDate,

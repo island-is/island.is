@@ -27,10 +27,6 @@ import {
   ExemptionForTransportationClientModule,
 } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import {
-  VehicleServiceFjsV1ClientConfig,
-  VehicleServiceFjsV1ClientModule,
-} from '@island.is/clients/vehicle-service-fjs-v1'
-import {
   VehiclesClientModule,
   VehiclesClientConfig,
 } from '@island.is/clients/vehicles'
@@ -47,7 +43,6 @@ import {
     VehiclePlateOrderingClientModule,
     VehiclePlateRenewalClientModule,
     ExemptionForTransportationClientModule,
-    VehicleServiceFjsV1ClientModule,
     VehiclesClientModule,
     VehiclesMileageClientModule,
     ConfigModule.forRoot({
@@ -59,7 +54,6 @@ import {
         VehiclePlateOrderingClientConfig,
         VehiclePlateRenewalClientConfig,
         ExemptionForTransportationClientConfig,
-        VehicleServiceFjsV1ClientConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,
       ],

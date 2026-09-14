@@ -11,6 +11,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   AppealDecisionPartyRole,
   AppealEventType,
   AppealOrigin,
@@ -175,6 +176,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
+          appealType: AppealCaseType.RULING,
           appealState: AppealCaseState.APPEALED,
           rulingFileId,
           appealDate: endDate,

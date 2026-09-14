@@ -19,17 +19,6 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
-
-    // Information for Ukrainian citizens
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7GtuCCd7MEZhZKe0oXcHdb
-    '7GtuCCd7MEZhZKe0oXcHdb': {
-      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: true,
-      carbonTheme: 'g10',
-      namespaceKey: 'ukrainian-citizens',
-    },
   },
   en: {
     // Test page for Watson chat bot
@@ -41,17 +30,6 @@ export const watsonConfig: Record<
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
-    },
-
-    // Information for Ukrainian citizens
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7GtuCCd7MEZhZKe0oXcHdb
-    '7GtuCCd7MEZhZKe0oXcHdb': {
-      integrationID: '9e320784-ad44-4da9-9eb3-f305057a196a',
-      region: 'eu-gb',
-      serviceInstanceID: '2529638b-503c-4374-955c-0310139ec177',
-      showLauncher: true,
-      carbonTheme: 'g10',
-      namespaceKey: 'ukrainian-citizens',
     },
   },
 }

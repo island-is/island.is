@@ -67,6 +67,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'user-1',
         prosecutorId: 'other',
+        indictmentApproverId: null,
         judgeId: null,
         registrarId: null,
       } as unknown as Case
@@ -78,6 +79,19 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'other',
         prosecutorId: 'user-1',
+        indictmentApproverId: null,
+        judgeId: null,
+        registrarId: null,
+      } as unknown as Case
+      expect(isMyCase(theCase, user)).toBe(true)
+    })
+
+    it('returns true for prosecution user when they are indictment approver', () => {
+      const user = prosecutionUser('user-1')
+      const theCase = {
+        creatingProsecutorId: 'other',
+        prosecutorId: 'other2',
+        indictmentApproverId: 'user-1',
         judgeId: null,
         registrarId: null,
       } as unknown as Case
@@ -89,6 +103,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'other',
         prosecutorId: 'other2',
+        indictmentApproverId: 'other3',
         judgeId: null,
         registrarId: null,
       } as unknown as Case
@@ -100,6 +115,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
+        indictmentApproverId: null,
         judgeId: 'judge-1',
         registrarId: null,
       } as unknown as Case
@@ -111,6 +127,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
+        indictmentApproverId: null,
         judgeId: null,
         registrarId: 'reg-1',
       } as unknown as Case
@@ -122,6 +139,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
+        indictmentApproverId: null,
         judgeId: 'other',
         registrarId: 'other2',
       } as unknown as Case
@@ -184,8 +202,11 @@ describe('caseTable.utils', () => {
   })
 
   describe('canDeleteIndictmentCase', () => {
-    it('returns true for DRAFT and WAITING_FOR_CONFIRMATION', () => {
+    it('returns true for DRAFT, WAITING_FOR_REVIEW, and WAITING_FOR_CONFIRMATION', () => {
       expect(canDeleteIndictmentCase({ state: CaseState.DRAFT })).toBe(true)
+      expect(
+        canDeleteIndictmentCase({ state: CaseState.WAITING_FOR_REVIEW }),
+      ).toBe(true)
       expect(
         canDeleteIndictmentCase({ state: CaseState.WAITING_FOR_CONFIRMATION }),
       ).toBe(true)

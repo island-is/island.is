@@ -152,6 +152,21 @@ export class BankTransferService {
       throw error
     }
 
+    // Blikk can return 200 for a payment that is already terminal, with its reason in `message`.
+    if (isBankTransferFailureStatus(providerResult.status)) {
+      this.logger.warn(
+        `${createLogPrefix(
+          input.paymentFlowId,
+          correlationId,
+          providerResult.providerPaymentId,
+        )}Bank transfer created already ${providerResult.status}`,
+        {
+          rawStatus: providerResult.rawStatus,
+          providerMessage: providerResult.message,
+        },
+      )
+    }
+
     try {
       await this.bankTransferPaymentModel.create({
         id: correlationId,
@@ -653,6 +668,11 @@ export class BankTransferService {
       return this.toResult(await this.blikkClient.createPayment(body))
     } catch (e) {
       if (e instanceof BlikkClientError) {
+        // Joins the flow to Blikk's reason (in e.message); the thrown code is deliberately generic.
+        this.logger.error(
+          `[${input.paymentFlowId}][correlationId: ${input.correlationId}] Blikk create payment failed`,
+          { status: e.status, error: e.message },
+        )
         throw new BadRequestException(
           BankTransferErrorCode.FailedToCreateBankTransfer,
         )
@@ -668,6 +688,13 @@ export class BankTransferService {
       return this.toResult(await this.blikkClient.getPayment(providerPaymentId))
     } catch (e) {
       if (e instanceof BlikkClientError) {
+        // A 4xx (e.g. 404 on a stale row) is routine; a 5xx or transport failure is not.
+        const level =
+          e.status !== undefined && e.status < 500 ? 'warn' : 'error'
+        this.logger[level](
+          `[rrn: ${providerPaymentId}] Blikk get payment failed`,
+          { providerPaymentId, status: e.status, error: e.message },
+        )
         throw new BadRequestException(
           BankTransferErrorCode.FailedToFetchBankTransfer,
         )
@@ -947,7 +974,7 @@ export class BankTransferService {
         if (e.status !== undefined) {
           this.logger.warn(
             `${logPrefix}Blikk refused to cancel — SCA session still live`,
-            { providerPaymentId, status: e.status },
+            { providerPaymentId, status: e.status, error: e.message },
           )
           return false
         }
@@ -955,7 +982,7 @@ export class BankTransferService {
 
       this.logger.warn(
         `${logPrefix}Could not reach Blikk to cancel — leaving attempt live`,
-        { providerPaymentId },
+        { providerPaymentId, error: (e as Error)?.message },
       )
       throw new BadRequestException(
         BankTransferErrorCode.FailedToFetchBankTransfer,

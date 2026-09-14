@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'hms-application-system',
   preset: '../../../jest.preset.js',

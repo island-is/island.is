@@ -2188,7 +2188,7 @@
     },
     "/v1/me/appointments/{id}/cancel": {
       "post": {
-        "description": "Ask the provider to cancel this appointment. 200 means the request reached the provider; there is no response body because the outcome is not tracked. canCancel stays true until the provider moves the appointment out of BOOKED, so a repeat request is accepted. Also returns 404 (not found, or not this patient), 409 (blocked, with an errorCode from AppointmentCancellationBlockedReason), 502 (the provider rejected the send) and 504 (the send timed out).",
+        "description": "Cancel an appointment. 200: appointment cancelled, 409: request blocked or refused.",
         "operationId": "MeAppointmentController_cancelAppointment_v1",
         "parameters": [
           {
@@ -2204,7 +2204,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelAppointmentResponseDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "",
@@ -2251,7 +2258,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
+                  "$ref": "#/components/schemas/CancelAppointmentConflictDto"
                 }
               }
             }
@@ -2643,7 +2650,7 @@
         "tags": ["Conversations"]
       },
       "post": {
-        "description": "Create a new patient-initiated conversation with an initial message and optional attachments.",
+        "description": "Create a new patient-initiated conversation with an initial message and optional attachments. Returns 504 (with `errorCode` `ACK_NOT_CONFIRMED` from `MessagingSubmitFailureReason`) when the provider does not acknowledge the message within the wait: the message was sent and may well have been delivered, it is kept but not shown until the acknowledgement arrives, and repeating the request unchanged waits again.",
         "operationId": "MeConversationController_createConversation_v1",
         "parameters": [],
         "requestBody": {
@@ -2937,7 +2944,7 @@
     },
     "/v1/me/conversations/{id}/messages": {
       "post": {
-        "description": "Append a patient reply to an existing conversation.",
+        "description": "Append a patient reply to an existing conversation. Returns 504 (with `errorCode` `ACK_NOT_CONFIRMED` from `MessagingSubmitFailureReason`) when the provider does not acknowledge the reply within the wait: the reply was sent and may well have been delivered, it is kept but not shown until the acknowledgement arrives, and repeating the request unchanged waits again.",
         "operationId": "MeConversationController_replyToConversation_v1",
         "parameters": [
           {
@@ -5552,7 +5559,7 @@
           },
           "errorCode": {
             "type": "string",
-            "description": "Why a 409 was refused, so the client can tell the reasons apart rather than showing one generic message. Values come from the refusing endpoint: AppointmentCancellationBlockedReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Absent on every other status."
+            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
           },
           "resourceType": {
             "type": "string",
@@ -5926,6 +5933,10 @@
           "groupId": {
             "type": "number",
             "description": "Hekla groupId of the recipient. Defaults to the patient primary care sagaGroupId."
+          },
+          "treatmentId": {
+            "type": "string",
+            "description": "Which care team at this nodeId + groupId the renewal is for, taken from the renewal targets list. Required only when the pair carries more than one care team and no clinic; omitted, a clinic at the pair wins and a lone care team is still used."
           }
         }
       },
@@ -5943,6 +5954,10 @@
           },
           "description": {
             "type": "string"
+          },
+          "treatmentId": {
+            "type": "string",
+            "description": "Set when this target is one of the patient care teams, absent when it is a clinic. A care team and a clinic can share one nodeId + groupId and are then two entries here, so key the list on all three fields and send this value back when renewing. It is the same id GET /me/treatments returns."
           }
         },
         "required": ["groupId", "nodeId", "name"]
@@ -6238,12 +6253,13 @@
           },
           "sender": {
             "type": "string",
-            "description": "Name of the sender of the questionnaire"
+            "nullable": true,
+            "description": "Name of the sender of the questionnaire; for questionnaires loaded from Heilsuvera the provider's `name, profession, department` string"
           },
           "senderGroupName": {
             "type": "string",
-            "description": "Name of the sender group of the questionnaire",
-            "nullable": true
+            "nullable": true,
+            "description": "Name of the sender group of the questionnaire, resolved from the sending node and group when the request carried no group name"
           },
           "createdDate": {
             "format": "date-time",
@@ -6282,7 +6298,7 @@
             "type": "boolean"
           }
         },
-        "required": ["questionnaireId", "sender", "numSubmitted", "hasDraft"]
+        "required": ["questionnaireId", "numSubmitted", "hasDraft"]
       },
       "QuestionType": {
         "type": "string",
@@ -7203,12 +7219,13 @@
           },
           "sender": {
             "type": "string",
-            "description": "Name of the sender of the questionnaire"
+            "nullable": true,
+            "description": "Name of the sender of the questionnaire; for questionnaires loaded from Heilsuvera the provider's `name, profession, department` string"
           },
           "senderGroupName": {
             "type": "string",
-            "description": "Name of the sender group of the questionnaire",
-            "nullable": true
+            "nullable": true,
+            "description": "Name of the sender group of the questionnaire, resolved from the sending node and group when the request carried no group name"
           },
           "createdDate": {
             "format": "date-time",
@@ -7322,7 +7339,6 @@
         },
         "required": [
           "questionnaireId",
-          "sender",
           "numSubmitted",
           "hasDraft",
           "daysBetweenReplies",
@@ -8278,6 +8294,27 @@
         },
         "required": ["type", "url"]
       },
+      "AppointmentCancellationDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["CANCELLED", "REJECTED"],
+            "description": "CANCELLED or REJECTED."
+          },
+          "requestedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the patient asked for the cancellation"
+          },
+          "rejectionReasonCode": {
+            "type": "string",
+            "nullable": true,
+            "description": "The provider's reason code for a refusal, stored as sent. Null in every response until the provider starts sending one."
+          }
+        },
+        "required": ["status", "requestedAt"]
+      },
       "AppointmentDetailDto": {
         "type": "object",
         "properties": {
@@ -8346,6 +8383,15 @@
             "format": "date-time",
             "type": "string",
             "description": "Deadline after which cancellation is no longer accepted"
+          },
+          "cancellation": {
+            "nullable": true,
+            "description": "The cancellation the patient asked for, or null when none was requested",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AppointmentCancellationDto"
+              }
+            ]
           }
         },
         "required": [
@@ -8358,6 +8404,83 @@
           "assignees",
           "canCancel"
         ]
+      },
+      "CancelAppointmentResponseDto": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The id correlating this request with the provider’s reply. Worth quoting in a support question."
+          },
+          "requestedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["CANCELLED"],
+            "description": "Always CANCELLED: this response exists only when the provider agreed. A refusal is a 409 carrying CANCELLATION_REFUSED, no answer is a 504 carrying ACK_NOT_CONFIRMED."
+          }
+        },
+        "required": ["conversationId", "requestedAt", "status"]
+      },
+      "CancelAppointmentConflictReason": {
+        "type": "string",
+        "enum": [
+          "NOT_CANCELLABLE",
+          "CANCELLATION_DEADLINE_PASSED",
+          "UNSUPPORTED_CANCEL_METHOD",
+          "INVALID_STATUS",
+          "CANCELLATION_REFUSED"
+        ],
+        "description": "CANCELLATION_REFUSED means the provider answered and said no. The rest are refusals made before anything was sent."
+      },
+      "CancelAppointmentConflictDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "A URI reference that identifies the problem type",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HttpProblemType"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          },
+          "errorCode": {
+            "description": "CANCELLATION_REFUSED means the provider answered and said no. The rest are refusals made before anything was sent.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CancelAppointmentConflictReason"
+              }
+            ]
+          },
+          "resourceType": {
+            "type": "string",
+            "description": "What a 402 wants paid for, so the client can open a payment intent for it. Values come from PaymentResourceType. Absent on every other status."
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "The id of the resource a 402 wants paid for. Absent on every other status."
+          }
+        },
+        "required": ["type", "title"]
       },
       "ConsentCountryDto": {
         "type": "object",
@@ -8525,7 +8648,13 @@
             "type": "string"
           },
           "lastSenderGroupName": {
-            "type": "string"
+            "type": "string",
+            "description": "The group the thread belongs to.",
+            "deprecated": true
+          },
+          "groupName": {
+            "type": "string",
+            "description": "The group the thread belongs to."
           },
           "organizationNationalId": {
             "type": "string",
@@ -8537,7 +8666,7 @@
           },
           "departmentName": {
             "type": "string",
-            "description": "Name of the HCP department within the organization, when the resolved mapping row is group-specific."
+            "description": "Name of the HCP department within the organization, as the sender named it on the message, falling back to the resolved group-specific mapping row."
           },
           "hasAttachment": {
             "type": "boolean"
@@ -8714,12 +8843,12 @@
           },
           "amountIsk": {
             "type": "number",
-            "description": "Price the patient would be charged, in ISK. Populated only when `requiresPayment` is true."
+            "description": "Price the patient would be charged, in ISK. Populated only when `requiresPayment` is true. Absent when the issuing HCP cannot be resolved."
           },
           "pendingPaymentId": {
             "type": "string",
             "format": "uuid",
-            "description": "A payment the patient has already started for this certificate and which has not yet expired. Render \"greiðsla í vinnslu\" and poll `GET /v1/me/certificates/{certificateId}` rather than sending them back to the gateway — they may have paid in a tab we cannot see. **A UI hint only:** access is decided by `paid` and nothing else, and this field must never be used to serve a gated resource."
+            "description": "An unpaid intent this patient has open on the certificate. Not time-bounded: it persists until the certificate is paid for, so its presence does not mean a payment is in flight. `POST /v1/me/certificates/{certificateId}/payment-intent` resumes it, returning this same `paymentId` and a byte-identical payment-page URL. A UI hint: access is decided by `paid` alone."
           },
           "attachments": {
             "type": "array",
@@ -8762,7 +8891,13 @@
             "type": "string"
           },
           "lastSenderGroupName": {
-            "type": "string"
+            "type": "string",
+            "description": "The group the thread belongs to.",
+            "deprecated": true
+          },
+          "groupName": {
+            "type": "string",
+            "description": "The group the thread belongs to."
           },
           "organizationNationalId": {
             "type": "string",
@@ -8774,7 +8909,7 @@
           },
           "departmentName": {
             "type": "string",
-            "description": "Name of the HCP department within the organization, when the resolved mapping row is group-specific."
+            "description": "Name of the HCP department within the organization, as the sender named it on the message, falling back to the resolved group-specific mapping row."
           },
           "hasAttachment": {
             "type": "boolean"
@@ -8797,6 +8932,18 @@
                 "$ref": "#/components/schemas/ConversationReplyBlockedReason"
               }
             ]
+          },
+          "messagingWindowOpen": {
+            "type": "string",
+            "description": "When the recipient starts accepting messages, as `HH:mm:ss` in UTC."
+          },
+          "messagingWindowClose": {
+            "type": "string",
+            "description": "When the recipient stops accepting messages, as `HH:mm:ss` in UTC."
+          },
+          "patientReplyWindowDays": {
+            "type": "number",
+            "description": "How long the thread accepts replies, in 24-hour periods from the newest `STAFF` message in `messages`."
           },
           "unread": {
             "type": "boolean",
@@ -8850,7 +8997,7 @@
           },
           "errorCode": {
             "type": "string",
-            "description": "Why a 409 was refused, so the client can tell the reasons apart rather than showing one generic message. Values come from the refusing endpoint: AppointmentCancellationBlockedReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Absent on every other status."
+            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
           },
           "resourceType": {
             "type": "string",
@@ -8915,6 +9062,10 @@
           },
           "groupId": {
             "type": "number"
+          },
+          "treatmentId": {
+            "type": "string",
+            "description": "Which care team at this nodeId + groupId the message is for, taken from the recipient list. Required only when the pair carries more than one care team and no clinic; omitted, a clinic at the pair wins and a lone care team is still used. The thread is filed under the care team named."
           },
           "patientInitiatedTypeCode": {
             "type": "string",
@@ -9018,6 +9169,10 @@
             "type": "string",
             "description": "HCP / care team display name."
           },
+          "treatmentId": {
+            "type": "string",
+            "description": "Set when this recipient is one of the patient care teams, absent when it is a clinic. A care team and a clinic can share one nodeId + groupId and are then two entries here, so **key the list on all three fields** and send this value back on create to say which was chosen. It is the same id GET /me/treatments returns."
+          },
           "allowsMessaging": {
             "type": "boolean"
           },
@@ -9094,6 +9249,10 @@
           },
           "groupId": {
             "type": "number"
+          },
+          "treatmentId": {
+            "type": "string",
+            "description": "Which care team at this nodeId + groupId the request is for, taken from the messaging recipient list. Required only when the pair carries more than one care team and no clinic; omitted, a clinic at the pair wins and a lone care team is still used."
           },
           "certificateType": {
             "description": "Certificate type code.",
@@ -9240,14 +9399,13 @@
         "properties": {
           "returnUrl": {
             "type": "string",
-            "description": "FE-owned URL the gateway redirects the patient's browser to after a successful charge. Forwarded to the gateway as PaymentSuccessfulURL. The host must appear in PAYMENT_RETURN_URL_ALLOWED_HOSTS; anything else is rejected with a 400."
+            "description": "FE-owned URL the gateway redirects the patient's browser to after a successful charge. Forwarded to the gateway as PaymentSuccessfulURL. The host must appear in PAYMENT_RETURN_URL_ALLOWED_HOSTS; anything else is rejected with a 400. Without it the gateway shows its own receipt page with no return link."
           },
           "cancelUrl": {
             "type": "string",
             "description": "FE-owned URL the gateway returns the patient's browser to if they abandon the payment, forwarded as PaymentCancelledURL. Also used when the gateway session times out. Defaults to returnUrl when omitted, and its host is allowlisted the same way."
           }
-        },
-        "required": ["returnUrl"]
+        }
       },
       "PaymentIntentDto": {
         "type": "object",
@@ -9855,7 +10013,7 @@
       "AllowedInteraction": {
         "type": "string",
         "enum": ["messaging", "prescription", "both"],
-        "description": "What the patient may do within this treatment. **Do not offer messaging unless this field is present and permits it.** It is omitted when the provider sends an interaction code this service does not map, and messaging is withheld — the field omitted, or narrowed from \"both\" to \"prescription\" — when the treatment cannot be addressed, which the client has no other way to detect."
+        "description": "What the patient may do within this treatment. **Do not offer an interaction unless this field is present and permits it.** It is omitted when the provider sends an interaction code this service does not map, and omitted whatever the code says when the treatment carries no Hekla node and integer group — a message and a prescription renewal are both addressed to that pair, so neither can be delivered. The client has no other way to detect that, because the group is never published."
       },
       "TreatmentBaseDto": {
         "type": "object",
@@ -9870,10 +10028,10 @@
           },
           "responsibleNode": {
             "type": "string",
-            "description": "The Hekla node of the provider responsible for the treatment. Optional because the provider may send the element empty or omit it; when it is absent the organisation fields below cannot be resolved either, and allowedInteractions will not offer messaging."
+            "description": "The Hekla node of the provider responsible for the treatment. Optional because the provider may send the element empty or omit it; when it is absent the organisation fields below cannot be resolved either, and allowedInteractions is omitted entirely."
           },
           "allowedInteractions": {
-            "description": "What the patient may do within this treatment. **Do not offer messaging unless this field is present and permits it.** It is omitted when the provider sends an interaction code this service does not map, and messaging is withheld — the field omitted, or narrowed from \"both\" to \"prescription\" — when the treatment cannot be addressed, which the client has no other way to detect.",
+            "description": "What the patient may do within this treatment. **Do not offer an interaction unless this field is present and permits it.** It is omitted when the provider sends an interaction code this service does not map, and omitted whatever the code says when the treatment carries no Hekla node and integer group — a message and a prescription renewal are both addressed to that pair, so neither can be delivered. The client has no other way to detect that, because the group is never published.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/AllowedInteraction"
@@ -9913,10 +10071,14 @@
           },
           "senderName": {
             "type": "string",
-            "description": "The group that last wrote to the patient. Absent until a clinician has written — a patient reply does not clear it."
+            "description": "The provider group the thread belongs to."
+          },
+          "unread": {
+            "type": "boolean",
+            "description": "Whether the patient has not yet read the newest message."
           }
         },
-        "required": ["id"]
+        "required": ["id", "unread"]
       },
       "TreatmentDetailDto": {
         "type": "object",
@@ -9931,10 +10093,10 @@
           },
           "responsibleNode": {
             "type": "string",
-            "description": "The Hekla node of the provider responsible for the treatment. Optional because the provider may send the element empty or omit it; when it is absent the organisation fields below cannot be resolved either, and allowedInteractions will not offer messaging."
+            "description": "The Hekla node of the provider responsible for the treatment. Optional because the provider may send the element empty or omit it; when it is absent the organisation fields below cannot be resolved either, and allowedInteractions is omitted entirely."
           },
           "allowedInteractions": {
-            "description": "What the patient may do within this treatment. **Do not offer messaging unless this field is present and permits it.** It is omitted when the provider sends an interaction code this service does not map, and messaging is withheld — the field omitted, or narrowed from \"both\" to \"prescription\" — when the treatment cannot be addressed, which the client has no other way to detect.",
+            "description": "What the patient may do within this treatment. **Do not offer an interaction unless this field is present and permits it.** It is omitted when the provider sends an interaction code this service does not map, and omitted whatever the code says when the treatment carries no Hekla node and integer group — a message and a prescription renewal are both addressed to that pair, so neither can be delivered. The client has no other way to detect that, because the group is never published.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/AllowedInteraction"
