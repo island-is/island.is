@@ -189,11 +189,21 @@ registerEnumType(HealthConversationSegmentTypeEnum, {
 
 export enum HealthConversationRecipientBlockedReasonEnum {
   MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  PATIENT_INITIATED_NOT_ALLOWED = 'patientInitiatedNotAllowed',
   OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
   NO_ALLOWED_TYPES = 'noAllowedTypes',
 }
 registerEnumType(HealthConversationRecipientBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationRecipientBlockedReason',
+})
+
+export enum HealthConversationDayTypeEnum {
+  WEEKDAY = 'weekday',
+  WEEKEND = 'weekend',
+  HOLIDAY = 'holiday',
+}
+registerEnumType(HealthConversationDayTypeEnum, {
+  name: 'HealthDirectorateHealthConversationDayType',
 })
 
 export enum CertificateTypeEnum {

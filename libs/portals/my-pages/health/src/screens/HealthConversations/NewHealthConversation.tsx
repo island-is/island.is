@@ -33,8 +33,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
-import { getMessagingWindowInfo } from './utils/messagingWindow'
+import { formatTimeLabel, getTodaysWindow } from './utils/messagingWindow'
 import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
+import ClosedRecipientAlert from './components/ClosedRecipientAlert'
 import * as styles from './HealthConversations.css'
 import {
   useGetHealthConversationRecipientsForNewQuery,
@@ -47,6 +48,14 @@ interface CertificateAlert {
   title?: string
   message?: string
 }
+
+const isRecipientOutsideWindow = (recipient: {
+  canCreateConversation: boolean
+  conversationBlockedReason?: HealthDirectorateHealthConversationRecipientBlockedReason | null
+}) =>
+  !recipient.canCreateConversation &&
+  recipient.conversationBlockedReason ===
+    HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW
 
 const getRecipientKey = (recipient: {
   nodeId: string
@@ -99,10 +108,37 @@ const NewHealthConversation = () => {
   const hasMultipleRecipients = (recipients?.length ?? 0) > 1
 
   const recipientOptions =
-    recipients?.map((r) => ({
-      label: r.name,
-      value: getRecipientKey(r),
-    })) ?? []
+    recipients?.map((r) => {
+      const todaysWindow = getTodaysWindow(r)
+      const openTime = formatTimeLabel(todaysWindow?.windowOpen)
+      const closeTime = formatTimeLabel(todaysWindow?.windowClose)
+      return {
+        label: r.name,
+        value: getRecipientKey(r),
+        description: !isRecipientOutsideWindow(r)
+          ? undefined
+          : r.isClosedToday || !openTime || !closeTime
+          ? formatMessage(messages.healthConversationRecipientClosedTodayOption)
+          : formatMessage(messages.healthConversationRecipientClosedOption, {
+              name: r.name,
+              openTime,
+              closeTime,
+            }),
+      }
+    }) ?? []
+
+  // The design replaces the whole form with the closed alert, but only when
+  // nothing on it is usable: every recipient blocks new conversations AND
+  // certificate requests, with at least one closed by the messaging window.
+  const allRecipientsClosed =
+    hasRecipients &&
+    !!recipients?.every(
+      (r) => !r.canCreateConversation && !r.canRequestCertificate,
+    ) &&
+    !!recipients?.some(isRecipientOutsideWindow)
+
+  const allClosedAlertRecipient =
+    recipients?.find(isRecipientOutsideWindow) ?? recipients?.[0]
 
   const preselectedTreatment = searchParams.get('treatment')
   const treatmentMatch = preselectedTreatment
@@ -145,28 +181,7 @@ const NewHealthConversation = () => {
   )
   const isCertificateSelected = !!selectedType?.isCertificate
 
-  const windowInfo = getMessagingWindowInfo({
-    windowOpen: recipient?.messagingWindowOpen,
-    windowClose: recipient?.messagingWindowClose,
-  })
-
-  const hasWindowInfo =
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel &&
-    recipient?.patientReplyWindowDays !== undefined
-
-  const introText = recipient
-    ? hasWindowInfo
-      ? formatMessage(messages.healthConversationsNewIntroWithWindow, {
-          name: recipient.name,
-          openTime: windowInfo.windowOpenLabel,
-          closeTime: windowInfo.windowCloseLabel,
-          days: recipient.patientReplyWindowDays,
-        })
-      : formatMessage(messages.healthConversationsNewIntroWithRecipient, {
-          name: recipient.name,
-        })
-    : formatMessage(messages.healthConversationsNewIntro)
+  const introText = formatMessage(messages.healthConversationsNewIntro)
 
   const isCertificateBlocked =
     isCertificateSelected && recipient?.canRequestCertificate === false
@@ -174,31 +189,21 @@ const NewHealthConversation = () => {
   const isConversationBlocked = recipient?.canCreateConversation === false
 
   const certificateBlockedOutsideWindow =
+    isCertificateBlocked &&
     recipient?.certificateBlockedReason ===
-      HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW &&
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel
+      HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW
 
   const isFormLocked = isConversationBlocked || isCertificateBlocked
 
-  const certificateAlert: CertificateAlert | undefined = !isCertificateBlocked
-    ? undefined
-    : certificateBlockedOutsideWindow
-    ? {
-        type: 'info',
-        title: formatMessage(messages.healthConversationClosedTitle),
-        message: formatMessage(messages.healthConversationClosedText, {
-          currentTime: windowInfo.currentTimeLabel,
-          openTime: windowInfo.windowOpenLabel,
-          closeTime: windowInfo.windowCloseLabel,
-        }),
-      }
-    : {
-        type: 'warning',
-        message: formatMessage(
-          messages.healthConversationsCertificateBlockedText,
-        ),
-      }
+  const certificateAlert: CertificateAlert | undefined =
+    !isCertificateBlocked || certificateBlockedOutsideWindow
+      ? undefined
+      : {
+          type: 'warning',
+          message: formatMessage(
+            messages.healthConversationsCertificateBlockedText,
+          ),
+        }
 
   const certificateInput = toCertificateRequestInput(certificateForm)
 
@@ -317,10 +322,16 @@ const NewHealthConversation = () => {
             title={formatMessage(messages.healthConversationsNoRecipient)}
           />
         )}
-        {!initialLoading && !error && recipient && (
+        {!initialLoading &&
+          !error &&
+          allRecipientsClosed &&
+          allClosedAlertRecipient && (
+            <ClosedRecipientAlert recipient={allClosedAlertRecipient} />
+          )}
+        {!initialLoading && !error && !allRecipientsClosed && recipient && (
           <ConversationAvailabilityAlert recipient={recipient} />
         )}
-        {!initialLoading && !error && hasRecipients && (
+        {!initialLoading && !error && !allRecipientsClosed && hasRecipients && (
           <Box className={styles.messageCard} background="white">
             <Hidden below="sm">
               <Box
@@ -402,6 +413,13 @@ const NewHealthConversation = () => {
                 </GridColumn>
               </GridRow>
 
+              {certificateBlockedOutsideWindow &&
+                recipient &&
+                !isRecipientOutsideWindow(recipient) && (
+                  <Box marginBottom={3}>
+                    <ClosedRecipientAlert recipient={recipient} />
+                  </Box>
+                )}
               {certificateAlert && (
                 <Box marginBottom={3}>
                   <AlertMessage

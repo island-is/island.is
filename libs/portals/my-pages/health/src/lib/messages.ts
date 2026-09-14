@@ -1955,18 +1955,8 @@ export const messages = defineMessages({
   },
   healthConversationsNewIntro: {
     defaultMessage:
-      'Heilsugæslan svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+      'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma. Ef erindið er brýnt og þarfnast svars samdægurs, hringdu í 1700 eða hafðu samband við þitt meðferðarteymi. Í neyðartilvikum, hringdu í 112.',
     id: 'sp.health:health-messages-new-intro',
-  },
-  healthConversationsNewIntroWithWindow: {
-    defaultMessage:
-      '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
-    id: 'sp.health:health-messages-new-intro-with-window',
-  },
-  healthConversationsNewIntroWithRecipient: {
-    defaultMessage:
-      '{name} svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
-    id: 'sp.health:health-messages-new-intro-with-recipient',
   },
   healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
@@ -2088,10 +2078,43 @@ export const messages = defineMessages({
     defaultMessage: 'Lokað fyrir ný skilaboð núna',
     id: 'sp.health:health-messages-closed-title',
   },
-  healthConversationClosedText: {
+  healthConversationClosedNowText: {
+    defaultMessage: 'Ekki er hægt að senda ný skilaboð eins og er.',
+    id: 'sp.health:health-messages-closed-now-text',
+  },
+  healthConversationClosedNextOpensText: {
     defaultMessage:
-      'Klukkan er {currentTime}. Þjónustan tekur við skilaboðum frá kl. {openTime} til kl. {closeTime}. Þú getur sent skilaboð aftur kl. {openTime} í fyrramálið.',
-    id: 'sp.health:health-messages-closed-text',
+      'Næst er hægt að senda skilaboð frá kl. {time} {when, select, today {í dag} tomorrow {í fyrramálið} other {{date}}}.',
+    id: 'sp.health:health-messages-closed-next-opens-text',
+  },
+  healthConversationOpeningHoursTitle: {
+    defaultMessage: 'Móttökutími skilaboða',
+    id: 'sp.health:health-messages-opening-hours-title',
+  },
+  healthConversationOpeningHoursWeekdays: {
+    defaultMessage: 'Virkir dagar',
+    id: 'sp.health:health-messages-opening-hours-weekdays',
+  },
+  healthConversationOpeningHoursWeekends: {
+    defaultMessage: 'Helgar',
+    id: 'sp.health:health-messages-opening-hours-weekends',
+  },
+  healthConversationOpeningHoursHolidays: {
+    defaultMessage: 'Lögbundnir frídagar',
+    id: 'sp.health:health-messages-opening-hours-holidays',
+  },
+  healthConversationOpeningHoursClosed: {
+    defaultMessage: 'Lokað',
+    id: 'sp.health:health-messages-opening-hours-closed',
+  },
+  healthConversationRecipientClosedOption: {
+    defaultMessage:
+      'Lokað núna. {name} tekur við skilaboðum frá kl. {openTime} til {closeTime}.',
+    id: 'sp.health:health-messages-recipient-closed-option',
+  },
+  healthConversationRecipientClosedTodayOption: {
+    defaultMessage: 'Lokað núna.',
+    id: 'sp.health:health-messages-recipient-closed-today-option',
   },
   healthConversationMessagingNotAllowedTitle: {
     defaultMessage: 'Ekki hægt að senda skilaboð',

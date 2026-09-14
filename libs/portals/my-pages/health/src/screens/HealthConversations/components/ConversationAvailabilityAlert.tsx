@@ -1,73 +1,60 @@
-import { AlertMessage, AlertMessageType, Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
 import { messages } from '../../../lib/messages'
 import { HealthConversationRecipientFragment } from '../NewHealthConversation.generated'
-import { getMessagingWindowInfo } from '../utils/messagingWindow'
+import { getClosingSoonInfo, getTodaysWindow } from '../utils/messagingWindow'
+import ClosedRecipientAlert from './ClosedRecipientAlert'
 
 interface Props {
   recipient: HealthConversationRecipientFragment
 }
 
-interface AvailabilityAlert {
-  type: AlertMessageType
-  title: string
-  message?: string
-}
-
 const ConversationAvailabilityAlert = ({ recipient }: Props) => {
   const { formatMessage } = useLocale()
   const blockedReason = recipient.conversationBlockedReason
-  const windowInfo = getMessagingWindowInfo({
-    windowOpen: recipient.messagingWindowOpen,
-    windowClose: recipient.messagingWindowClose,
-  })
 
-  const alert: AvailabilityAlert | undefined =
+  if (
     blockedReason ===
     HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW
-      ? {
-          type: 'info',
-          title: formatMessage(messages.healthConversationClosedTitle),
-          message:
-            windowInfo.windowOpenLabel && windowInfo.windowCloseLabel
-              ? formatMessage(messages.healthConversationClosedText, {
-                  currentTime: windowInfo.currentTimeLabel,
-                  openTime: windowInfo.windowOpenLabel,
-                  closeTime: windowInfo.windowCloseLabel,
-                })
-              : undefined,
-        }
-      : blockedReason
-      ? {
-          type: 'warning',
-          title: formatMessage(
-            messages.healthConversationMessagingNotAllowedTitle,
-          ),
-          message: formatMessage(
-            messages.healthConversationMessagingNotAllowedText,
-          ),
-        }
-      : windowInfo.isClosingSoon
-      ? {
-          type: 'warning',
-          title: formatMessage(messages.healthConversationClosingSoonTitle),
-          message: formatMessage(messages.healthConversationClosingSoonText, {
-            hasOpenTime: windowInfo.windowOpenLabel ? 'true' : 'false',
-            openTime: windowInfo.windowOpenLabel ?? '',
-            closeTime: windowInfo.windowCloseLabel,
-          }),
-        }
-      : undefined
+  ) {
+    return (
+      <Box marginBottom={3}>
+        <ClosedRecipientAlert recipient={recipient} />
+      </Box>
+    )
+  }
 
-  if (!alert) return null
+  if (blockedReason) {
+    return (
+      <Box marginBottom={3}>
+        <AlertMessage
+          type="warning"
+          title={formatMessage(
+            messages.healthConversationMessagingNotAllowedTitle,
+          )}
+          message={formatMessage(
+            messages.healthConversationMessagingNotAllowedText,
+          )}
+        />
+      </Box>
+    )
+  }
+
+  const closingSoon = getClosingSoonInfo(getTodaysWindow(recipient))
+
+  if (!closingSoon.isClosingSoon) return null
 
   return (
     <Box marginBottom={3}>
       <AlertMessage
-        type={alert.type}
-        title={alert.title}
-        message={alert.message}
+        type="warning"
+        title={formatMessage(messages.healthConversationClosingSoonTitle)}
+        message={formatMessage(messages.healthConversationClosingSoonText, {
+          hasOpenTime: closingSoon.openLabel ? 'true' : 'false',
+          openTime: closingSoon.openLabel ?? '',
+          closeTime: closingSoon.closeLabel,
+        })}
       />
     </Box>
   )
