@@ -74,6 +74,9 @@ export class Prescription {
   @Field({ nullable: true })
   amountRemaining?: string
 
+  @Field({ nullable: true })
+  primaryCareClinic?: string
+
   @Field(() => [Dispensation])
   dispensations!: Dispensation[]
 }
