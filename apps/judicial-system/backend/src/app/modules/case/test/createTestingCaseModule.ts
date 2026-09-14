@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended'
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { IntlService } from '@island.is/cms-translations'
@@ -31,12 +30,18 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseArchiveRepositoryService,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseFileRepositoryService,
   CaseRepositoryService,
-  CaseString,
-  DateLog,
+  CaseStringRepositoryService,
+  CivilClaimantRepositoryService,
+  DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
+  IndictmentCountRepositoryService,
+  OffenseRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
+  VictimRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { UserService } from '../../user'
@@ -44,6 +49,7 @@ import { VerdictService } from '../../verdict'
 import { caseModuleConfig } from '../case.config'
 import { CaseController } from '../case.controller'
 import { CaseService } from '../case.service'
+import { CaseCloningService } from '../caseCloning.service'
 import { InternalCaseController } from '../internalCase.controller'
 import { InternalCaseService } from '../internalCase.service'
 import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
@@ -75,6 +81,16 @@ jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock(
+  '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
+)
+jest.mock('../../repository/services/caseFileRepository.service')
+jest.mock('../../repository/services/civilClaimantRepository.service')
+jest.mock('../../repository/services/indictmentCountRepository.service')
+jest.mock('../../repository/services/offenseRepository.service')
+jest.mock('../../repository/services/victimRepository.service')
+jest.mock('../../repository/services/caseStringRepository.service')
+jest.mock('../../repository/services/dateLogRepository.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
 jest.mock('../../repository/services/policeDigitalCaseFileRepository.service')
@@ -111,9 +127,17 @@ export const createTestingCaseModule = async () => {
       AppealEventLogRepositoryService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
+      CaseDefendantPoliceCaseNumberRepositoryService,
+      CaseFileRepositoryService,
+      CaseStringRepositoryService,
+      CivilClaimantRepositoryService,
+      DateLogRepositoryService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      IndictmentCountRepositoryService,
+      OffenseRepositoryService,
       PoliceDigitalCaseFileRepositoryService,
+      VictimRepositoryService,
       {
         provide: IntlService,
         useValue: {
@@ -135,24 +159,8 @@ export const createTestingCaseModule = async () => {
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
-      {
-        provide: getModelToken(DateLog),
-        useValue: {
-          create: jest.fn(),
-          findOne: jest.fn(),
-        },
-      },
-      {
-        provide: getModelToken(CaseString),
-        useValue: {
-          create: jest.fn(),
-          destroy: jest.fn(),
-          findOne: jest.fn(),
-          update: jest.fn(),
-          upsert: jest.fn(),
-        },
-      },
       CaseService,
+      CaseCloningService,
       InternalCaseService,
       LimitedAccessCaseService,
       PdfService,
@@ -236,17 +244,45 @@ export const createTestingCaseModule = async () => {
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
 
-  const dateLogModel = caseModule.get<typeof DateLog>(getModelToken(DateLog))
-
-  const caseStringModel = caseModule.get<typeof CaseString>(
-    getModelToken(CaseString),
+  const dateLogRepositoryService = caseModule.get<DateLogRepositoryService>(
+    DateLogRepositoryService,
   )
+
+  const caseStringRepositoryService =
+    caseModule.get<CaseStringRepositoryService>(CaseStringRepositoryService)
 
   const caseConfig = caseModule.get<ConfigType<typeof caseModuleConfig>>(
     caseModuleConfig.KEY,
   )
 
   const caseService = caseModule.get<CaseService>(CaseService)
+
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    caseModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
+    )
+
+  const caseFileRepositoryService = caseModule.get<CaseFileRepositoryService>(
+    CaseFileRepositoryService,
+  )
+
+  const civilClaimantRepositoryService =
+    caseModule.get<CivilClaimantRepositoryService>(
+      CivilClaimantRepositoryService,
+    )
+
+  const indictmentCountRepositoryService =
+    caseModule.get<IndictmentCountRepositoryService>(
+      IndictmentCountRepositoryService,
+    )
+
+  const offenseRepositoryService = caseModule.get<OffenseRepositoryService>(
+    OffenseRepositoryService,
+  )
+
+  const victimRepositoryService = caseModule.get<VictimRepositoryService>(
+    VictimRepositoryService,
+  )
 
   const internalCaseService =
     caseModule.get<InternalCaseService>(InternalCaseService)
@@ -296,10 +332,16 @@ export const createTestingCaseModule = async () => {
     policeDigitalCaseFileRepositoryService,
     logger,
     sequelize,
-    dateLogModel,
-    caseStringModel,
+    caseStringRepositoryService,
+    dateLogRepositoryService,
     caseConfig,
     caseService,
+    caseDefendantPoliceCaseNumberRepositoryService,
+    caseFileRepositoryService,
+    civilClaimantRepositoryService,
+    indictmentCountRepositoryService,
+    offenseRepositoryService,
+    victimRepositoryService,
     internalCaseService,
     limitedAccessCaseService,
     caseController,

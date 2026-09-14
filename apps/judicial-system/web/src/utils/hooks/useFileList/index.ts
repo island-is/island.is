@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { validate as validateUuid } from 'uuid'
 
 import type { UploadFile } from '@island.is/island-ui/core'
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -11,6 +10,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 import useIsMobile from '@island.is/judicial-system-web/src/utils/hooks/useIsMobile/useIsMobile'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import type { GetSignedUrlQuery } from './getSignedUrl.generated'
 import { useGetSignedUrlLazyQuery } from './getSignedUrl.generated'

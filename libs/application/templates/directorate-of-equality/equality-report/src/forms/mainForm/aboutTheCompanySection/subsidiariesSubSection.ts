@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -72,6 +73,13 @@ export const subsidiariesSubSection = buildSubSection({
           condition: (answers) =>
             getValueViaPath(answers, 'subsidiaries.includesSubsidiaries') ===
             YES,
+        }),
+        buildCustomField({
+          // Renders nothing; see the component for why the screen needs it.
+          id: 'subsidiaries.formGuard',
+          title: '',
+          component: 'SubsidiariesFormGuard',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

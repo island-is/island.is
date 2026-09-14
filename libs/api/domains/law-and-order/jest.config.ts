@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-law-and-order',
   preset: '../../../../jest.preset.js',

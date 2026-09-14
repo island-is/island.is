@@ -10,8 +10,10 @@ import { formatDate, LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { ApiScope } from '@island.is/auth/scopes'
+import cn from 'classnames'
 import { useGetHealthConversationsQuery } from '../../../HealthConversations/HealthConversations.generated'
 import ConversationAvatar from '../../../HealthConversations/components/ConversationAvatar'
+import * as listStyles from '../../../HealthConversations/HealthConversations.css'
 import { HealthPaths } from '../../../../lib/paths'
 import { messages } from '../../../../lib/messages'
 import * as styles from './HealthConversationsBox.css'
@@ -96,12 +98,30 @@ export const HealthConversationsBox = ({ limit }: Props) => {
             columnGap={2}
             overflow="hidden"
           >
-            <Icon icon="mail" type="outline" color="blue400" size="medium" />
+            <Icon
+              icon="chatbubble"
+              type="outline"
+              color="blue400"
+              size="medium"
+            />
             <Text variant="h4" as="h2" color="blue400" truncate>
               {formatMessage(messages.healthConversationsBoxTitle)}
             </Text>
           </Box>
         </LinkResolver>
+        {hasHealthScope && (
+          <LinkResolver
+            href={HealthPaths.HealthConversations}
+            aria-label={formatMessage(messages.seeAllMessages)}
+          >
+            <Icon
+              icon="arrowForward"
+              type="filled"
+              color="blue400"
+              size="medium"
+            />
+          </LinkResolver>
+        )}
       </Box>
 
       {loading && (
@@ -149,15 +169,19 @@ export const HealthConversationsBox = ({ limit }: Props) => {
               )}
               className={styles.conversationLink}
             >
-              <Box paddingX={3}>
+              <Box paddingX={[0, 0, 3]}>
                 <Box
                   display="flex"
                   alignItems="center"
                   columnGap={2}
                   borderTopWidth="standard"
                   borderColor="blue200"
-                  style={{ paddingTop: 12, paddingBottom: 12 }}
-                  className={unread ? styles.unreadRow : undefined}
+                  paddingY={2}
+                  paddingX={[3, 3, 2]}
+                  className={cn(
+                    listStyles.conversationRow,
+                    unread && styles.unreadRow,
+                  )}
                 >
                   <ConversationAvatar
                     variant="organization"
@@ -173,7 +197,8 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                     >
                       <Box overflow="hidden">
                         <Text variant="medium" truncate>
-                          {item.organization?.name}
+                          {item.organization?.name?.trim() ||
+                            item.lastSenderGroupName}
                         </Text>
                       </Box>
                       {item.lastMessageSentAt && (

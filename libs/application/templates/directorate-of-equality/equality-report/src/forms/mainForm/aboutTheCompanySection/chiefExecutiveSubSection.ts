@@ -14,7 +14,6 @@ export const chiefExecutiveSubSection = buildSubSection({
     buildMultiField({
       id: 'chiefExecutiveMultiField',
       title: messages.aboutTheCompany.chiefExecutive.title,
-      description: messages.aboutTheCompany.chiefExecutive.intro,
       children: [
         buildTextField({
           id: 'chiefExecutive.name',

@@ -3,8 +3,7 @@ import { supportedLocales } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 
 export const IsLocale = (validationOptions?: ValidationOptions) => {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  return (object: Object, propertyName: string) => {
+  return (object: object, propertyName: string) => {
     registerDecorator({
       name: 'IsLocale',
       target: object.constructor,

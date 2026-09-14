@@ -26,6 +26,11 @@ export class HealthDirectorateCreateCertificateRequestInput {
   @IsInt()
   groupId!: number
 
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  treatmentId?: string
+
   @Field(() => CertificateTypeEnum)
   @IsEnum(CertificateTypeEnum)
   certificateType!: CertificateTypeEnum

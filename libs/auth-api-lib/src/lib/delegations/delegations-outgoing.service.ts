@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { and, Op, WhereOptions } from 'sequelize'
+import { and, Op, Transaction, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { isUuid, uuid } from 'uuidv4'
 import startOfDay from 'date-fns/startOfDay'
@@ -22,6 +22,7 @@ import {
   DelegationDTO,
   PatchDelegationDTO,
 } from './dto/delegation.dto'
+import { CreateDelegationBatchDTO } from './dto/create-delegation-batch.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
@@ -208,6 +209,82 @@ export class DelegationsOutgoingService {
     user: User,
     createDelegation: CreateDelegationDTO,
   ): Promise<DelegationDTO> {
+    const [{ delegation }] = await this.createOrUpdateMany(user, [
+      createDelegation,
+    ])
+
+    return delegation
+  }
+
+  async createBatch(
+    user: User,
+    input: CreateDelegationBatchDTO,
+  ): Promise<DelegationDTO[]> {
+    const results = await this.createOrUpdateMany(user, input.delegations)
+
+    const byRecipient = new Map<string, typeof results>()
+    for (const result of results) {
+      const recipient = result.delegation.toNationalId
+      const group = byRecipient.get(recipient) ?? []
+      group.push(result)
+      byRecipient.set(recipient, group)
+    }
+    for (const group of byRecipient.values()) {
+      void this.notifyDelegationUpdate(user, group)
+    }
+
+    return results.map((result) => result.delegation)
+  }
+
+  private async createOrUpdateMany(
+    user: User,
+    inputs: CreateDelegationDTO[],
+  ): Promise<Array<{ delegation: DelegationDTO; hadExistingScopes: boolean }>> {
+    for (const input of inputs) {
+      await this.validateCreateDelegation(user, input)
+    }
+
+    const written = await this.sequelize.transaction(async (transaction) => {
+      const rows: Array<{
+        id: string
+        toNationalId: string
+        hadExistingScopes: boolean
+      }> = []
+      for (const input of inputs) {
+        rows.push(await this.writeForDomain(user, input, transaction))
+      }
+      return rows
+    })
+
+    // Reindex after commit so we never index changes that might roll back.
+    for (const toNationalId of new Set(written.map((w) => w.toNationalId))) {
+      void this.delegationIndexService.indexCustomDelegations(
+        toNationalId,
+        user,
+      )
+    }
+
+    return Promise.all(
+      written.map(async ({ id, hadExistingScopes }) => {
+        const delegation = await this.findOneInternal(
+          user,
+          DelegationDirection.OUTGOING,
+          { id },
+        )
+        if (!delegation) {
+          throw new InternalServerErrorException(
+            `Failed to find the newly created delegation with id ${id}`,
+          )
+        }
+        return { delegation, hadExistingScopes }
+      }),
+    )
+  }
+
+  private async validateCreateDelegation(
+    user: User,
+    createDelegation: CreateDelegationDTO,
+  ): Promise<void> {
     if (
       createDelegation.toNationalId === user.nationalId ||
       createDelegation.toNationalId === user.actor?.nationalId
@@ -241,20 +318,30 @@ export class DelegationsOutgoingService {
         'When scope validTo property is provided it must be in the future',
       )
     }
+  }
 
+  private async writeForDomain(
+    user: User,
+    createDelegation: CreateDelegationDTO,
+    transaction: Transaction,
+  ): Promise<{ id: string; toNationalId: string; hadExistingScopes: boolean }> {
     let delegation = await this.delegationModel.findOne({
       where: {
         fromNationalId: user.nationalId,
         toNationalId: createDelegation.toNationalId,
         domainName: createDelegation.domainName,
       },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
     })
 
-    // Whether the delegation already had scopes before this grant, so the
-    // recipient gets the "new delegation" vs "updated delegation" notification.
     const hadExistingScopes = delegation
-      ? (await this.delegationScopeService.findByDelegationId(delegation.id))
-          .length > 0
+      ? (
+          await this.delegationScopeService.findByDelegationId(
+            delegation.id,
+            transaction,
+          )
+        ).length > 0
       : false
 
     if (!delegation) {
@@ -265,107 +352,109 @@ export class DelegationsOutgoingService {
         ),
       ])
 
-      delegation = await this.delegationModel.create({
-        id: uuid(),
-        fromNationalId: user.nationalId,
-        toNationalId: createDelegation.toNationalId,
-        domainName: createDelegation.domainName,
-        createdByNationalId: user.actor?.nationalId ?? user.nationalId,
-        // TODO: should not persist names with the delegation
-        // should always look it up to avoid being out of sync
-        fromDisplayName,
-        toName,
-      })
+      delegation = await this.delegationModel.create(
+        {
+          id: uuid(),
+          fromNationalId: user.nationalId,
+          toNationalId: createDelegation.toNationalId,
+          domainName: createDelegation.domainName,
+          createdByNationalId: user.actor?.nationalId ?? user.nationalId,
+          // TODO: should not persist names with the delegation
+          // should always look it up to avoid being out of sync
+          fromDisplayName,
+          toName,
+        },
+        { transaction },
+      )
     }
 
     await this.delegationScopeService.createOrUpdate(
       delegation.id,
       createDelegation.scopes,
+      transaction,
     )
 
-    const newDelegation = await this.findOneInternal(
-      user,
-      DelegationDirection.OUTGOING,
-      {
-        id: delegation.id,
-      },
-    )
-
-    if (!newDelegation) {
-      throw new InternalServerErrorException(
-        `Failed to find the newly created delegation with id ${delegation.id}`,
-      )
+    return {
+      id: delegation.id,
+      toNationalId: delegation.toNationalId,
+      hadExistingScopes,
     }
-
-    // Index custom delegations for the toNationalId
-    void this.delegationIndexService.indexCustomDelegations(
-      createDelegation.toNationalId,
-      user,
-    )
-
-    void this.notifyDelegationUpdate(user, newDelegation, hadExistingScopes)
-
-    return newDelegation
   }
 
   private async notifyDelegationUpdate(
     user: User,
-    delegation: DelegationDTO,
-    hasExistingScopes: boolean,
+    updates: Array<{ delegation: DelegationDTO; hadExistingScopes: boolean }>,
   ) {
     try {
+      const relevant = updates.filter(
+        (update) =>
+          update.delegation.scopes?.length && update.delegation.domainName,
+      )
+      if (relevant.length === 0) {
+        return
+      }
+
       const allowDelegationNotification =
         await this.featureFlagService.getValue(
           Features.isDelegationNotificationEnabled,
           false,
           user,
         )
-
-      if (
-        !allowDelegationNotification ||
-        !delegation.scopes?.length ||
-        !delegation.domainName
-      ) {
+      if (!allowDelegationNotification) {
         return
       }
 
+      const recipient = relevant[0].delegation.toNationalId
       const fromDisplayName = await this.namesService.getUserName(user)
-      const domainName = delegation.domainName
 
-      const domainNameIs = await this.delegationResourceService.findOneDomain(
-        user,
-        domainName,
-        'is',
-      )
-      const domainNameEn = await this.delegationResourceService.findOneDomain(
-        user,
-        domainName,
-        'en',
+      const uniqueDomains = [
+        ...new Set(
+          relevant.map((update) => update.delegation.domainName as string),
+        ),
+      ]
+      const domainDisplayNames = await Promise.all(
+        uniqueDomains.map(async (domainName) => ({
+          is: (
+            await this.delegationResourceService.findOneDomain(
+              user,
+              domainName,
+              'is',
+            )
+          ).displayName,
+          en: (
+            await this.delegationResourceService.findOneDomain(
+              user,
+              domainName,
+              'en',
+            )
+          ).displayName,
+        })),
       )
 
       const args = [
         { key: 'name', value: fromDisplayName },
         {
           key: 'domainNameIs',
-          value: domainNameIs.displayName,
+          value: domainDisplayNames.map((domain) => domain.is).join(', '),
         },
         {
           key: 'domainNameEn',
-          value: domainNameEn.displayName,
+          value: domainDisplayNames.map((domain) => domain.en).join(', '),
         },
       ]
 
-      // Notify toNationalId of the delegation update
+      const isNewDelegation = relevant.some(
+        (update) => !update.hadExistingScopes,
+      )
+
       await this.notificationsApi.notificationsControllerCreateHnippNotification(
         {
           createHnippNotificationDto: {
             args,
-            recipient: delegation.toNationalId,
-            // If there are existing scopes we are updating the delegation
-            // else it is a new delegation
-            templateId: hasExistingScopes
-              ? UPDATED_DELEGATION_TEMPLATE_ID
-              : NEW_DELEGATION_TEMPLATE_ID,
+            recipient,
+            templateId: isNewDelegation
+              ? NEW_DELEGATION_TEMPLATE_ID
+              : UPDATED_DELEGATION_TEMPLATE_ID,
           },
         },
       )
@@ -490,11 +579,9 @@ export class DelegationsOutgoingService {
     }
 
     const delegation = await this.findById(user, delegationId)
-    void this.notifyDelegationUpdate(
-      user,
-      delegation,
-      txResult.hadExistingScopes,
-    )
+    void this.notifyDelegationUpdate(user, [
+      { delegation, hadExistingScopes: txResult.hadExistingScopes },
+    ])
     return {
       kind: 'updated',
       delegation,

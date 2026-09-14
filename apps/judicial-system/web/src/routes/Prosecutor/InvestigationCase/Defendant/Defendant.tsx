@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
 
-import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
+import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE,
@@ -38,7 +38,8 @@ import {
   useSyncDefendantsFromPolice,
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -184,13 +185,13 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo
             workingCase={workingCase}
             hideDefendants
             hideCourt
           />
-          <Box component="section" className={grid({ gap: 3 })}>
+          <Box component="section" className={stack({ gap: 3 })}>
             <Box
               display="flex"
               alignItems="center"

@@ -11,8 +11,8 @@ export const enhancedFetch = {
     createEnhancedFetch({
       name: 'clients-blikk',
       timeout: config.fetchTimeout,
-      // Blikk error bodies can carry payment detail — don't log them.
-      logErrorResponseBody: false,
+      // Error bodies are logged (the default). Blikk only ever sees national ids and bank account
+      // numbers, which our logging redacts / does not treat as sensitive — no names are sent.
     }),
   inject: [BlikkClientConfig.KEY],
 }

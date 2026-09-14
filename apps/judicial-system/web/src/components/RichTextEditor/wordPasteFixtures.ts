@@ -66,3 +66,55 @@ export const DOWNLEVEL_CONDITIONAL_LIST = `
 export const REAL_LIST_PASSTHROUGH = `<ul><li>Fyrsti</li><li>Annar</li></ul>`
 
 export const INDENTED_PARAGRAPH = `<p class=MsoNormal style='margin-left:36.0pt'>Inndregið</p>`
+
+// A 2x2 desktop-Word table: MsoTableGrid with border/spacing attributes,
+// mso border styles, sized and padded cells (no tbody — Word puts tr directly
+// under table; the browser parser synthesizes one).
+export const WORD_TABLE = `
+<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:1184'>
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td width=301 valign=top style='width:225.4pt;border:solid windowtext 1.0pt;mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Efri vinstri<o:p></o:p></p>
+  </td>
+  <td width=301 valign=top style='width:225.4pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Efri hægri<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes'>
+  <td width=301 valign=top style='width:225.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Neðri vinstri<o:p></o:p></p>
+  </td>
+  <td width=301 valign=top style='width:225.4pt;border:solid windowtext 1.0pt;border-top:none;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Neðri hægri<o:p></o:p></p>
+  </td>
+ </tr>
+</table>`
+
+// A Word table with merged cells: a two-column merge in the first row
+// (colspan) and a two-row merge in the first column below it (rowspan), plus
+// a shaded header-ish cell whose background must not become a highlight.
+export const WORD_TABLE_MERGED = `
+<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse'>
+ <tr>
+  <td width=602 colspan=2 valign=top style='width:450.8pt;border:solid windowtext 1.0pt;background:#D9D9D9;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Sameinuð fyrirsögn<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=301 rowspan=2 valign=top style='width:225.4pt;border:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Spannar tvær raðir<o:p></o:p></p>
+  </td>
+  <td width=301 valign=top style='width:225.4pt;border:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Fyrri<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=301 valign=top style='width:225.4pt;border:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Seinni<o:p></o:p></p>
+  </td>
+ </tr>
+</table>`
+
+// A Google Docs table: colgroup with widths, inline styles everywhere, bold
+// carried as font-weight:700 on a span.
+export const GDOCS_TABLE = `<table style="border:none;border-collapse:collapse;"><colgroup><col width="221"/><col width="222"/></colgroup><tbody><tr style="height:22pt"><td style="border-left:solid #000000 1pt;border-right:solid #000000 1pt;border-bottom:solid #000000 1pt;border-top:solid #000000 1pt;vertical-align:top;padding:5pt 5pt 5pt 5pt;overflow:hidden;overflow-wrap:break-word;"><p style="line-height:1.2;margin-top:0pt;margin-bottom:0pt;"><span style="font-size:11pt;font-family:Arial,sans-serif;color:#000000;background-color:transparent;font-weight:700;font-style:normal;">Feitletrað</span></p></td><td style="border-left:solid #000000 1pt;border-right:solid #000000 1pt;border-bottom:solid #000000 1pt;border-top:solid #000000 1pt;vertical-align:top;padding:5pt 5pt 5pt 5pt;"><p style="line-height:1.2;margin-top:0pt;margin-bottom:0pt;"><span style="font-size:11pt;font-family:Arial,sans-serif;color:#000000;background-color:transparent;font-weight:400;">Venjulegt</span></p></td></tr></tbody></table>`

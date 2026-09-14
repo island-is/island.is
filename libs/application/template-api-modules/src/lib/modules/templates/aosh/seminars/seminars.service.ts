@@ -17,6 +17,7 @@ import {
   application as applicationMessages,
   IndividualOrCompany,
   RegisterNumber,
+  PaymentOptions,
 } from '@island.is/application/templates/aosh/seminars'
 @Injectable()
 export class SeminarsTemplateService extends BaseTemplateApiService {
@@ -112,6 +113,9 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
         application.externalData,
         'createCharge.data.id',
       ) ?? ''
+    const isPutIntoAccount =
+      paymentArrangement?.paymentOptions === PaymentOptions.putIntoAccount
+    const paymentId = isPutIntoAccount ? '' : chargeId
     return await this.seminarsClientService
       .registerSeminar(auth, {
         courseRegistrationCreateDTO: {
@@ -134,7 +138,7 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
               IndividualOrCompany.company
                 ? paymentArrangement?.companyInfo?.nationalId
                 : '',
-            paymentId: chargeId,
+            paymentId,
             paymentExplanation: paymentArrangement?.explanation ?? '',
           },
           students:

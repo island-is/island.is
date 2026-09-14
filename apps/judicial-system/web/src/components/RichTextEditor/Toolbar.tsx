@@ -101,6 +101,17 @@ const HighlightIcon = () => (
   </svg>
 )
 
+const TableIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      d="M4 5h16v14H4V5Zm0 4.7h16M4 14.3h16M9.3 5v14M14.7 5v14"
+    />
+  </svg>
+)
+
 // Ionicons expand-outline (MIT), inlined like the other glyphs.
 const FullscreenIcon = () => (
   <svg width="22" height="22" viewBox="0 0 512 512" aria-hidden="true">
@@ -142,6 +153,8 @@ interface Props {
   editor: Editor | null
   highlightPickerOpen: boolean
   onToggleHighlightPicker: () => void
+  tablePickerOpen: boolean
+  onToggleTablePicker: () => void
   fullscreen: boolean
   onToggleFullscreen: () => void
 }
@@ -150,6 +163,8 @@ const Toolbar: FC<Props> = ({
   editor,
   highlightPickerOpen,
   onToggleHighlightPicker,
+  tablePickerOpen,
+  onToggleTablePicker,
   fullscreen,
   onToggleFullscreen,
 }) => {
@@ -162,6 +177,7 @@ const Toolbar: FC<Props> = ({
             italic: ctx.editor.isActive('italic'),
             bulletList: ctx.editor.isActive('bulletList'),
             orderedList: ctx.editor.isActive('orderedList'),
+            inTable: ctx.editor.isActive('table'),
           }
         : null,
   })
@@ -233,6 +249,26 @@ const Toolbar: FC<Props> = ({
         onAction={onToggleHighlightPicker}
       >
         <HighlightIcon />
+      </ToolbarButton>
+      <ToolbarButton
+        label="Table"
+        active={tablePickerOpen}
+        // One button, two roles: outside a table it inserts one (a cell
+        // cannot hold another table); inside, it opens the row/column
+        // actions instead.
+        onAction={() => {
+          if (state?.inTable) {
+            onToggleTablePicker()
+            return
+          }
+          editor
+            .chain()
+            .focus()
+            .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
+            .run()
+        }}
+      >
+        <TableIcon />
       </ToolbarButton>
       <ToolbarButton
         label="Fullscreen"

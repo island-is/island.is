@@ -1,8 +1,10 @@
 import {
   AccessModes,
   IngressForEnv,
+  isPerEnvReplicaCount,
   PostgresInfo,
   PostgresInfoForEnv,
+  ReplicaCount,
   Resources,
   ServiceDefinition,
   ServiceDefinitionForEnv,
@@ -26,6 +28,33 @@ import {
 } from './serialization-helpers'
 
 import { getScaledValue } from '../utils/scale-value'
+
+type ResolvedReplicas = { min: number; max: number; default: number }
+
+// Resolve either replicaCount form to flat bounds for one environment. The
+// flat form applies to all envs; the per-env form uses the matching block,
+// falling back to env defaults when the block (or the whole config) is absent.
+function resolveReplicaCount(
+  rc: ReplicaCount | undefined,
+  env: EnvironmentConfig,
+): ResolvedReplicas {
+  const envDefaults: ResolvedReplicas = {
+    min: env.defaultMinReplicas,
+    max: env.defaultMaxReplicas,
+    default: env.defaultMinReplicas,
+  }
+
+  if (!rc) return envDefaults
+
+  if (!isPerEnvReplicaCount(rc)) {
+    return { min: rc.min, max: rc.max, default: rc.default }
+  }
+
+  const block = rc[env.type as 'dev' | 'staging' | 'prod']
+  if (!block) return envDefaults
+
+  return { min: block.min, max: block.max, default: block.default }
+}
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -109,13 +138,47 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.podDisruptionBudget) {
     result.podDisruptionBudget = serviceDef.podDisruptionBudget
   }
+
+  // rollout strategy
+  if (serviceDef.strategy) {
+    result.strategy = serviceDef.strategy
+  }
+
+  // graceful shutdown
+  if (serviceDef.gracefulShutdown) {
+    const {
+      minReadySeconds,
+      terminationGracePeriodSeconds,
+      preStopSleepSeconds,
+    } = serviceDef.gracefulShutdown
+    if (minReadySeconds !== undefined) {
+      result.minReadySeconds = minReadySeconds
+    }
+    if (terminationGracePeriodSeconds !== undefined) {
+      result.terminationGracePeriodSeconds = terminationGracePeriodSeconds
+    }
+    if (preStopSleepSeconds !== undefined) {
+      result.lifecycle = {
+        preStop: {
+          exec: {
+            command: ['/bin/sh', '-c', `sleep ${preStopSleepSeconds}`],
+          },
+        },
+      }
+    }
+  }
+
   // resources
   result.resources = serviceDef.resources
 
   // replicas
+  const resolved = resolveReplicaCount(serviceDef.replicaCount, env1)
+
   if (
     (env1.type == 'staging' || env1.type == 'dev') &&
-    service.name.indexOf('search-indexer') == -1
+    service.name.indexOf('search-indexer') == -1 &&
+    // bypassReplicaClamp services keep their explicit replicaCount in dev/staging.
+    !serviceDef.replicaCount?.bypassReplicaClamp
   ) {
     result.replicaCount = {
       min: 1,
@@ -123,35 +186,32 @@ const serializeService: SerializeMethod<HelmService> = async (
       default: 1,
     }
   } else {
-    if (serviceDef.replicaCount) {
-      result.replicaCount = {
-        min: serviceDef.replicaCount.min,
-        max: serviceDef.replicaCount.max,
-        default: serviceDef.replicaCount.default,
-      }
-    } else {
-      result.replicaCount = {
-        min: env1.defaultMinReplicas,
-        max: env1.defaultMaxReplicas,
-        default: env1.defaultMinReplicas,
-      }
+    result.replicaCount = {
+      min: resolved.min,
+      max: resolved.max,
+      default: resolved.default,
     }
   }
 
-  result.hpa = {
-    scaling: {
-      replicas: {
-        min: result.replicaCount.min,
-        max: result.replicaCount.max,
+  if (result.replicaCount.max === 0) {
+    // max 0 means scale to zero: no HPA
+    result.replicaCount = { min: 0, max: 0, default: 0 }
+  } else {
+    result.hpa = {
+      scaling: {
+        replicas: {
+          min: result.replicaCount.min,
+          max: result.replicaCount.max,
+        },
+        metric: {
+          cpuAverageUtilization:
+            serviceDef.replicaCount?.cpuAverageUtilization || 90,
+        },
       },
-      metric: {
-        cpuAverageUtilization:
-          serviceDef.replicaCount?.cpuAverageUtilization || 90,
-      },
-    },
+    }
+    result.hpa.scaling.metric.nginxRequestsIrate =
+      serviceDef.replicaCount?.scalingMagicNumber || 5
   }
-  result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 5
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
@@ -394,7 +454,7 @@ function serializeVolumes(
     ReadOnly: 'ReadOnlyMany',
     ReadWrite: 'ReadWriteMany',
   }
-  if (volumes.some((v) => typeof v.name === undefined) && volumes.length > 1) {
+  if (volumes.some((v) => v.name === undefined) && volumes.length > 1) {
     return { errors: ['Must set volume name if more than one'], volumes: [] }
   }
 
@@ -504,6 +564,13 @@ function serializeHTTPRoute(
     ingressConf.extraAnnotations?.['nginx.ingress.kubernetes.io/rewrite-target']
   const rewritePrefix = rewriteTarget === '/$2' ? '/' : undefined
 
+  // Carry the legacy global-auth opt-out onto the route so a no-auth
+  // SecurityPolicy is rendered (Cognito wall bypass).
+  const noAuth =
+    ingressConf.extraAnnotations?.[
+      'nginx.ingress.kubernetes.io/enable-global-auth'
+    ] === 'false'
+
   return {
     parentRefs: [
       {
@@ -528,6 +595,7 @@ function serializeHTTPRoute(
         ...(rewritePrefix ? { rewritePrefix } : {}),
       },
     ],
+    ...(noAuth ? { noAuth } : {}),
   }
 }
 
@@ -600,10 +668,17 @@ export const HelmOutput: OutputFormat<HelmService> = {
         (host) => `${env.feature}-${host}`,
       )
     })
-    s.replicaCount = {
-      min: Math.min(1, s.replicaCount?.min ?? 1),
-      max: Math.min(1, s.replicaCount?.max ?? 1),
-      default: Math.min(1, s.replicaCount?.default ?? 1),
+    // Feature deployments run in dev. Honor a scale-to-zero dev config
+    // verbatim; otherwise keep the existing cap of 1 replica.
+    const featureRc = resolveReplicaCount(s.replicaCount, env)
+    if (featureRc.max === 0) {
+      s.replicaCount = { min: 0, max: 0, default: 0 }
+    } else {
+      s.replicaCount = {
+        min: Math.min(1, featureRc.min),
+        max: Math.min(1, featureRc.max),
+        default: Math.min(1, featureRc.default),
+      }
     }
     s.namespace = getFeatureDeploymentNamespace(env)
     if (s.postgres) {

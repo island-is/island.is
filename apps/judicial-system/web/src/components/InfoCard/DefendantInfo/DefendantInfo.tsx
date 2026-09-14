@@ -23,7 +23,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   getAppealExpirationInfo,
@@ -145,7 +145,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
 
   return (
     <Box display="flex" justifyContent="spaceBetween">
-      <div className={grid({ gap: 1 })}>
+      <div className={stack({ gap: 1 })}>
         <Text>
           <Text as="span" fontWeight="semiBold">{`${formatMessage(
             infoCardStrings.name,

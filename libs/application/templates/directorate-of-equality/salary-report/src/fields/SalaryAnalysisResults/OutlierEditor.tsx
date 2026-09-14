@@ -172,7 +172,9 @@ export const OutlierEditor: FC<Props> = ({ outliers, errors, mode }) => {
   const groupLabel = (index: number) => {
     const name = watchedGroups[index]?.name?.trim()
     const fallback = `${formatMessage(m.groupHeading)} ${index + 1}`
-    return name ? `${name} (${index + 1})` : fallback
+    return name
+      ? `${formatMessage(m.addToExistingGroupPrefix)} ${name} (${index + 1})`
+      : `${formatMessage(m.addToExistingGroupPrefix)} ${fallback}`
   }
 
   // Guarded on the length: with nothing left in the table both sides are 0,

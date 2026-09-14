@@ -7,7 +7,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -22,6 +21,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
+  AppealCaseType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
   AppealEventType,
@@ -56,6 +56,8 @@ import {
   CourtSession,
   CourtSessionRepositoryService,
   CourtSessionString,
+  CourtSessionStringKey,
+  CourtSessionStringRepositoryService,
   UpdateCourtSession,
 } from '../repository'
 import { CourtSessionAppealDecisionDto } from './dto/courtSessionAppealDecision.dto'
@@ -88,10 +90,7 @@ export class CourtSessionService {
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly fileService: FileService,
     private readonly eventLogService: EventLogService,
-    // TODO: Move to a repository service - models should only be used in repository services
-    // It would be best to hide the details of the court session model from all but the backend
-    @InjectModel(CourtSessionString)
-    private readonly courtSessionStringModel: typeof CourtSessionString,
+    private readonly courtSessionStringRepositoryService: CourtSessionStringRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -141,30 +140,32 @@ export class CourtSessionService {
     update: CourtSessionStringDto
     transaction?: Transaction
   }): Promise<CourtSessionString> {
-    const courtSessionString = await this.courtSessionStringModel.findOne({
-      where: {
-        caseId,
-        courtSessionId,
-        mergedCaseId,
-        stringType: update.stringType,
-      },
-      transaction,
-    })
-    if (courtSessionString) {
-      const [numberOfAffectedRows, courtSessionString] =
-        await this.courtSessionStringModel.update(
+    // The same key addresses all three operations, so it is built once - the
+    // repository takes it as a typed key rather than a where clause.
+    const key: CourtSessionStringKey = {
+      caseId,
+      courtSessionId,
+      mergedCaseId,
+      stringType: update.stringType,
+    }
+
+    // Read followed by write without a lock: two concurrent requests for the
+    // same key can both miss and both insert. Carried over unchanged from the
+    // model-backed implementation - court_session_string has no unique index to
+    // upsert against, and adding one needs its own migration.
+    const existingCourtSessionString =
+      await this.courtSessionStringRepositoryService.findByKey(key, {
+        transaction,
+      })
+
+    if (existingCourtSessionString) {
+      const { numberOfAffectedRows, courtSessionStrings } =
+        await this.courtSessionStringRepositoryService.updateByKey(
+          key,
           { value: update.value },
-          {
-            where: {
-              caseId,
-              courtSessionId,
-              mergedCaseId,
-              stringType: update.stringType,
-            },
-            transaction,
-            returning: true,
-          },
+          { transaction },
         )
+
       if (numberOfAffectedRows < 1) {
         throw new InternalServerErrorException(
           `Could not update court session string for court session ${courtSessionId} of case ${caseId}`,
@@ -182,22 +183,14 @@ export class CourtSessionService {
       this.logger.debug(
         `Updated court session string for court session ${courtSessionId} of case ${caseId}`,
       )
-      return courtSessionString[0]
-    } else {
-      const courtSessionString = await this.courtSessionStringModel.create(
-        {
-          caseId,
-          courtSessionId,
-          mergedCaseId,
-          stringType: update.stringType,
-          value: update.value,
-        },
-        {
-          transaction,
-        },
-      )
-      return courtSessionString
+
+      return courtSessionStrings[0]
     }
+
+    return this.courtSessionStringRepositoryService.create(
+      { ...key, value: update.value },
+      { transaction },
+    )
   }
 
   async update(
@@ -813,6 +806,7 @@ export class CourtSessionService {
         (await this.appealCaseRepositoryService.create(
           theCase.id,
           {
+            appealType: AppealCaseType.RULING,
             appealState: AppealCaseState.APPEALED,
             rulingFileId,
             // The in-court appeal happened when the court session ended

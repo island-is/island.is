@@ -24,6 +24,7 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { normalizePersonAddress } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -73,7 +74,8 @@ export enum PoliceDocumentType {
   RVMV = 'RVMV', // Viðbótargögn verjanda í S-málum
   RVVS = 'RVVS', // Viðbótargögn sækjandan í S-málum
   RVFK = 'RVFK', // Fyrirkall í S-málum
-  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
+  RVBD = 'RVBD', // Birtingarvottorð fyrirkalls í S-málum
+  BRTNG_RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
 }
 
 export interface PoliceDocument {
@@ -505,17 +507,6 @@ export class PoliceService {
 
       if (!res.ok) {
         const detail = await res.text()
-        this.logger.error(
-          `Police digital case files request returned error for case ${caseId}`,
-          {
-            caseId,
-            source,
-            status: res.status,
-            detail: detail.slice(0, 2000),
-          },
-        )
-        // The police system does not provide a structured error response.
-        // When a police case does not exist, a stack trace is often returned.
         throw new NotFoundException({
           message: `Police digital case files for case ${caseId} do not exist`,
           detail,
@@ -527,18 +518,6 @@ export class PoliceService {
 
       return this.digitalCaseFilesStructure.parse(response)
     } catch (reason) {
-      if (reason instanceof NotFoundException) {
-        throw reason
-      }
-
-      if (reason instanceof ServiceUnavailableException) {
-        throw new NotFoundException({
-          ...reason,
-          message: `Police digital case files for case ${caseId} are unavailable`,
-          detail: reason.message,
-        })
-      }
-
       this.logPoliceFailureAndNotify(
         'Failed to get police digital case files',
         `Failed to get police digital case files for case ${caseId}`,
@@ -552,6 +531,18 @@ export class PoliceService {
         },
         reason,
       )
+
+      if (reason instanceof NotFoundException) {
+        throw reason
+      }
+
+      if (reason instanceof ServiceUnavailableException) {
+        throw new NotFoundException({
+          ...reason,
+          message: `Police digital case files for case ${caseId} are unavailable`,
+          detail: reason.message,
+        })
+      }
 
       throw new BadGatewayException({
         ...(reason instanceof Error ? reason : {}),
@@ -611,14 +602,34 @@ export class PoliceService {
         detail: reason,
       })
     } catch (reason) {
-      if (reason instanceof NotFoundException) {
-        throw reason
-      }
-
-      if (
+      const is425 =
         reason instanceof HttpException &&
         reason.getStatus() === httpStatusTooEarly
-      ) {
+
+      this.logPoliceFailureAndNotify(
+        'Failed to get token URL for digital case file',
+        is425
+          ? `Police digital case file ${policeDigitalFileId} is not published yet`
+          : `Failed to get token URL for digital case file ${policeDigitalFileId}`,
+        {
+          rvgCaseId,
+          rafraennGagnId: policeDigitalFileId,
+          actor: user.name,
+          institution: user.institution?.name,
+          startTime,
+          endTime: nowFactory(),
+          source,
+          ...(is425
+            ? {
+                status: String(httpStatusTooEarly),
+                errorType: 'PoliceDigitalFileNotPublished',
+              }
+            : {}),
+        },
+        reason,
+      )
+
+      if (reason instanceof NotFoundException || is425) {
         throw reason
       }
 
@@ -629,21 +640,6 @@ export class PoliceService {
           detail: reason.message,
         })
       }
-
-      this.logPoliceFailureAndNotify(
-        'Failed to get token URL for digital case file',
-        `Failed to get token URL for digital case file ${policeDigitalFileId}`,
-        {
-          rvgCaseId,
-          rafraennGagnId: policeDigitalFileId,
-          actor: user.name,
-          institution: user.institution?.name,
-          startTime,
-          endTime: nowFactory(),
-          source,
-        },
-        reason,
-      )
 
       throw new BadGatewayException({
         ...reason,
@@ -741,7 +737,7 @@ export class PoliceService {
         nationalId: defendant.accusedNationalId,
         name: defendant.accusedName ?? undefined,
         gender: defendant.accusedGender ?? undefined,
-        address: defendant.accusedAddress ?? undefined,
+        address: normalizePersonAddress(defendant.accusedAddress ?? undefined),
         dateOfBirth: defendant.accusedDOB ?? undefined,
         citizenship: defendant.citizenship ?? undefined,
       }))

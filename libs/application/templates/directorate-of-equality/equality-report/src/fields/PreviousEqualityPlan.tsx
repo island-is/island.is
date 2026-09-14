@@ -23,9 +23,26 @@ import { getProviderErrorMessage } from '../utils/providerError'
 // without checking the status hands back an empty bag that looks like a plan.
 type ProviderEntry = {
   status?: 'success' | 'failure'
-  data?: { equalityReportContent?: string } | null
+  data?: {
+    equalityReportContent?: string
+    contentType?: string
+    contentFilename?: string | null
+    /** Only on the separate, on-demand PDF provider. */
+    base64?: string
+  } | null
   reason?: unknown
 }
+
+/**
+ * ⚠️ **A PDF-backed plan arrives with BLANK content, and that is success.**
+ *
+ * DMR returns `equalityReportContent: null` when the plan was uploaded as a
+ * file — the bytes are megabytes of base64 and are fetched separately — so the
+ * "blank means the fetch failed" rule below is true only for HTML plans.
+ * Without this check an uploaded plan would report a load error on a screen
+ * whose whole purpose is to show the applicant they already have one.
+ */
+const isPdfPlan = (data: ProviderEntry['data']) => data?.contentType === 'PDF'
 
 // Judged on plain text, since '' and '<p></p>' both render blank. The screen
 // only shows when an active plan exists, so nothing to read means a failed
@@ -42,16 +59,30 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
   // resolved cached or fetched content — otherwise it renders blank for good.
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isPdf, setIsPdf] = useState(false)
+  const [pdfFilename, setPdfFilename] = useState<string | null>(null)
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
 
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
 
   useEffect(() => {
-    const cached = getValueViaPath<string>(
+    const cachedData = getValueViaPath<ProviderEntry['data']>(
       application.externalData,
-      'previousEqualityReportContent.data.equalityReportContent',
+      'previousEqualityReportContent.data',
     )
+
+    // Checked before the blank test below, which would otherwise read a PDF
+    // plan's empty content as a failed fetch.
+    if (isPdfPlan(cachedData)) {
+      setIsPdf(true)
+      setPdfFilename(cachedData?.contentFilename ?? null)
+      setLoading(false)
+      return
+    }
+
+    const cached = cachedData?.equalityReportContent
     // A run that failed while the API was down persists '' — short-circuiting
     // on it would render the blank editor forever.
     if (!isBlank(cached)) {
@@ -79,6 +110,14 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
       .then((res) => {
         const entry = res.data?.updateApplicationExternalData?.externalData
           ?.previousEqualityReportContent as ProviderEntry | undefined
+
+        // Same ordering as the cached path: a PDF plan's blank content is a
+        // success, so it must be recognised before the blank test.
+        if (entry?.status !== 'failure' && isPdfPlan(entry?.data)) {
+          setIsPdf(true)
+          setPdfFilename(entry?.data?.contentFilename ?? null)
+          return
+        }
 
         const html = entry?.data?.equalityReportContent
 
@@ -121,6 +160,75 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
     }
   }
 
+  /**
+   * Fetches the earlier plan's bytes and hands them to the browser.
+   *
+   * On demand rather than on render: several megabytes of base64 should not be
+   * pulled through the provider channel just because the applicant opened a
+   * screen that mentions the document exists.
+   */
+  const handleDownloadPdf = async () => {
+    setDownloadingPdf(true)
+    try {
+      const res = await updateApplicationExternalData({
+        variables: {
+          input: {
+            id: application.id,
+            dataProviders: [
+              {
+                actionId: draftActionId(
+                  ApiActions.getPreviousEqualityReportPdf,
+                ),
+                order: 0,
+              },
+            ],
+          },
+          locale,
+        },
+      })
+
+      const base64 = (
+        res.data?.updateApplicationExternalData?.externalData
+          ?.previousEqualityReportPdf as ProviderEntry | undefined
+      )?.data?.base64 as string | undefined
+
+      if (typeof base64 !== 'string') {
+        toast.error(
+          formatMessage(
+            messages.equalityReport.previousEqualityPlan.pdfDownloadError,
+          ),
+        )
+        return
+      }
+
+      // Same decode as the .docx template download in `Editor.tsx` — `atob`
+      // yields a binary string, which has to be widened byte by byte before it
+      // can become a Blob.
+      const binary = atob(base64)
+      const bytes = new Uint8Array(binary.length)
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+
+      const url = URL.createObjectURL(
+        new Blob([bytes], { type: 'application/pdf' }),
+      )
+      const a = document.createElement('a')
+      a.href = url
+      a.download = pdfFilename ?? 'jafnrettisaaetlun.pdf'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      setTimeout(() => URL.revokeObjectURL(url), 100)
+    } catch {
+      toast.error(
+        formatMessage(
+          messages.equalityReport.previousEqualityPlan.pdfDownloadError,
+        ),
+      )
+    } finally {
+      setDownloadingPdf(false)
+    }
+  }
+
   if (loading) {
     return <SkeletonLoader height={300} />
   }
@@ -137,22 +245,44 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
     )
   }
 
+  /*
+   * No editor and no copy button: there is no rich text to show or copy, and
+   * an empty editor beside a "copy" control would state the opposite of what is
+   * true — that the earlier plan is blank.
+   */
+  if (isPdf) {
+    return (
+      <Box>
+        <AlertMessage
+          type="info"
+          title={formatMessage(
+            messages.equalityReport.previousEqualityPlan.alertTitle,
+          )}
+          message={formatMessage(
+            messages.equalityReport.previousEqualityPlan.pdfNotice,
+          )}
+        />
+        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+          <Button
+            variant="utility"
+            size="small"
+            icon="download"
+            iconType="outline"
+            loading={downloadingPdf}
+            disabled={downloadingPdf}
+            onClick={() => void handleDownloadPdf()}
+          >
+            {formatMessage(
+              messages.equalityReport.previousEqualityPlan.pdfDownload,
+            )}
+          </Button>
+        </Box>
+      </Box>
+    )
+  }
+
   return (
     <Box>
-      <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
-        <Button
-          variant="utility"
-          size="small"
-          icon="copy"
-          iconType="outline"
-          onClick={() => void handleCopy()}
-          disabled={!content}
-        >
-          {formatMessage(
-            messages.equalityReport.previousEqualityPlan.copyButton,
-          )}
-        </Button>
-      </Box>
       <HTMLEditor
         value={content ?? ('' as HTMLText)}
         readOnly
