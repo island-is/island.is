@@ -20,7 +20,10 @@ import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import AnimateHeight from 'react-animate-height'
 import * as styles from './InteractiveTableFormField.css'
-import { InteractiveTableFormFieldExpandedRow } from './InteractiveTableFormFieldExpandedRow'
+import {
+  hasExpandedTable,
+  InteractiveTableFormFieldExpandedRow,
+} from './InteractiveTableFormFieldExpandedRow'
 
 export type InteractiveTableColumn = {
   truncate: boolean
@@ -153,6 +156,7 @@ interface Props {
   columns: InteractiveTableColumn[]
   expandedHeader?: StaticText[]
   expandedRows?: StaticText[][]
+  expandedInfo?: StaticText
   colSpan: number
 }
 
@@ -170,6 +174,7 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
   columns,
   expandedHeader,
   expandedRows,
+  expandedInfo,
   colSpan,
 }) => {
   const { formatMessage } = useLocale()
@@ -187,7 +192,8 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
     .join(', ')
 
   const isExpandable =
-    !!expandedHeader && !!expandedRows && expandedRows.length > 0
+    hasExpandedTable({ header: expandedHeader, rows: expandedRows }) ||
+    !!expandedInfo
   const isOpen = expanded || collapsing
 
   useEffect(() => {
@@ -345,6 +351,7 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
                 <InteractiveTableFormFieldExpandedRow
                   header={expandedHeader}
                   rows={expandedRows}
+                  info={expandedInfo}
                   application={application}
                 />
               )}
@@ -386,6 +393,7 @@ const arePropsEqual = (prev: Props, next: Props) =>
       column.truncate === next.columns[index].truncate &&
       column.expandable === next.columns[index].expandable,
   ) &&
+  prev.expandedInfo === next.expandedInfo &&
   areCellsEqual(prev.expandedHeader, next.expandedHeader) &&
   areRowsEqual(prev.expandedRows, next.expandedRows)
 

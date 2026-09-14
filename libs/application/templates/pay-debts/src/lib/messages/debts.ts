@@ -106,6 +106,13 @@ export const debts = {
       defaultMessage: 'Kostnaður',
       description: 'Cost header of the expanded charge type sub-table',
     },
+    salaryWithholdingInfo: {
+      id: 'pd.application:debts.table.salaryWithholdingInfo',
+      defaultMessage:
+        'Þessi skuld er merkt til frádráttar af launum. Launagreiðandi er: {payerName}.\nViltu halda áfram með greiðsluferlið?',
+      description:
+        'Shown in the expanded row of a debt that is being withheld from the applicant salary',
+    },
     noDateLabel: {
       id: 'pd.application:debts.table.noDateLabel',
       defaultMessage: 'Á ekki við',

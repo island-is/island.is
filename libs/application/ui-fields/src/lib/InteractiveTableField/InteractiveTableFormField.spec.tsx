@@ -234,3 +234,57 @@ describe('InteractiveTableFormField accessible names', () => {
     expect(unnamed).toHaveLength(0)
   })
 })
+
+describe('InteractiveTableFormField expanded row info', () => {
+  const infoMessage = 'Þessa skuld er verið að draga af launum þínum.'
+
+  const renderWithExpandedInfo = () =>
+    render(
+      <InteractiveTableFormField
+        field={
+          buildInteractiveTableField({
+            id: 'selectedDebts',
+            selectable: true,
+            header: [
+              { label: 'Gjaldflokkur', expandable: true },
+              'Gjaldgrunnur',
+              'Eindagi',
+              'Skuldir',
+            ],
+            rows: makeRows(2),
+            expandedRows: {
+              header: ['Gjalddagi', 'Höfuðstóll'],
+              rows: [
+                [['01.08.2025', '200.000 kr.']],
+                [['01.09.2025', '100.000 kr.']],
+              ],
+              info: [infoMessage, undefined],
+            },
+          }) as InteractiveTableField
+        }
+        application={application}
+      />,
+      { wrapper: Wrapper },
+    )
+
+  it('shows the info message of the expanded row', async () => {
+    renderWithExpandedInfo()
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Gjaldflokkur 0' }),
+    )
+
+    expect(await screen.findByText(infoMessage)).toBeInTheDocument()
+  })
+
+  it('leaves rows without an info message untouched', async () => {
+    renderWithExpandedInfo()
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Gjaldflokkur 1' }),
+    )
+
+    expect(await screen.findByText('01.09.2025')).toBeInTheDocument()
+    expect(screen.queryByText(infoMessage)).not.toBeInTheDocument()
+  })
+})

@@ -9,7 +9,13 @@ import {
 import { Application } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/shared/utils'
 
-const invoices = [
+const invoices: {
+  name: string
+  dueDate: string
+  amount: number
+  lines: { description: string; amount: number }[]
+  info?: string
+}[] = [
   {
     name: 'Invoice 1',
     dueDate: '15.01.2024',
@@ -18,6 +24,7 @@ const invoices = [
       { description: 'Base fee', amount: 20000 },
       { description: 'Interest', amount: 5000 },
     ],
+    info: 'This invoice is already being deducted from your salary. Let your employer know if you pay it off here.',
   },
   {
     name: 'Invoice 2',
@@ -39,7 +46,7 @@ export const interactiveTableSubsection = buildSubSection({
         buildDescriptionField({
           id: 'interactiveTableDescription',
           description:
-            'The interactive table lets users select rows and, optionally, enter an amount per row capped by a max value - for example choosing which invoices to pay and how much to pay towards each one. Pair it with a sticky footer field (referencing the table via widthReferenceTestId/watchFieldIds) to show a live running total as the user edits values. A column marked expandable turns into a chevron toggle that opens the row into a sub-table defined by expandedRows; rows with no sub-table entries stay closed.',
+            'The interactive table lets users select rows and, optionally, enter an amount per row capped by a max value - for example choosing which invoices to pay and how much to pay towards each one. Pair it with a sticky footer field (referencing the table via widthReferenceTestId/watchFieldIds) to show a live running total as the user edits values. A column marked expandable turns into a chevron toggle that opens the row into a sub-table defined by expandedRows; rows with no sub-table entries stay closed. Pass expandedRows.info to add an optional message below the sub-table of a given row.',
           marginBottom: 2,
         }),
         buildInteractiveTableField({
@@ -65,6 +72,7 @@ export const interactiveTableSubsection = buildSubSection({
                 formatCurrency(line.amount.toString()),
               ]),
             ),
+            info: invoices.map((invoice) => invoice.info),
           },
           inputColumn: {
             id: 'interactiveTableAmountToPay',

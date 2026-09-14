@@ -1053,6 +1053,9 @@ export interface InteractiveTableField extends BaseField {
   expandedRows?: {
     header: StaticText[] | ((application: Application) => StaticText[])
     rows: StaticText[][][] | ((application: Application) => StaticText[][][])
+    info?:
+      | (StaticText | undefined)[]
+      | ((application: Application) => (StaticText | undefined)[])
   }
   isSubmitDisabled?: (params: {
     selectedRows: boolean[]

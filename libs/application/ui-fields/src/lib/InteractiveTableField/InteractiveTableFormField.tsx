@@ -90,6 +90,10 @@ export const InteractiveTableFormField: FC<Props> = ({
     const config = field.expandedRows?.rows
     return typeof config === 'function' ? config(application) : config
   }, [field.expandedRows, application])
+  const expandedInfo = useMemo(() => {
+    const config = field.expandedRows?.info
+    return typeof config === 'function' ? config(application) : config
+  }, [field.expandedRows, application])
 
   const hasInputColumn = !!field.inputColumn
   const inputFieldId = field.inputColumn
@@ -291,6 +295,7 @@ export const InteractiveTableFormField: FC<Props> = ({
                 columns={columns}
                 expandedHeader={expandedHeader}
                 expandedRows={expandedRows?.[rowIndex]}
+                expandedInfo={expandedInfo?.[rowIndex]}
                 colSpan={colSpan}
               />
             ))}

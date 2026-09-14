@@ -10,6 +10,7 @@ export type CustomerDebt = {
   debts: number
   chargeItemSubject: string
   timePeriod: string
+  salaryPayerName?: string
 }
 
 export type SelectedDebt = CustomerDebt & {

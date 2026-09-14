@@ -201,6 +201,35 @@ describe('debtsSection', () => {
     ).toBe(false)
   })
 
+  it('warns about salary withholding only on the debts it applies to', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const info = table?.expandedRows?.info
+
+    if (typeof info !== 'function') {
+      throw new Error(
+        'Expected the expanded row info to be derived from the debts',
+      )
+    }
+
+    const application = {
+      externalData: fetched([
+        { ...debt, salaryPayerName: 'Mocklaunagreiðandi ehf.' },
+        debt,
+      ]),
+      answers: {},
+    } as unknown as Application
+
+    expect(info(application)).toEqual([
+      {
+        ...messages.table.salaryWithholdingInfo,
+        values: { payerName: 'Mocklaunagreiðandi ehf.' },
+      },
+      undefined,
+    ])
+  })
+
   it('keeps the loader ahead of the table so it renders in its place', () => {
     expect(children[0].id).toBe('debtsLoader')
   })

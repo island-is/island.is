@@ -92,6 +92,15 @@ export const debtsSection = buildSection({
                   formatCurrency(debt.cost),
                 ],
               ]),
+            info: (application) =>
+              getDebts(application).map((debt) =>
+                debt.salaryPayerName
+                  ? {
+                      ...messages.table.salaryWithholdingInfo,
+                      values: { payerName: debt.salaryPayerName },
+                    }
+                  : undefined,
+              ),
           },
           // inputColumn: {
           //   id: 'debtsToPay',

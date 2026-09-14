@@ -3,6 +3,17 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FinanceClientV3Service } from '@island.is/clients/finance-v3'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+
+// TODO: Remove the salary payer mock once FJS returns launagreiðandi on the
+// debt response; `salaryPayerName` should then come straight from `debt`.
+const MOCK_SALARY_PAYER_NAME = 'Mocklaunagreiðandi ehf.'
+
+const mockSalaryPayerName = (index: number) =>
+  (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
+  index % 2 === 0
+    ? MOCK_SALARY_PAYER_NAME
+    : undefined
 
 @Injectable()
 export class PayDebtsService extends BaseTemplateApiService {
@@ -18,7 +29,7 @@ export class PayDebtsService extends BaseTemplateApiService {
     return {
       message: result?.message ?? '',
       timestamp: result?.timestamp ?? '',
-      debts: (result?.debts ?? []).map((debt) => ({
+      debts: (result?.debts ?? []).map((debt, index) => ({
         chargeTypeId: debt.chargeTypeId,
         chargeTypeName: debt.chargeTypeName,
         chargeItemSubject: debt.chargeItemSubject,
@@ -30,6 +41,7 @@ export class PayDebtsService extends BaseTemplateApiService {
         cost: Number(debt.cost),
         debts: Number(debt.debts),
         payID: debt.payID,
+        salaryPayerName: mockSalaryPayerName(index),
       })),
     }
   }
