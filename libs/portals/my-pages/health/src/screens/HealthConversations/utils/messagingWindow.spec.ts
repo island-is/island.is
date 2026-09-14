@@ -36,7 +36,9 @@ describe('getTodaysWindow', () => {
     expect(
       getTodaysWindow({ dayType: 'WEEKDAY', openingHours: null }),
     ).toBeUndefined()
-    expect(getTodaysWindow({ dayType: 'SOMEDAY', openingHours })).toBeUndefined()
+    expect(
+      getTodaysWindow({ dayType: 'SOMEDAY', openingHours }),
+    ).toBeUndefined()
   })
 })
 
@@ -129,7 +131,10 @@ describe('getNextOpeningInfo', () => {
   }
 
   it('says tomorrow when the next opening is the next UTC day', () => {
-    const info = getNextOpeningInfo(nextOpensAt, new Date('2026-07-13T23:14:00Z'))
+    const info = getNextOpeningInfo(
+      nextOpensAt,
+      new Date('2026-07-13T23:14:00Z'),
+    )
     expect(info).toMatchObject({ when: 'tomorrow', timeLabel: '06:00' })
   })
 

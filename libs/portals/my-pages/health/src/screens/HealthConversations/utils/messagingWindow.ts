@@ -115,7 +115,11 @@ export const getNextOpeningInfo = (
   nextOpensAt?: NextOpening | null,
   now: Date = new Date(),
 ):
-  | { when: 'today' | 'tomorrow' | 'later'; timeLabel: string; dateLabel: string }
+  | {
+      when: 'today' | 'tomorrow' | 'later'
+      timeLabel: string
+      dateLabel: string
+    }
   | undefined => {
   if (!nextOpensAt) return undefined
   const timeLabel = formatTimeLabel(nextOpensAt.windowOpen)
