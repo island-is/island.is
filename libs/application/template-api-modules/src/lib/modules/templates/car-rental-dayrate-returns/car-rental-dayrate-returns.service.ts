@@ -37,9 +37,10 @@ const sumRentalDaysByPermno = (
 
   for (const entry of registration.entries ?? []) {
     if (!entry.permno) continue
+    if (entry.numberOfDays == null) continue
     totals.set(
       entry.permno,
-      (totals.get(entry.permno) ?? 0) + (entry.numberOfDays ?? 0),
+      (totals.get(entry.permno) ?? 0) + entry.numberOfDays,
     )
   }
 
