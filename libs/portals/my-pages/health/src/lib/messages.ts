@@ -2068,6 +2068,28 @@ export const messages = defineMessages({
     defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
     id: 'sp.health:health-messages-no-recipient',
   },
+  healthConversationsContactTitle: {
+    defaultMessage: 'Hafa samband',
+    id: 'sp.health:health-messages-contact-title',
+  },
+  healthConversationsContactIntro: {
+    defaultMessage:
+      'Heilsugæslan þín tekur ekki á móti skilaboðum á Ísland.is. Á vef heilsugæslunnar finnur þú upplýsingar um hvernig þú getur haft samband og nálgast þá þjónustu sem þú þarft. Ef erindið er brýnt, hringdu í <bold>1700</bold>. Í neyðartilvikum, hringdu í <bold>112</bold>.',
+    id: 'sp.health:health-messages-contact-intro',
+  },
+  healthConversationsContactWebChatTitle: {
+    defaultMessage: 'Netspjall Heilsuveru',
+    id: 'sp.health:health-messages-contact-web-chat-title',
+  },
+  healthConversationsContactWebChatText: {
+    defaultMessage:
+      'Þú getur einnig leitað til heilbrigðisstarfsfólks í gegnum netspjall Heilsuveru sem er opið frá kl. 08:00 – 15:30 alla virka daga',
+    id: 'sp.health:health-messages-contact-web-chat-text',
+  },
+  healthConversationsContactWebChatCta: {
+    defaultMessage: 'Opna netspjall',
+    id: 'sp.health:health-messages-contact-web-chat-cta',
+  },
   healthConversationClosingSoonTitle: {
     defaultMessage: 'Athugið: það lokar bráðlega fyrir skilaboð',
     id: 'sp.health:health-messages-closing-soon-title',
@@ -2433,6 +2455,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Hér finnur þú yfirlit yfir þær meðferðir sem þú ert skráð í.',
     id: 'sp.health:treatments-intro',
+  },
+  treatmentOverviewCardDescription: {
+    defaultMessage:
+      'Hér getur þú fundið allar upplýsingar sem tengjast meðferð þinni',
+    id: 'sp.health:treatment-overview-card-description',
   },
   noTreatmentsTitle: {
     defaultMessage: 'Engin meðferð skráð',

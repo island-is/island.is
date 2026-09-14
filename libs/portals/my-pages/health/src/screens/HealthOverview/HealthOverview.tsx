@@ -42,6 +42,7 @@ import ContactLinks from './components/ContactLinks'
 import HealthConversationsBox from './components/HealthConversationsBox/HealthConversationsBox'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import SameDayHelpBox from './components/SameDayHelpBox'
+import TreatmentsBox from './components/TreatmentsBox'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import * as styles from './HealthOverview.css'
 
@@ -257,6 +258,8 @@ export const HealthOverview = () => {
           showLinkButton
         />
       )}
+      {/* Active treatments */}
+      <TreatmentsBox />
       {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{

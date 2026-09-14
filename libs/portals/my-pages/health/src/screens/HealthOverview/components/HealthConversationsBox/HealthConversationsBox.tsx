@@ -10,8 +10,10 @@ import { formatDate, LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { ApiScope } from '@island.is/auth/scopes'
+import cn from 'classnames'
 import { useGetHealthConversationsQuery } from '../../../HealthConversations/HealthConversations.generated'
 import ConversationAvatar from '../../../HealthConversations/components/ConversationAvatar'
+import * as listStyles from '../../../HealthConversations/HealthConversations.css'
 import { HealthPaths } from '../../../../lib/paths'
 import { messages } from '../../../../lib/messages'
 import * as styles from './HealthConversationsBox.css'
@@ -167,7 +169,6 @@ export const HealthConversationsBox = ({ limit }: Props) => {
               )}
               className={styles.conversationLink}
             >
-              {/* Rows bleed to the card edges on mobile, inset on desktop */}
               <Box paddingX={[0, 0, 3]}>
                 <Box
                   display="flex"
@@ -177,7 +178,10 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                   borderColor="blue200"
                   paddingY={2}
                   paddingX={[3, 3, 2]}
-                  className={unread ? styles.unreadRow : undefined}
+                  className={cn(
+                    listStyles.conversationRow,
+                    unread && styles.unreadRow,
+                  )}
                 >
                   <ConversationAvatar
                     variant="organization"
