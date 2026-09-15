@@ -1,13 +1,13 @@
 import {
-  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
+  buildRadioField,
   buildSelectField,
   buildSubSection,
-  YES,
 } from '@island.is/application/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { memmMessages, sharedMessages } from '../../../../lib/messages'
+import { getYesNoDoNotKnowOptions } from '../../../../utils/childProtectionNotificationUtils'
 import {
   showLanguageSection,
   showPreferredLanguage,
@@ -110,16 +110,14 @@ export const cultureSubSection = buildSubSection({
           },
           condition: showPreferredLanguage,
         }),
-        buildCheckboxField({
+        buildRadioField({
           id: 'memm.culture.needsInterpreter',
-          spacing: 0,
+          title: sharedMessages.needsInterpreter,
+          titleVariant: 'h5',
+          widthWithIllustration: '1/3',
+          space: 4,
           doesNotRequireAnswer: true,
-          options: [
-            {
-              value: YES,
-              label: sharedMessages.needsInterpreter,
-            },
-          ],
+          options: getYesNoDoNotKnowOptions(),
           condition: showPreferredLanguage,
         }),
       ],
