@@ -35,6 +35,7 @@ export const FormFragment = gql`
     derivedFrom
     allowProceedOnValidationFail
     isInaccessible
+    validateEligibility
     hasSummaryScreen
     organizationZendeskInstance {
       zendeskInstance

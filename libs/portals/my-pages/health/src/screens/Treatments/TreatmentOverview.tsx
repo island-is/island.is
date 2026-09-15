@@ -11,7 +11,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkResolver,
   m,
@@ -64,13 +64,11 @@ const TreatmentOverview = () => {
       label: formatMessage(messages.questionnaires),
       to: HealthPaths.HealthQuestionnaires,
       lastSentAt: treatment?.lastQuestionnaireSentAt,
-      lastSentMessage: messages.lastListSent,
     },
     {
       label: formatMessage(m.healthTreatmentEducationalContent),
       to: HealthPaths.HealthTreatmentEducationalContent.replace(':id', id),
       lastSentAt: treatment?.lastDocumentSentAt,
-      lastSentMessage: messages.lastContentSent,
     },
   ]
 
@@ -86,8 +84,8 @@ const TreatmentOverview = () => {
     ...(treatment?.supportsMessaging
       ? [
           {
-            href: newMessageHref,
-            label: formatMessage(messages.healthConversationSend),
+            href: HealthPaths.HealthConversations,
+            label: formatMessage(m.messages),
           },
         ]
       : []),
@@ -112,8 +110,8 @@ const TreatmentOverview = () => {
           : formatMessage(messages.treatmentIntro)
       }
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirTreatmentTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaTreatmentTooltip),
       }}
       marginBottom={[0, 0, 0, 2]}
     >
@@ -135,15 +133,6 @@ const TreatmentOverview = () => {
             </Inline>
           </Box>
           <Stack space={6}>
-            {(treatment.recentConversations?.length ?? 0) > 0 && (
-              <TreatmentMessages
-                conversations={treatment.recentConversations ?? []}
-                newMessageHref={
-                  treatment.supportsMessaging ? newMessageHref : undefined
-                }
-              />
-            )}
-
             <Box>
               <Text
                 variant="eyebrow"
@@ -161,7 +150,7 @@ const TreatmentOverview = () => {
                       to={card.to}
                       text={
                         card.lastSentAt
-                          ? formatMessage(card.lastSentMessage, {
+                          ? formatMessage(messages.lastSent, {
                               date: formatDate(card.lastSentAt),
                             })
                           : undefined
@@ -171,6 +160,15 @@ const TreatmentOverview = () => {
                 ))}
               </GridRow>
             </Box>
+
+            {(treatment.recentConversations?.length ?? 0) > 0 && (
+              <TreatmentMessages
+                conversations={treatment.recentConversations ?? []}
+                newMessageHref={
+                  treatment.supportsMessaging ? newMessageHref : undefined
+                }
+              />
+            )}
 
             <Appointments
               data={{

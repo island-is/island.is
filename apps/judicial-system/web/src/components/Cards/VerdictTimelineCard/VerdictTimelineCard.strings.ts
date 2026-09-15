@@ -18,11 +18,6 @@ export const strings = defineMessages({
     defaultMessage: 'Dómur birtur {date}',
     description: 'Notaður sem texti fyrir dagsetningu birtingar.',
   },
-  defendantAppealDate: {
-    id: 'judicial.system.core:blue_box_with_date.defendant_appeal_date',
-    defaultMessage: 'Dómi áfrýjað {date}',
-    description: 'Notaður sem texti fyrir dagsetningu áfrýjunar.',
-  },
   defendantVerdictServiceDateButtonText: {
     id: 'judicial.system.core:blue_box_with_date.defendant_verdict_service_date_button_text',
     defaultMessage: 'Skrá birtingu dóms',

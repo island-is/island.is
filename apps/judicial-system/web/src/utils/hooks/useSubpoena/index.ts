@@ -60,7 +60,7 @@ export const useCreateSubpoenas = () => {
           }
         }
         return false
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að búa til fyrirkall')
         return false
       }

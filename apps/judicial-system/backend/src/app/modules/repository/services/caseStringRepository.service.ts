@@ -111,4 +111,48 @@ export class CaseStringRepositoryService {
       throw error
     }
   }
+
+  // Copies the case strings of the given types to another case as new rows.
+  // Which types travel is the caller's decision; how they are copied is not.
+  async copyByTypesToCase(
+    caseId: string,
+    newCaseId: string,
+    stringTypes: StringType[],
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Copying the case strings of types ${stringTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const caseStrings = await this.caseStringModel.findAll({
+        where: { caseId, stringType: stringTypes },
+        transaction: options.transaction,
+      })
+
+      await Promise.all(
+        caseStrings.map((caseString) =>
+          this.caseStringModel.create(
+            { ...caseString.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction: options.transaction },
+          ),
+        ),
+      )
+
+      this.logger.debug(
+        `Copied ${caseStrings.length} case strings of case ${caseId} to case ${newCaseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying the case strings of types ${stringTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }
