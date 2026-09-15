@@ -576,6 +576,119 @@ describe('Prosecutor IndictmentOverview', () => {
       expect(mockCreateProsecutionVerdictAppeal).not.toHaveBeenCalled()
     })
 
+    // The appeal case the confirmation created is not in the working case until
+    // it is refetched, so its id has to survive the modal closing - otherwise a
+    // withdrawal in the same visit has nothing to withdraw from.
+    it('withdraws from the appeal case the same visit created', async () => {
+      // Two defendants appeal together: the first creates the appeal case, the
+      // second's request fails, so the reviewer stays on the page holding an
+      // appeal case the working case knows nothing about.
+      mockCreateProsecutionVerdictAppeal.mockImplementation(
+        async (_caseId: string, defendantId: string) =>
+          defendantId === 'defendant_id'
+            ? { id: 'verdict_appeal_case_id' }
+            : undefined,
+      )
+      renderCase(
+        appealCase({
+          defendants: [
+            {
+              id: 'defendant_id',
+              name: 'Jón Sigurður Jónsson',
+              indictmentReviewDecision: null,
+            },
+            {
+              id: 'other_defendant_id',
+              name: 'Anna Annasdóttir',
+              indictmentReviewDecision: null,
+            },
+          ],
+        }),
+        [Feature.INDICTMENT_APPEAL],
+      )
+
+      await userEvent.click(
+        await screen.findByLabelText('Áfrýja héraðsdómi til Landsréttar', {
+          selector: '#review-option-appeal-defendant_id',
+        }),
+      )
+      await userEvent.click(
+        screen.getByLabelText('Áfrýja héraðsdómi til Landsréttar', {
+          selector: '#review-option-appeal-other_defendant_id',
+        }),
+      )
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Ljúka yfirlestri' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Staðfesta' }),
+      )
+
+      await waitFor(() =>
+        expect(mockCreateProsecutionVerdictAppeal).toHaveBeenCalledTimes(2),
+      )
+      expect(mockPush).not.toHaveBeenCalled()
+
+      // Now take the first defendant's appeal back. Its withdrawal has to reach
+      // the appeal case created a moment ago, not nothing at all.
+      await userEvent.click(screen.getByTestId('modalSecondaryButton'))
+      await userEvent.click(
+        screen.getByLabelText('Una héraðsdómi', {
+          selector: '#review-option-accept-defendant_id',
+        }),
+      )
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Ljúka yfirlestri' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Staðfesta' }),
+      )
+
+      await waitFor(() =>
+        expect(mockTransitionAppealCase).toHaveBeenCalledWith(
+          'test_id',
+          'verdict_appeal_case_id',
+          AppealCaseTransition.WITHDRAW_APPEAL,
+          undefined,
+          'defendant_id',
+        ),
+      )
+    })
+
+    // A decision recorded as an appeal before verdict appeals were switched on
+    // has no appeal case. Changing it must go through rather than wait forever
+    // on a withdrawal that has nothing to withdraw from.
+    it('confirms a change away from an appeal that has no appeal case', async () => {
+      renderCase(
+        appealCase({
+          indictmentReviewedDate: rulingDate,
+          defendants: [
+            {
+              id: 'defendant_id',
+              name: 'Jón Sigurður Jónsson',
+              indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+            },
+          ],
+        }),
+        [Feature.INDICTMENT_APPEAL],
+      )
+
+      await userEvent.click(
+        await screen.findByLabelText('Una héraðsdómi', {
+          selector: '#review-option-accept-defendant_id',
+        }),
+      )
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Breyta ákvörðun' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Staðfesta' }),
+      )
+
+      await waitFor(() => expect(mockPush).toHaveBeenCalled())
+      expect(mockTransitionAppealCase).not.toHaveBeenCalled()
+    })
+
     // A decision already confirmed as an appeal, so the reviewer can take it
     // back.
     const withdrawalCase = (): Case =>
@@ -590,7 +703,15 @@ describe('Prosecutor IndictmentOverview', () => {
         ],
         verdictAppealCase: {
           id: 'verdict_appeal_case_id',
-          appealEventLogs: [],
+          appealEventLogs: [
+            {
+              id: 'event_id',
+              created: '2026-05-25T10:00:00.000Z',
+              eventType: AppealEventType.APPEALED,
+              defendantId: 'defendant_id',
+              userRole: UserRole.PROSECUTOR,
+            },
+          ],
         },
       })
 

@@ -33,6 +33,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { standingProsecutionAppealDefendantIds } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/prosecutionVerdictAppeal.logic'
 import ReviewerVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/ReviewerVerdictTimelineCard'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
@@ -136,6 +137,33 @@ const IndictmentOverview: FC = () => {
 
   const [originalReviewDecisions, setOriginalReviewDecisions] =
     useState<ReviewDecisions>({})
+
+  // The appeals filed in this visit, which the working case does not know about
+  // until it is refetched. Kept here rather than in the modal so they survive
+  // the modal closing: withdrawing one of them again needs both its appeal case
+  // and the knowledge that the defendant has an appeal at all.
+  const [filedAppeals, setFiledAppeals] = useState<{
+    appealCaseId?: string
+    defendantIds: string[]
+  }>({ defendantIds: [] })
+
+  const recordFiledAppeal = useCallback(
+    (defendantId: string, appealCaseId: string) =>
+      setFiledAppeals((previous) => ({
+        appealCaseId: previous.appealCaseId ?? appealCaseId,
+        defendantIds: previous.defendantIds.includes(defendantId)
+          ? previous.defendantIds
+          : [...previous.defendantIds, defendantId],
+      })),
+    [],
+  )
+
+  // A review decision of APPEAL is not itself an appeal to withdraw - one
+  // recorded before verdict appeals were switched on has no event behind it.
+  const defendantIdsWithStandingAppeal = [
+    ...standingProsecutionAppealDefendantIds(workingCase.verdictAppealCase),
+    ...filedAppeals.defendantIds,
+  ]
 
   // Store original review decisions when workingCase loads to see if they change
   useEffect(() => {
@@ -362,9 +390,13 @@ const IndictmentOverview: FC = () => {
             originalDecisions={originalReviewDecisions}
             isFine={isFine}
             indictmentAppealDeadline={workingCase.indictmentAppealDeadline}
-            verdictAppealCaseId={workingCase.verdictAppealCase?.id}
+            verdictAppealCaseId={
+              workingCase.verdictAppealCase?.id ?? filedAppeals.appealCaseId
+            }
+            defendantIdsWithStandingAppeal={defendantIdsWithStandingAppeal}
             registersVerdictAppeal={registersVerdictAppeal}
             onClose={() => setModalVisible(undefined)}
+            onAppealFiled={recordFiledAppeal}
             // A saved decision is the new original: it no longer counts as
             // changed, so a retry after a partial failure sends only the rest.
             onSaved={(savedDefendantIds) =>

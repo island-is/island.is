@@ -41,6 +41,13 @@ interface Props {
   // False leaves the decisions exactly as they were before verdict appeals.
   registersVerdictAppeal: boolean
   onClose: () => void
+  // The defendants whose prosecution appeal stands, and so have one to
+  // withdraw. An APPEAL decision alone does not mean there is one.
+  defendantIdsWithStandingAppeal: string[]
+  // Called with each appeal that was filed, so the page knows about it without
+  // refetching: a withdrawal later in the same visit needs both the appeal case
+  // to withdraw from and the knowledge that this defendant has an appeal.
+  onAppealFiled: (defendantId: string, appealCaseId: string) => void
   // Called with the defendants whose decision was saved, whether or not every
   // save succeeded, so the page can stop counting them as changed and a retry
   // sends only what failed.
@@ -67,8 +74,10 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
     isFine,
     indictmentAppealDeadline,
     verdictAppealCaseId,
+    defendantIdsWithStandingAppeal,
     registersVerdictAppeal,
     onClose,
+    onAppealFiled,
     onSaved,
     onConfirmed,
   } = props
@@ -104,22 +113,36 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
     toWithdraw,
   }: VerdictAppealActions): Promise<VerdictAppealActions> => {
     const failed: VerdictAppealActions = { toAppeal: [], toWithdraw: [] }
+    // The first appeal creates the appeal case and the rest join it, so the id
+    // has to be picked up here: the page's copy of the case is not refetched
+    // between the two.
+    let appealCaseId = verdictAppealCaseId
 
     for (const defendant of toAppeal) {
-      if (!(await createProsecutionVerdictAppeal(caseId, defendant.id))) {
+      const appealCase = await createProsecutionVerdictAppeal(
+        caseId,
+        defendant.id,
+      )
+
+      if (!appealCase) {
         failed.toAppeal.push(defendant)
+      } else {
+        appealCaseId = appealCaseId ?? appealCase.id
+        onAppealFiled(defendant.id, appealCase.id)
       }
     }
 
-    // No appeal case means nothing was ever filed to withdraw.
-    if (!verdictAppealCaseId) {
+    // Nothing reaches toWithdraw without a standing appeal, so there is an
+    // appeal case by now unless the appeal that made it has just failed.
+    if (!appealCaseId) {
+      failed.toWithdraw.push(...toWithdraw)
       return failed
     }
 
     for (const defendant of toWithdraw) {
       const withdrawn = await transitionAppealCase(
         caseId,
-        verdictAppealCaseId,
+        appealCaseId,
         AppealCaseTransition.WITHDRAW_APPEAL,
         undefined,
         defendant.id,
@@ -164,6 +187,7 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
       const { toAppeal, toWithdraw } = getVerdictAppealActions(
         savedDefendants,
         originalDecisions,
+        defendantIdsWithStandingAppeal,
       )
 
       unfiled = await fileVerdictAppeals({
