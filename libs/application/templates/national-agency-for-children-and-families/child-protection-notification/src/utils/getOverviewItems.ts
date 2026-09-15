@@ -37,13 +37,13 @@ import {
 import {
   getAreParentsInformedTitle,
   getHasDiscussedWithParentsTitle,
+  getParentMessages,
 } from './childProtectionNotificationUtils'
 import {
   isDayCareProvider,
   isKnowsNationalId,
   isNoNationalId,
   isSchoolType,
-  isUnborn,
   shouldShowNonPrimarySchoolAgeChildInfo,
   showDisabilityService,
   showPreferredLanguage,
@@ -559,13 +559,24 @@ export const getChildManualItems = (
 }
 
 const buildParentItems = (
+  answers: FormValue,
   parent: Parent | undefined,
-  knowsParentNationalIds: string | undefined,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { genders, postalCodes } = getApplicationExternalData(externalData)
-  if (knowsParentNationalIds === YES) {
+
+  const knowsNationalIdItem: KeyValueItem = {
+    width: 'full',
+    keyText: getParentMessages(answers).radioLabel,
+    valueText:
+      parent?.knowsNationalId === YES
+        ? sharedMessages.radioYes
+        : sharedMessages.radioNo,
+  }
+
+  if (parent?.knowsNationalId === YES) {
     return [
+      knowsNationalIdItem,
       {
         width: 'half',
         keyText: coreMessages.nationalId,
@@ -595,6 +606,7 @@ const buildParentItems = (
   }
 
   return [
+    knowsNationalIdItem,
     {
       width: 'half',
       keyText: coreMessages.name,
@@ -688,39 +700,20 @@ const buildParentItems = (
   ]
 }
 
-export const getParentsPreItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { parentsKnowsNationalIds } = getApplicationAnswers(answers)
-
-  return [
-    {
-      width: 'full',
-      keyText: isUnborn(answers)
-        ? parentsMessages.expectantParents.radioLabel
-        : isKnowsNationalId(answers)
-        ? parentsMessages.custodians.radioLabel
-        : parentsMessages.guardians.radioLabel,
-      valueText:
-        parentsKnowsNationalIds === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
-    },
-  ]
-}
-
 export const getParent1Items = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { parent1, parentsKnowsNationalIds } = getApplicationAnswers(answers)
-  return buildParentItems(parent1, parentsKnowsNationalIds, externalData)
+  const { parent1 } = getApplicationAnswers(answers)
+  return buildParentItems(answers, parent1, externalData)
 }
 
 export const getParent2Items = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { parent2, parentsKnowsNationalIds } = getApplicationAnswers(answers)
-  return buildParentItems(parent2, parentsKnowsNationalIds, externalData)
+  const { parent2 } = getApplicationAnswers(answers)
+  return buildParentItems(answers, parent2, externalData)
 }
 
 export const getMemmEducationItems = (

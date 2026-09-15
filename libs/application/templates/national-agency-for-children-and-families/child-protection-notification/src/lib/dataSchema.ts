@@ -6,6 +6,7 @@ import {
   IS,
   SHOW_LANGUAGE_SECTION_TYPES,
 } from '../utils/constants'
+import { PARENT_KEYS } from '../utils/types'
 import { errorMessages } from './messages'
 
 const isValidPhone = (value: string) => {
@@ -128,6 +129,7 @@ const childSchema = z
   })
 
 const parentSchema = z.object({
+  knowsNationalId: z.enum([YES, NO]).optional(),
   nationalIdInfo: z
     .object({
       nationalId: z.string().optional(),
@@ -151,24 +153,25 @@ const parentSchema = z.object({
 
 const parentsSchema = z
   .object({
-    knowsParentNationalIds: z.enum([YES, NO]).optional(),
     parent1: parentSchema.optional(),
     parent2: parentSchema.optional(),
   })
   .superRefine((data, ctx) => {
-    if (!data.knowsParentNationalIds) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['knowsParentNationalIds'],
-        params: errorMessages.required,
-      })
-      return
-    }
+    for (const key of PARENT_KEYS) {
+      const parent = data[key]
 
-    if (data.knowsParentNationalIds === YES) {
-      for (const key of ['parent1', 'parent2'] as const) {
-        const nationalId = data[key]?.nationalIdInfo?.nationalId
-        const name = data[key]?.nationalIdInfo?.name
+      if (!parent?.knowsNationalId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key, 'knowsNationalId'],
+          params: errorMessages.required,
+        })
+        continue
+      }
+
+      if (parent.knowsNationalId === YES) {
+        const nationalId = parent.nationalIdInfo?.nationalId
+        const name = parent.nationalIdInfo?.name
 
         if (!nationalId) {
           ctx.addIssue({
@@ -184,16 +187,13 @@ const parentsSchema = z
           })
         }
       }
-    }
 
-    if (data.knowsParentNationalIds === NO) {
-      for (const key of ['parent1', 'parent2'] as const) {
-        const parent = data[key]
+      if (parent.knowsNationalId === NO) {
         const needsPreferredLanguage =
-          parent?.citizenship !== IS && parent?.needsInterpreter === YES
+          parent.citizenship !== IS && parent.needsInterpreter === YES
 
         // If parent is non-Icelandic and interpreter is requested, preferred language is required.
-        if (needsPreferredLanguage && !parent?.preferredLanguage) {
+        if (needsPreferredLanguage && !parent.preferredLanguage) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             path: [key, 'preferredLanguage'],

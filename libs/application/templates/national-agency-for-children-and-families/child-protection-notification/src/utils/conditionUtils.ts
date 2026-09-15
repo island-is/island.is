@@ -11,6 +11,7 @@ import {
 } from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
+import { ParentKey } from './types'
 
 export const isChildInPrimarySchoolAge = (nationalId: string): boolean => {
   const { birthday } = info(nationalId)
@@ -49,11 +50,12 @@ export const isUnborn = (answers: FormValue) =>
 export const isNoNationalId = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.NO
 
-export const knowsParentIds = (answers: FormValue) =>
-  getApplicationAnswers(answers).parentsKnowsNationalIds === YES
+export const knowsParentIds = (parentKey: ParentKey) => (answers: FormValue) =>
+  getApplicationAnswers(answers)[parentKey]?.knowsNationalId === YES
 
-export const doesNotKnowParentIds = (answers: FormValue) =>
-  getApplicationAnswers(answers).parentsKnowsNationalIds === NO
+export const doesNotKnowParentIds =
+  (parentKey: ParentKey) => (answers: FormValue) =>
+    getApplicationAnswers(answers)[parentKey]?.knowsNationalId === NO
 
 export const isSchoolType = (answers: FormValue) =>
   SCHOOL_TYPES.includes(getApplicationAnswers(answers).memmEducationType ?? '')

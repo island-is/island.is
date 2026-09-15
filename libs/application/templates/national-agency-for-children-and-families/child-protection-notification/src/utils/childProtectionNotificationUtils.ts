@@ -2,6 +2,7 @@ import { NO, YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import {
   memmMessages,
+  parentsMessages,
   reasonForNotificationMessages,
   sharedMessages,
 } from '../lib/messages'
@@ -87,3 +88,10 @@ export const getAreParentsInformedTitle = (
     : isKnowsNationalId(answers) && isSystemNationalId(externalData)
     ? reasonForNotificationMessages.notificationHistory.areCustodiansInformed
     : reasonForNotificationMessages.notificationHistory.areGuardiansInformed
+
+export const getParentMessages = (answers: FormValue) =>
+  isUnborn(answers)
+    ? parentsMessages.expectantParents
+    : isKnowsNationalId(answers)
+    ? parentsMessages.custodians
+    : parentsMessages.guardians
