@@ -501,6 +501,10 @@ export class PoliceService {
     caseId: string,
     user: User,
     source: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ) {
     const startTime = nowFactory()
     const url = `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`
@@ -528,6 +532,8 @@ export class PoliceService {
           caseId,
           actor: user.name,
           institution: user.institution?.name,
+          courtCaseNumber: caseNumbers?.courtCaseNumber ?? '',
+          policeCaseNumbers: caseNumbers?.policeCaseNumbers?.join(', ') ?? '',
           startTime,
           endTime: nowFactory(),
           source,
@@ -684,11 +690,16 @@ export class PoliceService {
   async getAllPoliceSystemDigitalCaseFiles(
     caseId: string,
     user: User,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<PoliceSystemDigitalCaseFile[]> {
     const caseFiles = await this.getDigitalCaseFiles(
       caseId,
       user,
       'getAllPoliceSystemDigitalCaseFiles',
+      caseNumbers,
     )
 
     const files: PoliceSystemDigitalCaseFile[] = []

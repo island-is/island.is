@@ -155,7 +155,10 @@ export class PoliceDigitalCaseFileService {
 
     const [policeSystemDigitalCaseFiles, currentPoliceDigitalCaseFiles] =
       await Promise.all([
-        this.policeService.getAllPoliceSystemDigitalCaseFiles(caseId, user),
+        this.policeService.getAllPoliceSystemDigitalCaseFiles(caseId, user, {
+          courtCaseNumber,
+          policeCaseNumbers,
+        }),
         this.policeDigitalCaseFileRepositoryService.findAll({
           where: { caseId },
         }),
