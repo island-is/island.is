@@ -67,17 +67,17 @@ export const prerequisitesMessages = {
     description: {
       id: 'cpn.application:prerequisites.serviceProvider.description',
       defaultMessage:
-        'Þjónustuveitandi er hver sá aðili sem hefur afskipti af börnum og fjölskyldum þeirra og veitir þeim þjónustu. Hann getur til að mynda verið stofnun, fyrirtæki, félagasamtök eða sjálfstætt starfandi fagaðili. \n\nVinsamlegast fylltu út upplýsingar um þjónustuveitandann sem sendir þessa tilkynningu. Þessar upplýsingar eru nauðsynlegar fyrir eftirfylgni.',
+        'Þjónustuveitandi er hver sá aðili sem hefur afskipti af börnum og fjölskyldum þeirra og veitir þeim þjónustu. Þjónustuveitandi getur til að mynda verið stofnun, fyrirtæki, félagasamtök eða sjálfstætt starfandi fagaðili.',
       description: 'Service provider description',
     },
     service: {
       id: 'cpn.application:prerequisites.serviceProvider.service',
-      defaultMessage: 'Þjónusta',
-      description: 'Service',
+      defaultMessage: 'Flokkur þjónustuveitanda',
+      description: 'Service provider category',
     },
     servicePlaceholder: {
       id: 'cpn.application:prerequisites.serviceProvider.servicePlaceholder',
-      defaultMessage: 'Veldu þjónustu',
+      defaultMessage: 'Veldu flokk þjónustuveitenda',
       description: 'Select service',
     },
     serviceType: {
@@ -90,6 +90,11 @@ export const prerequisitesMessages = {
       defaultMessage: 'Veldu tegund',
       description: 'Select type',
     },
+    serviceProviderInformation: {
+      id: 'cpn.application:prerequisites.serviceProvider.serviceProviderInformation',
+      defaultMessage: 'Upplýsingar um þjónustuveitanda',
+      description: 'Service provider information',
+    },
     contactPerson: {
       id: 'cpn.application:prerequisites.serviceProvider.contactPerson',
       defaultMessage: 'Tengiliður þjónustuveitanda',
@@ -98,25 +103,13 @@ export const prerequisitesMessages = {
     contactPersonDescription: {
       id: 'cpn.application:prerequisites.serviceProvider.contactPersonDescription',
       defaultMessage:
-        'Tengiliður er sá aðili sem samkvæmt verklagsreglum þjónustuveitanda hefur það formlega hlutverk að senda tilkynninguna til barnaverndar fyrir hönd þjónustuveitanda. Einnig að vera tengiliður milli barnaverndar og þeirra starfsmanna sem þekkja best til barnsins og atvika eða aðstæðna sem tilkynntar eru.',
+        'Tengiliður ber ábyrgð á að senda tilkynningu til barnaverndar fyrir hönd þjónustuveitanda og er milliliður í samskiptum við barnavernd vegna hennar.',
       description: 'Service provider contact description',
     },
     workEmail: {
       id: 'cpn.application:prerequisites.serviceProvider.workEmail',
       defaultMessage: 'Vinnunetfang',
       description: 'Work email',
-    },
-    workEmailTooltip: {
-      id: 'cpn.application:prerequisites.serviceProvider.workEmailTooltip',
-      defaultMessage:
-        'Hér er átt við almennt netfang sem notað er fyrir „hafa samband“. Dæmi: info@ eða postur@',
-      description: 'Work email tooltip',
-    },
-    workPhoneTooltip: {
-      id: 'cpn.application:prerequisites.serviceProvider.workPhoneTooltip',
-      defaultMessage:
-        'Hér er átt við vinnusímanúmer tengiliðs sem barnavernd getur hringt í til frekari upplýsingaöflunar.',
-      description: 'Work phone tooltip',
     },
   }),
   notifierInfo: defineMessages({

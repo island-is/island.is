@@ -31,9 +31,8 @@ export const childInfoManualSection = buildSection({
       description: childMessages.manualInfo.intro,
       children: [
         buildDescriptionField({
-          id: 'childInfoManual.nameAgeGenderTitle',
-          title: childMessages.manualInfo.nameAgeGenderTitle,
-          description: sharedMessages.fillByBestKnowledge,
+          id: 'childInfoManual.basicInfoTitle',
+          title: childMessages.manualInfo.basicInfoTitle,
           titleVariant: 'h4',
           space: 2,
         }),
@@ -72,9 +71,6 @@ export const childInfoManualSection = buildSection({
             {
               value: YES,
               label: childMessages.nationalIdLookup.usePronounAndPreferredName,
-              tooltip:
-                childMessages.nationalIdLookup
-                  .usePronounAndPreferredNameTooltip,
             },
           ],
         }),
@@ -111,7 +107,6 @@ export const childInfoManualSection = buildSection({
         buildDescriptionField({
           id: 'childInfoManual.addressTitle',
           title: childMessages.manualInfo.addressTitle,
-          description: sharedMessages.fillByBestKnowledge,
           titleVariant: 'h4',
           space: 4,
         }),
