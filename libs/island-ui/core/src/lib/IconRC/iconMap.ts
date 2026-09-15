@@ -59,6 +59,7 @@ export type Icon =
   | 'mail'
   | 'mailOpen'
   | 'menu'
+  | 'moon'
   | 'notifications'
   | 'open'
   | 'pencil'
@@ -170,6 +171,7 @@ export default {
     mail: 'Mail',
     mailOpen: 'MailOpen',
     menu: 'Menu',
+    moon: 'Moon',
     notifications: 'Notifications',
     open: 'Open',
     pause: 'Pause',
@@ -278,6 +280,7 @@ export default {
     mail: 'MailOutline',
     mailOpen: 'MailOpenOutline',
     menu: 'MenuOutline',
+    moon: 'MoonOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
     pause: 'PauseOutline',

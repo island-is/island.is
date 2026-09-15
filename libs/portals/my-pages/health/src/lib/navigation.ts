@@ -297,6 +297,11 @@ export const healthNavigation: PortalNavigationItem = {
           ],
         },
         {
+          name: messages.oldPregnanciesTitle,
+          description: messages.oldPregnanciesIntro,
+          path: HealthPaths.HealthOldPregnancies,
+        },
+        {
           name: messages.patientDataPermit,
           path: HealthPaths.HealthPatientDataPermits,
           children: [

@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   CaseState,
   CaseType,
   DefendantEventType,
@@ -432,6 +433,22 @@ export class DefendantService {
     ) {
       const { defenderNationalId: _, ...rest } = update
       update = rest
+    }
+
+    // The reviewer's decision on an indictment verdict is the prosecution's
+    // appeal or its absence. Once the court of appeals has received the verdict
+    // appeal the decision is made; the web creates and withdraws the appeal
+    // from the decision, and this keeps the two from drifting apart.
+    if (
+      update.indictmentReviewDecision !== undefined &&
+      update.indictmentReviewDecision !== defendant.indictmentReviewDecision &&
+      theCase.verdictAppealCase &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.APPEALED &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.WITHDRAWN
+    ) {
+      throw new BadRequestException(
+        'The review decision cannot change once the court of appeals has received the verdict appeal',
+      )
     }
 
     if (isIndictmentCase(theCase.type)) {

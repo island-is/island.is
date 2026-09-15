@@ -1,8 +1,17 @@
 import { useEffect, useState } from 'react'
-import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  IconMapIcon,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
+import { amountFormat, formSubmit } from '@island.is/portals/my-pages/core'
 import { messages } from '../../../lib/messages'
+import * as styles from '../HealthConversations.css'
 import {
   useCreateHealthCertificatePaymentIntentMutation,
   useGetHealthCertificateQuery,
@@ -56,12 +65,80 @@ const useCertificatePaymentPolling = ({
   return isPolling
 }
 
+interface CertificateCardProps {
+  icon: IconMapIcon
+  heading?: string | null
+  subText?: string
+  cta: {
+    label: string
+    onClick: () => void
+    disabled?: boolean
+    loading?: boolean
+  }
+}
+
+const CertificateCard = ({
+  icon,
+  heading,
+  subText,
+  cta,
+}: CertificateCardProps) => (
+  <Box
+    display="flex"
+    flexDirection={['column', 'row']}
+    alignItems={['stretch', 'center']}
+    borderColor="blue200"
+    borderWidth="standard"
+    borderRadius="large"
+    background="white"
+    paddingX={[3, 3, 4]}
+    paddingY={3}
+    rowGap={3}
+  >
+    <Box display="flex" alignItems="center" columnGap={2} flexGrow={1}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexShrink={0}
+        borderRadius="full"
+        background="blue100"
+        className={styles.certificateAvatar}
+      >
+        <Icon icon={icon} type="outline" color="blue400" ariaHidden />
+      </Box>
+      <Box>
+        {heading && (
+          <Text variant="h4" color="dark400">
+            {heading}
+          </Text>
+        )}
+        {subText && <Text color="dark400">{subText}</Text>}
+      </Box>
+    </Box>
+    <Box flexShrink={0} marginLeft={[0, 0, 5]}>
+      <Button
+        size="small"
+        fluid
+        onClick={cta.onClick}
+        disabled={cta.disabled}
+        loading={cta.loading}
+      >
+        {cta.label}
+      </Button>
+    </Box>
+  </Box>
+)
+
 interface Props {
   certificateId?: string | null
   requiresPayment?: boolean | null
   paid?: boolean | null
+  amountIsk?: number | null
   pendingPaymentId?: string | null
   isReturningFromPayment?: boolean
+  fileName?: string | null
+  downloadServiceURL?: string | null
   onPaid: () => void
 }
 
@@ -69,8 +146,11 @@ const CertificateAction = ({
   certificateId,
   requiresPayment,
   paid,
+  amountIsk,
   pendingPaymentId,
   isReturningFromPayment,
+  fileName,
+  downloadServiceURL,
   onPaid,
 }: Props) => {
   const { formatMessage, lang } = useLocale()
@@ -111,42 +191,62 @@ const CertificateAction = ({
 
   const isUnpaid = requiresPayment && !paid
 
-  /*  
-    Only an unpaid gated certificate needs payment: once paid (or when
-    payment is not required) the attachment row is the download. Without a
-    certificateId there is nothing to open a payment intent against or poll 
-    (the API's "payable in principle but not yet actionable" state) so render
-    nothing there too.
-  */
-  if (!isUnpaid || !certificateId) {
+  // Without a certificateId there is nothing to open a payment intent
+  // against, poll, or download — nothing renders in that case.
+  if (!certificateId) {
     return null
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      rowGap={1}
-      marginBottom={3}
-      alignItems="flexStart"
-      role="status"
-      aria-live="polite"
-    >
-      {isPolling ? (
-        <Box display="flex" alignItems="center" columnGap={2}>
-          <Button disabled size="small">
-            {formatMessage(
-              messages.healthConversationCertificatePaymentInProgress,
-            )}
-          </Button>
-          <LoadingDots />
-        </Box>
+    <Box marginBottom={3} role="status" aria-live="polite">
+      {isUnpaid ? (
+        <CertificateCard
+          icon="lockClosed"
+          heading={fileName}
+          subText={
+            typeof amountIsk === 'number'
+              ? formatMessage(
+                  messages.healthConversationCertificateLockedStatus,
+                  { amount: amountFormat(amountIsk) },
+                )
+              : formatMessage(
+                  messages.healthConversationCertificateLockedStatusNoAmount,
+                )
+          }
+          cta={
+            isPolling
+              ? {
+                  label: formatMessage(
+                    messages.healthConversationCertificatePaymentInProgress,
+                  ),
+                  disabled: true,
+                  loading: true,
+                  onClick: () => null,
+                }
+              : {
+                  label: formatMessage(
+                    messages.healthConversationCertificateContinueToPayment,
+                  ),
+                  loading: paymentLoading,
+                  onClick: handlePay,
+                }
+          }
+        />
       ) : (
-        <Button loading={paymentLoading} onClick={handlePay} size="small">
-          {formatMessage(
-            messages.healthConversationCertificateContinueToPayment,
-          )}
-        </Button>
+        <CertificateCard
+          icon="document"
+          heading={fileName}
+          subText={
+            requiresPayment && paid
+              ? formatMessage(messages.healthConversationCertificatePaidStatus)
+              : undefined
+          }
+          cta={{
+            label: formatMessage(messages.healthConversationCertificateOpen),
+            disabled: !downloadServiceURL,
+            onClick: () => downloadServiceURL && formSubmit(downloadServiceURL),
+          }}
+        />
       )}
     </Box>
   )

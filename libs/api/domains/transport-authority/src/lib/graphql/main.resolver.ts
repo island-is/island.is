@@ -203,6 +203,21 @@ export class MainResolver {
 
   @Scopes(ApiScope.samgongustofaVehicles)
   @Query(() => BasicVehicleInformation, {
+    name: 'myVehicleMilesInfoByPermno',
+    nullable: true,
+  })
+  async getMyVehicleMilesInfoByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getMyVehicleMilesInfoByPermno(
+      user,
+      permno,
+    )
+  }
+
+  @Scopes(ApiScope.samgongustofaVehicles)
+  @Query(() => BasicVehicleInformation, {
     name: 'vehicleBasicInfoByPermno',
     nullable: true,
   })
