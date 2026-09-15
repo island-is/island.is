@@ -46,6 +46,7 @@ export const ExternalData = ({
     title?: { is?: string; en?: string }
     message?: { is?: string; en?: string }
   }>()
+  const [operationSuccessful, setOperationSuccessful] = useState<boolean>()
 
   useEffect(() => {
     if (
@@ -81,6 +82,9 @@ export const ExternalData = ({
         const screenError = removeTypename(
           data?.notifyFormSystemExternalSystem?.screenError,
         )
+        setOperationSuccessful(
+          data?.notifyFormSystemExternalSystem?.operationSuccessful,
+        )
         setNotificationError(screenError)
         setHasValidateEligibilityNotificationError(
           screenError?.hasError === true,
@@ -106,7 +110,7 @@ export const ExternalData = ({
 
   return (
     <Box>
-      {notificationError?.hasError && (
+      {notificationError?.hasError && !operationSuccessful && (
         <Box marginBottom={[4, 4, 5]}>
           <AlertMessage
             type="error"
@@ -169,6 +173,19 @@ export const ExternalData = ({
           ))}
         </Stack>
       </Box>
+      {operationSuccessful && notificationError?.hasError && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="warning"
+            title={notificationError.title?.[lang]}
+            message={
+              <Text variant="small" whiteSpace="breakSpaces">
+                {notificationError.message?.[lang]}
+              </Text>
+            }
+          />
+        </Box>
+      )}
       <Checkbox
         large={true}
         backgroundColor="blue"
