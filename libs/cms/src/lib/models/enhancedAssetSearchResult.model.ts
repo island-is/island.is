@@ -1,4 +1,4 @@
-import { ObjectType } from '@nestjs/graphql'
+import { Int, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import { EnhancedAsset } from './enhancedAsset.model'
 
@@ -7,6 +7,6 @@ export class EnhancedAssetSearchResult {
   @CacheField(() => [EnhancedAsset])
   items!: EnhancedAsset[]
 
-  @CacheField()
+  @CacheField(() => Int)
   total!: number
 }
