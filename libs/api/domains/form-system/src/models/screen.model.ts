@@ -44,6 +44,9 @@ export class Screen {
 
 @ObjectType('FormSystemNotificationResponse')
 export class NotificationResponse {
+  @Field(() => Boolean, { nullable: true })
+  operationSuccessful?: boolean
+
   @Field(() => Screen, { nullable: true })
   screen?: Screen
 

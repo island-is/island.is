@@ -2527,20 +2527,16 @@ export const messages = defineMessages({
   },
   treatmentIntroWithDepartment: {
     defaultMessage:
-      'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt hjá {department}.',
+      'Hér getur þú nálgast fræðsluefni, spurningalista og átt í samskiptum við meðferðarteymið þitt hjá {department}.',
     id: 'sp.health:treatment-intro-with-department',
   },
-  lastListSent: {
-    defaultMessage: 'Síðasti listi sendur {date}',
-    id: 'sp.health:last-list-sent',
-  },
-  lastContentSent: {
-    defaultMessage: 'Síðasta efni sent {date}',
-    id: 'sp.health:last-content-sent',
+  lastSent: {
+    defaultMessage: 'Síðast sent {date}',
+    id: 'sp.health:last-sent',
   },
   treatmentIntro: {
     defaultMessage:
-      'Hér getur þú fundið allar upplýsingar sem tengjast meðferðinni þinni og átt í samskiptum við meðferðarteymið þitt.',
+      'Hér getur þú nálgast fræðsluefni, spurningalista og átt í samskiptum við meðferðarteymið þitt.',
     id: 'sp.health:treatment-intro',
   },
   stafraenHeilsaTreatmentTooltip: {
@@ -2553,7 +2549,7 @@ export const messages = defineMessages({
     id: 'sp.health:treatment-team',
   },
   treatmentMessagesFromTeam: {
-    defaultMessage: 'Skilaboð frá meðferðarteymi',
+    defaultMessage: 'Skilaboð vegna meðferðar',
     id: 'sp.health:treatment-messages-from-team',
   },
   seeAllMessages: {
