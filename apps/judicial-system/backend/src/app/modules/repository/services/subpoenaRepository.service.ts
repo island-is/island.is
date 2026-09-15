@@ -1,4 +1,13 @@
-import { FindOptions, Transaction, UpdateOptions } from 'sequelize'
+import {
+  col,
+  fn,
+  Includeable,
+  literal,
+  Op,
+  Transaction,
+  UpdateOptions,
+  WhereOptions,
+} from 'sequelize'
 
 import {
   Inject,
@@ -11,26 +20,33 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { HashAlgorithm, ServiceStatus } from '@island.is/judicial-system/types'
 
+import { Case } from '../models/case.model'
+import { CourtSession } from '../models/courtSession.model'
+import { Defendant } from '../models/defendant.model'
+import { Institution } from '../models/institution.model'
 import { Subpoena } from '../models/subpoena.model'
+import { User } from '../models/user.model'
 
-interface FindOneOptions {
-  where?: FindOptions['where']
-  transaction?: Transaction
-  include?: FindOptions['include']
-  attributes?: FindOptions['attributes']
-  order?: FindOptions['order']
-}
+// The graph a subpoena is read with wherever it is rendered on its own: the
+// case it belongs to, the people and institutions handling that case, and the
+// defendant it summons.
+const subpoenaInclude: Includeable[] = [
+  {
+    model: Case,
+    as: 'case',
+    include: [
+      { model: User, as: 'judge' },
+      { model: User, as: 'registrar' },
+      { model: Institution, as: 'prosecutorsOffice' },
+      { model: Institution, as: 'court' },
+      { model: CourtSession, as: 'courtSessions' },
+    ],
+  },
+  { model: Defendant, as: 'defendant' },
+]
 
-interface FindAllOptions {
-  where?: FindOptions['where']
+interface FindSubpoenaOptions {
   transaction?: Transaction
-  include?: FindOptions['include']
-  attributes?: FindOptions['attributes']
-  order?: FindOptions['order']
-  limit?: FindOptions['limit']
-  offset?: FindOptions['offset']
-  group?: FindOptions['group']
-  raw?: boolean
 }
 
 interface CreateSubpoenaOptions {
@@ -53,6 +69,24 @@ interface UpdateSubpoena {
   policeSubpoenaId?: string
 }
 
+// The subpoena statistics only ever cover subpoenas that have been registered
+// with the police - a subpoena without a police subpoena id was never sent and
+// has no service history to report on. The period and the institution narrow
+// that population; the repository owns the translation into a query.
+export type SubpoenaStatisticsFilter = {
+  from?: Date
+  to?: Date
+  institutionId?: string
+}
+
+// One row of countPoliceSubpoenasByServiceStatus. averageServiceTimeMs is null
+// when no subpoena in the group has been served yet.
+export type ServiceStatusCount = {
+  serviceStatus: ServiceStatus | null
+  count: number
+  averageServiceTimeMs: number | null
+}
+
 @Injectable()
 export class SubpoenaRepositoryService {
   constructor(
@@ -60,101 +94,172 @@ export class SubpoenaRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findOne(options?: FindOneOptions): Promise<Subpoena | null> {
+  private policeSubpoenaQuery(filter: SubpoenaStatisticsFilter): {
+    where: WhereOptions
+    include: Includeable[]
+  } {
+    const where: WhereOptions = {
+      policeSubpoenaId: { [Op.ne]: null },
+      ...(filter.from || filter.to
+        ? {
+            created: {
+              ...(filter.from ? { [Op.gte]: filter.from } : {}),
+              ...(filter.to ? { [Op.lte]: filter.to } : {}),
+            },
+          }
+        : {}),
+    }
+
+    // The case is joined only to filter on the institution handling it, so it
+    // is required and contributes no attributes of its own.
+    const include: Includeable[] = filter.institutionId
+      ? [
+          {
+            model: Case,
+            required: true,
+            attributes: [],
+            where: {
+              [Op.or]: [
+                { courtId: filter.institutionId },
+                { prosecutorsOfficeId: filter.institutionId },
+              ],
+            },
+          },
+        ]
+      : []
+
+    return { where, include }
+  }
+
+  async findById(
+    subpoenaId: string,
+    options?: FindSubpoenaOptions,
+  ): Promise<Subpoena | null> {
     try {
-      this.logger.debug('Finding subpoena with conditions:', {
-        where: Object.keys(options?.where ?? {}),
+      this.logger.debug(`Finding subpoena ${subpoenaId}`)
+
+      return await this.subpoenaModel.findOne({
+        include: subpoenaInclude,
+        where: { id: subpoenaId },
+        transaction: options?.transaction,
       })
-
-      const findOptions: FindOptions = {}
-
-      if (options?.where) {
-        findOptions.where = options.where
-      }
-
-      if (options?.transaction) {
-        findOptions.transaction = options.transaction
-      }
-
-      if (options?.include) {
-        findOptions.include = options.include
-      }
-
-      if (options?.attributes) {
-        findOptions.attributes = options.attributes
-      }
-
-      if (options?.order) {
-        findOptions.order = options.order
-      }
-
-      const result = await this.subpoenaModel.findOne(findOptions)
-
-      this.logger.debug(`Subpoena ${result ? 'found' : 'not found'}`)
-
-      return result
     } catch (error) {
-      this.logger.error('Error finding subpoena with conditions:', {
-        where: Object.keys(options?.where ?? {}),
-        error,
-      })
+      this.logger.error(`Error finding subpoena ${subpoenaId}:`, { error })
 
       throw error
     }
   }
 
-  async findAll(options?: FindAllOptions): Promise<Subpoena[]> {
+  // policeSubpoenaId is the subpoena's id in the police systems, handed back to
+  // us when the subpoena is registered with them.
+  async findByPoliceSubpoenaId(
+    policeSubpoenaId: string,
+  ): Promise<Subpoena | null> {
     try {
-      this.logger.debug('Finding all subpoenas with conditions:', {
-        where: Object.keys(options?.where ?? {}),
+      this.logger.debug(
+        `Finding subpoena with police subpoena id ${policeSubpoenaId}`,
+      )
+
+      return await this.subpoenaModel.findOne({
+        include: subpoenaInclude,
+        where: { policeSubpoenaId },
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error finding subpoena with police subpoena id ${policeSubpoenaId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The earliest date the subpoena statistics have anything to say about. It
+  // deliberately takes no period - it is what bounds the period the caller may
+  // ask for. Returns null when no subpoena has reached the police.
+  async findEarliestPoliceSubpoenaCreatedDate(): Promise<Date | null> {
+    try {
+      this.logger.debug('Finding the earliest police subpoena creation date')
+
+      const earliest = await this.subpoenaModel.findOne({
+        where: { policeSubpoenaId: { [Op.ne]: null } },
+        order: [['created', 'ASC']],
+        attributes: ['created'],
       })
 
-      const findOptions: FindOptions = {}
-
-      if (options?.where) {
-        findOptions.where = options.where
-      }
-
-      if (options?.transaction) {
-        findOptions.transaction = options.transaction
-      }
-
-      if (options?.include) {
-        findOptions.include = options.include
-      }
-
-      if (options?.attributes) {
-        findOptions.attributes = options.attributes
-      }
-
-      if (options?.order) {
-        findOptions.order = options.order
-      }
-
-      if (options?.limit) {
-        findOptions.limit = options.limit
-      }
-
-      if (options?.offset) {
-        findOptions.offset = options.offset
-      }
-
-      if (options?.group) {
-        findOptions.group = options.group
-      }
-
-      if (options?.raw !== undefined) {
-        findOptions.raw = options.raw
-      }
-
-      const results = await this.subpoenaModel.findAll(findOptions)
-
-      this.logger.debug(`Found ${results.length} subpoenas`)
-
-      return results
+      return earliest?.created ?? null
     } catch (error) {
-      this.logger.error('Error finding all subpoenas with conditions:', {
-        where: Object.keys(options?.where ?? {}),
+      this.logger.error(
+        'Error finding the earliest police subpoena creation date:',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async countPoliceSubpoenas(
+    filter: SubpoenaStatisticsFilter,
+  ): Promise<number> {
+    try {
+      this.logger.debug('Counting police subpoenas')
+
+      const { where, include } = this.policeSubpoenaQuery(filter)
+
+      // distinct, so that a join never counts a subpoena twice
+      return await this.subpoenaModel.count({ where, include, distinct: true })
+    } catch (error) {
+      this.logger.error('Error counting police subpoenas:', { error })
+
+      throw error
+    }
+  }
+
+  // Counts the police subpoenas by the status of their service and averages how
+  // long the service took. The average comes back from the database in
+  // milliseconds; what the statistics make of it is the caller's business.
+  async countPoliceSubpoenasByServiceStatus(
+    filter: SubpoenaStatisticsFilter,
+  ): Promise<ServiceStatusCount[]> {
+    try {
+      this.logger.debug('Counting police subpoenas by service status')
+
+      const { where, include } = this.policeSubpoenaQuery(filter)
+
+      const rows = (await this.subpoenaModel.findAll({
+        where,
+        include,
+        attributes: [
+          'serviceStatus',
+          [fn('COUNT', col('Subpoena.id')), 'count'],
+          [
+            literal(
+              'AVG(EXTRACT(EPOCH FROM "Subpoena"."service_date" - "Subpoena"."created") * 1000)',
+            ),
+            'averageServiceTimeMs',
+          ],
+        ],
+        group: ['serviceStatus'],
+        raw: true,
+      })) as unknown as {
+        serviceStatus: ServiceStatus | null
+        count: string
+        averageServiceTimeMs: string | null
+      }[]
+
+      this.logger.debug(`Counted ${rows.length} service status group(s)`)
+
+      return rows.map((row) => ({
+        serviceStatus: row.serviceStatus,
+        count: Number(row.count),
+        averageServiceTimeMs:
+          row.averageServiceTimeMs === null ||
+          row.averageServiceTimeMs === undefined
+            ? null
+            : Number(row.averageServiceTimeMs),
+      }))
+    } catch (error) {
+      this.logger.error('Error counting police subpoenas by service status:', {
         error,
       })
 
