@@ -314,6 +314,37 @@ export class DefendantRepositoryService {
     }
   }
 
+  async updateAllForCase(
+    caseId: string,
+    data: UpdateDefendant,
+    options: UpdateDefendantOptions,
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Updating all defendants of case ${caseId} with data:`,
+        { data: Object.keys(data) },
+      )
+
+      const [numberOfAffectedRows] = await this.defendantModel.update(data, {
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      this.logger.debug(
+        `Updated ${numberOfAffectedRows} defendants of case ${caseId}`,
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error updating all defendants of case ${caseId} with data:`,
+        { data: Object.keys(data), error },
+      )
+
+      throw error
+    }
+  }
+
   // Moves one defendant to another case, when they are split off into a case
   // of their own. The row is addressed within its own case, so a defendant of
   // some other case cannot be moved by mistake. The route's guards bound the

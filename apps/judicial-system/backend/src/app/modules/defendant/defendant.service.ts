@@ -563,6 +563,44 @@ export class DefendantService {
     return true
   }
 
+  async syncDefenderToAllDefendants(
+    caseId: string,
+    defenderFields: {
+      defenderName?: string | null
+      defenderNationalId?: string | null
+      defenderEmail?: string | null
+      defenderPhoneNumber?: string | null
+      defenderChoice?: DefenderChoice | null
+      isDefenderChoiceConfirmed?: boolean | null
+    },
+    transaction: Transaction,
+  ): Promise<void> {
+    const update: UpdateDefendant = {}
+
+    if (defenderFields.defenderName !== undefined) {
+      update.defenderName = defenderFields.defenderName
+    }
+    if (defenderFields.defenderNationalId !== undefined) {
+      update.defenderNationalId = defenderFields.defenderNationalId
+    }
+    if (defenderFields.defenderEmail !== undefined) {
+      update.defenderEmail = defenderFields.defenderEmail
+    }
+    if (defenderFields.defenderPhoneNumber !== undefined) {
+      update.defenderPhoneNumber = defenderFields.defenderPhoneNumber
+    }
+    if (defenderFields.defenderChoice !== undefined) {
+      update.defenderChoice = defenderFields.defenderChoice
+    }
+    if (defenderFields.isDefenderChoiceConfirmed !== undefined) {
+      update.isDefenderChoiceConfirmed = defenderFields.isDefenderChoiceConfirmed
+    }
+
+    await this.defendantRepositoryService.updateAllForCase(caseId, update, {
+      transaction,
+    })
+  }
+
   async isDefendantInActiveCustody(defendants?: Defendant[]): Promise<boolean> {
     if (
       !defendants ||
