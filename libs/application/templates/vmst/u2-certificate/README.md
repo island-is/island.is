@@ -32,6 +32,9 @@ stateDiagram-v2
     Review --> Completed: APPROVE (VMST)
     Review --> Rejected: REJECT (VMST)
     Review --> Revoked: REVOKE (applicant)
+    Completed --> Review: REVIEW (VMST)
+    Completed --> Rejected: REJECT (VMST)
+    Rejected --> Review: REVIEW (VMST)
 
     classDef applicant fill:#cfe2ff,stroke:#3d8bfd,color:#0a2a5e
     classDef vmst fill:#e2d6ff,stroke:#9366e3,color:#3a1d7a
@@ -48,8 +51,8 @@ stateDiagram-v2
 
 Colors mirror the action-card tag colors shown in Mínar síður: **blue**
 for states the applicant drives, **purple** while VMST is processing the
-application, **mint** for the approved terminal, **red** for terminal
-states reached via rejection or revocation.
+application, **mint** for approved outcomes, and **red** for rejected or
+revoked outcomes.
 
 ### Prerequisites
 
@@ -90,8 +93,12 @@ The application is with VMST. From this state:
 - **The applicant can revoke** — as long as the application is still in
   Review, the applicant can invoke `REVOKE` to move it to **Revoked**.
   `REVOKE` is only wired to the applicant role, so a reviewer cannot fire
-  it. Once VMST has approved or rejected, revocation is no longer
-  possible.
+  it. Once VMST has approved or rejected the application, revocation is
+  no longer possible.
+- **VMST can reopen prior decisions** — once an application is in
+  **Completed** or **Rejected**, the reviewer can move it back to Review
+  with the `REVIEW` action. A completed application can also be rejected
+  again with `REJECT`.
 
 While in Review the applicant sees a read-only view of their submitted
 data with a pending-action alert and a "Revoke application" button.
@@ -108,16 +115,19 @@ The applicant can start a fresh U2 application from this state.
 
 ### Rejected
 
-Terminal state reached when VMST rejects the application from Review.
-The applicant can start a fresh U2 application if their circumstances
-change.
+State reached when VMST rejects the application from Review. This is not
+final: a reviewer can send the application back to Review if more action
+is needed. The applicant can start a fresh U2 application if their
+circumstances change.
 
 ### Completed
 
-Terminal state reached when VMST approves the application. The applicant
-is instructed to pick up the physical certificate at their nearest VMST
+State reached when VMST approves the application. The applicant is
+instructed to pick up the physical certificate at their nearest VMST
 service office in the days before their departure — the U2 does not
-come into effect until it is collected in person.
+come into effect until it is collected in person. VMST can still return
+this application to Review or reject it again if they need to revise the
+decision.
 
 ## Lifecycle & Notifications
 
