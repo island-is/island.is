@@ -44,29 +44,23 @@ export const plateDeliverySubSection = buildSubSection({
                 'plateType.selectedPlateTypeName',
               ) ?? ''
 
-            if (plateType === 'VSK - merki') {
-              return [
-                {
-                  value: YES,
-                  label:
-                    information.labels.plateDelivery.deliveryStationOptionTitle,
-                },
-              ]
-            }
-
             return [
-              {
-                value: NO,
-                label:
-                  information.labels.plateDelivery
-                    .transportAuthorityOptionTitle,
-              },
+              ...(plateType === 'VSK - merki'
+                ? [
+                    {
+                      value: NO,
+                      label:
+                        information.labels.plateDelivery
+                          .transportAuthorityOptionTitle,
+                    },
+                  ]
+                : []),
               {
                 value: YES,
                 label:
                   information.labels.plateDelivery.deliveryStationOptionTitle,
               },
-            ]
+            ].filter(Boolean)
           },
           width: 'half',
           largeButtons: true,
