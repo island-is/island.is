@@ -22,6 +22,7 @@ import {
 } from '../../utils/UploadCarDayRateUsageUtils'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
+import { FormatMessage } from '@island.is/application/types'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { m } from '../../lib/messages'
 import { Locale } from '@island.is/shared/types'
@@ -42,6 +43,7 @@ interface Props {
       getFileContent: (
         dayRateRecords: DayRateRecord[],
         locale: Locale,
+        formatMessage: FormatMessage,
       ) => {
         base64Content: string
         fileType: string
@@ -301,7 +303,11 @@ export const UploadCarDayRateUsage = ({
     })
   }
 
-  const fileData = field.props.getFileContent?.(dayRateRecords, lang)
+  const fileData = field.props.getFileContent?.(
+    dayRateRecords,
+    lang,
+    formatMessage,
+  )
   if (!fileData) {
     throw Error('No valid file data recieved!')
   }
