@@ -309,6 +309,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/directorate-of-equality/salary-report'
     ),
+  [ApplicationTypes.CHILD_PROTECTION_NOTIFICATION]: () =>
+    import(
+      '@island.is/application/templates/national-agency-for-children-and-families/child-protection-notification'
+    ),
   [ApplicationTypes.U2_CERTIFICATE]: () =>
     import('@island.is/application/templates/vmst/u2-certificate'),
 }
