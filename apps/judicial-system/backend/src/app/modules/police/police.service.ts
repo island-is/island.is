@@ -344,11 +344,14 @@ export class PoliceService {
     info: { [key: string]: string | boolean | Date | undefined },
     reason: unknown,
   ): void {
+    const errorSummary = (
+      reason instanceof Error ? reason.message : String(reason)
+    ).slice(0, 2000)
+
     this.logger.error(logMessage, {
       ...info,
       error: reason instanceof Error ? reason : undefined,
-      errorSummary:
-        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+      errorSummary,
     })
   }
 
@@ -1221,9 +1224,16 @@ export class PoliceService {
           return true
         }
 
-        const response = await res.text()
+        const responseBody = await res.text()
+        const message =
+          responseBody.trim() !== ''
+            ? responseBody
+            : `Police case update failed with empty response body (HTTP ${res.status})`
 
-        throw response
+        throw Object.assign(new Error(message), {
+          statusCode: res.status,
+          responseBody,
+        })
       })
       .catch((reason) => {
         if (reason instanceof ServiceUnavailableException) {
@@ -1231,6 +1241,14 @@ export class PoliceService {
           // Act as if the case was updated
           return true
         }
+
+        const statusCode =
+          reason instanceof Error &&
+          'statusCode' in reason &&
+          typeof (reason as Error & { statusCode?: unknown }).statusCode ===
+            'number'
+            ? String((reason as Error & { statusCode: number }).statusCode)
+            : undefined
 
         this.logPoliceFailureAndNotify(
           'Failed to update police case',
@@ -1243,6 +1261,7 @@ export class PoliceService {
             caseState: String(caseState),
             policeCaseNumber,
             courtCaseNumber,
+            statusCode,
           },
           reason,
         )
