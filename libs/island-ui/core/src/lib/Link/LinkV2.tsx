@@ -59,7 +59,7 @@ export const LinkV2: React.FC<React.PropsWithChildren<LinkProps>> = ({
   if (isInternal) {
     const hrefString = href?.toString()
 
-    if (newTab || shouldLinkBeAnAnchorTag(hrefString)) {
+    if (shouldLinkBeAnAnchorTag(hrefString)) {
       return (
         <a
           className={classNames}
