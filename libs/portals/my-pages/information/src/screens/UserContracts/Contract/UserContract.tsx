@@ -17,6 +17,8 @@ import { useParams } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useUserContractQuery } from './UserContract.generated'
 import { HmsRentalAgreementStatusType } from '@island.is/api/schema'
+import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
+import { mapPropertyTypeToMessage } from '../../../utils/mapPropertyTypeToMessage'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
 const UserContract = () => {
@@ -33,6 +35,14 @@ const UserContract = () => {
 
   const contract = data?.hmsRentalAgreement ?? undefined
 
+  const address = useMemo(() => {
+    if (data?.hmsRentalAgreement?.contractProperty) {
+      return generateRentalAgreementAddress(
+        data.hmsRentalAgreement.contractProperty ?? undefined,
+      )
+    }
+  }, [data?.hmsRentalAgreement?.contractProperty])
+
   const status = useMemo(() => {
     if (
       data?.hmsRentalAgreement?.status &&
@@ -42,10 +52,14 @@ const UserContract = () => {
     }
   }, [data?.hmsRentalAgreement?.status])
 
+  const propertyTypeMessage = mapPropertyTypeToMessage(
+    data?.hmsRentalAgreement?.contractProperty?.type,
+  )
+
   return (
     <IntroWrapper
-      title={cm.contractsOverviewTitle}
-      intro={cm.contractDetailSubtitle}
+      title={address ?? cm.contractsOverviewTitle}
+      intro={propertyTypeMessage ?? cm.contractDetailSubtitle}
       serviceProvider={{
         slug: HMS_SLUG,
         tooltip: formatMessage(m.rentalAgreementsTooltip),
@@ -112,6 +126,7 @@ const UserContract = () => {
                 contract?.tenants?.map((l) => l.name).join(', ') ?? undefined
               }
             />
+            <InfoLine loading={loading} label={cm.location} content={address} />
             <InfoLine
               loading={loading}
               label={cm.lengthOfRentalAgreement}
