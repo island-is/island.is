@@ -189,21 +189,8 @@ export class AuthService {
       return []
     }
 
-    try {
-      return [await this.backendService.findDefenderByNationalId(nationalId)]
-    } catch (error) {
-      if (error?.problem?.status === 404) {
-        this.logger.info('Defender not found', { error })
-      } else {
-        this.logger.error('Error when looking up defender', { error })
-
-        throw error
-      }
-    }
-
-    // If a defender doesn't have any active cases, we still create a user from
-    // the lawyer registry so they get an empty case list rather than being
-    // locked out of the judicial system.
+    // Create a user from the lawyer registry. Case assignment is not required
+    // for login — defenders without active cases still get an empty case list.
     return [
       {
         // Reason for this is so we trust the nationalId from the authentication provider

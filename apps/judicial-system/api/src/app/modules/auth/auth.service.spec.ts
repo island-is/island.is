@@ -18,20 +18,6 @@ const lawyerRegistryInfo = {
   isLitigator: true,
 }
 
-const defenderFromCase = {
-  id: 'defender-id',
-  created: '2024-01-01',
-  modified: '2024-01-01',
-  nationalId,
-  name: 'Case Defender',
-  title: 'verjandi',
-  mobileNumber: '1111111',
-  email: 'defender@example.com',
-  role: UserRole.DEFENDER,
-  active: true,
-  canConfirmIndictment: false,
-}
-
 const staffUser = {
   id: 'staff-id',
   created: '2024-01-01',
@@ -52,14 +38,12 @@ describe('AuthService - findEligibleUsersByNationalId', () => {
   let service: AuthService
   let mockBackendService: {
     findUsersByNationalId: jest.Mock
-    findDefenderByNationalId: jest.Mock
     getLawyer: jest.Mock
   }
 
   beforeEach(async () => {
     mockBackendService = {
       findUsersByNationalId: jest.fn().mockRejectedValue(notFoundError),
-      findDefenderByNationalId: jest.fn().mockRejectedValue(notFoundError),
       getLawyer: jest.fn().mockRejectedValue(notFoundError),
     }
 
@@ -92,32 +76,10 @@ describe('AuthService - findEligibleUsersByNationalId', () => {
     const result = await service.findEligibleUsersByNationalId(nationalId)
 
     expect(result).toEqual([staffUser])
-    expect(mockBackendService.findDefenderByNationalId).not.toHaveBeenCalled()
     expect(mockBackendService.getLawyer).not.toHaveBeenCalled()
   })
 
-  it('returns a defender with active cases only when they are on the lawyer registry', async () => {
-    mockBackendService.findDefenderByNationalId.mockResolvedValueOnce(
-      defenderFromCase,
-    )
-    mockBackendService.getLawyer.mockResolvedValueOnce(lawyerRegistryInfo)
-
-    const result = await service.findEligibleUsersByNationalId(nationalId)
-
-    expect(result).toEqual([defenderFromCase])
-  })
-
-  it('denies access to defenders with active cases who are not on the lawyer registry', async () => {
-    mockBackendService.findDefenderByNationalId.mockResolvedValueOnce(
-      defenderFromCase,
-    )
-
-    const result = await service.findEligibleUsersByNationalId(nationalId)
-
-    expect(result).toEqual([])
-  })
-
-  it('returns a synthetic defender when the lawyer is on the registry but has no cases', async () => {
+  it('returns a defender from the lawyer registry', async () => {
     mockBackendService.getLawyer.mockResolvedValueOnce(lawyerRegistryInfo)
 
     const result = await service.findEligibleUsersByNationalId(nationalId)
@@ -134,7 +96,7 @@ describe('AuthService - findEligibleUsersByNationalId', () => {
     })
   })
 
-  it('returns no users when the national id is unknown', async () => {
+  it('denies access when the national id is not on the lawyer registry', async () => {
     const result = await service.findEligibleUsersByNationalId(nationalId)
 
     expect(result).toEqual([])

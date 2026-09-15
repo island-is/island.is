@@ -1,13 +1,10 @@
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
-import { Case } from '../models/case.model'
 import { CivilClaimant } from '../models/civilClaimant.model'
 
 export type UpdateCivilClaimant = {
@@ -126,40 +123,6 @@ export class CivilClaimantRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error deleting all civil claimants of case ${caseId}:`,
-        { error },
-      )
-
-      throw error
-    }
-  }
-
-  // Only claimants on a live case count, and "latest" is part of the operation
-  // rather than an ordering the caller gets to choose.
-  async findLatestBySpokespersonNationalId(
-    nationalId: string,
-  ): Promise<CivilClaimant | null> {
-    try {
-      this.logger.debug(
-        'Finding the latest civil claimant by spokesperson national id',
-      )
-
-      return await this.civilClaimantModel.findOne({
-        include: [
-          {
-            model: Case,
-            as: 'case',
-            where: {
-              state: { [Op.not]: CaseState.DELETED },
-              isArchived: false,
-            },
-          },
-        ],
-        where: { hasSpokesperson: true, spokespersonNationalId: nationalId },
-        order: [['created', 'DESC']],
-      })
-    } catch (error) {
-      this.logger.error(
-        'Error finding the latest civil claimant by spokesperson national id:',
         { error },
       )
 

@@ -1,13 +1,10 @@
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
-import { Case } from '../models/case.model'
 import { CivilClaimant } from '../models/civilClaimant.model'
 import { CivilClaimantRepositoryService } from '../services/civilClaimantRepository.service'
 
@@ -154,50 +151,6 @@ describe('CivilClaimantRepositoryService', () => {
 
       await expect(
         service.deleteAllForCase(caseId, { transaction }),
-      ).rejects.toThrow(error)
-    })
-  })
-
-  describe('findLatestBySpokespersonNationalId', () => {
-    const nationalId = '0000000000'
-
-    it('looks up the most recent claimant of a live case for the spokesperson', async () => {
-      const civilClaimant = { id: civilClaimantId, caseId }
-      model.findOne.mockResolvedValueOnce(civilClaimant)
-
-      const result = await service.findLatestBySpokespersonNationalId(
-        nationalId,
-      )
-
-      expect(model.findOne).toHaveBeenCalledWith({
-        include: [
-          {
-            model: Case,
-            as: 'case',
-            where: {
-              state: { [Op.not]: CaseState.DELETED },
-              isArchived: false,
-            },
-          },
-        ],
-        where: { hasSpokesperson: true, spokespersonNationalId: nationalId },
-        order: [['created', 'DESC']],
-      })
-      expect(result).toBe(civilClaimant)
-    })
-
-    it('returns null when there is no such civil claimant', async () => {
-      expect(
-        await service.findLatestBySpokespersonNationalId(nationalId),
-      ).toBeNull()
-    })
-
-    it('rethrows when the lookup fails', async () => {
-      const error = new Error('Some error')
-      model.findOne.mockRejectedValueOnce(error)
-
-      await expect(
-        service.findLatestBySpokespersonNationalId(nationalId),
       ).rejects.toThrow(error)
     })
   })
