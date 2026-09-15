@@ -171,7 +171,7 @@
     "aws-sdk": "2.814.0",
     "aws-sdk-client-mock": "4.1.0",
     "aws4": "1.11.0",
-    "axios": "1.15.0",
+    "axios": "1.20.0",
     "bottleneck": "2.19.5",
     "bull": "4.10.4",
     "cache-manager": "6.4.3",
@@ -529,6 +529,7 @@
     "webpack-bundle-analyzer": "4.5.0"
   },
   "resolutions": {
+    "axios": "1.20.0",
     "@types/express": "5.0.6",
     "@types/express-serve-static-core": "5.1.2",
     "tar-fs": "2.1.4",
