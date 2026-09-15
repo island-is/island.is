@@ -17,7 +17,11 @@ import {
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import {
+  getErrorViaPath,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 
 interface PlateOptionType {
   plateTypeCode?: string | null
@@ -147,6 +151,9 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               }))}
               onSelect={(value) => {
                 setValue('plateType.regGroup', value)
+                if (value === 'N5') {
+                  setValue('plateDelivery.deliveryMethodIsDeliveryStation', YES)
+                }
                 setValue(
                   'plateType.selectedPlateTypeName',
                   plates.find((p) => p.plateTypeCode === value)?.plateTypeName,
