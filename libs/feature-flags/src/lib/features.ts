@@ -46,6 +46,7 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
   isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
+  isNewDrivingLicenseEnabled = 'isNewDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
   isU2ApplicationEnabled = 'isU2ApplicationEnabled',
   // Application System Delegations active
@@ -74,6 +75,7 @@ export enum Features {
   isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   isServicePortalUnemploymentBenefitsPageEnabled = 'isServicePortalUnemploymentBenefitsPageEnabled',
   isServicePortalActivationAllowancePageEnabled = 'isServicePortalActivationAllowancePageEnabled',
+  isServicePortalHealthOldPregnanciesPageEnabled = 'isServicePortalHealthOldPregnanciesPageEnabled',
 
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',

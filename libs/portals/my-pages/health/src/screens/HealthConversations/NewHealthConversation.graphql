@@ -4,8 +4,27 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
   treatmentId
   name
   allowsMessaging
-  messagingWindowOpen
-  messagingWindowClose
+  isClosedToday
+  dayType
+  nextOpensAt {
+    date
+    windowOpen
+    windowClose
+  }
+  openingHours {
+    weekday {
+      windowOpen
+      windowClose
+    }
+    weekend {
+      windowOpen
+      windowClose
+    }
+    holiday {
+      windowOpen
+      windowClose
+    }
+  }
   patientReplyWindowDays
   canCreateConversation
   conversationBlockedReason

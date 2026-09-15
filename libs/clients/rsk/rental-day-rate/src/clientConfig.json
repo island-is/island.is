@@ -496,12 +496,19 @@
           "200": {
             "description": "OK",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalDayRegistrationModel"
+                }
+              },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RentalDaysEntry"
-                  }
+                  "$ref": "#/components/schemas/RentalDayRegistrationModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalDayRegistrationModel"
                 }
               }
             }

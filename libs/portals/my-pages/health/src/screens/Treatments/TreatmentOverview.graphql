@@ -22,6 +22,7 @@ query GetHealthTreatment($id: ID!) {
       title
       lastMessageSentAt
       senderName
+      isRead
     }
   }
 }

@@ -71,4 +71,37 @@ export class DefendantEventLogRepositoryService {
       throw error
     }
   }
+
+  // Moves every event log of a defendant to another case, when the defendant is
+  // split off into a case of their own. Returns the number of event logs moved.
+  async moveAllForDefendantToCase(
+    caseId: string,
+    defendantId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Moving the event logs of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.defendantEventLogModel.update(
+        { caseId: newCaseId },
+        { where: { caseId, defendantId }, transaction: options.transaction },
+      )
+
+      this.logger.debug(
+        `Moved ${numberOfAffectedRows} event logs of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error moving the event logs of defendant ${defendantId} from case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }
