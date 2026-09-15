@@ -37,18 +37,46 @@ export const plateDeliverySubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'plateDelivery.deliveryMethodIsDeliveryStation',
-          options: [
-            {
-              value: NO,
-              label:
-                information.labels.plateDelivery.transportAuthorityOptionTitle,
-            },
-            {
-              value: YES,
-              label:
-                information.labels.plateDelivery.deliveryStationOptionTitle,
-            },
-          ],
+          condition: (application) => {
+            const plateType =
+              getValueViaPath<string>(
+                application.answers,
+                'plateType.selectedPlateTypeName',
+              ) ?? ''
+
+            return plateType !== 'VSK - merki'
+          },
+          options: (application) => {
+            const plateType =
+              getValueViaPath<string>(
+                application.answers,
+                'plateType.selectedPlateTypeName',
+              ) ?? ''
+
+            if (plateType === 'VSK - merki') {
+              return [
+                {
+                  value: YES,
+                  label:
+                    information.labels.plateDelivery.deliveryStationOptionTitle,
+                },
+              ]
+            }
+
+            return [
+              {
+                value: NO,
+                label:
+                  information.labels.plateDelivery
+                    .transportAuthorityOptionTitle,
+              },
+              {
+                value: YES,
+                label:
+                  information.labels.plateDelivery.deliveryStationOptionTitle,
+              },
+            ]
+          },
           width: 'half',
           largeButtons: true,
         }),
