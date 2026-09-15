@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
@@ -48,9 +47,9 @@ interface Props {
   // refetching: a withdrawal later in the same visit needs both the appeal case
   // to withdraw from and the knowledge that this defendant has an appeal.
   onAppealFiled: (defendantId: string, appealCaseId: string) => void
-  // Called with the defendants whose decision was saved, whether or not every
-  // save succeeded, so the page can stop counting them as changed and a retry
-  // sends only what failed.
+  // Called with the defendants whose decision is fully confirmed - saved, and
+  // with any appeal it called for filed - so the page stops counting them as
+  // changed and a retry sends only what is still outstanding.
   onSaved: (savedDefendantIds: string[]) => void
   // Called once every changed decision has been saved.
   onConfirmed: () => void
@@ -94,16 +93,6 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
     changedDefendants,
     indictmentAppealDeadline,
   )
-
-  // The appeals that a saved decision called for but whose request failed.
-  // Confirming again retries exactly those: the decisions themselves are
-  // already on the server, and sending one a second time would record a second
-  // review. They are kept as the actions they are rather than re-derived, since
-  // once a decision is saved the page no longer sees it as changed.
-  const [unfiledAppeals, setUnfiledAppeals] = useState<VerdictAppealActions>({
-    toAppeal: [],
-    toWithdraw: [],
-  })
 
   // Files the appeals these actions call for, and answers with the ones that
   // did not go through. The first appeal creates the verdict appeal case and
@@ -177,31 +166,37 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
       .filter(({ saved }) => saved)
       .map(({ defendant }) => defendant)
 
-    if (savedDefendants.length > 0) {
-      onSaved(savedDefendants.map((defendant) => defendant.id))
-    }
-
     let unfiled: VerdictAppealActions = { toAppeal: [], toWithdraw: [] }
 
-    if (registersVerdictAppeal) {
-      const { toAppeal, toWithdraw } = getVerdictAppealActions(
-        savedDefendants,
-        originalDecisions,
-        defendantIdsWithStandingAppeal,
+    if (registersVerdictAppeal && savedDefendants.length > 0) {
+      unfiled = await fileVerdictAppeals(
+        getVerdictAppealActions(
+          savedDefendants,
+          originalDecisions,
+          defendantIdsWithStandingAppeal,
+        ),
       )
-
-      unfiled = await fileVerdictAppeals({
-        toAppeal: [...unfiledAppeals.toAppeal, ...toAppeal],
-        toWithdraw: [...unfiledAppeals.toWithdraw, ...toWithdraw],
-      })
-      setUnfiledAppeals(unfiled)
     }
 
-    if (
-      savedDefendants.length < changedDefendants.length ||
-      unfiled.toAppeal.length > 0 ||
-      unfiled.toWithdraw.length > 0
-    ) {
+    // A decision counts as confirmed only once the appeal it calls for has been
+    // filed too. One whose appeal failed stays a changed decision, so the page
+    // keeps offering it and confirming again retries both halves - the decision
+    // update is idempotent, since the backend records a review only when the
+    // value actually changes.
+    const unfiledDefendantIds = new Set(
+      [...unfiled.toAppeal, ...unfiled.toWithdraw].map(
+        (defendant) => defendant.id,
+      ),
+    )
+    const confirmedDefendants = savedDefendants.filter(
+      (defendant) => !unfiledDefendantIds.has(defendant.id),
+    )
+
+    if (confirmedDefendants.length > 0) {
+      onSaved(confirmedDefendants.map((defendant) => defendant.id))
+    }
+
+    if (confirmedDefendants.length < changedDefendants.length) {
       return
     }
 

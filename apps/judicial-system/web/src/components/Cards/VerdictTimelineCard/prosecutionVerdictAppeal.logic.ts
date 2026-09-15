@@ -4,7 +4,10 @@ import type {
   AppealCase,
   AppealEventLog,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { AppealEventType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  AppealEventType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 
@@ -99,3 +102,21 @@ export const getProsecutionVerdictAppealItem = (
     ? { text: `Ákæruvaldið áfrýjaði ${formatDate(appealDate)}` }
     : undefined
 }
+
+/**
+ * Whether the review decision is no longer the reviewer's to change, because
+ * the appeal it made has moved on.
+ *
+ * Mirrors the backend rule in defendant.service: a review decision may only
+ * change while the verdict appeal case is APPEALED or WITHDRAWN. Every later
+ * state - received by the court of appeals, and completed after it - refuses
+ * the change, so the page must not offer it.
+ */
+export const isVerdictAppealPastReview = (
+  verdictAppealCase: Pick<AppealCase, 'appealState'> | null | undefined,
+): boolean =>
+  Boolean(
+    verdictAppealCase &&
+      verdictAppealCase.appealState !== AppealCaseState.APPEALED &&
+      verdictAppealCase.appealState !== AppealCaseState.WITHDRAWN,
+  )

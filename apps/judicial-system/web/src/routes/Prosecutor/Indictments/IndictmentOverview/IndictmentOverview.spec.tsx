@@ -455,6 +455,7 @@ describe('Prosecutor IndictmentOverview', () => {
         appealCase({
           verdictAppealCase: {
             id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.APPEALED,
             appealEventLogs: [
               {
                 id: 'event_id',
@@ -525,8 +526,9 @@ describe('Prosecutor IndictmentOverview', () => {
       )
       expect(mockPush).not.toHaveBeenCalled()
 
-      // Retrying files the appeal again without saving the decision a second
-      // time - the server already has it, and a second save is a second review.
+      // Retrying sends both halves again. Re-sending the decision is harmless -
+      // the backend records a review only when the value actually changes - and
+      // it is what keeps the decision on offer until its appeal is filed.
       mockUpdateDefendant.mockClear()
       mockCreateProsecutionVerdictAppeal.mockResolvedValue({
         id: 'verdict_appeal_case_id',
@@ -536,7 +538,11 @@ describe('Prosecutor IndictmentOverview', () => {
       await waitFor(() =>
         expect(mockCreateProsecutionVerdictAppeal).toHaveBeenCalledTimes(2),
       )
-      expect(mockUpdateDefendant).not.toHaveBeenCalled()
+      expect(mockUpdateDefendant).toHaveBeenCalledWith({
+        caseId: 'test_id',
+        defendantId: 'defendant_id',
+        indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+      })
       await waitFor(() => expect(mockPush).toHaveBeenCalled())
     })
 
@@ -703,6 +709,7 @@ describe('Prosecutor IndictmentOverview', () => {
         ],
         verdictAppealCase: {
           id: 'verdict_appeal_case_id',
+          appealState: AppealCaseState.APPEALED,
           appealEventLogs: [
             {
               id: 'event_id',
@@ -766,14 +773,12 @@ describe('Prosecutor IndictmentOverview', () => {
       )
       expect(mockPush).not.toHaveBeenCalled()
 
-      mockUpdateDefendant.mockClear()
       mockTransitionAppealCase.mockResolvedValue(true)
       await userEvent.click(screen.getByRole('button', { name: 'Staðfesta' }))
 
       await waitFor(() =>
         expect(mockTransitionAppealCase).toHaveBeenCalledTimes(2),
       )
-      expect(mockUpdateDefendant).not.toHaveBeenCalled()
       await waitFor(() => expect(mockPush).toHaveBeenCalled())
     })
 
@@ -802,31 +807,96 @@ describe('Prosecutor IndictmentOverview', () => {
       ).toBeInTheDocument()
     })
 
-    // Once the court of appeals has the appeal, the decision that made it is no
-    // longer the reviewer's to change.
-    it('locks the decision once the appeal has been received', async () => {
-      const { container } = renderCase(
-        appealCase({
-          verdictAppealCase: {
-            id: 'verdict_appeal_case_id',
-            appealState: AppealCaseState.RECEIVED,
-            appealEventLogs: [],
-          },
-        }),
-        [Feature.INDICTMENT_APPEAL],
+    // Closing the confirmation must not strand a decision whose appeal failed:
+    // it is not confirmed, so the page keeps offering it.
+    it('still offers a decision whose appeal failed after the modal is closed', async () => {
+      mockCreateProsecutionVerdictAppeal.mockResolvedValue(undefined)
+      renderCase(appealCase({}), [Feature.INDICTMENT_APPEAL])
+      await chooseAppealAndConfirm()
+
+      await waitFor(() =>
+        expect(mockCreateProsecutionVerdictAppeal).toHaveBeenCalledTimes(1),
+      )
+
+      // Close the modal entirely, losing anything it was holding.
+      await userEvent.click(screen.getByTestId('modalSecondaryButton'))
+      expect(
+        screen.queryByText('Viltu staðfesta eftirfarandi ákvörðun:'),
+      ).not.toBeInTheDocument()
+
+      // The footer still offers the decision, and confirming retries the appeal.
+      mockCreateProsecutionVerdictAppeal.mockResolvedValue({
+        id: 'verdict_appeal_case_id',
+      })
+      const confirmButton = screen.getByRole('button', {
+        name: 'Ljúka yfirlestri',
+      })
+      expect(confirmButton).not.toBeDisabled()
+      await userEvent.click(confirmButton)
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Staðfesta' }),
       )
 
       await waitFor(() =>
-        expect(
-          container.querySelector('#review-option-appeal-defendant_id'),
-        ).toBeDisabled(),
+        expect(mockCreateProsecutionVerdictAppeal).toHaveBeenCalledTimes(2),
       )
-      expect(
-        container.querySelector('#review-option-accept-defendant_id'),
-      ).toBeDisabled()
-      expect(
-        screen.queryByRole('button', { name: 'Ljúka yfirlestri' }),
-      ).not.toBeInTheDocument()
+      await waitFor(() => expect(mockPush).toHaveBeenCalled())
     })
+
+    // Once the court of appeals has the appeal, the decision that made it is no
+    // longer the reviewer's to change.
+    it.each([AppealCaseState.RECEIVED, AppealCaseState.COMPLETED])(
+      'locks the decision once the appeal is %s',
+      async (appealState) => {
+        const { container } = renderCase(
+          appealCase({
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState,
+              appealEventLogs: [],
+            },
+          }),
+          [Feature.INDICTMENT_APPEAL],
+        )
+
+        await waitFor(() =>
+          expect(
+            container.querySelector('#review-option-appeal-defendant_id'),
+          ).toBeDisabled(),
+        )
+        expect(
+          container.querySelector('#review-option-accept-defendant_id'),
+        ).toBeDisabled()
+        expect(
+          screen.queryByRole('button', { name: 'Ljúka yfirlestri' }),
+        ).not.toBeInTheDocument()
+      },
+    )
+
+    // While the appeal is still the reviewer's, the decision stays theirs.
+    it.each([AppealCaseState.APPEALED, AppealCaseState.WITHDRAWN])(
+      'leaves the decision open while the appeal is %s',
+      async (appealState) => {
+        const { container } = renderCase(
+          appealCase({
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState,
+              appealEventLogs: [],
+            },
+          }),
+          [Feature.INDICTMENT_APPEAL],
+        )
+
+        await waitFor(() =>
+          expect(
+            container.querySelector('#review-option-appeal-defendant_id'),
+          ).not.toBeDisabled(),
+        )
+        expect(
+          screen.getByRole('button', { name: 'Ljúka yfirlestri' }),
+        ).toBeInTheDocument()
+      },
+    )
   })
 })

@@ -33,7 +33,10 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { standingProsecutionAppealDefendantIds } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/prosecutionVerdictAppeal.logic'
+import {
+  isVerdictAppealPastReview,
+  standingProsecutionAppealDefendantIds,
+} from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/prosecutionVerdictAppeal.logic'
 import ReviewerVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/ReviewerVerdictTimelineCard'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
@@ -93,11 +96,13 @@ const IndictmentOverview: FC = () => {
   const registersVerdictAppeal =
     isRuling && features.includes(Feature.INDICTMENT_APPEAL)
 
-  // Once the court of appeals has received the appeal, the decision that made
-  // it is no longer the reviewer's to change. The backend refuses it too; this
-  // keeps the page from offering what would be refused.
-  const isReviewDecisionLocked =
-    workingCase.verdictAppealCase?.appealState === AppealCaseState.RECEIVED
+  // Once the appeal has moved past the reviewer - received by the court of
+  // appeals, and completed after it - the decision that made it is no longer
+  // theirs to change. The backend refuses it too; this keeps the page from
+  // offering what would be refused.
+  const isReviewDecisionLocked = isVerdictAppealPastReview(
+    workingCase.verdictAppealCase,
+  )
 
   // Defendants whose indictment was cancelled or dismissed (completed for some)
   // do not receive a verdict, so no review decision is required for them.
