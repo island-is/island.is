@@ -25,6 +25,12 @@ const fileSchema = z.object({ key: z.string(), name: z.string() })
 
 const exemptionReasons = ['studies', 'health', 'housing', 'work'] as const
 
+export const institutionRequestedDocumentTypes = [
+  'exemptionReason',
+  'custodyAgreement',
+  'changedCircumstances',
+] as const
+
 const bankAccountSchema = z.object({
   bankNumber: z.string().optional(),
   ledger: z.string().optional(),
@@ -147,6 +153,35 @@ const baseSchema = z
     assigneeApproval: z
       .object({
         confirmRead: z.array(z.string()).optional(),
+      })
+      .optional(),
+    approveOrReject: z
+      .enum(['approve', 'reject', 'requestExtraData'])
+      .optional(),
+    approveOrRejectReason: z.string().optional(),
+    // clearOnChange on approveOrReject sets this to ""; normalize away
+    institutionRequestedDocuments: z
+      .union([
+        z.array(z.enum(institutionRequestedDocumentTypes)),
+        z.literal(''),
+      ])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
+    institutionMessageToApplicant: z.string().optional(),
+    extraDataAttachments: z
+      .object({
+        exemptionReason: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
+        custodyAgreement: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
+        changedCircumstances: z
+          .union([z.array(fileSchema), z.literal('')])
+          .optional()
+          .transform((v) => (v === '' ? undefined : v)),
       })
       .optional(),
     incomeHasOtherIncome: z.union([z.literal(YES), z.literal(NO)]).optional(),
@@ -312,6 +347,60 @@ export const dataSchema = baseSchema
     })
   })
   .superRefine((data, ctx) => {
+    if (data.approveOrReject !== 'reject') return
+    const reason = data.approveOrRejectReason?.trim()
+    if (!reason) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['approveOrRejectReason'],
+        params: m.institutionMessages.validationRejectionReasonRequired,
+      })
+    }
+  })
+  .superRefine((data, ctx) => {
+    if (data.approveOrReject !== 'requestExtraData') return
+    const docs = data.institutionRequestedDocuments ?? []
+    if (docs.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['institutionRequestedDocuments'],
+        params: m.institutionMessages.validationExtraDataDocumentsRequired,
+      })
+    }
+    const message = data.institutionMessageToApplicant?.trim()
+    if (!message) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['institutionMessageToApplicant'],
+        params: m.institutionMessages.validationExtraDataMessageRequired,
+      })
+    }
+  })
+  .superRefine((data, ctx) => {
+    const requested = data.institutionRequestedDocuments
+    if (!requested?.length) return
+    const att = data.extraDataAttachments
+    if (!att) return
+
+    const requireFiles = (
+      key: typeof institutionRequestedDocumentTypes[number],
+    ) => {
+      if (!requested.includes(key)) return
+      const files = att[key]
+      if (!Array.isArray(files) || files.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['extraDataAttachments', key],
+          params: m.extraDataMessages.validationFileRequired,
+        })
+      }
+    }
+
+    requireFiles('exemptionReason')
+    requireFiles('custodyAgreement')
+    requireFiles('changedCircumstances')
+  })
+  .superRefine((data, ctx) => {
     const applicantNatRaw = data.applicant?.nationalId?.trim()
     if (!applicantNatRaw || !kennitala.isValid(applicantNatRaw)) return
 
@@ -341,7 +430,7 @@ export const dataSchema = baseSchema
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: [kt, 'applicantSubmitAccessAgreementRepeater', index, 'file'],
-        params: m.draftMessages.exemptionSection.validationFileRequired,
+        params: m.extraDataMessages.validationFileRequired,
       })
     })
   })

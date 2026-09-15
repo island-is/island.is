@@ -27,6 +27,21 @@ export const actionCardMessages = defineMessages({
     defaultMessage: '{address}',
     description: 'Draft card description when only rental address is known',
   },
+  cardTitleExtraData: {
+    id: 'hb.application:actionCard.cardTitleExtraData',
+    defaultMessage: 'Viðbótargögn óskast',
+    description: 'Application card heading when extra data requested',
+  },
+  cardTitleApproved: {
+    id: 'hb.application:actionCard.cardTitleApproved',
+    defaultMessage: 'Umsókn samþykkt',
+    description: 'Application card heading when approved',
+  },
+  cardTitleRejected: {
+    id: 'hb.application:actionCard.cardTitleRejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application card heading when rejected',
+  },
   pendingTitleNoRental: {
     id: 'hb.application:actionCard.pendingTitleNoRental',
     defaultMessage: 'Enginn gildur leigusamningur fannst',
@@ -157,6 +172,61 @@ export const actionCardMessages = defineMessages({
     id: 'hb.application:actionCard.pendingContentInReviewApplicant',
     defaultMessage: 'Umsókn í vinnslu hjá HMS.',
     description: 'In review — applicant content',
+  },
+  pendingTitleInReviewInstitution: {
+    id: 'hb.application:actionCard.pendingTitleInReviewInstitution',
+    defaultMessage: 'Til meðferðar',
+    description: 'In review — institution title',
+  },
+  pendingContentInReviewInstitution: {
+    id: 'hb.application:actionCard.pendingContentInReviewInstitution',
+    defaultMessage: 'Umsókn um húsnæðisbætur bíður afgreiðslu.',
+    description: 'In review — institution content',
+  },
+  pendingTitleExtraData: {
+    id: 'hb.application:actionCard.pendingTitleExtraData',
+    defaultMessage: 'Viðbótargögn þarf að skila',
+    description: 'Extra data state title',
+  },
+  pendingContentExtraData: {
+    id: 'hb.application:actionCard.pendingContentExtraData',
+    defaultMessage:
+      'Stofnun bað um viðbótargögn eða skýringar. Skilaðu þeim hér til að halda áfram með málið. {applicantName} · {rentalAddress}',
+    description: 'Extra data state content',
+  },
+  pendingTitleApproved: {
+    id: 'hb.application:actionCard.pendingTitleApproved',
+    defaultMessage: 'Umsókn samþykkt',
+    description: 'Approved state title',
+  },
+  pendingContentApproved: {
+    id: 'hb.application:actionCard.pendingContentApproved',
+    defaultMessage:
+      'Umsóknin þín um húsnæðisbætur hefur verið samþykkt. {applicantName} · {rentalAddress}',
+    description: 'Approved state content',
+  },
+  pendingTitleRejected: {
+    id: 'hb.application:actionCard.pendingTitleRejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Rejected state title',
+  },
+  pendingContentRejected: {
+    id: 'hb.application:actionCard.pendingContentRejected',
+    defaultMessage:
+      'Umsóknin þín um húsnæðisbætur var hafnað. Þú getur skoðað nánari upplýsingar í umsókninni. {applicantName} · {rentalAddress}',
+    description: 'Rejected state content',
+  },
+  historyInReviewRequestedExtraData: {
+    id: 'hb.application:actionCard.historyInReviewRequestedExtraData',
+    defaultMessage: 'HMS óskaði eftir viðbótargögnum',
+    description:
+      'History log when institution requests extra data from the applicant',
+  },
+  historyExtraDataSubmitted: {
+    id: 'hb.application:actionCard.historyExtraDataSubmitted',
+    defaultMessage: '{applicantName} skilaði viðbótargögnum',
+    description:
+      'History log when applicant submits the requested extra data back to HMS',
   },
   inReviewDescription: {
     id: 'hb.application:actionCard.inReviewDescription',
