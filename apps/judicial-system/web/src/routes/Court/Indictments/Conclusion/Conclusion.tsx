@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parse from 'date-fns/parse'
@@ -26,6 +27,7 @@ import {
   hasGeneratedCourtRecordPdf,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
+import type { FormFooterAction } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CheckboxList,
@@ -34,7 +36,6 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  FormFooterAction,
   Modal,
   PageHeader,
   PageLayout,
@@ -44,20 +45,22 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InputDate from '@island.is/judicial-system-web/src/components/Inputs/InputDate'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
   CourtSessionRulingType,
   CourtSessionType,
-  Defendant,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { CourtCaseNumberInput } from '@island.is/judicial-system-web/src/routes/Court/components'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  UpdateCase,
   useCase,
   useDefendants,
   useFileList,
@@ -65,15 +68,13 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isGeneratedIndictmentCourtRecordValid,
   isNoGeneratedIndictmentCourtRecord,
   validate,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import InputDate from '../../../../components/Inputs/InputDate'
-import { CourtCaseNumberInput } from '../../components'
 import SelectCandidateMergeCase from './SelectCandidateMergeCase'
 import { strings } from './Conclusion.strings'
 
@@ -624,13 +625,13 @@ const Conclusion: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box className={grid({ gap: 5, marginBottom: 10 })}>
+        <Box className={stack({ gap: 5 })}>
           <Box component="section">
             <SectionHeading
               title={formatMessage(strings.decisionTitle)}
               required
             />
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               {radioButtons.map(({ id, value, label }) => (
                 <RadioButton
                   key={id}
@@ -704,7 +705,7 @@ const Conclusion: FC = () => {
                   title={formatMessage(strings.completingTitle)}
                   required
                 />
-                <BlueBox className={grid({ gap: 2 })}>
+                <BlueBox className={stack({ gap: 2 })}>
                   <RadioButton
                     id="decision-ruling"
                     name="decision"
@@ -789,7 +790,7 @@ const Conclusion: FC = () => {
                     title={formatMessage(strings.connectedCaseNumbersTitle)}
                     required
                   />
-                  <BlueBox className={grid({ gap: 2 })}>
+                  <BlueBox className={stack({ gap: 2 })}>
                     <SelectCandidateMergeCase
                       workingCase={workingCase}
                       setWorkingCase={setWorkingCase}
@@ -890,7 +891,7 @@ const Conclusion: FC = () => {
                 {activeDefendants.map((defendant) => (
                   <BlueBox
                     key={`completing-for-some-${defendant.id}`}
-                    className={grid({ gap: 2 })}
+                    className={stack({ gap: 2 })}
                   >
                     <SectionHeading
                       title={defendant.name || ''}
@@ -993,9 +994,9 @@ const Conclusion: FC = () => {
             (selectedDecision === CaseIndictmentRulingDecision.FINE ||
               selectedDecision === CaseIndictmentRulingDecision.RULING) &&
             isNonEmptyArray(activeDefendants) && (
-              <Box component="section" className={grid({ gap: 3 })}>
+              <Box component="section" className={stack({ gap: 3 })}>
                 {activeDefendants.map((defendant) => (
-                  <BlueBox key={defendant.id} className={grid({ gap: 2 })}>
+                  <BlueBox key={defendant.id} className={stack({ gap: 2 })}>
                     <SectionHeading
                       title={defendant.name || ''}
                       variant="h5"
@@ -1157,7 +1158,7 @@ const Conclusion: FC = () => {
             ]}
             onClose={() => setModalVisible(undefined)}
           >
-            <Box className={grid({ gap: 3, marginBottom: 3 })}>
+            <Box className={stack({ gap: 3 })} marginBottom={3}>
               {workingCase.defendants
                 ?.filter(
                   (defendant) =>
@@ -1232,7 +1233,7 @@ const Conclusion: FC = () => {
             ]}
             onClose={() => setModalVisible(undefined)}
           >
-            <Box className={grid({ marginBottom: 3 })}>
+            <Box className={stack()} marginBottom={3}>
               {workingCase.defendants
                 ?.filter(
                   (defendant) =>

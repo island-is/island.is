@@ -1,14 +1,19 @@
-import {
+import type {
   AppealCase,
+  Case,
+  CourtSessionResponse,
+  DateLog,
+  Defendant,
+  IndictmentCount,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   AppealCaseRulingDecision,
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
   CaseFileCategory,
-  CourtSessionResponse,
-  IndictmentCount,
   IndictmentCountOffense,
   IndictmentSubtype,
+  SubpoenaType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
@@ -16,6 +21,7 @@ import {
   getIndictmentCountWarningMessage,
   isCourtOfAppealRulingStepValid,
   isIndictmentCountComplete,
+  isSubpoenaStepValid,
   validate,
 } from './validate'
 
@@ -148,6 +154,28 @@ describe('getIndictmentCountWarningMessage', () => {
   })
 })
 
+describe('Validate empty', () => {
+  test.each(['', undefined, '   ', '\t', '\n'])(
+    'should fail for %j',
+    (value) => {
+      // Act
+      const r = validate([[value, ['empty']]])
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Reitur má ekki vera tómur')
+    },
+  )
+
+  test.each([' a ', '0'])('should be valid for %j', (value) => {
+    // Act
+    const r = validate([[value, ['empty']]])
+
+    // Assert
+    expect(r.isValid).toEqual(true)
+  })
+})
+
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
     // Arrange
@@ -160,6 +188,41 @@ describe('Validate police casenumber format', () => {
     expect(r.isValid).toEqual(false)
     expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
   })
+
+  test('should fail if the last part is longer than six digits', () => {
+    // Arrange
+    const value = '007-2024-1234567'
+
+    // Act
+    const r = validate([[value, ['police-casenumber-format']]])
+
+    // Assert
+    expect(r.isValid).toEqual(false)
+    expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
+  })
+
+  test('should fail if the number has not been finished', () => {
+    // Arrange
+    const value = '007-2024-'
+
+    // Act
+    const r = validate([[value, ['police-casenumber-format']]])
+
+    // Assert
+    expect(r.isValid).toEqual(false)
+    expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
+  })
+
+  test.each(['007-2024-042535', '007-2024-1'])(
+    'should be valid for %s',
+    (value) => {
+      // Act
+      const r = validate([[value, ['police-casenumber-format']]])
+
+      // Assert
+      expect(r.isValid).toEqual(true)
+    },
+  )
 })
 
 describe('Validate time format', () => {
@@ -495,6 +558,103 @@ describe('areAppealDecisionsComplete', () => {
     expect(
       areAppealDecisionsComplete({} as CourtSessionResponse, baseCase),
     ).toBe(false)
+  })
+})
+
+describe('isSubpoenaStepValid', () => {
+  const alternativeServiceDefendant = {
+    id: 'defendant-1',
+    isAlternativeService: true,
+    alternativeServiceDescription: 'Ákæra birt í þinghaldi',
+  } as Defendant
+
+  const subpoenaDefendant = {
+    id: 'defendant-2',
+    subpoenaType: SubpoenaType.ABSENCE,
+  } as Defendant
+
+  const arraignmentDate = {
+    date: '2026-09-01T10:00:00.000Z',
+    location: 'Dómsalur 1',
+  } as DateLog
+
+  test('returns true when an arraignment date and courtroom are registered', () => {
+    const workingCase = {
+      defendants: [subpoenaDefendant],
+      arraignmentDate,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(true)
+  })
+
+  test('returns false when the arraignment date is missing', () => {
+    const workingCase = {
+      defendants: [subpoenaDefendant],
+      arraignmentDate: { location: 'Dómsalur 1' } as DateLog,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
+  })
+
+  test('returns false when the courtroom is missing', () => {
+    const workingCase = {
+      defendants: [subpoenaDefendant],
+      arraignmentDate: { date: '2026-09-01T10:00:00.000Z' } as DateLog,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
+  })
+
+  test('returns true without an arraignment date when the summons is skipped and every defendant is served by alternative means', () => {
+    const workingCase = {
+      defendants: [alternativeServiceDefendant],
+      isArraignmentSummonsSkipped: true,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(true)
+  })
+
+  test('returns false when the summons is skipped but a defendant is still receiving a subpoena', () => {
+    const workingCase = {
+      defendants: [alternativeServiceDefendant, subpoenaDefendant],
+      isArraignmentSummonsSkipped: true,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
+  })
+
+  test('prefers the updated skip flag over the persisted one', () => {
+    const workingCase = {
+      defendants: [alternativeServiceDefendant],
+      isArraignmentSummonsSkipped: true,
+    } as Case
+
+    expect(
+      isSubpoenaStepValid(
+        workingCase,
+        [alternativeServiceDefendant],
+        null,
+        false,
+      ),
+    ).toBe(false)
+  })
+
+  test('returns false when an alternative service defendant has no description', () => {
+    const workingCase = {
+      defendants: [{ id: 'defendant-1', isAlternativeService: true }],
+      isArraignmentSummonsSkipped: true,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
+  })
+
+  test('returns false when the case has no defendants', () => {
+    const workingCase = {
+      defendants: [],
+      isArraignmentSummonsSkipped: true,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
 })
 

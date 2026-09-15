@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -10,7 +10,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -30,6 +29,7 @@ import {
   isCompletedCase,
   isIndictmentCase,
   isRequestCase,
+  isRulingOrderWithoutDocument,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -45,9 +45,12 @@ import {
   AppealCase,
   Case,
   CaseFile,
+  CaseFileRepositoryService,
   CourtDocumentRepositoryService,
   EventLog,
+  UpdateCaseFile,
 } from '../repository'
+import { AttachRulingOrderDocumentDto } from './dto/attachRulingOrderDocument.dto'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
@@ -73,9 +76,9 @@ export class FileService {
   private throttle = Promise.resolve('')
 
   constructor(
-    @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
+    private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
@@ -90,17 +93,12 @@ export class FileService {
   ): Promise<boolean> {
     this.logger.debug(`Deleting file ${fileId} from the database`)
 
-    const promisedUpdate = transaction
-      ? this.fileModel.update(
-          { state: CaseFileState.DELETED, isKeyAccessible: false },
-          { where: { id: fileId }, transaction },
-        )
-      : this.fileModel.update(
-          { state: CaseFileState.DELETED, isKeyAccessible: false },
-          { where: { id: fileId } },
-        )
-
-    const [numberOfAffectedRows] = await promisedUpdate
+    const numberOfAffectedRows =
+      await this.caseFileRepositoryService.updateById(
+        fileId,
+        { state: CaseFileState.DELETED, isKeyAccessible: false },
+        { transaction },
+      )
 
     if (numberOfAffectedRows !== 1) {
       // Tolerate failure, but log error
@@ -223,10 +221,10 @@ export class FileService {
         const { hash, hashAlgorithm, binaryPdf } = getCaseFileHash(confirmedPdf)
 
         // No need to wait for the update to finish
-        this.fileModel.update(
-          { hash, hashAlgorithm },
-          { where: { id: file.id } },
-        )
+        this.caseFileRepositoryService.updateById(file.id, {
+          hash,
+          hashAlgorithm,
+        })
 
         return binaryPdf
       })
@@ -339,10 +337,21 @@ export class FileService {
     )
   }
 
-  async findById(fileId: string, caseId: string): Promise<CaseFile> {
-    const caseFile = await this.fileModel.findOne({
-      where: { id: fileId, caseId, state: { [Op.not]: CaseFileState.DELETED } },
+  // Reads the file from the given transaction, so a caller acting on state a
+  // concurrent request has just written sees it - unlike the case associations
+  // loaded when the request began.
+  async findByIdOrNull(
+    fileId: string,
+    caseId: string,
+    transaction?: Transaction,
+  ): Promise<CaseFile | null> {
+    return this.caseFileRepositoryService.findLiveByIdAndCase(fileId, caseId, {
+      transaction,
     })
+  }
+
+  async findById(fileId: string, caseId: string): Promise<CaseFile> {
+    const caseFile = await this.findByIdOrNull(fileId, caseId)
 
     if (!caseFile) {
       throw new NotFoundException(
@@ -440,10 +449,23 @@ export class FileService {
       }
     }
 
+    this.addMessagesForIndictmentCaseFileDeliveryToQueue(theCase, file, user)
+
+    return file
+  }
+
+  // Files of an indictment case are delivered to the police and the courts as
+  // they arrive. Also used when a ruling order pronounced orally is written up,
+  // which is the first moment that file has a document to deliver.
+  private addMessagesForIndictmentCaseFileDeliveryToQueue(
+    theCase: Case,
+    file: CaseFile,
+    user: User,
+  ): void {
     if (
-      isIndictmentCase(theCase.type) &&
-      file.category &&
-      [
+      !isIndictmentCase(theCase.type) ||
+      !file.category ||
+      ![
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
@@ -452,26 +474,61 @@ export class FileService {
         CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ].includes(file.category)
     ) {
-      if (theCase.origin === CaseOrigin.LOKE) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: file.id,
-        })
-      }
-
-      if (theCase.courtCaseNumber) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: file.id,
-        })
-      }
+      return
     }
 
-    return file
+    if (theCase.origin === CaseOrigin.LOKE) {
+      addMessagesToQueue({
+        type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+        user,
+        caseId: theCase.id,
+        elementId: file.id,
+      })
+    }
+
+    if (theCase.courtCaseNumber) {
+      addMessagesToQueue({
+        type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+        user,
+        caseId: theCase.id,
+        elementId: file.id,
+      })
+    }
+  }
+
+  // A ruling order pronounced orally in a court session gets its case file when
+  // it is pronounced, before there is anything to store: the court record links
+  // to it, and the parties' appeal decisions and any appeal are keyed on it. The
+  // district court writes the ruling up and fills the document in later, and
+  // only if the ruling is appealed - until then the key is empty.
+  //
+  // Deliberately not routed through createCaseFile, which expects a key for an
+  // object already uploaded to S3 and would queue the file for delivery to the
+  // police and the courts.
+  async createRulingOrderPronouncedOrally(
+    theCase: Case,
+    name: string,
+    user: User,
+    transaction: Transaction,
+  ): Promise<CaseFile> {
+    return this.caseFileRepositoryService.create(
+      theCase.id,
+      {
+        category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+        state: CaseFileState.STORED_IN_RVG,
+        isPronouncedOrally: true,
+        name,
+        userGeneratedFilename: name,
+        // No document, so no content type, no size and no key. The name is the
+        // one the ruling was given when it was pronounced, and the document the
+        // district court uploads later keeps it.
+        type: '',
+        size: 0,
+        key: '',
+        submittedBy: user.name,
+      },
+      { transaction },
+    )
   }
 
   private async createCaseFileInDatabase(
@@ -483,33 +540,22 @@ export class FileService {
   ): Promise<CaseFile> {
     let finalOrderWithinChapter = createFile.orderWithinChapter
     if (createFile.orderWithinChapter === undefined && !createFile.category) {
-      // Lock existing uncategorized files so concurrent creates cannot read the
-      // same max orderWithinChapter before either insert commits.
-      await this.fileModel.findAll({
-        where: { caseId: theCase.id, category: null },
-        attributes: ['id'],
-        lock: Transaction.LOCK.UPDATE,
-        transaction,
-      })
-
-      const maxOrder = await this.fileModel.max<number | null, CaseFile>(
-        'orderWithinChapter',
-        {
-          where: { caseId: theCase.id, category: null },
-          transaction,
-        },
-      )
-      if (maxOrder !== null) {
-        finalOrderWithinChapter = maxOrder + 1
-      }
+      // The repository locks the existing uncategorized files so concurrent
+      // creates cannot read the same max orderWithinChapter before either
+      // insert commits. The first ordered file of a case gets no order here.
+      finalOrderWithinChapter =
+        (await this.caseFileRepositoryService.getNextOrderWithinChapterForUpdate(
+          theCase.id,
+          { transaction },
+        )) ?? undefined
     }
 
-    const file = await this.fileModel.create(
+    const file = await this.caseFileRepositoryService.create(
+      theCase.id,
       {
         ...createFile,
         orderWithinChapter: finalOrderWithinChapter,
         state: CaseFileState.STORED_IN_RVG,
-        caseId: theCase.id,
         name: fileName,
         userGeneratedFilename:
           createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
@@ -546,6 +592,16 @@ export class FileService {
   }
 
   private async verifyCaseFile(file: CaseFile, theCase: Case) {
+    // A ruling order pronounced orally has no document behind it until the
+    // district court writes it up, so there is nothing to fetch. Rejected up
+    // front: the object lookup below would come up empty for its blank key and
+    // mark the file inaccessible, which is not what an unwritten ruling is.
+    if (isRulingOrderWithoutDocument(file)) {
+      throw new NotFoundException(
+        `File ${file.id} has no document - the ruling order was pronounced orally and has not been written up`,
+      )
+    }
+
     if (!file.isKeyAccessible) {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
@@ -554,10 +610,9 @@ export class FileService {
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
-      this.fileModel.update(
-        { isKeyAccessible: false },
-        { where: { id: file.id } },
-      )
+      this.caseFileRepositoryService.updateById(file.id, {
+        isKeyAccessible: false,
+      })
 
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
@@ -657,10 +712,10 @@ export class FileService {
 
     await this.throttle
 
-    const [numberOfAffectedRows] = await this.fileModel.update(
-      { state: CaseFileState.STORED_IN_COURT },
-      { where: { id: file.id } },
-    )
+    const numberOfAffectedRows =
+      await this.caseFileRepositoryService.updateById(file.id, {
+        state: CaseFileState.STORED_IN_COURT,
+      })
 
     if (numberOfAffectedRows !== 1) {
       // Tolerate failure, but log error
@@ -677,21 +732,16 @@ export class FileService {
   async updateCaseFile(
     caseId: string,
     fileId: string,
-    update: { [key: string]: string | null },
+    update: UpdateCaseFile,
     transaction?: Transaction,
   ): Promise<CaseFile> {
-    const promisedUpdate = transaction
-      ? this.fileModel.update(update, {
-          where: { id: fileId, caseId },
-          returning: true,
-          transaction,
-        })
-      : this.fileModel.update(update, {
-          where: { id: fileId, caseId },
-          returning: true,
-        })
-
-    const [numberOfAffectedRows, updatedCaseFiles] = await promisedUpdate
+    const { numberOfAffectedRows, caseFiles: updatedCaseFiles } =
+      await this.caseFileRepositoryService.updateByIdAndCase(
+        fileId,
+        caseId,
+        update,
+        { transaction },
+      )
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -733,17 +783,86 @@ export class FileService {
     )
   }
 
+  // The district court writes up a ruling order that was pronounced orally and
+  // uploads the document. It fills in the ruling that already exists rather than
+  // creating a new file: the court record points at that one, and the parties'
+  // appeal decisions and any appeal are keyed on it, so a new file would strand
+  // all of it - and the ruling would lose the name it was given when it was
+  // pronounced.
+  async attachRulingOrderDocument(
+    theCase: Case,
+    caseFile: CaseFile,
+    attachDocument: AttachRulingOrderDocumentDto,
+    user: User,
+    transaction: Transaction,
+  ): Promise<CaseFile> {
+    if (!isRulingOrderWithoutDocument(caseFile)) {
+      throw new BadRequestException(
+        'Only a ruling order that was pronounced orally and has not been written up can have a document attached',
+      )
+    }
+
+    const { key, size, type, userGeneratedFilename } = attachDocument
+
+    const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
+
+    if (!regExp.test(key)) {
+      throw new BadRequestException(
+        `${key} is not a valid key for case ${theCase.id}`,
+      )
+    }
+
+    // Two uploads racing each other both pass the check above, each holding its
+    // own copy of a ruling that had no document when it was read. The update is
+    // therefore the only thing that can decide between them: it matches a ruling
+    // that still has no document, so the loser affects no rows and is rejected
+    // instead of replacing the document the winner just wrote up.
+    const { numberOfAffectedRows: affectedRows, caseFiles: updatedCaseFiles } =
+      await this.caseFileRepositoryService.updateByIdAndCaseWithoutDocument(
+        caseFile.id,
+        theCase.id,
+        {
+          key,
+          size,
+          type,
+          name: key.slice(NAME_BEGINS_INDEX),
+          ...(userGeneratedFilename ? { userGeneratedFilename } : {}),
+        },
+        { transaction },
+      )
+
+    if (affectedRows === 0) {
+      throw new BadRequestException(
+        'The ruling order has already been written up',
+      )
+    }
+
+    const updatedCaseFile = updatedCaseFiles[0]
+
+    // The ruling finally has a document to deliver, which is what createCaseFile
+    // would have queued had the ruling arrived as an upload in the first place.
+    this.addMessagesForIndictmentCaseFileDeliveryToQueue(
+      theCase,
+      updatedCaseFile,
+      user,
+    )
+
+    return updatedCaseFile
+  }
+
   async updateFiles(
     caseId: string,
     caseFileUpdates: UpdateFileDto[],
     transaction: Transaction,
   ): Promise<CaseFile[]> {
     const updates = caseFileUpdates.map(async (update) => {
-      const [affectedNumber, file] = await this.fileModel.update(update, {
-        where: { caseId, id: update.id },
-        returning: true,
-        transaction,
-      })
+      const { numberOfAffectedRows: affectedNumber, caseFiles: file } =
+        await this.caseFileRepositoryService.updateByIdAndCase(
+          update.id,
+          caseId,
+          update,
+          { transaction },
+        )
       if (affectedNumber !== 1 || !file[0]) {
         throw new InternalServerErrorException(
           `Could not update file ${update.id} of case ${caseId}`,
@@ -755,10 +874,13 @@ export class FileService {
     return Promise.all(updates)
   }
 
-  resetCaseFileStates(caseId: string, transaction: Transaction) {
-    return this.fileModel.update(
-      { state: CaseFileState.STORED_IN_RVG },
-      { where: { caseId, state: CaseFileState.STORED_IN_COURT }, transaction },
+  resetCaseFileStates(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<number> {
+    return this.caseFileRepositoryService.resetStoredInCourtFilesForCase(
+      caseId,
+      { transaction },
     )
   }
 

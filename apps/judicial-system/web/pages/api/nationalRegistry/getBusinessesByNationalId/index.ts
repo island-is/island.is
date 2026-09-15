@@ -1,8 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { NationalRegistryResponseBusiness } from '@island.is/judicial-system-web/src/types'
-
-import { fakeBusiness } from '../constants'
+import { fakeBusiness } from '@island.is/judicial-system-web/pages/api/nationalRegistry/constants'
+import type { NationalRegistryResponseBusiness } from '@island.is/judicial-system-web/src/types'
 
 const getBusinessesByNationalId = async (
   nationalId: string,

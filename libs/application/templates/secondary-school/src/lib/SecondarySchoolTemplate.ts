@@ -9,14 +9,13 @@ import {
   defineTemplateApi,
   FormModes,
   InstitutionNationalIds,
-  NotificationConfig,
-  NotificationType,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
   pruneAfterDays,
+  schedulePeriodEndingReminders,
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -48,8 +47,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import format from 'date-fns/format'
-import { CodeOwners, dateFormat } from '@island.is/shared/constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 /**
  * Calculates a date that is a certain number of days after the last registration close date of the application.
@@ -69,11 +67,6 @@ const daysAfterRegistrationClose = (application: Application, days: number) => {
   // set time to right before midnight
   return getEndOfDayUTCDate(date)
 }
-
-// date-fns formats using the server's local time; this carries a date's UTC
-// year/month/day into a local Date so formatting doesn't depend on server TZ.
-const toUTCDateOnly = (date: Date) =>
-  new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
 
 const pruneLifeTimeAfterSubmit = 90
 
@@ -234,39 +227,12 @@ const template: ApplicationTemplate<
             whenToPrune: (application: Application) =>
               daysAfterRegistrationClose(application, pruneLifeTimeAfterSubmit),
           },
-          scheduledNotifications: (application) => {
-            const registrationClose = daysAfterRegistrationClose(application, 0)
-            const weekBeforeClose = daysAfterRegistrationClose(application, -7)
-            const twoDaysBeforeClose = daysAfterRegistrationClose(
-              application,
-              -2,
-            )
-            return [weekBeforeClose, twoDaysBeforeClose].flatMap((sendDate) =>
-              sendDate.getTime() > Date.now()
-                ? [
-                    {
-                      template:
-                        NotificationConfig[
-                          NotificationType.ApplicationPeriodEndingReminder
-                        ].templateId,
-                      date: sendDate,
-                      includeApplicationLink: true,
-                      featureFlag:
-                        Features.secondarySchoolScheduledNotifications,
-                      args: [
-                        {
-                          key: 'registrationClose',
-                          value: format(
-                            toUTCDateOnly(registrationClose),
-                            dateFormat.is,
-                          ),
-                        },
-                      ],
-                    },
-                  ]
-                : [],
-            )
-          },
+          scheduledNotifications: (application) =>
+            schedulePeriodEndingReminders(
+              daysAfterRegistrationClose(application, 0),
+              [7, 2],
+              Features.secondarySchoolScheduledNotifications,
+            ),
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
             triggerEvent: DefaultEvents.SUBMIT,

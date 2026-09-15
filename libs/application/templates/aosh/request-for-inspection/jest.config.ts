@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'application-templates-aosh-request-for-inspection',
   preset: '../../../../../jest.preset.js',

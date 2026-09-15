@@ -55,12 +55,14 @@ export const periodSubSection = buildSubSection({
           clearOnChange: ['period.month'],
           condition: isOneMonth,
           options: () => getSalaryPeriodYearOptions(),
+          marginBottom: 4,
         }),
         buildSelectField({
           id: 'period.month',
           title: messages.aboutTheCompany.period.month,
           required: true,
           width: 'half',
+          marginBottom: 4,
           condition: isOneMonth,
           options: ({ answers }) =>
             getSalaryPeriodMonthOptions(

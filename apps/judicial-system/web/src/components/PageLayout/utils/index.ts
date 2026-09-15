@@ -1,12 +1,12 @@
-import { IntlFormatters } from 'react-intl'
+import type { IntlFormatters } from 'react-intl'
 
 import {
   isCompletedCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseType,

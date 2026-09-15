@@ -44,9 +44,6 @@ export class VmstApplicationsAvailableActions {
 
   @Field({ nullable: true })
   canUnregister?: boolean
-
-  @Field({ nullable: true })
-  canConfirmJobSearch?: boolean
 }
 
 @ObjectType('VmstApplicationsUnemploymentApplicationOverview')

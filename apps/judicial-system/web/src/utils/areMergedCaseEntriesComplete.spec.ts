@@ -1,9 +1,9 @@
-import {
+import type {
   CourtDocumentResponse,
   CourtSessionResponse,
   CourtSessionString,
-  CourtSessionStringType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CourtSessionStringType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { areMergedCaseEntriesComplete } from './validate'
 

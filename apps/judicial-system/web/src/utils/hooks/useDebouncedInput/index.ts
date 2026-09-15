@@ -1,15 +1,15 @@
 import { useContext } from 'react'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-} from '../../formHelper'
-import { Validation } from '../../validate'
-import useDebouncedField from '../useDebouncedField'
-import { UpdateCase, useCase } from '..'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import useDebouncedField from '@island.is/judicial-system-web/src/utils/hooks/useDebouncedField'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
 type SharedField = keyof UpdateCase & keyof Case
 

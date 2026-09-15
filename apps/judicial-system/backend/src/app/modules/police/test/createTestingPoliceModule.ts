@@ -118,6 +118,10 @@ export const createTestingPoliceModule = async () => {
   const indictmentCountService = policeModule.get<IndictmentCountService>(
     IndictmentCountService,
   )
+  const indictmentSubtypeRepositoryService =
+    policeModule.get<IndictmentSubtypeRepositoryService>(
+      IndictmentSubtypeRepositoryService,
+    )
   const caseRepositoryService = policeModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
@@ -131,6 +135,7 @@ export const createTestingPoliceModule = async () => {
     policeController,
     caseDefendantPoliceCaseNumberRepositoryService,
     indictmentCountService,
+    indictmentSubtypeRepositoryService,
     caseRepositoryService,
   }
 }

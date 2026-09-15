@@ -1,7 +1,13 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Box, FileUploadStatus, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  FileUploadStatus,
+  Text,
+} from '@island.is/island-ui/core'
 import { DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -15,9 +21,8 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import UploadFiles, {
-  FileWithPreviewURL,
-} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useS3Upload,
@@ -33,6 +38,37 @@ const AddRulingOrder: FC = () => {
 
   const previousRoute = `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
 
+  // Arriving from the "Hlaða upp úrskurði" action on a ruling order that was
+  // pronounced orally: the document is written up for that ruling rather than
+  // uploaded as a new one, so it fills in the file that already exists and
+  // keeps the name the ruling was pronounced under.
+  const rulingOrderIdParam = router.query.rulingFileId
+  const rulingOrderId =
+    typeof rulingOrderIdParam === 'string' && rulingOrderIdParam.length > 0
+      ? rulingOrderIdParam
+      : undefined
+
+  // A ruling was asked for but the query cannot say which - repeated, or empty.
+  // That must not read as "no ruling asked for", which would upload a new one.
+  const rulingOrderRequestedButUnusable =
+    'rulingFileId' in router.query && !rulingOrderId
+
+  const pronouncedRulingOrder = rulingOrderId
+    ? workingCase.caseFiles?.find((file) => file.id === rulingOrderId)
+    : undefined
+
+  // Asked to write up a particular ruling that is not on the case. Uploading
+  // anyway would create a new ruling and leave the court record and any appeal
+  // pointing at the one that was asked for, so refuse instead.
+  const pronouncedRulingOrderNotFound =
+    rulingOrderRequestedButUnusable ||
+    Boolean(rulingOrderId && !isLoadingWorkingCase && !pronouncedRulingOrder)
+
+  // These pages are statically optimised, so router.query is empty on the first
+  // client render: until it has hydrated there is no telling whether a ruling
+  // was asked for, and uploading meanwhile would create a new one.
+  const uploadBlocked = !router.isReady || pronouncedRulingOrderNotFound
+
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -41,16 +77,24 @@ const AddRulingOrder: FC = () => {
     removeUploadFile,
     updateUploadFile,
   } = useUploadFiles()
-  const { handleUpload } = useS3Upload(workingCase.id)
+  const { handleUpload, handleUploadRulingOrderDocument } = useS3Upload(
+    workingCase.id,
+  )
 
   const addFiles = (files: FileWithPreviewURL[]) => {
+    // A ruling that was pronounced has exactly one document, so picking a file
+    // replaces whatever was picked before rather than adding to it.
+    if (pronouncedRulingOrder) {
+      uploadFiles.forEach(removeUploadFile)
+    }
+
     addUploadFiles(
-      files,
+      pronouncedRulingOrder ? files.slice(0, 1) : files,
       {
         status: FileUploadStatus.done,
-        userGeneratedFilename: `${
-          workingCase.courtCaseNumber
-        } Úrskurður ${formatDate(new Date())}`,
+        userGeneratedFilename:
+          pronouncedRulingOrder?.userGeneratedFilename ??
+          `${workingCase.courtCaseNumber} Úrskurður ${formatDate(new Date())}`,
         category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       },
       true,
@@ -74,17 +118,37 @@ const AddRulingOrder: FC = () => {
   )
 
   const handleNextButtonClick = useCallback(async () => {
-    const uploadResult = await handleUpload(
-      uploadFiles.filter((file) => file.percent === 0),
-      updateUploadFile,
-    )
+    const filesToUpload = uploadFiles.filter((file) => file.percent === 0)
+
+    if (uploadBlocked) {
+      return
+    }
+
+    const succeeded = pronouncedRulingOrder
+      ? filesToUpload.length > 0 &&
+        (await handleUploadRulingOrderDocument(
+          filesToUpload[0],
+          pronouncedRulingOrder.id,
+          updateUploadFile,
+        ))
+      : (await handleUpload(filesToUpload, updateUploadFile)) ===
+        'ALL_SUCCEEDED'
 
     setVisibleModal(undefined)
 
-    if (uploadResult === 'ALL_SUCCEEDED') {
+    if (succeeded) {
       router.push(previousRoute)
     }
-  }, [handleUpload, updateUploadFile, uploadFiles, router, previousRoute])
+  }, [
+    handleUpload,
+    handleUploadRulingOrderDocument,
+    pronouncedRulingOrder,
+    uploadBlocked,
+    updateUploadFile,
+    uploadFiles,
+    router,
+    previousRoute,
+  ])
 
   return (
     <PageLayout
@@ -97,6 +161,14 @@ const AddRulingOrder: FC = () => {
         <PageTitle>Úrskurðir</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <SectionHeading title="Hlaða upp úrskurði" required />
+        {pronouncedRulingOrderNotFound && (
+          <Box marginBottom={2}>
+            <AlertMessage
+              type="error"
+              message="Úrskurðurinn sem á að hlaða upp fannst ekki í málinu. Farðu aftur á yfirlit málsins og reyndu aftur."
+            />
+          </Box>
+        )}
         <Box marginBottom={2}>
           <Text>
             Athugið að dómari þarf að staðfesta úrskurðinn á yfirliti máls eftir
@@ -123,7 +195,8 @@ const AddRulingOrder: FC = () => {
               disabled:
                 uploadFiles.length === 0 ||
                 !allFilesDoneOrError ||
-                editCount > 0,
+                editCount > 0 ||
+                uploadBlocked,
               testId: 'continueButton',
             },
           ]}

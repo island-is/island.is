@@ -122,6 +122,7 @@ export class TenantsService extends MultiEnvironmentService {
           description: domain.description,
           organisationLogoKey: domain.organisationLogoKey,
           contactEmail: domain.contactEmail,
+          municipalityCode: domain.municipalityCode,
         }),
         prefixErrorMessage: `Failed to fetch admin details for tenant ${id}`,
       },
@@ -140,6 +141,7 @@ export class TenantsService extends MultiEnvironmentService {
       contactEmail: primary.contactEmail,
       description: primary.description,
       organisationLogoKey: primary.organisationLogoKey,
+      municipalityCode: primary.municipalityCode,
     }
   }
 
@@ -159,6 +161,9 @@ export class TenantsService extends MultiEnvironmentService {
               organisationLogoKey: input.organisationLogoKey,
               ...(input.contactEmail
                 ? { contactEmail: input.contactEmail }
+                : {}),
+              ...(input.municipalityCode
+                ? { municipalityCode: input.municipalityCode }
                 : {}),
             },
           }),
@@ -209,6 +214,7 @@ export class TenantsService extends MultiEnvironmentService {
         description: domain.description,
         organisationLogoKey: domain.organisationLogoKey,
         contactEmail: domain.contactEmail,
+        municipalityCode: domain.municipalityCode,
       }),
       prefixErrorMessage: `Failed to update tenant ${tenantId}`,
     })
@@ -251,6 +257,9 @@ export class TenantsService extends MultiEnvironmentService {
             ...(source.contactEmail
               ? { contactEmail: source.contactEmail }
               : {}),
+            ...(source.municipalityCode
+              ? { municipalityCode: source.municipalityCode }
+              : {}),
           },
         }),
     )
@@ -269,6 +278,7 @@ export class TenantsService extends MultiEnvironmentService {
       description: created.description,
       organisationLogoKey: created.organisationLogoKey,
       contactEmail: created.contactEmail,
+      municipalityCode: created.municipalityCode,
     }
   }
 

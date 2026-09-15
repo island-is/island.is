@@ -1,15 +1,14 @@
-import {
+import type {
   ClearIndicatorProps,
-  components,
   DropdownIndicatorProps,
   OptionProps,
   PlaceholderProps,
   SingleValueProps,
 } from 'react-select'
+import { components } from 'react-select'
 
 import { Icon, Text } from '@island.is/island-ui/core'
-
-import { ReactSelectOption } from '../../types'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 export const ClearIndicator = <T extends ReactSelectOption>(
   props: ClearIndicatorProps<T>,

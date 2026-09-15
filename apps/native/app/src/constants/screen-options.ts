@@ -43,6 +43,13 @@ export const modalScreenOptions: StackScreenProps['options'] = {
   headerTransparent: false,
   headerShadowVisible: false,
   headerBackButtonDisplayMode: 'minimal',
+  // On iOS modals are dismissed with the close item on the right, so the
+  // back button is hidden and the left slot cleared. The close item is
+  // iOS-only, so Android keeps the default native back arrow instead.
+  ...(Platform.OS === 'ios' && {
+    headerBackVisible: false,
+    unstable_headerLeftItems: () => [],
+  }),
   headerStyle: {
     backgroundColor: theme.color.white,
   },

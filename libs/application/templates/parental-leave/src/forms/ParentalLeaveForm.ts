@@ -30,10 +30,7 @@ import {
   FormModes,
 } from '@island.is/application/types'
 
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { maxDaysToGiveOrReceive } from '../config'

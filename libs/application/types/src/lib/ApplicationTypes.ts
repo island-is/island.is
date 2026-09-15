@@ -10,6 +10,7 @@ export enum ApplicationTypes {
   PASSPORT_ANNULMENT = 'PassportAnnulment',
   DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
   DRIVING_LICENSE = 'DrivingLicense',
+  DISTRICT_COMMISSIONER_DRIVING_LICENSE = 'DistrictCommissionerDrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
@@ -40,6 +41,7 @@ export enum ApplicationTypes {
   OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
+  DRIVING_LICENSE_ADDITIONAL = 'DrivingLicenseAdditional',
   ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
   CHANGE_CO_OWNER_OF_VEHICLE = 'ChangeCoOwnerOfVehicle',
   CHANGE_OPERATOR_OF_VEHICLE = 'ChangeOperatorOfVehicle',
@@ -106,6 +108,7 @@ export enum ApplicationTypes {
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
+  U2_CERTIFICATE = 'U2Certificate',
 }
 
 export const ApplicationConfigurations = {
@@ -152,6 +155,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
     translation: ['dl.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: {
+    slug: 'okuskirteini-syslumadur',
+    translation: ['dl.dc.application', 'uiForms.application'],
   },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     slug: 'akstursmat',
@@ -272,6 +279,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
     slug: 'samrit',
     translation: ['dld.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: {
+    slug: 'aukin-okurettindi',
+    translation: 'dla.application',
   },
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: {
     slug: 'nafnleynd-i-okutaekjaskra',
@@ -540,5 +551,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SALARY_REPORT]: {
     slug: 'jafnrettisstofa-skyrslugjof',
     translation: ['doe.sr.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    slug: 'u2-vottord',
+    translation: ['vmst.u2c.application', 'uiForms.application'],
   },
 }

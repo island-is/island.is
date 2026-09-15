@@ -15,29 +15,32 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { messages } from '../../lib/messages'
-import { GENDER_OPTIONS, SALARY_COMPONENT_GROUPS } from '../../utils/constants'
-import type { Employee, SalaryComponentKey } from '../../utils/types'
 import {
-  componentsFromFormValues,
-  computeIdentifier,
+  GENDER_OPTIONS,
+  PAID_HOURS_MAX,
+  PAID_HOURS_MIN,
+  SALARY_COMPONENT_GROUPS,
+} from '../../utils/constants'
+import type { Employee } from '../../utils/types'
+import {
   EMPTY_EMPLOYEE_FORM_VALUES,
   type EmployeeFormValues,
+  getSalaryComponentLabels,
+  paidHoursFromFormValue,
   toFormValues,
 } from './utils'
 
 type Props = {
   // Present when editing an existing employee; omitted when adding a new one.
   employee?: Employee
-  nextOrdinal: number
-  identifierPrefix: string
-  onSubmit: (employee: Employee) => void
+  roleTitleById: Record<string, string>
+  onSubmit: (values: EmployeeFormValues) => void
   onCancel: () => void
 }
 
 export const EmployeeForm: FC<Props> = ({
   employee,
-  nextOrdinal,
-  identifierPrefix,
+  roleTitleById,
   onSubmit,
   onCancel,
 }) => {
@@ -45,7 +48,7 @@ export const EmployeeForm: FC<Props> = ({
   const m = messages.report.employees
   const methods = useForm<EmployeeFormValues>({
     defaultValues: employee
-      ? toFormValues(employee)
+      ? toFormValues(employee, roleTitleById)
       : EMPTY_EMPLOYEE_FORM_VALUES,
   })
   const {
@@ -54,22 +57,13 @@ export const EmployeeForm: FC<Props> = ({
 
   const requiredMsg = formatMessage(messages.errors.required)
 
-  const componentLabels: Record<SalaryComponentKey, string> = {
-    additionalFixedOvertime: formatMessage(m.additionalFixedOvertimeLabel),
-    additionalFixedCarAllowance: formatMessage(
-      m.additionalFixedCarAllowanceLabel,
-    ),
-    bonusOccasionalCarAllowance: formatMessage(
-      m.bonusOccasionalCarAllowanceLabel,
-    ),
-    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
-    bonusPayments: formatMessage(m.bonusPaymentsLabel),
-    bonusOther: formatMessage(m.bonusOtherLabel),
-  }
+  const componentLabels = getSalaryComponentLabels(formatMessage)
 
+  // Row 4 of the workbook, not the derived-total names: these head the input
+  // columns, and Viðbótarlaun / Aukagreiðslur are columns P and Q.
   const groupHeadings: Record<'additional' | 'bonus', string> = {
-    additional: formatMessage(m.additionalSalaryLabel),
-    bonus: formatMessage(m.bonusSalaryLabel),
+    additional: formatMessage(m.fixedPaymentsGroupLabel),
+    bonus: formatMessage(m.occasionalPaymentsGroupLabel),
   }
 
   const onValid = (data: EmployeeFormValues) => {
@@ -79,24 +73,8 @@ export const EmployeeForm: FC<Props> = ({
       methods.setError('startDate', { type: 'required', message: requiredMsg })
       return
     }
-
-    const components = componentsFromFormValues(data)
-
-    onSubmit({
-      ordinal: employee?.ordinal ?? nextOrdinal,
-      identifier:
-        employee?.identifier ??
-        computeIdentifier(identifierPrefix, nextOrdinal),
-      roleTitle: data.roleTitle,
-      gender: data.gender,
-      field: data.field,
-      department: data.department,
-      startDate: data.startDate,
-      workRatio: (Number(data.workRatio) || 0) / 100,
-      baseSalary: Number(data.baseSalary) || 0,
-      ...components,
-      personalStepAssignments: employee?.personalStepAssignments ?? [],
-    })
+    // Caller resolves roleTitle/id/ordinal and preserves step assignments.
+    onSubmit(data)
   }
 
   return (
@@ -165,16 +143,28 @@ export const EmployeeForm: FC<Props> = ({
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <InputController
-              id="workRatio"
-              name="workRatio"
-              label={formatMessage(m.workRatioInputLabel)}
+              id="paidHours"
+              name="paidHours"
+              label={formatMessage(m.paidHoursInputLabel)}
+              placeholder={formatMessage(m.paidHoursPlaceholder)}
               type="number"
-              suffix="%"
               backgroundColor="white"
               size="sm"
               required
-              rules={{ required: requiredMsg }}
-              error={errors.workRatio?.message}
+              rules={{
+                required: requiredMsg,
+                // Mirrors the API rule (4–750). The lower bound exists to catch
+                // a starfshlutfall carried into this field: 0,8 or 1 would
+                // otherwise pass and inflate tímakaup ~173x silently.
+                validate: (value: string) => {
+                  const hours = paidHoursFromFormValue(value)
+                  return (
+                    (hours >= PAID_HOURS_MIN && hours <= PAID_HOURS_MAX) ||
+                    formatMessage(m.paidHoursRangeError)
+                  )
+                },
+              }}
+              error={errors.paidHours?.message}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
@@ -183,12 +173,21 @@ export const EmployeeForm: FC<Props> = ({
               name="baseSalary"
               label={formatMessage(m.baseSalaryLabel)}
               type="number"
+              thousandSeparator
               backgroundColor="white"
               size="sm"
               required
               rules={{ required: requiredMsg }}
               error={errors.baseSalary?.message}
             />
+          </GridColumn>
+          {/* Sits under the hours/base-salary pair rather than in a tooltip:
+              template 2.0 narrowed what Greiddar stundir means, and a
+              manual-entry applicant has no workbook header to read it off. */}
+          <GridColumn span="12/12">
+            <Text variant="small" color="dark400">
+              {formatMessage(m.paidHoursHelperText)}
+            </Text>
           </GridColumn>
           {SALARY_COMPONENT_GROUPS.map(({ group, keys }) => (
             <Fragment key={group}>
@@ -204,6 +203,7 @@ export const EmployeeForm: FC<Props> = ({
                     name={key}
                     label={componentLabels[key]}
                     type="number"
+                    thousandSeparator
                     backgroundColor="white"
                     size="sm"
                   />

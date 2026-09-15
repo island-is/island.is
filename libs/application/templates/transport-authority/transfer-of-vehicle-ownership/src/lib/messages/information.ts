@@ -260,7 +260,7 @@ export const information = {
         description: 'Main label - for main operator',
       },
       identicalError: {
-        id: 'ta.cov.application:information.labels.operator.identicalError',
+        id: 'ta.tvo.application:information.labels.operator.identicalError',
         defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
         description: 'operator identical error',
       },

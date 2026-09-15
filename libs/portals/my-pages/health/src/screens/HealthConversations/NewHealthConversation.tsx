@@ -13,8 +13,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  ActionCard,
   CardLoader,
-  InlineLink,
   IntroWrapper,
   m,
   useIsPhoneWidth,
@@ -23,20 +23,22 @@ import ConversationAvailabilityAlert from './components/ConversationAvailability
 import ConversationBackButton from './components/ConversationBackButton'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMobileBackHeader from './components/ConversationMobileBackHeader'
-import ConversationTermsModal from './components/ConversationTermsModal'
 import MobileActionFooter from './components/MobileActionFooter'
 import CertificateRequestForm, {
   CertificateFormState,
   toCertificateRequestInput,
 } from './components/CertificateRequestForm'
 import { Problem } from '@island.is/react-spa/shared'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
-import { getMessagingWindowInfo } from './utils/messagingWindow'
+import { formatTimeLabel, getTodaysWindow } from './utils/messagingWindow'
+import { MAX_MESSAGE_LENGTH } from './utils/constants'
+import { Markdown } from '@island.is/shared/components'
 import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
+import ClosedRecipientAlert from './components/ClosedRecipientAlert'
 import * as styles from './HealthConversations.css'
 import {
   useGetHealthConversationRecipientsForNewQuery,
@@ -50,24 +52,47 @@ interface CertificateAlert {
   message?: string
 }
 
+const isRecipientOutsideWindow = (recipient: {
+  canCreateConversation: boolean
+  conversationBlockedReason?: HealthDirectorateHealthConversationRecipientBlockedReason | null
+}) =>
+  !recipient.canCreateConversation &&
+  recipient.conversationBlockedReason ===
+    HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW
+
+const getRecipientKey = (recipient: {
+  nodeId: string
+  groupId: number
+  treatmentId?: string | null
+}) =>
+  `${recipient.nodeId}-${recipient.groupId}${
+    recipient.treatmentId ? `-${recipient.treatmentId}` : ''
+  }`
+
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const { isPhoneWidth } = useIsPhoneWidth()
 
+  const [selectedRecipientKey, setSelectedRecipientKey] = useState<
+    string | null
+  >(null)
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
+  const [searchParams] = useSearchParams()
   const [messageText, setMessageText] = useState('')
   const [certificateForm, setCertificateForm] = useState<CertificateFormState>(
     {},
   )
   const [termsAccepted, setTermsAccepted] = useState(false)
-  const [termsModalOpen, setTermsModalOpen] = useState(false)
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
+      fetchPolicy: 'cache-and-network',
       variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
     })
+
+  const initialLoading = loading && !data
 
   const [createMessage, { loading: sending }] =
     useCreateHealthConversationMutation({
@@ -79,14 +104,73 @@ const NewHealthConversation = () => {
       refetchQueries: ['GetHealthConversations'],
     })
 
-  const recipients = data?.healthDirectorateHealthConversationRecipients
-  const recipient =
-    recipients?.find((r) => r.allowsMessaging) ?? recipients?.[0]
+  const allRecipients = data?.healthDirectorateHealthConversationRecipients
+  const recipients = allRecipients?.filter((r) => r.allowsMessaging)
+  const hasRecipients = !!recipients?.length
+  const messagingUnavailable = !!allRecipients && !hasRecipients
+  const hasMultipleRecipients = (recipients?.length ?? 0) > 1
+
+  const recipientOptions =
+    recipients?.map((r) => {
+      const todaysWindow = getTodaysWindow(r)
+      const openTime = formatTimeLabel(todaysWindow?.windowOpen)
+      const closeTime = formatTimeLabel(todaysWindow?.windowClose)
+      return {
+        label: r.name,
+        value: getRecipientKey(r),
+        description: !isRecipientOutsideWindow(r)
+          ? undefined
+          : r.isClosedToday || !openTime || !closeTime
+          ? formatMessage(messages.healthConversationRecipientClosedTodayOption)
+          : formatMessage(messages.healthConversationRecipientClosedOption, {
+              name: r.name,
+              openTime,
+              closeTime,
+            }),
+      }
+    }) ?? []
+
+  // A recipient closed for new conversations never accepts certificate
+  // requests either, so conversation availability alone decides this.
+  const allRecipientsClosed =
+    hasRecipients &&
+    !!recipients?.every((r) => !r.canCreateConversation) &&
+    !!recipients?.some(isRecipientOutsideWindow)
+
+  const allClosedAlertRecipient =
+    recipients?.find(isRecipientOutsideWindow) ?? recipients?.[0]
+
+  const preselectedTreatment = searchParams.get('treatment')
+  const treatmentMatch = preselectedTreatment
+    ? recipients?.find((r) => r.treatmentId === preselectedTreatment)
+    : undefined
+  const preselectedNode = searchParams.get('node')
+  const nodeMatches = preselectedNode
+    ? recipients?.filter((r) => r.nodeId === preselectedNode)
+    : undefined
+  const preselectMatchKey = treatmentMatch
+    ? getRecipientKey(treatmentMatch)
+    : nodeMatches?.length === 1
+    ? getRecipientKey(nodeMatches[0])
+    : null
+
+  const effectiveRecipientKey =
+    selectedRecipientKey ??
+    preselectMatchKey ??
+    (recipients?.length === 1 ? getRecipientKey(recipients[0]) : null)
+
+  const recipient = recipients?.find(
+    (r) => getRecipientKey(r) === effectiveRecipientKey,
+  )
+
+  const selectedRecipientOption =
+    recipientOptions.find((o) => o.value === effectiveRecipientKey) ?? null
 
   const typeOptions =
     recipient?.allowedMessageTypes.map((t) => ({
       label: t.title,
       value: t.patientInitiatedTypeCode,
+      description: t.externalLinkUrl ? t.description ?? undefined : undefined,
     })) ?? []
 
   const selectedOption =
@@ -97,23 +181,7 @@ const NewHealthConversation = () => {
   )
   const isCertificateSelected = !!selectedType?.isCertificate
 
-  const windowInfo = getMessagingWindowInfo({
-    windowOpen: recipient?.messagingWindowOpen,
-    windowClose: recipient?.messagingWindowClose,
-  })
-
-  const hasWindowInfo =
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel &&
-    !!recipient?.patientReplyWindowDays
-
-  const introText = hasWindowInfo
-    ? formatMessage(messages.healthConversationsNewIntroWithWindow, {
-        openTime: windowInfo.windowOpenLabel,
-        closeTime: windowInfo.windowCloseLabel,
-        days: recipient?.patientReplyWindowDays,
-      })
-    : formatMessage(messages.healthConversationsNewIntro)
+  const introText = formatMessage(messages.healthConversationsNewIntro)
 
   const isCertificateBlocked =
     isCertificateSelected && recipient?.canRequestCertificate === false
@@ -122,24 +190,8 @@ const NewHealthConversation = () => {
 
   const isFormLocked = isConversationBlocked || isCertificateBlocked
 
-  const certificateBlockedOutsideWindow =
-    recipient?.certificateBlockedReason ===
-      HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW &&
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel
-
   const certificateAlert: CertificateAlert | undefined = !isCertificateBlocked
     ? undefined
-    : certificateBlockedOutsideWindow
-    ? {
-        type: 'info',
-        title: formatMessage(messages.healthConversationClosedTitle),
-        message: formatMessage(messages.healthConversationClosedText, {
-          currentTime: windowInfo.currentTimeLabel,
-          openTime: windowInfo.windowOpenLabel,
-          closeTime: windowInfo.windowCloseLabel,
-        }),
-      }
     : {
         type: 'warning',
         message: formatMessage(
@@ -147,8 +199,6 @@ const NewHealthConversation = () => {
         ),
       }
 
-  // The single source of the certificate form's required-field rules: it is
-  // undefined until the form is complete.
   const certificateInput = toCertificateRequestInput(certificateForm)
 
   const isFormValid = isCertificateSelected
@@ -160,9 +210,35 @@ const NewHealthConversation = () => {
   const canSubmit = isFormValid && !sendingAny && !isFormLocked
 
   const handleTypeChange = (typeCode: string | null) => {
+    const newType = recipient?.allowedMessageTypes.find(
+      (t) => t.patientInitiatedTypeCode === typeCode,
+    )
+
+    if (newType?.externalLinkUrl) {
+      window.open(newType.externalLinkUrl, '_blank', 'noopener,noreferrer')
+      return
+    }
+
     setSelectedTypeCode(typeCode)
-    setMessageText('')
     setCertificateForm({})
+    if (newType?.isCertificate) {
+      setMessageText('')
+    }
+  }
+
+  const handleRecipientChange = (recipientKey: string | null) => {
+    setSelectedRecipientKey(recipientKey)
+
+    const newRecipient = recipients?.find(
+      (r) => getRecipientKey(r) === recipientKey,
+    )
+    const typeStillAllowed = newRecipient?.allowedMessageTypes.some(
+      (t) => t.patientInitiatedTypeCode === selectedTypeCode,
+    )
+
+    if (!typeStillAllowed) {
+      handleTypeChange(null)
+    }
   }
 
   const goToConversation = (conversationId?: string | null) => {
@@ -186,6 +262,7 @@ const NewHealthConversation = () => {
             input: {
               nodeId: recipient.nodeId,
               groupId: recipient.groupId,
+              treatmentId: recipient.treatmentId,
               ...certificateInput,
             },
           },
@@ -205,6 +282,7 @@ const NewHealthConversation = () => {
           input: {
             nodeId: recipient.nodeId,
             groupId: recipient.groupId,
+            treatmentId: recipient.treatmentId,
             patientInitiatedTypeCode: selectedTypeCode,
             title: selectedType.title,
             messageTextContent: messageText.trim(),
@@ -219,6 +297,41 @@ const NewHealthConversation = () => {
     }
   }
 
+  if (!initialLoading && !error && messagingUnavailable) {
+    return (
+      <Box marginTop={[1, 0, 0]}>
+        <ConversationMobileBackHeader
+          onClick={() => navigate(HealthPaths.HealthConversations)}
+        />
+        <IntroWrapper
+          title={messages.healthConversationsContactTitle}
+          introComponent={
+            <Text>
+              {formatMessage(messages.healthConversationsContactIntro, {
+                bold: (str: React.ReactNode) => <strong>{str}</strong>,
+              })}
+            </Text>
+          }
+          desktopContentSpan="10/12"
+        >
+          <ActionCard
+            heading={formatMessage(
+              messages.healthConversationsContactWebChatTitle,
+            )}
+            text={formatMessage(messages.healthConversationsContactWebChatText)}
+            cta={{
+              url: formatMessage(messages.heilsuveraChatLink),
+              label: formatMessage(
+                messages.healthConversationsContactWebChatCta,
+              ),
+              variant: 'text',
+            }}
+          />
+        </IntroWrapper>
+      </Box>
+    )
+  }
+
   return (
     <Box marginTop={[1, 0, 0]}>
       <ConversationMobileBackHeader
@@ -229,19 +342,25 @@ const NewHealthConversation = () => {
         intro={introText}
         desktopContentSpan="10/12"
       >
-        {loading && <CardLoader />}
+        {initialLoading && <CardLoader />}
         {error && <Problem error={error} noBorder={false} />}
-        {!loading && !error && !recipient && (
+        {!initialLoading && !error && !allRecipients && (
           <Problem
             type="no_data"
             noBorder={false}
             title={formatMessage(messages.healthConversationsNoRecipient)}
           />
         )}
-        {!loading && !error && recipient && (
+        {!initialLoading &&
+          !error &&
+          allRecipientsClosed &&
+          allClosedAlertRecipient && (
+            <ClosedRecipientAlert recipient={allClosedAlertRecipient} />
+          )}
+        {!initialLoading && !error && !allRecipientsClosed && recipient && (
           <ConversationAvailabilityAlert recipient={recipient} />
         )}
-        {!loading && !error && recipient && (
+        {!initialLoading && !error && !allRecipientsClosed && hasRecipients && (
           <Box className={styles.messageCard} background="white">
             <Hidden below="sm">
               <Box
@@ -258,11 +377,13 @@ const NewHealthConversation = () => {
               <Text variant="h4" fontWeight="semiBold">
                 {formatMessage(messages.healthConversationsCreate)}
               </Text>
-              <Text variant="medium">
-                {formatMessage(messages.healthConversationTo, {
-                  arg: recipient?.name ?? '',
-                })}
-              </Text>
+              {!hasMultipleRecipients && recipient && (
+                <Text variant="medium">
+                  {formatMessage(messages.healthConversationTo, {
+                    arg: recipient.name,
+                  })}
+                </Text>
+              )}
             </Box>
 
             <Box
@@ -271,7 +392,37 @@ const NewHealthConversation = () => {
               paddingBottom={[10, 5, 5]}
             >
               <GridRow marginBottom={3}>
-                <GridColumn span={['12/12', '8/12']}>
+                {hasMultipleRecipients && (
+                  <GridColumn
+                    span={['12/12', '6/12']}
+                    paddingBottom={[2, 0, 0]}
+                  >
+                    <Select
+                      name="recipient"
+                      label={formatMessage(
+                        messages.healthConversationsNewSelectRecipient,
+                      )}
+                      placeholder={formatMessage(
+                        messages.healthConversationsNewSelectRecipientPlaceholder,
+                      )}
+                      options={recipientOptions}
+                      value={selectedRecipientOption}
+                      onChange={(opt) =>
+                        handleRecipientChange(opt?.value ?? null)
+                      }
+                      backgroundColor="blue"
+                      size="sm"
+                      required
+                    />
+                  </GridColumn>
+                )}
+                <GridColumn
+                  span={
+                    hasMultipleRecipients
+                      ? ['12/12', '6/12']
+                      : ['12/12', '8/12']
+                  }
+                >
                   <Select
                     name="service-type"
                     label={formatMessage(
@@ -286,7 +437,7 @@ const NewHealthConversation = () => {
                     backgroundColor="blue"
                     size="sm"
                     required
-                    isDisabled={isConversationBlocked}
+                    isDisabled={!recipient || isConversationBlocked}
                   />
                 </GridColumn>
               </GridRow>
@@ -301,6 +452,12 @@ const NewHealthConversation = () => {
                 </Box>
               )}
 
+              {!isCertificateSelected && selectedType?.instructions && (
+                <Box marginBottom={2} className={styles.typeInstructions}>
+                  <Markdown>{selectedType.instructions}</Markdown>
+                </Box>
+              )}
+
               {isCertificateSelected ? (
                 <CertificateRequestForm
                   formState={certificateForm}
@@ -309,6 +466,7 @@ const NewHealthConversation = () => {
                   }
                   disabled={isFormLocked}
                   hidePaymentNotice={isCertificateBlocked}
+                  instructions={selectedType?.instructions}
                 />
               ) : (
                 <Box>
@@ -316,32 +474,32 @@ const NewHealthConversation = () => {
                     textarea
                     rows={8}
                     name="message-body"
-                    label={formatMessage(m.messages)}
+                    label={`${formatMessage(m.messages)} (${
+                      messageText.length
+                    }/${MAX_MESSAGE_LENGTH})`}
                     placeholder={formatMessage(
                       messages.healthConversationsNewBodyPlaceholder,
                     )}
                     backgroundColor="blue"
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
+                    maxLength={MAX_MESSAGE_LENGTH}
                     disabled={isFormLocked}
                   />
                 </Box>
               )}
 
-              <Box marginTop={4} marginBottom={4}>
+              <Box
+                marginTop={3}
+                marginBottom={4}
+                className={styles.termsCheckbox}
+              >
                 <Checkbox
                   id="terms-accept"
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
                   label={formatMessage(
-                    messages.healthConversationsNewTermsLabel,
-                    {
-                      link: (str: React.ReactNode) => (
-                        <InlineLink onClick={() => setTermsModalOpen(true)}>
-                          {str}
-                        </InlineLink>
-                      ),
-                    },
+                    messages.healthConversationsNewTermsInline,
                   )}
                   disabled={isFormLocked}
                 />
@@ -361,10 +519,6 @@ const NewHealthConversation = () => {
             </Box>
           </Box>
         )}
-        <ConversationTermsModal
-          isOpen={termsModalOpen}
-          onClose={() => setTermsModalOpen(false)}
-        />
       </IntroWrapper>
     </Box>
   )

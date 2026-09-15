@@ -515,6 +515,14 @@ export class BackendService {
     return this.post(`case/${caseId}/file/${fileId}/confirm`)
   }
 
+  attachRulingOrderDocument(
+    caseId: string,
+    fileId: string,
+    attachDocument: unknown,
+  ): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/document`, attachDocument)
+  }
+
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
   }
@@ -782,6 +790,16 @@ export class BackendService {
     updateAppealDecision: unknown,
   ): Promise<AppealDecisionResponse> {
     return this.patch(`case/${caseId}/appealDecision`, updateAppealDecision)
+  }
+
+  pronounceRulingOrally(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<CourtSessionResponse> {
+    return this.post(
+      `case/${caseId}/courtSession/${courtSessionId}/pronounceRulingOrally`,
+      {},
+    )
   }
 
   deleteCourtSession(

@@ -45,7 +45,7 @@ interface UpdateVerdict {
   servedBy?: string
   deliveredToDefenderNationalId?: string
   appealDecision?: string
-  appealDate?: Date
+  appealDate?: Date | null
   serviceInformationForDefendant?: InformationForDefendant[]
   isDefaultJudgement?: boolean | null
   isAcquittedByPublicProsecutionOffice?: boolean | null
@@ -217,6 +217,39 @@ export class VerdictRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error deleting verdict ${verdictId} of defendant ${defendantId} and case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Moves every verdict of a defendant to another case, when the defendant is
+  // split off into a case of their own. Returns the number of verdicts moved.
+  async moveAllForDefendantToCase(
+    caseId: string,
+    defendantId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Moving the verdicts of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.verdictModel.update(
+        { caseId: newCaseId },
+        { where: { caseId, defendantId }, transaction: options.transaction },
+      )
+
+      this.logger.debug(
+        `Moved ${numberOfAffectedRows} verdicts of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error moving the verdicts of defendant ${defendantId} from case ${caseId} to case ${newCaseId}:`,
         { error },
       )
 

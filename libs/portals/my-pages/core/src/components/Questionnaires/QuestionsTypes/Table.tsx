@@ -8,6 +8,7 @@ import {
   DatePicker,
   GridColumn,
   GridRow,
+  InputError,
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
@@ -237,14 +238,9 @@ export const Table: React.FC<TableProps> = ({
   return (
     <Box>
       {error && (
-        <Text
-          variant="small"
-          color="red600"
-          marginBottom={2}
-          id={`${id}-error`}
-        >
-          {error}
-        </Text>
+        <Box marginBottom={2}>
+          <InputError id={`${id}-error`} errorMessage={error} />
+        </Box>
       )}
 
       {/* Always show table with headers */}

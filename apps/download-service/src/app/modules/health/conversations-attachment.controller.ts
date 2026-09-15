@@ -11,6 +11,7 @@ import { AuditService } from '@island.is/nest/audit'
 import { Features, FeatureFlagService } from '@island.is/nest/feature-flags'
 import {
   Controller,
+  Inject,
   Param,
   ParseIntPipe,
   Post,
@@ -19,6 +20,7 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.health)
@@ -28,6 +30,7 @@ export class HealthConversationsAttachmentController {
     private readonly healthService: HealthDirectorateHealthService,
     private readonly auditService: AuditService,
     private readonly featureFlagService: FeatureFlagService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Post(':conversationId/:messageId/:attachmentId')
@@ -51,15 +54,35 @@ export class HealthConversationsAttachmentController {
       return res.status(403).json({ statusCode: 403, message: 'Not allowed' })
     }
 
-    const attachment = await this.healthService.getMessageAttachment(
-      user,
-      conversationId,
-      messageId,
-      attachmentId,
-    )
+    let attachment
+    try {
+      attachment = await this.healthService.getMessageAttachment(
+        user,
+        conversationId,
+        messageId,
+        attachmentId,
+      )
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error))
+      this.logger.error('Failed to get health conversation attachment', {
+        errorMessage: err.message,
+        errorStack: err.stack,
+        conversationId,
+        messageId,
+        attachmentId,
+      })
+      return res.status(500).end()
+    }
 
     if (!attachment) {
       return res.status(404).json({ statusCode: 404, message: 'Not found' })
+    }
+
+    if (attachment.status === 402) {
+      return res.status(402).json({
+        resourceType: attachment.resourceType,
+        resourceId: attachment.resourceId,
+      })
     }
 
     this.auditService.audit({

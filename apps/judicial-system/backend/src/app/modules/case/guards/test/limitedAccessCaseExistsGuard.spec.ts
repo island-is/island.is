@@ -7,12 +7,16 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  type User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
 import { CaseRepositoryService } from '../../../repository'
-import { attributes, include } from '../../limitedAccessCase.service'
+import { attributes, getInclude } from '../../limitedAccessCase.service'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 
 interface Then {
@@ -52,7 +56,15 @@ describe('Restricted Case Exists Guard', () => {
   describe('case exists', () => {
     const caseId = uuid()
     const theCase = { id: caseId }
-    const request = { params: { caseId }, case: undefined }
+    const user = {
+      nationalId: '1234567890',
+      role: UserRole.DEFENDER,
+    } as User
+    const request = {
+      params: { caseId },
+      case: undefined,
+      user: { currentUser: user },
+    }
     let then: Then
 
     beforeEach(async () => {
@@ -66,7 +78,7 @@ describe('Restricted Case Exists Guard', () => {
     it('should activate', () => {
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         attributes,
-        include,
+        include: getInclude(user),
         where: {
           id: caseId,
           state: { [Op.not]: CaseState.DELETED },

@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { GlassView, isLiquidGlassAvailable } from 'expo-glass-effect'
 
 import { useDynamicColor } from '../../utils'
 import closeIcon from '../../assets/icons/close.png'
@@ -24,11 +25,14 @@ const Input = styled(AnimatedTextInput)<{
   focused?: boolean
 }>`
   flex: 1;
-  border-radius: ${({ theme }) => theme.spacing[1]}px;
-  padding: ${({ theme }) => theme.spacing[1]}px 30px;
-  min-height: 40px;
+  border-radius: 24px;
+  padding-top: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
+  padding-left: 44px;
+  padding-right: 40px;
+  min-height: 48px;
 
-  ${font({ fontSize: 14 })}
+  ${font({ fontSize: 16 })}
 ` as any
 // @todo ^^ migration
 
@@ -49,8 +53,12 @@ export function SearchBar(props: SearchBarProps) {
     Keyboard.dismiss()
   }
 
-  return (
-    <View style={{ flex: 1, minHeight: 40 }}>
+  // On iOS 26+ the OS renders a real Liquid Glass material behind the field.
+  // Everywhere else we fall back to the solid grey (dark100) fill.
+  const glassAvailable = isLiquidGlassAvailable()
+
+  const content = (
+    <>
       <Input
         ref={inputRef}
         {...(props as TextInputProps)}
@@ -88,18 +96,20 @@ export function SearchBar(props: SearchBarProps) {
         style={[
           {
             color: theme.shade.foreground,
-            backgroundColor: pressed.current.interpolate({
-              inputRange: [0, 1],
-              outputRange: [
-                theme.isDark
-                  ? 'rgba(255, 255, 255, 0.10)'
-                  : 'rgba(118, 118, 128, 0.12)',
-                theme.isDark
-                  ? 'rgba(255, 255, 255, 0.16)'
-                  : 'rgba(118, 118, 128, 0.24)',
-              ],
-              extrapolate: 'clamp',
-            }),
+            backgroundColor: glassAvailable
+              ? 'transparent'
+              : pressed.current.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [
+                    theme.isDark
+                      ? 'rgba(255, 255, 255, 0.10)'
+                      : theme.color.dark100,
+                    theme.isDark
+                      ? 'rgba(255, 255, 255, 0.16)'
+                      : theme.color.dark200,
+                  ],
+                  extrapolate: 'clamp',
+                }),
           },
           props.style,
         ]}
@@ -108,23 +118,23 @@ export function SearchBar(props: SearchBarProps) {
         source={searchIcon}
         style={{
           position: 'absolute',
-          top: 11,
-          left: 7,
-          width: 19,
-          height: 19,
-          tintColor: dynamicColor({
-            dark: 'rgba(255, 255, 255, 0.6)',
-            light: 'rgba(60, 60, 67, 0.6)',
-          }),
+          top: 14,
+          left: 16,
+          width: 20,
+          height: 20,
+          tintColor: theme.color.blue400,
         }}
       />
       {props.value?.length ? (
         <Pressable
           onPress={onRightIconPress}
+          // The visible icon is only ~16px, far below the recommended ~44px
+          // touch target, so grow the pressable area around it.
+          hitSlop={14}
           style={{
             position: 'absolute',
-            top: 12,
-            right: 8,
+            top: 16,
+            right: 12,
             backgroundColor: dynamicColor({
               dark: 'rgba(255, 255, 255, 0.6)',
               light: 'rgba(60, 60, 67, 0.6)',
@@ -147,6 +157,20 @@ export function SearchBar(props: SearchBarProps) {
           />
         </Pressable>
       ) : null}
-    </View>
+    </>
   )
+
+  if (glassAvailable) {
+    return (
+      <GlassView
+        glassEffectStyle="regular"
+        isInteractive
+        style={{ flex: 1, minHeight: 48, borderRadius: 24 }}
+      >
+        {content}
+      </GlassView>
+    )
+  }
+
+  return <View style={{ flex: 1, minHeight: 48 }}>{content}</View>
 }

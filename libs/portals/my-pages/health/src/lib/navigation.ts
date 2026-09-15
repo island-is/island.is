@@ -110,6 +110,12 @@ export const healthNavigation: PortalNavigationItem = {
           navHide: true,
           breadcrumbHide: true,
         },
+        {
+          name: messages.bookAppointmentTitle,
+          path: HealthPaths.HealthBookAppointment,
+          navHide: true,
+          breadcrumbHide: true,
+        },
       ],
     },
     {
@@ -289,6 +295,11 @@ export const healthNavigation: PortalNavigationItem = {
               navHide: true,
             },
           ],
+        },
+        {
+          name: messages.oldPregnanciesTitle,
+          description: messages.oldPregnanciesIntro,
+          path: HealthPaths.HealthOldPregnancies,
         },
         {
           name: messages.patientDataPermit,

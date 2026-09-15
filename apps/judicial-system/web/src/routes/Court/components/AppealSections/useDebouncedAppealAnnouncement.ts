@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import { AppealDecisionPartyRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { AppealDecisionPartyRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDebouncedField } from '@island.is/judicial-system-web/src/utils/hooks'
 import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision'
 import {

@@ -1,6 +1,6 @@
 import { Box, Input } from '@island.is/island-ui/core'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import { CourtSessionString } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CourtSessionString } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDebouncedField } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const CourtSessionMergedCaseEntries = ({

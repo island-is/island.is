@@ -20,29 +20,33 @@ import {
   isIndictmentCase,
   isRequestCase,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
-import {
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { LinkComponent } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
   Case,
-  CaseIndictmentRulingDecision,
   CaseType,
   Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import {
+  canDefenceUserOpenLinkedCase,
+  getDefaultDefendantGender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
-import { getDefaultDefendantGender } from '../../utils/utils'
-import { FormContext } from '../FormProvider/FormProvider'
-import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
-import { UserContext } from '../UserProvider/UserProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { VictimInfo } from './VictimInfo/VictimInfo'
-import { Item } from './InfoCard'
+import type { Item } from './InfoCard'
 import { strings } from './useInfoCardItems.strings'
-import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
 type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
@@ -93,7 +97,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
       ),
       values: defendants
         ? [
-            <div key="defendants-grid" className={grid({ gap: 3 })}>
+            <div key="defendants-grid" className={stack({ gap: 3 })}>
               {defendants.map((defendant, index) => (
                 <div
                   key={`defendants-grid-${defendant.id}`}
@@ -252,9 +256,23 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   }
 
   const getMergeCaseValue = () => {
+    const mergeCaseId = workingCase.mergeCase?.id
     const internalCourtCaseNumber = workingCase.mergeCase?.courtCaseNumber
     if (internalCourtCaseNumber) {
-      return internalCourtCaseNumber
+      const shouldLink =
+        Boolean(mergeCaseId) &&
+        canDefenceUserOpenLinkedCase(user, workingCase.mergeCase)
+
+      return shouldLink ? (
+        <LinkComponent
+          href={`${ROUTE_HANDLER_ROUTE}/${mergeCaseId}`}
+          key={mergeCaseId}
+        >
+          {internalCourtCaseNumber}
+        </LinkComponent>
+      ) : (
+        internalCourtCaseNumber
+      )
     }
 
     const externalCourtCaseNumber = workingCase.mergeCaseNumber
@@ -283,7 +301,20 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const mergedCaseCourtCaseNumber = (mergedCase: Case): Item => ({
     id: 'merged-case-court-case-number-item',
     title: formatMessage(strings.mergedFromTitle),
-    values: [mergedCase.courtCaseNumber],
+    values: mergedCase.courtCaseNumber
+      ? [
+          canDefenceUserOpenLinkedCase(user, mergedCase) ? (
+            <LinkComponent
+              href={`${ROUTE_HANDLER_ROUTE}/${mergedCase.id}`}
+              key={mergedCase.id}
+            >
+              {mergedCase.courtCaseNumber}
+            </LinkComponent>
+          ) : (
+            mergedCase.courtCaseNumber
+          ),
+        ]
+      : [],
   })
 
   const mergedCaseProsecutor = (mergedCase: Case): Item => ({
@@ -316,7 +347,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     title: 'Klofinn frá',
     values: isNonEmptyArray(splitCaseEntries)
       ? [
-          <div key="split-cases-grid" className={grid({ gap: 2 })}>
+          <div key="split-cases-grid" className={stack({ gap: 2 })}>
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
@@ -447,7 +478,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     ),
     values: isNonEmptyArray(workingCase.civilClaimants)
       ? [
-          <div key="civil-claimants-grid" className={grid({ gap: 3 })}>
+          <div key="civil-claimants-grid" className={stack({ gap: 3 })}>
             {workingCase.civilClaimants.map((civilClaimant, index) => (
               <div
                 key={civilClaimant.id}
@@ -476,11 +507,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     ),
     values: isNonEmptyArray(workingCase.victims)
       ? [
-          <div key="victims-grid" className={grid({ gap: 3 })}>
+          <div key="victims-grid" className={stack({ gap: 3 })}>
             {workingCase.victims.map((victim, index) => (
               <div
                 key={victim.id}
-                className={cn(grid({ gap: 1 }), {
+                className={cn(stack({ gap: 1 }), {
                   [styles.renderDividerFull]:
                     isNonEmptyArray(workingCase.victims) &&
                     index !== workingCase.victims.length - 1,

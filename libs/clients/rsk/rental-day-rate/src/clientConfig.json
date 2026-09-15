@@ -462,6 +462,59 @@
           }
         }
       }
+    },
+    "/api/RentalDays/{EntityId}/periods/{Period}": {
+      "get": {
+        "tags": ["RentalDays"],
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Period",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^\\d{4}-\\d{2}$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Api-Version",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalDayRegistrationModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalDayRegistrationModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalDayRegistrationModel"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -627,7 +680,7 @@
         "additionalProperties": false
       },
       "InsertRentalDaysModel": {
-        "required": ["dayRateEntryId", "numberOfDays", "permno"],
+        "required": ["numberOfDays", "permno"],
         "type": "object",
         "properties": {
           "permno": {
@@ -640,7 +693,8 @@
           },
           "dayRateEntryId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false

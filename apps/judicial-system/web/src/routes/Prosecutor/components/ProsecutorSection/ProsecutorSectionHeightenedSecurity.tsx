@@ -12,7 +12,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 import { strings } from './ProsecutorSectionHeightenedSecurity.strings'
@@ -68,7 +68,7 @@ const ProsecutorSectionHeightenedSecurity = () => {
   return (
     <Box component="section">
       <ProsecutorSectionHeading />
-      <BlueBox className={grid({ gap: 2 })}>
+      <BlueBox className={stack({ gap: 2 })}>
         <ProsecutorSelection onChange={handleProsecutorChange} />
         <Checkbox
           name="isHeightenedSecurityLevel"

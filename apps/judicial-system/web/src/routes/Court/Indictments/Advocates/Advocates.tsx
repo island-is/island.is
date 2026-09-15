@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -20,7 +21,7 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectCivilClaimantAdvocate from './SelectCivilClaimantAdvocate'
@@ -119,7 +120,7 @@ const Advocates = () => {
             tooltipText="Ákærunni hefur ekki verið deilt með öllum verjendum"
           />
         </Box>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           {workingCase.defendants?.map((defendant) => (
             <SelectDefender defendant={defendant} key={defendant.id} />
           ))}
@@ -140,7 +141,7 @@ const Advocates = () => {
                   tooltipText="Ákærunni hefur ekki verið deilt með öllum talsmönnum kröfuhafa"
                 />
               </Box>
-              <div className={grid({ gap: 5 })}>
+              <div className={stack({ gap: 5 })}>
                 {workingCase.civilClaimants?.map((civilClaimant) => (
                   <Box component="section" key={civilClaimant.id}>
                     <SelectCivilClaimantAdvocate

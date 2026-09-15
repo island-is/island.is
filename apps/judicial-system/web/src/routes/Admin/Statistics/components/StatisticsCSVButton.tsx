@@ -1,10 +1,9 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Button } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseStatistics } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { mapServiceStatusTitle } from '../helpers'
+import type { CaseStatistics } from '@island.is/judicial-system-web/src/graphql/schema'
+import { mapServiceStatusTitle } from '@island.is/judicial-system-web/src/routes/Admin/Statistics/helpers'
 
 const convertToCSV = (rows: Record<string, unknown>[]): string => {
   if (!rows.length) return ''

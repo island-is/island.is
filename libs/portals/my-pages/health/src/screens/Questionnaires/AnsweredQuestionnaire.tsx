@@ -78,14 +78,12 @@ const AnsweredQuestionnaire: FC = () => {
   }, [data, id, submissionId])
 
   useEffect(() => {
-    if (organization === QuestionnaireQuestionnairesOrganizationEnum.EL) {
-      getQuestionnaire({
-        variables: {
-          input: { id: id ?? '', organization: organization },
-          locale: lang,
-        },
-      })
-    }
+    getQuestionnaire({
+      variables: {
+        input: { id: id ?? '', organization: organization },
+        locale: lang,
+      },
+    })
   }, [getQuestionnaire, id, lang, organization])
 
   const isDraft = currentSubmission?.isDraft

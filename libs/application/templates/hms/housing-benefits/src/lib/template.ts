@@ -9,7 +9,6 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -56,6 +55,7 @@ import {
   hasNewHouseholdMembersNeedingApproval,
 } from '../utils/addHouseholdMemberUtils'
 import { mapUserToRole } from '../utils/mapUserToRole'
+import { buildInstitutionAssignees } from '../utils/institutionAssignees'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
@@ -287,6 +287,7 @@ const template: ApplicationTemplate<
                   '../forms/assigneeApprovalState/assigneeWaitingForm'
                 ).then((module) => Promise.resolve(module.AssigneeWaitingForm)),
               read: 'all',
+              delete: true,
             },
           ],
         },
@@ -628,21 +629,11 @@ const template: ApplicationTemplate<
       }),
       assignToInstitution: assign((context) => {
         const { application } = context
-        const existing = (application.assignees ?? []).map((id) =>
-          kennitala.isValid(id) ? kennitala.sanitize(id) : id,
+        set(
+          application,
+          'assignees',
+          buildInstitutionAssignees(application.assignees ?? []),
         )
-        const hmsInstitutionNationalId = kennitala.sanitize(
-          InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
-        )
-        // Gervimaður Bretland — dev only, so institution UI can be tested locally
-        const devInstitutionTesterNationalId = kennitala.sanitize('0101304929')
-        set(application, 'assignees', [
-          ...new Set([
-            ...existing,
-            hmsInstitutionNationalId,
-            devInstitutionTesterNationalId,
-          ]),
-        ])
         return context
       }),
       clearAssignees: assign((context) => {

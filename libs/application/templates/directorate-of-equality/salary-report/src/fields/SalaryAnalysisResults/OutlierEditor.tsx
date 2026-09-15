@@ -1,238 +1,425 @@
-import { FC, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useRef, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { getErrorViaPath } from '@island.is/application/core'
-import { Application, RecordObject } from '@island.is/application/types'
+import { RecordObject } from '@island.is/application/types'
 import {
-  AccordionCard,
+  AlertMessage,
   Box,
   Button,
-  Checkbox,
-  createColumnHelper,
+  DropdownMenu,
+  Hidden,
   InteractiveTable,
   Text,
 } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import type {
-  SalaryAnalysisOutlierDto,
-  ScoreBucketDto,
-} from '@island.is/clients/directorate-of-equality'
+import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import type { Employee } from '../../utils/types'
-import { getPathValue } from '../../utils/answerHelpers'
-import { isOutlierGroupComplete } from '../../utils/outlierGroups'
-import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
-import { formatCurrency } from '../EmployeesEditor/utils'
+import {
+  cloneOutlierGroups,
+  emptyOutlierGroupAnswer,
+  foldGroupDirection,
+  isOutlierGroupComplete,
+  outlierGroupFingerprint,
+  savedOutlierGroupIndex,
+} from '../../utils/outlierGroups'
+import type { OutlierGroupAnswer, PayStatus } from '../../utils/outlierGroups'
 import { TablePagination } from '../TablePagination'
+import { OUTLIER_COLUMNS, OutlierTableProvider } from './outlierColumns'
+import { OutlierGroupCard } from './OutlierGroupCard'
+import { Markdown } from '@island.is/shared/components'
 
 const OUTLIERS_PAGE_SIZE = 10
-const SELECT_COLUMN_WIDTH = 32
-// The header checkbox only reaches the current page, which is fine for a
-// couple of pages but not for a long table — past this many pages the
-// select-everything shortcut appears.
-const SELECT_ALL_PAGE_THRESHOLD = 5
 
 type Props = {
-  application: Application
   outliers: SalaryAnalysisOutlierDto[]
-  scoreBuckets: ScoreBucketDto[]
   errors?: RecordObject
+  // draft: pre-submit, DMR-synced, keyed by employee id. postponed: answers-backed, keyed by ordinal.
+  mode: 'draft' | 'postponed'
+  // Writes the whole plan to the answers buffer, resolving to whether it was
+  // persisted — see useOutlierPlanBuffer.
+  onSaveGroups: (groups: OutlierGroupAnswer[]) => Promise<boolean>
+  // The plan exactly as last written to the answers buffer — the values, not
+  // just their fingerprints, because a removal has to be able to write this set
+  // back minus one group. It opens as what the screen was seeded with, from the
+  // buffer or from the DMR draft: either way that is already persisted, so
+  // everything starts out saved and the buttons open in their "Vistað" state.
+  //
+  // One save carries the whole array, so this is what every card compares
+  // itself against: a save from any one of them leaves them all matching.
+  //
+  // Held by OutlierGroupPanel rather than here: ticking the postpone checkbox
+  // unmounts this editor while the form values live on in the parent, so state
+  // kept here would fall back to the visit-start plan on the way back in and
+  // the next removal would write that over the session's saves.
+  savedGroups: OutlierGroupAnswer[]
+  onSavedGroupsChange: (groups: OutlierGroupAnswer[]) => void
 }
 
-const columnHelper = createColumnHelper<SalaryAnalysisOutlierDto>()
-
 export const OutlierEditor: FC<Props> = ({
-  application,
   outliers,
-  scoreBuckets,
   errors,
+  mode,
+  onSaveGroups,
+  savedGroups,
+  onSavedGroupsChange,
 }) => {
   const { formatMessage } = useLocale()
-  const { control } = useFormContext()
+  const { control, getValues, setValue } = useFormContext()
   const m = messages.salaryAnalysis.outlierGroup
 
-  const employees = getPathValue<Employee[]>(
-    application.answers,
-    'employees',
-    [],
+  // Only this component holds the outliers; OutlierGroupCard has ordinals and
+  // needs each member's payStatus to pick its prompt variant.
+  const payStatusByOrdinal = useMemo(
+    () =>
+      new Map<number, PayStatus>(
+        outliers.map((o) => [o.employeeOrdinal, o.payStatus]),
+      ),
+    [outliers],
   )
-  const identifierForOrdinal = (ordinal: number) =>
-    employees.find((e) => e.ordinal === ordinal)?.identifier ?? `#${ordinal}`
 
-  const scoreRangeLabel = (outlier: SalaryAnalysisOutlierDto) =>
-    `${outlier.scoreBucketRangeFrom}-${outlier.scoreBucketRangeTo}`
-
-  const medianSalaryForOutlier = (outlier: SalaryAnalysisOutlierDto) =>
-    scoreBuckets.find(
-      (b) =>
-        b.rangeFrom === outlier.scoreBucketRangeFrom &&
-        b.rangeTo === outlier.scoreBucketRangeTo,
-    )?.overallMedianSalary
+  // Same field name in both modes; draft mode just never persists it to applicationAnswers.
+  const fieldName = 'salaryAnalysis.outlierGroups'
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'salaryAnalysis.outlierGroups',
+    name: fieldName,
   })
 
   // useFieldArray's `fields` only updates on structural changes (append/
   // remove) — it does NOT reflect keystrokes in the reason/action/signature
   // inputs below. The completeness warning needs live values, so it reads
   // from useWatch instead.
-  const watchedGroups: OutlierGroupAnswer[] =
-    useWatch({ name: 'salaryAnalysis.outlierGroups' }) ?? []
+  const watchedGroups =
+    (useWatch({ name: fieldName }) as OutlierGroupAnswer[] | undefined) ?? []
 
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [page, setPage] = useState(1)
 
+  const [savingIndex, setSavingIndex] = useState<number>()
+  const [removingIndex, setRemovingIndex] = useState<number>()
+  const [saveErrorIndex, setSaveErrorIndex] = useState<number>()
+  const [removeFailed, setRemoveFailed] = useState(false)
+
+  // Every save and every removal writes the whole plan, so two of them in
+  // flight together race: the server keeps whichever response lands last,
+  // regardless of which plan it carries, and the loser's completion would still
+  // mark its own values as saved. One write at a time, then — every save and
+  // remove button goes inert while one runs, and the ref catches a second click
+  // that lands before that render does.
+  const writeInFlight = useRef(false)
+  const isWriting = savingIndex !== undefined || removingIndex !== undefined
+
+  // Membership is edited with setValue (assigning into an existing group, or a
+  // pill click freeing one member), which useFieldArray's `fields` does not
+  // see — so the live ordinals come from the watched values, positionally
+  // aligned with `fields` and falling back to them on the render where a
+  // structural change has landed in one but not yet the other.
+  //
+  // Keyed on the membership CONTENT, not on `watchedGroups`: useWatch clones its
+  // whole subtree on every change, so depending on its identity would recompute
+  // this — and with it unassignedOutliers and the `data` array handed to
+  // InteractiveTable — on every keystroke in any group's reason/action/signature
+  // field. That is precisely the churn the note on pageRows below exists to
+  // prevent; membership is the only part of the subtree this reads.
+  const memberKey = watchedGroups
+    .map((group) => (group?.employeeOrdinals ?? []).join(','))
+    .join('|')
+  const memberOrdinalsByIndex = useMemo(
+    () =>
+      (fields as unknown as (OutlierGroupAnswer & { id: string })[]).map(
+        (field, index) =>
+          watchedGroups[index]?.employeeOrdinals ??
+          field.employeeOrdinals ??
+          [],
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fields, memberKey],
+  )
+
   // Once an outlier is put into a group it leaves the table below — the
-  // group card owns it from then on. Removing a group frees its members
-  // back into this list.
-  const assignedOrdinals = new Set(
-    (fields as unknown as (OutlierGroupAnswer & { id: string })[]).flatMap(
-      (g) => g.employeeOrdinals,
-    ),
-  )
-  const unassignedOutliers = outliers.filter(
-    (o) => !assignedOrdinals.has(o.employeeOrdinal),
-  )
+  // group card owns it from then on. Removing a group, or clicking a member's
+  // pill, frees it back into this list.
+  const unassignedOutliers = useMemo(() => {
+    const assignedOrdinals = new Set(memberOrdinalsByIndex.flat())
+    return outliers.filter((o) => !assignedOrdinals.has(o.employeeOrdinal))
+  }, [memberOrdinalsByIndex, outliers])
 
   const totalPages = Math.max(
     1,
     Math.ceil(unassignedOutliers.length / OUTLIERS_PAGE_SIZE),
   )
   const currentPage = Math.min(page, totalPages)
-  const pageRows = unassignedOutliers.slice(
-    (currentPage - 1) * OUTLIERS_PAGE_SIZE,
-    currentPage * OUTLIERS_PAGE_SIZE,
+  // Memoised because InteractiveTable keys an effect on the `data` prop: a new
+  // array identity on every render makes that effect fire and set state again,
+  // costing a second render pass per interaction.
+  const pageRows = useMemo(
+    () =>
+      unassignedOutliers.slice(
+        (currentPage - 1) * OUTLIERS_PAGE_SIZE,
+        currentPage * OUTLIERS_PAGE_SIZE,
+      ),
+    [unassignedOutliers, currentPage],
   )
 
-  const toggleSelect = (ordinal: number) =>
-    setSelected((prev) => {
-      const next = new Set(prev)
-      if (next.has(ordinal)) next.delete(ordinal)
-      else next.add(ordinal)
-      return next
-    })
+  const toggleSelect = useCallback(
+    (ordinal: number) =>
+      setSelected((prev) => {
+        const next = new Set(prev)
+        if (next.has(ordinal)) next.delete(ordinal)
+        else next.add(ordinal)
+        return next
+      }),
+    [],
+  )
+
+  const byOrdinal = (a: number, b: number) => a - b
 
   const handleCreateGroup = () => {
-    append({ employeeOrdinals: [...selected] } as OutlierGroupAnswer)
+    append(
+      emptyOutlierGroupAnswer(
+        [...selected].sort(byOrdinal),
+        mode === 'draft' ? crypto.randomUUID() : undefined,
+      ),
+    )
     setSelected(new Set())
     // The current page may no longer exist once its rows leave the table.
     setPage(1)
   }
 
-  const handleSelectAll = () =>
-    setSelected(new Set(unassignedOutliers.map((o) => o.employeeOrdinal)))
+  // Adding to a group already on the screen, rather than always minting a new
+  // one: a setValue on that group's ordinals, since useFieldArray has no
+  // in-place member edit that leaves the sibling inputs untouched.
+  const handleAddToGroup = (index: number) => {
+    setValue(
+      `${fieldName}.${index}.employeeOrdinals`,
+      [...new Set([...memberOrdinalsByIndex[index], ...selected])].sort(
+        byOrdinal,
+      ),
+    )
+    setSelected(new Set())
+    setPage(1)
+  }
 
-  const allSelected = selected.size === unassignedOutliers.length
+  const handleRemoveGroup = async (index: number) => {
+    if (writeInFlight.current) return
+    // The save error goes with the card it was reported on: the index it is
+    // keyed by belongs to a different group once the array closes up.
+    const savedIndex = savedOutlierGroupIndex(
+      savedGroups,
+      watchedGroups[index],
+      index,
+    )
+    setSaveErrorIndex(undefined)
+    setRemoveFailed(false)
 
-  const allSelectedOnPage =
-    pageRows.length > 0 &&
-    pageRows.every((o) => selected.has(o.employeeOrdinal))
+    // A group that was never saved needs no write at all and goes straight
+    // away, which is the common case: created, then thought better of.
+    if (savedIndex === -1) {
+      remove(index)
+      return
+    }
 
-  const columns = useMemo(
-    () => [
-      columnHelper.display({
-        id: 'select',
-        header: () => (
-          <Box
-            display="flex"
-            justifyContent="center"
-            style={{ maxWidth: SELECT_COLUMN_WIDTH }}
-          >
-            <Checkbox
-              label=""
-              ariaLabel={formatMessage(m.selectAllLabel)}
-              checked={allSelectedOnPage}
-              disabled={pageRows.length === 0}
-              onChange={() =>
-                setSelected((prev) => {
-                  const next = new Set(prev)
-                  pageRows.forEach((o) =>
-                    allSelectedOnPage
-                      ? next.delete(o.employeeOrdinal)
-                      : next.add(o.employeeOrdinal),
-                  )
-                  return next
-                })
-              }
-            />
-          </Box>
-        ),
-        meta: { type: 'interactive' },
-        cell: (info) => (
-          <Box
-            display="flex"
-            justifyContent="center"
-            style={{ maxWidth: SELECT_COLUMN_WIDTH }}
-          >
-            <Checkbox
-              label=""
-              ariaLabel={formatMessage(m.selectEmployeeLabel, {
-                employee: identifierForOrdinal(
-                  info.row.original.employeeOrdinal,
-                ),
-              })}
-              checked={selected.has(info.row.original.employeeOrdinal)}
-              onChange={() => toggleSelect(info.row.original.employeeOrdinal)}
-            />
-          </Box>
-        ),
-      }),
-      columnHelper.accessor('employeeOrdinal', {
-        id: 'employee',
-        header: formatMessage(m.employeeColumn),
-        cell: (info) => identifierForOrdinal(info.getValue()),
-      }),
-      columnHelper.accessor((row) => row.scoreBucketRangeFrom, {
-        id: 'score',
-        header: formatMessage(m.scoreColumn),
-        enableSorting: true,
-        cell: (info) => scoreRangeLabel(info.row.original),
-      }),
-      columnHelper.accessor('adjustedBaseSalary', {
-        id: 'salary',
-        header: formatMessage(m.salaryColumn),
-        cell: (info) => formatCurrency(info.getValue()),
-      }),
-      columnHelper.display({
-        id: 'medianSalary',
-        header: formatMessage(m.medianSalaryColumn),
-        cell: (info) =>
-          formatCurrency(medianSalaryForOutlier(info.row.original)),
-      }),
-      columnHelper.accessor('differencePercent', {
-        id: 'difference',
-        header: formatMessage(m.differenceColumn),
-        cell: (info) => {
-          const value = info.getValue()
-          const sign = value > 0 ? '+' : value < 0 ? '-' : ''
-          return `${sign}${Math.abs(value).toFixed(1)}%`
-        },
-      }),
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pageRows, selected, allSelectedOnPage, employees, scoreBuckets],
+    // A group the buffer already holds has to come out of it too, or the next
+    // visit seeds it straight back in. Written as the saved set minus this
+    // group rather than as the live values, so removing one group does not
+    // quietly persist the half-finished text in the others — the button is
+    // still the only thing that saves.
+    const remaining = savedGroups.filter(
+      (_group, position) => position !== savedIndex,
+    )
+    writeInFlight.current = true
+    setRemovingIndex(index)
+    const persisted = await onSaveGroups(remaining)
+    writeInFlight.current = false
+    setRemovingIndex(undefined)
+    // Both sets drop the group in the same breath, or not at all: a form that
+    // had closed up over a buffer that had not would leave the positional
+    // savedIndexOf fallback pointing every card below it at the wrong saved
+    // group — and the card the applicant asked to remove is still there to try
+    // again on.
+    if (!persisted) {
+      setRemoveFailed(true)
+      return
+    }
+    onSavedGroupsChange(remaining)
+    remove(index)
+  }
+
+  const handleRemoveMember = (index: number, ordinal: number) => {
+    setValue(
+      `${fieldName}.${index}.employeeOrdinals`,
+      memberOrdinalsByIndex[index].filter((o) => o !== ordinal),
+    )
+    // The freed row joins the table, which may now need its first page shown.
+    setPage(1)
+  }
+
+  // Read straight off the form rather than from watchedGroups: the values are
+  // what goes to the server, and this is the one place that needs them exactly
+  // as react-hook-form holds them — cloned on the way out, since it keeps
+  // writing into them while the request is in flight.
+  const handleSave = async (index: number) => {
+    if (writeInFlight.current) return
+    const groups = cloneOutlierGroups(
+      (getValues(fieldName) ?? []) as OutlierGroupAnswer[],
+    )
+    writeInFlight.current = true
+    setSavingIndex(index)
+    setSaveErrorIndex(undefined)
+    // A save writes the whole array from the live values, which is the plan a
+    // failed removal left in place — so it settles that error too.
+    setRemoveFailed(false)
+    const persisted = await onSaveGroups(groups)
+    writeInFlight.current = false
+    setSavingIndex(undefined)
+    if (!persisted) {
+      // Reported on the card whose button was pressed, so the failure is where
+      // the applicant is looking.
+      setSaveErrorIndex(index)
+      return
+    }
+    onSavedGroupsChange(groups)
+  }
+
+  const isGroupSaved = (index: number) => {
+    const group = watchedGroups[index]
+    const savedIndex = savedOutlierGroupIndex(savedGroups, group, index)
+    return (
+      savedIndex !== -1 &&
+      outlierGroupFingerprint(savedGroups[savedIndex]) ===
+        outlierGroupFingerprint(group)
+    )
+  }
+
+  // Newest first. The array itself stays in creation order — the index is what
+  // names the inputs, numbers the groups and attributes the sync commands — so
+  // only the render order flips, and each entry carries its real index with it.
+  const groupsNewestFirst = useMemo(
+    () => fields.map((field, index) => ({ field, index })).reverse(),
+    [fields],
   )
 
-  const groupError = (index: number, suffix: string) =>
-    errors
-      ? getErrorViaPath(
-          errors,
-          `salaryAnalysis.outlierGroups.${index}.${suffix}`,
-        )
-      : undefined
+  // Suffixed with the index because the name is free text: two groups the
+  // applicant calls "Sölufólk" would otherwise render two identical menu rows
+  // bound to different groups.
+  const groupLabel = (index: number) => {
+    const name = watchedGroups[index]?.name?.trim()
+    const fallback = `${formatMessage(m.groupHeading)} ${index + 1}`
+    return name
+      ? `${formatMessage(m.addToExistingGroupPrefix)} ${name} (${index + 1})`
+      : `${formatMessage(m.addToExistingGroupPrefix)} ${fallback}`
+  }
+
+  // Guarded on the length: with nothing left in the table both sides are 0,
+  // which would otherwise read as "everything is selected" and show the header
+  // checkbox ticked over an empty selection.
+  const allSelected =
+    unassignedOutliers.length > 0 && selected.size === unassignedOutliers.length
+
+  // Drives the header checkbox's indeterminate state, so a partial selection
+  // reads as partial instead of as "nothing selected" — the native flag also
+  // gives the input aria-checked="mixed".
+  const someSelected = selected.size > 0 && !allSelected
+
+  // Every row still in the table, not just the page on screen: the outliers an
+  // applicant wants in one group are rarely all on one page, and paging through
+  // to tick them was the tedium this replaces. Clears as well as selects — it is
+  // the only way back from a select-all short of unticking each row.
+  const toggleSelectAll = useCallback(
+    () =>
+      setSelected((prev) =>
+        prev.size === unassignedOutliers.length && prev.size > 0
+          ? new Set()
+          : new Set(unassignedOutliers.map((o) => o.employeeOrdinal)),
+      ),
+    [unassignedOutliers],
+  )
+
+  // The column defs are module-level constants (see outlierColumns.tsx), so
+  // everything that changes per render reaches the cells through here.
+  const tableContext = useMemo(
+    () => ({
+      selected,
+      allSelected,
+      someSelected,
+      toggleSelect,
+      toggleSelectAll,
+    }),
+    [selected, allSelected, someSelected, toggleSelect, toggleSelectAll],
+  )
 
   return (
     <Box marginTop={4}>
+      {/* Outside the table's own guard: the table empties as outliers are
+          assigned to groups, and this copy is what explains that. */}
+      <Box marginBottom={2}>
+        <Text variant="h4" as="h4">
+          {formatMessage(m.tableTitle)}
+        </Text>
+        <Markdown>{formatMessage(m.tableText)}</Markdown>
+      </Box>
+
       {unassignedOutliers.length > 0 && (
         <>
-          <InteractiveTable
-            columns={columns}
-            data={pageRows}
-            mobileTitleKey="employee"
-            cellPaddingX={2}
-          />
+          <OutlierTableProvider value={tableContext}>
+            <InteractiveTable
+              columns={OUTLIER_COLUMNS}
+              data={pageRows}
+              mobileTitleKey="employee"
+              // Longhand on purpose: T.Data/T.HeadData spread this object
+              // over their own paddingTop/paddingBottom ('p5' = 18px) and
+              // paddingLeft/paddingRight (3 = 24px) in a single useBoxStyles
+              // call, and that call resolves each side as
+              // `paddingTop ?? paddingY ?? padding`. A shorthand here would
+              // therefore lose to the longhands already in the object, while
+              // these longhands replace them outright — and also override the
+              // paddingY: 2 InteractiveTable passes for body cells. The 24px
+              // sides are the single biggest width cost here: 8 columns spend
+              // 384px on padding alone, which is what overflows the card.
+              cellBox={{
+                header: {
+                  paddingTop: 1,
+                  paddingBottom: 1,
+                  paddingLeft: 'p2',
+                  paddingRight: 'p2',
+                },
+                body: {
+                  paddingTop: 1,
+                  paddingBottom: 1,
+                  paddingLeft: 'p2',
+                  paddingRight: 'p2',
+                },
+              }}
+            />
+          </OutlierTableProvider>
+
+          {/* Counts what is ticked, however it got ticked — the header checkbox
+              and the row checkboxes write to the same set. Directly under the
+              table so it reads as the table's own tally, above the unit
+              footnote. Hidden at zero rather than reading "0 frávik valin" over
+              an untouched table.
+
+              The live region is the outer Box, which stays mounted and carries
+              no margin of its own: a region announces only changes that happen
+              while it is already in the DOM, so mounting it with the count would
+              announce nothing, and an empty bordered-off Box would still take up
+              its margin over an untouched table. */}
+          <Box aria-live="polite">
+            {selected.size > 0 && (
+              <Box marginTop={1}>
+                <Text variant="small" fontWeight="semiBold">
+                  {formatMessage(m.selectedOutlierCount, {
+                    count: selected.size,
+                  })}
+                </Text>
+              </Box>
+            )}
+          </Box>
+
+          <Box marginTop={1}>
+            <Text variant="small" color="dark400">
+              {formatMessage(m.wageUnitFootnote)}
+            </Text>
+          </Box>
 
           <Box marginTop={2}>
             <TablePagination
@@ -249,115 +436,131 @@ export const OutlierEditor: FC<Props> = ({
             alignItems="center"
             columnGap={2}
           >
-            <Button
-              variant="ghost"
-              size="small"
-              icon="add"
-              disabled={selected.size === 0}
-              onClick={handleCreateGroup}
-            >
-              {formatMessage(m.createGroupButton)}
-            </Button>
-            {totalPages > SELECT_ALL_PAGE_THRESHOLD && (
+            {fields.length === 0 ? (
               <Button
-                variant="text"
+                variant="ghost"
                 size="small"
-                disabled={allSelected}
-                onClick={handleSelectAll}
+                icon="add"
+                disabled={selected.size === 0}
+                onClick={handleCreateGroup}
               >
-                {formatMessage(m.selectAllOutliersButton, {
-                  count: unassignedOutliers.length,
-                })}
+                {formatMessage(m.createGroupButton)}
               </Button>
+            ) : (
+              // With groups already on the screen, "put in a group" is a
+              // choice, not an implicit "make another one".
+              <DropdownMenu
+                menuLabel={formatMessage(m.assignToGroupMenuLabel)}
+                // No `title`: island-ui reads it only in the branch that builds
+                // its own button, not the `disclosure` one.
+                disclosure={
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    icon="add"
+                    disabled={selected.size === 0}
+                  >
+                    {formatMessage(m.createGroupButton)}
+                  </Button>
+                }
+                items={[
+                  // Same order as the cards below, so the menu reads top-down
+                  // against what is on screen.
+                  ...groupsNewestFirst.map(({ index }) => ({
+                    title: groupLabel(index),
+                    onClick: () => handleAddToGroup(index),
+                  })),
+                  {
+                    title: formatMessage(m.assignToNewGroup),
+                    onClick: handleCreateGroup,
+                  },
+                ]}
+              />
             )}
+            {/* The header checkbox is the select-all on the desktop table, but
+                InteractiveTable's mobile card view has no header row to put it
+                in — so below `md`, where that table is hidden, this button
+                stands in for it. Same two breakpoints InteractiveTable splits
+                its own views on, so exactly one of the two is ever reachable. */}
+            <Hidden above="sm">
+              <Button variant="text" size="small" onClick={toggleSelectAll}>
+                {formatMessage(
+                  allSelected
+                    ? m.deselectAllOutliersButton
+                    : m.selectAllOutliersButton,
+                  { count: unassignedOutliers.length },
+                )}
+              </Button>
+            </Hidden>
           </Box>
         </>
       )}
 
       <Box>
-        {fields.map((field, index) => {
-          const group = field as unknown as OutlierGroupAnswer & {
-            id: string
-          }
+        {groupsNewestFirst.map(({ field, index }) => {
+          const memberOrdinals = memberOrdinalsByIndex[index]
           return (
-            <Box key={field.id} marginBottom={3}>
-              <AccordionCard
-                id={field.id}
-                label={`${formatMessage(m.groupHeading)} ${index + 1}`}
-                visibleContent={`${formatMessage(
-                  m.groupMembers,
-                )}: ${group.employeeOrdinals
-                  .map(identifierForOrdinal)
-                  .join(', ')}`}
-                startExpanded
-              >
-                <Box marginBottom={2} display="flex" justifyContent="flexEnd">
-                  <Button
-                    variant="text"
-                    size="small"
-                    onClick={() => remove(index)}
-                  >
-                    {formatMessage(m.removeGroupButton)}
-                  </Button>
-                </Box>
-                <InputController
-                  id={`salaryAnalysis.outlierGroups.${index}.reason`}
-                  name={`salaryAnalysis.outlierGroups.${index}.reason`}
-                  label={formatMessage(m.reasonLabel)}
-                  textarea
-                  backgroundColor="blue"
-                  error={groupError(index, 'reason')}
-                />
-                <Box marginTop={2}>
-                  <InputController
-                    id={`salaryAnalysis.outlierGroups.${index}.action`}
-                    name={`salaryAnalysis.outlierGroups.${index}.action`}
-                    label={formatMessage(m.actionLabel)}
-                    textarea
-                    backgroundColor="blue"
-                    error={groupError(index, 'action')}
-                  />
-                </Box>
-                <Box marginTop={2} display="flex" columnGap={2}>
-                  <Box style={{ flex: 1 }}>
-                    <InputController
-                      id={`salaryAnalysis.outlierGroups.${index}.signatureName`}
-                      name={`salaryAnalysis.outlierGroups.${index}.signatureName`}
-                      label={formatMessage(m.signatureNameLabel)}
-                      backgroundColor="blue"
-                      error={groupError(index, 'signatureName')}
-                    />
-                  </Box>
-                  <Box style={{ flex: 1 }}>
-                    <InputController
-                      id={`salaryAnalysis.outlierGroups.${index}.signatureRole`}
-                      name={`salaryAnalysis.outlierGroups.${index}.signatureRole`}
-                      label={formatMessage(m.signatureRoleLabel)}
-                      backgroundColor="blue"
-                      error={groupError(index, 'signatureRole')}
-                    />
-                  </Box>
-                </Box>
-              </AccordionCard>
-            </Box>
+            <OutlierGroupCard
+              key={field.id}
+              fieldId={field.id}
+              fieldName={fieldName}
+              index={index}
+              liveName={watchedGroups[index]?.name}
+              memberOrdinals={memberOrdinals}
+              direction={foldGroupDirection(
+                memberOrdinals.flatMap((ordinal) => {
+                  const status = payStatusByOrdinal.get(ordinal)
+                  return status ? [status] : []
+                }),
+              )}
+              mode={mode}
+              errors={errors}
+              isSaved={isGroupSaved(index)}
+              isSaving={savingIndex === index}
+              isRemoving={removingIndex === index}
+              isWriting={isWriting}
+              saveFailed={saveErrorIndex === index}
+              onRemove={() => void handleRemoveGroup(index)}
+              onRemoveMember={(ordinal) => handleRemoveMember(index, ordinal)}
+              onSave={() => handleSave(index)}
+            />
           )
         })}
       </Box>
 
+      {/* Editor-level rather than on a card: the removal carries the whole
+          plan, so the failure is the plan's rather than any one group's.
+
+          The live region is the outer Box, which stays mounted and carries no
+          margin of its own, for the same two reasons as the selection count
+          above — and assertive, because the removal the applicant asked for did
+          not happen. */}
+      <Box aria-live="assertive">
+        {removeFailed && (
+          <Box marginTop={2}>
+            <AlertMessage
+              type="error"
+              message={formatMessage(m.removeGroupError)}
+            />
+          </Box>
+        )}
+      </Box>
       {unassignedOutliers.length > 0 && (
         <Box marginTop={2}>
-          <Text variant="small" color="red600">
-            {formatMessage(m.unassignedWarning)}
-          </Text>
+          <AlertMessage
+            type="warning"
+            message={formatMessage(m.unassignedWarning)}
+          />
         </Box>
       )}
       {unassignedOutliers.length === 0 &&
         watchedGroups.some((g) => g.employeeOrdinals.length > 0) &&
         watchedGroups.some((g) => !isOutlierGroupComplete(g)) && (
           <Box marginTop={2}>
-            <Text variant="small" color="red600">
-              {formatMessage(m.incompleteGroupWarning)}
-            </Text>
+            <AlertMessage
+              type="warning"
+              message={formatMessage(m.incompleteGroupWarning)}
+            />
           </Box>
         )}
     </Box>

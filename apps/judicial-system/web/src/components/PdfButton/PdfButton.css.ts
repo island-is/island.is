@@ -36,6 +36,12 @@ export const fileNameContainerWithChildren = style({
   },
 })
 
+export const titleIcon = style({
+  display: 'inline-flex',
+  verticalAlign: 'middle',
+  marginLeft: theme.spacing[1],
+})
+
 export const fileNameContainer = style({
   flex: 1,
   minWidth: 0,

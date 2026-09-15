@@ -1,12 +1,13 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import Link from 'next/link'
 
 import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { getCaseTableGroups } from '@island.is/judicial-system/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { useCaseTableMembershipQuery } from '@island.is/judicial-system-web/src/utils/hooks/useCaseTableMembership/caseTableMembership.generated'
 
-import { useCaseTableMembershipQuery } from '../../utils/hooks/useCaseTableMembership/caseTableMembership.generated'
-import { FormContext } from '../FormProvider/FormProvider'
-import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './BreadCrumbs.css'
 
 const BreadCrumbs: FC = () => {

@@ -1,3 +1,5 @@
+import type { FormatMessage } from '@island.is/cms-translations'
+import type { MessageDescriptor } from 'react-intl'
 import {
   ContentSegmentDto,
   ContentSegmentType,
@@ -5,18 +7,23 @@ import {
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
   MessageType,
+  MessagingDayType,
   MessagingRecipientDto,
+  OpeningHoursWindowDto,
   RecipientCreateBlockedReason,
   VideoConversationDto,
 } from '@island.is/clients/health-directorate'
 import {
+  HealthConversationDayTypeEnum,
   HealthConversationDirectionEnum,
   HealthConversationRecipientBlockedReasonEnum,
   HealthConversationReplyBlockedReasonEnum,
   HealthConversationSegmentTypeEnum,
   HealthConversationStatusFilterEnum,
 } from '../models/enums'
+import { m } from '../messages'
 import { HealthDirectorateHealthConversationMessageContent } from '../models/healthConversationMessageContent.model'
+import { HealthDirectorateHealthConversationOpeningWindow } from '../models/healthConversationOpeningHours.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 import { HealthDirectorateHealthConversationSegment } from '../models/healthConversationSegment.model'
 import { HealthDirectorateHealthConversationType } from '../models/healthConversationType.model'
@@ -50,21 +57,6 @@ export const toConversationSegmentTypeEnum = (
   }
 }
 
-/**
- * The health service API currently returns a local ISO datetime with
- * no timezone offset. This will be fixed and typed in following verions
- * of the API, but for now we have to parse the date to UTC manually.
- * Once it´s been changed, we can remove this.
- */
-const parseUtcDate = (value?: string): Date | undefined => {
-  if (!value) {
-    return undefined
-  }
-  const hasZone = /(Z|[+-]\d{2}:?\d{2})$/.test(value)
-  const date = new Date(hasZone ? value : `${value}Z`)
-  return isNaN(date.getTime()) ? undefined : date
-}
-
 export const mapConversationSegments = (
   segments?: Array<ContentSegmentDto>,
 ): HealthDirectorateHealthConversationSegment[] | undefined =>
@@ -82,7 +74,7 @@ export const mapConversationVideo = (
     ? {
         url: video.url,
         description: video.description,
-        appointmentDate: parseUtcDate(video.appointmentDate),
+        appointmentDate: video.appointmentDate,
         appointmentHostName: video.appointmentHostName,
         isCanceled: video.isCanceled,
         isEdited: video.isEdited,
@@ -132,12 +124,16 @@ export const toConversationReplyBlockedReasonEnum = (
       return HealthConversationReplyBlockedReasonEnum.NO_REPLY_GROUP
     case ConversationReplyBlockedReason.MESSAGING_NOT_ALLOWED:
       return HealthConversationReplyBlockedReasonEnum.MESSAGING_NOT_ALLOWED
+    case ConversationReplyBlockedReason.PATIENT_REPLY_NOT_ALLOWED:
+      return HealthConversationReplyBlockedReasonEnum.PATIENT_REPLY_NOT_ALLOWED
     case ConversationReplyBlockedReason.OUTSIDE_MESSAGING_WINDOW:
       return HealthConversationReplyBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
     case ConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED:
       return HealthConversationReplyBlockedReasonEnum.REPLY_WINDOW_EXPIRED
     case ConversationReplyBlockedReason.AWAITING_STAFF_REPLY:
       return HealthConversationReplyBlockedReasonEnum.AWAITING_STAFF_REPLY
+    case ConversationReplyBlockedReason.AWAITING_ACKNOWLEDGEMENT:
+      return HealthConversationReplyBlockedReasonEnum.AWAITING_ACKNOWLEDGEMENT
     default:
       return undefined
   }
@@ -149,6 +145,8 @@ export const toConversationRecipientBlockedReasonEnum = (
   switch (reason) {
     case RecipientCreateBlockedReason.MESSAGING_NOT_ALLOWED:
       return HealthConversationRecipientBlockedReasonEnum.MESSAGING_NOT_ALLOWED
+    case RecipientCreateBlockedReason.PATIENT_INITIATED_NOT_ALLOWED:
+      return HealthConversationRecipientBlockedReasonEnum.PATIENT_INITIATED_NOT_ALLOWED
     case RecipientCreateBlockedReason.OUTSIDE_MESSAGING_WINDOW:
       return HealthConversationRecipientBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
     case RecipientCreateBlockedReason.NO_ALLOWED_TYPES:
@@ -158,24 +156,111 @@ export const toConversationRecipientBlockedReasonEnum = (
   }
 }
 
+const toConversationDayTypeEnum = (
+  dayType: MessagingDayType,
+): HealthConversationDayTypeEnum => {
+  switch (dayType) {
+    case MessagingDayType.WEEKEND:
+      return HealthConversationDayTypeEnum.WEEKEND
+    case MessagingDayType.HOLIDAY:
+      return HealthConversationDayTypeEnum.HOLIDAY
+    default:
+      return HealthConversationDayTypeEnum.WEEKDAY
+  }
+}
+
+const mapOpeningWindow = (
+  window?: OpeningHoursWindowDto,
+): HealthDirectorateHealthConversationOpeningWindow | undefined =>
+  window
+    ? { windowOpen: window.windowOpen, windowClose: window.windowClose }
+    : undefined
+
+/* 
+  The Heilsuvera web chat is not a Hekla conversation type, it's appended
+  manually to every recipient's service list so both web and app render it
+  from the same source, as an external link at the bottom of the dropdown.
+*/
+export const WEB_CHAT_TYPE_CODE = 'HEILSUVERA_WEB_CHAT'
+// Must match the hours stated in the translated web chat description strings.
+const WEB_CHAT_OPENS_MINUTES = 8 * 60 // 08:00
+const WEB_CHAT_CLOSES_MINUTES = 15 * 60 + 30 // 15:30
+
+const isWebChatOpen = (now: Date): boolean => {
+  const day = now.getUTCDay()
+  const minutes = now.getUTCHours() * 60 + now.getUTCMinutes()
+  const isWeekday = day >= 1 && day <= 5
+  return (
+    isWeekday &&
+    minutes >= WEB_CHAT_OPENS_MINUTES &&
+    minutes < WEB_CHAT_CLOSES_MINUTES
+  )
+}
+
+export const getWebChatConversationType = (
+  formatMessage: FormatMessage,
+  now: Date = new Date(),
+): HealthDirectorateHealthConversationType => {
+  const isCurrentlyOpen = isWebChatOpen(now)
+
+  return {
+    patientInitiatedTypeCode: WEB_CHAT_TYPE_CODE,
+    title: formatMessage(m.webChatTitle),
+    description: formatMessage(m.webChatDescription, {
+      status: formatMessage(
+        isCurrentlyOpen ? m.webChatStatusOpen : m.webChatStatusClosed,
+      ),
+    }),
+    isCertificate: false,
+    externalLinkUrl: formatMessage(m.webChatUrl),
+    isCurrentlyOpen,
+  }
+}
+
+const TYPE_INSTRUCTIONS: Record<string, MessageDescriptor> = {
+  MEDICATION_INQUIRY: m.instructionsMedication,
+  CERTIFICATE: m.instructionsCertificate,
+  REFERRAL_REQUEST: m.instructionsReferral,
+}
+
 export const mapMessagingRecipient = (
   r: MessagingRecipientDto,
+  formatMessage: FormatMessage,
 ): HealthDirectorateHealthConversationRecipient => ({
   nodeId: r.nodeId,
   groupId: r.groupId,
+  treatmentId: r.treatmentId,
   name: r.name,
   allowsMessaging: r.allowsMessaging,
   messagingWindowOpen: r.messagingWindowOpen,
   messagingWindowClose: r.messagingWindowClose,
   isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
+  isClosedToday: r.isClosedToday,
+  dayType: toConversationDayTypeEnum(r.dayType),
+  nextOpensAt: r.nextOpensAt
+    ? {
+        date: new Date(r.nextOpensAt.date),
+        windowOpen: r.nextOpensAt.windowOpen,
+        windowClose: r.nextOpensAt.windowClose,
+      }
+    : undefined,
+  openingHours: {
+    weekday: mapOpeningWindow(r.openingHours.weekday),
+    weekend: mapOpeningWindow(r.openingHours.weekend),
+    holiday: mapOpeningWindow(r.openingHours.holiday),
+  },
   patientReplyWindowDays: r.patientReplyWindowDays,
   allowedMessageTypes: r.allowedConversationTypes.map(
-    (t): HealthDirectorateHealthConversationType => ({
-      patientInitiatedTypeCode: t.patientInitiatedTypeCode,
-      title: t.title,
-      description: t.description,
-      isCertificate: t.isCertificate,
-    }),
+    (t): HealthDirectorateHealthConversationType => {
+      const instructions = TYPE_INSTRUCTIONS[t.patientInitiatedTypeCode]
+      return {
+        patientInitiatedTypeCode: t.patientInitiatedTypeCode,
+        title: t.title,
+        description: t.description,
+        instructions: instructions ? formatMessage(instructions) : undefined,
+        isCertificate: t.isCertificate,
+      }
+    },
   ),
   canCreateConversation: r.canCreateConversation,
   conversationBlockedReason: toConversationRecipientBlockedReasonEnum(

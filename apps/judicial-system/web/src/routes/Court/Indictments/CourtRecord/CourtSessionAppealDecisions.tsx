@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
 
 import {
   AlertMessage,
@@ -13,11 +13,13 @@ import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  Case,
+  CourtSessionResponse,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
-  CourtSessionResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rulingOrderAppealCase } from '@island.is/judicial-system-web/src/utils/utils'

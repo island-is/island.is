@@ -4,6 +4,7 @@ import {
   QuestionnaireQuestion,
 } from '@island.is/api/schema'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
+import * as styles from './QuestionsTypes/QuestionTypes.css'
 import { FC } from 'react'
 import HtmlParser from 'react-html-parser'
 import { useIsMobile } from '@island.is/portals/core'
@@ -344,6 +345,12 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             ' - ' +
             question.answerOptions.max +
             ' '}
+        {question.required && (
+          <span aria-hidden="true" className={styles.isRequiredStar}>
+            {' '}
+            *
+          </span>
+        )}
       </Text>
       {question.sublabel && (
         <Text variant="medium" color="dark400" marginBottom={3}>

@@ -1,12 +1,14 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen, waitFor } from '@testing-library/react'
 
+import type {
+  Case,
+  CaseFile,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  Case,
   CaseDecision,
-  CaseFile,
   CaseFileCategory,
   CaseState,
   CaseType,

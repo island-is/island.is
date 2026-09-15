@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, useContext, useState } from 'react'
+import type { ChangeEvent, FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -17,18 +18,20 @@ import {
   InputAdvocate,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
+import type {
   Defendant,
-  DefenderChoice,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  DefenderChoice,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Advocates.strings'
 
-interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+type UpdateDefendant = Omit<UpdateDefendantInput, 'caseId'>
 
 interface Props {
   defendant: Defendant
@@ -146,7 +149,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
 
   return (
     <Box component="section">
-      <BlueBox className={grid({ gap: 2 })}>
+      <BlueBox className={stack({ gap: 2 })}>
         <Box display="flex" justifyContent="spaceBetween">
           <Text variant="h4">
             {`${capitalize(

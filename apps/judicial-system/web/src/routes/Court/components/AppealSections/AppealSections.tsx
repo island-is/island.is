@@ -1,4 +1,5 @@
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -14,14 +15,14 @@ import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   caseLevelAppealDecision,
   withCaseLevelAppealDecision,
@@ -176,7 +177,7 @@ const AppealSections: FC<Props> = ({
           />
         </Box>
       )}
-      <div className={grid({ gap: 3 })}>
+      <div className={stack({ gap: 3 })}>
         {workingCase.defendants && workingCase.defendants.length > 0 && (
           <BlueBox>
             <SectionHeading

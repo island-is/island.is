@@ -1,6 +1,6 @@
 import { Box, Input } from '@island.is/island-ui/core'
 import React from 'react'
-import { useIsMobile } from '../../..'
+import * as styles from './QuestionTypes.css'
 
 export interface TextInputProps {
   id: string
@@ -37,13 +37,12 @@ export const TextInput: React.FC<TextInputProps> = ({
   max,
   backgroundColor = 'blue',
 }) => {
-  const isMobile = useIsMobile()
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     let newValue = e.target.value
 
-    if (type === 'number') {
+    if (type === 'number' || type === 'decimal') {
       if (newValue === '') {
         onChange(newValue)
         return
@@ -66,7 +65,7 @@ export const TextInput: React.FC<TextInputProps> = ({
     onChange(newValue)
   }
   const handleBlur = () => {
-    if (type === 'number' && value) {
+    if ((type === 'number' || type === 'decimal') && value) {
       const numValue = parseFloat(value)
       if (!isNaN(numValue)) {
         if (min !== undefined && numValue < parseFloat(min)) {
@@ -80,12 +79,9 @@ export const TextInput: React.FC<TextInputProps> = ({
 
   return (
     <Box
-      width={
-        isMobile
-          ? 'full'
-          : type === 'number' || type === 'decimal'
-          ? 'half'
-          : 'full'
+      width="full"
+      className={
+        type === 'number' || type === 'decimal' ? styles.numberInput : undefined
       }
     >
       <Input
@@ -107,7 +103,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         max={max}
         textarea={multiline}
         rows={multiline ? rows : undefined}
-        type={type === 'decimal' ? 'number' : type}
+        type="text"
         inputMode={
           type === 'decimal'
             ? 'decimal'

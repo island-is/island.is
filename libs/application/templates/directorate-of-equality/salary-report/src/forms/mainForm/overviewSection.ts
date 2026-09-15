@@ -7,7 +7,10 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
-import { PERIOD_ONE_MONTH } from '../../utils/constants'
+import { PERIOD_ONE_MONTH, ScreenIds } from '../../utils/constants'
+import { salaryAnalysisOutlierPlanIsReviewed } from '../../utils/salaryAnalysisNavigation'
+import { buildAnalysisSummaryOverviewField } from '../analysisSummaryOverview'
+import { buildOutlierPlanOverviewField } from '../outlierPlanOverview'
 
 const MONTH_LABELS = [
   messages.aboutTheCompany.period.january,
@@ -24,10 +27,9 @@ const MONTH_LABELS = [
   messages.aboutTheCompany.period.december,
 ]
 
-// Shared with the POSTPONED-state report recap (postponedReportSummarySection)
-// — that screen shows the same submitted-report fields read-only, with no
-// backId, since it has no editable company/contact screens of its own to
-// jump back to.
+// Shared with the POSTPONED-state review screen (postponedReviewSection) —
+// that screen shows the same submitted-report fields read-only, with no backId,
+// since it has no editable company/contact screens of its own to jump back to.
 export const buildReportOverviewFields = (withBackLinks: boolean) => [
   buildOverviewField({
     id: 'overview.companyInfo',
@@ -137,6 +139,12 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
       },
       {
         width: 'half',
+        keyText: messages.aboutTheCompany.contactPerson.jobTitle,
+        valueText:
+          getValueViaPath<string>(answers, 'contactPerson.jobTitle') ?? '',
+      },
+      {
+        width: 'half',
         keyText: messages.aboutTheCompany.contactPerson.email,
         valueText:
           getValueViaPath<string>(answers, 'contactPerson.email') ?? '',
@@ -150,29 +158,42 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
     ],
   }),
   buildOverviewField({
-    id: 'overview.employeeCount',
-    title: messages.overview.employeeCount,
+    id: 'overview.subsidiaries',
+    title: messages.overview.subsidiaries,
     titleVariant: 'h3',
-    ...(withBackLinks ? { backId: 'employeeCountMultiField' } : {}),
-    items: (answers) => [
-      {
-        width: 'half',
-        keyText: messages.aboutTheCompany.employeeCount.women,
-        valueText:
-          getValueViaPath<string>(answers, 'employeeCount.women') ?? '',
-      },
-      {
-        width: 'half',
-        keyText: messages.aboutTheCompany.employeeCount.men,
-        valueText: getValueViaPath<string>(answers, 'employeeCount.men') ?? '',
-      },
-      {
-        width: 'half',
-        keyText: messages.aboutTheCompany.employeeCount.nonBinary,
-        valueText:
-          getValueViaPath<string>(answers, 'employeeCount.nonBinary') ?? '',
-      },
-    ],
+    ...(withBackLinks ? { backId: 'subsidiariesMultiField' } : {}),
+    items: (answers) => {
+      const hasSubsidiaries =
+        getValueViaPath<string>(
+          answers,
+          'subsidiaries.includesSubsidiaries',
+        ) === 'yes'
+      const subsidiaryList = hasSubsidiaries
+        ? getValueViaPath<
+            Array<{
+              nationalIdWithName?: { name?: string; nationalId?: string }
+              isRemoved?: boolean
+            }>
+          >(answers, 'subsidiaries.list') ?? []
+        : []
+
+      return [
+        {
+          width: 'full' as const,
+          keyText: messages.overview.hasSubsidiaries,
+          valueText: hasSubsidiaries
+            ? messages.overview.yesSubsidiaries
+            : messages.overview.noSubsidiaries,
+        },
+        ...subsidiaryList
+          .filter((s) => !s.isRemoved)
+          .map((s) => ({
+            width: 'half' as const,
+            keyText: s.nationalIdWithName?.name ?? '',
+            valueText: s.nationalIdWithName?.nationalId ?? '',
+          })),
+      ]
+    },
   }),
   buildOverviewField({
     id: 'overview.period',
@@ -207,8 +228,7 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
   }),
 ]
 
-// Basic overview — mirrors the equality report. Company / contact blocks for
-// now; the report + salary-analysis summary will be added later.
+// Basic overview — mirrors the equality report.
 export const overviewSection = buildSection({
   id: 'overview',
   title: messages.overview.sectionTitle,
@@ -219,6 +239,16 @@ export const overviewSection = buildSection({
       description: messages.overview.intro,
       children: [
         ...buildReportOverviewFields(true),
+        buildAnalysisSummaryOverviewField({
+          id: 'overview.salaryAnalysis',
+          backId: ScreenIds.analysisOverview,
+          showPostponeChoice: true,
+        }),
+        buildOutlierPlanOverviewField({
+          id: 'overview.outlierPlan',
+          title: messages.overview.outlierPlanTitle,
+          backId: ScreenIds.improvementPlan,
+        }),
         buildSubmitField({
           id: 'submit',
           title: messages.overview.submitButton,
@@ -228,6 +258,7 @@ export const overviewSection = buildSection({
               event: DefaultEvents.SUBMIT,
               name: messages.overview.submitButton,
               type: 'primary',
+              condition: salaryAnalysisOutlierPlanIsReviewed,
             },
           ],
         }),

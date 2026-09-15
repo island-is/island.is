@@ -74,6 +74,7 @@ import {
   ApplicationJsonValueDto,
 } from '../applications/models/dto/application.json.dto'
 import { FormDelegationDto } from './models/dto/formDelegation.dto'
+import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
 
 const MAX_COPY_SLUG_RETRIES = 5
 
@@ -155,6 +156,7 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'isInaccessible',
+      'validateEligibility',
       'hasSummaryScreen',
       'sectionInfo',
       'lastModifiedBy',
@@ -337,8 +339,13 @@ export class FormsService {
 
     const originalHasPayment = form.hasPayment
     const originalHasSummary = form.hasSummaryScreen
+    const originalUseValidate = form.useValidate
 
     Object.assign(form, updateFormDto)
+
+    if (form.useValidate === false) {
+      form.validateEligibility = false
+    }
 
     if (originalHasPayment !== form.hasPayment) {
       if (originalHasPayment) {
@@ -359,7 +366,37 @@ export class FormsService {
     const response = new UpdateFormResponse()
 
     try {
-      await form.save()
+      await this.sequelize.transaction(async (transaction) => {
+        await form.save({ transaction })
+
+        if (
+          originalUseValidate === true &&
+          updateFormDto.useValidate === false
+        ) {
+          const sections = await this.sectionModel.findAll({
+            attributes: ['id'],
+            where: { formId: id },
+            transaction,
+          })
+
+          await this.screenModel.update(
+            { shouldValidate: false },
+            {
+              where: {
+                sectionId: { [Op.in]: sections.map((section) => section.id) },
+              },
+              transaction,
+            },
+          )
+          await this.formModel.update(
+            { validateEligibility: false },
+            {
+              where: { id },
+              transaction,
+            },
+          )
+        }
+      })
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
         const slug = updateFormDto.slug
@@ -623,11 +660,16 @@ export class FormsService {
     )
     const zendeskBrandId = form.zendeskBrandId?.trim()
     const zendeskInstance = organization?.zendeskInstance?.trim()
+    const supportedZendeskInstance = normalizeZendeskInstance(zendeskInstance)
 
     if (!zendeskBrandId || !zendeskInstance) {
       throw new BadRequestException(
         'Zendesk instance and brand ID must be configured before publishing a Zendesk form.',
       )
+    }
+
+    if (!supportedZendeskInstance) {
+      throw new BadRequestException('Unsupported Zendesk tenant')
     }
   }
 
@@ -1102,6 +1144,7 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'isInaccessible',
+      'validateEligibility',
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',

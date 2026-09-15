@@ -144,7 +144,7 @@ const CaseFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section">
           <SectionHeading
             title={formatMessage(strings.caseFiles.otherDocumentsSection)}
             heading="h2"

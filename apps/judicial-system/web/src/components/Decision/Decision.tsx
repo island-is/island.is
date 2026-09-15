@@ -1,15 +1,15 @@
-import { FC, useState } from 'react'
+import type { FC } from 'react'
+import { useState } from 'react'
 
 import { RadioButton } from '@island.is/island-ui/core'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import RadioGroup from '../RadioGroup/RadioGroup'
-import { BlueBox } from '..'
-import { grid } from '../../utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 interface Props {
   workingCase: Case
@@ -36,7 +36,7 @@ const Decision: FC<Props> = ({
 
   return (
     <BlueBox>
-      <RadioGroup legend="Lyktir máls" hideLegend className={grid({ gap: 2 })}>
+      <RadioGroup legend="Lyktir máls" hideLegend className={stack({ gap: 2 })}>
         <RadioButton
           name="case-decision"
           id="case-decision-accepting"

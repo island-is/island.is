@@ -17,8 +17,10 @@ import {
   formatGender,
   formatNationalId,
   formatPhoneNumber,
+  formatRulingOrderPronouncedOrallyName,
   indictmentSubtypes,
   normalizeAndFormatNationalId,
+  normalizePersonAddress,
   readableIndictmentSubtypes,
   sanitize,
   splitStringByComma,
@@ -246,6 +248,40 @@ describe('normalizeAndFormatNationalId', () => {
   })
 })
 
+describe('normalizePersonAddress', () => {
+  test('should replace Ótilgreindu with ótilgreindu lögheimili', () => {
+    expect(normalizePersonAddress('Ótilgreindu')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+  })
+
+  test('should replace trimmed Ótilgreindu', () => {
+    expect(normalizePersonAddress('  Ótilgreindu  ')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+  })
+
+  test('should replace regardless of casing', () => {
+    expect(normalizePersonAddress('ótilgreindu')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+    expect(normalizePersonAddress('ÓTILGREINDU')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+  })
+
+  test('should leave other addresses unchanged', () => {
+    expect(normalizePersonAddress('Aðalgata 1, 101 Reykjavík')).toEqual(
+      'Aðalgata 1, 101 Reykjavík',
+    )
+  })
+
+  test('should leave null and undefined unchanged', () => {
+    expect(normalizePersonAddress(null)).toBeNull()
+    expect(normalizePersonAddress(undefined)).toBeUndefined()
+  })
+})
+
 describe('formatDOB', () => {
   it('should format a national id string for a valid national id', () => {
     // Arrange
@@ -466,5 +502,27 @@ describe('applyDativeCaseToCourtName', () => {
 
     // Assert
     expect(result).toBe(courtName)
+  })
+})
+
+// Shared so the court record previews the name the backend will store, rather
+// than one name before pronouncing and another after.
+describe('formatRulingOrderPronouncedOrallyName', () => {
+  test('should name the ruling after the case and the date it was pronounced', () => {
+    expect(
+      formatRulingOrderPronouncedOrallyName(
+        'S-123/2026',
+        new Date('2026-11-12T10:00:00Z'),
+      ),
+    ).toBe('S-123/2026 Úrskurður 12.11.2026')
+  })
+
+  test('should tolerate a case with no court case number', () => {
+    expect(
+      formatRulingOrderPronouncedOrallyName(
+        undefined,
+        new Date('2026-11-12T10:00:00Z'),
+      ),
+    ).toBe('Úrskurður 12.11.2026')
   })
 })
