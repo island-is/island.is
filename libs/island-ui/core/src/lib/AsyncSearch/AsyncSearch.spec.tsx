@@ -40,6 +40,47 @@ describe('AsyncSearch', () => {
     }
   })
 
+  it('should not render a clear button without onClear', () => {
+    const { queryByRole } = render(
+      <AsyncSearch filter options={items} inputValue="ap" />,
+    )
+
+    expect(queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument()
+  })
+
+  it('should only render the clear button once the input has a value', () => {
+    const onClear = jest.fn()
+    const { queryByRole, rerender } = render(
+      <AsyncSearch filter options={items} inputValue="" onClear={onClear} />,
+    )
+
+    expect(queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument()
+
+    rerender(
+      <AsyncSearch filter options={items} inputValue="ap" onClear={onClear} />,
+    )
+
+    const clearButton = queryByRole('button', { name: 'Clear' })
+    expect(clearButton).toBeInTheDocument()
+
+    if (clearButton !== null) fireEvent.click(clearButton)
+    expect(onClear).toHaveBeenCalledTimes(1)
+  })
+
+  it('should use a custom clear button aria label', () => {
+    const { getByRole } = render(
+      <AsyncSearch
+        filter
+        options={items}
+        inputValue="ap"
+        onClear={jest.fn()}
+        clearButtonAriaLabel="Hreinsa"
+      />,
+    )
+
+    expect(getByRole('button', { name: 'Hreinsa' })).toBeInTheDocument()
+  })
+
   it('should show 4 items', () => {
     const { baseElement } = render(<AsyncSearch filter options={items} />)
 

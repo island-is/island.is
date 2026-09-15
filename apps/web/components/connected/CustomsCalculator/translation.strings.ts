@@ -71,6 +71,11 @@ export const translation = defineMessages({
     defaultMessage: 'Skráið heildarmagn í lítrum',
     description: 'Description for the liters input',
   },
+  clearProductSearchInput: {
+    id: 'web.customsCalculator:clearProductSearchInput',
+    defaultMessage: 'Hreinsa vöruleit',
+    description: 'Aria label for the product search input clear button',
+  },
   productSearchInputPlaceholder: {
     id: 'web.customsCalculator:productSearchInputPlaceholder',
     defaultMessage: 'Leitaðu eftir vöruheiti',
