@@ -568,6 +568,10 @@ export class PoliceService {
     policeDigitalFileId: string,
     user: User,
     source: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<string> {
     const startTime = nowFactory()
     const query = new URLSearchParams({
@@ -625,6 +629,8 @@ export class PoliceService {
           rafraennGagnId: policeDigitalFileId,
           actor: user.name,
           institution: user.institution?.name,
+          courtCaseNumber: caseNumbers?.courtCaseNumber ?? '',
+          policeCaseNumbers: caseNumbers?.policeCaseNumbers?.join(', ') ?? '',
           startTime,
           endTime: nowFactory(),
           source,

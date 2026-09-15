@@ -253,6 +253,10 @@ export class PoliceDigitalCaseFileService {
     caseId: string,
     user: User,
     policeDigitalFileId: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<string> {
     return this.policeService.getTokenUrl(
       caseId,
@@ -260,6 +264,7 @@ export class PoliceDigitalCaseFileService {
       policeDigitalFileId,
       user,
       'getPoliceDigitalCaseFileTokenUrl',
+      caseNumbers,
     )
   }
 
