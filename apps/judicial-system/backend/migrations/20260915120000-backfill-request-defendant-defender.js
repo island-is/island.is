@@ -49,5 +49,6 @@ module.exports = {
   // defender fields for request cases until later phases flip the read paths.
   // A destructive rollback risks clearing data that was set independently
   // through the per-defendant write path.
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async down() {},
 }
