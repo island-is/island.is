@@ -867,16 +867,32 @@ export const is = {
   'health.appointments.locationFloor': 'Hæð',
   'health.appointments.locationRoom': 'Herbergi',
   'health.appointments.assigneeTypeRole': 'Hlutverk',
-  'health.appointments.assigneeTypeRoom': 'Herbergi',
+  'health.appointments.assigneeTypeRoom': 'Stofa',
   'health.appointments.assigneeTypeEquipment': 'Tæki',
   'health.appointments.assigneeTypeService': 'Þjónusta',
   'health.appointments.assigneeTypeTeam': 'Teymi',
   'health.appointments.assigneeTypeOther': 'Annað',
+  'health.appointments.cancelAppointment': 'Afbóka tíma',
+  'health.appointments.cancelDeadline': 'Hægt að afbóka til {date} kl. {time}',
+  'health.appointments.cancelNotPossible':
+    'Ekki hægt að afbóka rafrænt. Hringdu í þjónustuveitanda til að afbóka eða færa tímann.',
+  'health.appointments.cancelPromptTitle':
+    'Ertu viss um að þú viljir afbóka tímann?',
+  'health.appointments.cancelPromptMessage':
+    'Þú ert að fara afbóka tíma sem þú átt pantaðan.',
+  'health.appointments.cancelPromptConfirm': 'Staðfesta',
+  'health.appointments.cancelPromptCancel': 'Hætta við',
+  'health.appointments.cancelSuccessTitle': 'Tími hefur verið afbókaður',
+  'health.appointments.cancelErrorTitle': 'Ekki tókst að afbóka tímann',
+  'health.appointments.cancelErrorMessage':
+    'Ekki tókst að framkvæma aðgerð, reyndu aftur.',
 
   // health - messages
   'health.messages.screenTitle': 'Skilaboð',
   'health.messages.errorMessage':
     'Ekki tókst að sækja skilaboð. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.notFoundMessage':
+    'Skilaboðin fundust ekki. Þau kunna að hafa verið fjarlægð.',
   'health.messages.noMessagesTitle': 'Engin skilaboð',
   'health.messages.noMessagesText': 'Þegar þú færð skilaboð birtast þau hér.',
   'health.messages.searchPlaceholder': 'Leita',

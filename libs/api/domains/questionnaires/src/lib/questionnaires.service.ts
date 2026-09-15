@@ -479,13 +479,15 @@ export class QuestionnairesService {
   ): string[] {
     if ('rows' in reply) {
       return reply.rows.map((row) =>
-        row
-          .map((cell) =>
-            'answer' in cell
-              ? this.formatCellAnswer(cell.answer, formatMessage)
-              : cell.values.map((v) => v.answer).join(', '),
-          )
-          .join(' | '),
+        Array.isArray(row)
+          ? row
+              .map((cell) =>
+                'answer' in cell
+                  ? this.formatCellAnswer(cell.answer, formatMessage)
+                  : cell.values.map((v) => v.answer).join(', '),
+              )
+              .join(' | ')
+          : row.values.map((v) => v.answer).join(', '),
       )
     } else if ('values' in reply) {
       return reply.values.map((v) => v.answer)

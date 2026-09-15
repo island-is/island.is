@@ -2,6 +2,7 @@ query GetHealthTreatmentDocuments($treatmentId: ID!) {
   healthDirectorateTreatmentDocuments(treatmentId: $treatmentId) {
     id
     title
+    groupName
     sentAt
     links {
       label
