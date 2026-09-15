@@ -2429,8 +2429,7 @@ export class CaseService {
                 ? caseUpdate.defenderPhoneNumber
                 : theCase.defenderPhoneNumber,
             defenderChoice,
-            isDefenderChoiceConfirmed:
-              defenderChoice !== null ? true : null,
+            isDefenderChoiceConfirmed: defenderChoice !== null ? true : null,
           },
           transaction,
         )
