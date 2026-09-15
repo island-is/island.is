@@ -48,8 +48,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         return
       }
 
-      const allowedPattern =
-        type === 'decimal' ? /^-?\d*[.,]?\d*$/ : /^-?\d*$/
+      const allowedPattern = type === 'decimal' ? /^-?\d*[.,]?\d*$/ : /^-?\d*$/
       if (!allowedPattern.test(newValue)) {
         return
       }
