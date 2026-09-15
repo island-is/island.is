@@ -1,6 +1,7 @@
 import { buildSection } from '@island.is/application/core'
 import { tableRepeaterSubsection } from './tableRepeaterSubsection'
 import { staticTableSubsection } from './staticTableSubsection'
+import { interactiveTableSubsection } from './interactiveTableSubsection'
 import { fieldsRepeaterSubsection } from './fieldsrepeaterSubsection'
 import { paginatedSearchableTableSubsection } from './paginatedSearchableTableSubsection'
 import { accordionSubsection } from './accordionSubsection'
@@ -10,6 +11,7 @@ export const tablesAndRepeatersSection = buildSection({
   title: 'Tables and repeaters',
   children: [
     staticTableSubsection,
+    interactiveTableSubsection,
     tableRepeaterSubsection,
     fieldsRepeaterSubsection,
     paginatedSearchableTableSubsection,
