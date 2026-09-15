@@ -221,12 +221,13 @@ export class ZendeskService {
 
       if (!ticket?.id) {
         this.logger.warn('Zendesk ticket response is missing the ticket id')
+        return undefined
       }
 
       return ticket
     } catch (e) {
       const errMsg = 'Failed to submit Zendesk ticket'
-      const description = e.response.data.description
+      const description = e.response?.data?.description ?? e.message
 
       this.logger.error(errMsg, {
         message: description,

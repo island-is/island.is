@@ -532,7 +532,7 @@ export class CoursesService extends BaseTemplateApiService {
           course_start_time:
             courseInstance.startDateTimeDuration?.startTime ?? '',
           course_description: courseInstance.description ?? '',
-          course_price: priceAmount ?? null,
+          ...(priceAmount !== undefined && { course_price: priceAmount }),
           course_id: courseRecord.id,
           course: courseRecord.id,
         },
