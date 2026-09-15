@@ -11,7 +11,9 @@ import {
   IndividualDto,
 } from '@island.is/clients/national-registry-v3-applications'
 
-const buildIndividual = (overrides: Partial<IndividualDto> = {}): IndividualDto => ({
+const buildIndividual = (
+  overrides: Partial<IndividualDto> = {},
+): IndividualDto => ({
   nationalId: '1234567890',
   name: 'Jón Jónsson',
   givenName: 'Jón',
@@ -420,7 +422,10 @@ describe('NationalRegistryV3Service', () => {
       const result = await service.getParents({ auth } as any)
 
       expect(result).toEqual([
-        expect.objectContaining({ givenName: 'Anna', familyName: 'Jónsdóttir' }),
+        expect.objectContaining({
+          givenName: 'Anna',
+          familyName: 'Jónsdóttir',
+        }),
         expect.objectContaining({ givenName: 'Einar', familyName: null }),
       ])
     })
