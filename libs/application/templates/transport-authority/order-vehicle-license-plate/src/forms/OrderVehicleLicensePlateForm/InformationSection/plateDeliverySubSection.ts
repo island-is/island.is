@@ -37,15 +37,6 @@ export const plateDeliverySubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'plateDelivery.deliveryMethodIsDeliveryStation',
-          condition: (application) => {
-            const plateType =
-              getValueViaPath<string>(
-                application.answers,
-                'plateType.selectedPlateTypeName',
-              ) ?? ''
-
-            return plateType !== 'VSK - merki'
-          },
           options: (application) => {
             const plateType =
               getValueViaPath<string>(
