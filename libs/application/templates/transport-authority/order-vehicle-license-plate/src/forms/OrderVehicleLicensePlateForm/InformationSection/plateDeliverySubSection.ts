@@ -37,6 +37,15 @@ export const plateDeliverySubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'plateDelivery.deliveryMethodIsDeliveryStation',
+          condition: (formValue) => {
+            const plateType = getValueViaPath(
+              formValue,
+              'plateType.regGroup',
+              '',
+            ) as string
+
+            return plateType !== 'N5'
+          },
           options: [
             {
               value: NO,

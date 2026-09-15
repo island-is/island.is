@@ -17,12 +17,18 @@ import {
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import {
+  getErrorViaPath,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 
 interface PlateOptionType {
   plateTypeCode?: string | null
   plateTypeName?: string | null
 }
+
+const VSK_PLATE_TYPE_CODE = 'N5'
 
 export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -35,6 +41,7 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     control,
     name: 'plateType.regGroup',
   })
+  const isVskPlateType = selectedPlateType === VSK_PLATE_TYPE_CODE
 
   const vehicle = getSelectedVehicle(
     application.externalData,
@@ -96,6 +103,12 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     setFieldLoadingState?.(loading)
   }, [loading, setFieldLoadingState])
 
+  useEffect(() => {
+    if (isVskPlateType) {
+      setValue('plateDelivery.deliveryMethodIsDeliveryStation', YES)
+    }
+  }, [isVskPlateType, setValue])
+
   return (
     <Box paddingTop={2}>
       {loading ? (
@@ -147,6 +160,9 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               }))}
               onSelect={(value) => {
                 setValue('plateType.regGroup', value)
+                if (value === VSK_PLATE_TYPE_CODE) {
+                  setValue('plateDelivery.deliveryMethodIsDeliveryStation', YES)
+                }
                 setValue(
                   'plateType.selectedPlateTypeName',
                   plates.find((p) => p.plateTypeCode === value)?.plateTypeName,
@@ -161,7 +177,7 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               />
             )}
           </Box>
-          {selectedPlateType === 'N5' && (
+          {isVskPlateType && (
             <Box marginBottom={2}>
               <AlertMessage
                 type="info"
