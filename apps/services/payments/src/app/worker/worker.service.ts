@@ -13,7 +13,10 @@ import { Charge } from '@island.is/clients/charge-fjs-v2'
 import { FJS_NETWORK_ERROR } from '../../utils/fjsCharge'
 import { environment } from '../../environments'
 import { ChargeItem } from '../../utils/chargeUtils'
-import { generateBankTransferChargeFJSPayload } from '../bankTransferPayment/bankTransfer.utils'
+import {
+  bankTransferLogContext,
+  generateBankTransferChargeFJSPayload,
+} from '../bankTransferPayment/bankTransfer.utils'
 import { generateCardChargeFJSPayload } from '../cardPayment/cardPayment.utils'
 import type { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import type { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
@@ -245,8 +248,14 @@ export class WorkerService {
     // The charge is PAID — payInfo must carry the amount that actually settled, not the
     // catalog price at worker-run time (prices may have changed since settlement).
     if (catalogTotalPrice !== bankTransferPayment.amount) {
+      // Amounts not logged: identifiers only. Both are recoverable from the row and catalog.
       this.logger.warn(
-        `[${paymentFlow.id}] Catalog total (${catalogTotalPrice}) differs from settled bank transfer amount (${bankTransferPayment.amount}) — charging the settled amount`,
+        `[${paymentFlow.id}] Catalog total differs from settled bank transfer amount — charging the settled amount`,
+        bankTransferLogContext(
+          paymentFlow.id,
+          fulfillment.confirmationRefId,
+          bankTransferPayment.providerPaymentId,
+        ),
       )
     }
 
