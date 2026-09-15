@@ -31,7 +31,33 @@ import * as styles from './CustomsCalculator.css'
 interface CategoryNode {
   id: string
   label: string
+  description?: string
   children?: CategoryNode[]
+}
+
+interface CategoryDescription {
+  id: string
+  label: string
+  description: string
+}
+
+// Every node in the category tree can carry a description, not just the leaves.
+// The selected leaf only knows its ancestors' labels, so the descriptions are
+// looked up by id in the tree that the categories query already fetched.
+const collectCategoryDescriptions = (
+  categories: CategoryNode[],
+  map: Map<string, CategoryDescription>,
+) => {
+  for (const category of categories) {
+    map.set(category.id, {
+      id: category.id,
+      label: category.label,
+      description: category.description ?? '',
+    })
+    if (category.children?.length)
+      collectCategoryDescriptions(category.children, map)
+  }
+  return map
 }
 
 const findCategoryPath = (
@@ -209,6 +235,58 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       description: string
     } | null>(null)
 
+  const categoryDescriptions = useMemo(() => {
+    const topLevel =
+      productCategoriesResponse.data?.customsCalculatorProductCategories
+        ?.topLevel ?? []
+    return collectCategoryDescriptions(
+      topLevel as CategoryNode[],
+      new Map<string, CategoryDescription>(),
+    )
+  }, [
+    productCategoriesResponse.data?.customsCalculatorProductCategories
+      ?.topLevel,
+  ])
+
+  // Descriptions for the whole path down to the selected category, ordered from
+  // the top level down to the leaf. Categories without a description are left
+  // out so that only the levels that actually say something take up space.
+  // The path is resolved from the selected category itself rather than from
+  // the modal's browsing state, which can point at an entirely different
+  // branch while a category stays selected.
+  const descriptionChain = useMemo(() => {
+    if (!selectedBottomLevelCategory) return []
+
+    const topLevel =
+      productCategoriesResponse.data?.customsCalculatorProductCategories
+        ?.topLevel ?? []
+    const path =
+      findCategoryPath(
+        topLevel as CategoryNode[],
+        selectedBottomLevelCategory.id,
+      ) ?? []
+
+    const chain: CategoryDescription[] = []
+    for (const ancestor of path) {
+      const category = categoryDescriptions.get(ancestor.value)
+      if (category?.description.trim()) chain.push(category)
+    }
+
+    if (selectedBottomLevelCategory.description.trim())
+      chain.push({
+        id: selectedBottomLevelCategory.id,
+        label: selectedBottomLevelCategory.label,
+        description: selectedBottomLevelCategory.description,
+      })
+
+    return chain
+  }, [
+    categoryDescriptions,
+    productCategoriesResponse.data?.customsCalculatorProductCategories
+      ?.topLevel,
+    selectedBottomLevelCategory,
+  ])
+
   const unitsResponse = useQuery(GET_CUSTOMS_CALCULATOR_UNITS, {
     variables: { tariffNumber: selectedBottomLevelCategory?.tariffNumber },
     skip: !selectedBottomLevelCategory?.tariffNumber,
@@ -272,6 +350,14 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         </Text>
 
         <AsyncSearch
+          onClear={() => {
+            setInputState((prev) => ({ ...prev, searchInput: '' }))
+            setSelectedBottomLevelCategory(null)
+            setSelectedCategory({ current: null, breadcrumbs: [] })
+          }}
+          clearButtonAriaLabel={formatMessage(
+            translationStrings.clearProductSearchInput,
+          )}
           options={searchOptions}
           filter={(option) =>
             option.label
@@ -328,16 +414,32 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
             }
           }}
         />
-        <Box paddingX={1}>
-          <Text variant="small">
-            <span
-              className={styles.description}
-              dangerouslySetInnerHTML={{
-                __html: selectedBottomLevelCategory?.description ?? '',
-              }}
-            />
-          </Text>
-        </Box>
+        {descriptionChain.length > 0 && (
+          <Box paddingX={1}>
+            <Stack space={2}>
+              {descriptionChain.map((category) => (
+                <Stack key={category.id} space={1}>
+                  {/* A lone description belonging to the selected category
+                      needs no heading, the search input already names it. */}
+                  {(descriptionChain.length > 1 ||
+                    category.id !== selectedBottomLevelCategory?.id) && (
+                    <Text variant="small" fontWeight="semiBold">
+                      {category.label}
+                    </Text>
+                  )}
+                  <Text variant="small">
+                    <span
+                      className={styles.description}
+                      dangerouslySetInnerHTML={{
+                        __html: category.description,
+                      }}
+                    />
+                  </Text>
+                </Stack>
+              ))}
+            </Stack>
+          </Box>
+        )}
       </Stack>
 
       <CategoryModal
