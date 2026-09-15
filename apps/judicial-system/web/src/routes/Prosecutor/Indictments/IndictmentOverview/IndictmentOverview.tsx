@@ -7,6 +7,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   isCompletedCase,
   isProsecutionUser,
   isRulingOrDismissalCase,
@@ -32,6 +33,8 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import ReviewerVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/ReviewerVerdictTimelineCard'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
@@ -63,6 +66,7 @@ const IndictmentOverview: FC = () => {
     useContext(FormContext)
 
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
   const router = useRouter()
 
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
@@ -75,8 +79,24 @@ const IndictmentOverview: FC = () => {
   const isFine =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
+  const isRuling =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
   const indictmentAppealDeadlineIsInThePast =
     workingCase.indictmentVerdictAppealDeadlineExpired ?? false
+
+  // With verdict appeals on, the reviewer's decision is the appeal: confirming
+  // it files one for every defendant it was made for. Off, the decision is
+  // saved and nothing else happens, exactly as before. Only a ruling can be
+  // appealed this way - a fine is a ruling order appeal, and its own ticket.
+  const registersVerdictAppeal =
+    isRuling && features.includes(Feature.INDICTMENT_APPEAL)
+
+  // Once the court of appeals has received the appeal, the decision that made
+  // it is no longer the reviewer's to change. The backend refuses it too; this
+  // keeps the page from offering what would be refused.
+  const isReviewDecisionLocked =
+    workingCase.verdictAppealCase?.appealState === AppealCaseState.RECEIVED
 
   // Defendants whose indictment was cancelled or dismissed (completed for some)
   // do not receive a verdict, so no review decision is required for them.
@@ -210,6 +230,22 @@ const IndictmentOverview: FC = () => {
                   />
                 </Box>
               )}
+            {shouldDisplayReviewDecision &&
+              isRuling &&
+              defendantsRequiringReview && (
+                <div className={stack({ gap: 2 })}>
+                  {defendantsRequiringReview.map((defendant) => (
+                    <ReviewerVerdictTimelineCard
+                      key={`${defendant.id}_verdict_timeline`}
+                      defendant={defendant}
+                      verdictAppealCase={workingCase.verdictAppealCase}
+                      indictmentAppealDeadline={
+                        workingCase.indictmentAppealDeadline
+                      }
+                    />
+                  ))}
+                </div>
+              )}
             <Box component="section">
               {caseIsClosed ? (
                 <InfoCardClosedIndictment
@@ -277,10 +313,8 @@ const IndictmentOverview: FC = () => {
                         <ReviewDecision
                           caseId={workingCase.id}
                           defendant={defendant}
-                          isFine={
-                            workingCase.indictmentRulingDecision ===
-                            CaseIndictmentRulingDecision.FINE
-                          }
+                          isFine={isFine}
+                          disabled={isReviewDecisionLocked}
                         />
                       </BlueBox>
                     ))}
@@ -294,7 +328,8 @@ const IndictmentOverview: FC = () => {
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
             actions={
-              !shouldDisplayReviewDecision && !canDuplicateIndictment
+              !canDuplicateIndictment &&
+              (!shouldDisplayReviewDecision || isReviewDecisionLocked)
                 ? []
                 : [
                     {
@@ -324,6 +359,11 @@ const IndictmentOverview: FC = () => {
           <ReviewDecisionModal
             caseId={workingCase.id}
             changedDefendants={changedReviewDecisions}
+            originalDecisions={originalReviewDecisions}
+            isFine={isFine}
+            indictmentAppealDeadline={workingCase.indictmentAppealDeadline}
+            verdictAppealCaseId={workingCase.verdictAppealCase?.id}
+            registersVerdictAppeal={registersVerdictAppeal}
             onClose={() => setModalVisible(undefined)}
             // A saved decision is the new original: it no longer counts as
             // changed, so a retry after a partial failure sends only the rest.

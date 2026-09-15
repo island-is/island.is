@@ -18,6 +18,7 @@ import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/
 import type { CreateAppealCaseMutation } from './createAppealCase.generated'
 import { useCreateAppealCaseMutation } from './createAppealCase.generated'
 import { useCreateAppealEventLogMutation } from './createAppealEventLog.generated'
+import { useCreateProsecutionVerdictAppealMutation } from './createProsecutionVerdictAppeal.generated'
 import type { LimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
 import { useLimitedAccessCreateAppealCaseMutation } from './limitedAccessCreateAppealCase.generated'
 import { useLimitedAccessCreateAppealEventLogMutation } from './limitedAccessCreateAppealEventLog.generated'
@@ -58,6 +59,10 @@ const useAppealCase = () => {
     registerVerdictAppealMutation,
     { loading: isRegisteringVerdictAppeal },
   ] = useRegisterVerdictAppealMutation()
+  const [
+    createProsecutionVerdictAppealMutation,
+    { loading: isCreatingProsecutionVerdictAppeal },
+  ] = useCreateProsecutionVerdictAppealMutation()
   const [transitionAppealCaseMutation, { loading: isTransitioningAppealCase }] =
     useTransitionAppealCaseMutation()
   const [
@@ -190,6 +195,35 @@ const useAppealCase = () => {
     [registerVerdictAppealMutation, formatMessage],
   )
 
+  // The public prosecution reviewer appeals a verdict for one defendant by
+  // deciding to, so there is no date to record and no defender to name: the
+  // appeal is filed the moment the decision is confirmed.
+  const createProsecutionVerdictAppeal = useMemo(
+    () =>
+      async (
+        caseId: string,
+        defendantId: string,
+      ): Promise<AppealCase | undefined> => {
+        try {
+          const { data } = await createProsecutionVerdictAppealMutation({
+            variables: {
+              input: {
+                caseId,
+                defendantId,
+                appealType: AppealCaseType.VERDICT,
+              },
+            },
+          })
+
+          return data?.createAppealCase ?? undefined
+        } catch {
+          toast.error(formatMessage(errors.transitionCase))
+          return undefined
+        }
+      },
+    [createProsecutionVerdictAppealMutation, formatMessage],
+  )
+
   const transitionAppealCase = useMemo(
     () =>
       async (
@@ -310,11 +344,13 @@ const useAppealCase = () => {
     createAppealCase,
     createVerdictAppeal,
     registerVerdictAppeal,
+    createProsecutionVerdictAppeal,
     isCreatingAppealCase:
       isCreatingAppealCase ||
       isLimitedAccessCreatingAppealCase ||
       isCreatingVerdictAppeal ||
-      isRegisteringVerdictAppeal,
+      isRegisteringVerdictAppeal ||
+      isCreatingProsecutionVerdictAppeal,
     transitionAppealCase,
     isTransitioningAppealCase:
       isTransitioningAppealCase || isLimitedAccessTransitioningAppealCase,
