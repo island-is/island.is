@@ -42,6 +42,7 @@ export interface Country {
   id: string
   abbr: string
   name: string
+  english: string
   otherId: number
   orderNumber: number
   isInTheEUAndOrEEA: boolean
