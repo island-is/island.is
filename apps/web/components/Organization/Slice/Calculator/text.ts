@@ -15,6 +15,14 @@ export const CHROME_TEXT = {
   },
 } satisfies Record<string, CalculatorLocalizedText>
 
+/* Anything editor-authored that carries an optional label: an input section
+ * field, an output section field, or an output array item field. Declared here
+ * because `localized` is what decides whether such a label exists at all. */
+export interface CalculatorLabelledRow {
+  key: string
+  label?: CalculatorLocalizedText
+}
+
 export const localized = (
   value: CalculatorLocalizedText | undefined,
   locale: Locale,

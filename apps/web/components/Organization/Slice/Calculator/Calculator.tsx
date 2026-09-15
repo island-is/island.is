@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useQuery } from '@apollo/client'
 
@@ -12,18 +12,23 @@ import {
 import type { CalculatorConfig } from '@island.is/tax-calculators'
 import {
   calculatorConfigSchema,
-  collectSectionToggles,
+  collectInputSectionToggles,
 } from '@island.is/tax-calculators'
 import {
   Calculator as CalculatorSlice,
-  GetTaxCalculatorFieldsQuery,
-  GetTaxCalculatorFieldsQueryVariables,
+  GetTaxCalculatorQuery,
+  GetTaxCalculatorQueryVariables,
   TaxCalculatorType,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
-import { GET_TAX_CALCULATOR_FIELDS } from '@island.is/web/screens/queries/TaxCalculators'
+import { GET_TAX_CALCULATOR } from '@island.is/web/screens/queries/TaxCalculators'
 
 import { CalculatorSection } from './CalculatorSection'
+import { toInputFieldContract, toOutputFieldContract } from './contract'
+import {
+  reportConfigParseIssues,
+  reportContractDiagnostics,
+} from './diagnostics'
 import { CHROME_TEXT, localized } from './text'
 
 interface CalculatorProps {
@@ -41,22 +46,47 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 
   const [toggles, setToggles] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(
-      collectSectionToggles(config).map((toggle) => [toggle.key, false]),
+      collectInputSectionToggles(config).map((toggle) => [toggle.key, false]),
     ),
   )
 
   const { data, loading, error } = useQuery<
-    GetTaxCalculatorFieldsQuery,
-    GetTaxCalculatorFieldsQueryVariables
-  >(GET_TAX_CALCULATOR_FIELDS, { variables: { calculatorType } })
+    GetTaxCalculatorQuery,
+    GetTaxCalculatorQueryVariables
+  >(GET_TAX_CALCULATOR, { variables: { type: calculatorType } })
 
-  const contract = useMemo(
-    () =>
-      new Map(
-        (data?.taxCalculator.fields ?? []).map((field) => [field.key, field]),
-      ),
+  /* The raw per-`__typename` unions never leave `contract.ts`. */
+  const inputContract = useMemo(
+    () => toInputFieldContract(data?.taxCalculator.inputFields ?? []),
     [data],
   )
+
+  const outputContract = useMemo(
+    () => toOutputFieldContract(data?.taxCalculator.outputFields ?? []),
+    [data],
+  )
+
+  /* Above the early returns below, and guarded on `data` instead: a hook placed
+   * after a conditional return is a rules-of-hooks violation that `nx lint web`
+   * fails on. */
+  useEffect(() => {
+    if (!data) return
+
+    reportContractDiagnostics({
+      calculatorType,
+      config,
+      inputContract,
+      outputContract,
+      locale: activeLocale,
+    })
+  }, [
+    data,
+    calculatorType,
+    config,
+    inputContract,
+    outputContract,
+    activeLocale,
+  ])
 
   if (loading) return <SkeletonLoader height={64} repeat={4} space={2} />
 
@@ -69,34 +99,15 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     )
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-    const placed = new Set(
-      config.sections.flatMap((section) =>
-        section.fields.map((field) => field.key),
-      ),
-    )
-    const unplaced = [...contract.values()]
-      .filter((field) => field.required && !placed.has(field.key))
-      .map((field) => field.key)
-
-    if (unplaced.length > 0) {
-      console.warn(
-        `Calculator "${calculatorType}": required fields are in no section and will not render: ${unplaced.join(
-          ', ',
-        )}`,
-      )
-    }
-  }
-
   return (
     <FormProvider {...methods}>
       <Box background="blue100" borderRadius="large" padding={[3, 3, 5]}>
         <Stack space={5}>
-          {config.sections.map((section) => (
+          {config.inputSections.map((section) => (
             <CalculatorSection
               key={section.key}
               section={section}
-              contract={contract}
+              contract={inputContract}
               locale={activeLocale}
               toggles={toggles}
               onToggle={(key, checked) =>
@@ -119,7 +130,19 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 /* Split from the form so the hooks below never run against a half-configured
  * slice: `configJson` crosses a JSON scalar and regains its type here. */
 const Calculator = ({ slice }: CalculatorProps) => {
-  const parsed = calculatorConfigSchema.safeParse(slice.configJson)
+  /* Memoized so the effect below fires once per config rather than once per
+   * render -- and twice per render under StrictMode. */
+  const parsed = useMemo(
+    () => calculatorConfigSchema.safeParse(slice.configJson),
+    [slice.configJson],
+  )
+
+  /* The form component never mounts when the config is invalid, so its own
+   * diagnostics effect cannot be where this is reported. */
+  useEffect(() => {
+    if (parsed.success) return
+    reportConfigParseIssues(slice.id, parsed.error.issues)
+  }, [parsed, slice.id])
 
   if (!slice.calculatorType || !parsed.success) return null
 

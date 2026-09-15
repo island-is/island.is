@@ -1,45 +1,24 @@
 import {
   Box,
-  GridColumn,
   GridRow,
   Stack,
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
-import type {
-  CalculatorFieldSection,
-  CalculatorLocalizedText,
-} from '@island.is/tax-calculators'
-import { TaxCalculatorField } from '@island.is/web/graphql/schema'
+import type { CalculatorInputSection } from '@island.is/tax-calculators'
 
 import { CalculatorField } from './CalculatorField'
+import type { InputFieldContract } from './contract'
 import { localized } from './text'
 
 interface Props {
-  section: CalculatorFieldSection
-  contract: Map<string, TaxCalculatorField>
+  section: CalculatorInputSection
+  contract: InputFieldContract
   locale: Locale
   toggles: Record<string, boolean>
   onToggle: (key: string, checked: boolean) => void
 }
-
-/* `span` is a number 1-12 in the config, but GridColumn takes the fraction as a
- * string literal, so the two are bridged by position rather than interpolation. */
-const TWELFTHS = [
-  '1/12',
-  '2/12',
-  '3/12',
-  '4/12',
-  '5/12',
-  '6/12',
-  '7/12',
-  '8/12',
-  '9/12',
-  '10/12',
-  '11/12',
-  '12/12',
-] as const
 
 export const CalculatorSection = ({
   section,
@@ -58,33 +37,50 @@ export const CalculatorSection = ({
   const title = localized(section.title, locale)
   const description = localized(section.description, locale)
 
+  /* Resolved before rendering so that a section whose fields are ALL omitted
+   * can be dropped whole, rather than leaving a heading standing over an empty
+   * row. Both omissions are silent here on purpose -- the warning for each is
+   * emitted once from the diagnostics effect, where StrictMode's double render
+   * cannot repeat it. */
+  const fields = section.fields.flatMap((field) => {
+    const contractField = contract.get(field.key)
+    if (!contractField) return []
+
+    /* A raw key must never reach the public page, so an unlabelled field is
+     * dropped rather than labelled with its key. */
+    const label = localized(field.label, locale)
+    if (!label) return []
+
+    return [{ field, contractField, label }]
+  })
+
+  /* A section the editor authored with no fields at all is text-only and stands
+   * on its own; one whose every field was omitted is not. */
+  if (section.fields.length > 0 && fields.length === 0) return null
+
   const body = (
     <Stack space={2}>
       {(title || description) && (
         <Stack space={1}>
-          {title && <Text variant="h4">{title}</Text>}
+          {title && (
+            <Text variant="h4" as="h3">
+              {title}
+            </Text>
+          )}
           {description && <Text>{description}</Text>}
         </Stack>
       )}
       <GridRow rowGap={2}>
-        {section.fields.map((field) => {
-          const contractField = contract.get(field.key)
-          if (!contractField) return null
-
-          return (
-            <GridColumn
-              key={field.uid}
-              span={['1/1', '1/1', TWELFTHS[field.span - 1] ?? '12/12']}
-            >
-              <CalculatorField
-                field={field}
-                contractField={contractField}
-                locale={locale}
-                disabled={!isGateOpen}
-              />
-            </GridColumn>
-          )
-        })}
+        {fields.map(({ field, contractField, label }) => (
+          <CalculatorField
+            key={field.uid}
+            field={field}
+            contractField={contractField}
+            label={label}
+            locale={locale}
+            disabled={!isGateOpen}
+          />
+        ))}
       </GridRow>
     </Stack>
   )
@@ -94,7 +90,10 @@ export const CalculatorSection = ({
   return (
     <Stack space={2}>
       <ToggleSwitchCheckbox
-        label={localized(section.toggle.label, locale) ?? section.toggle.key}
+        /* `sectionToggleSchema.label` is required and `localized` falls back
+         * en -> is, so the fallback is unreachable -- but the label prop is a
+         * required string and `localized` returns `string | undefined`. */
+        label={localized(section.toggle.label, locale) ?? ''}
         checked={isOwnToggleOn}
         onChange={(checked) =>
           section.toggle && onToggle(section.toggle.key, checked)

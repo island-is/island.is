@@ -1,47 +1,67 @@
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 
-import { Checkbox } from '@island.is/island-ui/core'
+import { Checkbox, GridColumn } from '@island.is/island-ui/core'
 import {
   DatePickerController,
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
 import type { Locale } from '@island.is/shared/types'
-import type {
-  CalculatorLocalizedText,
-  CalculatorSectionField,
-} from '@island.is/tax-calculators'
+import type { CalculatorInputSectionField } from '@island.is/tax-calculators'
 import {
-  TaxCalculatorField,
-  TaxCalculatorFieldInputType,
+  TaxCalculatorInputFieldSemantic,
+  TaxCalculatorInputFieldType,
 } from '@island.is/web/graphql/schema'
 
+import type { InputContractField } from './contract'
 import { monthOptions, yearOptions } from './optionSources'
 import { localized } from './text'
 
 interface Props {
-  field: CalculatorSectionField
-  contractField: TaxCalculatorField
+  field: CalculatorInputSectionField
+  contractField: InputContractField
+  /* Resolved by the section, which drops the field outright when the editor
+   * authored no label -- so this component never has to represent that case. */
+  label: string
   locale: Locale
   disabled: boolean
 }
 
+/* `span` is a number 1-12 in the config, but GridColumn takes the fraction as a
+ * string literal, so the two are bridged by position rather than interpolation. */
+const TWELFTHS = [
+  '1/12',
+  '2/12',
+  '3/12',
+  '4/12',
+  '5/12',
+  '6/12',
+  '7/12',
+  '8/12',
+  '9/12',
+  '10/12',
+  '11/12',
+  '12/12',
+] as const
+
 export const CalculatorField = ({
   field,
   contractField,
+  label,
   locale,
   disabled,
 }: Props) => {
   const { control } = useFormContext()
-  const { dependsOn, key, inputType, required } = contractField
+  const { dependsOn, key, type, semantic, required } = contractField
 
   /* Hooks cannot be conditional, so this always runs: an empty name matches no
    * registered field and yields undefined, which no dependency ever equals. */
-  const dependencyValue = useWatch({ control, name: dependsOn?.field ?? '' })
+  const dependencyValue = useWatch({ control, name: dependsOn?.fieldKey ?? '' })
 
+  /* The column lives inside the field, not around it, so that this return --
+   * and the section's own omissions -- leave no empty column behind. */
   if (dependsOn && dependencyValue !== dependsOn.equals) return null
 
-  const label = localized(field.label, locale) ?? key
   const placeholder = localized(field.placeholder, locale)
 
   const common = {
@@ -54,63 +74,100 @@ export const CalculatorField = ({
     backgroundColor: 'white' as const,
   }
 
+  /* `DatePickerController` takes no `control` prop -- it reads `useFormContext`
+   * itself -- so the two spreads are deliberately different. */
   const select = { ...common, placeholder }
   const input = { ...common, control, placeholder }
 
-  switch (inputType) {
-    case TaxCalculatorFieldInputType.Year:
-      return <SelectController {...select} options={yearOptions()} />
+  /* Two stages: the field's `type` picks the control, and `semantic` -- which
+   * only number fields carry -- refines it. Extracted from the return so the
+   * `never` guard closing the switch survives. */
+  const renderControl = () => {
+    switch (type) {
+      case TaxCalculatorInputFieldType.Select:
+        return (
+          <SelectController
+            {...select}
+            /* Raw identifiers -- `configJson` has nowhere to author option text. */
+            options={(contractField.options ?? []).map((option) => ({
+              label: option,
+              value: option,
+            }))}
+          />
+        )
 
-    case TaxCalculatorFieldInputType.Month:
-      return <SelectController {...select} options={monthOptions(locale)} />
+      case TaxCalculatorInputFieldType.Boolean:
+        /* Not a CheckboxController: that one holds a string[], which no boolean
+         * `dependsOn` could ever match. */
+        return (
+          <Controller
+            control={control}
+            name={key}
+            defaultValue={false}
+            render={({ field: { onChange, value } }) => (
+              <Checkbox
+                id={field.uid}
+                name={key}
+                label={label}
+                checked={Boolean(value)}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.checked)}
+              />
+            )}
+          />
+        )
 
-    case TaxCalculatorFieldInputType.Enum:
-      return (
-        <SelectController
-          {...select}
-          /* Raw identifiers -- `configJson` has nowhere to author option text. */
-          options={(contractField.options ?? []).map((option) => ({
-            label: option,
-            value: option,
-          }))}
-        />
-      )
+      case TaxCalculatorInputFieldType.Date:
+        return <DatePickerController {...select} locale={locale} />
 
-    case TaxCalculatorFieldInputType.Boolean:
-      /* Not a CheckboxController: that one holds a string[], which no boolean
-       * `dependsOn` could ever match. */
-      return (
-        <Controller
-          control={control}
-          name={key}
-          defaultValue={false}
-          render={({ field: { onChange, value } }) => (
-            <Checkbox
-              id={field.uid}
-              name={key}
-              label={label}
-              checked={Boolean(value)}
-              disabled={disabled}
-              onChange={(event) => onChange(event.target.checked)}
-            />
-          )}
-        />
-      )
+      case TaxCalculatorInputFieldType.String:
+        return <InputController {...input} type="text" />
 
-    case TaxCalculatorFieldInputType.Date:
-      return <DatePickerController {...select} locale={locale} />
+      case TaxCalculatorInputFieldType.Number:
+        switch (semantic) {
+          case TaxCalculatorInputFieldSemantic.Year:
+            return <SelectController {...select} options={yearOptions()} />
 
-    case TaxCalculatorFieldInputType.Currency:
-      return <InputController {...input} type="number" currency />
+          case TaxCalculatorInputFieldSemantic.Month:
+            return (
+              <SelectController {...select} options={monthOptions(locale)} />
+            )
 
-    case TaxCalculatorFieldInputType.Percentage:
-      return <InputController {...input} type="number" suffix="%" />
+          case TaxCalculatorInputFieldSemantic.Currency:
+            return <InputController {...input} type="number" currency />
 
-    case TaxCalculatorFieldInputType.Count:
-    case TaxCalculatorFieldInputType.Number:
-      return <InputController {...input} type="number" />
+          case TaxCalculatorInputFieldSemantic.Percentage:
+            /* TODO(calculation-boundary): RSK expects a ratio 0-1 (api.graphql
+             * PERCENTAGE). This control collects a 0-100 figure, because asking
+             * for `0.37` beside a `%` sign is worse; the boundary must divide
+             * by 100. */
+            return (
+              <InputController
+                {...input}
+                type="number"
+                suffix="%"
+                min={0}
+                max={100}
+              />
+            )
 
-    case TaxCalculatorFieldInputType.String:
-      return <InputController {...input} type="text" />
+          /* A number with no semantic is the commonest field of all, so the
+           * fallback is spelled out rather than left to fall through. */
+          case TaxCalculatorInputFieldSemantic.Count:
+          default:
+            return <InputController {...input} type="number" />
+        }
+
+      default: {
+        const unhandled: never = type
+        return unhandled
+      }
+    }
   }
+
+  return (
+    <GridColumn span={['1/1', '1/1', TWELFTHS[field.span - 1] ?? '12/12']}>
+      {renderControl()}
+    </GridColumn>
+  )
 }
