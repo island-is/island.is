@@ -87,7 +87,7 @@ export const showWellbeingManagerFields = (answers: FormValue) =>
   getApplicationAnswers(answers).memmWellbeingWellbeingManager === YES
 
 export const showDisabilityService = (answers: FormValue) =>
-  getApplicationAnswers(answers).memmWellbeingDisability === YES
+  getApplicationAnswers(answers).memmCultureDisability === YES
 
 export const isReasonForNotificationSubCategorySelected = (
   answers: FormValue,

@@ -231,6 +231,8 @@ const memmSchema = z.object({
       languages: z.array(z.string()).optional(),
       preferredLanguage: z.string().nullish(),
       needsInterpreter: z.string().nullish(),
+      disability: z.string(),
+      disabilityService: z.string().optional(),
     })
     .superRefine((data, ctx) => {
       const showsLanguageSection = SHOW_LANGUAGE_SECTION_TYPES.includes(
@@ -261,6 +263,14 @@ const memmSchema = z.object({
           params: errorMessages.required,
         })
       }
+
+      if (data.disability === YES && !data.disabilityService) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['disabilityService'],
+          params: errorMessages.required,
+        })
+      }
     })
     .optional(),
   wellbeing: z
@@ -272,8 +282,6 @@ const memmSchema = z.object({
       wellbeingManager: z.string().optional(),
       wellbeingManagerEmail: z.string().email().optional().or(z.literal('')),
       wellbeingManagerName: z.string().optional(),
-      disability: z.string(),
-      disabilityService: z.string().optional(),
     })
     .superRefine((data, ctx) => {
       if (data.integratedService === YES) {
@@ -323,13 +331,6 @@ const memmSchema = z.object({
             })
           }
         }
-      }
-      if (data.disability === YES && !data.disabilityService) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['disabilityService'],
-          params: errorMessages.required,
-        })
       }
     })
     .optional(),

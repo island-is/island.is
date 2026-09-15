@@ -49,6 +49,7 @@ const buildParentFields = (parentKey: ParentKey) => {
     buildRadioField({
       id: `${base}.knowsNationalId`,
       title: ({ answers }) => getParentMessages(answers).radioLabel,
+      description: parentsMessages.shared.parentDescription,
       required: true,
       width: 'half',
       options: getYesNoOptions(),
@@ -88,8 +89,8 @@ const buildParentFields = (parentKey: ParentKey) => {
 
     // --- Nei path: manual name/age/gender ---
     buildDescriptionField({
-      id: `${base}.nameAgeGenderTitle`,
-      title: ({ answers }) => getParentMessages(answers).nameAgeGenderTitle,
+      id: `${base}.basicInfoTitle`,
+      title: parentsMessages.shared.basicInfoTitle,
       titleVariant: 'h5',
       space: 4,
       condition: doesNotKnow,
@@ -129,7 +130,7 @@ const buildParentFields = (parentKey: ParentKey) => {
     // --- Nei path: address ---
     buildDescriptionField({
       id: `${base}.addressTitle`,
-      title: ({ answers }) => getParentMessages(answers).addressTitle,
+      title: parentsMessages.shared.addressTitle,
       titleVariant: 'h5',
       space: 4,
       condition: doesNotKnow,

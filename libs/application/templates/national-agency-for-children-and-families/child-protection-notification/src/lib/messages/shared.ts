@@ -93,13 +93,8 @@ export const sharedMessages = defineMessages({
   },
   needsInterpreter: {
     id: 'cpn.application:shared.needsInterpreter',
-    defaultMessage: 'Er þörf á túlkþjónustu?',
+    defaultMessage: 'Er þörf á túlkaþjónustu?',
     description: 'Interpreter service needed question',
-  },
-  fillByBestKnowledge: {
-    id: 'cpn.application:shared.fillByBestKnowledge',
-    defaultMessage: 'Fylltu út upplýsingar eftir bestu vitneskju og getu.',
-    description: 'Fill in information according to best knowledge and ability',
   },
   chooseBestOptionPlaceholder: {
     id: 'cpn.application:shared.chooseBestOptionPlaceholder',

@@ -6,6 +6,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { reasonForNotificationMessages } from '../../../lib/messages'
+import { isUnborn } from '../../../utils/conditionUtils'
 
 export const reasonDescriptionSubSection = buildSubSection({
   id: 'reasonDescriptionSubSection',
@@ -14,7 +15,10 @@ export const reasonDescriptionSubSection = buildSubSection({
     buildMultiField({
       id: 'reasonDescription',
       title: reasonForNotificationMessages.description.title,
-      description: reasonForNotificationMessages.description.description,
+      description: ({ answers }) =>
+        isUnborn(answers)
+          ? reasonForNotificationMessages.description.descriptionUnborn
+          : reasonForNotificationMessages.description.description,
       children: [
         buildTextField({
           id: 'reasonDescription.description',

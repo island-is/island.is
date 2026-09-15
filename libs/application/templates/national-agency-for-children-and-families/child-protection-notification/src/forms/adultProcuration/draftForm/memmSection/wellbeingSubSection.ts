@@ -2,19 +2,16 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { memmMessages, sharedMessages } from '../../../../lib/messages'
+import { memmMessages } from '../../../../lib/messages'
 import { getYesNoDoNotKnowOptions } from '../../../../utils/childProtectionNotificationUtils'
 import {
-  showDisabilityService,
   showWellbeingContactAndManagerQuestions,
   showWellbeingContactFields,
   showWellbeingManagerFields,
 } from '../../../../utils/conditionUtils'
-import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
 
 export const wellbeingSubSection = buildSubSection({
   id: 'memmWellbeingSubSection',
@@ -23,12 +20,10 @@ export const wellbeingSubSection = buildSubSection({
     buildMultiField({
       id: 'memm.wellbeing',
       title: memmMessages.shared.pageTitle,
-      description: memmMessages.shared.pageDescription,
       children: [
         buildDescriptionField({
           id: 'memm.wellbeing.heading',
           title: memmMessages.wellbeing.subSectionTitle,
-          description: memmMessages.wellbeing.description,
           titleVariant: 'h3',
           space: 0,
         }),
@@ -96,33 +91,6 @@ export const wellbeingSubSection = buildSubSection({
           id: 'memm.wellbeing.wellbeingManagerName',
           title: memmMessages.wellbeing.wellbeingManagerName,
           condition: showWellbeingManagerFields,
-        }),
-        buildDescriptionField({
-          id: 'memm.wellbeing.disabilityLabel',
-          title: memmMessages.wellbeing.disabilityLabel,
-          titleTooltip: memmMessages.wellbeing.disabilityTooltip,
-          titleVariant: 'h5',
-          space: 3,
-        }),
-        buildRadioField({
-          id: 'memm.wellbeing.disability',
-          widthWithIllustration: '1/3',
-          space: 0,
-          options: getYesNoDoNotKnowOptions(),
-        }),
-        buildSelectField({
-          id: 'memm.wellbeing.disabilityService',
-          title: memmMessages.wellbeing.disabilityServiceLabel,
-          placeholder: sharedMessages.chooseBestOptionPlaceholder,
-          options: ({ externalData }) => {
-            const { disabilityStatusOptions } =
-              getApplicationExternalData(externalData)
-            return disabilityStatusOptions.map((d) => ({
-              value: d.value ?? '',
-              label: d.label ?? '',
-            }))
-          },
-          condition: showDisabilityService,
         }),
       ],
     }),
