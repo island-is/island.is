@@ -21,6 +21,8 @@ export const mapAnswerOptionType = (
         'max' in item &&
         typeof item.min === 'number' &&
         typeof item.max === 'number' &&
+        Number.isInteger(item.min) &&
+        Number.isInteger(item.max) &&
         item.min >= 0 &&
         item.max <= 10 &&
         item.min < item.max &&

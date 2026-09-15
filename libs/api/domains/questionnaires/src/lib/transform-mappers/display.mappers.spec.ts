@@ -585,6 +585,43 @@ describe('display mappers', () => {
       expect(question?.answerOptions.type).toBe(AnswerOptionType.scale)
     })
 
+    it('keeps a question with fractional bounds as a plain number input', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-9',
+        title: 'With fractional bounds',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q5',
+                type: 'number',
+                label: 'Fractional bounds question',
+                htmlLabel: '<strong>Fractional bounds question</strong>',
+                hint: null,
+                required: true,
+                min: 0.5,
+                max: 10,
+                decimals: false,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.number)
+    })
+
     it('keeps a 0-10 question that allows decimals as a plain number input', () => {
       const elDetail = {
         questionnaireId: 'el-q-8',
