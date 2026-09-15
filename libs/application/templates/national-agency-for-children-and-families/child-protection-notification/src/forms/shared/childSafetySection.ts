@@ -28,30 +28,6 @@ export const childSafetySection = buildSection({
           titleVariant: 'h4',
           doesNotRequireAnswer: true,
           space: 2,
-        }),
-        buildScaleField({
-          id: 'childSafetyUrgencyLevel',
-          min: 0,
-          max: ({ externalData }) => {
-            const { childSafetyLevels } =
-              getApplicationExternalData(externalData)
-            return childSafetyLevels.length > 0
-              ? Number(childSafetyLevels[childSafetyLevels.length - 1].value)
-              : 0
-          },
-          minLabel: ({ externalData }) => {
-            const { childSafetyLevels } =
-              getApplicationExternalData(externalData)
-            return childSafetyLevels[0]?.label ?? ''
-          },
-          maxLabel: ({ externalData }) => {
-            const { childSafetyLevels } =
-              getApplicationExternalData(externalData)
-            return childSafetyLevels[childSafetyLevels.length - 1]?.label ?? ''
-          },
-          step: 1,
-          required: true,
-          marginTop: 2,
           marginBottom: 2,
         }),
         buildAlertMessageField({
@@ -69,7 +45,7 @@ export const childSafetySection = buildSection({
               return 'warning'
             }
 
-            return 'info'
+            return 'success'
           },
           doesNotRequireAnswer: true,
           marginTop: 0,
@@ -98,6 +74,30 @@ export const childSafetySection = buildSection({
               childSafetyUrgencyLevel !== undefined
             )
           },
+        }),
+        buildScaleField({
+          id: 'childSafetyUrgencyLevel',
+          min: 0,
+          max: ({ externalData }) => {
+            const { childSafetyLevels } =
+              getApplicationExternalData(externalData)
+            return childSafetyLevels.length > 0
+              ? Number(childSafetyLevels[childSafetyLevels.length - 1].value)
+              : 0
+          },
+          minLabel: ({ externalData }) => {
+            const { childSafetyLevels } =
+              getApplicationExternalData(externalData)
+            return childSafetyLevels[0]?.label ?? ''
+          },
+          maxLabel: ({ externalData }) => {
+            const { childSafetyLevels } =
+              getApplicationExternalData(externalData)
+            return childSafetyLevels[childSafetyLevels.length - 1]?.label ?? ''
+          },
+          step: 1,
+          required: true,
+          marginBottom: 2,
         }),
         buildAlertMessageField({
           id: 'childSafety.emergencyWarning',
