@@ -79,6 +79,40 @@ Features.args = {
   large: false,
 }
 
+export const Clearable = ({ colored, size }) => {
+  const [value, setValue] = useState('')
+
+  return (
+    <Box padding={2}>
+      <Stack space={2}>
+        <AsyncSearch
+          filter
+          options={items}
+          colored={colored}
+          size={size}
+          placeholder="Type in something"
+          inputValue={value}
+          onInputValueChange={(inputValue) => setValue(inputValue ?? '')}
+          onClear={() => setValue('')}
+          clearButtonAriaLabel="Clear search"
+        />
+      </Stack>
+    </Box>
+  )
+}
+
+Clearable.args = {
+  colored: false,
+  size: 'medium',
+}
+
+Clearable.argTypes = {
+  size: {
+    control: { type: 'select' },
+    options: ['medium', 'semi-large', 'large'],
+  },
+}
+
 export const OnSubmit: FC<React.PropsWithChildren<unknown>> = () => (
   <Box padding={2}>
     <Stack space={2}>
