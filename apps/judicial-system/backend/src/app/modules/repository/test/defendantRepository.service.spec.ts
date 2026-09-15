@@ -1,5 +1,6 @@
 import { Transaction } from 'sequelize'
 
+import { InternalServerErrorException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -20,12 +21,14 @@ describe('DefendantRepositoryService', () => {
   let model: {
     findAll: jest.Mock
     create: jest.Mock
+    update: jest.Mock
   }
 
   beforeEach(async () => {
     model = {
       findAll: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
+      update: jest.fn().mockResolvedValue([1]),
     }
 
     const moduleRef = await Test.createTestingModule({
@@ -112,6 +115,38 @@ describe('DefendantRepositoryService', () => {
         service.copyProsecutorEnteredToCase(caseId, newCaseId, {
           transaction,
         }),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('moveToCase', () => {
+    it('moves the defendant, addressed within its own case, to the new case', async () => {
+      await service.moveToCase(defendantId, caseId, newCaseId, { transaction })
+
+      expect(model.update).toHaveBeenCalledWith(
+        { caseId: newCaseId },
+        { where: { id: defendantId, caseId }, transaction },
+      )
+      expect(model.create).not.toHaveBeenCalled()
+    })
+
+    // The guards bound the defendant to the case before the transaction
+    // opened, so a concurrent change can leave nothing to move - the split must
+    // then fail instead of committing a case without its defendant
+    it('throws when the defendant is no longer in the case', async () => {
+      model.update.mockResolvedValueOnce([0])
+
+      await expect(
+        service.moveToCase(defendantId, caseId, newCaseId, { transaction }),
+      ).rejects.toThrow(InternalServerErrorException)
+    })
+
+    it('rethrows when the move fails', async () => {
+      const error = new Error('Some error')
+      model.update.mockRejectedValueOnce(error)
+
+      await expect(
+        service.moveToCase(defendantId, caseId, newCaseId, { transaction }),
       ).rejects.toThrow(error)
     })
   })

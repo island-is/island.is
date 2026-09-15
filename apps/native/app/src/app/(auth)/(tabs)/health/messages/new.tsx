@@ -294,6 +294,7 @@ export default function HealthMessageComposeScreen() {
         ) : recipientsError ? (
           <Problem
             type="error"
+            error={recipientsRes.error}
             title={intl.formatMessage({ id: 'problem.error.title' })}
             message={intl.formatMessage({
               id: 'health.messages.errorMessage',
