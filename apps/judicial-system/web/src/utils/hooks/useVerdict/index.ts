@@ -1,6 +1,12 @@
 import type { Dispatch, SetStateAction } from 'react'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 
+import {
+  type InstitutionUser,
+  isDistrictCourtUser,
+  isPublicProsecutionOfficeUser,
+} from '@island.is/judicial-system/types'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type {
   Case,
   CreateVerdictsInput,
@@ -15,7 +21,15 @@ import { useDeliverCaseVerdictMutation } from './deliverCaseVerdict.generated'
 import { useUpdateVerdictMutation } from './updateVerdict.generated'
 import { useVerdictQuery } from './verdict.generated'
 
+// Mirrors the role rules on GET defendant/:defendantId/verdict. Prosecutors
+// and defenders may render VerdictStatusAlert from case data, but must not
+// trigger the police sync — the backend rejects them with 403.
+const canSyncVerdictFromPolice = (user?: InstitutionUser): boolean =>
+  isDistrictCourtUser(user) || isPublicProsecutionOfficeUser(user)
+
 const useVerdict = (currentVerdict?: Verdict) => {
+  const { user } = useContext(UserContext)
+
   const updateDefendantVerdictState = useCallback(
     (
       update: UpdateVerdictInput,
@@ -97,8 +111,9 @@ const useVerdict = (currentVerdict?: Verdict) => {
 
   const skip =
     !currentVerdict ||
-    !currentVerdict?.externalPoliceDocumentId ||
-    Boolean(currentVerdict?.serviceStatus)
+    !currentVerdict.externalPoliceDocumentId ||
+    Boolean(currentVerdict.serviceStatus) ||
+    !canSyncVerdictFromPolice(user)
   const {
     data,
     loading: verdictLoading,
