@@ -468,13 +468,6 @@ export class SubpoenaService {
     return subpoena
   }
 
-  async findByCaseId(caseId: string): Promise<Subpoena[]> {
-    return this.subpoenaRepositoryService.findAll({
-      include,
-      where: { caseId },
-    })
-  }
-
   async deliverSubpoenaToNationalCommissionersOffice({
     theCase,
     defendant,
