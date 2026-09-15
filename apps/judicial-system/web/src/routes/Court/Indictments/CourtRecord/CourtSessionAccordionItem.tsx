@@ -8,7 +8,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import _uniqBy from 'lodash/uniqBy'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -85,8 +84,16 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import type { CourtDocumentSection } from './CourtSessionAccordionItem.logic'
+import {
+  groupFiledCourtDocuments,
+  groupUnfiledCourtDocuments,
+  insertFiledCourtDocumentAt,
+  isKeptWhenRemovedFromCourtSession,
+} from './CourtSessionAccordionItem.logic'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
 import CourtSessionRuling from './CourtSessionRuling'
+import { UnfiledCourtDocumentList } from './UnfiledCourtDocumentList'
 import * as styles from './CourtRecord.css'
 
 interface Props {
@@ -209,9 +216,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
-  const [draggedMergeFileId, setDraggedMergeFileId] = useState<string | null>(
-    null,
-  )
 
   const [modalVisible, setModalVisible] = useState<'DELETE'>()
   // 'pronouncing' covers the request, 'refreshing' the wait for the case state
@@ -459,7 +463,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     }
 
     if (filedDocument.documentType === CourtDocumentType.UPLOADED_DOCUMENT) {
-      return onOpen(filedDocument.caseFileId ?? '')
+      // A document copied in from a merged case shares the original's case
+      // file, which is still that case's - so it is read through the merged
+      // case file route, keyed by the case it came from rather than by this
+      // one, which now owns the document.
+      return onOpen(
+        filedDocument.caseFileId ?? '',
+        filedDocument.mergedFromCaseId ?? undefined,
+      )
     }
 
     if (filedDocument.documentType === CourtDocumentType.GENERATED_DOCUMENT) {
@@ -491,7 +502,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    if (fileInSession.documentType !== CourtDocumentType.EXTERNAL_DOCUMENT) {
+    if (isKeptWhenRemovedFromCourtSession(fileInSession)) {
       setWorkingCase((prev) => ({
         ...prev,
         unfiledCourtDocuments: [
@@ -508,96 +519,58 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     })
   }
 
-  const getMergedDocumentIndex = (fileIndex: number) => {
-    const previousCourtSessionDocumentCount = countDocumentsBeforeSession(index)
-    const currentCourtSessionFiledDocumentCount = filedDocuments?.length || 0
-
-    return (
-      previousCourtSessionDocumentCount +
-      currentCourtSessionFiledDocumentCount +
-      fileIndex
-    )
-  }
-
   const getFiledDocumentIndex = (fileIndex: number) =>
     countDocumentsBeforeSession(index) + fileIndex || 0
 
   // NOTE: - Properties in newOrder documents will not contain the correct state when it comes to document order.
-  // In the court record, we always re-compute the file orders and merged filed orders in the client file ordering component,
+  // In the court record, we always re-compute the file orders in the client file ordering component,
   // and we additionally calculate it when posting the order changes for a given document to the server.
   // Thus when updating the state, the main thing we are updating here is the new order of the docs and we technically disregard
   // all the state related document properties that represent the document order.
 
   // - Updates the state for every reordered item where there will be a state change for every item
   // that the target item is dragged over
-  const handleReorder = (newOrder: CourtDocumentResponse[]) => {
+  //
+  // A section is dragged within itself: the copies of a merged case are that
+  // case's part of the record and stay together, and the case's own documents
+  // cannot be dropped into the middle of them. The server refuses either, so
+  // the section's documents are put back where they were taken from.
+  const handleReorder = (
+    section: CourtDocumentSection,
+    newOrder: CourtDocumentResponse[],
+  ) => {
     if (courtSession.isConfirmed) {
       return
     }
 
-    const mergedDocument = courtSession.mergedFiledDocuments?.find(
-      (d) =>
-        courtSession.id === d.mergedCourtSessionId &&
-        d.id === draggedMergeFileId,
-    )
-
-    if (mergedDocument) {
-      // For merged filed documents reordering, the newOrder will only contain the new order for merged documents for a single merged case id.
-      // But courtSession.mergedFiledDocuments can contain merged filed documents for many cases that are linked to the same court session.
-      // Thus we have to create a new merged documents array to persist the order state for other merged case filed documents.
-      const currentMergedDocuments = courtSession.mergedFiledDocuments ?? []
-      let newOrderIndex = 0
-      const newMergedDocumentsOrder: CourtDocumentResponse[] =
-        currentMergedDocuments.map((document) => {
-          if (document.caseId !== mergedDocument.caseId) {
-            return document
-          }
-
-          const reorderedDocument = newOrder[newOrderIndex]
-          newOrderIndex += 1
-          return reorderedDocument
-        })
-
-      if (newOrderIndex !== newOrder.length) {
-        return
-      }
-
-      patchSession(courtSession.id, {
-        mergedFiledDocuments: newMergedDocumentsOrder,
-      })
-    } else {
-      patchSession(courtSession.id, { filedDocuments: newOrder })
-    }
+    patchSession(courtSession.id, {
+      filedDocuments: [
+        ...filedDocuments.slice(0, section.offset),
+        ...newOrder,
+        ...filedDocuments.slice(section.offset + newOrder.length),
+      ],
+    })
   }
 
   // we only trigger this when an document item is dropped when reordering files
-  const handleOnDragEnd = (newOrder: CourtDocumentResponse[]) => {
-    if (courtSession.isConfirmed) {
+  const handleOnDragEnd = () => {
+    if (courtSession.isConfirmed || !draggedFileId) {
       return
     }
 
-    const mergedDocument = courtSession.mergedFiledDocuments?.find(
-      (d) =>
-        courtSession.id === d.mergedCourtSessionId &&
-        d.id === draggedMergeFileId,
+    const documentIndex = filedDocuments.findIndex(
+      (document) => document.id === draggedFileId,
     )
 
-    const fileId = mergedDocument ? draggedMergeFileId : draggedFileId
-    const targetFileIndex = newOrder.findIndex((f) => f.id === fileId)
-    if (targetFileIndex === -1 || !fileId) {
+    if (documentIndex === -1) {
       return
     }
-    const newIndex = mergedDocument
-      ? getMergedDocumentIndex(targetFileIndex)
-      : getFiledDocumentIndex(targetFileIndex)
 
     courtDocument.update.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
-      courtDocumentId: fileId,
-      ...(mergedDocument
-        ? { mergedDocumentOrder: newIndex + 1 }
-        : { documentOrder: newIndex + 1 }),
+      courtDocumentId: draggedFileId,
+      documentOrder: getFiledDocumentIndex(documentIndex) + 1,
     })
   }
 
@@ -614,32 +587,17 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       submittedBy: update.submittedBy,
     })
 
-    const isMergedDocument = courtSession.mergedFiledDocuments?.find(
-      (d) => courtSession.id === d.mergedCourtSessionId && d.id === fileId,
-    )
-    const updates = isMergedDocument
-      ? {
-          mergedFiledDocuments: courtSession.mergedFiledDocuments?.map((file) =>
-            file.id === fileId
-              ? {
-                  ...file,
-                  name: update.name ?? file.name,
-                  submittedBy: update.submittedBy ?? file.submittedBy,
-                }
-              : file,
-          ),
-        }
-      : {
-          filedDocuments: courtSession.filedDocuments?.map((file) =>
-            file.id === fileId
-              ? {
-                  ...file,
-                  name: update.name ?? file.name,
-                  submittedBy: update.submittedBy ?? file.submittedBy,
-                }
-              : file,
-          ),
-        }
+    const updates = {
+      filedDocuments: courtSession.filedDocuments?.map((file) =>
+        file.id === fileId
+          ? {
+              ...file,
+              name: update.name ?? file.name,
+              submittedBy: update.submittedBy ?? file.submittedBy,
+            }
+          : file,
+      ),
+    }
 
     patchSession(courtSession.id, updates)
   }
@@ -660,8 +618,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       ),
     }))
 
+    const currentDocuments = courtSession.filedDocuments ?? []
+    const insertAt = insertFiledCourtDocumentAt(currentDocuments, res)
+
     patchSession(courtSession.id, {
-      filedDocuments: [...(courtSession.filedDocuments || []), res],
+      filedDocuments: [
+        ...currentDocuments.slice(0, insertAt),
+        res,
+        ...currentDocuments.slice(insertAt),
+      ],
     })
   }
 
@@ -785,39 +750,21 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     [courtSession.id, workingCase.courtSessions],
   )
 
-  const mergedCaseDocumentsInCourtSession = useMemo(() => {
-    const mergedFileDocuments =
-      workingCase.courtSessions?.find((d) => d.id === courtSession.id)
-        ?.mergedFiledDocuments || []
+  const courtDocumentSections = groupFiledCourtDocuments(
+    filedDocuments,
+    workingCase.mergedCases,
+  )
 
-    const mergedCaseIds = _uniqBy(
-      mergedFileDocuments ?? [],
-      (d: CourtDocumentResponse) => d.caseId,
-    ).map((document) => document.caseId)
-
-    return mergedCaseIds.map((caseId) => {
-      const mergedFileDocumentsPerCase = mergedFileDocuments.filter(
-        (document) => document.caseId === caseId,
-      )
-      return {
-        caseId,
-        courtCaseNumber:
-          workingCase.mergedCases?.find((c) => c.id === caseId)
-            ?.courtCaseNumber ?? '',
-        mergedFileDocuments: mergedFileDocumentsPerCase,
-      }
-    })
-  }, [courtSession.id, workingCase.courtSessions, workingCase.mergedCases])
+  const unfiledCourtDocumentSections = groupUnfiledCourtDocuments(
+    workingCase.unfiledCourtDocuments ?? [],
+    workingCase.mergedCases,
+  )
 
   const countDocumentsBeforeSession = (index: number) => {
     const sessionsBefore = workingCase.courtSessions?.slice(0, index) || []
 
     return sessionsBefore.reduce(
-      (acc, session) =>
-        (acc =
-          acc +
-          (session.filedDocuments?.length || 0) +
-          (session.mergedFiledDocuments?.length || 0)),
+      (acc, session) => acc + (session.filedDocuments?.length || 0),
       0,
     )
   }
@@ -1144,96 +1091,133 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       )} liggja frammi`}</Text>
                     </Box>
                   )}
-                  {filedDocuments && filedDocuments.length > 0 && (
+                  {courtDocumentSections.map((section) => (
+                    // Keyed by merged case id, not court case number: the
+                    // number falls back to an empty string, so two unnumbered
+                    // merged cases would collide and React would hand one
+                    // section's rows to the other.
                     <Box
+                      key={
+                        section.mergedFromCaseId
+                          ? `merged-case-${section.mergedFromCaseId}`
+                          : `own-documents-${section.offset}`
+                      }
                       display="flex"
-                      columnGap={2}
-                      justifyContent="spaceBetween"
+                      flexDirection="column"
+                      rowGap={2}
                     >
-                      <Reorder.Group
-                        axis="y"
-                        values={filedDocuments}
-                        onReorder={handleReorder}
-                        className={styles.grid}
+                      {section.mergedFromCaseId && (
+                        <Box
+                          background="white"
+                          paddingX={3}
+                          paddingY={2}
+                          borderRadius="large"
+                        >
+                          <Text variant="h5">{`Dómskjöl úr sameinuðu máli ${section.courtCaseNumber}`}</Text>
+                        </Box>
+                      )}
+                      <Box
+                        display="flex"
+                        columnGap={2}
+                        justifyContent="spaceBetween"
                       >
-                        <AnimatePresence>
-                          {filedDocuments.map((item) => {
-                            let supplement: Supplement | undefined = undefined
-
-                            if (
-                              item.documentType ===
-                              CourtDocumentType.EXTERNAL_DOCUMENT
-                            ) {
-                              const split = item.submittedBy?.split('|')
-                              const enabled = (
-                                <Box marginTop={1}>
-                                  <SelectRepresentative
-                                    submitterName={split?.[0]}
-                                    caseFileCategory={
-                                      split?.[1] as CaseFileCategory
-                                    }
-                                    placeholder="Hver lagði fram?"
-                                    size="small"
-                                    updateRepresentative={(
-                                      submitterName,
-                                      caseFileCategory,
-                                    ) => {
-                                      handleUpdateFile(
-                                        courtSession.id,
-                                        item.id,
-                                        {
-                                          submittedBy:
-                                            submitterName && caseFileCategory
-                                              ? `${submitterName}|${caseFileCategory}`
-                                              : null,
-                                        },
-                                      )
-                                    }}
-                                  />
-                                </Box>
-                              )
-                              const disabled = split ? (
-                                <Text variant="small" color="currentColor">
-                                  {`${
-                                    split[0]
-                                  } (${getRoleTitleFromCaseFileCategory(
-                                    split[1] as CaseFileCategory,
-                                    { notRegistered: 'Málsaðili' },
-                                  )})`}
-                                </Text>
-                              ) : null
-                              supplement = { enabled, disabled }
-                            } else if (
-                              item.documentType ===
-                              CourtDocumentType.UPLOADED_DOCUMENT
-                            ) {
-                              const file = workingCase.caseFiles?.find(
-                                (file) => file.id === item.caseFileId,
-                              )
+                        <Reorder.Group
+                          axis="y"
+                          values={section.documents}
+                          onReorder={(newOrder: CourtDocumentResponse[]) =>
+                            handleReorder(section, newOrder)
+                          }
+                          className={styles.grid}
+                        >
+                          <AnimatePresence>
+                            {section.documents.map((item) => {
+                              let supplement: Supplement | undefined = undefined
 
                               if (
-                                file &&
-                                file.category &&
-                                [
-                                  CaseFileCategory.PROSECUTOR_CASE_FILE,
-                                  CaseFileCategory.DEFENDANT_CASE_FILE,
-                                  CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-                                  CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-                                  CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-                                ].includes(file.category)
+                                item.documentType ===
+                                CourtDocumentType.EXTERNAL_DOCUMENT
                               ) {
-                                const node = (
+                                const split = item.submittedBy?.split('|')
+                                const enabled = (
+                                  <Box marginTop={1}>
+                                    <SelectRepresentative
+                                      submitterName={split?.[0]}
+                                      caseFileCategory={
+                                        split?.[1] as CaseFileCategory
+                                      }
+                                      placeholder="Hver lagði fram?"
+                                      size="small"
+                                      updateRepresentative={(
+                                        submitterName,
+                                        caseFileCategory,
+                                      ) => {
+                                        handleUpdateFile(
+                                          courtSession.id,
+                                          item.id,
+                                          {
+                                            submittedBy:
+                                              submitterName && caseFileCategory
+                                                ? `${submitterName}|${caseFileCategory}`
+                                                : null,
+                                          },
+                                        )
+                                      }}
+                                    />
+                                  </Box>
+                                )
+                                const disabled = split ? (
                                   <Text variant="small" color="currentColor">
                                     {`${
-                                      file.fileRepresentative ??
-                                      file.submittedBy
+                                      split[0]
                                     } (${getRoleTitleFromCaseFileCategory(
-                                      file.category,
+                                      split[1] as CaseFileCategory,
                                       { notRegistered: 'Málsaðili' },
                                     )})`}
                                   </Text>
+                                ) : null
+                                supplement = { enabled, disabled }
+                              } else if (
+                                item.documentType ===
+                                CourtDocumentType.UPLOADED_DOCUMENT
+                              ) {
+                                // A copy from a merged case points at that
+                                // case's file, which is not among this case's,
+                                // so it falls through to the plain wording.
+                                const file = workingCase.caseFiles?.find(
+                                  (file) => file.id === item.caseFileId,
                                 )
-                                supplement = { enabled: node, disabled: node }
+
+                                if (
+                                  file &&
+                                  file.category &&
+                                  [
+                                    CaseFileCategory.PROSECUTOR_CASE_FILE,
+                                    CaseFileCategory.DEFENDANT_CASE_FILE,
+                                    CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+                                    CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+                                    CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+                                  ].includes(file.category)
+                                ) {
+                                  const node = (
+                                    <Text variant="small" color="currentColor">
+                                      {`${
+                                        file.fileRepresentative ??
+                                        file.submittedBy
+                                      } (${getRoleTitleFromCaseFileCategory(
+                                        file.category,
+                                        { notRegistered: 'Málsaðili' },
+                                      )})`}
+                                    </Text>
+                                  )
+                                  supplement = { enabled: node, disabled: node }
+                                } else {
+                                  const node = (
+                                    <Text variant="small" color="currentColor">
+                                      Lagt er fram
+                                    </Text>
+                                  )
+                                  supplement = { enabled: node, disabled: node }
+                                }
                               } else {
                                 const node = (
                                   <Text variant="small" color="currentColor">
@@ -1242,329 +1226,168 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                 )
                                 supplement = { enabled: node, disabled: node }
                               }
-                            } else {
-                              const node = (
-                                <Text variant="small" color="currentColor">
-                                  Lagt er fram
-                                </Text>
+
+                              return (
+                                <Reorder.Item
+                                  key={item.id}
+                                  value={item}
+                                  drag={!courtSession.isConfirmed}
+                                  data-reorder-item
+                                  onDragStart={() => {
+                                    setDraggedFileId(item.id)
+                                  }}
+                                  onDragEnd={() => {
+                                    handleOnDragEnd()
+                                    setDraggedFileId(null)
+                                  }}
+                                  initial={{ opacity: 0, y: -10, height: 101 }}
+                                  animate={{ opacity: 1, y: 0, height: 101 }}
+                                  exit={{ opacity: 0, y: 10, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  <EditableCaseFile
+                                    enableDrag
+                                    caseFile={{
+                                      id: item.id,
+                                      displayText: item.name,
+                                      name: item.name,
+                                      canOpen:
+                                        item.documentType !==
+                                        CourtDocumentType.EXTERNAL_DOCUMENT,
+                                      canEdit: ['fileName'],
+                                      supplement,
+                                    }}
+                                    backgroundColor="white"
+                                    onOpen={handleOnOpen}
+                                    onRename={(id: string, name: string) => {
+                                      handleUpdateFile(courtSession.id, id, {
+                                        name,
+                                      })
+                                    }}
+                                    onDelete={handleDeleteFile}
+                                    disabled={courtSession.isConfirmed || false}
+                                  />
+                                </Reorder.Item>
                               )
-                              supplement = { enabled: node, disabled: node }
-                            }
+                            })}
+                          </AnimatePresence>
+                        </Reorder.Group>
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          justifyContent="spaceAround"
+                          rowGap={2}
+                        >
+                          <AnimatePresence>
+                            {section.documents.map((_item, i) => {
+                              const currentIndex = getFiledDocumentIndex(
+                                section.offset + i,
+                              )
 
-                            return (
-                              <Reorder.Item
-                                key={item.id}
-                                value={item}
-                                drag={!courtSession.isConfirmed}
-                                data-reorder-item
-                                onDragStart={() => {
-                                  setDraggedFileId(item.id)
-                                }}
-                                onDragEnd={() => {
-                                  handleOnDragEnd(
-                                    courtSession.filedDocuments ?? [],
-                                  )
-                                  setDraggedFileId(null)
-                                }}
-                                initial={{ opacity: 0, y: -10, height: 101 }}
-                                animate={{ opacity: 1, y: 0, height: 101 }}
-                                exit={{ opacity: 0, y: 10, height: 0 }}
-                                transition={{ duration: 0.2 }}
-                              >
-                                <EditableCaseFile
-                                  enableDrag
-                                  caseFile={{
-                                    id: item.id,
-                                    displayText: item.name,
-                                    name: item.name,
-                                    canOpen:
-                                      item.documentType !==
-                                      CourtDocumentType.EXTERNAL_DOCUMENT,
-                                    canEdit: ['fileName'],
-                                    supplement,
+                              return (
+                                <motion.div
+                                  initial={{
+                                    opacity: 0,
+                                    y: -10,
+                                    height: 'auto',
                                   }}
-                                  backgroundColor="white"
-                                  onOpen={handleOnOpen}
-                                  onRename={(id: string, name: string) => {
-                                    handleUpdateFile(courtSession.id, id, {
-                                      name,
-                                    })
-                                  }}
-                                  onDelete={handleDeleteFile}
-                                  disabled={courtSession.isConfirmed || false}
-                                />
-                              </Reorder.Item>
-                            )
-                          })}
-                        </AnimatePresence>
-                      </Reorder.Group>
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="spaceAround"
-                        rowGap={2}
-                      >
-                        <AnimatePresence>
-                          {filedDocuments.map((_item, i) => {
-                            const currentIndex = getFiledDocumentIndex(i)
-
-                            return (
-                              <motion.div
-                                initial={{ opacity: 0, y: -10, height: 'auto' }}
-                                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                                exit={{ opacity: 0, y: 10, height: 0 }}
-                                transition={{ duration: 0.2 }}
-                                key={`þingmerkt_nr_${currentIndex + 1}`}
-                              >
-                                <Tag variant="darkerBlue" outlined disabled>
-                                  Þingmerkt nr. {currentIndex + 1}
-                                </Tag>
-                              </motion.div>
-                            )
-                          })}
-                        </AnimatePresence>
+                                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                  exit={{ opacity: 0, y: 10, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  key={`þingmerkt_nr_${currentIndex + 1}`}
+                                >
+                                  <Tag variant="darkerBlue" outlined disabled>
+                                    Þingmerkt nr. {currentIndex + 1}
+                                  </Tag>
+                                </motion.div>
+                              )
+                            })}
+                          </AnimatePresence>
+                        </Box>
                       </Box>
                     </Box>
-                  )}
+                  ))}
                   <Box borderRadius="large" background="white" paddingX={2}>
                     <Accordion dividerOnBottom={false} dividerOnTop={false}>
                       <AccordionItem
                         id={`unfiled-files-${courtSession.id}`}
-                        label={`Önnur skjöl ${
-                          workingCase.unfiledCourtDocuments
-                            ? `(${workingCase.unfiledCourtDocuments.length})`
-                            : ''
-                        }`}
+                        label={`Önnur skjöl (${unfiledCourtDocumentSections.ownDocuments.length})`}
                         labelVariant="h5"
                       >
-                        {workingCase.unfiledCourtDocuments?.length === 0 ? (
+                        {unfiledCourtDocumentSections.ownDocuments.length ===
+                        0 ? (
                           <AlertMessage
                             title="Engin óþingmerkt skjöl"
                             message="Öll skjöl málsins hafa verið lögð fram"
                             type="success"
                           />
                         ) : (
-                          <Box
-                            display="flex"
-                            flexDirection="column"
-                            columnGap={2}
-                            rowGap={2}
-                          >
-                            {workingCase.unfiledCourtDocuments?.map((item) => (
-                              <Box
-                                display="flex"
-                                alignItems="center"
-                                columnGap={2}
-                                key={item.id}
-                              >
-                                <Box
-                                  flexGrow={1}
-                                  background="white"
-                                  borderRadius="large"
-                                  border="standard"
-                                  borderColor="blue200"
-                                >
-                                  <Box
-                                    display="flex"
-                                    alignItems="center"
-                                    component="button"
-                                    onClick={() => handleOnOpen(item.id)}
-                                    paddingX={2}
-                                    paddingY={2}
-                                  >
-                                    <Text variant="h5">{item.name}</Text>
-                                    <Box marginLeft={1}>
-                                      <Icon
-                                        icon="open"
-                                        type="outline"
-                                        size="small"
-                                      />
-                                    </Box>
-                                  </Box>
-                                </Box>
-                                <Tag
-                                  outlined
-                                  variant="darkerBlue"
-                                  onClick={() => handleFileCourtDocument(item)}
-                                  disabled={
-                                    courtDocument.isLoading ||
-                                    courtSession.isConfirmed ||
-                                    false
-                                  }
-                                >
-                                  Leggja fram
-                                </Tag>
-                              </Box>
-                            ))}
-                          </Box>
+                          <UnfiledCourtDocumentList
+                            courtDocuments={
+                              unfiledCourtDocumentSections.ownDocuments
+                            }
+                            isDisabled={
+                              courtDocument.isLoading ||
+                              courtSession.isConfirmed ||
+                              false
+                            }
+                            onOpen={handleOnOpen}
+                            onFile={handleFileCourtDocument}
+                          />
                         )}
                       </AccordionItem>
+                      {/* A document removed from a merged case's section of the
+                      record is kept rather than destroyed, and is offered back
+                      under that case - it can only be filed into its own
+                      section, which is where the server puts it. */}
+                      {unfiledCourtDocumentSections.mergedCaseSections.map(
+                        (section) => (
+                          <AccordionItem
+                            key={`unfiled-merged-case-${section.mergedFromCaseId}`}
+                            id={`unfiled-merged-case-files-${courtSession.id}-${section.mergedFromCaseId}`}
+                            label={`Önnur skjöl úr sameinuðu máli ${section.courtCaseNumber} (${section.documents.length})`}
+                            labelVariant="h5"
+                          >
+                            <UnfiledCourtDocumentList
+                              courtDocuments={section.documents}
+                              isDisabled={
+                                courtDocument.isLoading ||
+                                courtSession.isConfirmed ||
+                                false
+                              }
+                              onOpen={handleOnOpen}
+                              onFile={handleFileCourtDocument}
+                            />
+                          </AccordionItem>
+                        ),
+                      )}
                     </Accordion>
                   </Box>
                 </Box>
               </MultipleValueList>
-              {mergedCaseDocumentsInCourtSession.map(
-                (mergeDocumentsPerCase) => {
-                  const courtCaseNumber = mergeDocumentsPerCase.courtCaseNumber
-                  const mergedFiledDocuments =
-                    mergeDocumentsPerCase.mergedFileDocuments
-                  const courtSessionString =
-                    courtSession.courtSessionStrings?.find(
-                      (string) =>
-                        string.stringType === CourtSessionStringType.ENTRIES &&
-                        string.mergedCaseId === mergeDocumentsPerCase.caseId,
-                    )
-
-                  return (
-                    // Keyed by merged case id, not court case number: the
-                    // number falls back to an empty string, so two unnumbered
-                    // merged cases would collide and React would hand one
-                    // row's debounced entries to the other.
-                    <Box key={`merged-case-${mergeDocumentsPerCase.caseId}`}>
-                      <CourtSessionMergedCaseEntries
-                        courtSessionId={courtSession.id}
-                        courtCaseNumber={courtCaseNumber ?? ''}
-                        courtSessionString={courtSessionString}
-                        mergedCaseId={mergeDocumentsPerCase.caseId}
-                        disabled={courtSession.isConfirmed || false}
-                        patchCourtSessionStrings={patchCourtSessionStrings}
-                      />
-                      <SectionHeading
-                        title={`Dómskjöl úr sameinuðu máli ${courtCaseNumber}`}
-                      />
-                      <BlueBox>
-                        {mergedFiledDocuments &&
-                          mergedFiledDocuments.length > 0 && (
-                            <Box
-                              display="flex"
-                              columnGap={2}
-                              justifyContent="spaceBetween"
-                            >
-                              <Reorder.Group
-                                axis="y"
-                                values={mergedFiledDocuments}
-                                onReorder={handleReorder}
-                                className={styles.grid}
-                              >
-                                <AnimatePresence>
-                                  {mergedFiledDocuments.map((item) => (
-                                    <Reorder.Item
-                                      key={item.id}
-                                      value={item}
-                                      data-reorder-item
-                                      onDragStart={() => {
-                                        setDraggedMergeFileId(item.id)
-                                      }}
-                                      onDragEnd={() => {
-                                        handleOnDragEnd(
-                                          courtSession.mergedFiledDocuments ??
-                                            [],
-                                        )
-                                        setDraggedMergeFileId(null)
-                                      }}
-                                      initial={{
-                                        opacity: 0,
-                                        y: -10,
-                                        height: 'auto',
-                                      }}
-                                      animate={{
-                                        opacity: 1,
-                                        y: 0,
-                                        height: 'auto',
-                                      }}
-                                      exit={{ opacity: 0, y: 10, height: 0 }}
-                                      transition={{ duration: 0.2 }}
-                                    >
-                                      <EditableCaseFile
-                                        enableDrag
-                                        caseFile={{
-                                          id: item.id,
-                                          displayText: item.name,
-                                          name: item.name,
-                                          canEdit: ['fileName'],
-                                        }}
-                                        backgroundColor="white"
-                                        onRename={(
-                                          id: string,
-                                          newName: string,
-                                        ) => {
-                                          handleUpdateFile(
-                                            courtSession.id,
-                                            id,
-                                            {
-                                              name: newName,
-                                            },
-                                          )
-                                        }}
-                                        disabled={
-                                          courtSession.isConfirmed || false
-                                        }
-                                      />
-                                    </Reorder.Item>
-                                  ))}
-                                </AnimatePresence>
-                              </Reorder.Group>
-                              <Box
-                                display="flex"
-                                flexDirection="column"
-                                justifyContent="spaceAround"
-                                rowGap={2}
-                              >
-                                <AnimatePresence>
-                                  {mergedFiledDocuments.map((item, i) => {
-                                    // we have to keep track of the previous merged case files within the same court session
-                                    // to calculate the document order indexes correctly in the client for reordering purposes
-                                    const previousMergedCaseDocumentCountInSession =
-                                      (
-                                        courtSession.mergedFiledDocuments?.filter(
-                                          (document) =>
-                                            item.mergedDocumentOrder &&
-                                            document.mergedDocumentOrder &&
-                                            item.mergedDocumentOrder >
-                                              document.mergedDocumentOrder &&
-                                            item.caseId !== document.caseId,
-                                        ) ?? []
-                                      ).length
-
-                                    const currentIndex =
-                                      getMergedDocumentIndex(i) +
-                                      previousMergedCaseDocumentCountInSession
-
-                                    return (
-                                      <motion.div
-                                        initial={{
-                                          opacity: 0,
-                                          y: -10,
-                                          height: 'auto',
-                                        }}
-                                        animate={{
-                                          opacity: 1,
-                                          y: 0,
-                                          height: 'auto',
-                                        }}
-                                        exit={{ opacity: 0, y: 10, height: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                        key={`þingmerkt_nr_${currentIndex + 1}`}
-                                      >
-                                        <Tag
-                                          variant="darkerBlue"
-                                          outlined
-                                          disabled
-                                        >
-                                          Þingmerkt nr. {currentIndex + 1}
-                                        </Tag>
-                                      </motion.div>
-                                    )
-                                  })}
-                                </AnimatePresence>
-                              </Box>
-                            </Box>
-                          )}
-                      </BlueBox>
-                    </Box>
-                  )
-                },
-              )}
+              {courtDocumentSections
+                .filter((section) => section.mergedFromCaseId)
+                .map((section) => (
+                  // Keyed by merged case id, not court case number: the number
+                  // falls back to an empty string, so two unnumbered merged
+                  // cases would collide and React would hand one row's
+                  // debounced entries to the other.
+                  <Box key={`merged-case-entries-${section.mergedFromCaseId}`}>
+                    <CourtSessionMergedCaseEntries
+                      courtSessionId={courtSession.id}
+                      courtCaseNumber={section.courtCaseNumber ?? ''}
+                      courtSessionString={courtSession.courtSessionStrings?.find(
+                        (string) =>
+                          string.stringType ===
+                            CourtSessionStringType.ENTRIES &&
+                          string.mergedCaseId === section.mergedFromCaseId,
+                      )}
+                      mergedCaseId={section.mergedFromCaseId ?? ''}
+                      disabled={courtSession.isConfirmed || false}
+                      patchCourtSessionStrings={patchCourtSessionStrings}
+                    />
+                  </Box>
+                ))}
               <Box>
                 <SectionHeading title="Bókanir" />
                 <RichTextEditor
