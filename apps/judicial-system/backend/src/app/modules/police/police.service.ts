@@ -1208,6 +1208,16 @@ export class PoliceService {
       courtDocuments,
     }
 
+    const failureInfo = {
+      caseId,
+      actor: user.name,
+      institution: user.institution?.name,
+      caseType: String(caseType),
+      caseState: String(caseState),
+      policeCaseNumber,
+      courtCaseNumber,
+    }
+
     return this.fetchPoliceCaseApi(url, {
       method: 'PUT',
       headers: {
@@ -1230,10 +1240,14 @@ export class PoliceService {
             ? responseBody
             : `Police case update failed with empty response body (HTTP ${res.status})`
 
-        throw Object.assign(new Error(message), {
-          statusCode: res.status,
-          responseBody,
-        })
+        this.logPoliceFailureAndNotify(
+          'Failed to update police case',
+          `Failed to update police case ${caseId}`,
+          { ...failureInfo, statusCode: String(res.status) },
+          new Error(message),
+        )
+
+        return false
       })
       .catch((reason) => {
         if (reason instanceof ServiceUnavailableException) {
@@ -1242,27 +1256,10 @@ export class PoliceService {
           return true
         }
 
-        const statusCode =
-          reason instanceof Error &&
-          'statusCode' in reason &&
-          typeof (reason as Error & { statusCode?: unknown }).statusCode ===
-            'number'
-            ? String((reason as Error & { statusCode: number }).statusCode)
-            : undefined
-
         this.logPoliceFailureAndNotify(
           'Failed to update police case',
           `Failed to update police case ${caseId}`,
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            caseType: String(caseType),
-            caseState: String(caseState),
-            policeCaseNumber,
-            courtCaseNumber,
-            statusCode,
-          },
+          failureInfo,
           reason,
         )
 
