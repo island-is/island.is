@@ -65,6 +65,12 @@ export const getSelectedReasonForNotificationCategoryCodes = (
   )
 }
 
+export const getHasReportedBeforeTitle = (answers: FormValue) =>
+  isUnborn(answers)
+    ? reasonForNotificationMessages.notificationHistory
+        .hasReportedBeforeExpectantParents
+    : reasonForNotificationMessages.notificationHistory.hasReportedBefore
+
 export const getHasDiscussedWithParentsTitle = (
   answers: FormValue,
   externalData: ExternalData,

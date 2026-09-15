@@ -20,7 +20,6 @@ export const educationSubSection = buildSubSection({
     buildMultiField({
       id: 'memm.education',
       title: memmMessages.shared.pageTitle,
-      description: memmMessages.shared.pageDescription,
       children: [
         buildDescriptionField({
           id: 'memm.education.heading',
