@@ -9,12 +9,18 @@ import { SubmitFeedbackResponse } from './models/submitFeedbackResponse'
 export class WatsonAssistantChatResolver {
   constructor(private watsonAssistantChatService: WatsonAssistantChatService) {}
 
-  @Query(() => IdentityTokenResponse)
+  @Query(() => IdentityTokenResponse, {
+    deprecationReason:
+      'The IBM Watson chatbot has been removed from the frontend.',
+  })
   watsonAssistantChatIdentityToken(@Args('input') input: IdentityTokenInput) {
     return this.watsonAssistantChatService.createIdentityToken(input)
   }
 
-  @Mutation(() => SubmitFeedbackResponse)
+  @Mutation(() => SubmitFeedbackResponse, {
+    deprecationReason:
+      'The IBM Watson chatbot has been removed from the frontend.',
+  })
   watsonAssistantChatSubmitFeedback(@Args('input') input: SubmitFeedbackInput) {
     return this.watsonAssistantChatService.submitFeedback(input)
   }
