@@ -1,4 +1,5 @@
 import { Op, Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
@@ -17,6 +18,8 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -98,6 +101,7 @@ describe('CaseController - Split defendant from case', () => {
   ]
 
   let transaction: Transaction
+  let mockSequelize: Sequelize
   let splitCaseId: string
   let oldIndictmentCountId: string
   let newIndictmentCountId: string
@@ -139,6 +143,7 @@ describe('CaseController - Split defendant from case', () => {
       caseController,
     } = await createTestingCaseModule()
 
+    mockSequelize = sequelize
     mockCaseRepositoryService =
       caseRepositoryService as jest.Mocked<CaseRepositoryService>
     mockPoliceCaseNumberRepositoryService =
@@ -206,20 +211,27 @@ describe('CaseController - Split defendant from case', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (theCase: Case, defendant: Defendant) => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.splitDefendantFromCase(
-          theCase.id,
-          defendant.id,
-          theCase,
-          defendant,
-        )
+        // The route is guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open - and holding a lock on this case row -
+        // by the time the handler runs. Guards do not execute in controller
+        // unit tests, so the request context and that transaction are set up
+        // here instead.
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await caseController.splitDefendantFromCase(
+            theCase.id,
+            defendant.id,
+            theCase,
+            defendant,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
