@@ -426,7 +426,9 @@ describe('CivilClaimantRepositoryService', () => {
         },
         { transaction },
       )
-      expect(result).toEqual(new Map([[civilClaimantId, 'new-civil-claimant-id']]))
+      expect(result).toEqual(
+        new Map([[civilClaimantId, 'new-civil-claimant-id']]),
+      )
     })
 
     it('rethrows when a copy fails', async () => {
