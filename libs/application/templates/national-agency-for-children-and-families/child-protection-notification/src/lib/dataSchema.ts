@@ -147,7 +147,7 @@ const parentSchema = z.object({
   postalCode: z.string().optional(),
   municipality: z.string().optional(),
   municipalityPostalCode: z.string().optional(),
-  needsInterpreter: z.string(),
+  needsInterpreter: z.string().optional(),
   preferredLanguage: z.string().optional(),
 })
 
@@ -189,16 +189,23 @@ const parentsSchema = z
       }
 
       if (parent.knowsNationalId === NO) {
-        const needsPreferredLanguage =
-          parent.citizenship !== IS && parent.needsInterpreter === YES
+        if (parent.citizenship && parent.citizenship !== IS) {
+          if (!parent.needsInterpreter) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: [key, 'needsInterpreter'],
+              params: errorMessages.required,
+            })
+          }
 
-        // If parent is non-Icelandic and interpreter is requested, preferred language is required.
-        if (needsPreferredLanguage && !parent.preferredLanguage) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [key, 'preferredLanguage'],
-            params: errorMessages.required,
-          })
+          // If parent is non-Icelandic and interpreter is requested, preferred language is required.
+          if (parent.needsInterpreter === YES && !parent.preferredLanguage) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: [key, 'preferredLanguage'],
+              params: errorMessages.required,
+            })
+          }
         }
       }
     }
