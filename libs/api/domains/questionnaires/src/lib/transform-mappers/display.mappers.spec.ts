@@ -510,5 +510,154 @@ describe('display mappers', () => {
       expect(dependentQuestion?.visibilityConditions).toBeDefined()
       expect(dependentQuestion?.visibilityConditions?.[0].questionId).toBe('q1')
     })
+
+    it('maps a whole-number 0-10 question to a scale', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-5',
+        title: 'With a 0-10 scale question',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q1',
+                type: 'number',
+                label: 'How tired are you?',
+                htmlLabel: '<strong>How tired are you?</strong>',
+                hint: null,
+                required: true,
+                min: 0,
+                max: 10,
+                decimals: false,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.scale)
+    })
+
+    it('maps a whole-number 1-5 question to a scale', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-7',
+        title: 'With a 1-5 scale question',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q3',
+                type: 'number',
+                label: 'How much pain are you in?',
+                htmlLabel: '<strong>How much pain are you in?</strong>',
+                hint: null,
+                required: true,
+                min: 1,
+                max: 5,
+                decimals: false,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.scale)
+    })
+
+    it('keeps a 0-10 question that allows decimals as a plain number input', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-8',
+        title: 'With a decimal number question',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q4',
+                type: 'number',
+                label: 'How many liters of water do you drink?',
+                htmlLabel:
+                  '<strong>How many liters of water do you drink?</strong>',
+                hint: null,
+                required: true,
+                min: 0,
+                max: 10,
+                decimals: true,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.number)
+    })
+
+    it('keeps a large-range number question as a plain number input', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-6',
+        title: 'With a regular number question',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q2',
+                type: 'number',
+                label: 'How many cigarettes per day?',
+                htmlLabel: '<strong>How many cigarettes per day?</strong>',
+                hint: null,
+                required: true,
+                min: 0,
+                max: 100,
+                decimals: false,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.number)
+    })
   })
 })

@@ -139,7 +139,11 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            type={question.answerOptions.decimal ? 'decimal' : 'number'}
+            type={
+              // Only restrict to whole numbers when the backend explicitly
+              // disallows decimals; a missing flag (e.g. LSH) stays permissive
+              question.answerOptions.decimal === false ? 'number' : 'decimal'
+            }
             min={question.answerOptions.min ?? undefined}
             max={question.answerOptions.max ?? undefined}
           />

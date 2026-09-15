@@ -16,6 +16,17 @@ export const mapAnswerOptionType = (
     case 'number':
       if ('displayClass' in item && item.displayClass === 'thermometer')
         return AnswerOptionType.thermometer
+      if (
+        'min' in item &&
+        'max' in item &&
+        typeof item.min === 'number' &&
+        typeof item.max === 'number' &&
+        item.min >= 0 &&
+        item.max <= 10 &&
+        item.min < item.max &&
+        !('decimals' in item && item.decimals)
+      )
+        return AnswerOptionType.scale
       return AnswerOptionType.number
     case 'bool':
       // Boolean questions are typically yes/no radio buttons
