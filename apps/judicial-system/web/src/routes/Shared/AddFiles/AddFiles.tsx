@@ -59,9 +59,8 @@ import { strings } from './AddFiles.strings'
 // District court users (and prosecutor representatives) reuse this screen for
 // uploads but are not allowed to send that notification type — calling it
 // produces a swallowed 403 in Datadog.
-const canSendCaseFilesUpdatedNotification = (
-  user?: InstitutionUser,
-): boolean => isProsecutorUser(user) || isDefenceUser(user)
+const canSendCaseFilesUpdatedNotification = (user?: InstitutionUser): boolean =>
+  isProsecutorUser(user) || isDefenceUser(user)
 
 const getUserProps = (user: User | undefined, workingCase: Case) => {
   const getCaseInfoNode = (workingCase: Case) => (
