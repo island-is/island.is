@@ -28,6 +28,8 @@ interface PlateOptionType {
   plateTypeName?: string | null
 }
 
+const VSK_PLATE_TYPE_CODE = 'N5'
+
 export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
@@ -39,6 +41,7 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     control,
     name: 'plateType.regGroup',
   })
+  const isVskPlateType = selectedPlateType === VSK_PLATE_TYPE_CODE
 
   const vehicle = getSelectedVehicle(
     application.externalData,
@@ -100,6 +103,12 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     setFieldLoadingState?.(loading)
   }, [loading, setFieldLoadingState])
 
+  useEffect(() => {
+    if (isVskPlateType) {
+      setValue('plateDelivery.deliveryMethodIsDeliveryStation', YES)
+    }
+  }, [isVskPlateType, setValue])
+
   return (
     <Box paddingTop={2}>
       {loading ? (
@@ -151,7 +160,7 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               }))}
               onSelect={(value) => {
                 setValue('plateType.regGroup', value)
-                if (value === 'N5') {
+                if (value === VSK_PLATE_TYPE_CODE) {
                   setValue('plateDelivery.deliveryMethodIsDeliveryStation', YES)
                 }
                 setValue(
@@ -168,7 +177,7 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               />
             )}
           </Box>
-          {selectedPlateType === 'N5' && (
+          {isVskPlateType && (
             <Box marginBottom={2}>
               <AlertMessage
                 type="info"
