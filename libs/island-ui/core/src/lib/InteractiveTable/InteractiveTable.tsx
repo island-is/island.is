@@ -73,6 +73,7 @@ type BaseInteractiveTableProps<TData extends object> = {
   cellBox?: {
     header?: Omit<UseBoxStylesProps, 'component'>
     body?: Omit<UseBoxStylesProps, 'component'>
+    footer?: Omit<UseBoxStylesProps, 'component'>
   }
 }
 
@@ -425,14 +426,7 @@ export const InteractiveTable = <TData extends object>({
                       textAlign: header.column.columnDef.meta.align,
                     }),
                   }}
-                  box={
-                    cellPaddingX !== undefined
-                      ? {
-                          paddingLeft: cellPaddingX,
-                          paddingRight: cellPaddingX,
-                        }
-                      : undefined
-                  }
+                  box={cellBox?.footer}
                 >
                   {header.isPlaceholder ? null : (
                     <Text
