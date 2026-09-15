@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { Auth, User } from '@island.is/auth-nest-tools'
+import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   DayRateEntry,
