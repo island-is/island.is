@@ -35,10 +35,4 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti á aðal takka í yfirlitsglugga um yfirlit ákæru.',
   },
-  reviewModalSecondaryButtonText: {
-    id: 'judicial.system.core:indictments_review.modal_secondary_button_text',
-    defaultMessage: 'Hætta við',
-    description:
-      'Notaður sem texti á aukatakka í yfirlitsglugga um yfirlit ákæru.',
-  },
 })
