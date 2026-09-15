@@ -38,6 +38,7 @@ import {
   isSentToPublicProsecutor,
   mapStringToGender,
   reconcileAppealDecisionsForRulingFileChange,
+  revertCaseLevelAppealDecision,
   rulingOrderChoices,
   userHasActiveInCourtAppeal,
 } from './utils'
@@ -1894,5 +1895,66 @@ describe('rulingOrderChoices', () => {
     )
 
     expect(resolved).toBeUndefined()
+  })
+})
+
+describe('revertCaseLevelAppealDecision', () => {
+  const prosecutorDecision = {
+    partyRole: AppealDecisionPartyRole.PROSECUTOR,
+    rulingFileId: null,
+    decision: CaseAppealDecision.ACCEPT,
+  } as NonNullable<Case['appealDecisions']>[number]
+  const defendantDecision = {
+    partyRole: AppealDecisionPartyRole.DEFENDANT,
+    rulingFileId: null,
+    decision: CaseAppealDecision.POSTPONE,
+  } as NonNullable<Case['appealDecisions']>[number]
+  const rulingOrderDecision = {
+    partyRole: AppealDecisionPartyRole.DEFENDANT,
+    rulingFileId: 'ruling_file_id',
+    decision: CaseAppealDecision.APPEAL,
+  } as NonNullable<Case['appealDecisions']>[number]
+
+  it('puts the previous row back for the party', () => {
+    const optimistic = [
+      prosecutorDecision,
+      { ...defendantDecision, decision: CaseAppealDecision.APPEAL },
+    ]
+
+    const result = revertCaseLevelAppealDecision(
+      optimistic,
+      [prosecutorDecision, defendantDecision],
+      AppealDecisionPartyRole.DEFENDANT,
+    )
+
+    expect(result).toEqual(
+      expect.arrayContaining([prosecutorDecision, defendantDecision]),
+    )
+    expect(result).toHaveLength(2)
+  })
+
+  it('drops the row when the party had none before', () => {
+    const result = revertCaseLevelAppealDecision(
+      [prosecutorDecision, defendantDecision],
+      [prosecutorDecision],
+      AppealDecisionPartyRole.DEFENDANT,
+    )
+
+    expect(result).toEqual([prosecutorDecision])
+  })
+
+  it('leaves the other party and ruling-order rows alone', () => {
+    const otherPartyUpdated = {
+      ...prosecutorDecision,
+      decision: CaseAppealDecision.APPEAL,
+    }
+
+    const result = revertCaseLevelAppealDecision(
+      [otherPartyUpdated, rulingOrderDecision, defendantDecision],
+      [prosecutorDecision, rulingOrderDecision],
+      AppealDecisionPartyRole.DEFENDANT,
+    )
+
+    expect(result).toEqual([otherPartyUpdated, rulingOrderDecision])
   })
 })
