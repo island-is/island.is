@@ -17,7 +17,6 @@ export const childSafetySection = buildSection({
     buildMultiField({
       id: 'childSafety',
       title: childSafetyMessages.sectionTitle,
-      description: childSafetyMessages.description,
       children: [
         buildDescriptionField({
           id: 'childSafety.question',
@@ -27,8 +26,13 @@ export const childSafetySection = buildSection({
               : childSafetyMessages.sliderQuestion,
           titleVariant: 'h4',
           doesNotRequireAnswer: true,
-          space: 2,
-          marginBottom: 2,
+          space: 0,
+        }),
+        buildDescriptionField({
+          id: 'childSafety.description',
+          description: childSafetyMessages.description,
+          doesNotRequireAnswer: true,
+          marginBottom: 4,
         }),
         buildAlertMessageField({
           id: 'childSafety.urgencyDescription',

@@ -8,13 +8,13 @@ export const completedMessages = defineMessages({
   },
   multiFieldTitle: {
     id: 'cpn.application:completed.multiFieldTitle',
-    defaultMessage: 'Hvað gerist næst',
+    defaultMessage: 'Hvað gerist næst?',
     description: 'Heading on the completed page',
   },
   alertTitle: {
     id: 'cpn.application:completed.alertTitle',
     defaultMessage:
-      'Tilkynningin þín hefur nú verið send til barnarverndarþjónustu',
+      'Tilkynningin þín hefur verið send til barnarverndarþjónustu þar sem barnið hefur lögheimili eða hefur aðsetur',
     description: 'Success alert title on the completed page',
   },
   alertMessage: {
@@ -25,7 +25,7 @@ export const completedMessages = defineMessages({
   thankYouDescription: {
     id: 'cpn.application:completed.thankYouDescription',
     defaultMessage:
-      'Með tilkynningunni hjálparðu okkur að tryggja velferð barna.\n\nBarnaverndarþjónusta fær núna tilkynninguna senda til sín og metur upplýsingarnar sem þú sendir inn.\n\nÁður en afstaða er tekin í hvaða farveg málið fer kann að vera þörf á því að afla frekari gagna. Það er gert í þeim tilgangi að tryggja rétt viðbragð. Mun þá starfsmaður barnaverndar í því sveitarfélagi sem barnið á lögheimili setja sig í samband við þig, inna 7 daga frá því að tilkynningin er send.\n\nVið vekjum athygli á því að vegna trúnaðar við fjölskyldur er ekki hægt að veita upplýsingar um framvindu mála til þeirra sem tilkynna. Bent er þó á að hægt er að tilkynna að nýju ef aðstæður gefa tilefni til.\n\nÖll börn eiga rétt á öryggi, þau eiga alltaf að njóta vafans.',
+      'Starfsmaður barnaverndar mun hafa samband við tengilið þjónustuveitenda, innan 7 daga, ef þörf er á frekari upplýsingum.\n\nVegna trúnaðar við fjölskyldur er ekki hægt að veita upplýsingar um framvindu mála til þeirra sem tilkynna. Bent er þó á að hægt er að tilkynna að nýju ef aðstæður gefa tilefni til.',
     description: 'Body text on the completed page',
   },
   bottomButtonMessage: {
