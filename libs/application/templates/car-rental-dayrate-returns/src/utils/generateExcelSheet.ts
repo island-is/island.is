@@ -1,6 +1,5 @@
 import XLSX from 'xlsx'
 import { DayRateRecord } from './types'
-import { getEligibleDayRateRecords } from './dayRateRecordUtils'
 import { Locale } from '@island.is/shared/types'
 
 export const generateExcelSheet = (
@@ -29,7 +28,7 @@ export const generateExcelSheet = (
   ]
   const headers = locale === 'is' ? icelandicHeaders : englishHeaders
 
-  const rows = getEligibleDayRateRecords(dayRateRecords).map((record) => [
+  const rows = dayRateRecords.map((record) => [
     record.permno,
     record.prevPeriodTotalDays,
     '',
