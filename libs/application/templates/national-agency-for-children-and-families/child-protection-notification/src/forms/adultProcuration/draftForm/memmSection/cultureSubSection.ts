@@ -9,10 +9,12 @@ import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { memmMessages, sharedMessages } from '../../../../lib/messages'
 import { getYesNoDoNotKnowOptions } from '../../../../utils/childProtectionNotificationUtils'
 import {
+  showDisabilityService,
   showLanguageSection,
   showPreferredLanguage,
 } from '../../../../utils/conditionUtils'
 import { getApplicationAnswers } from '../../../../utils/getApplicationAnswers'
+import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
 import { LanguageEnvironmentOptions } from '../../../../utils/constants'
 
 export const cultureSubSection = buildSubSection({
@@ -22,12 +24,10 @@ export const cultureSubSection = buildSubSection({
     buildMultiField({
       id: 'memm.culture',
       title: memmMessages.shared.pageTitle,
-      description: memmMessages.shared.pageDescription,
       children: [
         buildDescriptionField({
           id: 'memm.culture.heading',
-          title: memmMessages.culture.subSectionTitle,
-          description: memmMessages.culture.description,
+          title: memmMessages.culture.title,
           titleVariant: 'h3',
           space: 0,
         }),
@@ -119,6 +119,33 @@ export const cultureSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           options: getYesNoDoNotKnowOptions(),
           condition: showPreferredLanguage,
+        }),
+        buildDescriptionField({
+          id: 'memm.culture.disabilityLabel',
+          title: memmMessages.culture.disabilityLabel,
+          titleTooltip: memmMessages.culture.disabilityTooltip,
+          titleVariant: 'h5',
+          space: 3,
+        }),
+        buildRadioField({
+          id: 'memm.culture.disability',
+          widthWithIllustration: '1/3',
+          space: 0,
+          options: getYesNoDoNotKnowOptions(),
+        }),
+        buildSelectField({
+          id: 'memm.culture.disabilityService',
+          title: memmMessages.culture.disabilityServiceLabel,
+          placeholder: sharedMessages.chooseBestOptionPlaceholder,
+          options: ({ externalData }) => {
+            const { disabilityStatusOptions } =
+              getApplicationExternalData(externalData)
+            return disabilityStatusOptions.map((d) => ({
+              value: d.value ?? '',
+              label: d.label ?? '',
+            }))
+          },
+          condition: showDisabilityService,
         }),
       ],
     }),

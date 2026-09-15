@@ -37,6 +37,7 @@ import {
 import {
   getAreParentsInformedTitle,
   getHasDiscussedWithParentsTitle,
+  getHasReportedBeforeTitle,
   getParentMessages,
 } from './childProtectionNotificationUtils'
 import {
@@ -791,12 +792,16 @@ export const getMemmReceptionItems = (
 
 export const getMemmCultureItems = (
   answers: FormValue,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { disabilityStatusOptions } = getApplicationExternalData(externalData)
   const {
     memmCultureLanguageUsage,
     memmCultureLanguages,
     memmCulturePreferredLanguage,
     memmCultureNeedsInterpreter,
+    memmCultureDisability,
+    memmCultureDisabilityService,
   } = getApplicationAnswers(answers)
 
   return [
@@ -841,14 +846,38 @@ export const getMemmCultureItems = (
           },
         ]
       : []),
+    {
+      width: 'full',
+      keyText: memmMessages.culture.disabilityLabel,
+      valueText:
+        yesNoDoNotKnowLabelMap[
+          memmCultureDisability as keyof typeof yesNoDoNotKnowLabelMap
+        ] ??
+        memmCultureDisability ??
+        '',
+      hideIfEmpty: true,
+    },
+    ...(showDisabilityService(answers)
+      ? [
+          {
+            width: 'full' as const,
+            keyText: memmMessages.culture.disabilityServiceLabel,
+            valueText:
+              disabilityStatusOptions.find(
+                (d) => d.value === memmCultureDisabilityService,
+              )?.label ??
+              memmCultureDisabilityService ??
+              '',
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
   ]
 }
 
 export const getMemmWellbeingItems = (
   answers: FormValue,
-  externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { disabilityStatusOptions } = getApplicationExternalData(externalData)
   const {
     memmWellbeingIntegratedService,
     memmWellbeingWellbeingContact,
@@ -857,8 +886,6 @@ export const getMemmWellbeingItems = (
     memmWellbeingWellbeingManager,
     memmWellbeingWellbeingManagerEmail,
     memmWellbeingWellbeingManagerName,
-    memmWellbeingDisability,
-    memmWellbeingDisabilityService,
   } = getApplicationAnswers(answers)
 
   return [
@@ -929,32 +956,6 @@ export const getMemmWellbeingItems = (
                 },
               ]
             : []),
-        ]
-      : []),
-    {
-      width: 'full',
-      keyText: memmMessages.wellbeing.disabilityLabel,
-      valueText:
-        yesNoDoNotKnowLabelMap[
-          memmWellbeingDisability as keyof typeof yesNoDoNotKnowLabelMap
-        ] ??
-        memmWellbeingDisability ??
-        '',
-      hideIfEmpty: true,
-    },
-    ...(showDisabilityService(answers)
-      ? [
-          {
-            width: 'full' as const,
-            keyText: memmMessages.wellbeing.disabilityServiceLabel,
-            valueText:
-              disabilityStatusOptions.find(
-                (d) => d.value === memmWellbeingDisabilityService,
-              )?.label ??
-              memmWellbeingDisabilityService ??
-              '',
-            hideIfEmpty: true,
-          },
         ]
       : []),
   ]
@@ -1111,8 +1112,7 @@ export const getReasonNotificationHistoryItems = (
   return [
     {
       width: 'full',
-      keyText:
-        reasonForNotificationMessages.notificationHistory.hasReportedBefore,
+      keyText: getHasReportedBeforeTitle(answers),
       valueText:
         hasReportedBefore === YES
           ? sharedMessages.radioYes

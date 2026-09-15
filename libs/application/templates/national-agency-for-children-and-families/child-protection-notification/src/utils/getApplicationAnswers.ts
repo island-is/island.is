@@ -306,6 +306,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'memm.culture.needsInterpreter',
   )
 
+  const memmCultureDisability = getValueViaPath<string>(
+    answers,
+    'memm.culture.disability',
+  )
+
+  const memmCultureDisabilityService = getValueViaPath<string>(
+    answers,
+    'memm.culture.disabilityService',
+  )
+
   const memmWellbeingIntegratedService = getValueViaPath<string>(
     answers,
     'memm.wellbeing.integratedService',
@@ -341,15 +351,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'memm.wellbeing.wellbeingManagerName',
   )
 
-  const memmWellbeingDisability = getValueViaPath<string>(
-    answers,
-    'memm.wellbeing.disability',
-  )
-
-  const memmWellbeingDisabilityService = getValueViaPath<string>(
-    answers,
-    'memm.wellbeing.disabilityService',
-  )
   const childSafetyUrgencyLevel = getValueViaPath<string>(
     answers,
     'childSafetyUrgencyLevel',
@@ -419,6 +420,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     memmCultureLanguages,
     memmCulturePreferredLanguage,
     memmCultureNeedsInterpreter,
+    memmCultureDisability,
+    memmCultureDisabilityService,
     memmWellbeingIntegratedService,
     memmWellbeingWellbeingContact,
     memmWellbeingWellbeingContactEmail,
@@ -426,8 +429,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     memmWellbeingWellbeingManager,
     memmWellbeingWellbeingManagerEmail,
     memmWellbeingWellbeingManagerName,
-    memmWellbeingDisability,
-    memmWellbeingDisabilityService,
     childSafetyUrgencyLevel,
   }
 }
