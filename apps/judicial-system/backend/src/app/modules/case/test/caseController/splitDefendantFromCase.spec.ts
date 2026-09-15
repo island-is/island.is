@@ -375,9 +375,7 @@ describe('CaseController - Split defendant from case', () => {
         mockCaseFileRepositoryService.copyAllWithoutDefendantToCase,
       ).toHaveBeenCalledWith(caseId, splitCaseId, splitCaseFileCategories, {
         transaction,
-        civilClaimantIdMap: new Map([
-          [oldCivilClaimantId, newCivilClaimantId],
-        ]),
+        civilClaimantIdMap: new Map([[oldCivilClaimantId, newCivilClaimantId]]),
       })
     })
 

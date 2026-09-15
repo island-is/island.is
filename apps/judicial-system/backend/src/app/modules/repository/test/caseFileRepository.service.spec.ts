@@ -675,10 +675,17 @@ describe('CaseFileRepositoryService', () => {
         },
       ])
 
-      await service.copyAllWithoutDefendantToCase(caseId, newCaseId, categories, {
-        transaction,
-        civilClaimantIdMap: new Map([[oldCivilClaimantId, newCivilClaimantId]]),
-      })
+      await service.copyAllWithoutDefendantToCase(
+        caseId,
+        newCaseId,
+        categories,
+        {
+          transaction,
+          civilClaimantIdMap: new Map([
+            [oldCivilClaimantId, newCivilClaimantId],
+          ]),
+        },
+      )
 
       expect(model.create).toHaveBeenCalledTimes(2)
       expect(model.create).toHaveBeenCalledWith(
