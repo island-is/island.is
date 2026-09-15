@@ -13,6 +13,7 @@ import {
 import { CaseService } from '../../case'
 import { LimitedAccessCaseService } from '../../case/limitedAccessCase.service'
 import { EventService } from '../../event'
+import { FileService } from '../../file'
 import {
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
@@ -31,6 +32,7 @@ jest.mock('@island.is/judicial-system/message')
 jest.mock('../../case/case.service')
 jest.mock('../../case/limitedAccessCase.service')
 jest.mock('../../event/event.service')
+jest.mock('../../file/file.service')
 jest.mock('../../user/user.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
@@ -52,6 +54,7 @@ export const createTestingAppealCaseModule = async () => {
       CaseService,
       LimitedAccessCaseService,
       EventService,
+      FileService,
       UserService,
       AppealCaseRepositoryService,
       AppealDecisionRepositoryService,
@@ -102,6 +105,8 @@ export const createTestingAppealCaseModule = async () => {
 
   const eventService = appealCaseModule.get<EventService>(EventService)
 
+  const fileService = appealCaseModule.get<FileService>(FileService)
+
   const appealCaseService =
     appealCaseModule.get<AppealCaseService>(AppealCaseService)
 
@@ -126,6 +131,7 @@ export const createTestingAppealCaseModule = async () => {
     verdictRepositoryService,
     userService,
     eventService,
+    fileService,
     appealCaseService,
     appealCaseController,
     limitedAccessAppealCaseController,

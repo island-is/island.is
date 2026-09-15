@@ -232,12 +232,4 @@ export class CivilClaimantService {
       transaction,
     })
   }
-
-  findLatestClaimantBySpokespersonNationalId(
-    nationalId: string,
-  ): Promise<CivilClaimant | null> {
-    return this.civilClaimantRepositoryService.findLatestBySpokespersonNationalId(
-      nationalId,
-    )
-  }
 }

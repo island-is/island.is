@@ -1,13 +1,10 @@
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
-import { Case } from '../models/case.model'
 import { CivilClaimant } from '../models/civilClaimant.model'
 
 export type UpdateCivilClaimant = {
@@ -135,40 +132,6 @@ export class CivilClaimantRepositoryService {
     }
   }
 
-  // Only claimants on a live case count, and "latest" is part of the operation
-  // rather than an ordering the caller gets to choose.
-  async findLatestBySpokespersonNationalId(
-    nationalId: string,
-  ): Promise<CivilClaimant | null> {
-    try {
-      this.logger.debug(
-        'Finding the latest civil claimant by spokesperson national id',
-      )
-
-      return await this.civilClaimantModel.findOne({
-        include: [
-          {
-            model: Case,
-            as: 'case',
-            where: {
-              state: { [Op.not]: CaseState.DELETED },
-              isArchived: false,
-            },
-          },
-        ],
-        where: { hasSpokesperson: true, spokespersonNationalId: nationalId },
-        order: [['created', 'DESC']],
-      })
-    } catch (error) {
-      this.logger.error(
-        'Error finding the latest civil claimant by spokesperson national id:',
-        { error },
-      )
-
-      throw error
-    }
-  }
-
   // Copies every civil claimant of a case to another case as a new row, with
   // its defendant references remapped through the given map from original
   // defendant ids to their copies; references to defendants missing from the
@@ -218,6 +181,72 @@ export class CivilClaimantRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error copying all civil claimants of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // When a defendant is split into a new case, only civil claimants that apply
+  // to that defendant are copied: claimants with no defendant references
+  // (they apply to every defendant) and claimants whose defendantIds include
+  // the split defendant. Specific defendant references are narrowed to just
+  // that defendant - the defendant keeps its id when moved. Returns a map from
+  // each original civil claimant id to its copy so the caller can remap the
+  // references that point at civil claimants.
+  async copyApplicableToCaseForDefendant(
+    caseId: string,
+    newCaseId: string,
+    defendantId: string,
+    options: { transaction: Transaction },
+  ): Promise<Map<string, string>> {
+    try {
+      this.logger.debug(
+        `Copying civil claimants of case ${caseId} that apply to defendant ${defendantId} to case ${newCaseId}`,
+      )
+
+      const civilClaimants = await this.civilClaimantModel.findAll({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      const civilClaimantIdMap = new Map<string, string>()
+
+      for (const civilClaimant of civilClaimants) {
+        const appliesToDefendant =
+          !civilClaimant.defendantIds?.length ||
+          civilClaimant.defendantIds.includes(defendantId)
+
+        if (!appliesToDefendant) {
+          continue
+        }
+
+        const remappedDefendantIds = !civilClaimant.defendantIds?.length
+          ? civilClaimant.defendantIds
+          : [defendantId]
+
+        const newCivilClaimant = await this.civilClaimantModel.create(
+          {
+            ...civilClaimant.toJSON(),
+            id: undefined,
+            caseId: newCaseId,
+            defendantIds: remappedDefendantIds,
+          },
+          { transaction: options.transaction },
+        )
+
+        civilClaimantIdMap.set(civilClaimant.id, newCivilClaimant.id)
+      }
+
+      this.logger.debug(
+        `Copied ${civilClaimantIdMap.size} civil claimants of case ${caseId} that apply to defendant ${defendantId} to case ${newCaseId}`,
+      )
+
+      return civilClaimantIdMap
+    } catch (error) {
+      this.logger.error(
+        `Error copying civil claimants of case ${caseId} that apply to defendant ${defendantId} to case ${newCaseId}:`,
         { error },
       )
 

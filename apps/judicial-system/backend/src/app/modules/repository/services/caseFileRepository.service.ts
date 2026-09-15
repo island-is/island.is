@@ -470,12 +470,17 @@ export class CaseFileRepositoryService {
   // categories, to another case as new rows. Unlike copyToCase the copy is not
   // an independent draft: it keeps the original's S3 key, state and hash,
   // because both cases need the same document. Deleted files are soft-deleted
-  // and stay in the table, so they are excluded.
+  // and stay in the table, so they are excluded. When a civilClaimantIdMap is
+  // given (on split), files that point at a civil claimant missing from the
+  // map are skipped, and copied claimant references are remapped.
   async copyAllWithoutDefendantToCase(
     caseId: string,
     newCaseId: string,
     categories: CaseFileCategory[],
-    options: { transaction: Transaction },
+    options: {
+      transaction: Transaction
+      civilClaimantIdMap?: ReadonlyMap<string, string>
+    },
   ): Promise<void> {
     try {
       this.logger.debug(
@@ -492,17 +497,35 @@ export class CaseFileRepositoryService {
         transaction: options.transaction,
       })
 
+      const { civilClaimantIdMap } = options
+
+      const filesToCopy = civilClaimantIdMap
+        ? caseFiles.filter(
+            (caseFile) =>
+              !caseFile.civilClaimantId ||
+              civilClaimantIdMap.has(caseFile.civilClaimantId),
+          )
+        : caseFiles
+
       await Promise.all(
-        caseFiles.map((caseFile) =>
+        filesToCopy.map((caseFile) =>
           this.caseFileModel.create(
-            { ...caseFile.toJSON(), id: undefined, caseId: newCaseId },
+            {
+              ...caseFile.toJSON(),
+              id: undefined,
+              caseId: newCaseId,
+              civilClaimantId:
+                caseFile.civilClaimantId && civilClaimantIdMap
+                  ? civilClaimantIdMap.get(caseFile.civilClaimantId)
+                  : caseFile.civilClaimantId,
+            },
             { transaction: options.transaction },
           ),
         ),
       )
 
       this.logger.debug(
-        `Copied ${caseFiles.length} case files linked to no defendant of case ${caseId} to case ${newCaseId}`,
+        `Copied ${filesToCopy.length} case files linked to no defendant of case ${caseId} to case ${newCaseId}`,
       )
     } catch (error) {
       this.logger.error(
@@ -576,6 +599,65 @@ export class CaseFileRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error deleting the case files of all civil claimants of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // After defendant files have been moved onto a split case, remap civil
+  // claimant references through the given map from original claimant ids to
+  // their copies, and clear pointers at claimants that were not copied with
+  // this defendant so they do not keep a link into the original case.
+  async remapCivilClaimantIdsForCase(
+    caseId: string,
+    civilClaimantIdMap: ReadonlyMap<string, string>,
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Remapping civil claimant references on case files of case ${caseId}`,
+      )
+
+      await Promise.all(
+        [...civilClaimantIdMap.entries()].map(
+          ([oldCivilClaimantId, newCivilClaimantId]) =>
+            this.caseFileModel.update(
+              { civilClaimantId: newCivilClaimantId },
+              {
+                where: {
+                  caseId,
+                  civilClaimantId: oldCivilClaimantId,
+                },
+                transaction: options.transaction,
+              },
+            ),
+        ),
+      )
+
+      const remappedCivilClaimantIds = [...civilClaimantIdMap.values()]
+
+      await this.caseFileModel.update(
+        { civilClaimantId: null },
+        {
+          where: {
+            caseId,
+            civilClaimantId:
+              remappedCivilClaimantIds.length > 0
+                ? { [Op.notIn]: remappedCivilClaimantIds }
+                : { [Op.ne]: null },
+          },
+          transaction: options.transaction,
+        },
+      )
+
+      this.logger.debug(
+        `Remapped civil claimant references on case files of case ${caseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error remapping civil claimant references on case files of case ${caseId}:`,
         { error },
       )
 

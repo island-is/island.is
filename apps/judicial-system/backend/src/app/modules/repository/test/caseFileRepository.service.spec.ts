@@ -642,6 +642,137 @@ describe('CaseFileRepositoryService', () => {
         }),
       ).rejects.toThrow(error)
     })
+
+    it('skips files whose civil claimant was not copied and remaps the ones that were', async () => {
+      const oldCivilClaimantId = 'old-civil-claimant-id'
+      const newCivilClaimantId = 'new-civil-claimant-id'
+      const otherCivilClaimantId = 'other-civil-claimant-id'
+
+      model.findAll.mockResolvedValueOnce([
+        {
+          civilClaimantId: oldCivilClaimantId,
+          toJSON: () => ({
+            id: 'copied-file-id',
+            caseId,
+            civilClaimantId: oldCivilClaimantId,
+          }),
+        },
+        {
+          civilClaimantId: otherCivilClaimantId,
+          toJSON: () => ({
+            id: 'skipped-file-id',
+            caseId,
+            civilClaimantId: otherCivilClaimantId,
+          }),
+        },
+        {
+          civilClaimantId: null,
+          toJSON: () => ({
+            id: 'unlinked-file-id',
+            caseId,
+            civilClaimantId: null,
+          }),
+        },
+      ])
+
+      await service.copyAllWithoutDefendantToCase(
+        caseId,
+        newCaseId,
+        categories,
+        {
+          transaction,
+          civilClaimantIdMap: new Map([
+            [oldCivilClaimantId, newCivilClaimantId],
+          ]),
+        },
+      )
+
+      expect(model.create).toHaveBeenCalledTimes(2)
+      expect(model.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: undefined,
+          caseId: newCaseId,
+          civilClaimantId: newCivilClaimantId,
+        }),
+        { transaction },
+      )
+      expect(model.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: undefined,
+          caseId: newCaseId,
+          civilClaimantId: null,
+        }),
+        { transaction },
+      )
+      expect(model.create).not.toHaveBeenCalledWith(
+        expect.objectContaining({ civilClaimantId: otherCivilClaimantId }),
+        expect.anything(),
+      )
+    })
+  })
+
+  describe('remapCivilClaimantIdsForCase', () => {
+    const oldCivilClaimantId = 'old-civil-claimant-id'
+    const newCivilClaimantId = 'new-civil-claimant-id'
+
+    it('remaps copied claimant ids and clears the rest', async () => {
+      await service.remapCivilClaimantIdsForCase(
+        caseId,
+        new Map([[oldCivilClaimantId, newCivilClaimantId]]),
+        { transaction },
+      )
+
+      expect(model.update).toHaveBeenCalledWith(
+        { civilClaimantId: newCivilClaimantId },
+        {
+          where: {
+            caseId,
+            civilClaimantId: oldCivilClaimantId,
+          },
+          transaction,
+        },
+      )
+      expect(model.update).toHaveBeenCalledWith(
+        { civilClaimantId: null },
+        {
+          where: {
+            caseId,
+            civilClaimantId: { [Op.notIn]: [newCivilClaimantId] },
+          },
+          transaction,
+        },
+      )
+    })
+
+    it('clears every civilClaimantId when no claimants were copied', async () => {
+      await service.remapCivilClaimantIdsForCase(caseId, new Map(), {
+        transaction,
+      })
+
+      expect(model.update).toHaveBeenCalledWith(
+        { civilClaimantId: null },
+        {
+          where: {
+            caseId,
+            civilClaimantId: { [Op.ne]: null },
+          },
+          transaction,
+        },
+      )
+    })
+
+    it('rethrows when a remap fails', async () => {
+      const error = new Error('Some error')
+      model.update.mockRejectedValueOnce(error)
+
+      await expect(
+        service.remapCivilClaimantIdsForCase(
+          caseId,
+          new Map([[oldCivilClaimantId, newCivilClaimantId]]),
+          { transaction },
+        ),
+      ).rejects.toThrow(error)
+    })
   })
 
   describe('deleteAllForCivilClaimant', () => {

@@ -81,7 +81,6 @@ export const createTestingDefendantModule = async () => {
           updateByIdAndCase: jest.fn(),
           deleteByIdAndCase: jest.fn(),
           deleteAllForCase: jest.fn(),
-          findLatestBySpokespersonNationalId: jest.fn(),
         },
       },
       {
