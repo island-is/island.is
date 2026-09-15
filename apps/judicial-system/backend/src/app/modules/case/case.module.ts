@@ -1,5 +1,4 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
@@ -7,6 +6,7 @@ import { SigningModule } from '@island.is/dokobit-signing'
 import {
   AwsS3Module,
   CourtModule,
+  CourtSessionModule,
   DefendantModule,
   EventLogModule,
   EventModule,
@@ -22,6 +22,7 @@ import {
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
+import { CaseCloningService } from './caseCloning.service'
 import { InternalCaseController } from './internalCase.controller'
 import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
@@ -40,6 +41,7 @@ import { PdfService } from './pdf.service'
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),
     forwardRef(() => CourtModule),
+    forwardRef(() => CourtSessionModule),
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
@@ -48,6 +50,7 @@ import { PdfService } from './pdf.service'
   ],
   providers: [
     CaseService,
+    CaseCloningService,
     CaseInterceptor,
     InternalCaseService,
     LimitedAccessCaseService,

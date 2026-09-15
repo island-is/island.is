@@ -8,6 +8,9 @@ export class ScopeClient {
   clientId!: string
 
   @Field(() => String)
+  tenantId!: string
+
+  @Field(() => String)
   clientType!: string
 
   @Field(() => [TranslatedValue])

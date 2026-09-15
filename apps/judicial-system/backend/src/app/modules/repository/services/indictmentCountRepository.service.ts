@@ -221,4 +221,48 @@ export class IndictmentCountRepositoryService {
       throw error
     }
   }
+
+  // Copies every indictment count of a case to another case as a new row.
+  // Returns a map from each original count id to its copy so the caller can
+  // copy the offenses, which hang off the counts, against the new ids.
+  async copyAllToCase(
+    caseId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<Map<string, string>> {
+    try {
+      this.logger.debug(
+        `Copying all indictment counts of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const indictmentCounts = await this.indictmentCountModel.findAll({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      const indictmentCountIdMap = new Map<string, string>()
+
+      for (const indictmentCount of indictmentCounts) {
+        const newIndictmentCount = await this.indictmentCountModel.create(
+          { ...indictmentCount.toJSON(), id: undefined, caseId: newCaseId },
+          { transaction: options.transaction },
+        )
+
+        indictmentCountIdMap.set(indictmentCount.id, newIndictmentCount.id)
+      }
+
+      this.logger.debug(
+        `Copied ${indictmentCountIdMap.size} indictment counts of case ${caseId} to case ${newCaseId}`,
+      )
+
+      return indictmentCountIdMap
+    } catch (error) {
+      this.logger.error(
+        `Error copying all indictment counts of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }
