@@ -40,6 +40,7 @@ describe('CourtSessionStringRepositoryService', () => {
     findOne: jest.Mock
     update: jest.Mock
     create: jest.Mock
+    destroy: jest.Mock
   }
 
   beforeEach(async () => {
@@ -47,6 +48,7 @@ describe('CourtSessionStringRepositoryService', () => {
       findOne: jest.fn().mockResolvedValue(null),
       update: jest.fn().mockResolvedValue([0, []]),
       create: jest.fn(),
+      destroy: jest.fn().mockResolvedValue(0),
     }
 
     const moduleRef = await Test.createTestingModule({
@@ -181,6 +183,33 @@ describe('CourtSessionStringRepositoryService', () => {
 
       await expect(
         service.create({ ...key, value: 'Some value' }),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('deleteAllForCourtSession', () => {
+    it('deletes every string of the session, whichever merged case it belongs to', async () => {
+      model.destroy.mockResolvedValueOnce(3)
+
+      const result = await service.deleteAllForCourtSession(
+        caseId,
+        courtSessionId,
+        { transaction },
+      )
+
+      expect(model.destroy).toHaveBeenCalledWith({
+        where: { caseId, courtSessionId },
+        transaction,
+      })
+      expect(result).toBe(3)
+    })
+
+    it('rethrows when the deletion fails', async () => {
+      const error = new Error('Some error')
+      model.destroy.mockRejectedValueOnce(error)
+
+      await expect(
+        service.deleteAllForCourtSession(caseId, courtSessionId),
       ).rejects.toThrow(error)
     })
   })
