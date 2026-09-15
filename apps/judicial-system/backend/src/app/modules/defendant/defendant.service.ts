@@ -593,7 +593,8 @@ export class DefendantService {
       update.defenderChoice = defenderFields.defenderChoice
     }
     if (defenderFields.isDefenderChoiceConfirmed !== undefined) {
-      update.isDefenderChoiceConfirmed = defenderFields.isDefenderChoiceConfirmed
+      update.isDefenderChoiceConfirmed =
+        defenderFields.isDefenderChoiceConfirmed
     }
 
     await this.defendantRepositoryService.updateAllForCase(caseId, update, {
