@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { Includeable, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   forwardRef,
@@ -51,46 +51,13 @@ import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CourtDocumentRepositoryService,
-  CourtSession,
   Defendant,
-  Institution,
   Subpoena,
   SubpoenaRepositoryService,
-  User,
 } from '../repository'
 import { CreateSubpoenasDto } from './dto/createSubpoenas.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
-
-export const include: Includeable[] = [
-  {
-    model: Case,
-    as: 'case',
-    include: [
-      {
-        model: User,
-        as: 'judge',
-      },
-      {
-        model: User,
-        as: 'registrar',
-      },
-      {
-        model: Institution,
-        as: 'prosecutorsOffice',
-      },
-      {
-        model: Institution,
-        as: 'court',
-      },
-      {
-        model: CourtSession,
-        as: 'courtSessions',
-      },
-    ],
-  },
-  { model: Defendant, as: 'defendant' },
-]
 
 @Injectable()
 export class SubpoenaService {
@@ -440,9 +407,7 @@ export class SubpoenaService {
     subpoenaId: string,
     transaction: Transaction,
   ): Promise<Subpoena> {
-    const subpoena = await this.subpoenaRepositoryService.findOne({
-      include,
-      where: { id: subpoenaId },
+    const subpoena = await this.subpoenaRepositoryService.findById(subpoenaId, {
       transaction,
     })
 
@@ -453,11 +418,11 @@ export class SubpoenaService {
     return subpoena
   }
 
-  async findByPoliceSubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
-    const subpoena = await this.subpoenaRepositoryService.findOne({
-      include,
-      where: { policeSubpoenaId },
-    })
+  async findByPoliceSubpoenaId(policeSubpoenaId: string): Promise<Subpoena> {
+    const subpoena =
+      await this.subpoenaRepositoryService.findByPoliceSubpoenaId(
+        policeSubpoenaId,
+      )
 
     if (!subpoena) {
       throw new NotFoundException(
