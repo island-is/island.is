@@ -159,3 +159,39 @@ export const getStringFromQueryString = (
 
   return value
 }
+
+// The advert body ends with the department and publication date, e.g.
+// `<p align="center"><strong>C deild — Útgáfudagur: 15. september 2026</strong></p>`.
+// When an advert has appendixes that line belongs below the appendix accordion, so it
+// is split off the body here, while rendering, instead of being moved around in the DOM.
+const DEPARTMENT_DATE_PARAGRAPH =
+  '<p\\b[^>]*>((?:(?!</p>)[\\s\\S])*?Útgáfud(?:agur|\\.):(?:(?!</p>)[\\s\\S])*?)</p>'
+
+// Only whitespace and empty markup may follow the date paragraph, otherwise it is not
+// the closing line of the advert and is left untouched.
+const TRAILING_FILLER_ONLY =
+  /^(?:\s|&nbsp;|<br\s*\/?>|<(p|div|span)\b[^>]*>\s*<\/\1>)*$/
+
+export const splitDepartmentDateFromBody = (html: string) => {
+  const regex = new RegExp(DEPARTMENT_DATE_PARAGRAPH, 'g')
+
+  let match: RegExpExecArray | null
+  let lastMatch: RegExpExecArray | null = null
+  while ((match = regex.exec(html)) !== null) {
+    lastMatch = match
+  }
+
+  if (!lastMatch) {
+    return { bodyHtml: html, departmentDateHtml: null }
+  }
+
+  const endIndex = lastMatch.index + lastMatch[0].length
+  if (!TRAILING_FILLER_ONLY.test(html.slice(endIndex))) {
+    return { bodyHtml: html, departmentDateHtml: null }
+  }
+
+  return {
+    bodyHtml: html.slice(0, lastMatch.index) + html.slice(endIndex),
+    departmentDateHtml: lastMatch[1],
+  }
+}
