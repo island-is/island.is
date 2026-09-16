@@ -207,8 +207,7 @@ export const overviewSection = buildSection({
             const subsidiaries = getValueViaPath<
               ApplicationAnswers['subsidiaries']
             >(answers, 'subsidiaries')
-            const hasSubsidiaries =
-              subsidiaries?.includesSubsidiaries === 'yes'
+            const hasSubsidiaries = subsidiaries?.includesSubsidiaries === 'yes'
 
             const summaryItem = {
               width: 'full' as const,
