@@ -2338,6 +2338,10 @@ export const messages = defineMessages({
       'Hér finnur þú allar upplýsingar sem tengjast meðgöngu þinni á einum stað. Þú getur skoðað fræðsluefni frá mæðravernd, tímalínu samskipta, næstu tímabókanir, mælingar, skjöl og annað sem tengist meðgöngu þinni.',
     id: 'sp.health:my-pregnancy-intro',
   },
+  pregnancy: {
+    defaultMessage: 'Meðganga',
+    id: 'sp.health:pregnancy',
+  },
   readingMaterialPregnancy: {
     defaultMessage: 'Lesefni um meðgöngu',
     id: 'sp.health:reading-material-pregnancy',

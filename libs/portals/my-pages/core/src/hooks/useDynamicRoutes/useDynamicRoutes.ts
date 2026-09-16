@@ -13,11 +13,8 @@ export { parseMenuConfig } from '../../utils/orderRoutes'
 
 // Hardcoded — core can't import HealthPaths (health imports core).
 const HEALTH_ROUTE = '/heilsa'
-const HEALTH_OVERVIEW_ROUTE = '/heilsa/yfirlit'
 const HEALTH_CONVERSATIONS_ROUTE = '/heilsa/skilabod'
 const HEALTH_TREATMENT_BASE_ROUTE = '/heilsa/medferd'
-const HEALTH_PREGNANCY_ROUTE = '/heilsa/medganga'
-const HEALTH_PREGNANCY_OVERVIEW_ROUTE = '/heilsa/medganga/min-medganga'
 
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
@@ -109,6 +106,26 @@ export const useDynamicRoutes = () => {
     },
   )
 
+  const { value: pregnancyEnabled } = useFeatureFlag(
+    Features.isServicePortalHealthPregnancyPageEnabled,
+    false,
+  )
+
+  const { pathname } = useLocation()
+
+  // Only fetches on health pages; the cache then serves every consumer.
+  // Deliberately excluded from the loading aggregate below so it never
+  // delays other dynamic screens.
+  const { data: pregnancyData } = useQuery<Query>(
+    GET_HEALTH_PREGNANCY_NAV_QUERY,
+    {
+      skip: !pregnancyEnabled,
+      fetchPolicy: pathname.startsWith(HEALTH_ROUTE)
+        ? 'cache-first'
+        : 'cache-only',
+    },
+  )
+
   useEffect(() => {
     const dynamicPathArray = []
 
@@ -164,10 +181,19 @@ export const useDynamicRoutes = () => {
       )
     }
 
+    /**
+     * portals-my-pages/health
+     * Show pregnancy routes only if the user has an active pregnancy.
+     */
+    if (pregnancyData?.healthDirectorateHasActivePregnancy) {
+      dynamicPathArray.push(DynamicPaths.HealthPregnancy)
+      dynamicPathArray.push(DynamicPaths.HealthPregnancyOverview)
+    }
+
     // Combine routes, no duplicates.
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, licenseBook, vmstOverview])
+  }, [data, licenseBook, vmstOverview, pregnancyData])
 
   return {
     activeDynamicRoutes,
@@ -229,42 +255,6 @@ const injectHealthTreatmentNavItems = (
   }),
 })
 
-/**
- * Adds a "Meðganga" section under Heilsa when the user has an active pregnancy.
- */
-const injectHealthPregnancyNavItems = (
-  nav: PortalNavigationItem,
-): PortalNavigationItem => ({
-  ...nav,
-  children: nav.children?.map((child) => {
-    if (child.path !== HEALTH_ROUTE) {
-      return child
-    }
-    const health = cloneNavItem(child)
-    const pregnancyParent: PortalNavigationItem = {
-      name: m.healthPregnancy,
-      path: HEALTH_PREGNANCY_ROUTE,
-      children: [
-        {
-          name: m.healthMyPregnancy,
-          path: HEALTH_PREGNANCY_OVERVIEW_ROUTE,
-        },
-      ],
-    }
-    const healthChildren = [...(health.children ?? [])]
-    const overviewIndex = healthChildren.findIndex(
-      (item) => item.path === HEALTH_OVERVIEW_ROUTE,
-    )
-    healthChildren.splice(
-      overviewIndex >= 0 ? overviewIndex + 1 : healthChildren.length,
-      0,
-      pregnancyParent,
-    )
-    health.children = healthChildren
-    return health
-  }),
-})
-
 export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
   const { activeDynamicRoutes } = useDynamicRoutes()
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
@@ -281,11 +271,6 @@ export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
     false,
   )
 
-  const { value: pregnancyEnabled } = useFeatureFlag(
-    Features.isServicePortalHealthPregnancyPageEnabled,
-    false,
-  )
-
   const { pathname } = useLocation()
   const onHealthPage = pathname.startsWith(HEALTH_ROUTE)
 
@@ -299,35 +284,18 @@ export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
     },
   )
 
-  const { data: pregnancyData } = useQuery<Query>(
-    GET_HEALTH_PREGNANCY_NAV_QUERY,
-    {
-      skip: !pregnancyEnabled,
-      fetchPolicy: onHealthPage ? 'cache-first' : 'cache-only',
-    },
-  )
-
   const sortedNavigation = orderRoutes(nav, data?.getNamespace?.fields)
 
   // Memoized so useNavigation sees a stable object; namespace fields re-sort
   // the tree when they load.
   const navigation = useMemo(() => {
-    let assembled = sortedNavigation
-    if (pregnancyData?.healthDirectorateHasActivePregnancy) {
-      assembled = injectHealthPregnancyNavItems(assembled)
-    }
     const treatments = treatmentsData?.healthDirectorateTreatments
-    if (treatments?.length) {
-      assembled = injectHealthTreatmentNavItems(assembled, treatments)
+    if (!treatments?.length) {
+      return sortedNavigation
     }
-    return assembled
+    return injectHealthTreatmentNavItems(sortedNavigation, treatments)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    sortedNavigation,
-    treatmentsData,
-    pregnancyData,
-    data?.getNamespace?.fields,
-  ])
+  }, [sortedNavigation, treatmentsData, data?.getNamespace?.fields])
 
   return useNavigation(navigation, activeDynamicRoutes)
 }

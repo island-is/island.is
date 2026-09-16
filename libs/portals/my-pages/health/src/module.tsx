@@ -699,17 +699,19 @@ export const healthModule: PortalModule = {
       element: <HealthConversationDetail />,
     },
     {
-      name: m.healthPregnancy,
+      name: hm.pregnancy,
       path: HealthPaths.HealthPregnancy,
       key: Features.isServicePortalHealthPregnancyPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
+      dynamic: true,
       element: <Navigate to={HealthPaths.HealthPregnancyOverview} replace />,
     },
     {
-      name: m.healthMyPregnancy,
+      name: hm.myPregnancy,
       path: HealthPaths.HealthPregnancyOverview,
       key: Features.isServicePortalHealthPregnancyPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
+      dynamic: true,
       element: <Pregnancy />,
     },
     {
