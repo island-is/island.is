@@ -1,10 +1,12 @@
 import { Inject, Injectable, Optional } from '@nestjs/common'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import type { ConfigType } from '@nestjs/config'
 import type { Cache as CacheManager } from 'cache-manager'
 import type { User } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
+import { GoogleTranslateConfig } from './google-translate.config'
 import {
   assertGoogleTranslateInputLimits,
   createGoogleTranslateCacheStore,
@@ -25,6 +27,8 @@ export class GoogleTranslateService {
   private readonly rateLimiter: GoogleTranslateRateLimiter
 
   constructor(
+    @Inject(GoogleTranslateConfig.KEY)
+    private readonly config: ConfigType<typeof GoogleTranslateConfig>,
     @Optional()
     @Inject(CACHE_MANAGER)
     cacheManager?: CacheManager,
@@ -46,7 +50,7 @@ export class GoogleTranslateService {
     const totalChars = assertGoogleTranslateInputLimits(texts)
     await this.rateLimiter.consume(user.nationalId, totalChars)
 
-    const apiKey = process.env.FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY
+    const apiKey = this.config.apiKey
 
     if (!apiKey) {
       logger.warn(
@@ -56,22 +60,19 @@ export class GoogleTranslateService {
     }
 
     try {
-      const response = await this.enhancedFetch(
-        'https://translation.googleapis.com/language/translate/v2',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-goog-api-key': apiKey,
-          },
-          body: JSON.stringify({
-            q: texts,
-            source: 'is',
-            target: 'en',
-            format: 'text',
-          }),
+      const response = await this.enhancedFetch(this.config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-goog-api-key': apiKey,
         },
-      )
+        body: JSON.stringify({
+          q: texts,
+          source: 'is',
+          target: 'en',
+          format: 'text',
+        }),
+      })
 
       if (!response.ok) {
         throw new Error(

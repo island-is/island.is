@@ -15,6 +15,7 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import {
   ApplicationModule,
   ApplicationTranslationConfig,
+  GoogleTranslateConfig,
 } from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
@@ -567,6 +568,7 @@ const environment = getConfig
         LandspitaliApiModuleConfig,
         CourseChargesConfig,
         ApplicationTranslationConfig,
+        GoogleTranslateConfig,
         ApplicationTranslationHttpConfig,
         RecyclingFundClientConfig,
         CustomsGeneralClientConfig,
