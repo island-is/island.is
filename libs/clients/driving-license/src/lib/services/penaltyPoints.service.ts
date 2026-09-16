@@ -20,7 +20,6 @@ export class PenaltyPointsClientService {
   public async penaltyPointsDrivingLicenseApplicationIsBelowThreshold(
     user: User,
   ): Promise<boolean | undefined> {
-    //TODO: Fix this, shouldnt be sending tokens as a request parameter
     const result = await handle204(
       this.serviceWithAuth(user).apiDrivinglicenseV5PenaltypointsGetRaw({
         apiVersion: DRIVING_LICENSE_API_VERSION_V5,

@@ -13,9 +13,15 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { Audit } from '@island.is/nest/audit'
 import { DeprivationsService } from '../services/deprivations.service'
 import { DrivingLicenseDeprivations } from '../models/penalty/drivingLicenseDeprivations.model'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.isDriversDeprivationsEnabled)
 @Resolver(() => DrivingLicenseDeprivations)
 export class DeprivationsResolver {
   constructor(private readonly deprivationsService: DeprivationsService) {}
