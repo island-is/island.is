@@ -26,7 +26,7 @@ export const Prerequisites = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'forsendur',
+      id: 'prerequisitesSection',
       tabTitle: messages.prerequisites.section.sectionTitle,
       children: [
         buildExternalDataProvider({

@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildMultiField,
   buildOverviewField,
   buildSection,
@@ -8,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
+import { ApplicationAnswers } from '../../lib/dataSchema'
 import { Gender } from '../../utils/constants'
 
 export const overviewSection = buildSection({
@@ -198,9 +198,53 @@ export const overviewSection = buildSection({
             },
           ],
         }),
-        buildCustomField({
-          id: 'overview.display',
-          component: 'Overview',
+        buildOverviewField({
+          id: 'overview.subsidiaries',
+          title: messages.overview.subsidiaries,
+          titleVariant: 'h3',
+          backId: 'subsidiariesMultiField',
+          items: (answers) => {
+            const subsidiaries = getValueViaPath<
+              ApplicationAnswers['subsidiaries']
+            >(answers, 'subsidiaries')
+            const hasSubsidiaries =
+              subsidiaries?.includesSubsidiaries === 'yes'
+
+            const summaryItem = {
+              width: 'full' as const,
+              keyText: messages.overview.hasSubsidiaries,
+              valueText: hasSubsidiaries
+                ? messages.overview.yesSubsidiaries
+                : messages.overview.noSubsidiaries,
+            }
+
+            if (!hasSubsidiaries) return [summaryItem]
+
+            const subsidiaryItems = (subsidiaries?.list ?? [])
+              .filter((row) => !row.isRemoved)
+              .map((row) => ({
+                width: 'half' as const,
+                keyText: row.nationalIdWithName?.name ?? '',
+                valueText: row.nationalIdWithName?.nationalId ?? '',
+              }))
+
+            return [summaryItem, ...subsidiaryItems]
+          },
+        }),
+        buildOverviewField({
+          id: 'overview.equalityPlan',
+          title: messages.overview.equalityPlan,
+          titleVariant: 'h3',
+          backId: 'goalsAndActionsMultiField',
+          items: (answers) => [
+            {
+              width: 'full',
+              keyText: messages.overview.equalityPlanFile,
+              valueText:
+                getValueViaPath<string>(answers, 'goalsAndActions.filename') ??
+                '',
+            },
+          ],
         }),
         buildSubmitField({
           id: 'submit',
