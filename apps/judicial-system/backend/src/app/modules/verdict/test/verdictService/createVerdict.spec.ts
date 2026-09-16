@@ -4,14 +4,14 @@ import { v4 as uuid } from 'uuid'
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
 import { Verdict, VerdictRepositoryService } from '../../../repository'
-import { CreateVerdictDto } from '../../dto/createVerdict.dto'
+import { CreateVerdict } from '../../verdict.service'
 
 interface Then {
   result: Verdict
   error: Error
 }
 
-type GivenWhenThen = (verdict: CreateVerdictDto) => Promise<Then>
+type GivenWhenThen = (verdict: CreateVerdict) => Promise<Then>
 
 describe('VerdictService - createVerdict', () => {
   const caseId = uuid()

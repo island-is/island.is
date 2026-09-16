@@ -67,7 +67,7 @@ type UpdateVerdict = {
 // A verdict is always created for a defendant the caller has already
 // identified; CreateVerdictDto only makes the id optional because it also
 // carries the fields of an update.
-type CreateVerdict = CreateVerdictDto & { defendantId: string }
+export type CreateVerdict = CreateVerdictDto & { defendantId: string }
 
 export type VerdictServiceCertificateDelivery = {
   delivered: boolean
