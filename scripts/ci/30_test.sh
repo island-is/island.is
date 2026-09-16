@@ -36,5 +36,4 @@ yarn nx run-many \
   --ci \
   --coverage \
   --passWithNoTests \
-  --exclude="${services_to_skip[*]}" \
   "$@"
