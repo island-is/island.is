@@ -590,25 +590,6 @@ export class DefendantService {
     return defendantsInCustody.some((d) => d.case)
   }
 
-  findLatestDefendantByDefenderNationalId(
-    nationalId: string,
-  ): Promise<Defendant | null> {
-    return this.defendantRepositoryService.findOne({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: { [Op.not]: CaseState.DELETED },
-            isArchived: false,
-          },
-        },
-      ],
-      where: { defenderNationalId: nationalId },
-      order: [['created', 'DESC']],
-    })
-  }
-
   async deliverDefendantToCourt(
     theCase: Case,
     defendant: Defendant,
