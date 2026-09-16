@@ -1,5 +1,4 @@
 import { Case } from '../repository'
-
 import {
   formatRequestCaseDefenderNames,
   getRequestCaseDefenderRecipients,
