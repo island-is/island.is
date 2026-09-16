@@ -410,24 +410,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         courtSessionId
         documentType
         documentOrder
+        mergedFromCaseId
         name
         caseFileId
         generatedPdfUri
         submittedBy
-      }
-      mergedFiledDocuments {
-        id
-        created
-        modified
-        caseId
-        courtSessionId
-        documentType
-        documentOrder
-        mergedCourtSessionId
-        mergedDocumentOrder
-        name
-        caseFileId
-        generatedPdfUri
       }
       courtSessionStrings {
         id
@@ -489,24 +476,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           courtSessionId
           documentType
           documentOrder
+          mergedFromCaseId
           name
           caseFileId
           generatedPdfUri
           submittedBy
-        }
-        mergedFiledDocuments {
-          id
-          created
-          modified
-          caseId
-          courtSessionId
-          documentType
-          documentOrder
-          mergedCourtSessionId
-          mergedDocumentOrder
-          name
-          caseFileId
-          generatedPdfUri
         }
         courtSessionStrings {
           id
