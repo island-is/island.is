@@ -99,7 +99,7 @@ export enum Gender {
 // Moved from fields/JobClassificationEditor/utils.ts — shared by both classification editors.
 
 export type StepMeta = {
-  steps: { order: number; score: number }[]
+  steps: { order: number; score: number; description: string }[]
   totalSteps: number
   maxScore: number
   weight: number

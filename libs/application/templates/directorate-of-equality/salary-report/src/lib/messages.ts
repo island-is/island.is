@@ -1002,6 +1002,10 @@ export const messages = {
         id: 'doe.sr.application:report.jobClassification.subCriterionInfo',
         defaultMessage: '{description} {weight}% = {max} stig',
       },
+      selectedStepDescription: {
+        id: 'doe.sr.application:report.jobClassification.selectedStepDescription',
+        defaultMessage: '{order}. þrep: {description}',
+      },
       noRolesMessage: {
         id: 'doe.sr.application:report.jobClassification.noRolesMessage',
         defaultMessage:
