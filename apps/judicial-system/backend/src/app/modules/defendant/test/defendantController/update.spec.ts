@@ -209,6 +209,35 @@ describe('DefendantController - Update', () => {
     })
   })
 
+  describe('defendant defenderEmail changed after case is delivered to court', () => {
+    const defendantUpdate = { defenderEmail: 'new-defender@example.is' }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
+
+      await givenWhenThen(defendantUpdate, CaseType.CUSTODY, uuid())
+    })
+
+    it('should queue court delivery messages for the defendant', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
+      ])
+    })
+  })
+
   describe.each([
     { isDefenderChoiceConfirmed: true, shouldSendEmail: true },
     { isDefenderChoiceConfirmed: false, shouldSendEmail: false },
