@@ -1,10 +1,7 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Inject,
   Injectable,
-  InternalServerErrorException,
-  NotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common'
@@ -52,22 +49,9 @@ export class ApplicationTranslationClient {
     }
   }
 
-  private handleError(error: unknown, _url: string): never {
+  private handleError(error: unknown): never {
     if (error instanceof FetchError) {
-      const message = `Translation API error: ${error.status} ${error.statusText}`
-
-      switch (error.status) {
-        case 401:
-          throw new UnauthorizedException(message)
-        case 403:
-          throw new ForbiddenException(message)
-        case 404:
-          throw new NotFoundException(message)
-        case 503:
-          throw new ServiceUnavailableException(message)
-        default:
-          throw new InternalServerErrorException(message)
-      }
+      throw error
     }
 
     const isLocal =
@@ -101,7 +85,7 @@ export class ApplicationTranslationClient {
       })
       return await response.json()
     } catch (error) {
-      this.handleError(error, url)
+      this.handleError(error)
     }
   }
 
@@ -131,7 +115,7 @@ export class ApplicationTranslationClient {
 
     return this.fetch(url)
       .then((response) => response.json() as Promise<Record<string, string>>)
-      .catch((error) => this.handleError(error, url))
+      .catch((error) => this.handleError(error))
   }
 
   getTranslationsByNamespace(
