@@ -46,7 +46,7 @@ const AppointmentDetail = () => {
   const { id } = useParams<{ id: string }>()
   const [cancelModalVisible, setCancelModalVisible] = useState(false)
 
-  const { data, loading, error } = useGetAppointmentDetailQuery({
+  const { data, loading, error, refetch } = useGetAppointmentDetailQuery({
     fetchPolicy: 'network-only',
     variables: { id: id ?? '' },
     skip: !id,
@@ -84,6 +84,7 @@ const AppointmentDetail = () => {
             // Online cancellation isn't happening either way.
             setCancelModalVisible(false)
             toast.error(formatMessage(messages.cancelContactProvider))
+            refetch()
             break
           case HealthDirectorateAppointmentCancelOutcome.UNCONFIRMED:
             // Sent but unanswered — the modal stays open so the confirm
