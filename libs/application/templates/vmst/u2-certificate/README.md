@@ -94,7 +94,7 @@ The application is with VMST. From this state:
   Review, the applicant can invoke `REVOKE` to move it to **Revoked**.
   `REVOKE` is only wired to the applicant role, so a reviewer cannot fire
   it. Once VMST has approved or rejected the application, revocation is
-  no longer possible.
+  no longer possible (from those states, if VMST moves it back into Review, Revocation is again possible for user).
 - **VMST can reopen prior decisions** — once an application is in
   **Completed** or **Rejected**, the reviewer can move it back to Review
   with the `REVIEW` action. A completed application can also be rejected
