@@ -167,7 +167,8 @@ export const Premises = () => {
             <Column span="8/10">
               <Box marginTop={2}>
                 <Text variant="medium">
-                  Hægt er að nýta VALIDATE virknina fyrir þennan skjá.
+                  Hægt er að nýta VALIDATE_ELIGIBILITY virknina fyrir þennan
+                  skjá.
                 </Text>
               </Box>
             </Column>

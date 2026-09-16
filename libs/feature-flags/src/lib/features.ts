@@ -75,6 +75,7 @@ export enum Features {
   isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   isServicePortalUnemploymentBenefitsPageEnabled = 'isServicePortalUnemploymentBenefitsPageEnabled',
   isServicePortalActivationAllowancePageEnabled = 'isServicePortalActivationAllowancePageEnabled',
+  isServicePortalHealthOldPregnanciesPageEnabled = 'isServicePortalHealthOldPregnanciesPageEnabled',
 
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',

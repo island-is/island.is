@@ -311,7 +311,10 @@ export const canDefenceUserOpenLinkedCase = (
 }
 
 // The case-level appeal_decision row of a party - the one with no rulingFileId.
-const caseLevelAppealDecisionRow = (
+/**
+ * The case-level (no rulingFileId) appeal_decision row of a party, if any.
+ */
+export const caseLevelAppealDecisionRow = (
   appealDecisions: Case['appealDecisions'],
   partyRole: AppealDecisionPartyRole,
 ) =>
@@ -376,6 +379,31 @@ export const withCaseLevelAppealDecision = (
   return decisions.map((decision, i) =>
     i === index ? { ...decision, ...patch } : decision,
   )
+}
+
+/**
+ * Returns a new appeal-decisions array where the case-level (no rulingFileId)
+ * row for `partyRole` is put back to what `previousAppealDecisions` held for it
+ * - dropped when there was none. Rolls back the optimistic update of
+ * withCaseLevelAppealDecision when its mutation fails, leaving the other
+ * party's row (which may have been saved in the meantime) alone.
+ */
+export const revertCaseLevelAppealDecision = (
+  appealDecisions: Case['appealDecisions'],
+  previousAppealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+): Case['appealDecisions'] => {
+  const otherDecisions = (appealDecisions ?? []).filter(
+    (decision) => decision.rulingFileId || decision.partyRole !== partyRole,
+  )
+  const previousDecision = caseLevelAppealDecisionRow(
+    previousAppealDecisions,
+    partyRole,
+  )
+
+  return previousDecision
+    ? [...otherDecisions, previousDecision]
+    : otherDecisions
 }
 
 /**

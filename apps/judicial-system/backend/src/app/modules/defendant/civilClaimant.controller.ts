@@ -130,9 +130,8 @@ export class CivilClaimantController {
       `Deleting civil claimant ${civilClaimantId} of case ${caseId}`,
     )
 
-    const deleted = await this.civilClaimantService.delete(
-      caseId,
-      civilClaimantId,
+    const deleted = await this.sequelize.transaction((transaction) =>
+      this.civilClaimantService.delete(caseId, civilClaimantId, transaction),
     )
 
     return { deleted }

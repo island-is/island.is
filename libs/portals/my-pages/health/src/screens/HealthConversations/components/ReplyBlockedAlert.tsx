@@ -36,6 +36,11 @@ const reasonMessageMap: Record<
       type: 'info',
       text: messages.healthConversationReplyBlockedMessagingNotAllowedText,
     },
+  [HealthDirectorateHealthConversationReplyBlockedReason.PATIENT_REPLY_NOT_ALLOWED]:
+    {
+      type: 'info',
+      text: messages.healthConversationReplyBlockedPatientReplyNotAllowedText,
+    },
   [HealthDirectorateHealthConversationReplyBlockedReason.OUTSIDE_MESSAGING_WINDOW]:
     {
       type: 'info',
@@ -51,6 +56,11 @@ const reasonMessageMap: Record<
       type: 'success',
       title: messages.healthConversationReplyBlockedAwaitingStaffReplyTitle,
       text: messages.healthConversationReplyBlockedAwaitingStaffReplyText,
+    },
+  [HealthDirectorateHealthConversationReplyBlockedReason.AWAITING_ACKNOWLEDGEMENT]:
+    {
+      type: 'info',
+      text: messages.healthConversationReplyBlockedAwaitingAcknowledgementText,
     },
 }
 

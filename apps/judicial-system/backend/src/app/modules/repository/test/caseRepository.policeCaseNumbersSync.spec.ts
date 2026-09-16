@@ -9,20 +9,7 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
-import { CaseFile } from '../models/caseFile.model'
-import { CaseString } from '../models/caseString.model'
-import { CivilClaimant } from '../models/civilClaimant.model'
-import { DateLog } from '../models/dateLog.model'
-import { Defendant } from '../models/defendant.model'
-import { DefendantEventLog } from '../models/defendantEventLog.model'
-import { EventLog } from '../models/eventLog.model'
-import { IndictmentCount } from '../models/indictmentCount.model'
-import { Offense } from '../models/offense.model'
-import { Subpoena } from '../models/subpoena.model'
-import { Verdict } from '../models/verdict.model'
-import { Victim } from '../models/victim.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
 
@@ -57,30 +44,14 @@ describe('CaseRepositoryService — police case number junction sync', () => {
   const transaction = { id: 'tx' } as never
 
   const replaceUnassigned = jest.fn().mockResolvedValue(undefined)
-  const moveAssignedRowsToCaseForDefendant = jest
-    .fn()
-    .mockResolvedValue(undefined)
   const findDistinctPoliceCaseNumbersByCaseIds = jest
     .fn()
     .mockResolvedValue(new Map())
 
   const resolvePoliceCaseNumbersForCases = jest.fn()
-  const findUnassignedPoliceCaseNumbersForSplit = jest
-    .fn()
-    .mockResolvedValue([])
 
   let caseRepositoryService: CaseRepositoryService
   let caseModel: ReturnType<typeof mockSequelizeModel>
-  let defendantModel: ReturnType<typeof mockSequelizeModel>
-  let subpoenaModel: ReturnType<typeof mockSequelizeModel>
-  let verdictModel: ReturnType<typeof mockSequelizeModel>
-  let defendantEventLogModel: ReturnType<typeof mockSequelizeModel>
-  let caseStringModel: ReturnType<typeof mockSequelizeModel>
-  let dateLogModel: ReturnType<typeof mockSequelizeModel>
-  let eventLogModel: ReturnType<typeof mockSequelizeModel>
-  let victimModel: ReturnType<typeof mockSequelizeModel>
-  let indictmentCountModel: ReturnType<typeof mockSequelizeModel>
-  let caseFileModel: ReturnType<typeof mockSequelizeModel>
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -105,29 +76,6 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     )
 
     caseModel = mockSequelizeModel()
-    defendantModel = mockSequelizeModel()
-    subpoenaModel = mockSequelizeModel()
-    verdictModel = mockSequelizeModel()
-    defendantEventLogModel = mockSequelizeModel()
-    caseStringModel = mockSequelizeModel()
-    dateLogModel = mockSequelizeModel()
-    eventLogModel = mockSequelizeModel()
-    victimModel = mockSequelizeModel()
-    indictmentCountModel = mockSequelizeModel()
-    caseFileModel = mockSequelizeModel()
-
-    defendantModel.update.mockResolvedValue([0])
-    subpoenaModel.update.mockResolvedValue([0])
-    verdictModel.update.mockResolvedValue([0])
-    defendantEventLogModel.update.mockResolvedValue([0])
-    caseFileModel.update.mockResolvedValue([0])
-    caseStringModel.findOne.mockResolvedValue(null)
-    caseStringModel.create.mockResolvedValue({})
-    dateLogModel.findOne.mockResolvedValue(null)
-    eventLogModel.findAll.mockResolvedValue([])
-    victimModel.findAll.mockResolvedValue([])
-    indictmentCountModel.findAll.mockResolvedValue([])
-    caseFileModel.findAll.mockResolvedValue([])
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -136,36 +84,12 @@ describe('CaseRepositoryService — police case number junction sync', () => {
           useValue: { debug: jest.fn(), error: jest.fn() },
         },
         { provide: getModelToken(Case), useValue: caseModel },
-        { provide: getModelToken(Defendant), useValue: defendantModel },
-        { provide: getModelToken(Subpoena), useValue: subpoenaModel },
-        { provide: getModelToken(Verdict), useValue: verdictModel },
-        {
-          provide: getModelToken(DefendantEventLog),
-          useValue: defendantEventLogModel,
-        },
-        { provide: getModelToken(CaseString), useValue: caseStringModel },
-        { provide: getModelToken(DateLog), useValue: dateLogModel },
-        { provide: getModelToken(EventLog), useValue: eventLogModel },
-        { provide: getModelToken(Victim), useValue: victimModel },
-        {
-          provide: getModelToken(IndictmentCount),
-          useValue: indictmentCountModel,
-        },
-        { provide: getModelToken(Offense), useValue: mockSequelizeModel() },
-        {
-          provide: getModelToken(CivilClaimant),
-          useValue: mockSequelizeModel(),
-        },
-        { provide: getModelToken(CaseFile), useValue: caseFileModel },
-        { provide: getModelToken(AppealCase), useValue: mockSequelizeModel() },
         {
           provide: CaseDefendantPoliceCaseNumberRepositoryService,
           useValue: {
             replaceUnassignedFromPoliceCaseNumbersArray: replaceUnassigned,
-            moveAssignedRowsToCaseForDefendant,
             findDistinctPoliceCaseNumbersByCaseIds,
             resolvePoliceCaseNumbersForCases,
-            findUnassignedPoliceCaseNumbersForSplit,
           },
         },
         CaseRepositoryService,
@@ -324,50 +248,6 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       )
 
       expect(replaceUnassigned).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('split', () => {
-    it('syncs unassigned rows for the new case and moves assigned rows for the split defendant', async () => {
-      const parentCase = stubCase('parent-case-id', [])
-      Object.assign(parentCase, {
-        courtCaseNumber: 'R-100',
-        origin: CaseOrigin.LOKE,
-        type: CaseType.INDICTMENT,
-      })
-
-      const splitCase = stubCase('split-case-id', [])
-
-      caseModel.findByPk.mockResolvedValue(parentCase)
-      caseModel.create.mockResolvedValue(splitCase)
-
-      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
-        new Map([['parent-case-id', ['007-2024-1', '007-2024-2']]]),
-      )
-      findUnassignedPoliceCaseNumbersForSplit.mockResolvedValue(['007-2024-1'])
-
-      await caseRepositoryService.split('parent-case-id', 'defendant-id', {
-        transaction,
-      })
-
-      expect(findUnassignedPoliceCaseNumbersForSplit).toHaveBeenCalledWith(
-        'parent-case-id',
-        'defendant-id',
-        { transaction },
-      )
-
-      expect(replaceUnassigned).toHaveBeenCalledWith(
-        'split-case-id',
-        ['007-2024-1'],
-        { transaction },
-      )
-
-      expect(moveAssignedRowsToCaseForDefendant).toHaveBeenCalledWith(
-        'parent-case-id',
-        'split-case-id',
-        'defendant-id',
-        { transaction },
-      )
     })
   })
 })

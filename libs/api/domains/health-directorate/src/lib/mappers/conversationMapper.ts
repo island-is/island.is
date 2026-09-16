@@ -7,11 +7,14 @@ import {
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
   MessageType,
+  MessagingDayType,
   MessagingRecipientDto,
+  OpeningHoursWindowDto,
   RecipientCreateBlockedReason,
   VideoConversationDto,
 } from '@island.is/clients/health-directorate'
 import {
+  HealthConversationDayTypeEnum,
   HealthConversationDirectionEnum,
   HealthConversationRecipientBlockedReasonEnum,
   HealthConversationReplyBlockedReasonEnum,
@@ -20,6 +23,7 @@ import {
 } from '../models/enums'
 import { m } from '../messages'
 import { HealthDirectorateHealthConversationMessageContent } from '../models/healthConversationMessageContent.model'
+import { HealthDirectorateHealthConversationOpeningWindow } from '../models/healthConversationOpeningHours.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 import { HealthDirectorateHealthConversationSegment } from '../models/healthConversationSegment.model'
 import { HealthDirectorateHealthConversationType } from '../models/healthConversationType.model'
@@ -120,12 +124,16 @@ export const toConversationReplyBlockedReasonEnum = (
       return HealthConversationReplyBlockedReasonEnum.NO_REPLY_GROUP
     case ConversationReplyBlockedReason.MESSAGING_NOT_ALLOWED:
       return HealthConversationReplyBlockedReasonEnum.MESSAGING_NOT_ALLOWED
+    case ConversationReplyBlockedReason.PATIENT_REPLY_NOT_ALLOWED:
+      return HealthConversationReplyBlockedReasonEnum.PATIENT_REPLY_NOT_ALLOWED
     case ConversationReplyBlockedReason.OUTSIDE_MESSAGING_WINDOW:
       return HealthConversationReplyBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
     case ConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED:
       return HealthConversationReplyBlockedReasonEnum.REPLY_WINDOW_EXPIRED
     case ConversationReplyBlockedReason.AWAITING_STAFF_REPLY:
       return HealthConversationReplyBlockedReasonEnum.AWAITING_STAFF_REPLY
+    case ConversationReplyBlockedReason.AWAITING_ACKNOWLEDGEMENT:
+      return HealthConversationReplyBlockedReasonEnum.AWAITING_ACKNOWLEDGEMENT
     default:
       return undefined
   }
@@ -137,6 +145,8 @@ export const toConversationRecipientBlockedReasonEnum = (
   switch (reason) {
     case RecipientCreateBlockedReason.MESSAGING_NOT_ALLOWED:
       return HealthConversationRecipientBlockedReasonEnum.MESSAGING_NOT_ALLOWED
+    case RecipientCreateBlockedReason.PATIENT_INITIATED_NOT_ALLOWED:
+      return HealthConversationRecipientBlockedReasonEnum.PATIENT_INITIATED_NOT_ALLOWED
     case RecipientCreateBlockedReason.OUTSIDE_MESSAGING_WINDOW:
       return HealthConversationRecipientBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
     case RecipientCreateBlockedReason.NO_ALLOWED_TYPES:
@@ -145,6 +155,26 @@ export const toConversationRecipientBlockedReasonEnum = (
       return undefined
   }
 }
+
+const toConversationDayTypeEnum = (
+  dayType: MessagingDayType,
+): HealthConversationDayTypeEnum => {
+  switch (dayType) {
+    case MessagingDayType.WEEKEND:
+      return HealthConversationDayTypeEnum.WEEKEND
+    case MessagingDayType.HOLIDAY:
+      return HealthConversationDayTypeEnum.HOLIDAY
+    default:
+      return HealthConversationDayTypeEnum.WEEKDAY
+  }
+}
+
+const mapOpeningWindow = (
+  window?: OpeningHoursWindowDto,
+): HealthDirectorateHealthConversationOpeningWindow | undefined =>
+  window
+    ? { windowOpen: window.windowOpen, windowClose: window.windowClose }
+    : undefined
 
 /* 
   The Heilsuvera web chat is not a Hekla conversation type, it's appended
@@ -205,6 +235,20 @@ export const mapMessagingRecipient = (
   messagingWindowOpen: r.messagingWindowOpen,
   messagingWindowClose: r.messagingWindowClose,
   isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
+  isClosedToday: r.isClosedToday,
+  dayType: toConversationDayTypeEnum(r.dayType),
+  nextOpensAt: r.nextOpensAt
+    ? {
+        date: new Date(r.nextOpensAt.date),
+        windowOpen: r.nextOpensAt.windowOpen,
+        windowClose: r.nextOpensAt.windowClose,
+      }
+    : undefined,
+  openingHours: {
+    weekday: mapOpeningWindow(r.openingHours.weekday),
+    weekend: mapOpeningWindow(r.openingHours.weekend),
+    holiday: mapOpeningWindow(r.openingHours.holiday),
+  },
   patientReplyWindowDays: r.patientReplyWindowDays,
   allowedMessageTypes: r.allowedConversationTypes.map(
     (t): HealthDirectorateHealthConversationType => {

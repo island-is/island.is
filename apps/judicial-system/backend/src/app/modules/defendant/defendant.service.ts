@@ -1,4 +1,4 @@
-import { literal, Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
@@ -11,8 +11,7 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseType,
+  AppealCaseState,
   DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
@@ -434,6 +433,22 @@ export class DefendantService {
       update = rest
     }
 
+    // The reviewer's decision on an indictment verdict is the prosecution's
+    // appeal or its absence. Once the court of appeals has received the verdict
+    // appeal the decision is made; the web creates and withdraws the appeal
+    // from the decision, and this keeps the two from drifting apart.
+    if (
+      update.indictmentReviewDecision !== undefined &&
+      update.indictmentReviewDecision !== defendant.indictmentReviewDecision &&
+      theCase.verdictAppealCase &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.APPEALED &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.WITHDRAWN
+    ) {
+      throw new BadRequestException(
+        'The review decision cannot change once the court of appeals has received the verdict appeal',
+      )
+    }
+
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
         theCase,
@@ -555,41 +570,9 @@ export class DefendantService {
       return false
     }
 
-    const defendantsInCustody = await this.defendantRepositoryService.findAll({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: CaseState.ACCEPTED,
-            type: CaseType.CUSTODY,
-            valid_to_date: { [Op.gte]: literal('current_date') },
-          },
-        },
-      ],
-      where: { nationalId: defendants[0].nationalId },
-    })
-
-    return defendantsInCustody.some((d) => d.case)
-  }
-
-  findLatestDefendantByDefenderNationalId(
-    nationalId: string,
-  ): Promise<Defendant | null> {
-    return this.defendantRepositoryService.findOne({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: { [Op.not]: CaseState.DELETED },
-            isArchived: false,
-          },
-        },
-      ],
-      where: { defenderNationalId: nationalId },
-      order: [['created', 'DESC']],
-    })
+    return this.defendantRepositoryService.existsInActiveCustody(
+      defendants[0].nationalId,
+    )
   }
 
   async deliverDefendantToCourt(

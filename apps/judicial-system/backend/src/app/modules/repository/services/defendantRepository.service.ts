@@ -1,4 +1,4 @@
-import { FindOptions, Transaction, UpdateOptions } from 'sequelize'
+import { literal, Op, Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
@@ -9,25 +9,14 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+
+import { Case } from '../models/case.model'
 import { Defendant } from '../models/defendant.model'
 import { UpdateDefendant } from '../types/caseRepository.types'
 
-interface FindOneOptions {
-  where?: FindOptions['where']
+interface FindDefendantOptions {
   transaction?: Transaction
-  include?: FindOptions['include']
-  attributes?: FindOptions['attributes']
-  order?: FindOptions['order']
-}
-
-interface FindAllOptions {
-  where?: FindOptions['where']
-  transaction?: Transaction
-  include?: FindOptions['include']
-  attributes?: FindOptions['attributes']
-  order?: FindOptions['order']
-  limit?: FindOptions['limit']
-  offset?: FindOptions['offset']
 }
 
 interface CreateDefendantOptions {
@@ -49,93 +38,60 @@ export class DefendantRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findOne(options?: FindOneOptions): Promise<Defendant | null> {
+  // Looks a defendant up within a bounded set of cases - the case the caller
+  // is acting on and the cases split off from it - so a defendant id from some
+  // unrelated case cannot be resolved. Returns null when there is no such
+  // defendant; the caller owns the response to that.
+  async findByIdInCases(
+    defendantId: string,
+    caseIds: string[],
+    options?: FindDefendantOptions,
+  ): Promise<Defendant | null> {
     try {
-      this.logger.debug('Finding defendant with conditions:', {
-        where: Object.keys(options?.where ?? {}),
+      this.logger.debug(
+        `Finding defendant ${defendantId} within ${caseIds.length} cases`,
+      )
+
+      return await this.defendantModel.findOne({
+        where: { id: defendantId, caseId: { [Op.in]: caseIds } },
+        transaction: options?.transaction,
       })
-
-      const findOptions: FindOptions = {}
-
-      if (options?.where) {
-        findOptions.where = options.where
-      }
-
-      if (options?.transaction) {
-        findOptions.transaction = options.transaction
-      }
-
-      if (options?.include) {
-        findOptions.include = options.include
-      }
-
-      if (options?.attributes) {
-        findOptions.attributes = options.attributes
-      }
-
-      if (options?.order) {
-        findOptions.order = options.order
-      }
-
-      const result = await this.defendantModel.findOne(findOptions)
-
-      this.logger.debug(`Defendant ${result ? 'found' : 'not found'}`)
-
-      return result
     } catch (error) {
-      this.logger.error('Error finding defendant with conditions:', {
-        where: Object.keys(options?.where ?? {}),
-        error,
-      })
+      this.logger.error(
+        `Error finding defendant ${defendantId} within ${caseIds.length} cases:`,
+        { error },
+      )
 
       throw error
     }
   }
 
-  async findAll(options?: FindAllOptions): Promise<Defendant[]> {
+  // Whether the person behind a national id is a defendant in a custody case
+  // that has been accepted and has not run out. What counts as active custody
+  // is defendant read semantics, so the predicate lives here rather than in
+  // the caller.
+  async existsInActiveCustody(nationalId: string): Promise<boolean> {
     try {
-      this.logger.debug('Finding all defendants with conditions:', {
-        where: Object.keys(options?.where ?? {}),
+      this.logger.debug('Checking for a defendant in active custody')
+
+      const defendantInCustody = await this.defendantModel.findOne({
+        include: [
+          {
+            model: Case,
+            as: 'case',
+            where: {
+              state: CaseState.ACCEPTED,
+              type: CaseType.CUSTODY,
+              valid_to_date: { [Op.gte]: literal('current_date') },
+            },
+          },
+        ],
+        where: { nationalId },
       })
 
-      const findOptions: FindOptions = {}
-
-      if (options?.where) {
-        findOptions.where = options.where
-      }
-
-      if (options?.transaction) {
-        findOptions.transaction = options.transaction
-      }
-
-      if (options?.include) {
-        findOptions.include = options.include
-      }
-
-      if (options?.attributes) {
-        findOptions.attributes = options.attributes
-      }
-
-      if (options?.order) {
-        findOptions.order = options.order
-      }
-
-      if (options?.limit) {
-        findOptions.limit = options.limit
-      }
-
-      if (options?.offset) {
-        findOptions.offset = options.offset
-      }
-
-      const results = await this.defendantModel.findAll(findOptions)
-
-      this.logger.debug(`Found ${results.length} defendants`)
-
-      return results
+      return Boolean(defendantInCustody)
     } catch (error) {
-      this.logger.error('Error finding all defendants with conditions:', {
-        where: Object.keys(options?.where ?? {}),
+      this.logger.error('Error checking for a defendant in active custody:', {
         error,
       })
 
@@ -307,6 +263,53 @@ export class DefendantRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error copying the defendants of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Moves one defendant to another case, when they are split off into a case
+  // of their own. The row is addressed within its own case, so a defendant of
+  // some other case cannot be moved by mistake. The route's guards bound the
+  // defendant to the case before the transaction opened, so a concurrent split
+  // or delete can still leave nothing to move - that fails the split rather
+  // than committing a new case without its defendant.
+  async moveToCase(
+    defendantId: string,
+    caseId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Moving defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.defendantModel.update(
+        { caseId: newCaseId },
+        {
+          where: { id: defendantId, caseId },
+          transaction: options.transaction,
+        },
+      )
+
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not move defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+        )
+      }
+
+      if (numberOfAffectedRows > 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when moving defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+        )
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error moving defendant ${defendantId} from case ${caseId} to case ${newCaseId}:`,
         { error },
       )
 
