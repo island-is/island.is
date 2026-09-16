@@ -1,4 +1,5 @@
 import {
+  HealthDirectorateAppointmentCancelOutcome,
   HealthDirectorateAppointmentModality,
   HealthDirectorateAppointmentStatus,
 } from '@island.is/api/schema'
@@ -70,12 +71,27 @@ const AppointmentDetail = () => {
     }
     cancelAppointment({ variables: { id } })
       .then((response) => {
-        if (response.data?.healthDirectorateCancelAppointment) {
-          toast.success(formatMessage(messages.cancelAppointmentSuccess))
-          setCancelModalVisible(false)
-          navigate(HealthPaths.HealthAppointments, { replace: true })
-        } else {
-          toast.error(formatMessage(messages.cancelAppointmentError))
+        const result =
+          response.data?.healthDirectorateRequestAppointmentCancellation
+        switch (result?.outcome) {
+          case HealthDirectorateAppointmentCancelOutcome.CANCELLED:
+            toast.success(formatMessage(messages.cancelAppointmentSuccess))
+            setCancelModalVisible(false)
+            navigate(HealthPaths.HealthAppointments, { replace: true })
+            break
+          case HealthDirectorateAppointmentCancelOutcome.REFUSED:
+          case HealthDirectorateAppointmentCancelOutcome.BLOCKED:
+            // Online cancellation isn't happening either way.
+            setCancelModalVisible(false)
+            toast.error(formatMessage(messages.cancelContactProvider))
+            break
+          case HealthDirectorateAppointmentCancelOutcome.UNCONFIRMED:
+            // Sent but unanswered — the modal stays open so the confirm
+            // button doubles as the retry.
+            toast.error(formatMessage(messages.cancelUnconfirmed))
+            break
+          default:
+            toast.error(formatMessage(messages.cancelAppointmentError))
         }
       })
       .catch(() => {

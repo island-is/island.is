@@ -48,6 +48,7 @@ export {
 } from './lib/clients'
 export {
   AttachmentDownloadResult,
+  CancelAppointmentResult,
   CertificateDto,
   CertificateRequestDto,
   CertificateTypeCode,
