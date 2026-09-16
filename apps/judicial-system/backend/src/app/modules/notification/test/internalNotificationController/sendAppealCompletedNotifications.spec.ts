@@ -101,6 +101,15 @@ describe('InternalNotificationController - Send appeal completed notifications',
             defenderNationalId,
             defenderName: hasDefender ? defender.name : undefined,
             defenderEmail: hasDefender ? defender.email : undefined,
+            defendants: hasDefender
+              ? [
+                  {
+                    defenderNationalId,
+                    defenderName: defender.name,
+                    defenderEmail: defender.email,
+                  },
+                ]
+              : [],
             courtCaseNumber,
             courtId: courtId,
             appealCase,
