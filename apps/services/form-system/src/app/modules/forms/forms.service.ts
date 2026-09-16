@@ -15,6 +15,7 @@ import zipObject from 'lodash/zipObject'
 import { SectionInfo } from '@/app/dataTypes/sectionInfo.model'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AssetTypes } from '@island.is/form-system/enums'
 import {
   FieldTypesEnum,
   FormStatus,
@@ -1569,7 +1570,15 @@ export class FormsService {
         jsonField.values = [
           {
             order: 0,
-            json: this.fillValueTypeExamples(shaped),
+            json: this.fillValueTypeExamples(
+              shaped,
+              field.fieldType === FieldTypesEnum.ASSETS
+                ? field.fieldSettings?.assetType
+                : undefined,
+              field.fieldType === FieldTypesEnum.NUMBERBOX
+                ? field.fieldSettings?.isDecimal
+                : undefined,
+            ),
           } as ApplicationJsonValueDto,
         ]
         return jsonField
@@ -1587,11 +1596,23 @@ export class FormsService {
     return jsonSample
   }
 
-  private fillValueTypeExamples(partial: Partial<ValueType>): ValueType {
-    const v = partial as any
+  private fillValueTypeExamples(
+    partial: Partial<ValueType>,
+    assetType?: string,
+    isDecimal?: boolean,
+  ): ValueType {
+    const assetValueTypes =
+      assetType === AssetTypes.REAL_ESTATE
+        ? ['address', 'postalCode', 'municipality', 'propertyNumber']
+        : assetType === AssetTypes.VEHICLE
+        ? ['registrationNumber', 'model', 'color']
+        : undefined
+    const v = (
+      assetValueTypes ? pick(partial, assetValueTypes) : partial
+    ) as any
 
     if ('text' in v) v.text = 'Dæmi texti'
-    if ('number' in v) v.number = 123
+    if ('number' in v) v.number = isDecimal ? 17.5 : 17
     if ('date' in v) v.date = new Date('2026-01-01')
     if ('label' in v) v.label = { is: 'Dæmi', en: 'Example' }
     if ('value' in v) v.value = 'example_value'
@@ -1606,6 +1627,10 @@ export class FormsService {
 
     if ('homestayNumber' in v) v.homestayNumber = 'HOMESTAY-123'
     if ('propertyNumber' in v) v.propertyNumber = 'F1234567'
+
+    if ('registrationNumber' in v) v.registrationNumber = 'ABC123'
+    if ('model' in v) v.model = 'Tesla Model S'
+    if ('color' in v) v.color = { is: 'Rauður', en: 'Red' }
 
     if ('totalDays' in v) v.totalDays = 10
     if ('totalAmount' in v) v.totalAmount = 5000
