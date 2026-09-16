@@ -36,9 +36,6 @@ const DriversPoints = () => {
     error: deprivationsError,
   } = useGetDriversDeprivationsQuery()
 
-  const isPenaltyPointsOk = !(
-    data?.drivingLicensePenaltyPoints?.isDeprived ?? false
-  )
   const details = data?.drivingLicensePenaltyPoints?.details ?? []
 
   const totalPoints = details.reduce((sum, d) => sum + (d.points ?? 0), 0)
@@ -156,19 +153,6 @@ const DriversPoints = () => {
             />
           ) : (
             <Box>
-              {!isPenaltyPointsOk && (
-                <Box marginBottom={3}>
-                  {/* TODO: confirm alert type and message copy with business — isDeprived means threshold crossed, not approaching */}
-                  <AlertMessage
-                    type="warning"
-                    title={formatMessage(messages.driversPointsWarningTitle)}
-                    message={formatMessage(
-                      messages.driversPointsWarningDescription,
-                    )}
-                  />
-                </Box>
-              )}
-
               <PortalTable
                 columns={columns}
                 data={details}

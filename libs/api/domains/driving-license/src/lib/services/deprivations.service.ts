@@ -34,7 +34,8 @@ export class DeprivationsService {
             : undefined
 
         const dateTo = d.dateTo ?? undefined
-        const active = !dateTo || dateTo >= new Date()
+        const now = new Date()
+        const active = d.dateFrom <= now && (!dateTo || dateTo >= now)
 
         return {
           dateFrom: d.dateFrom,

@@ -135,6 +135,52 @@ describe('DrivingLicenseClient.getLicenses', () => {
     expect(result.data[0].hasActiveDeprivation).toBe(true)
   })
 
+  it('treats a deprivation that has not started yet as inactive', async () => {
+    const startsAt = new Date()
+    startsAt.setFullYear(startsAt.getFullYear() + 1)
+
+    penaltyPointsClient.deprivations = jest.fn().mockResolvedValue([
+      {
+        dateFrom: startsAt,
+        dateTo: undefined,
+      },
+    ])
+
+    const client = buildClient()
+    const result = await client.getLicenses(createUser())
+
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+
+    expect(result.data[0].hasActiveDeprivation).toBe(false)
+  })
+
+  it('stays active when an older deprivation is still running behind a newer expired one', async () => {
+    const stillRunning = new Date()
+    stillRunning.setFullYear(stillRunning.getFullYear() + 1)
+    const alreadyEnded = new Date()
+    alreadyEnded.setFullYear(alreadyEnded.getFullYear() - 1)
+
+    penaltyPointsClient.deprivations = jest.fn().mockResolvedValue([
+      {
+        dateFrom: new Date('2019-01-01'),
+        dateTo: stillRunning,
+      },
+      {
+        dateFrom: new Date('2023-01-01'),
+        dateTo: alreadyEnded,
+      },
+    ])
+
+    const client = buildClient()
+    const result = await client.getLicenses(createUser())
+
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+
+    expect(result.data[0].hasActiveDeprivation).toBe(true)
+  })
+
   it('degrades only the penalty points field when penaltyPointDetails throws, keeping the successful deprivations field', async () => {
     penaltyPointsClient.penaltyPointDetails = jest
       .fn()

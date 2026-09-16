@@ -310,14 +310,6 @@ export const messages = defineMessages({
     defaultMessage:
       'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila',
   },
-  driversPointsWarningTitle: {
-    id: 'sp.law-and-order:drivers-points-warning-title',
-    defaultMessage: 'Athugið',
-  },
-  driversPointsWarningDescription: {
-    id: 'sp.law-and-order:drivers-points-warning-description',
-    defaultMessage: 'Punktar þínir eru að nálgast svipting',
-  },
   driversPointsColumnOffenseDate: {
     id: 'sp.law-and-order:drivers-points-column-offense-date',
     defaultMessage: 'Dagsetning brots',

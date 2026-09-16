@@ -79,7 +79,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.penaltyPoints),
-            value: (t.totalPenaltyPoints ?? 0).toString(),
+            value: t.totalPenaltyPoints?.toString() ?? '',
             link: {
               label: formatMessage(m.viewPenaltyPoints),
               value: '/log-og-reglur/punktastada',

@@ -97,6 +97,34 @@ describe('DeprivationsService', () => {
         expect(response.current?.active).toBe(true)
       })
 
+      it('is false when dateFrom is in the future, even with no dateTo', async () => {
+        const futureDate = new Date()
+        futureDate.setFullYear(futureDate.getFullYear() + 1)
+
+        const service = createService([
+          createDeprivation({ dateFrom: futureDate, dateTo: undefined }),
+        ])
+
+        const response = await service.getDeprivations(MOCK_USER)
+
+        expect(response.current?.active).toBe(false)
+      })
+
+      it('is false when dateFrom is in the future, even with dateTo further ahead', async () => {
+        const startsAt = new Date()
+        startsAt.setFullYear(startsAt.getFullYear() + 1)
+        const endsAt = new Date()
+        endsAt.setFullYear(endsAt.getFullYear() + 2)
+
+        const service = createService([
+          createDeprivation({ dateFrom: startsAt, dateTo: endsAt }),
+        ])
+
+        const response = await service.getDeprivations(MOCK_USER)
+
+        expect(response.current?.active).toBe(false)
+      })
+
       it('is false when dateTo is in the past', async () => {
         const pastDate = new Date()
         pastDate.setFullYear(pastDate.getFullYear() - 1)

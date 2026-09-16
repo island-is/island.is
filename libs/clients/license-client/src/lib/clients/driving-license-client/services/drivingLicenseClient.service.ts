@@ -158,16 +158,13 @@ export class DrivingLicenseClient
   private computeHasActiveDeprivation(
     deprivations: Array<DtoV5DeprivationDto>,
   ): boolean {
-    const mostRecentDeprivation = [...deprivations].sort((a, b) => {
-      const aTime = a.dateFrom ? new Date(a.dateFrom).getTime() : 0
-      const bTime = b.dateFrom ? new Date(b.dateFrom).getTime() : 0
-      return bTime - aTime
-    })[0]
+    const now = Date.now()
 
-    return mostRecentDeprivation
-      ? !mostRecentDeprivation.dateTo ||
-          new Date(mostRecentDeprivation.dateTo) >= new Date()
-      : false
+    return deprivations.some(({ dateFrom, dateTo }) => {
+      const startsAt = dateFrom ? new Date(dateFrom).getTime() : -Infinity
+      const endsAt = dateTo ? new Date(dateTo).getTime() : Infinity
+      return startsAt <= now && now <= endsAt
+    })
   }
 
   private async fetchPenaltyPointsAndDeprivations(user: User): Promise<{
