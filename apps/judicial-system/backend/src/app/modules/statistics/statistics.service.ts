@@ -3,7 +3,7 @@ import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
-import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 
@@ -21,7 +21,6 @@ import {
   InstitutionType,
   isCompletedCase,
   isIndictmentCase,
-  ServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
@@ -130,86 +129,42 @@ export class StatisticsService {
     to?: Date,
     institutionId?: string,
   ): Promise<SubpoenaStatistics> {
-    const where: WhereOptions = {
-      policeSubpoenaId: {
-        [Op.ne]: null,
-      },
-    }
+    // The earliest date is the bound of the period that may be asked for, so it
+    // is read across every police subpoena rather than within the period given.
+    const earliestCreated =
+      await this.subpoenaRepositoryService.findEarliestPoliceSubpoenaCreatedDate()
 
-    // fetch only the earliest subpoena with the base filter
-    const earliestCase = await this.subpoenaRepositoryService.findOne({
-      where,
-      order: [['created', 'ASC']],
-      attributes: ['created'],
-    })
+    const filter = { from, to, institutionId }
 
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    const include: Includeable[] = []
-
-    if (institutionId) {
-      include.push({
-        model: Case,
-        required: true,
-        attributes: [],
-        where: {
-          [Op.or]: [
-            { courtId: institutionId },
-            { prosecutorsOfficeId: institutionId },
-          ],
-        },
-      })
-    }
-
-    const subpoenas = await this.subpoenaRepositoryService.findAll({
-      where,
-      include,
-    })
-
-    const grouped = (await this.subpoenaRepositoryService.findAll({
-      where,
-      include,
-      attributes: [
-        'serviceStatus',
-        [fn('COUNT', col('Subpoena.id')), 'count'],
-        [
-          literal(
-            'AVG(EXTRACT(EPOCH FROM "Subpoena"."service_date" - "Subpoena"."created") * 1000)',
-          ),
-          'averageServiceTimeMs',
-        ],
-      ],
-      group: ['serviceStatus'],
-      raw: true,
-    })) as unknown as {
-      serviceStatus: ServiceStatus | null
-      count: string
-      averageServiceTimeMs: string | null
-    }[]
-
-    const serviceStatusStatistics: ServiceStatusStatistics[] = grouped.map(
-      (row) => ({
-        serviceStatus: row.serviceStatus,
-        count: Number(row.count),
-        averageServiceTimeMs: Math.round(Number(row.averageServiceTimeMs) || 0),
-        averageServiceTimeDays:
-          Math.round(Number(row.averageServiceTimeMs) / 1000 / 60 / 60 / 24) ||
-          0,
-      }),
+    const count = await this.subpoenaRepositoryService.countPoliceSubpoenas(
+      filter,
     )
 
+    const serviceStatusCounts =
+      await this.subpoenaRepositoryService.countPoliceSubpoenasByServiceStatus(
+        filter,
+      )
+
+    const serviceStatusStatistics: ServiceStatusStatistics[] =
+      serviceStatusCounts.map((serviceStatusCount) => {
+        const averageServiceTimeMs = Math.round(
+          serviceStatusCount.averageServiceTimeMs ?? 0,
+        )
+
+        return {
+          serviceStatus: serviceStatusCount.serviceStatus,
+          count: serviceStatusCount.count,
+          averageServiceTimeMs,
+          averageServiceTimeDays: Math.round(
+            averageServiceTimeMs / (1000 * 60 * 60 * 24),
+          ),
+        }
+      })
+
     const stats: SubpoenaStatistics = {
-      count: subpoenas.length,
+      count,
       serviceStatusStatistics,
-      minDate: earliestCase?.created ?? new Date(),
+      minDate: earliestCreated ?? new Date(),
     }
 
     return stats
