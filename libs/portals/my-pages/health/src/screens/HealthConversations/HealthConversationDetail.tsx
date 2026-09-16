@@ -100,6 +100,24 @@ const HealthConversationDetail = () => {
     },
   )
 
+  // Abandoning a certificate payment (closed tab, back button, dropped
+  // connection) triggers no redirect back to us, so payment state is
+  // refreshed whenever the patient returns to the page.
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') refetch()
+    }
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) refetch()
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    window.addEventListener('pageshow', onPageShow)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+      window.removeEventListener('pageshow', onPageShow)
+    }
+  }, [refetch])
+
   const handleCertificatePaid = () => {
     toast.success(
       formatMessage(messages.healthConversationCertificatePaymentSuccess),
@@ -376,7 +394,7 @@ const HealthConversationDetail = () => {
                           requiresPayment={msg.requiresPayment}
                           paid={msg.paid}
                           amountIsk={msg.amountIsk}
-                          pendingPaymentId={msg.pendingPaymentId}
+                          pendingPaymentStartedAt={msg.pendingPaymentStartedAt}
                           isReturningFromPayment={
                             !!msg.certificateId &&
                             msg.certificateId === certificatePaymentReturnId
@@ -386,6 +404,7 @@ const HealthConversationDetail = () => {
                             msg.attachments[0]?.downloadServiceURL
                           }
                           onPaid={handleCertificatePaid}
+                          onRefresh={refetch}
                         />
                       )}
 

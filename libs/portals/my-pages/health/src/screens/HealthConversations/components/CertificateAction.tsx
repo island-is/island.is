@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { ApolloError } from '@apollo/client'
 import {
   Box,
   Button,
@@ -19,31 +20,62 @@ import {
 
 const POLL_INTERVAL_MS = 4000
 const POLL_TIMEOUT_MS = 2 * 60 * 1000
+// How long after the patient opened a payment intent we treat it as possibly
+// in flight (matches the server's old intent TTL). Older intents are assumed
+// abandoned — the server has no time bound of its own.
+const PENDING_INTENT_WINDOW_MS = 10 * 60 * 1000
+
+const getPaymentErrorCode = (error: unknown): string | undefined => {
+  if (!(error instanceof ApolloError)) return undefined
+  const problem = error.graphQLErrors[0]?.extensions?.problem as
+    | { errorCode?: string }
+    | undefined
+  return problem?.errorCode
+}
 
 const useCertificatePaymentPolling = ({
   certificateId,
-  pendingPaymentId,
+  pendingPaymentStartedAt,
   isReturningFromPayment,
   onPaid,
 }: Pick<
   Props,
-  'certificateId' | 'pendingPaymentId' | 'isReturningFromPayment' | 'onPaid'
+  | 'certificateId'
+  | 'pendingPaymentStartedAt'
+  | 'isReturningFromPayment'
+  | 'onPaid'
 >) => {
-  const [isPolling, setIsPolling] = useState(
-    Boolean(pendingPaymentId || isReturningFromPayment),
+  const [isReturnPolling, setIsReturnPolling] = useState(
+    Boolean(isReturningFromPayment),
   )
+  const [, setExpiryTick] = useState(0)
 
+  // An intent opened recently may still get a payment callback; an old one is
+  // an abandoned attempt the patient can simply resume, so it must never
+  // block the Pay button.
+  const startedAtMs = pendingPaymentStartedAt
+    ? new Date(pendingPaymentStartedAt).getTime()
+    : undefined
+  const hasFreshIntent =
+    startedAtMs !== undefined &&
+    Date.now() - startedAtMs < PENDING_INTENT_WINDOW_MS
+
+  // Re-render when the intent window expires so the loader reverts to Pay.
   useEffect(() => {
-    if (!isPolling) return
-    const timeout = setTimeout(() => setIsPolling(false), POLL_TIMEOUT_MS)
+    if (startedAtMs === undefined) return
+    const delay = startedAtMs + PENDING_INTENT_WINDOW_MS - Date.now()
+    if (delay <= 0) return
+    const timeout = setTimeout(() => setExpiryTick((n) => n + 1), delay)
     return () => clearTimeout(timeout)
-  }, [isPolling])
+  }, [startedAtMs])
 
-  // A pending payment can appear on an already-mounted message via a
-  // conversation refetch — start polling for it as well, not only on mount.
+  const isPolling = isReturnPolling || hasFreshIntent
+
   useEffect(() => {
-    if (pendingPaymentId) setIsPolling(true)
-  }, [pendingPaymentId])
+    if (!isReturnPolling) return
+    const timeout = setTimeout(() => setIsReturnPolling(false), POLL_TIMEOUT_MS)
+    return () => clearTimeout(timeout)
+  }, [isReturnPolling])
 
   const { data: pollData } = useGetHealthCertificateQuery({
     variables: { id: certificateId ?? '' },
@@ -56,7 +88,7 @@ const useCertificatePaymentPolling = ({
 
   useEffect(() => {
     if (isPolling && paid) {
-      setIsPolling(false)
+      setIsReturnPolling(false)
       onPaid()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,11 +167,12 @@ interface Props {
   requiresPayment?: boolean | null
   paid?: boolean | null
   amountIsk?: number | null
-  pendingPaymentId?: string | null
+  pendingPaymentStartedAt?: Date | string | null
   isReturningFromPayment?: boolean
   fileName?: string | null
   downloadServiceURL?: string | null
   onPaid: () => void
+  onRefresh: () => void
 }
 
 const CertificateAction = ({
@@ -147,16 +180,17 @@ const CertificateAction = ({
   requiresPayment,
   paid,
   amountIsk,
-  pendingPaymentId,
+  pendingPaymentStartedAt,
   isReturningFromPayment,
   fileName,
   downloadServiceURL,
   onPaid,
+  onRefresh,
 }: Props) => {
   const { formatMessage, lang } = useLocale()
   const isPolling = useCertificatePaymentPolling({
     certificateId,
-    pendingPaymentId,
+    pendingPaymentStartedAt,
     isReturningFromPayment,
     onPaid,
   })
@@ -182,7 +216,18 @@ const CertificateAction = ({
         throw new Error('Missing paymentPageUrl')
       }
       window.location.href = paymentPageUrl
-    } catch {
+    } catch (error) {
+      const errorCode = getPaymentErrorCode(error)
+      if (errorCode === 'ALREADY_PAID') {
+        // Paid all along (e.g. a late payment callback) — not a failure.
+        onPaid()
+        return
+      }
+      if (errorCode === 'NOT_PAYABLE') {
+        // The certificate no longer costs anything; refetching unlocks it.
+        onRefresh()
+        return
+      }
       toast.error(
         formatMessage(messages.healthConversationCertificatePaymentError),
       )

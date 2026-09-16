@@ -22,7 +22,6 @@ export {
   AttachmentReplyViewDto,
   BooleanReplyViewDto,
   DateReplyViewDto,
-  GridReplyViewDto,
   ListReplyViewDto,
   NumberReplyViewDto,
   StringReplyViewDto,

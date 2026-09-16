@@ -812,6 +812,7 @@ export class HealthDirectorateService {
       paid: m.paid,
       amountIsk: m.amountIsk,
       pendingPaymentId: m.pendingPaymentId,
+      pendingPaymentStartedAt: m.pendingPaymentStartedAt,
     }
   }
 
