@@ -151,9 +151,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
           <View
             style={{
               flexDirection: 'row',
-              gap: theme.spacing[2],
-              justifyContent: 'space-between',
-              width: '100%',
+              gap: theme.spacing[1],
             }}
           >
             <Button
