@@ -22,7 +22,6 @@ import {
   GeneralCardSkeleton,
   Label,
   Problem,
-  Tag,
   Typography,
 } from '@/ui'
 import { NetworkStatus } from '@apollo/client'
@@ -36,6 +35,9 @@ const Container = styled.View`
 
 const HeaderActions = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
+  /* Cards bring 16px of their own, so this tops the gap between the buttons
+     and the list up to the 24px the design asks for. */
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
   gap: ${({ theme }) => theme.spacing[3]}px;
   align-self: flex-start;
   align-items: flex-start;
@@ -52,6 +54,8 @@ const Card = styled(TouchableOpacity)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  /* Keeps the text off the chevron so it wraps before reaching it. */
+  gap: ${({ theme }) => theme.spacing[2]}px;
   margin-top: ${({ theme }) => theme.spacing[2]}px;
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
@@ -114,7 +118,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
 
   return (
     <ScrollView
-      style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}
+      style={{ flex: 1, paddingHorizontal: 16 }}
       contentInsetAdjustmentBehavior="automatic"
       refreshControl={
         <RefreshControl
@@ -167,19 +171,23 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
                 height: 10,
               }}
             />
-            <Button
-              isUtilityButton
-              isOutlined
-              title={intl.formatMessage({
-                id: showInactivePermits
-                  ? 'health.medicineDelegation.hideExpiredPermits'
-                  : 'health.medicineDelegation.showExpiredPermits',
-              })}
-              onPress={() => setShowInactivePermits((prev) => !prev)}
-              iconPosition="end"
-              icon={showInactivePermits ? eyeOffIcon : eyeIcon}
-              iconStyle={{ tintColor: theme.color.dark300 }}
-            />
+            {/* Nothing to reveal when the user has no delegations at all -
+                but an error means we do not know that, so keep it. */}
+            {(hasDelegations || hasError) && (
+              <Button
+                isUtilityButton
+                isOutlined
+                title={intl.formatMessage({
+                  id: showInactivePermits
+                    ? 'health.medicineDelegation.hideExpiredPermits'
+                    : 'health.medicineDelegation.showExpiredPermits',
+                })}
+                onPress={() => setShowInactivePermits((prev) => !prev)}
+                iconPosition="end"
+                icon={showInactivePermits ? eyeOffIcon : eyeIcon}
+                iconStyle={{ tintColor: theme.color.dark300 }}
+              />
+            )}
           </View>
         </HeaderActions>
 
@@ -215,7 +223,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
                 }}
                 accessibilityRole="button"
               >
-                <View>
+                <View style={{ flex: 1 }}>
                   <Typography variant="heading5">{delegation.name}</Typography>
                   <Typography>
                     {delegation.lookup
@@ -233,8 +241,8 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
                       </Label>
                     ) : (
                       delegation.dates?.to && (
-                        <Tag
-                          title={intl.formatMessage(
+                        <Label color="primary">
+                          {intl.formatMessage(
                             {
                               id: 'health.medicineDelegation.listValidTo',
                             },
@@ -242,13 +250,17 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
                               date: intl.formatDate(delegation.dates?.to ?? ''),
                             },
                           )}
-                        />
+                        </Label>
                       )
                     )}
                   </TagContainer>
                 </View>
                 <View>
-                  <Image source={chevronForward} />
+                  <Image
+                    source={chevronForward}
+                    style={{ width: 24, height: 24 }}
+                    resizeMode="contain"
+                  />
                 </View>
               </Card>
             ))
