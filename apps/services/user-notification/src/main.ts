@@ -24,7 +24,6 @@ if (job === 'cleanup') {
       database: true,
     },
   }).then(async ({ app }) => {
-
     if (job === 'server') {
       console.log(
         'This is intentional change to trigger CI, this should not have been merged',
