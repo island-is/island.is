@@ -146,13 +146,15 @@ export const reasonForNotificationMessages = {
     },
     explanation: {
       id: 'cpn.application:reasonForNotification.notificationHistory.explanation',
-      defaultMessage: 'Skýring',
-      description: 'Explanation label',
+      defaultMessage: 'Ástæða',
+      description: 'Reason label for why the guardian is not informed',
     },
-    explanationPlaceholder: {
-      id: 'cpn.application:reasonForNotification.notificationHistory.explanationPlaceholder',
-      defaultMessage: 'Veldu skýringu',
-      description: 'Select explanation placeholder',
+    abuseSuspicionWarning: {
+      id: 'cpn.application:reasonForNotification.notificationHistory.abuseSuspicionWarning',
+      // TODO: Placeholder text, replace once the correct wording is provided.
+      defaultMessage: 'Ekki skal upplýsa foreldri',
+      description:
+        'Warning shown when guardian not aware reason is abuse suspicion',
     },
   }),
 }

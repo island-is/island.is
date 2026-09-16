@@ -1138,11 +1138,13 @@ export const getReasonNotificationHistoryItems = (
       ? [
           {
             width: 'full' as const,
-            keyText: reasonForNotificationMessages.description.subSectionTitle,
-            valueText:
-              guardianNotAwareReasons.find(
-                (reason) => reason.value === notificationHistoryBiggestConcern,
-              )?.label ?? '',
+            keyText:
+              reasonForNotificationMessages.notificationHistory.explanation,
+            valueText: (notificationHistoryBiggestConcern ?? []).map(
+              (value) =>
+                guardianNotAwareReasons.find((reason) => reason.value === value)
+                  ?.label ?? value,
+            ),
           },
         ]
       : []),
