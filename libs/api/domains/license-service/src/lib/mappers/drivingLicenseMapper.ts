@@ -76,16 +76,18 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
             label: formatMessage(m.publishedDate),
             value: t.publishDate ? formatDate(t.publishDate) : '',
           },
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.penaltyPoints),
-            value: t.totalPenaltyPoints?.toString() ?? '',
-            link: {
-              label: formatMessage(m.viewPenaltyPoints),
-              value: '/log-og-reglur/punktastada',
-              type: GenericUserLicenseMetaLinksType.External,
-            },
-          },
+          t.totalPenaltyPoints !== undefined
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: formatMessage(m.penaltyPoints),
+                value: t.totalPenaltyPoints.toString(),
+                link: {
+                  label: formatMessage(m.viewPenaltyPoints),
+                  value: '/log-og-reglur/punktastada',
+                  type: GenericUserLicenseMetaLinksType.External,
+                },
+              }
+            : undefined,
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.validTo),

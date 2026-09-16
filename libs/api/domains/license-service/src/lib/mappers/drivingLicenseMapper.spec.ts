@@ -141,11 +141,23 @@ describe('DrivingLicensePayloadMapper', () => {
     expect(validToEntry?.tag?.text).toBe(formatMessage(m.valid))
   })
 
-  it('renders "0" penalty points when totalPenaltyPoints is undefined', async () => {
+  it('omits the penalty points entry when totalPenaltyPoints is undefined', async () => {
     const license: DriversLicenseWithExtras = {
       ...baseLicense,
       totalPenaltyPoints: undefined,
       hasActiveDeprivation: undefined,
+    }
+
+    const result = await mapper.parsePayload([license], 'is')
+    const data = result[0].payload.data as Array<ValueEntry>
+
+    expect(findEntry(data, formatMessage(m.penaltyPoints))).toBeUndefined()
+  })
+
+  it('renders the penalty points entry with its link when the value is available', async () => {
+    const license: DriversLicenseWithExtras = {
+      ...baseLicense,
+      totalPenaltyPoints: 0,
     }
 
     const result = await mapper.parsePayload([license], 'is')
