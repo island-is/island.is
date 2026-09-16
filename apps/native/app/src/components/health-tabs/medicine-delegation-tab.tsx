@@ -11,6 +11,8 @@ import styled, { useTheme } from 'styled-components/native'
 
 import chevronForward from '@/assets/icons/chevron-forward.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
+import eyeOffIcon from '@/assets/icons/eye-off.png'
+import eyeIcon from '@/assets/icons/eye.png'
 import plusIcon from '@/assets/icons/plus.png'
 import { useGetMedicineDelegationsQuery } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
@@ -169,12 +171,16 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
             />
             <Button
               isUtilityButton
+              isOutlined
               title={intl.formatMessage({
                 id: showInactivePermits
                   ? 'health.medicineDelegation.hideExpiredPermits'
                   : 'health.medicineDelegation.showExpiredPermits',
               })}
               onPress={() => setShowInactivePermits((prev) => !prev)}
+              iconPosition="end"
+              icon={showInactivePermits ? eyeOffIcon : eyeIcon}
+              iconStyle={{ tintColor: theme.color.dark300 }}
             />
           </View>
         </HeaderActions>
