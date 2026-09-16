@@ -2,8 +2,8 @@
 
 This roadmap is the control document for `libs/tax-calculators`, the shared
 configuration contract for the Contentful `calculator.configJson` field. It
-records the settled design; `PLAN.md` is the file-by-file execution plan for
-the current round.
+records the settled design and the cross-consumer intent for the calculator
+config contract.
 
 The domain/client rebuild is the current baseline:
 
@@ -13,7 +13,8 @@ The domain/client rebuild is the current baseline:
   `TaxCalculator.inputFields` and `TaxCalculator.outputFields`.
 - The domain does not execute calculations and does not publish labels or
   layout.
-- Contentful and web are allowed to break while they move to the new contract.
+- Contentful and web consume the new contract through their own editor and
+  renderer roadmaps.
 
 ## Goal
 
@@ -240,11 +241,11 @@ the config by hand for common validation/warning paths.
 
 ## Rounds
 
-**Round 1 -- the shared contract (current).** Rewrite the Zod schema and its
-tests in this library: rename `sections` to `inputSections`, add
+**Round 1 -- the shared contract.** Rewrite the Zod schema and its tests in this
+library: rename `sections` to `inputSections`, add
 `outputSections` with its section/field/item and markdown schemas, add the
 structural refinements above, and rename the exported types and helpers.
-Scope is `libs/tax-calculators` only. See `PLAN.md`.
+Scope is `libs/tax-calculators` only.
 
 **Round 2 -- the Contentful editor.** Query `inputFields` and `outputFields`,
 edit input sections from `inputSections`, add an output section editor with
@@ -264,6 +265,5 @@ never expose raw keys as public labels.
 laid out; producing one is a separate round and must not be designed from the
 old output handling.
 
-Rounds 2 and 3 are deliberately out of scope for round 1. This library is
-allowed to publish a contract that breaks the current editor and renderer;
-they move to it in their own rounds.
+Rounds 2 and 3 stay owned by their consumer roadmaps. This library publishes the
+shared contract; editor and renderer behavior belongs outside this package.

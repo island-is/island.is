@@ -82,7 +82,9 @@ calculator first.
 Non-goals:
 
 - do not correct existing requiredness issues in this section
-- do not change percentage conversion behavior in this section
+- ~~do not change percentage conversion behavior in this section~~ **Resolved
+  since:** percentage inputs are whole percent at the boundary and divided by
+  100 in the query mapper. See `CALCULATION_ROADMAP.md`.
 
 Work:
 
@@ -138,7 +140,8 @@ For each calculator:
 Non-goals:
 
 - do not correct existing requiredness issues during this section
-- do not change percentage conversion behavior during this section
+- ~~do not change percentage conversion behavior during this section~~
+  **Resolved since:** see the note on the same non-goal above.
 
 Design checks:
 
@@ -208,8 +211,7 @@ Work:
   or included in `getCalculator(key)`
 - decide whether calculation methods keep returning raw generated responses or
   mapped client output values
-- write the client output follow-up questions into `PLAN.md` before any code is
-  changed
+- record the client output follow-up questions before any code is changed
 
 Design checks:
 

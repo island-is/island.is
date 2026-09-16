@@ -157,19 +157,12 @@ calculator's fields.
 - **Field order carries no meaning.** `getCalculator` returns fields sorted by
   name for determinism. Match on `key`, never on array position.
 
-## Known-red consumers
+## Current consumers
 
-Both consumers of this query still select the previous shape and need updating
-(`fields` -> `inputFields`, `inputType` -> `type` + `semantic`, `options` from
-`[String!]` to structured objects, `dependsOn.field` -> `fieldKey`, `equals`
-from a scalar to a union, and the argument `calculatorType` -> `type`):
-
-- `apps/web/screens/queries/TaxCalculators.ts` and
-  `components/Organization/Slice/Calculator/Calculator.tsx`
-- `apps/contentful-apps/components/editors/CalculatorEditor/`
-  (`constants.ts`, `types.ts`)
-
-Deliberately out of scope for the domain rebuild; see `PLAN.md`.
+The public web calculator slice and the Contentful calculator editor both query
+the current metadata shape: `taxCalculator(type:)`, `inputFields`,
+`outputFields`, structured select options, dependency `fieldKey`, and typed
+dependency values.
 
 ## Performing a calculation
 

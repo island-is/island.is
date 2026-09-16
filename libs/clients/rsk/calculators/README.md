@@ -21,26 +21,31 @@ connection or authentication is required.
   dependencies. Fields come back sorted by `name` in code-unit order, so
   consumers must treat `name` as identity and never array position.
 
-A field's `semantic` says what a number means, not what range it may take. RSK
-declares no bounds on any numeric parameter, so this library asserts none.
+A field's `semantic` says what a number means, not what bounds it may take. RSK
+declares no bounds on any numeric parameter, so this library asserts none. It
+does assert a _scale_ for one semantic: a `percentage` input is whole percent,
+so `37` means 37%.
 
-RSK does expect every ratio parameter as a number between 0 and 1 — each is
+RSK itself expects every ratio parameter as a number between 0 and 1 — each is
 documented on the wire as "gefið sem tala milli 0 og 1" — and converting to
-that is the mapper's job, not the caller's. Note this is a statement about the
-wire and about the mapper's obligation, not about what a `percentage` field's
-own value looks like. Those differ today, deliberately:
+that is the mapper's job, not the caller's. Every ratio is converted, in two
+shapes:
 
 - `pensionFundRatio`, `privatePensionRatio` and `employerPensionMatchRatio` are
   `select` fields whose accepted values are strings like `'4%'`, converted to
   `0.04` by their `toRskValue` tables.
 - `taxCardUtilization` and `spouseTaxCardUtilization` are the only fields
-  carrying `semantic: 'percentage'`, and their values are forwarded to RSK
-  unconverted. The calculator form supplies whole percent, so these two are
-  the known gap: the conversion belongs in the mapper alongside `toRskValue`,
-  and correcting it was out of scope for the contract rebuild.
+  carrying `semantic: 'percentage'`, and their whole-percent values are divided
+  by 100 through `percentToRskRatio`.
 
-So the asymmetry, not a uniform whole-percent convention, is what a reader
-needs to know here.
+The two shapes stay separate on purpose. The select tables validate option
+identity over a curated, non-contiguous set — `employerPensionMatchRatio` skips
+11% between 10.5% and 11.5%, because the set is negotiated per collective
+agreement rather than arithmetic. Expressing them as division would invite
+parsing the string and silently accepting rates RSK does not offer.
+
+So a caller passes whole percent everywhere, and the mapper owns every
+conversion to RSK's wire scale.
 
 Labels, translations and layout belong downstream — the client authors
 identifiers only.

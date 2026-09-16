@@ -17,8 +17,8 @@ export class TaxCalculatorsService {
 
   /* Synchronous: `getCalculator` is a registry lookup plus a sort, with no
    * network call behind it. Validation runs per request, scoped to the
-   * requested calculator -- see PLAN.md for why this is not hoisted to a
-   * module-init check. */
+   * requested calculator, so publication invariant failures are reported on
+   * the queried contract. */
   getCalculator(type: TaxCalculatorType): TaxCalculator {
     const calculatorKey = toCalculatorKey(type)
     const contract = this.calculatorsClientService.getCalculator(calculatorKey)

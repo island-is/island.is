@@ -226,6 +226,12 @@ For `type: 'date'`, the explicit input value is a `yyyy-MM-dd` string. The
 contract's `date` type tells downstream consumers to render a date control; it
 does not mean the submitted contract value is a JavaScript `Date`.
 
+For `semantic: 'percentage'`, the input value is whole percent — `37` means 37%
+— and the query mapper divides it by 100 through `percentToRskRatio` to reach
+the 0-1 ratio RSK documents on the wire. The scale is the input type's
+contract; the conversion is the mapper's, in the same way the select ratio
+fields carry `'4%'` and convert through their `toRskValue` tables.
+
 Input types are still client-facing types only. They must not introduce runtime
 parsing, validation, dependency interpretation, semantic-specific behavior,
 outbound RSK query parameters, or other calculator behavior.

@@ -22,8 +22,8 @@ import { localized } from './text'
 
 const isDevelopment = () => process.env.NODE_ENV !== 'production'
 
-/* Input rows the editor keyed but never labelled. Public rendering omits them
- * (see PLAN.md, Label Policy); this is the only thing that says so out loud. */
+/* Input rows the editor keyed but never labelled. Public rendering omits them;
+ * this diagnostic is the thing that says so out loud during development. */
 export const collectUnlabelledKeys = (
   config: CalculatorConfig,
   locale: Locale,

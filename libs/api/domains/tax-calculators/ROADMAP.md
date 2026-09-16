@@ -302,8 +302,7 @@ Output publication invariants:
 ## Resolved Outputs (Sections 1-4)
 
 Recorded after the rebuild, so this control document states what was settled
-rather than being contradicted by the code. `PLAN.md` holds the file-level
-detail.
+rather than being contradicted by the code.
 
 ### Section 1 -- domain boundary
 
@@ -378,7 +377,7 @@ detail.
 - Testable domain contract: focused tests across the service, mappers and
   validation modules.
 
-## Section 5: Domain Output Implementation Plan
+## Section 5: Domain Output Implementation
 
 Goal: turn the chosen output metadata boundary into concrete code changes.
 
@@ -391,17 +390,6 @@ Work:
 - update `TaxCalculatorsService` to map `contract.outputFields`
 - update tests around public output behavior and mapping rules
 - update documentation once the model is implemented
-
-Output:
-
-- file-by-file implementation plan
-- focused test plan
-- verification commands
-- known risks and intentional downstream breaks
-
-See `PLAN.md` for the file-by-file implementation plan. Keep detailed file
-lists, test cases and verification commands there rather than duplicating them
-in this roadmap.
 
 Target domain structure after output metadata:
 

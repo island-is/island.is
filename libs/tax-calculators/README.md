@@ -18,8 +18,7 @@ dependencies. That metadata comes from `TaxCalculator.inputFields` and
 `TaxCalculator.outputFields` in `libs/api/domains/tax-calculators`, and joins
 to this config by `key`.
 
-`ROADMAP.md` is the control document for the contract's design; `PLAN.md` is
-the execution plan for the round in progress.
+`ROADMAP.md` is the control document for the contract's design.
 
 ## Running unit tests
 

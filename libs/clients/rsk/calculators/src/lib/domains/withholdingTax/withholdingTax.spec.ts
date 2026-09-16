@@ -97,8 +97,8 @@ describe('toWithholdingTaxQuery', () => {
     salary: 900000,
     pensionFundRatio: '4%',
     privatePensionRatio: '2%',
-    taxCardUtilization: 1,
-    spouseTaxCardUtilization: 0.5,
+    taxCardUtilization: 37,
+    spouseTaxCardUtilization: 50,
     accumulatedPersonalTaxCredit: 120000,
     vacationPay: 80000,
     unionDues: 9000,
@@ -117,7 +117,7 @@ describe('toWithholdingTaxQuery', () => {
       laun: 900000,
       lifeyrissjodurHlutfall: 0.04,
       sereignHlutfall: 0.02,
-      nytingSkattkorts: 1,
+      nytingSkattkorts: 0.37,
       nytingSkattkortsMaka: 0.5,
       uppsafnadurPersonuafslattur: 120000,
       orlof: 80000,
@@ -153,7 +153,7 @@ describe('toWithholdingTaxQuery', () => {
     expect(Object.values(query ?? {}).every((v) => v === undefined)).toBe(true)
   })
 
-  it('maps the ratio option values to the 0-1 numbers RSK expects', () => {
+  it('maps the select ratio options to the 0-1 numbers RSK expects', () => {
     expect(
       toWithholdingTaxQuery({
         paymentFrequency: 'weekly',
@@ -168,6 +168,22 @@ describe('toWithholdingTaxQuery', () => {
       sereignHlutfall: 0.04,
       motframlagLifeyrissjodur: 0.085,
       hjuskaparstada: 2,
+    })
+  })
+
+  /* The two `semantic: 'percentage'` inputs are whole percent at this boundary
+   * and divided rather than looked up, which is the one conversion the mapper
+   * performs arithmetically. `33.33` is used deliberately: it divides exactly,
+   * where a value like `12.3` yields 0.12300000000000001 and fails `toEqual`. */
+  it('divides the percentage inputs into the 0-1 ratios RSK expects', () => {
+    expect(
+      toWithholdingTaxQuery({
+        taxCardUtilization: 33.33,
+        spouseTaxCardUtilization: 0,
+      }),
+    ).toMatchObject({
+      nytingSkattkorts: 0.3333,
+      nytingSkattkortsMaka: 0,
     })
   })
 })

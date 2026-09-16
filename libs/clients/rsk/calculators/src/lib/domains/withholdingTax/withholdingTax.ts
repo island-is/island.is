@@ -1,4 +1,5 @@
 import type { GetWithholdingTaxData } from '../../../../gen/fetch'
+import { percentToRskRatio } from '../../utils/percentToRskRatio'
 import { toRskValue } from '../../utils/toRskValue'
 import type { WithholdingTaxInput } from './contract'
 
@@ -75,8 +76,8 @@ export const toWithholdingTaxQuery = (
     input.privatePensionRatio,
     RSK_VALUE_BY_PRIVATE_PENSION_RATIO,
   ),
-  nytingSkattkorts: input.taxCardUtilization,
-  nytingSkattkortsMaka: input.spouseTaxCardUtilization,
+  nytingSkattkorts: percentToRskRatio(input.taxCardUtilization),
+  nytingSkattkortsMaka: percentToRskRatio(input.spouseTaxCardUtilization),
   uppsafnadurPersonuafslattur: input.accumulatedPersonalTaxCredit,
   orlof: input.vacationPay,
   stettarfelag: input.unionDues,

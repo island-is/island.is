@@ -4,7 +4,7 @@ This roadmap covers the remaining public web work for the CMS `Calculator`
 slice after the shared config, API metadata domain and Contentful editor
 refactor.
 
-The goal is to get the renderer back to a working metadata-driven state. The
+The renderer is restored to a metadata-driven input-rendering state. The
 calculation operation is a separate API/domain design problem and is not part of
 this roadmap.
 
@@ -29,27 +29,16 @@ Out of scope for the first renderer pass:
 
 ## Current State
 
-The renderer is partly migrated and should be considered broken until this work
-is complete.
+The renderer parses the shared `configJson`, queries the current metadata shape,
+normalizes input/output metadata locally, renders configured input sections, and
+keeps submit disabled until a calculation operation exists.
 
-Known issues:
+Settled limitations:
 
-- `Calculator.tsx` parses `slice.configJson` with the new
-  `calculatorConfigSchema`, but still reads `config.sections`.
-- `Calculator.tsx` imports `collectSectionToggles`, which has been renamed to
-  `collectInputSectionToggles`.
-- `CalculatorSection.tsx` imports the removed `CalculatorFieldSection` type
-  instead of `CalculatorInputSection`.
-- `CalculatorField.tsx` imports the removed `CalculatorSectionField` type
-  instead of `CalculatorInputSectionField`.
-- `apps/web/screens/queries/TaxCalculators.ts` still calls
-  `taxCalculator(calculatorType:)` and selects `fields { inputType ... }`.
-- The target metadata query is `taxCalculator(type:)` with `inputFields` and
-  `outputFields`.
 - Submit is disabled and no calculation is executed.
-- `outputSections` are ignored.
-- Some public labels fall back to raw keys. Raw keys are acceptable for
-  diagnostics, not public rendering.
+- `outputSections` are used for metadata/config diagnostics only; calculated
+  output value rendering waits for the calculation boundary.
+- Raw keys are acceptable for diagnostics, not public rendering.
 - `libs/clients/rsk/calculators` can calculate through calculator-specific
   typed methods, but `libs/api/domains/tax-calculators` deliberately exposes
   metadata only.
@@ -66,7 +55,6 @@ The renderer should:
 - join authored config to domain metadata by `key`
 - omit stale configured keys instead of guessing presentation
 - never fall back to raw keys for public labels; omit unlabeled fields instead
-  (see PLAN.md, "Label Policy")
 - keep dev-only diagnostics for stale config and metadata mismatches
 
 ## Metadata Query
@@ -234,12 +222,9 @@ Rules:
 
 ## Input Rendering
 
-Rename the web usage to current shared config names:
-
-- `config.sections` -> `config.inputSections`
-- `collectSectionToggles` -> `collectInputSectionToggles`
-- `CalculatorFieldSection` -> `CalculatorInputSection`
-- `CalculatorSectionField` -> `CalculatorInputSectionField`
+The renderer uses the current shared config names: `inputSections`,
+`collectInputSectionToggles`, `CalculatorInputSection`, and
+`CalculatorInputSectionField`.
 
 Keep the existing input section behavior:
 
@@ -263,7 +248,7 @@ Update field rendering for new metadata:
 Public labels:
 
 - input fields without authored labels are omitted from public rendering and
-  reported with a development-only warning (see PLAN.md, "Label Policy")
+  reported with a development-only warning
 - section toggle labels are required by the shared schema, so the
   `?? section.toggle.key` fallback at `CalculatorSection.tsx:97` is dead at
   runtime -- but it is load-bearing at the type level (`ToggleSwitchCheckbox`
@@ -334,7 +319,7 @@ Field behavior:
 Public labels:
 
 - output fields without authored labels follow the same omit-and-warn policy as
-  input fields (see PLAN.md, "Label Policy")
+  input fields
 - output item fields without authored labels are the same policy
 - accordion section titles are schema-required and should come from config
 
@@ -427,8 +412,12 @@ assertions. Expect some test setup friction and avoid assuming
 - ~~Should optional input/output field labels cause omission in the web
   renderer?~~ **Decided:** omit and warn in development for the first pass.
   Making labels required in the shared schema is a later step, gated on
-  verifying existing content. See PLAN.md, "Label Policy".
+  verifying existing content.
 - Should select option display labels remain raw values for now, or do they need
   an authored label model before launch?
-- Should section `divider` be ignored in the first renderer pass or honored
-  immediately?
+- ~~Should section `divider` be ignored in the first renderer pass or honored
+  immediately?~~ **Decided:** neither. Dividers render automatically between
+  output sections by convention, matching what the shared roadmap already said
+  the editor should never expose. The `divider` field on the config schema is
+  vestigial and is being removed, along with its specs and the editor's
+  preservation logic.
