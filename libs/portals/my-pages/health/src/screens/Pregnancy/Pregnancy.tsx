@@ -60,7 +60,6 @@ const Pregnancy = () => {
             error: !!appointmentsError,
           }}
           showLinkButton
-          title={messages.nextAppointments}
         />
       )}
 

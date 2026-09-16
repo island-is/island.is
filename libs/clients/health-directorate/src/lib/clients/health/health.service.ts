@@ -342,17 +342,7 @@ export class HealthDirectorateHealthService {
       data(mePregnancyControllerHasActivePregnancyV1()),
     )
 
-    const hasActivePregnancy = (result as { hasActivePregnancy?: unknown })
-      ?.hasActivePregnancy
-
-    if (typeof hasActivePregnancy !== 'boolean') {
-      this.logger.debug(
-        'Unexpected response shape from hasActivePregnancy, expected { hasActivePregnancy: boolean }',
-      )
-      return null
-    }
-
-    return hasActivePregnancy
+    return result?.hasActivePregnancy ?? null
   }
 
   public async getQuestionnaires(

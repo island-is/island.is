@@ -19,7 +19,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 
-import { HealthDirectorateService } from '.././health-directorate.service'
+import { HealthDirectorateService } from '../health-directorate.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
