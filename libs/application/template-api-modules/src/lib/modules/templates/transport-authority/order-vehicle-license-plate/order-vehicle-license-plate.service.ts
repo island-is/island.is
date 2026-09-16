@@ -164,8 +164,7 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     // Check if used selected delivery method: Pick up at delivery station
     const deliveryStationTypeCode =
       answers?.plateDelivery?.deliveryStationTypeCode?.trim()
-    const isVskPlateType =
-      answers?.plateType?.regGroup === VSK_PLATE_TYPE_CODE
+    const isVskPlateType = answers?.plateType?.regGroup === VSK_PLATE_TYPE_CODE
 
     let deliveryStationType = ''
     let deliveryStationCode = ''
@@ -238,8 +237,7 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
     // Check if used selected delivery method: Pick up at delivery station
     const deliveryStationTypeCode =
       answers?.plateDelivery?.deliveryStationTypeCode?.trim()
-    const isVskPlateType =
-      answers?.plateType?.regGroup === VSK_PLATE_TYPE_CODE
+    const isVskPlateType = answers?.plateType?.regGroup === VSK_PLATE_TYPE_CODE
 
     let deliveryStationType = ''
     let deliveryStationCode = ''
