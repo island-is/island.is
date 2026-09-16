@@ -545,6 +545,14 @@ export const messages = {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.validUntil',
         defaultMessage: 'Gildir til',
       },
+      // Shown instead of the read-only editor when the active plan is a
+      // certificate from Jafnrettisstofa's retired register — there is no
+      // report behind it, so no content to display, copy or download.
+      legacyNotice: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.legacyNotice',
+        defaultMessage:
+          'Jafnréttisáætlun fyrirtækisins er skráð í eldra kerfi Jafnréttisstofu. Innihald hennar er ekki aðgengilegt hér, en þú getur sent inn nýja áætlun og látið þá eldri falla úr gildi.',
+      },
       loadError: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.loadError',
         defaultMessage:
