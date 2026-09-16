@@ -53,9 +53,10 @@ describe('InternalNotificationController - Send ready for court notifications fo
   const policeCaseNumber = uuid()
   const courtCaseNumber = uuid()
 
-  const { prosecutor, defender, testCourt } = createTestUsers([
+  const { prosecutor, defender, defender2, testCourt } = createTestUsers([
     'prosecutor',
     'defender',
+    'defender2',
     'testCourt',
   ])
 
@@ -74,6 +75,13 @@ describe('InternalNotificationController - Send ready for court notifications fo
     defenderNationalId: defender.nationalId,
     defenderName: defender.name,
     defenderEmail: defender.email,
+    defendants: [
+      {
+        defenderNationalId: defender.nationalId,
+        defenderName: defender.name,
+        defenderEmail: defender.email,
+      },
+    ],
     requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
     prosecutorsOffice: { name: 'Héraðsdómur Derricks' },
     dateLogs: [{ date: randomDate(), dateType: DateType.ARRAIGNMENT_DATE }],
@@ -263,6 +271,129 @@ describe('InternalNotificationController - Send ready for court notifications fo
           subject: `Krafa í máli ${courtCaseNumber}`,
           html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_REQUEST_CASE_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
           attachments: undefined,
+        }),
+      )
+    })
+  })
+
+  describe('multiple defendants with different defenders', () => {
+    beforeEach(async () => {
+      await givenWhenThen(
+        caseId,
+        {
+          ...theCase,
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+          defendants: [
+            {
+              defenderNationalId: defender.nationalId,
+              defenderName: defender.name,
+              defenderEmail: defender.email,
+            },
+            {
+              defenderNationalId: defender2.nationalId,
+              defenderName: defender2.name,
+              defenderEmail: defender2.email,
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
+    })
+
+    it('should send ready for court email to each unique defender', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender.name, address: defender.email }],
+          subject: `Krafa í máli ${policeCaseNumber}`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender2.name, address: defender2.email }],
+          subject: `Krafa í máli ${policeCaseNumber}`,
+        }),
+      )
+    })
+  })
+
+  describe('multiple defendants sharing the same defender', () => {
+    beforeEach(async () => {
+      await givenWhenThen(
+        caseId,
+        {
+          ...theCase,
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+          defendants: [
+            {
+              defenderNationalId: defender.nationalId,
+              defenderName: defender.name,
+              defenderEmail: defender.email,
+            },
+            {
+              defenderNationalId: defender.nationalId,
+              defenderName: defender.name,
+              defenderEmail: defender.email,
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
+    })
+
+    it('should send ready for court email to the defender only once', () => {
+      const defenderEmails = (
+        mockEmailService.sendEmail as jest.Mock
+      ).mock.calls.filter(
+        ([email]) => email?.to?.[0]?.address === defender.email,
+      )
+
+      expect(defenderEmails).toHaveLength(1)
+    })
+  })
+
+  describe('multiple defendants where only one defender was previously notified', () => {
+    beforeEach(async () => {
+      await givenWhenThen(
+        caseId,
+        {
+          ...theCase,
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+          defendants: [
+            {
+              defenderNationalId: defender.nationalId,
+              defenderName: defender.name,
+              defenderEmail: defender.email,
+            },
+            {
+              defenderNationalId: defender2.nationalId,
+              defenderName: defender2.name,
+              defenderEmail: defender2.email,
+            },
+          ],
+          notifications: [
+            {
+              type: TrackedNotificationType.READY_FOR_COURT,
+              recipients: [{ address: defender.email, success: true }],
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
+    })
+
+    it('should send a resubmit email to the previously notified defender and an initial email to the other', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender.name, address: defender.email }],
+          subject: `Krafa í máli ${courtCaseNumber}`,
+          html: expect.stringContaining('hefur breytt kröfunni'),
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender2.name, address: defender2.email }],
+          subject: `Krafa í máli ${policeCaseNumber}`,
+          html: expect.stringContaining('hefur valið að deila kröfu'),
         }),
       )
     })

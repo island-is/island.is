@@ -108,6 +108,13 @@ describe('InternalNotificationController - Send court date notifications', () =>
       defenderName: defender.name,
       defenderEmail: defender.email,
       defenderNationalId: defender.nationalId,
+      defendants: [
+        {
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+          defenderNationalId: defender.nationalId,
+        },
+      ],
     } as Case
 
     beforeEach(async () => {
@@ -159,6 +166,12 @@ describe('InternalNotificationController - Send court date notifications', () =>
       courtCaseNumber,
       defenderName: defender.name,
       defenderEmail: defender.email,
+      defendants: [
+        {
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+      ],
     } as Case
 
     beforeEach(async () => {
@@ -207,6 +220,12 @@ describe('InternalNotificationController - Send court date notifications', () =>
       courtCaseNumber,
       defenderName: defender.name,
       defenderEmail: defender.email,
+      defendants: [
+        {
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+      ],
       // The defender was notified the first time the court date was sent
       notifications: [
         {
@@ -259,6 +278,12 @@ describe('InternalNotificationController - Send court date notifications', () =>
       // The defender is also the legal rights protector of one of the victims
       defenderName: defender.name,
       defenderEmail: defender.email,
+      defendants: [
+        {
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+      ],
       sessionArrangements: SessionArrangements.ALL_PRESENT,
       victims: [
         {
