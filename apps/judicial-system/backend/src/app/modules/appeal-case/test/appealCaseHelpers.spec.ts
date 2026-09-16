@@ -58,10 +58,10 @@ describe('userIsAppellant', () => {
   })
 
   describe('request-case defence (collective)', () => {
-    it('is true for the current registered case defender', () => {
+    it('is true for the current registered defendant defender', () => {
       const theCase = {
         type: CaseType.CUSTODY,
-        defenderNationalId: '0101010101',
+        defendants: [{ defenderNationalId: '0101010101' }],
       } as Case
       const appealCase = appealCaseWith([
         appealed({ userRole: UserRole.DEFENDER }),
@@ -72,10 +72,10 @@ describe('userIsAppellant', () => {
       )
     })
 
-    it('is false for a defender who is not the current case defender', () => {
+    it('is false for a defender who is not registered on any defendant', () => {
       const theCase = {
         type: CaseType.CUSTODY,
-        defenderNationalId: '0101010101',
+        defendants: [{ defenderNationalId: '0101010101' }],
       } as Case
       const appealCase = appealCaseWith([
         appealed({ userRole: UserRole.DEFENDER }),
@@ -83,6 +83,23 @@ describe('userIsAppellant', () => {
 
       expect(userIsAppellant(theCase, appealCase, defender('9999999999'))).toBe(
         false,
+      )
+    })
+
+    it('is true when the defender is registered on any of several defendants', () => {
+      const theCase = {
+        type: CaseType.CUSTODY,
+        defendants: [
+          { defenderNationalId: '1111111111' },
+          { defenderNationalId: '0101010101' },
+        ],
+      } as Case
+      const appealCase = appealCaseWith([
+        appealed({ userRole: UserRole.DEFENDER }),
+      ])
+
+      expect(userIsAppellant(theCase, appealCase, defender('0101010101'))).toBe(
+        true,
       )
     })
   })

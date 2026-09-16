@@ -81,6 +81,9 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     })
 
     it('should look for defender', () => {
+      expect(
+        mockDefendantService.findLatestDefendantByDefenderNationalId,
+      ).toHaveBeenCalledWith(defenderNationalId)
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         where: {
           defenderNationalId,
@@ -90,7 +93,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         order: [['created', 'DESC']],
       })
       expect(
-        mockDefendantService.findLatestDefendantByDefenderNationalId,
+        mockCivilClaimantService.findLatestClaimantBySpokespersonNationalId,
       ).toHaveBeenCalledWith(defenderNationalId)
     })
 
@@ -106,23 +109,19 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     })
 
     it('should strip the dash before querying', () => {
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        where: {
-          defenderNationalId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-        },
-        order: [['created', 'DESC']],
-      })
+      expect(
+        mockDefendantService.findLatestDefendantByDefenderNationalId,
+      ).toHaveBeenCalledWith(defenderNationalId)
     })
   })
 
-  describe('defender found in a case', () => {
+  describe('defender found in a defendant', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({
+      const mockFindLatestDefendantByDefenderNationalId =
+        mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
+      mockFindLatestDefendantByDefenderNationalId.mockResolvedValueOnce({
         defenderNationalId,
         defenderName,
         defenderPhoneNumber,
@@ -147,15 +146,18 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         canConfirmIndictment: false,
       })
     })
+
+    it('should not fall back to case-level lookup', () => {
+      expect(mockCaseRepositoryService.findOne).not.toHaveBeenCalled()
+    })
   })
 
-  describe('defender found in a defendant', () => {
+  describe('defender found in a case (legacy fallback)', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindLatestDefendantByDefenderNationalId =
-        mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
-      mockFindLatestDefendantByDefenderNationalId.mockResolvedValueOnce({
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
         defenderNationalId,
         defenderName,
         defenderPhoneNumber,

@@ -166,7 +166,10 @@ describe('AppealCaseController - transition withdrawal rules', () => {
 
     it('allows the current registered defender to withdraw a case-level request appeal', () => {
       const request = buildRequest(
-        { type: CaseType.CUSTODY, defenderNationalId: nationalId },
+        {
+          type: CaseType.CUSTODY,
+          defendants: [{ defenderNationalId: nationalId }],
+        },
         { appealEventLogs: [appealed({ userRole: UserRole.DEFENDER })] },
         defender,
       )
@@ -176,7 +179,10 @@ describe('AppealCaseController - transition withdrawal rules', () => {
 
     it('denies a defender who is not the case defender on a request appeal', () => {
       const request = buildRequest(
-        { type: CaseType.CUSTODY, defenderNationalId: '9999999999' },
+        {
+          type: CaseType.CUSTODY,
+          defendants: [{ defenderNationalId: '9999999999' }],
+        },
         { appealEventLogs: [appealed({ userRole: UserRole.DEFENDER })] },
         defender,
       )

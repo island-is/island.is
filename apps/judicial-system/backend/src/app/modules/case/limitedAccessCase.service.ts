@@ -738,56 +738,56 @@ export class LimitedAccessCaseService {
     // pass the dash-free value down to the lookups and the constructed user.
     const normalizedNationalId = nationalId.replace(/-/g, '')
 
-    return this.caseRepositoryService
-      .findOne({
-        where: {
-          defenderNationalId: normalizedNationalId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-        },
-        order: [['created', 'DESC']],
-      })
-      .then((theCase) => {
-        if (theCase) {
-          // The national id is associated with a defender in a request case
-          return this.constructDefender(
-            normalizedNationalId,
-            theCase.defenderName,
-            theCase.defenderPhoneNumber,
-            theCase.defenderEmail,
-          )
-        }
+    // Primary: defendant row covers request cases (after dual-write / Phase 2)
+    // and indictment cases alike.
+    const defendant =
+      await this.defendantService.findLatestDefendantByDefenderNationalId(
+        normalizedNationalId,
+      )
 
-        return this.defendantService
-          .findLatestDefendantByDefenderNationalId(normalizedNationalId)
-          .then((defendant) => {
-            if (defendant) {
-              // The national id is associated with a defender in an indictment case
-              return this.constructDefender(
-                normalizedNationalId,
-                defendant.defenderName,
-                defendant.defenderPhoneNumber,
-                defendant.defenderEmail,
-              )
-            }
+    if (defendant) {
+      return this.constructDefender(
+        normalizedNationalId,
+        defendant.defenderName,
+        defendant.defenderPhoneNumber,
+        defendant.defenderEmail,
+      )
+    }
 
-            return this.civilClaimantService
-              .findLatestClaimantBySpokespersonNationalId(normalizedNationalId)
-              .then((civilClaimant) => {
-                if (civilClaimant) {
-                  // The national id is associated with a spokesperson for a civil claimant in an indictment case
-                  return this.constructDefender(
-                    normalizedNationalId,
-                    civilClaimant.spokespersonName,
-                    civilClaimant.spokespersonPhoneNumber,
-                    civilClaimant.spokespersonEmail,
-                  )
-                }
+    // Legacy fallback: case-level defender for request cases not yet backfilled.
+    const theCase = await this.caseRepositoryService.findOne({
+      where: {
+        defenderNationalId: normalizedNationalId,
+        state: { [Op.not]: CaseState.DELETED },
+        isArchived: false,
+      },
+      order: [['created', 'DESC']],
+    })
 
-                throw new NotFoundException('Defender not found')
-              })
-          })
-      })
+    if (theCase) {
+      return this.constructDefender(
+        normalizedNationalId,
+        theCase.defenderName,
+        theCase.defenderPhoneNumber,
+        theCase.defenderEmail,
+      )
+    }
+
+    const civilClaimant =
+      await this.civilClaimantService.findLatestClaimantBySpokespersonNationalId(
+        normalizedNationalId,
+      )
+
+    if (civilClaimant) {
+      return this.constructDefender(
+        normalizedNationalId,
+        civilClaimant.spokespersonName,
+        civilClaimant.spokespersonPhoneNumber,
+        civilClaimant.spokespersonEmail,
+      )
+    }
+
+    throw new NotFoundException('Defender not found')
   }
 
   private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
