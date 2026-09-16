@@ -1,13 +1,11 @@
 import XLSX from 'xlsx'
 import { createErrorExcel, parseUploadFile } from './UploadCarDayRateUsageUtils'
-import { getEligibleDayRateRecords } from './dayRateRecordUtils'
 import { DayRateRecord } from './types'
 
 const dayRateRecords: DayRateRecord[] = [
   { permno: 'AA111', prevPeriodTotalDays: 30 },
   { permno: 'BB222', prevPeriodTotalDays: 30 },
-  // Listed for the applicant to see, but Skatturinn already has its return
-  { permno: 'CC333', prevPeriodTotalDays: 30, alreadyReportedDays: 5 },
+  { permno: 'CC333', prevPeriodTotalDays: 30 },
 ]
 
 const dayRateRecordsByPermno = new Map(
@@ -15,7 +13,7 @@ const dayRateRecordsByPermno = new Map(
 )
 
 // What the multi upload screen checks the parsed rows against
-const eligibleRecordCount = getEligibleDayRateRecords(dayRateRecords).length
+const expectedRecordCount = dayRateRecords.length
 
 const csvFile = (rows: string[]) =>
   Buffer.from(['permno;total;usage', ...rows].join('\n'), 'utf-8')
@@ -41,19 +39,7 @@ const readSheet = (base64: string): string[][] => {
 }
 
 describe('parseUploadFile', () => {
-  it('accepts the generated template, which omits reported cars', async () => {
-    const parsed = await parseUploadFile(
-      csvFile(['AA111;30;10', 'BB222;30;12']),
-      'csv',
-      dayRateRecordsByPermno,
-    )
-
-    expect(parsed.ok).toBe(true)
-    if (!parsed.ok) return
-    expect(parsed.records.length).toBe(eligibleRecordCount)
-  })
-
-  it('skips already reported cars instead of failing', async () => {
+  it('accepts the generated template, which lists every day rate vehicle', async () => {
     const parsed = await parseUploadFile(
       csvFile(['AA111;30;10', 'BB222;30;12', 'CC333;30;7']),
       'csv',
@@ -65,8 +51,9 @@ describe('parseUploadFile', () => {
     expect(parsed.records.map((record) => record.vehicleId)).toEqual([
       'AA111',
       'BB222',
+      'CC333',
     ])
-    expect(parsed.records.length).toBe(eligibleRecordCount)
+    expect(parsed.records.length).toBe(expectedRecordCount)
   })
 
   it('still rejects a plate that is not on the day rate list', async () => {
@@ -161,7 +148,7 @@ describe('parseUploadFile', () => {
 
     expect(parsed.ok).toBe(true)
     if (!parsed.ok) return
-    expect(parsed.records.length).not.toBe(eligibleRecordCount)
+    expect(parsed.records.length).not.toBe(expectedRecordCount)
   })
 
   it('rejects the same plate on two rows instead of counting it twice', async () => {

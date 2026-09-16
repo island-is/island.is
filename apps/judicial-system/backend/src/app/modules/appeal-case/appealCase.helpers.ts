@@ -48,19 +48,31 @@ export const findAppealCaseOfCaseFile = (
   return theCase.appealCase
 }
 
-// The defendants that currently stand as appellants of a verdict appeal:
-// those whose most recent appeal event on it is an APPEALED rather
-// than an APPEAL_WITHDRAWN. A defendant who withdraws may appeal again while the
-// deadline still runs, so it is the latest event that decides, not the mere
-// presence of a withdrawal.
-//
-// The event log is the appellant source for out-of-court appeals - a verdict
-// appeal has no appeal_decision rows, since a party that appeals out of court is
-// precisely one that did not appeal in court.
-export const standingVerdictAppellantIds = (
+// A verdict appeal has two sides. The defence side is a defendant appealing -
+// through their defender in the system, or registered by the public
+// prosecution office on a letter; the prosecution side is the public
+// prosecution reviewer appealing the verdict regarding that defendant. Both are
+// per defendant, and they are independent: either or both may stand.
+export type VerdictAppellantSide = 'DEFENCE' | 'PROSECUTION'
+
+export interface VerdictAppellant {
+  defendantId: string
+  side: VerdictAppellantSide
+}
+
+export const verdictAppellantSide = (
+  userRole: UserRole,
+): VerdictAppellantSide =>
+  prosecutionRoles.includes(userRole) ? 'PROSECUTION' : 'DEFENCE'
+
+// The appellants of a verdict appeal that currently stand, read from the appeal
+// event log: for each (defendant, side) the latest APPEALED / APPEAL_WITHDRAWN
+// event decides, so a party that withdrew and appealed again while the deadline
+// ran still counts. Events without a defendant are not verdict appeal events.
+export const standingVerdictAppellants = (
   appealCase: Pick<AppealCase, 'appealEventLogs'>,
-): string[] => {
-  const latestByDefendant = new Map<string, AppealEventLog>()
+): VerdictAppellant[] => {
+  const latestByAppellant = new Map<string, AppealEventLog>()
 
   for (const eventLog of appealCase.appealEventLogs ?? []) {
     if (
@@ -71,17 +83,41 @@ export const standingVerdictAppellantIds = (
       continue
     }
 
-    const latest = latestByDefendant.get(eventLog.defendantId)
+    const key = `${eventLog.defendantId}:${verdictAppellantSide(
+      eventLog.userRole,
+    )}`
+    const latest = latestByAppellant.get(key)
 
     if (!latest || eventLog.created > latest.created) {
-      latestByDefendant.set(eventLog.defendantId, eventLog)
+      latestByAppellant.set(key, eventLog)
     }
   }
 
-  return Array.from(latestByDefendant)
-    .filter(([, eventLog]) => eventLog.eventType === AppealEventType.APPEALED)
-    .map(([defendantId]) => defendantId)
+  return Array.from(latestByAppellant.values())
+    .filter((eventLog) => eventLog.eventType === AppealEventType.APPEALED)
+    .map((eventLog) => ({
+      defendantId: eventLog.defendantId as string,
+      side: verdictAppellantSide(eventLog.userRole),
+    }))
 }
+
+export const hasStandingVerdictAppeal = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  defendantId: string,
+  side: VerdictAppellantSide,
+): boolean =>
+  standingVerdictAppellants(appealCase).some(
+    (appellant) =>
+      appellant.defendantId === defendantId && appellant.side === side,
+  )
+
+// The defendants whose own (defence-side) verdict appeal stands.
+export const standingVerdictAppellantIds = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+): string[] =>
+  standingVerdictAppellants(appealCase)
+    .filter((appellant) => appellant.side === 'DEFENCE')
+    .map((appellant) => appellant.defendantId)
 
 // Resolves the appeal decision (Ákvörðun um kæru) recorded in court for the
 // party the user acts for - the prosecution, or the specific defendant / civil
@@ -363,8 +399,14 @@ export const userIsAppellant = (
 
   // Indictment defence: the user must be the current confirmed representative of
   // a party (defendant / civil claimant) that appealed. Resolving live against
-  // the case follows defender / spokesperson reassignment.
+  // the case follows defender / spokesperson reassignment. A prosecution
+  // event names a defendant too - the one whose verdict the prosecution
+  // appealed - and that does not make the defendant's defender an appellant.
   return appealedEvents.some((eventLog) => {
+    if (prosecutionRoles.includes(eventLog.userRole)) {
+      return false
+    }
+
     if (eventLog.defendantId) {
       return Boolean(
         Defendant.isConfirmedDefenderOfDefendant(
@@ -402,7 +444,12 @@ export const appellantRepresentativeNationalIds = (
   const nationalIds = new Set<string>()
 
   for (const eventLog of appealCase.appealEventLogs ?? []) {
-    if (eventLog.eventType !== AppealEventType.APPEALED) {
+    // A prosecution verdict appeal names the defendant whose verdict it
+    // appeals; that defendant's defender is the one to notify, not an appellant.
+    if (
+      eventLog.eventType !== AppealEventType.APPEALED ||
+      prosecutionRoles.includes(eventLog.userRole)
+    ) {
       continue
     }
 

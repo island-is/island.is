@@ -18,14 +18,6 @@ query UserContract($id: ID!) {
     tenants {
       ...Party
     }
-    contractProperty {
-      id
-      propertyId
-      type
-      streetAndHouseNumber
-      municipality
-      postalCode
-    }
     latestDocumentDownloadUrl
     canTerminate
   }

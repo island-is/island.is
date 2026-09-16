@@ -4,6 +4,7 @@ import { getErrorViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
 import {
   AccordionCard,
+  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -38,8 +39,19 @@ type Props = {
   direction: GroupDirection
   mode: 'draft' | 'postponed'
   errors?: RecordObject
+  // Whether this group still matches the copy last written to answers. One save
+  // carries every group, so a save from any card leaves them all saved.
+  isSaved: boolean
+  isSaving: boolean
+  // A removal writes the plan too, so it holds the card until it has landed.
+  isRemoving: boolean
+  // Whether a plan write is in flight anywhere in the editor — one save carries
+  // every group, so no card may start a second one alongside it.
+  isWriting: boolean
+  saveFailed: boolean
   onRemove: () => void
   onRemoveMember: (ordinal: number) => void
+  onSave: () => void
 }
 
 // One accordion card per outlier group, split out of OutlierEditor.
@@ -52,8 +64,14 @@ export const OutlierGroupCard: FC<Props> = ({
   direction,
   mode,
   errors,
+  isSaved,
+  isSaving,
+  isRemoving,
+  isWriting,
+  saveFailed,
   onRemove,
   onRemoveMember,
+  onSave,
 }) => {
   const { formatMessage, lang } = useLocale()
   const m = messages.salaryAnalysis.outlierGroup
@@ -109,7 +127,13 @@ export const OutlierGroupCard: FC<Props> = ({
         startExpanded
       >
         <Box marginBottom={2} display="flex" justifyContent="flexEnd">
-          <Button variant="text" size="small" onClick={onRemove}>
+          <Button
+            variant="text"
+            size="small"
+            disabled={isWriting}
+            loading={isRemoving}
+            onClick={onRemove}
+          >
             {formatMessage(m.removeGroupButton)}
           </Button>
         </Box>
@@ -217,6 +241,8 @@ export const OutlierGroupCard: FC<Props> = ({
               locale={lang as Locale}
               minDate={minRemedyDate}
               maxDate={maxRemedyDate}
+              maxYear={maxRemedyDate.getFullYear()}
+              minYear={minRemedyDate.getFullYear()}
               required
               backgroundColor="blue"
               error={remedyDateError}
@@ -254,6 +280,41 @@ export const OutlierGroupCard: FC<Props> = ({
               error={groupError('signatureRole')}
             />
           </Box>
+        </Box>
+        {/* The live region is the wrapper, which stays mounted: a disabled
+            button announces nothing when it becomes disabled, so the change
+            from "Vista" to "Vistað" would otherwise pass silently. */}
+        <Box
+          marginTop={3}
+          display="flex"
+          justifyContent="flexEnd"
+          aria-live="polite"
+        >
+          <Button
+            size="small"
+            variant="ghost"
+            icon={isSaved ? 'checkmark' : undefined}
+            disabled={isSaved || isWriting}
+            loading={isSaving}
+            onClick={onSave}
+          >
+            {formatMessage(isSaved ? m.groupSavedButton : m.saveGroupButton)}
+          </Button>
+        </Box>
+        {/* The live region is the wrapper here too, for the same reason: the
+            save fails a round trip after the button was pressed, and a message
+            that arrives with its own region announces nothing. Assertive,
+            because the save the applicant asked for did not happen. No margin
+            on the mounted wrapper, so an unfailed card spends none. */}
+        <Box aria-live="assertive">
+          {saveFailed && (
+            <Box marginTop={2}>
+              <AlertMessage
+                type="error"
+                message={formatMessage(m.saveGroupError)}
+              />
+            </Box>
+          )}
         </Box>
       </AccordionCard>
     </Box>

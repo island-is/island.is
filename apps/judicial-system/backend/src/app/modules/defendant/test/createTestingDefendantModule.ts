@@ -20,6 +20,7 @@ import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseFileRepositoryService,
   CivilClaimantRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
@@ -80,7 +81,13 @@ export const createTestingDefendantModule = async () => {
           updateByIdAndCase: jest.fn(),
           deleteByIdAndCase: jest.fn(),
           deleteAllForCase: jest.fn(),
-          findLatestBySpokespersonNationalId: jest.fn(),
+        },
+      },
+      {
+        provide: CaseFileRepositoryService,
+        useValue: {
+          deleteAllForCivilClaimant: jest.fn(),
+          deleteAllForCivilClaimantsOfCase: jest.fn(),
         },
       },
       DefendantService,
@@ -130,6 +137,9 @@ export const createTestingDefendantModule = async () => {
       CivilClaimantRepositoryService,
     )
 
+  const caseFileRepositoryService =
+    defendantModule.get<CaseFileRepositoryService>(CaseFileRepositoryService)
+
   const civilClaimantService =
     defendantModule.get<CivilClaimantService>(CivilClaimantService)
 
@@ -167,5 +177,6 @@ export const createTestingDefendantModule = async () => {
     civilClaimantService,
     civilClaimantController,
     civilClaimantRepositoryService,
+    caseFileRepositoryService,
   }
 }
