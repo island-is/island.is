@@ -1456,6 +1456,23 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.genderNeutral',
         defaultMessage: 'Kynsegin',
       },
+      // Read only by screen readers, from the table's <caption>. It has to say
+      // that a third activation exists, because the order it returns to is the
+      // one `listRule` describes — the most extreme in each direction — and
+      // nothing on screen would otherwise tell a reader who sorted away from it
+      // that it can be had back.
+      tableCaption: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.tableCaption',
+        defaultMessage:
+          'Ábendingar um launadreifingu. Hægt er að raða eftir dálkum: fyrsti smellur raðar í hækkandi röð, annar í lækkandi og þriðji skilar upprunalegri röð.',
+      },
+      // On the sort button itself, so the control announces what activating it
+      // does rather than just reading out the column name. The state it is
+      // currently in is carried by aria-sort on the cell around it.
+      sortColumnLabel: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.sortColumnLabel',
+        defaultMessage: 'Raða eftir {column}',
+      },
     }),
     outlierGroup: defineMessages({
       ordinalColumn: {
