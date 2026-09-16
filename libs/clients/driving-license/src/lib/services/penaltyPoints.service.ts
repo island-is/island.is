@@ -17,7 +17,6 @@ export class PenaltyPointsClientService {
 
   parseJwtToken = (user: User) => user.authorization.slice(7)
 
-  //TODO: stop sending tokens around, it's not needed since its't in the request itself
   public async penaltyPointsDrivingLicenseApplicationIsBelowThreshold(
     user: User,
   ): Promise<boolean | undefined> {
