@@ -200,9 +200,9 @@ const CertificateAction = ({
       }
       window.location.href = paymentPageUrl
     } catch {
-      // The refusal may be good news the error can't be trusted to spell out
-      // (paid all along via a late callback, or no longer payable) — re-check
-      // the certificate and let its state decide before claiming failure.
+      // The refusal may be good news (paid all along via a late callback,
+      // or no longer payable) - re-check the certificate and let its state
+      // decide before claiming failure.
       const { data } = await checkCertificate({
         variables: { id: certificateId },
       })
