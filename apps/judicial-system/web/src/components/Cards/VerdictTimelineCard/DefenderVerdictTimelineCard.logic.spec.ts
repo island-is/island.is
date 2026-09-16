@@ -6,7 +6,25 @@ import {
   VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { getDefenderVerdictTimelineItems } from './DefenderVerdictTimelineCard.logic'
+import {
+  getDefenderVerdictTimelineItems,
+  hasVerdictServiceDecision,
+} from './DefenderVerdictTimelineCard.logic'
+
+describe('hasVerdictServiceDecision', () => {
+  it('should be false until the service requirement has been decided', () => {
+    expect(hasVerdictServiceDecision(undefined)).toBe(false)
+    expect(hasVerdictServiceDecision(null)).toBe(false)
+    expect(hasVerdictServiceDecision({})).toBe(false)
+    expect(hasVerdictServiceDecision({ serviceRequirement: null })).toBe(false)
+  })
+
+  it('should be true for every decided requirement', () => {
+    for (const serviceRequirement of Object.values(ServiceRequirement)) {
+      expect(hasVerdictServiceDecision({ serviceRequirement })).toBe(true)
+    }
+  })
+})
 
 describe('getDefenderVerdictTimelineItems', () => {
   const { formatMessage } = createIntl({ locale: 'is', messages: {} })

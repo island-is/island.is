@@ -3,7 +3,6 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ConfigModule } from '@island.is/nest/config'
 
-import { AwsS3Module } from '../aws-s3/awsS3.module'
 import { AppealCase } from './models/appealCase.model'
 import { AppealDecision } from './models/appealDecision.model'
 import { AppealEventLog } from './models/appealEventLog.model'
@@ -39,7 +38,9 @@ import { AppealDecisionRepositoryService } from './services/appealDecisionReposi
 import { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
+import { CaseFileRepositoryService } from './services/caseFileRepository.service'
 import { CaseRepositoryService } from './services/caseRepository.service'
+import { CaseStringRepositoryService } from './services/caseStringRepository.service'
 import { CivilClaimantRepositoryService } from './services/civilClaimantRepository.service'
 import { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 import { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
@@ -99,7 +100,6 @@ import { repositoryModuleConfig } from './repository.config'
       Victim,
     ]),
     ConfigModule.forFeature(repositoryModuleConfig),
-    AwsS3Module,
   ],
   providers: [
     AppealCaseRepositoryService,
@@ -107,7 +107,9 @@ import { repositoryModuleConfig } from './repository.config'
     AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
+    CaseFileRepositoryService,
     CaseRepositoryService,
+    CaseStringRepositoryService,
     CivilClaimantRepositoryService,
     CourtSessionRepositoryService,
     CourtSessionStringRepositoryService,
@@ -137,7 +139,9 @@ import { repositoryModuleConfig } from './repository.config'
     AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
+    CaseFileRepositoryService,
     CaseRepositoryService,
+    CaseStringRepositoryService,
     CivilClaimantRepositoryService,
     CourtSessionRepositoryService,
     CourtSessionStringRepositoryService,

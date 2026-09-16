@@ -35,7 +35,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   canDefenceUserOpenLinkedCase,
   getDefaultDefendantGender,
@@ -97,7 +97,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
       ),
       values: defendants
         ? [
-            <div key="defendants-grid" className={grid({ gap: 3 })}>
+            <div key="defendants-grid" className={stack({ gap: 3 })}>
               {defendants.map((defendant, index) => (
                 <div
                   key={`defendants-grid-${defendant.id}`}
@@ -347,7 +347,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     title: 'Klofinn frá',
     values: isNonEmptyArray(splitCaseEntries)
       ? [
-          <div key="split-cases-grid" className={grid({ gap: 2 })}>
+          <div key="split-cases-grid" className={stack({ gap: 2 })}>
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
@@ -478,7 +478,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     ),
     values: isNonEmptyArray(workingCase.civilClaimants)
       ? [
-          <div key="civil-claimants-grid" className={grid({ gap: 3 })}>
+          <div key="civil-claimants-grid" className={stack({ gap: 3 })}>
             {workingCase.civilClaimants.map((civilClaimant, index) => (
               <div
                 key={civilClaimant.id}
@@ -507,11 +507,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     ),
     values: isNonEmptyArray(workingCase.victims)
       ? [
-          <div key="victims-grid" className={grid({ gap: 3 })}>
+          <div key="victims-grid" className={stack({ gap: 3 })}>
             {workingCase.victims.map((victim, index) => (
               <div
                 key={victim.id}
-                className={cn(grid({ gap: 1 }), {
+                className={cn(stack({ gap: 1 }), {
                   [styles.renderDividerFull]:
                     isNonEmptyArray(workingCase.victims) &&
                     index !== workingCase.victims.length - 1,

@@ -9,7 +9,6 @@ import { Dispatch, useEffect, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { FieldBaseProps } from '@island.is/application/types'
 import { CarUsageError, DayRateRecord } from '../../utils/types'
-import { getEligibleDayRateRecords } from '../../utils/dayRateRecordUtils'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import {
@@ -23,6 +22,7 @@ import {
 } from '../../utils/UploadCarDayRateUsageUtils'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
+import { FormatMessage } from '@island.is/application/types'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { m } from '../../lib/messages'
 import { Locale } from '@island.is/shared/types'
@@ -43,6 +43,7 @@ interface Props {
       getFileContent: (
         dayRateRecords: DayRateRecord[],
         locale: Locale,
+        formatMessage: FormatMessage,
       ) => {
         base64Content: string
         fileType: string
@@ -133,13 +134,9 @@ export const UploadCarDayRateUsage = ({
       'getPreviousPeriodDayRateReturns.data',
     ) ?? []
 
-  // Keyed on every record, including already reported ones, so the parser can
-  // tell "not one of your vehicles" apart from "nothing left to report"
   const dayRateRecordsByPermno = new Map<string, DayRateRecord>(
     dayRateRecords.map((d) => [d.permno, d]),
   )
-
-  const eligibleRecordCount = getEligibleDayRateRecords(dayRateRecords).length
 
   // A blank plate cell is itself a "car not found" error, so fall back to the
   // row number rather than rendering a bare dash
@@ -204,9 +201,7 @@ export const UploadCarDayRateUsage = ({
       return null
     }
 
-    // Already reported vehicles are left out of the generated template and
-    // skipped by the parser, so only the eligible ones have to be accounted for
-    if (parsed.records.length !== eligibleRecordCount) {
+    if (parsed.records.length !== dayRateRecords.length) {
       setUploadErrorMessage(formatMessage(m.multiUpload.allCarsMustBePresent))
       return null
     }
@@ -308,7 +303,11 @@ export const UploadCarDayRateUsage = ({
     })
   }
 
-  const fileData = field.props.getFileContent?.(dayRateRecords, lang)
+  const fileData = field.props.getFileContent?.(
+    dayRateRecords,
+    lang,
+    formatMessage,
+  )
   if (!fileData) {
     throw Error('No valid file data recieved!')
   }

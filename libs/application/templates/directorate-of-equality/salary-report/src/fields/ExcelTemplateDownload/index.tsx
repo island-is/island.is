@@ -1,5 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
+import {
+  UPDATE_APPLICATION,
+  UPDATE_APPLICATION_EXTERNAL_DATA,
+} from '@island.is/application/graphql'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   ActionCard,
@@ -16,6 +19,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
 import { FC, useEffect, useRef, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { FileRejection } from 'react-dropzone'
 import {
   ApiActions,
@@ -54,7 +58,14 @@ const ANALYSIS_SCREEN_ID = ScreenIds.analysisOverview
 
 export const ExcelTemplateDownload: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application, goToScreen, setBeforeSubmitCallback, answerQuestions }) => {
+> = ({
+  application,
+  goToScreen,
+  setBeforeSubmitCallback,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
+  answerQuestions,
+}) => {
   const { formatMessage, lang: locale } = useLocale()
   const m = messages.report.dataEntry
   const [isImporting, setIsImporting] = useState(false)
@@ -96,6 +107,8 @@ export const ExcelTemplateDownload: FC<
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const { setValue } = useFormContext()
   // ensureDraft prepends the create-draft provider, so the draft exists before
   // anything reads it (idempotent). Same 'draftCriteria' key as CriteriaEditor,
   // which keeps the persisted snapshot in one place — that screen still reads
@@ -137,6 +150,47 @@ export const ExcelTemplateDownload: FC<
 
   // Cap the presigned upload so a stalled request can't leave isImporting stuck.
   const UPLOAD_TIMEOUT_MS = 60_000
+
+  // A successful re-import replaces the whole employee list (REPLACE
+  // semantics), so any outlier plan built against the old one — draft or
+  // already committed on an earlier pass through DRAFT — would carry
+  // employeeOrdinals for employees that no longer exist. setValue keeps the
+  // clear alive through the ambient form's eventual submit (see
+  // applyNavigationAnswers in SalaryAnalysisResults for why that's needed
+  // alongside answerQuestions), and the direct mutation persists it in case
+  // the applicant never reaches that submit.
+  const clearOutlierPlan = async () => {
+    const answers = {
+      salaryAnalysis: {
+        outlierGroupsDraft: [],
+        outlierGroups: [],
+        hasMinimumSetOutliers: false,
+        outlierPlanReviewed: false,
+      },
+    }
+    setValue('salaryAnalysis.outlierGroups', [])
+    setValue('salaryAnalysis.outlierGroupsDraft', [])
+    setValue('salaryAnalysis.hasMinimumSetOutliers', false)
+    setValue('salaryAnalysis.outlierPlanReviewed', false)
+    try {
+      await updateApplication({
+        variables: { input: { id: application.id, answers }, locale },
+      })
+    } catch (error) {
+      console.error(
+        'Failed to clear the outlier plan after a new upload',
+        error,
+      )
+    }
+    try {
+      answerQuestions?.(answers)
+    } catch (error) {
+      console.error(
+        'Failed to mirror the cleared outlier plan into answers',
+        error,
+      )
+    }
+  }
 
   const handleFileSelected = async (file: File) => {
     setIsImporting(true)
@@ -304,6 +358,7 @@ export const ExcelTemplateDownload: FC<
           ),
         },
       )
+      await clearOutlierPlan()
       importSucceededRef.current = true
       setImportStatus('success')
     } catch {
@@ -312,6 +367,16 @@ export const ExcelTemplateDownload: FC<
       setIsImporting(false)
     }
   }
+
+  // Reading the workbook is a multi-leg server round-trip (presign, upload,
+  // import, read back), and the footer's own "Halda áfram" would meanwhile
+  // seed default job factors and advance past an import that is still running
+  // — see setBeforeSubmitCallback below. Same pair FileUploadController uses:
+  // the loading state puts the button in its spinner, disabled throughout.
+  useEffect(() => {
+    setFieldLoadingState?.(isImporting)
+    setSubmitButtonDisabled?.(isImporting)
+  }, [isImporting, setFieldLoadingState, setSubmitButtonDisabled])
 
   const handleFilesChanged = (newFiles: File[]) => {
     const file = newFiles[0]
@@ -432,7 +497,22 @@ export const ExcelTemplateDownload: FC<
   return (
     <Box>
       {base64Template && (
-        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          marginBottom={3}
+          columnGap={2}
+        >
+          <a
+            href={formatMessage(messages.general.instructionsLink)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="utility" icon="open" iconType="outline" as="span">
+              {formatMessage(messages.general.instructionsLabel)}
+            </Button>
+          </a>
+
           <Button
             variant="utility"
             icon="download"

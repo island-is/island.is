@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'example-inputs',
   preset: '../../../../../jest.preset.js',

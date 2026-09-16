@@ -217,8 +217,8 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       )
     })
 
-    // The notification to ríkissaksóknari is its own story, and none of the
-    // kæra notifications apply to an áfrýjun.
+    // The notification to the public prosecution office is its own story, and none of the
+    // ruling appeal notifications apply to a verdict appeal.
     it('should queue no messages', () => {
       expect(addMessagesToQueue).not.toHaveBeenCalled()
     })

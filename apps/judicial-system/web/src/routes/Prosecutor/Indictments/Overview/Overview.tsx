@@ -11,7 +11,6 @@ import {
   Checkbox,
   RadioButton,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
@@ -53,7 +52,8 @@ import {
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
 import ReturnIndictmentModal from './ReturnIndictmentModal/ReturnIndictmentModal'
@@ -350,7 +350,7 @@ const Overview: FC = () => {
                 title="Ákæra bíður yfirlesturs"
                 message={
                   workingCase.indictmentApprover?.name
-                    ? `Ákæran bíður yfirlesturs hjá ${workingCase.indictmentApprover.name}.`
+                    ? `Ákæran bíður yfirlesturs. Yfirlesari: ${workingCase.indictmentApprover.name}`
                     : 'Ákæran bíður yfirlesturs.'
                 }
                 type="info"
@@ -390,7 +390,7 @@ const Overview: FC = () => {
               />
             </Box>
           )}
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <AppealRulingModifiedAlert />
           <Box component="section">
             <InfoCardActiveIndictment
@@ -454,7 +454,10 @@ const Overview: FC = () => {
                         placeholder="Veldu yfirlesara"
                         isRequired={true}
                         shouldInitializeSelector={true}
-                        excludeUserId={user?.id}
+                        excludeUserIds={[
+                          user?.id,
+                          workingCase.prosecutor?.id,
+                        ].filter((id): id is string => Boolean(id))}
                         onChange={(prosecutorId, prosecutorName) => {
                           setSelectedApproverId(prosecutorId)
                           setSelectedApproverName(prosecutorName)

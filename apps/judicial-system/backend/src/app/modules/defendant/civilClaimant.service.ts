@@ -22,6 +22,7 @@ import { CourtService } from '../court'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseFileRepositoryService,
   CivilClaimant,
   CivilClaimantRepositoryService,
 } from '../repository'
@@ -32,6 +33,7 @@ import { DeliverResponse } from './models/deliver.response'
 export class CivilClaimantService {
   constructor(
     private readonly civilClaimantRepositoryService: CivilClaimantRepositoryService,
+    private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     private readonly courtService: CourtService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -161,8 +163,8 @@ export class CivilClaimantService {
     civilClaimant: CivilClaimant,
     user: User,
   ): Promise<DeliverResponse> {
-    return this.courtService
-      .updateIndictmentCaseWithSpokespersonInfo(
+    try {
+      await this.courtService.updateIndictmentCaseWithSpokespersonInfo(
         user,
         theCase.id,
         theCase.court?.name,
@@ -170,24 +172,40 @@ export class CivilClaimantService {
         civilClaimant.nationalId,
         civilClaimant.name,
         civilClaimant.spokespersonNationalId,
+        civilClaimant.spokespersonName,
         civilClaimant.spokespersonIsLawyer,
       )
-      .then(() => ({ delivered: true }))
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to update civil claimant info for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
-          { reason },
-        )
 
-        return { delivered: false }
-      })
+      return { delivered: true }
+    } catch (reason) {
+      this.logger.error(
+        `Failed to update civil claimant info for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
   }
 
-  async delete(caseId: string, civilClaimantId: string): Promise<boolean> {
+  // A civil claimant's files go with the claimant, so they are deleted first in
+  // the same transaction - the delete of the claimant would otherwise fail on
+  // the case file foreign key.
+  async delete(
+    caseId: string,
+    civilClaimantId: string,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    await this.caseFileRepositoryService.deleteAllForCivilClaimant(
+      caseId,
+      civilClaimantId,
+      { transaction },
+    )
+
     const numberOfAffectedRows =
       await this.civilClaimantRepositoryService.deleteByIdAndCase(
         civilClaimantId,
         caseId,
+        { transaction },
       )
 
     if (numberOfAffectedRows > 1) {
@@ -205,16 +223,13 @@ export class CivilClaimantService {
   }
 
   async deleteAll(caseId: string, transaction: Transaction): Promise<void> {
+    await this.caseFileRepositoryService.deleteAllForCivilClaimantsOfCase(
+      caseId,
+      { transaction },
+    )
+
     await this.civilClaimantRepositoryService.deleteAllForCase(caseId, {
       transaction,
     })
-  }
-
-  findLatestClaimantBySpokespersonNationalId(
-    nationalId: string,
-  ): Promise<CivilClaimant | null> {
-    return this.civilClaimantRepositoryService.findLatestBySpokespersonNationalId(
-      nationalId,
-    )
   }
 }

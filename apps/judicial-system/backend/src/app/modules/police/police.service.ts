@@ -24,6 +24,7 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { normalizePersonAddress } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -73,7 +74,8 @@ export enum PoliceDocumentType {
   RVMV = 'RVMV', // Viðbótargögn verjanda í S-málum
   RVVS = 'RVVS', // Viðbótargögn sækjandan í S-málum
   RVFK = 'RVFK', // Fyrirkall í S-málum
-  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
+  RVBD = 'RVBD', // Birtingarvottorð fyrirkalls í S-málum
+  BRTNG_RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
 }
 
 export interface PoliceDocument {
@@ -735,7 +737,7 @@ export class PoliceService {
         nationalId: defendant.accusedNationalId,
         name: defendant.accusedName ?? undefined,
         gender: defendant.accusedGender ?? undefined,
-        address: defendant.accusedAddress ?? undefined,
+        address: normalizePersonAddress(defendant.accusedAddress ?? undefined),
         dateOfBirth: defendant.accusedDOB ?? undefined,
         citizenship: defendant.citizenship ?? undefined,
       }))

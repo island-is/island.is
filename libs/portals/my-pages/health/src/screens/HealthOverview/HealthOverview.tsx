@@ -8,8 +8,16 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { LinkResolver } from '@island.is/portals/my-pages/core'
-import { DelegationPaths } from '@island.is/portals/shared-modules/delegations'
+import { useQuery } from '@apollo/client'
+import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
+import {
+  formatPlausiblePathToParams,
+  GET_NAMESPACE_QUERY,
+  LinkResolver,
+} from '@island.is/portals/my-pages/core'
+import { healthOverviewQuickLinkClick } from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
+import { z } from 'zod'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { HealthPaths } from '../../lib/paths'
@@ -37,16 +45,44 @@ import ContactLinks from './components/ContactLinks'
 import HealthConversationsBox from './components/HealthConversationsBox/HealthConversationsBox'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import SameDayHelpBox from './components/SameDayHelpBox'
+import TreatmentsBox from './components/TreatmentsBox'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import * as styles from './HealthOverview.css'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 
+const QUICK_LINKS_NAMESPACE = 'Mínar síður Heilsa flýtileiðir'
+
+const quickLinksConfigSchema = z.object({
+  quickLinks: z.array(
+    z.object({
+      text: z.string().trim().min(1),
+      // Only allow the url shapes LinkResolver handles. Blocks e.g. javascript: from the CMS.
+      url: z
+        .string()
+        .trim()
+        .min(1)
+        .refine((url) => url.startsWith('/') || /^https?:\/\//i.test(url)),
+    }),
+  ),
+})
+
+const parseQuickLinksConfig = (fields?: string | null) => {
+  if (!fields) return []
+  try {
+    const result = quickLinksConfigSchema.safeParse(JSON.parse(fields))
+    return result.success ? result.data.quickLinks : []
+  } catch {
+    return []
+  }
+}
+
 export const HealthOverview = () => {
   useNamespaces('sp.health')
   useHealthPlausibleSwap()
   const { formatMessage, locale } = useLocale()
+  const { pathname } = useLocation()
   const { width } = useWindowSize()
   const isStackedLayout = width < theme.breakpoints.lg
   const { value: showAppointments } = useFeatureFlag(
@@ -130,14 +166,19 @@ export const HealthOverview = () => {
   const firstTwoAppointments =
     appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
 
-  const quickLinks = [
+  const { data: quickLinksData } = useQuery<Query, QueryGetNamespaceArgs>(
+    GET_NAMESPACE_QUERY,
+    {
+      variables: {
+        input: { namespace: QUICK_LINKS_NAMESPACE, lang: locale },
+      },
+    },
+  )
+
+  const fallbackQuickLinks = [
     {
       href: HealthPaths.HealthMedicinePrescription,
       label: formatMessage(messages.quickLinkMedicinePrescription),
-    },
-    {
-      href: DelegationPaths.Delegations,
-      label: formatMessage(messages.quickLinkMedicineDelegation),
     },
     {
       href: HealthPaths.HealthWaitlists,
@@ -149,22 +190,41 @@ export const HealthOverview = () => {
     },
   ]
 
+  const cmsQuickLinks = parseQuickLinksConfig(
+    quickLinksData?.getNamespace?.fields,
+  )
+
+  const quickLinks = cmsQuickLinks.length
+    ? cmsQuickLinks.map((link) => ({ href: link.url, label: link.text }))
+    : fallbackQuickLinks
+
   return (
     <>
-      <GridRow marginBottom={CONTENT_GAP_LG}>
+      <GridRow
+        marginBottom={isNewHealthOverviewPageEnabled ? 4 : CONTENT_GAP_LG}
+      >
         <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
           <>
             <Text variant="h3" as={'h1'}>
               {formatMessage(messages.healthOverview)}
             </Text>
-            <Text variant="default" paddingTop={1}>
+            <Text variant="default" paddingTop={2}>
               {formatMessage(messages.healthOverviewIntro)}
             </Text>
             {isNewHealthOverviewPageEnabled && (
-              <Box marginTop={3}>
+              <Box marginTop={2}>
                 <Inline space={[1, 2]}>
                   {quickLinks.map((link) => (
-                    <LinkResolver key={link.href} href={link.href}>
+                    <LinkResolver
+                      key={link.href}
+                      href={link.href}
+                      callback={() =>
+                        healthOverviewQuickLinkClick({
+                          ...formatPlausiblePathToParams(pathname),
+                          label: link.href,
+                        })
+                      }
+                    >
                       <Tag variant="blue">{link.label}</Tag>
                     </LinkResolver>
                   ))}
@@ -211,6 +271,8 @@ export const HealthOverview = () => {
           showLinkButton
         />
       )}
+      {/* Active treatments */}
+      <TreatmentsBox />
       {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{

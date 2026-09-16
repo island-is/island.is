@@ -1,7 +1,7 @@
 import { TrWebApiServicesDomainProfessionsModelsProfessionDto } from '../..'
 import { GenericKeyValueDto } from './genericKeyValue.dto'
 
-export interface ProfessionDto extends GenericKeyValueDto {}
+export type ProfessionDto = GenericKeyValueDto
 
 export const mapProfessionDto = ({
   description,

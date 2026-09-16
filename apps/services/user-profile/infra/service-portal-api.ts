@@ -77,7 +77,6 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
       default: 2,
       max: 30,
       min: 2,
-      scaleToProdInDev: true, // TEMPORARY: load-test window
     })
     .ingress({
       internal: {

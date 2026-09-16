@@ -81,12 +81,13 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 10
-      min: 3
+      max: 2
+      min: 1
 httpRoute:
   primary-gw:
     hostnames:
       - 'identity-server.dev01.devland.is'
+    noAuth: true
     parentRefs:
       - name: 'gateway-external'
         namespace: 'envoy-gateway-external'
@@ -109,9 +110,9 @@ pvcs:
     storageClass: 'efs-csi'
     useExisting: false
 replicaCount:
-  default: 3
-  max: 10
-  min: 3
+  default: 1
+  max: 2
+  min: 1
 resources:
   limits:
     cpu: '4000m'

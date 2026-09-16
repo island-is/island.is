@@ -2,7 +2,6 @@ query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
     created
-    modified
     type
     splitCases {
       id
@@ -71,6 +70,11 @@ query Case($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
+      appealDefenderName
+      appealDefenderNationalId
+      appealDefenderEmail
+      appealDefenderPhoneNumber
+      isAppealDefenderConfirmed
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -360,22 +364,7 @@ query Case($input: CaseQueryInput!) {
         courtSessionId
         documentType
         documentOrder
-        mergedDocumentOrder
-        name
-        caseFileId
-        generatedPdfUri
-        submittedBy
-      }
-      mergedFiledDocuments {
-        id
-        created
-        modified
-        caseId
-        courtSessionId
-        documentType
-        documentOrder
-        mergedCourtSessionId
-        mergedDocumentOrder
+        mergedFromCaseId
         name
         caseFileId
         generatedPdfUri
@@ -397,6 +386,7 @@ query Case($input: CaseQueryInput!) {
       courtSessionId
       documentType
       documentOrder
+      mergedFromCaseId
       name
       caseFileId
       generatedPdfUri
@@ -453,6 +443,22 @@ query Case($input: CaseQueryInput!) {
       isAppealCustodyIsolation
       appealIsolationToDate
       rulingFileId
+    }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
     }
     rulingOrderAppealCases {
       id
@@ -580,22 +586,7 @@ query Case($input: CaseQueryInput!) {
           courtSessionId
           documentType
           documentOrder
-          mergedDocumentOrder
-          name
-          caseFileId
-          generatedPdfUri
-          submittedBy
-        }
-        mergedFiledDocuments {
-          id
-          created
-          modified
-          caseId
-          courtSessionId
-          documentType
-          documentOrder
-          mergedCourtSessionId
-          mergedDocumentOrder
+          mergedFromCaseId
           name
           caseFileId
           generatedPdfUri

@@ -50,5 +50,10 @@ export const Application = () => {
     return <ErrorShell errorType="idNotFound" />
   }
 
-  return <ApplicationProvider application={application} />
+  return (
+    <ApplicationProvider
+      application={application}
+      validateEligibility={formSystemApp?.validateEligibility ?? false}
+    />
+  )
 }

@@ -7,6 +7,7 @@ import { formatWageAmount } from '../EmployeesEditor/utils'
 import {
   formatDeviationLabel,
   formatSalaryAnalysisGenderLabel,
+  formatStig,
 } from '../../utils/salaryAnalysisLabels'
 import { formatSignedPercentMagnitude } from '../../utils/wageGap'
 import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
@@ -95,6 +96,12 @@ const formatSpreads = (value: number | null | undefined): string => {
   return `${sign}${roundedValue.toFixed(2).replace('.', ',')}`
 }
 
+// The pool figures are plain counts, but they count a whole workforce — four
+// digits on a large company — so they take the same is-IS grouping as every
+// other figure in the report rather than being interpolated raw.
+const formatCount = (value: number): string =>
+  value.toLocaleString('is-IS', { maximumFractionDigits: 0 })
+
 const blockerMessage = (
   code: PayDispersionBlocker,
   formatMessage: ReturnType<typeof useLocale>['formatMessage'],
@@ -161,20 +168,34 @@ export const PayDispersionTable = ({ payDispersion }: Props) => {
           <Text marginBottom={2} fontWeight="semiBold">
             {formatMessage(p.noObligation)}
           </Text>
-          {payDispersion.cohortResidualSpreadPercentUp != null &&
-            payDispersion.cohortResidualSpreadPercentDown != null && (
-              <Text variant="small" color="dark350" marginBottom={2}>
-                {formatMessage(p.spreadNote, {
-                  down: `${formatSignedPercentMagnitude(
-                    payDispersion.cohortResidualSpreadPercentDown,
-                  )}%`,
-                  up: `${formatSignedPercentMagnitude(
-                    payDispersion.cohortResidualSpreadPercentUp,
-                  )}%`,
-                  threshold: String(payDispersion.threshold).replace('.', ','),
-                })}
-              </Text>
-            )}
+          {/* One block, so `counts` can never be separated from `listRule` —
+              see the note on those two messages. The spread band is the only
+              line of the three that can be missing. */}
+          <Box marginBottom={2}>
+            {payDispersion.cohortResidualSpreadPercentUp != null &&
+              payDispersion.cohortResidualSpreadPercentDown != null && (
+                <Text variant="small" color="dark350">
+                  {formatMessage(p.spreadNote, {
+                    down: `${formatSignedPercentMagnitude(
+                      payDispersion.cohortResidualSpreadPercentDown,
+                    )}%`,
+                    up: `${formatSignedPercentMagnitude(
+                      payDispersion.cohortResidualSpreadPercentUp,
+                    )}%`,
+                  })}
+                </Text>
+              )}
+            <Text variant="small" color="dark350">
+              {formatMessage(p.counts, {
+                threshold: String(payDispersion.threshold).replace('.', ','),
+                below: formatCount(payDispersion.countBelowExpected),
+                above: formatCount(payDispersion.countAboveExpected),
+              })}
+            </Text>
+            <Text variant="small" color="dark350">
+              {formatMessage(p.listRule)}
+            </Text>
+          </Box>
 
           <T.Table>
             <T.Head>
@@ -194,9 +215,9 @@ export const PayDispersionTable = ({ payDispersion }: Props) => {
                   {formatMessage(o.deviationColumn)}
                 </HeadCell>
                 {/* The one column with no counterpart in the úrbótaáætlun
-                    table, and it stays: it is the figure that put the row on
-                    this list, stated in the same units as the threshold in the
-                    note above. */}
+                    table, and it stays: it is the figure that both put the row
+                    in the pool and ranked it onto this list, stated in the same
+                    units as the threshold in the note above. */}
                 <HeadCell align="right">
                   {formatMessage(p.spreadHeader)}
                 </HeadCell>
@@ -212,7 +233,9 @@ export const PayDispersionTable = ({ payDispersion }: Props) => {
                       formatMessage,
                     )}
                   </DataCell>
-                  <DataCell align="right">{employee.score}</DataCell>
+                  <DataCell align="right">
+                    {formatStig(employee.score)}
+                  </DataCell>
                   <DataCell align="right">
                     {formatWageAmount(employee.regularHourlyWage)}
                   </DataCell>

@@ -1,4 +1,3 @@
-/* eslint-disable func-style */
 /**
  * Health Directorate Draft Mapper - Converts draft replies from Health Directorate API
  * into the answer format expected by the frontend questionnaire UI.
@@ -68,6 +67,9 @@ export const mapDraftRepliesToAnswers = (
       const columns = 'items' in tableQuestion ? tableQuestion.items : []
 
       reply.rows.forEach((row) => {
+        // GridReplyViewDto rows are {id, values} objects, not cell arrays —
+        // grid drafts are not mapped here yet
+        if (!Array.isArray(row)) return
         row.forEach((cell) => {
           // Find the column definition for this cell
           const column = columns?.find((col) => col.id === cell.questionId)

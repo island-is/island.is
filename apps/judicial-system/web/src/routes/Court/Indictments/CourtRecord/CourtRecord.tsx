@@ -118,18 +118,16 @@ const CourtRecord: FC = () => {
                 Bæta við þinghaldi
               </Button>
             </Box>
-            <Box marginBottom={10}>
-              <PdfButton
-                caseId={workingCase.id}
-                title="Þingbók - PDF"
-                pdfType="courtRecord"
-                elementId="Þingbók"
-                disabled={!hasGeneratedCourtRecord}
-              />
-            </Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Þingbók - PDF"
+              pdfType="courtRecord"
+              elementId="Þingbók"
+              disabled={!hasGeneratedCourtRecord}
+            />
           </>
         ) : (
-          <Box className={alertContainer} marginBottom={10}>
+          <Box className={alertContainer}>
             <AlertMessage
               title="Sjálfvirkni ekki í boði"
               message="Þetta mál var stofnað af sækjanda áður en sjálfvirkni við gerð þingbókar var virkjuð."
