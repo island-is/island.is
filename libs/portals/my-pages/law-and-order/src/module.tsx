@@ -10,15 +10,15 @@ import Verdict from './screens/Verdict/Verdict'
 import { Features } from '@island.is/feature-flags'
 
 const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
-const CourtCaseDetail = lazy(
-  () => import('./screens/CourtCaseDetail/CourtCaseDetail'),
+const CourtCaseDetail = lazy(() =>
+  import('./screens/CourtCaseDetail/CourtCaseDetail'),
 )
 const Subpoena = lazy(() => import('./screens/Subpoena/Subpoena'))
-const DriversPoints = lazy(
-  () => import('./screens/DriversPoints/DriversPoints'),
+const DriversPoints = lazy(() =>
+  import('./screens/DriversPoints/DriversPoints'),
 )
-const DriversDeprivations = lazy(
-  () => import('./screens/DriversDeprivations/DriversDeprivations'),
+const DriversDeprivations = lazy(() =>
+  import('./screens/DriversDeprivations/DriversDeprivations'),
 )
 export const lawAndOrderModule: PortalModule = {
   name: m.lawAndOrder,
