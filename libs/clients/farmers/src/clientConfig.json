@@ -335,6 +335,23 @@
           "next": { "type": "string", "nullable": true },
           "previous": { "type": "string", "nullable": true },
           "total": { "nullable": true, "type": "integer" },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "grossAmount": {
+                "type": "number",
+                "description": "Total amount before offsetting debts"
+              },
+              "netPaid": {
+                "type": "number",
+                "description": "Total outgoing payment"
+              },
+              "offset": {
+                "type": "number",
+                "description": "Total debt settlement"
+              }
+            }
+          },
           "filterOptions": {
             "type": "object",
             "properties": {
