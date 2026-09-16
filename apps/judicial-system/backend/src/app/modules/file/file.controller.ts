@@ -574,6 +574,7 @@ export class FileController {
   getPoliceDigitalCaseFileTokenUrl(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @Query('policeDigitalFileId') policeDigitalFileId: string,
   ): Promise<SignedUrl> {
     if (!policeDigitalFileId?.trim()) {
@@ -585,7 +586,10 @@ export class FileController {
     )
 
     return this.policeDigitalCaseFileService
-      .getTokenUrl(caseId, user, policeDigitalFileId)
+      .getTokenUrl(caseId, user, policeDigitalFileId, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        policeCaseNumbers: theCase.policeCaseNumbers,
+      })
       .then((url) => ({ url }))
   }
 

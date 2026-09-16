@@ -100,7 +100,6 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
   async submitApplication({
     application,
-    auth,
     currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<void> {
     const { answers, externalData } = application
