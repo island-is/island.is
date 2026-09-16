@@ -90,6 +90,7 @@ export class CivilClaimantRepositoryService {
   async deleteByIdAndCase(
     civilClaimantId: string,
     caseId: string,
+    options: { transaction: Transaction },
   ): Promise<number> {
     try {
       this.logger.debug(
@@ -98,6 +99,7 @@ export class CivilClaimantRepositoryService {
 
       return await this.civilClaimantModel.destroy({
         where: { id: civilClaimantId, caseId },
+        transaction: options.transaction,
       })
     } catch (error) {
       this.logger.error(
