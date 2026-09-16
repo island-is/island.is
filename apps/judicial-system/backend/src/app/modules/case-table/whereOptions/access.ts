@@ -251,8 +251,16 @@ export const defenceRequestCasesAccessWhereOptions = (user: User) => {
     type: [...restrictionCases, ...investigationCases],
     [Op.or]: [
       {
-        // defender assigned to the case
-        defender_national_id: userNationalId,
+        // Defender assigned to any defendant on the case. nationalId is
+        // digits-only via sanitizeNationalId above, so embedding it in the
+        // literal is safe.
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE defender_national_id = '${userNationalId}')
+          `),
+        },
         [Op.or]: [
           {
             state: [CaseState.SUBMITTED, CaseState.RECEIVED],
