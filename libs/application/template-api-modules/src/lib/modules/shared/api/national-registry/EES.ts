@@ -353,21 +353,4 @@ export const EES = [
     altSpellings: ['SE', 'Kingdom of Sweden', 'Konungariket Sverige'],
     region: 'Europe',
   },
-  {
-    name: 'Switzerland',
-    topLevelDomain: ['.ch'],
-    alpha2Code: 'CH',
-    alpha3Code: 'CHE',
-    callingCodes: ['41'],
-    capital: 'Bern',
-    altSpellings: [
-      'CH',
-      'Swiss Confederation',
-      'Schweiz',
-      'Suisse',
-      'Svizzera',
-      'Svizra',
-    ],
-    region: 'Europe',
-  },
 ]
