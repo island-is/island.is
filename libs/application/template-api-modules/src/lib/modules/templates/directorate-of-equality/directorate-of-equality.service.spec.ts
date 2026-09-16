@@ -51,7 +51,9 @@ describe('DirectorateOfEqualityService', () => {
 
   beforeEach(async () => {
     editOutliers = jest.fn().mockResolvedValue({})
-    getActiveEqualityReport = jest.fn().mockResolvedValue({ id: 'fresh-id' })
+    getActiveEqualityReport = jest
+      .fn()
+      .mockResolvedValue({ source: 'REPORT', id: 'fresh-id' })
     updateDraft = jest.fn().mockResolvedValue({})
     submitDraft = jest.fn().mockResolvedValue({})
 
@@ -151,9 +153,32 @@ describe('DirectorateOfEqualityService', () => {
     it('reports the active report when DMR has one', async () => {
       await expect(run(ApplicationTypes.EQUALITY_REPORT)).resolves.toEqual({
         hasActiveEqualityReport: true,
+        source: 'REPORT',
         id: 'fresh-id',
       })
     })
+
+    // The ~540 companies the legacy register covers: a 200 whose id fields are
+    // all null. Reading that as "no plan" is what sent them to NOT_ALLOWED.
+    it.each([ApplicationTypes.EQUALITY_REPORT, ApplicationTypes.SALARY_REPORT])(
+      'counts legacy coverage as an active plan for %s',
+      async (typeId) => {
+        getActiveEqualityReport.mockResolvedValue({
+          source: 'LEGACY',
+          id: null,
+          identifier: null,
+          providerId: null,
+          approvedAt: null,
+          validUntil: new Date('2028-03-31T23:59:59.000Z'),
+        })
+
+        await expect(run(typeId)).resolves.toMatchObject({
+          hasActiveEqualityReport: true,
+          source: 'LEGACY',
+          id: null,
+        })
+      },
+    )
 
     it.each([ApplicationTypes.EQUALITY_REPORT, ApplicationTypes.SALARY_REPORT])(
       'reads a 404 as "no approved report" for %s',
@@ -220,13 +245,21 @@ describe('DirectorateOfEqualityService', () => {
   // What matters is which equality-report id reaches submitDraft, not that
   // submit was called — see resolveEqualityReportId's staleness handling.
   describe('submitSalaryReport', () => {
-    const run = async () => {
+    // Not FormValue: this is externalData, and a legacy row really does carry
+    // `id: null` — the provider spreads DMR's answer through as it stands.
+    const run = async (
+      persisted: Record<string, unknown> = {
+        hasActiveEqualityReport: true,
+        source: 'REPORT',
+        id: 'stale-id',
+      },
+    ) => {
       const auth = createCurrentUser()
       const application = createApplication({
         answers: { approveExternalData: true },
         externalData: {
           activeEqualityReport: {
-            data: { hasActiveEqualityReport: true, id: 'stale-id' },
+            data: persisted,
             date: new Date(),
             status: 'success',
           },
@@ -266,6 +299,72 @@ describe('DirectorateOfEqualityService', () => {
 
       await expect(run()).rejects.toThrow(TemplateApiError)
       expect(submitDraft).not.toHaveBeenCalled()
+    })
+
+    // Legacy coverage has no report row to name, so the field goes off the
+    // submission entirely and DMR resolves the certificate itself. Sending the
+    // id persisted from an earlier, now-superseded report would be worse than
+    // sending nothing: DMR rejects it.
+    it('omits the id when DMR reports legacy coverage', async () => {
+      getActiveEqualityReport.mockResolvedValue({
+        source: 'LEGACY',
+        id: null,
+        providerId: null,
+        validUntil: new Date('2028-03-31T23:59:59.000Z'),
+      })
+
+      const body = await run()
+
+      expect(submitDraft).toHaveBeenCalled()
+      expect(body.equalityReportId).toBeUndefined()
+    })
+
+    // The outage fallback has to carry the same distinction: what was stored at
+    // PREREQUISITES is a source with no id, and that still submits.
+    it('submits legacy coverage stored at prerequisites when DMR cannot answer', async () => {
+      getActiveEqualityReport.mockRejectedValue(
+        await FetchError.buildMock({ status: 500 }),
+      )
+
+      const body = await run({
+        hasActiveEqualityReport: true,
+        source: 'LEGACY',
+        id: null,
+      })
+
+      expect(submitDraft).toHaveBeenCalled()
+      expect(body.equalityReportId).toBeUndefined()
+    })
+
+    // DMR says "no such company" with a 400 and a NotFound body, not a 404 —
+    // the provider gate above already allows for that, and so must this one, or
+    // a definitive rejection reaches the applicant as a generic error.
+    it('refuses to submit when DMR names the company as not found', async () => {
+      getActiveEqualityReport.mockRejectedValue(
+        await apiError(400, {
+          name: 'NotFound',
+          translatedMessage: 'Fyrirtækið fannst ekki',
+        }),
+      )
+
+      const error = await run().catch((e) => e)
+
+      expect(submitDraft).not.toHaveBeenCalled()
+      expect(error.problem.errorReason.summary).toBe(
+        salaryReportMessages.errors.missingEqualityReport,
+      )
+    })
+
+    // Reachable now that coverage can be left for DMR to resolve: the
+    // certificate lapses between the pre-check and the submit itself.
+    it('explains a 404 from the submit as missing coverage', async () => {
+      submitDraft.mockRejectedValue(await apiError(404))
+
+      const error = await run().catch((e) => e)
+
+      expect(error.problem.errorReason.summary).toBe(
+        salaryReportMessages.errors.missingEqualityReport,
+      )
     })
 
     it('explains the missing equality report instead of the generic error', async () => {
