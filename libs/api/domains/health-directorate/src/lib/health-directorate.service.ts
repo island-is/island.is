@@ -77,7 +77,9 @@ import {
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
 import { AppointmentDetail } from './models/appointmentDetail.model'
+import { CancelAppointmentResponse } from './models/cancelAppointmentResponse.model'
 import {
+  AppointmentCancelOutcomeEnum,
   HealthConversationStatusFilterEnum,
   PermitStatusEnum,
 } from './models/enums'
@@ -762,11 +764,34 @@ export class HealthDirectorateService {
     }
   }
 
+  public async requestAppointmentCancellation(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<CancelAppointmentResponse> {
+    const result = await this.healthApi.cancelAppointment(auth, input.id)
+
+    switch (result) {
+      case 'CANCELLED':
+        return { outcome: AppointmentCancelOutcomeEnum.CANCELLED }
+      case 'REFUSED':
+        return { outcome: AppointmentCancelOutcomeEnum.REFUSED }
+      case 'BLOCKED':
+        return { outcome: AppointmentCancelOutcomeEnum.BLOCKED }
+      case 'UNCONFIRMED':
+        return { outcome: AppointmentCancelOutcomeEnum.UNCONFIRMED }
+    }
+  }
+
+  /*
+   * Legacy path for the deployed native app's Boolean mutation: it treats
+   * false and a thrown error the same, so refusals and timeouts map to false.
+   */
   public async cancelAppointment(
     auth: Auth,
     input: HealthDirectorateAppointmentInput,
   ): Promise<boolean> {
-    return this.healthApi.cancelAppointment(auth, input.id)
+    const result = await this.healthApi.cancelAppointment(auth, input.id)
+    return result === 'CANCELLED'
   }
 
   /* Health Conversations */

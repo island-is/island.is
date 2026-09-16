@@ -62,6 +62,7 @@ export type {
 } from '../gen/fetch'
 export {
   CompanySizeEnum,
+  EqualityCoverageSourceEnum,
   ReportCriterionTypeEnum,
   ReportTypeEnum,
   SyncMethodEnum,
