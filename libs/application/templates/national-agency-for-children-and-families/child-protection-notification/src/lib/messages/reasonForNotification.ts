@@ -147,7 +147,8 @@ export const reasonForNotificationMessages = {
     explanation: {
       id: 'cpn.application:reasonForNotification.notificationHistory.explanation',
       defaultMessage: 'Ástæða',
-      description: 'Reason label for why the guardian is not informed',
+      description:
+        'Reason label for why the guardian/custodian/parent is not informed',
     },
     abuseSuspicionWarning: {
       id: 'cpn.application:reasonForNotification.notificationHistory.abuseSuspicionWarning',
