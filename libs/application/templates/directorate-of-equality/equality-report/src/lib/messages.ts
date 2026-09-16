@@ -551,7 +551,7 @@ export const messages = {
       legacyNotice: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.legacyNotice',
         defaultMessage:
-          'Jafnréttisáætlun fyrirtækisins er skráð í eldra kerfi Jafnréttisstofu. Innihald hennar er ekki aðgengilegt hér, en þú getur sent inn nýja áætlun og látið þá eldri falla úr gildi.',
+          'Jafnréttisáætlun fyrirtækisins er skráð í eldra kerfi Jafnréttisstofu og innihald hennar er ekki aðgengilegt hér.',
       },
       loadError: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.loadError',

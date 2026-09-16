@@ -336,6 +336,37 @@ describe('DirectorateOfEqualityService', () => {
       expect(body.equalityReportId).toBeUndefined()
     })
 
+    // DMR says "no such company" with a 400 and a NotFound body, not a 404 —
+    // the provider gate above already allows for that, and so must this one, or
+    // a definitive rejection reaches the applicant as a generic error.
+    it('refuses to submit when DMR names the company as not found', async () => {
+      getActiveEqualityReport.mockRejectedValue(
+        await apiError(400, {
+          name: 'NotFound',
+          translatedMessage: 'Fyrirtækið fannst ekki',
+        }),
+      )
+
+      const error = await run().catch((e) => e)
+
+      expect(submitDraft).not.toHaveBeenCalled()
+      expect(error.problem.errorReason.summary).toBe(
+        salaryReportMessages.errors.missingEqualityReport,
+      )
+    })
+
+    // Reachable now that coverage can be left for DMR to resolve: the
+    // certificate lapses between the pre-check and the submit itself.
+    it('explains a 404 from the submit as missing coverage', async () => {
+      submitDraft.mockRejectedValue(await apiError(404))
+
+      const error = await run().catch((e) => e)
+
+      expect(error.problem.errorReason.summary).toBe(
+        salaryReportMessages.errors.missingEqualityReport,
+      )
+    })
+
     it('explains the missing equality report instead of the generic error', async () => {
       getActiveEqualityReport.mockRejectedValue(
         await FetchError.buildMock({ status: 404 }),

@@ -19,6 +19,7 @@ import { toast } from '@island.is/island-ui/core'
 import { ApiActions, draftActionId } from '../utils/constants'
 import { htmlToPlainText } from '../utils/htmlHelpers'
 import { getProviderErrorMessage } from '../utils/providerError'
+import { formatValidUntil } from '../utils/dates'
 
 // The runner writes `data: {}` next to `status: 'failure'`, so reading `data`
 // without checking the status hands back an empty bag that looks like a plan.
@@ -43,18 +44,6 @@ type ProviderEntry = {
  * the screen tells the applicant their plan could not be loaded.
  */
 const LEGACY_COVERAGE_SOURCE = 'LEGACY'
-
-// Date-only formatting without pulling date-fns in for one line: the value has
-// been through externalData's JSON round-trip, so it arrives as an ISO instant.
-const formatValidUntil = (value?: string | null): string | null => {
-  if (!value) return null
-  const parsed = new Date(value)
-  return Number.isNaN(parsed.getTime())
-    ? null
-    : `${parsed.getUTCDate()}.${
-        parsed.getUTCMonth() + 1
-      }.${parsed.getUTCFullYear()}`
-}
 
 /**
  * ⚠️ **A PDF-backed plan arrives with BLANK content, and that is success.**

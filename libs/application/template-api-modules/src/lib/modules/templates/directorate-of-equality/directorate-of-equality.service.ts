@@ -682,9 +682,11 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         },
       )
 
-      // 404 is DMR's definitive "nothing covers this company" — the persisted
-      // coverage is known-stale, so don't fall back to it.
-      if (errorDetails.status === 404) return { covered: false }
+      // DMR's definitive "nothing covers this company" — the persisted coverage
+      // is known-stale, so don't fall back to it. Same test the provider above
+      // makes on this endpoint, because DMR does not always say it with a
+      // status: an unknown company comes back 400 with `name: 'NotFound'`.
+      if (this.isNotFoundApiError(error)) return { covered: false }
 
       // DMR did not answer. The coverage read at PREREQUISITES is the best
       // guess left, and for a legacy certificate that is a source with no id
@@ -773,10 +775,12 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             },
           )
         } catch (error) {
+          const status = this.extractFetchErrorDetails(error).status
+
           // DMR returns 409 when the company already has a report in progress
           // with the reviewing body — worth its own message instead of the
           // generic defaultTemplateApiError text.
-          if (this.extractFetchErrorDetails(error).status === 409) {
+          if (status === 409) {
             throw new TemplateApiError(
               {
                 title: coreErrorMessages.defaultTemplateApiError,
@@ -785,6 +789,22 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
               409,
             )
           }
+
+          // 404 here is the server's own coverage check failing, not a missing
+          // draft — updateDraft above just succeeded on the same providerId.
+          // It is reachable now that coverage can be left for DMR to resolve:
+          // a certificate that lapses between the read and the submit lands
+          // here, and the applicant needs the same answer the pre-check gives.
+          if (status === 404) {
+            throw new TemplateApiError(
+              {
+                title: coreErrorMessages.defaultTemplateApiError,
+                summary: salaryReportMessages.errors.missingEqualityReport,
+              },
+              404,
+            )
+          }
+
           throw error
         }
       },
