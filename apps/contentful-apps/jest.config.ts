@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'contentful-apps',
   preset: './jest.preset.js',

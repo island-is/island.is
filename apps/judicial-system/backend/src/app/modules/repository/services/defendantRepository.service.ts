@@ -258,4 +258,106 @@ export class DefendantRepositoryService {
       throw error
     }
   }
+
+  // Copies the defendants of a case to another case, keeping only the fields
+  // the prosecution enters - none of the court or process data. Returns a map
+  // from each original defendant id to its copy so the caller can remap the
+  // references that point at defendants.
+  async copyProsecutorEnteredToCase(
+    caseId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<Map<string, string>> {
+    try {
+      this.logger.debug(
+        `Copying the prosecutor entered defendant data of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const defendants = await this.defendantModel.findAll({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      const defendantIdMap = new Map<string, string>()
+
+      for (const defendant of defendants) {
+        const newDefendant = await this.defendantModel.create(
+          {
+            caseId: newCaseId,
+            noNationalId: defendant.noNationalId,
+            nationalId: defendant.nationalId,
+            dateOfBirth: defendant.dateOfBirth,
+            name: defendant.name,
+            gender: defendant.gender,
+            address: defendant.address,
+            citizenship: defendant.citizenship,
+            defendantPlea: defendant.defendantPlea,
+          },
+          { transaction: options.transaction },
+        )
+
+        defendantIdMap.set(defendant.id, newDefendant.id)
+      }
+
+      this.logger.debug(
+        `Copied ${defendantIdMap.size} defendants of case ${caseId} to case ${newCaseId}`,
+      )
+
+      return defendantIdMap
+    } catch (error) {
+      this.logger.error(
+        `Error copying the defendants of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Moves one defendant to another case, when they are split off into a case
+  // of their own. The row is addressed within its own case, so a defendant of
+  // some other case cannot be moved by mistake. The route's guards bound the
+  // defendant to the case before the transaction opened, so a concurrent split
+  // or delete can still leave nothing to move - that fails the split rather
+  // than committing a new case without its defendant.
+  async moveToCase(
+    defendantId: string,
+    caseId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Moving defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.defendantModel.update(
+        { caseId: newCaseId },
+        {
+          where: { id: defendantId, caseId },
+          transaction: options.transaction,
+        },
+      )
+
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not move defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+        )
+      }
+
+      if (numberOfAffectedRows > 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when moving defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+        )
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error moving defendant ${defendantId} from case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

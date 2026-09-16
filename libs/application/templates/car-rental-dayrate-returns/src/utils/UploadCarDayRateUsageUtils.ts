@@ -1,7 +1,6 @@
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
 import { CarUsageError, CarUsageRecord, DayRateRecord } from './types'
-import { isEligibleForReporting } from './dayRateRecordUtils'
 import { m } from '../lib/messages'
 
 // Day counts are whole days, so a decimal comma or stray text is a mistake to
@@ -85,12 +84,6 @@ export const parseFileToCarDayRateUsage = async (
           row: rowNumber,
         }
       }
-
-      // Listed so the applicant can see it, but Skatturinn already has the
-      // return for this period. The generated template leaves these rows out,
-      // so skip them rather than failing a file that legitimately includes
-      // them.
-      if (!isEligibleForReporting(dayRateRecord)) return undefined
 
       if (seenPermnos.has(normalizedPermno)) {
         return {

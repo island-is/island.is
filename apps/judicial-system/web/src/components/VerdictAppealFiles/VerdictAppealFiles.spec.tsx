@@ -25,7 +25,10 @@ import VerdictAppealFiles from './VerdictAppealFiles'
 describe('VerdictAppealFiles', () => {
   const defenderNationalId = '1111111111'
 
-  const theCase = (caseFiles: Case['caseFiles']): Case => ({
+  const theCase = (
+    caseFiles: Case['caseFiles'],
+    appealDefenderName?: string,
+  ): Case => ({
     ...mockCase(CaseType.INDICTMENT),
     defendants: [
       {
@@ -34,10 +37,20 @@ describe('VerdictAppealFiles', () => {
         isDefenderChoiceConfirmed: true,
         defenderNationalId,
         defenderName: 'Lára Lögmann',
+        appealDefenderName,
       },
     ],
     caseFiles,
   })
+
+  const declaration = {
+    id: 'declaration_id',
+    name: 'yfirlysing.pdf',
+    category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+    defendantId: 'own_client_id',
+    created: '2026-06-04T13:34:00.000Z',
+    isKeyAccessible: true,
+  }
 
   const renderSection = (theCase: Case) =>
     render(
@@ -81,6 +94,17 @@ describe('VerdictAppealFiles', () => {
     expect(screen.getByText('Verjandi (LL) sendi inn')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Valmynd fyrir yfirlysing.pdf' }),
+    ).toBeInTheDocument()
+  })
+
+  // When the public prosecution office registered the appeal on a letter, the
+  // defender who wrote that letter sent the declaration in, not the defender of
+  // record.
+  it('should name the defender who appealed when one was recorded', async () => {
+    renderSection(theCase([declaration], 'Vaka Dagsdóttir'))
+
+    expect(
+      await screen.findByText('Verjandi (VD) sendi inn'),
     ).toBeInTheDocument()
   })
 })

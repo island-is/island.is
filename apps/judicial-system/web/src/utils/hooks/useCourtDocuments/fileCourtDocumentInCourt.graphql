@@ -10,6 +10,7 @@ mutation FileCourtDocumentInCourtSession(
     documentType
     generatedPdfUri
     id
+    mergedFromCaseId
     modified
     name
   }

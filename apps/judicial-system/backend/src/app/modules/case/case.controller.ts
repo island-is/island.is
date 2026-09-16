@@ -117,6 +117,7 @@ import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppe
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+import { CaseCloningService } from './caseCloning.service'
 import { PdfService } from './pdf.service'
 
 @Controller('api')
@@ -125,6 +126,7 @@ import { PdfService } from './pdf.service'
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
+    private readonly caseCloningService: CaseCloningService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
@@ -1175,7 +1177,12 @@ export class CaseController {
     }
 
     const duplicatedCase = await this.sequelize.transaction((transaction) =>
-      this.caseService.duplicateIndictmentCase(theCase, user, transaction),
+      this.caseCloningService.duplicateIndictmentToDraft(theCase, {
+        transaction,
+        // The current prosecutor owns the new draft case
+        prosecutorId: user.id,
+        prosecutorsOfficeId: user.institution?.id,
+      }),
     )
 
     this.eventService.postEvent('DUPLICATE', duplicatedCase)

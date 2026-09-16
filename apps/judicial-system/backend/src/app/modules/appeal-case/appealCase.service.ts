@@ -35,9 +35,13 @@ import {
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
+  isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
+  verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { FileService } from '../file'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -48,10 +52,14 @@ import {
   CivilClaimant,
   CreateAppealCase,
   Defendant,
+  DefendantRepositoryService,
   UpdateAppealCase,
+  UpdateDefendant,
   VerdictRepositoryService,
 } from '../repository'
+import { getLatestVerdict } from '../verdict/getLatestVerdict'
 import { validateVerdictAppealUpdate } from '../verdict/verdict.helpers'
+import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { UpdateAppealCaseDto } from './dto/updateAppealCase.dto'
 import {
   AppealTransitionResult,
@@ -60,10 +68,26 @@ import {
 import { appealCaseModuleConfig } from './appealCase.config'
 import {
   findUserRulingOrderAppealDecision,
+  hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
-  standingVerdictAppellantIds,
+  standingVerdictAppellants,
   userRulingOrderAppealDecisions,
+  type VerdictAppellantSide,
 } from './appealCase.helpers'
+
+// What a verdict appeal is filed with, beyond the case and the user. A defender
+// appealing in the system supplies the defendant only; the public prosecution
+// office registering an appeal that arrived by letter or email also supplies
+// when it was filed and by which defender.
+export type VerdictAppealRequest = Pick<
+  CreateAppealCaseDto,
+  | 'defendantId'
+  | 'appealDate'
+  | 'appealDefenderName'
+  | 'appealDefenderNationalId'
+  | 'appealDefenderEmail'
+  | 'appealDefenderPhoneNumber'
+>
 
 @Injectable()
 export class AppealCaseService {
@@ -74,6 +98,9 @@ export class AppealCaseService {
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly verdictRepositoryService: VerdictRepositoryService,
+    private readonly defendantRepositoryService: DefendantRepositoryService,
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
     @Inject(appealCaseModuleConfig.KEY)
     private readonly config: ConfigType<typeof appealCaseModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -510,17 +537,12 @@ export class AppealCaseService {
     user: User,
     rulingFileId: string | undefined,
     transaction: Transaction,
-    verdictAppeal?: { defendantId?: string },
+    verdictAppeal?: VerdictAppealRequest,
   ): Promise<AppealCase> {
     this.logger.debug(`Creating appeal case for case ${theCase.id}`)
 
     if (verdictAppeal) {
-      return this.createVerdictAppeal(
-        theCase,
-        user,
-        verdictAppeal.defendantId,
-        transaction,
-      )
+      return this.createVerdictAppeal(theCase, user, verdictAppeal, transaction)
     }
 
     if (rulingFileId) {
@@ -654,23 +676,66 @@ export class AppealCaseService {
     return appealCase
   }
 
-  // A defence user files an appeal declaration for one of its defendants: the
-  // legal act of appealing the verdict, not bookkeeping about one, so every
-  // condition is checked hard here.
+  // Who is filing a verdict appeal, and for which side. The defendant's
+  // confirmed defender and the public prosecution office both file the
+  // defendant's appeal - the office on a letter that reached it outside the
+  // system - while the public prosecution reviewer files the prosecution's
+  // appeal of the verdict regarding that defendant. Each is per defendant.
+  private verdictAppealActor(
+    user: User,
+  ):
+    | { actor: 'DEFENDER' | 'OFFICE'; side: 'DEFENCE' }
+    | { actor: 'REVIEWER'; side: 'PROSECUTION' } {
+    if (isDefenceUser(user)) {
+      return { actor: 'DEFENDER', side: 'DEFENCE' }
+    }
+
+    if (isPublicProsecutionOfficeUser(user)) {
+      return { actor: 'OFFICE', side: 'DEFENCE' }
+    }
+
+    if (isPublicProsecutionUser(user)) {
+      return { actor: 'REVIEWER', side: 'PROSECUTION' }
+    }
+
+    throw new ForbiddenException(
+      'Only a defence user, the public prosecution office or the public prosecution can appeal a verdict',
+    )
+  }
+
+  // A verdict appeal is filed for one specific defendant rather than every
+  // party the lawyer represents - the action lives on that defendant's card,
+  // and two defendants of the same defender can appeal on different days or
+  // not at all - so resolveDefenceParties is deliberately not used.
   //
-  // Unlike the ruling appeal flow, this acts for one specific defendant rather than every
-  // party the lawyer represents - the action lives on that defendant's card, and
-  // two defendants of the same defender can appeal on different days or not at
-  // all. So resolveDefenceParties is deliberately not used.
+  // Three ways in. The defendant's confirmed defender appeals in the system:
+  // the legal act itself, so every condition is checked hard. The public
+  // prosecution office registers an appeal that reached it outside the system
+  // (a letter, typically from a new defender): it acts for the defendant, so it
+  // is not held to being their defender, and it records an act that already
+  // happened, so the appeal date is the filing's and the deadline is not
+  // enforced. The public prosecution reviewer appeals the verdict regarding a
+  // defendant on the prosecution's behalf: the decision confirmed on the
+  // review page is the appeal, the deadline is theirs to judge (confirmed on
+  // that page), and nothing about the defendant's own appeal - the service
+  // state, the mirror on the verdict, the appeal defender - applies.
   private async createVerdictAppeal(
     theCase: Case,
     user: User,
-    defendantId: string | undefined,
+    request: VerdictAppealRequest,
     transaction: Transaction,
   ): Promise<AppealCase> {
-    if (!isDefenceUser(user)) {
-      throw new ForbiddenException('Only a defence user can appeal a verdict')
+    const { actor, side } = this.verdictAppealActor(user)
+    const isRegisteredByProsecutionOffice = actor === 'OFFICE'
+    const isProsecutionAppeal = actor === 'REVIEWER'
+
+    if (isProsecutionAppeal && theCase.indictmentReviewerId !== user.id) {
+      throw new ForbiddenException(
+        'Only the reviewer assigned to the case can appeal a verdict for the prosecution',
+      )
     }
+
+    const { defendantId } = request
 
     if (!defendantId) {
       throw new BadRequestException(
@@ -687,6 +752,7 @@ export class AppealCaseService {
     }
 
     if (
+      actor === 'DEFENDER' &&
       !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
     ) {
       throw new ForbiddenException(
@@ -704,30 +770,50 @@ export class AppealCaseService {
       )
     }
 
-    // A defendant has at most one verdict; the array is how the association is
-    // modelled.
-    const verdict = defendant.verdicts?.[0]
+    // Prefer the newest verdict when a corrected ruling created a replacement.
+    const verdict = getLatestVerdict(defendant.verdicts)
 
-    // Covers the útivistardómur (reopened rather than appealed) and the service
-    // state: the defendant must have been made aware of the verdict.
-    if (!verdict || !canDefendantAppealVerdict(verdict)) {
+    if (!verdict) {
+      throw new ForbiddenException(
+        `Defendant ${defendantId} has no verdict to appeal`,
+      )
+    }
+
+    // The defendant's appeal covers the útivistardómur (reopened rather than
+    // appealed) and the service state: the defendant must have been made aware
+    // of the verdict. The prosecution's right to appeal depends on neither.
+    if (!isProsecutionAppeal && !canDefendantAppealVerdict(verdict)) {
       throw new ForbiddenException(
         `The verdict of defendant ${defendantId} cannot be appealed`,
       )
     }
 
-    validateVerdictAppealUpdate({
-      caseId: theCase.id,
-      indictmentRulingDecision: theCase.indictmentRulingDecision,
-      rulingDate: theCase.rulingDate,
-      verdict,
-    })
+    // The deadline is hard for a defender appealing in the system: the filing
+    // is the legal act. The public prosecution office registers an appeal that
+    // already happened, possibly after the deadline - late bookkeeping of a
+    // timely appeal, or a genuinely late one - and its screen confirms the
+    // latter with the user, the same way its appeal date picker did before. The
+    // reviewer's deadline runs from the ruling date and the review page
+    // confirms a late decision the same way.
+    if (actor === 'DEFENDER') {
+      validateVerdictAppealUpdate({
+        caseId: theCase.id,
+        indictmentRulingDecision: theCase.indictmentRulingDecision,
+        rulingDate: theCase.rulingDate,
+        verdict,
+      })
+    }
 
-    if (verdict.appealDate) {
+    // verdict.appealDate mirrors the defendant's own appeal only.
+    if (side === 'DEFENCE' && verdict.appealDate) {
       throw new ForbiddenException(
         `The verdict of defendant ${defendantId} has already been appealed`,
       )
     }
+
+    const appealedAt = isRegisteredByProsecutionOffice
+      ? this.registeredVerdictAppealDate(request.appealDate)
+      : nowFactory()
 
     // One Landsréttur case per district court case, whoever the appellants are:
     // the first defendant to appeal creates it and later ones join it, each
@@ -741,7 +827,7 @@ export class AppealCaseService {
     // DISTINCT, so it holds for the null ruling file of a case-level appeal - is
     // the backstop, not the mechanism: it would turn the race into a failed
     // appeal rather than a joined one.
-    await this.caseRepositoryService.lockByIdForUpdate(theCase.id, transaction)
+    await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
 
     const [existingAppealCase] = await this.appealCaseRepositoryService.findAll(
       {
@@ -754,24 +840,33 @@ export class AppealCaseService {
     // transaction, so it cannot see an appeal filed in the meantime - two
     // requests for the same defendant, a double-clicked filing being the easy
     // way there, would both pass it. This is the same question asked again under
-    // the lock, against what the appeal case actually records.
+    // the lock, against what the appeal case actually records - and for the
+    // prosecution, which has no mirror, it is the only check.
     if (existingAppealCase) {
+      // Once the court of appeals has received the case the prosecution's
+      // decision is made; a late change is not a matter for this system.
+      if (
+        isProsecutionAppeal &&
+        existingAppealCase.appealState !== AppealCaseState.APPEALED &&
+        existingAppealCase.appealState !== AppealCaseState.WITHDRAWN
+      ) {
+        throw new ForbiddenException(
+          'The verdict appeal has been received by the court of appeals',
+        )
+      }
+
       const appealEventLogs =
         await this.appealEventLogRepositoryService.findAll({
           where: { appealCaseId: existingAppealCase.id },
           transaction,
         })
 
-      if (
-        standingVerdictAppellantIds({ appealEventLogs }).includes(defendantId)
-      ) {
+      if (hasStandingVerdictAppeal({ appealEventLogs }, defendantId, side)) {
         throw new ForbiddenException(
           `The verdict of defendant ${defendantId} has already been appealed`,
         )
       }
     }
-
-    const appealedAt = nowFactory()
 
     let appealCase =
       existingAppealCase ??
@@ -811,25 +906,165 @@ export class AppealCaseService {
       transaction,
     )
 
+    if (isRegisteredByProsecutionOffice) {
+      await this.recordAppealDefender(
+        theCase,
+        defendantId,
+        request,
+        transaction,
+      )
+    }
+
     // AppealCase is the source of truth for who appealed; verdict.appealDate is
-    // kept as a one-way mirror so the public prosecution office's existing
-    // screen keeps working untouched. To be retired with that screen.
-    //
-    // It mirrors when *this* defendant appealed, which is not the appeal case's
-    // own appealDate for a defendant joining an appeal someone else filed - that
-    // screen shows the date per defendant.
-    await this.verdictRepositoryService.update(
-      theCase.id,
-      defendantId,
-      verdict.id,
-      { appealDate: appealedAt },
-      { transaction },
-    )
+    // kept as a one-way mirror of the *defendant's* appeal so the public
+    // prosecution office's existing screen keeps working untouched. It mirrors
+    // when *this* defendant appealed, which is not the appeal case's own
+    // appealDate for a defendant joining an appeal someone else filed - that
+    // screen shows the date per defendant. The prosecution's appeal is read
+    // from the event log alone.
+    if (side === 'DEFENCE') {
+      await this.verdictRepositoryService.update(
+        theCase.id,
+        defendantId,
+        verdict.id,
+        { appealDate: appealedAt },
+        { transaction },
+      )
+    }
 
     // No notification: the one that tells the public prosecution office about a verdict appeal is
     // its own story, and the ruling appeal notifications do not apply here.
 
     return appealCase
+  }
+
+  // Locks the case row for a verdict appeal action. The reviewer's authority
+  // comes from the case's reviewer assignment, which the guard read before the
+  // transaction; locking the row *as* the case assigned to this reviewer makes
+  // the check and the lock one statement, so a reassignment committed in the
+  // meantime fails the lock instead of slipping past a stale snapshot.
+  private async lockCaseForVerdictAppeal(
+    theCase: Case,
+    user: User,
+    actor: 'DEFENDER' | 'OFFICE' | 'REVIEWER',
+    transaction: Transaction,
+  ): Promise<void> {
+    const locked =
+      actor === 'REVIEWER'
+        ? await this.caseRepositoryService.lockByIdForUpdate(
+            theCase.id,
+            transaction,
+            { id: theCase.id, indictmentReviewerId: user.id },
+          )
+        : await this.caseRepositoryService.lockByIdForUpdate(
+            theCase.id,
+            transaction,
+          )
+
+    if (!locked) {
+      throw new ForbiddenException(
+        actor === 'REVIEWER'
+          ? 'Only the reviewer assigned to the case can act on a verdict appeal for the prosecution'
+          : `Case ${theCase.id} does not exist`,
+      )
+    }
+  }
+
+  // The date the public prosecution office registers is the one on the filing
+  // it received, which cannot be in the future. Anything else about it - a
+  // filing after the deadline in particular - is for the office to judge.
+  //
+  // The DTO declares a Date, but the validation pipe does not transform the
+  // body, so what arrives is whatever the client sent - an ISO string from the
+  // web. Read it as a date here rather than trust the declared type.
+  private registeredVerdictAppealDate(
+    appealDate: Date | string | undefined,
+  ): Date {
+    if (!appealDate) {
+      throw new BadRequestException(
+        'Registering a verdict appeal must state when it was filed',
+      )
+    }
+
+    const date = new Date(appealDate)
+
+    if (Number.isNaN(date.getTime())) {
+      throw new BadRequestException(
+        `${appealDate} is not a date a verdict appeal can have been filed on`,
+      )
+    }
+
+    if (date.getTime() > nowFactory().getTime()) {
+      throw new BadRequestException(
+        'A verdict appeal cannot have been filed in the future',
+      )
+    }
+
+    return date
+  }
+
+  // Records which defender filed the appeal the public prosecution office is
+  // registering. Information only - the defender of record is untouched and
+  // nothing grants the appeal defender access; that follows once the court of
+  // appeals confirms them.
+  private async recordAppealDefender(
+    theCase: Case,
+    defendantId: string,
+    request: VerdictAppealRequest,
+    transaction: Transaction,
+  ): Promise<void> {
+    const supplied = [
+      request.appealDefenderName,
+      request.appealDefenderNationalId,
+      request.appealDefenderEmail,
+      request.appealDefenderPhoneNumber,
+    ]
+
+    if (supplied.every((value) => value === undefined)) {
+      return
+    }
+
+    // The supplied fields describe one person, so the ones left out are
+    // cleared rather than kept from whoever was recorded before - Sequelize
+    // skips undefined, so the clearing has to be explicit. A new appeal
+    // defender is also a new person for the court of appeals to confirm,
+    // whatever it had decided about the previous one.
+    const appealDefender: UpdateDefendant = {
+      appealDefenderName: request.appealDefenderName ?? null,
+      appealDefenderNationalId: request.appealDefenderNationalId ?? null,
+      appealDefenderEmail: request.appealDefenderEmail ?? null,
+      appealDefenderPhoneNumber: request.appealDefenderPhoneNumber ?? null,
+      isAppealDefenderConfirmed: false,
+    }
+
+    await this.defendantRepositoryService.update(
+      theCase.id,
+      defendantId,
+      appealDefender,
+      { transaction },
+    )
+  }
+
+  // The appeal defender belongs to the appeal: withdrawn, there is no appeal
+  // for them to have filed, and a later registration that names nobody must
+  // not show them again.
+  private async clearAppealDefender(
+    theCase: Case,
+    defendantId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    await this.defendantRepositoryService.update(
+      theCase.id,
+      defendantId,
+      {
+        appealDefenderName: null,
+        appealDefenderNationalId: null,
+        appealDefenderEmail: null,
+        appealDefenderPhoneNumber: null,
+        isAppealDefenderConfirmed: null,
+      },
+      { transaction },
+    )
   }
 
   async update(
@@ -966,6 +1201,17 @@ export class AppealCaseService {
         defendantId,
         user,
         transaction,
+      )
+    }
+
+    // Withdrawal is the only transition a verdict appeal supports so far. The
+    // ones that carry a ruling appeal to and through the court of appeals were
+    // written for that, and the court of appeals work has to take them on for
+    // verdict appeals deliberately - until then they are refused rather than
+    // applied to a case they were never checked against.
+    if (appealCase.appealType === AppealCaseType.VERDICT) {
+      throw new ForbiddenException(
+        `Verdict appeals cannot be transitioned with ${transition} yet`,
       )
     }
 
@@ -1106,9 +1352,14 @@ export class AppealCaseService {
     user: User,
     transaction: Transaction,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
-    if (!isDefenceUser(user)) {
+    // The same three actors as filing, each withdrawing their own side's appeal
+    // for the defendant: the office on the defendant's behalf, so it is not held
+    // to being their defender; the reviewer the prosecution's.
+    const { actor, side } = this.verdictAppealActor(user)
+
+    if (actor === 'REVIEWER' && theCase.indictmentReviewerId !== user.id) {
       throw new ForbiddenException(
-        'Only a defence user can withdraw a verdict appeal',
+        'Only the reviewer assigned to the case can withdraw a verdict appeal for the prosecution',
       )
     }
 
@@ -1120,8 +1371,14 @@ export class AppealCaseService {
 
     const defendant = theCase.defendants?.find((d) => d.id === defendantId)
 
+    if (!defendant) {
+      throw new NotFoundException(
+        `Defendant ${defendantId} of case ${theCase.id} does not exist`,
+      )
+    }
+
     if (
-      !defendant ||
+      actor === 'DEFENDER' &&
       !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
     ) {
       throw new ForbiddenException(
@@ -1135,20 +1392,40 @@ export class AppealCaseService {
     // the other as standing, so neither would withdraw the appeal case and it
     // would stand with no appellants left. The second transaction blocks here
     // and re-reads the freshly committed events.
-    await this.caseRepositoryService.lockByIdForUpdate(theCase.id, transaction)
+    await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
+
+    // Once the court of appeals has received the case the prosecution's
+    // decision is made. The guard loaded the appeal case before the
+    // transaction, so the state is read again under the lock.
+    if (actor === 'REVIEWER') {
+      const lockedAppealCase = await this.appealCaseRepositoryService.findById(
+        appealCase.id,
+        { transaction },
+      )
+
+      if (lockedAppealCase?.appealState !== AppealCaseState.APPEALED) {
+        throw new ForbiddenException(
+          'The verdict appeal has been received by the court of appeals',
+        )
+      }
+    }
 
     const appealEventLogs = await this.appealEventLogRepositoryService.findAll({
       where: { appealCaseId: appealCase.id },
       transaction,
     })
 
-    const standingAppellantIds = standingVerdictAppellantIds({
-      appealEventLogs,
-    })
+    const standingAppellants = standingVerdictAppellants({ appealEventLogs })
+    const isWithdrawn = (appellant: {
+      defendantId: string
+      side: VerdictAppellantSide
+    }) => appellant.defendantId === defendantId && appellant.side === side
 
-    if (!standingAppellantIds.includes(defendantId)) {
+    if (!standingAppellants.some(isWithdrawn)) {
       throw new ForbiddenException(
-        `Defendant ${defendantId} has no standing appeal of the verdict to withdraw`,
+        side === 'PROSECUTION'
+          ? `The prosecution has no standing appeal of the verdict of defendant ${defendantId} to withdraw`
+          : `Defendant ${defendantId} has no standing appeal of the verdict to withdraw`,
       )
     }
 
@@ -1161,25 +1438,46 @@ export class AppealCaseService {
       transaction,
     )
 
-    // Clear the mirror on the verdict, so the public prosecution office's screen
-    // stops showing this defendant as having appealed.
-    const verdict = defendant.verdicts?.[0]
+    // The defendant's own appeal carries a mirror on the verdict and possibly an
+    // appeal defender; the prosecution's carries neither.
+    if (side === 'DEFENCE') {
+      // Clear the mirror on the verdict, so the public prosecution office's
+      // screen stops showing this defendant as having appealed.
+      const verdict = getLatestVerdict(defendant.verdicts)
 
-    if (verdict) {
-      await this.verdictRepositoryService.update(
-        theCase.id,
-        defendantId,
-        verdict.id,
-        { appealDate: null },
-        { transaction },
+      if (verdict) {
+        await this.verdictRepositoryService.update(
+          theCase.id,
+          defendantId,
+          verdict.id,
+          { appealDate: null },
+          { transaction },
+        )
+      }
+
+      await this.clearAppealDefender(theCase, defendantId, transaction)
+
+      // Soft-delete this defendant's áfrýjunaryfirlýsing and accompanying files.
+      // They are otherwise locked while a verdict appeal case exists, so leaving
+      // them behind blocks a fresh appeal upload after withdrawal.
+      const appealDeclarationFiles = (theCase.caseFiles ?? []).filter(
+        (file) =>
+          file.defendantId === defendantId &&
+          file.category &&
+          verdictAppealDeclarationFileCategories.includes(file.category),
       )
+
+      for (const file of appealDeclarationFiles) {
+        await this.fileService.deleteCaseFile(theCase, file, transaction)
+      }
     }
 
-    const remainingAppellantIds = standingAppellantIds.filter(
-      (id) => id !== defendantId,
+    // The appeal case stands while any appellant of either side stands.
+    const remainingAppellants = standingAppellants.filter(
+      (appellant) => !isWithdrawn(appellant),
     )
 
-    if (remainingAppellantIds.length === 0) {
+    if (remainingAppellants.length === 0) {
       return this.applyTransition(
         theCase,
         appealCase,

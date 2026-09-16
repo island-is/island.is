@@ -874,11 +874,29 @@ export const en: TranslatedMessages = {
   'health.appointments.assigneeTypeService': 'Service',
   'health.appointments.assigneeTypeTeam': 'Team',
   'health.appointments.assigneeTypeOther': 'Other',
+  'health.appointments.cancelAppointment': 'Cancel appointment',
+  'health.appointments.cancelDeadline':
+    'Can be cancelled online until {date} at {time}',
+  'health.appointments.cancelNotPossible':
+    'This appointment cannot be cancelled online. Call the service provider to cancel or reschedule.',
+  'health.appointments.cancelPromptTitle':
+    'Are you sure you want to cancel the appointment?',
+  'health.appointments.cancelPromptMessage':
+    'You are about to cancel an appointment you have booked.',
+  'health.appointments.cancelPromptConfirm': 'Confirm',
+  'health.appointments.cancelPromptCancel': 'Cancel',
+  'health.appointments.cancelSuccessTitle':
+    'The appointment has been cancelled',
+  'health.appointments.cancelErrorTitle': 'Could not cancel the appointment',
+  'health.appointments.cancelErrorMessage':
+    'The action could not be completed, please try again.',
 
   // health - messages
   'health.messages.screenTitle': 'Messages',
   'health.messages.errorMessage':
     'Failed to fetch messages. Please try again later.',
+  'health.messages.notFoundMessage':
+    'Message not found. It may have been removed.',
   'health.messages.noMessagesTitle': 'No messages',
   'health.messages.noMessagesText':
     'When you receive messages, they will appear here.',
@@ -904,6 +922,10 @@ export const en: TranslatedMessages = {
     "You can't reply to messages outside opening hours.",
   'health.messages.replyBlocked.windowExpired':
     "You can't reply to this conversation because the reply window has passed.",
+  'health.messages.replyBlocked.windowExpiredDay':
+    "You can't reply to messages older than {days} day.",
+  'health.messages.replyBlocked.windowExpiredDays':
+    "You can't reply to messages older than {days} days.",
   'health.messages.replyBlocked.awaitingStaff':
     "You can't reply to this conversation until staff have responded to you.",
   'health.messages.compose.newTitle': 'New message',

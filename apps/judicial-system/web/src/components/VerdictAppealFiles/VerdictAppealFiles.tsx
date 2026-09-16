@@ -17,7 +17,9 @@ import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getVerdictAppealFileGroups } from './VerdictAppealFiles.logic'
 
 // Appeal documents are "sent in" (design, 2026-09-03), unlike the case files
-// the shared formatter describes as "lagt fram".
+// the shared formatter describes as "lagt fram". When the public prosecution
+// office registered the appeal on a letter, the defender who wrote that letter
+// is the one who sent it in, not the defender of record.
 const formatSentInBy = (defenderName?: string | null): string => {
   const initials = getInitials(defenderName)
 
@@ -77,7 +79,9 @@ const VerdictAppealFiles: FC = () => {
                     )}`}
                   </Text>
                   <Text whiteSpace="nowrap" variant="small">
-                    {formatSentInBy(defendant.defenderName)}
+                    {formatSentInBy(
+                      defendant.appealDefenderName ?? defendant.defenderName,
+                    )}
                   </Text>
                 </Box>
                 <Box marginLeft={3}>

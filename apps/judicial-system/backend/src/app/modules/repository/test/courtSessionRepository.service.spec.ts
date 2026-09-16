@@ -1,37 +1,30 @@
 import { Transaction } from 'sequelize'
 
+import { InternalServerErrorException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Case } from '../models/case.model'
 import { CourtSession } from '../models/courtSession.model'
-import { CourtSessionString } from '../models/courtSessionString.model'
-import { EventLog } from '../models/eventLog.model'
-import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
-import { CourtDocumentRepositoryService } from '../services/courtDocumentRepository.service'
 import { CourtSessionRepositoryService } from '../services/courtSessionRepository.service'
 
+// The repository owns the court_session table and nothing else. Filing
+// documents into a new session, recording merged cases and emptying a session
+// before deleting it are CourtSessionService's sequences, not the repository's.
 describe('CourtSessionRepositoryService', () => {
+  const caseId = 'some-case-id'
+  const courtSessionId = 'some-court-session-id'
   const transaction = {} as Transaction
 
   let service: CourtSessionRepositoryService
-  let caseModel: { findAll: jest.Mock; findByPk: jest.Mock }
-  let courtSessionModel: { create: jest.Mock; findOne: jest.Mock }
-  let resolvePoliceCaseNumbersForCases: jest.Mock
+  let model: { create: jest.Mock; findOne: jest.Mock; destroy: jest.Mock }
 
   beforeEach(async () => {
-    resolvePoliceCaseNumbersForCases = jest.fn().mockResolvedValue(undefined)
-
-    caseModel = {
-      findAll: jest.fn().mockResolvedValue([]),
-      findByPk: jest.fn(),
-    }
-
-    courtSessionModel = {
-      create: jest.fn().mockResolvedValue({ id: 'session-1' }),
-      findOne: jest.fn(),
+    model = {
+      create: jest.fn().mockResolvedValue({ id: courtSessionId, caseId }),
+      findOne: jest.fn().mockResolvedValue(null),
+      destroy: jest.fn().mockResolvedValue(1),
     }
 
     const moduleRef = await Test.createTestingModule({
@@ -40,26 +33,7 @@ describe('CourtSessionRepositoryService', () => {
           provide: LOGGER_PROVIDER,
           useValue: { debug: jest.fn(), error: jest.fn() },
         },
-        { provide: getModelToken(EventLog), useValue: { findOne: jest.fn() } },
-        { provide: getModelToken(Case), useValue: caseModel },
-        {
-          provide: getModelToken(CourtSessionString),
-          useValue: { create: jest.fn().mockResolvedValue({}) },
-        },
-        { provide: getModelToken(CourtSession), useValue: courtSessionModel },
-        {
-          provide: CourtDocumentRepositoryService,
-          useValue: {
-            fileAllAvailableCourtDocumentsInCourtSession: jest
-              .fn()
-              .mockResolvedValue(undefined),
-            updateMergedCourtDocuments: jest.fn().mockResolvedValue(false),
-          },
-        },
-        {
-          provide: CaseDefendantPoliceCaseNumberRepositoryService,
-          useValue: { resolvePoliceCaseNumbersForCases },
-        },
+        { provide: getModelToken(CourtSession), useValue: model },
         CourtSessionRepositoryService,
       ],
     }).compile()
@@ -67,46 +41,76 @@ describe('CourtSessionRepositoryService', () => {
     service = moduleRef.get(CourtSessionRepositoryService)
   })
 
+  describe('findLatestByCase', () => {
+    it('reads the newest session of the case in the given transaction', async () => {
+      const courtSession = { id: courtSessionId } as CourtSession
+      model.findOne.mockResolvedValueOnce(courtSession)
+
+      const result = await service.findLatestByCase(caseId, { transaction })
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { caseId },
+        order: [['created', 'DESC']],
+        transaction,
+      })
+      expect(result).toBe(courtSession)
+    })
+
+    it('returns null when the case has no sessions', async () => {
+      expect(await service.findLatestByCase(caseId)).toBeNull()
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(service.findLatestByCase(caseId)).rejects.toThrow(error)
+    })
+  })
+
   describe('create', () => {
-    it('calls resolvePoliceCaseNumbersForCases when merged cases exist', async () => {
-      const merged = [{ id: 'm1' }, { id: 'm2' }] as Case[]
-      caseModel.findAll.mockResolvedValue(merged)
+    it('creates the session row and nothing else', async () => {
+      const result = await service.create(caseId, { transaction })
 
-      await service.create('parent-case', { transaction })
+      expect(model.create).toHaveBeenCalledWith({ caseId }, { transaction })
+      expect(result).toEqual({ id: courtSessionId, caseId })
+    })
 
-      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(merged, {
+    it('rethrows when the creation fails', async () => {
+      const error = new Error('Some error')
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(service.create(caseId, { transaction })).rejects.toThrow(
+        error,
+      )
+    })
+  })
+
+  describe('delete', () => {
+    it('deletes the session row by id and case', async () => {
+      await service.delete(caseId, courtSessionId, { transaction })
+
+      expect(model.destroy).toHaveBeenCalledWith({
+        where: { id: courtSessionId, caseId },
         transaction,
       })
     })
 
-    it('does not call resolvePoliceCaseNumbersForCases when there are no merged cases', async () => {
-      caseModel.findAll.mockResolvedValue([])
+    it('throws when no row was deleted', async () => {
+      model.destroy.mockResolvedValueOnce(0)
 
-      await service.create('parent-case', { transaction })
-
-      expect(resolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+      await expect(
+        service.delete(caseId, courtSessionId, { transaction }),
+      ).rejects.toThrow(InternalServerErrorException)
     })
-  })
 
-  describe('addMergedCaseToLatestCourtSession', () => {
-    it('calls resolvePoliceCaseNumbersForCases for the loaded merged case', async () => {
-      const mergedCase = { id: 'merged-id' } as Case
-      caseModel.findByPk.mockResolvedValue(mergedCase)
-      courtSessionModel.findOne.mockResolvedValue({
-        id: 'cs-1',
-        isConfirmed: false,
-      })
+    it('rethrows when the deletion fails', async () => {
+      const error = new Error('Some error')
+      model.destroy.mockRejectedValueOnce(error)
 
-      await service.addMergedCaseToLatestCourtSession(
-        'parent-case',
-        'merged-id',
-        { transaction },
-      )
-
-      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
-        [mergedCase],
-        { transaction },
-      )
+      await expect(
+        service.delete(caseId, courtSessionId, { transaction }),
+      ).rejects.toThrow(error)
     })
   })
 })
