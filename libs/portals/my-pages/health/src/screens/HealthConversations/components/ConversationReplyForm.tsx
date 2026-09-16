@@ -56,6 +56,7 @@ export const ConversationReplyForm = forwardRef<HTMLDivElement, Props>(
                 flexDirection="column"
                 marginLeft={2}
                 justifyContent="center"
+                minWidth={0}
               >
                 <Text variant="eyebrow" fontWeight="medium" truncate>
                   {senderName}
