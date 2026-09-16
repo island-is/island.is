@@ -29,7 +29,7 @@ export const countryAndDateSection = buildSection({
           width: 'half',
           marginTop: 2,
           required: true,
-          options: (application) => {
+          options: (application, _, locale) => {
             const countries =
               getValueViaPath<Country[]>(
                 application.externalData,
@@ -39,7 +39,10 @@ export const countryAndDateSection = buildSection({
             return countries
               .filter((c) => c.orderNumber >= 0)
               .map((country) => ({
-                label: country.name,
+                label:
+                  locale === 'is'
+                    ? country.name
+                    : country.english || country.name,
                 value: country.id,
               }))
           },
