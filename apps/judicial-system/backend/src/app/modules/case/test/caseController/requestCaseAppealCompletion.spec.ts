@@ -187,6 +187,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
       appealDecisions: [
         {
@@ -232,6 +233,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
       // Corrected: the prosecutor no longer appeals, the accused now does.
       appealDecisions: [
@@ -291,6 +293,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
       appealDecisions: [
         {
@@ -336,6 +339,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       // The appeal has been received by the court of appeals.
       appealCase: { id: appealCaseId, appealState: AppealCaseState.RECEIVED },
       appealDecisions: [
@@ -378,6 +382,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
       // Nobody appealed in court - the defence postponed and then appealed
       // itself within the deadline.
@@ -436,6 +441,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.RECEIVED },
       appealDecisions: [
         {

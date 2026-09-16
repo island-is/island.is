@@ -25,6 +25,7 @@ import {
   CaseRepositoryService,
   CaseString,
   CaseStringRepositoryService,
+  CivilClaimantRepositoryService,
   DateLogRepositoryService,
   Defendant,
   DefendantEventLogRepositoryService,
@@ -34,7 +35,6 @@ import {
   OffenseRepositoryService,
   SubpoenaRepositoryService,
   VerdictRepositoryService,
-  VictimRepositoryService,
 } from '../../../repository'
 
 interface Then {
@@ -101,6 +101,8 @@ describe('CaseController - Split defendant from case', () => {
   let splitCaseId: string
   let oldIndictmentCountId: string
   let newIndictmentCountId: string
+  let oldCivilClaimantId: string
+  let newCivilClaimantId: string
   let splitCase: Case
   let fullSplitCase: Case
 
@@ -112,10 +114,10 @@ describe('CaseController - Split defendant from case', () => {
   let mockDefendantEventLogRepositoryService: jest.Mocked<DefendantEventLogRepositoryService>
   let mockIndictmentCountRepositoryService: jest.Mocked<IndictmentCountRepositoryService>
   let mockOffenseRepositoryService: jest.Mocked<OffenseRepositoryService>
-  let mockVictimRepositoryService: jest.Mocked<VictimRepositoryService>
   let mockCaseStringRepositoryService: jest.Mocked<CaseStringRepositoryService>
   let mockDateLogRepositoryService: jest.Mocked<DateLogRepositoryService>
   let mockEventLogRepositoryService: jest.Mocked<EventLogRepositoryService>
+  let mockCivilClaimantRepositoryService: jest.Mocked<CivilClaimantRepositoryService>
   let mockCaseFileRepositoryService: jest.Mocked<CaseFileRepositoryService>
 
   let givenWhenThen: GivenWhenThen
@@ -131,10 +133,10 @@ describe('CaseController - Split defendant from case', () => {
       defendantEventLogRepositoryService,
       indictmentCountRepositoryService,
       offenseRepositoryService,
-      victimRepositoryService,
       caseStringRepositoryService,
       dateLogRepositoryService,
       eventLogRepositoryService,
+      civilClaimantRepositoryService,
       caseFileRepositoryService,
       caseController,
     } = await createTestingCaseModule()
@@ -155,14 +157,14 @@ describe('CaseController - Split defendant from case', () => {
       indictmentCountRepositoryService as jest.Mocked<IndictmentCountRepositoryService>
     mockOffenseRepositoryService =
       offenseRepositoryService as jest.Mocked<OffenseRepositoryService>
-    mockVictimRepositoryService =
-      victimRepositoryService as jest.Mocked<VictimRepositoryService>
     mockCaseStringRepositoryService =
       caseStringRepositoryService as jest.Mocked<CaseStringRepositoryService>
     mockDateLogRepositoryService =
       dateLogRepositoryService as jest.Mocked<DateLogRepositoryService>
     mockEventLogRepositoryService =
       eventLogRepositoryService as jest.Mocked<EventLogRepositoryService>
+    mockCivilClaimantRepositoryService =
+      civilClaimantRepositoryService as jest.Mocked<CivilClaimantRepositoryService>
     mockCaseFileRepositoryService =
       caseFileRepositoryService as jest.Mocked<CaseFileRepositoryService>
 
@@ -170,6 +172,8 @@ describe('CaseController - Split defendant from case', () => {
     splitCase = { id: splitCaseId } as Case
     oldIndictmentCountId = uuid()
     newIndictmentCountId = uuid()
+    oldCivilClaimantId = uuid()
+    newCivilClaimantId = uuid()
     // The re-read split case, as the initial court documents need it
     fullSplitCase = {
       id: splitCaseId,
@@ -194,12 +198,15 @@ describe('CaseController - Split defendant from case', () => {
     mockCaseStringRepositoryService.copyByTypesToCase.mockResolvedValue()
     mockDateLogRepositoryService.copyByTypesToCase.mockResolvedValue()
     mockEventLogRepositoryService.copyByTypesToCase.mockResolvedValue()
-    mockVictimRepositoryService.copyAllToCase.mockResolvedValue()
     mockIndictmentCountRepositoryService.copyAllToCase.mockResolvedValue(
       new Map([[oldIndictmentCountId, newIndictmentCountId]]),
     )
     mockOffenseRepositoryService.copyAllForIndictmentCounts.mockResolvedValue()
+    mockCivilClaimantRepositoryService.copyApplicableToCaseForDefendant.mockResolvedValue(
+      new Map([[oldCivilClaimantId, newCivilClaimantId]]),
+    )
     mockCaseFileRepositoryService.moveAllForDefendantToCase.mockResolvedValue(1)
+    mockCaseFileRepositoryService.remapCivilClaimantIdsForCase.mockResolvedValue()
     mockCaseFileRepositoryService.copyAllWithoutDefendantToCase.mockResolvedValue()
     mockPoliceCaseNumberRepositoryService.moveAssignedRowsToCaseForDefendant.mockResolvedValue()
     mockPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases.mockResolvedValue()
@@ -327,11 +334,6 @@ describe('CaseController - Split defendant from case', () => {
         ],
         { transaction },
       )
-      expect(mockVictimRepositoryService.copyAllToCase).toHaveBeenCalledWith(
-        caseId,
-        splitCaseId,
-        { transaction },
-      )
       expect(
         mockIndictmentCountRepositoryService.copyAllToCase,
       ).toHaveBeenCalledWith(caseId, splitCaseId, { transaction })
@@ -346,7 +348,13 @@ describe('CaseController - Split defendant from case', () => {
       )
     })
 
-    it("should move the defendant's case files and copy the ones linked to no defendant", () => {
+    it('should copy civil claimants that apply to the split defendant', () => {
+      expect(
+        mockCivilClaimantRepositoryService.copyApplicableToCaseForDefendant,
+      ).toHaveBeenCalledWith(caseId, splitCaseId, defendantId, { transaction })
+    })
+
+    it("should move the defendant's case files, remap claimants, and copy the ones linked to no defendant", () => {
       expect(
         mockCaseFileRepositoryService.moveAllForDefendantToCase,
       ).toHaveBeenCalledWith(
@@ -357,9 +365,17 @@ describe('CaseController - Split defendant from case', () => {
         { transaction },
       )
       expect(
+        mockCaseFileRepositoryService.remapCivilClaimantIdsForCase,
+      ).toHaveBeenCalledWith(
+        splitCaseId,
+        new Map([[oldCivilClaimantId, newCivilClaimantId]]),
+        { transaction },
+      )
+      expect(
         mockCaseFileRepositoryService.copyAllWithoutDefendantToCase,
       ).toHaveBeenCalledWith(caseId, splitCaseId, splitCaseFileCategories, {
         transaction,
+        civilClaimantIdMap: new Map([[oldCivilClaimantId, newCivilClaimantId]]),
       })
     })
 

@@ -8,6 +8,7 @@ import {
   AppealCaseTransition,
   AppealCaseType,
   AppealEventType,
+  CaseFileCategory,
   CaseState,
   CaseType,
   InstitutionType,
@@ -17,12 +18,14 @@ import {
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
+import { FileService } from '../../../file'
 import {
   AppealCase,
   AppealCaseRepositoryService,
   AppealEventLog,
   AppealEventLogRepositoryService,
   Case,
+  CaseFile,
   CaseRepositoryService,
   DefendantRepositoryService,
   VerdictRepositoryService,
@@ -46,6 +49,21 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
   const defendantId = uuid()
   const otherDefendantId = uuid()
   const verdictId = uuid()
+  const declarationFile = {
+    id: uuid(),
+    defendantId,
+    category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+  } as CaseFile
+  const declarationCaseFile = {
+    id: uuid(),
+    defendantId,
+    category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+  } as CaseFile
+  const otherDefendantDeclarationFile = {
+    id: uuid(),
+    defendantId: otherDefendantId,
+    category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+  } as CaseFile
 
   const publicProsecutorStaff = {
     id: uuid(),
@@ -71,7 +89,11 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
     id: caseId,
     type: CaseType.INDICTMENT,
     state: CaseState.COMPLETED,
-    caseFiles: [],
+    caseFiles: [
+      declarationFile,
+      declarationCaseFile,
+      otherDefendantDeclarationFile,
+    ],
     defendants: [
       {
         id: defendantId,
@@ -105,6 +127,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
   let mockCaseRepositoryService: CaseRepositoryService
   let mockDefendantRepositoryService: DefendantRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
+  let mockFileService: FileService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -118,6 +141,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
       caseRepositoryService,
       defendantRepositoryService,
       verdictRepositoryService,
+      fileService,
       sequelize,
     } = await createTestingAppealCaseModule()
 
@@ -126,6 +150,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
     mockCaseRepositoryService = caseRepositoryService
     mockDefendantRepositoryService = defendantRepositoryService
     mockVerdictRepositoryService = verdictRepositoryService
+    mockFileService = fileService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -216,6 +241,25 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
       )
     })
 
+    it('should soft-delete that defendant appeal declaration files only', () => {
+      expect(mockFileService.deleteCaseFile).toHaveBeenCalledTimes(2)
+      expect(mockFileService.deleteCaseFile).toHaveBeenCalledWith(
+        theCase,
+        declarationFile,
+        transaction,
+      )
+      expect(mockFileService.deleteCaseFile).toHaveBeenCalledWith(
+        theCase,
+        declarationCaseFile,
+        transaction,
+      )
+      expect(mockFileService.deleteCaseFile).not.toHaveBeenCalledWith(
+        theCase,
+        otherDefendantDeclarationFile,
+        transaction,
+      )
+    })
+
     it('should leave the appeal case standing for the other appellant', () => {
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
       expect(then.result).toBe(appealCase)
@@ -241,6 +285,10 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
         { transaction },
       )
     })
+
+    it('should soft-delete that defendant appeal declaration files', () => {
+      expect(mockFileService.deleteCaseFile).toHaveBeenCalledTimes(2)
+    })
   })
 
   describe('withdrawals that are not allowed', () => {
@@ -256,6 +304,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
       expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
+      expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
 
     it('should reject a withdrawal that names no defendant', async () => {
@@ -265,6 +314,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
 
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
   })
 })
