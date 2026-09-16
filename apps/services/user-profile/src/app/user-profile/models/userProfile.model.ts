@@ -123,4 +123,13 @@ export class UserProfile extends Model {
     as: 'emails', // 👈 optional, for cleaner includes
   })
   emails?: Emails[]
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  })
+  @ApiProperty()
+  onlyPriorityNotifications!: boolean
 }
+
