@@ -65,7 +65,6 @@ export const mapEntityToOptions = (
     sortedEntities[0]?.__typename === 'OfficialJournalOfIcelandAdvertType' ||
     sortedEntities[0]?.__typename === 'OfficialJournalOfIcelandAdvertsMainType'
   ) {
-    console.log('sortedEntities', sortedEntities)
     const combinedTypes = sortedEntities.reduce<Record<string, string[]>>(
       (acc, entity) => {
         const e = entity as
