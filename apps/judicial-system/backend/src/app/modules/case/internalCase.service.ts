@@ -1106,12 +1106,10 @@ export class InternalCaseService {
         ...(theCase.splitCases?.map((splitCase) => splitCase.id) ?? []),
       ]
 
-      const defendant = await this.defendantRepositoryService.findOne({
-        where: {
-          id: deliverDto.defendantId,
-          caseId: { [Op.in]: allowedCaseIds },
-        },
-      })
+      const defendant = await this.defendantRepositoryService.findByIdInCases(
+        deliverDto.defendantId,
+        allowedCaseIds,
+      )
 
       if (!defendant?.nationalId) {
         return { delivered: false }

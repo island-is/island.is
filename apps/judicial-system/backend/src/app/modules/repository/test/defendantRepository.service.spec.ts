@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize'
+import { literal, Op, Transaction } from 'sequelize'
 
 import { InternalServerErrorException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
@@ -6,8 +6,14 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  DefendantPlea,
+  Gender,
+} from '@island.is/judicial-system/types'
 
+import { Case } from '../models/case.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantRepositoryService } from '../services/defendantRepository.service'
 
@@ -19,6 +25,7 @@ describe('DefendantRepositoryService', () => {
 
   let service: DefendantRepositoryService
   let model: {
+    findOne: jest.Mock
     findAll: jest.Mock
     create: jest.Mock
     update: jest.Mock
@@ -26,6 +33,7 @@ describe('DefendantRepositoryService', () => {
 
   beforeEach(async () => {
     model = {
+      findOne: jest.fn().mockResolvedValue(null),
       findAll: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
       update: jest.fn().mockResolvedValue([1]),
@@ -43,6 +51,88 @@ describe('DefendantRepositoryService', () => {
     }).compile()
 
     service = moduleRef.get(DefendantRepositoryService)
+  })
+
+  describe('findByIdInCases', () => {
+    const caseIds = [caseId, newCaseId]
+
+    it('addresses the defendant within the given cases only', async () => {
+      const defendant = { id: defendantId } as Defendant
+      model.findOne.mockResolvedValueOnce(defendant)
+
+      const result = await service.findByIdInCases(defendantId, caseIds, {
+        transaction,
+      })
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { id: defendantId, caseId: { [Op.in]: caseIds } },
+        transaction,
+      })
+      expect(result).toBe(defendant)
+    })
+
+    it('returns null when the defendant is in none of the cases', async () => {
+      const result = await service.findByIdInCases(defendantId, caseIds)
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { id: defendantId, caseId: { [Op.in]: caseIds } },
+        transaction: undefined,
+      })
+      expect(result).toBeNull()
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(
+        service.findByIdInCases(defendantId, caseIds),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('existsInActiveCustody', () => {
+    const nationalId = '0000000000'
+
+    // Active custody is an accepted custody case that has not run out - all
+    // three conditions are part of the question, so the query is asserted in
+    // full
+    it('asks for a defendant on an accepted custody case that is still valid', async () => {
+      model.findOne.mockResolvedValueOnce({ id: defendantId })
+
+      const result = await service.existsInActiveCustody(nationalId)
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        include: [
+          {
+            model: Case,
+            as: 'case',
+            where: {
+              state: CaseState.ACCEPTED,
+              type: CaseType.CUSTODY,
+              valid_to_date: { [Op.gte]: literal('current_date') },
+            },
+          },
+        ],
+        where: { nationalId },
+      })
+      expect(result).toBe(true)
+    })
+
+    it('answers false when no such defendant exists', async () => {
+      const result = await service.existsInActiveCustody(nationalId)
+
+      expect(result).toBe(false)
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(service.existsInActiveCustody(nationalId)).rejects.toThrow(
+        error,
+      )
+    })
   })
 
   describe('copyProsecutorEnteredToCase', () => {
