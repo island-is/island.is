@@ -641,16 +641,16 @@ export const InteractiveTable = <TData extends object>({
               paddingTop={3}
               paddingBottom={3}
             >
-              <Box marginBottom={1}>
-                <Text variant="h4" as="h2" color="blue400">
-                  {titleHeader
-                    ? flexRender(
-                        titleHeader.column.columnDef.footer,
-                        titleHeader.getContext(),
-                      )
-                    : null}
-                </Text>
-              </Box>
+              {titleHeader?.column.columnDef.footer !== undefined && (
+                <Box marginBottom={1}>
+                  <Text variant="h4" as="h2" color="blue400">
+                    {flexRender(
+                      titleHeader.column.columnDef.footer,
+                      titleHeader.getContext(),
+                    )}
+                  </Text>
+                </Box>
+              )}
               <Box>
                 {otherHeaders.map((header) => (
                   <Box
