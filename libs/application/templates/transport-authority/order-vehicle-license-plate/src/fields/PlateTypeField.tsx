@@ -160,9 +160,6 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               }))}
               onSelect={(value) => {
                 setValue('plateType.regGroup', value)
-                if (value === VSK_PLATE_TYPE_CODE) {
-                  setValue('plateDelivery.deliveryMethodIsDeliveryStation', YES)
-                }
                 setValue(
                   'plateType.selectedPlateTypeName',
                   plates.find((p) => p.plateTypeCode === value)?.plateTypeName,
