@@ -252,7 +252,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'reasonNotificationHistory.areParentsInformed',
   )
 
-  const notificationHistoryBiggestConcern = getValueViaPath<string>(
+  const notificationHistoryBiggestConcern = getValueViaPath<string[]>(
     answers,
     'reasonNotificationHistory.biggestConcern',
   )

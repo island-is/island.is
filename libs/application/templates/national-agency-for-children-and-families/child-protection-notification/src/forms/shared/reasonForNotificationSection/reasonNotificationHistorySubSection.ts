@@ -1,7 +1,8 @@
 import {
+  buildAlertMessageField,
+  buildCheckboxField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   NO,
 } from '@island.is/application/core'
@@ -12,6 +13,7 @@ import {
   getHasReportedBeforeTitle,
   getYesNoOptions,
 } from '../../../utils/childProtectionNotificationUtils'
+import { showAbuseSuspicionWarning } from '../../../utils/conditionUtils'
 import { Roles } from '../../../utils/constants'
 import { getApplicationAnswers } from '../../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../../utils/getApplicationExternalData'
@@ -54,24 +56,32 @@ export const reasonNotificationHistorySubSection = buildSubSection({
           space: 4,
           options: getYesNoOptions(),
         }),
-        buildSelectField({
+        buildCheckboxField({
           id: 'reasonNotificationHistory.biggestConcern',
           title: reasonForNotificationMessages.notificationHistory.explanation,
-          placeholder:
-            reasonForNotificationMessages.notificationHistory
-              .explanationPlaceholder,
+          marginTop: 4,
           options: ({ externalData }) => {
             const { guardianNotAwareReasons } =
               getApplicationExternalData(externalData)
             return guardianNotAwareReasons.map((reason) => ({
               label: reason.label ?? '',
               value: reason.value ?? '',
+              excludeOthers: true,
             }))
           },
           condition: (answers) => {
             const { areParentsInformed } = getApplicationAnswers(answers)
             return areParentsInformed === NO
           },
+        }),
+        buildAlertMessageField({
+          id: 'reasonNotificationHistory.abuseSuspicionWarning',
+          alertType: 'warning',
+          doesNotRequireAnswer: true,
+          message:
+            reasonForNotificationMessages.notificationHistory
+              .abuseSuspicionWarning,
+          condition: showAbuseSuspicionWarning,
         }),
       ],
     }),
