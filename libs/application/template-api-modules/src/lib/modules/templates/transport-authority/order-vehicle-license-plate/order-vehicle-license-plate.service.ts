@@ -10,6 +10,7 @@ import {
 import {
   SGS_DELIVERY_STATION_CODE,
   SGS_DELIVERY_STATION_TYPE,
+  VSK_PLATE_TYPE_CODE,
   VehiclePlateOrderingClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
@@ -162,9 +163,12 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
 
     // Check if used selected delivery method: Pick up at delivery station
     const deliveryStationTypeCode =
-      answers?.plateDelivery?.deliveryStationTypeCode
-    let deliveryStationType: string
-    let deliveryStationCode: string
+      answers?.plateDelivery?.deliveryStationTypeCode?.trim()
+    const isVskPlateType =
+      answers?.plateType?.regGroup === VSK_PLATE_TYPE_CODE
+
+    let deliveryStationType = ''
+    let deliveryStationCode = ''
     if (
       answers.plateDelivery?.deliveryMethodIsDeliveryStation === YES &&
       deliveryStationTypeCode
@@ -172,7 +176,7 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       // Split up code+type (was merged when we fetched that data)
       deliveryStationType = deliveryStationTypeCode.split('_')[0]
       deliveryStationCode = deliveryStationTypeCode.split('_')[1]
-    } else {
+    } else if (!isVskPlateType) {
       // Otherwise we will default to option "Pick up at Samgöngustofa"
       deliveryStationType = SGS_DELIVERY_STATION_TYPE
       deliveryStationCode = SGS_DELIVERY_STATION_CODE
@@ -233,9 +237,12 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
 
     // Check if used selected delivery method: Pick up at delivery station
     const deliveryStationTypeCode =
-      answers?.plateDelivery?.deliveryStationTypeCode
-    let deliveryStationType: string
-    let deliveryStationCode: string
+      answers?.plateDelivery?.deliveryStationTypeCode?.trim()
+    const isVskPlateType =
+      answers?.plateType?.regGroup === VSK_PLATE_TYPE_CODE
+
+    let deliveryStationType = ''
+    let deliveryStationCode = ''
     if (
       answers.plateDelivery?.deliveryMethodIsDeliveryStation === YES &&
       deliveryStationTypeCode
@@ -243,7 +250,7 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       // Split up code+type (was merged when we fetched that data)
       deliveryStationType = deliveryStationTypeCode.split('_')[0]
       deliveryStationCode = deliveryStationTypeCode.split('_')[1]
-    } else {
+    } else if (!isVskPlateType) {
       // Otherwise we will default to option "Pick up at Samgöngustofa"
       deliveryStationType = SGS_DELIVERY_STATION_TYPE
       deliveryStationCode = SGS_DELIVERY_STATION_CODE

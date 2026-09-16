@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { YES, NO } from '@island.is/application/core'
+import { VSK_PLATE_TYPE_CODE } from '../shared'
 
 export const OrderVehicleLicensePlateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -31,6 +32,16 @@ export const OrderVehicleLicensePlateSchema = z.object({
     deliveryStationTypeCode: z.string().optional(),
     includeRushFee: z.array(z.enum([YES])).optional(),
   }),
+}).superRefine(({ plateType, plateDelivery }, ctx) => {
+  if (
+    plateType.regGroup === VSK_PLATE_TYPE_CODE &&
+    !plateDelivery.deliveryStationTypeCode?.trim()
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['plateDelivery', 'deliveryStationTypeCode'],
+    })
+  }
 })
 
 export type OrderVehicleLicensePlate = z.TypeOf<

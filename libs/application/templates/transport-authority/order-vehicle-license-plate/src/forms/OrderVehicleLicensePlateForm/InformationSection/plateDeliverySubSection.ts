@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/core'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { information } from '../../../lib/messages'
-import { DeliveryStation } from '../../../shared'
+import { DeliveryStation, VSK_PLATE_TYPE_CODE } from '../../../shared'
 
 export const plateDeliverySubSection = buildSubSection({
   id: 'plateDelivery',
@@ -45,7 +45,7 @@ export const plateDeliverySubSection = buildSubSection({
               '',
             ) as string
 
-            return plateType !== 'N5'
+            return plateType !== VSK_PLATE_TYPE_CODE
           },
           options: [
             {

@@ -22,13 +22,12 @@ import {
   getValueViaPath,
   YES,
 } from '@island.is/application/core'
+import { VSK_PLATE_TYPE_CODE } from '../shared'
 
 interface PlateOptionType {
   plateTypeCode?: string | null
   plateTypeName?: string | null
 }
-
-const VSK_PLATE_TYPE_CODE = 'N5'
 
 export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
