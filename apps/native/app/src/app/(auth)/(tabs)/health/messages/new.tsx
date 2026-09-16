@@ -171,10 +171,9 @@ export default function HealthMessageComposeScreen() {
   const isFormLocked =
     !isReply && selectedRecipient?.canCreateConversation === false
 
-  // Any blocked reason means the patient can't message this recipient right now,
-  // so hide the send button. Closing-soon is only a warning (no blocked reason),
-  // so it keeps the button.
-  const hideSendButton = !!selectedRecipient?.conversationBlockedReason
+  // A recipient that can't take a new conversation right now can't be sent to,
+  // so hide the send button. Closing-soon still allows sending, so it keeps it.
+  const hideSendButton = selectedRecipient?.canCreateConversation === false
 
   const canSend = isReply
     ? !!message.trim()
