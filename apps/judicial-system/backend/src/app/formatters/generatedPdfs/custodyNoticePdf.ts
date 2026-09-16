@@ -33,8 +33,7 @@ export const formatCustodyNoticeDefender = (
   theCase: Pick<Case, 'defendants' | 'sessionArrangements'>,
 ): string => {
   if (
-    theCase.sessionArrangements ===
-    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+    theCase.sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
   ) {
     return 'Ekki skráður'
   }
@@ -46,9 +45,7 @@ export const formatCustodyNoticeDefender = (
   }
 
   return `${defendant.defenderName}${
-    defendant.defenderPhoneNumber
-      ? `, s. ${defendant.defenderPhoneNumber}`
-      : ''
+    defendant.defenderPhoneNumber ? `, s. ${defendant.defenderPhoneNumber}` : ''
   }${defendant.defenderEmail ? `, ${defendant.defenderEmail}` : ''}`
 }
 

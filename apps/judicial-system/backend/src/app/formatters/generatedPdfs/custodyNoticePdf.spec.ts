@@ -21,10 +21,7 @@ describe('formatCustodyNoticeDefender', () => {
   it('should use the first defendant when several are present', () => {
     expect(
       formatCustodyNoticeDefender({
-        defendants: [
-          { defenderName: 'Fyrsti' },
-          { defenderName: 'Annar' },
-        ],
+        defendants: [{ defenderName: 'Fyrsti' }, { defenderName: 'Annar' }],
       } as Case),
     ).toBe('Fyrsti')
   })
