@@ -206,7 +206,7 @@ export class UserProfileService {
       onlyPriorityNotifications?: boolean
     } = {}
 
-    let isOnlyPrioNotificationsEnabled = false;
+    let isOnlyPrioNotificationsEnabled = false
 
     await this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
@@ -301,11 +301,10 @@ export class UserProfileService {
           : {}
 
       // Check if Only Priority Notification feature flag is enabled
-      isOnlyPrioNotificationsEnabled =
-        await this.featureFlagService.getValue(
-          Features.isOnlyPriorityNotificationsEnabled,
-          false,
-        )
+      isOnlyPrioNotificationsEnabled = await this.featureFlagService.getValue(
+        Features.isOnlyPriorityNotificationsEnabled,
+        false,
+      )
 
       const onlyPrioNotificationsUpdate =
         isDefined(userProfile.onlyPriorityNotifications) &&
