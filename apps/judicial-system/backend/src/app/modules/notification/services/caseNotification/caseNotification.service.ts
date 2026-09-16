@@ -492,7 +492,7 @@ export class CaseNotificationService extends BaseNotificationService {
           )
         } else if (
           theCase.requestSharedWithDefender ===
-            RequestSharedWithDefender.READY_FOR_COURT
+          RequestSharedWithDefender.READY_FOR_COURT
         ) {
           promises.push(
             this.sendReadyForCourtEmailNotificationToDefender({
@@ -916,7 +916,8 @@ export class CaseNotificationService extends BaseNotificationService {
       const uniqueVictimLawyers = _uniqBy(
         theCase.victims?.filter(
           (victim) =>
-            victim.lawyerEmail && !notifiedDefenderEmails.has(victim.lawyerEmail),
+            victim.lawyerEmail &&
+            !notifiedDefenderEmails.has(victim.lawyerEmail),
         ) ?? [],
         (victim) => victim.lawyerEmail,
       )
@@ -1756,8 +1757,7 @@ export class CaseNotificationService extends BaseNotificationService {
       promises.push(this.sendRevokedEmailNotificationToPrison(theCase))
     }
 
-    const caseNumber =
-      theCase.courtCaseNumber ?? theCase.policeCaseNumbers?.[0]
+    const caseNumber = theCase.courtCaseNumber ?? theCase.policeCaseNumbers?.[0]
 
     if (caseNumber) {
       for (const recipient of getRequestCaseDefenderRecipients(theCase)) {
