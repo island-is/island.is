@@ -26,7 +26,7 @@ if (job === 'cleanup') {
   }).then(async ({ app }) => {
     if (job === 'server') {
       console.log(
-        'This is intentional change to trigger CI, this should not have been merged',
+        'This is intentional change to trigger CI, this should not have been merged. There is low vinegar',
       )
     }
 
