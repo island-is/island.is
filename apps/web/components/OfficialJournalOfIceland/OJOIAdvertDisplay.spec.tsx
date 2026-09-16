@@ -49,7 +49,7 @@ describe('OJOIAdvertDisplay', () => {
     )
     const accordion = container.querySelector('[aria-expanded]')
     expect(dateLine).toBeDefined()
-    expect(accordion).toBeDefined()
+    expect(accordion).not.toBeNull()
     // 4 === DOCUMENT_POSITION_FOLLOWING, ie. the date line comes after the accordion
     expect(accordion?.compareDocumentPosition(dateLine as Node)).toBe(4)
   })

@@ -48,6 +48,41 @@ describe('splitDepartmentDateFromBody', () => {
     )
   })
 
+  it('does not swallow the body when an earlier paragraph is left unclosed', () => {
+    const { bodyHtml, departmentDateHtml } = splitDepartmentDateFromBody(
+      '<p>intro' + dateLine('C deild — Útgáfudagur: 15. september 2026'),
+    )
+
+    expect(bodyHtml).toBe('<p>intro')
+    expect(departmentDateHtml).toBe(
+      '<strong>C deild — Útgáfudagur: 15. september 2026</strong>',
+    )
+  })
+
+  it('matches the uppercase tags used by legacy adverts', () => {
+    const { bodyHtml, departmentDateHtml } = splitDepartmentDateFromBody(
+      '<p>body</p><P ALIGN="CENTER"><STRONG>C deild — Útgáfudagur: 1. maí 2026</STRONG></P>',
+    )
+
+    expect(bodyHtml).toBe('<p>body</p>')
+    expect(departmentDateHtml).toBe(
+      '<STRONG>C deild — Útgáfudagur: 1. maí 2026</STRONG>',
+    )
+  })
+
+  it('ignores a trailing paragraph holding only a non-breaking space', () => {
+    const { bodyHtml, departmentDateHtml } = splitDepartmentDateFromBody(
+      '<p>body</p>' +
+        dateLine('C deild — Útgáfudagur: 1. maí 2026') +
+        '<p>&nbsp;</p>',
+    )
+
+    expect(bodyHtml).toBe('<p>body</p><p>&nbsp;</p>')
+    expect(departmentDateHtml).toBe(
+      '<strong>C deild — Útgáfudagur: 1. maí 2026</strong>',
+    )
+  })
+
   it('leaves the body untouched when the date line is not the closing line', () => {
     const html =
       dateLine('C deild — Útgáfudagur: 1. maí 2026') + '<p>eftirmáli</p>'
