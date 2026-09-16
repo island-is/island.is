@@ -10,11 +10,13 @@ import { PenaltyPointsService } from './services/penaltyPoints.service'
 import { DeprivationsService } from './services/deprivations.service'
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
     NationalRegistryV3ApplicationsClientModule,
     DrivingLicenseApiModule,
+    FeatureFlagModule,
   ],
   providers: [
     MainResolver,
