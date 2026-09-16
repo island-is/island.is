@@ -232,7 +232,7 @@ export enum Features {
   secondarySchoolScheduledNotifications = 'isSecondarySchoolScheduledNotificationsEnabled',
   passportScheduledNotifications = 'isPassportScheduledNotificationsEnabled',
   idCardScheduledNotifications = 'isIdCardScheduledNotificationsEnabled',
-  isOnlyPriorityNotificationsEnabled = "isOnlyPriorityNotificationsEnabled",
+  isOnlyPriorityNotificationsEnabled = 'isOnlyPriorityNotificationsEnabled',
 }
 
 export enum ServerSideFeature {
