@@ -105,8 +105,7 @@ export default function MedicineDelegationFormScreen() {
       } else {
         setDelegateError(
           intl.formatMessage({
-            id:
-              'health.medicineDelegation.form.delegateMedicineDelegationError',
+            id: 'health.medicineDelegation.form.delegateMedicineDelegationError',
           }),
         )
       }
