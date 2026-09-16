@@ -73,6 +73,7 @@ type BaseInteractiveTableProps<TData extends object> = {
   cellBox?: {
     header?: Omit<UseBoxStylesProps, 'component'>
     body?: Omit<UseBoxStylesProps, 'component'>
+    footer?: Omit<UseBoxStylesProps, 'component'>
   }
 }
 
@@ -164,6 +165,10 @@ export const InteractiveTable = <TData extends object>({
   const hasSortableColumns = table
     .getAllColumns()
     .some((col) => col.getCanSort())
+
+  const hasFooter =
+    data.length > 0 &&
+    table.getAllColumns().some((col) => col.columnDef.footer !== undefined)
 
   const desktopTable = (
     <T.Table>
@@ -408,6 +413,39 @@ export const InteractiveTable = <TData extends object>({
           )
         })}
       </T.Body>
+      {hasFooter && (
+        <T.Foot>
+          {table.getFooterGroups().map((footerGroup) => (
+            <T.Row key={footerGroup.id}>
+              {footerGroup.headers.map((header) => (
+                <T.Data
+                  key={header.id}
+                  style={{
+                    fontSize: '16px',
+                    ...(header.column.columnDef.meta?.align && {
+                      textAlign: header.column.columnDef.meta.align,
+                    }),
+                  }}
+                  box={cellBox?.footer}
+                >
+                  {header.isPlaceholder ? null : (
+                    <Text
+                      variant="medium"
+                      fontWeight="semiBold"
+                      textAlign={header.column.columnDef.meta?.align}
+                    >
+                      {flexRender(
+                        header.column.columnDef.footer,
+                        header.getContext(),
+                      )}
+                    </Text>
+                  )}
+                </T.Data>
+              ))}
+            </T.Row>
+          ))}
+        </T.Foot>
+      )}
     </T.Table>
   )
 
@@ -583,6 +621,66 @@ export const InteractiveTable = <TData extends object>({
           </Box>
         )
       })}
+      {hasFooter &&
+        table.getFooterGroups().map((footerGroup) => {
+          const titleHeader = footerGroup.headers.find(
+            (h) => h.column.id === mobileTitleKey,
+          )
+          const otherHeaders = footerGroup.headers.filter(
+            (h) =>
+              h.column.id !== mobileTitleKey &&
+              h.column.id !== 'expander' &&
+              h.column.columnDef.footer !== undefined,
+          )
+
+          return (
+            <Box
+              key={footerGroup.id}
+              borderTopWidth="standard"
+              borderColor="blue200"
+              paddingTop={3}
+              paddingBottom={3}
+            >
+              {titleHeader?.column.columnDef.footer !== undefined && (
+                <Box marginBottom={1}>
+                  <Text variant="h4" as="h2" color="blue400">
+                    {flexRender(
+                      titleHeader.column.columnDef.footer,
+                      titleHeader.getContext(),
+                    )}
+                  </Text>
+                </Box>
+              )}
+              <Box>
+                {otherHeaders.map((header) => (
+                  <Box
+                    key={header.id}
+                    display="flex"
+                    flexDirection="row"
+                    marginBottom={1}
+                  >
+                    <Box width="half" display="flex" alignItems="center">
+                      <Text fontWeight="semiBold">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </Text>
+                    </Box>
+                    <Box width="half">
+                      <Text textAlign="right">
+                        {flexRender(
+                          header.column.columnDef.footer,
+                          header.getContext(),
+                        )}
+                      </Text>
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )
+        })}
     </Box>
   )
 
