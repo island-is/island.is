@@ -282,7 +282,8 @@ export class UserProfileService {
         documentNotifications:
           currentUserProfile?.documentNotifications ?? undefined,
         emailNotifications: currentUserProfile?.emailNotifications ?? undefined,
-        onlyPriorityNotifications: currentUserProfile?.onlyPriorityNotifications
+        onlyPriorityNotifications:
+          currentUserProfile?.onlyPriorityNotifications,
       }
 
       // Check if SMS notifications feature is enabled
@@ -298,13 +299,15 @@ export class UserProfileService {
           : {}
 
       // Check if Only Priority Notification feature flag is enabled
-      const isOnlyPrioNotificationsEnabled = await this.featureFlagService.getValue(
-        Features.isOnlyPriorityNotificationsEnabled,
-        false,
-      )
+      const isOnlyPrioNotificationsEnabled =
+        await this.featureFlagService.getValue(
+          Features.isOnlyPriorityNotificationsEnabled,
+          false,
+        )
 
       const onlyPrioNotificationsUpdate =
-        isDefined(userProfile.onlyPriorityNotifications) && isOnlyPrioNotificationsEnabled
+        isDefined(userProfile.onlyPriorityNotifications) &&
+        isOnlyPrioNotificationsEnabled
           ? { onlyPriorityNotifications: userProfile.onlyPriorityNotifications }
           : {}
 
@@ -329,7 +332,7 @@ export class UserProfileService {
           documentNotifications: userProfile.documentNotifications,
         }),
         ...smsNotificationsUpdate,
-        ...onlyPrioNotificationsUpdate
+        ...onlyPrioNotificationsUpdate,
       }
 
       const updateEmailVerified = isEmailDefined
@@ -472,7 +475,7 @@ export class UserProfileService {
     ) {
       this.metrics.increment('notification.setting.changed', 1, {
         setting: 'email',
-        value: userProfile.onlyPriorityNotifications ? 'on' : 'off'
+        value: userProfile.onlyPriorityNotifications ? 'on' : 'off',
       })
     }
 
