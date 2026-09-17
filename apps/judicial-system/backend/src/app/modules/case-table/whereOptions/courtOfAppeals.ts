@@ -3,10 +3,7 @@ import { Op } from 'sequelize'
 import { AppealCaseState } from '@island.is/judicial-system/types'
 
 import { CaseWhereOptions, expandCasesWithAppeals } from '../caseTable.types'
-import {
-  courtOfAppealsCasesAccessWhereOptions,
-  courtOfAppealsVerdictAppealsAccessWhereOptions,
-} from './access'
+import { courtOfAppealsCasesAccessWhereOptions } from './access'
 
 // Court of appeals cases
 
@@ -93,6 +90,9 @@ export const courtOfAppealsCasesCompletedWhereOptions =
 export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
+      // The access options reference the ruling appeal by alias, so it has to
+      // be joined even though these lists say nothing about it.
+      appealCase: { attributes: [], required: false },
       verdictAppealCase: {
         attributes: [],
         required: true,
@@ -103,7 +103,7 @@ export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
     },
     where: {
       [Op.and]: [
-        courtOfAppealsVerdictAppealsAccessWhereOptions(),
+        courtOfAppealsCasesAccessWhereOptions(),
         {
           '$verdictAppealCase.appeal_state$': [
             AppealCaseState.APPEALED,
@@ -117,6 +117,7 @@ export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
 export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
+      appealCase: { attributes: [], required: false },
       verdictAppealCase: {
         attributes: [],
         required: true,
@@ -127,7 +128,7 @@ export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
     },
     where: {
       [Op.and]: [
-        courtOfAppealsVerdictAppealsAccessWhereOptions(),
+        courtOfAppealsCasesAccessWhereOptions(),
         {
           '$verdictAppealCase.appeal_state$': [
             AppealCaseState.COMPLETED,

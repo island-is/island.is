@@ -10,6 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import * as repository from '../repository'
+import { courtOfAppealsCasesAccessWhereOptions } from './whereOptions/access'
 import { getGlobalIncludes } from './caseTable.utils'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
@@ -103,6 +104,40 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     return queries[0] ?? ''
   }
 
+  // The access options on their own, with no table where options - which is what
+  // searchCases applies.
+  const sqlForAccessOptions = async (): Promise<string> => {
+    const sequelize = repository.Case.sequelize as Sequelize
+    const queries: string[] = []
+    const stub = (sql: unknown) => {
+      queries.push(typeof sql === 'string' ? sql : JSON.stringify(sql))
+      return Promise.resolve([[], {}])
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anySequelize = sequelize as any
+    const originalQuery = anySequelize.query
+    const originalQueryRaw = anySequelize.queryRaw
+    anySequelize.query = stub
+    anySequelize.queryRaw = stub
+
+    try {
+      await repository.Case.findAll({
+        attributes: ['id'],
+        include: [
+          { association: 'appealCase', attributes: [], required: false },
+        ],
+        where: courtOfAppealsCasesAccessWhereOptions(),
+      })
+    } catch {
+      // Building the query is the subject here, not running it.
+    } finally {
+      anySequelize.query = originalQuery
+      anySequelize.queryRaw = originalQueryRaw
+    }
+
+    return queries[0] ?? ''
+  }
+
   // The tab a verdict appeal in APPEALED would surface in if the type were not
   // filtered - the reason this isolation exists at all.
   it('filters the appeal type in the district court appealed request cases', async () => {
@@ -156,14 +191,39 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
       expect(sql).not.toMatch(/"verdictAppealCase"/)
     })
 
+    // The selection is driven by the verdict appeal: an inner join on the
+    // alias scoped to VERDICT, so a case without one cannot appear whatever
+    // the access options admit. The ruling appeal is joined too, because the
+    // access options reference it, which is why this cannot simply assert that
+    // 'RULING' is absent.
     it.each([
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
     ])('selects only verdict appeals in %s', async (tableType) => {
       const sql = await sqlForTable(tableType, courtOfAppealsUser)
 
-      expect(sql).toMatch(/appeal_type.{0,20}'VERDICT'/)
-      expect(sql).not.toMatch(/appeal_type.{0,20}'RULING'/)
+      expect(sql).toMatch(
+        /INNER JOIN "appeal_case" AS "verdictAppealCase"[\s\S]*?"verdictAppealCase"\."appeal_type" = 'VERDICT'/,
+      )
+      expect(sql).not.toMatch(/INNER JOIN "appeal_case" AS "appealCase"/)
+    })
+
+    // The access options are the whole guard for search, which applies no table
+    // where options of its own. An arm that admits indictment cases without
+    // requiring an appeal would hand the court of appeals every indictment in
+    // the system.
+    it('admits an indictment case only when it carries an appeal', async () => {
+      const sql = await sqlForAccessOptions()
+
+      expect(sql).toMatch(/appeal_type" = 'VERDICT'/)
+
+      const indictmentArms = sql
+        .split(' OR ')
+        .filter((arm) => arm.includes('INDICTMENT'))
+
+      for (const arm of indictmentArms) {
+        expect(arm).toMatch(/appeal/)
+      }
     })
   })
 })

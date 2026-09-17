@@ -2,6 +2,7 @@ import { literal, Op } from 'sequelize'
 
 import {
   AppealCaseState,
+  AppealCaseType,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -75,6 +76,17 @@ const courtOfAppealsIndictmentsAccessWhereOptions = {
         AND ac."appeal_state" = 'WITHDRAWN'
         AND ac."appeal_received_by_court_date" IS NOT NULL
     )`),
+    // An appealed verdict reaches the court earlier than an appealed ruling
+    // does. The clauses above all wait for receipt; a verdict appeal is filed
+    // and then waits for the court to pick it up, so the court has to see it
+    // from the moment it is filed or it could never receive it at all (owner,
+    // 2026-09-17). Every state of one is therefore the court's to see, which
+    // is why this asks only that the appeal exists.
+    literal(`EXISTS (
+      SELECT 1 FROM "appeal_case" ac
+      WHERE ac."case_id" = "Case"."id"
+        AND ac."appeal_type" = '${AppealCaseType.VERDICT}'
+    )`),
   ],
 }
 
@@ -83,22 +95,6 @@ export const courtOfAppealsCasesAccessWhereOptions = () => ({
     courtOfAppealsRequestCasesAccessWhereOptions,
     courtOfAppealsIndictmentsAccessWhereOptions,
   ],
-})
-
-// Appealed verdicts reach the court of appeals earlier than appealed rulings
-// do. A ruling appeal is the court's to see only once it has received it - the
-// clauses above all require RECEIVED, COMPLETED, or a withdrawal that had been
-// received. A verdict appeal is filed and then waits for the court to pick it
-// up, so the court has to see it while it is still APPEALED, or it could never
-// receive it at all (owner, 2026-09-17).
-//
-// Which appeal states belong in which list is the lists' own business; all this
-// settles is which cases the court may see at all. The appeal type needs no
-// clause here: the `verdictAppealCase` association is scoped to it, and the
-// lists join it as required.
-export const courtOfAppealsVerdictAppealsAccessWhereOptions = () => ({
-  is_archived: false,
-  type: indictmentCases,
 })
 
 // District court access
