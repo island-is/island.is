@@ -234,50 +234,62 @@ export const getJobCareer = (
       'currentSituation.currentSituationRepeater',
     ) || []
   const previousJobCareer =
-    employmentHistory?.lastJobs?.map((job) => {
-      const employerSSN =
-        job.nationalIdWithName && job.nationalIdWithName !== '-'
-          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
-          : job.employer?.nationalId
-      const employerName =
-        job.nationalIdWithName && job.nationalIdWithName !== '-'
-          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
-              ?.name
-          : job.employer?.name
-      return {
-        employerSSN: employerSSN,
-        employer: employerName,
-        started: job.startDate,
-        quit: job.endDate,
-        workRatio: parseInt(job.percentage || ''),
-        jobCodeId: job.jobCodeId || '',
-      }
-    }) || []
+    employmentHistory?.lastJobs
+      // filters out stray empty {} objects that can end up in the array
+      ?.filter((job) => job && Object.keys(job).length > 0)
+      .map((job) => {
+        const employerSSN =
+          job.nationalIdWithName && job.nationalIdWithName !== '-'
+            ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+                ?.ssn
+            : job.employer?.nationalId
+        const employerName =
+          job.nationalIdWithName && job.nationalIdWithName !== '-'
+            ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+                ?.name
+            : job.employer?.name
+        return {
+          employerSSN: employerSSN,
+          employer: employerName,
+          started: job.startDate,
+          quit: job.endDate,
+          workRatio: parseInt(job.percentage || ''),
+          jobCodeId: job.jobCodeId || '',
+        }
+      }) || []
 
   const currentJobCareer =
-    employmentHistory?.currentJobs?.map((job, index) => {
-      let workHours
-      if (currentJob && currentJob.length > index) {
-        workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
-      }
-      const employerSSN =
-        job.nationalIdWithName && job.nationalIdWithName !== '-'
-          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
-          : job.employer?.nationalId
-      const employerName =
-        job.nationalIdWithName && job.nationalIdWithName !== '-'
-          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
-              ?.name
-          : job.employer?.name
-      return {
-        employerSSN: employerSSN,
-        employer: employerName,
-        quit: job.endDate,
-        workRatio: parseInt(job.percentage || ''),
-        workHours: workHours || '',
-        jobCodeId: job.jobCodeId || '',
-      }
-    }) || []
+    employmentHistory?.currentJobs
+      // filters out stray empty {} objects that can end up in the array
+      ?.filter((job) => job && Object.keys(job).length > 0)
+      .map((job, index) => {
+        let workHours
+        if (currentJob && currentJob.length > index) {
+          workHours = getValueViaPath<string>(
+            currentJob[index],
+            'workHours',
+            '',
+          )
+        }
+        const employerSSN =
+          job.nationalIdWithName && job.nationalIdWithName !== '-'
+            ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+                ?.ssn
+            : job.employer?.nationalId
+        const employerName =
+          job.nationalIdWithName && job.nationalIdWithName !== '-'
+            ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+                ?.name
+            : job.employer?.name
+        return {
+          employerSSN: employerSSN,
+          employer: employerName,
+          quit: job.endDate,
+          workRatio: parseInt(job.percentage || ''),
+          workHours: workHours || '',
+          jobCodeId: job.jobCodeId || '',
+        }
+      }) || []
 
   return { jobs: [previousJobCareer, currentJobCareer].flat() || [] }
 }
