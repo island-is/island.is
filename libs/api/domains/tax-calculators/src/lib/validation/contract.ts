@@ -79,6 +79,17 @@ const assertDependency = (
     return
   }
 
+  /* Applicability downstream is evaluated one level deep. Rejecting a chain
+   * here is what makes that complete rather than merely sufficient for the
+   * contracts RSK publishes today. */
+  if (target.dependsOn) {
+    fail(
+      calculatorKey,
+      `field "${field.name}" depends on conditional field "${target.name}"; chained dependencies are unsupported`,
+    )
+    return
+  }
+
   if (target.type === 'date') {
     fail(
       calculatorKey,
@@ -101,41 +112,6 @@ const assertDependency = (
       calculatorKey,
       `field "${field.name}" compares ${target.type} field "${target.name}" against an incompatible ${equalsType} value`,
     )
-  }
-}
-
-/* Depth-first walk over the dependsOn edges. Self-reference is already caught
- * above, so this only has to find longer loops. */
-const assertNoCycles = (
-  calculatorKey: CalculatorKey,
-  fieldsByName: Map<string, CalculatorField>,
-): void => {
-  const settled = new Set<string>()
-
-  for (const name of fieldsByName.keys()) {
-    if (settled.has(name)) {
-      continue
-    }
-
-    const path = new Set<string>()
-    let current: string | undefined = name
-
-    while (current) {
-      if (path.has(current)) {
-        fail(calculatorKey, `dependency cycle through field "${current}"`)
-        return
-      }
-
-      path.add(current)
-
-      if (settled.has(current)) {
-        break
-      }
-
-      current = fieldsByName.get(current)?.dependsOn?.field
-    }
-
-    path.forEach((visited) => settled.add(visited))
   }
 }
 
@@ -231,8 +207,6 @@ export const assertPublishableContract = (
     assertFieldShape(requestedKey, field)
     assertDependency(requestedKey, field, fieldsByName)
   })
-
-  assertNoCycles(requestedKey, fieldsByName)
 
   if (contract.outputFields.length === 0) {
     fail(requestedKey, 'contract publishes no output fields')

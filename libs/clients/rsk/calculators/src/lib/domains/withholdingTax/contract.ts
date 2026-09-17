@@ -1,6 +1,43 @@
 import type { CalculatorContract, CalculatorField } from '../../contracts/field'
 import type { CalculatorOutputField } from '../../contracts/output'
 
+export const PAYMENT_FREQUENCIES = ['weekly', 'monthly'] as const
+export type PaymentFrequency = (typeof PAYMENT_FREQUENCIES)[number]
+
+export const MARITAL_STATUSES = [
+  'single',
+  'singleParent',
+  'marriedOrCohabiting',
+] as const
+export type MaritalStatus = (typeof MARITAL_STATUSES)[number]
+
+/* The mandatory pension contribution is all-or-nothing at 4%; the private
+ * one is offered in whole points up to 4. */
+export const PENSION_FUND_RATIOS = ['0%', '4%'] as const
+export type PensionFundRatio = (typeof PENSION_FUND_RATIOS)[number]
+
+export const PRIVATE_PENSION_RATIOS = ['0%', '1%', '2%', '3%', '4%'] as const
+export type PrivatePensionRatio = (typeof PRIVATE_PENSION_RATIOS)[number]
+
+/* The employer's match is negotiated per collective agreement, so the set is
+ * neither round nor contiguous — 11% is genuinely absent between 10.5 and
+ * 11.5. */
+export const EMPLOYER_PENSION_MATCH_RATIOS = [
+  '0%',
+  '8%',
+  '8.5%',
+  '10%',
+  '10.5%',
+  '11.5%',
+  '12%',
+  '13.5%',
+] as const
+export type EmployerPensionMatchRatio =
+  (typeof EMPLOYER_PENSION_MATCH_RATIOS)[number]
+
+const toOptions = (values: readonly string[]) =>
+  values.map((value) => ({ value }))
+
 /* Every field is optional, matching RSK: `GetWithholdingTaxData.query` is
  * itself optional and so is every member of it. A bare call returns RSK's own
  * defaults. Which fields a form treats as mandatory is a downstream concern. */
@@ -9,40 +46,28 @@ const withholdingTaxInputFields = [
     name: 'paymentFrequency',
     type: 'select',
     required: false,
-    options: [{ value: 'weekly' }, { value: 'monthly' }],
+    options: toOptions(PAYMENT_FREQUENCIES),
   },
   {
     name: 'maritalStatus',
     type: 'select',
     required: false,
-    options: [
-      { value: 'single' },
-      { value: 'singleParent' },
-      { value: 'marriedOrCohabiting' },
-    ],
+    options: toOptions(MARITAL_STATUSES),
   },
   { name: 'incomeYear', type: 'number', required: false, semantic: 'year' },
   { name: 'payMonth', type: 'number', required: false, semantic: 'month' },
   { name: 'salary', type: 'number', required: false, semantic: 'currency' },
-  /* The mandatory pension contribution is all-or-nothing at 4%; the private
-   * one is offered in whole points up to 4. */
   {
     name: 'pensionFundRatio',
     type: 'select',
     required: false,
-    options: [{ value: '0%' }, { value: '4%' }],
+    options: toOptions(PENSION_FUND_RATIOS),
   },
   {
     name: 'privatePensionRatio',
     type: 'select',
     required: false,
-    options: [
-      { value: '0%' },
-      { value: '1%' },
-      { value: '2%' },
-      { value: '3%' },
-      { value: '4%' },
-    ],
+    options: toOptions(PRIVATE_PENSION_RATIOS),
   },
   {
     name: 'taxCardUtilization',
@@ -75,23 +100,11 @@ const withholdingTaxInputFields = [
     required: false,
     semantic: 'currency',
   },
-  /* The employer's match is negotiated per collective agreement, so the set is
-   * neither round nor contiguous — 11% is genuinely absent between 10.5 and
-   * 11.5. */
   {
     name: 'employerPensionMatchRatio',
     type: 'select',
     required: false,
-    options: [
-      { value: '0%' },
-      { value: '8%' },
-      { value: '8.5%' },
-      { value: '10%' },
-      { value: '10.5%' },
-      { value: '11.5%' },
-      { value: '12%' },
-      { value: '13.5%' },
-    ],
+    options: toOptions(EMPLOYER_PENSION_MATCH_RATIOS),
   },
   {
     name: 'vehicleAllowance',
@@ -251,28 +264,20 @@ export const withholdingTaxCalculator = {
 } as const satisfies CalculatorContract<'withholdingTax'>
 
 export interface WithholdingTaxInput {
-  paymentFrequency?: 'weekly' | 'monthly'
-  maritalStatus?: 'single' | 'singleParent' | 'marriedOrCohabiting'
+  paymentFrequency?: PaymentFrequency
+  maritalStatus?: MaritalStatus
   incomeYear?: number
   payMonth?: number
   salary?: number
-  pensionFundRatio?: '0%' | '4%'
-  privatePensionRatio?: '0%' | '1%' | '2%' | '3%' | '4%'
+  pensionFundRatio?: PensionFundRatio
+  privatePensionRatio?: PrivatePensionRatio
   taxCardUtilization?: number
   spouseTaxCardUtilization?: number
   accumulatedPersonalTaxCredit?: number
   vacationPay?: number
   unionDues?: number
   otherDeduction?: number
-  employerPensionMatchRatio?:
-    | '0%'
-    | '8%'
-    | '8.5%'
-    | '10%'
-    | '10.5%'
-    | '11.5%'
-    | '12%'
-    | '13.5%'
+  employerPensionMatchRatio?: EmployerPensionMatchRatio
   vehicleAllowance?: number
   seamenAccidentInsurancePremium?: number
 }

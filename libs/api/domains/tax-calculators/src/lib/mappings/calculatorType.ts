@@ -12,16 +12,25 @@ import { TaxCalculatorType } from '@island.is/tax-calculators'
  * WITHHOLDING_TAX_ON_WAGES (`withholdingTaxOnWages`) maps to `withholdingTax`.
  *
  * Keyed on the enum rather than written as a lookup function so a fifth member
- * fails to compile here instead of silently resolving to undefined. */
-const CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE: Record<
-  TaxCalculatorType,
-  CalculatorKey
-> = {
+ * fails to compile here instead of silently resolving to undefined.
+ *
+ * `satisfies` rather than an annotation: both give that totality check, but an
+ * annotation widens the values back to the full six-member CalculatorKey,
+ * which would force unreachable `vehicleDepreciation` and `interestBenefit`
+ * branches into every dispatch downstream. */
+const CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE = {
   [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES]: 'withholdingTax',
   [TaxCalculatorType.CHILD_BENEFIT]: 'childBenefit',
   [TaxCalculatorType.VEHICLE_TAX]: 'vehicleTax',
   [TaxCalculatorType.VEHICLE_BENEFIT]: 'vehicleBenefit',
-}
+} as const satisfies Record<TaxCalculatorType, CalculatorKey>
 
-export const toCalculatorKey = (type: TaxCalculatorType): CalculatorKey =>
-  CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE[type]
+/* The four keys a request can actually reach: TaxCalculatorType is the GraphQL
+ * argument type, so enum coercion rejects anything outside it before a
+ * resolver runs. */
+export type ReachableCalculatorKey =
+  (typeof CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE)[TaxCalculatorType]
+
+export const toCalculatorKey = (
+  type: TaxCalculatorType,
+): ReachableCalculatorKey => CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE[type]

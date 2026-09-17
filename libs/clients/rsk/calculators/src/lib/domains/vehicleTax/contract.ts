@@ -1,6 +1,9 @@
 import type { CalculatorContract, CalculatorField } from '../../contracts/field'
 import type { CalculatorOutputField } from '../../contracts/output'
 
+export const VEHICLE_TAX_PERIODS = ['firstHalf', 'secondHalf'] as const
+export type VehicleTaxPeriod = (typeof VEHICLE_TAX_PERIODS)[number]
+
 const vehicleTaxInputFields = [
   { name: 'year', type: 'number', required: true, semantic: 'year' },
   { name: 'licensePlate', type: 'string', required: true },
@@ -8,7 +11,7 @@ const vehicleTaxInputFields = [
     name: 'period',
     type: 'select',
     required: true,
-    options: [{ value: 'firstHalf' }, { value: 'secondHalf' }],
+    options: VEHICLE_TAX_PERIODS.map((value) => ({ value })),
   },
   { name: 'periodSplitDate', type: 'date', required: false },
 ] as const satisfies readonly CalculatorField[]
@@ -44,7 +47,7 @@ export const vehicleTaxCalculator = {
 export interface VehicleTaxInput {
   year: number
   licensePlate: string
-  period: 'firstHalf' | 'secondHalf'
+  period: VehicleTaxPeriod
   periodSplitDate?: string
 }
 

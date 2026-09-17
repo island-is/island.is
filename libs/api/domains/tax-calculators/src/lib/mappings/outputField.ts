@@ -20,7 +20,7 @@ import type {
   StringOutputField,
 } from '../models/outputField.model'
 
-const OUTPUT_FIELD_TYPE_BY_CLIENT_TYPE: Record<
+export const OUTPUT_FIELD_TYPE_BY_CLIENT_TYPE: Record<
   CalculatorOutputScalarType,
   ScalarOutputFieldType
 > = {

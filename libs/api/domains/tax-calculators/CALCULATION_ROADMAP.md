@@ -120,6 +120,15 @@ Keep the generic dispatch map local to the domain, keyed on the client's
 - `vehicleBenefit` -> `getVehicleBenefit`
 - `withholdingTax` -> `getWithholdingTax`
 
+Key it on the four keys `toCalculatorKey` can actually produce, not on all six
+the client declares. `CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE` should be written
+with `satisfies` rather than an annotation, so the four literal values survive
+into `toCalculatorKey`'s return type. Annotating it widens them back to the full
+`CalculatorKey` union and forces dead `vehicleDepreciation` and
+`interestBenefit` branches into every dispatch -- which is where an
+"unsupported calculator" error code comes from, for a request GraphQL enum
+coercion already rejects.
+
 Do not key this map on `TaxCalculatorType`. The two vocabularies agree on three
 of the four names and disagree on the fourth --
 `TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES` is `withholdingTaxOnWages`, whose
@@ -198,7 +207,6 @@ enum TaxCalculatorCalculationErrorCode {
   INAPPLICABLE_VALUE
   UNKNOWN_FIELD
   DUPLICATE_FIELD
-  UNSUPPORTED_CALCULATOR
   CALCULATION_FAILED
   EMPTY_RESULT
 }
@@ -215,7 +223,6 @@ At minimum distinguish:
 - invalid submitted value
 - missing required applicable field
 - dependency-inapplicable submitted field
-- unsupported or unreachable calculator type
 - RSK calculation failure
 - empty/missing result from RSK
 

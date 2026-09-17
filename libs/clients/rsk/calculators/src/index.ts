@@ -32,11 +32,25 @@ export type {
   VehicleDepreciationInput,
   VehicleDepreciationOutput,
 } from './lib/domains/vehicleDepreciation'
+export { VEHICLE_TAX_PERIODS } from './lib/domains/vehicleTax'
 export type {
   VehicleTaxInput,
   VehicleTaxOutput,
+  VehicleTaxPeriod,
 } from './lib/domains/vehicleTax'
+export {
+  EMPLOYER_PENSION_MATCH_RATIOS,
+  MARITAL_STATUSES,
+  PAYMENT_FREQUENCIES,
+  PENSION_FUND_RATIOS,
+  PRIVATE_PENSION_RATIOS,
+} from './lib/domains/withholdingTax'
 export type {
+  EmployerPensionMatchRatio,
+  MaritalStatus,
+  PaymentFrequency,
+  PensionFundRatio,
+  PrivatePensionRatio,
   WithholdingTaxBracketOutput,
   WithholdingTaxInput,
   WithholdingTaxOutput,

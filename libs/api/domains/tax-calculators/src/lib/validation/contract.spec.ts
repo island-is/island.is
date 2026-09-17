@@ -182,6 +182,26 @@ describe('assertPublishableContract', () => {
     ).toThrow(/unknown field "missing"/)
   })
 
+  it('rejects a dependency on a field that is itself conditional', () => {
+    expect(
+      assertFields([
+        { name: 'splitCustody', type: 'boolean', required: true },
+        {
+          name: 'children',
+          type: 'number',
+          required: false,
+          dependsOn: { field: 'splitCustody', equals: true },
+        },
+        {
+          name: 'childrenUnder7',
+          type: 'number',
+          required: false,
+          dependsOn: { field: 'children', equals: 2 },
+        },
+      ]),
+    ).toThrow(/chained dependencies are unsupported/)
+  })
+
   it('rejects a dependency on a date field', () => {
     expect(
       assertFields([
@@ -248,6 +268,8 @@ describe('assertPublishableContract', () => {
     ).not.toThrow()
   })
 
+  /* A cycle needs either self-reference or a conditional target, so the two
+   * guards above cover every one of them. */
   it('rejects a dependency cycle longer than one hop', () => {
     expect(
       assertFields([
@@ -264,7 +286,7 @@ describe('assertPublishableContract', () => {
           dependsOn: { field: 'a', equals: true },
         },
       ]),
-    ).toThrow(/dependency cycle/)
+    ).toThrow(/chained dependencies are unsupported/)
   })
 })
 

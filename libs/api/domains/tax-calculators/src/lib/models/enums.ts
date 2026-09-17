@@ -50,7 +50,8 @@ registerEnumType(TaxCalculatorInputFieldSemantic, {
   valuesMap: {
     CURRENCY: { description: 'A whole amount in ISK.' },
     PERCENTAGE: {
-      description: 'A ratio between 0 and 1, not a 0-100 figure.',
+      description:
+        'A whole percent, for example `37` rather than `0.37`. Conversion to the ratio RSK expects happens below this boundary.',
     },
     YEAR: { description: 'A calendar year.' },
     MONTH: {
@@ -111,5 +112,54 @@ registerEnumType(TaxCalculatorOutputFieldSemantic, {
         'A month number. RSK does not document whether it counts from 0 or from 1, so no range is asserted.',
     },
     COUNT: { description: 'A non-negative whole count of something.' },
+  },
+})
+
+/* Unlike the enums above, this one mirrors no client literal union. GraphQL
+ * only ever sees the member names; the values exist to keep the TypeScript
+ * side readable. */
+export enum TaxCalculatorCalculationErrorCode {
+  INVALID_VALUE = 'invalidValue',
+  MISSING_REQUIRED_VALUE = 'missingRequiredValue',
+  INAPPLICABLE_VALUE = 'inapplicableValue',
+  UNKNOWN_FIELD = 'unknownField',
+  DUPLICATE_FIELD = 'duplicateField',
+  CALCULATION_FAILED = 'calculationFailed',
+  EMPTY_RESULT = 'emptyResult',
+}
+
+registerEnumType(TaxCalculatorCalculationErrorCode, {
+  name: 'TaxCalculatorCalculationErrorCode',
+  description:
+    'Why a calculation did not produce a result. This is the contract -- switch on it rather than parsing the accompanying `message`.',
+  valuesMap: {
+    INVALID_VALUE: {
+      description:
+        "A submitted value does not satisfy its field's contract: the wrong kind, a value outside a select field's options, a malformed date, or a fraction where a whole number is required. Carries the field `key`.",
+    },
+    MISSING_REQUIRED_VALUE: {
+      description:
+        'A field RSK requires was not submitted, and its dependency -- if it has one -- is met. Carries the field `key`.',
+    },
+    INAPPLICABLE_VALUE: {
+      description:
+        'A value was submitted for a field whose `dependsOn` condition the other submitted values do not meet. Carries the field `key`.',
+    },
+    UNKNOWN_FIELD: {
+      description:
+        "A submitted key is not in this calculator's input contract. Carries the submitted `key`.",
+    },
+    DUPLICATE_FIELD: {
+      description:
+        'The same key was submitted more than once. Carries that `key`.',
+    },
+    CALCULATION_FAILED: {
+      description:
+        'RSK rejected the calculation or could not be reached. Calculation-level, so it carries no `key`. The underlying failure is logged server-side and deliberately not surfaced here.',
+    },
+    EMPTY_RESULT: {
+      description:
+        'RSK answered successfully but returned no result body. Calculation-level, so it carries no `key`.',
+    },
   },
 })

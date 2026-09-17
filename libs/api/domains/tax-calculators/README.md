@@ -2,10 +2,13 @@
 
 Serves the input and output contracts for Skatturinn's (RSK) tax calculators,
 so a consumer can render a generic form, and know what a result will contain,
-instead of writing per-calculator UI code. Metadata only -- this domain runs no
-calculation.
+instead of writing per-calculator UI code -- and runs those calculators against
+submitted values.
 
-## The query
+Two queries, in that order: `taxCalculator` publishes the contract, and
+`taxCalculatorCalculate` runs one against values keyed by it.
+
+## The metadata query
 
 ```graphql
 taxCalculator(type: TaxCalculatorType!): TaxCalculator!
@@ -66,10 +69,11 @@ inside an array unrepresentable, matching the client's
 would let the schema express nesting the contract does not have.
 
 `TaxCalculatorOutputFieldSemantic` is a separate enum from
-`TaxCalculatorInputFieldSemantic` despite identical members. The input enum
-documents `PERCENTAGE` as a 0-1 ratio; RSK does not document output ratio
-scale, and the client passes it through unchanged, so the output enum asserts
-no scale.
+`TaxCalculatorInputFieldSemantic` despite identical members, because the two
+sides assert different things about `PERCENTAGE`. The input enum documents
+whole percent, which is the value a consumer must submit; RSK does not document
+output ratio scale, and the client passes it through unchanged, so the output
+enum asserts none.
 
 `dependsOn.equals` is a union over
 `TaxCalculator{Boolean,String,Number}InputDependencyValue`; read `__typename` to
@@ -82,10 +86,11 @@ since the consumer is the Contentful-driven Calculator slice on the public web.
 
 ## Deliberate deviations
 
-**The root query is non-nullable**, against `conventions/graphql.md`'s "all root
-Query fields must be nullable". That rule protects consumers from a query that
-fronts a service which can be down; this one reads a static in-process registry
-with no network behind it.
+**The metadata root query is non-nullable**, against `conventions/graphql.md`'s
+"all root Query fields must be nullable". That rule protects consumers from a
+query that fronts a service which can be down; `taxCalculator` reads a static
+in-process registry with no network behind it. `taxCalculatorCalculate` does
+front RSK, and takes the convention as written.
 
 **Output uses a second scalar interface**, unlike input fields. This lets
 `TaxCalculatorArrayOutputField.itemFields` be typed as
@@ -164,11 +169,92 @@ the current metadata shape: `taxCalculator(type:)`, `inputFields`,
 `outputFields`, structured select options, dependency `fieldKey`, and typed
 dependency values.
 
-## Performing a calculation
+## The calculation query
 
-Not implemented, and separate from output metadata. `outputFields` describes
-what a result will contain; executing a calculation and mapping its values is a
-later round. The operation name `taxCalculatorCalculate` stays reserved for it.
+```graphql
+taxCalculatorCalculate(
+  input: TaxCalculatorCalculateInput!
+): TaxCalculatorCalculateResponse
+
+input TaxCalculatorCalculateInput {
+  type: TaxCalculatorType!
+  values: [TaxCalculatorInputFieldValue!]!
+}
+
+input TaxCalculatorInputFieldValue {
+  key: String!
+  value: TaxCalculatorInputValue!
+}
+
+input TaxCalculatorInputValue @oneOf {
+  numberValue: Float
+  stringValue: String
+  booleanValue: Boolean
+}
+
+type TaxCalculatorCalculateResponse {
+  calculation: TaxCalculatorCalculation
+  errors: [TaxCalculatorCalculationError!]!
+}
+```
+
+Generic at the GraphQL boundary, typed at the client boundary. Submitted values
+are keyed by input field `key` and results by output field `key`, so one query
+document serves every calculator, including ones not yet declared.
+
+`TaxCalculatorOutputFieldValue` is a flat tagged object -- `type` plus mutually
+exclusive nullable payloads -- rather than the interface hierarchy the metadata
+models use. The metadata models are genuinely polymorphic: different field types
+carry different fields. Values all carry a key and exactly one payload, so an
+interface would only force the consumer to enumerate concrete types through
+inline fragments, twice over once array rows nest, to read a fact the metadata
+contract already stated.
+
+### Three failure paths, not two
+
+A consumer has to handle all three, and only the middle one is an `errors` entry:
+
+1. **A transport or contract failure** nulls the whole response, or throws.
+   Unpublishable client metadata is the contract bug described above.
+2. **A populated `errors` array.** Validation and RSK failures alike. When
+   `errors` is non-empty `calculation` is null: a calculation runs completely or
+   not at all, and there is no partial result.
+3. **A top-level GraphQL error before the resolver runs.** `@oneOf` coercion
+   rejects a payload that is empty or carries more than one member, and a
+   cleared form control produces exactly that. Omit the whole
+   `TaxCalculatorInputFieldValue` row rather than sending `{}` or
+   `{ stringValue: null }`. Only `''` reaches the domain, which reads it as no
+   value at all.
+
+`TaxCalculatorCalculationError.code` is the contract; `message` is
+developer-facing English for logs, is not localized, and must never be
+rendered. Field-level codes carry the input `key`; `CALCULATION_FAILED` and
+`EMPTY_RESULT` are calculation-level and carry none.
+
+An RSK failure is logged server-side and deliberately not interpolated into
+`message` -- this is a public unauthenticated operation, so upstream detail must
+not reach the response.
+
+### Public value conventions
+
+Percentage inputs are whole percent (`37`, not `0.37`) and month inputs are
+`1-12`. The domain passes both through unchanged; the client's query mapper owns
+the conversion to RSK's own encoding, along with every other RSK-specific
+detail. Dates are `yyyy-MM-dd` on both sides.
+
+Number fields carrying the `year`, `month` or `count` semantic must be whole
+numbers. That is the one place a semantic affects behaviour rather than
+presentation, and it is an integrality rule rather than the range assertion the
+semantic enum disclaims.
+
+### Applicability is narrower here than on the web
+
+The domain decides applicability from `dependsOn` alone. The public web slice
+decides it from `dependsOn` plus CMS section gates, and does not submit values
+in a closed section. An editor who places a contract-required field inside a
+gated section therefore gets a `MISSING_REQUIRED_VALUE` for a value the web
+correctly declined to send. Surfacing that to the editor belongs to the web
+slice's own diagnostics, not here.
 
 ## Running unit tests
 
