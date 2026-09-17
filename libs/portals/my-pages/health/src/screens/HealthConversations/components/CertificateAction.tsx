@@ -57,6 +57,14 @@ const useCertificatePaymentPolling = ({
     return () => clearTimeout(timeout)
   }, [isPolling])
 
+  // A fresh intent can also arrive on an already-mounted message via a
+  // conversation refetch (e.g. the bfcache return from the gateway). Safe to
+  // re-arm on, unlike the removed pendingPaymentId effect: only a recent
+  // timestamp arms, so each one buys at most one bounded polling window.
+  useEffect(() => {
+    if (isPaymentMaybeInFlight(pendingPaymentStartedAt)) setIsPolling(true)
+  }, [pendingPaymentStartedAt])
+
   const { data: pollData } = useGetHealthCertificateQuery({
     variables: { id: certificateId ?? '' },
     skip: !isPolling || !certificateId,
