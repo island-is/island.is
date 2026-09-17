@@ -4,7 +4,6 @@ import { JobFactor, SalaryComponentKey, SubCriterion } from './types'
 export type Events = {
   type:
     | DefaultEvents.SUBMIT
-    | DefaultEvents.ABORT
     | DefaultEvents.APPROVE
     | DefaultEvents.REJECT
     | DefaultEvents.EDIT
