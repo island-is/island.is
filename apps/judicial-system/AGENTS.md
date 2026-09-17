@@ -116,6 +116,30 @@ derivation and tested directly; see
 to assert what only rendering can: that the values reach the page, and that
 nothing which should be hidden appears.
 
+## Run the e2e suite against a production build
+
+The judicial-system Playwright suite (`apps/system-e2e/src/tests/judicial-system`)
+is timed for a production build of the web app. Against a dev server Next
+compiles every route on first visit, which blows the suite's 15s request waits
+and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
+
+- Run it with `yarn playwright test -c apps/system-e2e/src --project judicial-system`,
+  or `/js-e2e` in Claude Code. When nothing listens on port 4200 the Playwright
+  config builds the production bundle and serves it itself; a dev server on
+  that port is reused as-is (slow, avoid). The port cannot change: the dev S3
+  upload bucket only allows the `localhost:4200` origin.
+- Before running: backend migrations applied and seeders run
+  (`yarn nx run judicial-system-backend:migrate` and `:seed`). A stale schema
+  makes every case creation fail with a 500, and the e2e defender
+  (`0909090909`) only logs in because the seeders put it in `lawyer_registry`.
+- Every spec is `describe.serial`, so one failure skips the rest of that file.
+  Read the trace (`apps/system-e2e/src/dist/test-results/*/trace.zip`) before
+  changing a test: `0-trace.network` shows request timing, and most "flaky"
+  failures are a server 500, a missing seed or a wait satisfied by a response
+  that was already in flight.
+- Never put a `.spec.ts` under `pages/` in the web app - Next compiles it as a
+  route and the production build fails.
+
 ## Codegen
 
 Regenerate after changing GraphQL schema/resolvers, REST controllers/DTOs, or
