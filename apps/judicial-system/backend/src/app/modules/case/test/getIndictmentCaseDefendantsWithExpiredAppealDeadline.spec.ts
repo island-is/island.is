@@ -69,8 +69,9 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
     const latestVerdictId = uuid()
     const olderVerdictId = uuid()
 
-    const mockFindAll = mockCaseRepositoryService.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([
+    const mockFindCases =
+      mockCaseRepositoryService.findIndictmentCasesForVerdictAppealDeadlineCheck as jest.Mock
+    mockFindCases.mockResolvedValue([
       buildCase({
         defendantId,
         verdicts: [
@@ -105,8 +106,9 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
     const defendantId = uuid()
     const latestVerdictId = uuid()
 
-    const mockFindAll = mockCaseRepositoryService.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([
+    const mockFindCases =
+      mockCaseRepositoryService.findIndictmentCasesForVerdictAppealDeadlineCheck as jest.Mock
+    mockFindCases.mockResolvedValue([
       buildCase({
         defendantId,
         verdicts: [
@@ -138,8 +140,9 @@ describe('InternalCaseService - getIndictmentCaseDefendantsWithExpiredAppealDead
     const olderVerdictId = uuid()
     const newerVerdictId = uuid()
 
-    const mockFindAll = mockCaseRepositoryService.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([
+    const mockFindCases =
+      mockCaseRepositoryService.findIndictmentCasesForVerdictAppealDeadlineCheck as jest.Mock
+    mockFindCases.mockResolvedValue([
       buildCase({
         defendantId,
         // Unordered on purpose: selection must use newest by created,
