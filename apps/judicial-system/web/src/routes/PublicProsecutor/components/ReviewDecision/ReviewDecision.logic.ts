@@ -37,46 +37,6 @@ export const getReviewDecisionLabel = (
   return isFine ? 'Una viðurlagaákvörðun' : 'Una héraðsdómi'
 }
 
-export interface VerdictAppealActions {
-  // Defendants the prosecution now appeals the verdict of.
-  toAppeal: Defendant[]
-  // Defendants whose appeal the prosecution takes back.
-  toWithdraw: Defendant[]
-}
-
-/**
- * The verdict appeals that confirming these decisions comes to.
- *
- * For the prosecution the review decision is the appeal: deciding to appeal
- * files one for that defendant, and changing the decision back takes it away
- * again. Only decisions that were actually saved are acted on, and only those
- * that changed - reconfirming an appeal must not file a second one.
- *
- * A decision changed away from an appeal is only withdrawn when there is an
- * appeal standing for that defendant. A decision recorded as an appeal before
- * verdict appeals were switched on has none, and the backend refuses to
- * withdraw one that was never filed - so treating every such change as a
- * withdrawal would leave the reviewer unable to confirm at all.
- */
-export const getVerdictAppealActions = (
-  savedDefendants: Defendant[],
-  originalDecisions: ReviewDecisions,
-  defendantIdsWithStandingAppeal: string[],
-): VerdictAppealActions => ({
-  toAppeal: savedDefendants.filter(
-    (defendant) =>
-      defendant.indictmentReviewDecision ===
-      IndictmentCaseReviewDecision.APPEAL,
-  ),
-  toWithdraw: savedDefendants.filter(
-    (defendant) =>
-      defendant.indictmentReviewDecision !==
-        IndictmentCaseReviewDecision.APPEAL &&
-      originalDecisions[defendant.id] === IndictmentCaseReviewDecision.APPEAL &&
-      defendantIdsWithStandingAppeal.includes(defendant.id),
-  ),
-})
-
 /**
  * Whether confirming these decisions means appealing after the prosecution's
  * own deadline has run out. The deadline is soft - a late appeal is allowed -

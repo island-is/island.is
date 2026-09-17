@@ -4,7 +4,6 @@ import { IndictmentCaseReviewDecision } from '@island.is/judicial-system-web/src
 import {
   getChangedReviewDecisions,
   getReviewDecisionLabel,
-  getVerdictAppealActions,
   isLateVerdictAppeal,
 } from './ReviewDecision.logic'
 
@@ -71,62 +70,6 @@ describe('getReviewDecisionLabel', () => {
     expect(
       getReviewDecisionLabel(IndictmentCaseReviewDecision.ACCEPT, true),
     ).toBe('Una viðurlagaákvörðun')
-  })
-})
-
-describe('getVerdictAppealActions', () => {
-  const appeals: Defendant = {
-    id: 'appeals',
-    indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
-  }
-  const accepts: Defendant = {
-    id: 'accepts',
-    indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
-  }
-
-  it('should file an appeal for every defendant it was decided for', () => {
-    expect(getVerdictAppealActions([appeals, accepts], {}, [])).toEqual({
-      toAppeal: [appeals],
-      toWithdraw: [],
-    })
-  })
-
-  // Changing the decision back takes the appeal away again.
-  it('should withdraw the appeal of a defendant changed away from it', () => {
-    expect(
-      getVerdictAppealActions(
-        [accepts],
-        { accepts: IndictmentCaseReviewDecision.APPEAL },
-        ['accepts'],
-      ),
-    ).toEqual({ toAppeal: [], toWithdraw: [accepts] })
-  })
-
-  // Only a decision that stood as an appeal has one to take back.
-  it('should not withdraw for a defendant who never appealed', () => {
-    expect(
-      getVerdictAppealActions([accepts], { accepts: null }, ['accepts']),
-    ).toEqual({ toAppeal: [], toWithdraw: [] })
-  })
-
-  // A decision recorded as an appeal before verdict appeals were switched on
-  // has no appeal behind it, and the backend refuses to withdraw one that was
-  // never filed - so this must not become a withdrawal the reviewer waits on.
-  it('should not withdraw when no appeal stands for that defendant', () => {
-    expect(
-      getVerdictAppealActions(
-        [accepts],
-        { accepts: IndictmentCaseReviewDecision.APPEAL },
-        [],
-      ),
-    ).toEqual({ toAppeal: [], toWithdraw: [] })
-  })
-
-  it('should do nothing when nothing was saved', () => {
-    expect(getVerdictAppealActions([], {}, [])).toEqual({
-      toAppeal: [],
-      toWithdraw: [],
-    })
   })
 })
 

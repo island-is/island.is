@@ -1,7 +1,0 @@
-mutation CreateProsecutionVerdictAppeal($input: CreateAppealCaseInput!) {
-  createAppealCase(input: $input) {
-    id
-    appealState
-    appealType
-  }
-}
