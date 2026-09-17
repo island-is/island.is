@@ -640,8 +640,10 @@ export const archivableCaseInclude: Includeable[] = [
   { model: AppealDecision, as: 'appealDecisions' },
 ]
 
-// The archive is a positional structure, so the order the children come back
-// in is part of it - the encryption map is written and read in this order.
+// The archived children are stored as arrays of property values carrying no ids
+// of their own, so a child's position is its only identity - this order is the
+// order they are written to the archive in, and the order any future restore
+// would have to assume. Nothing in this codebase reads the archive back.
 export const archivableCaseOrder: Order = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'displayOrder', 'ASC'],
