@@ -48,13 +48,12 @@ const routes: Record<
   '/minarsidur/heilsa/bolusetningar': '/health/vaccinations',
   '/minarsidur/heilsa/spurningalistar': '/health/questionnaires',
   '/minarsidur/heilsa/lyf': '/health/medicine',
-  '/minarsidur/heilsa/lyf/lyfjaskirteini': '/health/medicine/prescriptions',
-  // Lands on the medicine hub with the prescriptions tab selected rather than
-  // the standalone prescriptions route, which is titled "Lyfjaskírteini".
-  '/minarsidur/heilsa/lyf/lyfjaavisanir': {
-    pathname: '/health/medicine',
-    params: { tab: 'prescriptions' },
-  },
+  // Both resolve to the standalone screen that renders the content, not to a
+  // tab on the medicine hub: the hub's prescriptions tab sits behind
+  // `isPrescriptionsEnabled`, and a `?tab=` that is flagged off silently falls
+  // back to the first tab instead of failing.
+  '/minarsidur/heilsa/lyf/lyfjaskirteini': '/health/medicine/certificates',
+  '/minarsidur/heilsa/lyf/lyfjaavisanir': '/health/medicine/prescriptions',
   '/minarsidur/heilsa/lyf/lyfjasaga/:id': ({ id }) => ({
     pathname: '/health/medicine/prescriptions/history/[id]',
     params: { id: id as string },

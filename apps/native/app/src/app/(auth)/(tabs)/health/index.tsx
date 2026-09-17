@@ -265,7 +265,7 @@ export default function HealthOverviewScreen() {
         id: 'prescriptionsAndCertificates',
         titleId: 'health.drugCertificates.title',
         icon: medicineIcon,
-        route: '/health/medicine/legacy',
+        route: '/health/medicine/certificates',
         enabled: !isMedicineEnabled,
       },
       {
