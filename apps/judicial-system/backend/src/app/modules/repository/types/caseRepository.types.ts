@@ -554,6 +554,7 @@ export const caseInclude: Includeable[] = [
 export const caseStatisticsInclude: Includeable[] = [
   {
     model: EventLog,
+    as: 'eventLogs',
     required: false,
     attributes: ['created', 'eventType'],
     where: { eventType: EventType.INDICTMENT_CONFIRMED },
@@ -565,6 +566,7 @@ export const caseStatisticsInclude: Includeable[] = [
 export const requestCaseEventExportInclude: Includeable[] = [
   {
     model: EventLog,
+    as: 'eventLogs',
     required: false,
     attributes: ['created', 'eventType'],
   },
@@ -601,6 +603,7 @@ export const requestCaseEventExportInclude: Includeable[] = [
 export const indictmentCaseEventExportInclude: Includeable[] = [
   {
     model: EventLog,
+    as: 'eventLogs',
     required: false,
     attributes: ['created', 'eventType'],
   },
