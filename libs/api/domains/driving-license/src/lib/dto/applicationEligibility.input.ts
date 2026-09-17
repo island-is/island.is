@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import type { DrivingLicenseApplicationType } from '../../drivingLicense.type'
+import type { DrivingLicenseApplicationType } from '../drivingLicense.type'
 
 @InputType()
 export class ApplicationEligibilityInput {
