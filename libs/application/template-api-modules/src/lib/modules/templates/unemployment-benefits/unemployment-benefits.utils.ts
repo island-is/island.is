@@ -235,7 +235,7 @@ export const getJobCareer = (
     ) || []
   const previousJobCareer =
     employmentHistory?.lastJobs
-      // filters out stray empty {} objects that can end up in the array
+      // filters out stray empty {} objects
       ?.filter((job) => job && Object.keys(job).length > 0)
       .map((job) => {
         const employerSSN =
@@ -260,7 +260,7 @@ export const getJobCareer = (
 
   const currentJobCareer =
     employmentHistory?.currentJobs
-      // filters out stray empty {} objects that can end up in the array
+      // filters out stray empty {} objects
       ?.filter((job) => job && Object.keys(job).length > 0)
       .map((job, index) => {
         let workHours
