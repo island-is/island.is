@@ -103,7 +103,7 @@ describe('court of appeals verdict appeal tables', () => {
       caseTables[CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED]
 
     expect(inProgress.columnKeys).toEqual([
-      'caseNumber',
+      'verdictAppealCaseNumber',
       'defendants',
       'caseType',
       'districtCourtRulingDate',
@@ -112,7 +112,7 @@ describe('court of appeals verdict appeal tables', () => {
       'verdictAppealHead',
     ])
     expect(completed.columnKeys).toEqual([
-      'caseNumber',
+      'verdictAppealCaseNumber',
       'defendants',
       'caseType',
       'verdictAppealAppellant',
@@ -124,6 +124,10 @@ describe('court of appeals verdict appeal tables', () => {
       expect(table.columnKeys).not.toContain('appealState')
       expect(table.columnKeys).not.toContain('appealCaseState')
       expect(table.columnKeys).not.toContain('courtOfAppealsHead')
+      // caseNumber's generator reads the ruling appeal, so these lists would
+      // show no appeal case number at all - or, on a case that had both, the
+      // wrong one.
+      expect(table.columnKeys).not.toContain('caseNumber')
     }
   })
 

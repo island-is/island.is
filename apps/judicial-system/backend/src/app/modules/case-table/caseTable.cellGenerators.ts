@@ -468,6 +468,53 @@ const generateCaseNumberSortValue = (
   return undefined
 }
 
+// The numbers a case is known by, most specific first: the number the court of
+// appeals gave the appeal, the district court's case number, and the police
+// case number. Which appeal supplies the first line is the caller's to say -
+// a list of appealed verdicts must not label its rows with the number of a
+// ruling appeal, and would otherwise show no appeal number at all.
+const generateCaseNumber = (
+  c: Case,
+  user: TUser,
+  appealCaseNumber: string,
+): CaseTableCell<StringGroupValue> => {
+  const court = !isDistrictCourtUser(user)
+    ? districtCourtAbbreviation(c.court?.name)
+    : ''
+  const courtCaseNumber =
+    court && c.courtCaseNumber
+      ? `${court}: ${c.courtCaseNumber}`
+      : c.courtCaseNumber ?? ''
+  const policeCaseNumber =
+    c.policeCaseNumbers.length > 0
+      ? c.policeCaseNumbers.length > 1
+        ? `${c.policeCaseNumbers[0]} +${c.policeCaseNumbers.length - 1}`
+        : c.policeCaseNumbers[0]
+      : ''
+
+  const sortValue = generateCaseNumberSortValue(
+    appealCaseNumber,
+    courtCaseNumber,
+    policeCaseNumber,
+    user,
+  )
+
+  const hasCheckMark =
+    isPublicProsecutionOfficeUser(user) &&
+    // It's ok to only check the first defendant here since this
+    // checkmark is only used for public prosecutors office users
+    // and each defendant has their own line in their cases table
+    c.defendants?.[0]?.publicProsecutorIsRegisteredInPoliceSystem
+
+  return generateCell(
+    {
+      strList: [appealCaseNumber, courtCaseNumber, policeCaseNumber],
+      hasCheckMark,
+    },
+    sortValue,
+  )
+}
+
 const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['policeCaseNumbers', 'courtCaseNumber'],
   includes: {
@@ -476,44 +523,19 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
     appealCase: { attributes: ['appealCaseNumber'] },
     rulingOrderAppealCases: { attributes: ['appealCaseNumber'] },
   },
-  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
-    const court = !isDistrictCourtUser(user)
-      ? districtCourtAbbreviation(c.court?.name)
-      : ''
-    const appealCaseNumber = c.appealCase?.appealCaseNumber ?? ''
-    const courtCaseNumber =
-      court && c.courtCaseNumber
-        ? `${court}: ${c.courtCaseNumber}`
-        : c.courtCaseNumber ?? ''
-    const policeCaseNumber =
-      c.policeCaseNumbers.length > 0
-        ? c.policeCaseNumbers.length > 1
-          ? `${c.policeCaseNumbers[0]} +${c.policeCaseNumbers.length - 1}`
-          : c.policeCaseNumbers[0]
-        : ''
+  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> =>
+    generateCaseNumber(c, user, c.appealCase?.appealCaseNumber ?? ''),
+}
 
-    const sortValue = generateCaseNumberSortValue(
-      appealCaseNumber,
-      courtCaseNumber,
-      policeCaseNumber,
-      user,
-    )
-
-    const hasCheckMark =
-      isPublicProsecutionOfficeUser(user) &&
-      // It's ok to only check the first defendant here since this
-      // checkmark is only used for public prosecutors office users
-      // and each defendant has their own line in their cases table
-      c.defendants?.[0]?.publicProsecutorIsRegisteredInPoliceSystem
-
-    return generateCell(
-      {
-        strList: [appealCaseNumber, courtCaseNumber, policeCaseNumber],
-        hasCheckMark,
-      },
-      sortValue,
-    )
+const verdictAppealCaseNumber: CaseTableCellGenerator<StringGroupValue> = {
+  attributes: ['policeCaseNumbers', 'courtCaseNumber'],
+  includes: {
+    court: { attributes: ['name'] },
+    defendants: { attributes: ['publicProsecutorIsRegisteredInPoliceSystem'] },
+    verdictAppealCase: { attributes: ['appealCaseNumber'] },
   },
+  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> =>
+    generateCaseNumber(c, user, c.verdictAppealCase?.appealCaseNumber ?? ''),
 }
 
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
@@ -1383,6 +1405,7 @@ export const caseTableCellGenerators: Record<
   // The district court's ruling date, which the verdict appeal lists show under
   // a title of their own.
   districtCourtRulingDate: rulingDate,
+  verdictAppealCaseNumber,
   verdictAppealAppellant,
   verdictAppealState,
   verdictAppealHead,

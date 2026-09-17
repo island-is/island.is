@@ -35,7 +35,7 @@ export const courtOfAppealsCasesCompleted: CaseTable = {
 // is filed, before the court of appeals has received it, so the first thing the
 // court sees is a case with no appeal case number - "Nýtt".
 const courtOfAppealsVerdictAppealsInProgressColumnKeys: CaseTableColumnKey[] = [
-  'caseNumber',
+  'verdictAppealCaseNumber',
   'defendants',
   'caseType',
   'districtCourtRulingDate',
@@ -52,7 +52,7 @@ export const courtOfAppealsVerdictAppealsInProgress: CaseTable = {
 }
 
 const courtOfAppealsVerdictAppealsCompletedColumnKeys: CaseTableColumnKey[] = [
-  'caseNumber',
+  'verdictAppealCaseNumber',
   'defendants',
   'caseType',
   'verdictAppealAppellant',

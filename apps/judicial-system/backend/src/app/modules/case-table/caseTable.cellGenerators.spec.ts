@@ -221,3 +221,46 @@ describe('verdict appeal cell generators', () => {
     })
   })
 })
+
+describe('the case number on a verdict appeal list', () => {
+  const user = { role: UserRole.COURT_OF_APPEALS_JUDGE } as User
+
+  const caseWithBothAppeals = {
+    policeCaseNumbers: ['007-2022-45678'],
+    courtCaseNumber: 'S-301/2022',
+    appealCase: { appealCaseNumber: '1111/2022' },
+    verdictAppealCase: { appealCaseNumber: '2041/2022' },
+  } as Case
+
+  it('labels the row with the verdict appeal, not the ruling appeal', () => {
+    const cell = caseTableCellGenerators.verdictAppealCaseNumber.generate(
+      caseWithBothAppeals,
+      user,
+    )
+
+    expect((cell.value as { strList: string[] }).strList[0]).toBe('2041/2022')
+  })
+
+  it('still labels a ruling appeal row with the ruling appeal', () => {
+    const cell = caseTableCellGenerators.caseNumber.generate(
+      caseWithBothAppeals,
+      user,
+    )
+
+    expect((cell.value as { strList: string[] }).strList[0]).toBe('1111/2022')
+  })
+
+  // Landsréttur has not numbered the appeal yet - that is what "Nýtt" is.
+  it('leaves the appeal number out until one is given', () => {
+    const cell = caseTableCellGenerators.verdictAppealCaseNumber.generate(
+      { ...caseWithBothAppeals, verdictAppealCase: {} } as Case,
+      user,
+    )
+
+    expect((cell.value as { strList: string[] }).strList).toEqual([
+      '',
+      'S-301/2022',
+      '007-2022-45678',
+    ])
+  })
+})

@@ -41,6 +41,7 @@ const prosecutorInitials: CaseTableColumn = { title: 'Ákærandi' }
 // The verdict appeal columns read the case's verdict appeal, not its ruling
 // appeal, so they cannot share the appealCase-backed columns above even where
 // the title is the same.
+const verdictAppealCaseNumber: CaseTableColumn = { title: 'Málsnúmer' }
 const districtCourtRulingDate: CaseTableColumn = { title: 'Dómur héraðsdóms' }
 const verdictAppealAppellant: CaseTableColumn = { title: 'Áfrýjað af' }
 const verdictAppealState: CaseTableColumn = { title: 'Staða' }
@@ -78,6 +79,7 @@ export const caseTableColumns = {
   created,
   prosecutor,
   prosecutorInitials,
+  verdictAppealCaseNumber,
   districtCourtRulingDate,
   verdictAppealAppellant,
   verdictAppealState,
