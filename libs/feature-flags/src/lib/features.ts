@@ -221,6 +221,7 @@ export enum Features {
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
   // Housing Benefits
   isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
+  isDriversDeprivationsEnabled = 'isDriversDeprivationsEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 
