@@ -2295,6 +2295,15 @@ export const messages = defineMessages({
     defaultMessage: 'Ekki tókst að framkvæma aðgerð, reyndu aftur',
     id: 'sp.health:cancel-appointment-error',
   },
+  cancelContactProvider: {
+    defaultMessage:
+      'Ekki tókst að afbóka tíma, vinsamlegast hringdu í þjónustuveitanda.',
+    id: 'sp.health:cancel-contact-provider',
+  },
+  cancelUnconfirmed: {
+    defaultMessage: 'Ekki tókst að staðfesta afbókun, reyndu aftur.',
+    id: 'sp.health:cancel-unconfirmed',
+  },
   appointmentCancelledStatus: {
     defaultMessage: 'Afbókað',
     id: 'sp.health:appointment-cancelled-status',
