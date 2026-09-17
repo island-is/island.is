@@ -3,7 +3,6 @@ import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
-import { Op, WhereOptions } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 
@@ -12,11 +11,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseType,
   DataGroups,
-  dateTypes,
-  defendantEventTypes,
   EventType,
   InstitutionType,
   isCompletedCase,
@@ -25,21 +20,11 @@ import {
 
 import { AwsS3Service } from '../aws-s3'
 import {
-  AppealCase,
-  AppealEventLog,
   Case,
   CaseRepositoryService,
-  DateLog,
-  Defendant,
-  DefendantEventLog,
   EventLog,
-  IndictmentCount,
-  Institution,
   InstitutionRepositoryService,
-  Offense,
-  Subpoena,
   SubpoenaRepositoryService,
-  Verdict,
 } from '../repository'
 import {
   CaseStatistics,
@@ -175,49 +160,10 @@ export class StatisticsService {
     to?: Date,
     institutionId?: string,
   ): Promise<CaseStatistics> {
-    let where: WhereOptions = {
-      state: {
-        [Op.not]: [
-          CaseState.DELETED,
-          CaseState.DRAFT,
-          CaseState.NEW,
-          CaseState.WAITING_FOR_CONFIRMATION,
-        ],
-      },
-    }
-
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    if (institutionId) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { courtId: institutionId },
-          { prosecutorsOfficeId: institutionId },
-        ],
-      }
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-          where: {
-            eventType: EventType.INDICTMENT_CONFIRMED,
-          },
-        },
-      ],
+    const cases = await this.caseRepositoryService.findCasesForStatistics({
+      from,
+      to,
+      institutionId,
     })
 
     const [indictments, requests] = partition(cases, (c) =>
@@ -298,47 +244,8 @@ export class StatisticsService {
   }
 
   private async extractAndTransformRequestCases(period?: DateFilter) {
-    const where: WhereOptions = {
-      type: {
-        [Op.not]: [CaseType.INDICTMENT],
-      },
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      order: [['created', 'ASC']],
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-        },
-        { model: Institution, as: 'prosecutorsOffice' },
-        { model: Institution, as: 'court' },
-        {
-          model: DateLog,
-          as: 'dateLogs',
-          required: false,
-          where: { dateType: dateTypes },
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-        {
-          model: AppealCase,
-          as: 'appealCase',
-          required: false,
-          include: [
-            {
-              model: AppealEventLog,
-              as: 'appealEventLogs',
-              required: false,
-              attributes: ['eventType', 'userRole'],
-              separate: true,
-            },
-          ],
-        },
-      ],
-    })
+    const cases =
+      await this.caseRepositoryService.findRequestCasesForEventExport()
 
     // create events for data analytics for each case
     if (!period) return []
@@ -353,77 +260,8 @@ export class StatisticsService {
   }
 
   private async extractAndTransformIndictmentCases(period?: DateFilter) {
-    const where: WhereOptions = {
-      type: CaseType.INDICTMENT,
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      order: [['created', 'ASC']],
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-        },
-        {
-          model: IndictmentCount,
-          as: 'indictmentCounts',
-          required: false,
-          order: [['created', 'ASC']],
-          include: [
-            {
-              model: Offense,
-              as: 'offenses',
-              required: false,
-              order: [['created', 'ASC']],
-              separate: true,
-            },
-          ],
-          separate: true,
-        },
-        { model: Institution, as: 'prosecutorsOffice' },
-        { model: Institution, as: 'court' },
-        {
-          model: DateLog,
-          as: 'dateLogs',
-          required: false,
-          where: { dateType: dateTypes },
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: false,
-          order: [['created', 'ASC']],
-          include: [
-            {
-              model: Subpoena,
-              as: 'subpoenas',
-              required: false,
-              order: [['created', 'DESC']],
-              separate: true,
-            },
-            {
-              model: DefendantEventLog,
-              as: 'eventLogs',
-              required: false,
-              where: { eventType: defendantEventTypes },
-              separate: true,
-            },
-            {
-              model: Verdict,
-              as: 'verdicts',
-              required: false,
-              order: [['created', 'DESC']],
-              separate: true,
-            },
-          ],
-          separate: true,
-        },
-      ],
-    })
+    const cases =
+      await this.caseRepositoryService.findIndictmentCasesForEventExport()
 
     // get institutions that are not linked directly to a case but
     // are known to handle certain events
