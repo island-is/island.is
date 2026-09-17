@@ -145,4 +145,21 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:myDataAttachmentError',
     defaultMessage: 'Ekki tókst að sækja skjal',
   },
+  paymentsTitle: {
+    id: 'sp.social-benefits-unemployment:paymentsTitle',
+    defaultMessage: 'Greiðslur',
+  },
+  paymentsIntro: {
+    id: 'sp.social-benefits-unemployment:paymentsIntro',
+    defaultMessage:
+      'Hér er yfirlit yfir þínar greiðslur frá Atvinnuleysissjóði',
+  },
+  paymentsTabPayments: {
+    id: 'sp.social-benefits-unemployment:paymentsTabPayments',
+    defaultMessage: 'Greiðslur frá Atvinnuleysissjóði',
+  },
+  paymentsTabReportedIncome: {
+    id: 'sp.social-benefits-unemployment:paymentsTabReportedIncome',
+    defaultMessage: 'Tilkynntar tekjur',
+  },
 })
