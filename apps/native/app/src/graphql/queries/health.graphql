@@ -407,6 +407,7 @@ query GetHealthConversationRecipients($locale: LocaleEnum) {
       patientInitiatedTypeCode
       title
       description
+      instructions
       isCertificate
     }
   }

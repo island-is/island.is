@@ -49,6 +49,12 @@ const routes: Record<
   '/minarsidur/heilsa/spurningalistar': '/health/questionnaires',
   '/minarsidur/heilsa/lyf': '/health/medicine',
   '/minarsidur/heilsa/lyf/lyfjaskirteini': '/health/medicine/prescriptions',
+  // Lands on the medicine hub with the prescriptions tab selected rather than
+  // the standalone prescriptions route, which is titled "Lyfjaskírteini".
+  '/minarsidur/heilsa/lyf/lyfjaavisanir': {
+    pathname: '/health/medicine',
+    params: { tab: 'prescriptions' },
+  },
   '/minarsidur/heilsa/lyf/lyfjasaga/:id': ({ id }) => ({
     pathname: '/health/medicine/prescriptions/history/[id]',
     params: { id: id as string },

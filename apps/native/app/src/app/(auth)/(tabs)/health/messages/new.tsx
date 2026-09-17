@@ -12,6 +12,7 @@ import { useTheme } from 'styled-components/native'
 
 import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
 import { HealthMessageIntro } from '@/components/health-message-intro'
+import { ServiceInstructions } from '@/components/service-instructions'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
@@ -151,30 +152,34 @@ export default function HealthMessageComposeScreen() {
     toast.error(intl.formatMessage({ id: 'health.messages.compose.sendError' }))
   }
 
-  const [replyToConversation, { loading: replying }] =
-    useReplyToHealthConversationMutation({
-      refetchQueries: ['GetHealthConversation', 'GetHealthConversations'],
-      onCompleted: () => router.back(),
-      onError,
-    })
+  const [
+    replyToConversation,
+    { loading: replying },
+  ] = useReplyToHealthConversationMutation({
+    refetchQueries: ['GetHealthConversation', 'GetHealthConversations'],
+    onCompleted: () => router.back(),
+    onError,
+  })
 
-  const [createConversation, { loading: creating }] =
-    useCreateHealthConversationMutation({
-      refetchQueries: ['GetHealthConversations'],
-      onCompleted: (data) => {
-        const id = data.healthDirectorateCreateHealthConversation?.id
-        if (id) {
-          // Replace the compose screen so back returns to the inbox.
-          router.replace({
-            pathname: '/health/messages/[id]',
-            params: { id, justCreated: 'true' },
-          })
-        } else {
-          router.back()
-        }
-      },
-      onError,
-    })
+  const [
+    createConversation,
+    { loading: creating },
+  ] = useCreateHealthConversationMutation({
+    refetchQueries: ['GetHealthConversations'],
+    onCompleted: (data) => {
+      const id = data.healthDirectorateCreateHealthConversation?.id
+      if (id) {
+        // Replace the compose screen so back returns to the inbox.
+        router.replace({
+          pathname: '/health/messages/[id]',
+          params: { id, justCreated: 'true' },
+        })
+      } else {
+        router.back()
+      }
+    },
+    onError,
+  })
 
   const sending = replying || creating
 
@@ -305,7 +310,16 @@ export default function HealthMessageComposeScreen() {
   if (step === 'intro') {
     return (
       <>
-        <StackScreen closeable options={{ title: '', gestureEnabled: true }} />
+        <StackScreen
+          closeable
+          options={{
+            title: '',
+            gestureEnabled: true,
+            // Header options are merged per key, so the form's chevron has to
+            // be cleared explicitly — omitting the key would leave it in place.
+            headerLeftItems: [],
+          }}
+        />
         <HealthMessageIntro
           termsAccepted={termsAccepted}
           onToggleTerms={() => setTermsAccepted(!termsAccepted)}
@@ -461,6 +475,9 @@ export default function HealthMessageComposeScreen() {
                   onOpenChange={setServiceMenuOpen}
                   disabled={isFormLocked}
                 />
+              )}
+              {!isCertificateSelected && !!selectedType?.instructions && (
+                <ServiceInstructions text={selectedType.instructions} />
               )}
 
               {!isCertificateSelected && (
