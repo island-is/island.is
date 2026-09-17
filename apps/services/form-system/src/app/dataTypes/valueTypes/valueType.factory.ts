@@ -132,7 +132,12 @@ export class ValueTypeFactory {
             key === 'email' ||
             key === 'iskNumber' ||
             key === 'phoneNumber' ||
-            key === 'bankAccount'
+            key === 'bankAccount' ||
+            key === 'name' ||
+            key === 'nationalId' ||
+            key === 'address' ||
+            key === 'postalCode' ||
+            key === 'municipality'
           ) {
             return ''
           }
