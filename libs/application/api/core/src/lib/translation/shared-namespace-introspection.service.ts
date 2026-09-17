@@ -18,6 +18,11 @@ import {
   socialInsuranceAdministrationMessage,
   statesMessages as siaStatesMessages,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { m as drivingAssessmentApprovalMessages } from '@island.is/application/templates/transport-authority/driving-assessment-approval'
+import {
+  messages as drivingLicenseAdditionalMessages,
+  requirementsMessages as drivingLicenseAdditionalRequirementsMessages,
+} from '@island.is/application/templates/district-commissioners/driving-license-additional'
 import {
   CORE_TRANSLATION_NAMESPACE,
   getSharedTranslationNamespaces,
@@ -99,6 +104,11 @@ const SHARED_NAMESPACE_MESSAGE_ROOTS: Record<string, unknown[]> = {
     socialInsuranceAdministrationMessage,
     siaErrorMessages,
     siaStatesMessages,
+  ],
+  'dla.application': [
+    drivingAssessmentApprovalMessages,
+    drivingLicenseAdditionalMessages,
+    drivingLicenseAdditionalRequirementsMessages,
   ],
 }
 
