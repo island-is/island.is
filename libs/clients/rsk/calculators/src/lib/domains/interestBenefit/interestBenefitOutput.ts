@@ -1,4 +1,5 @@
 import type { InterestBenefitResult } from '../../../../gen/fetch'
+import { rskRatioToPercent } from '../../utils/rskRatioToPercent'
 import type { InterestBenefitOutput } from './contract'
 
 export const toInterestBenefitOutput = (
@@ -17,10 +18,10 @@ export const toInterestBenefitOutput = (
   incomeReduction: result.skerdingVegnaTekna ?? undefined,
   interestBenefitAfterIncomeReduction:
     result.vaxtabaeturEftirSkerdinguTekna ?? undefined,
-  incomeReductionRate: result.tekjuskerdingarhlutfall ?? undefined,
-  debtReductionRate: result.skuldaskerdingarhlutfall ?? undefined,
+  incomeReductionRate: rskRatioToPercent(result.tekjuskerdingarhlutfall),
+  debtReductionRate: rskRatioToPercent(result.skuldaskerdingarhlutfall),
   assetReduction: result.skerdingVegnaEigna ?? undefined,
-  assetReductionRate: result.eignaskerdingarhlutfall ?? undefined,
+  assetReductionRate: rskRatioToPercent(result.eignaskerdingarhlutfall),
   reductionLaw2003: result.skerdingLog2003 ?? undefined,
   reductionLaw2004: result.skerdingLog2004 ?? undefined,
   totalInterestBenefit: result.vaxtabaeturAlls ?? undefined,

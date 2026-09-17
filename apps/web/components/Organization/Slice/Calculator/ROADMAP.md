@@ -141,7 +141,8 @@ these two shapes:
   safety, but pushes calculator-specific branching back into a generic renderer.
 
 That future operation also owns input/output boundary decisions such as month
-indexing and percentage scale. The renderer should not guess those rules.
+indexing. Percentage scale is now settled: whole `0-100` in both directions. The
+renderer should not guess such rules.
 
 For this roadmap, the buildable work is:
 

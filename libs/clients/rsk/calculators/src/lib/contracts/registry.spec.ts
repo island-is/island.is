@@ -31,4 +31,42 @@ describe('calculatorRegistry', () => {
       'withholdingTax.taxCardUtilization',
     ])
   })
+
+  /* The mirror of the assertion above, for the return trip: an output declared
+   * `percentage` that its mapper forwards unconverted publishes RSK's 0-1 ratio
+   * where the contract promises a whole 0-100 figure. Add a field here only
+   * once its output mapper wires `rskRatioToPercent`.
+   *
+   * Array item fields are included, since `taxBrackets.withholdingRate` is a
+   * percentage that the scalar walk alone would miss. */
+  it('carries percentage outputs only where the mapper converts them', () => {
+    const percentageOutputs = contracts
+      .flatMap((contract) =>
+        contract.outputFields.flatMap((field) =>
+          field.kind === 'array'
+            ? field.itemFields.map((itemField) => ({
+                contract,
+                field: itemField,
+                path: `${field.name}.${itemField.name}`,
+              }))
+            : [{ contract, field, path: field.name }],
+        ),
+      )
+      .filter(({ field }) => field.semantic === 'percentage')
+      .map(({ contract, path }) => `${contract.key}.${path}`)
+      .sort()
+
+    expect(percentageOutputs).toEqual([
+      'childBenefit.excessReductionRate',
+      'childBenefit.reductionRate',
+      'childBenefit.reductionRateForChildrenUnder7',
+      'interestBenefit.assetReductionRate',
+      'interestBenefit.debtReductionRate',
+      'interestBenefit.incomeReductionRate',
+      'withholdingTax.appliedPensionFundRatio',
+      'withholdingTax.appliedPrivatePensionRatio',
+      'withholdingTax.taxBrackets.withholdingRate',
+      'withholdingTax.withholdingRate',
+    ])
+  })
 })

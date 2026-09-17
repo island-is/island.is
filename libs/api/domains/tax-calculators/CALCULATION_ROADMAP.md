@@ -101,7 +101,8 @@ This carries one correction to already-shipped metadata code, which this pass
 owns: `models/enums.ts` currently describes the *input* `PERCENTAGE` semantic as
 `A ratio between 0 and 1, not a 0-100 figure`. That description is now wrong at
 the public boundary and must say whole percent. The *output* `PERCENTAGE`
-description (`No scale is asserted`) is correct and stays.
+description must say the same: the scale is declared by the contract in both
+directions, and the client output mapper converts to meet it.
 
 The `1-12` month convention is the accepted current baseline. Both
 `models/enums.ts` and the web's `optionSources.ts` record that RSK documents no
@@ -187,7 +188,8 @@ Output omission rules:
 - missing or `undefined` scalar client outputs are omitted
 - empty arrays are returned as `arrayValue: []`
 - extra client output keys not present in metadata are ignored
-- output percentage values are returned as the client mapper produced them
+- output percentage values are whole percent, like input ones -- the client
+  output mapper has already converted from RSK's ratio
 
 ## Error Shape
 

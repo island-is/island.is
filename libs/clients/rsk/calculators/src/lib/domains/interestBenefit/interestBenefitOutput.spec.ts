@@ -145,6 +145,8 @@ describe('toInterestBenefitOutput', () => {
   })
 
   it('reads each output field from its own RSK source key', () => {
+    /* The percentage fields read x100: their source is RSK's 0-1 ratio and
+     * the contract publishes whole percent. */
     expect(toInterestBenefitOutput(result)).toEqual({
       maritalStatusLabel: 'text-1',
       incomeYear: 2,
@@ -158,10 +160,10 @@ describe('toInterestBenefitOutput', () => {
       maximumInterestBenefit: 10,
       incomeReduction: 11,
       interestBenefitAfterIncomeReduction: 12,
-      incomeReductionRate: 13,
-      debtReductionRate: 14,
+      incomeReductionRate: 1300,
+      debtReductionRate: 1400,
       assetReduction: 15,
-      assetReductionRate: 16,
+      assetReductionRate: 1600,
       reductionLaw2003: 17,
       reductionLaw2004: 18,
       totalInterestBenefit: 19,

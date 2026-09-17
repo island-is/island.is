@@ -69,11 +69,11 @@ inside an array unrepresentable, matching the client's
 would let the schema express nesting the contract does not have.
 
 `TaxCalculatorOutputFieldSemantic` is a separate enum from
-`TaxCalculatorInputFieldSemantic` despite identical members, because the two
-sides assert different things about `PERCENTAGE`. The input enum documents
-whole percent, which is the value a consumer must submit; RSK does not document
-output ratio scale, and the client passes it through unchanged, so the output
-enum asserts none.
+`TaxCalculatorInputFieldSemantic` despite identical members, so that each side
+can describe the value in the direction it travels. Both assert the same scale
+for `PERCENTAGE`: a whole `0-100` figure. That is a declaration this contract
+makes, not an observation of what RSK sends -- the client's mappers divide on
+the way in and multiply on the way out to make it true.
 
 `dependsOn.equals` is a union over
 `TaxCalculator{Boolean,String,Number}InputDependencyValue`; read `__typename` to
@@ -237,10 +237,10 @@ not reach the response.
 
 ### Public value conventions
 
-Percentage inputs are whole percent (`37`, not `0.37`) and month inputs are
-`1-12`. The domain passes both through unchanged; the client's query mapper owns
-the conversion to RSK's own encoding, along with every other RSK-specific
-detail. Dates are `yyyy-MM-dd` on both sides.
+Percentages are whole percent (`37`, not `0.37`) in both directions, and month
+inputs are `1-12`. The domain passes both through unchanged; the client's
+mappers own the conversion to and from RSK's own encoding, along with every
+other RSK-specific detail. Dates are `yyyy-MM-dd` on both sides.
 
 Number fields carrying the `year`, `month` or `count` semantic must be whole
 numbers. That is the one place a semantic affects behaviour rather than

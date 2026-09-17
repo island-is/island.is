@@ -25,7 +25,8 @@ hand-code calculator-specific result layouts, or know RSK query parameter names.
 4. Track form values under the same metadata keys.
 5. Enable submit only when required applicable inputs are sufficiently present.
 6. Serialize form values into GraphQL keyed typed rows.
-7. Query `taxCalculatorCalculate(input:)`.
+7. Query `taxCalculatorCalculate(input:)` lazily -- submission is button-driven,
+   so a plain `useQuery` would fire on mount against an empty form.
 8. Normalize returned keyed output values into lookup maps.
 9. Render values through `config.outputSections`, using configured labels,
    markdown, variants, accordion sections and item field placement.
@@ -81,6 +82,9 @@ Serialization rules:
 
 - dispatch on metadata `type` to choose `numberValue`, `stringValue` or
   `booleanValue` -- never on which control rendered the field
+- build the value object with exactly one key. A member present as `null` is
+  rejected by `@oneOf` coercion just as a second populated member is -- absent
+  means absent, not null
 - **drop absent values first, coerce second.** `Number("") === 0`, so coercing
   before the emptiness check turns every untouched numeric field into a
   submitted `0`. For `withholdingTax`, whose fields are all optional and whose
@@ -95,10 +99,12 @@ Serialization rules:
 - do not submit stale configured input keys
 - percentage number inputs submit whole percent, for example `37`, exactly as
   the control collects them. The `0-1` conversion RSK wants belongs to the
-  client query mapper, so the web layer performs no scaling. The
-  `TODO(calculation-boundary)` comment in `CalculatorField.tsx` is resolved by
-  that decision and should be removed when this lands
+  client query mapper, so the web layer performs no scaling
 - month number inputs submit `1-12`
+- `count` inputs render with `min={0}` and `decimalScale={0}`. The domain
+  rejects a fractional or negative count with `INVALID_VALUE`, so the control
+  does not offer one. `decimalScale` rather than `step`, which NumberFormat
+  ignores for `type="number"`
 
 ### Applicability, not visibility, decides submission
 
@@ -172,10 +178,15 @@ Rendering rules:
 Formatting derives from output metadata, not from config:
 
 - currency uses Icelandic krona formatting
-- percentage uses the value exactly as returned by the domain/client convention
+- percentage values are whole percent (`37.45`), the same scale the inputs use,
+  so the renderer appends the sign and performs no scaling
 - count/plain numbers use locale-aware number formatting
 - booleans render localized yes/no
-- dates render localized dates
+- dates render localized dates. No contract declares a date output today, so
+  this is unexercised -- and before the first one renders, read the note in the
+  domain's `mappings/outputValue.ts`: the client generates with `{ dates: true }`
+  and a date-typed response arrives as a `Date`, which that mapper omits. The
+  value would never reach the renderer to be formatted
 - strings render as plain text
 
 ## Error States
@@ -214,8 +225,10 @@ Hardcoded for now. Moving this copy to a Contentful translation namespace via
 
 Any returned error means no calculation should be rendered. Field-level errors
 include `key` and should attach to the matching input control where practical.
-Calculation-level errors have no `key`. Keep the user's form values visible for
-both validation failures and RSK/network failures.
+A `key` naming a field that is not currently rendered -- dependency-hidden, or
+in a closed `disableOnly` section -- falls back to the result-area alert rather
+than being dropped. Calculation-level errors have no `key`. Keep the user's form
+values visible for both validation failures and RSK/network failures.
 
 ## Verification
 

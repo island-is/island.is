@@ -76,6 +76,7 @@ export const CalculatorSection = ({
             key={field.uid}
             field={field}
             contractField={contractField}
+            contract={contract}
             label={label}
             locale={locale}
             disabled={!isGateOpen}

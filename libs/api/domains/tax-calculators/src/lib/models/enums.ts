@@ -104,7 +104,8 @@ registerEnumType(TaxCalculatorOutputFieldSemantic, {
   valuesMap: {
     CURRENCY: { description: 'A whole amount in ISK.' },
     PERCENTAGE: {
-      description: 'A percentage-like numeric value. No scale is asserted.',
+      description:
+        'A whole percent, for example `37` rather than `0.37` -- the same scale as the input semantic. Conversion from the ratio RSK returns happens below this boundary.',
     },
     YEAR: { description: 'A calendar year.' },
     MONTH: {

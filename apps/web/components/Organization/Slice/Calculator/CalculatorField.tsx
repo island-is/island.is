@@ -13,13 +13,17 @@ import {
   TaxCalculatorInputFieldType,
 } from '@island.is/web/graphql/schema'
 
-import type { InputContractField } from './contract'
+import type { InputContractField, InputFieldContract } from './contract'
 import { monthOptions, yearOptions } from './optionSources'
 import { localized } from './text'
+import { toTypedValue } from './values'
 
 interface Props {
   field: CalculatorInputSectionField
   contractField: InputContractField
+  /* The whole contract, not just this field's entry: a dependency is resolved
+   * against its target's metadata `type`, which lives in another entry. */
+  contract: InputFieldContract
   /* Resolved by the section, which drops the field outright when the editor
    * authored no label -- so this component never has to represent that case. */
   label: string
@@ -47,6 +51,7 @@ const TWELFTHS = [
 export const CalculatorField = ({
   field,
   contractField,
+  contract,
   label,
   locale,
   disabled,
@@ -56,11 +61,27 @@ export const CalculatorField = ({
 
   /* Hooks cannot be conditional, so this always runs: an empty name matches no
    * registered field and yields undefined, which no dependency ever equals. */
-  const dependencyValue = useWatch({ control, name: dependsOn?.fieldKey ?? '' })
+  const rawDependencyValue = useWatch({
+    control,
+    name: dependsOn?.fieldKey ?? '',
+  })
+
+  /* Compared through the coercion rather than raw, because form state holds a
+   * string where `equals` holds the scalar metadata declares: a dependency on a
+   * `number` field would otherwise never match and hide its dependent forever.
+   * A target missing from the contract is a publication bug the domain rejects;
+   * hiding the dependent is the safe reading of it here. */
+  const dependencyType = dependsOn && contract.get(dependsOn.fieldKey)?.type
 
   /* The column lives inside the field, not around it, so that this return --
    * and the section's own omissions -- leave no empty column behind. */
-  if (dependsOn && dependencyValue !== dependsOn.equals) return null
+  if (
+    dependsOn &&
+    (!dependencyType ||
+      toTypedValue(rawDependencyValue, dependencyType) !== dependsOn.equals)
+  ) {
+    return null
+  }
 
   const placeholder = localized(field.placeholder, locale)
 
@@ -137,10 +158,9 @@ export const CalculatorField = ({
             return <InputController {...input} type="number" currency />
 
           case TaxCalculatorInputFieldSemantic.Percentage:
-            /* TODO(calculation-boundary): RSK expects a ratio 0-1 (api.graphql
-             * PERCENTAGE). This control collects a 0-100 figure, because asking
-             * for `0.37` beside a `%` sign is worse; the boundary must divide
-             * by 100. */
+            /* Whole percent by contract, in both directions. The client's
+             * mappers convert to and from RSK's 0-1 ratio; nothing above them
+             * scales. */
             return (
               <InputController
                 {...input}
@@ -151,9 +171,22 @@ export const CalculatorField = ({
               />
             )
 
+          /* The domain rejects a fractional or negative count outright, so the
+           * control does not offer one. `decimalScale` rather than `step`:
+           * `type="number"` routes through NumberFormat, which ignores `step`
+           * and enforces `min` through `isAllowed`. */
+          case TaxCalculatorInputFieldSemantic.Count:
+            return (
+              <InputController
+                {...input}
+                type="number"
+                min={0}
+                decimalScale={0}
+              />
+            )
+
           /* A number with no semantic is the commonest field of all, so the
            * fallback is spelled out rather than left to fall through. */
-          case TaxCalculatorInputFieldSemantic.Count:
           default:
             return <InputController {...input} type="number" />
         }

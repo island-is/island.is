@@ -7,7 +7,7 @@ import {
 } from '@island.is/web/graphql/schema'
 
 import { CalculatorField } from './CalculatorField'
-import type { InputContractField } from './contract'
+import type { InputContractField, InputFieldContract } from './contract'
 
 /* What is under test is the two-stage resolution table -- which control a
  * `type`/`semantic` pair picks, and with which props -- not how island-ui
@@ -23,6 +23,7 @@ jest.mock('@island.is/shared/form-fields', () => ({
       data-suffix={String(props.suffix ?? '')}
       data-min={String(props.min ?? '')}
       data-max={String(props.max ?? '')}
+      data-decimal-scale={String(props.decimalScale ?? '')}
     />
   ),
   SelectController: (props: { options?: { value: string }[] }) => (
@@ -40,12 +41,16 @@ const Form = ({ children }: { children: React.ReactNode }) => {
   return <FormProvider {...methods}>{children}</FormProvider>
 }
 
-const renderField = (contractField: InputContractField) =>
+const renderField = (
+  contractField: InputContractField,
+  contract: InputFieldContract = new Map([[contractField.key, contractField]]),
+) =>
   render(
     <Form>
       <CalculatorField
         field={{ uid: 'uid-1', key: contractField.key, span: 6 }}
         contractField={contractField}
+        contract={contract}
         label="Reitur"
         locale="is"
         disabled={false}
@@ -75,7 +80,9 @@ describe('CalculatorField control resolution', () => {
     expect(element?.getAttribute('data-currency')).toBe('false')
   })
 
-  it('renders a count the same way as a bare number', () => {
+  /* The domain rejects a fractional or negative count with INVALID_VALUE, so
+   * the control is constrained rather than left to fail server-side. */
+  it('renders a count as a whole non-negative number', () => {
     const { container } = renderField(
       numberField(TaxCalculatorInputFieldSemantic.Count),
     )
@@ -84,6 +91,8 @@ describe('CalculatorField control resolution', () => {
     expect(element?.getAttribute('data-control')).toBe('input')
     expect(element?.getAttribute('data-type')).toBe('number')
     expect(element?.getAttribute('data-suffix')).toBe('')
+    expect(element?.getAttribute('data-min')).toBe('0')
+    expect(element?.getAttribute('data-decimal-scale')).toBe('0')
   })
 
   it('renders currency with the currency flag rather than a suffix', () => {
@@ -175,13 +184,68 @@ describe('CalculatorField control resolution', () => {
   })
 
   it('renders nothing at all while a dependency is unmet -- not an empty column', () => {
-    const { container } = renderField({
+    const target: InputContractField = {
+      key: 'isMarried',
+      type: TaxCalculatorInputFieldType.Boolean,
+      required: false,
+    }
+    const dependent: InputContractField = {
       key: 'spouseName',
       type: TaxCalculatorInputFieldType.String,
       required: false,
       dependsOn: { fieldKey: 'isMarried', equals: true },
-    })
+    }
+
+    const { container } = renderField(
+      dependent,
+      new Map([
+        [target.key, target],
+        [dependent.key, dependent],
+      ]),
+    )
 
     expect(container.firstChild).toBeNull()
+  })
+
+  /* The target is a `number` field rendered as a select, so form state holds
+   * `'2024'` where `equals` holds `2024`. Compared raw, the two never match and
+   * the dependent stays hidden whatever the user picks. */
+  it('matches a number dependency against the string its select holds', () => {
+    const target: InputContractField = {
+      key: 'incomeYear',
+      type: TaxCalculatorInputFieldType.Number,
+      semantic: TaxCalculatorInputFieldSemantic.Year,
+      required: true,
+    }
+    const dependent: InputContractField = {
+      key: 'retroactive',
+      type: TaxCalculatorInputFieldType.String,
+      required: false,
+      dependsOn: { fieldKey: 'incomeYear', equals: 2024 },
+    }
+    const contract = new Map([
+      [target.key, target],
+      [dependent.key, dependent],
+    ])
+
+    const Harness = () => {
+      const methods = useForm({ defaultValues: { incomeYear: '2024' } })
+      return (
+        <FormProvider {...methods}>
+          <CalculatorField
+            field={{ uid: 'uid-1', key: dependent.key, span: 6 }}
+            contractField={dependent}
+            contract={contract}
+            label="Reitur"
+            locale="is"
+            disabled={false}
+          />
+        </FormProvider>
+      )
+    }
+
+    const { container } = render(<Harness />)
+
+    expect(control(container)).toBeTruthy()
   })
 })

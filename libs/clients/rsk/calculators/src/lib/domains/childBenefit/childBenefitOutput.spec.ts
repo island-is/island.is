@@ -194,6 +194,8 @@ describe('toChildBenefitOutput', () => {
   })
 
   it('reads each output field from its own RSK source key', () => {
+    /* The percentage fields read x100: their source is RSK's 0-1 ratio and
+     * the contract publishes whole percent. */
     expect(toChildBenefitOutput(result)).toEqual({
       maritalStatusLabel: 'text-1',
       numberOfChildren: 2,
@@ -201,14 +203,14 @@ describe('toChildBenefitOutput', () => {
       incomeYear: 4,
       benefitYear: 5,
       incomeBase: 6,
-      reductionRate: 7,
+      reductionRate: 700,
       reductionThreshold: 8,
       upperReductionThreshold: 9,
       reductionBase: 10,
       excessReductionBase: 11,
       incomeReduction: 12,
       excessIncomeReduction: 13,
-      excessReductionRate: 14,
+      excessReductionRate: 1400,
       unreducedChildBenefit: 15,
       childBenefitPerChild: 16,
       totalChildBenefit: 17,
@@ -218,7 +220,7 @@ describe('toChildBenefitOutput', () => {
       additionalBenefitForChildrenUnder7: 21,
       additionalBenefitPerChildUnder7: 22,
       reductionForChildrenUnder7: 23,
-      reductionRateForChildrenUnder7: 24,
+      reductionRateForChildrenUnder7: 2400,
       childrenBirthYears: 'text-25',
       splitCustody: true,
       splitCustodyChildrenOver7: 27,

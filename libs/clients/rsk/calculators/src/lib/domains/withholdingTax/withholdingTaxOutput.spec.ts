@@ -168,10 +168,12 @@ describe('toWithholdingTaxOutput', () => {
   })
 
   it('reads each output field from its own RSK source key', () => {
+    /* The percentage fields read x100: their source is RSK's 0-1 ratio and
+     * the contract publishes whole percent. */
     expect(toWithholdingTaxOutput(result)).toEqual({
       monthlySalary: 1,
-      appliedPensionFundRatio: 2,
-      appliedPrivatePensionRatio: 3,
+      appliedPensionFundRatio: 200,
+      appliedPrivatePensionRatio: 300,
       pensionFundPayment: 4,
       privatePensionPayment: 5,
       totalDeductions: 6,
@@ -189,7 +191,7 @@ describe('toWithholdingTaxOutput', () => {
       payMonth: 18,
       childIncomeLimit: 19,
       childBirthYear: 20,
-      withholdingRate: 21,
+      withholdingRate: 2100,
       employerPensionMatch: 22,
       payrollTaxBase: 23,
       payrollTax: 24,
@@ -197,7 +199,7 @@ describe('toWithholdingTaxOutput', () => {
         {
           lowerBound: 100,
           bracketNumber: 200,
-          withholdingRate: 300,
+          withholdingRate: 30000,
           calculatedWithholding: 400,
         },
       ],

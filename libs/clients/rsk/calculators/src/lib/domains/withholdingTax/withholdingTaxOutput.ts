@@ -1,4 +1,5 @@
 import type { TaxBracket, WithholdingTaxResult } from '../../../../gen/fetch'
+import { rskRatioToPercent } from '../../utils/rskRatioToPercent'
 import { toNumber } from '../../utils/toNumber'
 import type {
   WithholdingTaxBracketOutput,
@@ -10,7 +11,7 @@ const toWithholdingTaxBracketOutput = (
 ): WithholdingTaxBracketOutput => ({
   lowerBound: toNumber(bracket.nedriMork),
   bracketNumber: toNumber(bracket.numerThreps),
-  withholdingRate: bracket.stadgreidsluhlutfall ?? undefined,
+  withholdingRate: rskRatioToPercent(bracket.stadgreidsluhlutfall),
   calculatedWithholding: toNumber(bracket.reiknudStadgreidsla),
 })
 
@@ -18,8 +19,8 @@ export const toWithholdingTaxOutput = (
   result: WithholdingTaxResult,
 ): WithholdingTaxOutput => ({
   monthlySalary: result.manadarlaun ?? undefined,
-  appliedPensionFundRatio: result.lifeyrisjodurProsenta ?? undefined,
-  appliedPrivatePensionRatio: result.sereignProsenta ?? undefined,
+  appliedPensionFundRatio: rskRatioToPercent(result.lifeyrisjodurProsenta),
+  appliedPrivatePensionRatio: rskRatioToPercent(result.sereignProsenta),
   pensionFundPayment: result.lifeyrissjodur ?? undefined,
   privatePensionPayment: result.sereignarsjodur ?? undefined,
   totalDeductions: result.fradratturAlls ?? undefined,
@@ -37,7 +38,7 @@ export const toWithholdingTaxOutput = (
   payMonth: result.launamanudur ?? undefined,
   childIncomeLimit: result.fritekjumarkBarns ?? undefined,
   childBirthYear: result.faedingararBarns ?? undefined,
-  withholdingRate: result.stadgreidsluhlutfall ?? undefined,
+  withholdingRate: rskRatioToPercent(result.stadgreidsluhlutfall),
   employerPensionMatch: result.motframlag ?? undefined,
   payrollTaxBase: result.tryggingagjaldsstofn ?? undefined,
   payrollTax: result.tryggingagjald ?? undefined,
