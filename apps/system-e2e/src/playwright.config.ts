@@ -6,7 +6,10 @@ import { join } from 'path'
 import './addons'
 import { env, urls } from './support/urls'
 
-const localPort = process.env.PORT ?? '4200'
+// Fixed on purpose, not read from PORT: the dev S3 upload bucket only allows the
+// localhost:4200 origin, so the tests must run there. Kept in step with
+// judicialSystemBaseUrl in support/urls.ts.
+const judicialSystemPort = 4200
 
 /**
  * The judicial-system suite is timed for a production build (the way CI runs
@@ -25,10 +28,10 @@ const judicialSystemWebServer: PlaywrightTestConfig['webServer'] =
           'yarn nx run judicial-system-web:build:production',
           // The tests use fake national ids, so the registry lookups have to
           // answer with the fakes a dev server would use.
-          `NODE_ENV=production PORT=${localPort} ENABLE_LOCAL_PROXY=true MOCK_NATIONAL_REGISTRY=true node dist/apps/judicial-system/web/main.js`,
+          `NODE_ENV=production PORT=${judicialSystemPort} ENABLE_LOCAL_PROXY=true MOCK_NATIONAL_REGISTRY=true node dist/apps/judicial-system/web/main.js`,
         ].join(' && '),
         cwd: join(__dirname, '../../..'),
-        url: `http://localhost:${localPort}/liveness`,
+        url: `http://localhost:${judicialSystemPort}/liveness`,
         reuseExistingServer: true,
         // The production build takes several minutes on a cold nx cache.
         timeout: 15 * 60 * 1000,

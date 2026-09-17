@@ -12,8 +12,8 @@ describe('shouldMockNationalRegistry', () => {
     process.env = env
   })
 
-  it('mocks outside production', () => {
-    process.env.NODE_ENV = 'development'
+  it.each(['development', 'test'])('mocks in %s', (nodeEnv) => {
+    process.env.NODE_ENV = nodeEnv
 
     expect(shouldMockNationalRegistry()).toBe(true)
   })
@@ -30,4 +30,27 @@ describe('shouldMockNationalRegistry', () => {
 
     expect(shouldMockNationalRegistry()).toBe(true)
   })
+
+  it('calls the registry when NODE_ENV is unset', () => {
+    delete process.env.NODE_ENV
+
+    expect(shouldMockNationalRegistry()).toBe(false)
+  })
+
+  it('calls the registry when NODE_ENV is unset even if opted in', () => {
+    delete process.env.NODE_ENV
+    process.env.MOCK_NATIONAL_REGISTRY = 'true'
+
+    expect(shouldMockNationalRegistry()).toBe(false)
+  })
+
+  it.each(['prod', 'Production', 'staging'])(
+    'calls the registry when NODE_ENV is %s',
+    (nodeEnv) => {
+      process.env.NODE_ENV = nodeEnv
+      process.env.MOCK_NATIONAL_REGISTRY = 'true'
+
+      expect(shouldMockNationalRegistry()).toBe(false)
+    },
+  )
 })

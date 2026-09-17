@@ -175,7 +175,7 @@ The e2e tests live in `apps/system-e2e/src/tests/judicial-system` and are run wi
 yarn playwright test -c apps/system-e2e/src --project judicial-system
 ```
 
-The suite is timed for a production build of the web app, which is also how e2e runs in CI. When nothing is listening on port 4200 (or `PORT`), the Playwright config builds the production bundle and serves it with `ENABLE_LOCAL_PROXY=true`, so `/api` is still forwarded to the local api server. If a dev server is already running on that port it is reused instead - note that in dev mode Next compiles each route on first visit, which makes the suite slow and prone to timeouts. To run against a production build manually:
+The suite is timed for a production build of the web app, which is also how e2e runs in CI. When nothing is listening on port 4200, the Playwright config builds the production bundle and serves it with `ENABLE_LOCAL_PROXY=true`, so `/api` is still forwarded to the local api server. If a dev server is already running on that port it is reused instead - note that in dev mode Next compiles each route on first visit, which makes the suite slow and prone to timeouts. To run against a production build manually:
 
 ```bash
 yarn nx run judicial-system-web:build:production
