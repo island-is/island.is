@@ -755,21 +755,40 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
   /**
    * Whether a refused submit was refused because the renewal window is shut.
    *
-   * Reachable even though PREREQUISITES gates on the same check: a draft can
-   * outlive its window when DMR rolls the company's due date forward, which an
-   * earlier report being approved does. Never throws — it only picks which of
-   * two messages to show on a request that has already failed, so a second
-   * failure falls back to the other reading rather than replacing a specific
-   * error with a generic one.
+   * Reachable even though PREREQUISITES gates on the same check, by a route
+   * worth spelling out because the branch cannot be reproduced outside prod
+   * (see the 409 handler) and so reads like dead code: DMR rolls the due date
+   * forward on approval and at no other point, so a company whose earlier
+   * report is sitting in review still has its old, open window. It passes
+   * PREREQUISITES on that window, opens this draft, and the earlier report is
+   * approved while the draft sits — rolling the due date three years out and
+   * shutting the window under a draft that is already past the gate.
+   *
+   * Never throws — it only picks which of two messages to show on a request
+   * that has already failed, so a second failure falls back to the other
+   * reading rather than replacing a specific error with a generic one.
    */
   private async isRenewalWindowClosed(
     auth: TemplateApiModuleActionProps['auth'],
+    applicationId: string,
   ): Promise<boolean> {
     try {
       const eligibility =
         await this.directorateOfEqualityService.getSalaryReportEligibility(auth)
       return eligibility.reason === SALARY_INELIGIBILITY_RENEWAL_WINDOW_NOT_OPEN
-    } catch {
+    } catch (error) {
+      // Warned rather than swallowed: if this read breaks permanently the
+      // fallback is silent, and the symptom is the very bug the check exists
+      // to prevent — an applicant who submitted too early being told their
+      // report is already in review.
+      this.logger.warn(
+        'Failed to resolve the reason for a refused salary submit',
+        {
+          applicationId,
+          context: LOGGING_CONTEXT,
+          ...this.extractFetchErrorDetails(error),
+        },
+      )
       return false
     }
   }
@@ -850,16 +869,38 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         } catch (error) {
           const status = this.extractFetchErrorDetails(error).status
 
-          // Two unrelated refusals share 409 — a report already in progress
-          // with the reviewing body, and a renewal window that has not opened —
-          // and DMR does not tell them apart in the body, so the pre-flight
-          // check is asked which one it is. Only on this path: it costs a round
-          // trip, and the submit has already failed by the time we are here.
+          // Three unrelated refusals share 409 — the renewal window not being
+          // open, a salary report already sitting in IN_REVIEW or POSTPONED (a
+          // merely SUBMITTED one is withdrawn silently), and a providerId tuple
+          // already bound to another company or report type — and none of them
+          // is named in a machine-readable field, so the pre-flight check is
+          // asked instead. Only on this path: it costs a round trip, and the
+          // submit has already failed by the time we are here.
+          //
+          // DMR does put the reason in `ApiErrorDto.message` as free text.
+          // That is not a contract — unlike `translatedMessage` it is not
+          // declared user-facing, and matching on its wording would break
+          // silently the first time it is reworded — so it is not parsed here.
+          //
+          // The test is deliberately the positive one. Eligibility does not
+          // look for an in-flight report at all, so the renewal window is the
+          // only cause it can confirm; everything else it calls eligible and
+          // falls through to the in-progress message. That also catches the
+          // tuple collision, which is an integrity error that cannot arise
+          // while providerId is this application's own id.
+          //
+          // NB: the renewal 409 fires in production only. Dev and staging
+          // accept the POST even when eligibility says RENEWAL_WINDOW_NOT_OPEN,
+          // so this branch cannot be reproduced outside prod — the other two
+          // causes fire everywhere.
           if (status === 409) {
             throw new TemplateApiError(
               {
                 title: coreErrorMessages.defaultTemplateApiError,
-                summary: (await this.isRenewalWindowClosed(auth))
+                summary: (await this.isRenewalWindowClosed(
+                  auth,
+                  application.id,
+                ))
                   ? salaryReportMessages.errors.renewalWindowNotOpen
                   : salaryReportMessages.errors.submitConflict,
               },
