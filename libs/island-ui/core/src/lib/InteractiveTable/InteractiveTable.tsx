@@ -142,12 +142,6 @@ export const InteractiveTable = <TData extends object>({
     ...(meta ? { meta } : {}),
   })
 
-  const footerGroup = table.getFooterGroups()[0]
-  const footerHeaders =
-    footerGroup?.headers.filter((header) => header.column.columnDef.footer) ??
-    []
-  const hasFooter = footerHeaders.length > 0
-
   if (errorMessage) {
     return (
       <ProblemTemplate
