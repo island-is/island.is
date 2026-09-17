@@ -63,7 +63,7 @@ export const debtsSection = buildSection({
             },
             {
               label: messages.table.amountHeader,
-              width: 110,
+              width: 125,
             },
             // { label: messages.table.toPayLabel, width: 140 },
           ],
