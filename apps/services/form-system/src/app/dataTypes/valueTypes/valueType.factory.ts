@@ -124,7 +124,7 @@ export class ValueTypeFactory {
       zipObject(
         keys,
         keys.map((key) => {
-          if (key === 'checkboxValue') {
+          if (key === 'checkboxValue' || key === 'isLoggedInUser') {
             return false
           }
           if (
@@ -137,7 +137,8 @@ export class ValueTypeFactory {
             key === 'nationalId' ||
             key === 'address' ||
             key === 'postalCode' ||
-            key === 'municipality'
+            key === 'municipality' ||
+            key === 'time'
           ) {
             return ''
           }
